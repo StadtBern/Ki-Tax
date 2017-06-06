@@ -1082,6 +1082,22 @@ export default class GesuchModelManager {
     }
 
     /**
+     * Gibt true zurueck wenn es mindestens eine Betreuung gibt, dessen Status ABGEWIESEN ist
+     * @returns {boolean}
+     */
+    public isThereAnyAbgewieseneBetreuung(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (betreuung.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns true when all Betreuungen are of kind SCHULAMT.
      * Returns false also if there are no Kinder with betreuungsbedarf
      */

@@ -50,11 +50,13 @@ public interface FallService {
 
 	/**
 	 * Gibt alle existierenden Faelle zurueck.
+	 * @param doAuthCheck: Definiert, ob die Berechtigungen (Lesen/Schreiben) für alle Faelle geprüft werden muessen.
+	 *                   Falls spaeter sowieso nur IDs (der Gesuche) verwendet werden, kann der Check weggelassen werden.
 	 *
 	 * @return Liste aller Faelle aus der DB
 	 */
 	@Nonnull
-	Collection<Fall> getAllFalle();
+	Collection<Fall> getAllFalle(boolean doAuthCheck);
 
 	/**
 	 * entfernt einen Fall aus der Database

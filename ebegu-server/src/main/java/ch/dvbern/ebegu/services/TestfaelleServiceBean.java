@@ -459,6 +459,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 					verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId(), Betreuungsstatus.VERFUEGT);
 				});
 			});
+			gesuchService.postGesuchVerfuegen(gesuch);
 		}
 		wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.VERFUEGEN);
 	}

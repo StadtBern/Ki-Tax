@@ -685,6 +685,8 @@ public class JaxBConverter {
 		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
 		antrag.setDatumGewarntNichtFreigegeben(antragJAXP.getDatumGewarntNichtFreigegeben());
 		antrag.setDatumGewarntFehlendeQuittung(antragJAXP.getDatumGewarntFehlendeQuittung());
+		antrag.setTimestampVerfuegt(antragJAXP.getTimestampVerfuegt());
+		antrag.setGueltig(antragJAXP.isGueltig());
 		return antrag;
 	}
 
@@ -812,7 +814,8 @@ public class JaxBConverter {
 		jaxGesuch.setGesperrtWegenBeschwerde(persistedGesuch.isGesperrtWegenBeschwerde());
 		jaxGesuch.setDatumGewarntNichtFreigegeben(persistedGesuch.getDatumGewarntNichtFreigegeben());
 		jaxGesuch.setDatumGewarntFehlendeQuittung(persistedGesuch.getDatumGewarntFehlendeQuittung());
-
+		jaxGesuch.setTimestampVerfuegt(persistedGesuch.getTimestampVerfuegt());
+		jaxGesuch.setGueltig(persistedGesuch.isGueltig());
 		return jaxGesuch;
 	}
 
@@ -1417,6 +1420,7 @@ public class JaxBConverter {
 		betreuung.setBetreuungNummer(betreuungJAXP.getBetreuungNummer());
 		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
 		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
+		betreuung.setGueltig(betreuungJAXP.isGueltig());
 
 		//ACHTUNG: Verfuegung wird hier nicht synchronisiert aus sicherheitsgruenden
 		return betreuung;
@@ -1621,6 +1625,7 @@ public class JaxBConverter {
 		}
 		jaxBetreuung.setBetreuungMutiert(betreuungFromServer.getBetreuungMutiert());
 		jaxBetreuung.setAbwesenheitMutiert(betreuungFromServer.getAbwesenheitMutiert());
+		jaxBetreuung.setGueltig(betreuungFromServer.isGueltig());
 		return jaxBetreuung;
 	}
 
@@ -2011,6 +2016,7 @@ public class JaxBConverter {
 		convertAbstractDateRangedFieldsToJAX(ebeguVorlage, jaxEbeguVorlage);
 
 		jaxEbeguVorlage.setName(ebeguVorlage.getName());
+		jaxEbeguVorlage.setProGesuchsperiode(ebeguVorlage.isProGesuchsperiode());
 		if (ebeguVorlage.getVorlage() != null) {
 			jaxEbeguVorlage.setVorlage(vorlageToJax(ebeguVorlage.getVorlage()));
 		}
@@ -2038,6 +2044,7 @@ public class JaxBConverter {
 		convertAbstractDateRangedFieldsToEntity(ebeguVorlageJAXP, ebeguVorlage);
 
 		ebeguVorlage.setName(ebeguVorlageJAXP.getName());
+		ebeguVorlage.setProGesuchsperiode(ebeguVorlageJAXP.isProGesuchsperiode());
 		if (ebeguVorlageJAXP.getVorlage() != null) {
 			if (ebeguVorlage.getVorlage() == null) {
 				ebeguVorlage.setVorlage(new Vorlage());
@@ -2395,6 +2402,7 @@ public class JaxBConverter {
 		jaxZahlungsauftrag.getZahlungen().addAll(
 			persistedZahlungsauftrag.getZahlungen()
 				.stream()
+				.filter(zahlung -> !zahlung.getZahlungspositionen().isEmpty())
 				.map(this::zahlungToJAX)
 				.collect(Collectors.toList()));
 		return jaxZahlungsauftrag;
@@ -2406,15 +2414,16 @@ public class JaxBConverter {
 		// nur die Zahlungen welche inst sehen darf
 		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) {
 			RestUtil.purgeZahlungenOfInstitutionen(jaxZahlungsauftrag, allowedInst);
+			// es muss nochmal das Auftragstotal berechnet werden. Diesmal nur mit den erlaubten Zahlungen
+			// Dies nur fuer Institutionen
+			BigDecimal total = BigDecimal.ZERO;
+			for (JaxZahlung zahlung : jaxZahlungsauftrag.getZahlungen()) {
+				total = MathUtil.DEFAULT.add(total, zahlung.getBetragTotalZahlung());
+			}
+			jaxZahlungsauftrag.setBetragTotalAuftrag(total);
+		} else {
+			jaxZahlungsauftrag.setBetragTotalAuftrag(persistedZahlungsauftrag.getBetragTotalAuftrag());
 		}
-
-		// es muss nochmal das Auftragstotal berechnet werden. Diesmal nur mit den erlaubten Zahlungen
-		BigDecimal total = BigDecimal.ZERO;
-		for (JaxZahlung zahlung : jaxZahlungsauftrag.getZahlungen()) {
-			total = MathUtil.DEFAULT.add(total, zahlung.getBetragTotalZahlung());
-		}
-		jaxZahlungsauftrag.setBetragTotalAuftrag(total);
-
 		return jaxZahlungsauftrag;
 	}
 

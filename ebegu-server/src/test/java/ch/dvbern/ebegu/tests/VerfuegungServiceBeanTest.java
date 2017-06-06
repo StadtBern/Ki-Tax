@@ -106,17 +106,20 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 		Integer betreuungNummer = betreuung.getBetreuungNummer();
 		Verfuegung verfuegung1 = betreuung.getVerfuegung();
 		gesuch.setStatus(AntragStatus.VERFUEGT);
+		LocalDateTime timestampVerfuegt = LocalDateTime.of(2016, Month.APRIL, 1, 0, 0);
+		gesuch.setTimestampVerfuegt(timestampVerfuegt);
+		gesuch.setGueltig(true);
 		Set<AntragStatusHistory> antragStatusHistories = gesuch.getAntragStatusHistories();
 		AntragStatusHistory antragStatusHistory = new AntragStatusHistory();
 		antragStatusHistory.setBenutzer(TestDataUtil.createAndPersistBenutzer(persistence));
 		antragStatusHistory.setStatus(AntragStatus.VERFUEGT);
 		antragStatusHistory.setGesuch(gesuch);
-		antragStatusHistory.setTimestampVon(LocalDateTime.of(2016, Month.APRIL, 1, 0, 0));
+		antragStatusHistory.setTimestampVon(timestampVerfuegt);
 		antragStatusHistories.add(antragStatusHistory);
 		gesuch.getGesuchsteller1().getAdressen().get(0).setGesuchstellerContainer(gesuch.getGesuchsteller1());
 		persistence.persist(gesuch.getGesuchsteller1().getAdressen().get(0));
 		persistence.persist(antragStatusHistory);
-		persistence.merge(gesuch);
+		gesuch = persistence.merge(gesuch);
 
 		Optional<Gesuch> gesuchOptional = this.gesuchService.antragMutieren(gesuch.getId(), LocalDate.now());
 		Assert.assertTrue(gesuchOptional.isPresent());
