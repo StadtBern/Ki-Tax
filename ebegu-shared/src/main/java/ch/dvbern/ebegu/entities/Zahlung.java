@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.ZahlungStatus;
-import ch.dvbern.ebegu.util.MathUtil;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
@@ -43,6 +42,9 @@ public class Zahlung extends AbstractEntity implements Comparable<Zahlung>{
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "zahlung")
 	private List<Zahlungsposition> zahlungspositionen = new ArrayList<>();
 
+	@Nonnull
+	private BigDecimal betragTotalZahlung;
+
 
 	public Zahlungsauftrag getZahlungsauftrag() {
 		return zahlungsauftrag;
@@ -77,17 +79,13 @@ public class Zahlung extends AbstractEntity implements Comparable<Zahlung>{
 		this.zahlungspositionen = zahlungspositionen;
 	}
 
-	/**
-	 * Addiert die Betraege aller Zahlungspositionen die nicht ignoriert sind.
-	 */
+	@Nonnull
 	public BigDecimal getBetragTotalZahlung() {
-		BigDecimal total = BigDecimal.ZERO;
-		for (Zahlungsposition zahlungsposition : zahlungspositionen) {
-			if (!zahlungsposition.isIgnoriert()) {
-				total = MathUtil.DEFAULT.add(total, zahlungsposition.getBetrag());
-			}
-		}
-		return total;
+		return betragTotalZahlung;
+	}
+
+	public void setBetragTotalZahlung(@Nonnull BigDecimal betragTotalZahlung) {
+		this.betragTotalZahlung = betragTotalZahlung;
 	}
 
 	@Override
