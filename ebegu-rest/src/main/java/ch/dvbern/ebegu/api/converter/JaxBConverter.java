@@ -2403,7 +2403,6 @@ public class JaxBConverter {
 			jaxZahlungsauftrag.getZahlungen().addAll(
 				persistedZahlungsauftrag.getZahlungen()
 					.stream()
-					.filter(zahlung -> !zahlung.getZahlungspositionen().isEmpty())
 					.map(this::zahlungToJAX)
 					.collect(Collectors.toList()));
 		}
