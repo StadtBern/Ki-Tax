@@ -7,6 +7,8 @@ import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.errors.MailException;
 
 import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.concurrent.Future;
 
 /**
  * Service zum Versenden von E-Mails
@@ -66,5 +68,6 @@ public interface MailService {
 	/**
 	 * Sendet eine Mail an den GS1 des übergebenen Gesuchs, dass die übergebene Gesuchsperiode eröffnet wurde.
 	 */
-	void sendInfoFreischaltungGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Gesuch gesuch) throws MailException;
+	Future<Integer> sendInfoFreischaltungGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull List<Gesuch> gesucheToSendMail);
+
 }

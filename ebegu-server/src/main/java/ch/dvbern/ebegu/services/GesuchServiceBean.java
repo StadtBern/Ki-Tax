@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.Asynchronous;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -1337,6 +1338,38 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				updateGesuch(neustesVerfuegtesGesuchFuerGesuch.get(), false);
 			}
 		}
+	}
+
+	@Override
+	@Asynchronous
+	public void sendMailsToAllGesuchstellerOfLastGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
+		List<Gesuch> antraegeOfLastYear = new ArrayList<>();
+		Collection<Fall> allFaelle = fallService.getAllFalle(true);
+		for (Fall fall : allFaelle) {
+			Optional<Gesuch> idsFuerGesuch = getNeuestesGesuchForFallAndPeriod(fall, gesuchsperiode);
+			idsFuerGesuch.ifPresent(antraegeOfLastYear::add);
+		}
+		mailService.sendInfoFreischaltungGesuchsperiode(gesuchsperiode, antraegeOfLastYear);
+	}
+
+	@Nonnull
+	private Optional<Gesuch> getNeuestesGesuchForFallAndPeriod(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
+		authorizer.checkReadAuthorizationFall(fall);
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Predicate fallPredicate = cb.equal(root.get(Gesuch_.fall), fall);
+		Predicate gesuchsperiodePredicate = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+
+		query.where(fallPredicate, gesuchsperiodePredicate);
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
+		if (criteriaResults.isEmpty()) {
+			return Optional.empty();
+		}
+		return Optional.of(criteriaResults.get(0));
 	}
 
 	private void logDeletingOfGesuchstellerAntrag(@Nonnull Gesuch antrag) {

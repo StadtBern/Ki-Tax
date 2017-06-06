@@ -80,26 +80,6 @@ public class EbeguParameterResource {
 		return Response.created(uri).entity(converter.ebeguParameterToJAX(persistedEbeguParameter)).build();
 	}
 
-
-	@ApiOperation(value = "Find a E-BEGU parameter by its unique name",
-		response = JaxEbeguParameter.class)
-	@Nullable
-	@GET
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/{id}")
-	public JaxEbeguParameter findEbeguParameter (
-		@Nonnull @NotNull @PathParam("id") JaxId id) throws EbeguException {
-
-		Validate.notNull(id.getId());
-		String parameterId = converter.toEntityId(id);
-		Optional<EbeguParameter> optional = ebeguParameterService.findEbeguParameter(parameterId);
-		if (!optional.isPresent()) {
-			return null;
-		}
-		return converter.ebeguParameterToJAX(optional.get());
-	}
-
 	@ApiOperation(value = "Get all E-BEGU parameter")
 	@Nonnull
 	@GET

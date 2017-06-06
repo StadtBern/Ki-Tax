@@ -9,9 +9,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.List;
+import java.util.concurrent.Future;
 
 
 /**
@@ -167,18 +171,28 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	}
 
 	@Override
-	public void sendInfoFreischaltungGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Gesuch gesuch) throws MailException {
-		if (doSendMail(gesuch.getFall())) {
-			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
-			Gesuchsteller gesuchsteller = gesuch.extractGesuchsteller1();
-			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
-				String message = mailTemplateConfig.getInfoFreischaltungGesuchsperiode(gesuchsperiode, gesuchsteller, mailaddress);
-				sendMessageWithTemplate(message, mailaddress);
-				LOG.debug("Email fuer InfoFreischaltungGesuchsperiode wurde versendet an" + mailaddress);
-			} else {
-				LOG.warn("skipping InfoFreischaltungGesuchsperiode because Gesuchsteller 1 is null");
+	@Asynchronous
+	public Future<Integer> sendInfoFreischaltungGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull List<Gesuch> gesucheToSendMail) {
+		int i = 0;
+		for (Gesuch gesuch : gesucheToSendMail) {
+			try {
+				if (doSendMail(gesuch.getFall())) {
+					String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
+					Gesuchsteller gesuchsteller = gesuch.extractGesuchsteller1();
+					if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+						String message = mailTemplateConfig.getInfoFreischaltungGesuchsperiode(gesuchsperiode, gesuchsteller, mailaddress);
+						sendMessageWithTemplate(message, mailaddress);
+						LOG.debug("Email fuer InfoFreischaltungGesuchsperiode wurde versendet an" + mailaddress);
+					} else {
+						LOG.warn("skipping InfoFreischaltungGesuchsperiode because Gesuchsteller 1 is null");
+					}
+				}
+				i++;
+			} catch (Exception e) {
+				LOG.error("Mail InfoMahnung konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
 			}
 		}
+		return new AsyncResult<>(i);
 	}
 
 	/**
