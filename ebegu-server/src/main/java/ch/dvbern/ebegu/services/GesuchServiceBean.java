@@ -846,7 +846,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	/**
 	 * Diese Methode gibt eine Liste zurueck. Diese Liste sollte aber maximal eine Mutation enthalten, da es unmoeglich ist,
-	 * mehrere offene Mutationen fuer dieselbe Gesuchsperiode zu haben.
+	 * mehrere offene Mutationen fuer dieselbe Gesuchsperiode zu haben. Rechten werden nicht beruecksichtigtm d.h. alle
+	 * Gesuche werden geguckt und daher die richtige letzte Mutation wird zurueckgegeben.
 	 */
 	private List<Gesuch> findExistingOpenMutationen(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -1261,14 +1262,41 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
-	public void removeOnlineMutation(@Nonnull Fall fall, Gesuchsperiode gesuchsperiode) {
+	public void removeOnlineMutation(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		logDeletingOfGesuchstellerAntrag(fall, gesuchsperiode);
 		List<Gesuch> criteriaResults = findExistingOpenMutationen(fall, gesuchsperiode);
 		if (criteriaResults.size() > 1) {
 			// It should be impossible that there are more than one open Mutation
 			throw new EbeguRuntimeException("removeOnlineMutation", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
 		}
-		superAdminService.removeGesuch(criteriaResults.get(0).getId());
+		if (criteriaResults.size() <= 0) {
+			throw new EbeguEntityNotFoundException("removeOnlineMutation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
+		}
+		final Gesuch onlineMutation = criteriaResults.get(0);
+		moveBetreuungmitteilungenToPreviousAntrag(onlineMutation);
+		superAdminService.removeGesuch(onlineMutation.getId());
+	}
+
+	/**
+	 * Takes all Betreuungsmitteilungen of the given Gesuch and links them to the previous corresponding Betreuung (vorgaengerId),
+	 * so that the mitteilungen don't get lost.
+	 * @param onlineMutation
+	 */
+	private void moveBetreuungmitteilungenToPreviousAntrag(@Nonnull Gesuch onlineMutation) {
+		if (onlineMutation.hasVorgaenger()) {
+			for (Betreuung betreuung : onlineMutation.extractAllBetreuungen()) {
+				if (betreuung.hasVorgaenger()) {
+					final Optional<Betreuung> optVorgaengerBetreuung = betreuungService.findBetreuung(betreuung.getVorgaengerId());
+					final Betreuung vorgaengerBetreuung = optVorgaengerBetreuung
+						.orElseThrow(() -> new EbeguEntityNotFoundException("moveBetreuungmitteilungenToPreviousAntrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuung.getVorgaengerId()));
+
+					final Collection<Betreuungsmitteilung> mitteilungen = mitteilungService.findAllBetreuungsmitteilungenForBetreuung(betreuung);
+					mitteilungen.forEach(mitteilung -> mitteilung.setBetreuung(vorgaengerBetreuung)); // should be saved automatically
+				}
+			}
+		} else {
+			throw new EbeguEntityNotFoundException("moveBetreuungmitteilungenToPreviousAntrag", ErrorCodeEnum.ERROR_VORGAENGER_MISSING, onlineMutation.getId());
+		}
 	}
 
 	@Override

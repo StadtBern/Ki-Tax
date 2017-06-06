@@ -239,7 +239,7 @@ public interface GesuchService {
 	 * @param fall Der Antraege, zu denen die Mutation gehoert, die geloescht werden muss
 	 * @param gesuchsperiode
 	 */
-	void removeOnlineMutation(@Nonnull Fall fall, Gesuchsperiode gesuchsperiode);
+	void removeOnlineMutation(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
 	 * Sucht ein Folgegesuch fuer den gegebenen Antrag in der gegebenen Gesuchsperiode

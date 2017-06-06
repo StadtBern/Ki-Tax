@@ -8,16 +8,18 @@ import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import TSAntragDTO from '../../models/TSAntragDTO';
 import DateUtil from '../../utils/DateUtil';
 import * as moment from 'moment';
+import {TSMitteilungEvent} from '../../models/enums/TSMitteilungEvent';
+import IRootScopeService = angular.IRootScopeService;
 
 export default class GesuchRS implements IEntityRS {
     serviceURL: string;
     http: IHttpService;
     ebeguRestUtil: EbeguRestUtil;
 
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', 'WizardStepManager'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', 'WizardStepManager', '$rootScope'];
     /* @ngInject */
     constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, private $log: ILogService,
-                private wizardStepManager: WizardStepManager) {
+                private wizardStepManager: WizardStepManager, private $rootScope: IRootScopeService) {
         this.serviceURL = REST_API + 'gesuche';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
@@ -177,10 +179,11 @@ export default class GesuchRS implements IEntityRS {
             });
     }
 
-    public removeOnlineMutation(fallID: string, gesuchsperiodeId: string):  IPromise<boolean> {
+    public removeOnlineMutation(fallID: string, gesuchsperiodeId: string): IPromise<boolean> {
         return this.http.delete(this.serviceURL + '/removeOnlineMutation/' + encodeURIComponent(fallID)
             + '/' + encodeURIComponent(gesuchsperiodeId))
             .then((response: any) => {
+                this.$rootScope.$broadcast(TSMitteilungEvent[TSMitteilungEvent.MUTATIONSMITTEILUNG_MUTATION_REMOVED], response);
                 return response.data;
             });
     }
