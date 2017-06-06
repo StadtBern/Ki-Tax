@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
 import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.util.MathUtil;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
@@ -51,6 +50,9 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity implements Compara
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "zahlungsauftrag")
 	private List<Zahlung> zahlungen = new ArrayList<>();
 
+	@Nonnull
+	private BigDecimal betragTotalAuftrag;
+
 
 	public LocalDate getDatumFaellig() {
 		return datumFaellig;
@@ -93,12 +95,13 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity implements Compara
 		this.zahlungen = zahlungen;
 	}
 
+	@Nonnull
 	public BigDecimal getBetragTotalAuftrag() {
-		BigDecimal total = BigDecimal.ZERO;
-		for (Zahlung zahlung : zahlungen) {
-				total = MathUtil.DEFAULT.add(total, zahlung.getBetragTotalZahlung());
-		}
-		return total;
+		return betragTotalAuftrag;
+	}
+
+	public void setBetragTotalAuftrag(@Nonnull BigDecimal betragTotalAuftrag) {
+		this.betragTotalAuftrag = betragTotalAuftrag;
 	}
 
 	@Override
