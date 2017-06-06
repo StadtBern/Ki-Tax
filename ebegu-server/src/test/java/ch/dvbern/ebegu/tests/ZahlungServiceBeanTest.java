@@ -73,30 +73,6 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void findGesuchIdsOfAktuellerAntrag() throws Exception {
-		Gesuch verfuegtesGesuch = createGesuch(true);
-		Gesuch nichtVerfuegtesGesuch = createGesuch(false);
-
-		Gesuch erstgesuchMitMutation = createGesuch(true);
-		Gesuch nichtVerfuegteMutation = createMutation(erstgesuchMitMutation, false);
-
-		Gesuch erstgesuchMitVerfuegterMutation = createGesuch(true);
-		Gesuch verfuegteMutation = createMutation(erstgesuchMitVerfuegterMutation, true);
-
-		List<String> gesuchIdsOfAktuellerAntrag = gesuchService.getNeuesteVerfuegteAntraege(verfuegtesGesuch.getGesuchsperiode());
-		Assert.assertNotNull(gesuchIdsOfAktuellerAntrag);
-
-		Assert.assertTrue(gesuchIdsOfAktuellerAntrag.contains(verfuegtesGesuch.getId()));
-		Assert.assertFalse(gesuchIdsOfAktuellerAntrag.contains(nichtVerfuegtesGesuch.getId()));
-
-		Assert.assertTrue(gesuchIdsOfAktuellerAntrag.contains(erstgesuchMitMutation.getId()));
-		Assert.assertFalse(gesuchIdsOfAktuellerAntrag.contains(nichtVerfuegteMutation.getId()));
-
-		Assert.assertFalse(gesuchIdsOfAktuellerAntrag.contains(erstgesuchMitVerfuegterMutation.getId()));
-		Assert.assertTrue(gesuchIdsOfAktuellerAntrag.contains(verfuegteMutation.getId()));
-	}
-
-	@Test
 	public void zahlungsauftragErstellenNormal() throws Exception {
 		createGesuch(true);
 		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag", LocalDateTime.now());
@@ -353,6 +329,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	private Gesuch createGesuch(boolean verfuegen, LocalDate verfuegungsdatum) {
 		Gesuch gesuch = createGesuch(verfuegen);
+		gesuch.setTimestampVerfuegt(verfuegungsdatum.atStartOfDay());
 		AntragStatusHistory lastStatusChange = antragStatusHistoryService.findLastStatusChange(gesuch);
 		lastStatusChange.setTimestampVon(verfuegungsdatum.atStartOfDay());
 		persistence.merge(lastStatusChange);
@@ -393,6 +370,10 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	private Gesuch createMutationBetreuungspensum(Gesuch erstgesuch, LocalDate eingangsdatum, int pensum, LocalDate verfuegungsdatum) {
 		Gesuch gesuch = createMutationBetreuungspensum(erstgesuch, eingangsdatum, pensum);
+		gesuchService.postGesuchVerfuegen(gesuch);
+		gesuch = gesuchService.findGesuch(gesuch.getId()).get();
+		gesuch.setTimestampVerfuegt(verfuegungsdatum.atStartOfDay());
+		gesuchService.updateGesuch(gesuch, false);
 		AntragStatusHistory lastStatusChange = antragStatusHistoryService.findLastStatusChange(gesuch);
 		lastStatusChange.setTimestampVon(verfuegungsdatum.atStartOfDay());
 		persistence.merge(lastStatusChange);

@@ -199,63 +199,12 @@
                                         </div>
                                     </div>
 
-                                    <!-- Vorlage-Liste -->
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <table st-table="table" st-safe-src="vm.ebeguVorlageListGesuchsperiode"
-                                                   class="table table-striped" width="100%">
+                                    <!-- Vorlage-Liste fuer Gesuchsperiode -->
+                                    <dv-vorlage-list is-readonly="vm.isReadonly"
+                                                     gesuchsperiode="vm.gesuchsperiode"
+                                                     pro-gesuchsperiode="true">
+                                    </dv-vorlage-list>
 
-                                                <tbody>
-                                                <tr ng-repeat="row in table">
-
-                                                    <td ng-click="$event.stopPropagation()" width="50%">
-                                                        <a ng-bind="row.name | translate"
-                                                           ngf-select="vm.uploadAnhaenge($files, row)"
-                                                           ngf-multiple="false"
-                                                           ngf-max-size="'10MB'" ngf-max-total-size="100MB"
-                                                           ngf-drop="vm.uploadAnhaenge($files, row)"
-                                                           ngf-drag-over-class="'dragover'"
-                                                           ng-if="!vm.isReadonly()"
-                                                           aria-hidden="true" style="color: black"></a>
-                                                        <span ng-if="vm.isReadonly()">{{row.name | translate}}</span>
-                                                    </td>
-
-                                                    <td ng-bind="row.vorlage.filename" width="22%"></td>
-                                                    <td ng-bind="row.vorlage.timestampMutiert | amDateFormat : 'DD.MM.YYYY'"
-                                                        width="10%"></td>
-                                                    <td ng-bind="row.vorlage.filesize" width="10%"></td>
-                                                    <td width="2%">
-                                <span ng-click="vm.download(row,true)" class="fa fa-download" aria-hidden="true"
-                                      style="color: black" ng-if="vm.hasVorlage(row)"></span>
-                                                        <span class="fa fa-download" aria-hidden="true"
-                                                              style="color: lightgray"
-                                                              ng-if="!vm.hasVorlage(row)"></span>
-                                                    </td>
-                                                    <td width="2%">
-                                <span ng-click="vm.download(row,false)" class="fa fa-eye" aria-hidden="true"
-                                      style="color: black" ng-if="vm.hasVorlage(row)"></span>
-                                                        <span class="fa fa-eye" aria-hidden="true" style="color: lightgray"
-                                                              ng-if="!vm.hasVorlage(row)"></span>
-                                                    </td>
-                                                    <td width="2%">
-                                <span ng-click="vm.remove(row, dokument)" class="fa fa-trash" aria-hidden="true"
-                                      style="color: black" ng-if="vm.hasVorlage(row) && !vm.isReadonly()"></span>
-                                                        <span class="fa fa-trash" aria-hidden="true"
-                                                              style="color: lightgray"
-                                                              ng-if="!vm.hasVorlage(row) || vm.isReadonly()"></span>
-                                                    </td>
-
-                                                    <td width="2%">
-                                                        <i ng-if="!vm.hasVorlage(row)" class="fa fa-circle"
-                                                           aria-hidden="true"
-                                                           style="color: red"></i>
-                                                        <i ng-if="vm.hasVorlage(row)" class="fa fa-check" aria-hidden="true"
-                                                           style="color: green"></i>
-                                                    </td>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                             <!-- Parameter pro Jahr -->
@@ -309,7 +258,8 @@
                                                                for="jahr"></label>
                                                     </div>
                                                     <div class="col-md-2">
-                                                        <input id="jahr" type="text" name="jahr" ng-disabled="true" ng-model="vm.jahr"
+                                                        <input id="jahr" type="text" name="jahr" ng-disabled="true"
+                                                               ng-model="vm.jahr"
                                                                class="input-element"
                                                                required
                                                                ng-change="vm.jahrChanged()">
@@ -362,7 +312,8 @@
                                                 </dv-loading-button>
                                             </div>
                                             <div class="col-md-2">
-                                                <a href="javascript:;" id="cancelJahresabhLink" class="dv-btn" unsaved-warning-clear
+                                                <a href="javascript:;" id="cancelJahresabhLink" class="dv-btn"
+                                                   unsaved-warning-clear
                                                    ng-click="vm.cancelJahresabhaengig(); form.$setPristine();form.$setUntouched();">
                                                     <span data-translate="CANCEL"></span>
                                                 </a>
@@ -374,6 +325,17 @@
                             <div class="row marginTop40">
                                 <span>&nbsp;</span>
                             </div>
+
+                            <!-- Vorlage-Liste fuer Gesuchsperiode -->
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <h1>
+                                        <span data-translate="BENUTZERHANDBUCH_LIST"></span>
+                                    </h1>
+                                </div>
+                            </div>
+                            <dv-vorlage-list is-readonly="vm.isReadonly" pro-gesuchsperiode="false">
+                            </dv-vorlage-list>
                         </fieldset>
                     </form>
                 </div>

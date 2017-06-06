@@ -15,7 +15,8 @@
 <div id="Intro" class="logo-bern">
     <dv-countdown  dv-show-element  dv-show-allowed-roles="['GESUCHSTELLER']"></dv-countdown>
     <dv-home-icon></dv-home-icon>
-    <dv-quicksearchbox      dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'JURIST', 'REVISOR']"></dv-quicksearchbox>
+    <dv-quicksearchbox dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'JURIST', 'REVISOR']"></dv-quicksearchbox>
+    <dv-downloadmenu dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'JURIST', 'REVISOR', 'STEUERAMT']"></dv-downloadmenu>
     <dv-pulldown-user-menu  dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'STEUERAMT', 'JURIST', 'REVISOR']"></dv-pulldown-user-menu>
     <dv-pulldown-user-menu hide-sm hide-xs  dv-show-element  dv-show-allowed-roles="['GESUCHSTELLER']"></dv-pulldown-user-menu>
     <dv-mobile-navigation-toggle hide-gt-sm dv-show-element  dv-show-allowed-roles="['GESUCHSTELLER']"></dv-mobile-navigation-toggle>
@@ -45,7 +46,7 @@
                 </li>
                 <li ui-sref-active="active" dv-show-element
                     dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN']">
-                    <a ui-sref="gesuch.fallcreation({createNew: true, gesuchId: null, eingangsart: 'PAPIER'})"
+                    <a ui-sref="gesuch.fallcreation({createNew: true, gesuchId: null, fallId: null, eingangsart: 'PAPIER'})"
                        data-translate="MENU_FALL_EROEFFNEN"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element

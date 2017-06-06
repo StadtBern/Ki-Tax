@@ -68,7 +68,8 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
                                 </label>
-                                <dv-datepicker input-id="geburtsdatum_ID" name="geburtsdatum"
+                                <dv-datepicker no-future
+                                               input-id="geburtsdatum_ID" name="geburtsdatum"
                                                ng-model="vm.getModelJA().geburtsdatum" ng-required="true"
                                                class="input-element" dv-on-blur="vm.checkAllEwkRelevantDataPresent()">
                                 </dv-datepicker>

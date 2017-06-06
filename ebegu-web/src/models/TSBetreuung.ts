@@ -27,6 +27,7 @@ export default class TSBetreuung extends TSAbstractEntity {
     private _gesuchsperiode: TSGesuchsperiode;
     private _betreuungMutiert: boolean;
     private _abwesenheitMutiert: boolean;
+    private _gueltig: boolean;
 
 
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
@@ -34,7 +35,7 @@ export default class TSBetreuung extends TSAbstractEntity {
                 betreuungNummer?: number, verfuegung?: TSVerfuegung, vertrag?: boolean, erweiterteBeduerfnisse?: boolean,
                 grundAblehnung?: string, datumAblehnung?: moment.Moment, datumBestaetigung?: moment.Moment, kindFullname?: string,
                 kindNummer?: number, gesuchId?: string, gesuchsperiode?: TSGesuchsperiode,
-                betreuungMutiert?: boolean, abwesenheitMutiert?: boolean) {
+                betreuungMutiert?: boolean, abwesenheitMutiert?: boolean, gueltig?: boolean) {
         super();
         this._institutionStammdaten = institutionStammdaten;
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
@@ -53,6 +54,7 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._gesuchsperiode = gesuchsperiode;
         this._betreuungMutiert = betreuungMutiert;
         this._abwesenheitMutiert = abwesenheitMutiert;
+        this._gueltig = gueltig;
     }
 
     get institutionStammdaten(): TSInstitutionStammdaten {
@@ -189,6 +191,14 @@ export default class TSBetreuung extends TSAbstractEntity {
 
     set abwesenheitMutiert(value: boolean) {
         this._abwesenheitMutiert = value;
+    }
+
+    get gueltig(): boolean {
+        return this._gueltig;
+    }
+
+    set gueltig(value: boolean) {
+        this._gueltig = value;
     }
 
     public isAngebotKITA(): boolean {
