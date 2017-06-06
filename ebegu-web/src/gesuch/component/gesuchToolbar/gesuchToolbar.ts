@@ -155,6 +155,8 @@ export class GesuchToolbarController {
                     if (this.fallid) {
                         this.updateAntragDTOList();
                     } else {
+                        // Fall-ID hat auf undefined gewechselt -> Fall zuruecksetzen
+                        this.fall = undefined;
                         this.antragTypList = {};
                         this.gesuchNavigationList = {};
                         this.gesuchsperiodeList = {};
