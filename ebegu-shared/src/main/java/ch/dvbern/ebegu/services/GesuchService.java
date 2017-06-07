@@ -10,6 +10,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.ejb.Asynchronous;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
@@ -261,5 +262,18 @@ public interface GesuchService {
 	 */
 	Gesuch verfuegenStarten(@Nonnull Gesuch gesuch);
 
+	/**
+	 * Schliesst das Verfuegen ab: Setzt den TimestampVerfuegt und das Gueltig-Flag, bzw. entfernt dieses
+	 * beim letzt gueltigen Gesuch
+	 */
 	void postGesuchVerfuegen(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Sucht das jeweils juengste Gesuch pro Fall der uebergebenen Gesuchsperiode und sendet eine
+	 * Infomail betreffend der neuen Gesuchsperiode.
+	 * Diese Methode wird asynchron ausgefuehrt, da das ermitteln des jeweils letzten Gesuchs pro
+	 * Fall sehr lange geht.
+	 */
+	@Asynchronous
+	void sendMailsToAllGesuchstellerOfLastGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode);
 }

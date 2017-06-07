@@ -24,7 +24,10 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
@@ -49,16 +52,11 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	private GesuchService gesuchService;
 
 	@Inject
-	private MailService mailService;
-
-	@Inject
 	private FallService fallService;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
-	@Inject
-	private Authorizer authorizer;
 
 	@Nonnull
 	@Override
@@ -91,18 +89,8 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 			if (GesuchsperiodeStatus.AKTIV.equals(gesuchsperiode.getStatus()) && gesuchsperiode.getDatumAktiviert() == null) {
 				Optional<Gesuchsperiode> lastGesuchsperiodeOptional = getGesuchsperiodeAm(gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1));
 				if (lastGesuchsperiodeOptional.isPresent()) {
-					List<Gesuch> gesucheToSendMail = getNeuesteAntraegeForPeriod(lastGesuchsperiodeOptional.get());
-					int i = 0;
-					for (Gesuch gesuch : gesucheToSendMail) {
-						try {
-							mailService.sendInfoFreischaltungGesuchsperiode(gesuchsperiode, gesuch);
-							i++;
-						} catch (Exception e) {
-							LOGGER.error("Mail InfoMahnung konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
-						}
-					}
+					gesuchService.sendMailsToAllGesuchstellerOfLastGesuchsperiode(lastGesuchsperiodeOptional.get());
 					gesuchsperiode.setDatumAktiviert(LocalDate.now());
-					LOGGER.info("Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString() + " wurde aktiv gesetzt: " + i + "/" + gesucheToSendMail.size() + " Gesuchsteller wurden potentiell informiert");
 				}
 			}
 			if (GesuchsperiodeStatus.GESCHLOSSEN.equals(gesuchsperiode.getStatus())) {
@@ -233,36 +221,5 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 		} else {
 			return false;
 		}
-	}
-
-	@Nonnull
-	private List<Gesuch> getNeuesteAntraegeForPeriod(@Nonnull Gesuchsperiode gesuchsperiode) {
-		List<Gesuch> ids = new ArrayList<>();
-		Collection<Fall> allFaelle = fallService.getAllFalle(true);
-		for (Fall fall : allFaelle) {
-			Optional<Gesuch> idsFuerGesuch = getNeuestesGesuchForFallAndPeriod(fall, gesuchsperiode);
-			idsFuerGesuch.ifPresent(ids::add);
-		}
-		return ids;
-	}
-
-	@Nonnull
-	private Optional<Gesuch> getNeuestesGesuchForFallAndPeriod(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
-		authorizer.checkReadAuthorizationFall(fall);
-
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
-
-		Root<Gesuch> root = query.from(Gesuch.class);
-		Predicate fallPredicate = cb.equal(root.get(Gesuch_.fall), fall);
-		Predicate gesuchsperiodePredicate = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
-
-		query.where(fallPredicate, gesuchsperiodePredicate);
-		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
-		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
-		if (criteriaResults.isEmpty()) {
-			return Optional.empty();
-		}
-		return Optional.of(criteriaResults.get(0));
 	}
 }
