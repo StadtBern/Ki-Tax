@@ -17,10 +17,7 @@ import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.services.BenutzerService;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.GesuchsperiodeService;
-import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.DateUtil;
 import ch.dvbern.ebegu.util.MonitoringUtil;
@@ -72,6 +69,9 @@ public class GesuchResource {
 
 	@Inject
 	private BenutzerService benutzerService;
+
+	@Inject
+	private FallService fallService;
 
 	@Inject
 	private PrincipalBean principalBean;
@@ -592,39 +592,47 @@ public class GesuchResource {
 	}
 
 	@DELETE
-	@Path("/removeOnlineMutation/{antragId}")
+	@Path("/removeOnlineMutation/{fallId}/{gesuchsperiodeId}")
 	@Consumes(MediaType.WILDCARD)
 	public Response removeOnlineMutation(
-		@Nonnull @NotNull @PathParam("antragId") JaxId antragJAXPId,
+		@Nonnull @NotNull @PathParam("fallId") JaxId fallId,
+		@Nonnull @NotNull @PathParam("gesuchsperiodeId") JaxId gesuchsperiodeId,
 		@Context HttpServletResponse response) {
 
-		Validate.notNull(antragJAXPId.getId());
-		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragJAXPId.getId());
-		if (gesuch.isPresent()) {
-			gesuchService.removeOnlineMutation(gesuch.get());
-			return Response.ok().build();
+		Validate.notNull(fallId.getId());
+		Validate.notNull(gesuchsperiodeId.getId());
+		Optional<Fall> fall = fallService.findFall(fallId.getId());
+		if (!fall.isPresent()) {
+			throw new EbeguEntityNotFoundException("removeOnlineMutation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Fall_ID invalid " + fallId.getId());
 		}
-		throw new EbeguEntityNotFoundException("removeOnlineMutation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJAXPId.getId());
+		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId.getId());
+		if (!gesuchsperiode.isPresent()) {
+			throw new EbeguEntityNotFoundException("removeOnlineMutation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Gesuchsperiode_ID invalid " + gesuchsperiodeId.getId());
+		}
+		gesuchService.removeOnlineMutation(fall.get(), gesuchsperiode.get());
+		return Response.ok().build();
 	}
 
 	@DELETE
-	@Path("/removeOnlineFolgegesuch/{antragId}/{gesuchsperiodeId}")
+	@Path("/removeOnlineFolgegesuch/{fallId}/{gesuchsperiodeId}")
 	@Consumes(MediaType.WILDCARD)
 	public Response removeOnlineFolgegesuch(
-		@Nonnull @NotNull @PathParam("antragId") JaxId antragJAXPId,
+		@Nonnull @NotNull @PathParam("fallId") JaxId fallJAXPId,
 		@Nonnull @NotNull @PathParam("gesuchsperiodeId") JaxId gesuchsperiodeJAXPId,
 		@Context HttpServletResponse response) {
 
-		Validate.notNull(antragJAXPId.getId());
-		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragJAXPId.getId());
-		if (!gesuch.isPresent()) {
-			throw new EbeguEntityNotFoundException("removeOnlineFolgegesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJAXPId.getId());
+		Validate.notNull(fallJAXPId.getId());
+		Validate.notNull(gesuchsperiodeJAXPId.getId());
+
+		Optional<Fall> fall = fallService.findFall(fallJAXPId.getId());
+		if (!fall.isPresent()) {
+			throw new EbeguEntityNotFoundException("removeOnlineFolgegesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Fall_ID invalid " + fallJAXPId.getId());
 		}
 		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeJAXPId.getId());
 		if (!gesuchsperiode.isPresent()) {
 			throw new EbeguEntityNotFoundException("removeOnlineFolgegesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchsperiodeId invalid: " + gesuchsperiodeJAXPId.getId());
 		}
-		gesuchService.removeOnlineFolgegesuch(gesuch.get(), gesuchsperiode.get());
+		gesuchService.removeOnlineFolgegesuch(fall.get(), gesuchsperiode.get());
 		return Response.ok().build();
 	}
 

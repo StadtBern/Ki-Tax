@@ -24,6 +24,7 @@ import IFormController = angular.IFormController;
 import IQService = angular.IQService;
 import IWindowService = angular.IWindowService;
 import IRootScopeService = angular.IRootScopeService;
+import IScope = angular.IScope;
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -56,7 +57,7 @@ export class DVMitteilungListController {
     ebeguUtil: EbeguUtil;
 
     static $inject: any[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS', 'FallRS', 'BetreuungRS',
-        '$q', '$window', '$rootScope', '$state', 'EbeguUtil', 'DvDialog', 'GesuchModelManager'];
+        '$q', '$window', '$rootScope', '$state', 'EbeguUtil', 'DvDialog', 'GesuchModelManager', '$scope'];
     /* @ngInject */
     constructor(private $stateParams: IMitteilungenStateParams, private mitteilungRS: MitteilungRS,
                 private authServiceRS: AuthServiceRS,
@@ -64,7 +65,7 @@ export class DVMitteilungListController {
                 private $window: IWindowService,
                 private $rootScope: IRootScopeService, private $state: IStateService, ebeguUtil: EbeguUtil,
                 private DvDialog: DvDialog,
-                private gesuchModelManager: GesuchModelManager) {
+                private gesuchModelManager: GesuchModelManager, private $scope: IScope) {
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
         this.ebeguUtil = ebeguUtil;
@@ -101,6 +102,9 @@ export class DVMitteilungListController {
                 }
             });
         }
+        this.$scope.$on(TSMitteilungEvent[TSMitteilungEvent.MUTATIONSMITTEILUNG_MUTATION_REMOVED], () => {
+            this.loadAllMitteilungen();
+        });
     }
 
     public cancel(): void {
