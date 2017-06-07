@@ -32,6 +32,12 @@ public interface MitteilungService {
 	@Nonnull
 	Optional<Betreuungsmitteilung> findBetreuungsmitteilung(@Nonnull String key);
 
+	/**
+	 * Returns all Betreuungsmitteilungen that are linked with the given Betreuung.
+	 */
+	@Nonnull
+	Collection<Betreuungsmitteilung> findAllBetreuungsmitteilungenForBetreuung(@Nonnull Betreuung betreuung);
+
 	@Nonnull
 	Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Fall fall);
 

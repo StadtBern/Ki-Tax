@@ -100,7 +100,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		persistence.persist(steueramt);
 	}
 
-	protected void loginAsSachbearbeiterJA() {
+	protected Benutzer loginAsSachbearbeiterJA() {
 		try {
 			createLoginContext("saja", "saja").login();
 		} catch (LoginException e) {
@@ -110,6 +110,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
 		Benutzer saja = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, "saja", null, null, mandant);
 		persistence.persist(saja);
+		return saja;
 	}
 
 	protected void loginAsAdmin() {
@@ -124,7 +125,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		persistence.persist(admin);
 	}
 
-	protected void loginAsSachbearbeiterInst(String username, Institution institutionToSet) {
+	protected Benutzer loginAsSachbearbeiterInst(String username, Institution institutionToSet) {
 		Benutzer user = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_INSTITUTION, username, null, institutionToSet, institutionToSet.getMandant());
 		user = persistence.merge(user);
 		try {
@@ -132,6 +133,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		} catch (LoginException e) {
 			LOG.error("could not login as sachbearbeiter jugendamt {} for tests", username);
 		}
+		return user;
 		//theoretisch sollten wir wohl zuerst ausloggen bevor wir wieder einloggen aber es scheint auch so zu gehen
 	}
 }
