@@ -212,4 +212,18 @@ export class AbwesenheitViewController extends AbstractGesuchViewController<Arra
             this.addChangedBetreuungToList(this.gesuchModelManager.getBetreuungToWorkWith());
         }
     }
+
+    public getPreviousButtonText(): string {
+        if (this.getAbwesenheiten().length === 0) {
+            return 'ZURUECK_ONLY_UPPER';
+        }
+        return 'ZURUECK_UPPER';
+    }
+
+    public getNextButtonText(): string {
+        if (this.getAbwesenheiten().length === 0) {
+            return 'WEITER_ONLY_UPPER';
+        }
+        return 'WEITER_UPPER';
+    }
 }

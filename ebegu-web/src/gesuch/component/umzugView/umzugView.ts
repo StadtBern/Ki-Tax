@@ -21,7 +21,6 @@ let template = require('./umzugView.html');
 require('./umzugView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 
-
 export class UmzugViewComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {};
@@ -29,7 +28,6 @@ export class UmzugViewComponentConfig implements IComponentOptions {
     controller = UmzugViewController;
     controllerAs = 'vm';
 }
-
 
 export class UmzugViewController extends AbstractGesuchViewController<Array<TSUmzugAdresse>> {
 
@@ -94,8 +92,8 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
                 betroffenenList.push(TSBetroffene.GESUCHSTELLER_2);
             }
             if (this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller1) {
-                // Dies koennte auch direkt beim Push des GS2 gemacht werden, da es keinen GS2 geben darf wenn es keinen GS1 gibt.
-                // Allerdings sind wir mit diesem IF sicher dass GS1 und GS2 wirklich existieren.
+                // Dies koennte auch direkt beim Push des GS2 gemacht werden, da es keinen GS2 geben darf wenn es
+                // keinen GS1 gibt. Allerdings sind wir mit diesem IF sicher dass GS1 und GS2 wirklich existieren.
                 betroffenenList.push(TSBetroffene.BEIDE_GESUCHSTELLER);
             }
         }
@@ -231,5 +229,19 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
                 //update old adresse
             }
         }
+    }
+
+    public getPreviousButtonText(): string {
+        if (this.getUmzugAdressenList().length === 0) {
+            return 'ZURUECK_ONLY_UPPER';
+        }
+        return 'ZURUECK_UPPER';
+    }
+
+    public getNextButtonText(): string {
+        if (this.getUmzugAdressenList().length === 0) {
+            return 'WEITER_ONLY_UPPER';
+        }
+        return 'WEITER_UPPER';
     }
 }
