@@ -88,7 +88,6 @@ export class ZahlungsauftragViewController {
 
     public gotoZahlung(zahlungsauftrag: TSZahlungsauftrag) {
         this.$state.go('zahlung', {
-            zahlungsauftrag: zahlungsauftrag,
             zahlungsauftragId: zahlungsauftrag.id
         });
     }
