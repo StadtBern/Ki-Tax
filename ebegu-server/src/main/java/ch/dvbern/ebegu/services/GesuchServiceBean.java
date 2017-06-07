@@ -846,7 +846,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	/**
 	 * Diese Methode gibt eine Liste zurueck. Diese Liste sollte aber maximal eine Mutation enthalten, da es unmoeglich ist,
-	 * mehrere offene Mutationen fuer dieselbe Gesuchsperiode zu haben. Rechten werden nicht beruecksichtigtm d.h. alle
+	 * mehrere offene Mutationen fuer dieselbe Gesuchsperiode zu haben. Rechte werden nicht beruecksichtigt d.h. alle
 	 * Gesuche werden geguckt und daher die richtige letzte Mutation wird zurueckgegeben.
 	 */
 	private List<Gesuch> findExistingOpenMutationen(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
