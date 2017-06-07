@@ -19,6 +19,9 @@ import IFormController = angular.IFormController;
 let template = require('./zahlungsauftragView.html');
 require('./zahlungsauftragView.less');
 import Moment = moment.Moment;
+import {DvDialog} from '../../core/directive/dv-dialog/dv-dialog';
+import {RemoveDialogController} from '../../gesuch/dialog/RemoveDialogController';
+let removeDialogTemplate = require('../../gesuch/dialog/removeDialogTemplate.html');
 
 export class ZahlungsauftragViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -41,11 +44,12 @@ export class ZahlungsauftragViewController {
     testMode: boolean = false;
 
     static $inject: string[] = ['ZahlungRS', 'CONSTANTS', '$state', 'DownloadRS', 'ApplicationPropertyRS', 'ReportRS',
-        'AuthServiceRS', 'EbeguUtil'];
+        'AuthServiceRS', 'EbeguUtil', 'DvDialog'];
 
     constructor(private zahlungRS: ZahlungRS, private CONSTANTS: any,
                 private $state: IStateService, private downloadRS: DownloadRS, private applicationPropertyRS: ApplicationPropertyRS,
-                private reportRS: ReportRS, private authServiceRS: AuthServiceRS, private ebeguUtil: EbeguUtil) {
+                private reportRS: ReportRS, private authServiceRS: AuthServiceRS, private ebeguUtil: EbeguUtil,
+                private dvDialog: DvDialog) {
         this.initViewModel();
     }
 
@@ -126,6 +130,19 @@ export class ZahlungsauftragViewController {
             }
             this.ebeguUtil.handleSmarttablesUpdateBug(this.zahlungsauftragen);
         });
+    }
+
+    public remove(zahlungsauftrag: TSZahlungsauftrag) {
+        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            deleteText: 'ZAHLUNG_LOESCHEN_DIALOG_TEXT',
+            title: 'ZAHLUNG_LOESCHEN_DIALOG_TITLE'
+        })
+            .then(() => {   //User confirmed removal
+                let index = EbeguUtil.getIndexOfElementwithID(zahlungsauftrag, this.zahlungsauftragen);
+                this.zahlungRS.zahlungsauftragLoeschen(zahlungsauftrag.id).then((response: TSZahlungsauftrag) => {
+                    this.zahlungsauftragen.splice(index, 1);
+                });
+            });
     }
 
     public edit(zahlungsauftrag: TSZahlungsauftrag) {
