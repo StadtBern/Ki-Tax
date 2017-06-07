@@ -206,39 +206,66 @@ describe('betreuungView', function () {
         });
         describe('isMutationsmeldungAllowed', () => {
             it('should be false if the Gesuch is not a Mutation and is not verfuegt', () => {
-                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.IN_BEARBEITUNG_JA);
+                betreuungView.model.betreuungsstatus = TSBetreuungsstatus.BESTAETIGT;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.IN_BEARBEITUNG_JA, false);
                 expect(betreuungView.isMutationsmeldungAllowed()).toBe(false);
             });
-            it('should be true if the Gesuch is not a Mutation but in Status Verfuegt', () => {
-                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.VERFUEGT);
+            it('should be true if the Gesuch is not a Mutation but the betreuung is in Status Verfuegt', () => {
+                betreuungView.model.betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.VERFUEGT, false);
                 expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
             });
-            it('should be true if the Gesuch is not a Mutation but in Status STV', () => {
-                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.PRUEFUNG_STV);
+            it('should be false if the Gesuch is not a Mutation and is in Status VERFUEGT but the betreuung is not in Status VERFUEGT', () => {
+                // this case is actually not possible
+                betreuungView.model.betreuungsstatus = TSBetreuungsstatus.BESTAETIGT;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.VERFUEGT, false);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(false);
+            });
+            it('should be false if the Gesuch is not a Mutation and is not in Status VERFUEGT but the betreuung is in Status VERFUEGT', () => {
+                betreuungView.model.betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.VERFUEGEN, false);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(false);
+            });
+            it('should be true if the Gesuch is not gesperrtWegenBeschwerde though STV status and the betreuung is in Status VERFUEGT', () => {
+                betreuungView.model.betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.PRUEFUNG_STV, false);
                 expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
             });
-            it('should be true if the Gesuch is gesperrtWegenBeschwerde though STV status', () => {
-                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.PRUEFUNG_STV);
-                gesuch.gesperrtWegenBeschwerde = false;
+            it('should be true if the Gesuch is a Mutation and the betreuung has a vorgaengerID', () => {
+                betreuungView.model.vorgaengerId = '111-222-333-444-555';
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.MUTATION, TSAntragStatus.IN_BEARBEITUNG_JA, false);
                 expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
             });
-            it('should be true if the Gesuch is a Mutation', () => {
-                let gesuch: TSGesuch = initGesuch(TSAntragTyp.MUTATION, TSAntragStatus.IN_BEARBEITUNG_JA);
+            it('should be false if the Gesuch is a Mutation and the betreuung has no vorgaengerID, i.e. it is a new Betreuung', () => {
+                betreuungView.model.vorgaengerId = undefined;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.MUTATION, TSAntragStatus.IN_BEARBEITUNG_JA, false);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(false);
+            });
+            it('should be false if the Mutation is gesperrtWegenBeschwerde although the Betreuung has a vorgaengerId', () => {
+                betreuungView.model.vorgaengerId = '111-222-333-444-555';
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.MUTATION, TSAntragStatus.IN_BEARBEITUNG_JA, true);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(false);
+            });
+            it('should be true if the Gesuch is a Mutation and is in Status VERFUEGEN but the betreuung is in Status VERFUEGT and has a vorgaengerId', () => {
+                betreuungView.model.vorgaengerId = '111-222-333-444-555';
+                betreuungView.model.betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.MUTATION, TSAntragStatus.VERFUEGEN, false);
                 expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
             });
-            it('should be false if the Mutation is gesperrtWegenBeschwerde', () => {
-                let gesuch: TSGesuch = initGesuch(TSAntragTyp.MUTATION, TSAntragStatus.IN_BEARBEITUNG_JA);
-                gesuch.gesperrtWegenBeschwerde = false;
+            it('should be true if the Gesuch is a Mutation and is in Status VERFUEGT and the betreuung is in Status VERFUEGT but has no vorgaengerId', () => {
+                betreuungView.model.vorgaengerId = undefined;
+                betreuungView.model.betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.MUTATION, TSAntragStatus.VERFUEGT, false);
                 expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
             });
         });
     });
 
-    function initGesuch(typ: TSAntragTyp, status: TSAntragStatus): TSGesuch {
+    function initGesuch(typ: TSAntragTyp, status: TSAntragStatus, gesperrtWegenBeschwerde: boolean): TSGesuch {
         let gesuch: TSGesuch = new TSGesuch();
         gesuch.typ = typ;
         gesuch.status = status;
-        gesuch.gesperrtWegenBeschwerde = false;
+        gesuch.gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
         gesuch.gesuchsperiode = new TSGesuchsperiode();
         gesuch.gesuchsperiode.status = TSGesuchsperiodeStatus.AKTIV;
         spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
