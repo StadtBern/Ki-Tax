@@ -20,6 +20,7 @@
 
                 <table class="table table-striped fixedtable">
                     <thead>
+                    <!-- Sortierspalten -->
                     <tr>
                         <th st-sort="betreuungsNummer" class="sortable" data-translate="ID_UPPER"></th>
                         <th st-sort="name" class="sortable" data-translate="NAME_UPPER"></th>
@@ -31,6 +32,7 @@
                         <th st-sort="betreuungsangebotTyp" class="sortable" data-translate="ANGEBOT_UPPER"></th>
                         <th st-sort="institution" class="sortable" data-translate="INSTITUTION_UPPER"></th>
                     </tr>
+                    <!-- Filterspalten -->
                     <tr>
                         <th><input st-search="betreuungsNummer" class="form-control" type="text"/></th>
                         <th><input st-search="name" class="form-control" type="text"/></th>
@@ -67,6 +69,7 @@
                         </th>
                     </tr>
                     </thead>
+                    <!-- Daten -->
                     <tbody>
                     <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                         ng-click="vm.editPendenzInstitution(row, $event)">
