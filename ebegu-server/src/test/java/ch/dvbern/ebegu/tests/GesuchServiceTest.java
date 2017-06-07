@@ -70,6 +70,8 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	private FallService fallService;
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
+	@Inject
+	private MitteilungService mitteilungService;
 
 	@Inject
 	private InstitutionService institutionService;
@@ -818,6 +820,44 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(6, gesuchService.getAllGesuche().size());
 		Assert.assertEquals(4, gesuchService.deleteGesucheOhneFreigabeOderQuittung());
 		Assert.assertEquals(2, gesuchService.getAllGesuche().size());
+	}
+
+	@Test
+	public void testRemoveOnlineMutation() {
+		final Benutzer userGS = loginAsGesuchsteller("gesuchst");
+		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		gesuch.setGueltig(true);
+		gesuch.setTimestampVerfuegt(LocalDateTime.now());
+		gesuch.setStatus(AntragStatus.VERFUEGT);
+		gesuch = gesuchService.updateGesuch(gesuch, true);
+		final Betreuung betreuungErstGesuch = gesuch.extractAllBetreuungen().get(0);
+
+		final Optional<Gesuch> optMutation = gesuchService.antragMutieren(gesuch.getId(), LocalDate.now());
+		final Gesuch mutation = gesuchService.createGesuch(optMutation.get());
+		final String mutationID = mutation.getId();
+
+		Institution institutionToSet = gesuch.extractAllBetreuungen().get(0).getInstitutionStammdaten().getInstitution();
+		final Benutzer saInst = loginAsSachbearbeiterInst("sainst", institutionToSet);
+
+		Betreuungsmitteilung mitteilung = TestDataUtil.createBetreuungmitteilung(mutation.getFall(),
+			userGS, MitteilungTeilnehmerTyp.JUGENDAMT, saInst, MitteilungTeilnehmerTyp.INSTITUTION);
+		final Betreuung betreuungMutation = mutation.extractAllBetreuungen().get(0);
+		mitteilung.setBetreuung(betreuungMutation);
+		mitteilungService.sendBetreuungsmitteilung(mitteilung);
+
+		// mitteilung belongs to the Mutation and not to the Erstgesuch
+		Assert.assertEquals(0, mitteilungService.findAllBetreuungsmitteilungenForBetreuung(betreuungErstGesuch).size());
+		Assert.assertEquals(1, mitteilungService.findAllBetreuungsmitteilungenForBetreuung(betreuungMutation).size());
+
+		loginAsAdmin();
+		gesuchService.removeOnlineMutation(mutation.getFall(), mutation.getGesuchsperiode());
+
+		final Optional<Gesuch> removedMutation = gesuchService.findGesuch(mutationID);
+		Assert.assertFalse(removedMutation.isPresent());
+
+		// The Mitteilung belongs now to the Betreuung Erstgesuch
+		final Collection<Betreuungsmitteilung> mitteilungenErstgesuch = mitteilungService.findAllBetreuungsmitteilungenForBetreuung(betreuungErstGesuch);
+		Assert.assertEquals(1, mitteilungenErstgesuch.size());
 	}
 
 

@@ -237,16 +237,17 @@ public interface GesuchService {
 	 * Sucht die neueste Online Mutation, die zu dem gegebenen Antrag gehoert und loescht sie.
 	 * Diese Mutation muss Online und noch nicht freigegeben sein. Diese Methode darf nur bei ADMIN oder SUPER_ADMIN
 	 * aufgerufen werden, wegen loescherechten wird es dann immer mir RunAs/SUPER_ADMIN) ausgefuehrt.
-	 * @param antrag Der Antraege, zu denen die Mutation gehoert, die geloescht werden muss
+	 * @param fall Der Antraege, zu denen die Mutation gehoert, die geloescht werden muss
+	 * @param gesuchsperiode
 	 */
-	void removeOnlineMutation(@Nonnull Gesuch antrag);
+	void removeOnlineMutation(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
 	 * Sucht ein Folgegesuch fuer den gegebenen Antrag in der gegebenen Gesuchsperiode
-	 * @param antrag Der Antraeg des Falles
+	 * @param fall Der Antraeg des Falles
 	 * @param gesuchsperiode Gesuchsperiode in der das Folgegesuch gesucht werden muss
 	 */
-	void removeOnlineFolgegesuch(@Nonnull Gesuch antrag, @Nonnull Gesuchsperiode gesuchsperiode);
+	void removeOnlineFolgegesuch(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
 	 * Schliesst ein Gesuch, das sich im Status GEPRUEFT befindet und kein Angebot hat

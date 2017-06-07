@@ -14,6 +14,7 @@ import {DVMitteilungListController} from '../../../core/component/dv-mitteilung-
 import BetreuungRS from '../../../core/service/betreuungRS.rest';
 import IScope = angular.IScope;
 import IQService = angular.IQService;
+import {IScope} from 'angular';
 
 describe('mitteilungenView', function () {
 
@@ -28,6 +29,7 @@ describe('mitteilungenView', function () {
     let controller: DVMitteilungListController;
     let besitzer: TSUser;
     let verantwortlicher: TSUser;
+    let scope: IScope;
 
 
     beforeEach(angular.mock.module(EbeguWebMitteilungen.name));
@@ -40,6 +42,7 @@ describe('mitteilungenView', function () {
         stateParams = $injector.get('$stateParams');
         $rootScope = $injector.get('$rootScope');
         $q = $injector.get('$q');
+        scope = $rootScope.$new();
 
         // prepare fall
         stateParams.fallId = '123';
@@ -170,7 +173,7 @@ describe('mitteilungenView', function () {
         spyOn(mitteilungRS, 'getMitteilungenForCurrentRolleForFall').and.returnValue($q.when([{}]));
         spyOn(mitteilungRS, 'setAllNewMitteilungenOfFallGelesen').and.returnValue($q.when([{}]));
         controller = new DVMitteilungListController(stateParams, mitteilungRS, authServiceRS, fallRS, betreuungRS, $q, null,
-            $rootScope, undefined, undefined, undefined, undefined);
+            $rootScope, undefined, undefined, undefined, undefined, scope);
         controller.$onInit();   // hack, muesste wohl eher so gehen   http://stackoverflow.com/questions/38631204/how-to-trigger-oninit-or-onchanges-implictly-in-unit-testing-angular-component
         $rootScope.$apply();
     }

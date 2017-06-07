@@ -171,6 +171,28 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@Nonnull
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, SCHULAMT})
+	public Collection<Betreuungsmitteilung> findAllBetreuungsmitteilungenForBetreuung(@Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, "gesuch muss gesetzt sein");
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Betreuungsmitteilung> query = cb.createQuery(Betreuungsmitteilung.class);
+		Root<Betreuungsmitteilung> root = query.from(Betreuungsmitteilung.class);
+		List<Expression<Boolean>> predicates = new ArrayList<>();
+
+		Predicate predicateLinkedObject = cb.equal(root.get(Betreuungsmitteilung_.betreuung), betreuung);
+		predicates.add(predicateLinkedObject);
+
+		Predicate predicateEntwurf = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ENTWURF);
+		predicates.add(predicateEntwurf);
+
+		query.orderBy(cb.desc(root.get(Mitteilung_.sentDatum)));
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+		return persistence.getCriteriaResults(query);
+	}
+
+	@Nonnull
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, SCHULAMT})
 	public Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall, "fall muss gesetzt sein");
 		return getMitteilungenForCurrentRolle(Mitteilung_.fall, fall);
@@ -396,7 +418,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		} catch (EJBTransactionRolledbackException exception) {
 			//Wenn der Sachbearbeiter den neusten Antrag nicht lesen darf ist es ein noch nicht freigegebener ONLINE Antrag
 			if(exception.getCause().getClass().equals(EJBAccessException.class)) {
-				throw new EbeguExistingAntragException("applyBetreuungsmitteilung", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION, exception, gesuch.getId());
+				throw new EbeguExistingAntragException("applyBetreuungsmitteilung", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION,
+					exception, gesuch.getFall().getId(), gesuch.getGesuchsperiode().getId());
 			}
 			throw exception;
 		}
