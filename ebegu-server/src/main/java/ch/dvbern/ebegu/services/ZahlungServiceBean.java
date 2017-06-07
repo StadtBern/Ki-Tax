@@ -460,11 +460,14 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	}
 
 	@Override
-	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@RolesAllowed(value = {SUPER_ADMIN})
 	public void deleteZahlungsauftrag(@Nonnull String auftragId) {
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Optional<Zahlungsauftrag> auftragOptional = findZahlungsauftrag(auftragId);
 		if (auftragOptional.isPresent()) {
+			// Alle Pain-Files loeschen
+			Optional<Pain001Dokument> painDokumentOptional = criteriaQueryHelper.getEntityByUniqueAttribute(Pain001Dokument.class, auftragOptional.get(), Pain001Dokument_.zahlungsauftrag);
+			painDokumentOptional.ifPresent(pain001Dokument -> persistence.remove(Pain001Dokument.class, pain001Dokument.getId()));
 			// Alle verknuepften Zeitabschnitte wieder auf "unbezahlt" setzen
 			Zahlungsauftrag auftrag = auftragOptional.get();
 			for (Zahlung zahlung : auftrag.getZahlungen()) {

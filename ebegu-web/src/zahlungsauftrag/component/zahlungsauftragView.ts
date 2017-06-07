@@ -128,6 +128,13 @@ export class ZahlungsauftragViewController {
         });
     }
 
+    public loeschen(zahlungsauftrag: TSZahlungsauftrag) {
+        let index = EbeguUtil.getIndexOfElementwithID(zahlungsauftrag, this.zahlungsauftragen);
+        this.zahlungRS.zahlungsauftragLoeschen(zahlungsauftrag.id).then((response: TSZahlungsauftrag) => {
+            this.zahlungsauftragen.splice(index, 1);
+        });
+    }
+
     public edit(zahlungsauftrag: TSZahlungsauftrag) {
         this.zahlungsauftragToEdit = zahlungsauftrag;
     }
