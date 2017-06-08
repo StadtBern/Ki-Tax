@@ -270,11 +270,11 @@ public interface GesuchService {
 	void postGesuchVerfuegen(@Nonnull Gesuch gesuch);
 
 	/**
-	 * Sucht das jeweils juengste Gesuch pro Fall der uebergebenen Gesuchsperiode und sendet eine
-	 * Infomail betreffend der neuen Gesuchsperiode.
+	 * Sucht das jeweils juengste Gesuch pro Fall der lastGesuchsperiode und sendet eine
+	 * Infomail betreffend der neuen Gesuchsperiode (nextGesuchsperiode).
 	 * Diese Methode wird asynchron ausgefuehrt, da das ermitteln des jeweils letzten Gesuchs pro
 	 * Fall sehr lange geht.
 	 */
 	@Asynchronous
-	void sendMailsToAllGesuchstellerOfLastGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode);
+	void sendMailsToAllGesuchstellerOfLastGesuchsperiode(@Nonnull Gesuchsperiode lastGesuchsperiode, @Nonnull Gesuchsperiode nextGesuchsperiode);
 }
