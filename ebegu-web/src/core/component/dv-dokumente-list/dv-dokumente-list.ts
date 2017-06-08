@@ -13,6 +13,8 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import ITranslateService = angular.translate.ITranslateService;
+import {TSDokumentGrundPersonType} from '../../../models/enums/TSDokumentGrundPersonType';
+import TSKindContainer from '../../../models/TSKindContainer';
 let template = require('./dv-dokumente-list.html');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 require('./dv-dokumente-list.less');
@@ -163,6 +165,35 @@ export class DVDokumenteListController {
         // Dokument-Upload ist eigentlich in jedem Status möglich, aber nicht für alle Rollen. Also nicht
         // gleichbedeutend mit readonly auf dem Gesuch
         return this.authServiceRS.isOneOfRoles(TSRoleUtil.getReadOnlyRoles());
+    }
+
+    /**
+     * According to the personType the right FullName will be calculated.
+     * - For FREETEXT the value in field fullName prevails.
+     * - For GESUCHSTELLER the fullname will be taken out of the GESUCHSTELLER. The value of personNumber indicates from which Gesuchsteller.
+     * - For KIND the fullname will be taken out of the KIND. The value of personNumber indicates from which Kind using its field kindNumber.
+     */
+    public extractFullName(dokumentGrund: TSDokumentGrund): string {
+        if (dokumentGrund.personType === TSDokumentGrundPersonType.FREETEXT) {
+            return dokumentGrund.fullName;
+        } else if (dokumentGrund.personType === TSDokumentGrundPersonType.GESUCHSTELLER) {
+            if (this.gesuchModelManager.getGesuch())  {
+                if (dokumentGrund.personNumber === 2 && this.gesuchModelManager.getGesuch().gesuchsteller2) {
+                    return this.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName();
+
+                } else if (this.gesuchModelManager.getGesuch().gesuchsteller1) { // gs1 bz default
+                    return this.gesuchModelManager.getGesuch().gesuchsteller1.extractFullName();
+                }
+            }
+        } else if (dokumentGrund.personType === TSDokumentGrundPersonType.KIND) {
+            if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().kindContainers)  {
+                let kindContainer: TSKindContainer = this.gesuchModelManager.getGesuch().extractKindFromKindNumber(dokumentGrund.personNumber);
+                if (kindContainer && kindContainer.kindJA)  {
+                    return kindContainer.kindJA.getFullName();
+                }
+            }
+        }
+        return '';
     }
 }
 

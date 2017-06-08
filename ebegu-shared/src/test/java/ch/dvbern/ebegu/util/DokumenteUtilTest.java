@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.util;
 
 import ch.dvbern.ebegu.entities.Dokument;
 import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
@@ -22,6 +23,7 @@ public class DokumenteUtilTest {
 	@Test
 	public void testAllPersistedInNeeded() {
 		Set<DokumentGrund> dokumentGrundsNeeded = new HashSet<>();
+		final Gesuch gesuch = new Gesuch();
 
 		Collection<DokumentGrund> persistedDokumentGrunds = new HashSet<>();
 
@@ -31,7 +33,7 @@ public class DokumenteUtilTest {
 
 		createGrundPersisted(persistedDokumentGrunds, DokumentGrundTyp.FAMILIENSITUATION, DokumentTyp.JAHRESLOHNAUSWEISE, 3);
 
-		final Set<DokumentGrund> mergeNeededAndPersisted = DokumenteUtil.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrunds);
+		final Set<DokumentGrund> mergeNeededAndPersisted = DokumenteUtil.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrunds, gesuch);
 
 		Set<DokumentGrund> mergedFamsit = getByGrundTyp(mergeNeededAndPersisted, DokumentGrundTyp.FAMILIENSITUATION);
 

@@ -225,7 +225,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 				final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil
 					.mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(wizardStep.getGesuch()),
-						dokumentGrundService.findAllDokumentGrundByGesuch(wizardStep.getGesuch()));
+						dokumentGrundService.findAllDokumentGrundByGesuch(wizardStep.getGesuch()), wizardStep.getGesuch());
 
 				boolean allNeededDokumenteUploaded = true;
 				for (DokumentGrund dokumentGrund : dokumentGrundsMerged) {
