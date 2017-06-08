@@ -181,7 +181,7 @@ export class DVDokumenteListController {
                 if (dokumentGrund.personNumber === 2 && this.gesuchModelManager.getGesuch().gesuchsteller2) {
                     return this.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName();
 
-                } else if (this.gesuchModelManager.getGesuch().gesuchsteller1) { // gs1 bz default
+                } else if (dokumentGrund.personNumber === 1 && this.gesuchModelManager.getGesuch().gesuchsteller1) {
                     return this.gesuchModelManager.getGesuch().gesuchsteller1.extractFullName();
                 }
             }
