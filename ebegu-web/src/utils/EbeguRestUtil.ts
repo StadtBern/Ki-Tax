@@ -1546,6 +1546,8 @@ export default class EbeguRestUtil {
             dokumentGrund.dokumentGrundTyp = dokumentGrundFromServer.dokumentGrundTyp;
             dokumentGrund.fullName = dokumentGrundFromServer.fullName;
             dokumentGrund.tag = dokumentGrundFromServer.tag;
+            dokumentGrund.personNumber = dokumentGrundFromServer.personNumber;
+            dokumentGrund.personType = dokumentGrundFromServer.personType;
             dokumentGrund.dokumentTyp = dokumentGrundFromServer.dokumentTyp;
             dokumentGrund.needed = dokumentGrundFromServer.needed;
             dokumentGrund.dokumente = this.parseDokumente(dokumentGrundFromServer.dokumente);
@@ -1578,17 +1580,19 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public dokumentGrundToRestObject(dokumentGrund: any, dokumentGrundTS: TSDokumentGrund): any {
+    public dokumentGrundToRestObject(restDokumentGrund: any, dokumentGrundTS: TSDokumentGrund): any {
         if (dokumentGrundTS) {
-            this.abstractEntityToRestObject(dokumentGrund, dokumentGrundTS);
-            dokumentGrund.tag = dokumentGrundTS.tag;
-            dokumentGrund.fullName = dokumentGrundTS.fullName;
-            dokumentGrund.dokumentGrundTyp = dokumentGrundTS.dokumentGrundTyp;
-            dokumentGrund.dokumentTyp = dokumentGrundTS.dokumentTyp;
-            dokumentGrund.needed = dokumentGrundTS.needed;
-            dokumentGrund.dokumente = this.dokumenteToRestObject(dokumentGrundTS.dokumente);
+            this.abstractEntityToRestObject(restDokumentGrund, dokumentGrundTS);
+            restDokumentGrund.tag = dokumentGrundTS.tag;
+            restDokumentGrund.fullName = dokumentGrundTS.fullName;
+            restDokumentGrund.personNumber = dokumentGrundTS.personNumber;
+            restDokumentGrund.personType = dokumentGrundTS.personType;
+            restDokumentGrund.dokumentGrundTyp = dokumentGrundTS.dokumentGrundTyp;
+            restDokumentGrund.dokumentTyp = dokumentGrundTS.dokumentTyp;
+            restDokumentGrund.needed = dokumentGrundTS.needed;
+            restDokumentGrund.dokumente = this.dokumenteToRestObject(dokumentGrundTS.dokumente);
 
-            return dokumentGrund;
+            return restDokumentGrund;
         }
         return undefined;
     }

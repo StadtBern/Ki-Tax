@@ -44,7 +44,7 @@
                 <td ng-bind="row.tag" ng-if="!vm.sonstige && vm.tag"
                     ng-class="{'documents-vailable': vm.hasDokuments(row),'no-documents': !vm.hasDokuments(row)}"></td>
 
-                <td ng-bind="row.fullName"
+                <td ng-bind="vm.extractFullName(row)"
                     ng-class="{'documents-vailable': vm.hasDokuments(row),'no-documents': !vm.hasDokuments(row)}"
                     ng-if="!vm.sonstige"></td>
 

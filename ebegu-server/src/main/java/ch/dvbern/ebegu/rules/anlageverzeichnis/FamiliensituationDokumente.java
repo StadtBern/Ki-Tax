@@ -21,7 +21,8 @@ public class FamiliensituationDokumente extends AbstractDokumente<Familiensituat
 
 	@Override
 	public void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis) {
-		add(getDokument(DokumentTyp.NACHWEIS_TRENNUNG, gesuch.extractFamiliensituationErstgesuch(), gesuch.extractFamiliensituation(), null, null, DokumentGrundTyp.FAMILIENSITUATION), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.NACHWEIS_TRENNUNG, gesuch.extractFamiliensituationErstgesuch(), gesuch.extractFamiliensituation(),
+			null, null, null, DokumentGrundTyp.FAMILIENSITUATION), anlageVerzeichnis);
 	}
 
 	@Override
