@@ -50,6 +50,7 @@ export default class DVSTPersistAntraege implements IDirective {
                     antragListController.selectedKinder = savedState.search.predicateObject.kinder;
                     antragListController.selectedAenderungsdatum = savedState.search.predicateObject.aenderungsdatum;
                     antragListController.selectedEingangsdatum = savedState.search.predicateObject.eingangsdatum;
+                    antragListController.selectedEingangsdatumSTV = savedState.search.predicateObject.eingangsdatumSTV;
                     this.setUserFromName(antragListController, savedState.search.predicateObject.verantwortlicher);
                 }
                 let tableState = stTableCtrl.tableState();

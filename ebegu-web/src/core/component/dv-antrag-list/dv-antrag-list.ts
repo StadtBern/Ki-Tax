@@ -59,6 +59,7 @@ export class DVAntragListController {
     selectedKinder: string;
     selectedAenderungsdatum: string;
     selectedEingangsdatum: string;
+    selectedEingangsdatumSTV: string;
     selectedVerantwortlicher: TSUser;
 
     tableId: string;
