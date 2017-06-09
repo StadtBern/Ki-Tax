@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 
@@ -32,6 +33,12 @@ public class JaxDokumentGrund extends JaxAbstractDTO {
 
 	@Nullable
 	private String tag;
+
+	@Nullable
+	private DokumentGrundPersonType personType;
+
+	@Nullable
+	private Integer personNumber;
 
 	@Nullable
 	private Set<JaxDokument> dokumente = new HashSet<>();
@@ -91,5 +98,23 @@ public class JaxDokumentGrund extends JaxAbstractDTO {
 
 	public boolean isEmpty() {
 		return getDokumente() == null || getDokumente().size() <= 0;
+	}
+
+	@Nullable
+	public DokumentGrundPersonType getPersonType() {
+		return personType;
+	}
+
+	public void setPersonType(@Nullable DokumentGrundPersonType personType) {
+		this.personType = personType;
+	}
+
+	@Nullable
+	public Integer getPersonNumber() {
+		return personNumber;
+	}
+
+	public void setPersonNumber(@Nullable Integer personNumber) {
+		this.personNumber = personNumber;
 	}
 }

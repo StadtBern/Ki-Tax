@@ -1905,6 +1905,8 @@ public class JaxBConverter {
 		jaxDokumentGrund.setDokumentGrundTyp(dokumentGrund.getDokumentGrundTyp());
 		jaxDokumentGrund.setFullName(dokumentGrund.getFullName());
 		jaxDokumentGrund.setTag(dokumentGrund.getTag());
+		jaxDokumentGrund.setPersonType(dokumentGrund.getPersonType());
+		jaxDokumentGrund.setPersonNumber(dokumentGrund.getPersonNumber());
 		jaxDokumentGrund.setDokumentTyp(dokumentGrund.getDokumentTyp());
 		jaxDokumentGrund.setNeeded(dokumentGrund.isNeeded());
 		if (dokumentGrund.getDokumente() != null) {
@@ -1934,6 +1936,8 @@ public class JaxBConverter {
 		dokumentGrund.setDokumentGrundTyp(dokumentGrundJAXP.getDokumentGrundTyp());
 		dokumentGrund.setFullName(dokumentGrundJAXP.getFullName());
 		dokumentGrund.setTag(dokumentGrundJAXP.getTag());
+		dokumentGrund.setPersonType(dokumentGrundJAXP.getPersonType());
+		dokumentGrund.setPersonNumber(dokumentGrundJAXP.getPersonNumber());
 		dokumentGrund.setDokumentTyp(dokumentGrundJAXP.getDokumentTyp());
 		dokumentGrund.setNeeded(dokumentGrundJAXP.isNeeded());
 

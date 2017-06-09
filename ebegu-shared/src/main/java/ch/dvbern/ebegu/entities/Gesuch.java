@@ -678,4 +678,16 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		}
 		return null;
 	}
+
+	@Nullable
+	public KindContainer extractKindFromKindNumber(Integer kindNumber) {
+		if (this.kindContainers != null && kindNumber > 0) {
+			for (KindContainer kindContainer : this.kindContainers) {
+				if (Objects.equals(kindContainer.getKindNummer(), kindNumber)) {
+					return kindContainer;
+				}
+			}
+		}
+		return null;
+	}
 }
