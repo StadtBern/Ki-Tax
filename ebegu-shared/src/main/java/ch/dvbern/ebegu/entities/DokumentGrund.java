@@ -1,18 +1,28 @@
 package ch.dvbern.ebegu.entities;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -184,8 +194,8 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 
 	/**
 	 * This methode compares both objects with all their attributes.
-	 * WARNING! Never use it when trying to compare all DokumentGrund with new DokumentGrund.
-	 * Since in the all data the fields personType and personNumber didn't exist, the comparisson
+	 * WARNING! Never use it when trying to compare old DokumentGrund with new DokumentGrund.
+	 * Since in the old data the fields personType and personNumber didn't exist, the comparison
 	 * cannot be done with this methode.
 	 */
 	@Override
