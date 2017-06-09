@@ -111,9 +111,9 @@ public class BetreuungsgutscheinConfigurator {
 	private void berechnenAnspruchRegeln(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
 		// GRUNDREGELN_CALC: Berechnen / Ändern den Anspruch
 
-		// - Gekuendigt vor Eintritt
-		GekuendigtVorEintrittCalcRule gekuendigtVorEintrittCalcRule = new GekuendigtVorEintrittCalcRule(defaultGueltigkeit);
-		rules.add(gekuendigtVorEintrittCalcRule);
+		// - Storniert
+		StorniertCalcRule storniertCalcRule = new StorniertCalcRule(defaultGueltigkeit);
+		rules.add(storniertCalcRule);
 
 		// - Erwerbspensum
 		EbeguParameter maxZuschlagValue = ebeguParameter.get(PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM);
