@@ -126,7 +126,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		List<DokumentGrund> dokumentGrundsMerged = new ArrayList<>();
 		dokumentGrundsMerged.addAll(DokumenteUtil
 			.mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(gesuch),
-				dokumentGrundService.findAllDokumentGrundByGesuch(gesuch)));
+				dokumentGrundService.findAllDokumentGrundByGesuch(gesuch), gesuch));
 		Collections.sort(dokumentGrundsMerged);
 
 		StringBuilder bemerkungenBuilder = new StringBuilder();

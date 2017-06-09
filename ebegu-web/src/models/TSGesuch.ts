@@ -301,4 +301,15 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         }
         return false;
     }
+
+    public extractKindFromKindNumber(kindNumber: number): TSKindContainer {
+        if (this.kindContainers && kindNumber > 0) {
+            for (let i = 0; i < this.kindContainers.length; i++) {
+                if (this.kindContainers[i].kindNummer === kindNumber) {
+                    return this.kindContainers[i];
+                }
+            }
+        }
+        return undefined;
+    }
 }
