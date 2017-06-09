@@ -56,19 +56,27 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 	}
 
     @Override
-    public boolean authenticate(String token) {
+    public boolean authenticate(final String token) {
 		return MonitoringUtil.monitor(EBEGUTokenAuthenticator.class, "auth", () -> {
-			AuthorisierterBenutzer cachedUser = cache.get(token);
+			boolean doRefreshToken = true;
+			// Wir muessen entscheiden, ob wir das Login verlaengern sollen. Dies wollen wir nur, wenn der ensprechende
+			// Suffix nicht am Token haengt.
+			String effectiveToken = token;
+			if (token.endsWith(Constants.AUTH_TOKEN_SUFFIX_FOR_NO_TOKEN_REFRESH_REQUESTS)) {
+				effectiveToken = token.replaceAll(Constants.AUTH_TOKEN_SUFFIX_FOR_NO_TOKEN_REFRESH_REQUESTS, "");
+				doRefreshToken = false;
+			}
+			AuthorisierterBenutzer cachedUser = cache.get(effectiveToken);
 			if (cachedUser != null) {
 				user = cachedUser;
 			} else {
-				Optional<AuthorisierterBenutzer> authUser = readUserFromDatabase(token);
+				Optional<AuthorisierterBenutzer> authUser = readUserFromDatabase(effectiveToken, doRefreshToken);
 				if (!authUser.isPresent()) {
-					LOG.debug("Could not load authorisierter_benutzer with  token  " + token);
+					LOG.debug("Could not load authorisierter_benutzer with  token  " + effectiveToken);
 					return false;
 				}
 				user = authUser.get();
-				cache.putForExternalRead(token, user);
+				cache.putForExternalRead(effectiveToken, user);
 				boolean stillValid = verifyTokenStillValid();
 				if (!stillValid) {
 					return false;
@@ -90,9 +98,9 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 		return true;
 	}
 
-	private Optional<AuthorisierterBenutzer> readUserFromDatabase(String token) {
+	private Optional<AuthorisierterBenutzer> readUserFromDatabase(String token, boolean doRefreshToken) {
 
-		return authService.validateAndRefreshLoginToken(token);
+		return authService.validateAndRefreshLoginToken(token, doRefreshToken);
 
 	}
 

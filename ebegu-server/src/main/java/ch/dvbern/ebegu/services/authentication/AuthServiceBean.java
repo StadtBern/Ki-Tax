@@ -115,7 +115,7 @@ public class AuthServiceBean implements AuthService {
 	}
 
 	@Override
-	public Optional<AuthorisierterBenutzer> validateAndRefreshLoginToken(String token) {
+	public Optional<AuthorisierterBenutzer> validateAndRefreshLoginToken(String token, boolean doRefreshToken) {
 
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 			ParameterExpression<String> authTokenParam = cb.parameter(String.class, "authToken");
@@ -132,16 +132,19 @@ public class AuthServiceBean implements AuthService {
 
 				AuthorisierterBenutzer authUser = tq.getSingleResult();
 
-				LocalDateTime now = LocalDateTime.now();
-				LocalDateTime maxDateFromNow = now.minus(Constants.LOGIN_TIMEOUT_SECONDS, ChronoUnit.SECONDS);
-				if (authUser.getLastLogin().isBefore(maxDateFromNow)) {
-					LOG.debug("Token is no longer valid: " + token);
-					return Optional.empty();
+				// Das Login verlaengern, falls es sich nicht um einen Timer handelt
+				if (doRefreshToken) {
+					LocalDateTime now = LocalDateTime.now();
+					LocalDateTime maxDateFromNow = now.minus(Constants.LOGIN_TIMEOUT_SECONDS, ChronoUnit.SECONDS);
+					if (authUser.getLastLogin().isBefore(maxDateFromNow)) {
+						LOG.debug("Token is no longer valid: " + token);
+						return Optional.empty();
+					}
+					authUser.setLastLogin(now);
+					entityManager.persist(authUser);
+					entityManager.flush();
+					LOG.trace("Valid auth Token was refreshed ");
 				}
-				authUser.setLastLogin(now);
-				entityManager.persist(authUser);
-				entityManager.flush();
-				LOG.trace("Valid auth Token was refreshed ");
 				return Optional.of(authUser);
 
 			} catch (NoResultException ignored) {

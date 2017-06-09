@@ -112,7 +112,7 @@ public class AuthResource {
 									 @CookieParam(AuthDataUtil.COOKIE_AUTH_TOKEN) Cookie authTokenCookie) {
 
 		if (authTokenCookie != null && authTokenCookie.getValue() != null) {
-			Optional<AuthorisierterBenutzer> currentAuthOpt = authService.validateAndRefreshLoginToken(authTokenCookie.getValue());
+			Optional<AuthorisierterBenutzer> currentAuthOpt = authService.validateAndRefreshLoginToken(authTokenCookie.getValue(), false);
 			if (currentAuthOpt.isPresent()) {
 				String nameID = currentAuthOpt.get().getSamlNameId();
 				String sessionID = currentAuthOpt.get().getSessionIndex();
