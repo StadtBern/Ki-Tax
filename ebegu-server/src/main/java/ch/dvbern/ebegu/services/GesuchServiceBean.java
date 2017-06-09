@@ -1,11 +1,80 @@
 package ch.dvbern.ebegu.services;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Asynchronous;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Fetch;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
+
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.entities.AbstractEntity_;
+import ch.dvbern.ebegu.entities.AntragStatusHistory;
+import ch.dvbern.ebegu.entities.AntragStatusHistory_;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Benutzer_;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuung_;
+import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Fall_;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Gesuchsperiode_;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer_;
+import ch.dvbern.ebegu.entities.Gesuchsteller_;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
+import ch.dvbern.ebegu.entities.Institution_;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.KindContainer_;
+import ch.dvbern.ebegu.entities.Kind_;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.UserRoleName;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -22,23 +91,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Asynchronous;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 
 /**
@@ -450,7 +502,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			case SEARCH:
 				query.select(root.get(Gesuch_.id))
 					.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-				constructOrderByClause(antragTableFilterDto, cb, query, root, kinder, institutionstammdaten, institution);
+				constructOrderByClause(antragTableFilterDto, cb, query, root, kinder, gesuchsperiode, institutionstammdaten, institution);
 				break;
 			case COUNT:
 				query.select(cb.countDistinct(root.get(Gesuch_.id)))
@@ -482,8 +534,12 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return result;
 	}
 
-
-	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query, Root<Gesuch> root, Join<KindContainer, Kind> kinder, Join<Betreuung, InstitutionStammdaten> institutionstammdaten, Join<InstitutionStammdaten, Institution> institution) {
+	@SuppressWarnings({"PMD.NcssMethodCount"})
+	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query,
+										Root<Gesuch> root, Join<KindContainer, Kind> kinder,
+										Join<Gesuch, Gesuchsperiode> gesuchsperiode,
+										Join<Betreuung, InstitutionStammdaten> institutionstammdaten,
+										Join<InstitutionStammdaten, Institution> institution) {
 		Expression<?> expression;
 		if (antragTableFilterDto.getSort() != null && antragTableFilterDto.getSort().getPredicate() != null) {
 			switch (antragTableFilterDto.getSort().getPredicate()) {
@@ -497,7 +553,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					expression = root.get(Gesuch_.typ);
 					break;
 				case "gesuchsperiode":
-					expression = root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb);
+					expression = gesuchsperiode.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb);
 					break;
 				case "aenderungsdatum":
 					expression = root.get(Gesuch_.timestampMutiert);
@@ -509,13 +565,29 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					expression = root.get(Gesuch_.status);
 					break;
 				case "angebote":
-					expression = institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp);
+					// Die Angebote sind eigentlich eine Liste innerhalb der Liste (also des Tabelleneintrages).
+					// Kinder ohne Angebot sollen egal wie sortiert ist am Schluss kommen!
+					if (antragTableFilterDto.getSort().getReverse()) {
+						expression = cb.selectCase().when(institutionstammdaten.isNull(), "ZZZZ")
+							.otherwise(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp));
+					} else {
+						expression = cb.selectCase().when(institutionstammdaten.isNull(), "0000")
+							.otherwise(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp));
+					}
 					break;
 				case "institutionen":
-					expression = institution.get(Institution_.name);
+					// Die Institutionen sind eigentlich eine Liste innerhalb der Liste (also des Tabelleneintrages).
+					// Kinder ohne Angebot sollen egal wie sortiert ist am Schluss kommen!
+					if (antragTableFilterDto.getSort().getReverse()) {
+						expression = cb.selectCase().when(institution.isNull(), "ZZZZ")
+							.otherwise(institution.get(Institution_.name));
+					} else {
+						expression = cb.selectCase().when(institution.isNull(), "0000")
+							.otherwise(institution.get(Institution_.name));
+					}
 					break;
 				case "verantwortlicher":
-					expression = root.get(Gesuch_.fall).get(Fall_.verantwortlicher);
+					expression = root.get(Gesuch_.fall).get(Fall_.verantwortlicher).get(Benutzer_.nachname);
 					break;
 				case "kinder":
 					expression = kinder.get(Kind_.vorname);
