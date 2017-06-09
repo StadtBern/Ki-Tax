@@ -31,7 +31,7 @@ export class PendenzenInstitutionListViewController {
     selectedGesuchsperiode: string;
     institutionenList: Array<TSInstitution>;
     betreuungsangebotTypList: Array<TSBetreuungsangebotTyp>;
-    activeGesuchsperiodenList: Array<string>;
+    activeGesuchsperiodenList: Array<string> = [];
     itemsByPage: number = 20;
     numberOfPages: number = 1;
 
@@ -43,10 +43,9 @@ export class PendenzenInstitutionListViewController {
                 private institutionStammdatenRS: InstitutionStammdatenRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
                 private $state: IStateService) {
-        this.initViewModel();
     }
 
-    private initViewModel() {
+    $onInit() {
         this.updatePendenzenList();
         this.updateInstitutionenList();
         this.updateBetreuungsangebotTypList();
