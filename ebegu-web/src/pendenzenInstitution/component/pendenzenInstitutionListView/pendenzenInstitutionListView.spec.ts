@@ -52,6 +52,7 @@ describe('pendenzenInstitutionListView', function () {
                 spyOn(gesuchsperiodeRS, 'getAllActiveGesuchsperioden').and.returnValue($q.when([TestDataUtil.createGesuchsperiode20162017()]));
                 pendenzInstitutionListViewController = new PendenzenInstitutionListViewController(pendenzInstitutionRS, undefined,
                     institutionRS, institutionStammdatenRS, gesuchsperiodeRS, gesuchModelManager, berechnungsManager, $state);
+                pendenzInstitutionListViewController.$onInit();
 
                 $scope.$apply();
                 expect(pendenzInstitutionRS.getPendenzenList).toHaveBeenCalled();

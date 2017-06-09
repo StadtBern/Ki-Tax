@@ -128,11 +128,15 @@
 
             <!-- Verantwortlichen zuteilen -->
             <span title="{{'VERANTWORTLICHER' | translate:{name: vmx.getVerantwortlicherFullName()} }}"
-                  dv-show-element dv-show-allowed-roles="vmx.TSRoleUtil.getAllButAdministratorJugendamtRole()">
+                  dv-show-element
+                  dv-show-allowed-roles="vmx.TSRoleUtil.getAllButAdministratorJugendamtRole()"
+                  dv-show-expression="vmx.hasGesuch()">
                 {{vmx.getVerantwortlicherFullName()}}
             </span>
 
-            <md-menu dv-show-element dv-show-allowed-roles="vmx.TSRoleUtil.getAdministratorJugendamtRole()">
+            <md-menu dv-show-element
+                     dv-show-allowed-roles="vmx.TSRoleUtil.getAdministratorJugendamtRole()"
+                     dv-show-expression="vmx.hasGesuch()">
                 <button ng-click="$mdOpenMenu()" aria-label="{{vmx.getVerantwortlicherFullName()}}">
                     <i class="fa fa-user" aria-hidden="true" style="margin-right: 0.2rem"></i>
                     <span ng-bind="vmx.getVerantwortlicherFullName()"></span>
