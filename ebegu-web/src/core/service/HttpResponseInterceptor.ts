@@ -14,7 +14,11 @@ export default class HttpResponseInterceptor implements IHttpInterceptor {
 
     public responseError = (response: any) => {
         this.$rootScope.$broadcast(TSHTTPEvent[TSHTTPEvent.REQUEST_FINISHED], response);
-        return this.$q.reject(response);
+        if (response.config.url.indexOf('notokenrefresh') > 0) {
+            return response;
+        } else {
+            return this.$q.reject(response);
+        }
     }
 
     public response = (response: any) => {

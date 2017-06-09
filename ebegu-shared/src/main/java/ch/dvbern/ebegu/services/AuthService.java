@@ -32,6 +32,7 @@ public interface AuthService {
 
 	/**
 	 * gets the logged in user based on the login token
+	 * if doRefresh is true, the login cookie gets refreshed.
 	 */
-	Optional<AuthorisierterBenutzer> validateAndRefreshLoginToken(String token);
+	Optional<AuthorisierterBenutzer> validateAndRefreshLoginToken(String token, boolean doRefreshToken);
 }
