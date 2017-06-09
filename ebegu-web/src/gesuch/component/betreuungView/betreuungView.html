@@ -355,10 +355,10 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12"
-                                 ng-if="vm.isGekuendigtVorAntritt() && !vm.isSavingData">
+                                 ng-if="vm.isStorniert() && !vm.isSavingData">
                                 <div class="well well-status-bestaetigt">
                                     <i class="fa fa-exclamation " aria-hidden="true"></i>
-                                    <span data-translate="BETREUUNG_GEKUENDINGT_VOR_ANTRITT_TEXT"></span>
+                                    <span data-translate="BETREUUNG_STORNIERT_TEXT"></span>
                                 </div>
                             </div>
                         </div>
@@ -430,9 +430,9 @@
                          dv-show-expression="vm.isBetreuungsstatusWarten() && !vm.isGesuchReadonly()">
 
                         <div ng-if="vm.isFromMutation()">
-                            <dv-loading-button button-click="vm.gekuendigtVorEintritt()"
-                                               aria-label="{{'GEKUENDIGT_VOR_EINTRITT_UPPER' | translate}}">
-                                <span data-translate="GEKUENDIGT_VOR_EINTRITT_UPPER"></span>
+                            <dv-loading-button button-click="vm.stornieren()"
+                                               aria-label="{{'STORNIEREN_UPPER' | translate}}">
+                                <span data-translate="STORNIEREN_UPPER"></span>
                             </dv-loading-button>
                         </div>
 

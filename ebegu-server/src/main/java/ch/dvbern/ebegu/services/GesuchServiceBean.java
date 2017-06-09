@@ -511,7 +511,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			case SEARCH:
 				query.select(root.get(Gesuch_.id))
 					.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-				constructOrderByClause(antragTableFilterDto, cb, query, root, kinder, institutionstammdaten, institution);
+				constructOrderByClause(antragTableFilterDto, cb, query, root, kinder, gesuchsperiode, institutionstammdaten, institution);
 				break;
 			case COUNT:
 				query.select(cb.countDistinct(root.get(Gesuch_.id)))
@@ -543,8 +543,12 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return result;
 	}
 
-
-	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query, Root<Gesuch> root, Join<KindContainer, Kind> kinder, Join<Betreuung, InstitutionStammdaten> institutionstammdaten, Join<InstitutionStammdaten, Institution> institution) {
+	@SuppressWarnings({"PMD.NcssMethodCount"})
+	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query,
+										Root<Gesuch> root, Join<KindContainer, Kind> kinder,
+										Join<Gesuch, Gesuchsperiode> gesuchsperiode,
+										Join<Betreuung, InstitutionStammdaten> institutionstammdaten,
+										Join<InstitutionStammdaten, Institution> institution) {
 		Expression<?> expression;
 		if (antragTableFilterDto.getSort() != null && antragTableFilterDto.getSort().getPredicate() != null) {
 			switch (antragTableFilterDto.getSort().getPredicate()) {
@@ -558,7 +562,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					expression = root.get(Gesuch_.typ);
 					break;
 				case "gesuchsperiode":
-					expression = root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb);
+					expression = gesuchsperiode.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb);
 					break;
 				case "aenderungsdatum":
 					expression = root.get(Gesuch_.timestampMutiert);
@@ -573,13 +577,29 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					expression = root.get(Gesuch_.status);
 					break;
 				case "angebote":
-					expression = institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp);
+					// Die Angebote sind eigentlich eine Liste innerhalb der Liste (also des Tabelleneintrages).
+					// Kinder ohne Angebot sollen egal wie sortiert ist am Schluss kommen!
+					if (antragTableFilterDto.getSort().getReverse()) {
+						expression = cb.selectCase().when(institutionstammdaten.isNull(), "ZZZZ")
+							.otherwise(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp));
+					} else {
+						expression = cb.selectCase().when(institutionstammdaten.isNull(), "0000")
+							.otherwise(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp));
+					}
 					break;
 				case "institutionen":
-					expression = institution.get(Institution_.name);
+					// Die Institutionen sind eigentlich eine Liste innerhalb der Liste (also des Tabelleneintrages).
+					// Kinder ohne Angebot sollen egal wie sortiert ist am Schluss kommen!
+					if (antragTableFilterDto.getSort().getReverse()) {
+						expression = cb.selectCase().when(institution.isNull(), "ZZZZ")
+							.otherwise(institution.get(Institution_.name));
+					} else {
+						expression = cb.selectCase().when(institution.isNull(), "0000")
+							.otherwise(institution.get(Institution_.name));
+					}
 					break;
 				case "verantwortlicher":
-					expression = root.get(Gesuch_.fall).get(Fall_.verantwortlicher);
+					expression = root.get(Gesuch_.fall).get(Fall_.verantwortlicher).get(Benutzer_.nachname);
 					break;
 				case "kinder":
 					expression = kinder.get(Kind_.vorname);

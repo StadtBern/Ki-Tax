@@ -308,7 +308,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution', undefined);
     }
 
-    public gekuendigtVorEintritt(): void {
+    public stornieren(): void {
         if (this.isGesuchValid()) {
             this.getBetreuungModel().datumBestaetigung = DateUtil.today();
 
@@ -318,7 +318,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             }
             this.getBetreuungModel().erweiterteBeduerfnisse = false;
 
-            this.save(TSBetreuungsstatus.GEKUENDIGT_VOR_EINTRITT, 'pendenzenInstitution', undefined);
+            this.save(TSBetreuungsstatus.STORNIERT, 'pendenzenInstitution', undefined);
         }
     }
 
@@ -358,8 +358,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         return this.isBetreuungsstatus(TSBetreuungsstatus.NICHT_EINGETRETEN);
     }
 
-    public isGekuendigtVorAntritt(): boolean {
-        return this.isBetreuungsstatus(TSBetreuungsstatus.GEKUENDIGT_VOR_EINTRITT);
+    public isStorniert(): boolean {
+        return this.isBetreuungsstatus(TSBetreuungsstatus.STORNIERT);
     }
 
     public isBetreuungsstatusAusstehend(): boolean {

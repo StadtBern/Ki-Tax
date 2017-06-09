@@ -15,7 +15,7 @@ public enum Betreuungsstatus {
 	SCHULAMT,
 	ABGEWIESEN,
 	NICHT_EINGETRETEN,
-	GEKUENDIGT_VOR_EINTRITT,
+	STORNIERT,
 	BESTAETIGT,
 	VERFUEGT,
 	GESCHLOSSEN_OHNE_VERFUEGUNG;
@@ -23,7 +23,7 @@ public enum Betreuungsstatus {
 	private static final Set<Betreuungsstatus> all = EnumSet.allOf(Betreuungsstatus.class);
 	private static final Set<Betreuungsstatus> none = EnumSet.noneOf(Betreuungsstatus.class);
 
-	private static final Set<Betreuungsstatus> forSachbearbeiterInstitutionRole = EnumSet.of(WARTEN, VERFUEGT, BESTAETIGT, ABGEWIESEN, NICHT_EINGETRETEN, GEKUENDIGT_VOR_EINTRITT, GESCHLOSSEN_OHNE_VERFUEGUNG);
+	private static final Set<Betreuungsstatus> forSachbearbeiterInstitutionRole = EnumSet.of(WARTEN, VERFUEGT, BESTAETIGT, ABGEWIESEN, NICHT_EINGETRETEN, STORNIERT, GESCHLOSSEN_OHNE_VERFUEGUNG);
 	public static final Set<Betreuungsstatus> hasVerfuegung = EnumSet.of(VERFUEGT, NICHT_EINGETRETEN);
 
 	private static final Set<Betreuungsstatus> forSachbearbeiterTraegerschaftRole = forSachbearbeiterInstitutionRole;
@@ -34,7 +34,7 @@ public enum Betreuungsstatus {
 	}
 
 	public boolean isAnyStatusOfVerfuegt() {
-		return VERFUEGT.equals(this) || GEKUENDIGT_VOR_EINTRITT.equals(this) || SCHULAMT.equals(this);
+		return VERFUEGT.equals(this) || STORNIERT.equals(this) || SCHULAMT.equals(this);
 	}
 
 	@SuppressWarnings("Duplicates")
