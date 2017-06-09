@@ -140,7 +140,7 @@ public class AuthServiceBean implements AuthService {
 						LOG.debug("Token is no longer valid: " + token);
 						return Optional.empty();
 					}
-				authUser.setLastLogin(now);
+					authUser.setLastLogin(now);
 					entityManager.persist(authUser);
 					entityManager.flush();
 					LOG.trace("Valid auth Token was refreshed ");
