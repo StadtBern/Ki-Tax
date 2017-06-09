@@ -254,7 +254,7 @@ public class MitteilungResource {
 
 	@Nullable
 	@GET
-	@Path("/amountnewforuser")
+	@Path("/amountnewforuser/notokenrefresh")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Integer getAmountNewMitteilungenForCurrentBenutzer(

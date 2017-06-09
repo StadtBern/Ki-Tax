@@ -89,7 +89,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 			if (GesuchsperiodeStatus.AKTIV.equals(gesuchsperiode.getStatus()) && gesuchsperiode.getDatumAktiviert() == null) {
 				Optional<Gesuchsperiode> lastGesuchsperiodeOptional = getGesuchsperiodeAm(gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1));
 				if (lastGesuchsperiodeOptional.isPresent()) {
-					gesuchService.sendMailsToAllGesuchstellerOfLastGesuchsperiode(lastGesuchsperiodeOptional.get());
+					gesuchService.sendMailsToAllGesuchstellerOfLastGesuchsperiode(lastGesuchsperiodeOptional.get(), gesuchsperiode);
 					gesuchsperiode.setDatumAktiviert(LocalDate.now());
 				}
 			}
