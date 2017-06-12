@@ -155,7 +155,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     private isDetailAvailableForBetreuungstatus(betreuungsstatus: TSBetreuungsstatus): boolean {
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
-        let allowedBetstatus: Array<TSBetreuungsstatus> = [TSBetreuungsstatus.VERFUEGT, TSBetreuungsstatus.NICHT_EINGETRETEN, TSBetreuungsstatus.GEKUENDIGT_VOR_EINTRITT];
+        let allowedBetstatus: Array<TSBetreuungsstatus> = [TSBetreuungsstatus.VERFUEGT, TSBetreuungsstatus.NICHT_EINGETRETEN, TSBetreuungsstatus.STORNIERT];
         //Annahme: alle ausser Gesuchsteller duerfen bestaetigte betreuungen sehen wenn sie uberhaupt auf die Seite kommen
         if (!isGesuchsteller) {
             allowedBetstatus.push(TSBetreuungsstatus.BESTAETIGT);
@@ -510,5 +510,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         // dirty checker wird hier ausgeschaltet. Aenderungen des fs flag wird automatisch gespeichert wenn gesuch auf geprüft gesetzt wird
         // Aus performance Gründen wird hier daruf verzichtet das Gesuch neu zu persisten, nur weil das Flag ändert.
         this.form.$setPristine();
+    }
+
+    public isSuperAdmin(): boolean {
+        return  this.authServiceRs.isRole(TSRole.SUPER_ADMIN);
     }
 }

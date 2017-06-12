@@ -41,18 +41,12 @@ export class ZahlungViewController {
     }
 
     private initViewModel() {
-        if (this.$stateParams.zahlungsauftrag) {
-            this.zahlungen = this.$stateParams.zahlungsauftrag.zahlungen;
-        } else if (this.$stateParams.zahlungsauftragId) {
-
+        if (this.$stateParams.zahlungsauftragId) {
             switch (this.authServiceRS.getPrincipal().role) {
-
                 case TSRole.SACHBEARBEITER_INSTITUTION:
                 case TSRole.SACHBEARBEITER_TRAEGERSCHAFT: {
                     this.zahlungRS.getZahlungsauftragInstitution(this.$stateParams.zahlungsauftragId).then((response) => {
-                        this.zahlungen = response.zahlungen.filter((element) => {
-                            return element.betragTotalZahlung > 0;
-                        });
+                        this.zahlungen = response.zahlungen;
                     });
                     break;
                 }
@@ -62,9 +56,7 @@ export class ZahlungViewController {
                 case TSRole.JURIST:
                 case TSRole.REVISOR: {
                     this.zahlungRS.getZahlungsauftrag(this.$stateParams.zahlungsauftragId).then((response) => {
-                        this.zahlungen = response.zahlungen.filter((element) => {
-                            return element.betragTotalZahlung > 0;
-                        });
+                        this.zahlungen = response.zahlungen;
                     });
                     break;
                 }

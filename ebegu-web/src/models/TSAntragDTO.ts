@@ -13,6 +13,7 @@ export default class TSAntragDTO {
     private _antragTyp: TSAntragTyp;
     private _eingangsart: TSEingangsart;
     private _eingangsdatum: moment.Moment;
+    private _eingangsdatumSTV: moment.Moment;
     private _aenderungsdatum: moment.Moment;
     private _verantwortlicher: string;
     private _besitzerUsername: string;
@@ -27,7 +28,7 @@ export default class TSAntragDTO {
     private _laufnummer: number;
 
     constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
-                eingangsdatum?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
+                eingangsdatum?: moment.Moment, eingangsdatumSTV?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
                 verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
                 verfuegt?: boolean, laufnummer?: number, besitzerUsername?: string, eingangsart?: TSEingangsart, beschwerdeHaengig?: boolean,
                 kinder?: Array<string>) {
@@ -37,6 +38,7 @@ export default class TSAntragDTO {
         this._familienName = familienName;
         this._antragTyp = antragTyp;
         this._eingangsdatum = eingangsdatum;
+        this._eingangsdatumSTV = eingangsdatumSTV;
         this._aenderungsdatum = aenderungsdatum;
         this._angebote = angebote;
         this._institutionen = institutionen;
@@ -91,6 +93,14 @@ export default class TSAntragDTO {
 
     set eingangsdatum(value: moment.Moment) {
         this._eingangsdatum = value;
+    }
+
+    get eingangsdatumSTV(): moment.Moment {
+        return this._eingangsdatumSTV;
+    }
+
+    set eingangsdatumSTV(value: moment.Moment) {
+        this._eingangsdatumSTV = value;
     }
 
     get aenderungsdatum(): moment.Moment {

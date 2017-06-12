@@ -52,8 +52,8 @@ export class DvErrorMessagesPanelComponent {
 
     private executeAction(error: TSExceptionReport): void {
         if (error.action) {
-            if (error.action === TSErrorAction.REMOVE_ONLINE_MUTATION) {
-                this.removeOnlineMutation(error.objectId);
+            if (error.action === TSErrorAction.REMOVE_ONLINE_MUTATION && error.argumentList.length > 0) {
+                this.removeOnlineMutation(error.objectId, error.argumentList[0]);
 
             } else if (error.action === TSErrorAction.REMOVE_ONLINE_ERNEUERUNGSGESUCH && error.argumentList.length > 0) {
                 this.removeOnlineErneuerungsgesuch(error.objectId, error.argumentList[0]);
@@ -62,12 +62,12 @@ export class DvErrorMessagesPanelComponent {
         this.clear();
     }
 
-    private removeOnlineMutation(objectId: string): void {
+    private removeOnlineMutation(objectId: string, gesuchsperiodeId: string): void {
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             title: 'REMOVE_ONLINE_MUTATION_CONFIRMATION',
             deleteText: 'REMOVE_ONLINE_MUTATION_BESCHREIBUNG'
         }).then(() => {   //User confirmed removal
-            this.gesuchRS.removeOnlineMutation(objectId).then((response) => {});
+            this.gesuchRS.removeOnlineMutation(objectId, gesuchsperiodeId).then((response) => {});
         });
     }
 

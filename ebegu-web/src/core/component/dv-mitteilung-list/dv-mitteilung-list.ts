@@ -24,6 +24,7 @@ import IFormController = angular.IFormController;
 import IQService = angular.IQService;
 import IWindowService = angular.IWindowService;
 import IRootScopeService = angular.IRootScopeService;
+import IScope = angular.IScope;
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -55,14 +56,16 @@ export class DVMitteilungListController {
     TSRoleUtil: any;
     ebeguUtil: EbeguUtil;
 
-
     static $inject: any[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS', 'FallRS', 'BetreuungRS',
-        '$q', '$window', '$rootScope', '$state', 'EbeguUtil', 'DvDialog', 'GesuchModelManager'];
+        '$q', '$window', '$rootScope', '$state', 'EbeguUtil', 'DvDialog', 'GesuchModelManager', '$scope'];
     /* @ngInject */
-    constructor(private $stateParams: IMitteilungenStateParams, private mitteilungRS: MitteilungRS, private authServiceRS: AuthServiceRS,
-                private fallRS: FallRS, private betreuungRS: BetreuungRS, private $q: IQService, private $window: IWindowService,
-                private $rootScope: IRootScopeService, private $state: IStateService, ebeguUtil: EbeguUtil, private DvDialog: DvDialog,
-                private gesuchModelManager: GesuchModelManager) {
+    constructor(private $stateParams: IMitteilungenStateParams, private mitteilungRS: MitteilungRS,
+                private authServiceRS: AuthServiceRS,
+                private fallRS: FallRS, private betreuungRS: BetreuungRS, private $q: IQService,
+                private $window: IWindowService,
+                private $rootScope: IRootScopeService, private $state: IStateService, ebeguUtil: EbeguUtil,
+                private DvDialog: DvDialog,
+                private gesuchModelManager: GesuchModelManager, private $scope: IScope) {
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
         this.ebeguUtil = ebeguUtil;
@@ -99,6 +102,9 @@ export class DVMitteilungListController {
                 }
             });
         }
+        this.$scope.$on(TSMitteilungEvent[TSMitteilungEvent.MUTATIONSMITTEILUNG_MUTATION_REMOVED], () => {
+            this.loadAllMitteilungen();
+        });
     }
 
     public cancel(): void {
@@ -175,6 +181,9 @@ export class DVMitteilungListController {
      * Speichert die aktuelle Mitteilung als gesendet.
      */
     public sendMitteilung(): IPromise<TSMitteilung> {
+        if (this.form.$invalid) {
+            return undefined;
+        }
         if (!this.isMitteilungEmpty()) {
             return this.mitteilungRS.sendMitteilung(this.getCurrentMitteilung()).then((response) => {
                 this.loadEntwurf();
@@ -201,7 +210,7 @@ export class DVMitteilungListController {
                 return this.currentMitteilung;
             }).finally(() => {
                 this.form.$setPristine();
-                this.form.$setUntouched();
+               this.form.$setUntouched();
             });
 
         } else if (this.isMitteilungEmpty() && !this.currentMitteilung.isNew() && this.currentMitteilung.id) {
@@ -273,8 +282,8 @@ export class DVMitteilungListController {
     }
 
     private setAllMitteilungenGelesen(): IPromise<Array<TSMitteilung>> {
-            return this.mitteilungRS.setAllNewMitteilungenOfFallGelesen(this.fall.id);
-        }
+        return this.mitteilungRS.setAllNewMitteilungenOfFallGelesen(this.fall.id);
+    }
 
     /**
      * Aendert den Status der gegebenen Mitteilung auf ERLEDIGT wenn es GELESEN war oder
@@ -343,8 +352,9 @@ export class DVMitteilungListController {
                 this.mitteilungRS.applyBetreuungsmitteilung(betreuungsmitteilung.id).then((response: any) => { // JaxID kommt als response
                     this.loadAllMitteilungen();
                     if (response.id === this.gesuchModelManager.getGesuch().id) {
-                        // Dies wird gebraucht wenn das Gesuch der Mitteilung schon geladen ist, weil die Daten der Betreuung geaendert
-                        // wurden und deshalb neugeladen werden müssen. reloadGesuch ist einfacher als die entsprechende Betreuung neu zu laden
+                        // Dies wird gebraucht wenn das Gesuch der Mitteilung schon geladen ist, weil die Daten der
+						// Betreuung geaendert wurden und deshalb neugeladen werden müssen. reloadGesuch ist einfacher
+						// als die entsprechende Betreuung neu zu laden
                         this.gesuchModelManager.reloadGesuch();
                     } else if (response.id) { // eine neue Mutation wurde aus der Muttationsmitteilung erstellt
                         // informieren, dass eine neue Mutation erstellt wurde

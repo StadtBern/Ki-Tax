@@ -32,7 +32,8 @@ export class DVNavigation implements IDirective {
         dvSubStep: '<',
         dvSave: '&?',
         dvSavingPossible: '<?',
-        dvTranslateNext: '@'
+        dvTranslateNext: '@',
+        dvTranslatePrevious: '@'
     };
     controller = NavigatorController;
     controllerAs = 'vm';
@@ -58,6 +59,7 @@ export class NavigatorController {
     dvSavingPossible: boolean;
     dvSubStep: number;
     dvTranslateNext: string;
+    dvTranslatePrevious: string;
     isRequestInProgress: boolean = false; // this semaphore will prevent a navigation button to be called again until the prozess is not finished
 
     performSave: boolean;
@@ -89,12 +91,16 @@ export class NavigatorController {
      * @returns {string}
      */
     public getPreviousButtonName(): string {
-        if (this.gesuchModelManager.isGesuchReadonly()) {
-            return this.$translate.instant('ZURUECK_ONLY_UPPER');
-        } else if (this.dvSave) {
-            return this.$translate.instant('ZURUECK_UPPER');
+        if (this.dvTranslatePrevious) {
+            return this.$translate.instant(this.dvTranslatePrevious);
         } else {
-            return this.$translate.instant('ZURUECK_ONLY_UPPER');
+            if (this.gesuchModelManager.isGesuchReadonly()) {
+                return this.$translate.instant('ZURUECK_ONLY_UPPER');
+            } else if (this.dvSave) {
+                return this.$translate.instant('ZURUECK_UPPER');
+            } else {
+                return this.$translate.instant('ZURUECK_ONLY_UPPER');
+            }
         }
     }
 

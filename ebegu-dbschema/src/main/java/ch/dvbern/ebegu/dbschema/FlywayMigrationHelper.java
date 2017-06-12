@@ -11,7 +11,9 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.inject.spi.CDI;
-import java.util.function.Consumer;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.function.BiConsumer;
 
 /**
  * Unterstuetz die Java basierte Migration von Datenbestaenden.
@@ -23,6 +25,9 @@ import java.util.function.Consumer;
 @RunAs(UserRoleName.SUPER_ADMIN)
 @PermitAll
 public class FlywayMigrationHelper {
+
+	@PersistenceContext(unitName = "ebeguPersistenceUnit")
+	EntityManager em;
 
 	@Resource
 	private SessionContext ctx;
@@ -36,13 +41,13 @@ public class FlywayMigrationHelper {
 	 *
 	 * @param consumer die Funktion, welche die Migrierung durchfuert
 	 */
-	public void migrate(@Nonnull Consumer<CDI<Object>> consumer) {
+	public void migrate(@Nonnull BiConsumer<CDI<Object>, EntityManager> consumer) {
 		ctx.getBusinessObject(FlywayMigrationHelper.class).migrateInternal(consumer);
 	}
 
 	// Muss leider public sein, sollte aber nicht verwendet werden
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void migrateInternal(@Nonnull Consumer<CDI<Object>> consumer) {
-		consumer.accept(CDI.current());
+	public void migrateInternal(@Nonnull BiConsumer<CDI<Object>, EntityManager> consumer) {
+		consumer.accept(CDI.current(), em);
 	}
 }

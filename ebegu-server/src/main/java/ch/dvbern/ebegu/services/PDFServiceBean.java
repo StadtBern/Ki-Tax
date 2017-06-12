@@ -256,7 +256,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 		List<DokumentGrund> dokumentGrundsMerged = new ArrayList<>();
 		dokumentGrundsMerged.addAll(DokumenteUtil
 			.mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(gesuch),
-				dokumentGrundService.findAllDokumentGrundByGesuch(gesuch)));
+				dokumentGrundService.findAllDokumentGrundByGesuch(gesuch), gesuch));
 		Collections.sort(dokumentGrundsMerged);
 		return dokumentGrundsMerged;
 	}

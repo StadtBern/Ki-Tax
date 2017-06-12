@@ -1,12 +1,13 @@
 package ch.dvbern.ebegu.dto.suchfilter.smarttable;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Klasse zum deserialisieren/serialisieren des SmartTable Filter Objekts fuer suchfilter in Java
@@ -22,6 +23,7 @@ public class PredicateObjectDTO implements Serializable {
 	private String antragTyp;      //Gesuch.antragtyp
 	private String gesuchsperiodeString; //Gesuch.gesuchperiode.gueltigAb nach jahr
 	private String eingangsdatum;  //Gesuch.eingangsdatum
+	private String eingangsdatumSTV;  //Gesuch.eingangsdatumSTV
 	private String aenderungsdatum;  //Gesuch.antragStatusHistory
 	private String status;       //Gesuch.status
 	private String angebote;        //Gesuch.kindContainers.betreuungen.institutionStammdaten.betreuungsangebotTyp
@@ -75,6 +77,14 @@ public class PredicateObjectDTO implements Serializable {
 
 	public void setEingangsdatum(String eingangsdatum) {
 		this.eingangsdatum = eingangsdatum;
+	}
+
+	public String getEingangsdatumSTV() {
+		return eingangsdatumSTV;
+	}
+
+	public void setEingangsdatumSTV(String eingangsdatumSTV) {
+		this.eingangsdatumSTV = eingangsdatumSTV;
 	}
 
 	public String getAenderungsdatum() {

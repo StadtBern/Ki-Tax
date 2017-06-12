@@ -4,6 +4,7 @@ import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
 import DateUtil from '../../utils/DateUtil';
 import TSZahlung from '../../models/TSZahlung';
 import * as moment from 'moment';
+import IHttpPromise = angular.IHttpPromise;
 
 export default class ZahlungRS {
     serviceURL: string;
@@ -57,6 +58,10 @@ export default class ZahlungRS {
             this.$log.debug('PARSING user REST array object', response.data);
             return this.ebeguRestUtil.parseZahlungsauftrag(new TSZahlungsauftrag(), response.data);
         });
+    }
+
+    public zahlungsauftragLoeschen(zahlungsauftragId: string): IHttpPromise<any> {
+        return this.http.delete(this.serviceURL + '/delete' + '/' + encodeURIComponent(zahlungsauftragId), null);
     }
 
     public zahlungBestaetigen(zahlungId: string): IPromise<TSZahlung> {

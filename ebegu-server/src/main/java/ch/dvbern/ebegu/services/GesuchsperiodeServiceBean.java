@@ -52,13 +52,11 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	private GesuchService gesuchService;
 
 	@Inject
-	private MailService mailService;
-
-	@Inject
 	private FallService fallService;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+
 
 	@Nonnull
 	@Override
@@ -91,18 +89,8 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 			if (GesuchsperiodeStatus.AKTIV.equals(gesuchsperiode.getStatus()) && gesuchsperiode.getDatumAktiviert() == null) {
 				Optional<Gesuchsperiode> lastGesuchsperiodeOptional = getGesuchsperiodeAm(gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1));
 				if (lastGesuchsperiodeOptional.isPresent()) {
-					List<Gesuch> gesucheToSendMail = gesuchService.getNeuesteAntraegeForPeriod(lastGesuchsperiodeOptional.get());
-					int i = 0;
-					for (Gesuch gesuch : gesucheToSendMail) {
-						try {
-							mailService.sendInfoFreischaltungGesuchsperiode(gesuchsperiode, gesuch);
-							i++;
-						} catch (Exception e) {
-							LOGGER.error("Mail InfoMahnung konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
-						}
-					}
+					gesuchService.sendMailsToAllGesuchstellerOfLastGesuchsperiode(lastGesuchsperiodeOptional.get(), gesuchsperiode);
 					gesuchsperiode.setDatumAktiviert(LocalDate.now());
-					LOGGER.info("Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString() + " wurde aktiv gesetzt: " + i + "/" + gesucheToSendMail.size() + " Gesuchsteller wurden potentiell informiert");
 				}
 			}
 			if (GesuchsperiodeStatus.GESCHLOSSEN.equals(gesuchsperiode.getStatus())) {

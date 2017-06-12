@@ -17,10 +17,12 @@
                                class="table table-fixed table-hover" st-delay="20">
                             <thead>
                             <tr>
-                                <th data-translate="KIND" width="35%"></th>
-                                <th data-translate="BETREUUNG" width="25%"></th>
+                                <th data-translate="KIND" width="20%"></th>
+                                <th data-translate="INSTITUTION" width="20%"></th>
+                                <th data-translate="BETREUUNGSANGEBOT" width="20%"></th>
                                 <th data-translate="ID" width="20%"></th>
                                 <th data-translate="STATUS" width="20%"></th>
+                                <th data-translate="GUELTIGE_BETREUUNG" width="20%" ng-show="vm.isSuperAdmin()"></th>
                             </tr>
                             </thead>
                             <tbody ng-repeat="kindContainer in displayedCollection">
@@ -30,16 +32,20 @@
                                 ng-click="vm.openVerfuegung(kindContainer, betreuung)">
                                 <td ng-bind="kindContainer.kindJA.getFullName()"></td>
                                 <td ng-bind="betreuung.institutionStammdaten.institution.name"></td>
+                                <td ng-bind="betreuung.institutionStammdaten.betreuungsangebotTyp | translate"></td>
                                 <td ng-bind="vm.ebeguUtil.calculateBetreuungsId(vm.getGesuchsperiode(), vm.getFall(), kindContainer.kindNummer, betreuung.betreuungNummer)"></td>
                                 <td class="betreuung-status ng-class:betreuung.betreuungsstatus;">
                                     <div ng-bind="betreuung.betreuungsstatus | translate"></div>
                                     <span class="betreuung-bar"></span>
                                 </td>
+                                <td ng-show="vm.isSuperAdmin()">
+                                    <span>{{betreuung.gueltig ? 'Ja' : 'Nein'}}</span>
+                                </td>
                             </tr>
                             </tbody>
                             <tbody ng-if="vm.getKinderWithBetreuungList().length === 0">
                             <tr>
-                                <td colspan="4" class="empty-table" data-translate="VERFUEGUNGEN_NOCH_KEINE"></td>
+                                <td colspan="5" class="empty-table" data-translate="VERFUEGUNGEN_NOCH_KEINE"></td>
                             </tr>
                             </tbody>
                         </table>

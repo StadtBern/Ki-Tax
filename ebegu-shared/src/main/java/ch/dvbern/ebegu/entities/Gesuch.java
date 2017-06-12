@@ -1,5 +1,36 @@
 package ch.dvbern.ebegu.entities;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
@@ -13,17 +44,6 @@ import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Entitaet zum Speichern von Gesuch in der Datenbank.
@@ -52,6 +72,9 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	@Column(nullable = true)
 	private LocalDate freigabeDatum;
+
+	@Column(nullable = true)
+	private LocalDate eingangsdatumSTV;
 
 	@NotNull
 	@Column(nullable = false)
@@ -148,6 +171,12 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	@Column(nullable = true)
 	private LocalDate datumGewarntFehlendeQuittung;
+
+	@Column(nullable = true)
+	private LocalDateTime timestampVerfuegt;
+
+	@Column(nullable = false)
+	private boolean gueltig = false;
 
 
 	public Gesuch() {
@@ -278,6 +307,14 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		this.eingangsdatum = eingangsdatum;
 	}
 
+	public LocalDate getEingangsdatumSTV() {
+		return eingangsdatumSTV;
+	}
+
+	public void setEingangsdatumSTV(LocalDate eingangsdatumSTV) {
+		this.eingangsdatumSTV = eingangsdatumSTV;
+	}
+
 	public LocalDate getFreigabeDatum() {
 		return freigabeDatum;
 	}
@@ -390,6 +427,22 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	public void setDatumGewarntFehlendeQuittung(LocalDate datumGewarntFehlendeQuittung) {
 		this.datumGewarntFehlendeQuittung = datumGewarntFehlendeQuittung;
+	}
+
+	public LocalDateTime getTimestampVerfuegt() {
+		return timestampVerfuegt;
+	}
+
+	public void setTimestampVerfuegt(LocalDateTime datumVerfuegt) {
+		this.timestampVerfuegt = datumVerfuegt;
+	}
+
+	public boolean isGueltig() {
+		return gueltig;
+	}
+
+	public void setGueltig(boolean gueltig) {
+		this.gueltig = gueltig;
 	}
 
 	@SuppressWarnings("ObjectEquality")
@@ -562,6 +615,8 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		mutation.setGeprueftSTV(false);
 		mutation.setDatumGewarntNichtFreigegeben(null);
 		mutation.setDatumGewarntFehlendeQuittung(null);
+		mutation.setTimestampVerfuegt(null);
+		mutation.setGueltig(false);
 		return mutation;
 	}
 
@@ -595,6 +650,8 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		folgegesuch.setGeprueftSTV(false);
 		folgegesuch.setDatumGewarntNichtFreigegeben(null);
 		folgegesuch.setDatumGewarntFehlendeQuittung(null);
+		folgegesuch.setTimestampVerfuegt(null);
+		folgegesuch.setGueltig(false);
 		return folgegesuch;
 	}
 
@@ -648,6 +705,18 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	public Gesuchsteller extractGesuchsteller1() {
 		if (this.getGesuchsteller1() != null) {
 			return this.getGesuchsteller1().getGesuchstellerJA();
+		}
+		return null;
+	}
+
+	@Nullable
+	public KindContainer extractKindFromKindNumber(Integer kindNumber) {
+		if (this.kindContainers != null && kindNumber > 0) {
+			for (KindContainer kindContainer : this.kindContainers) {
+				if (Objects.equals(kindContainer.getKindNummer(), kindNumber)) {
+					return kindContainer;
+				}
+			}
 		}
 		return null;
 	}

@@ -106,9 +106,11 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 
 	@Nonnull
 	@Override
-	public Collection<Fall> getAllFalle() {
+	public Collection<Fall> getAllFalle(boolean doAuthCheck) {
 		List<Fall> faelle = new ArrayList<>(criteriaQueryHelper.getAll(Fall.class));
-		authorizer.checkReadAuthorizationFaelle(faelle);
+		if (doAuthCheck) {
+			authorizer.checkReadAuthorizationFaelle(faelle);
+		}
 		return faelle;
 	}
 

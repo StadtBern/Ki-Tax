@@ -279,6 +279,7 @@ export default class GesuchModelManager {
     public updateGesuch(): IPromise<TSGesuch> {
         return this.gesuchRS.updateGesuch(this.gesuch).then((gesuchResponse: any) => {
             this.gesuch = gesuchResponse;
+            this.calculateNewStatus(this.gesuch.status); // just to be sure that the status has been correctly updated
             return this.gesuch;
         });
     }
@@ -795,6 +796,9 @@ export default class GesuchModelManager {
     public removeBetreuungFromKind() {
         this.getKindToWorkWith().betreuungen.splice(this.betreuungIndex, 1);
         this.setBetreuungIndex(undefined); //by default auf undefined setzen
+        // recalculates the current status because a change in a Betreuung could mean a change in the gesuchstatus, for example when
+        // the status was PLATZBESTAETIGUNG_ABGEWIESEN and the declined Platz is removed, the new status should be GEPRUEFT
+        this.getGesuch().status = this.calculateNewStatus(this.getGesuch().status);
     }
 
     public getKindIndex(): number {
@@ -855,7 +859,7 @@ export default class GesuchModelManager {
     public removeKind(): IPromise<void> {
         return this.kindRS.removeKind(this.getKindToWorkWith().id, this.gesuch.id).then((responseKind: any) => {
             this.removeKindFromList();
-            this.gesuchRS.updateGesuch(this.gesuch);
+            this.updateGesuch();
         });
     }
 
@@ -1010,12 +1014,12 @@ export default class GesuchModelManager {
             .then((response: TSVerfuegung) => {
             this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
-            this.calculateGesuchStatus();
+            this.calculateGesuchStatusVerfuegt();
             return this.getVerfuegenToWorkWith();
         });
     }
 
-    private calculateGesuchStatus() {
+    private calculateGesuchStatusVerfuegt() {
         if (!this.isThereAnyOpenBetreuung()) {
             this.gesuch.status = this.calculateNewStatus(TSAntragStatus.VERFUEGT);
         }
@@ -1024,7 +1028,7 @@ export default class GesuchModelManager {
     public verfuegungSchliessenOhenVerfuegen(): IPromise<void> {
         return this.verfuegungRS.verfuegungSchliessenOhneVerfuegen(this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG;
-            this.calculateGesuchStatus();
+            this.calculateGesuchStatusVerfuegt();
             return;
         });
     }
@@ -1033,7 +1037,7 @@ export default class GesuchModelManager {
         return this.verfuegungRS.nichtEintreten(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response: TSVerfuegung) => {
             this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.NICHT_EINGETRETEN;
-            this.calculateGesuchStatus();
+            this.calculateGesuchStatusVerfuegt();
             return this.getVerfuegenToWorkWith();
         });
     }
@@ -1074,6 +1078,22 @@ export default class GesuchModelManager {
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.VERFUEGT
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.NICHT_EINGETRETEN
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gibt true zurueck wenn es mindestens eine Betreuung gibt, dessen Status ABGEWIESEN ist
+     * @returns {boolean}
+     */
+    public isThereAnyAbgewieseneBetreuung(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (betreuung.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN) {
                     return true;
                 }
             }

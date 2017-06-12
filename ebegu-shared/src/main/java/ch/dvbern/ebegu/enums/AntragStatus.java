@@ -117,6 +117,8 @@ public enum AntragStatus {
 		IN_BEARBEITUNG_STV,
 		GEPRUEFT_STV);
 
+	public static final Set<AntragStatus> FIRST_STATUS_OF_VERFUEGT = EnumSet.of(VERFUEGT, NUR_SCHULAMT, KEIN_ANGEBOT);
+
     private static final Set<AntragStatus> all = EnumSet.allOf(AntragStatus.class);
     private static final Set<AntragStatus> none = EnumSet.noneOf(AntragStatus.class);
     private static final Set<AntragStatus> forAdminRole = FOR_ADMIN_ROLE;

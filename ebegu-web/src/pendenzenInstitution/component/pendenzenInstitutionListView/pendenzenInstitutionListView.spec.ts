@@ -52,6 +52,7 @@ describe('pendenzenInstitutionListView', function () {
                 spyOn(gesuchsperiodeRS, 'getAllActiveGesuchsperioden').and.returnValue($q.when([TestDataUtil.createGesuchsperiode20162017()]));
                 pendenzInstitutionListViewController = new PendenzenInstitutionListViewController(pendenzInstitutionRS, undefined,
                     institutionRS, institutionStammdatenRS, gesuchsperiodeRS, gesuchModelManager, berechnungsManager, $state);
+                pendenzInstitutionListViewController.$onInit();
 
                 $scope.$apply();
                 expect(pendenzInstitutionRS.getPendenzenList).toHaveBeenCalled();
@@ -66,7 +67,7 @@ describe('pendenzenInstitutionListView', function () {
 
     function mockGetPendenzenList(): TSPendenzInstitution {
         let mockPendenz: TSPendenzInstitution = new TSPendenzInstitution('123.12.12.12', '123', '123', '123', 'Kind', 'Kilian', undefined,
-            'Platzbestaetigung', undefined, undefined, TSBetreuungsangebotTyp.KITA, undefined);
+            'Platzbestaetigung', undefined, undefined, undefined, TSBetreuungsangebotTyp.KITA, undefined);
         let result: Array<TSPendenzInstitution> = [mockPendenz];
         spyOn(pendenzInstitutionRS, 'getPendenzenList').and.returnValue($q.when(result));
         return mockPendenz;

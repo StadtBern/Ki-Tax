@@ -14,6 +14,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -64,16 +65,13 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	private VerfuegungService verfuegungService;
 
 	@Inject
-	private GesuchService gesuchService;
-
-	@Inject
-	private GesuchsperiodeService gesuchsperiodeService;
-
-	@Inject
 	private FileSaverService fileSaverService;
 
 	@Inject
 	private EbeguConfiguration ebeguConfiguration;
+
+	@Inject
+	private GeneratedDokumentService generatedDokumentService;
 
 	@Override
 	@Nonnull
@@ -166,7 +164,27 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 			sb.append(" [Repetition]");
 		}
 		LOGGER.info(sb.toString());
+		calculateZahlungsauftrag(zahlungsauftrag);
 		return persistence.merge(zahlungsauftrag);
+	}
+
+	/**
+	 * Zahlungsauftrag wird einmalig berechnet. Danach koennen nur noch die Stammdaten der Institutionen
+	 * geaendert werden.
+	 */
+	private void calculateZahlungsauftrag(Zahlungsauftrag zahlungsauftrag) {
+		BigDecimal totalAuftrag = BigDecimal.ZERO;
+		for (Zahlung zahlung : zahlungsauftrag.getZahlungen()) {
+			BigDecimal totalZahlung = BigDecimal.ZERO;
+			for (Zahlungsposition zahlungsposition : zahlung.getZahlungspositionen()) {
+				if (!zahlungsposition.isIgnoriert()) {
+					totalZahlung = MathUtil.DEFAULT.add(totalZahlung, zahlungsposition.getBetrag());
+				}
+			}
+			zahlung.setBetragTotalZahlung(totalZahlung);
+			totalAuftrag = MathUtil.DEFAULT.add(totalAuftrag, totalZahlung);
+		}
+		zahlungsauftrag.setBetragTotalAuftrag(totalAuftrag);
 	}
 
 	/**
@@ -180,7 +198,8 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<VerfuegungZeitabschnitt> query = cb.createQuery(VerfuegungZeitabschnitt.class);
 		Root<VerfuegungZeitabschnitt> root = query.from(VerfuegungZeitabschnitt.class);
-		Join<Verfuegung, Betreuung> joinBetreuung = root.join(VerfuegungZeitabschnitt_.verfuegung).join(Verfuegung_.betreuung);
+		Join<VerfuegungZeitabschnitt, Verfuegung> joinVerfuegung = root.join(VerfuegungZeitabschnitt_.verfuegung);
+		Join<Verfuegung, Betreuung> joinBetreuung = joinVerfuegung.join(Verfuegung_.betreuung);
 
 		List<Expression<Boolean>> predicates = new ArrayList<>();
 
@@ -194,18 +213,8 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Predicate predicateAngebot = cb.equal(joinBetreuung.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.KITA);
 		predicates.add(predicateAngebot);
 		// Nur neueste Verfuegung jedes Falls beachten
-		Optional<Gesuchsperiode> gesuchsperiodeAm = gesuchsperiodeService.getGesuchsperiodeAm(zeitabschnittBis);
-		if (gesuchsperiodeAm.isPresent()) {
-			List<String> gesuchIdsOfAktuellerAntrag = gesuchService.getNeuesteVerfuegteAntraege(gesuchsperiodeAm.get());
-			if (!gesuchIdsOfAktuellerAntrag.isEmpty()) {
-				Predicate predicateAktuellesGesuch = joinBetreuung.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(gesuchIdsOfAktuellerAntrag);
-				predicates.add(predicateAktuellesGesuch);
-			} else {
-				return Collections.emptyList();
-			}
-		} else {
-			throw new EbeguRuntimeException("getGueltigeVerfuegungZeitabschnitte", "Keine Gesuchsperiode gefunden fuer Stichtag " + Constants.DATE_FORMATTER.format(zeitabschnittBis));
-		}
+		Predicate predicateGueltig = cb.equal(joinBetreuung.get(Betreuung_.gueltig), Boolean.TRUE);
+		predicates.add(predicateGueltig);
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		return persistence.getCriteriaResults(query);
@@ -227,7 +236,10 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<VerfuegungZeitabschnitt> query = cb.createQuery(VerfuegungZeitabschnitt.class);
 		Root<VerfuegungZeitabschnitt> root = query.from(VerfuegungZeitabschnitt.class);
-		Join<Verfuegung, Betreuung> joinBetreuung = root.join(VerfuegungZeitabschnitt_.verfuegung).join(Verfuegung_.betreuung);
+		Join<VerfuegungZeitabschnitt, Verfuegung> joinVerfuegung = root.join(VerfuegungZeitabschnitt_.verfuegung);
+		Join<Verfuegung, Betreuung> joinBetreuung = joinVerfuegung.join(Verfuegung_.betreuung);
+		Join<Betreuung, KindContainer> joinKindContainer = joinBetreuung.join(Betreuung_.kind);
+		Join<KindContainer, Gesuch> joinGesuch = joinKindContainer.join(KindContainer_.gesuch);
 
 		List<Expression<Boolean>> predicates = new ArrayList<>();
 
@@ -238,13 +250,11 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Predicate predicateAngebot = cb.equal(joinBetreuung.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.KITA);
 		predicates.add(predicateAngebot);
 		// Gesuche, welche seit dem letzten Zahlungslauf verfuegt wurden. Nur neueste Verfuegung jedes Falls beachten
-		List<String> gesuchIdsOfAktuellerAntrag = gesuchService.getNeuesteVerfuegteAntraege(datumVerfuegtVon, datumVerfuegtBis);
-		if (!gesuchIdsOfAktuellerAntrag.isEmpty()) {
-			Predicate predicateAktuellesGesuch = joinBetreuung.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(gesuchIdsOfAktuellerAntrag);
-			predicates.add(predicateAktuellesGesuch);
-		} else {
-			return Collections.emptyList();
-		}
+		Predicate predicateDatum = cb.between(joinGesuch.get(Gesuch_.timestampVerfuegt), cb.literal(datumVerfuegtVon), cb.literal(datumVerfuegtBis));
+		predicates.add(predicateDatum);
+		// Nur neueste Verfuegung jedes Falls beachten
+		Predicate predicateGueltig = cb.equal(joinBetreuung.get(Betreuung_.gueltig), Boolean.TRUE);
+		predicates.add(predicateGueltig);
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		return persistence.getCriteriaResults(query);
@@ -414,6 +424,13 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Zahlungsauftrag zahlungsauftrag = persistence.find(Zahlungsauftrag.class, auftragId);
 		zahlungsauftrag.setStatus(ZahlungauftragStatus.AUSGELOEST);
+		// Jetzt muss noch das PAIN File erstellt werden. Nach dem Ausloesen kann dieses nicht mehr veraendert werden
+		try {
+			generatedDokumentService.getPain001DokumentAccessTokenGeneratedDokument(zahlungsauftrag, true);
+		} catch (MimeTypeParseException e) {
+			throw new IllegalStateException("Pain-File konnte nicht erstellt werden: " + auftragId, e);
+		}
+		//  return this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, true);
 		for (Zahlung zahlung : zahlungsauftrag.getZahlungen()) {
 			if (!ZahlungStatus.ENTWURF.equals(zahlung.getStatus())) {
 				throw new IllegalArgumentException("Zahlung muss im Status ENTWURF sein, wenn der Auftrag ausgelöst wird: " + zahlung.getId());
@@ -443,11 +460,17 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	}
 
 	@Override
-	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@RolesAllowed(value = {SUPER_ADMIN})
 	public void deleteZahlungsauftrag(@Nonnull String auftragId) {
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Optional<Zahlungsauftrag> auftragOptional = findZahlungsauftrag(auftragId);
 		if (auftragOptional.isPresent()) {
+			// Alle Pain-Files loeschen
+			Optional<Pain001Dokument> painDokumentOptional = criteriaQueryHelper.getEntityByUniqueAttribute(Pain001Dokument.class, auftragOptional.get(), Pain001Dokument_.zahlungsauftrag);
+			painDokumentOptional.ifPresent(pain001Dokument -> {
+				LOGGER.info("Pain001Dokument removed: " + pain001Dokument.getId() + ". Filename (file not removed): " + pain001Dokument.getFilename());
+				persistence.remove(Pain001Dokument.class, pain001Dokument.getId());
+			});
 			// Alle verknuepften Zeitabschnitte wieder auf "unbezahlt" setzen
 			Zahlungsauftrag auftrag = auftragOptional.get();
 			for (Zahlung zahlung : auftrag.getZahlungen()) {
@@ -461,6 +484,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		}
 		// Dann erst den Auftrag loeschen
 		Zahlungsauftrag auftragToRemove = auftragOptional.orElseThrow(() -> new EbeguEntityNotFoundException("deleteZahlungsauftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
+		LOGGER.info("Zahlungsauftrag and its Zahlungen removed: " + auftragToRemove.getId());
 		persistence.remove(auftragToRemove);
 	}
 

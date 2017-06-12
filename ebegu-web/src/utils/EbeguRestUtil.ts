@@ -622,6 +622,8 @@ export default class EbeguRestUtil {
         restGesuch.gesperrtWegenBeschwerde = gesuch.gesperrtWegenBeschwerde;
         restGesuch.datumGewarntNichtFreigegeben = DateUtil.momentToLocalDate(gesuch.datumGewarntNichtFreigegeben);
         restGesuch.datumGewarntFehlendeQuittung = DateUtil.momentToLocalDate(gesuch.datumGewarntFehlendeQuittung);
+        restGesuch.timestampVerfuegt = DateUtil.momentToLocalDateTime(gesuch.timestampVerfuegt);
+        restGesuch.gueltig = gesuch.gueltig;
         return restGesuch;
     }
 
@@ -643,6 +645,8 @@ export default class EbeguRestUtil {
             gesuchTS.gesperrtWegenBeschwerde = gesuchFromServer.gesperrtWegenBeschwerde;
             gesuchTS.datumGewarntNichtFreigegeben = DateUtil.localDateToMoment(gesuchFromServer.datumGewarntNichtFreigegeben);
             gesuchTS.datumGewarntFehlendeQuittung = DateUtil.localDateToMoment(gesuchFromServer.datumGewarntFehlendeQuittung);
+            gesuchTS.timestampVerfuegt = DateUtil.localDateTimeToMoment(gesuchFromServer.timestampVerfuegt);
+            gesuchTS.gueltig = gesuchFromServer.gueltig;
             return gesuchTS;
         }
         return undefined;
@@ -1140,6 +1144,7 @@ export default class EbeguRestUtil {
         restBetreuung.betreuungNummer = betreuung.betreuungNummer;
         restBetreuung.betreuungMutiert = betreuung.betreuungMutiert;
         restBetreuung.abwesenheitMutiert = betreuung.abwesenheitMutiert;
+        restBetreuung.gueltig = betreuung.gueltig;
         return restBetreuung;
     }
 
@@ -1215,6 +1220,7 @@ export default class EbeguRestUtil {
             betreuungTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), betreuungFromServer.gesuchsperiode);
             betreuungTS.betreuungMutiert = betreuungFromServer.betreuungMutiert;
             betreuungTS.abwesenheitMutiert = betreuungFromServer.abwesenheitMutiert;
+            betreuungTS.gueltig = betreuungFromServer.gueltig;
             return betreuungTS;
         }
         return undefined;
@@ -1349,6 +1355,7 @@ export default class EbeguRestUtil {
         restPendenz.angebote = pendenz.angebote;
         restPendenz.antragTyp = pendenz.antragTyp;
         restPendenz.eingangsdatum = DateUtil.momentToLocalDate(pendenz.eingangsdatum);
+        restPendenz.eingangsdatumSTV = DateUtil.momentToLocalDate(pendenz.eingangsdatumSTV);
         restPendenz.aenderungsdatum = DateUtil.momentToLocalDateTime(pendenz.aenderungsdatum);
         restPendenz.gesuchsperiodeGueltigAb = DateUtil.momentToLocalDate(pendenz.gesuchsperiodeGueltigAb);
         restPendenz.gesuchsperiodeGueltigBis = DateUtil.momentToLocalDate(pendenz.gesuchsperiodeGueltigBis);
@@ -1372,6 +1379,7 @@ export default class EbeguRestUtil {
         antragTS.kinder = antragFromServer.kinder;
         antragTS.antragTyp = antragFromServer.antragTyp;
         antragTS.eingangsdatum = DateUtil.localDateToMoment(antragFromServer.eingangsdatum);
+        antragTS.eingangsdatumSTV = DateUtil.localDateToMoment(antragFromServer.eingangsdatumSTV);
         antragTS.aenderungsdatum = DateUtil.localDateTimeToMoment(antragFromServer.aenderungsdatum);
         antragTS.gesuchsperiodeGueltigAb = DateUtil.localDateToMoment(antragFromServer.gesuchsperiodeGueltigAb);
         antragTS.gesuchsperiodeGueltigBis = DateUtil.localDateToMoment(antragFromServer.gesuchsperiodeGueltigBis);
@@ -1437,6 +1445,7 @@ export default class EbeguRestUtil {
         restPendenz.typ = pendenz.typ;
         restPendenz.gesuchsperiode = this.gesuchsperiodeToRestObject({}, pendenz.gesuchsperiode);
         restPendenz.eingangsdatum = DateUtil.momentToLocalDate(pendenz.eingangsdatum);
+        restPendenz.eingangsdatumSTV = DateUtil.momentToLocalDate(pendenz.eingangsdatumSTV);
         restPendenz.betreuungsangebotTyp = pendenz.betreuungsangebotTyp;
         restPendenz.institution = pendenz.institution;
         return restPendenz;
@@ -1453,6 +1462,7 @@ export default class EbeguRestUtil {
         pendenzTS.typ = pendenzFromServer.typ;
         pendenzTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), pendenzFromServer.gesuchsperiode);
         pendenzTS.eingangsdatum = DateUtil.localDateToMoment(pendenzFromServer.eingangsdatum);
+        pendenzTS.eingangsdatumSTV = DateUtil.localDateToMoment(pendenzFromServer.eingangsdatumSTV);
         pendenzTS.betreuungsangebotTyp = pendenzFromServer.betreuungsangebotTyp;
         pendenzTS.institution = pendenzFromServer.institution;
         return pendenzTS;
@@ -1540,6 +1550,8 @@ export default class EbeguRestUtil {
             dokumentGrund.dokumentGrundTyp = dokumentGrundFromServer.dokumentGrundTyp;
             dokumentGrund.fullName = dokumentGrundFromServer.fullName;
             dokumentGrund.tag = dokumentGrundFromServer.tag;
+            dokumentGrund.personNumber = dokumentGrundFromServer.personNumber;
+            dokumentGrund.personType = dokumentGrundFromServer.personType;
             dokumentGrund.dokumentTyp = dokumentGrundFromServer.dokumentTyp;
             dokumentGrund.needed = dokumentGrundFromServer.needed;
             dokumentGrund.dokumente = this.parseDokumente(dokumentGrundFromServer.dokumente);
@@ -1572,17 +1584,19 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public dokumentGrundToRestObject(dokumentGrund: any, dokumentGrundTS: TSDokumentGrund): any {
+    public dokumentGrundToRestObject(restDokumentGrund: any, dokumentGrundTS: TSDokumentGrund): any {
         if (dokumentGrundTS) {
-            this.abstractEntityToRestObject(dokumentGrund, dokumentGrundTS);
-            dokumentGrund.tag = dokumentGrundTS.tag;
-            dokumentGrund.fullName = dokumentGrundTS.fullName;
-            dokumentGrund.dokumentGrundTyp = dokumentGrundTS.dokumentGrundTyp;
-            dokumentGrund.dokumentTyp = dokumentGrundTS.dokumentTyp;
-            dokumentGrund.needed = dokumentGrundTS.needed;
-            dokumentGrund.dokumente = this.dokumenteToRestObject(dokumentGrundTS.dokumente);
+            this.abstractEntityToRestObject(restDokumentGrund, dokumentGrundTS);
+            restDokumentGrund.tag = dokumentGrundTS.tag;
+            restDokumentGrund.fullName = dokumentGrundTS.fullName;
+            restDokumentGrund.personNumber = dokumentGrundTS.personNumber;
+            restDokumentGrund.personType = dokumentGrundTS.personType;
+            restDokumentGrund.dokumentGrundTyp = dokumentGrundTS.dokumentGrundTyp;
+            restDokumentGrund.dokumentTyp = dokumentGrundTS.dokumentTyp;
+            restDokumentGrund.needed = dokumentGrundTS.needed;
+            restDokumentGrund.dokumente = this.dokumenteToRestObject(dokumentGrundTS.dokumente);
 
-            return dokumentGrund;
+            return restDokumentGrund;
         }
         return undefined;
     }

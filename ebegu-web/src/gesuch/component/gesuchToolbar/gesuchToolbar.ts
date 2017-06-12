@@ -155,6 +155,8 @@ export class GesuchToolbarController {
                     if (this.fallid) {
                         this.updateAntragDTOList();
                     } else {
+                        // Fall-ID hat auf undefined gewechselt -> Fall zuruecksetzen
+                        this.fall = undefined;
                         this.antragTypList = {};
                         this.gesuchNavigationList = {};
                         this.gesuchsperiodeList = {};
@@ -564,6 +566,7 @@ export class GesuchToolbarController {
             gesuchId: this.getGesuch().id
         });
     }
+
     public openAlleVerfuegungen(): void {
         this.$state.go('alleVerfuegungen', {
             fallId: this.fallid
@@ -578,5 +581,9 @@ export class GesuchToolbarController {
                 }
             });
         }
+    }
+
+    public hasGesuch(): boolean {
+        return this.antragList && this.antragList.length > 0;
     }
 }

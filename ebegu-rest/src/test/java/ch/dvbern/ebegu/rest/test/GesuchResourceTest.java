@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import javax.security.auth.login.LoginException;
 import javax.ws.rs.core.Response;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Iterator;
 
@@ -157,7 +158,11 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	@Test
 	public void testAntragMutieren() throws EbeguException {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
-		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.VERFUEGT);
+		gesuch.setGueltig(true);
+		gesuch.setTimestampVerfuegt(LocalDateTime.now());
+		gesuch = persistence.merge(gesuch);
+		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.VERFUEGT).getEntity();
+
 		final Response response = gesuchResource.antragMutieren(new JaxId(gesuch.getId()), LocalDate.now().toString(), null, null);
 
 		Assert.assertNotNull(response);

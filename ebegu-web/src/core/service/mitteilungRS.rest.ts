@@ -119,7 +119,7 @@ export default class MitteilungRS {
     }
 
     public getAmountMitteilungenForCurrentBenutzer(): IPromise<number> {
-        return this.http.get(this.serviceURL + '/amountnewforuser').then((response: any) => {
+        return this.http.get(this.serviceURL + '/amountnewforuser/notokenrefresh').then((response: any) => {
             return response.data;
         });
     }

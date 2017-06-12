@@ -308,7 +308,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution', undefined);
     }
 
-    public gekuendigtVorEintritt(): void {
+    public stornieren(): void {
         if (this.isGesuchValid()) {
             this.getBetreuungModel().datumBestaetigung = DateUtil.today();
 
@@ -318,7 +318,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             }
             this.getBetreuungModel().erweiterteBeduerfnisse = false;
 
-            this.save(TSBetreuungsstatus.GEKUENDIGT_VOR_EINTRITT, 'pendenzenInstitution', undefined);
+            this.save(TSBetreuungsstatus.STORNIERT, 'pendenzenInstitution', undefined);
         }
     }
 
@@ -358,8 +358,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         return this.isBetreuungsstatus(TSBetreuungsstatus.NICHT_EINGETRETEN);
     }
 
-    public isGekuendigtVorAntritt(): boolean {
-        return this.isBetreuungsstatus(TSBetreuungsstatus.GEKUENDIGT_VOR_EINTRITT);
+    public isStorniert(): boolean {
+        return this.isBetreuungsstatus(TSBetreuungsstatus.STORNIERT);
     }
 
     public isBetreuungsstatusAusstehend(): boolean {
@@ -434,15 +434,16 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     /**
-     * Mutationsmeldungen werden nur bei Mutationen oder bei Gesuchen in Status VERFUEGT erlaubt. Ausserdem muss es
-     * sich um letztes bzw. neuestes Gesuch handeln
+     * Mutationsmeldungen werden nur Betreuungen erlaubt, die verfuegt sind oder bereits irgendwann
+     * verfuegt wurden bzw. ein vorgaengerId haben. Ausserdem muss es sich um das letzte bzw. neueste Gesuch handeln
      */
     public isMutationsmeldungAllowed(): boolean {
-        return (this.isMutation() || (isVerfuegtOrSTV(this.gesuchModelManager.getGesuch().status)))
-            && this.gesuchModelManager.getGesuch().gesperrtWegenBeschwerde !== true
-            && this.isNewestGesuch
+        return ((this.isMutation() && (this.getBetreuungModel().vorgaengerId || this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.VERFUEGT))
+            || (!this.isMutation() && isVerfuegtOrSTV(this.gesuchModelManager.getGesuch().status) && this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.VERFUEGT))
             && this.getBetreuungModel().betreuungsstatus !== TSBetreuungsstatus.WARTEN
-            && this.gesuchModelManager.getGesuch().gesuchsperiode.status === TSGesuchsperiodeStatus.AKTIV;
+            && this.gesuchModelManager.getGesuch().gesuchsperiode.status === TSGesuchsperiodeStatus.AKTIV
+            && this.isNewestGesuch
+            && this.gesuchModelManager.getGesuch().gesperrtWegenBeschwerde !== true;
     }
 
     public mutationsmeldungSenden(): void {
