@@ -48,6 +48,7 @@ import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.entities.Mitteilung_;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
@@ -521,8 +522,10 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				//gs container muss nicht mikopiert werden
 				betPenCont.setBetreuungspensumJA(betPensumJA);
 				existingBetreuung.getBetreuungspensumContainers().add(betPenCont);
-				betreuungService.saveBetreuung(existingBetreuung, false);
 			}
+			// when we apply a Betreuungsmitteilung we have to change the status to BESTAETIGT
+			existingBetreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
+			betreuungService.saveBetreuung(existingBetreuung, false);
 			mitteilung.setApplied(true);
 			mitteilung.setMitteilungStatus(MitteilungStatus.ERLEDIGT);
 			return persistence.merge(mitteilung);
