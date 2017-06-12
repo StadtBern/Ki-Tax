@@ -15,13 +15,14 @@ export default class TSPendenzInstitution {
     private _typ: string;
     private _gesuchsperiode: TSGesuchsperiode;
     private _eingangsdatum: moment.Moment;
+    private _eingangsdatumSTV: moment.Moment;
     private _betreuungsangebotTyp: TSBetreuungsangebotTyp;
     private _institution: TSInstitution;
 
 
     constructor(betreuungsNummer?: string, betreuungsId?: string, gesuchId?: string, kindId?: string, name?: string, vorname?: string,
                 geburtsdatum?: moment.Moment, typ?: string, gesuchsperiode?: TSGesuchsperiode, eingangsdatum?: moment.Moment,
-                betreuungsangebotTyp?: TSBetreuungsangebotTyp, institution?: TSInstitution) {
+                eingangsdatumSTV?: moment.Moment, betreuungsangebotTyp?: TSBetreuungsangebotTyp, institution?: TSInstitution) {
         this._betreuungsNummer = betreuungsNummer;
         this._betreuungsId = betreuungsId;
         this._gesuchId = gesuchId;
@@ -32,6 +33,7 @@ export default class TSPendenzInstitution {
         this._typ = typ;
         this._gesuchsperiode = gesuchsperiode;
         this._eingangsdatum = eingangsdatum;
+        this._eingangsdatumSTV = eingangsdatumSTV;
         this._betreuungsangebotTyp = betreuungsangebotTyp;
         this._institution = institution;
     }
@@ -114,6 +116,14 @@ export default class TSPendenzInstitution {
 
     set eingangsdatum(value: moment.Moment) {
         this._eingangsdatum = value;
+    }
+
+    get eingangsdatumSTV(): moment.Moment {
+        return this._eingangsdatumSTV;
+    }
+
+    set eingangsdatumSTV(value: moment.Moment) {
+        this._eingangsdatumSTV = value;
     }
 
     get betreuungsangebotTyp(): TSBetreuungsangebotTyp {

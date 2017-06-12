@@ -84,11 +84,12 @@ export default class BetreuungRS {
         });
     }
 
-    removeBetreuung(betreuungId: string, gesuchId: string): IPromise<any> {
+    public removeBetreuung(betreuungId: string, gesuchId: string): IPromise<any> {
         return this.http.delete(this.serviceURL + '/' + encodeURIComponent(betreuungId))
-            .then((response) => {
-                this.wizardStepManager.findStepsFromGesuch(gesuchId);
-                return response;
+            .then((responseDeletion) => {
+                return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
+                    return responseDeletion;
+                });
             });
     }
 

@@ -36,7 +36,7 @@
                         data-translate="GEANDERT_UPPER" dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                     </th>
-                    <th st-sort="eingangssdatum" class="sortable row-geandert"
+                    <th st-sort="eingangsdatumSTV" class="sortable row-geandert"
                         data-translate="EINGANG_UPPER" dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
                     </th>
@@ -93,8 +93,8 @@
                     </th>
                     <th dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
-                        <input st-search="eingangsdatum" class="form-control" type="text"
-                               ng-model="vm.selectedEingangsdatum"/>
+                        <input st-search="eingangsdatumSTV" class="form-control" type="text"
+                               ng-model="vm.selectedEingangsdatumSTV"/>
                     </th>
                     <th>
                         <div class="dv-select-style">
@@ -159,8 +159,8 @@
                         ng-bind="row.aenderungsdatum | amDateFormat : 'DD.MM.YYYY'"
                         dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
-                    <td class="ellipsis" ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
-                        ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"
+                    <td class="ellipsis" ellipsis-tooltip="{{row.eingangsdatumSTV | amDateFormat : 'DD.MM.YYYY'}}"
+                        ng-bind="row.eingangsdatumSTV | amDateFormat : 'DD.MM.YYYY'"
                         dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
                     </td>
