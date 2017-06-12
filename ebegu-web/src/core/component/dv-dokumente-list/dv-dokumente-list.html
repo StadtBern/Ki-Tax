@@ -86,7 +86,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="dokument in table2">
+                        <tr ng-repeat="dokument in table2  | orderBy: 'timestampUpload'">
                             <td ng-bind="dokument.filename"
                                 ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
                             <td ng-bind="dokument.timestampUpload | amDateFormat : 'DD.MM.YYYY'"
