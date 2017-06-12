@@ -463,6 +463,15 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					return new ImmutablePair<>(0L, Collections.emptyList());
 				}
 			}
+			if (predicateObjectDto.getEingangsdatumSTV() != null) {
+				try {
+					LocalDate searchDate = LocalDate.parse(predicateObjectDto.getEingangsdatumSTV(), Constants.DATE_FORMATTER);
+					predicates.add(cb.equal(root.get(Gesuch_.eingangsdatumSTV), searchDate));
+				} catch (DateTimeParseException e) {
+					// Kein gueltiges Datum. Es kann kein Gesuch geben, welches passt. Wir geben leer zurueck
+					return new ImmutablePair<>(0L, Collections.emptyList());
+				}
+			}
 			if (predicateObjectDto.getAenderungsdatum() != null) {
 				try {
 					// Wir wollen ohne Zeit vergleichen
@@ -561,6 +570,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				case "eingangsdatum":
 					expression = root.get(Gesuch_.eingangsdatum);
 					break;
+				case "eingangsdatumSTV":
+					expression = root.get(Gesuch_.eingangsdatumSTV);
+					break;
 				case "status":
 					expression = root.get(Gesuch_.status);
 					break;
@@ -657,6 +669,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb),
 				root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigBis),
 				root.get(Gesuch_.eingangsdatum),
+				root.get(Gesuch_.eingangsdatumSTV),
 				root.get(Gesuch_.typ),
 				root.get(Gesuch_.status),
 				root.get(Gesuch_.laufnummer),
