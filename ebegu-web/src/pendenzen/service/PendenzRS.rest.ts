@@ -30,7 +30,7 @@ export default class PendenzRS {
     }
 
     public getPendenzenListForUser(userId: string): IPromise<Array<TSAntragDTO>> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(userId))
+        return this.http.get(this.serviceURL + '/jugendamt/' + encodeURIComponent(userId))
             .then((response: any) => {
                 this.log.debug('PARSING pendenz REST object ', response.data);
                 return this.ebeguRestUtil.parseAntragDTOs(response.data);
