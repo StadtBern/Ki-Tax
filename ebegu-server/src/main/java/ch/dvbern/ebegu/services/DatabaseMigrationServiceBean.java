@@ -1,17 +1,27 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.*;
+
+import ch.dvbern.ebegu.entities.AntragStatusHistory;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -89,7 +99,7 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 						if (betreuung.getVerfuegung() != null && betreuung.getBetreuungsstatus().isAnyStatusOfVerfuegt()) {
 							betreuung.setGueltig(true);
 							LOGGER.info("... gueltig");
-						} else if (betreuung.getBetreuungsstatus().equals(Betreuungsstatus.SCHULAMT)) {
+						} else if (betreuung.getBetreuungsstatus() == Betreuungsstatus.SCHULAMT) {
 							betreuung.setGueltig(true);
 							LOGGER.info("... Schulamt");
 						} else {
@@ -99,6 +109,10 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 							if (vorgaengerVerfuegungOptional.isPresent()) {
 								Verfuegung vorgaengerVerfuegung = vorgaengerVerfuegungOptional.get();
 								LOGGER.info("Vorgaengerverfuegung: " + getBetreuungInfo(vorgaengerVerfuegung.getBetreuung()));
+								if (vorgaengerVerfuegung.getBetreuung().isGueltig()) {
+									LOGGER.info("... VorgaengerBetreuung wurde schon behandelt");
+									continue;
+								}
 								if (vorgaengerVerfuegung.getBetreuung().getBetreuungsstatus().isAnyStatusOfVerfuegt()) {
 									vorgaengerVerfuegung.getBetreuung().setGueltig(true);
 									LOGGER.info("... gueltig");
