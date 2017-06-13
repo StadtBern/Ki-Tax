@@ -88,6 +88,7 @@ import DVSTPersistAntraege from './directive/dv-st-persist-antraege/dv-st-persis
 import DVSTPersistPendenzen from './directive/dv-st-persist-pendenzen/dv-st-persist-pendenzen';
 import {DvDownloadmenuComponentConfig} from './component/dv-downloadmenu/dv-downloadmenu';
 import {DVVorlageListConfig} from './component/dv-vorlage-list/dv-vorlage-list';
+import {DatabaseMigrationRS} from '../admin/service/databaseMigrationRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -224,6 +225,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('MahnungRS', MahnungRS)
     .service('ReportRS', ReportRS)
     .service('EwkRS', EwkRS)
+    .service('DatabaseMigrationRS', DatabaseMigrationRS)
     .filter('arrayToString', () => {
         return function (input: Array<string>) {
             if (input) {

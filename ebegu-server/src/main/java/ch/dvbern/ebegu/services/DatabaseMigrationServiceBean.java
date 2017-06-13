@@ -1,46 +1,68 @@
-package db.migration;
+package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.dbschema.FlywayMigrationHelper;
-import ch.dvbern.ebegu.entities.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.AntragStatusHistory;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.services.*;
-import org.flywaydb.core.api.migration.jdbc.JdbcMigration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.enterprise.inject.spi.CDI;
-import javax.persistence.EntityManager;
-import java.sql.Connection;
-import java.util.*;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+/**
+ * Service zum Ausfuehren von manuellen DB-Migrationen
+ */
+@Stateless
+@Local(DatabaseMigrationService.class)
+@PermitAll
+@SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals", "LocalVariableNamingConvention", "PMD.NcssTypeCount", "InstanceMethodNamingConvention"})
+public class DatabaseMigrationServiceBean extends AbstractBaseService implements DatabaseMigrationService {
 
-@SuppressWarnings("unused")
-public class V0041__GesuchGueltigDatumVerfuegt implements JdbcMigration {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(V0041__GesuchGueltigDatumVerfuegt.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseMigrationServiceBean.class.getSimpleName());
 	public static final String SEPARATOR = " / ";
 
+
+	@Inject
+	private GesuchService gesuchService;
+
+	@Inject
+	private AntragStatusHistoryService antragStatusHistoryService;
+
+	@Inject
+	private FallService fallService;
+
+	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
+
+	@Inject
+	private VerfuegungService verfuegungService;
+
+
 	@Override
-	public void migrate(Connection connection) {
-		// Leider funktioniert wegen einem WELD Bug CDI Injection nicht. Wir muessen uns deshalb selbst
-		FlywayMigrationHelper helper = CDI.current().select(FlywayMigrationHelper.class).get();
-		helper.migrate(this::setGueltigFlagForVerfuegteAntraege);
+	public void processScript(@Nonnull String scriptId) {
+		switch (scriptId) {
+			case "1105":
+				processScript1105_GesuchGueltigDatumVerfuegt();
+		}
 	}
-
-	@SuppressWarnings("PMD.NcssMethodCount")
-	private void setGueltigFlagForVerfuegteAntraege(@Nonnull CDI<Object> cdi, @Nonnull EntityManager em) {
-		checkNotNull(cdi);
-		LOGGER.info("Starting Migration V0040");
-
-		GesuchsperiodeService gesuchsperiodeService = cdi.select(GesuchsperiodeService.class).get();
-		FallService fallService = cdi.select(FallService.class).get();
-		GesuchService gesuchService = cdi.select(GesuchService.class).get();
-		AntragStatusHistoryService antragStatusHistoryService = cdi.select(AntragStatusHistoryService.class).get();
-		VerfuegungService verfuegungService = cdi.select(VerfuegungService.class).get();
-
+	@SuppressWarnings({"PMD.NcssMethodCount", "OverlyComplexMethod", "OverlyNestedMethod"})
+	private void processScript1105_GesuchGueltigDatumVerfuegt() {
+		LOGGER.info("Starting Migration EBEGU-1105");
 		Collection<Gesuchsperiode> allGesuchsperioden = gesuchsperiodeService.getAllGesuchsperioden();
 		List<String> ids = new ArrayList<>();
 		for (Gesuchsperiode gesuchsperiode : allGesuchsperioden) {
@@ -70,10 +92,14 @@ public class V0041__GesuchGueltigDatumVerfuegt implements JdbcMigration {
 					for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
 						String betreuungInfo = getBetreuungInfo(betreuung);
 						LOGGER.info("Evaluiere Betreuung: " + betreuungInfo);
+						if (betreuung.isGueltig()) {
+							LOGGER.info("... Betreuung wurde schon behandelt");
+							continue;
+						}
 						if (betreuung.getVerfuegung() != null && betreuung.getBetreuungsstatus().isAnyStatusOfVerfuegt()) {
 							betreuung.setGueltig(true);
 							LOGGER.info("... gueltig");
-						} else if (betreuung.getBetreuungsstatus().equals(Betreuungsstatus.SCHULAMT)) {
+						} else if (betreuung.getBetreuungsstatus() == Betreuungsstatus.SCHULAMT) {
 							betreuung.setGueltig(true);
 							LOGGER.info("... Schulamt");
 						} else {
@@ -83,6 +109,10 @@ public class V0041__GesuchGueltigDatumVerfuegt implements JdbcMigration {
 							if (vorgaengerVerfuegungOptional.isPresent()) {
 								Verfuegung vorgaengerVerfuegung = vorgaengerVerfuegungOptional.get();
 								LOGGER.info("Vorgaengerverfuegung: " + getBetreuungInfo(vorgaengerVerfuegung.getBetreuung()));
+								if (vorgaengerVerfuegung.getBetreuung().isGueltig()) {
+									LOGGER.info("... VorgaengerBetreuung wurde schon behandelt");
+									continue;
+								}
 								if (vorgaengerVerfuegung.getBetreuung().getBetreuungsstatus().isAnyStatusOfVerfuegt()) {
 									vorgaengerVerfuegung.getBetreuung().setGueltig(true);
 									LOGGER.info("... gueltig");
@@ -99,10 +129,12 @@ public class V0041__GesuchGueltigDatumVerfuegt implements JdbcMigration {
 				}
 			}
 		}
-		LOGGER.info("Migration V0040 finished");
+		LOGGER.info("Migration EBEGU-1105 finished");
 	}
 
 	private String getBetreuungInfo(Betreuung betreuung) {
 		return betreuung.getKind().getKindNummer() + SEPARATOR + betreuung.getBetreuungNummer() + SEPARATOR + betreuung.getBetreuungsstatus();
 	}
 }
+
+
