@@ -299,7 +299,7 @@
             <!-- Schulungsdaten -->
             <div class="row marginTop10">
                 <div class="viewTitle marginTop10">
-                    <h1 data-translate="SCHULUNG"></h1>
+                    <h2 data-translate="SCHULUNG"></h2>
                 </div>
                 <button type="button" class=" btn-testfall"
                         ng-click="vm.resetSchulungsdaten()">
@@ -308,6 +308,18 @@
                 <button type="button" class=" btn-testfall"
                         ng-click="vm.deleteSchulungsdaten()">
                     <span data-translate="SCHULUNG_DELETE_DATA"></span>
+                </button>
+            </div>
+
+
+            <!-- Manuelle Skripts ausfuehren -->
+            <div class="row marginTop10">
+                <div class="viewTitle marginTop10">
+                    <h2 data-translate="MANUELLE_SKRIPTS"></h2>
+                </div>
+                <button type="button" class=" btn-testfall"
+                        ng-click="vm.processScript('1105')">
+                    <span>EBEGU-1105: Gueltig-Flag auf Gesuch und Betreuung</span>
                 </button>
             </div>
         </div>
