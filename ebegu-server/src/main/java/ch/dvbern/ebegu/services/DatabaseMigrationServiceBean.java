@@ -84,7 +84,7 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 						LOGGER.info("Evaluiere Betreuung: " + betreuungInfo);
 						if (betreuung.isGueltig()) {
 							LOGGER.info("... Betreuung wurde schon behandelt");
-							break;
+							continue;
 						}
 						if (betreuung.getVerfuegung() != null && betreuung.getBetreuungsstatus().isAnyStatusOfVerfuegt()) {
 							betreuung.setGueltig(true);
