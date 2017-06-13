@@ -194,7 +194,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())
 				&& WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
 				if (!newEntity.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()) {
-					wizardStep.setWizardStepStatus(getWizardStepStatusOkOrMutiert(wizardStep));
+					setWizardStepOkOrMutiert(wizardStep);
 				} else if (oldEntity == null || !oldEntity.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()
 					|| (!oldEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2() && newEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2())) {
 					// beim Wechseln von KEIN_EV auf EV oder von KEIN_EV_FUER_BASISJAHR2 auf EV_FUER_BASISJAHR2
@@ -235,7 +235,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					}
 				}
 				if (allNeededDokumenteUploaded) {
-					wizardStep.setWizardStepStatus(getWizardStepStatusOkOrMutiert(wizardStep));
+					setWizardStepOkOrMutiert(wizardStep);
 				} else {
 					if (wizardStep.getGesuch().isMutation()) {
 						wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
