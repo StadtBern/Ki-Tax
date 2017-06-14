@@ -1,4 +1,4 @@
-FROM docker.dvbern.ch:5000/dvbern/appserv-wildfly-10.1.0:1.2
+FROM docker.dvbern.ch:5000/dvbern/appserv-wildfly-10.1.0:latest
 
 MAINTAINER Markus Hofstetter <markus.hofstetter@dvbern.ch>
 
