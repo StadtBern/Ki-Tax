@@ -54,28 +54,35 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 			if (newFamiliensituation.getGemeinsameSteuererklaerung() == null) {
 				newFamiliensituation.setGemeinsameSteuererklaerung(false);
 			}
-			if (gesuch.extractEinkommensverschlechterungInfo() != null) { //eigentlich darf es bei einer Mutation nie null sein. Trotzdem zur Sicherheit...
+			if (gesuch.extractEinkommensverschlechterungInfo() != null) { //eigentlich darf es bei einer Mutation nie
+				// null sein. Trotzdem zur Sicherheit...
 				if (gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP1() == null) {
 					gesuch.extractEinkommensverschlechterungInfo().setGemeinsameSteuererklaerung_BjP1(false);
 				}
 				if (gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP2() == null) {
 					gesuch.extractEinkommensverschlechterungInfo().setGemeinsameSteuererklaerung_BjP2(false);
 				}
-					einkommensverschlechterungInfoService.updateEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfoContainer());
-				}
+				einkommensverschlechterungInfoService.updateEinkommensverschlechterungInfo(gesuch
+					.getEinkommensverschlechterungInfoContainer());
 			}
+		} else if (!newFamiliensituation.hasSecondGesuchsteller()) {
+			// if there is no GS2 the field gemeinsameSteuererklaerung must be set to null
+			newFamiliensituation.setGemeinsameSteuererklaerung(null);
+		}
 
-		final FamiliensituationContainer mergedFamiliensituationContainer = persistence.merge(familiensituationContainer);
+		final FamiliensituationContainer mergedFamiliensituationContainer = persistence.merge
+			(familiensituationContainer);
 		gesuch.setFamiliensituationContainer(mergedFamiliensituationContainer);
 
 		// get old FamSit to compare with
 		Familiensituation oldFamiliensituation;
-		if (mergedFamiliensituationContainer != null && mergedFamiliensituationContainer.getFamiliensituationErstgesuch() != null) {
-			oldFamiliensituation = mergedFamiliensituationContainer.getFamiliensituationErstgesuch();  //bei mutation immer die Situation vom Erstgesuch als  Basis fuer Wizardstepanpassung
+		if (mergedFamiliensituationContainer != null && mergedFamiliensituationContainer
+			.getFamiliensituationErstgesuch() != null) {
+			oldFamiliensituation = mergedFamiliensituationContainer.getFamiliensituationErstgesuch();  //bei mutation
+			// immer die Situation vom Erstgesuch als  Basis fuer Wizardstepanpassung
 		} else {
 			oldFamiliensituation = loadedFamiliensituation;
 		}
-
 
 		//Alle Daten des GS2 loeschen wenn man von 2GS auf 1GS wechselt und GS2 bereits erstellt wurde
 		if (gesuch.getGesuchsteller2() != null && isNeededToRemoveGesuchsteller2(gesuch,
@@ -85,7 +92,8 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 			newFamiliensituation.setGemeinsameSteuererklaerung(false);
 		}
 
-		wizardStepService.updateSteps(gesuch.getId(), oldFamiliensituation, newFamiliensituation, WizardStepName.FAMILIENSITUATION);
+		wizardStepService.updateSteps(gesuch.getId(), oldFamiliensituation, newFamiliensituation, WizardStepName
+			.FAMILIENSITUATION);
 
 		return mergedFamiliensituationContainer;
 	}

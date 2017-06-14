@@ -116,4 +116,27 @@ public class Familiensituation extends AbstractEntity {
 		mutation.setGesuchstellerKardinalitaet(this.gesuchstellerKardinalitaet);
 		return mutation;
 	}
+
+	@Override
+	public boolean equals(@Nullable Object that) {
+		if (that instanceof Familiensituation) {
+			Familiensituation thatFamiliensituation = (Familiensituation) that;
+
+			boolean isEqualAenderungPer = (this.aenderungPer == null && thatFamiliensituation.aenderungPer == null) ||
+				(this.aenderungPer != null && this.aenderungPer.equals(thatFamiliensituation.aenderungPer));
+			boolean isEqualGemeinsameSE = (this.gemeinsameSteuererklaerung == null && thatFamiliensituation.gemeinsameSteuererklaerung == null) ||
+				(this.gemeinsameSteuererklaerung != null && this.gemeinsameSteuererklaerung.equals(thatFamiliensituation.gemeinsameSteuererklaerung));
+
+			return isEqualAenderungPer
+				&& this.familienstatus.equals(thatFamiliensituation.familienstatus)
+				&& isEqualGemeinsameSE
+				&& this.gesuchstellerKardinalitaet.equals(thatFamiliensituation.gesuchstellerKardinalitaet);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return getId() != null ? getId().hashCode() : 0;
+	}
 }

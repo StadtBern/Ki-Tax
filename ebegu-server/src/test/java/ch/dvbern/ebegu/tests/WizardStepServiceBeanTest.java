@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -115,8 +114,11 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		updateStatus(gesuchstellerStep, WizardStepStatus.IN_BEARBEITUNG);
 
 		//oldData ist eine leere Familiensituation
+		final Familiensituation newFamiliensituation = TestDataUtil.createDefaultFamiliensituation();
+		final Familiensituation vorgaenger = TestDataUtil.createDefaultFamiliensituation();
+		newFamiliensituation.setVorgaengerId(vorgaenger.getId());
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(),
-			new Familiensituation(), TestDataUtil.createDefaultFamiliensituation(), WizardStepName.FAMILIENSITUATION);
+			new Familiensituation(), newFamiliensituation, WizardStepName.FAMILIENSITUATION);
 		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.FAMILIENSITUATION).getWizardStepStatus());
@@ -132,6 +134,8 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		Familiensituation oldFamiliensituation = new Familiensituation(gesuch.getFamiliensituationContainer().getFamiliensituationJA());
 		final Familiensituation newFamiliensituation = gesuch.extractFamiliensituation();
 		newFamiliensituation.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
+		final Familiensituation vorgaenger = TestDataUtil.createDefaultFamiliensituation();
+		newFamiliensituation.setVorgaengerId(vorgaenger.getId());
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), oldFamiliensituation,
 			newFamiliensituation, WizardStepName.FAMILIENSITUATION);
@@ -452,8 +456,22 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
+	public void updateWizardStepFamiliensitMutiertSameData() {
+		updateStatusMutiert(familienStep, WizardStepStatus.OK);
+		gesuch.extractFamiliensituation().setVorgaengerId(gesuch.extractFamiliensituation().getId()); // same data
+		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), gesuch.extractFamiliensituation(),
+			gesuch.extractFamiliensituation(), WizardStepName.FAMILIENSITUATION);
+		Assert.assertEquals(11, wizardSteps.size());
+
+		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.FAMILIENSITUATION).getWizardStepStatus());
+	}
+
+	@Test
 	public void updateWizardStepFamiliensitMutiert() {
 		updateStatusMutiert(familienStep, WizardStepStatus.OK);
+		final Familiensituation vorgaenger = TestDataUtil.createDefaultFamiliensituation();
+		vorgaenger.setFamilienstatus(EnumFamilienstatus.KONKUBINAT);
+		gesuch.extractFamiliensituation().setVorgaengerId(vorgaenger.getId());
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), gesuch.extractFamiliensituation(),
 			gesuch.extractFamiliensituation(), WizardStepName.FAMILIENSITUATION);
 		Assert.assertEquals(11, wizardSteps.size());
@@ -514,6 +532,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		EinkommensverschlechterungInfo newData = new EinkommensverschlechterungInfo();
 		newData.setEinkommensverschlechterung(false);
 		newDataCont.setEinkommensverschlechterungInfoJA(newData);
+		newDataCont.setVorgaengerId(newDataCont.getId());
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(),
 			oldDataCont, newDataCont, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
