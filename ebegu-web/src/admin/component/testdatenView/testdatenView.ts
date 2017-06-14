@@ -1,5 +1,6 @@
 import {IComponentOptions, IPromise} from 'angular';
 import {TestFaelleRS} from '../../service/testFaelleRS.rest';
+import {DatabaseMigrationRS} from '../../service/databaseMigrationRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
 import {LinkDialogController} from '../../../gesuch/dialog/LinkDialogController';
@@ -24,7 +25,7 @@ export class TestdatenViewComponentConfig implements IComponentOptions {
 
 export class TestdatenViewController {
     static $inject = ['TestFaelleRS', 'DvDialog', 'UserRS',
-        'ErrorService', 'ReindexRS', 'GesuchsperiodeRS'];
+        'ErrorService', 'ReindexRS', 'GesuchsperiodeRS', 'DatabaseMigrationRS'];
 
     testFaelleRS: TestFaelleRS;
     fallId: number;
@@ -41,7 +42,8 @@ export class TestdatenViewController {
 
     /* @ngInject */
     constructor(testFaelleRS: TestFaelleRS, private dvDialog: DvDialog, private userRS: UserRS,
-                private errorService: ErrorService, private reindexRS: ReindexRS, private gesuchsperiodeRS: GesuchsperiodeRS) {
+                private errorService: ErrorService, private reindexRS: ReindexRS,
+                private gesuchsperiodeRS: GesuchsperiodeRS, private databaseMigrationRS: DatabaseMigrationRS) {
         this.testFaelleRS = testFaelleRS;
         this.fetchList();
     }
@@ -159,5 +161,9 @@ export class TestdatenViewController {
 
     public startReindex() {
         return this.reindexRS.reindex();
+    }
+
+    public processScript(script: string): void {
+        this.databaseMigrationRS.processScript(script);
     }
 }

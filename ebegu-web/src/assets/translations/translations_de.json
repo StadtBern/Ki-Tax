@@ -1041,5 +1041,6 @@
     "VORLAGE_BENUTZERHANDBUCH_REVISOR": "Benutzerhandbuch Revisor",
     "VORLAGE_BENUTZERHANDBUCH_SCHULAMT": "Benutzerhandbuch Schulamt",
     "VORLAGE_BENUTZERHANDBUCH_STV": "Benutzerhandbuch Steuerverwaltung",
-    "VORLAGE_BENUTZERHANDBUCH_TRAEGERSCHAFT": "Benutzerhandbuch Trägerschaften"
+    "VORLAGE_BENUTZERHANDBUCH_TRAEGERSCHAFT": "Benutzerhandbuch Trägerschaften",
+    "MANUELLE_SKRIPTS": "Manuelle Skripts ausführen"
 }

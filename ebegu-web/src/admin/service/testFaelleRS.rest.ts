@@ -75,4 +75,8 @@ export class TestFaelleRS {
             return response.data;
         });
     }
+
+    public processScript(scriptNr: string): IHttpPromise<any> {
+        return this.http.get(this.serviceURL + '/processscript/' + scriptNr);
+    }
 }
