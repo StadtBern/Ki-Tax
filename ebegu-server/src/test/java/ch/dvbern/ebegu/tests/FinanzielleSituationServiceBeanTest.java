@@ -1,5 +1,11 @@
 package ch.dvbern.ebegu.tests;
 
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.FinanzielleSituation;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -14,11 +20,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Tests fuer die Klasse FinanzielleSituationService
@@ -70,18 +71,6 @@ public class FinanzielleSituationServiceBeanTest extends AbstractEbeguLoginTest 
 		updatedCont.getFinanzielleSituationGS().setNettolohn(new BigDecimal(200000));
 		FinanzielleSituationContainer contUpdTwice = finanzielleSituationService.saveFinanzielleSituation(updatedCont, null);
 		Assert.assertEquals(200000L, contUpdTwice.getFinanzielleSituationGS().getNettolohn().longValue());
-	}
-
-	@Test
-	public void removeFinanzielleSituationTest() {
-		Assert.assertNotNull(finanzielleSituationService);
-		Assert.assertEquals(0, finanzielleSituationService.getAllFinanzielleSituationen().size());
-
-		FinanzielleSituationContainer insertedFinanzielleSituations = insertNewEntity();
-		Assert.assertEquals(1, finanzielleSituationService.getAllFinanzielleSituationen().size());
-
-		finanzielleSituationService.removeFinanzielleSituation(insertedFinanzielleSituations);
-		Assert.assertEquals(0, finanzielleSituationService.getAllFinanzielleSituationen().size());
 	}
 
 	private FinanzielleSituationContainer insertNewEntity() {

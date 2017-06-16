@@ -33,6 +33,9 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
@@ -85,6 +88,7 @@ import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
+import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -767,6 +771,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public Gesuch antragFreigabequittungErstellen(@Nonnull Gesuch gesuch, AntragStatus statusToChangeTo) {
 		authorizer.checkWriteAuthorization(gesuch);
 
+		// Zum jetzigen Zeitpunkt muss das Gesuch zwingend in einem kompletten / gueltigen Zustand sein
+		validateGesuchComplete(gesuch);
+
 		gesuch.setFreigabeDatum(LocalDate.now());
 
 		if (AntragStatus.FREIGEGEBEN.equals(statusToChangeTo)) {
@@ -788,6 +795,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Optional<Gesuch> gesuchOptional = Optional.ofNullable(persistence.find(Gesuch.class, gesuchId)); //direkt ueber persistence da wir eigentlich noch nicht leseberechtigt sind)
 		if (gesuchOptional.isPresent()) {
 			Gesuch gesuch = gesuchOptional.get();
+
+			// Zum jetzigen Zeitpunkt muss das Gesuch zwingend in einem kompletten / gueltigen Zustand sein
+			validateGesuchComplete(gesuch);
 
 			if (!gesuch.getStatus().equals(AntragStatus.FREIGABEQUITTUNG) && !gesuch.getStatus().equals(AntragStatus.IN_BEARBEITUNG_GS)) {
 				throw new EbeguRuntimeException("antragFreigeben",
@@ -1416,8 +1426,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	public Gesuch verfuegenStarten(@Nonnull Gesuch gesuch) {
 		if (!gesuch.getStatus().equals(AntragStatus.GEPRUEFT)) {
-			throw new EbeguRuntimeException("closeWithoutAngebot", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_ALLOWED);
+			throw new EbeguRuntimeException("verfuegenStarten", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_ALLOWED);
 		}
+		// Zum jetzigen Zeitpunkt muss das Gesuch zwingend in einem kompletten / gueltigen Zustand sein
+		validateGesuchComplete(gesuch);
+
 		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
 			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
 			postGesuchVerfuegen(gesuch);
@@ -1439,6 +1452,15 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 
 		return superAdminService.updateGesuch(gesuch, true);
+	}
+
+	private void validateGesuchComplete(@Nonnull Gesuch gesuch) {
+		// Gesamt-Validierung durchführen
+		Validator validator = Validation.byDefaultProvider().configure().buildValidatorFactory().getValidator();
+		Set<ConstraintViolation<Gesuch>> constraintViolations = validator.validate(gesuch, AntragCompleteValidationGroup.class);
+		if (!constraintViolations.isEmpty()) {
+			throw new EbeguRuntimeException("verfuegenStarten", ErrorCodeEnum.ERROR_ANTRAG_NOT_COMPLETE);
+		}
 	}
 
 	@Override
