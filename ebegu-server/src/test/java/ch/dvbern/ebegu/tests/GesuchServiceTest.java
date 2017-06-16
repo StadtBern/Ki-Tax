@@ -951,6 +951,9 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuch.setStatus(status);
 		gesuch.setGesuchsperiode(persistence.persist(gesuch.getGesuchsperiode()));
 		gesuch.setFall(persistence.persist(gesuch.getFall()));
+		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer(gesuch));
+		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(TestDataUtil.createFinanzielleSituationContainer());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationJA(TestDataUtil.createDefaultFinanzielleSituation());
 		gesuchService.createGesuch(gesuch);
 		return gesuch;
 	}
