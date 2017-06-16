@@ -248,15 +248,16 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                     // available for the role SCHULAMT, so JA doesn't need the PDFs to be created. When a Schulamt worker opens this Gesuch,
                     // she can generate the PDFs by clicking on the corresponding links
                     AuthenticationUtil.navigateToStartPageForRole(this.authServiceRs.getPrincipal(), this.$state);
-                    // No return needed because we have already navigated to the StartPage of the role
-                }
-                this.gesuchModelManager.setGesuch(response);
-                this.form.$setPristine(); // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
-                return this.refreshKinderListe().then(() => {
-                    return this.createNeededPDFs(true).then(() => {
-                        return this.gesuchModelManager.getGesuch();
+                    return this.gesuchModelManager.getGesuch();
+                } else { // for NUR_SCHULAMT this makes no sense
+                    this.gesuchModelManager.setGesuch(response);
+                    this.form.$setPristine(); // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
+                    return this.refreshKinderListe().then(() => {
+                        return this.createNeededPDFs(true).then(() => {
+                            return this.gesuchModelManager.getGesuch();
+                        });
                     });
-                });
+                }
             });
         });
     }

@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
 import javax.ejb.Asynchronous;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -31,15 +33,20 @@ public interface GesuchService {
 	@Nonnull
 	Gesuch createGesuch(@Nonnull Gesuch gesuch);
 
+	@Nonnull
+	@PermitAll
+	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory);
+
 	/**
 	 * Aktualisiert das Gesuch in der DB
 	 *
 	 * @param gesuch              das Gesuch als DTO
 	 * @param saveInStatusHistory true wenn gewollt, dass die Aenderung in der Status gespeichert wird
+	 * @param saveAsUser 		  wenn gesetzt, die Statusaenderung des Gesuchs wird mit diesem User gespeichert, sonst mit currentUser
 	 * @return Das aktualisierte Gesuch
 	 */
 	@Nonnull
-	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory);
+	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory, @Nullable Benutzer saveAsUser);
 
 	/**
 	 * Laedt das Gesuch mit der id aus der DB. ACHTUNG zudem wird hier der Status auf IN_BEARBEITUNG_JA gesetzt

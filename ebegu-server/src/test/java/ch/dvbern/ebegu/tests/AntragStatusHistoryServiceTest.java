@@ -42,25 +42,38 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	private GesuchService gesuchService;
 
 	private Gesuch gesuch;
-	private Benutzer benutzer;
+	private Benutzer benutzerSuperAdmin;
 
 
 	@Before
 	public void setUp() {
-		benutzer = getDummySuperadmin(); // wir erstellen in superklasse schon einen superadmin
+		benutzerSuperAdmin = getDummySuperadmin(); // wir erstellen in superklasse schon einen superadmin
 		gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 	}
 
 	@Test
-	public void saveChanges() {
-
+	public void saveChangesCurrentUser() {
 		LocalDateTime time = LocalDateTime.now();
-		final AntragStatusHistory createdStatusHistory = statusHistoryService.saveStatusChange(gesuch);
+		final Benutzer benutzerJA = loginAsSachbearbeiterJA();
+		final AntragStatusHistory createdStatusHistory = statusHistoryService.saveStatusChange(gesuch, null);
 
+		assertSavedChanges(time, createdStatusHistory, benutzerJA);
+	}
+
+	@Test
+	public void saveChangesAsOtherUser() {
+		LocalDateTime time = LocalDateTime.now();
+		loginAsSachbearbeiterJA();
+		final AntragStatusHistory createdStatusHistory = statusHistoryService.saveStatusChange(gesuch, benutzerSuperAdmin);
+
+		assertSavedChanges(time, createdStatusHistory, benutzerSuperAdmin);
+	}
+
+	private void assertSavedChanges(LocalDateTime time, AntragStatusHistory createdStatusHistory, Benutzer user) {
 		Assert.assertNotNull(createdStatusHistory);
 		Assert.assertEquals(gesuch.getStatus(), createdStatusHistory.getStatus());
 		Assert.assertEquals(gesuch, createdStatusHistory.getGesuch());
-		Assert.assertEquals(benutzer, createdStatusHistory.getBenutzer());
+		Assert.assertEquals(user, createdStatusHistory.getBenutzer());
 		//just check that the generated date is after (or equals) the temporal one we created before
 		Assert.assertTrue(time.isBefore(createdStatusHistory.getTimestampVon()) || time.isEqual(createdStatusHistory.getTimestampVon()));
 	}
@@ -73,11 +86,11 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	@Ignore
 	public void findLastStatusChangeTest() {
 		gesuch.setStatus(AntragStatus.ERSTE_MAHNUNG);
-		statusHistoryService.saveStatusChange(gesuch);
+		statusHistoryService.saveStatusChange(gesuch, null);
 		gesuch.setStatus(AntragStatus.FREIGABEQUITTUNG);
-		statusHistoryService.saveStatusChange(gesuch);
+		statusHistoryService.saveStatusChange(gesuch, null);
 		gesuch.setStatus(AntragStatus.VERFUEGT);
-		statusHistoryService.saveStatusChange(gesuch);
+		statusHistoryService.saveStatusChange(gesuch, null);
 		final AntragStatusHistory lastStatusChange = statusHistoryService.findLastStatusChange(gesuch);
 		Assert.assertNotNull(lastStatusChange);
 		Assert.assertEquals(AntragStatus.VERFUEGT, lastStatusChange.getStatus());
