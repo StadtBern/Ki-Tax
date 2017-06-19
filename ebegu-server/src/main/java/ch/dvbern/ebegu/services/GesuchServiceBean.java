@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
@@ -82,6 +83,7 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
+import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
@@ -1409,23 +1411,29 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	public Gesuch closeWithoutAngebot(@Nonnull Gesuch gesuch) {
-		if (!gesuch.getStatus().equals(AntragStatus.GEPRUEFT)) {
+		if (gesuch.getStatus() != AntragStatus.GEPRUEFT) {
 			throw new EbeguRuntimeException("closeWithoutAngebot", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_ALLOWED);
 		}
 		if (!gesuch.extractAllBetreuungen().isEmpty()) {
 			throw new EbeguRuntimeException("closeWithoutAngebot", ErrorCodeEnum.ERROR_ONLY_IF_NO_BETERUUNG);
 		}
-
 		gesuch.setStatus(AntragStatus.KEIN_ANGEBOT);
 		postGesuchVerfuegen(gesuch);
 		wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
-
-		return updateGesuch(gesuch, true, null);
+		Gesuch persistedGesuch = updateGesuch(gesuch, true, null);
+		// Das Dokument der Finanziellen Situation erstellen
+		try {
+			generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(persistedGesuch, true);
+		} catch (MimeTypeParseException | MergeDocException e) {
+			throw new EbeguRuntimeException("closeWithoutAngebot", "FinSit-Dokument konnte nicht erstellt werden"
+				+ persistedGesuch.getId(), e);
+		}
+		return persistedGesuch;
 	}
 
 	@Override
 	public Gesuch verfuegenStarten(@Nonnull Gesuch gesuch) {
-		if (!gesuch.getStatus().equals(AntragStatus.GEPRUEFT)) {
+		if (gesuch.getStatus() != AntragStatus.GEPRUEFT) {
 			throw new EbeguRuntimeException("verfuegenStarten", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_ALLOWED);
 		}
 		// Zum jetzigen Zeitpunkt muss das Gesuch zwingend in einem kompletten / gueltigen Zustand sein
@@ -1451,7 +1459,15 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			}
 		}
 
-		return superAdminService.updateGesuch(gesuch, true, principalBean.getBenutzer());
+		Gesuch persistedGesuch = superAdminService.updateGesuch(gesuch, true, principalBean.getBenutzer());
+		// Das Dokument der Finanziellen Situation erstellen
+		try {
+			generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(persistedGesuch, true);
+		} catch (MimeTypeParseException | MergeDocException e) {
+			throw new EbeguRuntimeException("verfuegenStarten", "FinSit-Dokument konnte nicht erstellt werden"
+				+ persistedGesuch.getId(), e);
+		}
+		return persistedGesuch;
 	}
 
 	private void validateGesuchComplete(@Nonnull Gesuch gesuch) {

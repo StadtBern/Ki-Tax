@@ -303,7 +303,8 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		if (persistedDokument == null) {
 			LOGGER.error("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
-				"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp, expectedFilepath);
+				"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp,
+				id, expectedFilepath);
 		}
 
 		if (persistedDokument != null && !Files.exists(Paths.get(persistedDokument.getFilepfad()))) {
@@ -394,7 +395,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		WriteProtectedDokument persistedDokument = null;
 
-		if (!forceCreation && Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
+		if (!forceCreation || Betreuungsstatus.VERFUEGT == betreuung.getBetreuungsstatus()) {
 
 			String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
 			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp, expectedFilepath);

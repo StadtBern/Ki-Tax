@@ -225,9 +225,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                 this.gesuchModelManager.setGesuch(response);
                 this.form.$setPristine(); // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
                 return this.refreshKinderListe().then(() => {
-                    return this.createNeededPDFs(true).then(() => {
-                        return this.gesuchModelManager.getGesuch();
-                    });
+                    return this.gesuchModelManager.getGesuch();
                 });
             });
         });
@@ -253,9 +251,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                     this.gesuchModelManager.setGesuch(response);
                     this.form.$setPristine(); // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
                     return this.refreshKinderListe().then(() => {
-                        return this.createNeededPDFs(true).then(() => {
-                            return this.gesuchModelManager.getGesuch();
-                        });
+                        return this.gesuchModelManager.getGesuch();
                     });
                 }
             });
@@ -358,11 +354,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             this.mahnungRS.saveMahnung(this.mahnung).then((mahnungResponse: TSMahnung) => {
                 this.setGesuchStatus(this.tempAntragStatus).then(any => {
                     this.mahnungList.push(mahnungResponse);
-
-                    this.downloadRS.getAccessTokenMahnungGeneratedDokument(mahnungResponse, true).then((response: any) => {
-                        this.tempAntragStatus = undefined;
-                        this.mahnung = undefined;
-                    });
+                    this.tempAntragStatus = undefined;
+                    this.mahnung = undefined;
                 });
             });
         }
@@ -463,13 +456,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });
-    }
-
-    private createNeededPDFs(forceCreation: boolean): IPromise<TSDownloadFile> {
-        if (this.getGesuch().hasFSDokument) {
-            return this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, true);
-        }
-        return undefined;
     }
 
     public showBeschwerdeHaengig(): boolean {
