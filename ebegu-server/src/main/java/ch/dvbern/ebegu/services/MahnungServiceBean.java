@@ -1,5 +1,25 @@
 package ch.dvbern.ebegu.services;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Mahnung;
@@ -13,20 +33,6 @@ import ch.dvbern.ebegu.vorlagen.PrintUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
@@ -158,10 +164,10 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 			final Gesuch gesuch = mahnung.getGesuch();
 			if (AntragStatus.ERSTE_MAHNUNG.equals(gesuch.getStatus()) || AntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN.equals(gesuch.getStatus())) {
 				gesuch.setStatus(AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN);
-				gesuchService.updateGesuch(gesuch, true);
+				gesuchService.updateGesuch(gesuch, true, null);
 			} else if (AntragStatus.ZWEITE_MAHNUNG.equals(gesuch.getStatus()) || AntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN.equals(gesuch.getStatus())) {
 				gesuch.setStatus(AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
-				gesuchService.updateGesuch(gesuch, true);
+				gesuchService.updateGesuch(gesuch, true, null);
 			}
 			mahnung.setAbgelaufen(true);
 			persistence.merge(mahnung);

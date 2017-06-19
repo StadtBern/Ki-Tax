@@ -1,5 +1,9 @@
 package ch.dvbern.ebegu.services.interceptors;
 
+import javax.inject.Inject;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
+
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -11,11 +15,10 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
-
-import static ch.dvbern.ebegu.enums.UserRole.*;
+import static ch.dvbern.ebegu.enums.UserRole.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRole.STEUERAMT;
+import static ch.dvbern.ebegu.enums.UserRole.SUPER_ADMIN;
 
 /**
  * UpdateStatusInterceptor:
@@ -68,7 +71,7 @@ public class UpdateStatusInterceptor {
 
 	private void changeGesuchStatus(Gesuch gesuch, AntragStatus newStatus) {
 		gesuch.setStatus(newStatus);
-		gesuchService.updateGesuch(gesuch, true);
+		gesuchService.updateGesuch(gesuch, true, null);
 
 		if (configuration.getIsDevmode() || LOG.isDebugEnabled()) {
             LOG.info("Antrag wurde in den Status " + newStatus + " gesetzt. ID " + gesuch.getId());
