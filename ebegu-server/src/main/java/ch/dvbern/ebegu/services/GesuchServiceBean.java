@@ -167,13 +167,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	@Override
 	@PermitAll
-	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory) {
-		return this.updateGesuch(gesuch, saveInStatusHistory, null); // save as current user
-	}
-
-	@Nonnull
-	@Override
-	@PermitAll
 	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory, @Nullable Benutzer saveAsUser) {
 		authorizer.checkWriteAuthorization(gesuch);
 		Objects.requireNonNull(gesuch);
@@ -792,7 +785,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		// Step Freigabe gruen
 		wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
 
-		return updateGesuch(gesuch, true);
+		return updateGesuch(gesuch, true, null);
 	}
 
 	@Nonnull
@@ -860,7 +853,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		allGesucheForFall.iterator().forEachRemaining(gesuchLoop -> {
 			if (gesuch.equals(gesuchLoop)) {
 				gesuchLoop.setStatus(AntragStatus.BESCHWERDE_HAENGIG);
-				updateGesuch(gesuchLoop, true);
+				updateGesuch(gesuchLoop, true, null);
 			}
 			gesuchLoop.setGesperrtWegenBeschwerde(true); // Flag nicht über Service setzen, da u.U. Gesuch noch inBearbeitungGS
 			persistence.merge(gesuchLoop);
@@ -876,7 +869,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			if (gesuch.equals(gesuchLoop) && AntragStatus.BESCHWERDE_HAENGIG.equals(gesuchLoop.getStatus())) {
 				final AntragStatusHistory lastStatusChange = antragStatusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuchLoop);
 				gesuchLoop.setStatus(lastStatusChange.getStatus());
-				updateGesuch(gesuchLoop, true);
+				updateGesuch(gesuchLoop, true, null);
 			}
 			gesuchLoop.setGesperrtWegenBeschwerde(false); // Flag nicht über Service setzen, da u.U. Gesuch noch inBearbeitungGS
 			persistence.merge(gesuchLoop);
@@ -1240,7 +1233,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			try {
 				mailService.sendWarnungGesuchNichtFreigegeben(gesuch, anzahlTageBisLoeschungNachWarnungFreigabe);
 				gesuch.setDatumGewarntNichtFreigegeben(LocalDate.now());
-				updateGesuch(gesuch, false);
+				updateGesuch(gesuch, false, null);
 			} catch (MailException e) {
 				LOG.error("Mail WarnungGesuchNichtFreigegeben konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
 				anzahl--;
@@ -1280,7 +1273,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			try {
 				mailService.sendWarnungFreigabequittungFehlt(gesuch, anzahlTageBisLoeschungNachWarnungFreigabe);
 				gesuch.setDatumGewarntFehlendeQuittung(LocalDate.now());
-				updateGesuch(gesuch, false);
+				updateGesuch(gesuch, false, null);
 			} catch (MailException e) {
 				LOG.error("Mail WarnungFreigabequittungFehlt konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
 				anzahl--;
@@ -1427,7 +1420,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		postGesuchVerfuegen(gesuch);
 		wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
 
-		return updateGesuch(gesuch, true);
+		return updateGesuch(gesuch, true, null);
 	}
 
 	@Override
@@ -1486,7 +1479,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			gesuch.setGueltig(true);
 			if (neustesVerfuegtesGesuchFuerGesuch.isPresent() && !neustesVerfuegtesGesuchFuerGesuch.get().getId().equals(gesuch.getId())) {
 				neustesVerfuegtesGesuchFuerGesuch.get().setGueltig(false);
-				updateGesuch(neustesVerfuegtesGesuchFuerGesuch.get(), false);
+				updateGesuch(neustesVerfuegtesGesuchFuerGesuch.get(), false, null);
 			}
 		}
 	}

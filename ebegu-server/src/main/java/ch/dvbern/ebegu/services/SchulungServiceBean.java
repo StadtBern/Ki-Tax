@@ -1,10 +1,58 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.Random;
+
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import ch.dvbern.ebegu.entities.Adresse;
+import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
+import ch.dvbern.ebegu.entities.AuthorisierterBenutzer_;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuung_;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.ebegu.testfaelle.*;
+import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
+import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
+import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
+import ch.dvbern.ebegu.testfaelle.Testfall03_PerreiraMarcia;
+import ch.dvbern.ebegu.testfaelle.Testfall04_WaltherLaura;
+import ch.dvbern.ebegu.testfaelle.Testfall05_LuethiMeret;
+import ch.dvbern.ebegu.testfaelle.Testfall06_BeckerNora;
+import ch.dvbern.ebegu.testfaelle.Testfall07_MeierMeret;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
@@ -14,17 +62,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.criteria.*;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.*;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
@@ -332,7 +369,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		testfall.setFixId(GESUCH_ID.replaceAll("XX", id));
 		Gesuch gesuch = createFallForSuche(testfall, nachname, vorname, institutionenForSchulung, verfuegen, noRandom);
 		FreigabeCopyUtil.copyForFreigabe(gesuch);
-		gesuchService.updateGesuch(gesuch, false);
+		gesuchService.updateGesuch(gesuch, false, null);
 	}
 
 	private void createFall(Class<? extends AbstractTestfall> classTestfall, Gesuchsperiode gesuchsperiode, List<InstitutionStammdaten> institutionenForTestfall, String id, String nachname, String vorname, List<InstitutionStammdaten> institutionenForSchulung) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
@@ -348,7 +385,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		if (StringUtils.isNotEmpty(vorname)) {
 			gesuch.getGesuchsteller1().getGesuchstellerJA().setVorname(vorname);
 		}
-		return gesuchService.updateGesuch(gesuch, false);
+		return gesuchService.updateGesuch(gesuch, false, null);
 	}
 
 	@Inject
@@ -393,7 +430,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 				}
 			}
 		}
-		Gesuch savedGesuch = gesuchService.updateGesuch(gesuch, false);
+		Gesuch savedGesuch = gesuchService.updateGesuch(gesuch, false, null);
 		if (verfuegen) {
 			wizardStepService.updateSteps(savedGesuch.getId(), null, null, WizardStepName.VERFUEGEN);
 		}

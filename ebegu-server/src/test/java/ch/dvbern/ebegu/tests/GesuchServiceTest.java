@@ -115,7 +115,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(insertedGesuch.getFall().getId(), gesuch.get().getFall().getId());
 
 		gesuch.get().setFall(persistence.persist(TestDataUtil.createDefaultFall()));
-		final Gesuch updated = gesuchService.updateGesuch(gesuch.get(), false);
+		final Gesuch updated = gesuchService.updateGesuch(gesuch.get(), false, null);
 		Assert.assertEquals(updated.getFall().getId(), gesuch.get().getFall().getId());
 
 	}
@@ -383,7 +383,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuchVerfuegt.setStatus(AntragStatus.VERFUEGT);
 		gesuchVerfuegt.setGueltig(true);
 		gesuchVerfuegt.setTimestampVerfuegt(LocalDateTime.now());
-		gesuchVerfuegt = gesuchService.updateGesuch(gesuchVerfuegt, true);
+		gesuchVerfuegt = gesuchService.updateGesuch(gesuchVerfuegt, true, null);
 
 		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(gesuchVerfuegt.getId(), LocalDate.of(1980, Month.MARCH, 25));
 
@@ -607,7 +607,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuch.setGueltig(true);
 		gesuch.setTimestampVerfuegt(LocalDateTime.now());
 		gesuch.setStatus(AntragStatus.VERFUEGT);
-		gesuch = gesuchService.updateGesuch(gesuch, true);
+		gesuch = gesuchService.updateGesuch(gesuch, true, null);
 		final Optional<Gesuch> optMutation = gesuchService.antragMutieren(gesuch.getId(), LocalDate.now());
 
 		gesuchService.createGesuch(optMutation.get());
@@ -621,7 +621,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		}
 
 		optMutation.get().setStatus(AntragStatus.VERFUEGT);
-		gesuchService.updateGesuch(optMutation.get(), true);
+		gesuchService.updateGesuch(optMutation.get(), true, null);
 		gesuchService.antragMutieren(gesuch.getId(), LocalDate.now()); // nach dem die Mutation verfuegt ist, darf man es wieder mutieren
 	}
 
@@ -740,7 +740,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		persistence.persist(gesuch1415_1);
 
 		gesuch1516_1.setStatus(AntragStatus.VERFUEGT);
-		final Gesuch gesuch1516_1_verfuegt = gesuchService.updateGesuch(gesuch1516_1, true);
+		final Gesuch gesuch1516_1_verfuegt = gesuchService.updateGesuch(gesuch1516_1, true, null);
 
 		gesuchService.setBeschwerdeHaengigForPeriode(gesuch1516_1_verfuegt);
 		gesuchService.removeBeschwerdeHaengigForPeriode(gesuch1516_1_verfuegt);
@@ -829,7 +829,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuch.setGueltig(true);
 		gesuch.setTimestampVerfuegt(LocalDateTime.now());
 		gesuch.setStatus(AntragStatus.VERFUEGT);
-		gesuch = gesuchService.updateGesuch(gesuch, true);
+		gesuch = gesuchService.updateGesuch(gesuch, true, null);
 		final Betreuung betreuungErstGesuch = gesuch.extractAllBetreuungen().get(0);
 
 		final Optional<Gesuch> optMutation = gesuchService.antragMutieren(gesuch.getId(), LocalDate.now());

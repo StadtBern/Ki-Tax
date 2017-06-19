@@ -446,7 +446,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			saveFinanzielleSituation(gesuch, wizardStepsFromGesuch);
 			saveEinkommensverschlechterung(gesuch, wizardStepsFromGesuch);
 
-			gesuchService.updateGesuch(gesuch, false); // just save all other objects before updating dokumente and verfuegungen
+			gesuchService.updateGesuch(gesuch, false, null); // just save all other objects before updating dokumente and verfuegungen
 			saveDokumente(wizardStepsFromGesuch);
 			saveVerfuegungen(gesuch, wizardStepsFromGesuch);
 		}

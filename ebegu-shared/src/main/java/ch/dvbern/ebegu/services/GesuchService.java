@@ -1,5 +1,14 @@
 package ch.dvbern.ebegu.services;
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Asynchronous;
+
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
@@ -8,15 +17,6 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.security.PermitAll;
-import javax.ejb.Asynchronous;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Service zum Verwalten von Gesuche
@@ -32,10 +32,6 @@ public interface GesuchService {
 	 */
 	@Nonnull
 	Gesuch createGesuch(@Nonnull Gesuch gesuch);
-
-	@Nonnull
-	@PermitAll
-	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory);
 
 	/**
 	 * Aktualisiert das Gesuch in der DB
