@@ -43,8 +43,6 @@ public class AntragStatusConverterUtil {
 				return AntragStatusDTO.FREIGEGEBEN;
 			case IN_BEARBEITUNG_JA:
 				return AntragStatusDTO.IN_BEARBEITUNG_JA;
-			case ZURUECKGEWIESEN:
-				return AntragStatusDTO.ZURUECKGEWIESEN;
 			case ERSTE_MAHNUNG:
 				return AntragStatusDTO.ERSTE_MAHNUNG;
 			case ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN:
@@ -118,8 +116,6 @@ public class AntragStatusConverterUtil {
 				return AntragStatus.FREIGEGEBEN;
 			case IN_BEARBEITUNG_JA:
 				return AntragStatus.IN_BEARBEITUNG_JA;
-			case ZURUECKGEWIESEN:
-				return AntragStatus.ZURUECKGEWIESEN;
 			case ERSTE_MAHNUNG:
 				return AntragStatus.ERSTE_MAHNUNG;
 			case ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN:
