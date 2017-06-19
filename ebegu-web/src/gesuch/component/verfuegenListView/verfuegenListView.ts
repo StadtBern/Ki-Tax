@@ -229,9 +229,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                 this.gesuchModelManager.setGesuch(response);
                 this.form.$setPristine(); // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
                 return this.refreshKinderListe().then(() => {
-                    return this.createNeededPDFs(true).then(() => {
-                        return this.gesuchModelManager.getGesuch();
-                    });
+                    return this.gesuchModelManager.getGesuch();
                 });
             });
         });
@@ -243,7 +241,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
         }).then(() => {
 
-            return this.gesuchRS.verfuegenStarten(this.gesuchModelManager.getGesuch().id).then((response) => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+            return this.gesuchRS.verfuegenStarten(
+                    this.gesuchModelManager.getGesuch().id, this.gesuchModelManager.getGesuch().hasFSDokument).
+                    then((response) => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
                 if (response.status === TSAntragStatus.NUR_SCHULAMT) {
                     // If AntragStatus==NUR_SCHULAMT the Sachbearbeiter_JA has no rights to work with or even to see this gesuch any more
                     // For this reason we have to navigate directly out of the gesuch once it has been saved. We navigate to the
@@ -257,9 +257,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                     this.gesuchModelManager.setGesuch(response);
                     this.form.$setPristine(); // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
                     return this.refreshKinderListe().then(() => {
-                        return this.createNeededPDFs(true).then(() => {
-                            return this.gesuchModelManager.getGesuch();
-                        });
+                        return this.gesuchModelManager.getGesuch();
                     });
                 }
             });
@@ -464,13 +462,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });
-    }
-
-    private createNeededPDFs(forceCreation: boolean): IPromise<TSDownloadFile> {
-        if (this.getGesuch().hasFSDokument) {
-            return this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, true);
-        }
-        return undefined;
     }
 
     public showBeschwerdeHaengig(): boolean {
