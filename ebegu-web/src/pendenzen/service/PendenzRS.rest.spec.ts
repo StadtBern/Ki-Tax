@@ -41,7 +41,7 @@ describe('pendenzInstitutionRS', function () {
         describe('findBetreuung', () => {
             it('should return all pending Antraege', () => {
                 let arrayResult: Array<any> = [mockPendenzRest];
-                $httpBackend.expectGET(pendenzRS.serviceURL).respond(arrayResult);
+                $httpBackend.expectGET(pendenzRS.serviceURL + '/jugendamt/').respond(arrayResult);
 
                 let foundPendenzen: Array<TSAntragDTO>;
                 pendenzRS.getPendenzenList().then((result) => {
