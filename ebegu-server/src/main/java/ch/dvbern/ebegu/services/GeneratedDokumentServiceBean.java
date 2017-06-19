@@ -397,7 +397,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		WriteProtectedDokument persistedDokument = null;
 
-		if (!forceCreation || Betreuungsstatus.VERFUEGT == betreuung.getBetreuungsstatus()) {
+		if (!forceCreation && Betreuungsstatus.VERFUEGT == betreuung.getBetreuungsstatus()) {
 
 			String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
 			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp, expectedFilepath);
