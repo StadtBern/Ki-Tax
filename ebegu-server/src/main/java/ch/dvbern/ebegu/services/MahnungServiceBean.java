@@ -230,7 +230,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		// Wirft eine NonUnique-Exception, falls mehrere aktive ErstMahnungen!
 		List<Mahnung> criteriaResults = persistence.getCriteriaResults(query);
 		if (!criteriaResults.isEmpty()) {
-			throw new EbeguRuntimeException("assertNoOpenMahnungOfType", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
+			throw new EbeguRuntimeException("assertNoOpenMahnungOfType", ErrorCodeEnum.ERROR_EXISTING_MAHNUNG);
 		}
 	}
 }
