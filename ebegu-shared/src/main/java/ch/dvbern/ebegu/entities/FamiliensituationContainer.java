@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
+import ch.dvbern.ebegu.validators.CheckFamiliensituationContainerComplete;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -11,6 +13,7 @@ import java.time.LocalDate;
 /**
  * Entitaet zum Speichern von FamiliensituationContainer in der Datenbank.
  */
+@CheckFamiliensituationContainerComplete(groups = AntragCompleteValidationGroup.class)
 @Audited
 @Entity
 public class FamiliensituationContainer extends AbstractEntity {

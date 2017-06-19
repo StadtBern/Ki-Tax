@@ -87,7 +87,7 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 					gesuch.setTimestampVerfuegt(historyOptional.get().getTimestampVon());
 					gesuch.setGueltig(true);
 					LOGGER.info("Updating Gesuch: " + gesuchInfo);
-					gesuchService.updateGesuch(gesuch, false);
+					gesuchService.updateGesuch(gesuch, false, null);
 					// Die gueltige Verfuegung ermitteln
 					for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
 						String betreuungInfo = getBetreuungInfo(betreuung);

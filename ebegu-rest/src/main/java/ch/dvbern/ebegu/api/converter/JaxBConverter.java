@@ -1110,7 +1110,7 @@ public class JaxBConverter {
 
 	}
 
-
+	@Nonnull
 	public FinanzielleSituationContainer finanzielleSituationContainerToStorableEntity(@Nonnull final JaxFinanzielleSituationContainer containerJAX) {
 		Validate.notNull(containerJAX);
 		FinanzielleSituationContainer containerToMergeWith = new FinanzielleSituationContainer();
@@ -1291,6 +1291,7 @@ public class JaxBConverter {
 		return gesuchToEntity(gesuchToFind, gesuchToMergeWith);
 	}
 
+	@Nonnull
 	public FinanzielleSituationContainer finanzielleSituationContainerToEntity(@Nonnull final JaxFinanzielleSituationContainer containerJAX,
 																			   @Nonnull final FinanzielleSituationContainer container) {
 		Validate.notNull(container);
@@ -1310,7 +1311,9 @@ public class JaxBConverter {
 		return container;
 	}
 
-	public JaxFinanzielleSituationContainer finanzielleSituationContainerToJAX(final FinanzielleSituationContainer persistedFinanzielleSituation) {
+	@Nonnull
+	public JaxFinanzielleSituationContainer finanzielleSituationContainerToJAX(@Nonnull final FinanzielleSituationContainer
+		persistedFinanzielleSituation) {
 		final JaxFinanzielleSituationContainer jaxPerson = new JaxFinanzielleSituationContainer();
 		convertAbstractFieldsToJAX(persistedFinanzielleSituation, jaxPerson);
 		jaxPerson.setJahr(persistedFinanzielleSituation.getJahr());

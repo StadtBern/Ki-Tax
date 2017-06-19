@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.AntragStatusHistory;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,12 +13,14 @@ public interface AntragStatusHistoryService {
 
 	/**
 	 * Erstellt einen neuen Datensatz mit aktuellerStatus gleich wie der Status des uebergebenden Gesuchs
-	 * und alterStatus, der Status der es vorher hatte. Der eingeloggte Benutzer wird als benutzer hinterlegt
+	 * und alterStatus, der Status der es vorher hatte. Wenn saveAsUser null ist wird der eingeloggte Benutzer
+	 * wird als benutzer hinterlegt, sonst wird saveAsUser als benutzer hinterlegt
 	 * @param gesuch
+	 * @param saveAsUser
 	 * @return
 	 */
 	@Nonnull
-	AntragStatusHistory saveStatusChange(@Nonnull Gesuch gesuch);
+	AntragStatusHistory saveStatusChange(@Nonnull Gesuch gesuch, @Nullable Benutzer saveAsUser);
 
 	/**
 	 * Findet den letzten StatusChange furs gegebene Gesuch und gibt ihn zurueck

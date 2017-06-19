@@ -1,21 +1,8 @@
 package ch.dvbern.ebegu.api.resource;
 
-import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
-import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.api.dtos.JaxMahnung;
-import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.Zustelladresse;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.MergeDocException;
-import ch.dvbern.ebegu.services.*;
-import ch.dvbern.ebegu.util.UploadFileInfo;
-import ch.dvbern.lib.cdipersistence.Persistence;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.Validate;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
 
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
@@ -24,14 +11,55 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.MatrixParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Optional;
+
+import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
+import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.JaxMahnung;
+import ch.dvbern.ebegu.api.util.RestUtil;
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.DownloadFile;
+import ch.dvbern.ebegu.entities.FileMetadata;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Mahnung;
+import ch.dvbern.ebegu.entities.WriteProtectedDokument;
+import ch.dvbern.ebegu.entities.Zahlungsauftrag;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.Zustelladresse;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.services.BetreuungService;
+import ch.dvbern.ebegu.services.DokumentService;
+import ch.dvbern.ebegu.services.DownloadFileService;
+import ch.dvbern.ebegu.services.EbeguVorlageService;
+import ch.dvbern.ebegu.services.ExportService;
+import ch.dvbern.ebegu.services.GeneratedDokumentService;
+import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.VorlageService;
+import ch.dvbern.ebegu.services.ZahlungService;
+import ch.dvbern.ebegu.util.UploadFileInfo;
+import ch.dvbern.lib.cdipersistence.Persistence;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * REST Resource fuer Institution
@@ -41,6 +69,7 @@ import java.util.Optional;
 @Api
 public class DownloadResource {
 
+	private static final Logger LOG = LoggerFactory.getLogger(DownloadResource.class.getSimpleName());
 
 	@Inject
 	private DownloadFileService downloadFileService;
@@ -99,9 +128,9 @@ public class DownloadResource {
 		try {
 			return RestUtil.buildDownloadResponse(downloadFile, attachment);
 		} catch (IOException e) {
+			LOG.error("Dokument kann nicht heruntergeladen werden", e);
 			return Response.status(Response.Status.NOT_FOUND).entity("Dokument kann nicht gelesen werden").build();
 		}
-
 	}
 
 	@Nonnull

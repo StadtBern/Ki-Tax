@@ -70,15 +70,18 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     /**
-     * Die finanzielle Situation und die Einkommensverschlechterungen muessen mithilfe des Berechnungsmanagers berechnet werden, um manche Daten zur Verfügung
-     * zu haben. Das ist notwendig weil die finanzielle Situation nicht gespeichert wird. D.H. das erste Mal in einer Sitzung wenn ein Gesuch geoeffnet wird,
-     * ist gar nichts berechnet. Wenn man dann die Verfügen direkt aufmacht, ist alles leer und wird nichts angezeigt, deswegen muss alles auch hier berechnet werden.
-     * Um Probleme mit der Performance zu vermeiden, wird zuerst geprueft, ob die Berechnung schon vorher gemacht wurde, wenn ja dann wird sie einfach verwendet
-     * ohne sie neu berechnen zu muessen. Dieses geht aber davon aus, dass die Berechnungen immer richtig kalkuliert wurden.
+     * Die finanzielle Situation und die Einkommensverschlechterungen muessen mithilfe des Berechnungsmanagers
+     * berechnet werden, um manche Daten zur Verfügung zu haben. Das ist notwendig weil die finanzielle Situation nicht
+     * gespeichert wird. D.H. das erste Mal in einer Sitzung wenn ein Gesuch geoeffnet wird, ist gar nichts berechnet.
+     * Wenn man dann die Verfügen direkt aufmacht, ist alles leer und wird nichts angezeigt, deswegen muss alles auch
+     * hier berechnet werden. Um Probleme mit der Performance zu vermeiden, wird zuerst geprueft, ob die Berechnung
+     * schon vorher gemacht wurde, wenn ja dann wird sie einfach verwendet ohne sie neu berechnen zu muessen. Dieses
+     * geht aber davon aus, dass die Berechnungen immer richtig kalkuliert wurden.
      *
-     * Die Verfuegungen werden IMMER geladen, wenn diese View geladen wird. Dieses ist etwas ineffizient. Allerdings muss es eigentlich so funktionieren, weil
-     * die Daten sich haben aendern koennen. Es ist ein aehnlicher Fall wie mit der finanziellen Situation. Sollte es Probleme mit der Performance geben, muessen
-     * wir ueberlegen, ob wir es irgendwie anders berechnen koennen um den Server zu entlasten.
+     * Die Verfuegungen werden IMMER geladen, wenn diese View geladen wird. Dieses ist etwas ineffizient. Allerdings
+     * muss es eigentlich so funktionieren, weil die Daten sich haben aendern koennen. Es ist ein aehnlicher Fall wie
+     * mit der finanziellen Situation. Sollte es Probleme mit der Performance geben, muessen wir ueberlegen, ob wir es
+     * irgendwie anders berechnen koennen um den Server zu entlasten.
      */
     private initViewModel(): void {
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.WARTEN);
@@ -164,7 +167,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     /**
-     * das FinanzielleSituation PDF ist fuer den Gesuchsteller erst sichtbar sobald der Antrag den Status VERFUEGT erreicht hat
+     * das FinanzielleSituation PDF ist fuer den Gesuchsteller erst sichtbar sobald der Antrag den Status VERFUEGT
+     * erreicht hat
      */
     public isFinanziellesituationPDFVisible(): boolean {
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
@@ -248,15 +252,16 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                     // available for the role SCHULAMT, so JA doesn't need the PDFs to be created. When a Schulamt worker opens this Gesuch,
                     // she can generate the PDFs by clicking on the corresponding links
                     AuthenticationUtil.navigateToStartPageForRole(this.authServiceRs.getPrincipal(), this.$state);
-                    // No return needed because we have already navigated to the StartPage of the role
-                }
-                this.gesuchModelManager.setGesuch(response);
-                this.form.$setPristine(); // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
-                return this.refreshKinderListe().then(() => {
-                    return this.createNeededPDFs(true).then(() => {
-                        return this.gesuchModelManager.getGesuch();
+                    return this.gesuchModelManager.getGesuch();
+                } else { // for NUR_SCHULAMT this makes no sense
+                    this.gesuchModelManager.setGesuch(response);
+                    this.form.$setPristine(); // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
+                    return this.refreshKinderListe().then(() => {
+                        return this.createNeededPDFs(true).then(() => {
+                            return this.gesuchModelManager.getGesuch();
+                        });
                     });
-                });
+                }
             });
         });
     }
@@ -357,11 +362,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             this.mahnungRS.saveMahnung(this.mahnung).then((mahnungResponse: TSMahnung) => {
                 this.setGesuchStatus(this.tempAntragStatus).then(any => {
                     this.mahnungList.push(mahnungResponse);
-
-                    this.downloadRS.getAccessTokenMahnungGeneratedDokument(mahnungResponse, true).then((response: any) => {
-                        this.tempAntragStatus = undefined;
-                        this.mahnung = undefined;
-                    });
+                    this.tempAntragStatus = undefined;
+                    this.mahnung = undefined;
                 });
             });
         }

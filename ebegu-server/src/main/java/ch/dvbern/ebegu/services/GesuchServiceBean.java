@@ -33,6 +33,9 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
@@ -85,6 +88,7 @@ import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
+import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -156,19 +160,19 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		final Gesuch persistedGesuch = persistence.persist(gesuch);
 		// Die WizsrdSteps werden direkt erstellt wenn das Gesuch erstellt wird. So vergewissern wir uns dass es kein Gesuch ohne WizardSteps gibt
 		wizardStepService.createWizardStepList(persistedGesuch);
-		antragStatusHistoryService.saveStatusChange(persistedGesuch);
+		antragStatusHistoryService.saveStatusChange(persistedGesuch, null);
 		return persistedGesuch;
 	}
 
 	@Nonnull
 	@Override
 	@PermitAll
-	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory) {
+	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory, @Nullable Benutzer saveAsUser) {
 		authorizer.checkWriteAuthorization(gesuch);
 		Objects.requireNonNull(gesuch);
 		final Gesuch merged = persistence.merge(gesuch);
 		if (saveInStatusHistory) {
-			antragStatusHistoryService.saveStatusChange(merged);
+			antragStatusHistoryService.saveStatusChange(merged, saveAsUser);
 		}
 		return merged;
 	}
@@ -767,6 +771,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public Gesuch antragFreigabequittungErstellen(@Nonnull Gesuch gesuch, AntragStatus statusToChangeTo) {
 		authorizer.checkWriteAuthorization(gesuch);
 
+		// Zum jetzigen Zeitpunkt muss das Gesuch zwingend in einem kompletten / gueltigen Zustand sein
+		validateGesuchComplete(gesuch);
+
 		gesuch.setFreigabeDatum(LocalDate.now());
 
 		if (AntragStatus.FREIGEGEBEN.equals(statusToChangeTo)) {
@@ -778,7 +785,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		// Step Freigabe gruen
 		wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
 
-		return updateGesuch(gesuch, true);
+		return updateGesuch(gesuch, true, null);
 	}
 
 	@Nonnull
@@ -788,6 +795,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Optional<Gesuch> gesuchOptional = Optional.ofNullable(persistence.find(Gesuch.class, gesuchId)); //direkt ueber persistence da wir eigentlich noch nicht leseberechtigt sind)
 		if (gesuchOptional.isPresent()) {
 			Gesuch gesuch = gesuchOptional.get();
+
+			// Zum jetzigen Zeitpunkt muss das Gesuch zwingend in einem kompletten / gueltigen Zustand sein
+			validateGesuchComplete(gesuch);
 
 			if (!gesuch.getStatus().equals(AntragStatus.FREIGABEQUITTUNG) && !gesuch.getStatus().equals(AntragStatus.IN_BEARBEITUNG_GS)) {
 				throw new EbeguRuntimeException("antragFreigeben",
@@ -829,7 +839,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			}
 
 			final Gesuch merged = persistence.merge(gesuch);
-			antragStatusHistoryService.saveStatusChange(merged);
+			antragStatusHistoryService.saveStatusChange(merged, null);
 			return merged;
 		} else {
 			throw new EbeguEntityNotFoundException("antragFreigeben", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId);
@@ -843,7 +853,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		allGesucheForFall.iterator().forEachRemaining(gesuchLoop -> {
 			if (gesuch.equals(gesuchLoop)) {
 				gesuchLoop.setStatus(AntragStatus.BESCHWERDE_HAENGIG);
-				updateGesuch(gesuchLoop, true);
+				updateGesuch(gesuchLoop, true, null);
 			}
 			gesuchLoop.setGesperrtWegenBeschwerde(true); // Flag nicht über Service setzen, da u.U. Gesuch noch inBearbeitungGS
 			persistence.merge(gesuchLoop);
@@ -859,7 +869,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			if (gesuch.equals(gesuchLoop) && AntragStatus.BESCHWERDE_HAENGIG.equals(gesuchLoop.getStatus())) {
 				final AntragStatusHistory lastStatusChange = antragStatusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuchLoop);
 				gesuchLoop.setStatus(lastStatusChange.getStatus());
-				updateGesuch(gesuchLoop, true);
+				updateGesuch(gesuchLoop, true, null);
 			}
 			gesuchLoop.setGesperrtWegenBeschwerde(false); // Flag nicht über Service setzen, da u.U. Gesuch noch inBearbeitungGS
 			persistence.merge(gesuchLoop);
@@ -1223,7 +1233,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			try {
 				mailService.sendWarnungGesuchNichtFreigegeben(gesuch, anzahlTageBisLoeschungNachWarnungFreigabe);
 				gesuch.setDatumGewarntNichtFreigegeben(LocalDate.now());
-				updateGesuch(gesuch, false);
+				updateGesuch(gesuch, false, null);
 			} catch (MailException e) {
 				LOG.error("Mail WarnungGesuchNichtFreigegeben konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
 				anzahl--;
@@ -1263,7 +1273,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			try {
 				mailService.sendWarnungFreigabequittungFehlt(gesuch, anzahlTageBisLoeschungNachWarnungFreigabe);
 				gesuch.setDatumGewarntFehlendeQuittung(LocalDate.now());
-				updateGesuch(gesuch, false);
+				updateGesuch(gesuch, false, null);
 			} catch (MailException e) {
 				LOG.error("Mail WarnungFreigabequittungFehlt konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
 				anzahl--;
@@ -1410,17 +1420,20 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		postGesuchVerfuegen(gesuch);
 		wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
 
-		return updateGesuch(gesuch, true);
+		return updateGesuch(gesuch, true, null);
 	}
 
 	@Override
 	public Gesuch verfuegenStarten(@Nonnull Gesuch gesuch) {
 		if (!gesuch.getStatus().equals(AntragStatus.GEPRUEFT)) {
-			throw new EbeguRuntimeException("closeWithoutAngebot", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_ALLOWED);
+			throw new EbeguRuntimeException("verfuegenStarten", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_ALLOWED);
 		}
+		// Zum jetzigen Zeitpunkt muss das Gesuch zwingend in einem kompletten / gueltigen Zustand sein
+		validateGesuchComplete(gesuch);
+
 		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
 			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
-			postGesuchVerfuegen(gesuch);
+			postGesuchVerfuegen(gesuch, false);
 		} else {
 			gesuch.setStatus(AntragStatus.VERFUEGEN);
 		}
@@ -1438,12 +1451,27 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			}
 		}
 
-		return superAdminService.updateGesuch(gesuch, true);
+		return superAdminService.updateGesuch(gesuch, true, principalBean.getBenutzer());
+	}
+
+	private void validateGesuchComplete(@Nonnull Gesuch gesuch) {
+		// Gesamt-Validierung durchführen
+		Validator validator = Validation.byDefaultProvider().configure().buildValidatorFactory().getValidator();
+		Set<ConstraintViolation<Gesuch>> constraintViolations = validator.validate(gesuch, AntragCompleteValidationGroup.class);
+		if (!constraintViolations.isEmpty()) {
+			throw new EbeguRuntimeException("verfuegenStarten", ErrorCodeEnum.ERROR_ANTRAG_NOT_COMPLETE);
+		}
 	}
 
 	@Override
 	public void postGesuchVerfuegen(@Nonnull Gesuch gesuch) {
-		authorizer.checkReadAuthorization(gesuch);
+		postGesuchVerfuegen(gesuch, true);
+	}
+
+	private void postGesuchVerfuegen(@Nonnull Gesuch gesuch, boolean checkAuthorization) {
+		if (checkAuthorization) {
+			authorizer.checkReadAuthorization(gesuch);
+		}
 		Optional<Gesuch> neustesVerfuegtesGesuchFuerGesuch = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall());
 		if (AntragStatus.FIRST_STATUS_OF_VERFUEGT.contains(gesuch.getStatus()) && gesuch.getTimestampVerfuegt() == null) {
 			// Status ist neuerdings verfuegt, aber das Datum noch nicht gesetzt -> dies war der Statuswechsel
@@ -1451,7 +1479,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			gesuch.setGueltig(true);
 			if (neustesVerfuegtesGesuchFuerGesuch.isPresent() && !neustesVerfuegtesGesuchFuerGesuch.get().getId().equals(gesuch.getId())) {
 				neustesVerfuegtesGesuchFuerGesuch.get().setGueltig(false);
-				updateGesuch(neustesVerfuegtesGesuchFuerGesuch.get(), false);
+				updateGesuch(neustesVerfuegtesGesuchFuerGesuch.get(), false, null);
 			}
 		}
 	}

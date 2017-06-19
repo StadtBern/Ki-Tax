@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
+import ch.dvbern.ebegu.validators.CheckFinanzielleSituationContainerComplete;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -11,6 +13,7 @@ import javax.validation.constraints.NotNull;
  * Container-Entity für die Finanzielle Situation: Diese muss für jeden Benutzertyp (GS, JA, SV) einzeln geführt werden,
  * damit die Veränderungen / Korrekturen angezeigt werden können.
  */
+@CheckFinanzielleSituationContainerComplete(groups = AntragCompleteValidationGroup.class)
 @Audited
 @Entity
 @Table(
