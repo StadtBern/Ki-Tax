@@ -241,7 +241,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
         }).then(() => {
 
-            return this.gesuchRS.verfuegenStarten(this.gesuchModelManager.getGesuch().id).then((response) => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+            return this.gesuchRS.verfuegenStarten(
+                    this.gesuchModelManager.getGesuch().id, this.gesuchModelManager.getGesuch().hasFSDokument).
+                    then((response) => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
                 if (response.status === TSAntragStatus.NUR_SCHULAMT) {
                     // If AntragStatus==NUR_SCHULAMT the Sachbearbeiter_JA has no rights to work with or even to see this gesuch any more
                     // For this reason we have to navigate directly out of the gesuch once it has been saved. We navigate to the
