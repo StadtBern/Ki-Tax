@@ -141,7 +141,7 @@ public class GesuchResource {
 		//only if status has changed: Muss ermittelt werden, BEVOR wir mergen!
 		final boolean saveInStatusHistory = gesuchFromDB.getStatus() != AntragStatusConverterUtil.convertStatusToEntity(gesuchJAXP.getStatus());
 		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
-		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge, saveInStatusHistory);
+		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge, saveInStatusHistory, null);
 		return converter.gesuchToJAX(modifiedGesuch);
 	}
 
@@ -261,7 +261,7 @@ public class GesuchResource {
 		if (gesuchOptional.isPresent()) {
 			gesuchOptional.get().setBemerkungen(bemerkung);
 
-			gesuchService.updateGesuch(gesuchOptional.get(), false);
+			gesuchService.updateGesuch(gesuchOptional.get(), false, null);
 
 			return Response.ok().build();
 		}
@@ -285,7 +285,7 @@ public class GesuchResource {
 		if (gesuchOptional.isPresent()) {
 			gesuchOptional.get().setBemerkungenPruefungSTV(bemerkungPruefungSTV);
 
-			gesuchService.updateGesuch(gesuchOptional.get(), false);
+			gesuchService.updateGesuch(gesuchOptional.get(), false, null);
 
 			return Response.ok().build();
 		}
@@ -309,7 +309,7 @@ public class GesuchResource {
 			if (gesuchOptional.get().getStatus() != AntragStatusConverterUtil.convertStatusToEntity(statusDTO)) {
 				//only if status has changed
 				gesuchOptional.get().setStatus(AntragStatusConverterUtil.convertStatusToEntity(statusDTO));
-				gesuchService.updateGesuch(gesuchOptional.get(), true);
+				gesuchService.updateGesuch(gesuchOptional.get(), true, null);
 			}
 			return Response.ok().build();
 		}
@@ -517,7 +517,7 @@ public class GesuchResource {
 		if (StringUtils.isNotEmpty(bemerkungen)) {
 			gesuch.setBemerkungenSTV(bemerkungen);
 		}
-		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch, true);
+		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch, true, null);
 		return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 	}
 
@@ -547,7 +547,7 @@ public class GesuchResource {
 		gesuch.get().setStatus(AntragStatus.GEPRUEFT_STV);
 		gesuch.get().setGeprueftSTV(true);
 
-		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch.get(), true);
+		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch.get(), true, null);
 		return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 
 	}
@@ -575,7 +575,7 @@ public class GesuchResource {
 		}
 
 		gesuch.setStatus(AntragStatus.VERFUEGT);
-		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch, true);
+		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch, true, null);
 		return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 
 	}

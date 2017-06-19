@@ -39,6 +39,8 @@ import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
+import ch.dvbern.ebegu.validators.CheckGesuchComplete;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyzer;
@@ -49,6 +51,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
  * Entitaet zum Speichern von Gesuch in der Datenbank.
  */
 @Audited
+@CheckGesuchComplete(groups = AntragCompleteValidationGroup.class)
 @Entity
 @Indexed
 @Analyzer(impl = EBEGUGermanAnalyzer.class)
