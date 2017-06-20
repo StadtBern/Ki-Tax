@@ -155,23 +155,18 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
             // wenn Erstgesuch, not KITA oder die neue Verfuegung dieselben Daten hat, wird sie nur gespeichert
             if (!this.getBetreuung().isAngebotKITA() || this.isSameVerrechneteVerguenstigung() || !this.isMutation()) {
                 this.saveVerfuegung().then(() => {
-                    this.generateVerfuegungDokument();
+                    this.$state.go('gesuch.verfuegen', {
+                        gesuchId: this.getGesuchId()
+                    });
                 });
             } else { // wenn Mutation, und die Verfuegung neue Daten hat, kann sie ignoriert oder uebernommen werden
                 this.saveMutierteVerfuegung().then(() => {
-                    this.generateVerfuegungDokument();
+                    this.$state.go('gesuch.verfuegen', {
+                        gesuchId: this.getGesuchId()
+                    });
                 });
             }
         }
-    }
-
-    private generateVerfuegungDokument() {
-        this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
-            this.getBetreuung().id, true, null).then(() => {
-            this.$state.go('gesuch.verfuegen', {
-                gesuchId: this.getGesuchId()
-            });
-        });
     }
 
     public schliessenOhneVerfuegen() {
@@ -187,11 +182,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public nichtEintreten() {
         if (this.isGesuchValid()) {
             this.verfuegungNichtEintreten().then(() => {
-                this.downloadRS.getAccessTokenNichteintretenGeneratedDokument(
-                    this.gesuchModelManager.getBetreuungToWorkWith().id, true).then(() => {
-                    this.$state.go('gesuch.verfuegen', {
-                        gesuchId: this.getGesuchId()
-                    });
+                this.$state.go('gesuch.verfuegen', {
+                    gesuchId: this.getGesuchId()
                 });
             });
         }

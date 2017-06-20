@@ -141,7 +141,7 @@ public class GesuchResource {
 		//only if status has changed: Muss ermittelt werden, BEVOR wir mergen!
 		final boolean saveInStatusHistory = gesuchFromDB.getStatus() != AntragStatusConverterUtil.convertStatusToEntity(gesuchJAXP.getStatus());
 		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
-		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge, saveInStatusHistory);
+		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge, saveInStatusHistory, null);
 		return converter.gesuchToJAX(modifiedGesuch);
 	}
 
@@ -261,7 +261,7 @@ public class GesuchResource {
 		if (gesuchOptional.isPresent()) {
 			gesuchOptional.get().setBemerkungen(bemerkung);
 
-			gesuchService.updateGesuch(gesuchOptional.get(), false);
+			gesuchService.updateGesuch(gesuchOptional.get(), false, null);
 
 			return Response.ok().build();
 		}
@@ -285,7 +285,7 @@ public class GesuchResource {
 		if (gesuchOptional.isPresent()) {
 			gesuchOptional.get().setBemerkungenPruefungSTV(bemerkungPruefungSTV);
 
-			gesuchService.updateGesuch(gesuchOptional.get(), false);
+			gesuchService.updateGesuch(gesuchOptional.get(), false, null);
 
 			return Response.ok().build();
 		}
@@ -309,7 +309,7 @@ public class GesuchResource {
 			if (gesuchOptional.get().getStatus() != AntragStatusConverterUtil.convertStatusToEntity(statusDTO)) {
 				//only if status has changed
 				gesuchOptional.get().setStatus(AntragStatusConverterUtil.convertStatusToEntity(statusDTO));
-				gesuchService.updateGesuch(gesuchOptional.get(), true);
+				gesuchService.updateGesuch(gesuchOptional.get(), true, null);
 			}
 			return Response.ok().build();
 		}
@@ -517,7 +517,7 @@ public class GesuchResource {
 		if (StringUtils.isNotEmpty(bemerkungen)) {
 			gesuch.setBemerkungenSTV(bemerkungen);
 		}
-		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch, true);
+		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch, true, null);
 		return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 	}
 
@@ -547,7 +547,7 @@ public class GesuchResource {
 		gesuch.get().setStatus(AntragStatus.GEPRUEFT_STV);
 		gesuch.get().setGeprueftSTV(true);
 
-		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch.get(), true);
+		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch.get(), true, null);
 		return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 
 	}
@@ -575,7 +575,7 @@ public class GesuchResource {
 		}
 
 		gesuch.setStatus(AntragStatus.VERFUEGT);
-		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch, true);
+		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch, true, null);
 		return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 
 	}
@@ -685,22 +685,21 @@ public class GesuchResource {
 	@ApiOperation(value = "Aendert den Status des Gesuchs auf VERFUEGEN. Sollte es nur Schulangebote geben, dann wechselt auf NUR_SCHULAMT")
 	@Nullable
 	@POST
-	@Path("/verfuegenStarten/{antragId}")
+	@Path("/verfuegenStarten/{antragId}/{hasFSDocument}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response verfuegenStarten(
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@PathParam("hasFSDocument") boolean hasFSDocument,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(antragJaxId.getId());
 		final String antragId = converter.toEntityId(antragJaxId);
-		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(antragId);
-		if (!gesuchOptional.isPresent()) {
-			throw new EbeguEntityNotFoundException("verfuegenStarten", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragId);
-		}
 
-		Gesuch closedGesuch = gesuchService.verfuegenStarten(gesuchOptional.get());
+		final Gesuch gesuch = gesuchService.findGesuch(antragId).orElseThrow(() -> new EbeguEntityNotFoundException("verfuegenStarten", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragId));
+		gesuch.setHasFSDokument(hasFSDocument);
+		Gesuch closedGesuch = gesuchService.verfuegenStarten(gesuch);
 
 		return Response.ok(converter.gesuchToJAX(closedGesuch)).build();
 	}

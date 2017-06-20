@@ -46,11 +46,17 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 
 	@Nonnull
 	@Override
-	public AntragStatusHistory saveStatusChange(@Nonnull Gesuch gesuch) {
+	public AntragStatusHistory saveStatusChange(@Nonnull Gesuch gesuch, @Nullable Benutzer saveAsUser) {
 		Objects.requireNonNull(gesuch);
 
-		Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();
-		if (currentBenutzer.isPresent()) {
+		Benutzer userToSet = saveAsUser;
+		if (userToSet == null) {
+			Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();
+			if (currentBenutzer.isPresent()) {
+				userToSet = currentBenutzer.get();
+			}
+		}
+		if (userToSet != null) {
 			// Den letzten Eintrag beenden, falls es schon einen gab
 			AntragStatusHistory lastStatusChange = findLastStatusChange(gesuch);
 			if (lastStatusChange != null) {
@@ -61,7 +67,7 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 			newStatusHistory.setStatus(gesuch.getStatus());
 			newStatusHistory.setGesuch(gesuch);
 			newStatusHistory.setTimestampVon(LocalDateTime.now());
-			newStatusHistory.setBenutzer(currentBenutzer.get());
+			newStatusHistory.setBenutzer(userToSet);
 
 			return persistence.persist(newStatusHistory);
 		}

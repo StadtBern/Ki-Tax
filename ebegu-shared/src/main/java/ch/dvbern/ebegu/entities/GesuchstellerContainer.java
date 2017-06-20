@@ -1,29 +1,38 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
-import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
-import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.Constants;
-import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
+import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
+import ch.dvbern.ebegu.validators.CheckGesuchstellerContainerComplete;
+import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+
 /**
  * Entitaet zum Speichern von GesuchContainer in der Datenbank.
  */
 @Audited
+@CheckGesuchstellerContainerComplete(groups = AntragCompleteValidationGroup.class)
 @Entity
 @Indexed
 @Analyzer(impl = EBEGUGermanAnalyzer.class)
@@ -116,7 +125,7 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 			return erwerbspensenContainers;
 		}
 
-		final Set<ErwerbspensumContainer> erwerbspensen = new HashSet();
+		final Set<ErwerbspensumContainer> erwerbspensen = new HashSet<>();
 		final ErwerbspensumContainer erwerbspensum = new ErwerbspensumContainer();
 		Erwerbspensum pensumJA = new Erwerbspensum();
 		pensumJA.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
@@ -130,11 +139,12 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 		this.erwerbspensenContainers = erwerbspensenContainers;
 	}
 
-	public void setFinanzielleSituationContainer(@Nullable final FinanzielleSituationContainer finanzielleSituationContainer) {
+	public void setFinanzielleSituationContainer(@Nullable final FinanzielleSituationContainer
+		finanzielleSituationContainer) {
 		this.finanzielleSituationContainer = finanzielleSituationContainer;
-		if (finanzielleSituationContainer != null &&
-			(finanzielleSituationContainer.getGesuchsteller() == null || !finanzielleSituationContainer.getGesuchsteller().equals(this))) {
-			finanzielleSituationContainer.setGesuchsteller(this);
+		if (this.finanzielleSituationContainer != null &&
+			(this.finanzielleSituationContainer.getGesuchsteller() == null || !this.finanzielleSituationContainer.getGesuchsteller().equals(this))) {
+			this.finanzielleSituationContainer.setGesuchsteller(this);
 		}
 	}
 

@@ -302,7 +302,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						LOG.error("Error sending Mail zu gesuchsteller", e);
 					}
 
-					antragStatusHistoryService.saveStatusChange(wizardStep.getGesuch());
+					antragStatusHistoryService.saveStatusChange(wizardStep.getGesuch(), null);
 				}
 			}
 		}
