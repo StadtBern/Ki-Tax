@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
+import java.util.Objects;
+
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
@@ -86,5 +88,18 @@ public class Institution extends AbstractEntity implements HasMandant {
 		this.active = active;
 	}
 
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final Institution otherInstitution = (Institution) other;
+		return Objects.equals(getMail(), otherInstitution.getMail()) &&
+			Objects.equals(getName(), otherInstitution.getName());
+	}
 
 }

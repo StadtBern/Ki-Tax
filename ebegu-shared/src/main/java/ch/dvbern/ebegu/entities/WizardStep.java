@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
+import java.util.Objects;
+
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.util.Constants;
@@ -87,5 +89,21 @@ public class WizardStep extends AbstractEntity {
 
 	public void setVerfuegbar(Boolean verfuegbar) {
 		this.verfuegbar = verfuegbar;
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final WizardStep otherWizardStep = (WizardStep) other;
+		return Objects.equals(getWizardStepName(), otherWizardStep.getWizardStepName()) &&
+			Objects.equals(getWizardStepStatus(), otherWizardStep.getWizardStepStatus()) &&
+			Objects.equals(getBemerkungen(), otherWizardStep.getBemerkungen()) &&
+			Objects.equals(getVerfuegbar(), otherWizardStep.getVerfuegbar());
 	}
 }

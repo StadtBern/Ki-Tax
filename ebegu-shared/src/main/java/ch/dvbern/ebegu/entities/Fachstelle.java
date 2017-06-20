@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
+import java.util.Objects;
+
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
@@ -61,5 +63,20 @@ public class Fachstelle extends AbstractEntity {
 
 	public void setBehinderungsbestaetigung(boolean behinderungsbestaetigung) {
 		this.behinderungsbestaetigung = behinderungsbestaetigung;
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final Fachstelle otherGesuchsteller = (Fachstelle) other;
+		return Objects.equals(getName(), otherGesuchsteller.getName()) &&
+			Objects.equals(getBeschreibung(), otherGesuchsteller.getBeschreibung()) &&
+			Objects.equals(isBehinderungsbestaetigung(), otherGesuchsteller.isBehinderungsbestaetigung());
 	}
 }

@@ -7,6 +7,7 @@ import org.hibernate.envers.Audited;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * Entity fuer Betreuungspensen.
@@ -57,5 +58,21 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 		super.copyForMutation(mutation);
 		mutation.setNichtEingetreten(this.getNichtEingetreten());
 		return mutation;
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!super.isSame(other)) {
+			return false;
+		}
+		final Betreuungspensum otherBetreuungspensum = (Betreuungspensum) other;
+		return Objects.equals(getNichtEingetreten(), otherBetreuungspensum.getNichtEingetreten());
 	}
 }

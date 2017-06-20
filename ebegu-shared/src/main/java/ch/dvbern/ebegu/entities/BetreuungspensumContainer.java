@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.envers.Audited;
@@ -64,16 +65,19 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 		this.betreuungspensumJA = betreuungspensumJA;
 	}
 
-	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
-	public boolean isSame(BetreuungspensumContainer otherBetreuungspensumContainer) {
-		if (this == otherBetreuungspensumContainer) {
+	@SuppressWarnings({"OverlyComplexBooleanExpression"})
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		if (otherBetreuungspensumContainer == null || getClass() != otherBetreuungspensumContainer.getClass()) {
+		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		final BetreuungspensumContainer otherBetreuungspensumContainer = (BetreuungspensumContainer) other;
 
-		return getBetreuungspensumJA().isSame(otherBetreuungspensumContainer.getBetreuungspensumJA());
+		return EbeguUtil.isSameObject(getBetreuungspensumJA(), otherBetreuungspensumContainer.getBetreuungspensumJA());
 	}
 
 	/**

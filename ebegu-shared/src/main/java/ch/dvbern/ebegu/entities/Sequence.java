@@ -10,6 +10,8 @@
 
 package ch.dvbern.ebegu.entities;
 
+import java.util.Objects;
+
 import ch.dvbern.ebegu.enums.SequenceType;
 import ch.dvbern.ebegu.util.Constants;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -89,5 +91,24 @@ public class Sequence extends AbstractEntity implements HasMandant{
 
 	public void setMandant(Mandant mandant) {
 		this.mandant = mandant;
+	}
+
+	@Nonnull
+	public Long getCurrentValue() {
+		return currentValue;
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final Sequence otherSequence = (Sequence) other;
+		return Objects.equals(getSequenceType(), otherSequence.getSequenceType()) &&
+			Objects.equals(getCurrentValue(), otherSequence.getCurrentValue());
 	}
 }

@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * Entitaet zum Speichern von Familiensituation in der Datenbank.
@@ -118,25 +119,19 @@ public class Familiensituation extends AbstractEntity {
 	}
 
 	@Override
-	public boolean equals(@Nullable Object that) {
-		if (that instanceof Familiensituation) {
-			Familiensituation thatFamiliensituation = (Familiensituation) that;
-
-			boolean isEqualAenderungPer = (this.aenderungPer == null && thatFamiliensituation.aenderungPer == null) ||
-				(this.aenderungPer != null && this.aenderungPer.equals(thatFamiliensituation.aenderungPer));
-			boolean isEqualGemeinsameSE = (this.gemeinsameSteuererklaerung == null && thatFamiliensituation.gemeinsameSteuererklaerung == null) ||
-				(this.gemeinsameSteuererklaerung != null && this.gemeinsameSteuererklaerung.equals(thatFamiliensituation.gemeinsameSteuererklaerung));
-
-			return isEqualAenderungPer
-				&& this.familienstatus.equals(thatFamiliensituation.familienstatus)
-				&& isEqualGemeinsameSE
-				&& this.gesuchstellerKardinalitaet.equals(thatFamiliensituation.gesuchstellerKardinalitaet);
+	public boolean isSame(@Nullable AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
 		}
-		return false;
-	}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final Familiensituation otherFamiliensituation = (Familiensituation) other;
+		return Objects.equals(getAenderungPer(), otherFamiliensituation.getAenderungPer()) &&
+			Objects.equals(getFamilienstatus(), otherFamiliensituation.getFamilienstatus()) &&
+			Objects.equals(getGesuchstellerKardinalitaet(), otherFamiliensituation.getGesuchstellerKardinalitaet()) &&
+			Objects.equals(getGemeinsameSteuererklaerung(), otherFamiliensituation.getGemeinsameSteuererklaerung());
 
-	@Override
-	public int hashCode() {
-		return getId() != null ? getId().hashCode() : 0;
 	}
 }

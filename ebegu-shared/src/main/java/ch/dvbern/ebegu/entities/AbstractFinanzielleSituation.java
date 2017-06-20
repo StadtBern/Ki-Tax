@@ -2,13 +2,13 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * Gemeinsame Basisklasse für FinanzielleSituation und Einkommensverschlechterung
@@ -142,5 +142,26 @@ public abstract class AbstractFinanzielleSituation extends AbstractEntity {
 		mutation.setGeschaeftsgewinnBasisjahr(this.getGeschaeftsgewinnBasisjahr());
 		mutation.setGeleisteteAlimente(this.getGeleisteteAlimente());
 		return mutation;
+	}
+
+	@SuppressWarnings("OverlyComplexMethod")
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final AbstractFinanzielleSituation otherFinSituation = (AbstractFinanzielleSituation) other;
+		return Objects.equals(getSteuerveranlagungErhalten(), otherFinSituation.getSteuerveranlagungErhalten()) &&
+			Objects.equals(getSteuererklaerungAusgefuellt(), otherFinSituation.getSteuererklaerungAusgefuellt()) &&
+			Objects.equals(getFamilienzulage(), otherFinSituation.getFamilienzulage()) &&
+			Objects.equals(getErsatzeinkommen(), otherFinSituation.getErsatzeinkommen()) &&
+			Objects.equals(getErhalteneAlimente(), otherFinSituation.getErhalteneAlimente()) &&
+			Objects.equals(getBruttovermoegen(), otherFinSituation.getBruttovermoegen()) &&
+			Objects.equals(getSchulden(), otherFinSituation.getSchulden()) &&
+			Objects.equals(getGeschaeftsgewinnBasisjahr(), otherFinSituation.getGeschaeftsgewinnBasisjahr()) &&
+			Objects.equals(getGeleisteteAlimente(), otherFinSituation.getGeleisteteAlimente());
 	}
 }

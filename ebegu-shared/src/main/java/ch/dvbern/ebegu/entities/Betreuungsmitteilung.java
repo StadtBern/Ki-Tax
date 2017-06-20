@@ -42,4 +42,21 @@ public class Betreuungsmitteilung extends Mitteilung {
 	public void setApplied(boolean applied) {
 		this.applied = applied;
 	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!super.isSame(other)) {
+			return false;
+		}
+		final Betreuungsmitteilung otherBetreuungsmitteilung = (Betreuungsmitteilung) other;
+		return isApplied() == otherBetreuungsmitteilung.isApplied();
+	}
+
 }

@@ -4,12 +4,14 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * Entitaet zum Speichern von zeitabhängigen Vorlagen in E-BEGU
@@ -93,5 +95,23 @@ public class EbeguVorlage extends AbstractDateRangedEntity implements Comparable
 	@Override
 	public int compareTo(EbeguVorlage o) {
 		return this.getName().compareTo(o.getName());
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!super.isSame(other)) {
+			return false;
+		}
+		final EbeguVorlage otherEbeguVorlage = (EbeguVorlage) other;
+		return Objects.equals(getName(), otherEbeguVorlage.getName()) &&
+			EbeguUtil.isSameObject(getVorlage(), otherEbeguVorlage.getVorlage()) &&
+			isProGesuchsperiode() == otherEbeguVorlage.isProGesuchsperiode();
 	}
 }

@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
@@ -15,6 +16,8 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -198,5 +201,21 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	@Override
 	public String getOwningGesuchId() {
 		return getGesuch().getId();
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final KindContainer otherKindContainer = (KindContainer) other;
+		return EbeguUtil.isSameObject(getKindJA(), otherKindContainer.getKindJA()) &&
+			Objects.equals(getKindNummer(), otherKindContainer.getKindNummer()) &&
+			Objects.equals(getNextNumberBetreuung(), otherKindContainer.getNextNumberBetreuung()) &&
+			Objects.equals(getKindMutiert(), otherKindContainer.getKindMutiert());
 	}
 }

@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
+import java.util.Objects;
+
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
@@ -60,5 +62,19 @@ public class Traegerschaft extends AbstractEntity {
 
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final Traegerschaft otherTraegerschaft = (Traegerschaft) other;
+		return Objects.equals(getMail(), otherTraegerschaft.getMail()) &&
+			Objects.equals(getName(), otherTraegerschaft.getName());
 	}
 }

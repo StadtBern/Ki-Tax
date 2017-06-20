@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Entitaet fuer Mahnungen
@@ -97,5 +98,21 @@ public class Mahnung extends AbstractEntity {
 
 	public void setAbgelaufen(Boolean abgelaufen) {
 		this.abgelaufen = abgelaufen;
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final Mahnung otherMahnung = (Mahnung) other;
+		return Objects.equals(getMahnungTyp(), otherMahnung.getMahnungTyp()) &&
+			Objects.equals(getDatumFristablauf(), otherMahnung.getDatumFristablauf()) &&
+			Objects.equals(getBemerkungen(), otherMahnung.getBemerkungen()) &&
+			Objects.equals(getTimestampAbgeschlossen(), otherMahnung.getTimestampAbgeschlossen());
 	}
 }

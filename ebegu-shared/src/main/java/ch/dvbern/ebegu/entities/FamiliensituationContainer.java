@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
 import ch.dvbern.ebegu.validators.CheckFamiliensituationContainerComplete;
 import org.hibernate.envers.Audited;
@@ -101,5 +102,18 @@ public class FamiliensituationContainer extends AbstractEntity {
 		} else {
 			return getFamiliensituationErstgesuch();
 		}
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final FamiliensituationContainer otherFamSitContainer = (FamiliensituationContainer) other;
+		return EbeguUtil.isSameObject(getFamiliensituationJA(), otherFamSitContainer.getFamiliensituationJA());
 	}
 }

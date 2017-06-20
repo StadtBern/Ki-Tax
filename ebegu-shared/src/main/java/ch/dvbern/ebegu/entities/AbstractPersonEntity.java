@@ -113,13 +113,16 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 		return mutation;
 	}
 
-	public boolean isSame(AbstractPersonEntity otherPerson) {
-		if (this == otherPerson) {
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		if (otherPerson == null || getClass() != otherPerson.getClass()) {
+		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		final AbstractPersonEntity otherPerson = (AbstractPersonEntity) other;
 		return	getGeschlecht() == otherPerson.getGeschlecht() &&
 			Objects.equals(getVorname(), otherPerson.getVorname()) &&
 			Objects.equals(getNachname(), otherPerson.getNachname()) &&

@@ -60,11 +60,21 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 		this.datumAktiviert = datumAktiviert;
 	}
 
-	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
-	public boolean isSame(Gesuchsperiode otherGesuchsperiode) {
-		boolean dateRangeIsSame = super.isSame(otherGesuchsperiode);
-		boolean statusSame = Objects.equals(this.getStatus(), otherGesuchsperiode.getStatus());
-		return dateRangeIsSame && statusSame;
+	@SuppressWarnings({"OverlyComplexBooleanExpression"})
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!super.isSame(other)) {
+			return false;
+		}
+		final Gesuchsperiode otherGesuchsperiode = (Gesuchsperiode) other;
+		return Objects.equals(this.getStatus(), otherGesuchsperiode.getStatus());
 	}
 
 	@Override

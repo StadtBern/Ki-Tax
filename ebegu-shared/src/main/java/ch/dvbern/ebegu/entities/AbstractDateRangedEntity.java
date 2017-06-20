@@ -38,15 +38,17 @@ public class AbstractDateRangedEntity extends AbstractEntity implements Gueltigk
 		this.gueltigkeit = gueltigkeit;
 	}
 
-	@SuppressWarnings("ObjectEquality")
-	public boolean isSame(AbstractDateRangedEntity otherAbstDateRangedEntity) {
-		if (this == otherAbstDateRangedEntity) {
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		if (otherAbstDateRangedEntity == null || getClass() != otherAbstDateRangedEntity.getClass()) {
+		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-		return Objects.equals(this.getGueltigkeit(), otherAbstDateRangedEntity.getGueltigkeit());
+		final AbstractDateRangedEntity otherAbstractDateRangedEntity = (AbstractDateRangedEntity) other;
+		return Objects.equals(this.getGueltigkeit(), otherAbstractDateRangedEntity.getGueltigkeit());
 	}
 
 	@Override

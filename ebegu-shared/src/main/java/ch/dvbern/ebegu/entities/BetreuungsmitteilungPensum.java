@@ -6,6 +6,7 @@ import org.hibernate.envers.Audited;
 import javax.annotation.Nonnull;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 /**
  * Entity fuer BetreuungsmitteilungPensum.
@@ -19,6 +20,7 @@ public class BetreuungsmitteilungPensum extends AbstractPensumEntity implements 
 	private static final long serialVersionUID = -9032858720574672370L;
 
 	@ManyToOne(optional = false)
+	@NotNull
 	private Betreuungsmitteilung betreuungsmitteilung;
 
 
@@ -36,5 +38,21 @@ public class BetreuungsmitteilungPensum extends AbstractPensumEntity implements 
 		builder.append(this.getGueltigkeit(), o.getGueltigkeit());
 		builder.append(this.getId(), o.getId());
 		return builder.toComparison();
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!super.isSame(other)) {
+			return false;
+		}
+		final BetreuungsmitteilungPensum otherBetreuungsmitteilungPensum = (BetreuungsmitteilungPensum) other;
+		return getBetreuungsmitteilung().isSame(otherBetreuungsmitteilungPensum.getBetreuungsmitteilung());
 	}
 }

@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.validators.CheckMitteilungCompleteness;
 import org.hibernate.envers.Audited;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 import static ch.dvbern.ebegu.util.Constants.DB_TEXTAREA_LENGTH;
@@ -161,5 +163,27 @@ public class Mitteilung extends AbstractEntity {
 
 	public boolean isEntwurf() {
 		return MitteilungStatus.ENTWURF.equals(this.mitteilungStatus);
+	}
+
+	@SuppressWarnings({"OverlyComplexBooleanExpression", "OverlyComplexMethod"})
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final Mitteilung otherMitteilung = (Mitteilung) other;
+		return EbeguUtil.isSameObject(getBetreuung(), otherMitteilung.getBetreuung()) &&
+			Objects.equals(getSender().getId(), otherMitteilung.getSender().getId()) &&
+			Objects.equals(getSenderTyp(), otherMitteilung.getSenderTyp()) &&
+			Objects.equals(getSentDatum(), otherMitteilung.getSentDatum()) &&
+			EbeguUtil.isSameObject(getEmpfaenger(), otherMitteilung.getEmpfaenger()) &&
+			Objects.equals(getEmpfaengerTyp(), otherMitteilung.getEmpfaengerTyp()) &&
+			Objects.equals(getSubject(), otherMitteilung.getSubject()) &&
+			Objects.equals(getMessage(), otherMitteilung.getMessage()) &&
+			getMitteilungStatus() == otherMitteilung.getMitteilungStatus();
 	}
 }

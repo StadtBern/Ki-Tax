@@ -161,7 +161,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		if (WizardStepName.FAMILIENSITUATION.equals(stepName) && oldEntity instanceof Familiensituation && newEntity instanceof Familiensituation) {
 			updateAllStatusForFamiliensituation(wizardSteps, (Familiensituation) oldEntity, (Familiensituation) newEntity);
 		} else if (WizardStepName.GESUCHSTELLER.equals(stepName)) {
-			updateAllStatusForGesuchsteller(wizardSteps, newEntity);
+			updateAllStatusForGesuchsteller(wizardSteps, (Gesuchsteller) newEntity);
 		} else if (WizardStepName.UMZUG.equals(stepName)) {
 			updateAllStatusForUmzug(wizardSteps, newEntity);
 		} else if (WizardStepName.BETREUUNG.equals(stepName)) {
@@ -316,7 +316,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 *
 	 * @param wizardSteps
 	 */
-	private void updateAllStatusForGesuchsteller(List<WizardStep> wizardSteps, AbstractEntity newEntity) {
+	private void updateAllStatusForGesuchsteller(List<WizardStep> wizardSteps, Gesuchsteller newEntity) {
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
 				setWizardStepOkOrMutiert(wizardStep, newEntity);
@@ -369,7 +369,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private boolean isObjectMutiert(@NotNull AbstractEntity newEntity) {
 		if (newEntity != null) {
 			final AbstractEntity vorgaengerEntity = persistence.find(newEntity.getClass(), newEntity.getVorgaengerId());
-			return !newEntity.equals(vorgaengerEntity);
+			return !newEntity.isSame(vorgaengerEntity);
 		}
 		return true;
 	}

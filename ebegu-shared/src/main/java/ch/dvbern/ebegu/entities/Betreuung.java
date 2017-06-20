@@ -252,13 +252,21 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		this.gueltig = gueltig;
 	}
 
-	public boolean isSame(Betreuung otherBetreuung, boolean inklAbwesenheiten, boolean inklStatus) {
-		if (this == otherBetreuung) {
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		return this.isSame(other, true, true);
+	}
+
+	public boolean isSame(AbstractEntity other, boolean inklAbwesenheiten, boolean inklStatus) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		if (otherBetreuung == null || getClass() != otherBetreuung.getClass()) {
+		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+
+		final Betreuung otherBetreuung = (Betreuung) other;
 
 		boolean pensenSame = this.getBetreuungspensumContainers().stream().allMatch(
 			(pensCont) -> otherBetreuung.getBetreuungspensumContainers().stream().anyMatch(otherPensenCont -> otherPensenCont.isSame(pensCont)));

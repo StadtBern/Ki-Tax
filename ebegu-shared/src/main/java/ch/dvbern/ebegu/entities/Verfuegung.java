@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Verfuegung fuer eine einzelne Betreuung
@@ -164,5 +165,23 @@ public class Verfuegung extends AbstractEntity{
 		return sb.toString();
 	}
 
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final Verfuegung otherVerfuegung = (Verfuegung) other;
+		return Objects.equals(getGeneratedBemerkungen(), otherVerfuegung.getGeneratedBemerkungen()) &&
+			Objects.equals(getManuelleBemerkungen(), otherVerfuegung.getManuelleBemerkungen()) &&
+			Objects.equals(isKategorieNormal(), otherVerfuegung.isKategorieNormal()) &&
+			Objects.equals(isKategorieMaxEinkommen(), otherVerfuegung.isKategorieMaxEinkommen()) &&
+			Objects.equals(isKategorieKeinPensum(), otherVerfuegung.isKategorieKeinPensum()) &&
+			Objects.equals(isKategorieZuschlagZumErwerbspensum(), otherVerfuegung.isKategorieZuschlagZumErwerbspensum()) &&
+			Objects.equals(isKategorieNichtEintreten(), otherVerfuegung.isKategorieNichtEintreten());
+	}
 
 }

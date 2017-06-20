@@ -3,7 +3,9 @@ package ch.dvbern.ebegu.entities;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.validation.Valid;
 
 /**
@@ -42,5 +44,17 @@ public class Abwesenheit extends AbstractDateRangedEntity implements Comparable<
 
 	public Abwesenheit copyForMutation(Abwesenheit mutation) {
 		return (Abwesenheit) super.copyForMutation(mutation);
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		return super.isSame(other);
 	}
 }

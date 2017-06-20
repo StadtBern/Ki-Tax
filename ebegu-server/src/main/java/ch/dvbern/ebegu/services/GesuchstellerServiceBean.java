@@ -82,25 +82,25 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 			updateLuceneIndex(GesuchstellerContainer.class, gesuchsteller.getId());
 		}
 		final GesuchstellerContainer mergedGesuchsteller = persistence.merge(gesuchsteller);
-		updateWizStepsForGesuchstellerView(gesuch, gsNumber, umzug);
+		updateWizStepsForGesuchstellerView(gesuch, gsNumber, umzug, mergedGesuchsteller);
 		return mergedGesuchsteller;
 	}
 
-	private void updateWizStepsForGesuchstellerView(Gesuch gesuch, Integer gsNumber, boolean umzug) {
+	private void updateWizStepsForGesuchstellerView(Gesuch gesuch, Integer gsNumber, boolean umzug, GesuchstellerContainer gesuchsteller) {
 		//Wenn beide Gesuchsteller ausgefuellt werden muessen (z.B bei einer Mutation die die Familiensituation aendert
 		// (i.e. von 1GS auf 2GS) wollen wir den Benutzer zwingen beide Gesuchsteller Seiten zu besuchen bevor wir auf ok setzten.
 		// Ansonsten setzten wir es sofort auf ok
 		if (umzug) {
-			wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.UMZUG);
+			wizardStepService.updateSteps(gesuch.getId(), null, gesuchsteller, WizardStepName.UMZUG);
 		} else {
 			WizardStep existingWizStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.GESUCHSTELLER);
 			WizardStepStatus gesuchStepStatus = existingWizStep != null ?  existingWizStep.getWizardStepStatus() : null;
 			if (WizardStepStatus.NOK.equals(gesuchStepStatus) || WizardStepStatus.IN_BEARBEITUNG.equals(gesuchStepStatus)) {
 				if (isSavingLastNecessaryGesuchsteller(gesuch, gsNumber)) {
-					wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.GESUCHSTELLER);
+					wizardStepService.updateSteps(gesuch.getId(), null, gesuchsteller, WizardStepName.GESUCHSTELLER);
 				}
 			} else {
-				wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.GESUCHSTELLER);
+				wizardStepService.updateSteps(gesuch.getId(), null, gesuchsteller, WizardStepName.GESUCHSTELLER);
 			}
 		}
 	}

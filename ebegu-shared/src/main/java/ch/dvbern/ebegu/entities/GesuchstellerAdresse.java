@@ -1,11 +1,14 @@
 package ch.dvbern.ebegu.entities;
 
-import org.hibernate.envers.Audited;
-
 import javax.annotation.Nonnull;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
+
+import org.hibernate.envers.Audited;
 
 /**
  * Entitaet zum Speichern von Adressen einer Person in der Datenbank.
@@ -45,19 +48,22 @@ public class GesuchstellerAdresse extends Adresse {
 	}
 
 
-	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
-	public boolean isSame(GesuchstellerAdresse otherAdr) {
-		if (this == otherAdr) {
+	@SuppressWarnings({"OverlyComplexBooleanExpression"})
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		if (otherAdr == null || getClass() != otherAdr.getClass()) {
+		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-
-
-		return super.isSame(otherAdr) &&
-			adresseTyp == otherAdr.getAdresseTyp() &&
-			Objects.equals(getGueltigkeit(), otherAdr.getGueltigkeit());
+		if (!super.isSame(other)) {
+			return false;
+		}
+		final GesuchstellerAdresse otherAdr = (GesuchstellerAdresse) other;
+		return getAdresseTyp() == otherAdr.getAdresseTyp() &&
+			isNichtInGemeinde() == otherAdr.isNichtInGemeinde();
 
 	}
 

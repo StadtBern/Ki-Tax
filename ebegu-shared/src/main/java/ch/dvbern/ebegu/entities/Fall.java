@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
+import java.util.Objects;
+
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -103,5 +105,18 @@ public class Fall extends AbstractEntity implements HasMandant {
 
 	public void setMandant(Mandant mandant) {
 		this.mandant = mandant;
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final Fall otherFall = (Fall) other;
+		return Objects.equals(getFallNummer(), otherFall.getFallNummer());
 	}
 }

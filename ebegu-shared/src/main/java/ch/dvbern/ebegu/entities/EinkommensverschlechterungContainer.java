@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -108,5 +109,21 @@ public class EinkommensverschlechterungContainer extends AbstractEntity {
 			mutation.setEkvJABasisJahrPlus2(this.getEkvJABasisJahrPlus2().copyForMutation(new Einkommensverschlechterung()));
 		}
 		return mutation;
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final EinkommensverschlechterungContainer otherEKVContainer = (EinkommensverschlechterungContainer) other;
+		return EbeguUtil.isSameObject(getEkvGSBasisJahrPlus1(), otherEKVContainer.getEkvGSBasisJahrPlus1()) &&
+			EbeguUtil.isSameObject(getEkvGSBasisJahrPlus2(), otherEKVContainer.getEkvGSBasisJahrPlus2()) &&
+			EbeguUtil.isSameObject(getEkvJABasisJahrPlus1(), otherEKVContainer.getEkvJABasisJahrPlus1()) &&
+			EbeguUtil.isSameObject(getEkvJABasisJahrPlus2(), otherEKVContainer.getEkvJABasisJahrPlus2());
 	}
 }

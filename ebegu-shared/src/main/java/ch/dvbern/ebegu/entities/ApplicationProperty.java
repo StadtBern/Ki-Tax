@@ -7,6 +7,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import java.util.Objects;
+
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 import static ch.dvbern.ebegu.util.Constants.DB_TEXTAREA_LENGTH;
 
@@ -33,6 +35,20 @@ public class ApplicationProperty extends AbstractEntity {
 
 
 	public ApplicationProperty() {
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final ApplicationProperty otherApplicationProperty = (ApplicationProperty) other;
+		return getName() == otherApplicationProperty.getName() &&
+			Objects.equals(getValue(), otherApplicationProperty.getValue());
 	}
 
 	public ApplicationProperty(final ApplicationPropertyKey key, final String value) {

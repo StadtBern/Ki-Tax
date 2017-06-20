@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
@@ -61,17 +62,18 @@ public class AbwesenheitContainer extends AbstractEntity implements Comparable<A
 		this.abwesenheitJA = abwesenheitJA;
 	}
 
-	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
-	public boolean isSame(AbwesenheitContainer otherAbwesenheitContainer) {
-		if (this == otherAbwesenheitContainer) {
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		if (otherAbwesenheitContainer == null || getClass() != otherAbwesenheitContainer.getClass()) {
+		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-
-		return getAbwesenheitGS().isSame(otherAbwesenheitContainer.getAbwesenheitGS()) &&
-			getAbwesenheitJA().isSame(otherAbwesenheitContainer.getAbwesenheitJA());
+		final AbwesenheitContainer otherAbwesenheitContainer = (AbwesenheitContainer) other;
+		return EbeguUtil.isSameObject(getAbwesenheitGS(), otherAbwesenheitContainer.getAbwesenheitGS()) &&
+			EbeguUtil.isSameObject(getAbwesenheitJA(), otherAbwesenheitContainer.getAbwesenheitJA());
 	}
 
 	@Override

@@ -12,6 +12,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import java.util.Objects;
+
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 @Entity
@@ -147,5 +149,18 @@ public class Benutzer extends AbstractEntity {
 			.append("username", username)
 			.append("role", role)
 			.toString();
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final Benutzer otherBenutzer = (Benutzer) other;
+		return Objects.equals(getUsername(), otherBenutzer.getUsername());
 	}
 }

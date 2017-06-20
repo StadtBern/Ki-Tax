@@ -11,6 +11,8 @@ import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import java.util.Objects;
+
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 /**
@@ -27,22 +29,6 @@ public abstract class FileMetadata extends AbstractEntity {
 
 	private static final long serialVersionUID = -4502262818759522627L;
 
-	// copy
-	public FileMetadata(FileMetadata fileMetadata) {
-		this.filename = fileMetadata.filename;
-		this.filepfad = fileMetadata.filepfad;
-		this.filesize = fileMetadata.filesize;
-	}
-
-	public FileMetadata() {
-	}
-
-	public FileMetadata(UploadFileInfo uploadFileInfo) {
-		this.filename = uploadFileInfo.getFilename();
-		this.filepfad = uploadFileInfo.getPath();
-		this.filesize = uploadFileInfo.getSizeString();
-	}
-
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	@Column(nullable = false)
 	@NotNull
@@ -58,6 +44,22 @@ public abstract class FileMetadata extends AbstractEntity {
 	@Column(nullable = false)
 	@NotNull
 	private String filesize;
+
+	// copy
+	public FileMetadata(FileMetadata fileMetadata) {
+		this.filename = fileMetadata.filename;
+		this.filepfad = fileMetadata.filepfad;
+		this.filesize = fileMetadata.filesize;
+	}
+
+	public FileMetadata() {
+	}
+
+	public FileMetadata(UploadFileInfo uploadFileInfo) {
+		this.filename = uploadFileInfo.getFilename();
+		this.filepfad = uploadFileInfo.getPath();
+		this.filesize = uploadFileInfo.getSizeString();
+	}
 
 	public String getFilename() {
 		return filename;
@@ -97,5 +99,20 @@ public abstract class FileMetadata extends AbstractEntity {
 		mutation.setFilepfad(this.filepfad);
 		mutation.setFilesize(this.filesize);
 		return mutation;
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final FileMetadata otherFileMetadata = (FileMetadata) other;
+		return Objects.equals(getFilename(), otherFileMetadata.getFilename()) &&
+			Objects.equals(getFilepfad(), otherFileMetadata.getFilepfad()) &&
+			Objects.equals(getFilesize(), otherFileMetadata.getFilesize());
 	}
 }

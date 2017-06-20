@@ -6,6 +6,7 @@ import org.hibernate.envers.Audited;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * Entität für die Einkommensverschlechterung
@@ -204,5 +205,35 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 		mutation.setNettolohnZus(this.getNettolohnZus());
 		mutation.setGeschaeftsgewinnBasisjahrMinus1(this.getGeschaeftsgewinnBasisjahrMinus1());
 		return mutation;
+	}
+
+	@SuppressWarnings("OverlyComplexMethod")
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!super.isSame(other)) {
+			return false;
+		}
+		final Einkommensverschlechterung otherEinkommensverschlechterung = (Einkommensverschlechterung) other;
+		return Objects.equals(getNettolohnJan(), otherEinkommensverschlechterung.getNettolohnJan()) &&
+			Objects.equals(getNettolohnFeb(), otherEinkommensverschlechterung.getNettolohnFeb()) &&
+			Objects.equals(getNettolohnMrz(), otherEinkommensverschlechterung.getNettolohnMrz()) &&
+			Objects.equals(getNettolohnApr(), otherEinkommensverschlechterung.getNettolohnApr()) &&
+			Objects.equals(getNettolohnMai(), otherEinkommensverschlechterung.getNettolohnMai()) &&
+			Objects.equals(getNettolohnJun(), otherEinkommensverschlechterung.getNettolohnJun()) &&
+			Objects.equals(getNettolohnJul(), otherEinkommensverschlechterung.getNettolohnJul()) &&
+			Objects.equals(getNettolohnAug(), otherEinkommensverschlechterung.getNettolohnAug()) &&
+			Objects.equals(getNettolohnSep(), otherEinkommensverschlechterung.getNettolohnSep()) &&
+			Objects.equals(getNettolohnOkt(), otherEinkommensverschlechterung.getNettolohnOkt()) &&
+			Objects.equals(getNettolohnNov(), otherEinkommensverschlechterung.getNettolohnNov()) &&
+			Objects.equals(getNettolohnDez(), otherEinkommensverschlechterung.getNettolohnDez()) &&
+			Objects.equals(getNettolohnZus(), otherEinkommensverschlechterung.getNettolohnZus()) &&
+			Objects.equals(getGeschaeftsgewinnBasisjahrMinus1(), otherEinkommensverschlechterung.getGeschaeftsgewinnBasisjahrMinus1());
 	}
 }

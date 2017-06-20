@@ -21,6 +21,7 @@ import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
 import ch.dvbern.ebegu.validators.CheckGesuchstellerContainerComplete;
 import org.hibernate.envers.Audited;
@@ -274,5 +275,18 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 	@Override
 	public String getOwningGesuchId() {
 		return null;   //leider nicht ohne serviceabfrage verfuegbar
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final GesuchstellerContainer otherGesuchstellerContainer = (GesuchstellerContainer) other;
+		return EbeguUtil.isSameObject(getGesuchstellerJA(), otherGesuchstellerContainer.getGesuchstellerJA());
 	}
 }

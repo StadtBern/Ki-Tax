@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -62,16 +63,17 @@ public class ErwerbspensumContainer extends AbstractEntity {
 		this.erwerbspensumJA = erwerbspensumJA;
 	}
 
-	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
-	public boolean isSame(ErwerbspensumContainer otherErwerbspensum) {
-		if (this == otherErwerbspensum) {
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		if (otherErwerbspensum == null || getClass() != otherErwerbspensum.getClass()) {
+		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-		return getErwerbspensumGS().isSame(otherErwerbspensum.getErwerbspensumGS()) &&
-			getErwerbspensumJA().isSame(otherErwerbspensum.getErwerbspensumJA());
+		final ErwerbspensumContainer otherErwerbspensumContainer = (ErwerbspensumContainer) other;
+		return EbeguUtil.isSameObject(getErwerbspensumJA(), otherErwerbspensumContainer.getErwerbspensumJA());
 	}
 
 	public ErwerbspensumContainer copyForMutation(@Nonnull ErwerbspensumContainer mutation, @Nonnull GesuchstellerContainer gesuchstellerMutation) {

@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import org.hibernate.envers.Audited;
 
@@ -12,7 +13,7 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-
+import java.util.Objects;
 
 /**
  * Entitaet zum Speichern von InstitutionStammdaten in der Datenbank.
@@ -116,4 +117,24 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 		this.adresse = adresse;
 	}
 
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!super.isSame(other)) {
+			return false;
+		}
+		final InstitutionStammdaten otherInstStammdaten = (InstitutionStammdaten) other;
+		return EbeguUtil.isSameObject(getInstitution(), otherInstStammdaten.getInstitution()) &&
+			Objects.equals(getBetreuungsangebotTyp(), otherInstStammdaten.getBetreuungsangebotTyp()) &&
+			Objects.equals(getIban(), otherInstStammdaten.getIban()) &&
+			Objects.equals(getOeffnungsstunden(), otherInstStammdaten.getOeffnungsstunden()) &&
+			Objects.equals(getOeffnungstage(), otherInstStammdaten.getOeffnungstage()) &&
+			EbeguUtil.isSameObject(getAdresse(), otherInstStammdaten.getAdresse());
+	}
 }

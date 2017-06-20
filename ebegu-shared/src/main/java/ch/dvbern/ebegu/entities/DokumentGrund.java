@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -237,5 +238,24 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 		}
 		mutation.setNeeded(this.isNeeded());
 		return mutation;
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final DokumentGrund otherDokumentGrund = (DokumentGrund) other;
+		return getDokumentGrundTyp() == otherDokumentGrund.getDokumentGrundTyp() &&
+//			Objects.equals(getFullName(), otherDokumentGrund.getFullName()) && // deprecated
+			Objects.equals(getTag(), otherDokumentGrund.getTag()) &&
+			getPersonType() == otherDokumentGrund.getPersonType() &&
+			Objects.equals(getPersonNumber(), otherDokumentGrund.getPersonNumber()) &&
+			getDokumentTyp() == otherDokumentGrund.getDokumentTyp() &&
+			Objects.equals(isNeeded(), otherDokumentGrund.isNeeded());
 	}
 }

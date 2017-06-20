@@ -13,6 +13,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * Entitaet zum Speichern von zeitabhängigen Parametern in E-BEGU
@@ -83,5 +84,22 @@ public class EbeguParameter extends AbstractDateRangedEntity {
 
 	public Integer getValueAsInteger() {
 		return Integer.valueOf(value);
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!super.isSame(other)) {
+			return false;
+		}
+		final EbeguParameter otherEbeguParameter = (EbeguParameter) other;
+		return getName() == otherEbeguParameter.getName() &&
+			Objects.equals(getValue(), otherEbeguParameter.getValue());
 	}
 }

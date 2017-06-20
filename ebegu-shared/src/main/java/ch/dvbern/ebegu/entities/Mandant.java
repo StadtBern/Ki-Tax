@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
+import java.util.Objects;
+
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -33,5 +35,18 @@ public class Mandant extends AbstractEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final Mandant otherMandant = (Mandant) other;
+		return Objects.equals(getName(), otherMandant.getName());
 	}
 }

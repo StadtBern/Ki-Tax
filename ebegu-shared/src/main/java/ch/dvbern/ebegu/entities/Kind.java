@@ -141,16 +141,19 @@ public class Kind extends AbstractPersonEntity {
 		return mutation;
 	}
 
-	public boolean isSame(Kind otherKind) {
-		if (this == otherKind) {
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		if (otherKind == null || getClass() != otherKind.getClass()) {
+		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-		if (!super.isSame(otherKind)) {
+		if (!super.isSame(other)) {
 			return false;
 		}
+		final Kind otherKind = (Kind) other;
 		return Objects.equals(getWohnhaftImGleichenHaushalt(), otherKind.getWohnhaftImGleichenHaushalt()) &&
 			getKinderabzug() == otherKind.getKinderabzug() &&
 			Objects.equals(getFamilienErgaenzendeBetreuung(), otherKind.getFamilienErgaenzendeBetreuung()) &&

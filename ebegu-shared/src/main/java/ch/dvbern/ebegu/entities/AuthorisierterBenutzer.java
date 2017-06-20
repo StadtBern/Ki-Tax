@@ -18,6 +18,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -181,5 +182,27 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 			.append("role", role)
 			.append("sessionIndex", sessionIndex)
 			.toString();
+	}
+
+	@SuppressWarnings({"OverlyComplexBooleanExpression", "OverlyComplexMethod"})
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final AuthorisierterBenutzer otherAuthorisierterBenutzer = (AuthorisierterBenutzer) other;
+		return Objects.equals(getFirstLogin(), otherAuthorisierterBenutzer.getFirstLogin()) &&
+			Objects.equals(getLastLogin(), otherAuthorisierterBenutzer.getLastLogin()) &&
+			Objects.equals(getAuthToken(), otherAuthorisierterBenutzer.getAuthToken()) &&
+			Objects.equals(getUsername(), otherAuthorisierterBenutzer.getUsername()) &&
+			getRole() == otherAuthorisierterBenutzer.getRole() &&
+			Objects.equals(getSessionIndex(), otherAuthorisierterBenutzer.getSessionIndex()) &&
+			Objects.equals(getSamlNameId(), otherAuthorisierterBenutzer.getSamlNameId()) &&
+			Objects.equals(getSamlIDPEntityID(), otherAuthorisierterBenutzer.getSamlIDPEntityID()) &&
+			Objects.equals(getSamlSPEntityID(), otherAuthorisierterBenutzer.getSamlSPEntityID());
 	}
 }

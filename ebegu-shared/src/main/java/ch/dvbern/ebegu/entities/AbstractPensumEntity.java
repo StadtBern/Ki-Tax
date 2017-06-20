@@ -38,15 +38,18 @@ public class AbstractPensumEntity extends AbstractDateRangedEntity {
 		this.pensum = pensum;
 	}
 
-	@SuppressWarnings("ObjectEquality")
-	public boolean isSame(AbstractPensumEntity otherAbstDateRangedEntity) {
-		if (this == otherAbstDateRangedEntity) {
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		if (otherAbstDateRangedEntity == null || getClass() != otherAbstDateRangedEntity.getClass()) {
+		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-		return super.isSame(otherAbstDateRangedEntity) && Objects.equals(this.getPensum(), otherAbstDateRangedEntity.getPensum());
+		final AbstractPensumEntity otherAbstDateRangedEntity = (AbstractPensumEntity) other;
+		return super.isSame(otherAbstDateRangedEntity)
+			&& Objects.equals(this.getPensum(), otherAbstDateRangedEntity.getPensum());
 	}
 
 	public AbstractPensumEntity copyForMutation(AbstractPensumEntity mutation) {

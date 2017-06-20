@@ -448,17 +448,19 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		this.gueltig = gueltig;
 	}
 
-	@SuppressWarnings("ObjectEquality")
-	public boolean isSame(Gesuch otherAntrag) {
-		if (this == otherAntrag) {
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		if (otherAntrag == null || getClass() != otherAntrag.getClass()) {
+		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-		return (Objects.equals(this.getEingangsdatum(), otherAntrag.getEingangsdatum())
+		final Gesuch otherAntrag = (Gesuch) other;
+		return Objects.equals(this.getEingangsdatum(), otherAntrag.getEingangsdatum())
 			&& Objects.equals(this.getFall(), otherAntrag.getFall())
-			&& Objects.equals(this.getGesuchsperiode(), otherAntrag.getGesuchsperiode()));
+			&& Objects.equals(this.getGesuchsperiode(), otherAntrag.getGesuchsperiode());
 	}
 
 	/**

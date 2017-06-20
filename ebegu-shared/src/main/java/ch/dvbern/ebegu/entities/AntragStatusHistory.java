@@ -7,6 +7,7 @@ import org.hibernate.envers.Audited;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Entity um eine History von AntragStatus zu speichern.
@@ -86,5 +87,22 @@ public class AntragStatusHistory extends AbstractEntity implements Comparable<An
 		cb.append(this.getTimestampVon(), o.getTimestampVon())
 			.append(this.getId(), o.getId());
 		return cb.toComparison();
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		final AntragStatusHistory otherAntragStatusHistory = (AntragStatusHistory) other;
+		return Objects.equals(getGesuch().getId(), otherAntragStatusHistory.getGesuch().getId()) && // the content is not relevant
+			Objects.equals(getBenutzer().getId(), otherAntragStatusHistory.getBenutzer().getId()) && // the content is not relevant
+			Objects.equals(getTimestampVon(), otherAntragStatusHistory.getTimestampVon()) &&
+			Objects.equals(getTimestampBis(), otherAntragStatusHistory.getTimestampBis()) &&
+			Objects.equals(getStatus(), otherAntragStatusHistory.getStatus());
 	}
 }

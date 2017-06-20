@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Entitaet zum Speichern von einem Zahlungsauftrag in der Datenbank.
@@ -113,5 +114,25 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity implements Compara
 
 	public String getFilename() {
 		return "Zahlungslauf_" + Constants.SQL_DATE_FORMAT.format(getDatumGeneriert());
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!super.isSame(other)) {
+			return false;
+		}
+		final Zahlungsauftrag otherZahlungsauftrag = (Zahlungsauftrag) other;
+		return Objects.equals(getDatumFaellig(), otherZahlungsauftrag.getDatumFaellig()) &&
+			Objects.equals(getDatumGeneriert(), otherZahlungsauftrag.getDatumGeneriert()) &&
+			Objects.equals(getStatus(), otherZahlungsauftrag.getStatus()) &&
+			Objects.equals(getBeschrieb(), otherZahlungsauftrag.getBeschrieb()) &&
+			Objects.equals(getBetragTotalAuftrag(), otherZahlungsauftrag.getBetragTotalAuftrag());
 	}
 }
