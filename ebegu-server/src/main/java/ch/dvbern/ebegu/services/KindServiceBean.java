@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.services;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -139,22 +138,16 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	@Override
 	@Nonnull
 	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR})
-	public List<KindDubletteDTO> getKindDubletten(@Nonnull String gesuchId) {
-		List<KindDubletteDTO> dublettenOfAllKinder = new ArrayList<>();
+	public Set<KindDubletteDTO> getKindDubletten(@Nonnull String gesuchId) {
+		Set<KindDubletteDTO> dublettenOfAllKinder = new HashSet<>();
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);
 		if (gesuchOptional.isPresent()) {
 			Set<KindContainer> kindContainers = gesuchOptional.get().getKindContainers();
-			Set<Long> fallIds = new HashSet<>();
 			for (KindContainer kindContainer : kindContainers) {
 				List<KindDubletteDTO> kindDubletten = getKindDubletten(kindContainer);
 				// Die Resultate sind nach Muationsdatum absteigend sortiert. Wenn also eine Fall-Id noch nicht vorkommt,
 				// dann ist dies das neueste Gesuch dieses Falls
-				for (KindDubletteDTO kindDubletteDTO : kindDubletten) {
-					if (!fallIds.contains(kindDubletteDTO.getFallNummer())) {
-						dublettenOfAllKinder.add(kindDubletteDTO);
-						fallIds.add(kindDubletteDTO.getFallNummer());
-					}
-				}
+				dublettenOfAllKinder.addAll(kindDubletten);
 			}
 		}
 		else {
@@ -178,7 +171,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
             joinGesuch.get(Gesuch_.fall).get(Fall_.fallNummer),
             cb.literal(kindContainer.getKindNummer()),
             root.get(KindContainer_.kindNummer) ,
-			joinGesuch.get(Gesuch_.timestampMutiert)
+			joinGesuch.get(Gesuch_.timestampErstellt)
         ).distinct(true);
 
         // Identische Merkmale
@@ -189,7 +182,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
         Predicate predicateOtherFall = cb.notEqual(joinGesuch.get(Gesuch_.fall), kindContainer.getGesuch().getFall());
         // Nur das zuletzt gueltige Gesuch
         Predicate predicateStatus = joinGesuch.get(Gesuch_.status).in(AntragStatus.FOR_KIND_DUBLETTEN);
-        query.orderBy(cb.desc(joinGesuch.get(Gesuch_.timestampMutiert)));
+        query.orderBy(cb.desc(joinGesuch.get(Gesuch_.timestampErstellt)));
         query.where(predicateName, predicateVorname, predicateGeburtsdatum, predicateOtherFall, predicateStatus);
 
         return persistence.getCriteriaResults(query);
