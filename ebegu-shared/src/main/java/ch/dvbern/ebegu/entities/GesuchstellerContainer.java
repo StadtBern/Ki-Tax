@@ -110,6 +110,20 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 		this.adressen = adressen;
 	}
 
+	/**
+	 * Returns the first korrespondezAdresse found for this GesuchstellerContainer. It should have only one.
+	 * If no korrespondezAdresse is set, null is returned
+	 */
+	@Nullable
+	public GesuchstellerAdresseContainer extractKorrespondezAdresse() {
+		for (GesuchstellerAdresseContainer adresse : getAdressen()) {
+			if (adresse.extractIsKorrespondenzAdresse()) {
+				return adresse;
+			}
+		}
+		return null;
+	}
+
 	@Nullable
 	public FinanzielleSituationContainer getFinanzielleSituationContainer() {
 		return finanzielleSituationContainer;

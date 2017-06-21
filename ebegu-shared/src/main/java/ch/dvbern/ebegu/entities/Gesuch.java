@@ -485,6 +485,17 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	}
 
 	@Transient
+	public List<AbwesenheitContainer> extractAllAbwesenheiten() {
+		final List<AbwesenheitContainer> list = new ArrayList<>();
+		for (final KindContainer kind : getKindContainers()) {
+			for (final Betreuung betreuung : kind.getBetreuungen()) {
+				list.addAll(betreuung.getAbwesenheitContainers());
+			}
+		}
+		return list;
+	}
+
+	@Transient
 	public Betreuung extractBetreuungById(String betreuungId) {
 		for (KindContainer kind : getKindContainers()) {
 			for (Betreuung betreuung : kind.getBetreuungen()) {

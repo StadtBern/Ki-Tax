@@ -254,7 +254,8 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 
 	@Override
 	public boolean isSame(AbstractEntity other) {
-		return this.isSame(other, true, true);
+		//by default just the fields that belong to the Betreuung itself
+		return this.isSame(other, false, false);
 	}
 
 	public boolean isSame(AbstractEntity other, boolean inklAbwesenheiten, boolean inklStatus) {

@@ -1,12 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.Taetigkeit;
-import ch.dvbern.ebegu.enums.Zuschlagsgrund;
-import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.util.ServerMessageUtil;
-import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumZuschlagUndGrund;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.envers.Audited;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -16,7 +10,14 @@ import javax.persistence.Enumerated;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.enums.Taetigkeit;
+import ch.dvbern.ebegu.enums.Zuschlagsgrund;
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
+import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumZuschlagUndGrund;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.envers.Audited;
 
 /**
  * Erwerbspensum eines Gesuchstellers
@@ -104,7 +105,8 @@ public class Erwerbspensum extends AbstractPensumEntity {
 		boolean pensumIsSame = super.isSame(otherErwerbspensum);
 		boolean taetigkeitSame = Objects.equals(taetigkeit, otherErwerbspensum.getTaetigkeit());
 		boolean zuschlagSame = Objects.equals(zuschlagZuErwerbspensum, otherErwerbspensum.getZuschlagZuErwerbspensum());
-		return pensumIsSame && taetigkeitSame && zuschlagSame;
+		boolean bezeichnungSame = Objects.equals(bezeichnung, otherErwerbspensum.getBezeichnung());
+		return pensumIsSame && taetigkeitSame && zuschlagSame && bezeichnungSame;
 	}
 
 	public String getName() {
