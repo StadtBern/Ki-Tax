@@ -32,6 +32,28 @@
         .ebeguPlaceholder-specs();
     }
 }
+.ebeguDisabledPlaceholder() {
+    &::-webkit-input-placeholder {
+        color: @contrast;
+        -webkit-text-fill-color:@contrast;
+    }
+    &::-moz-placeholder {
+        color: @contrast;
+        -webkit-text-fill-color:@contrast;
+    }
+    &:-moz-placeholder {
+        color: @contrast;
+        -webkit-text-fill-color:@contrast;
+    }
+    &:-ms-input-placeholder {
+        color: @contrast;
+        -webkit-text-fill-color:@contrast;
+    }
+    &::placeholder{
+        color: @contrast;
+        -webkit-text-fill-color:@contrast;
+    }
+}
 
 .ebeguFont-family() {
     font-family: "Open Sans", Arial, Helvetica, sans-serif;
