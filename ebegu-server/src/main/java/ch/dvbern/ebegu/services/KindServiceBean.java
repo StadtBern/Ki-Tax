@@ -1,10 +1,10 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.dto.KindDubletteDTO;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.lib.cdipersistence.Persistence;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
@@ -12,10 +12,37 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.criteria.*;
-import java.util.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
-import static ch.dvbern.ebegu.enums.UserRoleName.*;
+import ch.dvbern.ebegu.dto.KindDubletteDTO;
+import ch.dvbern.ebegu.entities.Fall_;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.KindContainer_;
+import ch.dvbern.ebegu.entities.Kind_;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.lib.cdipersistence.Persistence;
+
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
+import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
+import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Service fuer Kind
@@ -111,22 +138,16 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	@Override
 	@Nonnull
 	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR})
-	public List<KindDubletteDTO> getKindDubletten(@Nonnull String gesuchId) {
-		List<KindDubletteDTO> dublettenOfAllKinder = new ArrayList<>();
+	public Set<KindDubletteDTO> getKindDubletten(@Nonnull String gesuchId) {
+		Set<KindDubletteDTO> dublettenOfAllKinder = new HashSet<>();
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);
 		if (gesuchOptional.isPresent()) {
 			Set<KindContainer> kindContainers = gesuchOptional.get().getKindContainers();
-			Set<Long> fallIds = new HashSet<>();
 			for (KindContainer kindContainer : kindContainers) {
 				List<KindDubletteDTO> kindDubletten = getKindDubletten(kindContainer);
 				// Die Resultate sind nach Muationsdatum absteigend sortiert. Wenn also eine Fall-Id noch nicht vorkommt,
 				// dann ist dies das neueste Gesuch dieses Falls
-				for (KindDubletteDTO kindDubletteDTO : kindDubletten) {
-					if (!fallIds.contains(kindDubletteDTO.getFallNummer())) {
-						dublettenOfAllKinder.add(kindDubletteDTO);
-						fallIds.add(kindDubletteDTO.getFallNummer());
-					}
-				}
+				dublettenOfAllKinder.addAll(kindDubletten);
 			}
 		}
 		else {
@@ -149,7 +170,8 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
             joinGesuch.get(Gesuch_.id),
             joinGesuch.get(Gesuch_.fall).get(Fall_.fallNummer),
             cb.literal(kindContainer.getKindNummer()),
-            root.get(KindContainer_.kindNummer)
+            root.get(KindContainer_.kindNummer) ,
+			joinGesuch.get(Gesuch_.timestampErstellt)
         ).distinct(true);
 
         // Identische Merkmale
@@ -160,7 +182,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
         Predicate predicateOtherFall = cb.notEqual(joinGesuch.get(Gesuch_.fall), kindContainer.getGesuch().getFall());
         // Nur das zuletzt gueltige Gesuch
         Predicate predicateStatus = joinGesuch.get(Gesuch_.status).in(AntragStatus.FOR_KIND_DUBLETTEN);
-        query.orderBy(cb.desc(joinGesuch.get(Gesuch_.timestampMutiert)));
+        query.orderBy(cb.desc(joinGesuch.get(Gesuch_.timestampErstellt)));
         query.where(predicateName, predicateVorname, predicateGeburtsdatum, predicateOtherFall, predicateStatus);
 
         return persistence.getCriteriaResults(query);

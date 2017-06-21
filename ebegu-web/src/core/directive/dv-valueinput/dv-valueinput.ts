@@ -1,5 +1,7 @@
 import {IDirective, IDirectiveFactory, IAugmentedJQuery, IDirectiveLinkFn, INgModelController} from 'angular';
 import ITimeoutService = angular.ITimeoutService;
+declare let require: any;
+declare let angular: any;
 let template = require('./dv-valueinput.html');
 
 export class DVValueinput implements IDirective {
@@ -11,6 +13,8 @@ export class DVValueinput implements IDirective {
         ngRequired: '<',
         ngDisabled: '<',
         allowNegative: '<',
+        float: '<',
+        fixedDecimals: '@',
         dvOnBlur: '&?'
     };
     controller = ValueinputController;
@@ -35,6 +39,8 @@ export class ValueinputController {
     valueRequired: boolean;
     ngRequired: boolean;
     allowNegative: boolean;
+    float: boolean;
+    fixedDecimals: number;
     dvOnBlur: () => void;
 
     static $inject: string[] = ['$timeout'];
@@ -46,7 +52,6 @@ export class ValueinputController {
         if (changes.ngRequired && !changes.ngRequired.isFirstChange()) {
             this.valueRequired = changes.ngRequired.currentValue;
         }
-
     }
 
     //wird von angular aufgerufen
@@ -63,6 +68,10 @@ export class ValueinputController {
             this.allowNegative = false;
         }
 
+        if (!this.float) {
+            this.float = false;
+        }
+
         this.ngModelCtrl.$render = () => {
             this.valueinput = this.ngModelCtrl.$viewValue;
         };
@@ -74,6 +83,7 @@ export class ValueinputController {
             if (!this.valueRequired && !viewValue) {
                 return true;
             }
+
             let value = modelValue || ValueinputController.stringToNumber(viewValue);
 
             return !isNaN(Number(value)) && (Number(value) < 999999999999) && this.allowNegative ? true : Number(value) >= 0;
@@ -117,7 +127,12 @@ export class ValueinputController {
     updateModelValue() {
         //set the number as formatted string to the model
         if (this.valueinput) {
+            //if a number of fixed decimals are requested make the transformation on blur
+            if (this.float === true && !isNaN(this.fixedDecimals)) {
+                this.valueinput = parseFloat(this.valueinput).toFixed(this.fixedDecimals);
+            }
             this.valueinput = ValueinputController.formatToNumberString(ValueinputController.formatFromNumberString(this.valueinput));
+
         }
         this.ngModelCtrl.$setViewValue(this.valueinput);
         if (this.dvOnBlur) { // userdefined onBlur event
@@ -137,11 +152,13 @@ export class ValueinputController {
         if (string) {
             return Number(ValueinputController.formatFromNumberString(string));
         }
-        return undefined;
+        return null;  // null zurueckgeben und nicht undefined denn sonst wird ein ng-parse error erzeugt
     }
 
     private static formatToNumberString(valueString: string): string {
-        return valueString.replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+        let parts = valueString.split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+        return parts.join('.');
     }
 
     private static formatFromNumberString(numberString: string): string {
@@ -152,8 +169,9 @@ export class ValueinputController {
         let transformedInput = this.sanitizeInputString();
 
         //neuen wert ins model schreiben
-        if (transformedInput !== this.ngModelCtrl.$viewValue) {
-            this.ngModelCtrl.$setViewValue(ValueinputController.formatToNumberString(transformedInput)); //setting the new raw number into the invisible parentmodel
+        if (transformedInput && transformedInput !== this.ngModelCtrl.$viewValue) {
+            //setting the new raw number into the invisible parentmodel
+            this.ngModelCtrl.$setViewValue(ValueinputController.formatToNumberString(transformedInput));
             this.ngModelCtrl.$render();
         }
         if (this.valueinput !== transformedInput) {
@@ -169,12 +187,38 @@ export class ValueinputController {
                 sign = '-';
                 transformedInput.substr(1); // get just the number part
             }
-            transformedInput = transformedInput.replace(/\D+/g, ''); // removes all "not digit"
-            if (transformedInput) {
-                transformedInput = parseInt(transformedInput).toString(); // parse to int to remove not wanted digits like leading zeros and then back to string
+            if (!this.float) {
+                transformedInput = this.sanitizeIntString(transformedInput, sign);
+            } else {
+                transformedInput = this.sanitizeFloatString(transformedInput, sign);
             }
-            transformedInput = sign + transformedInput; // add sign to raw number
         }
+        return transformedInput;
+    }
+
+    private sanitizeFloatString(transformedInput: string, sign: string) {
+        // removes all chars that are not a digit or a point
+        transformedInput = transformedInput.replace(/([^0-9|\.])+/g, '');
+        if (transformedInput) {
+            let pointIndex = transformedInput.indexOf('.');
+            //only parse if there is either no floating point or the floating point is not at the end. Also dont parse
+			// if 0 at end
+            if (pointIndex === -1 || (pointIndex !== (transformedInput.length - 1) && transformedInput.lastIndexOf('0') !== (transformedInput.length - 1) )) {
+                // parse to float to remove unwanted  digits like leading zeros and then back to string
+                transformedInput = parseFloat(transformedInput).toString();
+            }
+        }
+        transformedInput = sign + transformedInput; // add sign to raw number
+        return transformedInput;
+    }
+
+    private sanitizeIntString(transformedInput: string, sign: string) {
+        transformedInput = transformedInput.replace(/\D+/g, ''); // removes all "not digit"
+        if (transformedInput) {
+            // parse to int to remove not wanted digits like leading zeros and then back to string
+            transformedInput = parseInt(transformedInput).toString();
+        }
+        transformedInput = sign + transformedInput; // add sign to raw number
         return transformedInput;
     }
 

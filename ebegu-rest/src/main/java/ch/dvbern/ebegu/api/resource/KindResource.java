@@ -33,8 +33,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * REST Resource fuer Kinder
@@ -136,10 +136,11 @@ public class KindResource {
 	@Path("/dubletten/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<KindDubletteDTO> getKindDubletten(@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJaxId) throws EbeguException {
+	public Set<KindDubletteDTO> getKindDubletten(@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJaxId) throws
+		EbeguException {
 		Validate.notNull(gesuchJaxId.getId());
 		String gesuchId = converter.toEntityId(gesuchJaxId);
-		List<KindDubletteDTO> kindDubletten = kindService.getKindDubletten(gesuchId);
+		Set<KindDubletteDTO> kindDubletten = kindService.getKindDubletten(gesuchId);
 		return kindDubletten;
 	}
 }
