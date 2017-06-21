@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.ZahlungStatus;
 import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.ebegu.util.MathUtil;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
@@ -110,6 +111,6 @@ public class Zahlung extends AbstractEntity implements Comparable<Zahlung>{
 		final Zahlung otherZahlung = (Zahlung) other;
 		return Objects.equals(getStatus(), otherZahlung.getStatus()) &&
 			EbeguUtil.isSameObject(getInstitutionStammdaten(), otherZahlung.getInstitutionStammdaten()) &&
-			Objects.equals(getBetragTotalZahlung(), otherZahlung.getBetragTotalZahlung());
+			MathUtil.isSame(getBetragTotalZahlung(), otherZahlung.getBetragTotalZahlung());
 	}
 }

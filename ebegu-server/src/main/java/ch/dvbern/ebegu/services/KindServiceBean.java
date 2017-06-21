@@ -71,7 +71,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 			updateLuceneIndex(KindContainer.class, kind.getId());
 		}
 		final KindContainer mergedKind = persistence.merge(kind);
-		wizardStepService.updateSteps(kind.getGesuch().getId(), null, null, WizardStepName.KINDER);
+		wizardStepService.updateSteps(kind.getGesuch().getId(), null, mergedKind.getKindJA(), WizardStepName.KINDER);
 		return mergedKind;
 	}
 

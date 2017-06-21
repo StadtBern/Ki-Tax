@@ -82,11 +82,11 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 			updateLuceneIndex(GesuchstellerContainer.class, gesuchsteller.getId());
 		}
 		final GesuchstellerContainer mergedGesuchsteller = persistence.merge(gesuchsteller);
-		updateWizStepsForGesuchstellerView(gesuch, gsNumber, umzug, mergedGesuchsteller);
+		updateWizStepsForGesuchstellerView(gesuch, gsNumber, umzug, mergedGesuchsteller.getGesuchstellerJA());
 		return mergedGesuchsteller;
 	}
 
-	private void updateWizStepsForGesuchstellerView(Gesuch gesuch, Integer gsNumber, boolean umzug, GesuchstellerContainer gesuchsteller) {
+	private void updateWizStepsForGesuchstellerView(Gesuch gesuch, Integer gsNumber, boolean umzug, Gesuchsteller gesuchsteller) {
 		//Wenn beide Gesuchsteller ausgefuellt werden muessen (z.B bei einer Mutation die die Familiensituation aendert
 		// (i.e. von 1GS auf 2GS) wollen wir den Benutzer zwingen beide Gesuchsteller Seiten zu besuchen bevor wir auf ok setzten.
 		// Ansonsten setzten wir es sofort auf ok

@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.ZahlungspositionStatus;
 import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.ebegu.util.MathUtil;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
@@ -108,7 +109,7 @@ public class Zahlungsposition extends AbstractEntity implements Comparable<Zahlu
 		final Zahlungsposition otherZahlungsposition = (Zahlungsposition) other;
 		return EbeguUtil.isSameObject(getVerfuegungZeitabschnitt(), otherZahlungsposition.getVerfuegungZeitabschnitt()) &&
 			Objects.equals(getStatus(), otherZahlungsposition.getStatus()) &&
-			Objects.equals(getBetrag(), otherZahlungsposition.getBetrag()) &&
+			MathUtil.isSame(getBetrag(), otherZahlungsposition.getBetrag()) &&
 			Objects.equals(isIgnoriert(), otherZahlungsposition.isIgnoriert());
 	}
 }

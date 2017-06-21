@@ -181,7 +181,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		} else if (WizardStepName.VERFUEGEN.equals(stepName)) {
 			updateAllStatusForVerfuegen(wizardSteps);
 		} else if (WizardStepName.FINANZIELLE_SITUATION.equals(stepName)) {
-			updateAllStatusForFinSit(wizardSteps);
+			updateAllStatusForFinSit(wizardSteps, newEntity);
 		} else {
 			updateStatusSingleStep(wizardSteps, stepName);
 		}
@@ -345,10 +345,10 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		}
 	}
 
-	private void updateAllStatusForFinSit(List<WizardStep> wizardSteps) {
+	private void updateAllStatusForFinSit(List<WizardStep> wizardSteps, AbstractEntity newEntity) {
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName()) && wizardStep.getGesuch().isMutation()) {
-				wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
+				setWizardStepOkOrMutiert(wizardStep, newEntity);
 			}
 		}
 	}
@@ -367,11 +367,11 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	}
 
 	private boolean isObjectMutiert(@NotNull AbstractEntity newEntity) {
-		if (newEntity != null) {
+		if (newEntity != null && newEntity.getVorgaengerId() != null) {
 			final AbstractEntity vorgaengerEntity = persistence.find(newEntity.getClass(), newEntity.getVorgaengerId());
 			return !newEntity.isSame(vorgaengerEntity);
 		}
-		return true;
+		return true; // todo this should probably not always be true
 	}
 
 	private void updateAllStatusForBetreuung(List<WizardStep> wizardSteps, AbstractEntity newEntity) {

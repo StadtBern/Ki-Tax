@@ -2,6 +2,8 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.ebegu.util.MathUtil;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
@@ -133,6 +135,6 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity implements Compara
 			Objects.equals(getDatumGeneriert(), otherZahlungsauftrag.getDatumGeneriert()) &&
 			Objects.equals(getStatus(), otherZahlungsauftrag.getStatus()) &&
 			Objects.equals(getBeschrieb(), otherZahlungsauftrag.getBeschrieb()) &&
-			Objects.equals(getBetragTotalAuftrag(), otherZahlungsauftrag.getBetragTotalAuftrag());
+			MathUtil.isSame(getBetragTotalAuftrag(), otherZahlungsauftrag.getBetragTotalAuftrag());
 	}
 }

@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import org.hibernate.envers.Audited;
 
@@ -133,8 +134,8 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 		return EbeguUtil.isSameObject(getInstitution(), otherInstStammdaten.getInstitution()) &&
 			Objects.equals(getBetreuungsangebotTyp(), otherInstStammdaten.getBetreuungsangebotTyp()) &&
 			Objects.equals(getIban(), otherInstStammdaten.getIban()) &&
-			Objects.equals(getOeffnungsstunden(), otherInstStammdaten.getOeffnungsstunden()) &&
-			Objects.equals(getOeffnungstage(), otherInstStammdaten.getOeffnungstage()) &&
+			MathUtil.isSame(getOeffnungsstunden(), otherInstStammdaten.getOeffnungsstunden()) &&
+			MathUtil.isSame(getOeffnungstage(), otherInstStammdaten.getOeffnungstage()) &&
 			EbeguUtil.isSameObject(getAdresse(), otherInstStammdaten.getAdresse());
 	}
 }
