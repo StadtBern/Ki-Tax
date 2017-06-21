@@ -1,5 +1,19 @@
 package ch.dvbern.ebegu.services;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.FamiliensituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -11,14 +25,10 @@ import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
-import javax.annotation.Nonnull;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Service fuer familiensituation
@@ -39,6 +49,7 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 	private EinkommensverschlechterungInfoService einkommensverschlechterungInfoService;
 
 	@Override
+	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
 	public FamiliensituationContainer saveFamiliensituation(Gesuch gesuch,
 															FamiliensituationContainer familiensituationContainer,
 															Familiensituation loadedFamiliensituation) {
@@ -61,9 +72,10 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 				if (gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP2() == null) {
 					gesuch.extractEinkommensverschlechterungInfo().setGemeinsameSteuererklaerung_BjP2(false);
 				}
-					einkommensverschlechterungInfoService.updateEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfoContainer());
-				}
+				//noinspection ConstantConditions (ist mit extractEinkommensverschlechterungInfo().isPresent() sichergestellt)
+				einkommensverschlechterungInfoService.updateEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfoContainer());
 			}
+		}
 
 		final FamiliensituationContainer mergedFamiliensituationContainer = persistence.merge(familiensituationContainer);
 		gesuch.setFamiliensituationContainer(mergedFamiliensituationContainer);
@@ -80,18 +92,18 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 		//Alle Daten des GS2 loeschen wenn man von 2GS auf 1GS wechselt und GS2 bereits erstellt wurde
 		if (gesuch.getGesuchsteller2() != null && isNeededToRemoveGesuchsteller2(gesuch,
 			mergedFamiliensituationContainer.extractFamiliensituation(), oldFamiliensituation)) {
-			gesuchstellerService.removeGesuchsteller(gesuch.getGesuchsteller2());
-			gesuch.setGesuchsteller2(null);
-			newFamiliensituation.setGemeinsameSteuererklaerung(false);
-		}
+				gesuchstellerService.removeGesuchsteller(gesuch.getGesuchsteller2());
+				gesuch.setGesuchsteller2(null);
+				newFamiliensituation.setGemeinsameSteuererklaerung(false);
+			}
 
 		wizardStepService.updateSteps(gesuch.getId(), oldFamiliensituation, newFamiliensituation, WizardStepName.FAMILIENSITUATION);
-
 		return mergedFamiliensituationContainer;
 	}
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Optional<FamiliensituationContainer> findFamiliensituation(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		FamiliensituationContainer a = persistence.find(FamiliensituationContainer.class, key);
@@ -100,24 +112,25 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Collection<FamiliensituationContainer> getAllFamiliensituatione() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(FamiliensituationContainer.class));
 	}
 
 	@Override
+	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
 	public void removeFamiliensituation(@Nonnull FamiliensituationContainer familiensituation) {
 		Validate.notNull(familiensituation);
 		Optional<FamiliensituationContainer> familiensituationToRemove = findFamiliensituation(familiensituation.getId());
 		familiensituationToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, familiensituation));
-		persistence.remove(familiensituationToRemove.get());
+		familiensituationToRemove.ifPresent(familiensituationContainer -> persistence.remove
+			(familiensituationContainer));
 	}
 
 	/**
 	 * Wenn die neue Familiensituation nur 1GS hat und der zweite GS schon existiert, wird dieser
 	 * und seine Daten endgueltig geloescht. Dies gilt aber nur fuer ERSTGESUCH. Bei Mutationen wird
 	 * der 2GS nie geloescht
-	 *
-	 * @return
 	 */
 	private boolean isNeededToRemoveGesuchsteller2(Gesuch gesuch, Familiensituation newFamiliensituation,
 												   Familiensituation familiensituationErstgesuch) {
@@ -129,5 +142,4 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 		return gesuch.getGesuchsteller2() != null && !familiensituationErstgesuch.hasSecondGesuchsteller()
 			&& !newFamiliensituation.hasSecondGesuchsteller();
 	}
-
 }

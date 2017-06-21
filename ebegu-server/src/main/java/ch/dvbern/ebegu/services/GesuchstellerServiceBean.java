@@ -1,6 +1,33 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import ch.dvbern.ebegu.entities.AbstractEntity_;
+import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.FinanzielleSituation;
+import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
@@ -9,17 +36,10 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Service fuer Gesuchsteller
@@ -38,8 +58,9 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 
 	@Nonnull
 	@Override
-	public GesuchstellerContainer saveGesuchsteller(@Nonnull GesuchstellerContainer gesuchsteller, final Gesuch gesuch, Integer gsNumber,
-										   boolean umzug) {
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	public GesuchstellerContainer saveGesuchsteller(@Nonnull GesuchstellerContainer gesuchsteller,
+		final Gesuch gesuch, Integer gsNumber, boolean umzug) {
 		Objects.requireNonNull(gesuchsteller);
 		Objects.requireNonNull(gesuch);
 		Objects.requireNonNull(gsNumber);
@@ -51,6 +72,9 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 			finanzielleSituationJA.setSteuerveranlagungErhalten(false); // by default
 			finanzielleSituationJA.setSteuererklaerungAusgefuellt(false); // by default
 			finanzielleSituationContainer.setFinanzielleSituationJA(finanzielleSituationJA); // alle Werte by default auf null -> nichts eingetragen
+			Validate.notNull(gesuch.getGesuchsteller1(), "Gesuchsteller 1 muss zu diesem Zeitpunkt gesetzt sein");
+			Validate.notNull(gesuch.getGesuchsteller1().getFinanzielleSituationContainer(),
+				"Finanzielle Situation GS1 muss zu diesem Zeitpunkt gesetzt sein");
 			finanzielleSituationContainer.setJahr(gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getJahr()); // copy it from GS1
 			finanzielleSituationContainer.setGesuchsteller(gesuchsteller);
 			gesuchsteller.setFinanzielleSituationContainer(finanzielleSituationContainer);
@@ -67,6 +91,7 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 					final Einkommensverschlechterung ekvJABasisJahrPlus1 = new Einkommensverschlechterung();
 					ekvJABasisJahrPlus1.setSteuerveranlagungErhalten(false); // by default
 					ekvJABasisJahrPlus1.setSteuererklaerungAusgefuellt(false); // by default
+					//noinspection ConstantConditions: Wird ausserhalb des IF-Blocks schon gesetzt
 					gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(ekvJABasisJahrPlus1);
 				}
 				if (gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() != null) {
@@ -95,7 +120,7 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 		} else {
 			WizardStep existingWizStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.GESUCHSTELLER);
 			WizardStepStatus gesuchStepStatus = existingWizStep != null ?  existingWizStep.getWizardStepStatus() : null;
-			if (WizardStepStatus.NOK.equals(gesuchStepStatus) || WizardStepStatus.IN_BEARBEITUNG.equals(gesuchStepStatus)) {
+			if (WizardStepStatus.NOK == gesuchStepStatus || WizardStepStatus.IN_BEARBEITUNG == gesuchStepStatus) {
 				if (isSavingLastNecessaryGesuchsteller(gesuch, gsNumber)) {
 					wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.GESUCHSTELLER);
 				}
@@ -116,6 +141,7 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Optional<GesuchstellerContainer> findGesuchsteller(@Nonnull final String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
 		GesuchstellerContainer a = persistence.find(GesuchstellerContainer.class, id);
@@ -124,20 +150,23 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Collection<GesuchstellerContainer> getAllGesuchsteller() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(GesuchstellerContainer.class));
 	}
 
 	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public void removeGesuchsteller(@Nonnull GesuchstellerContainer gesuchsteller) {
 		Validate.notNull(gesuchsteller);
 		Optional<GesuchstellerContainer> gesuchstellerToRemove = findGesuchsteller(gesuchsteller.getId());
 		gesuchstellerToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsteller));
-		persistence.remove(gesuchstellerToRemove.get());
+		gesuchstellerToRemove.ifPresent(gesuchstellerContainer -> persistence.remove(gesuchstellerContainer));
 	}
 
 	@Nullable
 	@Override
+	@PermitAll
 	public Gesuch findGesuchOfGesuchsteller(@Nonnull String gesuchstellerContainerID) {
 		Validate.notEmpty(gesuchstellerContainerID, "gesuchstellerContainerID must be set");
 

@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
-
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
 
 /**
  * Service zum Verwalten von Personen Adressen
@@ -28,11 +29,11 @@ public interface GesuchstellerAdresseService {
 	GesuchstellerAdresseContainer updateAdresse(@Nonnull GesuchstellerAdresseContainer gesuchstellerAdresse);
 
 	/**
-	 * @param key PK (id) der Adresse
+	 * @param id PK (id) der Adresse
 	 * @return Adresse mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
-	Optional<GesuchstellerAdresseContainer> findAdresse(@Nonnull String key);
+	Optional<GesuchstellerAdresseContainer> findAdresse(@Nonnull String id);
 
 	/**
 	 * @return Liste aller Adressen aus der DB
@@ -48,20 +49,8 @@ public interface GesuchstellerAdresseService {
 	void removeAdresse(@Nonnull GesuchstellerAdresseContainer gesuchstellerAdresse);
 
 	/**
-	 * Laedt die aktuellste Adresse mit gueltigBis EndOfTime fuer die Gesuchsteller mit gesuchstellerID
-	 */
-	@Nonnull
-	Optional<GesuchstellerAdresseContainer> getNewestWohnadresse(String gesuchstellerID);
-
-	/**
 	 * Laedt die Korrespondenzadresse (aktuell gibt es immer nur 1) fuer die Gesuchsteller mit gesuchstellerID
 	 */
 	@Nonnull
-	Optional<GesuchstellerAdresseContainer> getKorrespondenzAdr(String gesuchstellerID);
-
-	/**
-	 * Laedt die Wohnadresse die Stichtag heute gueltig ist
-	 */
-	@Nonnull
-	GesuchstellerAdresseContainer getCurrentWohnadresse(String gesuchstellerID);
+	Optional<GesuchstellerAdresseContainer> getKorrespondenzAdr(@Nonnull String gesuchstellerID);
 }

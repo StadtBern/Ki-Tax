@@ -1,11 +1,12 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Mahnung;
-
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Mahnung;
 
 /**
  * Service zum Verwalten von Mahnungen
@@ -53,7 +54,6 @@ public interface MahnungService {
 
 	/**
 	 * Entfernt alle Mahnungen vom gegebenen Gesuch
-	 * @param gesuch
 	 */
 	void removeAllMahnungenFromGesuch(Gesuch gesuch);
 }

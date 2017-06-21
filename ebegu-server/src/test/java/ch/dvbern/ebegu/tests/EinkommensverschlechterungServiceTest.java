@@ -1,6 +1,15 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.services.EinkommensverschlechterungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -11,11 +20,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Tests fuer die Klasse FinanzielleSituationService
@@ -30,7 +34,6 @@ public class EinkommensverschlechterungServiceTest extends AbstractEbeguLoginTes
 
 	@Inject
 	private Persistence<Gesuch> persistence;
-
 
 
 	@Test
@@ -86,9 +89,13 @@ public class EinkommensverschlechterungServiceTest extends AbstractEbeguLoginTes
 
 		final Optional<EinkommensverschlechterungContainer> einkommensverschlechterungContainerUpdated = einkommensverschlechterungService.findEinkommensverschlechterungContainer(einkommensverschlechterungContainer.getId());
 
-		final EinkommensverschlechterungContainer container1 = einkommensverschlechterungContainerUpdated.get();
-		Assert.assertNotNull(container1);
-		Assert.assertEquals(0, container1.getEkvGSBasisJahrPlus1().getNettolohnJan().compareTo(BigDecimal.TEN));
+		if (einkommensverschlechterungContainerUpdated.isPresent()) {
+			final EinkommensverschlechterungContainer container1 = einkommensverschlechterungContainerUpdated.get();
+			Assert.assertNotNull(container1);
+			Assert.assertEquals(0, container1.getEkvGSBasisJahrPlus1().getNettolohnJan().compareTo(BigDecimal.TEN));
+		} else {
+			Assert.fail("Einkommensverschlechterungsinfo konnte nicht aktualisiert werden");
+		}
 	}
 
 	@Test
@@ -102,8 +109,5 @@ public class EinkommensverschlechterungServiceTest extends AbstractEbeguLoginTes
 
 		einkommensverschlechterungService.removeEinkommensverschlechterungContainer(container);
 		Assert.assertEquals(0, einkommensverschlechterungService.getAllEinkommensverschlechterungContainer().size());
-
 	}
-
-
 }

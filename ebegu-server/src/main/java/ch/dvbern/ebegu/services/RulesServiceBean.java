@@ -1,5 +1,18 @@
 package ch.dvbern.ebegu.services;
 
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Mandant;
@@ -12,14 +25,6 @@ import ch.dvbern.ebegu.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.util.*;
-
 /**
  * Services fuer Rules
  */
@@ -27,7 +32,7 @@ import java.util.*;
 @Local(RulesService.class)
 public class RulesServiceBean extends AbstractBaseService implements RulesService {
 
-	private final Logger LOG = LoggerFactory.getLogger(RulesServiceBean.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RulesServiceBean.class);
 
 	@Inject
 	EbeguParameterService ebeguParameterService;
@@ -46,8 +51,6 @@ public class RulesServiceBean extends AbstractBaseService implements RulesServic
 
 	/**
 	 * Hinewis, hier muss wohl spaeter der Mandant als Parameter mitgehen
-	 *
-	 * @return
 	 */
 	private Map<EbeguParameterKey, EbeguParameter> loadRuleParameters(Mandant mandant, Gesuchsperiode gesuchsperiode, Set<EbeguParameterKey> keysToLoad) {
 		//Hinweis, Mandant wird noch ignoriert

@@ -1,8 +1,79 @@
 package ch.dvbern.ebegu.services;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.Tuple;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.entities.Abwesenheit;
+import ch.dvbern.ebegu.entities.AntragStatusHistory;
+import ch.dvbern.ebegu.entities.AntragStatusHistory_;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Benutzer_;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuung_;
+import ch.dvbern.ebegu.entities.Erwerbspensum;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Fall_;
+import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.KindContainer_;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt_;
+import ch.dvbern.ebegu.entities.Verfuegung_;
+import ch.dvbern.ebegu.entities.Zahlung;
+import ch.dvbern.ebegu.entities.Zahlungsauftrag;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.ReportVorlage;
+import ch.dvbern.ebegu.enums.Taetigkeit;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MergeDocException;
@@ -33,29 +104,14 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.Tuple;
-import javax.persistence.criteria.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static ch.dvbern.ebegu.enums.UserRoleName.*;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
+import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -68,6 +124,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.*;
  * <p>
  * Created by medu on 31/01/2017.
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @Local(ReportService.class)
 public class ReportServiceBean extends AbstractReportServiceBean implements ReportService {
@@ -131,6 +188,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	private static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
 	private static final String TEMP_REPORT_FOLDERNAME = "tempReports";
 
+	@Nonnull
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
 	public List<GesuchStichtagDataRow> getReportDataGesuchStichtag(@Nonnull LocalDateTime datetime, @Nullable String gesuchPeriodeID) {
@@ -139,10 +197,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		EntityManager em = persistence.getEntityManager();
 
-		List<GesuchStichtagDataRow> results = null;
+		List<GesuchStichtagDataRow> results = new ArrayList<>();
 
 		if (em != null) {
-
 			Query gesuchStichtagQuery = em.createNamedQuery("GesuchStichtagNativeSQLQuery");
 			// Wir rechnen zum Stichtag einen Tag dazu, damit es bis 24.00 des Vorabends gilt.
 			gesuchStichtagQuery.setParameter("stichTagDate", Constants.SQL_DATETIME_FORMAT.format(datetime.plusDays(1)));
@@ -194,7 +251,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		EntityManager em = persistence.getEntityManager();
 
-		List<GesuchZeitraumDataRow> results = null;
+		List<GesuchZeitraumDataRow> results = new ArrayList<>();
 
 		if (em != null) {
 			Query gesuchPeriodeQuery = em.createNamedQuery("GesuchZeitraumNativeSQLQuery");
@@ -486,7 +543,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
-	public UploadFileInfo generateExcelReportZahlungAuftrag(String auftragId) throws ExcelMergeException {
+	public UploadFileInfo generateExcelReportZahlungAuftrag(@Nonnull String auftragId) throws ExcelMergeException {
 
 		Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
 			.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
@@ -497,7 +554,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
-	public UploadFileInfo generateExcelReportZahlung(String zahlungId) throws ExcelMergeException {
+	public UploadFileInfo generateExcelReportZahlung(@Nonnull String zahlungId) throws ExcelMergeException {
 
 		List<Zahlung> reportData = new ArrayList<>();
 
@@ -506,7 +563,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		reportData.add(zahlung);
 
-		return getUploadFileInfoZahlung(reportData, zahlung.getZahlungsauftrag().getFilename() + "_" + zahlung.getInstitutionStammdaten().getInstitution().getName(),
+		return getUploadFileInfoZahlung(reportData, zahlung.getZahlungsauftrag().getFilename() + '_' + zahlung.getInstitutionStammdaten().getInstitution().getName(),
 			zahlung.getZahlungsauftrag().getBeschrieb(), zahlung.getZahlungsauftrag().getDatumGeneriert(), zahlung.getZahlungsauftrag().getDatumFaellig());
 	}
 
@@ -693,7 +750,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 				row.setVerfuegungsdatum(antragStatusHistory.getTimestampVon().toLocalDate());
 			}
 		}
-		row.setFallId(Integer.parseInt(""+gesuch.getFall().getFallNummer()));
+		row.setFallId(Integer.parseInt(String.valueOf(gesuch.getFall().getFallNummer())));
 		row.setBgNummer(zeitabschnitt.getVerfuegung().getBetreuung().getBGNummer());
 	}
 
@@ -715,19 +772,19 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		List<Erwerbspensum> erwerbspensenGS1 = containerGS1.getErwerbspensenAm(row.getZeitabschnittVon());
 		for (Erwerbspensum erwerbspensumJA : erwerbspensenGS1) {
-			if (Taetigkeit.ANGESTELLT.equals(erwerbspensumJA.getTaetigkeit())) {
+			if (Taetigkeit.ANGESTELLT == erwerbspensumJA.getTaetigkeit()) {
 				row.setGs1EwpAngestellt(row.getGs1EwpAngestellt() + erwerbspensumJA.getPensum());
 			}
-			if (Taetigkeit.AUSBILDUNG.equals(erwerbspensumJA.getTaetigkeit())) {
+			if (Taetigkeit.AUSBILDUNG == erwerbspensumJA.getTaetigkeit()) {
 				row.setGs1EwpAusbildung(row.getGs1EwpAusbildung() + erwerbspensumJA.getPensum());
 			}
-			if (Taetigkeit.SELBSTAENDIG.equals(erwerbspensumJA.getTaetigkeit())) {
+			if (Taetigkeit.SELBSTAENDIG == erwerbspensumJA.getTaetigkeit()) {
 				row.setGs1EwpSelbstaendig(row.getGs1EwpSelbstaendig() + erwerbspensumJA.getPensum());
 			}
-			if (Taetigkeit.RAV.equals(erwerbspensumJA.getTaetigkeit())) {
+			if (Taetigkeit.RAV == erwerbspensumJA.getTaetigkeit()) {
 				row.setGs1EwpRav(row.getGs1EwpRav() + erwerbspensumJA.getPensum());
 			}
-			if (Taetigkeit.GESUNDHEITLICHE_EINSCHRAENKUNGEN.equals(erwerbspensumJA.getTaetigkeit())) {
+			if (Taetigkeit.GESUNDHEITLICHE_EINSCHRAENKUNGEN == erwerbspensumJA.getTaetigkeit()) {
 				row.setGs1EwpGesundhtl(row.getGs1EwpGesundhtl() + erwerbspensumJA.getPensum());
 			}
 			if (erwerbspensumJA.getZuschlagZuErwerbspensum()) {
@@ -753,19 +810,19 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		// EWP Gesuchsteller 2
 		List<Erwerbspensum> erwerbspensenGS2 = containerGS2.getErwerbspensenAm(row.getZeitabschnittVon());
 		for (Erwerbspensum erwerbspensumJA : erwerbspensenGS2) {
-			if (Taetigkeit.ANGESTELLT.equals(erwerbspensumJA.getTaetigkeit())) {
+			if (Taetigkeit.ANGESTELLT == erwerbspensumJA.getTaetigkeit()) {
 				row.setGs2EwpAngestellt(row.getGs2EwpAngestellt() + erwerbspensumJA.getPensum());
 			}
-			if (Taetigkeit.AUSBILDUNG.equals(erwerbspensumJA.getTaetigkeit())) {
+			if (Taetigkeit.AUSBILDUNG == erwerbspensumJA.getTaetigkeit()) {
 				row.setGs2EwpAusbildung(row.getGs2EwpAusbildung() + erwerbspensumJA.getPensum());
 			}
-			if (Taetigkeit.SELBSTAENDIG.equals(erwerbspensumJA.getTaetigkeit())) {
+			if (Taetigkeit.SELBSTAENDIG == erwerbspensumJA.getTaetigkeit()) {
 				row.setGs2EwpSelbstaendig(row.getGs2EwpSelbstaendig() + erwerbspensumJA.getPensum());
 			}
-			if (Taetigkeit.RAV.equals(erwerbspensumJA.getTaetigkeit())) {
+			if (Taetigkeit.RAV == erwerbspensumJA.getTaetigkeit()) {
 				row.setGs2EwpRav(row.getGs2EwpRav() + erwerbspensumJA.getPensum());
 			}
-			if (Taetigkeit.GESUNDHEITLICHE_EINSCHRAENKUNGEN.equals(erwerbspensumJA.getTaetigkeit())) {
+			if (Taetigkeit.GESUNDHEITLICHE_EINSCHRAENKUNGEN == erwerbspensumJA.getTaetigkeit()) {
 				row.setGs2EwpGesundhtl(row.getGs2EwpGesundhtl() + erwerbspensumJA.getPensum());
 			}
 			if (erwerbspensumJA.getZuschlagZuErwerbspensum()) {
@@ -1002,14 +1059,14 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 				Betreuung vorgaengerBetreuung = persistence.find(Betreuung.class, betreuung.getVorgaengerId());
 				if (!betreuung.isSame(vorgaengerBetreuung, false, false)) {
 					betreuung.setBetreuungMutiert(Boolean.TRUE);
-					LOGGER.info("Betreuung hat geändert: " + betreuung.getId());
+					LOGGER.info("Betreuung hat geändert: {}", betreuung.getId());
 				} else {
 					betreuung.setBetreuungMutiert(Boolean.FALSE);
-					LOGGER.info("Betreuung hat nicht geändert: " + betreuung.getId());
+					LOGGER.info("Betreuung hat nicht geändert: {}", betreuung.getId());
 				}
 			} else {
 				// Betreuung war auf dieser Mutation neu
-				LOGGER.info("Betreuung ist neu: " + betreuung.getId());
+				LOGGER.info("Betreuung ist neu: {}", betreuung.getId());
 				betreuung.setBetreuungMutiert(Boolean.TRUE);
 			}
 		}
@@ -1023,14 +1080,14 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 				Abwesenheit vorgaengerAbwesenheit = persistence.find(Abwesenheit.class, abwesenheit.getVorgaengerId());
 				if (!abwesenheit.isSame(vorgaengerAbwesenheit)) {
 					betreuung.setAbwesenheitMutiert(Boolean.TRUE);
-					LOGGER.info("Abwesenheit hat geändert: " + abwesenheit.getId());
+					LOGGER.info("Abwesenheit hat geändert: {}", abwesenheit.getId());
 				} else {
 					betreuung.setAbwesenheitMutiert(Boolean.FALSE);
-					LOGGER.info("Abwesenheit hat nicht geändert: " + abwesenheit.getId());
+					LOGGER.info("Abwesenheit hat nicht geändert: {}", abwesenheit.getId());
 				}
 			} else {
 				// Abwesenheit war auf dieser Mutation neu
-				LOGGER.info("Abwesenheit ist neu: " + abwesenheit.getId());
+				LOGGER.info("Abwesenheit ist neu: {}", abwesenheit.getId());
 				betreuung.setAbwesenheitMutiert(Boolean.TRUE);
 			}
 		}
@@ -1044,14 +1101,14 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 				Kind vorgaengerKind = persistence.find(Kind.class, kind.getVorgaengerId());
 				if (!kind.isSame(vorgaengerKind)) {
 					kindContainer.setKindMutiert(Boolean.TRUE);
-					LOGGER.info("Kind hat geändert: " + kindContainer.getId());
+					LOGGER.info("Kind hat geändert: {}", kindContainer.getId());
 				} else {
 					kindContainer.setKindMutiert(Boolean.FALSE);
-					LOGGER.info("Kind hat nicht geändert: " + kindContainer.getId());
+					LOGGER.info("Kind hat nicht geändert: {}", kindContainer.getId());
 				}
 			} else {
 				// Kind war auf dieser Mutation neu
-				LOGGER.info("Kind ist neu: " + kindContainer.getId());
+				LOGGER.info("Kind ist neu: {}", kindContainer.getId());
 				kindContainer.setKindMutiert(Boolean.TRUE);
 			}
 		}

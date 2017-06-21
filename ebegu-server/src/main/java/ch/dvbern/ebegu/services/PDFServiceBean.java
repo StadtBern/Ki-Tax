@@ -1,6 +1,26 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Mahnung;
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
@@ -24,15 +44,9 @@ import ch.dvbern.ebegu.vorlagen.verfuegung.VerfuegungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.verfuegung.VerfuegungPrintMergeSource;
 import com.google.common.io.ByteStreams;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.util.*;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -49,6 +63,8 @@ import java.util.*;
 @Local(PDFService.class)
 public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
+	private static final Objects[] OBJECTARRAY = {};
+
 	@Inject
 	private DokumentGrundService dokumentGrundService;
 
@@ -60,7 +76,9 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 	@Nonnull
 	@Override
-	public byte[] generateNichteintreten(Betreuung betreuung, boolean writeProtected) throws MergeDocException {
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
+	public byte[] generateNichteintreten(Betreuung betreuung, boolean writeProtected) throws
+		MergeDocException {
 
 		EbeguVorlageKey vorlageKey;
 
@@ -75,7 +93,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			vorlageKey = EbeguVorlageKey.VORLAGE_INFOSCHREIBEN_MAXIMALTARIF;
 		} else {
 			throw new MergeDocException("generateNichteintreten()",
-				"Unexpected Betreuung Type", null, new Objects[]{});
+				"Unexpected Betreuung Type", null, OBJECTARRAY);
 		}
 
 		try {
@@ -90,14 +108,15 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			return bytes;
 		} catch (IOException e) {
 			throw new MergeDocException("generateNichteintreten()",
-				"Bei der Generierung der Nichteintreten ist ein Fehler aufgetreten", e, new Objects[]{});
+				"Bei der Generierung der Nichteintreten ist ein Fehler aufgetreten", e, OBJECTARRAY);
 		}
-
 	}
 
 	@Nonnull
 	@Override
-	public byte[] generateMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung, boolean writeProtected) throws MergeDocException {
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
+	public byte[] generateMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung,
+		boolean writeProtected) throws MergeDocException {
 
 		EbeguVorlageKey vorlageKey;
 
@@ -110,7 +129,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 				break;
 			default:
 				throw new MergeDocException("generateMahnung()",
-					"Unexpected Mahnung Type", null, new Objects[]{});
+					"Unexpected Mahnung Type", null, OBJECTARRAY);
 		}
 
 		try {
@@ -125,17 +144,17 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			return bytes;
 		} catch (IOException e) {
 			throw new MergeDocException("generateMahnung()",
-				"Bei der Generierung der Mahnung ist ein Fehler aufgetreten", e, new Objects[]{});
+				"Bei der Generierung der Mahnung ist ein Fehler aufgetreten", e, OBJECTARRAY);
 		}
-
 	}
 
 	@Override
 	@Nonnull
-	public byte[] generateFreigabequittung(Gesuch gesuch, Zustelladresse zustellAdresse, boolean writeProtected) throws MergeDocException {
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
+	public byte[] generateFreigabequittung(Gesuch gesuch, Zustelladresse zustelladresse,
+		boolean writeProtected) throws MergeDocException {
 
 		EbeguVorlageKey vorlageKey = EbeguVorlageKey.VORLAGE_FREIGABEQUITTUNG;
-
 		try {
 			Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 			final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();
@@ -145,18 +164,19 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			final List<DokumentGrund> dokumentGrundsMerged = calculateListOfDokumentGrunds(gesuch);
 
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				ByteStreams.toByteArray(is), new FreigabequittungPrintMergeSource(new FreigabequittungPrintImpl(gesuch, zustellAdresse, dokumentGrundsMerged)),
+				ByteStreams.toByteArray(is), new FreigabequittungPrintMergeSource(new FreigabequittungPrintImpl(gesuch, zustelladresse, dokumentGrundsMerged)),
 				writeProtected);
 			is.close();
 			return bytes;
 		} catch (IOException e) {
 			throw new MergeDocException("generateFreigabequittung()",
-				"Bei der Generierung der Freigabequittung ist ein Fehler aufgetreten", e, new Objects[]{});
+				"Bei der Generierung der Freigabequittung ist ein Fehler aufgetreten", e, OBJECTARRAY);
 		}
 	}
 
 	@Override
 	@Nonnull
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
 	public byte[] generateBegleitschreiben(@Nonnull Gesuch gesuch, boolean writeProtected) throws MergeDocException {
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 		authorizer.checkReadAuthorization(gesuch);
@@ -173,18 +193,18 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			return bytes;
 		} catch (IOException e) {
 			throw new MergeDocException("printBegleitschreiben()",
-				"Bei der Generierung der Begleitschreibenvorlage ist ein Fehler aufgetreten", e, new Objects[]{});
+				"Bei der Generierung der Begleitschreibenvorlage ist ein Fehler aufgetreten", e, OBJECTARRAY);
 		}
 	}
 
 	@Nonnull
 	@Override
-	public byte[] generateFinanzielleSituation(@Nonnull Gesuch gesuch, Verfuegung famGroessenVerfuegung, boolean writeProtected) throws MergeDocException {
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
+	public byte[] generateFinanzielleSituation(@Nonnull Gesuch gesuch, Verfuegung famGroessenVerfuegung,
+		boolean writeProtected) throws MergeDocException {
 
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
-
 		authorizer.checkReadAuthorizationFinSit(gesuch);
-
 		try {
 			final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();
 			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
@@ -198,13 +218,15 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			return bytes;
 		} catch (IOException e) {
 			throw new MergeDocException("generateFinanzielleSituation()",
-				"Bei der Generierung der Berechnungsgrundlagen ist ein Fehler aufgetreten", e, new Objects[]{});
+				"Bei der Generierung der Berechnungsgrundlagen ist ein Fehler aufgetreten", e, OBJECTARRAY);
 		}
 	}
 
 	@Nonnull
 	@Override
-	public byte[] generateVerfuegungForBetreuung(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum, boolean writeProtected) throws MergeDocException {
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
+	public byte[] generateVerfuegungForBetreuung(Betreuung betreuung,
+		@Nullable LocalDate	letzteVerfuegungDatum, boolean writeProtected) throws MergeDocException {
 
 		final DateRange gueltigkeit = betreuung.extractGesuchsperiode().getGueltigkeit();
 		EbeguVorlageKey vorlageFromBetreuungsangebottyp = getVorlageFromBetreuungsangebottyp(betreuung);
@@ -219,13 +241,13 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			return bytes;
 		} catch (IOException e) {
 			throw new MergeDocException("printVerfuegungen()",
-				"Bei der Generierung der Verfuegungsmustervorlage ist ein Fehler aufgetreten", e, new Objects[]{});
+				"Bei der Generierung der Verfuegungsmustervorlage ist ein Fehler aufgetreten", e, OBJECTARRAY);
 		}
 	}
 
 	@Nonnull
 	private EbeguVorlageKey getVorlageFromBetreuungsangebottyp(final Betreuung betreuung) {
-		if (Betreuungsstatus.NICHT_EINGETRETEN.equals(betreuung.getBetreuungsstatus())) {
+		if (Betreuungsstatus.NICHT_EINGETRETEN == betreuung.getBetreuungsstatus()) {
 			if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
 				return EbeguVorlageKey.VORLAGE_NICHT_EINTRETENSVERFUEGUNG;
 			} else {
@@ -248,9 +270,6 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 	/**
 	 * In dieser Methode werden alle DokumentGrunds vom Gesuch einer Liste hinzugefuegt. Die die bereits existieren und die
 	 * die noch nicht hochgeladen wurden
-	 *
-	 * @param gesuch
-	 * @return
 	 */
 	private List<DokumentGrund> calculateListOfDokumentGrunds(Gesuch gesuch) {
 		List<DokumentGrund> dokumentGrundsMerged = new ArrayList<>();

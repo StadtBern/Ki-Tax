@@ -470,7 +470,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 			return "-";
 		}
 		return Integer.toString(getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2)
-			+ "." + StringUtils.leftPad("" + getFall().getFallNummer(), Constants.FALLNUMMER_LENGTH, '0');
+			+ '.' + StringUtils.leftPad(String.valueOf(getFall().getFallNummer()), Constants.FALLNUMMER_LENGTH, '0');
 	}
 
 	@Transient
@@ -543,9 +543,9 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	public boolean areAllBetreuungenBestaetigt() {
 		List<Betreuung> betreuungs = extractAllBetreuungen();
 		for (Betreuung betreuung : betreuungs) {
-			if (Betreuungsstatus.AUSSTEHEND.equals(betreuung.getBetreuungsstatus()) ||
-				Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus()) ||
-				Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus())) {
+			if (Betreuungsstatus.AUSSTEHEND == betreuung.getBetreuungsstatus() ||
+				Betreuungsstatus.WARTEN == betreuung.getBetreuungsstatus() ||
+				Betreuungsstatus.ABGEWIESEN == betreuung.getBetreuungsstatus()) {
 				return false;
 			}
 		}

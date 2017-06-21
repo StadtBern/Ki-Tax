@@ -1,21 +1,5 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.testfaelle.*;
-import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.util.FreigabeCopyUtil;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.Validate;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
@@ -23,12 +7,75 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.AdresseTyp;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Erwerbspensum;
+import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.FamiliensituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.WizardStep;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.EnumFamilienstatus;
+import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.Geschlecht;
+import ch.dvbern.ebegu.enums.Taetigkeit;
+import ch.dvbern.ebegu.enums.UserRoleName;
+import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.enums.WizardStepStatus;
+import ch.dvbern.ebegu.enums.Zuschlagsgrund;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.testfaelle.AbstractASIVTestfall;
+import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
+import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
+import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
+import ch.dvbern.ebegu.testfaelle.Testfall03_PerreiraMarcia;
+import ch.dvbern.ebegu.testfaelle.Testfall04_WaltherLaura;
+import ch.dvbern.ebegu.testfaelle.Testfall05_LuethiMeret;
+import ch.dvbern.ebegu.testfaelle.Testfall06_BeckerNora;
+import ch.dvbern.ebegu.testfaelle.Testfall07_MeierMeret;
+import ch.dvbern.ebegu.testfaelle.Testfall08_UmzugAusInAusBern;
+import ch.dvbern.ebegu.testfaelle.Testfall09_Abwesenheit;
+import ch.dvbern.ebegu.testfaelle.Testfall10_UmzugVorGesuchsperiode;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_01;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_02;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_03;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_04;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_05;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_06;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_07;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_08;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_09;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_10;
+import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.FreigabeCopyUtil;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Validate;
+
 /**
  * Service fuer erstellen und mutieren von Testfällen
  */
 @Stateless
 @Local(TestfaelleService.class)
-@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
+@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
 public class TestfaelleServiceBean extends AbstractBaseService implements TestfaelleService {
 
 
@@ -65,7 +112,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 	@Override
 	@Nonnull
-	public StringBuilder createAndSaveTestfaelle(String fallid,
+	public StringBuilder createAndSaveTestfaelle(@Nonnull String fallid,
 												 boolean betreuungenBestaetigt,
 												 boolean verfuegen, @Nullable String gesuchsPeriodeId) {
 		return this.createAndSaveTestfaelle(fallid, 1, betreuungenBestaetigt, verfuegen, null, gesuchsPeriodeId);
@@ -73,8 +120,8 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 	@Nonnull
 	@SuppressWarnings(value = {"PMD.NcssMethodCount", "PMD.AvoidDuplicateLiterals"})
-	public StringBuilder createAndSaveTestfaelle(String fallid,
-												 Integer iterationCount,
+	public StringBuilder createAndSaveTestfaelle(@Nonnull String fallid,
+												 @Nullable Integer iterationCount,
 												 boolean betreuungenBestaetigt,
 												 boolean verfuegen, Benutzer besitzer, @Nullable String gesuchsPeriodeId) {
 
@@ -91,34 +138,34 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		StringBuilder responseString = new StringBuilder("");
 		for (int i = 0; i < iterationCount; i++) {
 
-			if (WaeltiDagmar.equals(fallid)) {
+			if (WAELTI_DAGMAR.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Dagmar Waelti erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
-			} else if (FeutzIvonne.equals(fallid)) {
+			} else if (FEUTZ_IVONNE.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Yvonne Feutz erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
-			} else if (PerreiraMarcia.equals(fallid)) {
+			} else if (PERREIRA_MARCIA.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Marcia Perreira erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
-			} else if (WaltherLaura.equals(fallid)) {
+			} else if (WALTHER_LAURA.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Laura Walther erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
-			} else if (LuethiMeret.equals(fallid)) {
+			} else if (LUETHI_MERET.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Meret Luethi erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
-			} else if (BeckerNora.equals(fallid)) {
+			} else if (BECKER_NORA.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Nora Becker erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
-			} else if (MeierMeret.equals(fallid)) {
+			} else if (MEIER_MERET.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Meier Meret erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
-			} else if (UmzugAusInAusBern.equals(fallid)) {
+			} else if (UMZUG_AUS_IN_AUS_BERN.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Umzug Aus-In-Aus Bern Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
-			} else if (UmzugVorGesuchsperiode.equals(fallid)) {
+			} else if (UMZUG_VOR_GESUCHSPERIODE.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall10_UmzugVorGesuchsperiode(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Umzug Vor Gesuchsperiode Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
-			} else if (Abwesenheit.equals(fallid)) {
+			} else if (ABWESENHEIT.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Abwesenheit Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
 			} else if (ASIV1.equals(fallid)) {
@@ -175,60 +222,57 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			} else {
 				responseString.append("Usage: /Nummer des Testfalls an die URL anhaengen. Bisher umgesetzt: 1-9. '/all' erstellt alle Testfaelle");
 			}
-
 		}
 		return responseString;
 	}
 
-
+	@Override
+	@Nonnull
 	public StringBuilder createAndSaveAsOnlineGesuch(@Nonnull String fallid,
 													 boolean betreuungenBestaetigt,
 													 boolean verfuegen, @Nonnull String username, @Nullable String gesuchsPeriodeId) {
-
 		removeGesucheOfGS(username);
 		Benutzer benutzer = benutzerService.findBenutzer(username).orElse(benutzerService.getCurrentBenutzer().orElse(null));
 		return this.createAndSaveTestfaelle(fallid, 1, betreuungenBestaetigt, verfuegen, benutzer, gesuchsPeriodeId);
-
 	}
-
 
 	@Override
 	@Nullable
-	public Gesuch createAndSaveTestfaelle(String fallid,
+	public Gesuch createAndSaveTestfaelle(@Nonnull String fallid,
 										  boolean betreuungenBestaetigt,
 										  boolean verfuegen) {
 
 		Gesuchsperiode gesuchsperiode = getNeuesteGesuchsperiode();
 		List<InstitutionStammdaten> institutionStammdatenList = getInstitutionsstammdatenForTestfaelle();
 
-		if (WaeltiDagmar.equals(fallid)) {
+		if (WAELTI_DAGMAR.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
-		if (FeutzIvonne.equals(fallid)) {
+		if (FEUTZ_IVONNE.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
-		if (PerreiraMarcia.equals(fallid)) {
+		if (PERREIRA_MARCIA.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
-		if (WaltherLaura.equals(fallid)) {
+		if (WALTHER_LAURA.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
-		if (LuethiMeret.equals(fallid)) {
+		if (LUETHI_MERET.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
-		if (BeckerNora.equals(fallid)) {
+		if (BECKER_NORA.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
-		if (MeierMeret.equals(fallid)) {
+		if (MEIER_MERET.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
-		if (UmzugAusInAusBern.equals(fallid)) {
+		if (UMZUG_AUS_IN_AUS_BERN.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
-		if (Abwesenheit.equals(fallid)) {
+		if (ABWESENHEIT.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
-		if (UmzugVorGesuchsperiode.equals(fallid)) {
+		if (UMZUG_VOR_GESUCHSPERIODE.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall10_UmzugVorGesuchsperiode(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
 		if (ASIV1.equals(fallid)) {
@@ -265,35 +309,35 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 	@Override
-	public void removeGesucheOfGS(String username) {
+	public void removeGesucheOfGS(@Nonnull String username) {
 		Benutzer benutzer = benutzerService.findBenutzer(username).orElse(null);
 		Optional<Fall> existingFall = fallService.findFallByBesitzer(benutzer);
-		if (existingFall.isPresent()) {
-			fallService.removeFall(existingFall.get());
-		}
+		existingFall.ifPresent(fall -> fallService.removeFall(fall));
 	}
 
 	@Override
-	public Gesuch mutierenHeirat(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId, @Nonnull LocalDate eingangsdatum, LocalDate aenderungPer, boolean verfuegen) {
+	@Nonnull
+	public Gesuch mutierenHeirat(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
+			@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen) {
+
 		Validate.notNull(eingangsdatum);
 		Validate.notNull(gesuchsperiodeId);
 		Validate.notNull(fallNummer);
 		Validate.notNull(aenderungPer);
 
-		Familiensituation newFamsit = new Familiensituation();
-		newFamsit.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
-		newFamsit.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
-		newFamsit.setGemeinsameSteuererklaerung(true);
-		newFamsit.setAenderungPer(aenderungPer);
+		Familiensituation newFamsit = getFamiliensituationZuZweit(aenderungPer);
+		Familiensituation oldFamsit = getFamiliensituationAlleine(null);
 
 		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(fallNummer, gesuchsperiodeId, eingangsdatum);
 		if (gesuchOptional.isPresent()) {
 			final Gesuch mutation = gesuchOptional.get();
 			final FamiliensituationContainer familiensituationContainer = mutation.getFamiliensituationContainer();
+			Validate.notNull(familiensituationContainer, "Familiensituation muss gesetzt sein");
 			familiensituationContainer.setFamiliensituationErstgesuch(familiensituationContainer.getFamiliensituationJA());
 			familiensituationContainer.setFamiliensituationJA(newFamsit);
 
-			familiensituationService.saveFamiliensituation(mutation, familiensituationContainer, null);
+			familiensituationService.saveFamiliensituation(mutation, familiensituationContainer, oldFamsit);
+			Validate.notNull(mutation.getGesuchsteller1(), "Gesuchsteller 1 muss gesetzt sein");
 			final GesuchstellerContainer gesuchsteller2 = gesuchstellerService
 				.saveGesuchsteller(createGesuchstellerHeirat(mutation.getGesuchsteller1()), mutation, 2, false);
 
@@ -307,7 +351,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 	@Override
-	public Gesuch mutierenScheidung(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId, @Nonnull LocalDate eingangsdatum, LocalDate aenderungPer, boolean verfuegen) {
+	@Nullable
+	public Gesuch mutierenScheidung(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
+			@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen) {
 
 		Validate.notNull(eingangsdatum);
 		Validate.notNull(gesuchsperiodeId);
@@ -319,10 +365,15 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		newFamsit.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		newFamsit.setAenderungPer(aenderungPer);
 
+		Familiensituation oldFamsit = new Familiensituation();
+		oldFamsit.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		oldFamsit.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+
 		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(fallNummer, gesuchsperiodeId, eingangsdatum);
 		if (gesuchOptional.isPresent()) {
 			final Gesuch mutation = gesuchOptional.get();
 			final FamiliensituationContainer familiensituationContainer = mutation.getFamiliensituationContainer();
+			Validate.notNull(familiensituationContainer, "Familiensituation muss gesetzt sein");
 			familiensituationContainer.setFamiliensituationErstgesuch(familiensituationContainer.getFamiliensituationJA());
 			familiensituationContainer.setFamiliensituationJA(newFamsit);
 			familiensituationService.saveFamiliensituation(mutation, familiensituationContainer, null);
@@ -334,12 +385,14 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		return gesuchOptional.orElse(null);
 	}
 
+	@Nonnull
 	private Gesuchsperiode getNeuesteGesuchsperiode() {
 		Collection<Gesuchsperiode> allActiveGesuchsperioden = gesuchsperiodeService.getAllActiveGesuchsperioden();
 		return allActiveGesuchsperioden.iterator().next();
 	}
 
 	@Override
+	@Nonnull
 	public List<InstitutionStammdaten> getInstitutionsstammdatenForTestfaelle() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		Optional<InstitutionStammdaten> optionalAaregg = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_KITA);
@@ -366,7 +419,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	 * @param besitzer     wenn der besitzer gesetzt ist wird der fall diesem besitzer zugeordnet
 	 */
 	@Override
-	public Gesuch createAndSaveGesuch(AbstractTestfall fromTestfall, boolean verfuegen, @Nullable Benutzer besitzer) {
+	@Nonnull
+	public Gesuch createAndSaveGesuch(@Nonnull AbstractTestfall fromTestfall, boolean verfuegen,
+			@Nullable Benutzer besitzer) {
 		final List<Gesuch> gesuche = gesuchService.findGesuchByGSName(fromTestfall.getNachname(), fromTestfall.getVorname());
 		if (!gesuche.isEmpty()) {
 			fromTestfall.setFall(gesuche.iterator().next().getFall());
@@ -395,6 +450,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		gesuchService.createGesuch(fromTestfall.getGesuch());
 		Gesuch gesuch = fromTestfall.fillInGesuch();
 
+		//noinspection VariableNotUsedInsideIf Muss so sein
 		if (besitzer != null) {
 			gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_GS);
 			gesuch.setEingangsart(Eingangsart.ONLINE);
@@ -408,24 +464,26 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 	}
 
-	public Gesuch createAndSaveAsivGesuch(AbstractASIVTestfall fromTestfall, boolean verfuegen, Benutzer besitzer) {
+	@Nonnull
+	public Gesuch createAndSaveAsivGesuch(@Nonnull AbstractASIVTestfall fromTestfall, boolean verfuegen,
+			@Nullable Benutzer besitzer) {
 		final Gesuch erstgesuch = createAndSaveGesuch(fromTestfall, true, besitzer);
 		// Mutation
-		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(erstgesuch.getId(), LocalDate.of(2016, Month.MARCH, 1));
-		if (gesuchOptional.isPresent()) {
-			Gesuch mutation = fromTestfall.createMutation(gesuchOptional.get());
-			gesuchService.createGesuch(mutation);
-			familiensituationService.saveFamiliensituation(mutation, mutation.getFamiliensituationContainer(), null);
-			gesuchVerfuegenUndSpeichern(verfuegen, mutation, true);
-			setWizardStepOkayAndVerfuegbar(wizardStepService.findWizardStepFromGesuch(mutation.getId(), WizardStepName.GESUCHSTELLER).getId());
-			setWizardStepOkayAndVerfuegbar(wizardStepService.findWizardStepFromGesuch(mutation.getId(), WizardStepName.FINANZIELLE_SITUATION).getId());
-			setWizardStepOkayAndVerfuegbar(wizardStepService.findWizardStepFromGesuch(mutation.getId(), WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getId());
-			return mutation;
-		}
-		return null;
+		Gesuch gesuch = gesuchService.antragMutieren(erstgesuch.getId(),
+			LocalDate.of(2016, Month.MARCH, 1)).
+			orElseThrow(() -> new EbeguEntityNotFoundException("createAndSaveAsivGesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND));
+		Gesuch mutation = fromTestfall.createMutation(gesuch);
+		gesuchService.createGesuch(mutation);
+		Validate.notNull(mutation.getFamiliensituationContainer(), "Familiensituation muss gesetzt sein!");
+		familiensituationService.saveFamiliensituation(mutation, mutation.getFamiliensituationContainer(), null);
+		gesuchVerfuegenUndSpeichern(verfuegen, mutation, true);
+		setWizardStepOkayAndVerfuegbar(wizardStepService.findWizardStepFromGesuch(mutation.getId(), WizardStepName.GESUCHSTELLER).getId());
+		setWizardStepOkayAndVerfuegbar(wizardStepService.findWizardStepFromGesuch(mutation.getId(), WizardStepName.FINANZIELLE_SITUATION).getId());
+		setWizardStepOkayAndVerfuegbar(wizardStepService.findWizardStepFromGesuch(mutation.getId(), WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getId());
+		return mutation;
 	}
 
-	private void setWizardStepOkayAndVerfuegbar(String wizardStepId) {
+	private void setWizardStepOkayAndVerfuegbar(@Nonnull String wizardStepId) {
 		Optional<WizardStep> wizardStep = wizardStepService.findWizardStep(wizardStepId);
 		if (wizardStep.isPresent()) {
 			wizardStep.get().setVerfuegbar(true);
@@ -434,7 +492,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 	@Override
-	public void gesuchVerfuegenUndSpeichern(boolean verfuegen, Gesuch gesuch, boolean mutation) {
+	public void gesuchVerfuegenUndSpeichern(boolean verfuegen, @Nonnull Gesuch gesuch, boolean mutation) {
 		final List<WizardStep> wizardStepsFromGesuch = wizardStepService.findWizardStepsFromGesuch(gesuch.getId());
 
 		if (!mutation) {
@@ -454,17 +512,13 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		if (verfuegen) {
 			FreigabeCopyUtil.copyForFreigabe(gesuch);
 			verfuegungService.calculateVerfuegung(gesuch);
-			gesuch.getKindContainers().stream().forEach(kindContainer -> {
-				kindContainer.getBetreuungen().stream().forEach(betreuung -> {
-					verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId(), Betreuungsstatus.VERFUEGT);
-				});
-			});
+			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId(), Betreuungsstatus.VERFUEGT)));
 			gesuchService.postGesuchVerfuegen(gesuch);
 		}
 		wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.VERFUEGEN);
 	}
 
-	private void saveVerfuegungen(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
+	private void saveVerfuegungen(@Nonnull Gesuch gesuch, @Nonnull List<WizardStep> wizardStepsFromGesuch) {
 		if (!gesuch.getStatus().isAnyStatusOfVerfuegt()) {
 			setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.VERFUEGEN, WizardStepStatus.WARTEN);
 		} else {
@@ -473,12 +527,13 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.VERFUEGEN);
 	}
 
-	private void saveDokumente(List<WizardStep> wizardStepsFromGesuch) {
+	private void saveDokumente(@Nonnull List<WizardStep> wizardStepsFromGesuch) {
 		setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.DOKUMENTE, WizardStepStatus.IN_BEARBEITUNG);
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.DOKUMENTE);
 	}
 
-	private void saveEinkommensverschlechterung(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
+	private void saveEinkommensverschlechterung(@Nonnull Gesuch gesuch,
+			@Nonnull List<WizardStep> wizardStepsFromGesuch) {
 		if (gesuch.getEinkommensverschlechterungInfoContainer() != null) {
 			setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.IN_BEARBEITUNG);
 			einkommensverschlechterungInfoService.createEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfoContainer());
@@ -493,7 +548,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 	}
 
-	private void saveFinanzielleSituation(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
+	private void saveFinanzielleSituation(@Nonnull Gesuch gesuch, @Nonnull List<WizardStep> wizardStepsFromGesuch) {
 		if (gesuch.getGesuchsteller1() != null && gesuch.getGesuchsteller1().getFinanzielleSituationContainer() != null) {
 			setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.IN_BEARBEITUNG);
 			finanzielleSituationService.saveFinanzielleSituation(gesuch.getGesuchsteller1().getFinanzielleSituationContainer(), gesuch.getId());
@@ -505,7 +560,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.FINANZIELLE_SITUATION);
 	}
 
-	private void saveErwerbspensen(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
+	private void saveErwerbspensen(@Nonnull Gesuch gesuch, @Nonnull List<WizardStep> wizardStepsFromGesuch) {
 		if (gesuch.getGesuchsteller1() != null) {
 			setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.ERWERBSPENSUM, WizardStepStatus.IN_BEARBEITUNG);
 			gesuch.getGesuchsteller1().getErwerbspensenContainers()
@@ -518,20 +573,20 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.ERWERBSPENSUM);
 	}
 
-	private void saveBetreuungen(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
+	private void saveBetreuungen(@Nonnull Gesuch gesuch, @Nonnull List<WizardStep> wizardStepsFromGesuch) {
 		setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.BETREUUNG, WizardStepStatus.IN_BEARBEITUNG);
 		gesuch.getKindContainers().forEach(kindContainer
 			-> kindContainer.getBetreuungen().forEach(betreuung -> betreuungService.saveBetreuung(betreuung, false)));
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.BETREUUNG);
 	}
 
-	private void saveKinder(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
+	private void saveKinder(@Nonnull Gesuch gesuch, @Nonnull List<WizardStep> wizardStepsFromGesuch) {
 		setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.KINDER, WizardStepStatus.IN_BEARBEITUNG);
 		gesuch.getKindContainers().forEach(kindContainer -> kindService.saveKind(kindContainer));
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.KINDER);
 	}
 
-	private void saveGesuchsteller(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
+	private void saveGesuchsteller(@Nonnull Gesuch gesuch, @Nonnull List<WizardStep> wizardStepsFromGesuch) {
 		if (gesuch.getGesuchsteller1() != null) {
 			setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.GESUCHSTELLER, WizardStepStatus.IN_BEARBEITUNG);
 			gesuchstellerService.saveGesuchsteller(gesuch.getGesuchsteller1(), gesuch, 1, false);
@@ -545,15 +600,17 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.UMZUG, WizardStepStatus.OK);
 	}
 
-	private void saveFamiliensituation(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
+	private void saveFamiliensituation(@Nonnull Gesuch gesuch, @Nonnull List<WizardStep> wizardStepsFromGesuch) {
 		if (gesuch.extractFamiliensituation() != null) {
 			setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.IN_BEARBEITUNG);
+			Validate.notNull(gesuch.getFamiliensituationContainer(), "FamiliensituationContainer muss gesetzt sein");
 			familiensituationService.saveFamiliensituation(gesuch, gesuch.getFamiliensituationContainer(), null);
 			setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.FAMILIENSITUATION);
 		}
 	}
 
-	private void setWizardStepInStatus(List<WizardStep> wizardSteps, WizardStepName stepName, WizardStepStatus status) {
+	private void setWizardStepInStatus(@Nonnull List<WizardStep> wizardSteps, @Nonnull WizardStepName stepName,
+			@Nonnull WizardStepStatus status) {
 		final WizardStep wizardStep = getWizardStepByName(wizardSteps, stepName);
 		if (wizardStep != null) {
 			wizardStep.setWizardStepStatus(status);
@@ -561,7 +618,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		}
 	}
 
-	private void setWizardStepVerfuegbar(List<WizardStep> wizardSteps, WizardStepName stepName) {
+	private void setWizardStepVerfuegbar(@Nonnull List<WizardStep> wizardSteps, @Nonnull WizardStepName stepName) {
 		final WizardStep wizardStep = getWizardStepByName(wizardSteps, stepName);
 		if (wizardStep != null) {
 			wizardStep.setVerfuegbar(true);
@@ -569,16 +626,18 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		}
 	}
 
-	private WizardStep getWizardStepByName(List<WizardStep> wizardSteps, WizardStepName stepName) {
+	@Nullable
+	private WizardStep getWizardStepByName(@Nonnull List<WizardStep> wizardSteps,@Nonnull  WizardStepName stepName) {
 		for (WizardStep wizardStep : wizardSteps) {
-			if (stepName.equals(wizardStep.getWizardStepName())) {
+			if (stepName == wizardStep.getWizardStepName()) {
 				return wizardStep;
 			}
 		}
 		return null;
 	}
 
-	private GesuchstellerContainer createGesuchstellerHeirat(GesuchstellerContainer gesuchsteller1) {
+	@Nonnull
+	private GesuchstellerContainer createGesuchstellerHeirat(@Nonnull GesuchstellerContainer gesuchsteller1) {
 		GesuchstellerContainer gesuchsteller2 = new GesuchstellerContainer();
 		Gesuchsteller gesuchsteller = new Gesuchsteller();
 		gesuchsteller.setGeburtsdatum(LocalDate.of(1984, 12, 12));
@@ -601,7 +660,8 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		return gesuchsteller2;
 	}
 
-	private GesuchstellerAdresseContainer createGesuchstellerAdresseHeirat(GesuchstellerContainer gsCont) {
+	@Nonnull
+	private GesuchstellerAdresseContainer createGesuchstellerAdresseHeirat(@Nonnull GesuchstellerContainer gsCont) {
 		GesuchstellerAdresseContainer gsAdresseContainer = new GesuchstellerAdresseContainer();
 
 		GesuchstellerAdresse gesuchstellerAdresse = new GesuchstellerAdresse();
@@ -619,6 +679,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		return gsAdresseContainer;
 	}
 
+	@Nonnull
 	private ErwerbspensumContainer createErwerbspensumContainer() {
 		ErwerbspensumContainer epCont = new ErwerbspensumContainer();
 		epCont.setErwerbspensumGS(createErwerbspensumData());
@@ -628,6 +689,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		return epCont;
 	}
 
+	@Nonnull
 	private Erwerbspensum createErwerbspensumData() {
 		Erwerbspensum ep = new Erwerbspensum();
 		ep.setTaetigkeit(Taetigkeit.ANGESTELLT);
@@ -637,5 +699,24 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		ep.setZuschlagsprozent(10);
 		ep.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 		return ep;
+	}
+
+	@Nonnull
+	private Familiensituation getFamiliensituationZuZweit(@Nullable LocalDate aenderungPer) {
+		Familiensituation famsit = new Familiensituation();
+		famsit.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
+		famsit.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
+		famsit.setGemeinsameSteuererklaerung(true);
+		famsit.setAenderungPer(aenderungPer);
+		return famsit;
+	}
+
+	@Nonnull
+	private Familiensituation getFamiliensituationAlleine(@Nullable LocalDate aenderungPer) {
+		Familiensituation famsit = new Familiensituation();
+		famsit.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		famsit.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		famsit.setAenderungPer(aenderungPer);
+		return famsit;
 	}
 }

@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 /**
- * Service zum berechnen und speichern der Verfuegung
+ * Service fuer erstellen und mutieren von Schulungsdaten
  */
 public interface SchulungService {
 

@@ -10,16 +10,11 @@
 
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.entities.ApplicationProperty;
-import ch.dvbern.ebegu.entities.ApplicationProperty_;
-import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.UserRoleName;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang3.Validate;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,11 +23,22 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.ebegu.entities.ApplicationProperty_;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Service fuer ApplicationProperty
@@ -42,6 +48,7 @@ import java.util.Optional;
 @PermitAll
 public class ApplicationPropertyServiceBean extends AbstractBaseService implements ApplicationPropertyService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(ApplicationPropertyServiceBean.class.getSimpleName());
 
 	@Inject
 	private Persistence<AbstractEntity> persistence;
@@ -53,7 +60,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Nonnull
 	@Override
-	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
+	@RolesAllowed({ADMIN, SUPER_ADMIN})
 	public ApplicationProperty  saveOrUpdateApplicationProperty(@Nonnull final ApplicationPropertyKey key, @Nonnull final String value) {
 		Validate.notNull(key);
 		Validate.notNull(value);
@@ -64,55 +71,57 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 		} else {
 			return persistence.persist(new ApplicationProperty(key, value));
 		}
-
 	}
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Optional<ApplicationProperty> readApplicationProperty(@Nonnull final ApplicationPropertyKey key) {
 		return criteriaQueryHelper.getEntityByUniqueAttribute(ApplicationProperty.class, key, ApplicationProperty_.name);
 	}
 
 	@Override
+	@PermitAll
 	public Optional<ApplicationProperty> readApplicationProperty(String keyParam) {
 		try {
 			ApplicationPropertyKey keyToSearch = Enum.valueOf(ApplicationPropertyKey.class, keyParam);
 			return readApplicationProperty(keyToSearch);
 		} catch (IllegalArgumentException e) {
+			LOG.warn("Property not found {}", keyParam, e);
 			return Optional.empty();
 		}
 	}
 
 	@Nonnull
 	@Override
+	@RolesAllowed({ADMIN, SUPER_ADMIN, REVISOR})
 	public List<ApplicationProperty> getAllApplicationProperties() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(ApplicationProperty.class));
 	}
 
 
 	@Override
-	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
+	@RolesAllowed({ADMIN, SUPER_ADMIN})
 	public void removeApplicationProperty(@Nonnull ApplicationPropertyKey key) {
 		Validate.notNull(key);
 		Optional<ApplicationProperty> propertyToRemove = readApplicationProperty(key);
 		propertyToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeApplicationProperty", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, key));
-		persistence.remove(propertyToRemove.get());
+		propertyToRemove.ifPresent(applicationProperty -> persistence.remove(applicationProperty));
 
 	}
 
 	@Override
 	@Nullable
+	@PermitAll
 	public String findApplicationPropertyAsString(@Nonnull ApplicationPropertyKey name) {
 		Objects.requireNonNull(name, NAME_MISSING_MSG);
 		Optional<ApplicationProperty> property = criteriaQueryHelper.getEntityByUniqueAttribute(ApplicationProperty.class, name, ApplicationProperty_.name);
-		if (property.isPresent()) {
-			return property.get().getValue();
-		}
-		return null;
+		return property.map(ApplicationProperty::getValue).orElse(null);
 	}
 
 	@Override
 	@Nullable
+	@PermitAll
 	public BigDecimal findApplicationPropertyAsBigDecimal(@Nonnull ApplicationPropertyKey name) {
 		Objects.requireNonNull(name, NAME_MISSING_MSG);
 		String valueAsString = findApplicationPropertyAsString(name);
@@ -124,6 +133,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Override
 	@Nullable
+	@PermitAll
 	public Integer findApplicationPropertyAsInteger(@Nonnull ApplicationPropertyKey name) {
 		Objects.requireNonNull(name, NAME_MISSING_MSG);
 		String valueAsString = findApplicationPropertyAsString(name);
@@ -135,8 +145,8 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Override
 	@Nullable
+	@PermitAll
 	public Boolean findApplicationPropertyAsBoolean(@Nonnull ApplicationPropertyKey name) {
-
 		Objects.requireNonNull(name, NAME_MISSING_MSG);
 		String valueAsString = findApplicationPropertyAsString(name);
 		if (valueAsString != null) {
@@ -147,6 +157,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Boolean findApplicationPropertyAsBoolean(@Nonnull ApplicationPropertyKey name, boolean defaultValue) {
 		Boolean property = findApplicationPropertyAsBoolean(name);
 		if (property == null) {
@@ -154,6 +165,4 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 		}
 		return property;
 	}
-
-
 }

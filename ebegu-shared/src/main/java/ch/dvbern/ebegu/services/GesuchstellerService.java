@@ -1,12 +1,13 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import java.util.Collection;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Optional;
+
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 
 /**
  * Service zum Verwalten von Gesuchstellern
@@ -16,18 +17,18 @@ public interface GesuchstellerService {
 	/**
 	 * Aktualisiert die Gesuchsteller in der DB.
 	 * @param gesuchsteller Die Gesuchsteller als DTO
-	 * @param gsNumber
+	 * @param gsNumber Die Gesuchersteller-Nummer
 	 */
 	@Nonnull
 	GesuchstellerContainer saveGesuchsteller(@Nonnull GesuchstellerContainer gesuchsteller, final Gesuch gesuch, Integer gsNumber, boolean umzug);
 
 	/**
 
-	 * @param key PK (id) der Gesuchsteller
+	 * @param id PK (id) der Gesuchsteller
 	 * @return Gesuchsteller mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
-	Optional<GesuchstellerContainer> findGesuchsteller(@Nonnull String key);
+	Optional<GesuchstellerContainer> findGesuchsteller(@Nonnull String id);
 
 	/**
 	 *

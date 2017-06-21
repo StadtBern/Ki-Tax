@@ -10,14 +10,19 @@
 
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.EbeguParameterKey;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.types.DateRange_;
-import ch.dvbern.lib.cdipersistence.Persistence;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.RolesAllowed;
@@ -27,20 +32,42 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.*;
-import java.util.stream.Collectors;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
-import static ch.dvbern.ebegu.enums.UserRoleName.*;
+import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.EbeguParameter;
+import ch.dvbern.ebegu.entities.EbeguParameter_;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.enums.EbeguParameterKey;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.lib.cdipersistence.Persistence;
+
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
+import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
+import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.STEUERAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Service fuer E-BEGU-Parameter
  */
 @Stateless
 @Local(EbeguParameterService.class)
-@RolesAllowed(value ={ADMIN, SUPER_ADMIN})
+@RolesAllowed({ADMIN, SUPER_ADMIN})
 public class EbeguParameterServiceBean extends AbstractBaseService implements EbeguParameterService {
 
 	@Inject
@@ -52,6 +79,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 
 	@Override
 	@Nonnull
+	@RolesAllowed({ADMIN, SUPER_ADMIN})
 	public EbeguParameter saveEbeguParameter(@Nonnull EbeguParameter ebeguParameter) {
 		Objects.requireNonNull(ebeguParameter);
 		return persistence.merge(ebeguParameter);
@@ -67,6 +95,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	}
 
 	@Override
+	@RolesAllowed({ADMIN, SUPER_ADMIN})
 	public void removeEbeguParameter(@Nonnull String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
 		Optional<EbeguParameter> parameterToRemove = findEbeguParameter(id);
@@ -99,7 +128,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 			ebeguParameters = getAllEbeguParameterByDate(gesuchsperiode.getGueltigkeit().getGueltigAb());
 			collect = ebeguParameters.stream().filter(ebeguParameter -> ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
 		}
-		collect.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
+		collect.sort(Comparator.comparing(EbeguParameter::getName));
 		return collect;
 	}
 
@@ -114,7 +143,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 			ebeguParameters = getAllEbeguParameterByDate(LocalDate.of(jahr, Month.JANUARY, 1));
 			collect = ebeguParameters.stream().filter(ebeguParameter -> !ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
 		}
-		collect.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
+		collect.sort(Comparator.comparing(EbeguParameter::getName));
 		return collect;
 	}
 
@@ -205,7 +234,6 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	/**
 	 * searches all parameters that were valid at the first of january of the jahr-1. Then go through those parameters and if
 	 * the parameter is set "per Gesuchsperiode" then copy it from the previous year and set the daterange for the current year
-	 * @param jahr
 	 */
 	private void createEbeguParameterListForJahr(@Nonnull Integer jahr) {
 		Collection<EbeguParameter> paramsOfYear = getAllEbeguParameterByDate(LocalDate.of(jahr-1, Month.JANUARY, 1));

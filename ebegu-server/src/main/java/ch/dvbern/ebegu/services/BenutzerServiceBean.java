@@ -1,15 +1,10 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Benutzer_;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.enums.UserRoleName;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang.StringUtils;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
@@ -21,11 +16,17 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+
+import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Benutzer_;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.UserRoleName;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Service fuer Benutzer
@@ -49,6 +50,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Benutzer saveBenutzer(@Nonnull Benutzer benutzer) {
 		Objects.requireNonNull(benutzer);
 		return persistence.merge(benutzer);
@@ -56,6 +58,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Optional<Benutzer> findBenutzer(@Nonnull String username) {
 		Objects.requireNonNull(username, "username muss gesetzt sein");
 		return criteriaQueryHelper.getEntityByUniqueAttribute(Benutzer.class, username, Benutzer_.username);
@@ -63,12 +66,14 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Collection<Benutzer> getAllBenutzer() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(Benutzer.class));
 	}
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Collection<Benutzer> getBenutzerJAorAdmin() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Benutzer> query = cb.createQuery(Benutzer.class);
@@ -83,7 +88,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 	@Nonnull
 	@Override
-	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
+	@RolesAllowed({UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
 	public Collection<Benutzer> getGesuchsteller() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Benutzer> query = cb.createQuery(Benutzer.class);
@@ -98,15 +103,17 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 
 	@Override
+	@RolesAllowed({UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
 	public void removeBenutzer(@Nonnull String username) {
 		Objects.requireNonNull(username);
 		Optional<Benutzer> benutzerToRemove = findBenutzer(username);
 		benutzerToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
-		persistence.remove(benutzerToRemove.get());
+		benutzerToRemove.ifPresent(benutzer -> persistence.remove(benutzer));
 	}
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Optional<Benutzer> getCurrentBenutzer() {
 		String username = null;
 		if (principalBean != null) {
@@ -123,6 +130,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	}
 
 	@Override
+	@PermitAll
 	public Benutzer updateOrStoreUserFromIAM(Benutzer benutzer) {
 		Optional<Benutzer> foundUser = this.findBenutzer(benutzer.getUsername());
 		if (foundUser.isPresent()) {

@@ -1,11 +1,27 @@
 package ch.dvbern.ebegu.tests;
 
+import java.time.LocalDate;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.dto.dataexport.v1.VerfuegungExportDTO;
 import ch.dvbern.ebegu.dto.dataexport.v1.VerfuegungenExportDTO;
 import ch.dvbern.ebegu.dto.dataexport.v1.ZeitabschnittExportDTO;
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
-import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.services.ExportService;
+import ch.dvbern.ebegu.services.GesuchsperiodeService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.InstitutionStammdatenService;
+import ch.dvbern.ebegu.services.TestfaelleService;
+import ch.dvbern.ebegu.services.TraegerschaftService;
+import ch.dvbern.ebegu.services.VerfuegungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -17,10 +33,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.util.List;
 
 /**
  * Tests fuer die Klasse AdresseService
@@ -92,8 +104,7 @@ public class ExportServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void exportTestVorVerfuegt() {
 
-		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.WaeltiDagmar, true, true);
-
+		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.WAELTI_DAGMAR, true, true);
 		Assert.assertNotNull(gesuch.getKindContainers().stream().findFirst().get().getBetreuungen().stream().findFirst().get().getVerfuegung());
 		VerfuegungenExportDTO exportedVerfuegungen = exportService.exportAllVerfuegungenOfAntrag(gesuch.getId());
 		Assert.assertNotNull(exportedVerfuegungen);
@@ -111,13 +122,15 @@ public class ExportServiceBeanTest extends AbstractEbeguLoginTest {
 		}
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	private void checkExportedValuesCorrect(Verfuegung verfuegung, VerfuegungExportDTO matchingVerfuegungExport) {
 		Assert.assertEquals(verfuegung.getZeitabschnitte().size(), matchingVerfuegungExport.getZeitabschnitte().size());
 		Assert.assertEquals(verfuegung.getBetreuung().getBetreuungsangebotTyp(), matchingVerfuegungExport.getBetreuung().getBetreuungsArt());
 
 		Assert.assertEquals(verfuegung.getBetreuung().getInstitutionStammdaten().getInstitution().getId(), matchingVerfuegungExport.getBetreuung().getInstitution().getId());
 		Assert.assertNotNull(verfuegung.getBetreuung().extractGesuch().getGesuchsteller1());
-		Assert.assertEquals(verfuegung.getBetreuung().extractGesuch().getGesuchsteller1().getGesuchstellerJA().getMail(), matchingVerfuegungExport.getGesuchsteller().getEmail());
+		Assert.assertEquals(verfuegung.getBetreuung().extractGesuch().getGesuchsteller1().getGesuchstellerJA()
+			.getMail(), matchingVerfuegungExport.getGesuchsteller().getEmail());
 		Assert.assertEquals(verfuegung.getBetreuung().extractGesuch().getGesuchsteller1().getGesuchstellerJA().getNachname(), matchingVerfuegungExport.getGesuchsteller().getNachname());
 		Assert.assertEquals(verfuegung.getBetreuung().extractGesuch().getGesuchsteller1().getGesuchstellerJA().getVorname(), matchingVerfuegungExport.getGesuchsteller().getVorname());
 		Assert.assertEquals(verfuegung.getBetreuung().getKind().getKindJA().getNachname(), matchingVerfuegungExport.getKind().getNachname());

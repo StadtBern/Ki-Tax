@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Benutzer;
-
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Benutzer;
 
 /**
  * Service fuer die Verwaltung von Benutzern
@@ -20,7 +21,6 @@ public interface BenutzerService {
 	Benutzer saveBenutzer(@Nonnull Benutzer benutzer);
 
 	/**
-	 *
 	 * @param username PK (id) des Benutzers
 	 * @return Benutzer mit dem gegebenen key oder null falls nicht vorhanden
 	 */
@@ -61,7 +61,6 @@ public interface BenutzerService {
 
 	/**
 	 * inserts a user received from iam or updates it if it alreday exists
-	 * @param benutzer
 	 */
 	Benutzer updateOrStoreUserFromIAM(Benutzer benutzer);
 }

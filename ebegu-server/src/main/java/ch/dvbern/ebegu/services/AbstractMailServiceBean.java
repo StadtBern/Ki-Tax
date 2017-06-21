@@ -1,5 +1,12 @@
 package ch.dvbern.ebegu.services;
 
+import java.io.IOException;
+import java.io.Writer;
+
+import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.errors.MailException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -12,16 +19,12 @@ import org.apache.commons.net.smtp.SMTPReply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.io.IOException;
-import java.io.Writer;
-
 
 /**
  * Allgemeine Mailing-Funktionalität
  */
-@SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals"})
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
+@PermitAll
 public abstract class AbstractMailServiceBean extends AbstractBaseService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractMailServiceBean.class.getSimpleName());
@@ -30,7 +33,7 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 	@Inject
 	private EbeguConfiguration configuration;
 
-
+	@PermitAll
 	public void sendMessage(@Nonnull String subject, @Nonnull String messageBody, @Nonnull String mailadress) throws MailException {
 		Validate.notNull(subject);
 		Validate.notNull(messageBody);
@@ -54,8 +57,8 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 			email.addTo(mailadress);
 			email.send();
 		} catch (final EmailException e) {
-			LOG.error("Error while sending Mail to: '" + mailadress + "'", e);
-			throw new MailException("Error while sending Mail to: '" + mailadress + "'", e);
+			LOG.error("Error while sending Mail to: '" + mailadress + '\'', e);
+			throw new MailException("Error while sending Mail to: '" + mailadress + '\'', e);
 		}
 	}
 
@@ -79,8 +82,8 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 			assertPositiveIntermediate(client);
 			client.quit();
 		} catch (final Exception e) {
-			LOG.error("Error while sending Mail to: '" + mailadress + "'", e);
-			throw new MailException("Error while sending Mail to: '" + mailadress + "'", e);
+			LOG.error("Error while sending Mail to: '" + mailadress + '\'', e);
+			throw new MailException("Error while sending Mail to: '" + mailadress + '\'', e);
 		} finally {
 			if (client.isConnected()) {
 				try {

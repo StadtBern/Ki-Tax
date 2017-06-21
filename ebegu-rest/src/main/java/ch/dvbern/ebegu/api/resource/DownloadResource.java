@@ -71,6 +71,7 @@ public class DownloadResource {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DownloadResource.class.getSimpleName());
 
+
 	@Inject
 	private DownloadFileService downloadFileService;
 
@@ -196,8 +197,6 @@ public class DownloadResource {
 	 * @param request     request
 	 * @param uriInfo     uri
 	 * @return ein Response mit dem GeneratedDokument
-	 * @throws EbeguEntityNotFoundException
-	 * @throws MergeDocException
 	 */
 	@Nonnull
 	@GET
@@ -232,8 +231,6 @@ public class DownloadResource {
 	 * @param request     request
 	 * @param uriInfo     uri
 	 * @return ein Response mit dem GeneratedDokument
-	 * @throws EbeguEntityNotFoundException
-	 * @throws MergeDocException
 	 */
 	@Nonnull
 	@GET
@@ -361,11 +358,11 @@ public class DownloadResource {
 		Validate.notNull(jaxBetreuungId);
 		String ip = getIP(request);
 
-		Optional<Betreuung> betreuung = betreuungService.findBetreuung(jaxBetreuungId.getId());
-
+		Betreuung betreuung = betreuungService.findBetreuung(jaxBetreuungId.getId()).orElseThrow(()
+			-> new EbeguEntityNotFoundException("getNichteintretenDokumentAccessTokenGeneratedDokument",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxBetreuungId.getId()));
 		WriteProtectedDokument persistedDokument = generatedDokumentService
-			.getNichteintretenDokumentAccessTokenGeneratedDokument(betreuung.get(), forceCreation);
-
+			.getNichteintretenDokumentAccessTokenGeneratedDokument(betreuung, forceCreation);
 		return getFileDownloadResponse(uriInfo, ip, persistedDokument);
 	}
 
@@ -390,7 +387,6 @@ public class DownloadResource {
 
 		UploadFileInfo uploadFileInfo = exportService.exportVerfuegungOfBetreuungAsFile(converter.toEntityId(jaxBetreuungId));
 		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
-
 		return this.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
 
@@ -428,7 +424,7 @@ public class DownloadResource {
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(DownloadResource.class)
-			.path("/" + downloadFile.getId())
+			.path('/' + downloadFile.getId())
 			.build();
 
 		JaxDownloadFile jaxDownloadFile = converter.downloadFileToJAX(downloadFile);

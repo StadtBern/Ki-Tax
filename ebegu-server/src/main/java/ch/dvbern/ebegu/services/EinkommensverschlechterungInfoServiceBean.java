@@ -1,5 +1,17 @@
 package ch.dvbern.ebegu.services;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
@@ -10,20 +22,17 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
-import javax.annotation.Nonnull;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
- * Service fuer FinanzielleSituation
+ * Service fuer die Einkommensverschlechterung
  */
 @Stateless
 @Local(EinkommensverschlechterungInfoService.class)
+@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
 public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseService implements EinkommensverschlechterungInfoService {
 
 	@Inject
@@ -40,6 +49,7 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 
 	@Override
 	@Nonnull
+	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
 	public Optional<EinkommensverschlechterungInfoContainer> createEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo) {
 		Objects.requireNonNull(einkommensverschlechterungInfo);
 		final Gesuch gesuch = einkommensverschlechterungInfo.getGesuch();
@@ -50,6 +60,7 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 
 	@Override
 	@Nonnull
+	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
 	public EinkommensverschlechterungInfoContainer updateEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo) {
 		Objects.requireNonNull(einkommensverschlechterungInfo);
 		return persistence.merge(einkommensverschlechterungInfo);
@@ -57,6 +68,7 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 
 	@Override
 	@Nonnull
+	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
 	public EinkommensverschlechterungInfoContainer updateEinkommensVerschlechterungInfoAndGesuch(Gesuch gesuch, EinkommensverschlechterungInfoContainer oldEVData,
 																								 EinkommensverschlechterungInfoContainer convertedEkvi) {
 		convertedEkvi.setGesuch(gesuch);
@@ -69,12 +81,12 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 
 		wizardStepService.updateSteps(gesuch.getId(), oldEVData,
 			convertedEkvi, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
-
 		return convertedEkvi;
 	}
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Optional<EinkommensverschlechterungInfoContainer> findEinkommensverschlechterungInfo(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		EinkommensverschlechterungInfoContainer a = persistence.find(EinkommensverschlechterungInfoContainer.class, key);
@@ -83,11 +95,13 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Collection<EinkommensverschlechterungInfoContainer> getAllEinkommensverschlechterungInfo() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(EinkommensverschlechterungInfoContainer.class));
 	}
 
 	@Override
+	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
 	public void removeEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo) {
 		Validate.notNull(einkommensverschlechterungInfo);
 		einkommensverschlechterungInfo.getGesuch().setEinkommensverschlechterungInfoContainer(null);
@@ -95,11 +109,13 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 
 		Optional<EinkommensverschlechterungInfoContainer> propertyToRemove = findEinkommensverschlechterungInfo(einkommensverschlechterungInfo.getId());
 		propertyToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeEinkommensverschlechterungInfo", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, einkommensverschlechterungInfo));
-		persistence.remove(EinkommensverschlechterungInfoContainer.class, propertyToRemove.get().getId());
+		propertyToRemove.ifPresent(einkommensverschlechterungInfoContainer -> persistence.remove
+			(EinkommensverschlechterungInfoContainer.class, einkommensverschlechterungInfoContainer.getId()));
 	}
 
 	private void removeEinkommensverschlechterungFromGesuchsteller(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfoContainer oldData, EinkommensverschlechterungInfoContainer convertedEkvi) {
 		if (isNeededToRemoveEinkommensverschlechterung(gesuchsteller, oldData, convertedEkvi)) {
+			//noinspection ConstantConditions
 			einkommensverschlechterungService.removeEinkommensverschlechterungContainer(gesuchsteller.getEinkommensverschlechterungContainer());
 			gesuchsteller.setEinkommensverschlechterungContainer(null);
 		}
@@ -107,17 +123,10 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 
 	/**
 	 * Returns true when the given GS already has an einkommensverschlechtrung and the new EVInfo says that no EV should be present
-	 *
-	 * @param gesuchsteller
-	 * @param oldData
-	 * @param newData
-	 * @return
 	 */
 	private boolean isNeededToRemoveEinkommensverschlechterung(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfoContainer oldData, EinkommensverschlechterungInfoContainer newData) {
 		return oldData != null && newData != null && gesuchsteller != null
 			&& oldData.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung() && !newData.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()
 			&& gesuchsteller.getEinkommensverschlechterungContainer() != null;
 	}
-
-
 }

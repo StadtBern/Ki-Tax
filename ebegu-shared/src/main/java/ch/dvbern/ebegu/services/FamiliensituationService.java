@@ -1,12 +1,13 @@
 package ch.dvbern.ebegu.services;
 
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.FamiliensituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
-
-import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Service zum Verwalten von Familiensituation

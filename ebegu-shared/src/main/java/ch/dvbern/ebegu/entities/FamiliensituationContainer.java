@@ -1,14 +1,19 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
-import ch.dvbern.ebegu.validators.CheckFamiliensituationContainerComplete;
-import org.hibernate.envers.Audited;
+import java.time.LocalDate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.validation.Valid;
-import java.time.LocalDate;
+
+import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
+import ch.dvbern.ebegu.validators.CheckFamiliensituationContainerComplete;
+import org.hibernate.envers.Audited;
 
 /**
  * Entitaet zum Speichern von FamiliensituationContainer in der Datenbank.
