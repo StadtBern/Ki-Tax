@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.dto;
 
+import java.time.LocalDateTime;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -12,6 +14,7 @@ public class KindDubletteDTO {
 	private long fallNummer;
 	private Integer kindNummerOriginal;
 	private Integer kindNummerDublette;
+	private LocalDateTime timestampMutiertGesuch;
 
 	public KindDubletteDTO(String gesuchId, long fallNummer, Integer kindNummerOriginal, Integer kindNummerDublette) {
 		this.gesuchId = gesuchId;
@@ -52,5 +55,13 @@ public class KindDubletteDTO {
 
 	public void setKindNummerDublette(Integer kindNummerDublette) {
 		this.kindNummerDublette = kindNummerDublette;
+	}
+
+	public LocalDateTime getTimestampMutiertGesuch() {
+		return timestampMutiertGesuch;
+	}
+
+	public void setTimestampMutiertGesuch(LocalDateTime timestampMutiertGesuch) {
+		this.timestampMutiertGesuch = timestampMutiertGesuch;
 	}
 }
