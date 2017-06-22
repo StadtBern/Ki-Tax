@@ -147,6 +147,9 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		if (!super.isSame(other)) {
 			return false;
 		}
+		if (!(other instanceof Gesuchsteller)) {
+			return false;
+		}
 		final Gesuchsteller otherGesuchsteller = (Gesuchsteller) other;
 		return Objects.equals(getMail(), otherGesuchsteller.getMail()) &&
 			Objects.equals(getMobile(), otherGesuchsteller.getMobile()) &&

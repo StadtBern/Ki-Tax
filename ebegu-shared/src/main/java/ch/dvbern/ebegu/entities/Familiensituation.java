@@ -127,6 +127,9 @@ public class Familiensituation extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof Familiensituation)) {
+			return false;
+		}
 		final Familiensituation otherFamiliensituation = (Familiensituation) other;
 		return Objects.equals(getAenderungPer(), otherFamiliensituation.getAenderungPer()) &&
 			Objects.equals(getFamilienstatus(), otherFamiliensituation.getFamilienstatus()) &&

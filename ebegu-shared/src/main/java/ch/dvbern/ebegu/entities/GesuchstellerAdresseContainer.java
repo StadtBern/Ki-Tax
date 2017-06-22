@@ -164,6 +164,9 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof GesuchstellerAdresseContainer)) {
+			return false;
+		}
 		final GesuchstellerAdresseContainer otherAdresseContainer = (GesuchstellerAdresseContainer) other;
 		return EbeguUtil.isSameObject(getGesuchstellerAdresseJA(), otherAdresseContainer.getGesuchstellerAdresseJA());
 	}

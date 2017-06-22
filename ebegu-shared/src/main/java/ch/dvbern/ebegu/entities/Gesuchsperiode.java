@@ -73,6 +73,9 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 		if (!super.isSame(other)) {
 			return false;
 		}
+		if (!(other instanceof Gesuchsperiode)) {
+			return false;
+		}
 		final Gesuchsperiode otherGesuchsperiode = (Gesuchsperiode) other;
 		return Objects.equals(this.getStatus(), otherGesuchsperiode.getStatus());
 	}

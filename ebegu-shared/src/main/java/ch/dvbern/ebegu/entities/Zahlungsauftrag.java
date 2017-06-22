@@ -130,6 +130,9 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity implements Compara
 		if (!super.isSame(other)) {
 			return false;
 		}
+		if (!(other instanceof Zahlungsauftrag)) {
+			return false;
+		}
 		final Zahlungsauftrag otherZahlungsauftrag = (Zahlungsauftrag) other;
 		return Objects.equals(getDatumFaellig(), otherZahlungsauftrag.getDatumFaellig()) &&
 			Objects.equals(getDatumGeneriert(), otherZahlungsauftrag.getDatumGeneriert()) &&

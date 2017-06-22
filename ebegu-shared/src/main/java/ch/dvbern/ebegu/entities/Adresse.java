@@ -154,6 +154,9 @@ public class Adresse extends AbstractDateRangedEntity {
 		if (!super.isSame(other)) {
 			return false;
 		}
+		if (!(other instanceof Adresse)) {
+			return false;
+		}
 		final Adresse otherAdr = (Adresse) other;
 		return Objects.equals(getStrasse(), otherAdr.getStrasse()) &&
 			Objects.equals(getHausnummer(), otherAdr.getHausnummer()) &&

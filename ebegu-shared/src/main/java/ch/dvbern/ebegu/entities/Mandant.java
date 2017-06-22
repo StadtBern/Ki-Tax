@@ -46,6 +46,9 @@ public class Mandant extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof Mandant)) {
+			return false;
+		}
 		final Mandant otherMandant = (Mandant) other;
 		return Objects.equals(getName(), otherMandant.getName());
 	}

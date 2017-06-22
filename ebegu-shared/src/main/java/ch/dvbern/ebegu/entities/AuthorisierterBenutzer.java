@@ -194,6 +194,9 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof AuthorisierterBenutzer)) {
+			return false;
+		}
 		final AuthorisierterBenutzer otherAuthorisierterBenutzer = (AuthorisierterBenutzer) other;
 		return Objects.equals(getFirstLogin(), otherAuthorisierterBenutzer.getFirstLogin()) &&
 			Objects.equals(getLastLogin(), otherAuthorisierterBenutzer.getLastLogin()) &&

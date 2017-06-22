@@ -55,6 +55,9 @@ public class Betreuungsmitteilung extends Mitteilung {
 		if (!super.isSame(other)) {
 			return false;
 		}
+		if (!(other instanceof Betreuungsmitteilung)) {
+			return false;
+		}
 		final Betreuungsmitteilung otherBetreuungsmitteilung = (Betreuungsmitteilung) other;
 		return isApplied() == otherBetreuungsmitteilung.isApplied();
 	}

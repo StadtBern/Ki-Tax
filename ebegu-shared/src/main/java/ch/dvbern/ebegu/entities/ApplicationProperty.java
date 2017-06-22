@@ -46,6 +46,9 @@ public class ApplicationProperty extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof ApplicationProperty)) {
+			return false;
+		}
 		final ApplicationProperty otherApplicationProperty = (ApplicationProperty) other;
 		return getName() == otherApplicationProperty.getName() &&
 			Objects.equals(getValue(), otherApplicationProperty.getValue());

@@ -75,6 +75,9 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof BetreuungspensumContainer)) {
+			return false;
+		}
 		final BetreuungspensumContainer otherBetreuungspensumContainer = (BetreuungspensumContainer) other;
 
 		return EbeguUtil.isSameObject(getBetreuungspensumJA(), otherBetreuungspensumContainer.getBetreuungspensumJA());

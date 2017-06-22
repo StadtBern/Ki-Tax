@@ -61,6 +61,9 @@ public class GesuchstellerAdresse extends Adresse {
 		if (!super.isSame(other)) {
 			return false;
 		}
+		if (!(other instanceof GesuchstellerAdresse)) {
+			return false;
+		}
 		final GesuchstellerAdresse otherAdr = (GesuchstellerAdresse) other;
 		return getAdresseTyp() == otherAdr.getAdresseTyp() &&
 			isNichtInGemeinde() == otherAdr.isNichtInGemeinde();

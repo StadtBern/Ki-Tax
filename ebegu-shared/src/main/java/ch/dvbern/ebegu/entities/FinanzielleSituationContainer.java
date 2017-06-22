@@ -100,6 +100,9 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof FinanzielleSituationContainer)) {
+			return false;
+		}
 		final FinanzielleSituationContainer otherFinSitContainer = (FinanzielleSituationContainer) other;
 		return Objects.equals(getJahr(), otherFinSitContainer.getJahr()) &&
 			EbeguUtil.isSameObject(getFinanzielleSituationJA(), otherFinSitContainer.getFinanzielleSituationJA());

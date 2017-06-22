@@ -98,6 +98,9 @@ public class AntragStatusHistory extends AbstractEntity implements Comparable<An
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof AntragStatusHistory)) {
+			return false;
+		}
 		final AntragStatusHistory otherAntragStatusHistory = (AntragStatusHistory) other;
 		return Objects.equals(getGesuch().getId(), otherAntragStatusHistory.getGesuch().getId()) && // the content is not relevant
 			Objects.equals(getBenutzer().getId(), otherAntragStatusHistory.getBenutzer().getId()) && // the content is not relevant

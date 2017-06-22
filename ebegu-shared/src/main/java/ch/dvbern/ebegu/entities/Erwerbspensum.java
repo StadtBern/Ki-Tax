@@ -101,6 +101,9 @@ public class Erwerbspensum extends AbstractPensumEntity {
 		if (!super.isSame(other)) {
 			return false;
 		}
+		if (!(other instanceof Erwerbspensum)) {
+			return false;
+		}
 		final Erwerbspensum otherErwerbspensum = (Erwerbspensum) other;
 		boolean pensumIsSame = super.isSame(otherErwerbspensum);
 		boolean taetigkeitSame = Objects.equals(taetigkeit, otherErwerbspensum.getTaetigkeit());

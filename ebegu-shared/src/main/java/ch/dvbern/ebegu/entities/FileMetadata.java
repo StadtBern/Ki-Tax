@@ -110,6 +110,9 @@ public abstract class FileMetadata extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof FileMetadata)) {
+			return false;
+		}
 		final FileMetadata otherFileMetadata = (FileMetadata) other;
 		return Objects.equals(getFilename(), otherFileMetadata.getFilename()) &&
 			Objects.equals(getFilepfad(), otherFileMetadata.getFilepfad()) &&

@@ -174,6 +174,9 @@ public class Verfuegung extends AbstractEntity{
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof Verfuegung)) {
+			return false;
+		}
 		final Verfuegung otherVerfuegung = (Verfuegung) other;
 		return Objects.equals(getGeneratedBemerkungen(), otherVerfuegung.getGeneratedBemerkungen()) &&
 			Objects.equals(getManuelleBemerkungen(), otherVerfuegung.getManuelleBemerkungen()) &&

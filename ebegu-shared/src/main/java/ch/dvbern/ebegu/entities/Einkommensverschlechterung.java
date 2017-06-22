@@ -220,6 +220,9 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 		if (!super.isSame(other)) {
 			return false;
 		}
+		if (!(other instanceof Einkommensverschlechterung)) {
+			return false;
+		}
 		final Einkommensverschlechterung otherEinkommensverschlechterung = (Einkommensverschlechterung) other;
 		return MathUtil.isSame(getNettolohnJan(), otherEinkommensverschlechterung.getNettolohnJan()) &&
 			MathUtil.isSame(getNettolohnFeb(), otherEinkommensverschlechterung.getNettolohnFeb()) &&

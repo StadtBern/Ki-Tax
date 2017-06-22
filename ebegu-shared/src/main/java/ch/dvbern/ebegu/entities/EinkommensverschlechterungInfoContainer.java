@@ -95,6 +95,9 @@ public class EinkommensverschlechterungInfoContainer extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof EinkommensverschlechterungInfoContainer)) {
+			return false;
+		}
 		final EinkommensverschlechterungInfoContainer otherEKVInfoContainer = (EinkommensverschlechterungInfoContainer) other;
 		return EbeguUtil.isSameObject(getEinkommensverschlechterungInfoJA(), otherEKVInfoContainer.getEinkommensverschlechterungInfoJA());
 	}

@@ -175,6 +175,9 @@ public class Mitteilung extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof Mitteilung)) {
+			return false;
+		}
 		final Mitteilung otherMitteilung = (Mitteilung) other;
 		return EbeguUtil.isSameObject(getBetreuung(), otherMitteilung.getBetreuung()) &&
 			Objects.equals(getSender().getId(), otherMitteilung.getSender().getId()) &&

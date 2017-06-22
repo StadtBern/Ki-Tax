@@ -98,6 +98,9 @@ public class EbeguParameter extends AbstractDateRangedEntity {
 		if (!super.isSame(other)) {
 			return false;
 		}
+		if (!(other instanceof EbeguParameter)) {
+			return false;
+		}
 		final EbeguParameter otherEbeguParameter = (EbeguParameter) other;
 		return getName() == otherEbeguParameter.getName() &&
 			Objects.equals(getValue(), otherEbeguParameter.getValue());

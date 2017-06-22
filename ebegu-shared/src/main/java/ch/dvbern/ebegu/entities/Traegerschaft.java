@@ -73,6 +73,9 @@ public class Traegerschaft extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof Traegerschaft)) {
+			return false;
+		}
 		final Traegerschaft otherTraegerschaft = (Traegerschaft) other;
 		return Objects.equals(getMail(), otherTraegerschaft.getMail()) &&
 			Objects.equals(getName(), otherTraegerschaft.getName());

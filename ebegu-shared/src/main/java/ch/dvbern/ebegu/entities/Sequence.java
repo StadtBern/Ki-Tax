@@ -107,6 +107,9 @@ public class Sequence extends AbstractEntity implements HasMandant{
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof Sequence)) {
+			return false;
+		}
 		final Sequence otherSequence = (Sequence) other;
 		return Objects.equals(getSequenceType(), otherSequence.getSequenceType()) &&
 			Objects.equals(getCurrentValue(), otherSequence.getCurrentValue());

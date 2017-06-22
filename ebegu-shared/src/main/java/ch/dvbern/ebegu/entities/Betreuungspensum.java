@@ -72,6 +72,9 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 		if (!super.isSame(other)) {
 			return false;
 		}
+		if (!(other instanceof Betreuungspensum)) {
+			return false;
+		}
 		final Betreuungspensum otherBetreuungspensum = (Betreuungspensum) other;
 		return Objects.equals(getNichtEingetreten(), otherBetreuungspensum.getNichtEingetreten());
 	}

@@ -47,6 +47,9 @@ public class AbstractPensumEntity extends AbstractDateRangedEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof AbstractPensumEntity)) {
+			return false;
+		}
 		final AbstractPensumEntity otherAbstDateRangedEntity = (AbstractPensumEntity) other;
 		return super.isSame(otherAbstDateRangedEntity)
 			&& Objects.equals(this.getPensum(), otherAbstDateRangedEntity.getPensum());

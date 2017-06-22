@@ -97,6 +97,9 @@ public class Institution extends AbstractEntity implements HasMandant {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof Institution)) {
+			return false;
+		}
 		final Institution otherInstitution = (Institution) other;
 		return Objects.equals(getMail(), otherInstitution.getMail()) &&
 			Objects.equals(getName(), otherInstitution.getName());

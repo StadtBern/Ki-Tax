@@ -47,6 +47,9 @@ public class AbstractDateRangedEntity extends AbstractEntity implements Gueltigk
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof AbstractDateRangedEntity)) {
+			return false;
+		}
 		final AbstractDateRangedEntity otherAbstractDateRangedEntity = (AbstractDateRangedEntity) other;
 		return Objects.equals(this.getGueltigkeit(), otherAbstractDateRangedEntity.getGueltigkeit());
 	}

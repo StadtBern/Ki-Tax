@@ -72,6 +72,9 @@ public class ErwerbspensumContainer extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof ErwerbspensumContainer)) {
+			return false;
+		}
 		final ErwerbspensumContainer otherErwerbspensumContainer = (ErwerbspensumContainer) other;
 		return EbeguUtil.isSameObject(getErwerbspensumJA(), otherErwerbspensumContainer.getErwerbspensumJA());
 	}

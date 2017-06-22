@@ -100,6 +100,9 @@ public class WizardStep extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof WizardStep)) {
+			return false;
+		}
 		final WizardStep otherWizardStep = (WizardStep) other;
 		return Objects.equals(getWizardStepName(), otherWizardStep.getWizardStepName()) &&
 			Objects.equals(getWizardStepStatus(), otherWizardStep.getWizardStepStatus()) &&

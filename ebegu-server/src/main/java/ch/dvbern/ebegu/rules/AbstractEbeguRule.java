@@ -99,7 +99,8 @@ public abstract class AbstractEbeguRule implements Rule {
 		// - Muss innerhalb Gesuchsperiode sein
 		// - Müssen sich unterscheiden (d.h. 20+20 vs 40 soll nur einen Schnitz geben)
 		Gesuchsperiode gesuchsperiode = betreuung.extractGesuchsperiode();
-		List<VerfuegungZeitabschnitt> normalizedZeitabschn =normalizeZeitabschnitte(mergedZeitabschnitte, gesuchsperiode);
+		List<VerfuegungZeitabschnitt> normalizedZeitabschn = normalizeZeitabschnitte(mergedZeitabschnitte,
+			gesuchsperiode);
 
 		// Die eigentliche Rule anwenden
 		for (VerfuegungZeitabschnitt zeitabschnitt : normalizedZeitabschn) {

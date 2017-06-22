@@ -106,6 +106,9 @@ public class Zahlungsposition extends AbstractEntity implements Comparable<Zahlu
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof Zahlungsposition)) {
+			return false;
+		}
 		final Zahlungsposition otherZahlungsposition = (Zahlungsposition) other;
 		return EbeguUtil.isSameObject(getVerfuegungZeitabschnitt(), otherZahlungsposition.getVerfuegungZeitabschnitt()) &&
 			Objects.equals(getStatus(), otherZahlungsposition.getStatus()) &&

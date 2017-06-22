@@ -74,6 +74,9 @@ public class Fachstelle extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof Fachstelle)) {
+			return false;
+		}
 		final Fachstelle otherGesuchsteller = (Fachstelle) other;
 		return Objects.equals(getName(), otherGesuchsteller.getName()) &&
 			Objects.equals(getBeschreibung(), otherGesuchsteller.getBeschreibung()) &&

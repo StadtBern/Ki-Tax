@@ -717,7 +717,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-		if (!super.isSame(other)) {
+		if (!(other instanceof VerfuegungZeitabschnitt)) {
 			return false;
 		}
 		final VerfuegungZeitabschnitt otherVerfuegungZeitabschnitt = (VerfuegungZeitabschnitt) other;

@@ -154,6 +154,9 @@ public abstract class AbstractFinanzielleSituation extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof AbstractFinanzielleSituation)) {
+			return false;
+		}
 		final AbstractFinanzielleSituation otherFinSituation = (AbstractFinanzielleSituation) other;
 		return Objects.equals(getSteuerveranlagungErhalten(), otherFinSituation.getSteuerveranlagungErhalten()) &&
 			Objects.equals(getSteuererklaerungAusgefuellt(), otherFinSituation.getSteuererklaerungAusgefuellt()) &&

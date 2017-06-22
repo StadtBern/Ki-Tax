@@ -83,6 +83,9 @@ public class FinanzielleSituation extends AbstractFinanzielleSituation {
 		if (!super.isSame(other)) {
 			return false;
 		}
+		if (!(other instanceof FinanzielleSituation)) {
+			return false;
+		}
 		final FinanzielleSituation otherFinSit = (FinanzielleSituation) other;
 		return MathUtil.isSame(getNettolohn(), otherFinSit.getNettolohn()) &&
 			MathUtil.isSame(getGeschaeftsgewinnBasisjahrMinus1(), otherFinSit.getGeschaeftsgewinnBasisjahrMinus1()) &&

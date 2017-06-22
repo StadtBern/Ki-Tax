@@ -160,6 +160,9 @@ public class Benutzer extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof Benutzer)) {
+			return false;
+		}
 		final Benutzer otherBenutzer = (Benutzer) other;
 		return Objects.equals(getUsername(), otherBenutzer.getUsername());
 	}

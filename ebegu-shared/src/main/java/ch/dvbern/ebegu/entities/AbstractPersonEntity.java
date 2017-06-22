@@ -122,6 +122,9 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof AbstractPersonEntity)) {
+			return false;
+		}
 		final AbstractPersonEntity otherPerson = (AbstractPersonEntity) other;
 		return	getGeschlecht() == otherPerson.getGeschlecht() &&
 			Objects.equals(getVorname(), otherPerson.getVorname()) &&

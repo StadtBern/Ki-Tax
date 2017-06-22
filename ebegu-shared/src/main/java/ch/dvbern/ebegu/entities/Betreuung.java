@@ -266,7 +266,9 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-
+		if (!(other instanceof Betreuung)) {
+			return false;
+		}
 		final Betreuung otherBetreuung = (Betreuung) other;
 
 		boolean pensenSame = this.getBetreuungspensumContainers().stream().allMatch(

@@ -300,6 +300,9 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof GesuchstellerContainer)) {
+			return false;
+		}
 		final GesuchstellerContainer otherGesuchstellerContainer = (GesuchstellerContainer) other;
 		return EbeguUtil.isSameObject(getGesuchstellerJA(), otherGesuchstellerContainer.getGesuchstellerJA());
 	}

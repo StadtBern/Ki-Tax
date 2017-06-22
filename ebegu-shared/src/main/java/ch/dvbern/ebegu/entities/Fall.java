@@ -116,6 +116,9 @@ public class Fall extends AbstractEntity implements HasMandant {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof Fall)) {
+			return false;
+		}
 		final Fall otherFall = (Fall) other;
 		return Objects.equals(getFallNummer(), otherFall.getFallNummer());
 	}

@@ -113,6 +113,9 @@ public class FamiliensituationContainer extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof FamiliensituationContainer)) {
+			return false;
+		}
 		final FamiliensituationContainer otherFamSitContainer = (FamiliensituationContainer) other;
 		return EbeguUtil.isSameObject(getFamiliensituationJA(), otherFamSitContainer.getFamiliensituationJA());
 	}

@@ -52,6 +52,9 @@ public class BetreuungsmitteilungPensum extends AbstractPensumEntity implements 
 		if (!super.isSame(other)) {
 			return false;
 		}
+		if (!(other instanceof BetreuungsmitteilungPensum)) {
+			return false;
+		}
 		final BetreuungsmitteilungPensum otherBetreuungsmitteilungPensum = (BetreuungsmitteilungPensum) other;
 		return getBetreuungsmitteilung().isSame(otherBetreuungsmitteilungPensum.getBetreuungsmitteilung());
 	}

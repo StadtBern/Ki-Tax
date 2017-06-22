@@ -108,6 +108,9 @@ public class Zahlung extends AbstractEntity implements Comparable<Zahlung>{
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof Zahlung)) {
+			return false;
+		}
 		final Zahlung otherZahlung = (Zahlung) other;
 		return Objects.equals(getStatus(), otherZahlung.getStatus()) &&
 			EbeguUtil.isSameObject(getInstitutionStammdaten(), otherZahlung.getInstitutionStammdaten()) &&

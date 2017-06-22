@@ -191,6 +191,9 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof EinkommensverschlechterungInfo)) {
+			return false;
+		}
 		final EinkommensverschlechterungInfo otherEKVInfo = (EinkommensverschlechterungInfo) other;
 		return Objects.equals(getEinkommensverschlechterung(), otherEKVInfo.getEinkommensverschlechterung()) &&
 			Objects.equals(getEkvFuerBasisJahrPlus1(), otherEKVInfo.getEkvFuerBasisJahrPlus1()) &&

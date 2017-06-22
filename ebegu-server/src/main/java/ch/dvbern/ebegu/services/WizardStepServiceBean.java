@@ -384,6 +384,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * Returns all Objects that are related to the given Step. For instance for the Step GESUCHSTELLER it returns
 	 * the object Gesuchsteller1 and Gesuchsteller2. These objects can then be used to check for changes.
 	 */
+	@SuppressWarnings("OverlyComplexMethod")
 	private List<AbstractEntity> getStepRelatedObjects(@NotNull WizardStepName wizardStepName, @NotNull Gesuch gesuch) {
 		List<AbstractEntity> relatedObjects = new ArrayList<>();
 		if (WizardStepName.FAMILIENSITUATION == wizardStepName
@@ -429,10 +430,12 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 				if (ekvInfo != null) {
 					relatedObjects.add(ekvInfo);
 					if (ekvInfo.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()) {
-						if (gesuch.getGesuchsteller1() != null) {
+						if (gesuch.getGesuchsteller1() != null && gesuch.getGesuchsteller1()
+							.getEinkommensverschlechterungContainer() != null) {
 							relatedObjects.add(gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer());
 						}
-						if (gesuch.getGesuchsteller2() != null) {
+						if (gesuch.getGesuchsteller2() != null && gesuch.getGesuchsteller2()
+							.getEinkommensverschlechterungContainer() != null) {
 							relatedObjects.add(gesuch.getGesuchsteller2().getEinkommensverschlechterungContainer());
 						}
 					}

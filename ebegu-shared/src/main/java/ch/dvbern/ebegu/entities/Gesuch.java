@@ -457,6 +457,9 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof Gesuch)) {
+			return false;
+		}
 		final Gesuch otherAntrag = (Gesuch) other;
 		return Objects.equals(this.getEingangsdatum(), otherAntrag.getEingangsdatum())
 			&& Objects.equals(this.getFall(), otherAntrag.getFall())

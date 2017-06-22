@@ -71,6 +71,9 @@ public class AbwesenheitContainer extends AbstractEntity implements Comparable<A
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof AbwesenheitContainer)) {
+			return false;
+		}
 		final AbwesenheitContainer otherAbwesenheitContainer = (AbwesenheitContainer) other;
 		return EbeguUtil.isSameObject(getAbwesenheitGS(), otherAbwesenheitContainer.getAbwesenheitGS()) &&
 			EbeguUtil.isSameObject(getAbwesenheitJA(), otherAbwesenheitContainer.getAbwesenheitJA());

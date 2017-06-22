@@ -153,6 +153,9 @@ public class Kind extends AbstractPersonEntity {
 		if (!super.isSame(other)) {
 			return false;
 		}
+		if (!(other instanceof Kind)) {
+			return false;
+		}
 		final Kind otherKind = (Kind) other;
 		return Objects.equals(getWohnhaftImGleichenHaushalt(), otherKind.getWohnhaftImGleichenHaushalt()) &&
 			getKinderabzug() == otherKind.getKinderabzug() &&

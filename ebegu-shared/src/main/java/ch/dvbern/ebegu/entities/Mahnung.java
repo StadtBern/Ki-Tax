@@ -109,6 +109,9 @@ public class Mahnung extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof Mahnung)) {
+			return false;
+		}
 		final Mahnung otherMahnung = (Mahnung) other;
 		return Objects.equals(getMahnungTyp(), otherMahnung.getMahnungTyp()) &&
 			Objects.equals(getDatumFristablauf(), otherMahnung.getDatumFristablauf()) &&
