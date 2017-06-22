@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
@@ -364,7 +365,15 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			// just to avoid doing the calculation for Mutation if it is not needed
 			return WizardStepStatus.OK;
 		}
-		boolean isMutiert = isObjectMutiert(getStepRelatedObjects(wizardStep));
+
+		final List<AbstractEntity> newObjects = getStepRelatedObjects(wizardStep.getWizardStepName(), wizardStep.getGesuch());
+		Optional<Gesuch> vorgaengerGesuch = this.gesuchService.findGesuch(wizardStep.getGesuch().getVorgaengerId());
+		if (!vorgaengerGesuch.isPresent()) {
+			throw new EbeguEntityNotFoundException("getWizardStepStatusOkOrMutiert", ErrorCodeEnum
+				.ERROR_VORGAENGER_MISSING, "Vorgaenger Gesuch fuer Mutation nicht gefunden");
+		}
+		final List<AbstractEntity> vorgaengerObjects = getStepRelatedObjects(wizardStep.getWizardStepName(), vorgaengerGesuch.get());
+		boolean isMutiert = isObjectMutiert(newObjects, vorgaengerObjects);
 		if (AntragTyp.MUTATION.equals(wizardStep.getGesuch().getTyp()) && isMutiert) {
 			return WizardStepStatus.MUTIERT;
 		}
@@ -375,58 +384,63 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * Returns all Objects that are related to the given Step. For instance for the Step GESUCHSTELLER it returns
 	 * the object Gesuchsteller1 and Gesuchsteller2. These objects can then be used to check for changes.
 	 */
-	private List<AbstractEntity> getStepRelatedObjects(WizardStep wizardStep) {
+	private List<AbstractEntity> getStepRelatedObjects(@NotNull WizardStepName wizardStepName, @NotNull Gesuch gesuch) {
 		List<AbstractEntity> relatedObjects = new ArrayList<>();
-		if (WizardStepName.FAMILIENSITUATION == wizardStep.getWizardStepName()
-			&& wizardStep.getGesuch().getFamiliensituationContainer() != null) {
-			relatedObjects.add(wizardStep.getGesuch().getFamiliensituationContainer().getFamiliensituationJA());
+		if (WizardStepName.FAMILIENSITUATION == wizardStepName
+			&& gesuch.getFamiliensituationContainer() != null) {
+			relatedObjects.add(gesuch.getFamiliensituationContainer().getFamiliensituationJA());
 		}
-		else if (WizardStepName.GESUCHSTELLER == wizardStep.getWizardStepName()) {
-			addRelatedObjectsForGesuchsteller(relatedObjects, wizardStep.getGesuch().getGesuchsteller1());
-			addRelatedObjectsForGesuchsteller(relatedObjects, wizardStep.getGesuch().getGesuchsteller2());
+		else if (WizardStepName.GESUCHSTELLER == wizardStepName) {
+			addRelatedObjectsForGesuchsteller(relatedObjects, gesuch.getGesuchsteller1());
+			addRelatedObjectsForGesuchsteller(relatedObjects, gesuch.getGesuchsteller2());
 		}
-		else if (WizardStepName.UMZUG == wizardStep.getWizardStepName()) {
-			addRelatedObjectsForUmzug(wizardStep.getGesuch().getGesuchsteller1(), relatedObjects);
-			addRelatedObjectsForUmzug(wizardStep.getGesuch().getGesuchsteller2(), relatedObjects);
+		else if (WizardStepName.UMZUG == wizardStepName) {
+			addRelatedObjectsForUmzug(gesuch.getGesuchsteller1(), relatedObjects);
+			addRelatedObjectsForUmzug(gesuch.getGesuchsteller2(), relatedObjects);
 		}
-		else if (WizardStepName.KINDER == wizardStep.getWizardStepName()) {
-			relatedObjects.addAll(wizardStep.getGesuch().getKindContainers());
+		else if (WizardStepName.KINDER == wizardStepName) {
+			relatedObjects.addAll(gesuch.getKindContainers());
 		}
-		else if (WizardStepName.BETREUUNG == wizardStep.getWizardStepName()) {
-			relatedObjects.addAll(wizardStep.getGesuch().extractAllBetreuungen());
+		else if (WizardStepName.BETREUUNG == wizardStepName) {
+			relatedObjects.addAll(gesuch.extractAllBetreuungen());
 		}
-		else if (WizardStepName.ABWESENHEIT == wizardStep.getWizardStepName()) {
-			relatedObjects.addAll(wizardStep.getGesuch().extractAllAbwesenheiten());
+		else if (WizardStepName.ABWESENHEIT == wizardStepName) {
+			relatedObjects.addAll(gesuch.extractAllAbwesenheiten());
 		}
-		else if (WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()) {
-			if (wizardStep.getGesuch().getGesuchsteller1() != null) {
-				relatedObjects.addAll(wizardStep.getGesuch().getGesuchsteller1().getErwerbspensenContainers());
+		else if (WizardStepName.ERWERBSPENSUM == wizardStepName) {
+			if (gesuch.getGesuchsteller1() != null) {
+				relatedObjects.addAll(gesuch.getGesuchsteller1().getErwerbspensenContainers());
 			}
-			if (wizardStep.getGesuch().getGesuchsteller2() != null) {
-				relatedObjects.addAll(wizardStep.getGesuch().getGesuchsteller2().getErwerbspensenContainers());
-			}
-		}
-		else if (WizardStepName.FINANZIELLE_SITUATION == wizardStep.getWizardStepName()) {
-			if (wizardStep.getGesuch().getGesuchsteller1() != null) {
-				relatedObjects.add(wizardStep.getGesuch().getGesuchsteller1().getFinanzielleSituationContainer());
-			}
-			if (wizardStep.getGesuch().getGesuchsteller2() != null) {
-				relatedObjects.add(wizardStep.getGesuch().getGesuchsteller2().getFinanzielleSituationContainer());
+			if (gesuch.getGesuchsteller2() != null) {
+				relatedObjects.addAll(gesuch.getGesuchsteller2().getErwerbspensenContainers());
 			}
 		}
-		else if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()) {
-			if (wizardStep.getGesuch() != null) {
-				relatedObjects.add(wizardStep.getGesuch().getEinkommensverschlechterungInfoContainer());
+		else if (WizardStepName.FINANZIELLE_SITUATION == wizardStepName) {
+			if (gesuch.getGesuchsteller1() != null) {
+				relatedObjects.add(gesuch.getGesuchsteller1().getFinanzielleSituationContainer());
 			}
-			if (wizardStep.getGesuch().getGesuchsteller1() != null) {
-				relatedObjects.add(wizardStep.getGesuch().getGesuchsteller1().getEinkommensverschlechterungContainer());
-			}
-			if (wizardStep.getGesuch().getGesuchsteller2() != null) {
-				relatedObjects.add(wizardStep.getGesuch().getGesuchsteller2().getEinkommensverschlechterungContainer());
+			if (gesuch.getGesuchsteller2() != null) {
+				relatedObjects.add(gesuch.getGesuchsteller2().getFinanzielleSituationContainer());
 			}
 		}
-		else if (WizardStepName.DOKUMENTE == wizardStep.getWizardStepName()) {
-			relatedObjects.addAll(dokumentGrundService.findAllDokumentGrundByGesuch(wizardStep.getGesuch()));
+		else if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStepName) {
+			if (gesuch != null) {
+				final EinkommensverschlechterungInfoContainer ekvInfo = gesuch.getEinkommensverschlechterungInfoContainer();
+				if (ekvInfo != null) {
+					relatedObjects.add(ekvInfo);
+					if (ekvInfo.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()) {
+						if (gesuch.getGesuchsteller1() != null) {
+							relatedObjects.add(gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer());
+						}
+						if (gesuch.getGesuchsteller2() != null) {
+							relatedObjects.add(gesuch.getGesuchsteller2().getEinkommensverschlechterungContainer());
+						}
+					}
+				}
+			}
+		}
+		else if (WizardStepName.DOKUMENTE == wizardStepName) {
+			relatedObjects.addAll(dokumentGrundService.findAllDokumentGrundByGesuch(gesuch));
 		}
 		return relatedObjects;
 	}
@@ -462,7 +476,15 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		}
 	}
 
-	private boolean isObjectMutiert(@NotNull List<AbstractEntity> newEntities) {
+	/**
+	 * Returns true when given list have different sizes. If not, it checks whether the content of each object
+	 * of the list newEntities is the same as it was in the list oldEntities. Any change will make the method return
+	 * true
+	 */
+	private boolean isObjectMutiert(@NotNull List<AbstractEntity> newEntities, @NotNull List<AbstractEntity> oldEntities) {
+		if (oldEntities.size() != newEntities.size()) {
+			return true;
+		}
 		for (AbstractEntity newEntity : newEntities) {
 			if (newEntity != null && newEntity.getVorgaengerId() == null) {
 				return true; // if there is no vorgaenger it must have changed
