@@ -104,7 +104,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
         if (this.isLastEinkVersStep()) {
             if (this.gesuchModelManager.getGesuch().isMutation()) {
                 if (this.wizardStepManager.getCurrentStep().wizardStepStatus === TSWizardStepStatus.NOK || changes) {
-                    return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.MUTIERT);
+                    return this.wizardStepManager.updateCurrentWizardStepStatusMutiert();
                 }
             } else {
                 return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);

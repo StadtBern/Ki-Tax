@@ -66,7 +66,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
                 .then((gesuch: TSGesuch) => {
                     // Nötig, da nur das ganze Gesuch upgedated wird und die Aeenderng bei der FinSit sonst nicht bemerkt werden
                     if (this.gesuchModelManager.getGesuch().isMutation()) {
-                        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.MUTIERT);
+                        this.wizardStepManager.updateCurrentWizardStepStatusMutiert();
                     }
                     return gesuch;
                 });

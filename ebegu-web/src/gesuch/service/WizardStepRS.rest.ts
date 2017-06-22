@@ -40,4 +40,10 @@ export default class WizardStepRS {
         return 'WizardStepRS';
     }
 
+    public setWizardStepMutiert(wizardStepId: string): IPromise<TSWizardStep> {
+        return this.http.post(this.serviceURL + '/setWizardStepMutiert/' + encodeURIComponent(wizardStepId), null)
+            .then((response) => {
+            return this.ebeguRestUtil.parseWizardStep(new TSWizardStep(), response.data);
+        });
+    }
 }
