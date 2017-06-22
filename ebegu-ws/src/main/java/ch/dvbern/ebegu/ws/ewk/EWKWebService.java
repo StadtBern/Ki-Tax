@@ -42,6 +42,7 @@ public class EWKWebService implements IEWKWebService {
 	public static final BigInteger MAX_RESULTS_ID = BigInteger.ONE;
 	public static final BigInteger MAX_RESULTS_NAME = BigInteger.TEN;
 	private static final String RETURN_CODE_OKAY = "00";
+	private static final String RETURN_CODE_NO_RESULT = "01";
 
 	private static final Logger logger = LoggerFactory.getLogger(EWKWebService.class.getSimpleName());
 	public static final String METHOD_NAME_SUCHE_PERSON = "suchePerson";
@@ -117,7 +118,8 @@ public class EWKWebService implements IEWKWebService {
 			throw new PersonenSucheServiceException("handleResponseStatus", "Status der Response muss gesetzt sein");
 		}
 		//wenn der Status nicht 0 ist ist es ein Fehler
-		if (!RETURN_CODE_OKAY.equals(returnMessage.getCode())) {
+		if (!RETURN_CODE_OKAY.equals(returnMessage.getCode()) && !RETURN_CODE_NO_RESULT.equals(returnMessage.getCode()))
+		{
 			String msg = "EWK: Fehler bei Webservice Aufruf: " + returnMessage.getCode() + " / " + returnMessage.getText();
 			logger.error(msg);
 			throw new PersonenSucheServiceBusinessException("handleResponseStatus", returnMessage.getCode(), returnMessage.getText());

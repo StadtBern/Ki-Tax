@@ -252,7 +252,9 @@
             </div>
             <div ng-repeat=" n in [1,2]" ng-if="vm.showAbfrageForGesuchsteller(n)">
 
-                <h3 ng-bind="vm.getGesuchstellerTitle(vm.getGesuchsteller(n))"></h3>
+                <h3><span ng-bind="vm.ewkRS.getGesuchsteller(n).gesuchstellerJA.getFullName()">
+                    </span> (<span ng-bind="vm.ewkRS.getGesuchsteller(n).gesuchstellerJA.ewkPersonId"></span>)
+                </h3>
                 <button type="button" class="dv-btn-operation"
                         ng-click="vm.searchGesuchsteller(n)">
                     <i class="fa fa-search"></i>
