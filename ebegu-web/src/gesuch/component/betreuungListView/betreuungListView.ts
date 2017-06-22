@@ -15,6 +15,7 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
@@ -22,7 +23,6 @@ import ILogService = angular.ILogService;
 let template = require('./betreuungListView.html');
 require('./betreuungListView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
-
 
 export class BetreuungListViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -41,9 +41,11 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
     static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguUtil', 'BerechnungsManager',
         'ErrorService', 'WizardStepManager', 'AuthServiceRS', '$scope', '$log'];
     /* @ngInject */
-    constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private $translate: ITranslateService,
+    constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager,
+                private $translate: ITranslateService,
                 private DvDialog: DvDialog, private ebeguUtil: EbeguUtil, berechnungsManager: BerechnungsManager,
-                private errorService: ErrorService, wizardStepManager: WizardStepManager, private authServiceRS: AuthServiceRS, $scope: IScope, private $log: ILogService) {
+                private errorService: ErrorService, wizardStepManager: WizardStepManager,
+                private authServiceRS: AuthServiceRS, $scope: IScope, private $log: ILogService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
 
@@ -53,6 +55,14 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         if (kind && betreuung) {
             betreuung.isSelected = false; // damit die row in der Tabelle nicht mehr als "selected" markiert ist
             this.openBetreuungView(betreuung.betreuungNummer, kind.kindNummer);
+        }
+    }
+
+    public isNotAllowedToRemove(betreuung: TSBetreuung): boolean {
+        if (betreuung.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN && this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getAdministratorJugendamtRole())) {
+            return false;
+        } else {
+            return this.isKorrekturModusJugendamt();
         }
     }
 
