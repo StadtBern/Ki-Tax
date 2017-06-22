@@ -1041,5 +1041,8 @@
     "VORLAGE_BENUTZERHANDBUCH_SCHULAMT": "Benutzerhandbuch Schulamt",
     "VORLAGE_BENUTZERHANDBUCH_STV": "Benutzerhandbuch Steuerverwaltung",
     "VORLAGE_BENUTZERHANDBUCH_TRAEGERSCHAFT": "Benutzerhandbuch Trägerschaften",
-    "MANUELLE_SKRIPTS": "Manuelle Skripts ausführen"
+    "MANUELLE_SKRIPTS": "Manuelle Skripts ausführen",
+    "ZAHLUNGSAUFTRAG_ENTWURF": "In Bearbeitung",
+    "ZAHLUNGSAUFTRAG_BESTAETIGT": "Bestätigt",
+    "ZAHLUNGSAUFTRAG_AUSGELOEST": "Ausgelöst"
 }
