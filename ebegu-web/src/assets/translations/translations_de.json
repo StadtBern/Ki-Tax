@@ -592,7 +592,7 @@
     "FIXE_ARBEITSZEITEN": "Fixe Arbeitszeiten",
     "LANGER_ARBWEITSWEG": "Langer Arbeitsweg",
     "ANDERE": "Andere",
-    "INFOTEXT_ERWERBSPENSUM": "Massgebend ist das aktuelle Erwerbspensum (gleichgestellt sind anerkannte Ausbildungen und Arbeitslosigkeit im Rahmen der Vermittlungsfähigkeit).",
+    "INFOTEXT_ERWERBSPENSUM": "Massgebend ist das Erwerbspensum während der Zeit der gewünschten Betreuung. (gleichgestellt sind anerkannte Ausbildungen und Arbeitslosigkeit im Rahmen der Vermittlungsfähigkeit).",
     "ERWERBSPENSEN_LIST_TITLE": "Erwerbspensen",
     "ERWERBSPENSEN_LIST_HINT": "Sämtliche Erwerbspensen für die ganze Gesuchsperiode müssen hier erfasst werden!",
     "UMZUG_LIST_HINT": "Sämtliche Umzugsadressen für die ganze Gesuchsperiode müssen hier erfasst werden!",
