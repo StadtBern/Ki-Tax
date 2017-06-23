@@ -46,7 +46,7 @@ export default class TSStatistikParameter extends TSAbstractEntity {
     }
 
     set bis(value: moment.Moment) {
-        this._bis = (value !== undefined) ? value.add(1, 'days').subtract(1, 'seconds') : value;
+        this._bis = value;
     }
 
 }
