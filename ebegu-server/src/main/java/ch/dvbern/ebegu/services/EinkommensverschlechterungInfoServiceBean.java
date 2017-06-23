@@ -95,7 +95,7 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 
 	@Override
 	@Nonnull
-	@PermitAll
+	@RolesAllowed({ADMIN, SUPER_ADMIN})
 	public Collection<EinkommensverschlechterungInfoContainer> getAllEinkommensverschlechterungInfo() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(EinkommensverschlechterungInfoContainer.class));
 	}

@@ -328,7 +328,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		Familiensituation newFamsit = getFamiliensituationZuZweit(aenderungPer);
 		Familiensituation oldFamsit = getFamiliensituationAlleine(null);
 
-		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(fallNummer, gesuchsperiodeId, eingangsdatum);
+		Optional<Gesuch> gesuchOptional = gesuchService.testfallMutieren(fallNummer, gesuchsperiodeId, eingangsdatum);
 		if (gesuchOptional.isPresent()) {
 			final Gesuch mutation = gesuchOptional.get();
 			final FamiliensituationContainer familiensituationContainer = mutation.getFamiliensituationContainer();
@@ -369,7 +369,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		oldFamsit.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		oldFamsit.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 
-		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(fallNummer, gesuchsperiodeId, eingangsdatum);
+		Optional<Gesuch> gesuchOptional = gesuchService.testfallMutieren(fallNummer, gesuchsperiodeId, eingangsdatum);
 		if (gesuchOptional.isPresent()) {
 			final Gesuch mutation = gesuchOptional.get();
 			final FamiliensituationContainer familiensituationContainer = mutation.getFamiliensituationContainer();

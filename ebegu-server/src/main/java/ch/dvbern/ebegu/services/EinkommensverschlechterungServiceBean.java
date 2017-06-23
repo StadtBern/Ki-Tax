@@ -78,7 +78,7 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 	}
 
 	@Override
-	@PermitAll
+	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
 	public void removeEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer) {
 		Validate.notNull(einkommensverschlechterungContainer);
 		einkommensverschlechterungContainer.getGesuchsteller().setEinkommensverschlechterungContainer(null);

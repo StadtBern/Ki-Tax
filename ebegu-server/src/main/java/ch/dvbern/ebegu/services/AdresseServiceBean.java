@@ -69,13 +69,4 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 	public Collection<Adresse> getAllAdressen() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(Adresse.class));
 	}
-
-	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN})
-	public void removeAdresse(@Nonnull String adresseId) {
-		Validate.notNull(adresseId);
-		Optional<Adresse> propertyToRemove = findAdresse(adresseId);
-		propertyToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeAdresse", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, adresseId));
-		propertyToRemove.ifPresent(adresse -> persistence.remove(adresse));
-	}
 }
