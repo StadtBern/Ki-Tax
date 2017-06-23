@@ -320,13 +320,13 @@
                                 <span class="ewk-label" data-translate="EWK_NATIONALITAET"></span><span
                                 ng-bind="person.nationalitaet"></span>
                             </div>
-                            <div ng-if="person.bewilligungsart">
+                            <div ng-if="person.bewilligungsartTxt">
                                 <span class="ewk-label" data-translate="EWK_BEWILLIGUNGSART"></span><span
-                                ng-bind="person.bewilligungsart"></span>
+                                ng-bind="person.bewilligungsartTxt"></span>
                             </div>
-                            <div ng-if="person.bewilligungsartBis">
+                            <div ng-if="person.bewilligungBis">
                                 <span class="ewk-label" data-translate="EWK_BEWILLIGUNGSART_BIS"></span><span
-                                ng-bind="person.bewilligungsartBis | amDateFormat: 'DD.MM.YYYY'"></span>
+                                ng-bind="person.bewilligungBis | amDateFormat: 'DD.MM.YYYY'"></span>
                             </div>
                             <div>
                                 <span class="ewk-label" data-translate="EWK_ZIVILSTAND"></span><span
