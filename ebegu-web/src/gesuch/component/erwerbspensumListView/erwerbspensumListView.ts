@@ -13,8 +13,11 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSKindContainer from '../../../models/TSKindContainer';
 import {TSBetreuungsangebotTypUtil} from '../../../utils/TSBetreuungsangebotTypUtil';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRole} from '../../../models/enums/TSRole';
 import ILogService = angular.ILogService;
 import IScope = angular.IScope;
+import * as moment from 'moment';
 let template: string = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 require('./erwerbspensumListView.less');
@@ -44,11 +47,11 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     erwerbspensenGS2: Array<TSErwerbspensumContainer>;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$log', 'DvDialog',
-        'ErrorService', 'WizardStepManager', '$scope'];
+        'ErrorService', 'WizardStepManager', '$scope', 'AuthServiceRS'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, $scope: IScope) {
+                wizardStepManager: WizardStepManager, $scope: IScope,  private authServiceRS: AuthServiceRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ERWERBSPENSUM);
         this.initErwerbspensumStepStatus();
     }
@@ -95,10 +98,13 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
         this.openErwerbspensumView(gesuchstellerNumber, undefined);
     }
 
-    removePensum(pensum: any, gesuchstellerNumber: number): void {
+    removePensum(pensum: TSErwerbspensumContainer, gesuchstellerNumber: number): void {
+        // Spezielle Meldung, wenn es ein GS ist, der in einer Mutation loescht
+        let gsInMutation: boolean = (this.authServiceRS.getPrincipalRole() === TSRole.GESUCHSTELLER && pensum.vorgaengerId !== undefined);
+        let pensumLaufendOderVergangen: boolean = pensum.erwerbspensumJA.gueltigkeit.gueltigAb.isBefore(moment(moment.now()));
         this.errorService.clearAll();
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
-            deleteText: '',
+            deleteText: (gsInMutation && pensumLaufendOderVergangen) ? 'ERWERBSPENSUM_LOESCHEN_GS_MUTATION' : '',
             title: 'ERWERBSPENSUM_LOESCHEN'
         })
             .then(() => {   //User confirmed removal
