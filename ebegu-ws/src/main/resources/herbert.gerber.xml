@@ -18,6 +18,8 @@
 		<Zivilstand_txt>verheiratet</Zivilstand_txt>
 		<Zivilstandsdatum>2007-05-25</Zivilstandsdatum>
 		<Geschlecht>M</Geschlecht>
+		<Bewilligungsart_txt>Ausländer</Bewilligungsart_txt>
+		<BewilligungBis>2002-07-15</BewilligungBis>
 		<Adresse>
 			<Adresstyp>1</Adresstyp>
 			<Adresstyp_txt>Wohnadresse</Adresstyp_txt>
