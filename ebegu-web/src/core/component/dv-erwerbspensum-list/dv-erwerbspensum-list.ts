@@ -76,9 +76,10 @@ export class DVErwerbspensumListController {
     }
 
     isRemoveAllowed(pensumToEdit: any) {
-        // Loeschen erlaubt, wenn Erstgesuch ODER Jugendamt
-        return this.addButtonVisible && (pensumToEdit.erwerbspensumJA.vorgaengerId === null ||
-            this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole()));
+        // Loeschen erlaubt, solange das Gesuch noch nicht readonly ist. Dies ist notwendig, weil sonst in die Zukunft
+        // erfasste Taetigkeiten bei nicht-zustandekommen des Jobs nicht mehr geloescht werden koennen
+        // Siehe auch EBEGU-1146 und EBEGU-580
+        return this.addButtonVisible;
     }
 }
 
