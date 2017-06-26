@@ -69,7 +69,8 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 		authorizer.checkCreateAuthorizationFinSit(finanzielleSituation);
 		FinanzielleSituationContainer finanzielleSituationPersisted = persistence.merge(finanzielleSituation);
 		if(gesuchId != null) {
-			wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.FINANZIELLE_SITUATION);
+			wizardStepService.updateSteps(gesuchId, null, finanzielleSituationPersisted.getFinanzielleSituationJA(), WizardStepName
+				.FINANZIELLE_SITUATION);
 		}
 		return finanzielleSituationPersisted;
 	}

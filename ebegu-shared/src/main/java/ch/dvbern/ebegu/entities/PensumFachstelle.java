@@ -50,4 +50,17 @@ public class PensumFachstelle extends AbstractPensumEntity {
 	private void copyForMutationOrErneuerung(PensumFachstelle mutation) {
 		mutation.setFachstelle(this.getFachstelle());
 	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		//noinspection SimplifiableIfStatement
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		return super.isSame(other);
+	}
 }

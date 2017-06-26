@@ -102,4 +102,20 @@ public class WizardStepResource {
 		throw new EbeguEntityNotFoundException("saveWizardStep", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + wizardStepJAXP.getGesuchId());
 	}
 
+	@Nullable
+	@POST
+	@Path("/setWizardStepMutiert/{gesuchId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxWizardStep setWizardStepMutiert(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId wizardStepJAXPId) throws EbeguException {
+
+		Optional<WizardStep> optional = wizardStepService.findWizardStep(wizardStepJAXPId.getId());
+		final WizardStep wizardStep = optional.orElse(new WizardStep());
+
+		this.wizardStepService.setWizardStepOkOrMutiert(wizardStep);
+		WizardStep persistedWizardStep = this.wizardStepService.saveWizardStep(wizardStep);
+		return converter.wizardStepToJAX(persistedWizardStep);
+	}
+
 }
