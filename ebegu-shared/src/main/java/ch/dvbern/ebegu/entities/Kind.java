@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.Kinderabzug;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -162,6 +163,6 @@ public class Kind extends AbstractPersonEntity {
 			Objects.equals(getFamilienErgaenzendeBetreuung(), otherKind.getFamilienErgaenzendeBetreuung()) &&
 			Objects.equals(getMutterspracheDeutsch(), otherKind.getMutterspracheDeutsch()) &&
 			Objects.equals(getEinschulung(), otherKind.getEinschulung()) &&
-			Objects.equals(getPensumFachstelle(), otherKind.getPensumFachstelle());
+			EbeguUtil.isSameObject(getPensumFachstelle(), otherKind.getPensumFachstelle());
 	}
 }

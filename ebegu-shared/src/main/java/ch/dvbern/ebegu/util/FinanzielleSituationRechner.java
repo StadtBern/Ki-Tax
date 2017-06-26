@@ -1,16 +1,22 @@
 package ch.dvbern.ebegu.util;
 
-import ch.dvbern.ebegu.dto.FinanzDatenDTO;
-import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.*;
-import org.apache.commons.lang3.Validate;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDate;
+
+import ch.dvbern.ebegu.dto.FinanzDatenDTO;
+import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
+import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
+import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.entities.FinanzielleSituation;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Ein Rechner mit den ganzen Operationen fuer Finanziellesituation
@@ -38,10 +44,6 @@ public class FinanzielleSituationRechner {
 	/**
 	 * Diese Methode wird momentan im Print gebraucht um die Finanzielle Situation zu berechnen. Der Abzug aufgrund Familiengroesse wird
 	 * hier auf 0 gesetzt
-	 *
-	 * @param gesuch
-	 * @param basisJahrPlus
-	 * @return
 	 */
 
 	@Nonnull
@@ -57,9 +59,6 @@ public class FinanzielleSituationRechner {
 	/**
 	 * Nimmt das uebergebene FinanzielleSituationResultateDTO und mit den Daten vom Gesuch, berechnet alle im
 	 * FinanzielleSituationResultateDTO benoetigten Daten und setzt sie direkt im dto.
-	 *
-	 * @param gesuch
-	 * @param finSitResultDTO
 	 */
 	private void setFinanzielleSituationParameters(@Nonnull Gesuch gesuch, final FinanzielleSituationResultateDTO finSitResultDTO, boolean hasSecondGesuchsteller) {
 		final FinanzielleSituation finanzielleSituationGS1 = getFinanzielleSituationGS(gesuch.getGesuchsteller1());
@@ -82,10 +81,6 @@ public class FinanzielleSituationRechner {
 	/**
 	 * Nimmt das uebergebene FinanzielleSituationResultateDTO und mit den Daten vom Gesuch, berechnet alle im
 	 * FinanzielleSituationResultateDTO benoetigten Daten.
-	 *
-	 * @param gesuch
-	 * @param basisJahrPlus
-	 * @param einkVerResultDTO
 	 */
 	private void setEinkommensverschlechterungParameters(@Nonnull Gesuch gesuch, int basisJahrPlus,
 														 final FinanzielleSituationResultateDTO einkVerResultDTO, boolean hasSecondGesuchsteller) {
@@ -256,9 +251,6 @@ public class FinanzielleSituationRechner {
 
 	/**
 	 * Diese Methode aufrufen um den GeschaeftsgewinnDurchschnitt fuer die Finanzielle Situation zu berechnen.
-	 *
-	 * @param finanzielleSituation
-	 * @return
 	 */
 	@Nullable
 	public static BigDecimal calcGeschaeftsgewinnDurchschnitt(@Nullable FinanzielleSituation finanzielleSituation) {
@@ -302,11 +294,6 @@ public class FinanzielleSituationRechner {
 
 	/**
 	 * Allgemeine Methode fuer die Berechnung des GeschaeftsgewinnDurchschnitt. Die drei benoetigten Felder werden uebergeben
-	 *
-	 * @param geschaeftsgewinnBasisjahr
-	 * @param geschaeftsgewinnBasisjahrMinus1
-	 * @param geschaeftsgewinnBasisjahrMinus2
-	 * @return
 	 */
 	@Nullable
 	private static BigDecimal calcGeschaeftsgewinnDurchschnitt(@Nullable final BigDecimal geschaeftsgewinnBasisjahr,
@@ -370,7 +357,7 @@ public class FinanzielleSituationRechner {
 
 	private static BigDecimal percent(BigDecimal value, int percent) {
 		BigDecimal total = value != null ? value : BigDecimal.ZERO;
-		total = total.multiply(new BigDecimal("" + percent));
+		total = total.multiply(new BigDecimal(String.valueOf(percent)));
 		total = total.divide(new BigDecimal("100"), RoundingMode.HALF_UP);
 		return total;
 	}
@@ -408,9 +395,6 @@ public class FinanzielleSituationRechner {
 
 	/**
 	 * Berechnet die NettoJahresLohn fuer ein Einkommensverschlechterung
-	 *
-	 * @param einkommensverschlechterung
-	 * @return
 	 */
 	private BigDecimal calculateNettoJahresLohn(Einkommensverschlechterung einkommensverschlechterung) {
 		BigDecimal total = BigDecimal.ZERO;
@@ -434,9 +418,6 @@ public class FinanzielleSituationRechner {
 
 	/**
 	 * Berechnet die NettoJahresLohn fuer eine Finanzielle Situation
-	 *
-	 * @param finanzielleSituation
-	 * @return
 	 */
 	private BigDecimal calculateNettoJahresLohn(FinanzielleSituation finanzielleSituation) {
 		if (finanzielleSituation != null) {

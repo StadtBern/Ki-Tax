@@ -1,18 +1,25 @@
 package ch.dvbern.ebegu.api.resource;
 
+import java.time.LocalDate;
+
+import javax.annotation.Nullable;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.SchulungService;
 import ch.dvbern.ebegu.services.TestfaelleService;
 import ch.dvbern.ebegu.util.DateUtil;
 import io.swagger.annotations.Api;
-
-import javax.annotation.Nullable;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.time.LocalDate;
 
 /**
  * REST Resource zur Erstellung von (vordefinierten) Testfaellen.
@@ -88,7 +95,6 @@ public class TestfaelleResource {
 		if (gesuch != null) {
 			return Response.ok(FALL + gesuch.getFall().getFallNummer() + " mutiert zu heirat").build();
 		}
-
 		return Response.ok(FALL + fallNummer + " konnte nicht mutiert").build();
 	}
 
@@ -109,7 +115,6 @@ public class TestfaelleResource {
 		if (gesuch != null) {
 			return Response.ok(FALL + gesuch.getFall().getFallNummer() + " mutiert zu scheidung").build();
 		}
-
 		return Response.ok(FALL + fallNummer + " konnte nicht mutiert").build();
 	}
 

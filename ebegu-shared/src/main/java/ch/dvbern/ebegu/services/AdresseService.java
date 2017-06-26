@@ -40,11 +40,4 @@ public interface AdresseService {
 	@Nonnull
 	Collection<Adresse> getAllAdressen();
 
-	/**
-	 * entfernt eine Adresse aus der Databse
-	 *
-	 * @param adresse Adresse zu entfernen
-	 */
-	void removeAdresse(@Nonnull String adresseId);
-
 }

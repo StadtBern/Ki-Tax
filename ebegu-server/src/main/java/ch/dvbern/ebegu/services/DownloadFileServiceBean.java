@@ -1,5 +1,17 @@
 package ch.dvbern.ebegu.services;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.DownloadFile_;
 import ch.dvbern.ebegu.entities.FileMetadata;
@@ -9,20 +21,14 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Objects;
-import java.util.Optional;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Service fuer den Download von Dokumenten
+ */
 @Stateless
 @Local(DownloadFileService.class)
+@PermitAll
 public class DownloadFileServiceBean implements DownloadFileService {
 
 
@@ -53,15 +59,12 @@ public class DownloadFileServiceBean implements DownloadFileService {
 		if (!tempDokumentOptional.isPresent()) {
 			return null;
 		}
-
 		DownloadFile downloadFile = tempDokumentOptional.get();
 
 		if (isFileDownloadExpired(downloadFile)) {
 			return null;
 		}
-
 		return downloadFile;
-
 	}
 
 	@Override
@@ -77,7 +80,6 @@ public class DownloadFileServiceBean implements DownloadFileService {
 			String msg = "Unexpected error while deleting old TempDocuments";
 			LOG.error(msg, rte);
 		}
-
 	}
 
 	/**
@@ -87,6 +89,4 @@ public class DownloadFileServiceBean implements DownloadFileService {
 		LocalDateTime timestampMutiert = checkNotNull(tempBlob.getTimestampMutiert());
 		return timestampMutiert.isBefore(LocalDateTime.now().minus(Constants.MAX_TEMP_DOWNLOAD_AGE_MINUTES, ChronoUnit.MINUTES));
 	}
-
-
 }

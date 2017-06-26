@@ -10,6 +10,8 @@ import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -23,6 +25,17 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+
+/**
+ * Service zum Speichern von Files auf dem File-System
+ */
 @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
 @Stateless
 @Local(FileSaverService.class)
@@ -31,12 +44,12 @@ public class FileSaverServiceBean implements FileSaverService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileSaverServiceBean.class.getSimpleName());
 
-
 	@Inject
 	private EbeguConfiguration ebeguConfiguration;
 
 
 	@Override
+	@PermitAll
 	public boolean save(UploadFileInfo uploadFileInfo, String folderName) {
 		Validate.notNull(uploadFileInfo);
 		Validate.notNull(uploadFileInfo.getFilename());
@@ -65,8 +78,9 @@ public class FileSaverServiceBean implements FileSaverService {
 		return true;
 	}
 
-	@Override
 	@Nullable
+	@Override
+	@PermitAll
 	public UploadFileInfo save(byte[] bytes, String fileName, String folderName) throws MimeTypeParseException {
 		MimeType contentType = new MimeType("application/pdf");
 		return save(bytes, fileName, folderName, contentType);
@@ -74,6 +88,7 @@ public class FileSaverServiceBean implements FileSaverService {
 
 	@Nullable
 	@Override
+	@PermitAll
 	public UploadFileInfo save(byte[] bytes, String fileName, String folderName, MimeType contentType) {
 		final UploadFileInfo uploadFileInfo = new UploadFileInfo(fileName, contentType);
 		uploadFileInfo.setBytes(bytes);
@@ -84,14 +99,13 @@ public class FileSaverServiceBean implements FileSaverService {
 	}
 
 	@Override
+	@PermitAll
 	public boolean copy(FileMetadata fileToCopy, String folderName) {
 		Validate.notNull(fileToCopy);
 		Validate.notNull(folderName);
 
 		Path oldfile = Paths.get(fileToCopy.getFilepfad());
-
 		UUID uuid = UUID.randomUUID();
-
 		String ending = getFileNameEnding(fileToCopy.getFilename());
 
 		// Wir speichern der Name des Files nicht im FS. Kann sonst Probleme mit Umlauten geben
@@ -99,9 +113,7 @@ public class FileSaverServiceBean implements FileSaverService {
 		fileToCopy.setFilepfad(absoluteFilePath);
 
 		Path newfile = Paths.get(absoluteFilePath);
-
 		try {
-
 			if (!Files.exists(newfile.getParent())) {
 				Files.createDirectories(newfile.getParent());
 				LOG.info("Save file in FileSystem: {}", absoluteFilePath);
@@ -116,7 +128,6 @@ public class FileSaverServiceBean implements FileSaverService {
 	}
 
 	private String getFileNameEnding(String filename) {
-
 		String extension = "";
 		int i = filename.lastIndexOf('.');
 		if (i > 0) {
@@ -126,13 +137,12 @@ public class FileSaverServiceBean implements FileSaverService {
 	}
 
 	@Override
+	@PermitAll
 	public boolean remove(String dokumentPaths) {
 		final Path path = Paths.get(dokumentPaths);
-
 		try {
 			if (Files.exists(path)) {
 				Files.delete(path);
-
 				LOG.info("Delete file in FileSystem: {}", dokumentPaths);
 			}
 		} catch (IOException e) {
@@ -143,6 +153,7 @@ public class FileSaverServiceBean implements FileSaverService {
 	}
 
 	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public boolean removeAllFromSubfolder(@Nonnull String subfolder) {
 		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + '/' + subfolder + '/';
 		Path file = Paths.get(absoluteFilePath);

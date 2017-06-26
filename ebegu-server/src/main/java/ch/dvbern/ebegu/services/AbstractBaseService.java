@@ -1,7 +1,22 @@
 package ch.dvbern.ebegu.services;
 
 
-import ch.dvbern.ebegu.entities.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.EbeguParameter;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -14,16 +29,6 @@ import org.hibernate.search.Search;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.security.PermitAll;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Map;
-import java.util.Optional;
-
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_FIXBETRAG_STADT_PRO_TAG_KITA;
 
 /**
@@ -31,7 +36,7 @@ import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_FIXBETRAG_STADT_PRO_
  */
 public abstract class AbstractBaseService {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getSimpleName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractBaseService.class.getSimpleName());
 
 	@Inject
 	private Persistence<Fall> persistence;
@@ -52,6 +57,7 @@ public abstract class AbstractBaseService {
 		fullTextSession.index(customer);
 	}
 
+	@PermitAll
 	@Nonnull
 	public BGRechnerParameterDTO loadCalculatorParameters(@Nonnull Mandant mandant, @Nonnull Gesuchsperiode gesuchsperiode) {
 		Map<EbeguParameterKey, EbeguParameter> paramMap = ebeguParameterService.getEbeguParameterByGesuchsperiodeAsMap(gesuchsperiode);
