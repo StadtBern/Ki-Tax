@@ -43,8 +43,6 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 	private GesuchstellerService gesuchstellerService;
 	@Inject
 	private WizardStepService wizardStepService;
-	@Inject
-	private EinkommensverschlechterungInfoService einkommensverschlechterungInfoService;
 
 	@Override
 	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
