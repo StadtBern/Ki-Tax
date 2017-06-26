@@ -253,6 +253,14 @@ public enum MathUtil {
 	}
 
 	/**
+	 * Vergleicht zwei BigDecimal.
+	 * @return TRUE, wenn beide Werte NULL sind, oder wenn beide BigDecimal (via compareTo) identisch sind. Sonst FALSE
+	 */
+	public static boolean isSame(BigDecimal a, BigDecimal b) {
+		return (a == null && b == null) || (a != null && b != null && (a.compareTo(b) == 0));
+	}
+
+	/**
 	 * Rundet die eingegebene Nummer in 10er Schritten.
 	 * Beispiel
 	 * 20 bis 24 = 20

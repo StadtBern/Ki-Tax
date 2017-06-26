@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.util.EbeguUtil;
 import java.time.LocalDate;
 
 import javax.annotation.Nonnull;
@@ -106,5 +107,21 @@ public class FamiliensituationContainer extends AbstractEntity {
 		} else {
 			return getFamiliensituationErstgesuch();
 		}
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!(other instanceof FamiliensituationContainer)) {
+			return false;
+		}
+		final FamiliensituationContainer otherFamSitContainer = (FamiliensituationContainer) other;
+		return EbeguUtil.isSameObject(getFamiliensituationJA(), otherFamSitContainer.getFamiliensituationJA());
 	}
 }
