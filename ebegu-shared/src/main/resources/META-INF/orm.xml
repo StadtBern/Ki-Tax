@@ -210,10 +210,12 @@ FROM kind_container
 					FROM antrag_status_history
 					INNER JOIN gesuch ON gesuch.id = antrag_status_history.gesuch_id
 					INNER JOIN gesuchsperiode ON gesuchsperiode.id = gesuch.gesuchsperiode_id
-					WHERE
+                    WHERE antrag_status_history.status IN ('PRUEFUNG_STV', 'GEPRUEFT_STV', 'BESCHWERDE_HAENGIG')
+                        AND (
 							  timestamp_von BETWEEN :fromDateTime AND :toDateTime
 							  OR timestamp_bis BETWEEN :fromDateTime AND :toDateTime
 							  OR (:fromDateTime >= timestamp_von AND (:toDateTime <= timestamp_bis OR timestamp_bis IS NULL))
+						)
 				) Statuswechsel ON Statuswechsel.gesuch_id = gesuch.id
 
   LEFT OUTER JOIN (
