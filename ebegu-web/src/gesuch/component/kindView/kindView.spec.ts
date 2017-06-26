@@ -3,9 +3,9 @@ describe('kindView', function () {
 
     beforeEach(angular.mock.module('ebeguWeb.gesuch'));
 
-    var component : any;
-    var scope : angular.IScope;
-    var $componentController : any;
+    let component: any;
+    let scope: angular.IScope;
+    let $componentController: any;
 
     beforeEach(angular.mock.inject(function (_$componentController_: any, $rootScope: IScope) {
         $componentController = _$componentController_;

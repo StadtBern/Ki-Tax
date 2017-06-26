@@ -30,7 +30,7 @@ export class UploadRS {
 
         let names: string [] = [];
         for (let file of files) {
-            if(file){
+            if (file) {
                 let encodedFilename = this.base64.encode(file.name);
                 names.push(encodedFilename);
             }
@@ -55,7 +55,7 @@ export class UploadRS {
         }, (evt: any) => {
             let loaded: number = evt.loaded;
             let total: number = evt.total;
-            var progressPercentage: number = 100.0 * loaded / total;
+            let progressPercentage: number = 100.0 * loaded / total;
             console.log('progress: ' + progressPercentage + '% ');
             return this.q.defer().notify();
         });

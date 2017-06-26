@@ -115,4 +115,5 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	public void setAdresse(Adresse adresse) {
 		this.adresse = adresse;
 	}
+
 }

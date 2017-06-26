@@ -193,15 +193,19 @@ describe('gesuchModelManager', function () {
         });
         describe('exist at least one Betreuung among all kinder', function () {
             it('should return false for empty list', function() {
-                spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([]);
-                expect(gesuchModelManager.isThereAnyBetreuung()).toBe(false);
+                let gesuch: TSGesuch = new TSGesuch();
+                spyOn(gesuch, 'getKinderWithBetreuungList').and.returnValue([]);
+                spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
+                expect(gesuchModelManager.getGesuch().isThereAnyBetreuung()).toBe(false);
             });
             it('should return false for a list with Kinder but no Betreuung', function() {
                 let kind: TSKindContainer = new TSKindContainer();
                 kind.kindJA = new TSKind();
                 kind.kindJA.familienErgaenzendeBetreuung = false;
-                spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([kind]);
-                expect(gesuchModelManager.isThereAnyBetreuung()).toBe(false);
+                let gesuch: TSGesuch = new TSGesuch();
+                spyOn(gesuch, 'getKinderWithBetreuungList').and.returnValue([kind]);
+                spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
+                expect(gesuchModelManager.getGesuch().isThereAnyBetreuung()).toBe(false);
             });
             it('should return true for a list with Kinder needing Betreuung', function() {
                 let kind: TSKindContainer = new TSKindContainer();
@@ -209,8 +213,10 @@ describe('gesuchModelManager', function () {
                 kind.kindJA.familienErgaenzendeBetreuung = true;
                 let betreuung: TSBetreuung = new TSBetreuung();
                 kind.betreuungen = [betreuung];
-                spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([kind]);
-                expect(gesuchModelManager.isThereAnyBetreuung()).toBe(true);
+                let gesuch: TSGesuch = new TSGesuch();
+                spyOn(gesuch, 'getKinderWithBetreuungList').and.returnValue([kind]);
+                spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
+                expect(gesuchModelManager.getGesuch().isThereAnyBetreuung()).toBe(true);
             });
         });
 
@@ -258,7 +264,7 @@ describe('gesuchModelManager', function () {
                 let verfuegung: TSVerfuegung = new TSVerfuegung();
                 spyOn(verfuegungRS, 'saveVerfuegung').and.returnValue($q.when(verfuegung));
 
-                gesuchModelManager.saveVerfuegung();
+                gesuchModelManager.saveVerfuegung(false);
                 scope.$apply();
 
                 expect(gesuchModelManager.getVerfuegenToWorkWith()).toBe(verfuegung);
@@ -270,7 +276,9 @@ describe('gesuchModelManager', function () {
                 spyOn(wizardStepManager, 'hasStepGivenStatus').and.callFake(function(stepName: TSWizardStepName, status: TSWizardStepStatus) {
                     return stepName === TSWizardStepName.BETREUUNG && status === TSWizardStepStatus.NOK;
                 });
-                spyOn(gesuchModelManager, 'isThereAnyBetreuung').and.returnValue(false);
+                let gesuch: TSGesuch = new TSGesuch();
+                spyOn(gesuch, 'isThereAnyBetreuung').and.returnValue(false);
+                spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.GEPRUEFT)).toEqual(TSAntragStatus.GEPRUEFT);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN)).toEqual(TSAntragStatus.GEPRUEFT);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN)).toEqual(TSAntragStatus.GEPRUEFT);
@@ -279,7 +287,9 @@ describe('gesuchModelManager', function () {
                 spyOn(wizardStepManager, 'hasStepGivenStatus').and.callFake(function(stepName: TSWizardStepName, status: TSWizardStepStatus) {
                     return stepName === TSWizardStepName.BETREUUNG && status === TSWizardStepStatus.NOK;
                 });
-                spyOn(gesuchModelManager, 'isThereAnyBetreuung').and.returnValue(true);
+                let gesuch: TSGesuch = new TSGesuch();
+                spyOn(gesuch, 'isThereAnyBetreuung').and.returnValue(true);
+                spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.GEPRUEFT)).toEqual(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN)).toEqual(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN)).toEqual(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN);
@@ -311,7 +321,6 @@ describe('gesuchModelManager', function () {
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN)).toEqual(TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.VERFUEGEN)).toEqual(TSAntragStatus.VERFUEGEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.VERFUEGT)).toEqual(TSAntragStatus.VERFUEGT);
-                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZURUECKGEWIESEN)).toEqual(TSAntragStatus.ZURUECKGEWIESEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZWEITE_MAHNUNG)).toEqual(TSAntragStatus.ZWEITE_MAHNUNG);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN)).toEqual(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
             });
@@ -354,7 +363,7 @@ describe('gesuchModelManager', function () {
                 spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
                 spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
                 let gesuch: TSGesuch = new TSGesuch();
-                gesuch.typ = TSAntragTyp.GESUCH;
+                gesuch.typ = TSAntragTyp.ERSTGESUCH;
                 gesuch.gesuchsteller1 = TestDataUtil.createGesuchsteller('Julio', 'Iglesias');
                 gesuch.gesuchsteller1.addAdresse(TestDataUtil.createAdresse('wohnstrasse', '1'));
                 gesuch.gesuchsteller1.addAdresse(TestDataUtil.createAdresse('umzug', '2'));
@@ -369,25 +378,23 @@ describe('gesuchModelManager', function () {
         });
         describe('updateBetreuungen', function () {
             it('should return empty Promise for undefined betreuung list', function() {
-                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen(undefined, true);
                 expect(promise).toBeDefined();
-                let promiseExecuted: boolean = false;
-                promise.then(() => {
-                    promiseExecuted = true;
+                let promiseExecuted: Array<TSBetreuung> = null;
+                promise.then((response) => {
+                    promiseExecuted = response;
                 });
-                $httpBackend.flush();
-                expect(promiseExecuted).toBe(true);
+                scope.$apply();
+                expect(promiseExecuted).toBe(undefined);
             });
             it('should return empty Promise for empty betreuung list', function() {
-                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen([], true);
                 expect(promise).toBeDefined();
                 let promiseExecuted: boolean = false;
-                promise.then(() => {
+                promise.then((response) => {
                     promiseExecuted = true;
                 });
-                $httpBackend.flush();
+                scope.$apply();
                 expect(promiseExecuted).toBe(true);
             });
             it('should return a Promise with the Betreuung that was updated', function() {
@@ -416,8 +423,7 @@ describe('gesuchModelManager', function () {
                     promiseExecuted = response;
                 });
 
-                $httpBackend.flush();
-
+                scope.$apply();
                 expect(betreuungRS.saveBetreuungen).toHaveBeenCalledWith(betreuungen, myGesuch.id, true);
                 expect(promiseExecuted.length).toBe(1);
                 expect(promiseExecuted[0]).toEqual(betreuung);

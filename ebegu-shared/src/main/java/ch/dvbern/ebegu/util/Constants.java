@@ -13,6 +13,7 @@ package ch.dvbern.ebegu.util;
 import ch.dvbern.ebegu.types.DateRange;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -35,6 +36,8 @@ public interface Constants {
 
 	Locale DEFAULT_LOCALE = new Locale("de", "CH");
 
+	String DATA = "Data";
+
 
 	String REGEX_EMAIL = "[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}";
 	String REGEX_TELEFON = "(0|\\+41|0041)[ ]*[\\d]{2}[ ]*[\\d]{3}[ ]*[\\d]{2}[ ]*[\\d]{2}";
@@ -43,15 +46,25 @@ public interface Constants {
 	String PATTERN_FILENAME_DATE_TIME = "dd.MM.yyyy_HH.mm.ss";
 	DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Constants.PATTERN_DATE);
 	DateTimeFormatter FILENAME_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(Constants.PATTERN_FILENAME_DATE_TIME);
+	DateTimeFormatter SQL_DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	DateTimeFormatter SQL_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	String SERVER_MESSAGE_BUNDLE_NAME = "ch.dvbern.ebegu.i18n.server-messages";
 
 	LocalDate END_OF_TIME = LocalDate.of(9999, 12, 31);
 	LocalDate START_OF_TIME = LocalDate.of(1000, 1, 1);
+	LocalDateTime START_OF_DATETIME = LocalDateTime.of(1000, 1, 1, 0, 0, 0);
 
 	DateRange DEFAULT_GUELTIGKEIT = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
 
-	long MAX_TEMP_DOWNLOAD_AGE_MINUTES = 3;
+	long MAX_TEMP_DOWNLOAD_AGE_MINUTES = 3L;
 
 	int FALLNUMMER_LENGTH = 6;
+	long MAX_LUCENE_QUERY_RUNTIME = 500L;
+	int MAX_LUCENE_QUICKSEARCH_RESULTS = 25; // hier gibt es ein Problem, wenn wir fuer keines der Resultate berechtigt sind wird unser resultset leer sein auf client
+
+	String DEFAULT_MANDANT_ID = "e3736eb8-6eef-40ef-9e52-96ab48d8f220";
+
+	String AUTH_TOKEN_SUFFIX_FOR_NO_TOKEN_REFRESH_REQUESTS = "NO_REFRESH";
+	String PATH_DESIGNATOR_NO_TOKEN_REFRESH = "notokenrefresh";
 }

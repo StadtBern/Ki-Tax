@@ -14,6 +14,7 @@ package ch.dvbern.ebegu.api.resource.authentication;
 
 import ch.dvbern.ebegu.api.EbeguApplicationV1;
 import ch.dvbern.ebegu.api.util.RestUtil;
+import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.omnifaces.security.jaspic.core.AuthParameters;
 import org.omnifaces.security.jaspic.core.HttpMsgContext;
@@ -115,6 +116,13 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 				TokenAuthenticator tokenAuthenticator = getReferenceOrNull(TokenAuthenticator.class);
 				if (tokenAuthenticator != null) {
 
+					// In einigen Faellen wollen wir bei einem Request nicht automatisch das Login verlaengern, z.B.
+					// wenn ein Request ueber einen Timer ausgeloest war (z.B. Posteingang)
+					// Da das Interface authenticate() mit einem Parameter vorgegeben ist, haengen wir in diesem Fall
+					// einen Suffix an das Login-Token
+					if (path.contains(Constants.PATH_DESIGNATOR_NO_TOKEN_REFRESH)) {
+						authToken = authToken + Constants.AUTH_TOKEN_SUFFIX_FOR_NO_TOKEN_REFRESH_REQUESTS;
+					}
 					if (tokenAuthenticator.authenticate(authToken)) {
 						LOG.debug("successfully logged in user: " + tokenAuthenticator.getUserName());
 						MDC.put(LOG_MDC_AUTHUSERID, authToken);

@@ -72,28 +72,28 @@ describe('faelleListView', function () {
         });
         describe('editPendenzJA', function () {
             it('should call findGesuch and open the view gesuch.fallcreation with it for normal user', function () {
-                let tsGesuch = callEditFall('findGesuch');
+                let tsGesuch = callEditFall();
 
                 expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation', { createNew: false, gesuchId: '66345345' });
 
             });
             it('should call findGesuch and open the view gesuch.betreuungen with it for INS/TRAEGER user if gesuch not verfuegt', function () {
                 spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
-                let tsGesuch = callEditFall('findGesuchForInstitution');
+                let tsGesuch = callEditFall();
                 expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen', { createNew: false, gesuchId: '66345345' });
             });
             it('should call findGesuch and open the view gesuch.verfuegen with it for INS/TRAEGER user if gesuch verfuegt', function () {
                spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
                 mockAntrag.status = TSAntragStatus.VERFUEGT;
-               let tsGesuch = callEditFall('findGesuchForInstitution');
+               let tsGesuch = callEditFall();
                expect($state.go).toHaveBeenCalledWith('gesuch.verfuegen', { createNew: false, gesuchId: '66345345' });
            });
         });
     });
 
     function mockGetPendenzenList(): TSAntragDTO {
-        let mockPendenz: TSAntragDTO = new TSAntragDTO('66345345', 123, 'name', TSAntragTyp.GESUCH,
-            undefined, undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined);
+        let mockPendenz: TSAntragDTO = new TSAntragDTO('66345345', 123, 'name', TSAntragTyp.ERSTGESUCH,
+            undefined, undefined, undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined);
         let dtoList: Array<TSAntragDTO> = [mockPendenz];
         let totalSize: number = 1;
         let searchresult: TSAntragSearchresultDTO = new TSAntragSearchresultDTO(dtoList, totalSize);
@@ -108,7 +108,7 @@ describe('faelleListView', function () {
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
     }
 
-    function callEditFall(methodName: string): TSGesuch {
+    function callEditFall(): TSGesuch {
         mockRestCalls();
         spyOn($state, 'go');
         spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue(undefined);
@@ -116,7 +116,8 @@ describe('faelleListView', function () {
             gesuchModelManager, berechnungsManager, $state, $log, CONSTANTS, authServiceRS, $q);
 
         let tsGesuch = new TSGesuch();
-        spyOn(gesuchRS, methodName).and.returnValue($q.when(tsGesuch));
+        spyOn(gesuchRS, 'findGesuch').and.returnValue($q.when(tsGesuch));
+        spyOn(gesuchRS, 'findGesuchForInstitution').and.returnValue($q.when(tsGesuch));
 
         faelleListViewController.editFall(mockAntrag, undefined);
         $scope.$apply();

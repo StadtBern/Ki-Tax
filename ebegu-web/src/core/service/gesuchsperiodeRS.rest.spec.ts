@@ -6,6 +6,9 @@ import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import {TSDateRange} from '../../models/types/TSDateRange';
 import DateUtil from '../../utils/DateUtil';
 import TestDataUtil from '../../utils/TestDataUtil';
+import * as moment from 'moment';
+import {TSGesuchsperiodeStatus} from '../../models/enums/TSGesuchsperiodeStatus';
+
 
 describe('gesuchsperiodeRS', function () {
 
@@ -26,7 +29,7 @@ describe('gesuchsperiodeRS', function () {
 
     beforeEach(() => {
         date = DateUtil.today();
-        mockGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(date, date));
+        mockGesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.AKTIV, new TSDateRange(date, date));
         TestDataUtil.setAbstractFieldsUndefined(mockGesuchsperiode);
         mockGesuchsperiodeRest = ebeguRestUtil.gesuchsperiodeToRestObject({}, mockGesuchsperiode);
     });
@@ -80,7 +83,7 @@ describe('gesuchsperiodeRS', function () {
                 $httpBackend.flush();
                 expect(foundGesuchsperioden).toBeDefined();
                 expect(foundGesuchsperioden.length).toBe(1);
-                expect(foundGesuchsperioden[0].active).toBe(true);
+                expect(foundGesuchsperioden[0].status).toBe(TSGesuchsperiodeStatus.AKTIV);
                 TestDataUtil.checkGueltigkeitAndSetIfSame(foundGesuchsperioden[0], mockGesuchsperiode);
                 expect(foundGesuchsperioden[0]).toEqual(mockGesuchsperiode);
             });
@@ -100,7 +103,7 @@ describe('gesuchsperiodeRS', function () {
         });
         describe('updateGesuchsperiode', () => {
             it('should update a gesuchsperiode', () => {
-                mockGesuchsperiode.active = false;
+                mockGesuchsperiode.status = TSGesuchsperiodeStatus.AKTIV;
                 mockGesuchsperiodeRest = ebeguRestUtil.gesuchsperiodeToRestObject({}, mockGesuchsperiode);
                 let updatedGesuchsperiode: TSGesuchsperiode;
                 $httpBackend.expectPUT(gesuchsperiodeRS.serviceURL, mockGesuchsperiodeRest).respond(mockGesuchsperiodeRest);
@@ -132,7 +135,7 @@ describe('gesuchsperiodeRS', function () {
 
     function checkFieldValues(createdGesuchsperiode: TSGesuchsperiode, mockGesuchsperiode: TSGesuchsperiode, active: boolean) {
         expect(createdGesuchsperiode).toBeDefined();
-        expect(createdGesuchsperiode.active).toBe(active);
+        expect(createdGesuchsperiode.status).toBe(TSGesuchsperiodeStatus.AKTIV);
         TestDataUtil.checkGueltigkeitAndSetIfSame(createdGesuchsperiode, mockGesuchsperiode);
     }
 });

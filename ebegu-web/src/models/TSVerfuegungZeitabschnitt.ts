@@ -1,5 +1,6 @@
 import {TSAbstractDateRangedEntity} from './TSAbstractDateRangedEntity';
 import {TSDateRange} from './types/TSDateRange';
+import {TSVerfuegungZeitabschnittZahlungsstatus} from './enums/TSVerfuegungZeitabschnittZahlungsstatus';
 
 export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntity {
 
@@ -17,19 +18,22 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
     private _famGroesse: number;
     private _massgebendesEinkommenVorAbzugFamgr: number;
     private _bemerkungen: string;
-    private _status: string;
+    private _zahlungsstatus: TSVerfuegungZeitabschnittZahlungsstatus;
     private _einkommensjahr: number;
     private _kategorieMaxEinkommen: boolean;
     private _kategorieKeinPensum: boolean;
     private _kategorieZuschlagZumErwerbspensum: boolean;
     private _zuSpaetEingereicht: boolean;
+    private _sameVerfuegungsdaten: boolean;
+    private _sameVerguenstigung: boolean;
 
 
     constructor(erwerbspensumGS1?: number, erwerbspensumGS2?: number, betreuungspensum?: number, fachstellenpensum?: number,
                 anspruchspensumRest?: number, anspruchberechtigtesPensum?: number, bgPensum?: number, betreuungsstunden?: number, vollkosten?: number,
                 elternbeitrag?: number, abzugFamGroesse?: number, massgebendesEinkommen?: number, bemerkungen?: string,
-                status?: string, gueltigkeit?: TSDateRange, famGroesse?: number, einkommensjahr?: number, kategorieMaxEinkommen?: boolean,
-                kategorieKeinPensum?: boolean, kategorieZuschlagZumErwerbspensum?: boolean) {
+                zahlungsstatus?: TSVerfuegungZeitabschnittZahlungsstatus, gueltigkeit?: TSDateRange, famGroesse?: number, einkommensjahr?: number, kategorieMaxEinkommen?: boolean,
+                kategorieKeinPensum?: boolean, kategorieZuschlagZumErwerbspensum?: boolean, sameVerfuegungsdaten?: boolean,
+                sameVerguenstigung?: boolean) {
         super(gueltigkeit);
         this._erwerbspensumGS1 = erwerbspensumGS1;
         this._erwerbspensumGS2 = erwerbspensumGS2;
@@ -44,12 +48,14 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
         this._abzugFamGroesse = abzugFamGroesse;
         this._massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommen;
         this._bemerkungen = bemerkungen;
-        this._status = status;
+        this._zahlungsstatus = zahlungsstatus;
         this._famGroesse = famGroesse;
         this._einkommensjahr = einkommensjahr;
         this._kategorieMaxEinkommen = kategorieMaxEinkommen;
         this._kategorieKeinPensum = kategorieKeinPensum;
         this._kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
+        this._sameVerfuegungsdaten = sameVerfuegungsdaten;
+        this._sameVerguenstigung = sameVerguenstigung;
     }
 
     get erwerbspensumGS1(): number {
@@ -156,12 +162,12 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
         this._bemerkungen = value;
     }
 
-    get status(): string {
-        return this._status;
+    get zahlungsstatus(): TSVerfuegungZeitabschnittZahlungsstatus {
+        return this._zahlungsstatus;
     }
 
-    set status(value: string) {
-        this._status = value;
+    set zahlungsstatus(value: TSVerfuegungZeitabschnittZahlungsstatus) {
+        this._zahlungsstatus = value;
     }
 
     get famGroesse(): number {
@@ -210,5 +216,21 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
 
     set zuSpaetEingereicht(value: boolean) {
         this._zuSpaetEingereicht = value;
+    }
+
+    get sameVerfuegungsdaten(): boolean {
+        return this._sameVerfuegungsdaten;
+    }
+
+    set sameVerfuegungsdaten(value: boolean) {
+        this._sameVerfuegungsdaten = value;
+    }
+
+    get sameVerguenstigung(): boolean {
+        return this._sameVerguenstigung;
+    }
+
+    set sameVerguenstigung(value: boolean) {
+        this._sameVerguenstigung = value;
     }
 }

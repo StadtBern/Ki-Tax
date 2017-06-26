@@ -1,25 +1,42 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.Constants;
-import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
+import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
+import ch.dvbern.ebegu.validators.CheckGesuchstellerContainerComplete;
+import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+
 /**
  * Entitaet zum Speichern von GesuchContainer in der Datenbank.
  */
 @Audited
+@CheckGesuchstellerContainerComplete(groups = AntragCompleteValidationGroup.class)
 @Entity
-public class GesuchstellerContainer extends AbstractEntity {
+@Indexed
+@Analyzer(impl = EBEGUGermanAnalyzer.class)
+public class GesuchstellerContainer extends AbstractEntity implements Searchable {
 
 	private static final long serialVersionUID = -8403117439764700618L;
 
@@ -33,6 +50,7 @@ public class GesuchstellerContainer extends AbstractEntity {
 	@Valid
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuchsteller_container_gesuchstellerja_id"), nullable = true)
+	@IndexedEmbedded
 	private Gesuchsteller gesuchstellerJA;
 
 	@Nullable
@@ -107,7 +125,7 @@ public class GesuchstellerContainer extends AbstractEntity {
 			return erwerbspensenContainers;
 		}
 
-		final Set<ErwerbspensumContainer> erwerbspensen = new HashSet();
+		final Set<ErwerbspensumContainer> erwerbspensen = new HashSet<>();
 		final ErwerbspensumContainer erwerbspensum = new ErwerbspensumContainer();
 		Erwerbspensum pensumJA = new Erwerbspensum();
 		pensumJA.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
@@ -121,11 +139,12 @@ public class GesuchstellerContainer extends AbstractEntity {
 		this.erwerbspensenContainers = erwerbspensenContainers;
 	}
 
-	public void setFinanzielleSituationContainer(@Nullable final FinanzielleSituationContainer finanzielleSituationContainer) {
+	public void setFinanzielleSituationContainer(@Nullable final FinanzielleSituationContainer
+		finanzielleSituationContainer) {
 		this.finanzielleSituationContainer = finanzielleSituationContainer;
-		if (finanzielleSituationContainer != null &&
-			(finanzielleSituationContainer.getGesuchsteller() == null || !finanzielleSituationContainer.getGesuchsteller().equals(this))) {
-			finanzielleSituationContainer.setGesuchsteller(this);
+		if (this.finanzielleSituationContainer != null &&
+			(this.finanzielleSituationContainer.getGesuchsteller() == null || !this.finanzielleSituationContainer.getGesuchsteller().equals(this))) {
+			this.finanzielleSituationContainer.setGesuchsteller(this);
 		}
 	}
 
@@ -168,8 +187,8 @@ public class GesuchstellerContainer extends AbstractEntity {
 		return "";
 	}
 
-
-	public GesuchstellerContainer copyForMutation(GesuchstellerContainer mutation) {
+	@Nonnull
+	public GesuchstellerContainer copyForMutation(@Nonnull GesuchstellerContainer mutation) {
 		super.copyForMutation(mutation);
 		mutation.setVorgaengerId(this.getId());
 		mutation.setGesuchstellerGS(null);
@@ -193,4 +212,67 @@ public class GesuchstellerContainer extends AbstractEntity {
 		return mutation;
 	}
 
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
+	@Nonnull
+	public GesuchstellerContainer copyForErneuerung(@Nonnull GesuchstellerContainer folgegesuch, @Nonnull Gesuchsperiode gesuchsperiodeFolgegesuch) {
+		super.copyForErneuerung(folgegesuch);
+		folgegesuch.setGesuchstellerGS(null);
+		if (this.getGesuchstellerJA() != null) {
+			folgegesuch.setGesuchstellerJA(this.getGesuchstellerJA().copyForErneuerung(new Gesuchsteller()));
+		}
+		for (GesuchstellerAdresseContainer gesuchstellerAdresse : this.getAdressen()) {
+			if (gesuchstellerAdresse.getGesuchstellerAdresseJA() != null) {
+				// Nur aktuelle und zukuenftige Adressen kopieren
+				if (!gesuchstellerAdresse.extractGueltigkeit().endsBefore(gesuchsperiodeFolgegesuch.getGueltigkeit().getGueltigAb())) {
+					GesuchstellerAdresseContainer adresseContainer = gesuchstellerAdresse.copyForErneuerung(new GesuchstellerAdresseContainer(), this);
+					folgegesuch.addAdresse(adresseContainer);
+				}
+			}
+		}
+		return folgegesuch;
+	}
+
+	@Nullable
+	public GesuchstellerAdresse getWohnadresseAm(LocalDate stichtag) {
+		for (GesuchstellerAdresseContainer adresse : getAdressen()) {
+			if (AdresseTyp.WOHNADRESSE.equals(adresse.extractAdresseTyp()) && adresse.extractGueltigkeit().contains(stichtag)) {
+				return adresse.getGesuchstellerAdresseJA();
+			}
+		}
+		return null;
+	}
+
+	@Nonnull
+	public List<Erwerbspensum> getErwerbspensenAm(LocalDate stichtag) {
+		List<Erwerbspensum> erwerbspensenInZeitraum = new ArrayList<>();
+		for (ErwerbspensumContainer erwerbspensumContainer : getErwerbspensenContainersNotEmpty()) {
+			if (erwerbspensumContainer.getErwerbspensumJA().getGueltigkeit().contains(stichtag)) {
+				erwerbspensenInZeitraum.add(erwerbspensumContainer.getErwerbspensumJA());
+			}
+		}
+		return erwerbspensenInZeitraum;
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultId() {
+		return getId();
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultSummary() {
+		return extractFullName();
+	}
+
+	@Nullable
+	@Override
+	public String getSearchResultAdditionalInformation() {
+		return toString();
+	}
+
+	@Override
+	public String getOwningGesuchId() {
+		return null;   //leider nicht ohne serviceabfrage verfuegbar
+	}
 }

@@ -11,6 +11,7 @@ import java.util.Locale;
  * In hibernate 5 die Strategies werden nicht mehr von NamingStrategy implementiert.
  * Aus diesem Grund muss man seine eigene PhysicalStrategy bauen.
  * Check http://stackoverflow.com/questions/32437202/improvednamingstrategy-no-longer-working-in-hibernate-5
+ * Diese Strategie macht fuer die Tabellennamen CamelCase zu snake_case
  */
 public class EbeguPhysicalNamingStrategyImpl extends PhysicalNamingStrategyStandardImpl {
 

@@ -18,6 +18,9 @@ public class VerfuegungenExportDTO {
 
 	private static final String SCHEMA_VERSION = "1.0"; //converter for Version 1
 
+	private List<VerfuegungExportDTO> verfuegungen;
+
+
 	public List<VerfuegungExportDTO> getVerfuegungen() {
 		return verfuegungen;
 	}
@@ -25,8 +28,6 @@ public class VerfuegungenExportDTO {
 	public void setVerfuegungen(List<VerfuegungExportDTO> verfuegungen) {
 		this.verfuegungen = verfuegungen;
 	}
-
-	private List<VerfuegungExportDTO> verfuegungen;
 
 	public String getSchemaVersion() {
 		return SCHEMA_VERSION;

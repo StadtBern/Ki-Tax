@@ -1,9 +1,11 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxAbstractDateRangedDTO;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
@@ -20,6 +22,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 /**
  * REST Resource fuer Gesuchsperiode
  */
+@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 @Path("gesuchsperioden")
 @Stateless
 @Api(description = "Resource welche zum bearbeiten der Gesuchsperiode dient")
@@ -53,9 +57,11 @@ public class GesuchsperiodeResource {
 			Optional<Gesuchsperiode> optional = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeJAXP.getId());
 			gesuchsperiode = optional.isPresent() ? optional.get() : new Gesuchsperiode();
 		}
+		// Überprüfen, ob der Statusübergang zulässig ist
+		GesuchsperiodeStatus gesuchsperiodeStatusBisher = gesuchsperiode.getStatus();
 
 		Gesuchsperiode convertedGesuchsperiode = converter.gesuchsperiodeToEntity(gesuchsperiodeJAXP, gesuchsperiode);
-		Gesuchsperiode persistedGesuchsperiode = this.gesuchsperiodeService.saveGesuchsperiode(convertedGesuchsperiode);
+		Gesuchsperiode persistedGesuchsperiode = this.gesuchsperiodeService.saveGesuchsperiode(convertedGesuchsperiode, gesuchsperiodeStatusBisher);
 
 		return converter.gesuchsperiodeToJAX(persistedGesuchsperiode);
 	}
@@ -72,10 +78,7 @@ public class GesuchsperiodeResource {
 		String gesuchsperiodeID = converter.toEntityId(gesuchsperiodeJAXPId);
 		Optional<Gesuchsperiode> optional = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeID);
 
-		if (!optional.isPresent()) {
-			return null;
-		}
-		return converter.gesuchsperiodeToJAX(optional.get());
+		return optional.map(gesuchsperiode -> converter.gesuchsperiodeToJAX(gesuchsperiode)).orElse(null);
 	}
 
 	@Nullable
@@ -96,10 +99,9 @@ public class GesuchsperiodeResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxGesuchsperiode> getAllGesuchsperioden() {
-
 		return gesuchsperiodeService.getAllGesuchsperioden().stream()
 			.map(gesuchsperiode -> converter.gesuchsperiodeToJAX(gesuchsperiode))
-			.sorted()
+			.sorted(Comparator.comparing(JaxAbstractDateRangedDTO::getGueltigAb).reversed())
 			.collect(Collectors.toList());
 	}
 
@@ -122,7 +124,7 @@ public class GesuchsperiodeResource {
 	public List<JaxGesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden() {
 		return gesuchsperiodeService.getAllNichtAbgeschlosseneGesuchsperioden().stream()
 			.map(gesuchsperiode -> converter.gesuchsperiodeToJAX(gesuchsperiode))
-			.sorted()
+			.sorted(Comparator.comparing(JaxAbstractDateRangedDTO::getGueltigAb).reversed())
 			.collect(Collectors.toList());
 	}
 }

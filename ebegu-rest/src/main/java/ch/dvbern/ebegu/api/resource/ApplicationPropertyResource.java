@@ -24,6 +24,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -98,6 +99,7 @@ public class ApplicationPropertyResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxApplicationProperties> getAllApplicationProperties() {
 		return applicationPropertyService.getAllApplicationProperties().stream()
+			.sorted(Comparator.comparing(o -> o.getName().name()))
 			.map(ap -> converter.applicationPropertyToJAX(ap))
 			.collect(Collectors.toList());
 	}
@@ -151,13 +153,18 @@ public class ApplicationPropertyResource {
 	@DELETE
 	@Path("/{key}")
 	@Consumes(MediaType.WILDCARD)
-	public Response remove(
-		@Nonnull @PathParam("key") String keyParam,
-		@Context HttpServletResponse response) {
-
+	public Response remove(@Nonnull @PathParam("key") String keyParam, @Context HttpServletResponse response) {
 		applicationPropertyService.removeApplicationProperty(Enum.valueOf(ApplicationPropertyKey.class, keyParam));
 		return Response.ok().build();
 	}
 
-
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+	@ApiOperation(value = "Are we in Testmode for Zahlungen?", response = Boolean.class)
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	@Path("/public/zahlungentestmode")
+	public Response isZahlungenTestMode(@Context HttpServletResponse response) {
+		return Response.ok(ebeguConfiguration.getIsZahlungenTestMode()).build();
+	}
 }

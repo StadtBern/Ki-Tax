@@ -77,7 +77,7 @@ public class ExportServiceBean implements ExportService {
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, JURIST, REVISOR})
 	public UploadFileInfo exportVerfuegungOfBetreuungAsFile(String betreuungID) {
 		Betreuung betreuung = readBetreuung(betreuungID);
 		VerfuegungenExportDTO verfuegungenExportDTO = convertBetreuungToExport(betreuung);
@@ -112,7 +112,7 @@ public class ExportServiceBean implements ExportService {
 		try {
 			return new MimeType(MediaType.TEXT_PLAIN);
 		} catch (MimeTypeParseException e) {
-			throw new EbeguRuntimeException("getContentTypeForExport", "could not parse mime type", e,MediaType.TEXT_PLAIN);
+			throw new EbeguRuntimeException("getContentTypeForExport", "could not parse mime type", e, MediaType.TEXT_PLAIN);
 
 		}
 	}

@@ -46,7 +46,7 @@ public class MutationsMerger {
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
 
-		if (betreuung.extractGesuch().getTyp().equals(AntragTyp.GESUCH)) {
+		if (betreuung.extractGesuch().getTyp().isGesuch()) {
 			return zeitabschnitte;
 		}
 		final Verfuegung verfuegungOnGesuchForMuation = betreuung.getVorgaengerVerfuegung();

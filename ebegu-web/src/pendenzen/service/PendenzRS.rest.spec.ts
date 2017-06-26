@@ -6,9 +6,9 @@ import PendenzRS from './PendenzRS.rest';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 
-describe('pendenzRS', function () {
+describe('pendenzInstitutionRS', function () {
 
-    var pendenzRS: PendenzRS;
+    let pendenzRS: PendenzRS;
     let $httpBackend: IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockPendenz: TSAntragDTO;
@@ -23,7 +23,7 @@ describe('pendenzRS', function () {
     }));
 
     beforeEach(() => {
-        mockPendenz = new TSAntragDTO('id1', 123, 'name', TSAntragTyp.GESUCH, undefined, undefined,
+        mockPendenz = new TSAntragDTO('id1', 123, 'name', TSAntragTyp.ERSTGESUCH, undefined, undefined, undefined,
             [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined, undefined, undefined);
         mockPendenzRest = ebeguRestUtil.antragDTOToRestObject({}, mockPendenz);
     });
@@ -41,7 +41,7 @@ describe('pendenzRS', function () {
         describe('findBetreuung', () => {
             it('should return all pending Antraege', () => {
                 let arrayResult: Array<any> = [mockPendenzRest];
-                $httpBackend.expectGET(pendenzRS.serviceURL).respond(arrayResult);
+                $httpBackend.expectGET(pendenzRS.serviceURL + '/jugendamt/').respond(arrayResult);
 
                 let foundPendenzen: Array<TSAntragDTO>;
                 pendenzRS.getPendenzenList().then((result) => {

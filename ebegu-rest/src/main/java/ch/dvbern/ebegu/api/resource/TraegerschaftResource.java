@@ -6,8 +6,10 @@ import ch.dvbern.ebegu.api.client.OpenIdmRestService;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxTraegerschaft;
+import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.TraegerschaftService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,6 +44,9 @@ public class TraegerschaftResource {
 
 	@Inject
 	private TraegerschaftService traegerschaftService;
+
+	@Inject
+	private InstitutionService institutionService;
 
 	@Inject
 	private JaxBConverter converter;
@@ -115,10 +120,13 @@ public class TraegerschaftResource {
 
 		Validate.notNull(traegerschaftJAXPId.getId());
 		final String traegerschaftId = converter.toEntityId(traegerschaftJAXPId);
+		Collection<Institution> allInstitutionen = institutionService.getAllActiveInstitutionenFromTraegerschaft(traegerschaftId);
+		for (Institution institution : allInstitutionen) {
+			institutionService.setInstitutionInactive(institution.getId());
+			openIdmRestService.deleteInstitution(converter.toJaxId(institution).getId());
+		}
 		traegerschaftService.setInactive(traegerschaftId);
-
 		openIdmRestService.deleteTraegerschaft(openIdmRestService.convertToOpenIdmTraegerschaftUID(traegerschaftId));
-
 		return Response.ok().build();
 	}
 

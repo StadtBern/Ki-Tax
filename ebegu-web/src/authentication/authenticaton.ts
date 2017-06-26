@@ -95,7 +95,7 @@ export class AuthenticationListViewController {
         console.log('redirecting to login', urlToGoTo);
 
         this.$window.open(urlToGoTo, '_self');
-    };
+    }
 
     /**
      * triggered einen logout, fuer iam user sowohl in iam als auch in ebegu,

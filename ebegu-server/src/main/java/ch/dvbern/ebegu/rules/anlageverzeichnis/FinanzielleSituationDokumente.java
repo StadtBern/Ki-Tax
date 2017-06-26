@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 
@@ -74,7 +75,8 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 
 		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller.extractFullName(), basisJahr, gemeinsam, gesuchstellerNumber, finanzielleSituationJA, DokumentGrundTyp.FINANZIELLESITUATION);
 
-		add(getDokument(DokumentTyp.JAHRESLOHNAUSWEISE, finanzielleSituationJA, gesuchsteller.extractFullName(), String.valueOf(basisJahr), DokumentGrundTyp.FINANZIELLESITUATION), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.JAHRESLOHNAUSWEISE, finanzielleSituationJA, gesuchsteller.extractFullName(), String.valueOf(basisJahr), DokumentGrundPersonType.GESUCHSTELLER,
+			gesuchstellerNumber, DokumentGrundTyp.FINANZIELLESITUATION), anlageVerzeichnis);
 
 	}
 

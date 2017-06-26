@@ -3,7 +3,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>1.0.17-SNAPSHOT</version>
+        <version>2.0.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -57,6 +57,11 @@
             <artifactId>dvbern-lib-beanvalidation</artifactId>
         </dependency>
         <dependency>
+            <groupId>ch.dvbern.lib.excelmerger</groupId>
+            <artifactId>dvbern-lib-excelmerger-impl</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-envers</artifactId>
             <version>${version.hibernate}</version>
@@ -102,6 +107,34 @@
             <artifactId>jboss-annotations-api_1.2_spec</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
+        <dependency>
+           <groupId>org.hibernate</groupId>
+           <artifactId>hibernate-search-orm</artifactId>
+            <!--<scope>provided</scope> eigentlich ware das in jboss vorhanden, gibt aber ein problem bei einzeltests in ide-->
+        </dependency>
+        <!--<dependency>-->
+           <!--<groupId>org.infinispan</groupId>-->
+           <!--<artifactId>infinispan-directory-provider</artifactId>-->
+        <!--</dependency>-->
+
+        <dependency>
+           <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search-engine</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!--json object generation-->
         <dependency>
@@ -110,6 +143,7 @@
             <version>2.6.1</version>
         </dependency>
     </dependencies>
+
     <build>
     </build>
 

@@ -40,15 +40,6 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_authorisierter_benutzer_benutzer_id"))
 	private Benutzer benutzer = null;
 
-	// todo team Dieses Feld muss aus Sicherheitsgrunden entfernt werden wenn das dummylogin nicht mehr benoetigt wird
-	@Deprecated
-	/**
-	 * @deprecated
-	 */
-	@Nullable
-	@Size(max = DB_DEFAULT_MAX_LENGTH)
-	private String password = null;
-
 	/**
 	 * Dies entspricht dem token aus dem cookie
 	 */
@@ -105,24 +96,6 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 
 	public void setBenutzer(Benutzer benutzer) {
 		this.benutzer = benutzer;
-	}
-
-	@Nullable
-	@Deprecated
-	/**
-	 * @deprecated
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	@Nullable
-	@Deprecated
-	/**
-	 * @deprecated
-	 */
-	public void setPassword(@Nullable String password) {
-		this.password = password;
 	}
 
 	@Nonnull

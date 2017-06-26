@@ -44,7 +44,7 @@
                 <td ng-bind="row.tag" ng-if="!vm.sonstige && vm.tag"
                     ng-class="{'documents-vailable': vm.hasDokuments(row),'no-documents': !vm.hasDokuments(row)}"></td>
 
-                <td ng-bind="row.fullName"
+                <td ng-bind="vm.extractFullName(row)"
                     ng-class="{'documents-vailable': vm.hasDokuments(row),'no-documents': !vm.hasDokuments(row)}"
                     ng-if="!vm.sonstige"></td>
 
@@ -59,7 +59,7 @@
                 <td width="5%" class="symbol" ng-click="$event.stopPropagation()"
                     ng-class="{'documents-vailable': vm.hasDokuments(row),'no-documents': !vm.hasDokuments(row),'no-color' : vm.sonstige}">
                     <a ngf-select="vm.uploadAnhaenge($files, row)" ngf-multiple="true"
-                       class="fa fa-upload" aria-hidden="true" style="color: black"></a>
+                       class="fa fa-upload" aria-hidden="true" style="color: black" ng-disabled="vm.isDokumenteUploadDisabled()"></a>
                 </td>
 
             </tr>
@@ -86,7 +86,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="dokument in table2">
+                        <tr ng-repeat="dokument in table2  | orderBy: 'timestampUpload'">
                             <td ng-bind="dokument.filename"
                                 ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
                             <td ng-bind="dokument.timestampUpload | amDateFormat : 'DD.MM.YYYY'"

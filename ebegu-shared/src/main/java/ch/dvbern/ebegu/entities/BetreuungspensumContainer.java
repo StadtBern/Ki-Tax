@@ -73,8 +73,7 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 			return false;
 		}
 
-		return getBetreuungspensumGS().isSame(otherBetreuungspensumContainer.getBetreuungspensumGS()) &&
-			getBetreuungspensumJA().isSame(otherBetreuungspensumContainer.getBetreuungspensumJA());
+		return getBetreuungspensumJA().isSame(otherBetreuungspensumContainer.getBetreuungspensumJA());
 	}
 
 	/**

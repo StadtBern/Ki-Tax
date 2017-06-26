@@ -1,0 +1,12 @@
+#This file configures the properties that are left as placeholder in the docker-compose file
+#for this to work the entries of this file must be put in a file named .env and the file should be placed at the
+#location of the docker-compose file alternativly it could be passed as a parameter to docker-compose
+
+TAGTOUSE=latest
+MYSQL_DB=ebegu
+MYSQL_PATH=/var/lib/mysql
+PORT_MYSQL=3305
+WILDFLY_PORT_BACKEND=8080
+WILDFLY_SSLPORT_BACKEND=8443
+WILDFLY_PORT_MGMT=9090
+PORT_FRONTEND=80

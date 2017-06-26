@@ -2,6 +2,9 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -13,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+
+import static ch.dvbern.ebegu.tets.util.JBossLoginContextFactory.createLoginContext;
 
 /**
  * Diese Klasse loggt vor jeder testmethode als superadmin ein und danach wieder aus.
@@ -32,11 +37,15 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 	public  void performLogin() {
 		dummyAdmin = TestDataUtil.createDummySuperAdmin(persistence);
 		try {
-			loginContext = JBossLoginContextFactory.createLoginContext("superadmin", "superadmin");
-			loginContext.login();
+			loginAsSuperadmin();
 		} catch (LoginException ex) {
 			LOG.error("Konnte dummy login nicht vornehmen fuer ArquillianTests ", ex);
 		}
+	}
+
+	protected void loginAsSuperadmin() throws LoginException {
+		loginContext = JBossLoginContextFactory.createLoginContext("superadmin", "superadmin");
+		loginContext.login();
 	}
 
 	@After
@@ -52,5 +61,79 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 
 	public Benutzer getDummySuperadmin() {
 		return dummyAdmin;
+	}
+
+	protected Benutzer loginAsGesuchsteller(String username) {
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
+		Benutzer user = TestDataUtil.createBenutzer(UserRole.GESUCHSTELLER, username, null, null, mandant);
+		user = persistence.merge(user);
+		try {
+			createLoginContext(username, username).login();
+		} catch (LoginException e) {
+			LOG.error("could not login as gesuchsteller {} for tests", username);
+		}
+		return user;
+		//theoretisch sollten wir wohl zuerst ausloggen bevor wir wieder einloggen aber es scheint auch so zu gehen
+	}
+
+	protected void loginAsSchulamt() {
+		try {
+			createLoginContext("schulamt", "schulamt").login();
+		} catch (LoginException e) {
+			LOG.error("could not login as sachbearbeiter schulamt for tests");
+		}
+
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
+		Benutzer schulamt = TestDataUtil.createBenutzer(UserRole.SCHULAMT, "schulamt", null, null, mandant);
+		persistence.persist(schulamt);
+	}
+
+	protected void loginAsSteueramt() {
+		try {
+			createLoginContext("steueramt", "steueramt").login();
+		} catch (LoginException e) {
+			LOG.error("could not login as steueramt for tests");
+		}
+
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
+		Benutzer steueramt = TestDataUtil.createBenutzer(UserRole.STEUERAMT, "steueramt", null, null, mandant);
+		persistence.persist(steueramt);
+	}
+
+	protected Benutzer loginAsSachbearbeiterJA() {
+		try {
+			createLoginContext("saja", "saja").login();
+		} catch (LoginException e) {
+			LOG.error("could not login as sachbearbeiter jugendamt saja for tests");
+		}
+
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
+		Benutzer saja = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, "saja", null, null, mandant);
+		persistence.persist(saja);
+		return saja;
+	}
+
+	protected void loginAsAdmin() {
+		try {
+			createLoginContext("admin", "admin").login();
+		} catch (LoginException e) {
+			LOG.error("could not login as sachbearbeiter jugendamt admin for tests");
+		}
+
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
+		Benutzer admin = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
+		persistence.persist(admin);
+	}
+
+	protected Benutzer loginAsSachbearbeiterInst(String username, Institution institutionToSet) {
+		Benutzer user = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_INSTITUTION, username, null, institutionToSet, institutionToSet.getMandant());
+		user = persistence.merge(user);
+		try {
+			createLoginContext(username, username).login();
+		} catch (LoginException e) {
+			LOG.error("could not login as sachbearbeiter jugendamt {} for tests", username);
+		}
+		return user;
+		//theoretisch sollten wir wohl zuerst ausloggen bevor wir wieder einloggen aber es scheint auch so zu gehen
 	}
 }

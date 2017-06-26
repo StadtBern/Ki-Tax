@@ -9,4 +9,11 @@ public interface DailyBatch {
 
 	Future<Boolean> runBatchMahnungFristablauf();
 
+	void runBatchWarnungGesuchNichtFreigegeben();
+
+	void runBatchWarnungFreigabequittungFehlt();
+
+	void runBatchGesucheLoeschen();
+
+	void runBatchGesuchsperiodeLoeschen();
 }

@@ -1,12 +1,13 @@
 package ch.dvbern.ebegu.tets;
 
-import ch.dvbern.ebegu.dto.suchfilter.AntragSearchDTO;
-import ch.dvbern.ebegu.dto.suchfilter.AntragSortDTO;
-import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
-import ch.dvbern.ebegu.dto.suchfilter.PaginationDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragSearchDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragSortDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
+import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
@@ -35,9 +36,15 @@ public final class TestDataUtil {
 
 	private static final String iban = "CH39 0900 0000 3066 3817 2";
 
-	public static final LocalDate STICHTAG_EKV_1 = LocalDate.of(2016, Month.SEPTEMBER, 1);
+	public static final int PERIODE_JAHR_1 = 2017;
+	public static final int PERIODE_JAHR_2 = 2018;
+
+	public static final LocalDate START_PERIODE = LocalDate.of(PERIODE_JAHR_1, Month.AUGUST, 1);
+	public static final LocalDate ENDE_PERIODE = LocalDate.of(PERIODE_JAHR_2, Month.JULY, 31);
+
+	public static final LocalDate STICHTAG_EKV_1 = LocalDate.of(PERIODE_JAHR_1, Month.SEPTEMBER, 1);
 	public static final LocalDate STICHTAG_EKV_1_GUELTIG = STICHTAG_EKV_1.plusMonths(1);
-	public static final LocalDate STICHTAG_EKV_2 = LocalDate.of(2017, Month.APRIL, 1);
+	public static final LocalDate STICHTAG_EKV_2 = LocalDate.of(PERIODE_JAHR_2, Month.APRIL, 1);
 	public static final LocalDate STICHTAG_EKV_2_GUELTIG =STICHTAG_EKV_2.plusMonths(1);
 
 	private TestDataUtil() {
@@ -89,7 +96,6 @@ public final class TestDataUtil {
 		gesuchsteller.setMail("tim.tester@example.com");
 		gesuchsteller.setMobile("076 309 30 58");
 		gesuchsteller.setTelefon("031 378 24 24");
-		gesuchsteller.setZpvNumber("0761234567897");
 		return gesuchsteller;
 	}
 
@@ -220,7 +226,7 @@ public final class TestDataUtil {
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
 		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_WEISSENSTEIN);
-		instStammdaten.getInstitution().setName("Kita Aaregg"); //todo eventuell umbennen Weissenstein
+		instStammdaten.getInstitution().setName("Kita Aaregg");
 		instStammdaten.setAdresse(createDefaultAdresse());
 		return instStammdaten;
 	}
@@ -321,7 +327,7 @@ public final class TestDataUtil {
 		Betreuung betreuung = new Betreuung();
 		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
 		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
-		betreuung.setBetreuungspensumContainers(new HashSet<>());
+		betreuung.setBetreuungspensumContainers(new TreeSet<>());
 		betreuung.setAbwesenheitContainers(new HashSet<>());
 		betreuung.setKind(createDefaultKindContainer());
 		return betreuung;
@@ -347,7 +353,7 @@ public final class TestDataUtil {
 
 	public static Gesuchsperiode createCurrentGesuchsperiode() {
 		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
-		gesuchsperiode.setActive(true);
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
 
 		boolean isSecondHalbjahr = LocalDate.now().isAfter(LocalDate.of(LocalDate.now().getYear(), Month.JULY, 31));
 		int startyear = isSecondHalbjahr ? LocalDate.now().getYear() : LocalDate.now().getYear() - 1;
@@ -357,16 +363,16 @@ public final class TestDataUtil {
 		return gesuchsperiode;
 	}
 
-	public static Gesuchsperiode createGesuchsperiode1617() {
+	public static Gesuchsperiode createGesuchsperiode1718() {
 		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
-		gesuchsperiode.setActive(true);
-		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31)));
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
+		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(2017, Month.AUGUST, 1), LocalDate.of(2018, Month.JULY, 31)));
 		return gesuchsperiode;
 	}
 
 	public static Gesuchsperiode createCustomGesuchsperiode(int firstYear, int secondYear) {
 		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
-		gesuchsperiode.setActive(true);
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
 		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(firstYear, Month.AUGUST, 1), LocalDate.of(secondYear, Month.JULY, 31)));
 		return gesuchsperiode;
 	}
@@ -460,7 +466,7 @@ public final class TestDataUtil {
 	@SuppressWarnings("ConstantConditions")
 	public static Betreuung createGesuchWithBetreuungspensum(boolean zweiGesuchsteller) {
 		Gesuch gesuch = new Gesuch();
-		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1718());
 		gesuch.setFamiliensituationContainer(createDefaultFamiliensituationContainer());
 		gesuch.extractFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		if (zweiGesuchsteller) {
@@ -486,7 +492,7 @@ public final class TestDataUtil {
 
 	public static void calculateFinanzDaten(Gesuch gesuch) {
 		if (gesuch.getGesuchsperiode() == null) {
-			gesuch.setGesuchsperiode(createGesuchsperiode1617());
+			gesuch.setGesuchsperiode(createGesuchsperiode1718());
 		}
 		FinanzielleSituationRechner finanzielleSituationRechner = new FinanzielleSituationRechner();
 		finanzielleSituationRechner.calculateFinanzDaten(gesuch, BigDecimal.valueOf(0.80));
@@ -495,12 +501,12 @@ public final class TestDataUtil {
 	public static Gesuch createTestgesuchDagmar() {
 		List<InstitutionStammdaten> insttStammdaten = new ArrayList<>();
 		insttStammdaten.add(TestDataUtil.createDefaultInstitutionStammdaten());
-		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), insttStammdaten);
+		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1718(), insttStammdaten);
 		testfall.createFall(null);
 		testfall.createGesuch(LocalDate.of(1980, Month.MARCH, 25));
 		Gesuch gesuch = testfall.fillInGesuch();
 		TestDataUtil.calculateFinanzDaten(gesuch);
-		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1718());
 		return gesuch;
 	}
 
@@ -561,7 +567,7 @@ public final class TestDataUtil {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
-		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1718(), institutionStammdatenList);
 
 		return persistAllEntities(persistence, eingangsdatum, testfall);
 	}
@@ -590,10 +596,9 @@ public final class TestDataUtil {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
-		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1718(), institutionStammdatenList);
 
-		Gesuch gesuch = persistAllEntities(persistence, eingangsdatum, testfall);
-		return gesuch;
+		return persistAllEntities(persistence, eingangsdatum, testfall);
 	}
 
 	public static Gesuch createAndPersistBeckerNoraGesuch(InstitutionService instService, Persistence<Gesuch> persistence, LocalDate eingangsdatum) {
@@ -601,10 +606,9 @@ public final class TestDataUtil {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
-		Testfall06_BeckerNora testfall = new Testfall06_BeckerNora(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+		Testfall06_BeckerNora testfall = new Testfall06_BeckerNora(TestDataUtil.createGesuchsperiode1718(), institutionStammdatenList);
 
-		Gesuch gesuch = persistAllEntities(persistence, eingangsdatum, testfall);
-		return gesuch;
+		return persistAllEntities(persistence, eingangsdatum, testfall);
 	}
 
 
@@ -711,6 +715,20 @@ public final class TestDataUtil {
 
 	}
 
+	public static void prepareApplicationProperties( Persistence<?> persistence) {
+
+		saveParameter(ApplicationPropertyKey.DEBTOR_NAME, "Direktion für Bildung, Soziales und Sport der Stadt Bern", persistence);
+		saveParameter(ApplicationPropertyKey.DEBTOR_IBAN, "CH4808704020071690000", persistence);
+		saveParameter(ApplicationPropertyKey.DEBTOR_BIC, "POFICHBEXXX", persistence);
+		saveParameter(ApplicationPropertyKey.DEBTOR_IBAN_GEBUEHREN, "CH4808704020071700000", persistence);
+	}
+
+	public static void saveParameter(ApplicationPropertyKey key, String value, Persistence<?> persistence) {
+		ApplicationProperty applicationProperty = new ApplicationProperty(key, value);
+		persistence.persist(applicationProperty);
+
+	}
+
 	public static Benutzer createBenutzer(UserRole role, String userName, Traegerschaft traegerschaft, Institution institution, Mandant mandant) {
 		final Benutzer benutzer = new Benutzer();
 		benutzer.setUsername(userName);
@@ -729,7 +747,7 @@ public final class TestDataUtil {
 		persistence.persist(traegerschaft);
 		final Mandant mandant = TestDataUtil.createDefaultMandant();
 		persistence.persist(mandant);
-		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, "satraeg", traegerschaft, null, mandant);
+		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, UUID.randomUUID().toString(), traegerschaft, null, mandant);
 		persistence.persist(benutzer);
 		return benutzer;
 	}
@@ -835,5 +853,67 @@ public final class TestDataUtil {
 		gesuch.setGesuchsperiode(periodeToUpdate);
 		gesuch.setStatus(status);
 		return gesuch;
+	}
+
+	@SuppressWarnings("MagicNumber")
+	public static Betreuungsmitteilung createBetreuungmitteilung(Fall fall, Benutzer empfaenger, MitteilungTeilnehmerTyp empfaengerTyp,
+													   Benutzer sender, MitteilungTeilnehmerTyp senderTyp) {
+		final Betreuungsmitteilung mitteilung = new Betreuungsmitteilung();
+		fillOutMitteilung(fall, empfaenger, empfaengerTyp, sender, senderTyp, mitteilung);
+
+		Set<BetreuungsmitteilungPensum> betPensen = new HashSet<>();
+
+		BetreuungsmitteilungPensum pensum = new BetreuungsmitteilungPensum();
+		pensum.setBetreuungsmitteilung(mitteilung);
+		pensum.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		pensum.setPensum(30);
+
+		betPensen.add(pensum);
+		mitteilung.setBetreuungspensen(betPensen);
+
+		return mitteilung;
+	}
+
+	public static Mitteilung createMitteilung(Fall fall, Benutzer empfaenger, MitteilungTeilnehmerTyp empfaengerTyp,
+											  Benutzer sender, MitteilungTeilnehmerTyp senderTyp) {
+		Mitteilung mitteilung = new Mitteilung();
+		fillOutMitteilung(fall, empfaenger, empfaengerTyp, sender, senderTyp, mitteilung);
+		return mitteilung;
+	}
+
+	private static void fillOutMitteilung(Fall fall, Benutzer empfaenger, MitteilungTeilnehmerTyp empfaengerTyp, Benutzer sender, MitteilungTeilnehmerTyp senderTyp, Mitteilung mitteilung) {
+		mitteilung.setFall(fall);
+		mitteilung.setEmpfaenger(empfaenger);
+		mitteilung.setSender(sender);
+		mitteilung.setMitteilungStatus(MitteilungStatus.ENTWURF);
+		mitteilung.setSubject("Subject");
+		mitteilung.setEmpfaengerTyp(empfaengerTyp);
+		mitteilung.setSenderTyp(senderTyp);
+		mitteilung.setMessage("Message");
+	}
+
+	public static Betreuung persistBetreuung(BetreuungService betreuungService, Persistence<Gesuch> persistence) {
+		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
+		for (BetreuungspensumContainer container : betreuung.getBetreuungspensumContainers()) {
+			persistence.persist(container);
+		}
+		for (AbwesenheitContainer abwesenheit : betreuung.getAbwesenheitContainers()) {
+			persistence.persist(abwesenheit);
+		}
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution());
+		persistence.persist(betreuung.getInstitutionStammdaten());
+		persistence.persist(betreuung.getKind().getKindGS().getPensumFachstelle().getFachstelle());
+		persistence.persist(betreuung.getKind().getKindJA().getPensumFachstelle().getFachstelle());
+
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		betreuung.getKind().setGesuch(gesuch);
+		persistence.persist(betreuung.getKind());
+
+		betreuungService.saveBetreuung(betreuung, false);
+
+		return betreuung;
+
 	}
 }

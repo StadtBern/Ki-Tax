@@ -223,11 +223,10 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 
 	}
 
-	//todo homa minor dass sollte eigentlich nettovermoegensabzug heissen oder so
+	//das ist eigentlich der nettovermoegensabzug
 	@Override
 	@Nonnull
 	public final BigDecimal getNettovermoegen() {
-
 		return FinanzielleSituationRechner.calcVermoegen5Prozent(this.getFinanzSituationGS1(), this.getFinanzSituationGS2());
 	}
 

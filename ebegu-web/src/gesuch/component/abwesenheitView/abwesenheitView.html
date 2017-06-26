@@ -115,7 +115,11 @@
                 </div>
 
                 <!--Buttons-->
-                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save()">
+
+                <dv-navigation dv-save="vm.save()"
+                               dv-previous="true" dv-next="true"
+                               dv-translate-next="{{vm.getNextButtonText()}}"
+                               dv-translate-previous="{{vm.getPreviousButtonText()}}">
                 </dv-navigation>
 
             </form>

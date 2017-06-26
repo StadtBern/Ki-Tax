@@ -23,7 +23,7 @@ export default class TSEinkommensverschlechterungInfoContainer extends TSAbstrac
         this._einkommensverschlechterungInfoJA = value;
     }
 
-    public init() : void {
+    public init(): void {
         this.einkommensverschlechterungInfoJA = new TSEinkommensverschlechterungInfo();
         this.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus1 = false;
         this.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus2 = false;

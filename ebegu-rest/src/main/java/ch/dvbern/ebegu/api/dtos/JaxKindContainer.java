@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -32,6 +33,9 @@ public class JaxKindContainer extends JaxAbstractDTO {
 
 	@Min(1)
 	private Integer nextNumberBetreuung = 1;
+
+	@Nullable
+	private Boolean kindMutiert;
 
 
 	public JaxKind getKindGS() {
@@ -72,5 +76,13 @@ public class JaxKindContainer extends JaxAbstractDTO {
 
 	public void setNextNumberBetreuung(Integer nextNumberBetreuung) {
 		this.nextNumberBetreuung = nextNumberBetreuung;
+	}
+
+	public Boolean isKindMutiert() {
+		return kindMutiert;
+	}
+
+	public void setKindMutiert(Boolean kindMutiert) {
+		this.kindMutiert = kindMutiert;
 	}
 }

@@ -43,6 +43,8 @@ import DokumenteRS from '../gesuch/service/dokumenteRS.rest';
 import {DVDokumenteListConfig} from './component/dv-dokumente-list/dv-dokumente-list';
 import {DVLoading} from './directive/dv-loading/dv-loading';
 import {DVLoadingButton} from './directive/dv-loading-button/dv-loading-button';
+import {DvAccordionComponentConfig} from './component/dv-accordion/dv-accordion';
+import {DvAccordionTabComponentConfig} from './component/dv-accordion/dv-accordion-tab/dv-accordion-tab';
 import HttpResponseInterceptor from './service/HttpResponseInterceptor';
 import DVSubmitevent from './directive/dv-submitevent/dv-submitevent';
 import 'ng-file-upload';
@@ -57,6 +59,7 @@ import WizardStepRS from '../gesuch/service/WizardStepRS.rest';
 import EinkommensverschlechterungInfoRS from '../gesuch/service/einkommensverschlechterungInfoRS.rest';
 import {DVNavigation} from './directive/dv-navigation/dv-navigation';
 import {DVAntragListConfig} from './component/dv-antrag-list/dv-antrag-list';
+import {DVPendenzenListConfig} from './component/dv-pendenzen-list/dv-pendenzen-list';
 import AntragStatusHistoryRS from './service/antragStatusHistoryRS.rest';
 import {NavigationLogger} from './service/NavigationLogger';
 import GlobalCacheService from '../gesuch/service/globalCacheService';
@@ -65,9 +68,27 @@ import {DvHomeIconComponentConfig} from './component/dv-home-icon/dv-home-icon';
 import {DVBarcodeListener} from './directive/dv-barcode-listener';
 import DVTrimEmpty from './directive/dv-trim-empty/dv-trim-empty';
 import {DvMobileNavigationToggleComponentConfig} from './component/dv-mobile-navigation-toggle/dv-mobile-navigation-toggle';
+import {SearchIndexRS} from './service/searchIndexRS.rest';
+import {DvSearchResultIconComponentConfig} from './component/dv-search/dv-search-result-icon/dv-search-result-icon';
+import {DvQuicksearchboxComponentConfig} from './component/dv-search/dv-quicksearchbox/dv-quicksearchbox';
 import {DVValueinput} from './directive/dv-valueinput/dv-valueinput';
+import MitteilungRS from './service/mitteilungRS.rest';
+import {DVMitteilungListConfig} from './component/dv-mitteilung-list/dv-mitteilung-list';
+import {DvPosteingangComponentConfig} from './component/dv-posteingang/dv-posteingang';
+import {ReportRS} from './service/reportRS.rest';
 import DVSupressFormSubmitOnEnter from './directive/dv-suppress-form-submit-on-enter/dv-suppress-form-submit-on-enter';
 import ExportRS from '../gesuch/service/exportRS.rest';
+import {DvCountdownComponentConfig} from './component/dv-countdown/dv-countdown';
+import ZahlungRS from './service/zahlungRS.rest';
+import EwkRS from './service/ewkRS.rest';
+import {DVDisplayElement} from './directive/dv-display-element/dv-display-element';
+import {DVsTPersistService} from './service/dVsTPersistService';
+import DVSTResetSearch from './directive/dv-st-reset-search/dv-st-reset-search';
+import DVSTPersistAntraege from './directive/dv-st-persist-antraege/dv-st-persist-antraege';
+import DVSTPersistPendenzen from './directive/dv-st-persist-pendenzen/dv-st-persist-pendenzen';
+import {DvDownloadmenuComponentConfig} from './component/dv-downloadmenu/dv-downloadmenu';
+import {DVVorlageListConfig} from './component/dv-vorlage-list/dv-vorlage-list';
+import {DatabaseMigrationRS} from '../admin/service/databaseMigrationRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -115,7 +136,7 @@ export const EbeguWebCore: angular.IModule = angular
         MAX_LENGTH: 255,
         FALLNUMMER_LENGTH: 6,
         PATTERN_BETRAG: '([0-9]{0,12})',
-        PATTERN_PERCENTAGE: '^[0-9][0-9]?$|^100$',    //todo team kann nach mergen des tasks ueber inputmaske gemact werden
+        PATTERN_PERCENTAGE: '^[0-9][0-9]?$|^100$',
         PATTERN_PHONE: '(0|\\+41|0041)\\s?([\\d]{2})\\s?([\\d]{3})\\s?([\\d]{2})\\s?([\\d]{2})',
         PATTERN_MOBILE: '(0|\\+41|0041)\\s?(74|75|76|77|78|79)\\s?([\\d]{3})\\s?([\\d]{2})\\s?([\\d]{2})',
         PATTERN_EMAIL: '[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}',
@@ -150,6 +171,8 @@ export const EbeguWebCore: angular.IModule = angular
     .service('DownloadRS', DownloadRS)
     .service('WizardStepRS', WizardStepRS)
     .service('AntragStatusHistoryRS', AntragStatusHistoryRS)
+    .service('MitteilungRS', MitteilungRS)
+    .service('ZahlungRS', ZahlungRS)
     .service('GlobalCacheService', GlobalCacheService)
     .service('ExportRS', ExportRS)
     .directive('dvMaxLength', DVMaxLength.factory())
@@ -160,7 +183,11 @@ export const EbeguWebCore: angular.IModule = angular
     .directive('dvLoading', DVLoading.factory())
     .directive('dvLoadingButton', DVLoadingButton.factory())
     .directive('dvSubmitevent', DVSubmitevent.factory())
+    .directive('dvStPersistAntraege', DVSTPersistAntraege.factory())
+    .directive('dvStPersistPendenzen', DVSTPersistPendenzen.factory())
+    .directive('dvStResetSearch', DVSTResetSearch.factory())
     .directive('dvShowElement', DVShowElement.factory())
+    .directive('dvDisplayElement', DVDisplayElement.factory())
     .directive('dvEnableElement', DVEnableElement.factory())
     .directive('dvBarcodeListener', DVBarcodeListener.factory())
     .directive('dvTrimEmpty', DVTrimEmpty.factory())
@@ -170,6 +197,8 @@ export const EbeguWebCore: angular.IModule = angular
     .service('HttpResponseInterceptor', HttpResponseInterceptor)
     .service('WizardStepManager', WizardStepManager)
     .service('NavigationLogger', NavigationLogger)
+    .service('SearchIndexRS', SearchIndexRS)
+    .service('DVsTPersistService', DVsTPersistService)
     .controller('DVElementController', DVRoleElementController)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
@@ -180,8 +209,29 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvPulldownUserMenu', new DvPulldownUserMenuComponentConfig())
     .component('dvMobileNavigationToggle', new DvMobileNavigationToggleComponentConfig())
     .component('dvHomeIcon', new DvHomeIconComponentConfig())
+    .component('dvDownloadmenu', new DvDownloadmenuComponentConfig())
+    .component('dvCountdown', new DvCountdownComponentConfig())
+    .component('dvPosteingang', new DvPosteingangComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig())
     .component('dvDokumenteList', new DVDokumenteListConfig())
     .component('dvAntragList', new DVAntragListConfig())
-    .service('MahnungRS', MahnungRS);
+    .component('dvVorlageList', new DVVorlageListConfig())
+    .component('dvPendenzenList', new DVPendenzenListConfig())
+    .component('dvQuicksearchbox', new DvQuicksearchboxComponentConfig())
+    .component('dvSearchResultIcon', new DvSearchResultIconComponentConfig())
+    .component('dvMitteilungList', new DVMitteilungListConfig())
+    .component('dvAccordion', new DvAccordionComponentConfig())
+    .component('dvAccordionTab', new DvAccordionTabComponentConfig())
+    .service('MahnungRS', MahnungRS)
+    .service('ReportRS', ReportRS)
+    .service('EwkRS', EwkRS)
+    .service('DatabaseMigrationRS', DatabaseMigrationRS)
+    .filter('arrayToString', () => {
+        return function (input: Array<string>) {
+            if (input) {
+                return input.join(', ');
+            }
+            return '';
+        };
+    });
 

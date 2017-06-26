@@ -452,7 +452,7 @@ describe('dvNavigation', function () {
 
     function mockGesuch() {
         let gesuch: TSGesuch = new TSGesuch();
-        gesuch.typ = TSAntragTyp.GESUCH;
+        gesuch.typ = TSAntragTyp.ERSTGESUCH;
         gesuch.eingangsart = TSEingangsart.ONLINE;
         gesuch.id = '123';
         gesuch.fall = new TSFall();

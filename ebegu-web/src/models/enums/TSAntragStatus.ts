@@ -1,10 +1,10 @@
+import {TSRole} from './TSRole';
 export enum TSAntragStatus {
     IN_BEARBEITUNG_GS = <any> 'IN_BEARBEITUNG_GS',
     FREIGABEQUITTUNG = <any> 'FREIGABEQUITTUNG',
     NUR_SCHULAMT = <any> 'NUR_SCHULAMT',
     NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN = <any> 'NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN',
     FREIGEGEBEN = <any> 'FREIGEGEBEN',
-    ZURUECKGEWIESEN = <any> 'ZURUECKGEWIESEN',
     ERSTE_MAHNUNG = <any> 'ERSTE_MAHNUNG',
     ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN = <any> 'ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN',
     ERSTE_MAHNUNG_ABGELAUFEN = <any> 'ERSTE_MAHNUNG_ABGELAUFEN',
@@ -17,7 +17,11 @@ export enum TSAntragStatus {
     PLATZBESTAETIGUNG_WARTEN = <any> 'PLATZBESTAETIGUNG_WARTEN',
     VERFUEGEN = <any> 'VERFUEGEN',
     VERFUEGT = <any> 'VERFUEGT',
-    BESCHWERDE_HAENGIG = <any> 'BESCHWERDE_HAENGIG'
+    KEIN_ANGEBOT = <any> 'KEIN_ANGEBOT',
+    BESCHWERDE_HAENGIG = <any> 'BESCHWERDE_HAENGIG',
+    PRUEFUNG_STV = <any> 'PRUEFUNG_STV',
+    IN_BEARBEITUNG_STV = <any> 'IN_BEARBEITUNG_STV',
+    GEPRUEFT_STV = <any> 'GEPRUEFT_STV'
 }
 
 export const IN_BEARBEITUNG_BASE_NAME = 'IN_BEARBEITUNG';
@@ -29,7 +33,6 @@ export function getTSAntragStatusValues(): Array<TSAntragStatus> {
         TSAntragStatus.NUR_SCHULAMT,
         TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN,
         TSAntragStatus.FREIGEGEBEN,
-        TSAntragStatus.ZURUECKGEWIESEN,
         TSAntragStatus.ERSTE_MAHNUNG,
         TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
         TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN,
@@ -42,16 +45,45 @@ export function getTSAntragStatusValues(): Array<TSAntragStatus> {
         TSAntragStatus.PLATZBESTAETIGUNG_WARTEN,
         TSAntragStatus.VERFUEGEN,
         TSAntragStatus.VERFUEGT,
-        TSAntragStatus.BESCHWERDE_HAENGIG
+        TSAntragStatus.KEIN_ANGEBOT,
+        TSAntragStatus.BESCHWERDE_HAENGIG,
+        TSAntragStatus.PRUEFUNG_STV,
+        TSAntragStatus.IN_BEARBEITUNG_STV,
+        TSAntragStatus.GEPRUEFT_STV
     ];
+}
+export function getTSAntragStatusValuesByRole(userrole: TSRole): Array<TSAntragStatus> {
+    switch (userrole) {
+        case TSRole.STEUERAMT:
+            return [
+                TSAntragStatus.PRUEFUNG_STV,
+                TSAntragStatus.IN_BEARBEITUNG_STV
+            ];
+        case TSRole.SACHBEARBEITER_JA:
+        case TSRole.ADMIN:
+            return getTSAntragStatusValues().filter(element => (element !== TSAntragStatus.IN_BEARBEITUNG_GS
+                && element !== TSAntragStatus.FREIGABEQUITTUNG && element !== TSAntragStatus.NUR_SCHULAMT
+                && element !== TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN));
+        case TSRole.REVISOR:
+        case TSRole.JURIST:
+            return getTSAntragStatusValues().filter(element => (element !== TSAntragStatus.IN_BEARBEITUNG_GS
+            && element !== TSAntragStatus.FREIGABEQUITTUNG));
+        case TSRole.SACHBEARBEITER_INSTITUTION:
+        case TSRole.SACHBEARBEITER_TRAEGERSCHAFT:
+            return getTSAntragStatusValues().filter(element => (element !== TSAntragStatus.PRUEFUNG_STV
+            && element !== TSAntragStatus.IN_BEARBEITUNG_STV && element !== TSAntragStatus.GEPRUEFT_STV));
+        default:
+            return getTSAntragStatusValues();
+    }
 }
 
 /**
- * Gibt alle Werte zurueck ausser VERFUEGT. Diese Werte sind die, die bei der Pendenzenliste notwendig sind
+ * Gibt alle Werte zurueck ausser VERFUEGT und KEIN_ANGEBOT.
+ * Diese Werte sind die, die bei der Pendenzenliste notwendig sind
  * @returns {TSAntragStatus[]}
  */
-export function getTSAntragStatusPendenzValues(): Array<TSAntragStatus> {
-    return getTSAntragStatusValues().filter(element => element !== TSAntragStatus.VERFUEGT);
+export function getTSAntragStatusPendenzValues(userrole: TSRole): Array<TSAntragStatus> {
+    return getTSAntragStatusValuesByRole(userrole).filter(element => (element !== TSAntragStatus.VERFUEGT && element !== TSAntragStatus.KEIN_ANGEBOT));
 }
 
 export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {
@@ -59,7 +91,6 @@ export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {
         TSAntragStatus.NUR_SCHULAMT,
         TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN,
         TSAntragStatus.FREIGEGEBEN,
-        TSAntragStatus.ZURUECKGEWIESEN,
         TSAntragStatus.ERSTE_MAHNUNG,
         TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
         TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN,
@@ -72,7 +103,11 @@ export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {
         TSAntragStatus.PLATZBESTAETIGUNG_WARTEN,
         TSAntragStatus.VERFUEGEN,
         TSAntragStatus.VERFUEGT,
-        TSAntragStatus.BESCHWERDE_HAENGIG];
+        TSAntragStatus.KEIN_ANGEBOT,
+        TSAntragStatus.BESCHWERDE_HAENGIG,
+        TSAntragStatus.PRUEFUNG_STV,
+        TSAntragStatus.IN_BEARBEITUNG_STV,
+        TSAntragStatus.GEPRUEFT_STV];
     return validStates.indexOf(status) !== -1;
 }
 
@@ -82,7 +117,19 @@ export function isAtLeastFreigegebenOrFreigabequittung(status: TSAntragStatus): 
 
 export function isAnyStatusOfVerfuegt(status: TSAntragStatus): boolean {
     return status === TSAntragStatus.NUR_SCHULAMT || status === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN ||
-        status === TSAntragStatus.VERFUEGT || status === TSAntragStatus.BESCHWERDE_HAENGIG;
+        status === TSAntragStatus.VERFUEGT || status === TSAntragStatus.BESCHWERDE_HAENGIG || status === TSAntragStatus.PRUEFUNG_STV
+        || status === TSAntragStatus.IN_BEARBEITUNG_STV || status === TSAntragStatus.GEPRUEFT_STV || status === TSAntragStatus.KEIN_ANGEBOT;
+}
+
+export function isAnyStatusOfVerfuegtButSchulamt(status: TSAntragStatus): boolean {
+    return status === TSAntragStatus.VERFUEGT || status === TSAntragStatus.BESCHWERDE_HAENGIG || status === TSAntragStatus.PRUEFUNG_STV
+        || status === TSAntragStatus.IN_BEARBEITUNG_STV || status === TSAntragStatus.GEPRUEFT_STV || status === TSAntragStatus.KEIN_ANGEBOT;
+}
+
+export function isVerfuegtOrSTV(status: TSAntragStatus): boolean {
+    return status === TSAntragStatus.VERFUEGT || status === TSAntragStatus.PRUEFUNG_STV
+        || status === TSAntragStatus.IN_BEARBEITUNG_STV || status === TSAntragStatus.GEPRUEFT_STV
+        || status === TSAntragStatus.KEIN_ANGEBOT;
 }
 
 /**

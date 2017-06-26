@@ -5,16 +5,15 @@
                 <span data-translate="ERWERBSPENSEN_LIST_TITLE"></span>
             </h1>
             <hr class="header"/>
-            <p ng-if="vm.gesuchModelManager.getGesuch().isMutation() && !vm.isGesuchReadonly()"  class="inlineHint" data-translate="ERWERBSPENSUM_HINT"></p>
-
+            <p ng-if="vm.gesuchModelManager.getGesuch().isMutation() && !vm.isGesuchReadonly()" class="inlineHint"
+               data-translate="ERWERBSPENSUM_HINT"></p>
+            <p ng-if="vm.gesuchModelManager.getGesuch().isMutation()" class="inlineHint"
+               data-translate="ERWERBSPENSEN_LIST_HINT">
+            </p>
             <p class="inlineHint" ng-if="!vm.isErwerbspensumRequired()" data-translate="ERWERBSPENSEN_NOT_REQUIRED"></p>
-
         </div>
     </div>
-    <div ng-if="vm.gesuchModelManager.getGesuch().isMutation()" class="well well-status-warten">
-        <h3 data-translate="ERWERBSPENSEN_LIST_HINT">
-        </h3>
-    </div>
+
 
     <!--Erwerbspensen von Gesuchsteller 1-->
     <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller1" class="marginBottom80">

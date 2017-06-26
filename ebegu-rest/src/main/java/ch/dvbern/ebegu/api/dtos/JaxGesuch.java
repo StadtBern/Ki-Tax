@@ -1,10 +1,15 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -35,11 +40,33 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	@Nullable
 	private String bemerkungen;
 
+	@Nullable
+	private String bemerkungenSTV;
+
+	@Nullable
+	private String bemerkungenPruefungSTV;
+
 	private int laufnummer;
+
+	private boolean geprueftSTV;
 
 	private boolean hasFSDokument;
 
 	private boolean gesperrtWegenBeschwerde;
+
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate datumGewarntNichtFreigegeben;
+
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate datumGewarntFehlendeQuittung;
+
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDateTime timestampVerfuegt;
+
+	private boolean gueltig;
 
 
 	public static long getSerialVersionUID() {
@@ -100,12 +127,38 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	}
 
 	@Nullable
+	public String getBemerkungenSTV() {
+		return bemerkungenSTV;
+	}
+
+	public void setBemerkungenSTV(@Nullable String bemerkungenSTV) {
+		this.bemerkungenSTV = bemerkungenSTV;
+	}
+
+	@Nullable
+	public String getBemerkungenPruefungSTV() {
+		return bemerkungenPruefungSTV;
+	}
+
+	public void setBemerkungenPruefungSTV(@Nullable String bemerkungenPruefungSTV) {
+		this.bemerkungenPruefungSTV = bemerkungenPruefungSTV;
+	}
+
+	@Nullable
 	public int getLaufnummer() {
 		return laufnummer;
 	}
 
 	public void setLaufnummer(@Nullable int laufnummer) {
 		this.laufnummer = laufnummer;
+	}
+
+	public boolean isGeprueftSTV() {
+		return geprueftSTV;
+	}
+
+	public void setGeprueftSTV(boolean geprueftSTV) {
+		this.geprueftSTV = geprueftSTV;
 	}
 
 	@Nullable
@@ -123,6 +176,41 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	public void setGesperrtWegenBeschwerde(boolean gesperrtWegenBeschwerde) {
 		this.gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
+	}
+
+	@Nullable
+	public LocalDate getDatumGewarntNichtFreigegeben() {
+		return datumGewarntNichtFreigegeben;
+	}
+
+	public void setDatumGewarntNichtFreigegeben(@Nullable LocalDate datumGewarntNichtFreigegeben) {
+		this.datumGewarntNichtFreigegeben = datumGewarntNichtFreigegeben;
+	}
+
+	@Nullable
+	public LocalDate getDatumGewarntFehlendeQuittung() {
+		return datumGewarntFehlendeQuittung;
+	}
+
+	public void setDatumGewarntFehlendeQuittung(@Nullable LocalDate datumGewarntFehlendeQuittung) {
+		this.datumGewarntFehlendeQuittung = datumGewarntFehlendeQuittung;
+	}
+
+	@Nullable
+	public LocalDateTime getTimestampVerfuegt() {
+		return timestampVerfuegt;
+	}
+
+	public void setTimestampVerfuegt(@Nullable LocalDateTime timestampVerfuegt) {
+		this.timestampVerfuegt = timestampVerfuegt;
+	}
+
+	public boolean isGueltig() {
+		return gueltig;
+	}
+
+	public void setGueltig(boolean gueltig) {
+		this.gueltig = gueltig;
 	}
 }
 

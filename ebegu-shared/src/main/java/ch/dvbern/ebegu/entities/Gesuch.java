@@ -1,36 +1,68 @@
 package ch.dvbern.ebegu.entities;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
+import ch.dvbern.ebegu.validators.CheckGesuchComplete;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
 /**
  * Entitaet zum Speichern von Gesuch in der Datenbank.
  */
 @Audited
+@CheckGesuchComplete(groups = AntragCompleteValidationGroup.class)
 @Entity
-public class Gesuch extends AbstractEntity {
+@Indexed
+@Analyzer(impl = EBEGUGermanAnalyzer.class)
+public class Gesuch extends AbstractEntity implements Searchable{
 
 	private static final long serialVersionUID = -8403487439884700618L;
 
 	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_fall_id"))
+	@IndexedEmbedded
 	private Fall fall;
 
 	@NotNull
@@ -44,6 +76,9 @@ public class Gesuch extends AbstractEntity {
 	@Column(nullable = true)
 	private LocalDate freigabeDatum;
 
+	@Column(nullable = true)
+	private LocalDate eingangsdatumSTV;
+
 	@NotNull
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -52,7 +87,7 @@ public class Gesuch extends AbstractEntity {
 	@NotNull
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private AntragTyp typ = AntragTyp.GESUCH;
+	private AntragTyp typ = AntragTyp.ERSTGESUCH;
 
 	@NotNull
 	@Column(nullable = false)
@@ -103,6 +138,18 @@ public class Gesuch extends AbstractEntity {
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
+	// Hier werden die Bemerkungen gespeichert, die das JA fuer die STV eintraegt
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
+	private String bemerkungenSTV;
+
+	// Hier werden die Bemerkungen gespeichert, die die STV eingibt
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
+	private String bemerkungenPruefungSTV;
+
 	@Nullable
 	@Valid
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "gesuch")
@@ -114,13 +161,26 @@ public class Gesuch extends AbstractEntity {
 	private int laufnummer = 0;
 
 	@Column(nullable = false)
+	private boolean geprueftSTV = false;
+
+	@Column(nullable = false)
 	private boolean hasFSDokument = true;
 
 	@Column(nullable = false)
 	private boolean gesperrtWegenBeschwerde = false;
 
-	@Transient
-	private AntragStatus orginalAntragStatus;
+	@Column(nullable = true)
+	private LocalDate datumGewarntNichtFreigegeben;
+
+	@Column(nullable = true)
+	private LocalDate datumGewarntFehlendeQuittung;
+
+	@Column(nullable = true)
+	private LocalDateTime timestampVerfuegt;
+
+	@Column(nullable = false)
+	private boolean gueltig = false;
+
 
 	public Gesuch() {
 	}
@@ -208,6 +268,24 @@ public class Gesuch extends AbstractEntity {
 		this.bemerkungen = bemerkungen;
 	}
 
+	@Nullable
+	public String getBemerkungenSTV() {
+		return bemerkungenSTV;
+	}
+
+	public void setBemerkungenSTV(@Nullable String bemerkungenSTV) {
+		this.bemerkungenSTV = bemerkungenSTV;
+	}
+
+	@Nullable
+	public String getBemerkungenPruefungSTV() {
+		return bemerkungenPruefungSTV;
+	}
+
+	public void setBemerkungenPruefungSTV(@Nullable String bemerkungenPruefungSTV) {
+		this.bemerkungenPruefungSTV = bemerkungenPruefungSTV;
+	}
+
 	public Fall getFall() {
 		return fall;
 	}
@@ -232,6 +310,14 @@ public class Gesuch extends AbstractEntity {
 		this.eingangsdatum = eingangsdatum;
 	}
 
+	public LocalDate getEingangsdatumSTV() {
+		return eingangsdatumSTV;
+	}
+
+	public void setEingangsdatumSTV(LocalDate eingangsdatumSTV) {
+		this.eingangsdatumSTV = eingangsdatumSTV;
+	}
+
 	public LocalDate getFreigabeDatum() {
 		return freigabeDatum;
 	}
@@ -246,14 +332,6 @@ public class Gesuch extends AbstractEntity {
 
 	public final void setStatus(AntragStatus status) {
 		this.status = status;
-	}
-
-	public AntragStatus getOrginalStatus() {
-		return orginalAntragStatus;
-	}
-
-	public void setOrginalStatus(AntragStatus orginalAntragStatus) {
-		this.orginalAntragStatus = orginalAntragStatus;
 	}
 
 	public AntragTyp getTyp() {
@@ -287,6 +365,14 @@ public class Gesuch extends AbstractEntity {
 
 	public void setLaufnummer(int laufnummer) {
 		this.laufnummer = laufnummer;
+	}
+
+	public boolean isGeprueftSTV() {
+		return geprueftSTV;
+	}
+
+	public void setGeprueftSTV(boolean geprueftSTV) {
+		this.geprueftSTV = geprueftSTV;
 	}
 
 	public boolean isHasFSDokument() {
@@ -330,6 +416,38 @@ public class Gesuch extends AbstractEntity {
 		this.finanzDatenDTO_zuZweit = finanzDatenDTO_zuZweit;
 	}
 
+	public LocalDate getDatumGewarntNichtFreigegeben() {
+		return datumGewarntNichtFreigegeben;
+	}
+
+	public void setDatumGewarntNichtFreigegeben(LocalDate datumGewarntNichtFreigegeben) {
+		this.datumGewarntNichtFreigegeben = datumGewarntNichtFreigegeben;
+	}
+
+	public LocalDate getDatumGewarntFehlendeQuittung() {
+		return datumGewarntFehlendeQuittung;
+	}
+
+	public void setDatumGewarntFehlendeQuittung(LocalDate datumGewarntFehlendeQuittung) {
+		this.datumGewarntFehlendeQuittung = datumGewarntFehlendeQuittung;
+	}
+
+	public LocalDateTime getTimestampVerfuegt() {
+		return timestampVerfuegt;
+	}
+
+	public void setTimestampVerfuegt(LocalDateTime datumVerfuegt) {
+		this.timestampVerfuegt = datumVerfuegt;
+	}
+
+	public boolean isGueltig() {
+		return gueltig;
+	}
+
+	public void setGueltig(boolean gueltig) {
+		this.gueltig = gueltig;
+	}
+
 	@SuppressWarnings("ObjectEquality")
 	public boolean isSame(Gesuch otherAntrag) {
 		if (this == otherAntrag) {
@@ -343,7 +461,11 @@ public class Gesuch extends AbstractEntity {
 			&& Objects.equals(this.getGesuchsperiode(), otherAntrag.getGesuchsperiode()));
 	}
 
-	public String getAntragNummer() {
+	/**
+	 * Gibt das Startjahr der Gesuchsperiode (zweistellig) gefolgt von Fall-Nummer als String zurück.
+	 * Achtung, entspricht NICHT der Antragsnummer! (siehe Antrag.laufnummer)
+	 */
+	public String getJahrAndFallnummer() {
 		if (getGesuchsperiode() == null) {
 			return "-";
 		}
@@ -379,6 +501,13 @@ public class Gesuch extends AbstractEntity {
 	public String extractFamiliennamenString() {
 		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().extractNachname() : "");
 		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().extractNachname() : "";
+		return bothFamiliennamen;
+	}
+
+	@Transient
+	public String extractFullnamesString() {
+		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().extractFullName() : "");
+		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().extractFullName() : "";
 		return bothFamiliennamen;
 	}
 
@@ -449,7 +578,8 @@ public class Gesuch extends AbstractEntity {
 		familiensituationContainer.setFamiliensituationJA(new Familiensituation());
 	}
 
-	public Gesuch copyForMutation(Gesuch mutation, Eingangsart eingangsart) {
+	@Nonnull
+	public Gesuch copyForMutation(@Nonnull Gesuch mutation, @Nonnull Eingangsart eingangsart) {
 		super.copyForMutation(mutation);
 		mutation.setEingangsart(eingangsart);
 		mutation.setFall(this.getFall());
@@ -484,10 +614,113 @@ public class Gesuch extends AbstractEntity {
 				mutation.addDokumentGrund(dokumentGrund.copyForMutation(new DokumentGrund()));
 			}
 		}
+		mutation.setGesperrtWegenBeschwerde(false);
+		mutation.setGeprueftSTV(false);
+		mutation.setDatumGewarntNichtFreigegeben(null);
+		mutation.setDatumGewarntFehlendeQuittung(null);
+		mutation.setTimestampVerfuegt(null);
+		mutation.setGueltig(false);
 		return mutation;
+	}
+
+	@Nonnull
+	public Gesuch copyForErneuerung(@Nonnull Gesuch folgegesuch, @Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Eingangsart eingangsart) {
+		super.copyForErneuerung(folgegesuch);
+		folgegesuch.setEingangsart(eingangsart);
+		folgegesuch.setFall(this.getFall());
+		folgegesuch.setGesuchsperiode(gesuchsperiode);
+		folgegesuch.setEingangsdatum(null);
+		folgegesuch.setStatus(eingangsart == Eingangsart.PAPIER ?  AntragStatus.IN_BEARBEITUNG_JA : AntragStatus.IN_BEARBEITUNG_GS);
+		folgegesuch.setTyp(AntragTyp.ERNEUERUNGSGESUCH);
+		folgegesuch.setLaufnummer(0); // Wir fangen für die neue Periode wieder mit 0 an
+
+		// Zuerst die Familiensituation kopieren, damit wir beim Kopieren der GS wissen, ob GS2 kopiert werden muss
+		if (this.getFamiliensituationContainer() != null) {
+			folgegesuch.setFamiliensituationContainer(this.getFamiliensituationContainer().copyForErneuerung(new FamiliensituationContainer()));
+		}
+
+		if (this.getGesuchsteller1() != null) {
+			folgegesuch.setGesuchsteller1(this.getGesuchsteller1().copyForErneuerung(new GesuchstellerContainer(), gesuchsperiode));
+		}
+		// Den zweiten GS nur kopieren, wenn er laut aktuellem Zivilstand noch benoetigt wird
+		if (this.getGesuchsteller2() != null && folgegesuch.getFamiliensituationContainer().getFamiliensituationJA().hasSecondGesuchsteller()) {
+			folgegesuch.setGesuchsteller2(this.getGesuchsteller2().copyForErneuerung(new GesuchstellerContainer(), gesuchsperiode));
+		}
+		for (KindContainer kindContainer : this.getKindContainers()) {
+			folgegesuch.addKindContainer(kindContainer.copyForErneuerung(new KindContainer(), folgegesuch));
+		}
+		folgegesuch.setGesperrtWegenBeschwerde(false);
+		folgegesuch.setGeprueftSTV(false);
+		folgegesuch.setDatumGewarntNichtFreigegeben(null);
+		folgegesuch.setDatumGewarntFehlendeQuittung(null);
+		folgegesuch.setTimestampVerfuegt(null);
+		folgegesuch.setGueltig(false);
+		return folgegesuch;
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultId() {
+		return getId();
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultSummary() {
+		return getJahrAndFallnummer();
+	}
+
+	@Nullable
+	@Override
+	public String getSearchResultAdditionalInformation() {
+		return toString();
+	}
+
+	@Override
+	public String getOwningGesuchId() {
+		return getId();
+	}
+
+	@Nonnull
+	public Optional<Betreuung> extractBetreuungsFromBetreuungNummer(@NotNull Integer kindNummer, @NotNull Integer betreuungNummer) {
+		final List<Betreuung> allBetreuungen = extractAllBetreuungen();
+		for (final Betreuung betreuung: allBetreuungen) {
+			if (betreuung.getId() != null
+					&& betreuung.getBetreuungNummer().equals(betreuungNummer)
+					&& betreuung.getKind().getKindNummer().equals(kindNummer)) {
+				return Optional.of(betreuung);
+			}
+		}
+		return Optional.empty();
 	}
 
 	public String getEingangsdatumFormated(){
 		return Constants.DATE_FORMATTER.format(eingangsdatum);
+	}
+
+	public String getFreigabedatumFormated(){
+		if (freigabeDatum != null) {
+			return Constants.DATE_FORMATTER.format(freigabeDatum);
+		}
+		return "";
+	}
+
+	public Gesuchsteller extractGesuchsteller1() {
+		if (this.getGesuchsteller1() != null) {
+			return this.getGesuchsteller1().getGesuchstellerJA();
+		}
+		return null;
+	}
+
+	@Nullable
+	public KindContainer extractKindFromKindNumber(Integer kindNumber) {
+		if (this.kindContainers != null && kindNumber > 0) {
+			for (KindContainer kindContainer : this.kindContainers) {
+				if (Objects.equals(kindContainer.getKindNummer(), kindNumber)) {
+					return kindContainer;
+				}
+			}
+		}
+		return null;
 	}
 }

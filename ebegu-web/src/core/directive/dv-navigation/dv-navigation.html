@@ -2,18 +2,18 @@
 mit Flexlayout wieder korrigiert. Grund ist, dass beim druecken von Enter in einem input Feld automaitisch der erste submit button triggered wird-->
 <div layout="row" layout-align="space-between center" layout-align-gt-sm="center center">
     <dv-loading-button ng-if="vm.dvNext()" button-click="vm.nextStep()" button-class="next" type="submit"
-                       button-disabled="vm.isNextButtonDisabled()" title="{{vm.getTooltip()}}">
+                       button-disabled="vm.isNextButtonDisabled()" title="{{vm.getTooltip()}}" aria-label="{{vm.getNextButtonName()}}">
         <span ng-if="!vm.doesdvTranslateNextExist()" ng-bind="vm.getNextButtonName()" hide-xs></span>
         <span ng-if="vm.doesdvTranslateNextExist()" ng-bind="vm.getNextButtonName()"></span>
         <span ng-if="!vm.doesdvTranslateNextExist()" class="fa fa-angle-right" hide-gt-xs
               style="font-size: 2rem; height:unset; line-height: 4rem;"></span>
     </dv-loading-button>
     <dv-loading-button ng-if="vm.dvPrevious()" button-click="vm.previousStep()" button-class="previous"
-                       type="submit">
+                       type="submit" aria-label="{{vm.getPreviousButtonName()}}">
         <span ng-bind="vm.getPreviousButtonName()" hide-xs></span>
         <span class="fa fa-angle-left" hide-gt-xs style="font-size: 2rem; height:unset; line-height: 4rem;"></span>
     </dv-loading-button>
-    <dv-loading-button ng-if="vm.doesCancelExist()" button-click="vm.cancel()" button-class="cancel" type="reset">
+    <dv-loading-button ng-if="vm.doesCancelExist()" button-click="vm.cancel()" button-class="cancel" type="reset" aria-label="{{'CANCEL' | translate}}">
         <span data-translate="ABBRECHEN_UPPER"></span>
     </dv-loading-button>
 </div>

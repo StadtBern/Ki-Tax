@@ -9,7 +9,12 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSAntragStatus, isAtLeastFreigegeben, isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
+import {
+    TSAntragStatus,
+    isAtLeastFreigegeben,
+    isAnyStatusOfVerfuegt,
+    isAnyStatusOfVerfuegtButSchulamt
+} from '../../../models/enums/TSAntragStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
@@ -20,13 +25,15 @@ import {TSMahnungTyp} from '../../../models/enums/TSMahnungTyp';
 import MahnungRS from '../../service/mahnungRS.rest';
 import TSGesuch from '../../../models/TSGesuch';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
-import DateUtil from '../../../utils/DateUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import GesuchRS from '../../service/gesuchRS.rest';
+import {BemerkungenDialogController} from '../../dialog/BemerkungenDialogController';
+import AuthenticationUtil from '../../../utils/AuthenticationUtil';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
+let bemerkungDialogTempl = require('../../dialog/bemerkungenDialogTemplate.html');
 
 
 export class VerfuegenListViewComponentConfig implements IComponentOptions {
@@ -63,15 +70,18 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     /**
-     * Die finanzielle Situation und die Einkommensverschlechterungen muessen mithilfe des Berechnungsmanagers berechnet werden, um manche Daten zur Verfügung
-     * zu haben. Das ist notwendig weil die finanzielle Situation nicht gespeichert wird. D.H. das erste Mal in einer Sitzung wenn ein Gesuch geoeffnet wird,
-     * ist gar nichts berechnet. Wenn man dann die Verfügen direkt aufmacht, ist alles leer und wird nichts angezeigt, deswegen muss alles auch hier berechnet werden.
-     * Um Probleme mit der Performance zu vermeiden, wird zuerst geprueft, ob die Berechnung schon vorher gemacht wurde, wenn ja dann wird sie einfach verwendet
-     * ohne sie neu berechnen zu muessen. Dieses geht aber davon aus, dass die Berechnungen immer richtig kalkuliert wurden.
+     * Die finanzielle Situation und die Einkommensverschlechterungen muessen mithilfe des Berechnungsmanagers
+     * berechnet werden, um manche Daten zur Verfügung zu haben. Das ist notwendig weil die finanzielle Situation nicht
+     * gespeichert wird. D.H. das erste Mal in einer Sitzung wenn ein Gesuch geoeffnet wird, ist gar nichts berechnet.
+     * Wenn man dann die Verfügen direkt aufmacht, ist alles leer und wird nichts angezeigt, deswegen muss alles auch
+     * hier berechnet werden. Um Probleme mit der Performance zu vermeiden, wird zuerst geprueft, ob die Berechnung
+     * schon vorher gemacht wurde, wenn ja dann wird sie einfach verwendet ohne sie neu berechnen zu muessen. Dieses
+     * geht aber davon aus, dass die Berechnungen immer richtig kalkuliert wurden.
      *
-     * Die Verfuegungen werden IMMER geladen, wenn diese View geladen wird. Dieses ist etwas ineffizient. Allerdings muss es eigentlich so funktionieren, weil
-     * die Daten sich haben aendern koennen. Es ist ein aehnlicher Fall wie mit der finanziellen Situation. Sollte es Probleme mit der Performance geben, muessen
-     * wir ueberlegen, ob wir es irgendwie anders berechnen koennen um den Server zu entlasten.
+     * Die Verfuegungen werden IMMER geladen, wenn diese View geladen wird. Dieses ist etwas ineffizient. Allerdings
+     * muss es eigentlich so funktionieren, weil die Daten sich haben aendern koennen. Es ist ein aehnlicher Fall wie
+     * mit der finanziellen Situation. Sollte es Probleme mit der Performance geben, muessen wir ueberlegen, ob wir es
+     * irgendwie anders berechnen koennen um den Server zu entlasten.
      */
     private initViewModel(): void {
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.WARTEN);
@@ -120,7 +130,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             if (kind && betreuung) {
                 let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
                 if (kindIndex >= 0) {
-                    this.gesuchModelManager.setKindIndex(kindIndex);     //betreuungsnummer > 1 wird nicht mehr geprueft
+                    this.gesuchModelManager.setKindIndex(kindIndex);
                     this.$state.go('gesuch.verfuegenView', {
                         betreuungNumber: betreuung.betreuungNummer,
                         kindNumber: kind.kindNummer,
@@ -148,7 +158,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     private isDetailAvailableForBetreuungstatus(betreuungsstatus: TSBetreuungsstatus): boolean {
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
-        let allowedBetstatus: Array<TSBetreuungsstatus> = [TSBetreuungsstatus.VERFUEGT, TSBetreuungsstatus.NICHT_EINGETRETEN, TSBetreuungsstatus.GEKUENDIGT_VOR_EINTRITT];
+        let allowedBetstatus: Array<TSBetreuungsstatus> = [TSBetreuungsstatus.VERFUEGT, TSBetreuungsstatus.NICHT_EINGETRETEN, TSBetreuungsstatus.STORNIERT];
         //Annahme: alle ausser Gesuchsteller duerfen bestaetigte betreuungen sehen wenn sie uberhaupt auf die Seite kommen
         if (!isGesuchsteller) {
             allowedBetstatus.push(TSBetreuungsstatus.BESTAETIGT);
@@ -157,7 +167,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     /**
-     * das FinanzielleSituation PDF ist fuer den Gesuchsteller erst sichtbar sobald der Antrag den Status VERFUEGT erreicht hat
+     * das FinanzielleSituation PDF ist fuer den Gesuchsteller erst sichtbar sobald der Antrag den Status VERFUEGT
+     * erreicht hat
      */
     public isFinanziellesituationPDFVisible(): boolean {
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
@@ -208,24 +219,47 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         });
     }
 
-    public setGesuchStatusVerfuegen(): IPromise<TSGesuch> {
-        //by default wird alles auf VERFUEGEN gesetzt, da es der normale Fall ist
-        let newStatus: TSAntragStatus = TSAntragStatus.VERFUEGEN;
-        let deleteTextValue: string = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN';
-
+    public closeWithoutAngebot(): IPromise<TSGesuch> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
-            title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
-            deleteText: deleteTextValue
-        }).then(() => {
+            title: 'CONFIRM_GESUCH_STATUS_KEIN_ANGEBOT',
+            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
 
-            this.gesuchModelManager.getGesuch().status = newStatus;
-            return this.gesuchModelManager.updateGesuch().then(() => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+        }).then(() => {
+            return this.gesuchRS.closeWithoutAngebot(this.gesuchModelManager.getGesuch().id).then((response) => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+                this.gesuchModelManager.setGesuch(response);
                 this.form.$setPristine(); // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
                 return this.refreshKinderListe().then(() => {
-                    return this.createNeededPDFs(true).then(() => {
+                    return this.gesuchModelManager.getGesuch();
+                });
+            });
+        });
+    }
+
+    public setGesuchStatusVerfuegen(): IPromise<TSGesuch> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
+            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
+        }).then(() => {
+
+            return this.gesuchRS.verfuegenStarten(
+                    this.gesuchModelManager.getGesuch().id, this.gesuchModelManager.getGesuch().hasFSDokument).
+                    then((response) => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+                if (response.status === TSAntragStatus.NUR_SCHULAMT) {
+                    // If AntragStatus==NUR_SCHULAMT the Sachbearbeiter_JA has no rights to work with or even to see this gesuch any more
+                    // For this reason we have to navigate directly out of the gesuch once it has been saved. We navigate to the
+                    // default start page for the current role.
+                    // createNeededPDFs is not being called for the same reason. Anyway, the Gesuch vanishes for the role JA and is only
+                    // available for the role SCHULAMT, so JA doesn't need the PDFs to be created. When a Schulamt worker opens this Gesuch,
+                    // she can generate the PDFs by clicking on the corresponding links
+                    AuthenticationUtil.navigateToStartPageForRole(this.authServiceRs.getPrincipal(), this.$state);
+                    return this.gesuchModelManager.getGesuch();
+                } else { // for NUR_SCHULAMT this makes no sense
+                    this.gesuchModelManager.setGesuch(response);
+                    this.form.$setPristine(); // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
+                    return this.refreshKinderListe().then(() => {
                         return this.gesuchModelManager.getGesuch();
                     });
-                });
+                }
             });
         });
     }
@@ -237,6 +271,37 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             }
         }
         return false;
+    }
+
+    public sendToSteuerverwaltung(): void {
+        this.DvDialog.showDialog(bemerkungDialogTempl, BemerkungenDialogController, {
+            title: 'SEND_TO_STV_CONFIRMATION',
+            bemerkungen: this.gesuchModelManager.getGesuch().bemerkungenSTV
+        }).then((bemerkung: string) => {
+            this.gesuchRS.sendGesuchToSTV(this.getGesuch().id, bemerkung).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+            });
+        });
+    }
+
+    public showSendToSteuerverwaltung(): boolean {
+        //hier wird extra nur "VERFUEGT" gestestet statt alle verfuegten status weil das Schulamt das Gesuch nicht pruefen lassen darf
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT) && !this.getGesuch().gesperrtWegenBeschwerde;
+    }
+
+    public stvPruefungAbschliessen(): void {
+        this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'STV_PRUEFUNG_ABSCHLIESSEN_CONFIRMATION',
+            deleteText: ''
+        }).then((bemerkung: string) => {
+            this.gesuchRS.stvPruefungAbschliessen(this.getGesuch().id).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+            });
+        });
+    }
+
+    public showSTVPruefungAbschliessen(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT_STV) && !this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     public showErsteMahnungErstellen(): boolean {
@@ -295,11 +360,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             this.mahnungRS.saveMahnung(this.mahnung).then((mahnungResponse: TSMahnung) => {
                 this.setGesuchStatus(this.tempAntragStatus).then(any => {
                     this.mahnungList.push(mahnungResponse);
-
-                    this.downloadRS.getAccessTokenMahnungGeneratedDokument(mahnungResponse, true).then((response: any) => {
-                        this.tempAntragStatus = undefined;
-                        this.mahnung = undefined;
-                    });
+                    this.tempAntragStatus = undefined;
+                    this.mahnung = undefined;
                 });
             });
         }
@@ -348,7 +410,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      */
     public showGeprueft(): boolean {
         return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))
-            && this.wizardStepManager.areAllStepsOK() && this.mahnung === undefined && !this.isGesuchReadonly();
+            && this.wizardStepManager.areAllStepsOK(this.getGesuch()) && this.mahnung === undefined && !this.isGesuchReadonly();
     }
 
     /**
@@ -358,8 +420,18 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public showVerfuegenStarten(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
             && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
+            && this.gesuchModelManager.getGesuch().isThereAnyBetreuung()
             && !this.isGesuchReadonly();
         // && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
+    }
+
+    /**
+     * Nur wenn ein Gesuch keine Angebote hat und geprueft ist, kann man es ohne Angebote schliessen.
+     */
+    public showCloseWithoutAngebot(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
+            && !this.gesuchModelManager.getGesuch().isThereAnyBetreuung()
+            && !this.isGesuchReadonly();
     }
 
     public openFinanzielleSituationPDF(): void {
@@ -392,17 +464,10 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             });
     }
 
-    private createNeededPDFs(forceCreation: boolean): IPromise<TSDownloadFile> {
-        if (this.getGesuch().hasFSDokument) {
-            return this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, true);
-        }
-        return;
-    }
-
     public showBeschwerdeHaengig(): boolean {
         let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-        //hier wird extra nur "VERFUEGT" gestestet statt alle verfuegten status weil das Schulamt keine Beschwerden erstellen darf
-        return TSAntragStatus.VERFUEGT === status && !this.getGesuch().gesperrtWegenBeschwerde;
+        // Schulamt Status duerfen keine Beschwerde starten
+        return isAnyStatusOfVerfuegtButSchulamt(status) && !this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     public showBeschwerdeAbschliessen(): boolean {
@@ -438,5 +503,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         // dirty checker wird hier ausgeschaltet. Aenderungen des fs flag wird automatisch gespeichert wenn gesuch auf geprüft gesetzt wird
         // Aus performance Gründen wird hier daruf verzichtet das Gesuch neu zu persisten, nur weil das Flag ändert.
         this.form.$setPristine();
+    }
+
+    public isSuperAdmin(): boolean {
+        return  this.authServiceRs.isRole(TSRole.SUPER_ADMIN);
     }
 }

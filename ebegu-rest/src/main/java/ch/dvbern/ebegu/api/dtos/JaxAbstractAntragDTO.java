@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
-import ch.dvbern.ebegu.enums.AntragStatusDTO;
-import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.Eingangsart;
+import java.time.LocalDate;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -11,7 +8,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.time.LocalDate;
+
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.Eingangsart;
 
 /**
  * Abstract DTO fuer Antraege.
@@ -31,6 +32,10 @@ public class JaxAbstractAntragDTO extends JaxAbstractDTO {
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate eingangsdatum = null;
+
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate eingangsdatumSTV = null;
 
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
@@ -69,6 +74,15 @@ public class JaxAbstractAntragDTO extends JaxAbstractDTO {
 
 	public void setEingangsdatum(@Nullable LocalDate eingangsdatum) {
 		this.eingangsdatum = eingangsdatum;
+	}
+
+	@Nullable
+	public LocalDate getEingangsdatumSTV() {
+		return eingangsdatumSTV;
+	}
+
+	public void setEingangsdatumSTV(@Nullable LocalDate eingangsdatumSTV) {
+		this.eingangsdatumSTV = eingangsdatumSTV;
 	}
 
 	@Nullable

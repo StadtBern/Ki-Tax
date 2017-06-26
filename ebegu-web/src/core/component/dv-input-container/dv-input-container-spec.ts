@@ -1,4 +1,3 @@
-/// <reference path="../../../../typings/browser.d.ts" />
 describe('dvInputContainer', function () {
 
     beforeEach(angular.mock.module('ebeguWeb.core'));

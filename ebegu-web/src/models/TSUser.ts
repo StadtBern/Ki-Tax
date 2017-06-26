@@ -5,7 +5,6 @@ import TSInstitution from './TSInstitution';
 
 export default class TSUser {
 
-    //todo team Hier muessen wir schauen ob alle diese Felder benoetigt werden, dafuer brauchen wir aber zuerst die Daten von IAM
     private _nachname: string;
     private _vorname: string;
     private _username: string;

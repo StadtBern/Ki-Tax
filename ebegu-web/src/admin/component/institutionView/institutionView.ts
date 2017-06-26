@@ -19,6 +19,9 @@ import IPromise = angular.IPromise;
 import IFormController = angular.IFormController;
 import ListResourceRS from '../../../core/service/listResourceRS.rest';
 import TSLand from '../../../models/types/TSLand';
+import AbstractAdminViewController from '../../abstractAdminView';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import IQService = angular.IQService;
 let template = require('./institutionView.html');
 let style = require('./institutionView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -37,7 +40,7 @@ export class InstitutionViewComponentConfig implements IComponentOptions {
     controllerAs: string = 'vm';
 }
 
-export class InstitutionViewController {
+export class InstitutionViewController extends AbstractAdminViewController {
 
     institutionRS: InstitutionRS;
     institutionStammdatenRS: InstitutionStammdatenRS;
@@ -53,12 +56,14 @@ export class InstitutionViewController {
     betreuungsangebotValues: Array<any>;
     selectedInstitutionStammdatenBetreuungsangebot: any = null;
     laenderList: TSLand[];
+    errormessage: string = undefined;
 
 
-    static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService', 'DvDialog', 'ListResourceRS'];
+    static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService', 'DvDialog', 'ListResourceRS', 'AuthServiceRS'];
     /* @ngInject */
     constructor(institutionRS: InstitutionRS, ebeguUtil: EbeguUtil, institutionStammdatenRS: InstitutionStammdatenRS,
-                private errorService: ErrorService, private dvDialog: DvDialog, listResourceRS: ListResourceRS) {
+                private errorService: ErrorService, private dvDialog: DvDialog, listResourceRS: ListResourceRS, authServiceRS: AuthServiceRS) {
+        super(authServiceRS);
         this.institutionRS = institutionRS;
         this.ebeguUtil = ebeguUtil;
         this.institutionStammdatenRS = institutionStammdatenRS;
@@ -77,7 +82,7 @@ export class InstitutionViewController {
         return this.traegerschaften;
     }
 
-    setSelectedInstitution(institution: any): void {
+    setSelectedInstitution(institution: TSInstitution): void {
         this.selectedInstitution = institution;
         this.isSelected = true;
         this.selectedInstitutionStammdaten = null;
@@ -85,6 +90,7 @@ export class InstitutionViewController {
         this.institutionStammdatenRS.getAllInstitutionStammdatenByInstitution(this.selectedInstitution.id).then((loadedInstStammdaten) => {
             this.instStammdatenList = loadedInstStammdaten;
         });
+        this.errormessage = undefined;
     }
 
     isCreateInstitutionsMode(): boolean {
@@ -113,7 +119,7 @@ export class InstitutionViewController {
             this.selectedInstitution = null;
             this.isSelected = false;
             this.institutionRS.removeInstitution(institution.id).then((response) => {
-                var index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
+                let index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
                 if (index > -1) {
                     this.institutionen.splice(index, 1);
                 }
@@ -165,6 +171,7 @@ export class InstitutionViewController {
     private resetInstitutionSelection() {
         this.selectedInstitution = null;
         this.isSelected = false;
+        this.errormessage = undefined;
     }
 
     getSelectedInstitutionStammdatenList(): TSInstitutionStammdaten[] {
@@ -203,7 +210,7 @@ export class InstitutionViewController {
                 });
             } else {
                 this.institutionStammdatenRS.updateInstitutionStammdaten(this.selectedInstitutionStammdaten).then((institutionStammdaten: TSInstitutionStammdaten) => {
-                    var index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
+                    let index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
                     if (index > -1) {
                         this.instStammdatenList[index] = institutionStammdaten;
                         this.resetInstitutionStammdatenSelection();
@@ -230,6 +237,8 @@ export class InstitutionViewController {
                     this.instStammdatenList.splice(index, 1);
                 }
                 this.isSelectedStammdaten = false;
+            }).catch((ex) => {
+                this.errormessage = 'INSTITUTION_STAMMDATEN_DELETE_FAILED';
             });
         });
 

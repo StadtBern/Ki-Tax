@@ -42,10 +42,10 @@ export class DVErwerbspensumListController {
     static $inject: any[] = ['AuthServiceRS'];
     /* @ngInject */
     constructor(private authServiceRS: AuthServiceRS) {
-        this.removeButtonTitle = 'Eintrag entfernen';
     }
 
     $onInit() {
+        this.removeButtonTitle = 'Eintrag entfernen';
         if (!this.addButtonText) {
             this.addButtonText = 'add item';
         }
@@ -56,7 +56,7 @@ export class DVErwerbspensumListController {
             this.addButtonEnabled = true;
         }
         //clear selected
-        for (var i = 0; i < this.erwerbspensen.length; i++) {
+        for (let i = 0; i < this.erwerbspensen.length; i++) {
             let obj: any = this.erwerbspensen[i];
             obj.isSelected = false;
 

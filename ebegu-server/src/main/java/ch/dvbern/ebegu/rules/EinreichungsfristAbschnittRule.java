@@ -20,8 +20,6 @@ import java.util.Set;
  * - Für die Angebote Tageseltern–Schulkinder und Tagesstätten entspricht der Anspruch dem gewünschten Pensum.
  * 		Ihnen wird für den Monat August aber der Volltarif verrechnet.
  * 	Verweis 16.11 Gesuch zu Speat
- *
- * 	TODO: Diese Regel soll nur beim Erstgesuch gelten jedoch nicht bei Mutationen! Xaver fragen ob dies so richtig ist!
  */
 public class EinreichungsfristAbschnittRule extends AbstractAbschnittRule {
 
@@ -35,7 +33,7 @@ public class EinreichungsfristAbschnittRule extends AbstractAbschnittRule {
 		List<VerfuegungZeitabschnitt> einreichungsfristAbschnitte = new ArrayList<>();
 		Gesuch gesuch = betreuung.extractGesuch();
 		LocalDate eingangsdatum = gesuch.getEingangsdatum();
-		if (gesuch.getTyp().equals(AntragTyp.GESUCH) && eingangsdatum != null) {
+		if (gesuch.getTyp().isGesuch() && eingangsdatum != null) {
 		    Set<BetreuungspensumContainer> betreuungspensen = betreuung.getBetreuungspensumContainers();
 			LocalDate firstOfMonthDesEinreichungsMonats = LocalDate.of(eingangsdatum.getYear(), eingangsdatum.getMonth(), 1);
 			for (BetreuungspensumContainer betreuungspensumContainer : betreuungspensen) {

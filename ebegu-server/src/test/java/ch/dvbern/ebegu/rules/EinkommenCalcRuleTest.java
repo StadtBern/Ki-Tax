@@ -9,16 +9,12 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
 
 /**
  * Testet die MaximalesEinkommen-Regel
  */
 public class EinkommenCalcRuleTest {
-
-	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
-	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
 
 	@Test
 	public void testKitaNormalfall() {
@@ -74,7 +70,7 @@ public class EinkommenCalcRuleTest {
 	 */
 	@Test
 	public void testAcceptedEKV() {
-		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.TAGI, 100);
+		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, BetreuungsangebotTyp.TAGI, 100);
 		Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 
@@ -83,11 +79,11 @@ public class EinkommenCalcRuleTest {
 		einkommensverschlechterungInfoJA.setEinkommensverschlechterung(true);
 		einkommensverschlechterungInfoJA.setEkvFuerBasisJahrPlus1(true);
 		einkommensverschlechterungInfoJA.setEkvFuerBasisJahrPlus2(true);
-		einkommensverschlechterungInfoJA.setStichtagFuerBasisJahrPlus1(LocalDate.of(2016, 10, 1));
-		einkommensverschlechterungInfoJA.setStichtagFuerBasisJahrPlus2(LocalDate.of(2017, 4, 1));
+		einkommensverschlechterungInfoJA.setStichtagFuerBasisJahrPlus1(LocalDate.of(TestDataUtil.PERIODE_JAHR_1, 10, 1));
+		einkommensverschlechterungInfoJA.setStichtagFuerBasisJahrPlus2(LocalDate.of(TestDataUtil.PERIODE_JAHR_2, 4, 1));
 		gesuch.getEinkommensverschlechterungInfoContainer().setEinkommensverschlechterungInfoJA(einkommensverschlechterungInfoJA);
 
-		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 100, 0));
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setNettolohn(new BigDecimal(50000));
@@ -106,18 +102,18 @@ public class EinkommenCalcRuleTest {
 		Assert.assertEquals(3, result.size());
 		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
 		Assert.assertEquals(new BigDecimal(50000), result.get(0).getMassgebendesEinkommen());
-		Assert.assertEquals("EINKOMMEN: Ihr massgebendes Einkommen des Jahres 2016 ist gegenüber der Vergleichsperiode um mehr als 20% gesunken. Die Bemessung erfolgt auf dem provisorischen Einkommen des Jahres 2016.", result.get(1).getBemerkungen());
+		Assert.assertEquals("EINKOMMEN: Ihr massgebendes Einkommen des Jahres " + TestDataUtil.PERIODE_JAHR_1 + " ist gegenüber der Vergleichsperiode um mehr als 20% gesunken. Die Bemessung erfolgt auf dem provisorischen Einkommen des Jahres " + TestDataUtil.PERIODE_JAHR_1 + ".", result.get(1).getBemerkungen());
 		Assert.assertEquals(new BigDecimal(25000), result.get(1).getMassgebendesEinkommen());
-		Assert.assertEquals("EINKOMMEN: Ihr massgebendes Einkommen des Jahres 2017 ist gegenüber der Vergleichsperiode um mehr als 20% gesunken. Die Bemessung erfolgt auf dem provisorischen Einkommen des Jahres 2017.", result.get(2).getBemerkungen());
+		Assert.assertEquals("EINKOMMEN: Ihr massgebendes Einkommen des Jahres " + TestDataUtil.PERIODE_JAHR_2 + " ist gegenüber der Vergleichsperiode um mehr als 20% gesunken. Die Bemessung erfolgt auf dem provisorischen Einkommen des Jahres " + TestDataUtil.PERIODE_JAHR_2 + ".", result.get(2).getBemerkungen());
 		Assert.assertEquals(new BigDecimal(20000), result.get(2).getMassgebendesEinkommen());
 	}
 
 	private Betreuung prepareData(BigDecimal massgebendesEinkommen, BetreuungsangebotTyp angebot, int pensum) {
-		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, angebot, pensum);
+		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, angebot, pensum);
 		Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		TestDataUtil.calculateFinanzDaten(gesuch);
-		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 100, 0));
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setNettolohn(massgebendesEinkommen);

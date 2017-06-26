@@ -23,10 +23,10 @@ public class AbstractEbeguRuleTest {
 	private final DateRange defaultGueltigkeit = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
 	private final ErwerbspensumAbschnittRule erwerbspensumRule = new ErwerbspensumAbschnittRule(defaultGueltigkeit);
 
-	private final LocalDate DATUM_1 = LocalDate.of(2016, Month.APRIL, 1);
-	private final LocalDate DATUM_2 = LocalDate.of(2016, Month.SEPTEMBER, 1);
-	private final LocalDate DATUM_3 = LocalDate.of(2016, Month.OCTOBER, 1);
-	private final LocalDate DATUM_4 = LocalDate.of(2016, Month.DECEMBER, 1);
+	private final LocalDate DATUM_1 = LocalDate.of(TestDataUtil.PERIODE_JAHR_1, Month.APRIL, 1);
+	private final LocalDate DATUM_2 = LocalDate.of(TestDataUtil.PERIODE_JAHR_1, Month.SEPTEMBER, 1);
+	private final LocalDate DATUM_3 = LocalDate.of(TestDataUtil.PERIODE_JAHR_1, Month.OCTOBER, 1);
+	private final LocalDate DATUM_4 = LocalDate.of(TestDataUtil.PERIODE_JAHR_1, Month.DECEMBER, 1);
 
 	@Test
 	public void testErwerbspensenUndBetreuungspensen() throws Exception {

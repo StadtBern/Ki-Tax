@@ -5,6 +5,7 @@ import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import ErrorService from '../errors/service/ErrorService';
 import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
+import * as moment from 'moment';
 import Moment = moment.Moment;
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
@@ -101,7 +102,7 @@ export class DVBarcodeController {
                     this.dVDialog.showDialogFullscreen(FREIGEBEN_DIALOG_TEMPLATE, FreigabeController, {
                         docID: barcodeDocID
                     }).then(() => {
-                        //TODO: (medu) update view, for example when gesuch is visible in pending table
+                        //TODO (beim) update view, for example when gesuch is visible in pendenzen table
                     });
                 } else {
                     this.errorService.addMesageAsError('Barcode hat falsches Format: ' + barcodeRead);

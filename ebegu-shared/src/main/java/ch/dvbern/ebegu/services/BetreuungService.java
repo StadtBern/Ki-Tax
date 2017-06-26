@@ -1,6 +1,8 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Fall;
 
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
@@ -71,10 +73,30 @@ public interface BetreuungService {
 	List<Betreuung> findAllBetreuungenFromGesuch(String gesuchId);
 
 	/**
+	 * @param fall Fall, dessen verfuegte Betreuungen zurueckgegeben werden
+	 * @return BetreuungList, welche zum Fall gehoeren oder null
+	 */
+	@Nonnull
+	List<Betreuung> findAllBetreuungenWithVerfuegungFromFall(@Nonnull Fall fall);
+
+	/**
 	 * Schliesst die Betreuung (Status GESCHLOSSEN_OHNE_VERFUEGUNG) ohne eine neue Verfuegung zu erstellen
 	 * (bei gleichbleibenden Daten)
      */
 	@Nonnull
 	Betreuung schliessenOhneVerfuegen(@Nonnull Betreuung betreuung);
 
+	/**
+	 * Gibt alle Betreuungen zurueck, welche Mutationen betreffen, die verfügt sind und deren
+	 * betreuungMutiert-Flag noch nicht gesetzt sind
+	 */
+	@Nonnull
+	List<Betreuung> getAllBetreuungenWithMissingStatistics();
+
+	/**
+	 * Gibt alle Abwesenheiten zurueck, welche Mutationen betreffen, die verfügt sind und deren
+	 * abwesenheitMutiert-Flag noch nicht gesetzt sind
+	 */
+	@Nonnull
+	List<Abwesenheit> getAllAbwesenheitenWithMissingStatistics();
 }

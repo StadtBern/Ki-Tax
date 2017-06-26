@@ -39,7 +39,7 @@ public class BetreuungConverterTest extends AbstractEbeguRestLoginTest {
 		Betreuung betreuung = insertNewEntity();
 		JaxBetreuung jaxBetr = this.converter.betreuungToJAX(betreuung);
 		Betreuung betrToEntity = this.converter.betreuungToEntity(jaxBetr, new Betreuung());
-		Assert.assertTrue(betreuung.isSame(betrToEntity));
+		Assert.assertTrue(betreuung.isSame(betrToEntity, true, true));
 
 	}
 

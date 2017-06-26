@@ -6,7 +6,7 @@ import {IHttpBackendService} from 'angular';
 
 describe('mandantRS', function () {
 
-    var mandantRS: MandantRS;
+    let mandantRS: MandantRS;
     let $httpBackend: IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockMandant: TSMandant;

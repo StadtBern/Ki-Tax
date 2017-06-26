@@ -72,8 +72,13 @@ export default class WizardStepManager {
     public setAllowedStepsForRole(role: TSRole): void {
         if (TSRoleUtil.getTraegerschaftInstitutionOnlyRoles().indexOf(role) > -1) {
             this.setAllowedStepsForInstitutionTraegerschaft();
+
         } else if (TSRoleUtil.getSchulamtOnlyRoles().indexOf(role) > -1) {
             this.setAllowedStepsForSchulamt();
+
+        } else if (TSRoleUtil.getSteueramtOnlyRoles().indexOf(role) > -1) {
+            this.setAllowedStepsForSteueramt();
+
         } else {
             this.setAllAllowedSteps();
         }
@@ -87,6 +92,16 @@ export default class WizardStepManager {
         this.allowedSteps.push(TSWizardStepName.BETREUUNG);
         this.allowedSteps.push(TSWizardStepName.ABWESENHEIT);
         this.allowedSteps.push(TSWizardStepName.VERFUEGEN);
+    }
+
+    private setAllowedStepsForSteueramt(): void {
+        this.allowedSteps = [];
+        this.allowedSteps.push(TSWizardStepName.FAMILIENSITUATION);
+        this.allowedSteps.push(TSWizardStepName.GESUCHSTELLER);
+        this.allowedSteps.push(TSWizardStepName.UMZUG);
+        this.allowedSteps.push(TSWizardStepName.KINDER);
+        this.allowedSteps.push(TSWizardStepName.FINANZIELLE_SITUATION);
+        this.allowedSteps.push(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
     }
 
     private setAllowedStepsForSchulamt(): void {
@@ -210,8 +225,12 @@ export default class WizardStepManager {
      * @returns {boolean}
      */
     public isNextStepEnabled(gesuch: TSGesuch): boolean {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSteueramtOnlyRoles()) && this.currentStepName === TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG) {
+            // todo team dies if ist ein Hack. Das Problem ist, dass der Step EKV der letzte fuer das Steueramt ist, und da er substeps hat,
+            // ist es sehr schwierig zu wissen, wann man darf und wann nicht. Wir sollten die ganze Funktionalitaet von Steps verbessern
+            return true;
+        }
         return this.isStepAvailableViaBtn(this.getNextStep(gesuch), gesuch);
-        // return this.getStepByName(this.getNextStep(gesuch)).verfuegbar;
     }
 
     public getNextStep(gesuch: TSGesuch): TSWizardStepName {
@@ -229,7 +248,7 @@ export default class WizardStepManager {
      * iterate through the existing steps and get the previous one based on the current position
      */
     public getPreviousStep(gesuch: TSGesuch): TSWizardStepName {
-        var allVisibleStepNames = this.getVisibleSteps();
+        let allVisibleStepNames = this.getVisibleSteps();
         let currentPosition: number = allVisibleStepNames.indexOf(this.getCurrentStepName()) - 1;
         for (let i = currentPosition; i >= 0; i--) {
             if (this.isStepAvailableViaBtn(allVisibleStepNames[i], gesuch)) {
@@ -244,10 +263,11 @@ export default class WizardStepManager {
      */
     private isStepAvailableViaBtn(stepName: TSWizardStepName, gesuch: TSGesuch): boolean {
         let step: TSWizardStep = this.getStepByName(stepName);
+
         if (step !== undefined) {
             return (this.isStepClickableForCurrentRole(step, gesuch)
-            || (gesuch.typ === TSAntragTyp.GESUCH && step.wizardStepStatus === TSWizardStepStatus.UNBESUCHT
-            && !(this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles()) && stepName === TSWizardStepName.VERFUEGEN))
+            || ((gesuch.typ === TSAntragTyp.ERSTGESUCH || gesuch.typ === TSAntragTyp.ERNEUERUNGSGESUCH) && step.wizardStepStatus === TSWizardStepStatus.UNBESUCHT
+            && !(this.authServiceRS.isOneOfRoles(TSRoleUtil.getAllButAdministratorJugendamtRoleAsRoles()) && stepName === TSWizardStepName.VERFUEGEN))
             || (gesuch.typ === TSAntragTyp.MUTATION && step.wizardStepName === TSWizardStepName.FAMILIENSITUATION));
         }
         return false;  // wenn der step undefined ist geben wir mal verfuegbar zurueck
@@ -278,7 +298,7 @@ export default class WizardStepManager {
                     }
                 }
             }
-            return this.areAllStepsOK();
+            return this.areAllStepsOK(gesuch);
         }
         return step.verfuegbar === true;  //wenn keine Sonderbedingung gehen wir davon aus dass der step nicht disabled ist
     }
@@ -289,11 +309,13 @@ export default class WizardStepManager {
      *  - Bei BETREUUNGEN darf es WARTEN sein
      *  - Der Status von VERFUEGEN wird gar nicht beruecksichtigt
      */
-    public areAllStepsOK(): boolean {
+    public areAllStepsOK(gesuch: TSGesuch): boolean {
         for (let i = 0; i < this.wizardSteps.length; i++) {
             if (this.wizardSteps[i].wizardStepName === TSWizardStepName.BETREUUNG) {
                 if (!this.isStatusOk(this.wizardSteps[i].wizardStepStatus)
-                    && this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.PLATZBESTAETIGUNG) {
+                    && this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.PLATZBESTAETIGUNG
+                    && (this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.NOK
+                    && !gesuch.isThereAnyBetreuung())) {
                     return false;
                 }
 

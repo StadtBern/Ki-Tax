@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
 import ch.dvbern.ebegu.api.util.RestUtil;
+import ch.dvbern.ebegu.dto.KindDubletteDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
@@ -32,6 +33,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -83,7 +85,7 @@ public class KindResource {
 
 	@Nullable
 	@GET
-	@Path("/{kindContainerId}")
+	@Path("/find/{kindContainerId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxKindContainer findKind(
@@ -129,4 +131,15 @@ public class KindResource {
 
 	}
 
+	@Nullable
+	@GET
+	@Path("/dubletten/{gesuchId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<KindDubletteDTO> getKindDubletten(@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJaxId) throws EbeguException {
+		Validate.notNull(gesuchJaxId.getId());
+		String gesuchId = converter.toEntityId(gesuchJaxId);
+		List<KindDubletteDTO> kindDubletten = kindService.getKindDubletten(gesuchId);
+		return kindDubletten;
+	}
 }

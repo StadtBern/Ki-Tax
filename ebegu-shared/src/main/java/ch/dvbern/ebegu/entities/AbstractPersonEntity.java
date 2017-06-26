@@ -1,7 +1,11 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EbeguLocalDateBridge;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
@@ -11,6 +15,7 @@ import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Objects;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -31,15 +36,19 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	@Column(nullable = false)
 	@NotNull
+	@Field()
 	private String vorname;
 
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	@NotNull
 	@Column(nullable = false)
+	@Field()
 	private String nachname;
 
 	@Column(nullable = false)
 	@NotNull
+	@FieldBridge(impl=EbeguLocalDateBridge.class)   //wir indizieren dates als string
+	@Field(analyze= Analyze.NO) //datumsfelder nicht tokenizen etc
 	private LocalDate geburtsdatum;
 
 
@@ -83,12 +92,37 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 		return vorname + " " + nachname;
 	}
 
-	public AbstractPersonEntity copyForMutation(AbstractPersonEntity mutation) {
+	@Nonnull
+	public AbstractPersonEntity copyForMutation(@Nonnull AbstractPersonEntity mutation) {
 		super.copyForMutation(mutation);
+		return copyForMutationOrErneuerung(mutation);
+	}
+
+	@Nonnull
+	public AbstractPersonEntity copyForErneuerung(@Nonnull AbstractPersonEntity folgeEntity) {
+		super.copyForErneuerung(folgeEntity);
+		return copyForMutationOrErneuerung(folgeEntity);
+	}
+
+	@Nonnull
+	private AbstractPersonEntity copyForMutationOrErneuerung(@Nonnull AbstractPersonEntity mutation) {
 		mutation.setGeschlecht(this.getGeschlecht());
 		mutation.setVorname(this.getVorname());
 		mutation.setNachname(this.getNachname());
 		mutation.setGeburtsdatum(this.getGeburtsdatum());
 		return mutation;
+	}
+
+	public boolean isSame(AbstractPersonEntity otherPerson) {
+		if (this == otherPerson) {
+			return true;
+		}
+		if (otherPerson == null || getClass() != otherPerson.getClass()) {
+			return false;
+		}
+		return	getGeschlecht() == otherPerson.getGeschlecht() &&
+			Objects.equals(getVorname(), otherPerson.getVorname()) &&
+			Objects.equals(getNachname(), otherPerson.getNachname()) &&
+			Objects.equals(getGeburtsdatum(), otherPerson.getGeburtsdatum());
 	}
 }

@@ -2,6 +2,7 @@ import {IDirective, IDirectiveFactory} from 'angular';
 import TSUser from '../../../models/TSUser';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import UserRS from '../../service/userRS.rest';
+import * as moment from 'moment';
 import Moment = moment.Moment;
 import INgModelController = angular.INgModelController;
 let template = require('./dv-userselect.html');
@@ -17,7 +18,8 @@ export class DVUserselect implements IDirective {
         ngDisabled: '<',
         initialAll: '=',
         showSelectionAll: '=',
-        onUserChanged: '&'
+        onUserChanged: '&',
+        selectedUser: '=?'
         //initialAll -> tritt nur ein, wenn explizit  { initial-all="true" } geschrieben ist
     };
     controller = UserselectController;
@@ -47,32 +49,27 @@ export class UserselectController {
     static $inject: string[] = ['UserRS', 'AuthServiceRS'];
     /* @ngInject */
     constructor(private userRS: UserRS, private authService: AuthServiceRS) {
-        this.updateUserList();
-        if (!this.initialAll) { //tritt nur ein, wenn explizit  { initial-all="true" } geschrieben ist
-            this.selectedUser = authService.getPrincipal();
-        } else {
-            this.selectedUser = undefined;
-        }
-    }
 
+    }
 
     //wird von angular aufgerufen
     $onInit() {
+        this.updateUserList();
+        if (!this.initialAll) { //tritt nur ein, wenn explizit  { initial-all="true" } geschrieben ist
+            this.selectedUser = this.authService.getPrincipal();
+        }
         //initial nach aktuell eingeloggtem filtern
-        if (this.smartTable && !this.initialAll) {
+        if (this.smartTable && !this.initialAll && this.selectedUser) {
             this.smartTable.search(this.selectedUser.getFullName(), this.dvUsersearch);
         }
         this.valueChanged = () => {
-            console.log('valueChanged in dv-userselect.ts');
             this.onUserChanged({user: this.selectedUser});
         };
     }
 
-    private updateUserList() {
+    private updateUserList(): void {
         this.userRS.getBenutzerJAorAdmin().then((response: any) => {
             this.userList = angular.copy(response);
         });
     }
-
-
 }

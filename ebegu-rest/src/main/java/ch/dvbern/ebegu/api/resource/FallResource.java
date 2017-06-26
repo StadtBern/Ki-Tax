@@ -90,4 +90,22 @@ public class FallResource {
 		Fall fallToReturn = fallOptional.get();
 		return converter.fallToJAX(fallToReturn);
 	}
+
+	@ApiOperation(value = "Creates a new Fall in the database with the current user as owner.")
+	@NotNull
+	@PUT
+	@Path("/createforcurrentbenutzer")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxFall createFallForCurrentGesuchstellerAsBesitzer(
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Optional<Fall> fallOptional = fallService.createFallForCurrentGesuchstellerAsBesitzer();
+		if (!fallOptional.isPresent()) {
+			return null;
+		}
+		Fall fallToReturn = fallOptional.get();
+		return converter.fallToJAX(fallToReturn);
+	}
 }

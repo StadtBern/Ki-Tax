@@ -10,18 +10,8 @@ export class ShowTooltipController {
     text: string;
 
     constructor(private $mdDialog: IDialogService, $translate: ITranslateService, title: string, text: string) {
-
-        /* TODO: Klaeren ob title verwendet werden soll, ist im Moment nicht im Template. Falls nicht: Ausbauen
-
-         if (title !== undefined && title !== null) {
-         this.title = $translate.instant(title);
-
-         } else {
-         this.title = $translate.instant('');
-         }*/
         if (text !== undefined && text !== null) {
             this.text = $translate.instant(text);
-
         } else {
             this.text = 'test';
         }

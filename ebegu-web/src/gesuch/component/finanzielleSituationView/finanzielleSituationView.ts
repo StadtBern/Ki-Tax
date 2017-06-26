@@ -77,7 +77,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     }
 
     showSteuerveranlagung(): boolean {
-        return !this.model.gemeinsameSteuererklaerung || this.model.gemeinsameSteuererklaerung === false;
+        return !this.model.gemeinsameSteuererklaerung;
     }
 
     showSteuererklaerung(): boolean {

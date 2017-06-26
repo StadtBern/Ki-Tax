@@ -13,6 +13,8 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
@@ -34,12 +36,14 @@ export class BetreuungListViewComponentConfig implements IComponentOptions {
  */
 export class BetreuungListViewController extends AbstractGesuchViewController<any> {
 
+    TSRoleUtil = TSRoleUtil;
+
     static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguUtil', 'BerechnungsManager',
-        'ErrorService', 'WizardStepManager', '$scope', '$log'];
+        'ErrorService', 'WizardStepManager', 'AuthServiceRS', '$scope', '$log'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private $translate: ITranslateService,
                 private DvDialog: DvDialog, private ebeguUtil: EbeguUtil, berechnungsManager: BerechnungsManager,
-                private errorService: ErrorService, wizardStepManager: WizardStepManager, $scope: IScope, private $log: ILogService) {
+                private errorService: ErrorService, wizardStepManager: WizardStepManager, private authServiceRS: AuthServiceRS, $scope: IScope, private $log: ILogService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
 
@@ -65,7 +69,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
 
 
     public createBetreuung(kind: TSKindContainer): void {
-        let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
+        let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
         if (kindIndex >= 0) {
             this.gesuchModelManager.setKindIndex(kindIndex);
             this.openBetreuungView(undefined, kind.kindNummer);
@@ -120,4 +124,16 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         return !this.isGesuchReadonly() && !betreuung.vorgaengerId;
     }
 
+    private showMitteilung(): boolean {
+        return this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles());
+    }
+
+    private gotoMitteilung(betreuung: TSBetreuung) {
+        this.$state.go('gesuch.mitteilung', {
+            fallId: this.gesuchModelManager.getGesuch().fall.id,
+            gesuchId: this.gesuchModelManager.getGesuch().id,
+            betreuungId: betreuung.id,
+            mitteilungId: undefined
+        });
+    }
 }

@@ -1,3 +1,4 @@
+import * as moment from 'moment';
 import TSAbstractEntity from './TSAbstractEntity';
 
 export default class TSEinkommensverschlechterungInfo extends TSAbstractEntity {

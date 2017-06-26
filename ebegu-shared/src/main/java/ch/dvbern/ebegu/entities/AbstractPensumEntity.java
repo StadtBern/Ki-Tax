@@ -51,7 +51,17 @@ public class AbstractPensumEntity extends AbstractDateRangedEntity {
 
 	public AbstractPensumEntity copyForMutation(AbstractPensumEntity mutation) {
 		super.copyForMutation(mutation);
-		mutation.setPensum(this.getPensum());
+		copyForMutationOrErneuerung(mutation);
 		return mutation;
+	}
+
+	public AbstractPensumEntity copyForErneuerung(AbstractPensumEntity mutation) {
+		super.copyForErneuerung(mutation);
+		copyForMutationOrErneuerung(mutation);
+		return mutation;
+	}
+
+	private void copyForMutationOrErneuerung(AbstractPensumEntity mutation) {
+		mutation.setPensum(this.getPensum());
 	}
 }

@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.PaginationDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

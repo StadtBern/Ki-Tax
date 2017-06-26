@@ -30,7 +30,7 @@ export class DVEnableElement implements IDirective {
             controller.dvExpression = newValue;
             this.enableElement(controller, attributes);
         }, true);
-    };
+    }
 
     /**
      * Sets the attribute disabled to true or false of the element.

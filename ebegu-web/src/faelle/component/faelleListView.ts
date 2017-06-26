@@ -3,7 +3,6 @@ import {IStateService} from 'angular-ui-router';
 import GesuchRS from '../../gesuch/service/gesuchRS.rest';
 import GesuchModelManager from '../../gesuch/service/gesuchModelManager';
 import BerechnungsManager from '../../gesuch/service/berechnungsManager';
-import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import TSAntragDTO from '../../models/TSAntragDTO';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
@@ -26,7 +25,7 @@ export class FaelleListViewComponentConfig implements IComponentOptions {
 export class FaelleListViewController {
 
     private antragList: Array<TSAntragDTO>;
-    totalResultCount: string = '-';
+    totalResultCount: string = '0';
 
 
     static $inject: string[] = ['$filter', 'GesuchRS', 'GesuchModelManager',
@@ -48,20 +47,16 @@ export class FaelleListViewController {
     public passFilterToServer = (tableFilterState: any): IPromise<TSAntragSearchresultDTO> => {
         this.$log.debug('Triggering ServerFiltering with Filter Object', tableFilterState);
         return this.gesuchRS.searchAntraege(tableFilterState).then((response: TSAntragSearchresultDTO) => {
-            this.totalResultCount = response.totalResultSize ? response.totalResultSize.toString() : undefined;
+            this.totalResultCount = response.totalResultSize ? response.totalResultSize.toString() : '0';
             this.antragList = response.antragDTOs;
             return response;
         });
 
-    };
+    }
 
 
     public getAntragList(): Array<TSAntragDTO> {
         return this.antragList;
-    }
-
-    public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
-        return gesuchsperiode.gesuchsperiodeString;
     }
 
     /**
@@ -72,7 +67,7 @@ export class FaelleListViewController {
      */
     public editFall(antrag: TSAntragDTO, event: any): void {
         if (antrag) {
-            let isCtrlKeyPressed : boolean = (event && event.ctrlKey);
+            let isCtrlKeyPressed: boolean = (event && event.ctrlKey);
             if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
                 // Reload Gesuch in gesuchModelManager on Init in fallCreationView because it has been changed since last time
                 this.gesuchModelManager.clearGesuch();

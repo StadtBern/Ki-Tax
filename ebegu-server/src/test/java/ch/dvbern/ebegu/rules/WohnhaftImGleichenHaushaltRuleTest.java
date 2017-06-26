@@ -9,18 +9,12 @@ import ch.dvbern.ebegu.types.DateRange;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
 
 /**
  * Tests fuer die Regel WohnhaftImGleichenHaushaltRule
  */
 public class WohnhaftImGleichenHaushaltRuleTest {
-
-	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
-	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
-
 
 	/**
 	 * Wenn WohnhaftImGleichenHaushalt nicht eingegeben wurde (null), wird der Wert nicht ueberschrieben
@@ -92,9 +86,9 @@ public class WohnhaftImGleichenHaushaltRuleTest {
 		if (fachstelle > 0) {
 			betreuung.getKind().getKindJA().setPensumFachstelle(new PensumFachstelle());
 			betreuung.getKind().getKindJA().getPensumFachstelle().setPensum(fachstelle);
-			betreuung.getKind().getKindJA().getPensumFachstelle().setGueltigkeit(new DateRange(START_PERIODE, ENDE_PERIODE));
+			betreuung.getKind().getKindJA().getPensumFachstelle().setGueltigkeit(new DateRange(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE));
 		}
-		betreuung.extractGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, pensum, 0));
+		betreuung.extractGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, pensum, 0));
 		return betreuung;
 	}
 }

@@ -24,7 +24,7 @@ public class GesuchCopyForMutationTest {
 
 		Collection<InstitutionStammdaten> instStammdaten = new ArrayList<>();
 
-		Gesuchsperiode gesuchsperiode = TestDataUtil.createGesuchsperiode1617();
+		Gesuchsperiode gesuchsperiode = TestDataUtil.createGesuchsperiode1718();
 		Testfall01_WaeltiDagmar testfall01_waeltiDagmar =
 			new Testfall01_WaeltiDagmar(gesuchsperiode, instStammdaten);
 

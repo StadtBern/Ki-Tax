@@ -2,19 +2,24 @@ import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import {TSAntragTyp} from './enums/TSAntragTyp';
 import {TSAntragStatus} from './enums/TSAntragStatus';
 import {TSEingangsart} from './enums/TSEingangsart';
+import EbeguUtil from '../utils/EbeguUtil';
+import * as moment from 'moment';
 
 export default class TSAntragDTO {
+
     private _antragId: string;
     private _fallNummer: number;
     private _familienName: string;
     private _antragTyp: TSAntragTyp;
     private _eingangsart: TSEingangsart;
     private _eingangsdatum: moment.Moment;
+    private _eingangsdatumSTV: moment.Moment;
     private _aenderungsdatum: moment.Moment;
     private _verantwortlicher: string;
     private _besitzerUsername: string;
     private _angebote: Array<TSBetreuungsangebotTyp>;
     private _institutionen: Array<string>;
+    private _kinder: Array<string>;
     private _status: TSAntragStatus;
     private _gesuchsperiodeGueltigAb: moment.Moment;
     private _gesuchsperiodeGueltigBis: moment.Moment;
@@ -23,15 +28,17 @@ export default class TSAntragDTO {
     private _laufnummer: number;
 
     constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
-                eingangsdatum?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
+                eingangsdatum?: moment.Moment, eingangsdatumSTV?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
                 verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
-                verfuegt?: boolean, laufnummer?: number, besitzerUsername?: string, eingangsart?: TSEingangsart, beschwerdeHaengig?: boolean) {
+                verfuegt?: boolean, laufnummer?: number, besitzerUsername?: string, eingangsart?: TSEingangsart, beschwerdeHaengig?: boolean,
+                kinder?: Array<string>) {
 
         this._antragId = antragId;
         this._fallNummer = fallNummer;
         this._familienName = familienName;
         this._antragTyp = antragTyp;
         this._eingangsdatum = eingangsdatum;
+        this._eingangsdatumSTV = eingangsdatumSTV;
         this._aenderungsdatum = aenderungsdatum;
         this._angebote = angebote;
         this._institutionen = institutionen;
@@ -44,6 +51,7 @@ export default class TSAntragDTO {
         this._besitzerUsername = besitzerUsername;
         this._eingangsart = eingangsart;
         this._beschwerdeHaengig = beschwerdeHaengig;
+        this._kinder = kinder;
     }
 
 
@@ -85,6 +93,14 @@ export default class TSAntragDTO {
 
     set eingangsdatum(value: moment.Moment) {
         this._eingangsdatum = value;
+    }
+
+    get eingangsdatumSTV(): moment.Moment {
+        return this._eingangsdatumSTV;
+    }
+
+    set eingangsdatumSTV(value: moment.Moment) {
+        this._eingangsdatumSTV = value;
     }
 
     get aenderungsdatum(): moment.Moment {
@@ -195,5 +211,37 @@ export default class TSAntragDTO {
         this._beschwerdeHaengig = value;
     }
 
+    public getQuicksearchString(): string {
+        let text = '';
+        if (this.fallNummer) {
+            text = EbeguUtil.addZerosToNumber(this.fallNummer, 6);
+        }
+        if (this.familienName) {
+            text = text + ' ' + this.familienName;
+        }
+        return text;
+    }
+
+
+    get kinder(): Array<string> {
+        return this._kinder;
+    }
+
+    set kinder(value: Array<string>) {
+        this._kinder = value;
+    }
+
+    public canBeFreigegeben(): boolean {
+        return this.status === TSAntragStatus.FREIGABEQUITTUNG;
+    }
+
+    public hasOnlySchulamtAngebote(): boolean {
+        for (let angebot of this.angebote) {
+            if (TSBetreuungsangebotTyp.TAGESSCHULE !== angebot) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 }

@@ -20,7 +20,7 @@ import java.util.Optional;
 /**
  * Abstract Service class, die von allen PrintServices erweitert werden muss. Sie enthaelt Methoden, um die Vorlagen zu laden
  */
-public class AbstractPrintService extends AbstractBaseService {
+public abstract class AbstractPrintService extends AbstractBaseService {
 
 	private final Logger LOG = LoggerFactory.getLogger(AbstractPrintService.class.getSimpleName());
 

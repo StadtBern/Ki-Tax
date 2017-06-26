@@ -110,11 +110,33 @@ public interface EbeguConfiguration {
 	 */
 	String getEmailOfSuperUser();
 
+	/**
+	 * @return true wenn sich die Applikation im Testmodus fuer Zahlungen befindet, false sonst
+	 */
+	boolean getIsZahlungenTestMode();
 
 	/**
-	 * Hiermit kann die Hintergrundfarbe auf verschiedenen System per property eingestellt werden. Das sollte es uns ermoeglichen
-	 * Test und Produktion besser unterscheiden zu koennen
-	 * @return
+	 * Gibt zurueck, ob der Dummy-Service für die EWK-Abfragen benutzt werden soll.
 	 */
-	String getBackgroundColor();
+	boolean isPersonenSucheDisabled();
+
+	/**
+	 * Gibt den Endpoint des EWK-Services zurueck.
+	 */
+	String getPersonenSucheEndpoint();
+
+	/**
+	 * URL des WSDLs des EWK-Services
+	 */
+	String getPersonenSucheWsdl();
+
+	/**
+	 * Gibt den Usernamen für den EWK-Service zurueck.
+	 */
+	String getPersonenSucheUsername();
+
+	/**
+	 * Gibt das Passwort für den EWK-Service zurueck.
+	 */
+	String getPersonenSuchePassword();
 }

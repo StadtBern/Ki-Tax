@@ -2,6 +2,7 @@ import TSDokument from './TSDokument';
 import {TSDokumentGrundTyp} from './enums/TSDokumentGrundTyp';
 import TSAbstractEntity from './TSAbstractEntity';
 import {TSDokumentTyp} from './enums/TSDokumentTyp';
+import {TSDokumentGrundPersonType} from './enums/TSDokumentGrundPersonType';
 
 export default class TSDokumentGrund extends TSAbstractEntity {
 
@@ -10,6 +11,10 @@ export default class TSDokumentGrund extends TSAbstractEntity {
     private _fullName: string;
 
     private _tag: string;
+
+    private _personType: TSDokumentGrundPersonType;
+
+    private _personNumber: number;
 
     private _dokumente: Array<TSDokument>;
 
@@ -69,6 +74,22 @@ export default class TSDokumentGrund extends TSAbstractEntity {
 
     set needed(value: boolean) {
         this._needed = value;
+    }
+
+    get personType(): TSDokumentGrundPersonType {
+        return this._personType;
+    }
+
+    set personType(value: TSDokumentGrundPersonType) {
+        this._personType = value;
+    }
+
+    get personNumber(): number {
+        return this._personNumber;
+    }
+
+    set personNumber(value: number) {
+        this._personNumber = value;
     }
 }
 

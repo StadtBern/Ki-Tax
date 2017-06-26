@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.dto.VerfuegungsBemerkung;
 import ch.dvbern.ebegu.enums.MsgKey;
+import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
 import ch.dvbern.ebegu.rules.RuleKey;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
@@ -38,6 +39,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	private static final long serialVersionUID = 7250339356897563374L;
 
 	// Zwischenresulate aus DATA-Rules ("Abschnitt")
+
+	@Transient
+	private boolean sameVerfuegungsdaten;
+
+	// Dieser Wert wird gebraucht, um zu wissen ob die Korrektur relevant fuer die Zahlungen ist, da nur wenn die
+	// Verguenstigung sich geaendert hat, muss man die Korrektur beruecksichtigen
+	@Transient
+	private boolean sameVerguenstigung;
 
 	@Transient
 	private Integer erwerbspensumGS1 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
@@ -149,6 +158,15 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@Column(nullable = false)
 	private boolean zuSpaetEingereicht;
 
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private VerfuegungsZeitabschnittZahlungsstatus zahlungsstatus = VerfuegungsZeitabschnittZahlungsstatus.NEU;
+
+	@NotNull
+	@OneToMany (mappedBy = "verfuegungZeitabschnitt")
+	private List<Zahlungsposition> zahlungsposition = new ArrayList<>();
+
 
 	public VerfuegungZeitabschnitt() {
 	}
@@ -158,7 +176,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	 */
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	public VerfuegungZeitabschnitt(VerfuegungZeitabschnitt toCopy) {
-		this.setVorgaengerId(toCopy.getId());
 		this.setGueltigkeit(new DateRange(toCopy.getGueltigkeit()));
 		this.erwerbspensumGS1 = toCopy.erwerbspensumGS1;
 		this.erwerbspensumGS2 = toCopy.erwerbspensumGS2;
@@ -192,6 +209,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.kategorieMaxEinkommen = toCopy.kategorieMaxEinkommen;
 		this.kategorieKeinPensum = toCopy.kategorieKeinPensum;
 		this.kategorieZuschlagZumErwerbspensum = toCopy.kategorieZuschlagZumErwerbspensum;
+		this.zahlungsstatus = toCopy.zahlungsstatus;
 	}
 
 	/**
@@ -199,6 +217,18 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	 */
 	public VerfuegungZeitabschnitt(DateRange gueltigkeit) {
 		this.setGueltigkeit(new DateRange(gueltigkeit));
+	}
+
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
+	@Override
+	public void setVorgaengerId(String vorgaengerId) {
+		// nop -> Diese Methode darf eingentlich nicht verwendet werden, da ein VerfuegungZeitabschnitt keinen Vorgaenger hat
+	}
+
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
+	@Override
+	public String getVorgaengerId() {
+		return null; // Diese Methode darf eingentlich nicht verwendet werden, da ein VerfuegungZeitabschnitt keinen Vorgaenger hat
 	}
 
 	public Integer getErwerbspensumGS1() {
@@ -463,6 +493,38 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
 	}
 
+	public VerfuegungsZeitabschnittZahlungsstatus getZahlungsstatus() {
+		return zahlungsstatus;
+	}
+
+	public void setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus zahlungsstatus) {
+		this.zahlungsstatus = zahlungsstatus;
+	}
+
+	public List<Zahlungsposition> getZahlungsposition() {
+		return zahlungsposition;
+	}
+
+	public void setZahlungsposition(List<Zahlungsposition> zahlungsposition) {
+		this.zahlungsposition = zahlungsposition;
+	}
+
+	public boolean isSameVerfuegungsdaten() {
+		return sameVerfuegungsdaten;
+	}
+
+	public void setSameVerfuegungsdaten(boolean sameVerfuegungsdaten) {
+		this.sameVerfuegungsdaten = sameVerfuegungsdaten;
+	}
+
+	public boolean isSameVerguenstigung() {
+		return sameVerguenstigung;
+	}
+
+	public void setSameVerguenstigung(boolean sameVerguenstigung) {
+		this.sameVerguenstigung = sameVerguenstigung;
+	}
+
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
@@ -644,7 +706,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		return sb.toString();
 	}
 
-	//TODO: Ist hier Objects.equals() richtig??
 	@SuppressWarnings({"OverlyComplexBooleanExpression", "AccessingNonPublicFieldOfAnotherObject"})
 	public boolean isSame(VerfuegungZeitabschnitt that) {
 		if (this == that) {
@@ -672,7 +733,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			this.ekv1ZuZweit == that.ekv1ZuZweit &&
 			this.ekv2Alleine == that.ekv2Alleine &&
 			this.ekv2ZuZweit == that.ekv2ZuZweit &&
-			this.ekv1NotExisting == that.ekv1NotExisting;
+			this.ekv1NotExisting == that.ekv1NotExisting &&
+			Objects.equals(this.zahlungsstatus, that.zahlungsstatus);
 	}
 
 	public boolean isSameSichtbareDaten(VerfuegungZeitabschnitt that) {
@@ -699,7 +761,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	 */
 	@SuppressWarnings({"OverlyComplexBooleanExpression", "AccessingNonPublicFieldOfAnotherObject", "QuestionableName"})
 	public boolean isSamePersistedValues(VerfuegungZeitabschnitt that) {
-		// zuSpaetEingereicht ist hier nicht aufgefuehrt, weil;
+		// zuSpaetEingereicht und zahlungsstatus sind hier nicht aufgefuehrt, weil;
 		// Es sollen die Resultate der Verfuegung verglichen werden und nicht der Weg, wie wir zu diesem Resultat gelangt sind
 		return betreuungspensum == that.betreuungspensum &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&

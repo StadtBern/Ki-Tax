@@ -8,10 +8,11 @@ import {InstitutionStammdatenRS} from './institutionStammdatenRS.rest';
 import DateUtil from '../../utils/DateUtil';
 import {TSDateRange} from '../../models/types/TSDateRange';
 import TSAdresse from '../../models/TSAdresse';
+import * as moment from 'moment';
 
 describe('institutionStammdatenRS', function () {
 
-    var institutionStammdatenRS: InstitutionStammdatenRS;
+    let institutionStammdatenRS: InstitutionStammdatenRS;
     let $httpBackend: IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockInstitutionStammdaten: TSInstitutionStammdaten;

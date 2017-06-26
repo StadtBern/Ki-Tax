@@ -14,7 +14,12 @@ import DateUtil from '../../../utils/DateUtil';
 import WizardStepManager from '../../service/wizardStepManager';
 import TSKindContainer from '../../../models/TSKindContainer';
 import {IBetreuungStateParams} from '../../gesuch.route';
+import TSGesuch from '../../../models/TSGesuch';
 import IFormController = angular.IFormController;
+import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 
 describe('betreuungView', function () {
 
@@ -44,10 +49,12 @@ describe('betreuungView', function () {
 
         betreuung = new TSBetreuung();
         betreuung.timestampErstellt = DateUtil.today();
+        betreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
         kind = new TSKindContainer();
         $stateParams = $injector.get('$stateParams');
         spyOn(gesuchModelManager, 'getKindToWorkWith').and.returnValue(kind);
         spyOn(gesuchModelManager, 'convertKindNumberToKindIndex').and.returnValue(0);
+        spyOn(gesuchModelManager, 'isNeuestesGesuch').and.returnValue($q.when(true));
         // model = betreuung;
         spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.callFake(() => {
              // wenn betreuung view ihr model schon kopiert hat geben wir das zurueck, sonst sind wir noch im constructor der view und geben betreuung zurueck
@@ -60,12 +67,12 @@ describe('betreuungView', function () {
         wizardStepManager = $injector.get('WizardStepManager');
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
             $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS,
-            wizardStepManager, $stateParams, undefined);
+            wizardStepManager, $stateParams, $injector.get('MitteilungRS'), $injector.get('DvDialog'), $injector.get('$log'));
+        betreuungView.$onInit();
+        $rootScope.$apply();
         betreuungView.model = betreuung;
 
-        let form = TestDataUtil.createDummyForm();
-        // $rootScope.form = form;
-        betreuungView.form = form;
+        betreuungView.form = TestDataUtil.createDummyForm();
     }));
 
     describe('Public API', function () {
@@ -78,7 +85,7 @@ describe('betreuungView', function () {
         describe('Object creation', () => {
             it('create an empty list of Betreuungspensen for a role different than Institution', () => {
                 let myBetreuungView: BetreuungViewController = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, null,
-                    $rootScope, null, null, authServiceRS, wizardStepManager, $stateParams, undefined);
+                    $rootScope, null, null, authServiceRS, wizardStepManager, $stateParams, undefined, undefined, undefined);
                 myBetreuungView.model = betreuung;
                 expect(myBetreuungView.getBetreuungspensen()).toBeDefined();
                 expect(myBetreuungView.getBetreuungspensen().length).toEqual(0);
@@ -197,7 +204,73 @@ describe('betreuungView', function () {
                 expect(betreuungView.getBetreuungspensen().length).toEqual(0);
             });
         });
+        describe('isMutationsmeldungAllowed', () => {
+            it('should be false if the Gesuch is not a Mutation and is not verfuegt', () => {
+                betreuungView.model.betreuungsstatus = TSBetreuungsstatus.BESTAETIGT;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.IN_BEARBEITUNG_JA, false);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(false);
+            });
+            it('should be true if the Gesuch is not a Mutation but the betreuung is in Status Verfuegt', () => {
+                betreuungView.model.betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.VERFUEGT, false);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
+            });
+            it('should be false if the Gesuch is not a Mutation and is in Status VERFUEGT but the betreuung is not in Status VERFUEGT', () => {
+                // this case is actually not possible
+                betreuungView.model.betreuungsstatus = TSBetreuungsstatus.BESTAETIGT;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.VERFUEGT, false);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(false);
+            });
+            it('should be false if the Gesuch is not a Mutation and is not in Status VERFUEGT but the betreuung is in Status VERFUEGT', () => {
+                betreuungView.model.betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.VERFUEGEN, false);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(false);
+            });
+            it('should be true if the Gesuch is not gesperrtWegenBeschwerde though STV status and the betreuung is in Status VERFUEGT', () => {
+                betreuungView.model.betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.PRUEFUNG_STV, false);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
+            });
+            it('should be true if the Gesuch is a Mutation and the betreuung has a vorgaengerID', () => {
+                betreuungView.model.vorgaengerId = '111-222-333-444-555';
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.MUTATION, TSAntragStatus.IN_BEARBEITUNG_JA, false);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
+            });
+            it('should be false if the Gesuch is a Mutation and the betreuung has no vorgaengerID, i.e. it is a new Betreuung', () => {
+                betreuungView.model.vorgaengerId = undefined;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.MUTATION, TSAntragStatus.IN_BEARBEITUNG_JA, false);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(false);
+            });
+            it('should be false if the Mutation is gesperrtWegenBeschwerde although the Betreuung has a vorgaengerId', () => {
+                betreuungView.model.vorgaengerId = '111-222-333-444-555';
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.MUTATION, TSAntragStatus.IN_BEARBEITUNG_JA, true);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(false);
+            });
+            it('should be true if the Gesuch is a Mutation and is in Status VERFUEGEN but the betreuung is in Status VERFUEGT and has a vorgaengerId', () => {
+                betreuungView.model.vorgaengerId = '111-222-333-444-555';
+                betreuungView.model.betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.MUTATION, TSAntragStatus.VERFUEGEN, false);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
+            });
+            it('should be true if the Gesuch is a Mutation and is in Status VERFUEGT and the betreuung is in Status VERFUEGT but has no vorgaengerId', () => {
+                betreuungView.model.vorgaengerId = undefined;
+                betreuungView.model.betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.MUTATION, TSAntragStatus.VERFUEGT, false);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
+            });
+        });
     });
+
+    function initGesuch(typ: TSAntragTyp, status: TSAntragStatus, gesperrtWegenBeschwerde: boolean): TSGesuch {
+        let gesuch: TSGesuch = new TSGesuch();
+        gesuch.typ = typ;
+        gesuch.status = status;
+        gesuch.gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
+        gesuch.gesuchsperiode = new TSGesuchsperiode();
+        gesuch.gesuchsperiode.status = TSGesuchsperiodeStatus.AKTIV;
+        spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
+        return gesuch;
+    }
 
     function createInstitutionStammdaten(iban: string, betAngTyp: TSBetreuungsangebotTyp) {
         let instStam1: TSInstitutionStammdaten = new TSInstitutionStammdaten();
@@ -211,12 +284,14 @@ describe('betreuungView', function () {
      * eine Exception (reject) ist, muss der $state nicht geaendert werden und daher wird die Methode $state.go()  nicht aufgerufen.
      * Ansonsten wird sie mit  dem naechsten state 'gesuch.betreuungen' aufgerufen
      * @param promiseResponse
+     * @param moveToNextStep
      */
     function testSubmit(promiseResponse: any, moveToNextStep: boolean) {
         betreuungView.model.vertrag = true;
         spyOn($state, 'go');
         spyOn(gesuchModelManager, 'saveBetreuung').and.returnValue(promiseResponse);
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+        TestDataUtil.mockLazyGesuchModelManagerHttpCalls($httpBackend);
         betreuungView.platzAnfordern();
         $rootScope.$apply();
         expect(gesuchModelManager.saveBetreuung).toHaveBeenCalled();

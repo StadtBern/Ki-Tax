@@ -9,16 +9,9 @@ export class EnumEx {
         );
     }
 
-    static getValues(e: any) { // TODO return type
+    static getValues(e: any): number[]  {
         return Object.keys(e)
             .map(v => parseInt(v, 10))
             .filter(v => !isNaN(v));
     }
-
-    //static getNamesAndValues(e: any) { // TODO return type
-    //    return EnumEx.getValues(e)
-    //        .map(v => {
-    //            return {name: e[v] as string, value: v};
-    //        });
-    //}
 }

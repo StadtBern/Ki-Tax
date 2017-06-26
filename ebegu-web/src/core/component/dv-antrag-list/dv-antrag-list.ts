@@ -1,7 +1,9 @@
 import {IComponentOptions, IFilterService, IPromise, ILogService} from 'angular';
 import TSAbstractAntragEntity from '../../../models/TSAbstractAntragEntity';
-import {TSAntragTyp, getTSAntragTypValues} from '../../../models/enums/TSAntragTyp';
-import {TSAntragStatus, getTSAntragStatusValues} from '../../../models/enums/TSAntragStatus';
+import {TSAntragTyp, getNormalizedTSAntragTypValues} from '../../../models/enums/TSAntragTyp';
+import {
+    TSAntragStatus, getTSAntragStatusValuesByRole
+} from '../../../models/enums/TSAntragStatus';
 import {TSBetreuungsangebotTyp, getTSBetreuungsangebotTypValues} from '../../../models/enums/TSBetreuungsangebotTyp';
 import TSInstitution from '../../../models/TSInstitution';
 import TSAntragDTO from '../../../models/TSAntragDTO';
@@ -10,7 +12,12 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import TSAntragSearchresultDTO from '../../../models/TSAntragSearchresultDTO';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
+import * as moment from 'moment';
 import Moment = moment.Moment;
+import IDocumentService = angular.IDocumentService;
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import TSUser from '../../../models/TSUser';
 let template = require('./dv-antrag-list.html');
 require('./dv-antrag-list.less');
 
@@ -22,7 +29,7 @@ export class DVAntragListConfig implements IComponentOptions {
         onAdd: '&',
         onEdit: '&',
         onFilterChange: '&',
-        antraege: '<',
+        totalResultCount: '<',
         tableId: '@',
         tableTitle: '@',
         actionVisible: '@',
@@ -36,7 +43,7 @@ export class DVAntragListConfig implements IComponentOptions {
 
 export class DVAntragListController {
 
-    antraege: Array<TSAntragDTO> = []; //muss hier gesuch haben damit Felder die wir anzeigen muessen da sind
+    totalResultCount: number;
     displayedCollection: Array<TSAntragDTO> = []; //Liste die im Gui angezeigt wird
     pagination: any;
     gesuchsperiodenList: Array<string>;
@@ -45,8 +52,14 @@ export class DVAntragListController {
     selectedBetreuungsangebotTyp: string;
     selectedAntragTyp: string;
     selectedAntragStatus: string;
-    selectedInstitution: string;
+    selectedInstitution: TSInstitution;
     selectedGesuchsperiode: string;
+    selectedFallNummer: string;
+    selectedFamilienName: string;
+    selectedKinder: string;
+    selectedAenderungsdatum: string;
+    selectedEingangsdatumSTV: string;
+    selectedVerantwortlicher: TSUser;
 
     tableId: string;
     tableTitle: string;
@@ -59,14 +72,17 @@ export class DVAntragListController {
     onFilterChange: (changedTableState: any) => IPromise<any>;
     onEdit: (pensumToEdit: any) => void;
     onAdd: () => void;
+    TSRoleUtil: any;
 
-    static $inject: any[] = ['EbeguUtil', '$filter', '$log', 'InstitutionRS', 'GesuchsperiodeRS', 'CONSTANTS'];
+    static $inject: any[] = ['EbeguUtil', '$filter', '$log', 'InstitutionRS', 'GesuchsperiodeRS', 'CONSTANTS', 'AuthServiceRS',
+        '$window'];
     /* @ngInject */
     constructor(private ebeguUtil: EbeguUtil, private $filter: IFilterService, private $log: ILogService,
                 private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS,
-                private CONSTANTS: any) {
+                private CONSTANTS: any, private authServiceRS: AuthServiceRS, private $window: ng.IWindowService) {
         this.removeButtonTitle = 'Eintrag entfernen';
         this.initViewModel();
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     private initViewModel() {
@@ -82,16 +98,6 @@ export class DVAntragListController {
         if (this.addButtonVisible === undefined) {
             this.addButtonVisible = 'false';
         }
-        //clear selected
-        if (this.antraege) {
-            for (var i = 0; i < this.antraege.length; i++) {
-                let obj: any = this.antraege[i];
-                obj.isSelected = false;
-
-            }
-        }
-        this.displayedCollection.concat(this.antraege);
-        // this.callServer(undefined);
     }
 
     public updateInstitutionenList(): void {
@@ -139,10 +145,10 @@ export class DVAntragListController {
         } else {
             this.$log.info('no callback function spcified for filtering');
         }
-    };
+    }
 
     public getAntragTypen(): Array<TSAntragTyp> {
-        return getTSAntragTypValues();
+        return getNormalizedTSAntragTypValues();
     }
 
     /**
@@ -150,7 +156,7 @@ export class DVAntragListController {
      * @returns {Array<TSAntragStatus>}
      */
     public getAntragStatus(): Array<TSAntragStatus> {
-        return getTSAntragStatusValues();
+        return getTSAntragStatusValuesByRole(this.authServiceRS.getPrincipalRole());
     }
 
     /**
@@ -191,7 +197,16 @@ export class DVAntragListController {
 
     public isActionsVisible() {
         return this.actionVisible === 'true';
+    }
 
+    /**
+     * Provided there is a row with id antraegeHeadRow it will take this row to check how many
+     * columns there are. Therefore this row cannot have any colspan inside any cell and any other
+     * children but td or th
+     */
+    public getColumnsNumber(): number {
+        let element = this.$window.document.getElementById('antraegeHeadRow');
+        return element.childElementCount;
     }
 }
 

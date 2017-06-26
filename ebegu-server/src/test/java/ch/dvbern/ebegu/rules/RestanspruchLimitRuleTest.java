@@ -9,8 +9,6 @@ import org.apache.commons.lang3.Validate;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
 
 import static ch.dvbern.ebegu.rules.EbeguRuleTestsHelper.calculate;
@@ -20,9 +18,6 @@ import static ch.dvbern.ebegu.rules.EbeguRuleTestsHelper.calculateWithRemainingR
  * Tests für {@link RestanspruchLimitCalcRule}
  */
 public class RestanspruchLimitRuleTest {
-
-	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
-	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
 
 
 	@Test
@@ -99,10 +94,10 @@ public class RestanspruchLimitRuleTest {
 	}
 
 	private List<VerfuegungZeitabschnitt> initZeitabschnitteForSecondBetreuung(int arbeitspensum, int remainingRestanspruch, int betreuungspensum, BetreuungsangebotTyp type) {
-		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, type, betreuungspensum);
+		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, type, betreuungspensum);
 		final Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
-		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, arbeitspensum, 0));
+		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, arbeitspensum, 0));
 		List<VerfuegungZeitabschnitt> calculatedAbschnitte;
 		if (remainingRestanspruch != -1) {
 			//simulates the already existing another betreuung and we have just remainingRestanspruch left for this calculation,

@@ -1,6 +1,7 @@
 import TSAbstractEntity from './TSAbstractEntity';
 import TSUser from './TSUser';
 import {TSAntragStatus} from './enums/TSAntragStatus';
+import * as moment from 'moment';
 
 export default class TSAntragStatusHistory extends TSAbstractEntity {
 

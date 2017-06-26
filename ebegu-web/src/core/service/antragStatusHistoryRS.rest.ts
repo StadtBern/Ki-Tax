@@ -3,6 +3,8 @@ import {IHttpService, ILogService, IPromise} from 'angular';
 import TSAntragStatusHistory from '../../models/TSAntragStatusHistory';
 import TSGesuch from '../../models/TSGesuch';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import TSGesuchsperiode from '../../models/TSGesuchsperiode';
+import TSFall from '../../models/TSFall';
 
 export default class AntragStatusHistoryRS {
 
@@ -44,6 +46,17 @@ export default class AntragStatusHistoryRS {
                 });
         } else {
             this._lastChange = undefined;
+        }
+        return undefined;
+    }
+
+    public loadAllAntragStatusHistoryByGesuchsperiode(fall: TSFall, gesuchsperiode: TSGesuchsperiode): IPromise<Array<TSAntragStatusHistory>> {
+        if (gesuchsperiode && gesuchsperiode.id && fall && fall.id) {
+            return this.http.get(this.serviceURL + '/verlauf/' + encodeURIComponent(gesuchsperiode.id) + '/' + encodeURIComponent(fall.id))
+                .then((response: any) => {
+                    this.log.debug('PARSING AntragStatusHistory REST object ', response.data);
+                    return this.ebeguRestUtil.parseAntragStatusHistoryCollection(response.data);
+                });
         }
         return undefined;
     }

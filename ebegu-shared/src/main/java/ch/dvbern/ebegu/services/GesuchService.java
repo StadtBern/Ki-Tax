@@ -1,24 +1,27 @@
 package ch.dvbern.ebegu.services;
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Asynchronous;
+
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
 /**
  * Service zum Verwalten von Gesuche
  */
+@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 public interface GesuchService {
 
 	/**
@@ -35,10 +38,11 @@ public interface GesuchService {
 	 *
 	 * @param gesuch              das Gesuch als DTO
 	 * @param saveInStatusHistory true wenn gewollt, dass die Aenderung in der Status gespeichert wird
+	 * @param saveAsUser 		  wenn gesetzt, die Statusaenderung des Gesuchs wird mit diesem User gespeichert, sonst mit currentUser
 	 * @return Das aktualisierte Gesuch
 	 */
 	@Nonnull
-	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory);
+	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory, @Nullable Benutzer saveAsUser);
 
 	/**
 	 * Laedt das Gesuch mit der id aus der DB. ACHTUNG zudem wird hier der Status auf IN_BEARBEITUNG_JA gesetzt
@@ -50,6 +54,20 @@ public interface GesuchService {
 	Optional<Gesuch> findGesuch(@Nonnull String key);
 
 	/**
+	 * Spezialmethode fuer die Freigabe. Kann Gesuche lesen die im Status Freigabequittung oder hoeher sind
+	 */
+	@Nonnull
+	Optional<Gesuch> findGesuchForFreigabe(@Nonnull String gesuchId);
+
+	/**
+	 * Gibt alle Gesuche zurueck die in der Liste der gesuchIds auftauchen und fuer die der Benutzer berechtigt ist.
+	 * Gesuche fuer die der Benutzer nicht berechtigt ist werden uebersprungen
+	 * @param gesuchIds
+	 *
+	 */
+	List<Gesuch> findReadableGesuche(@Nullable Collection<String> gesuchIds);
+
+	/**
 	 * Gibt alle existierenden Gesuche zurueck.
 	 *
 	 * @return Liste aller Gesuche aus der DB
@@ -59,7 +77,6 @@ public interface GesuchService {
 
 	/**
 	 * Gibt alle existierenden Gesuche zurueck, deren Status nicht VERFUEGT ist
-	 *
 	 * @return Liste aller Gesuche aus der DB
 	 */
 	@Nonnull
@@ -71,12 +88,12 @@ public interface GesuchService {
 	 * @return Liste aller Gesuche aus der DB
 	 */
 	@Nonnull
-	Collection<Gesuch> getAllActiveGesucheOfVerantwortlichePerson(String benutzername);
+	Collection<Gesuch> getAllActiveGesucheOfVerantwortlichePerson(@Nonnull String benutzername);
 
 	/**
 	 * entfernt ein Gesuch aus der Database
 	 *
-	 * @param gesuch der Gesuch zu entfernen
+	 * @param gesuchId der Gesuch zu entfernen
 	 */
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	void removeGesuch(@Nonnull String gesuchId);
@@ -97,7 +114,7 @@ public interface GesuchService {
 	/**
 	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
 	 *
-	 * @param antragSearch
+	 * @param antragTableFilterDto
 	 * @return Resultatpaar, der erste Wert im Paar ist die Anzahl Resultate, der zweite Wert ist die Resultatliste
 	 */
 	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragTableFilterDto);
@@ -123,12 +140,11 @@ public interface GesuchService {
 									@Nonnull LocalDate eingangsdatum);
 
 	/**
-	 * Gibt das neuste verfügte Gesuch (mit dem neuesten Verfuegungsdatum) in der gleichen Gesuchsperiode zurück,
-	 * ACHTUNG: Dies kann ein neueres oder aelteres als das uebergebene Gesuch sein, oder sogar das uebergebene
-	 * Gesuch selber!
+	 * Erstellt ein Erneuerungsgesuch fuer die Gesuchsperiode und Fall des übergebenen Antrags. Es wird immer der
+	 * letzte verfügte Antrag kopiert für das Erneuerungsgesuch
 	 */
 	@Nonnull
-	Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch);
+	Optional<Gesuch> antragErneuern(@Nonnull String antragId, @Nonnull String gesuchsperiodeId, @Nullable LocalDate eingangsdatum);
 
 	/**
 	 * Gibt das neueste Gesuch der im selben Fall und Periode wie das gegebene Gesuch ist.
@@ -138,25 +154,6 @@ public interface GesuchService {
 	 */
 	@Nonnull
 	Optional<Gesuch> getNeustesGesuchFuerGesuch(@Nonnull Gesuch gesuch);
-
-	/**
-	 * Gibt das letzte verfuegte Gesuch zurueck, also rekursiv ueber die Vorgaenger, nie das uebergebene Gesuch.
-	 * @deprecated Diese Methode gibt das letzte verfuegte Gesuch zurueck. Dieses Gesuch muss nicht unbedignt
-	 * die richtigen Daten enthalten. Diese Methode sollte deshalb nur vorsichtig benutzt werden.
-	 * Z.B. wenn eine Betreuung im Status GESCHLOSSEN_OHNE_VERFUEGUNG ist, und wir diese Methode benutzen, wird dann die falsche
-	 * Verfuegung geholt
-	 * @return
-	 */
-	@Nonnull
-	@Deprecated
-	Optional<Gesuch> getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(Gesuch gesuch);
-
-	/**
-	 * fuellt die laufnummern der Gesuche/Mutationen eines Falls auf (nach timestamperstellt)
-	 *
-	 * @param fallId
-	 */
-	void updateLaufnummerOfAllGesucheOfFall(String fallId);
 
 	/**
 	 * Alle GesucheIDs des Gesuchstellers zurueckgeben fuer admin
@@ -170,18 +167,18 @@ public interface GesuchService {
 	 * @param gesuchsperiode
 	 */
 	@Nonnull
-	List<Gesuch> getAllGesucheForFallAndPeriod(@NotNull Fall fall, @NotNull Gesuchsperiode gesuchsperiode);
+	List<Gesuch> getAllGesucheForFallAndPeriod(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
 	 * Das gegebene Gesuch wird mit heutigem Datum freigegeben und den Step FREIGABE auf OK gesetzt
 	 * @param gesuch
 	 * @param statusToChangeTo
 	 */
-	Gesuch antragFreigabequittungErstellen(@NotNull Gesuch gesuch, AntragStatus statusToChangeTo);
+	Gesuch antragFreigabequittungErstellen(@Nonnull Gesuch gesuch, AntragStatus statusToChangeTo);
 
 	/**
 	 * Gibt das Gesuch frei für das Jugendamt: Anpassung des Status inkl Kopieren der Daten des GS aus den
-	 * JA-Containern in die GS-Containern
+	 * JA-Containern in die GS-Containern. Wird u.a. beim einlesen per Scanner aufgerufen
 	 */
 	@Nonnull
 	Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username);
@@ -192,7 +189,7 @@ public interface GesuchService {
 	 * @return Gibt das aktualisierte gegebene Gesuch zurueck
 	 */
 	@Nonnull
-	Gesuch setBeschwerdeHaengigForPeriode(@NotNull Gesuch gesuch);
+	Gesuch setBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch);
 
 	/**
 	 * Setzt das gegebene Gesuch als VERFUEGT und bei allen Gescuhen der Periode den Flag
@@ -200,5 +197,87 @@ public interface GesuchService {
 	 * @return Gibt das aktualisierte gegebene Gesuch zurueck
 	 */
 	@Nonnull
-	Gesuch removeBeschwerdeHaengigForPeriode(@NotNull Gesuch gesuch);
+	Gesuch removeBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Gibt zurueck, ob es sich um das neueste Gesuch (egal welcher Status) handelt
+	 */
+	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Gibt das neueste (zuletzt verfügte) Gesuch für eine Gesuchsperiode und einen Fall zurueck.
+	 */
+	@Nonnull
+	Optional<String> getNeustesFreigegebenesGesuchIdFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall);
+
+	/**
+	 * Schickt eine E-Mail an alle Gesuchsteller, die ihr Gesuch innerhalb einer konfigurierbaren Frist nach
+	 * Erstellung nicht freigegeben haben.
+	 * Gibt die Anzahl Warnungen zurueck.
+	 */
+	int warnGesuchNichtFreigegeben();
+
+	/**
+	 * Schickt eine E-Mail an alle Gesuchsteller, die die Freigabequittung innerhalb einer konfigurierbaren Frist nach
+	 * Freigabe des Gesuchs nicht geschickt haben.
+	 * Gibt die Anzahl Warnungen zurueck.
+	 */
+	int warnFreigabequittungFehlt();
+
+	/**
+	 * Löscht alle Gesuche, die nach einer konfigurierbaren Frist nach Erstellung nicht freigegeben bzw. nach Freigabe
+	 * die Quittung nicht geschickt haben. Schickt dem Gesuchsteller eine E-Mail.
+	 * Gibt die Anzahl Warnungen zurueck.
+	 */
+	int deleteGesucheOhneFreigabeOderQuittung();
+
+	/**
+	 * Prüft, ob alle Anträge dieser Periode im Status VERFUEGT oder NUR_SCHULAMT sind
+	 */
+	boolean canGesuchsperiodeBeClosed(@Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
+	 * Sucht die neueste Online Mutation, die zu dem gegebenen Antrag gehoert und loescht sie.
+	 * Diese Mutation muss Online und noch nicht freigegeben sein. Diese Methode darf nur bei ADMIN oder SUPER_ADMIN
+	 * aufgerufen werden, wegen loescherechten wird es dann immer mir RunAs/SUPER_ADMIN) ausgefuehrt.
+	 * @param fall Der Antraege, zu denen die Mutation gehoert, die geloescht werden muss
+	 * @param gesuchsperiode
+	 */
+	void removeOnlineMutation(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
+	 * Sucht ein Folgegesuch fuer den gegebenen Antrag in der gegebenen Gesuchsperiode
+	 * @param fall Der Antraeg des Falles
+	 * @param gesuchsperiode Gesuchsperiode in der das Folgegesuch gesucht werden muss
+	 */
+	void removeOnlineFolgegesuch(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
+	 * Schliesst ein Gesuch, das sich im Status GEPRUEFT befindet und kein Angebot hat
+	 * Das Gesuch bekommt den Status KEIN_ANGEBOT und der WizardStep VERFUEGEN den Status OK
+	 */
+	Gesuch closeWithoutAngebot(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Wenn das Gesuch nicht nur Schulangebote hat, wechselt der Status auf VERFUEGEN. Falls es
+	 * nur Schulangebote hat, wechselt der Status auf NUR_SCHULAMT, da es keine Verfuegung noetig ist
+	 * @param gesuch
+	 * @return
+	 */
+	Gesuch verfuegenStarten(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Schliesst das Verfuegen ab: Setzt den TimestampVerfuegt und das Gueltig-Flag, bzw. entfernt dieses
+	 * beim letzt gueltigen Gesuch
+	 */
+	void postGesuchVerfuegen(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Sucht das jeweils juengste Gesuch pro Fall der lastGesuchsperiode und sendet eine
+	 * Infomail betreffend der neuen Gesuchsperiode (nextGesuchsperiode).
+	 * Diese Methode wird asynchron ausgefuehrt, da das ermitteln des jeweils letzten Gesuchs pro
+	 * Fall sehr lange geht.
+	 */
+	@Asynchronous
+	void sendMailsToAllGesuchstellerOfLastGesuchsperiode(@Nonnull Gesuchsperiode lastGesuchsperiode, @Nonnull Gesuchsperiode nextGesuchsperiode);
 }

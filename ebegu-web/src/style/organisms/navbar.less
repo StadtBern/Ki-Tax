@@ -55,7 +55,7 @@
             display: inline-block;
             width: 18rem;
             height: @navbar-height;
-            > a {
+            a {
                 font-size: 1.6rem;
                 line-height: @navbar-height;
                 height: @navbar-height;
@@ -71,7 +71,7 @@
                 }
             }
             &.active {
-                > a, > a:hover, > a:focus {
+                a, > a:hover, > a:focus {
                     display: inline-block;
                     box-sizing: border-box;
                     .ebeguBold();
@@ -81,15 +81,14 @@
                 }
             }
         }
-        .ddm
-        > .active {
+        .active {
             > a {
                 .ebeguBold();
                 color: @contrast-lightest;
                 // background-color: @primary;
             }
         }
-        > .open {
+        .open {
             > a, > a:hover, > a:focus {
                 color: @primary-light;
                 //    background-color: @primary;

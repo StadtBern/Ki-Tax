@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import Moment = moment.Moment; // TODO kann das über ein anderes Import Format gelöst werden (import ... from 'moment')?
+import Moment = moment.Moment; // kann das über ein anderes Import Format gelöst werden (import ... from 'moment')?
 
 export default class DateUtil {
 
@@ -8,7 +8,7 @@ export default class DateUtil {
      * @returns {?Moment}
      */
     public static localDateTimeToMoment(localDateTimeString: string): Moment {
-        var theMoment: Moment = moment(localDateTimeString, ['YYYY-MM-DDTHH:mm:ss.SSS', 'YYYY-MM-DDTHH:mm:ss', 'YYYY-MM-DDTHH:mm:ss.SSSZ'], true);
+        let theMoment: Moment = moment(localDateTimeString, ['YYYY-MM-DDTHH:mm:ss.SSS', 'YYYY-MM-DDTHH:mm:ss', 'YYYY-MM-DDTHH:mm:ss.SSSZ'], true);
         return theMoment.isValid() ? theMoment : undefined;
     }
 
@@ -23,6 +23,7 @@ export default class DateUtil {
 
     /**
      * @param {Moment} aMoment time instance
+     * @param {string} format the format
      * @returns {?string} a Date (YYYY-MM-DD) representation of the given moment. NULL when aMoment is invalid
      */
     public static momentToLocalDateFormat(aMoment: Moment, format: string): string {
@@ -37,7 +38,7 @@ export default class DateUtil {
      * @param format format for the time
      * @returns {?string} a Date (YYYY-MM-DD) representation of the given moment. undefined when aMoment is invalid
      */
-    private static momentToLocalDateTimeFormat(aMoment: Moment, format: string): string {
+    public static momentToLocalDateTimeFormat(aMoment: Moment, format: string): string {
         if (!aMoment) {
             return undefined;
         }
@@ -57,8 +58,8 @@ export default class DateUtil {
      * @param {string} localDateString string with format YYYY-MM-DD
      * @returns {?moment}
      */
-    public static localDateToMoment(localDateString: string) { // TODO how to annotate optional Moment return type?
-        var theMoment = moment(localDateString, 'YYYY-MM-DD', true);
+    public static localDateToMoment(localDateString: string): Moment {
+        let theMoment = moment(localDateString, 'YYYY-MM-DD', true);
         return theMoment.isValid() ? theMoment : undefined;
     }
 
@@ -72,5 +73,18 @@ export default class DateUtil {
 
     public static currentYear(): number {
         return moment().year();
+    }
+
+    /**
+     * Vergleicht 2 Moments. Date und Time werden beruecksichtigt.
+     */
+    public static compareDateTime(a: Moment, b: Moment): number {
+        if (a.isBefore(b)) {
+            return -1;
+        } else if (a.isSame(b)) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 }

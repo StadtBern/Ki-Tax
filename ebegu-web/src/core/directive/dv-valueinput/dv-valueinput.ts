@@ -116,7 +116,9 @@ export class ValueinputController {
 
     updateModelValue() {
         //set the number as formatted string to the model
-        this.valueinput = ValueinputController.formatToNumberString(ValueinputController.formatFromNumberString(this.valueinput));
+        if (this.valueinput) {
+            this.valueinput = ValueinputController.formatToNumberString(ValueinputController.formatFromNumberString(this.valueinput));
+        }
         this.ngModelCtrl.$setViewValue(this.valueinput);
         if (this.dvOnBlur) { // userdefined onBlur event
             this.dvOnBlur();
@@ -131,11 +133,11 @@ export class ValueinputController {
         return '';
     }
 
-    private static stringToNumber(string: string): number {
+    private static stringToNumber(string: string): number | undefined {
         if (string) {
             return Number(ValueinputController.formatFromNumberString(string));
         }
-        return null;
+        return undefined;
     }
 
     private static formatToNumberString(valueString: string): string {
@@ -161,16 +163,18 @@ export class ValueinputController {
 
     private sanitizeInputString() {
         let transformedInput = this.valueinput;
-        let sign: string = '';
-        if (this.allowNegative === true && this.valueinput && this.valueinput.indexOf('-') === 0) { // if negative allowed, get sign
-            sign = '-';
-            transformedInput.substr(1); // get just the number part
-        }
-        transformedInput = transformedInput.replace(/\D+/g, ''); // removes all "not digit"
         if (transformedInput) {
-            transformedInput = parseInt(transformedInput).toString(); // parse to int to remove not wanted digits like leading zeros and then back to string
+            let sign: string = '';
+            if (this.allowNegative === true && this.valueinput && this.valueinput.indexOf('-') === 0) { // if negative allowed, get sign
+                sign = '-';
+                transformedInput.substr(1); // get just the number part
+            }
+            transformedInput = transformedInput.replace(/\D+/g, ''); // removes all "not digit"
+            if (transformedInput) {
+                transformedInput = parseInt(transformedInput).toString(); // parse to int to remove not wanted digits like leading zeros and then back to string
+            }
+            transformedInput = sign + transformedInput; // add sign to raw number
         }
-        transformedInput = sign + transformedInput; // add sign to raw number
         return transformedInput;
     }
 

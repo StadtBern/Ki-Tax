@@ -1,6 +1,7 @@
 import TSAbstractEntity from './TSAbstractEntity';
 import TSGesuch from './TSGesuch';
 import {TSMahnungTyp} from './enums/TSMahnungTyp';
+import * as moment from 'moment';
 
 export default class TSMahnung extends TSAbstractEntity {
 

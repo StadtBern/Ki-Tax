@@ -21,7 +21,7 @@ public class JaxFall extends JaxAbstractDTO {
 	@Min(1)
 	private Integer nextNumberKind = 1;
 
-	private String besitzerUsername; //
+	private JaxAuthLoginElement besitzer; //
 
 
 	public long getFallNummer() {
@@ -48,11 +48,11 @@ public class JaxFall extends JaxAbstractDTO {
 		this.nextNumberKind = nextNumberKind;
 	}
 
-	public void setBesitzerUsername(String besitzerUsername) {
-		this.besitzerUsername = besitzerUsername;
+	public void setBesitzer(JaxAuthLoginElement besitzer) {
+		this.besitzer = besitzer;
 	}
 
-	public String getBesitzerUsername() {
-		return besitzerUsername;
+	public JaxAuthLoginElement getBesitzer() {
+		return besitzer;
 	}
 }

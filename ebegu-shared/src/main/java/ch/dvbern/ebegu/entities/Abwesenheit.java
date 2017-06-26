@@ -1,10 +1,10 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.types.DateRange;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
+import javax.validation.Valid;
 
 /**
  * Entity fuer Abwesenheit.
@@ -16,9 +16,21 @@ public class Abwesenheit extends AbstractDateRangedEntity implements Comparable<
 
 	private static final long serialVersionUID = -6776981643150835840L;
 
+
+	@Valid
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "abwesenheitJA")
+	private AbwesenheitContainer abwesenheitContainer;
+
 	public Abwesenheit() {
 	}
 
+	public AbwesenheitContainer getAbwesenheitContainer() {
+		return abwesenheitContainer;
+	}
+
+	public void setAbwesenheitContainer(AbwesenheitContainer abwesenheitContainer) {
+		this.abwesenheitContainer = abwesenheitContainer;
+	}
 
 	@Override
 	public int compareTo(Abwesenheit o) {

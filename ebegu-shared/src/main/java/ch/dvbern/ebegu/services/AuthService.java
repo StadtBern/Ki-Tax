@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.authentication.AuthLoginElement;
-import ch.dvbern.ebegu.authentication.BenutzerCredentials;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 
 import javax.annotation.Nonnull;
@@ -24,15 +23,6 @@ public interface AuthService {
 
 	/**
 	 * @param authToken Authentifizierungs Token Identifikation
-	 * @return BenutzerCredentials mit der angegebenen Identifikation falls vorhanden
-	 * @deprecated  sieht aus als ob das nicht mehr benutzt wird, evtl entfernen
-	 */
-	@Nonnull
-	@Deprecated()
-	Optional<BenutzerCredentials> getCredentialsForAuthorizedToken(@Nonnull final String authToken);
-
-	/**
-	 * @param authToken Authentifizierungs Token Identifikation
 	 * @return TRUE falls das Logout erfolgreich war, sonst FALSE
 	 */
 	boolean logout(@Nonnull final String authToken);
@@ -42,6 +32,7 @@ public interface AuthService {
 
 	/**
 	 * gets the logged in user based on the login token
+	 * if doRefresh is true, the login cookie gets refreshed.
 	 */
-	Optional<AuthorisierterBenutzer> validateAndRefreshLoginToken(String token);
+	Optional<AuthorisierterBenutzer> validateAndRefreshLoginToken(String token, boolean doRefreshToken);
 }

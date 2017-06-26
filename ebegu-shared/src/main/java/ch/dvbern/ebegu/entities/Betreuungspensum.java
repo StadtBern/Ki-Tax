@@ -4,7 +4,6 @@ import ch.dvbern.ebegu.types.DateRange;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -26,6 +25,12 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 
 
 	public Betreuungspensum() {
+	}
+
+	public Betreuungspensum(BetreuungsmitteilungPensum betPensumMitteilung) {
+		this.setGueltigkeit(new DateRange(betPensumMitteilung.getGueltigkeit()));
+		this.setPensum(betPensumMitteilung.getPensum());
+		this.setNichtEingetreten(false); //can not be set through BetreuungsmitteilungPensum
 	}
 
 	public Betreuungspensum(DateRange gueltigkeit) {

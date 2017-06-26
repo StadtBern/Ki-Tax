@@ -38,10 +38,6 @@ public interface Authorizer {
 	 */
 	void checkWriteAuthorization(@Nullable Fall fall);
 
-	/**
-	 * prueft ob der aktuell eingeloggte benutzer den Fall mit id schreibend bearbeiten darf
-	 */
-	void checkWriteAuthorizationFall(@Nonnull  String fallId);
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer den fall lesen darf
@@ -109,4 +105,10 @@ public interface Authorizer {
 	void checkReadAuthorizationFinSit(@Nullable Gesuch gesuch);
 
 	void checkReadAuthorization(@Nullable WizardStep step);
+
+	/**
+	 * prueft ob der aktuelle Benutzer ein Gesuch fuer die Freigabe lesen darf
+	 */
+	void checkReadAuthorizationForFreigabe(Gesuch gesuch);
+
 }

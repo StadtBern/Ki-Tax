@@ -7,7 +7,7 @@ import TSPendenzInstitution from '../../models/TSPendenzInstitution';
 
 describe('pendenzInstitutionRS', function () {
 
-    var pendenzInstitutionRS: PendenzInstitutionRS;
+    let pendenzInstitutionRS: PendenzInstitutionRS;
     let $httpBackend: IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockPendenzInstitution: TSPendenzInstitution;
@@ -23,7 +23,7 @@ describe('pendenzInstitutionRS', function () {
 
     beforeEach(() => {
         mockPendenzInstitution = new TSPendenzInstitution('123.12.12', '123',  '123',  '123', 'Kind', 'Kilian', undefined, 'Platzbestaetigung', undefined,
-            undefined, TSBetreuungsangebotTyp.KITA, undefined);
+            undefined, undefined, TSBetreuungsangebotTyp.KITA, undefined);
         mockPendenzInstitutionRest = ebeguRestUtil.pendenzInstitutionToRestObject({}, mockPendenzInstitution);
     });
 

@@ -1,22 +1,23 @@
 import {TSAbstractDateRangedEntity} from './TSAbstractDateRangedEntity';
 import {TSDateRange} from './types/TSDateRange';
+import {TSGesuchsperiodeStatus} from './enums/TSGesuchsperiodeStatus';
 
 export default class TSGesuchsperiode extends TSAbstractDateRangedEntity {
 
-    private _active: boolean;
+    private _status: TSGesuchsperiodeStatus;
 
-    constructor(active?: boolean, gueltigkeit?: TSDateRange) {
+    constructor(status?: TSGesuchsperiodeStatus, gueltigkeit?: TSDateRange) {
         super(gueltigkeit);
-        this._active = active;
+        this._status = status;
     }
 
 
-    get active(): boolean {
-        return this._active;
+    get status(): TSGesuchsperiodeStatus {
+        return this._status;
     }
 
-    set active(value: boolean) {
-        this._active = value;
+    set status(value: TSGesuchsperiodeStatus) {
+        this._status = value;
     }
 
     get gesuchsperiodeString(): string {

@@ -1,4 +1,5 @@
 import {IDirective, IDirectiveFactory, IHttpService} from 'angular';
+import * as moment from 'moment';
 import Moment = moment.Moment;
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
@@ -22,7 +23,7 @@ export class DVLoading implements IDirective {
 
             }
         });
-    };
+    }
 
     static factory(): IDirectiveFactory {
         const directive = () => new DVLoading();

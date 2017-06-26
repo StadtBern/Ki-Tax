@@ -18,9 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Testet PendenzResource
@@ -46,6 +44,8 @@ public class PendenzResourceTest extends AbstractEbeguRestLoginTest {
 		TestDataUtil.persistEntities(gesuch2, persistence);
 
 		List<JaxAntragDTO> pendenzenList = pendenzResource.getAllPendenzenJA();
+		// Die Antraege muessen sortiert werden, damit der Test immer gleich ablaeuft
+		Collections.sort(pendenzenList, (o1, o2) -> o1.getFallNummer() > o2.getFallNummer() ? 1 : -1);
 
 		Assert.assertNotNull(pendenzenList);
 		Assert.assertEquals(2, pendenzenList.size());
@@ -57,7 +57,7 @@ public class PendenzResourceTest extends AbstractEbeguRestLoginTest {
 		angeboteList.add(BetreuungsangebotTyp.KITA);
 		Assert.assertEquals(angeboteList, pendenzenList.get(0).getAngebote());
 
-		Assert.assertEquals(AntragTyp.GESUCH, pendenzenList.get(0).getAntragTyp());
+		Assert.assertEquals(AntragTyp.ERSTGESUCH, pendenzenList.get(0).getAntragTyp());
 
 		Set<String> institutionen = new LinkedHashSet<>();
 		institutionen.add("Institution1");

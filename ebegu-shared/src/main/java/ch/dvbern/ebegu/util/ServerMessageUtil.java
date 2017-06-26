@@ -76,19 +76,16 @@ public final class ServerMessageUtil {
 		return getMessage(getKey(e), args);
 	}
 
-
 	/**
 	 * Uebersetzt einen Enum-Wert
 	 */
 	@Nonnull
-	public static String translateEnumValue(@Nullable final Enum<?> e, Locale locale) {
+	public static String translateEnumValue(@Nullable final Enum<?> e, Locale locale, Object... args) {
 		if (e == null) {
 			return StringUtils.EMPTY;
 		}
-		return getMessage(getKey(e),locale);
+		return getMessage(getKey(e),locale, args);
 	}
-
-
 
 	/**
 	 * Gibt den Bundle-Key für einen Enum-Wert zurück.

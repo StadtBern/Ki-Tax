@@ -1,19 +1,26 @@
 <div class="pendenzenInstitutionListView">
-    <div class="col-md-12">
+    <div class="col-md-12" st-table="displayedCollection" st-set-filter="pendenzInstitutionFilter"
+         st-safe-src="vm.getPendenzenList()"  st-delay="20">
+
         <div class="row">
-            <div class="col-md-11">
-                <h3 data-translate="PENDENZEN_LIST"></h3>
+            <div class="col-md-10">
+                <div id="titleText">
+                    <h3 data-translate="PENDENZEN_LIST"></h3>
+                </div>
+                <div id="refreshIcon">
+                    <i class="fa fa-undo" dv-st-reset-search></i>
+                </div>
             </div>
-            <div class="col-md-1 text-right">
-                <h3 ng-bind="vm.getPendenzenList() ? vm.getPendenzenList().length : 0"></h3>
+            <div class="col-md-2 text-right">
+                <h3 ng-bind="(displayedCollection || [] ).length"></h3>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12 table-responsive">
 
-                <table st-table="displayedCollection" st-set-filter="pendenzInstitutionFilter"  st-safe-src="vm.getPendenzenList()"  st-delay="20"
-                       class="table table-striped fixedtable">
+                <table class="table table-striped fixedtable">
                     <thead>
+                    <!-- Sortierspalten -->
                     <tr>
                         <th st-sort="betreuungsNummer" class="sortable" data-translate="ID_UPPER"></th>
                         <th st-sort="name" class="sortable" data-translate="NAME_UPPER"></th>
@@ -25,6 +32,7 @@
                         <th st-sort="betreuungsangebotTyp" class="sortable" data-translate="ANGEBOT_UPPER"></th>
                         <th st-sort="institution" class="sortable" data-translate="INSTITUTION_UPPER"></th>
                     </tr>
+                    <!-- Filterspalten -->
                     <tr>
                         <th><input st-search="betreuungsNummer" class="form-control" type="text"/></th>
                         <th><input st-search="name" class="form-control" type="text"/></th>
@@ -33,7 +41,7 @@
                         <th><input st-search="typ" class="form-control" type="text"/></th>
                         <th>
                             <div class="dv-select-style">
-                                <select st-input-event="change" name="gesuchsperiodeString" id="gesuchsperiodeString" st-search="gesuchsperiodeString" class="form-control"
+                                <select st-input-event="change" name="gesuchsperiodeString" id="gesuchsperiodeString" st-search="gesuchsperiode.gesuchsperiodeString" class="form-control"
                                         ng-options="periode for periode in vm.activeGesuchsperiodenList track by periode"
                                         ng-model="vm.selectedGesuchsperiode">
                                     <option value="">{{"ALLE" | translate}}</option>
@@ -61,6 +69,7 @@
                         </th>
                     </tr>
                     </thead>
+                    <!-- Daten -->
                     <tbody>
                     <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                         ng-click="vm.editPendenzInstitution(row, $event)">

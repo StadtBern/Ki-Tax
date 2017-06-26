@@ -5,6 +5,7 @@ import EbeguUtil from './EbeguUtil';
 import * as moment from 'moment';
 import TSFall from '../models/TSFall';
 import TestDataUtil from './TestDataUtil';
+import {TSGesuchsperiodeStatus} from '../models/enums/TSGesuchsperiodeStatus';
 
 describe('EbeguUtil', function () {
 
@@ -79,17 +80,17 @@ describe('EbeguUtil', function () {
             expect(ebeguUtil.getFirstDayGesuchsperiodeAsString(undefined)).toBe('');
         });
         it ('it returns empty string for undefined daterange in the Gesuchsperiode', () => {
-            let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode(true, undefined);
+            let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.AKTIV, undefined);
             expect(ebeguUtil.getFirstDayGesuchsperiodeAsString(undefined)).toBe('');
         });
         it ('it returns empty string for undefined gueltigAb', () => {
             let daterange: TSDateRange = new TSDateRange(undefined, moment('31.07.2017', 'DD.MM.YYYY'));
-            let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode(true, daterange);
+            let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.AKTIV, daterange);
             expect(ebeguUtil.getFirstDayGesuchsperiodeAsString(gesuchsperiode)).toBe('');
         });
         it ('it returns 01.08.2016', () => {
             let daterange: TSDateRange = new TSDateRange(moment('01.08.2016', 'DD.MM.YYYY'), moment('31.07.2017', 'DD.MM.YYYY'));
-            let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode(true, daterange);
+            let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.AKTIV, daterange);
             expect(ebeguUtil.getFirstDayGesuchsperiodeAsString(gesuchsperiode)).toBe('01.08.2016');
         });
     });

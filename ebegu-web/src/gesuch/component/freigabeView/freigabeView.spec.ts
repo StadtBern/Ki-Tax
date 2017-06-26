@@ -168,7 +168,7 @@ describe('freigabeView', function () {
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
         });
         it('should call the service with TSZustelladresse.JUGENDAMT for Erstgesuch', function () {
-            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
+            spyOn(gesuchModelManager, 'isGesuch').and.returnValue(true);
             spyOn(gesuchModelManager, 'areThereOnlySchulamtAngebote').and.returnValue(false);
 
             controller.openFreigabequittungPDF(false);
@@ -177,7 +177,7 @@ describe('freigabeView', function () {
             expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.JUGENDAMT);
         });
         it('should call the service with TSZustelladresse.SCHULAMT for Erstgesuch', function () {
-            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
+            spyOn(gesuchModelManager, 'isGesuch').and.returnValue(true);
             spyOn(gesuchModelManager, 'areThereOnlySchulamtAngebote').and.returnValue(true);
 
             controller.openFreigabequittungPDF(false);
@@ -186,7 +186,7 @@ describe('freigabeView', function () {
             expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.SCHULAMT);
         });
         it('should call the service with TSZustelladresse.JUGENDAMT for Mutation of Erstgesuch with SA-Freigabequittung', function () {
-            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(false);
+            spyOn(gesuchModelManager, 'isGesuch').and.returnValue(false);
             spyOn(gesuchModelManager, 'areAllJAAngeboteNew').and.returnValue(true);
 
             controller.openFreigabequittungPDF(false);
@@ -195,7 +195,7 @@ describe('freigabeView', function () {
             expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.JUGENDAMT);
         });
         it('should call the service with undefined for Mutation of Erstgesuch with JS-Freigabequittung', function () {
-            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(false);
+            spyOn(gesuchModelManager, 'isGesuch').and.returnValue(false);
             spyOn(gesuchModelManager, 'areAllJAAngeboteNew').and.returnValue(false);
 
             controller.openFreigabequittungPDF(false);

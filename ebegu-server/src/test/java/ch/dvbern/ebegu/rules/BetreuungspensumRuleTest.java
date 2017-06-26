@@ -8,8 +8,6 @@ import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
 
 import static ch.dvbern.ebegu.rules.EbeguRuleTestsHelper.calculate;
@@ -23,13 +21,10 @@ public class BetreuungspensumRuleTest {
 
 	private final RestanspruchInitializer restanspruchInitializer = new RestanspruchInitializer();
 
-	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
-	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
-
 	@Test
 	public void testKitaNormalfall() {
-		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE,  BetreuungsangebotTyp.KITA, 60);
-		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
+		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE,  BetreuungsangebotTyp.KITA, 60);
+		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 60, 0));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
 
 		Assert.assertNotNull(result);
@@ -44,8 +39,8 @@ public class BetreuungspensumRuleTest {
 
 	@Test
 	public void testKitaZuwenigAnspruch() {
-		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.KITA, 80);
-		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
+		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, BetreuungsangebotTyp.KITA, 80);
+		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 60, 0));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
 
 		Assert.assertNotNull(result);
@@ -60,8 +55,8 @@ public class BetreuungspensumRuleTest {
 
 	@Test
 	public void testKitaMitRestanspruch() {
-		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.KITA, 60);
-		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
+		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, BetreuungsangebotTyp.KITA, 60);
+		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 80, 0));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
 
 		Assert.assertNotNull(result);
@@ -77,9 +72,9 @@ public class BetreuungspensumRuleTest {
 
 	@Test
 	public void testZweiKitas() {
-		Betreuung betreuung1 = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.KITA, 60);
-		Betreuung betreuung2 = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.KITA, 40);
-		betreuung1.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
+		Betreuung betreuung1 = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, BetreuungsangebotTyp.KITA, 60);
+		Betreuung betreuung2 = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, BetreuungsangebotTyp.KITA, 40);
+		betreuung1.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 80, 0));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung1);
 
 		Assert.assertNotNull(result);
@@ -96,7 +91,7 @@ public class BetreuungspensumRuleTest {
 		Assert.assertEquals(0, abschnForNxtBetr.get(0).getAnspruchberechtigtesPensum());
 
 		// Kita 2: Reicht nicht mehr ganz
-		betreuung2.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
+		betreuung2.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 80, 0));
 		List<VerfuegungZeitabschnitt> resultBetr2 = calculateWithRemainingRestanspruch(betreuung2, 20);
 
 
@@ -114,10 +109,10 @@ public class BetreuungspensumRuleTest {
 	@Test
 	public void testRestanspruchKitaTagiKita() {
 		//Teste ob der Restanspruch richtig berechnet wird wenn die erste Betreuung eine Kita ist, gefolgt von einer Tagi fuer Schulkinder, gefolgt von einer Kita
-		Betreuung betreuung1 = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.KITA, 60);
-		Betreuung betreuung2 = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.TAGESELTERN_SCHULKIND, 40);
-		Betreuung betreuung3 = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.KITA, 40);
-		betreuung1.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
+		Betreuung betreuung1 = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, BetreuungsangebotTyp.KITA, 60);
+		Betreuung betreuung2 = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, BetreuungsangebotTyp.TAGESELTERN_SCHULKIND, 40);
+		Betreuung betreuung3 = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, BetreuungsangebotTyp.KITA, 40);
+		betreuung1.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 80, 0));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung1);
 
 		Assert.assertNotNull(result);
@@ -134,7 +129,7 @@ public class BetreuungspensumRuleTest {
 		Assert.assertEquals(0, result.get(0).getAnspruchberechtigtesPensum());
 
 		//Tagi fuer Schulkinder, Restanspruch bleibt gleich
-		betreuung2.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
+		betreuung2.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 80, 0));
 		result = calculateWithRemainingRestanspruch(betreuung2, 20);
 		Assert.assertEquals(20, result.get(0).getAnspruchspensumRest());  //restanspruch ist immer noch 20%
 		// Anspruchsrest fuer naechste Betreuung setzten
@@ -143,7 +138,7 @@ public class BetreuungspensumRuleTest {
 		Assert.assertEquals(20, result.get(0).getAnspruchspensumRest());
 
 		// Kita 2: Reicht nicht mehr ganz
-		betreuung3.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
+		betreuung3.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 80, 0));
 		result = calculateWithRemainingRestanspruch(betreuung3, 20);
 
 		Assert.assertNotNull(result);
@@ -163,7 +158,7 @@ public class BetreuungspensumRuleTest {
 	@Test
 	public void testTageselternKleinkinderOhneErwerbspensum() {
 		// Tageseltern Kleinkind haben die gleichen Regeln wie Kita
-		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.TAGESELTERN_KLEINKIND, 80);
+		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, BetreuungsangebotTyp.TAGESELTERN_KLEINKIND, 80);
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
 
 		Assert.assertNotNull(result);
@@ -180,8 +175,8 @@ public class BetreuungspensumRuleTest {
 	@Test
 	public void testTageselternSchulkinderMitTiefemErwerbspensum() {
 		// Tageseltern Schulkinder erhalten immer soviel wie sie wollen, unabhängig von Erwerbspensum
-		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.TAGESELTERN_SCHULKIND, 80);
-		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
+		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, BetreuungsangebotTyp.TAGESELTERN_SCHULKIND, 80);
+		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 60, 0));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
 
 		Assert.assertNotNull(result);
@@ -198,8 +193,8 @@ public class BetreuungspensumRuleTest {
 	@Test
 	public void testTageselternKleinkinderMitTiefemErwerbspensum() {
 		// Tageseltern Kleinkinder haben die gleichen Regeln wie Kita
-		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.TAGESELTERN_KLEINKIND, 80);
-		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
+		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, BetreuungsangebotTyp.TAGESELTERN_KLEINKIND, 80);
+		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 60, 0));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
 
 		Assert.assertNotNull(result);

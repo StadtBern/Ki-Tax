@@ -22,8 +22,6 @@ import ch.dvbern.ebegu.vorlagen.nichteintreten.NichteintretenPrintImpl;
 import ch.dvbern.ebegu.vorlagen.nichteintreten.NichteintretenPrintMergeSource;
 import ch.dvbern.ebegu.vorlagen.verfuegung.VerfuegungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.verfuegung.VerfuegungPrintMergeSource;
-import ch.dvbern.lib.doctemplate.common.DocTemplateException;
-import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 import com.google.common.io.ByteStreams;
 
 import javax.annotation.Nonnull;
@@ -258,7 +256,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 		List<DokumentGrund> dokumentGrundsMerged = new ArrayList<>();
 		dokumentGrundsMerged.addAll(DokumenteUtil
 			.mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(gesuch),
-				dokumentGrundService.findAllDokumentGrundByGesuch(gesuch)));
+				dokumentGrundService.findAllDokumentGrundByGesuch(gesuch), gesuch));
 		Collections.sort(dokumentGrundsMerged);
 		return dokumentGrundsMerged;
 	}

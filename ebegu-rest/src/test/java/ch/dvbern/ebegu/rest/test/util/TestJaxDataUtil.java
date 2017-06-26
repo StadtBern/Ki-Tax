@@ -28,7 +28,7 @@ public class TestJaxDataUtil {
 		jaxGesuchsteller.setGeschlecht(Geschlecht.MAENNLICH);
 		jaxGesuchsteller.setMobile("+41 78 987 65 54");
 		jaxGesuchsteller.setTelefonAusland("+49 12 123 42 12");
-		jaxGesuchsteller.setZpvNumber("1234");
+		jaxGesuchsteller.setEwkPersonId("1234");
 
 		jaxGesuchstellerContainer.setAdressen(createTestJaxAdressenList(null));
 		jaxGesuchstellerContainer.setGesuchstellerJA(jaxGesuchsteller);
@@ -236,7 +236,7 @@ public class TestJaxDataUtil {
 		JaxGesuchsperiode jaxGesuchsperiode = new JaxGesuchsperiode();
 		jaxGesuchsperiode.setGueltigAb(LocalDate.now());
 		jaxGesuchsperiode.setGueltigBis(LocalDate.now().plusMonths(1));
-		jaxGesuchsperiode.setActive(true);
+		jaxGesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
 		return jaxGesuchsperiode;
 	}
 

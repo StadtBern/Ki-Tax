@@ -15,7 +15,7 @@ import {TSBetreuungsangebotTypUtil} from '../../../utils/TSBetreuungsangebotTypU
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import ILogService = angular.ILogService;
 import IScope = angular.IScope;
-let template = require('./erwerbspensumListView.html');
+let template: string = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 require('./erwerbspensumListView.less');
 
@@ -23,7 +23,7 @@ require('./erwerbspensumListView.less');
 export class ErwerbspensumListViewComponentConfig implements IComponentOptions {
     transclude: boolean;
     bindings: any;
-    template: string | Function;
+    template: string;
     controller: any;
     controllerAs: string;
 
@@ -63,7 +63,6 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
 
     getErwerbspensenListGS1(): Array<TSErwerbspensumContainer> {
         if (this.erwerbspensenGS1 === undefined) {
-            //todo team, hier die daten vielleicht reingeben statt sie zu lesen
             if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller1 &&
                 this.gesuchModelManager.getGesuch().gesuchsteller1.erwerbspensenContainer) {
                 let gesuchsteller1: TSGesuchstellerContainer = this.gesuchModelManager.getGesuch().gesuchsteller1;
@@ -78,7 +77,6 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
 
     getErwerbspensenListGS2(): Array<TSErwerbspensumContainer> {
         if (this.erwerbspensenGS2 === undefined) {
-            //todo team, hier die daten vielleicht reingeben statt sie zu lesen
             if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller2 &&
                 this.gesuchModelManager.getGesuch().gesuchsteller2.erwerbspensenContainer) {
                 let gesuchsteller2: TSGesuchstellerContainer = this.gesuchModelManager.getGesuch().gesuchsteller2;

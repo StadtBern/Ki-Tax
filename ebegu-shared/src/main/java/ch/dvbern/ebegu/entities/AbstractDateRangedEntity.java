@@ -61,4 +61,10 @@ public class AbstractDateRangedEntity extends AbstractEntity implements Gueltigk
 		mutation.setGueltigkeit(new DateRange(this.getGueltigkeit()));
 		return mutation;
 	}
+
+	public AbstractDateRangedEntity copyForErneuerung(AbstractDateRangedEntity mutation) {
+		super.copyForErneuerung(mutation);
+		mutation.setGueltigkeit(new DateRange(this.getGueltigkeit()));
+		return mutation;
+	}
 }

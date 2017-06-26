@@ -37,7 +37,17 @@ public class PensumFachstelle extends AbstractPensumEntity {
 
 	public PensumFachstelle copyForMutation(PensumFachstelle mutation) {
 		super.copyForMutation(mutation);
-		mutation.setFachstelle(this.getFachstelle());
+		copyForMutationOrErneuerung(mutation);
 		return mutation;
+	}
+
+	public PensumFachstelle copyForErneuerung(PensumFachstelle mutation) {
+		super.copyForErneuerung(mutation);
+		copyForMutationOrErneuerung(mutation);
+		return mutation;
+	}
+
+	private void copyForMutationOrErneuerung(PensumFachstelle mutation) {
+		mutation.setFachstelle(this.getFachstelle());
 	}
 }

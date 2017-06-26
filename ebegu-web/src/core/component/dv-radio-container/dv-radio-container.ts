@@ -12,7 +12,9 @@ export class DvRadioContainerComponentConfig implements IComponentOptions {
         ngRequired: '<',
         items: '<',
         dvEnableAllowedRoles: '<',
-        dvEnableExpression: '<'
+        dvEnableExpression: '<',
+        ariaDescribedBy: '@',
+        ariaLabel: '@'
     };
     template = template;
     controller = DvRadioContainerController;

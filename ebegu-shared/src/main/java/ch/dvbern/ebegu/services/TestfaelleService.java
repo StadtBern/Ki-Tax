@@ -40,16 +40,15 @@ public interface TestfaelleService {
 	String heirat = "1";
 
 	StringBuilder createAndSaveTestfaelle(String fallid,
-										  Integer iterationCount,
 										  boolean betreuungenBestaetigt,
-										  boolean verfuegen);
+										  boolean verfuegen, @Nullable String gesuchsPeriodeId);
 
 	StringBuilder createAndSaveAsOnlineGesuch(@Nonnull String fallid,
 											  boolean betreuungenBestaetigt,
 											  boolean verfuegen,
-											  @Nonnull String username);
+											  @Nonnull String username, @Nullable String gesuchsPeriodeId);
 
-	Gesuch createAndSaveTestfaelle(String fallid,
+	Gesuch createAndSaveTestfaelle(@Nonnull String fallid,
 								   boolean betreuungenBestaetigt,
 								   boolean verfuegen);
 
@@ -74,4 +73,6 @@ public interface TestfaelleService {
 	List<InstitutionStammdaten> getInstitutionsstammdatenForTestfaelle();
 
 	Gesuch createAndSaveGesuch(AbstractTestfall fromTestfall, boolean verfuegen, @Nullable Benutzer besitzer);
+
+	void gesuchVerfuegenUndSpeichern(boolean verfuegen, Gesuch gesuch, boolean mutation);
 }

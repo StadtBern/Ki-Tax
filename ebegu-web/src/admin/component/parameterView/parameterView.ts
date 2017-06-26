@@ -7,17 +7,17 @@ import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import {TSDateRange} from '../../../models/types/TSDateRange';
 import {EbeguVorlageRS} from '../../service/ebeguVorlageRS.rest';
-import TSEbeguVorlage from '../../../models/TSEbeguVorlage';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
-import {DownloadRS} from '../../../core/service/downloadRS.rest';
-import TSDownloadFile from '../../../models/TSDownloadFile';
 import GlobalCacheService from '../../../gesuch/service/globalCacheService';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
+import AbstractAdminViewController from '../../abstractAdminView';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {getTSGesuchsperiodeStatusValues, TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import ITranslateService = angular.translate.ITranslateService;
-import Moment = moment.Moment;
 import ITimeoutService = angular.ITimeoutService;
 let template = require('./parameterView.html');
 let style = require('./parameterView.less');
@@ -30,10 +30,10 @@ export class ParameterViewComponentConfig implements IComponentOptions {
     controllerAs: string = 'vm';
 }
 
-export class ParameterViewController {
+export class ParameterViewController extends AbstractAdminViewController {
     static $inject = ['EbeguParameterRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$translate', 'EbeguVorlageRS',
-        'EbeguUtil', 'DvDialog', 'DownloadRS', '$log', 'GlobalCacheService', 'GesuchModelManager', '$timeout',
-        '$window'];
+        'EbeguUtil', 'DvDialog', '$log', 'GlobalCacheService', 'GesuchModelManager', '$timeout',
+        '$window', 'AuthServiceRS'];
 
     ebeguParameterRS: EbeguParameterRS;
     ebeguRestUtil: EbeguRestUtil;
@@ -45,17 +45,18 @@ export class ParameterViewController {
     ebeguJahresabhParameter: TSEbeguParameter[] = []; // enthält alle Jahresabhängigen Params für alle Jahre
 
     ebeguParameterListGesuchsperiode: TSEbeguParameter[];
-    ebeguVorlageListGesuchsperiode: TSEbeguVorlage[];
     ebeguParameterListJahr: TSEbeguParameter[]; // enthält alle Params für nur 1 Jahr
 
+    statusChanged: boolean = false;
 
     /* @ngInject */
     constructor(ebeguParameterRS: EbeguParameterRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 ebeguRestUtil: EbeguRestUtil, private $translate: ITranslateService,
                 private ebeguVorlageRS: EbeguVorlageRS, private ebeguUtil: EbeguUtil,
-                private dvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService,
+                private dvDialog: DvDialog, private $log: ILogService,
                 private globalCacheService: GlobalCacheService, private gesuchModelManager: GesuchModelManager,
-                private $timeout: ITimeoutService, private $window: ng.IWindowService) {
+                private $timeout: ITimeoutService, private $window: ng.IWindowService, authServiceRS: AuthServiceRS) {
+        super(authServiceRS);
         this.ebeguParameterRS = ebeguParameterRS;
         this.ebeguRestUtil = ebeguRestUtil;
         $timeout(() => {
@@ -65,7 +66,7 @@ export class ParameterViewController {
     }
 
     private readGesuchsperioden(): void {
-        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: Array<TSGesuchsperiode>) => {
+        this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: Array<TSGesuchsperiode>) => {
             this.gesuchsperiodenList =  response; //angular.copy(response);
         });
     }
@@ -73,9 +74,6 @@ export class ParameterViewController {
     private readEbeguParameterByGesuchsperiode(): void {
         this.ebeguParameterRS.getEbeguParameterByGesuchsperiode(this.gesuchsperiode.id).then((response: TSEbeguParameter[]) => {
             this.ebeguParameterListGesuchsperiode = response;
-        });
-        this.ebeguVorlageRS.getEbeguVorlagenByGesuchsperiode(this.gesuchsperiode.id).then((response: TSEbeguVorlage[]) => {
-            this.ebeguVorlageListGesuchsperiode = response;
         });
     }
 
@@ -94,25 +92,40 @@ export class ParameterViewController {
         }
     }
 
-    jahresabhParamSelected(parameter : TSEbeguParameter) {
+    jahresabhParamSelected(parameter: TSEbeguParameter) {
         this.jahr = parameter.gueltigkeit.gueltigAb.get('year');
         this.jahrChanged();
     }
 
     createGesuchsperiode(): void {
-        this.gesuchsperiode = new TSGesuchsperiode(false, new TSDateRange());
+        this.gesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.ENTWURF, new TSDateRange());
         if (this.gesuchsperiodenList) {
-            let prevGesPer: TSGesuchsperiode = this.gesuchsperiodenList[this.gesuchsperiodenList.length - 1];
+            let prevGesPer: TSGesuchsperiode = this.gesuchsperiodenList[0];
             this.gesuchsperiode.gueltigkeit.gueltigAb = prevGesPer.gueltigkeit.gueltigAb.clone().add('years', 1);
             this.gesuchsperiode.gueltigkeit.gueltigBis = prevGesPer.gueltigkeit.gueltigBis.clone().add('years', 1);
         }
     }
 
     saveGesuchsperiode(): void {
+        // Den Dialog nur aufrufen, wenn der Status geändert wurde (oder die GP neu ist)
+        if (this.gesuchsperiode.isNew() || this.statusChanged === true) {
+            let dialogText = this.getGesuchsperiodeSaveDialogText();
+            this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                title: 'GESUCHSPERIODE_DIALOG_TITLE',
+                deleteText: dialogText
+            }).then(() => {
+                this.doSave();
+            });
+        } else {
+            this.doSave();
+        }
+    }
+
+    private doSave(): void {
         this.gesuchsperiodeRS.updateGesuchsperiode(this.gesuchsperiode).then((response: TSGesuchsperiode) => {
             this.gesuchsperiode = response;
 
-            let index: number = this.getIndexOfElementwithID(response);
+            let index: number = EbeguUtil.getIndexOfElementwithID(response, this.gesuchsperiodenList);
             if (index !== -1) {
                 this.gesuchsperiodenList[index] = response;
             } else {
@@ -127,19 +140,29 @@ export class ParameterViewController {
                     this.updateJahresabhParamList();
                 });
             });
-            this.gesuchModelManager.updateActiveGesuchsperiodenList(); //reset gesuchperioden is manager
+            this.gesuchsperiodeRS.updateActiveGesuchsperiodenList(); //reset gesuchperioden in manager
+            this.gesuchsperiodeRS.updateNichtAbgeschlosseneGesuchsperiodenList();
+            this.statusChanged = false;
         });
     }
 
-    private getIndexOfElementwithID(gesuchsperiodeToSearch: TSGesuchsperiode): number {
-        let idToSearch = gesuchsperiodeToSearch.id;
-        for (let i = 0; i < this.gesuchsperiodenList.length; i++) {
-            if (this.gesuchsperiodenList[i].id === idToSearch) {
-                return i;
-            }
-        }
-        return -1;
+    setStatusChanged(): void {
+        this.statusChanged = true;
+    }
 
+    private getGesuchsperiodeSaveDialogText(): string {
+        if (this.gesuchsperiode.status === TSGesuchsperiodeStatus.ENTWURF) {
+            return 'GESUCHSPERIODE_DIALOG_TEXT_ENTWURF';
+        } else if (this.gesuchsperiode.status === TSGesuchsperiodeStatus.AKTIV) {
+            return 'GESUCHSPERIODE_DIALOG_TEXT_AKTIV';
+        } else if (this.gesuchsperiode.status === TSGesuchsperiodeStatus.INAKTIV) {
+            return 'GESUCHSPERIODE_DIALOG_TEXT_INAKTIV';
+        } else if (this.gesuchsperiode.status === TSGesuchsperiodeStatus.GESCHLOSSEN) {
+            return 'GESUCHSPERIODE_DIALOG_TEXT_GESCHLOSSEN';
+        } else {
+            this.$log.warn('Achtung, Status unbekannt: ', this.gesuchsperiode.status);
+            return null;
+        }
     }
 
     cancelGesuchsperiode(): void {
@@ -161,7 +184,8 @@ export class ParameterViewController {
             this.ebeguParameterRS.saveEbeguParameter(param);
         }
         this.globalCacheService.getCache(TSCacheTyp.EBEGU_PARAMETER).removeAll();
-        this.gesuchModelManager.updateActiveGesuchsperiodenList();
+        this.gesuchsperiodeRS.updateActiveGesuchsperiodenList();
+        this.gesuchsperiodeRS.updateNichtAbgeschlosseneGesuchsperiodenList();
         this.gesuchsperiode = undefined;
     }
 
@@ -176,78 +200,41 @@ export class ParameterViewController {
         }
     }
 
-    hasVorlage(selectVorlage: TSEbeguVorlage): boolean {
-        if (selectVorlage.vorlage) {
-            return true;
-        }
-        return false;
-    }
-
-    uploadAnhaenge(files: any[], selectEbeguVorlage: TSEbeguVorlage) {
-        this.$log.debug('Uploading files ');
-
-        this.ebeguVorlageRS.uploadVorlage(files[0], selectEbeguVorlage, this.gesuchsperiode.id).then((response) => {
-            this.addResponseToCurrentList(response);
-
-        });
-    }
-
-    private addResponseToCurrentList(response: TSEbeguVorlage) {
-        let returnedDG: TSEbeguVorlage = angular.copy(response);
-        let index = this.getIndexOfElement(returnedDG, this.ebeguVorlageListGesuchsperiode);
-
-        if (index > -1) {
-            //this.$log.debug('add dokument to dokumentList');
-            this.ebeguVorlageListGesuchsperiode[index] = returnedDG;
-        }
-        this.ebeguUtil.handleSmarttablesUpdateBug(this.ebeguVorlageListGesuchsperiode);
-    }
-
-    public getIndexOfElement(entityToSearch: TSEbeguVorlage, listToSearchIn: TSEbeguVorlage[]): number {
-        let idToSearch = entityToSearch.name;
-        for (let i = 0; i < listToSearchIn.length; i++) {
-            if (listToSearchIn[i].name === idToSearch) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    remove(ebeguVorlage: TSEbeguVorlage) {
-        this.$log.debug('component -> remove dokument ' + ebeguVorlage.vorlage.filename);
-        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
-            deleteText: '',
-            title: 'FILE_LOESCHEN'
-        })
-            .then(() => {   //User confirmed removal
-
-                this.ebeguVorlageRS.deleteEbeguVorlage(ebeguVorlage.id).then((response) => {
-
-                    let index = EbeguUtil.getIndexOfElementwithID(ebeguVorlage, this.ebeguVorlageListGesuchsperiode);
-                    if (index > -1) {
-                        this.$log.debug('remove Vorlage in EbeguVorlage');
-                        ebeguVorlage.vorlage = null;
-                        this.ebeguVorlageListGesuchsperiode[index] = ebeguVorlage;
-                    }
-                });
-                this.ebeguUtil.handleSmarttablesUpdateBug(this.ebeguVorlageListGesuchsperiode);
-
-            });
-    }
-
-    download(ebeguVorlage: TSEbeguVorlage, attachment: boolean) {
-        this.$log.debug('download vorlage ' + ebeguVorlage.vorlage.filename);
-        let win: Window = this.downloadRS.prepareDownloadWindow();
-
-        this.downloadRS.getAccessTokenVorlage(ebeguVorlage.vorlage.id).then((downloadFile: TSDownloadFile) => {
-            this.$log.debug('accessToken: ' + downloadFile.accessToken);
-            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment, win);
-        });
-    }
-
     private updateJahresabhParamList() {
         this.ebeguParameterRS.getJahresabhParameter().then((response: Array<TSEbeguParameter>) => {
             this.ebeguJahresabhParameter = response;
         });
+    }
+
+    getTSGesuchsperiodeStatusValues(): Array<TSGesuchsperiodeStatus> {
+        return getTSGesuchsperiodeStatusValues();
+    }
+
+    private periodenaParamsEditableForPeriode(gesuchsperiode: TSGesuchsperiode): boolean {
+        if (gesuchsperiode && gesuchsperiode.status) {
+            // Fuer SuperAdmin immer auch editierbar, wenn AKTIV oder INAKTIV, sonst nur ENTWURF
+            if (TSGesuchsperiodeStatus.GESCHLOSSEN === gesuchsperiode.status) {
+                return false;
+            } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSuperAdminRoles())) {
+                return true;
+            } else {
+                return TSGesuchsperiodeStatus.ENTWURF === gesuchsperiode.status;
+            }
+        }
+        return false;
+    }
+
+    public periodenaParamsEditable(): boolean {
+        return this.periodenaParamsEditableForPeriode(this.gesuchsperiode);
+    }
+
+    public jahresParamsEditable(): boolean {
+        // Wenn die Periode, die in dem Jahr *endet* noch ENTWURF ist
+        for (let gp of this.gesuchsperiodenList) {
+            if (gp.gueltigkeit.gueltigBis.year() === this.jahr) {
+                return this.periodenaParamsEditableForPeriode(gp);
+            }
+        }
+        return true;
     }
 }

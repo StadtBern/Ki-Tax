@@ -33,29 +33,31 @@ public class TestfaelleResource {
 	private SchulungService schulungService;
 
 	@GET
-	@Path("/testfall/{fallid}/{betreuungenBestaetigt}/{verfuegen}")
+	@Path("/testfall/{fallid}/{gesuchsperiodeId}/{betreuungenBestaetigt}/{verfuegen}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response getTestFall(
 		@PathParam("fallid") String fallid,
+		@PathParam("gesuchsperiodeId") String gesuchsperiodeId,
 		@PathParam("betreuungenBestaetigt") boolean betreuungenBestaetigt,
 		@PathParam("verfuegen") boolean verfuegen) {
 
-		StringBuilder responseString = testfaelleService.createAndSaveTestfaelle(fallid, 1, betreuungenBestaetigt, verfuegen);
+		StringBuilder responseString = testfaelleService.createAndSaveTestfaelle(fallid, betreuungenBestaetigt, verfuegen, gesuchsperiodeId);
 		return Response.ok(responseString.toString()).build();
 	}
 
 	@GET
-	@Path("/testfallgs/{fallid}/{betreuungenBestaetigt}/{verfuegen}/{username}")
+	@Path("/testfallgs/{fallid}/{gesuchsperiodeId}/{betreuungenBestaetigt}/{verfuegen}/{username}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response getTestFallGS(
 		@PathParam("fallid") String fallid,
+		@PathParam("gesuchsperiodeId") String gesuchsperiodeId,
 		@PathParam("betreuungenBestaetigt") boolean betreuungenBestaetigt,
 		@PathParam("verfuegen") boolean verfuegen,
 		@PathParam("username") String username) {
 
-		StringBuilder responseString = testfaelleService.createAndSaveAsOnlineGesuch(fallid, betreuungenBestaetigt, verfuegen, username);
+		StringBuilder responseString = testfaelleService.createAndSaveAsOnlineGesuch(fallid, betreuungenBestaetigt, verfuegen, username, gesuchsperiodeId);
 		return Response.ok(responseString.toString()).build();
 	}
 
@@ -67,21 +69,6 @@ public class TestfaelleResource {
 
 		testfaelleService.removeGesucheOfGS(username);
 		return Response.ok().build();
-	}
-
-
-	@GET
-	@Path("/testfall/{fallid}/{iterationCount}/{betreuungenBestaetigt}/{verfuegen}")
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.TEXT_PLAIN)
-	public Response getTestFall(
-		@PathParam("fallid") String fallid,
-		@PathParam("iterationCount") Integer iterationCount,
-		@PathParam("betreuungenBestaetigt") boolean betreuungenBestaetigt,
-		@PathParam("verfuegen") boolean verfuegen) {
-
-		StringBuilder responseString = testfaelleService.createAndSaveTestfaelle(fallid, iterationCount, betreuungenBestaetigt, verfuegen);
-		return Response.ok(responseString.toString()).build();
 	}
 
 	@GET

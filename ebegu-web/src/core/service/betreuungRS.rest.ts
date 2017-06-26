@@ -31,6 +31,14 @@ export default class BetreuungRS {
             });
     }
 
+    public findAllBetreuungenWithVerfuegungFromFall(fallId: string): IPromise<TSBetreuung[]> {
+        return this.http.get(this.serviceURL + '/alleBetreuungen/' + encodeURIComponent(fallId))
+            .then((response: any) => {
+                this.log.debug('PARSING Betreuung REST object ', response.data);
+                return this.ebeguRestUtil.parseBetreuungList(response.data);
+            });
+    }
+
     public saveBetreuung(betreuung: TSBetreuung, kindId: string, gesuchId: string, abwesenheit: boolean): IPromise<TSBetreuung> {
         let restBetreuung = {};
         restBetreuung = this.ebeguRestUtil.betreuungToRestObject(restBetreuung, betreuung);
@@ -76,11 +84,12 @@ export default class BetreuungRS {
         });
     }
 
-    removeBetreuung(betreuungId: string, gesuchId: string): IPromise<any> {
+    public removeBetreuung(betreuungId: string, gesuchId: string): IPromise<any> {
         return this.http.delete(this.serviceURL + '/' + encodeURIComponent(betreuungId))
-            .then((response) => {
-                this.wizardStepManager.findStepsFromGesuch(gesuchId);
-                return response;
+            .then((responseDeletion) => {
+                return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
+                    return responseDeletion;
+                });
             });
     }
 

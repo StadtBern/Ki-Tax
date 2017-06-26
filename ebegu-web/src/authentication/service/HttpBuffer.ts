@@ -46,7 +46,7 @@ export default class HttpBuffer {
      */
     public rejectAll(reason: any) {
         if (reason) {
-            for (var i = 0; i < this.buffer.length; ++i) {
+            for (let i = 0; i < this.buffer.length; ++i) {
                 this.buffer[i].deferred.reject(reason);
             }
         }
@@ -57,7 +57,7 @@ export default class HttpBuffer {
      * Retries all the buffered requests clears the buffer.
      */
     public retryAll(updater: any) {
-        for (var i = 0; i < this.buffer.length; ++i) {
+        for (let i = 0; i < this.buffer.length; ++i) {
             this.retryHttpRequest(updater(this.buffer[i].config), this.buffer[i].deferred);
         }
         this.buffer = [];

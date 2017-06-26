@@ -1,14 +1,19 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
+import ch.dvbern.ebegu.validators.CheckFamiliensituationContainerComplete;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
+import java.time.LocalDate;
 
 /**
  * Entitaet zum Speichern von FamiliensituationContainer in der Datenbank.
  */
+@CheckFamiliensituationContainerComplete(groups = AntragCompleteValidationGroup.class)
 @Audited
 @Entity
 public class FamiliensituationContainer extends AbstractEntity {
@@ -36,7 +41,8 @@ public class FamiliensituationContainer extends AbstractEntity {
 	public FamiliensituationContainer() {
 	}
 
-	public FamiliensituationContainer copyForMutation(FamiliensituationContainer mutation, boolean toCopyisMutation) {
+	@Nonnull
+	public FamiliensituationContainer copyForMutation(@Nonnull FamiliensituationContainer mutation, boolean toCopyisMutation) {
 		super.copyForMutation(mutation);
 		mutation.setFamiliensituationGS(null);
 		mutation.setFamiliensituationJA(getFamiliensituationJA().copyForMutation(new Familiensituation()));
@@ -46,6 +52,14 @@ public class FamiliensituationContainer extends AbstractEntity {
 			mutation.setFamiliensituationErstgesuch(this.getFamiliensituationJA().copyForMutation(new Familiensituation()));
 		}
 		return mutation;
+	}
+
+	@Nonnull
+	public FamiliensituationContainer copyForErneuerung(@Nonnull FamiliensituationContainer folgeEntity) {
+		super.copyForErneuerung(folgeEntity);
+		folgeEntity.setFamiliensituationGS(null);
+		folgeEntity.setFamiliensituationJA(getFamiliensituationJA().copyForErneuerung(new Familiensituation()));
+		return folgeEntity;
 	}
 
 	@Nullable
@@ -78,5 +92,14 @@ public class FamiliensituationContainer extends AbstractEntity {
 	@Nullable
 	public Familiensituation extractFamiliensituation() {
 		return familiensituationJA;
+	}
+
+	@Nonnull
+	public Familiensituation getFamiliensituationAm(LocalDate stichtag) {
+		if (getFamiliensituationJA().getAenderungPer() == null || getFamiliensituationJA().getAenderungPer().isBefore(stichtag)) {
+			return getFamiliensituationJA();
+		} else {
+			return getFamiliensituationErstgesuch();
+		}
 	}
 }

@@ -15,6 +15,17 @@
 @import 'style/mixins.less';
 @import 'style/mediaqueries.less';
 @import 'style/typography.less';
+
+dv-posteingang {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.fixedtable {
+    table-layout: fixed;
+}
+
 /* Add Component LESS Above */
 .loaded {
     opacity: 1 !important;
@@ -64,6 +75,10 @@ body {
     flex-direction: column;
 }
 
+.overflow-hidden {
+    overflow: hidden;
+}
+
 .overflow-auto {
     overflow: auto;
 }
@@ -100,11 +115,13 @@ body {
     flex: 0 0 auto;
     flex-direction: row;
     align-content: flex-end;
-    z-index: @z-index-navbar;
+    z-index: (@z-index-error+1);
 }
 
-dv-home-icon {
-    margin-left: auto;
+dv-home-icon, dv-countdown, dv-downloadmenu {
+    &:first-child {
+        margin-left: auto;
+    }
     display: flex;
     width: @navbar-height;
     text-align: center;
@@ -122,7 +139,12 @@ dv-pulldown-user-menu {
     background-position: left 0.7rem center;
 }
 
-.logo-house {
+.logo-house, .dv-countdown-countdown {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -o-user-select: none;
     vertical-align: middle;
     padding: 0;
     height: @navbar-height;
@@ -131,6 +153,11 @@ dv-pulldown-user-menu {
     &:hover {
         background-color: @contrast-light;
     }
+}
+
+.dv-countdown-countdown:hover {
+    background-color: transparent;
+    cursor: default;
 }
 
 .logo-text {
@@ -163,7 +190,7 @@ dv-pulldown-user-menu {
     background-color: @background-error-color;
 }
 
-//todo das braucht es wohl gar nicht mehr
+//todo (mrra) das braucht es wohl gar nicht mehr
 .form-horizontal {
     dv-error-messages {
         padding-left: 0.1rem;
@@ -173,7 +200,7 @@ dv-pulldown-user-menu {
 //roter hintergund bei den feldern die invalid sind
 form {
     &.ng-submitted {
-        input {
+        input, textarea {
             &.ng-invalid {
                 .ErrorInput
             }
@@ -216,6 +243,93 @@ md-dialog.md-default-theme, md-dialog {
     border-radius: 0;
     .md-dialog-content {
         padding: 2.5rem;
+    }
+}
+
+.md-virtual-repeat-container.md-autocomplete-suggestions-container {
+    max-height: 99999999px !important;
+    z-index: @z-index-mobile-toolbar; //todo (mrra) Kannst du das  anschauen? das ist evtl. nicht so gut
+    box-shadow: none;
+}
+
+.md-autocomplete-suggestions-container.md-default-theme, .md-autocomplete-suggestions-container {
+    background: @secondary;
+}
+
+.md-autocomplete-suggestions-container li {
+    color: @contrast-lightest;
+    .highlight {
+        color: @contrast-lightest;
+        font-weight: bold;
+    }
+    .allresultsLink {
+        background: transparent;
+        color: @contrast-lightest;
+    }
+    &:hover, &:focus {
+        background: @secondary-dark;
+    }
+}
+
+dv-quicksearchbox {
+    md-autocomplete, md-autocomplete input:not(.md-input) {
+        background: @contrast-light;
+        height: @navbar-height;
+
+        md-autocomplete-wrap {
+            height: @navbar-height;
+            input {
+                transition: all 0.5s ease;
+            }
+
+            input::-webkit-input-placeholder {
+                color: @contrast-darkest;
+                opacity: 1 !important;
+                text-align: right;
+                font-family: FontAwesome;
+            }
+            input:-moz-placeholder {
+                color: @contrast-darkest;
+                opacity: 1 !important;
+                text-align: right;
+                font-family: FontAwesome;
+            }
+            input::-moz-placeholder {
+                color: @contrast-darkest;
+                opacity: 1 !important;
+                text-align: right;
+                font-family: FontAwesome;
+            }
+            input:-ms-input-placeholder {
+                color: @contrast-darkest;
+                opacity: 1 !important;
+                text-align: right;
+                font-family: FontAwesome;
+            }
+
+        }
+    }
+    md-autocomplete {
+        md-progress-linear.md-default-theme .md-bar, md-progress-linear .md-bar {
+            background-color: @secondary;
+        }
+        md-progress-linear.md-default-theme .md-container, md-progress-linear .md-container {
+            background-color: @contrast-light;
+        }
+    }
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+    min-width: 43rem;
+    .md-whiteframe-z1 {
+        box-shadow: none;
+    }
+    button:hover, button:focus, button:active {
+        background: none;
+        &:after {
+            content: none;
+        }
     }
 }
 

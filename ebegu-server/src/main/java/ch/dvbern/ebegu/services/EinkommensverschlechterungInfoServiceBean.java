@@ -45,7 +45,7 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 		final Gesuch gesuch = einkommensverschlechterungInfo.getGesuch();
 		Objects.requireNonNull(gesuch);
 
-		return Optional.ofNullable(gesuchService.updateGesuch(gesuch, false).getEinkommensverschlechterungInfoContainer());
+		return Optional.ofNullable(gesuchService.updateGesuch(gesuch, false, null).getEinkommensverschlechterungInfoContainer());
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 																								 EinkommensverschlechterungInfoContainer convertedEkvi) {
 		convertedEkvi.setGesuch(gesuch);
 		gesuch.setEinkommensverschlechterungInfoContainer(convertedEkvi);
-		convertedEkvi.setGesuch(gesuchService.updateGesuch(gesuch, false)); // saving gesuch cascades and saves Ekvi too
+		convertedEkvi.setGesuch(gesuchService.updateGesuch(gesuch, false, null)); // saving gesuch cascades and saves Ekvi too
 
 		//Alle Daten des EV loeschen wenn man kein EV mehr eingeben will
 		removeEinkommensverschlechterungFromGesuchsteller(gesuch.getGesuchsteller1(), oldEVData, convertedEkvi);

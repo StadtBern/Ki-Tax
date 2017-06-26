@@ -64,12 +64,14 @@ xa-data-source add \
 /system-property=ebegu.client.using.https:add(value=false)
 /system-property=ebegu.openidm.enabled:add(value=false)
 /system-property=ebegu.development.mode:add(value=true)
+/system-property=ebegu.zahlungen.test.mode:add(value=true)
 /system-property=ebegu.dummy.login.enabled:add(value=true)
 /system-property=ebegu.mail.smtp.from:add(value=ebegu@dvbern.ch)
 /system-property=ebegu.mail.smtp.host:add(value=mailint.dvbern.ch)
 /system-property=ebegu.mail.smtp.port:add(value=25)
 /system-property=ebegu.mail.disabled:add(value=false)
 /system-property=ebegu.hostname:add(value=ebegu.dvbern.ch/web/#)
+/system-property=ebegu.personensuche.disabled:add(value=true)
 
 
 #Helperskripts

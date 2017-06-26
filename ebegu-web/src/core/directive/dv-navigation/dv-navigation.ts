@@ -5,7 +5,6 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import ErrorService from '../../errors/service/ErrorService';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./dv-navigation.html');
 let style = require('./dv-navigation.less');
@@ -33,7 +32,8 @@ export class DVNavigation implements IDirective {
         dvSubStep: '<',
         dvSave: '&?',
         dvSavingPossible: '<?',
-        dvTranslateNext: '@'
+        dvTranslateNext: '@',
+        dvTranslatePrevious: '@'
     };
     controller = NavigatorController;
     controllerAs = 'vm';
@@ -59,6 +59,7 @@ export class NavigatorController {
     dvSavingPossible: boolean;
     dvSubStep: number;
     dvTranslateNext: string;
+    dvTranslatePrevious: string;
     isRequestInProgress: boolean = false; // this semaphore will prevent a navigation button to be called again until the prozess is not finished
 
     performSave: boolean;
@@ -90,12 +91,16 @@ export class NavigatorController {
      * @returns {string}
      */
     public getPreviousButtonName(): string {
-        if (this.gesuchModelManager.isGesuchReadonly()) {
-            return this.$translate.instant('ZURUECK_ONLY_UPPER');
-        } else if (this.dvSave) {
-            return this.$translate.instant('ZURUECK_UPPER');
+        if (this.dvTranslatePrevious) {
+            return this.$translate.instant(this.dvTranslatePrevious);
         } else {
-            return this.$translate.instant('ZURUECK_ONLY_UPPER');
+            if (this.gesuchModelManager.isGesuchReadonly()) {
+                return this.$translate.instant('ZURUECK_ONLY_UPPER');
+            } else if (this.dvSave) {
+                return this.$translate.instant('ZURUECK_UPPER');
+            } else {
+                return this.$translate.instant('ZURUECK_ONLY_UPPER');
+            }
         }
     }
 
@@ -196,8 +201,8 @@ export class NavigatorController {
 
         this.errorService.clearAll();
 
-        //TODO: All diese Sonderregel sollten in getNextStep() vom wizardStepManager sein, damit die gleiche
-        // Funktionalität für isButtonDisable wie für die Navigation existiert. Siehe https://support.dvbern.ch/browse/EBEGU-688
+        // Improvement?: All diese Sonderregel koennten in getNextStep() vom wizardStepManager sein, damit die gleiche
+        // Funktionalität für isButtonDisable wie für die Navigation existiert.
         if (TSWizardStepName.GESUCHSTELLER === this.wizardStepManager.getCurrentStepName()
             && (this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
             this.navigateToStep(TSWizardStepName.GESUCHSTELLER, '2');
@@ -473,13 +478,13 @@ export class NavigatorController {
             return true;
         }
         // otherwise check specifics
-        if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.GESUCH) {
+        if (this.gesuchModelManager.isGesuch()) {
             if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
                 return !this.gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()
                     && !this.wizardStepManager.isNextStepBesucht(this.gesuchModelManager.getGesuch());
             }
             if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-                return !this.gesuchModelManager.isThereAnyBetreuung()
+                return !this.gesuchModelManager.getGesuch().isThereAnyBetreuung()
                     && !this.wizardStepManager.isNextStepBesucht(this.gesuchModelManager.getGesuch());
             }
             if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {

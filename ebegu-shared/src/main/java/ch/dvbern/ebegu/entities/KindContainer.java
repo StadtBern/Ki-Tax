@@ -1,8 +1,13 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,7 +27,9 @@ import java.util.TreeSet;
 @Table(
 	uniqueConstraints = @UniqueConstraint(columnNames = {"kindNummer", "gesuch_id"}, name = "UK_kindcontainer_gesuch_kind_nummer")
 )
-public class KindContainer extends AbstractEntity implements Comparable<KindContainer>{
+@Indexed
+@Analyzer(impl = EBEGUGermanAnalyzer.class)
+public class KindContainer extends AbstractEntity implements Comparable<KindContainer>, Searchable {
 
 	private static final long serialVersionUID = -6784985260190035840L;
 
@@ -39,6 +46,7 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	@Valid
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_kind_container_kindja_id"), nullable = true)
+	@IndexedEmbedded
 	private Kind kindJA;
 
 	@NotNull
@@ -60,6 +68,10 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	@SortNatural
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "kind")
 	private Set<Betreuung> betreuungen = new TreeSet<>();
+
+	@Column(nullable = true)
+	@Nullable
+	private Boolean kindMutiert;
 
 
 	public KindContainer() {
@@ -114,6 +126,15 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 		this.betreuungen = betreuungen;
 	}
 
+	@Nullable
+	public Boolean getKindMutiert() {
+		return kindMutiert;
+	}
+
+	public void setKindMutiert(@Nullable Boolean kindMutiert) {
+		this.kindMutiert = kindMutiert;
+	}
+
 	@Override
 	public int compareTo(KindContainer other) {
 		CompareToBuilder compareToBuilder = new CompareToBuilder();
@@ -122,12 +143,10 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 		return compareToBuilder.toComparison();
 	}
 
-	public KindContainer copyForMutation(KindContainer mutation, @Nonnull Gesuch gesuchMutation) {
+	@Nonnull
+	public KindContainer copyForMutation(@Nonnull KindContainer mutation, @Nonnull Gesuch gesuchMutation) {
 		super.copyForMutation(mutation);
-		mutation.setGesuch(gesuchMutation);
-		mutation.setKindGS(null);
 		mutation.setKindJA(this.getKindJA().copyForMutation(new Kind()));
-		mutation.setKindNummer(this.getKindNummer());
 		mutation.setNextNumberBetreuung(this.getNextNumberBetreuung());
 		if (this.getBetreuungen() != null) {
 			mutation.setBetreuungen(new TreeSet<>());
@@ -135,6 +154,49 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 				mutation.getBetreuungen().add(betreuung.copyForMutation(new Betreuung(), mutation));
 			}
 		}
+		return copyForMutationOrErneuerung(mutation, gesuchMutation);
+	}
+
+	@Nonnull
+	public KindContainer copyForErneuerung(@Nonnull KindContainer mutation, @Nonnull Gesuch folgegesuch) {
+		super.copyForErneuerung(mutation);
+		mutation.setKindJA(this.getKindJA().copyForErneuerung(new Kind(), folgegesuch.getGesuchsperiode()));
+		mutation.setNextNumberBetreuung(1); // Betreuungen werden wieder ab 1 durchnummeriert
+		return copyForMutationOrErneuerung(mutation, folgegesuch);
+	}
+
+	@Nonnull
+	private KindContainer copyForMutationOrErneuerung(@Nonnull KindContainer mutation, @Nonnull Gesuch gesuchMutation) {
+		mutation.setGesuch(gesuchMutation);
+		mutation.setKindGS(null);
+		mutation.setKindNummer(this.getKindNummer());
+		mutation.setKindMutiert(null);
 		return mutation;
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultId() {
+		return this.getId();
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultSummary() {
+		if(getKindJA()!=null){
+			return getKindJA().getFullName();
+		}
+		return "-";
+	}
+
+	@Nullable
+	@Override
+	public String getSearchResultAdditionalInformation() {
+		return this.toString();
+	}
+
+	@Override
+	public String getOwningGesuchId() {
+		return getGesuch().getId();
 	}
 }

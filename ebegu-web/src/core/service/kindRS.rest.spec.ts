@@ -63,7 +63,7 @@ describe('KindRS', function () {
     describe('API Usage', function () {
         describe('findKind', () => {
             it('should return the Kind by id', () => {
-                $httpBackend.expectGET(kindRS.serviceURL + '/' + mockKind.id).respond(mockKindRest);
+                $httpBackend.expectGET(kindRS.serviceURL + '/find/' + mockKind.id).respond(mockKindRest);
 
                 let foundKind: TSKindContainer;
                 kindRS.findKind(mockKind.id).then((result) => {

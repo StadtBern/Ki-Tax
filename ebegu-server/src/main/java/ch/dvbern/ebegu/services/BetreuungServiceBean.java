@@ -1,12 +1,10 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MailException;
-import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +39,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Inject
 	private MailService mailService;
 
-	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
+	private final Logger LOG = LoggerFactory.getLogger(BetreuungServiceBean.class.getSimpleName());
 
 
 	@Override
@@ -49,6 +47,14 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
 	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung, @Nonnull Boolean isAbwesenheit) {
 		Objects.requireNonNull(betreuung);
+		if (betreuung.getBetreuungsstatus().equals(Betreuungsstatus.SCHULAMT)) {
+			// Wir setzen auch Schulamt-Betreuungen auf gueltig, for future use
+			betreuung.setGueltig(true);
+			if (betreuung.getVorgaengerId() != null) {
+				Optional<Betreuung> vorgaengerBetreuungOptional = findBetreuung(betreuung.getVorgaengerId());
+				vorgaengerBetreuungOptional.ifPresent(vorgaenger -> vorgaenger.setGueltig(false));
+			}
+		}
 		final Betreuung mergedBetreuung = persistence.merge(betreuung);
 
 		//jetzt noch wizard step updaten
@@ -170,6 +176,43 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		return persistence.getCriteriaResults(query);
 	}
 
+	@Nonnull
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	public List<Betreuung> findAllBetreuungenWithVerfuegungFromFall(@Nonnull Fall fall) {
+		Objects.requireNonNull(fall, "fall muss gesetzt sein");
+
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
+
+
+		Root<Betreuung> root = query.from(Betreuung.class);
+		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
+
+		Predicate fallPredicate = cb.equal(root.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.fall), fall);
+		predicatesToUse.add(fallPredicate);
+
+		Predicate predicateBetreuung = root.get(Betreuung_.betreuungsstatus).in(Betreuungsstatus.hasVerfuegung);
+		predicatesToUse.add(predicateBetreuung);
+
+		Predicate verfuegungPredicate = cb.isNotNull(root.get(Betreuung_.verfuegung));
+		predicatesToUse.add(verfuegungPredicate);
+
+		Collection<Institution> institutionen = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+		Predicate predicateInstitution = root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen));
+		predicatesToUse.add(predicateInstitution);
+
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicatesToUse)).orderBy(cb.desc(root.get(Betreuung_.verfuegung).get(Verfuegung_.timestampErstellt)));
+
+		List<Betreuung> criteriaResults = persistence.getCriteriaResults(query);
+
+		criteriaResults.forEach(betreuung -> authorizer.checkReadAuthorization(betreuung));
+
+		return criteriaResults;
+	}
+
+
 	/**
 	 * Liest alle Betreuungen die zu einer der mitgegebenen Institution gehoeren und die im Status WARTEN sind
 	 *
@@ -187,8 +230,10 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 			Predicate predicateStatus = cb.equal(root.get(Betreuung_.betreuungsstatus), Betreuungsstatus.WARTEN);
 			// Institution
 			Predicate predicateInstitution = root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen));
+			// Gesuchsperiode darf nicht geschlossen sein
+			Predicate predicateGesuchsperiode = root.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.status).in(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV);
 
-			query.where(predicateStatus, predicateInstitution);
+			query.where(predicateStatus, predicateInstitution, predicateGesuchsperiode);
 			List<Betreuung> betreuungen = persistence.getCriteriaResults(query);
 			authorizer.checkReadAuthorizationForAllBetreuungen(betreuungen);
 			return betreuungen;
@@ -212,5 +257,47 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		authorizer.checkWriteAuthorization(persistedBetreuung);
 		wizardStepService.updateSteps(persistedBetreuung.extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
 		return persistedBetreuung;
+	}
+
+	@Override
+	@Nonnull
+	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, REVISOR})
+	public List<Betreuung> getAllBetreuungenWithMissingStatistics() {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
+
+		Root<Betreuung> root = query.from(Betreuung.class);
+		Join<Betreuung, KindContainer> joinKindContainer = root.join(Betreuung_.kind, JoinType.LEFT);
+		Join<KindContainer, Gesuch> joinGesuch = joinKindContainer.join(KindContainer_.gesuch, JoinType.LEFT);
+
+		Predicate predicateMutation = cb.equal(joinGesuch.get(Gesuch_.typ), AntragTyp.MUTATION);
+		Predicate predicateFlag = cb.isNull(root.get(Betreuung_.betreuungMutiert));
+		Predicate predicateStatus = joinGesuch.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates());
+
+		query.where(predicateMutation, predicateFlag, predicateStatus);
+		query.orderBy(cb.desc(joinGesuch.get(Gesuch_.laufnummer)));
+		return persistence.getCriteriaResults(query);
+	}
+
+	@Override
+	@Nonnull
+	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, REVISOR})
+	public List<Abwesenheit> getAllAbwesenheitenWithMissingStatistics() {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Abwesenheit> query = cb.createQuery(Abwesenheit.class);
+
+		Root<Abwesenheit> root = query.from(Abwesenheit.class);
+		Join<Abwesenheit, AbwesenheitContainer> joinAbwesenheitContainer = root.join(Abwesenheit_.abwesenheitContainer, JoinType.LEFT);
+		Join<AbwesenheitContainer, Betreuung> joinBetreuung = joinAbwesenheitContainer.join(AbwesenheitContainer_.betreuung, JoinType.LEFT);
+		Join<Betreuung, KindContainer> joinKindContainer = joinBetreuung.join(Betreuung_.kind, JoinType.LEFT);
+		Join<KindContainer, Gesuch> joinGesuch = joinKindContainer.join(KindContainer_.gesuch, JoinType.LEFT);
+
+		Predicate predicateMutation = cb.equal(joinGesuch.get(Gesuch_.typ), AntragTyp.MUTATION);
+		Predicate predicateFlag = cb.isNull(joinBetreuung.get(Betreuung_.abwesenheitMutiert));
+		Predicate predicateStatus = joinGesuch.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates());
+
+		query.where(predicateMutation, predicateFlag, predicateStatus);
+		query.orderBy(cb.desc(joinGesuch.get(Gesuch_.laufnummer)));
+		return persistence.getCriteriaResults(query);
 	}
 }

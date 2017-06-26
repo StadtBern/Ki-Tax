@@ -34,7 +34,6 @@ export class DvAdresseController {
     adresseRS: AdresseRS;
     $translate: ITranslateService;
     parentForm: IFormController;
-    popup: any;   //todo team welchen datepicker wollen wir
     laenderList: TSLand[];
     organisation: boolean;
     TSRoleUtil = TSRoleUtil;
@@ -48,7 +47,6 @@ export class DvAdresseController {
         this.TSRoleUtil = TSRoleUtil;
         this.adresseRS = adresseRS;
         this.gesuchModelManager = gesuchModelManager;
-        this.popup = {opened: false};
         this.$translate = $translate;
         this.bisherLand = this.getBisherLand();
         listResourceRS.getLaenderList().then((laenderList: TSLand[]) => {
@@ -69,9 +67,6 @@ export class DvAdresseController {
         this.adresse = undefined;
     }
 
-    openPopup() {     //todo team welchen datepicker wollen wir
-        this.popup.opened = true;
-    }
 
     public isGesuchReadonly(): boolean {
         return this.gesuchModelManager.isGesuchReadonly();

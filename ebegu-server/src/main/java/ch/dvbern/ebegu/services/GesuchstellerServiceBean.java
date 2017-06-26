@@ -10,9 +10,12 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -74,7 +77,10 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 				}
 			}
 		}
-
+		if (!gesuchsteller.isNew()) {
+			// Den Lucene-Index manuell nachführen, da es bei unidirektionalen Relationen nicht automatisch geschieht!
+			updateLuceneIndex(GesuchstellerContainer.class, gesuchsteller.getId());
+		}
 		final GesuchstellerContainer mergedGesuchsteller = persistence.merge(gesuchsteller);
 		updateWizStepsForGesuchstellerView(gesuch, gsNumber, umzug);
 		return mergedGesuchsteller;
@@ -128,5 +134,27 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 		Optional<GesuchstellerContainer> gesuchstellerToRemove = findGesuchsteller(gesuchsteller.getId());
 		gesuchstellerToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsteller));
 		persistence.remove(gesuchstellerToRemove.get());
+	}
+
+	@Nullable
+	@Override
+	public Gesuch findGesuchOfGesuchsteller(@Nonnull String gesuchstellerContainerID) {
+		Validate.notEmpty(gesuchstellerContainerID, "gesuchstellerContainerID must be set");
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		ParameterExpression<String> gesuchsteller1ID = cb.parameter(String.class, "gesuchsteller1ID");
+		ParameterExpression<String> gesuchsteller2ID = cb.parameter(String.class, "gesuchsteller2ID");
+		Predicate predicateGs1 = cb.equal(root.get(Gesuch_.gesuchsteller1).get(AbstractEntity_.id), gesuchsteller1ID);
+		Predicate predicateGs2 = cb.equal(root.get(Gesuch_.gesuchsteller2).get(AbstractEntity_.id), gesuchsteller2ID);
+		Predicate predicateGs1OrGs2 = cb.or(predicateGs1, predicateGs2);
+		query.where(predicateGs1OrGs2);
+		TypedQuery<Gesuch> typedQuery = persistence.getEntityManager().createQuery(query);
+		typedQuery.setParameter(gesuchsteller1ID, gesuchstellerContainerID);
+		typedQuery.setParameter(gesuchsteller2ID, gesuchstellerContainerID);
+		return typedQuery.getSingleResult();
 	}
 }

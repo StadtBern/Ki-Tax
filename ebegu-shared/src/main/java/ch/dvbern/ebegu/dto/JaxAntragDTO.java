@@ -1,8 +1,9 @@
 package ch.dvbern.ebegu.dto;
 
-import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
-import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
-import ch.dvbern.ebegu.enums.*;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -10,26 +11,33 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Set;
+
+import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Eingangsart;
 
 /**
  * DTO fuer Pendenzen
  */
 @XmlRootElement(name = "pendenz")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxAntragDTO {
+public class JaxAntragDTO implements Serializable {
 
 	private static final long serialVersionUID = -1277026654764135397L;
 
 	//probably unused
 	public JaxAntragDTO(String antragId, LocalDate gesuchsperiodeGueltigAb, LocalDate gesuchsperiodeGueltigBis,
-						@Nullable LocalDate eingangsdatum, AntragTyp antragTyp, int laufnummer, Eingangsart eingangsart) {
+						@Nullable LocalDate eingangsdatum, @Nullable LocalDate eingangsdatumSTV, AntragTyp antragTyp,
+		int laufnummer, Eingangsart eingangsart) {
 		this.antragId = antragId;
 		this.gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
 		this.gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
 		this.eingangsdatum = eingangsdatum;
+		this.eingangsdatumSTV = eingangsdatumSTV;
 		this.antragTyp = antragTyp;
 		this.laufnummer = laufnummer;
 		this.eingangsart = eingangsart;
@@ -37,12 +45,14 @@ public class JaxAntragDTO {
 
 	//constructor fuer query
 	public JaxAntragDTO(String antragId, LocalDate gesuchsperiodeGueltigAb, LocalDate gesuchsperiodeGueltigBis,
-						@Nullable LocalDate eingangsdatum, AntragTyp antragTyp, AntragStatus antragStatus, int laufnummer,
+						@Nullable LocalDate eingangsdatum,  @Nullable LocalDate eingangsdatumSTV, AntragTyp antragTyp,
+		AntragStatus antragStatus, int laufnummer,
 						Eingangsart eingangsart, String besitzerUsername) {
 		this.antragId = antragId;
 		this.gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
 		this.gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
 		this.eingangsdatum = eingangsdatum;
+		this.eingangsdatumSTV = eingangsdatumSTV;
 		this.antragTyp = antragTyp;
 		this.verfuegt = antragStatus.isAnyStatusOfVerfuegt();
 		this.beschwerdeHaengig = antragStatus.equals(AntragStatus.BESCHWERDE_HAENGIG);
@@ -85,11 +95,18 @@ public class JaxAntragDTO {
 	private LocalDate eingangsdatum = null;
 
 	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate eingangsdatumSTV = null;
+
+	@Nullable
 	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
 	private LocalDateTime aenderungsdatum = null;
 
 	@NotNull
 	private Set<BetreuungsangebotTyp> angebote;
+
+	@NotNull
+	private Set<String> kinder;
 
 	@NotNull
 	private Set<String> institutionen;
@@ -174,6 +191,15 @@ public class JaxAntragDTO {
 	}
 
 	@Nullable
+	public LocalDate getEingangsdatumSTV() {
+		return eingangsdatumSTV;
+	}
+
+	public void setEingangsdatumSTV(@Nullable LocalDate eingangsdatumSTV) {
+		this.eingangsdatumSTV = eingangsdatumSTV;
+	}
+
+	@Nullable
 	public LocalDateTime getAenderungsdatum() {
 		return aenderungsdatum;
 	}
@@ -246,5 +272,13 @@ public class JaxAntragDTO {
 
 	public void setBesitzerUsername(@Nullable String besitzerUsername) {
 		this.besitzerUsername = besitzerUsername;
+	}
+
+	public Set<String> getKinder() {
+		return kinder;
+	}
+
+	public void setKinder(Set<String> kinder) {
+		this.kinder = kinder;
 	}
 }

@@ -36,18 +36,28 @@
 		<property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION" value="on"/>
 		<property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION_MIME_TYPES" value="text/javascript,text/css,text/html"/>
 		<property name="ebegu.development.mode" value="true"/>
+		<property name="ebegu.zahlungen.test.mode" value="true"/>
 		<property name="ebegu.dummy.login.enabled" value="true"/>
 		<property name="ebegu.superuser.mail" value="ebeguadmin@dvbern.ch"/>
         <property name="ebegu.client.using.https" value="false"/>
 		<!-- Mail -->
-		<property name="ebegu.mail.disabled" value="false"/>
+		<property name="ebegu.mail.disabled" value="true"/>
 		<property name="ebegu.mail.smtp.from" value="ebegu@dvbern.ch"/>
 		<property name="ebegu.mail.smtp.host" value="mailext.dvbern.ch"/>
 		<property name="ebegu.mail.smtp.port" value="25"/>
 		<property name="ebegu.hostname" value="app.ebegu.ch:3000/#"/>
+
+		<property name="ebegu.dump.dbunit.xml" value="true"/>
 		<!--OpenIDM-->
 		<property name="ebegu.openidm.loginwithtoken.enabled" value="true"/>
 		<property name="ebegu.openam.url" value="https://elogin-test.bern.ch"/>
+		<property name="hibernate.search.default.indexBase" value="${jboss.server.data.dir}/lucene-index"/>
+		<!-- EWK Personensuche -->
+		<property name="ebegu.personensuche.disabled" value="true"/>
+		<property name="ebegu.personensuche.endpoint" value="https://dbs0019.bgov.ch:50001/XISOAPAdapter/MessageServlet?senderParty=&amp;senderService=E_BEGU_PRD&amp;receiverParty=&amp;receiverService=&amp;interface=PersonenSuche_OB&amp;interfaceNamespace=http://bern.ch/E_GOV/E_BEGU/EGOV_002"/>
+		<property name="ebegu.personensuche.wsdl" value="http://dbs0019.bgov.ch:50000/dir/wsdl?p=ic/b3563da22d373b9ab15f89d67216848a"/>
+		<property name="ebegu.personensuche.username" value="E_BEGU_p"/>
+		<property name="ebegu.personensuche.password" value="x/$xj^8|s5vw9q"/>
     </system-properties>
 
 
@@ -180,7 +190,7 @@
                 </datasource>
                 <xa-datasource jndi-name="java:/jdbc/ebegu" pool-name="ebegu" use-ccm="true">
                     <xa-datasource-property name="url">
-                        jdbc:mysql://localhost:3304/ebegu
+                        jdbc:mysql://localhost:3306/ebegu
                     </xa-datasource-property>
                     <xa-datasource-class>org.mariadb.jdbc.MariaDbDataSource</xa-datasource-class>
                     <driver>mariadbsql</driver>

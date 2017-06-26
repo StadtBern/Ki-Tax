@@ -68,10 +68,12 @@ export class DVSuppressFormSubmitOnEnterController {
         // so that we don't trigger on things like arrow keys in
         // inputs.
 
+        // tslint:disable
         if (keyCode != this.$mdConstant.KEY_CODE.ENTER &&
             ev.currentTarget != ev.target) {
             return;
         }
+        // tslint:enable
 
         switch (keyCode) {
             case this.$mdConstant.KEY_CODE.LEFT_ARROW:

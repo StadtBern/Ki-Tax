@@ -30,7 +30,7 @@ export default class HttpErrorInterceptor implements IHttpInterceptor {
             return this.$q.reject(errors);
         }
         return this.$q.reject(response);
-    };
+    }
 
     /**
      * Tries to determine what kind of response data the error-response retunred and  handles the data object

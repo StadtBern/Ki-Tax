@@ -6,7 +6,7 @@ import {EbeguWebCore} from '../core.module';
 
 describe('fachstelleRS', function () {
 
-    var fachstelleRS: FachstelleRS;
+    let fachstelleRS: FachstelleRS;
     let $httpBackend: IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockFachstelle: TSFachstelle;

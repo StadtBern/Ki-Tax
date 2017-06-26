@@ -11,14 +11,17 @@ export default class TSKindContainer extends TSAbstractEntity {
     private _betreuungen: Array<TSBetreuung>;
     private _kindNummer: number;
     private _nextNumberBetreuung: number;
+    private _kindMutiert: boolean;
 
-    constructor(kindGS?: TSKind, kindJA?: TSKind, betreuungen?: Array<TSBetreuung>, kindNummer?: number, nextNumberBetreuung?: number) {
+    constructor(kindGS?: TSKind, kindJA?: TSKind, betreuungen?: Array<TSBetreuung>, kindNummer?: number,
+                nextNumberBetreuung?: number, kindMutiert?: boolean) {
         super();
         this._kindGS = kindGS;
         this._kindJA = kindJA;
         this._betreuungen = betreuungen ? betreuungen : [];
         this._kindNummer = kindNummer;
         this._nextNumberBetreuung = nextNumberBetreuung;
+        this._kindMutiert = kindMutiert;
     }
 
 
@@ -60,6 +63,14 @@ export default class TSKindContainer extends TSAbstractEntity {
 
     set nextNumberBetreuung(value: number) {
         this._nextNumberBetreuung = value;
+    }
+
+    get kindMutiert(): boolean {
+        return this._kindMutiert;
+    }
+
+    set kindMutiert(value: boolean) {
+        this._kindMutiert = value;
     }
 
     public initBetreuungList(): void {

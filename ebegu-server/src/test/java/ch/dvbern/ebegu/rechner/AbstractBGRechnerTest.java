@@ -232,7 +232,6 @@ public class AbstractBGRechnerTest {
 
 				Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());
 				Assert.assertEquals(MathUtil.GANZZAHL.from(MathUtil.DEFAULT.from(113745.70)), verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommen());
-				// TODO (team) Die TAGI-Berechnungen scheinen noch nicht zu stimmen
 				// Erster Monat
 				VerfuegungZeitabschnitt august = verfuegung.getZeitabschnitte().get(0);
 				assertZeitabschnitt(august, 60, 60, 60, 1000.45, 362.75, 637.70);

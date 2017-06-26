@@ -1,0 +1,17 @@
+<div class="pendenzenSteueramtListView">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
+                <dv-antrag-list
+                    table-title="PENDENZEN_LIST"
+                    on-filter-change="vm.passFilterToServer(tableState)"
+                    on-edit="vm.editpendenzSteueramt(antrag, event)"
+                    table-id="pendenzenSTVTable"
+                    add-button-visible="false"
+                    total-result-count="vm.totalResultCount"
+                    action-visible="false">
+                </dv-antrag-list>
+            </div>
+        </div>
+    </div>
+</div>

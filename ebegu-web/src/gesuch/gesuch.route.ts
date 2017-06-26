@@ -7,9 +7,12 @@ import BerechnungsManager from './service/berechnungsManager';
 import WizardStepManager from './service/wizardStepManager';
 import MahnungRS from './service/mahnungRS.rest';
 import {TSEingangsart} from '../models/enums/TSEingangsart';
+import KindRS from '../core/service/kindRS.rest';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ILogService = angular.ILogService;
+import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
+import {TSRoleUtil} from '../utils/TSRoleUtil';
 let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];
@@ -38,6 +41,7 @@ function getStates(): IState[] {
         new EbeguAbwesenheitState(),
         new EbeguNewFallState(),
         new EbeguMutationState(),
+        new EbeguErneuerungsgesuchState(),
         new EbeguVerfuegenListState(),
         new EbeguVerfuegenState(),
         new EbeguEinkommensverschlechterungInfoState(),
@@ -45,7 +49,8 @@ function getStates(): IState[] {
         new EbeguEinkommensverschlechterungState(),
         new EbeguEinkommensverschlechterungResultateState(),
         new EbeguDokumenteState(),
-        new EbeguFreigabeState()
+        new EbeguFreigabeState(),
+        new EbeguBetreuungMitteilungState()
     ];
 }
 
@@ -94,6 +99,24 @@ export class EbeguMutationState implements IState {
 
     resolve = {
         gesuch: createEmptyMutation
+    };
+}
+
+export class EbeguErneuerungsgesuchState implements IState {
+    name = 'gesuch.erneuerung';
+    url = '/erneuerung/:createErneuerung/:eingangsart/:gesuchsperiodeId/:gesuchId/:fallId';
+
+    views: {[name: string]: IState} = {
+        'gesuchViewPort': {
+            template: '<fall-creation-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
+
+    resolve = {
+        gesuch: createEmptyErneuerungsgesuch
     };
 }
 
@@ -157,7 +180,7 @@ export class EbeguKinderListState implements IState {
 
     views: {[name: string]: IState} = {
         'gesuchViewPort': {
-            template: '<kinder-list-view>'
+            template: '<kinder-list-view kinder-dubletten="$resolve.kinderDubletten">'
         },
         'kommentarViewPort': {
             template: '<kommentar-view>'
@@ -165,7 +188,8 @@ export class EbeguKinderListState implements IState {
     };
 
     resolve = {
-        gesuch: getGesuchModelManager
+        gesuch: getGesuchModelManager,
+        kinderDubletten: getKinderDubletten
     };
 }
 
@@ -476,6 +500,24 @@ export class EbeguFreigabeState implements IState {
     };
 }
 
+export class EbeguBetreuungMitteilungState implements IState {
+    name = 'gesuch.mitteilung';
+    url = '/mitteilung/:fallId/:gesuchId/:betreuungId/:mitteilungId';
+
+    views: {[name: string]: IState} = {
+        'gesuchViewPort': {
+            template: '<betreuung-mitteilung-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
+}
+
 //PARAMS
 
 export class IGesuchStateParams implements IStateParamsService {
@@ -546,9 +588,10 @@ export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, be
         let gesuchIdParam = $stateParams.gesuchId;
         if (gesuchIdParam) {
             if (!gesuchModelManager.getGesuch() || gesuchModelManager.getGesuch() && gesuchModelManager.getGesuch().id !== gesuchIdParam
-                || gesuchModelManager.getGesuch().emptyMutation) {
+                || gesuchModelManager.getGesuch().emptyCopy) {
                 // Wenn die antrags id im GescuchModelManager nicht mit der GesuchId ueberreinstimmt wird das gesuch neu geladen
                 // Ebenfalls soll das Gesuch immer neu geladen werden, wenn es sich beim Gesuch im Gesuchmodelmanager um eine leere Mutation handelt
+                // oder um ein leeres Erneuerungsgesuch
                 berechnungsManager.clear();
                 return gesuchModelManager.openGesuch(gesuchIdParam);
             } else {
@@ -590,6 +633,20 @@ export function reloadGesuchModelManager(gesuchModelManager: GesuchModelManager,
     return $q.defer(gesuchModelManager.getGesuch());
 }
 
+getKinderDubletten.$inject = ['$stateParams', '$q', '$log', 'KindRS', 'AuthServiceRS'];
+/* @ngInject */
+// Die Kinderdubletten werden nur für JA-Mitarbeiter (inkl. Revisor und Jurist) angezeigt
+export function getKinderDubletten($stateParams: IGesuchStateParams, $q: IQService, $log: ILogService, KindRS: KindRS, authService: AuthServiceRS) {
+    let isAdmin: boolean = authService.isOneOfRoles(TSRoleUtil.getJugendamtRole());
+    if (isAdmin && $stateParams && $stateParams.gesuchId) {
+        let gesuchIdParam = $stateParams.gesuchId;
+        return KindRS.getKindDubletten(gesuchIdParam);
+    }
+    let deferred = $q.defer();
+    deferred.resolve(undefined);
+    return deferred.promise;
+}
+
 createEmptyMutation.$inject = ['GesuchModelManager', '$stateParams', '$q'];
 export function createEmptyMutation(gesuchModelManager: GesuchModelManager, $stateParams: INewFallStateParams, $q: any): IPromise<TSGesuch> {
     if ($stateParams) {
@@ -599,6 +656,20 @@ export function createEmptyMutation(gesuchModelManager: GesuchModelManager, $sta
         let fallId = $stateParams.fallId;
         if (gesuchId && eingangsart) {
             gesuchModelManager.initMutation(gesuchId, eingangsart, gesuchsperiodeId, fallId);
+        }
+    }
+    return $q.defer(gesuchModelManager.getGesuch());
+}
+
+createEmptyErneuerungsgesuch.$inject = ['GesuchModelManager', '$stateParams', '$q'];
+export function createEmptyErneuerungsgesuch(gesuchModelManager: GesuchModelManager, $stateParams: INewFallStateParams, $q: any): IPromise<TSGesuch> {
+    if ($stateParams) {
+        let gesuchId = $stateParams.gesuchId;
+        let eingangsart = $stateParams.eingangsart;
+        let gesuchsperiodeId = $stateParams.gesuchsperiodeId;
+        let fallId = $stateParams.fallId;
+        if (gesuchId && eingangsart) {
+            gesuchModelManager.initErneuerungsgesuch(gesuchId, eingangsart, gesuchsperiodeId, fallId);
         }
     }
     return $q.defer(gesuchModelManager.getGesuch());

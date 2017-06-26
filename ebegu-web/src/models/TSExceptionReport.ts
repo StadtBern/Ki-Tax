@@ -1,5 +1,6 @@
 import {TSErrorType} from './enums/TSErrorType';
 import {TSErrorLevel} from './enums/TSErrorLevel';
+import {TSErrorAction} from './enums/TSErrorAction';
 
 export default class TSExceptionReport {
 
@@ -14,10 +15,13 @@ export default class TSExceptionReport {
     private _customMessage: string;
     private _errorCodeEnum: string;
     private _stackTrace: string;
+    private _objectId: string;
     private _argumentList: any;
 
     // fields for ViolationReports
     private _path: string;
+
+    private _action: TSErrorAction = undefined;
 
 
     /**
@@ -32,6 +36,7 @@ export default class TSExceptionReport {
         this._severity = severity || null;
         this._msgKey = msgKey || null;
         this._argumentList = args || [];
+        this._action = undefined;
     }
 
 
@@ -131,6 +136,14 @@ export default class TSExceptionReport {
         this._stackTrace = value;
     }
 
+    get objectId(): string {
+        return this._objectId;
+    }
+
+    set objectId(value: string) {
+        this._objectId = value;
+    }
+
     get argumentList(): any {
         return this._argumentList;
     }
@@ -148,6 +161,14 @@ export default class TSExceptionReport {
         this._path = value;
     }
 
+    get action(): TSErrorAction {
+        return this._action;
+    }
+
+    set action(value: TSErrorAction) {
+        this._action = value;
+    }
+
     public static createFromViolation(constraintType: string, message: string, path: string, value: string): TSExceptionReport {
         let report: TSExceptionReport = new TSExceptionReport(TSErrorType.VALIDATION, TSErrorLevel.SEVERE, message, value);
         report.path = path;
@@ -156,8 +177,7 @@ export default class TSExceptionReport {
     }
 
     public static createClientSideError(severity: TSErrorLevel, msgKey: string, args: any): TSExceptionReport {
-        let report: TSExceptionReport = new TSExceptionReport(TSErrorType.CLIENT_SIDE, severity, msgKey, args);
-        return report;
+        return new TSExceptionReport(TSErrorType.CLIENT_SIDE, severity, msgKey, args);
     }
 
     /**
@@ -174,8 +194,19 @@ export default class TSExceptionReport {
         exceptionReport.stackTrace = data.stackTrace;
         exceptionReport.translatedMessage = msgToDisp;
         exceptionReport.customMessage = data.customMessage;
+        exceptionReport.objectId = data.objectId;
         exceptionReport.argumentList = data.argumentList;
+        exceptionReport.addActionToMessage();
         return exceptionReport;
 
+    }
+
+    private addActionToMessage(): void {
+        if (this.errorCodeEnum === 'ERROR_EXISTING_ONLINE_MUTATION') {
+            this.action = TSErrorAction.REMOVE_ONLINE_MUTATION;
+
+        } else if (this.errorCodeEnum === 'ERROR_EXISTING_ERNEUERUNGSGESUCH') {
+            this.action = TSErrorAction.REMOVE_ONLINE_ERNEUERUNGSGESUCH;
+        }
     }
 }

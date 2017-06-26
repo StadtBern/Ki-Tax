@@ -125,12 +125,13 @@ public class VerfuegungResource {
 	// Das ware sicherer gegen client manipulationen.
 	@Nullable
 	@PUT
-	@Path("/{gesuchId}/{betreuungId}")
+	@Path("/{gesuchId}/{betreuungId}/{ignorieren}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxVerfuegung saveVerfuegung(
 		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchId,
 		@Nonnull @NotNull @PathParam ("betreuungId") JaxId betreuungId,
+		@Nonnull @NotNull @PathParam ("ignorieren") Boolean ignorieren,
 		@Nonnull @NotNull @Valid JaxVerfuegung verfuegungJAXP) throws EbeguException {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
@@ -144,7 +145,7 @@ public class VerfuegungResource {
 				}
 				Verfuegung convertedVerfuegung = converter.verfuegungToEntity(verfuegungJAXP, verfuegungToMerge);
 
-				Verfuegung persistedVerfuegung = this.verfuegungService.verfuegen(convertedVerfuegung, betreuung.get().getId());
+				Verfuegung persistedVerfuegung = this.verfuegungService.verfuegen(convertedVerfuegung, betreuung.get().getId(), ignorieren);
 
 				return converter.verfuegungToJax(persistedVerfuegung);
 			}

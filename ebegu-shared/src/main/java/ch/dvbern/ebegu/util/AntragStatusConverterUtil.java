@@ -5,8 +5,11 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.UserRole;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -40,8 +43,6 @@ public class AntragStatusConverterUtil {
 				return AntragStatusDTO.FREIGEGEBEN;
 			case IN_BEARBEITUNG_JA:
 				return AntragStatusDTO.IN_BEARBEITUNG_JA;
-			case ZURUECKGEWIESEN:
-				return AntragStatusDTO.ZURUECKGEWIESEN;
 			case ERSTE_MAHNUNG:
 				return AntragStatusDTO.ERSTE_MAHNUNG;
 			case ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN:
@@ -60,8 +61,16 @@ public class AntragStatusConverterUtil {
 				return AntragStatusDTO.VERFUEGEN;
 			case VERFUEGT:
 				return AntragStatusDTO.VERFUEGT;
+			case KEIN_ANGEBOT:
+				return AntragStatusDTO.KEIN_ANGEBOT;
 			case BESCHWERDE_HAENGIG:
 				return AntragStatusDTO.BESCHWERDE_HAENGIG;
+			case PRUEFUNG_STV:
+				return AntragStatusDTO.PRUEFUNG_STV;
+			case IN_BEARBEITUNG_STV:
+				return AntragStatusDTO.IN_BEARBEITUNG_STV;
+			case GEPRUEFT_STV:
+				return AntragStatusDTO.GEPRUEFT_STV;
 			default:
 				return null;
 		}
@@ -107,8 +116,6 @@ public class AntragStatusConverterUtil {
 				return AntragStatus.FREIGEGEBEN;
 			case IN_BEARBEITUNG_JA:
 				return AntragStatus.IN_BEARBEITUNG_JA;
-			case ZURUECKGEWIESEN:
-				return AntragStatus.ZURUECKGEWIESEN;
 			case ERSTE_MAHNUNG:
 				return AntragStatus.ERSTE_MAHNUNG;
 			case ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN:
@@ -129,10 +136,39 @@ public class AntragStatusConverterUtil {
 				return AntragStatus.VERFUEGEN;
 			case VERFUEGT:
 				return AntragStatus.VERFUEGT;
+			case KEIN_ANGEBOT:
+				return AntragStatus.KEIN_ANGEBOT;
 			case BESCHWERDE_HAENGIG:
 				return AntragStatus.BESCHWERDE_HAENGIG;
+			case PRUEFUNG_STV:
+				return AntragStatus.PRUEFUNG_STV;
+			case IN_BEARBEITUNG_STV:
+				return AntragStatus.IN_BEARBEITUNG_STV;
+			case GEPRUEFT_STV:
+				return AntragStatus.GEPRUEFT_STV;
 			default:
 				return null;
+		}
+	}
+	public static Collection<AntragStatus> convertStatusToEntityForRole(AntragStatusDTO statusDTO, UserRole userrole) {
+		Collection<AntragStatus> tmp = new ArrayList<>();
+		switch (userrole) {
+			case GESUCHSTELLER:
+			case SACHBEARBEITER_INSTITUTION:
+			case SACHBEARBEITER_TRAEGERSCHAFT: {
+				tmp.add(convertStatusToEntity(statusDTO));
+				if (statusDTO == AntragStatusDTO.VERFUEGT) {
+					tmp.add(AntragStatus.PRUEFUNG_STV);
+					tmp.add(AntragStatus.IN_BEARBEITUNG_STV);
+					tmp.add(AntragStatus.GEPRUEFT_STV);
+				}
+				return tmp;
+			}
+			default: {
+				tmp.add(convertStatusToEntity(statusDTO));
+				return tmp;
+			}
+
 		}
 	}
 }

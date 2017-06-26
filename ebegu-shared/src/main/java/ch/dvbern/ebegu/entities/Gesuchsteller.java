@@ -4,11 +4,13 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -39,7 +41,10 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	private String telefonAusland;
 
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
-	private String zpvNumber; //todo team, es ist noch offen was das genau fuer ein identifier ist
+	private String ewkPersonId;
+
+	@Column(nullable = true)
+	private LocalDate ewkAbfrageDatum;
 
 	@NotNull
 	private boolean diplomatenstatus;
@@ -81,12 +86,20 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		this.telefonAusland = telefonAusland;
 	}
 
-	public String getZpvNumber() {
-		return zpvNumber;
+	public String getEwkPersonId() {
+		return ewkPersonId;
 	}
 
-	public void setZpvNumber(final String zpvNumber) {
-		this.zpvNumber = zpvNumber;
+	public void setEwkPersonId(final String ewkPersonId) {
+		this.ewkPersonId = ewkPersonId;
+	}
+
+	public LocalDate getEwkAbfrageDatum() {
+		return ewkAbfrageDatum;
+	}
+
+	public void setEwkAbfrageDatum(LocalDate ewkAbfrageDatum) {
+		this.ewkAbfrageDatum = ewkAbfrageDatum;
 	}
 
 	public boolean isDiplomatenstatus() {
@@ -97,14 +110,27 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		this.diplomatenstatus = diplomatenstatus;
 	}
 
-	public Gesuchsteller copyForMutation(Gesuchsteller mutation) {
-		super.copyForMutation(mutation);
+	@Nonnull
+	private Gesuchsteller copyForMutationOrErneuerung(@Nonnull Gesuchsteller mutation) {
 		mutation.setMail(this.getMail());
 		mutation.setMobile(this.getMobile());
 		mutation.setTelefon(this.getTelefon());
 		mutation.setTelefonAusland(this.getTelefonAusland());
-		mutation.setZpvNumber(this.getZpvNumber());
+		mutation.setEwkPersonId(this.getEwkPersonId());
+		mutation.setEwkAbfrageDatum(this.getEwkAbfrageDatum());
 		mutation.setDiplomatenstatus(this.isDiplomatenstatus());
 		return mutation;
+	}
+
+	@Nonnull
+	public Gesuchsteller copyForMutation(@Nonnull Gesuchsteller mutation) {
+		super.copyForMutation(mutation);
+		return copyForMutationOrErneuerung(mutation);
+	}
+
+	@Nonnull
+	public Gesuchsteller copyForErneuerung(@Nonnull Gesuchsteller mutation) {
+		super.copyForErneuerung(mutation);
+		return copyForMutationOrErneuerung(mutation);
 	}
 }

@@ -1,15 +1,18 @@
 import {EbeguAuthentication} from '../authentication.module';
 import AuthServiceRS from './AuthServiceRS.rest';
-import { IHttpService, IQService, IScope, ITimeoutService} from 'angular';
+import {IHttpService, IQService, IScope, ITimeoutService} from 'angular';
 import {EbeguWebCore} from '../../core/core.module';
 import {TSRole} from '../../models/enums/TSRole';
 import TSUser from '../../models/TSUser';
+import TestDataUtil from '../../utils/TestDataUtil';
 import ICookiesService = angular.cookies.ICookiesService;
+import IHttpBackendService = angular.IHttpBackendService;
 
 describe('AuthServiceRS', function () {
 
     let authServiceRS: AuthServiceRS;
     let $http: IHttpService;
+    let $httpBackend: IHttpBackendService;
     let $q: IQService;
     let $rootScope: IScope;
     let $timeout: ITimeoutService;
@@ -22,6 +25,7 @@ describe('AuthServiceRS', function () {
     beforeEach(angular.mock.inject(function ($injector: any) {
         authServiceRS = $injector.get('AuthServiceRS');
         $http = $injector.get('$http');
+        $httpBackend = $injector.get('$httpBackend');
         $rootScope = $injector.get('$rootScope');
         $q = $injector.get('$q');
         $timeout = $injector.get('$timeout');
@@ -43,6 +47,8 @@ describe('AuthServiceRS', function () {
             spyOn($cookies, 'get').and.returnValue(encodedUser);
 
             let cookieUser: TSUser;
+            //if we can decode the cookie the client application assumes the user is logged in for ui purposes
+            TestDataUtil.mockLazyGesuchModelManagerHttpCalls($httpBackend);
             authServiceRS.loginRequest(user).then((response: TSUser) => {
                 cookieUser = response;
             });

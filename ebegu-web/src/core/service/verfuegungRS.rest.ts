@@ -32,9 +32,9 @@ export default class VerfuegungRS {
             });
     }
 
-    public saveVerfuegung(verfuegung: TSVerfuegung, gesuchId: string, betreuungId: string): IPromise<TSVerfuegung> {
+    public saveVerfuegung(verfuegung: TSVerfuegung, gesuchId: string, betreuungId: string, ignorieren: boolean): IPromise<TSVerfuegung> {
         let restVerfuegung = this.ebeguRestUtil.verfuegungToRestObject({}, verfuegung);
-        return this.http.put(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/' + encodeURIComponent(betreuungId), restVerfuegung, {
+        return this.http.put(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/' + encodeURIComponent(betreuungId) + '/' + ignorieren, restVerfuegung, {
             headers: {
                 'Content-Type': 'application/json'
             }

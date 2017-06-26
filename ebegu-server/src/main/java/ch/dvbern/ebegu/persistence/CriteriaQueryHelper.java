@@ -134,7 +134,6 @@ public class CriteriaQueryHelper {
 		query.select(root);
 
 		ParameterExpression<LocalDate> dateParam = cb.parameter(LocalDate.class, "date");
-		//todo beim root.get() muss die Felder von Entity_ holen
 		Predicate intervalPredicate = cb.between(dateParam,
 			root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
 			root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));

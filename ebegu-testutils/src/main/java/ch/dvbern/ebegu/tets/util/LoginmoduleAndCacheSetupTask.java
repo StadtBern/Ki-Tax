@@ -32,12 +32,29 @@ public class LoginmoduleAndCacheSetupTask implements ServerSetupTask {
 		//add login module
 		addEbeguTestLoginModule(managementClient);
 
+        //ad system properties
+		addProperties(managementClient);
+
 		// add infinispan cache subsystem
 		addInfinispanCacheForTest(managementClient);
 
 //        // FIXME reload is not working due to https://bugzilla.redhat.com/show_bug.cgi?id=900065
 //         managementClient.getControllerClient().execute(ModelUtil.createOpNode(null, "reload"));
     }
+
+	public void addProperties(ManagementClient managementClient) {
+		//generate lucene index to jboss data dir
+		String jbossDataDirPath = System.getProperty("jboss.server.data.dir", "target/lucene-index");
+		if (jbossDataDirPath != null) {
+			ModelNode stepa = WildflyCLIUtil.createOpNode("system-property=hibernate.search.default.indexBase", "add");
+			stepa.get("value").set(jbossDataDirPath + "/lucene-index");
+			ModelNode op = WildflyCLIUtil.createCompositeNode(stepa);
+
+			boolean success = WildflyCLIUtil.execute(managementClient, op);
+			LOG.info("Installing ebegu system propertiesfor ebegu application {}",
+				new Object[] { success ? "passed" : "failed" });
+		}
+	}
 
 	private void addEbeguTestLoginModule(ManagementClient managementClient) {
 		ModelNode step1 = WildflyCLIUtil.createOpNode("subsystem=security/security-domain=ebegu-test/", "add");
@@ -86,10 +103,17 @@ public class LoginmoduleAndCacheSetupTask implements ServerSetupTask {
 		boolean success = WildflyCLIUtil.execute(managementClient, op);
 		LOG.info("Uninstalling infinispan cache for ebegu application {}",
                 new Object[] { success ? "passed" : "failed" });
+
 		ModelNode op2 = WildflyCLIUtil.createOpNode("subsystem=security/security-domain=ebegu-test", "remove");
 		boolean success2 = WildflyCLIUtil.execute(managementClient, op2);
 		LOG.info("Uninstalling demo login module  for ebegu application {}",
                 new Object[] { success2 ? "passed" : "failed" });
+
+		ModelNode op3 = WildflyCLIUtil.createOpNode("system-property=hibernate.search.default.indexBase", "remove");
+		boolean success3 = WildflyCLIUtil.execute(managementClient, op3);
+		LOG.info("Uninstalling system properties {}",
+			new Object[] { success3 ? "passed" : "failed" });
+
 
 		// FIXME reload is not working due to https://bugzilla.redhat.com/show_bug.cgi?id=900065
         // managementClient.getControllerClient().execute(ModelUtil.createOpNode(null, "reload"));

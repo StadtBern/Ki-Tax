@@ -1,6 +1,9 @@
 package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.bridge.builtin.LongBridge;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
@@ -24,13 +27,14 @@ import javax.validation.constraints.NotNull;
 		@Index(name = "IX_fall_mandant", columnList = "mandant_id")
 	}
 )
-public class Fall extends AbstractEntity implements HasMandant{
+public class Fall extends AbstractEntity implements HasMandant {
 
 	private static final long serialVersionUID = -9154456879261811678L;
 
 	@NotNull
 	@Column(nullable = false)
 	@Min(1)
+	@Field(bridge = @FieldBridge(impl = LongBridge.class))
 	private long fallNummer = 1;
 
 	@Nullable
@@ -55,7 +59,7 @@ public class Fall extends AbstractEntity implements HasMandant{
 	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_fall_mandant_id"))
-	private Mandant mandant; //TODO (Team) Die Abfrage-Skripts muessten noch den Mandanten beruecksichtigen!
+	private Mandant mandant;
 
 
 	public long getFallNummer() {

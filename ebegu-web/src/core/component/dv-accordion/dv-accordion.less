@@ -1,0 +1,53 @@
+@import '../../../style/variables.less';
+@import '../../../style/mixins.less';
+
+dv-accordion {
+    overflow: hidden;
+    dv-accordion-tab {
+        .dv-accordion-tab-title {
+            position: relative;
+            z-index: 1;
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari*/
+            -khtml-user-select: none; /* Konqueror */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
+            &:focus {
+                outline: none;
+            }
+            display: block;
+            width: 100%;
+            background: darkgrey;
+            color: black;
+            margin: 0;
+            transition: all 0.5s ease;
+            &.tab-open {
+                background: grey;
+                color: black;
+            }
+        }
+        .dv-accordion-tab-content {
+            overflow: hidden;
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 15rem;
+            background: lightblue;
+            &.ng-hide-add {
+                max-height: 15rem;
+                transition: all 1s ease;
+            }
+            &.ng-hide-add.ng-hide-add-active {
+                max-height: 0;
+            }
+            &.ng-hide-remove {
+                transition: all 1s ease;
+                max-height: 0;
+            }
+            &.ng-hide-remove.ng-hide-remove-active {
+                max-height: 15rem;
+            }
+        }
+    }
+}

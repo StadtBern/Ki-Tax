@@ -1,4 +1,4 @@
-import {IComponentOptions, IPromise, IScope, IQService} from 'angular';
+import {IComponentOptions, IPromise, IQService, IScope} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
@@ -10,8 +10,12 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import * as moment from 'moment';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
+import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 let template = require('./fallCreationView.html');
 require('./fallCreationView.less');
 
@@ -30,17 +34,22 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     // showError ist ein Hack damit, die Fehlermeldung fuer die Checkboxes nicht direkt beim Laden der Seite angezeigt wird
     // sondern erst nachdem man auf ein checkbox oder auf speichern geklickt hat
     showError: boolean = false;
+    private nichtAbgeschlosseneGesuchsperiodenList: Array<TSGesuchsperiode>;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', '$stateParams',
-        'WizardStepManager', '$translate', '$q', '$scope' , 'AuthServiceRS'];
+        'WizardStepManager', '$translate', '$q', '$scope', 'AuthServiceRS', 'GesuchsperiodeRS'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager,
-                private $translate: ITranslateService, private $q: IQService, $scope: IScope, private authServiceRS: AuthServiceRS) {
+                private $translate: ITranslateService, private $q: IQService, $scope: IScope, private authServiceRS: AuthServiceRS,
+                private gesuchsperiodeRS: GesuchsperiodeRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.GESUCH_ERSTELLEN);
+        this.TSRoleUtil = TSRoleUtil;
+    }
+
+    $onInit() {
         this.readStateParams();
         this.initViewModel();
-        this.TSRoleUtil = TSRoleUtil;
     }
 
     private readStateParams() {
@@ -61,9 +70,9 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
             }
         }
 
-        if (!this.gesuchModelManager.getAllActiveGesuchsperioden() || this.gesuchModelManager.getAllActiveGesuchsperioden().length <= 0) {
-            this.gesuchModelManager.updateActiveGesuchsperiodenList();
-        }
+        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: TSGesuchsperiode[]) => {
+            this.nichtAbgeschlosseneGesuchsperiodenList = angular.copy(response);
+        });
     }
 
     save(): IPromise<TSGesuch> {
@@ -75,12 +84,16 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
                 return this.$q.when(this.gesuchModelManager.getGesuch());
             }
             this.errorService.clearAll();
-            if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.MUTATION && this.gesuchModelManager.getGesuch().isNew()) {
-                this.berechnungsManager.clear();
-                return this.gesuchModelManager.saveMutation();
-            } else {
-                return this.gesuchModelManager.saveGesuchAndFall();
+            if (this.gesuchModelManager.getGesuch().isNew()) {
+                if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.MUTATION) {
+                    this.berechnungsManager.clear();
+                    return this.gesuchModelManager.saveMutation();
+                } else if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.ERNEUERUNGSGESUCH) {
+                    this.berechnungsManager.clear();
+                    return this.gesuchModelManager.saveErneuerungsgesuch();
+                }
             }
+            return this.gesuchModelManager.saveGesuchAndFall();
         }
         return undefined;
     }
@@ -90,7 +103,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     }
 
     public getAllActiveGesuchsperioden() {
-        return this.gesuchModelManager.getAllActiveGesuchsperioden();
+        return this.nichtAbgeschlosseneGesuchsperiodenList;
     }
 
     public setSelectedGesuchsperiode(): void {
@@ -102,14 +115,25 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
         }
     }
 
+    public isGesuchsperiodeActive(): boolean {
+        if (this.gesuchModelManager.getGesuchsperiode()) {
+            return TSGesuchsperiodeStatus.AKTIV === this.gesuchModelManager.getGesuchsperiode().status
+                || TSGesuchsperiodeStatus.INAKTIV === this.gesuchModelManager.getGesuchsperiode().status;
+        } else {
+            return true;
+        }
+    }
+
     public getTitle(): string {
-        if (this.gesuchModelManager.isErstgesuch()) {
+        if (this.gesuchModelManager.isGesuch()) {
             if (this.gesuchModelManager.isGesuchSaved() && this.gesuchModelManager.getGesuchsperiode()) {
-                return this.$translate.instant('KITAX_ERSTGESUCH_PERIODE', {
+                let key = (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.ERNEUERUNGSGESUCH) ? 'KITAX_ERNEUERUNGSGESUCH_PERIODE' : 'KITAX_ERSTGESUCH_PERIODE';
+                return this.$translate.instant(key, {
                     periode: this.gesuchModelManager.getGesuchsperiode().gesuchsperiodeString
                 });
             } else {
-                return this.$translate.instant('KITAX_ERSTGESUCH');
+                let key = (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.ERNEUERUNGSGESUCH) ? 'KITAX_ERNEUERUNGSGESUCH' : 'KITAX_ERSTGESUCH';
+                return this.$translate.instant(key);
             }
         } else {
             return this.$translate.instant('ART_DER_MUTATION');
@@ -121,5 +145,11 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
             return this.$translate.instant('WEITER_ONLY_UPPER');
         }
         return this.$translate.instant('WEITER_UPPER');
+    }
+
+    public isSelectedGesuchsperiodeInaktiv(): boolean {
+        return this.getGesuchModel() && this.getGesuchModel().gesuchsperiode
+            && this.getGesuchModel().gesuchsperiode.status === TSGesuchsperiodeStatus.INAKTIV
+            && this.getGesuchModel().isNew();
     }
 }

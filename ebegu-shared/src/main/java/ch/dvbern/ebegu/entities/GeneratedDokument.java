@@ -13,36 +13,17 @@ import javax.validation.constraints.NotNull;
  */
 @Audited
 @Entity
-@EntityListeners({GeneratedDokumentListener.class})
-public class GeneratedDokument extends FileMetadata {
+@EntityListeners({WriteProtectedDokumentListener.class})
+public class GeneratedDokument extends WriteProtectedDokument {
 
 	private static final long serialVersionUID = -895840426576485097L;
-
-	@NotNull
-	@Column(nullable = false, length = Constants.DB_DEFAULT_MAX_LENGTH)
-	@Enumerated(EnumType.STRING)
-	private GeneratedDokumentTyp typ;
 
 	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_generated_dokument_gesuch_id"), nullable = false)
 	private Gesuch gesuch;
 
-	@Column(nullable = false)
-	private boolean writeProtected = false;
-
-	@Transient
-	private boolean orginalWriteProtected;
-
 	public GeneratedDokument() {
-	}
-
-	public GeneratedDokumentTyp getTyp() {
-		return typ;
-	}
-
-	public void setTyp(GeneratedDokumentTyp typ) {
-		this.typ = typ;
 	}
 
 	public Gesuch getGesuch() {
@@ -53,27 +34,12 @@ public class GeneratedDokument extends FileMetadata {
 		this.gesuch = gesuch;
 	}
 
-	public boolean isWriteProtected() {
-		return writeProtected;
-	}
 
-	public void setWriteProtected(boolean writeProtected) {
-		this.writeProtected = writeProtected;
-	}
-
-	public boolean isOrginalWriteProtected() {
-		return orginalWriteProtected;
-	}
-
-	public void setOrginalWriteProtected(boolean orginalWriteProtected) {
-		this.orginalWriteProtected = orginalWriteProtected;
-	}
 
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this)
 			.appendSuper(super.toString())
-			.append("typ", typ)
 			.append("gesuch", gesuch)
 			.toString();
 	}

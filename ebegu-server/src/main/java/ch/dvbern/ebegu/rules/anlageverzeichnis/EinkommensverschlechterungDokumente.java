@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 
@@ -86,7 +87,8 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 			gesuchstellerNumber, einkommensverschlechterung, DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
 
 		add(getDokument(DokumentTyp.NACHWEIS_EINKOMMENSSITUATION_MONAT, einkommensverschlechterung, gesuchsteller.extractFullName(),
-			String.valueOf(basisJahr), DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG), anlageVerzeichnis);
+			String.valueOf(basisJahr), DokumentGrundPersonType.GESUCHSTELLER,
+			gesuchstellerNumber, DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG), anlageVerzeichnis);
 
 	}
 

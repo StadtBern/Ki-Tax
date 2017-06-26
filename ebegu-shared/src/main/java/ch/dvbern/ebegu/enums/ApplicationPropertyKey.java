@@ -24,7 +24,51 @@ public enum ApplicationPropertyKey {
 	/**
 	 * Damit wir Test/Produktion leichter unterscheiden koennen kann man die Hintergrundfarbe einstellen
 	 */
-	BACKGROUND_COLOR
+	BACKGROUND_COLOR,
 
+	/**
+	 * Wenn eine Nachricht zu einem Fall eintrifft, welcher noch keinen Verantwortlichen hat, so soll diese an den
+	 * Default-Verantwortlichen geschickt werden.
+	 */
+	DEFAULT_VERANTWORTLICHER,
 
+	/**
+	 * <Dbtr><Nm> Name des Zahlungspflichtigen
+	 */
+	DEBTOR_NAME,
+
+	/**
+	 * <IBAN> IBAN des Zahlungspflichtigen?
+	 */
+	DEBTOR_IBAN,
+
+	/**
+	 * <BIC> BIC des Zahlungspflichtigen?
+	 */
+	DEBTOR_BIC,
+
+	/**
+	 * <ChrgsAcct> <IBAN> IBAN Belastungskonto Gebühren?
+	 */
+	DEBTOR_IBAN_GEBUEHREN,
+
+	/**
+	 *  Anzahl Tage nach Erstellungsdatum bis der GS gewarnt wird, wenn er nicht freigibt
+	 */
+	ANZAHL_TAGE_BIS_WARNUNG_FREIGABE,
+
+	/**
+	 * Anzahl Tage nach Freigabe bis der GS gewarnt wird, wenn er Quittung nicht schickt
+	 */
+	ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG,
+
+	/**
+	 * Anzahl Tage nach Warnung bis Gesuch geloescht wird, wenn er nicht freigibt
+	 */
+	ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE,
+
+	/**
+	 * Anzahl Tage nach Warnung bis Gesuch geloescht wird, wenn er Quittung nicht schickt
+	 */
+	ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG;
 }

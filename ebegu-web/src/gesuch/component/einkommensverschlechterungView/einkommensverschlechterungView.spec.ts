@@ -19,9 +19,9 @@ describe('einkommensverschlechterungView', function () {
 
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
-    var component: any;
-    var scope: angular.IScope;
-    var $componentController: any;
+    let component: any;
+    let scope: angular.IScope;
+    let $componentController: any;
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         $componentController = $injector.get('$componentController');
@@ -46,7 +46,7 @@ describe('einkommensverschlechterungView', function () {
          To initialise your component controller you have to setup your (mock) bindings and
          pass them to $componentController.
          */
-        var bindings: {};
+        let bindings: {};
         component = $componentController('einkommensverschlechterungView', {$scope: scope}, bindings);
         expect(component).toBeDefined();
     });

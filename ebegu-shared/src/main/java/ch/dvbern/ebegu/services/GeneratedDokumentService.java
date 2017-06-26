@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.GeneratedDokument;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Mahnung;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.errors.MergeDocException;
@@ -27,31 +24,35 @@ public interface GeneratedDokumentService {
 	 * @return
 	 */
 	@Nonnull
-	GeneratedDokument saveGeneratedDokument(@Nonnull GeneratedDokument dokument);
+	WriteProtectedDokument saveDokument(@Nonnull WriteProtectedDokument dokument);
 
 	@Nullable
-	GeneratedDokument findGeneratedDokument(String gesuchId, String filename, String path);
+	WriteProtectedDokument findGeneratedDokument(String gesuchId, String filename, String path);
+
+	Pain001Dokument findPain001Dokument(String zahlungsauftragId, String filename, String path);
 
 	@Nonnull
-	GeneratedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName, boolean writeProtected) throws MimeTypeParseException;
+	WriteProtectedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, AbstractEntity entity, String fileName, boolean writeProtected) throws MimeTypeParseException;
 
-	GeneratedDokument getFinSitDokumentAccessTokenGeneratedDokument(Gesuch gesuch,
+	WriteProtectedDokument getFinSitDokumentAccessTokenGeneratedDokument(Gesuch gesuch,
 																	Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
 
-	GeneratedDokument getBegleitschreibenDokument(Gesuch gesuch,
+	WriteProtectedDokument getBegleitschreibenDokument(Gesuch gesuch,
 												  Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
 
-	GeneratedDokument getFreigabequittungAccessTokenGeneratedDokument(Gesuch gesuch,
+	WriteProtectedDokument getFreigabequittungAccessTokenGeneratedDokument(Gesuch gesuch,
 																	  Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException;
 
-	GeneratedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(Gesuch gesuch, Betreuung betreuung, String manuelleBemerkungen,
+	WriteProtectedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(Gesuch gesuch, Betreuung betreuung, String manuelleBemerkungen,
 																		Boolean forceCreation) throws MimeTypeParseException, MergeDocException, IOException;
 
-	GeneratedDokument getMahnungDokumentAccessTokenGeneratedDokument(Mahnung mahnung,
+	WriteProtectedDokument getMahnungDokumentAccessTokenGeneratedDokument(Mahnung mahnung,
 																	 Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException;
 
-	GeneratedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(Betreuung betreuung,
+	WriteProtectedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(Betreuung betreuung,
 																			Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException;
+
+	WriteProtectedDokument getPain001DokumentAccessTokenGeneratedDokument(Zahlungsauftrag zahlungsauftrag, Boolean forceCreation) throws MimeTypeParseException;
 
 	void removeAllGeneratedDokumenteFromGesuch(Gesuch gesuch);
 

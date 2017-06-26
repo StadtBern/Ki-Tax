@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.GeneratedDokument;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.WriteProtectedDokument;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.services.GeneratedDokumentService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -42,9 +43,9 @@ public class GeneratedDokumentServiceTest extends AbstractEbeguLoginTest {
 		final GeneratedDokument dokument = TestDataUtil.createGeneratedDokument(gesuch);
 		persistence.persist(dokument);
 
-		generatedDokumentService.saveGeneratedDokument(dokument);
+		generatedDokumentService.saveDokument(dokument);
 
-		final GeneratedDokument generatedDokument = generatedDokumentService.findGeneratedDokument(gesuch.getId(), dokument.getFilename(), dokument.getFilepfad());
+		final WriteProtectedDokument generatedDokument = generatedDokumentService.findGeneratedDokument(gesuch.getId(), dokument.getFilename(), dokument.getFilepfad());
 
 		Assert.assertNotNull(generatedDokument);
 		Assert.assertEquals(dokument, generatedDokument);
@@ -56,11 +57,11 @@ public class GeneratedDokumentServiceTest extends AbstractEbeguLoginTest {
 		final GeneratedDokument dokument = TestDataUtil.createGeneratedDokument(gesuch);
 		persistence.persist(dokument);
 
-		generatedDokumentService.saveGeneratedDokument(dokument);
+		generatedDokumentService.saveDokument(dokument);
 
 		byte[] data = new byte[0];
 		final String newFileName = "Newname.pdf";
-		final GeneratedDokument generatedDokument = generatedDokumentService
+		final GeneratedDokument generatedDokument = (GeneratedDokument) generatedDokumentService
 			.saveGeneratedDokumentInDB(data, GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch, newFileName, false);
 
 		Assert.assertNotNull(generatedDokument);

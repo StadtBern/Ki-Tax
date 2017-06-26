@@ -90,7 +90,7 @@ describe('ErwerbspensumRS', function () {
 
     describe('updateErwerbspensumContainer', () => {
         it('should update an ErwerbspensumContainer', () => {
-            let  changedEwp : TSErwerbspensum = TestDataUtil.createErwerbspensum();
+            let  changedEwp: TSErwerbspensum = TestDataUtil.createErwerbspensum();
             changedEwp.pensum = 40;
             changedEwp.zuschlagsprozent = 10;
             mockErwerbspensum.erwerbspensumJA = changedEwp;

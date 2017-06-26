@@ -49,7 +49,6 @@ public class BerechnungsgrundlagenInformationPrintImpl extends BriefPrintImpl im
 		FinanzSituationPrintGesuchsteller fG2 = FinanzSituationPrintGesuchstellerHelper.getFinanzSituationGesuchsteller2(gesuch);
 
 		// FinanzielleSituation G1 und G2
-		// TODO Pruefen oder Implementieren
 		String finanzielleSituationJahr = Integer.toString(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear() - 1);
 		String fallNummer = PrintUtil.createFallNummerString(gesuch);
 

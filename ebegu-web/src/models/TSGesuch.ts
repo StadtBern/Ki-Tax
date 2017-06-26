@@ -10,6 +10,7 @@ import {TSEingangsart} from './enums/TSEingangsart';
 import {isSchulamt} from './enums/TSBetreuungsangebotTyp';
 import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
 import {TSAntragStatus} from './enums/TSAntragStatus';
+import * as moment from 'moment';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 
@@ -19,12 +20,21 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _familiensituationContainer: TSFamiliensituationContainer;
     private _einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer;
     private _bemerkungen: string;
+    private _bemerkungenSTV: string;
+    private _bemerkungenPruefungSTV: string;
     private _laufnummer: number;
+    private _geprueftSTV: boolean = false;
     private _hasFSDokument: boolean = true;
     private _gesperrtWegenBeschwerde: boolean = false;
+    private _datumGewarntNichtFreigegeben: moment.Moment;
+    private _datumGewarntFehlendeQuittung: moment.Moment;
 
-    // Wir müssen uns merken, dass dies nicht das originalGesuch ist sondern eine Mutationskopie (Wichitg für laden des Gesuchs bei Navigation)
-    private _emptyMutation: boolean = false;
+    private _timestampVerfuegt: moment.Moment;
+    private _gueltig: boolean;
+
+    // Wir müssen uns merken, dass dies nicht das originalGesuch ist sondern eine Mutations- oder Erneuerungskopie
+    // (Wichtig für laden des Gesuchs bei Navigation)
+    private _emptyCopy: boolean = false;
 
 
     public get gesuchsteller1(): TSGesuchstellerContainer {
@@ -75,12 +85,36 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         this._bemerkungen = value;
     }
 
+    get bemerkungenSTV(): string {
+        return this._bemerkungenSTV;
+    }
+
+    set bemerkungenSTV(value: string) {
+        this._bemerkungenSTV = value;
+    }
+
+    get bemerkungenPruefungSTV(): string {
+        return this._bemerkungenPruefungSTV;
+    }
+
+    set bemerkungenPruefungSTV(value: string) {
+        this._bemerkungenPruefungSTV = value;
+    }
+
     get laufnummer(): number {
         return this._laufnummer;
     }
 
     set laufnummer(value: number) {
         this._laufnummer = value;
+    }
+
+    get geprueftSTV(): boolean {
+        return this._geprueftSTV;
+    }
+
+    set geprueftSTV(value: boolean) {
+        this._geprueftSTV = value;
     }
 
     get hasFSDokument(): boolean {
@@ -99,20 +133,56 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         this._gesperrtWegenBeschwerde = value;
     }
 
+    get emptyCopy(): boolean {
+        return this._emptyCopy;
+    }
+
+    set emptyCopy(value: boolean) {
+        this._emptyCopy = value;
+    }
+
+    get datumGewarntNichtFreigegeben(): moment.Moment {
+        return this._datumGewarntNichtFreigegeben;
+    }
+
+    set datumGewarntNichtFreigegeben(value: moment.Moment) {
+        this._datumGewarntNichtFreigegeben = value;
+    }
+
+    get datumGewarntFehlendeQuittung(): moment.Moment {
+        return this._datumGewarntFehlendeQuittung;
+    }
+
+    set datumGewarntFehlendeQuittung(value: moment.Moment) {
+        this._datumGewarntFehlendeQuittung = value;
+    }
+
+    get timestampVerfuegt(): moment.Moment {
+        return this._timestampVerfuegt;
+    }
+
+    set timestampVerfuegt(value: moment.Moment) {
+        this._timestampVerfuegt = value;
+    }
+
+    get gueltig(): boolean {
+        return this._gueltig;
+    }
+
+    set gueltig(value: boolean) {
+        this._gueltig = value;
+    }
+
     public isMutation(): boolean {
         return this.typ === TSAntragTyp.MUTATION;
     }
 
+    public isFolgegesuch(): boolean {
+        return this.typ === TSAntragTyp.ERNEUERUNGSGESUCH;
+    }
+
     public isOnlineGesuch(): boolean {
         return TSEingangsart.ONLINE === this.eingangsart;
-    }
-
-    get emptyMutation(): boolean {
-        return this._emptyMutation;
-    }
-
-    set emptyMutation(value: boolean) {
-        this._emptyMutation = value;
     }
 
     /**
@@ -212,10 +282,34 @@ export default class TSGesuch extends TSAbstractAntragEntity {
             return this.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA;
         }
         return undefined;
-
     }
 
     public canBeFreigegeben(): boolean {
         return this.status === TSAntragStatus.FREIGABEQUITTUNG;
+    }
+
+    /**
+     * Schaut dass mindestens eine Betreuung erfasst wurde.
+     * @returns {boolean}
+     */
+    public isThereAnyBetreuung(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        for (let kind of kinderWithBetreuungList) {
+            if (kind.betreuungen && kind.betreuungen.length > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public extractKindFromKindNumber(kindNumber: number): TSKindContainer {
+        if (this.kindContainers && kindNumber > 0) {
+            for (let i = 0; i < this.kindContainers.length; i++) {
+                if (this.kindContainers[i].kindNummer === kindNumber) {
+                    return this.kindContainers[i];
+                }
+            }
+        }
+        return undefined;
     }
 }
