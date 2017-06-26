@@ -10,6 +10,21 @@
 
 package ch.dvbern.ebegu.tests.services;
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.enterprise.inject.Alternative;
+import javax.persistence.EntityManager;
+
 import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
@@ -18,16 +33,11 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.AbstractBaseService;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 
-import javax.annotation.Nonnull;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.enterprise.inject.Alternative;
-import javax.persistence.EntityManager;
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_PENSUM_KITA_MIN;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_PENSUM_TAGESELTERN_MIN;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_PENSUM_TAGESSCHULE_MIN;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_PENSUM_TAGI_MIN;
 
 /**
  * Dummyservice fuer Ebegu Parameters
@@ -38,7 +48,7 @@ import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
 public class EbeguDummyParameterServiceBean extends AbstractBaseService implements EbeguParameterService {
 
 
-	Map<EbeguParameterKey, EbeguParameter> dummyObjects;
+	private final Map<EbeguParameterKey, EbeguParameter> dummyObjects;
 
 
 	public EbeguDummyParameterServiceBean() {

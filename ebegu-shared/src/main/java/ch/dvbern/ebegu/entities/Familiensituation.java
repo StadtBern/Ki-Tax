@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * Entitaet zum Speichern von Familiensituation in der Datenbank.
@@ -115,5 +116,25 @@ public class Familiensituation extends AbstractEntity {
 		mutation.setGemeinsameSteuererklaerung(this.getGemeinsameSteuererklaerung());
 		mutation.setGesuchstellerKardinalitaet(this.gesuchstellerKardinalitaet);
 		return mutation;
+	}
+
+	@Override
+	public boolean isSame(@Nullable AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!(other instanceof Familiensituation)) {
+			return false;
+		}
+		final Familiensituation otherFamiliensituation = (Familiensituation) other;
+		return Objects.equals(getAenderungPer(), otherFamiliensituation.getAenderungPer()) &&
+			Objects.equals(getFamilienstatus(), otherFamiliensituation.getFamilienstatus()) &&
+			Objects.equals(getGesuchstellerKardinalitaet(), otherFamiliensituation.getGesuchstellerKardinalitaet()) &&
+			Objects.equals(getGemeinsameSteuererklaerung(), otherFamiliensituation.getGemeinsameSteuererklaerung());
+
 	}
 }

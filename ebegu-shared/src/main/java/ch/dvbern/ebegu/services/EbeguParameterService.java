@@ -1,15 +1,16 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.EbeguParameter;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.enums.EbeguParameterKey;
-
-import javax.annotation.Nonnull;
-import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.persistence.EntityManager;
+
+import ch.dvbern.ebegu.entities.EbeguParameter;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.enums.EbeguParameterKey;
 
 
 /**
@@ -63,7 +64,6 @@ public interface EbeguParameterService {
 
 	/**
 	 * Gibt alle Jahresabh Parameter zuruek fuer die verschiendenen Jahre
-	 * @return
 	 */
 	@Nonnull
 	Collection<EbeguParameter> getJahresabhParameter();
@@ -83,9 +83,6 @@ public interface EbeguParameterService {
 
 	/**
 	 * Gleiches resultat wie getEbeguParameterByGesuchsperiode aber als Map
-	 *
-	 * @param gesuchsperiode
-	 * @return
 	 */
 	Map<EbeguParameterKey, EbeguParameter> getEbeguParameterByGesuchsperiodeAsMap(@Nonnull Gesuchsperiode gesuchsperiode);
 }

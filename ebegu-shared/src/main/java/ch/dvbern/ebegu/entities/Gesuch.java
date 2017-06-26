@@ -448,17 +448,22 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		this.gueltig = gueltig;
 	}
 
-	@SuppressWarnings("ObjectEquality")
-	public boolean isSame(Gesuch otherAntrag) {
-		if (this == otherAntrag) {
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		if (otherAntrag == null || getClass() != otherAntrag.getClass()) {
+		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-		return (Objects.equals(this.getEingangsdatum(), otherAntrag.getEingangsdatum())
+		if (!(other instanceof Gesuch)) {
+			return false;
+		}
+		final Gesuch otherAntrag = (Gesuch) other;
+		return Objects.equals(this.getEingangsdatum(), otherAntrag.getEingangsdatum())
 			&& Objects.equals(this.getFall(), otherAntrag.getFall())
-			&& Objects.equals(this.getGesuchsperiode(), otherAntrag.getGesuchsperiode()));
+			&& Objects.equals(this.getGesuchsperiode(), otherAntrag.getGesuchsperiode());
 	}
 
 	/**
@@ -470,7 +475,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 			return "-";
 		}
 		return Integer.toString(getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2)
-			+ "." + StringUtils.leftPad("" + getFall().getFallNummer(), Constants.FALLNUMMER_LENGTH, '0');
+			+ '.' + StringUtils.leftPad(String.valueOf(getFall().getFallNummer()), Constants.FALLNUMMER_LENGTH, '0');
 	}
 
 	@Transient
@@ -478,6 +483,17 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		final List<Betreuung> list = new ArrayList<>();
 		for (final KindContainer kind : getKindContainers()) {
 			list.addAll(kind.getBetreuungen());
+		}
+		return list;
+	}
+
+	@Transient
+	public List<AbwesenheitContainer> extractAllAbwesenheiten() {
+		final List<AbwesenheitContainer> list = new ArrayList<>();
+		for (final KindContainer kind : getKindContainers()) {
+			for (final Betreuung betreuung : kind.getBetreuungen()) {
+				list.addAll(betreuung.getAbwesenheitContainers());
+			}
 		}
 		return list;
 	}
@@ -543,9 +559,9 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	public boolean areAllBetreuungenBestaetigt() {
 		List<Betreuung> betreuungs = extractAllBetreuungen();
 		for (Betreuung betreuung : betreuungs) {
-			if (Betreuungsstatus.AUSSTEHEND.equals(betreuung.getBetreuungsstatus()) ||
-				Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus()) ||
-				Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus())) {
+			if (Betreuungsstatus.AUSSTEHEND == betreuung.getBetreuungsstatus() ||
+				Betreuungsstatus.WARTEN == betreuung.getBetreuungsstatus() ||
+				Betreuungsstatus.ABGEWIESEN == betreuung.getBetreuungsstatus()) {
 				return false;
 			}
 		}

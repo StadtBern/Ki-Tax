@@ -51,7 +51,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.STEUERAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
- * Service fuer FinanzielleSituation
+ * Service zum berechnen und speichern der Verfuegung
  */
 @Stateless
 @Local(VerfuegungService.class)
@@ -276,12 +276,11 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		// Leseberechtigt bin, fuer die Mutation aber schon!
 		Betreuung vorgaengerbetreuung = persistence.find(Betreuung.class, betreuung.getVorgaengerId());
 		if (vorgaengerbetreuung != null) {
-			if (!vorgaengerbetreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)) {
+			if (vorgaengerbetreuung.getBetreuungsstatus() != Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
 				// Hier kann aus demselben Grund die Berechtigung fuer die Vorgaengerverfuegung nicht geprueft werden
 				return Optional.ofNullable(vorgaengerbetreuung.getVerfuegung());
-			} else {
-				return findVorgaengerVerfuegung(vorgaengerbetreuung);
 			}
+			return findVorgaengerVerfuegung(vorgaengerbetreuung);
 		}
 		return Optional.empty();
 	}
@@ -290,11 +289,14 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
 	public Optional<LocalDate> findVorgaengerVerfuegungDate(@Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
-		Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuung);
+		Optional<Verfuegung> vorgaengerVerfuegungOpt = findVorgaengerVerfuegung(betreuung);
 		LocalDate letztesVerfDatum = null;
-		if (vorgaengerVerfuegung.isPresent()) {
-			authorizer.checkReadAuthorization(vorgaengerVerfuegung.get());
-			letztesVerfDatum = vorgaengerVerfuegung.get().getTimestampErstellt().toLocalDate();
+		if (vorgaengerVerfuegungOpt.isPresent()) {
+			Verfuegung vorgaengerVerfuegung = vorgaengerVerfuegungOpt.get();
+			authorizer.checkReadAuthorization(vorgaengerVerfuegung);
+			if (vorgaengerVerfuegung.getTimestampErstellt() != null) {
+				letztesVerfDatum = vorgaengerVerfuegung.getTimestampErstellt().toLocalDate();
+			}
 		}
 		return Optional.ofNullable(letztesVerfDatum);
 	}
@@ -313,8 +315,10 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 					return zeitabschnitteOnVorgaengerVerfuegung;
 				}
 			}
-			// Es gab keine bereits Verrechneten Zeitabschnitte auf dieser Verfuegung -> eins weiter zurueckgehen
-			return findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, vorgaengerBetreuung);
+			if (vorgaengerBetreuung != null) {
+				// Es gab keine bereits Verrechneten Zeitabschnitte auf dieser Verfuegung -> eins weiter zurueckgehen
+				return findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, vorgaengerBetreuung);
+			}
 		}
 		return Collections.emptyList();
 	}
@@ -333,5 +337,4 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		}
 		return lastVerfuegungsZeitabschnitte;
 	}
-
 }

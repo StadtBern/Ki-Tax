@@ -159,6 +159,12 @@ export default class WizardStepManager {
         return this.$q.when();
     }
 
+    public updateCurrentWizardStepStatusMutiert(): IPromise<void> {
+        return this.wizardStepRS.setWizardStepMutiert(this.getCurrentStep().id).then((response: TSWizardStep) => {
+            return this.findStepsFromGesuch(response.gesuchId);
+        });
+    }
+
     private needNewStatusSave(oldStepStatus: TSWizardStepStatus, newStepStatus: TSWizardStepStatus) {
         if (oldStepStatus === newStepStatus) {
             return false;

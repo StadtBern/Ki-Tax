@@ -228,4 +228,6 @@ public abstract class AbstractEntity implements Serializable {
 		folgeEntity.setVorgaengerId(null); // Wir verlinken exlizit nicht mit der Vorperiode
 		return folgeEntity;
 	}
+
+	public abstract boolean isSame(AbstractEntity other);
 }
