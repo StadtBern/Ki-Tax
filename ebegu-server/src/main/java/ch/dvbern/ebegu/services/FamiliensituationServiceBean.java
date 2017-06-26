@@ -65,9 +65,13 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 				einkommensverschlechterungInfoService.updateEinkommensverschlechterungInfo(gesuch
 					.getEinkommensverschlechterungInfoContainer());
 			}
-		} else if (!newFamiliensituation.hasSecondGesuchsteller()) {
-			// if there is no GS2 the field gemeinsameSteuererklaerung must be set to null
-			newFamiliensituation.setGemeinsameSteuererklaerung(null);
+		} else {
+			Familiensituation familiensituationErstgesuch = familiensituationContainer.getFamiliensituationErstgesuch();
+			if (familiensituationErstgesuch != null &&
+				(!familiensituationErstgesuch.hasSecondGesuchsteller() && !newFamiliensituation.hasSecondGesuchsteller())) {
+				// if there is no GS2 the field gemeinsameSteuererklaerung must be set to null
+				newFamiliensituation.setGemeinsameSteuererklaerung(null);
+			}
 		}
 
 		final FamiliensituationContainer mergedFamiliensituationContainer = persistence.merge

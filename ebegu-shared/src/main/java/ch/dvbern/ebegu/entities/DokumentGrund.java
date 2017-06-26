@@ -254,7 +254,6 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 		}
 		final DokumentGrund otherDokumentGrund = (DokumentGrund) other;
 		return getDokumentGrundTyp() == otherDokumentGrund.getDokumentGrundTyp() &&
-//			Objects.equals(getFullName(), otherDokumentGrund.getFullName()) && // deprecated
 			Objects.equals(getTag(), otherDokumentGrund.getTag()) &&
 			getPersonType() == otherDokumentGrund.getPersonType() &&
 			Objects.equals(getPersonNumber(), otherDokumentGrund.getPersonNumber()) &&

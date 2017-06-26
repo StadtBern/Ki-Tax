@@ -1,8 +1,8 @@
 package ch.dvbern.ebegu.entities;
 
 
-import ch.dvbern.ebegu.util.Constants;
-import org.hibernate.envers.Audited;
+import java.time.LocalDate;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
@@ -10,8 +10,9 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.util.Constants;
+import org.hibernate.envers.Audited;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -155,7 +156,6 @@ public class Gesuchsteller extends AbstractPersonEntity {
 			Objects.equals(getMobile(), otherGesuchsteller.getMobile()) &&
 			Objects.equals(getTelefon(), otherGesuchsteller.getTelefon()) &&
 			Objects.equals(getTelefonAusland(), otherGesuchsteller.getTelefonAusland()) &&
-//			Objects.equals(getEwkAbfrageDatum(), otherGesuchsteller.getEwkAbfrageDatum()) &&
 			Objects.equals(isDiplomatenstatus(), otherGesuchsteller.isDiplomatenstatus());
 	}
 
