@@ -9,14 +9,15 @@
  */
 package ch.dvbern.ebegu.reporting.gesuchzeitraum;
 
-import ch.dvbern.lib.excelmerger.ExcelConverter;
-import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
-import org.apache.poi.ss.usermodel.Sheet;
+import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.enterprise.context.Dependent;
-import java.util.List;
-import java.util.Locale;
+
+import ch.dvbern.lib.excelmerger.ExcelConverter;
+import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -62,6 +63,8 @@ public class GeuschZeitraumExcelConverter implements ExcelConverter {
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationUmzug, dataRow.getAnzahlMutationUmzug());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationVerfuegen, dataRow.getAnzahlMutationVerfuegen());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMahnungen, dataRow.getAnzahlMahnungen());
+				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlSteueramtAusgeloest, dataRow.getAnzahlSteueramtAusgeloest());
+				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlSteueramtGeprueft, dataRow.getAnzahlSteueramtGeprueft());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlBeschwerde, dataRow.getAnzahlBeschwerde());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlVerfuegungen, dataRow.getAnzahlVerfuegungen());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlVerfuegungenNormal, dataRow.getAnzahlVerfuegungenNormal());

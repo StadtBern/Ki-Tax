@@ -45,9 +45,18 @@ public class GesuchZeitraumDataRow {
 	private Integer anzahlVerfuegungenKeinPensum;
 	private Integer anzahlVerfuegungenZuschlagZumPensum;
 	private Integer anzahlVerfuegungenNichtEintreten;
+	private Integer anzahlSteueramtAusgeloest;
+	private Integer anzahlSteueramtGeprueft;
 
 
-	public GesuchZeitraumDataRow(String bgNummer, Integer gesuchLaufNr, String institution, String betreuungsTyp, String periode, Integer anzahlGesuchOnline, Integer anzahlGesuchPapier, Integer anzahlMutationOnline, Integer anzahlMutationPapier, Integer anzahlMutationAbwesenheit, Integer anzahlMutationBetreuung, Integer anzahlMutationDokumente, Integer anzahlMutationEV, Integer anzahlMutationEwerbspensum, Integer anzahlMutationFamilienSitutation, Integer anzahlMutationFinanzielleSituation, Integer anzahlMutationFreigabe, Integer anzahlMutationGesuchErstellen, Integer anzahlMutationGesuchsteller, Integer anzahlMutationKinder, Integer anzahlMutationUmzug, Integer anzahlMutationVerfuegen, Integer anzahlMahnungen, Integer anzahlBeschwerde, Integer anzahlVerfuegungen, Integer anzahlVerfuegungenNormal, Integer anzahlVerfuegungenMaxEinkommen, Integer anzahlVerfuegungenKeinPensum, Integer anzahlVerfuegungenZuschlagZumPensum, Integer anzahlVerfuegungenNichtEintreten) {
+	public GesuchZeitraumDataRow(String bgNummer, Integer gesuchLaufNr, String institution, String betreuungsTyp, String periode, Integer anzahlGesuchOnline,
+			Integer anzahlGesuchPapier, Integer anzahlMutationOnline, Integer anzahlMutationPapier, Integer anzahlMutationAbwesenheit, Integer anzahlMutationBetreuung,
+			Integer anzahlMutationDokumente, Integer anzahlMutationEV, Integer anzahlMutationEwerbspensum, Integer anzahlMutationFamilienSitutation,
+			Integer anzahlMutationFinanzielleSituation, Integer anzahlMutationFreigabe, Integer anzahlMutationGesuchErstellen, Integer anzahlMutationGesuchsteller,
+			Integer anzahlMutationKinder, Integer anzahlMutationUmzug, Integer anzahlMutationVerfuegen, Integer anzahlMahnungen, Integer anzahlSteueramtAusgeloest,
+			Integer anzahlSteueramtGeprueft, Integer anzahlBeschwerde, Integer anzahlVerfuegungen, Integer anzahlVerfuegungenNormal,
+			Integer anzahlVerfuegungenMaxEinkommen, Integer anzahlVerfuegungenKeinPensum, Integer anzahlVerfuegungenZuschlagZumPensum,
+		Integer anzahlVerfuegungenNichtEintreten) {
 		this.bgNummer = bgNummer;
 		this.gesuchLaufNr = gesuchLaufNr;
 		this.institution = institution;
@@ -78,6 +87,8 @@ public class GesuchZeitraumDataRow {
 		this.anzahlVerfuegungenKeinPensum = anzahlVerfuegungenKeinPensum;
 		this.anzahlVerfuegungenZuschlagZumPensum = anzahlVerfuegungenZuschlagZumPensum;
 		this.anzahlVerfuegungenNichtEintreten = anzahlVerfuegungenNichtEintreten;
+		this.anzahlSteueramtAusgeloest = anzahlSteueramtAusgeloest;
+		this.anzahlSteueramtGeprueft = anzahlSteueramtGeprueft;
 	}
 
 	@SuppressFBWarnings("NM_CONFUSING")
@@ -319,5 +330,21 @@ public class GesuchZeitraumDataRow {
 
 	public void setAnzahlVerfuegungenNichtEintreten(Integer anzahlVerfuegungenNichtEintreten) {
 		this.anzahlVerfuegungenNichtEintreten = anzahlVerfuegungenNichtEintreten;
+	}
+
+	public Integer getAnzahlSteueramtAusgeloest() {
+		return anzahlSteueramtAusgeloest;
+	}
+
+	public void setAnzahlSteueramtAusgeloest(Integer anzahlSteueramtAusgeloest) {
+		this.anzahlSteueramtAusgeloest = anzahlSteueramtAusgeloest;
+	}
+
+	public Integer getAnzahlSteueramtGeprueft() {
+		return anzahlSteueramtGeprueft;
+	}
+
+	public void setAnzahlSteueramtGeprueft(Integer anzahlSteueramtGeprueft) {
+		this.anzahlSteueramtGeprueft = anzahlSteueramtGeprueft;
 	}
 }

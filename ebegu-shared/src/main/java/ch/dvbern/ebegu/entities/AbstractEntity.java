@@ -1,5 +1,24 @@
 package ch.dvbern.ebegu.entities;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.UUID;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
+import javax.persistence.EntityListeners;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.SqlResultSetMappings;
+import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.util.AbstractEntityListener;
@@ -8,16 +27,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.Hibernate;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.UUID;
 
 @SuppressWarnings("ClassReferencesSubclass")
 @MappedSuperclass
@@ -64,6 +73,8 @@ import java.util.UUID;
 				@ColumnResult(name = "anzahlMutationUmzug", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationVerfuegen", type = Integer.class),
 				@ColumnResult(name = "anzahlMahnungen", type = Integer.class),
+				@ColumnResult(name = "anzahlSteueramtAusgeloest", type = Integer.class),
+				@ColumnResult(name = "anzahlSteueramtGeprueft", type = Integer.class),
 				@ColumnResult(name = "anzahlBeschwerde", type = Integer.class),
 				@ColumnResult(name = "anzahlVerfuegungen", type = Integer.class),
 				@ColumnResult(name = "anzahlVerfuegungenNormal", type = Integer.class),
