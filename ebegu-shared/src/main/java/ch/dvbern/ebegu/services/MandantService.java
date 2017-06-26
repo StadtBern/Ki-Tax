@@ -1,9 +1,10 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Mandant;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
-import java.util.Optional;
+
+import ch.dvbern.ebegu.entities.Mandant;
 
 /**
  * Service fuer Mandant
@@ -17,6 +18,9 @@ public interface MandantService {
 	@Nonnull
 	Optional<Mandant> findMandant(@Nonnull final String id);
 
+	/**
+	 * Gibt den ersten (und aktuell einzigen) Mandanten aus der DB zurueck
+	 */
 	@Nonnull
 	Mandant getFirst();
 }
