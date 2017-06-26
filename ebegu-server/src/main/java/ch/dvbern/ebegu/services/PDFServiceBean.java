@@ -1,6 +1,25 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Mahnung;
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
@@ -23,16 +42,6 @@ import ch.dvbern.ebegu.vorlagen.nichteintreten.NichteintretenPrintMergeSource;
 import ch.dvbern.ebegu.vorlagen.verfuegung.VerfuegungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.verfuegung.VerfuegungPrintMergeSource;
 import com.google.common.io.ByteStreams;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.util.*;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -183,7 +192,11 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 
-		authorizer.checkReadAuthorizationFinSit(gesuch);
+		if (!gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			// Bei nur Schulamt prüfen wir die Berechtigung nicht, damit das JA solche Gesuche schliessen kann. Der UseCase ist, dass zuerst ein zweites
+			// Angebot vorhanden war, dieses aber durch das JA gelöscht wurde.
+			authorizer.checkReadAuthorizationFinSit(gesuch);
+		}
 
 		try {
 			final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();
