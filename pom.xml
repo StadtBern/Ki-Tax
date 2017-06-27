@@ -323,12 +323,12 @@
             <dependency>
                 <groupId>ch.dvbern.lib</groupId>
                 <artifactId>dvbern-lib-iso20022-intf</artifactId>
-                <version>1.0.1</version>
+                <version>1.0.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>ch.dvbern.lib</groupId>
                 <artifactId>dvbern-lib-iso20022-impl</artifactId>
-                <version>1.0.1</version>
+                <version>1.0.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>ch.dvbern.lib.excelmerger</groupId>
