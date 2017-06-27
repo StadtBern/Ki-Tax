@@ -1,6 +1,8 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.ZahlungspositionStatus;
+import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.ebegu.util.MathUtil;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
@@ -8,6 +10,7 @@ import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * Entitaet zum Speichern von Zahlungspositionen in der Datenbank.
@@ -92,5 +95,24 @@ public class Zahlungsposition extends AbstractEntity implements Comparable<Zahlu
 		builder.append(this.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb(), o.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb());
 		builder.append(this.getBetrag(), o.getBetrag());
 		return builder.toComparison();
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!(other instanceof Zahlungsposition)) {
+			return false;
+		}
+		final Zahlungsposition otherZahlungsposition = (Zahlungsposition) other;
+		return EbeguUtil.isSameObject(getVerfuegungZeitabschnitt(), otherZahlungsposition.getVerfuegungZeitabschnitt()) &&
+			Objects.equals(getStatus(), otherZahlungsposition.getStatus()) &&
+			MathUtil.isSame(getBetrag(), otherZahlungsposition.getBetrag()) &&
+			Objects.equals(isIgnoriert(), otherZahlungsposition.isIgnoriert());
 	}
 }

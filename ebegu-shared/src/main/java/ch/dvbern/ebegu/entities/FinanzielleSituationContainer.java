@@ -1,5 +1,10 @@
 package ch.dvbern.ebegu.entities;
 
+import java.util.Objects;
+
+import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
+import ch.dvbern.ebegu.validators.CheckFinanzielleSituationContainerComplete;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -11,6 +16,7 @@ import javax.validation.constraints.NotNull;
  * Container-Entity für die Finanzielle Situation: Diese muss für jeden Benutzertyp (GS, JA, SV) einzeln geführt werden,
  * damit die Veränderungen / Korrekturen angezeigt werden können.
  */
+@CheckFinanzielleSituationContainerComplete(groups = AntragCompleteValidationGroup.class)
 @Audited
 @Entity
 @Table(
@@ -83,5 +89,22 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 		mutation.setFinanzielleSituationGS(null);
 		mutation.setFinanzielleSituationJA(this.getFinanzielleSituationJA().copyForMutation(new FinanzielleSituation()));
 		return mutation;
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!(other instanceof FinanzielleSituationContainer)) {
+			return false;
+		}
+		final FinanzielleSituationContainer otherFinSitContainer = (FinanzielleSituationContainer) other;
+		return Objects.equals(getJahr(), otherFinSitContainer.getJahr()) &&
+			EbeguUtil.isSameObject(getFinanzielleSituationJA(), otherFinSitContainer.getFinanzielleSituationJA());
 	}
 }

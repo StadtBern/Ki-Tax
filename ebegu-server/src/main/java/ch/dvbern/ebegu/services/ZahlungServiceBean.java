@@ -430,7 +430,6 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		} catch (MimeTypeParseException e) {
 			throw new IllegalStateException("Pain-File konnte nicht erstellt werden: " + auftragId, e);
 		}
-		//  return this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, true);
 		for (Zahlung zahlung : zahlungsauftrag.getZahlungen()) {
 			if (!ZahlungStatus.ENTWURF.equals(zahlung.getStatus())) {
 				throw new IllegalArgumentException("Zahlung muss im Status ENTWURF sein, wenn der Auftrag ausgelöst wird: " + zahlung.getId());

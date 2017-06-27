@@ -1,5 +1,21 @@
 package ch.dvbern.ebegu.services;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
+
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.FileMetadata;
 import ch.dvbern.ebegu.util.UploadFileInfo;
@@ -9,20 +25,18 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
-@SuppressFBWarnings({"NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"})
+/**
+ * Service zum Speichern von Files auf dem File-System
+ */
+@SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
 @Stateless
 @Local(FileSaverService.class)
 public class FileSaverServiceBean implements FileSaverService {
@@ -30,12 +44,12 @@ public class FileSaverServiceBean implements FileSaverService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileSaverServiceBean.class.getSimpleName());
 
-
 	@Inject
 	private EbeguConfiguration ebeguConfiguration;
 
 
 	@Override
+	@PermitAll
 	public boolean save(UploadFileInfo uploadFileInfo, String folderName) {
 		Validate.notNull(uploadFileInfo);
 		Validate.notNull(uploadFileInfo.getFilename());
@@ -45,7 +59,7 @@ public class FileSaverServiceBean implements FileSaverService {
 		String ending = getFileNameEnding(uploadFileInfo.getFilename());
 
 		// Wir speichern der Name des Files nicht im FS. Kann sonst Probleme mit Umlauten geben
-		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + "/" + folderName + "/" + uuid + "." + ending;
+		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + '/' + folderName + '/' + uuid + '.' + ending;
 		uploadFileInfo.setPath(absoluteFilePath);
 		uploadFileInfo.setActualFilename(uuid + "." + ending);
 
@@ -55,16 +69,18 @@ public class FileSaverServiceBean implements FileSaverService {
 				Files.createDirectories(file.getParent());
 			}
 			uploadFileInfo.setSize(Files.size(Files.write(file, uploadFileInfo.getBytes())));
-			LOG.info("Save file in FileSystem: " + absoluteFilePath);
+			LOG.info("Save file in FileSystem: {}", absoluteFilePath);
 
 		} catch (IOException e) {
-			LOG.info("Can't save file in FileSystem: " + uploadFileInfo.getFilename(), e);
+			LOG.error("Can't save file in FileSystem: {}", uploadFileInfo.getFilename(), e);
 			return false;
 		}
 		return true;
 	}
 
+	@Nullable
 	@Override
+	@PermitAll
 	public UploadFileInfo save(byte[] bytes, String fileName, String folderName) throws MimeTypeParseException {
 		MimeType contentType = new MimeType("application/pdf");
 		return save(bytes, fileName, folderName, contentType);
@@ -72,6 +88,7 @@ public class FileSaverServiceBean implements FileSaverService {
 
 	@Nullable
 	@Override
+	@PermitAll
 	public UploadFileInfo save(byte[] bytes, String fileName, String folderName, MimeType contentType) {
 		final UploadFileInfo uploadFileInfo = new UploadFileInfo(fileName, contentType);
 		uploadFileInfo.setBytes(bytes);
@@ -82,39 +99,35 @@ public class FileSaverServiceBean implements FileSaverService {
 	}
 
 	@Override
+	@PermitAll
 	public boolean copy(FileMetadata fileToCopy, String folderName) {
 		Validate.notNull(fileToCopy);
 		Validate.notNull(folderName);
 
 		Path oldfile = Paths.get(fileToCopy.getFilepfad());
-
 		UUID uuid = UUID.randomUUID();
-
 		String ending = getFileNameEnding(fileToCopy.getFilename());
 
 		// Wir speichern der Name des Files nicht im FS. Kann sonst Probleme mit Umlauten geben
-		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + "/" + folderName + "/" + uuid + "." + ending;
+		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + '/' + folderName + '/' + uuid + '.' + ending;
 		fileToCopy.setFilepfad(absoluteFilePath);
 
 		Path newfile = Paths.get(absoluteFilePath);
-
 		try {
-
 			if (!Files.exists(newfile.getParent())) {
 				Files.createDirectories(newfile.getParent());
-				LOG.info("Save file in FileSystem: " + absoluteFilePath);
+				LOG.info("Save file in FileSystem: {}", absoluteFilePath);
 			}
 			Files.copy(oldfile, newfile);
 
 		} catch (IOException e) {
-			LOG.info("Can't save file in FileSystem: " + fileToCopy.getFilename(), e);
+			LOG.error("Can't save file in FileSystem: {}", fileToCopy.getFilename(), e);
 			return false;
 		}
 		return true;
 	}
 
 	private String getFileNameEnding(String filename) {
-
 		String extension = "";
 		int i = filename.lastIndexOf('.');
 		if (i > 0) {
@@ -124,35 +137,35 @@ public class FileSaverServiceBean implements FileSaverService {
 	}
 
 	@Override
+	@PermitAll
 	public boolean remove(String dokumentPaths) {
 		final Path path = Paths.get(dokumentPaths);
-
 		try {
 			if (Files.exists(path)) {
 				Files.delete(path);
-
-				LOG.info("Delete file in FileSystem: " + dokumentPaths);
+				LOG.info("Delete file in FileSystem: {}", dokumentPaths);
 			}
 		} catch (IOException e) {
-			LOG.info("Can't remove file in FileSystem: " + dokumentPaths, e);
+			LOG.error("Can't remove file in FileSystem: {}", dokumentPaths, e);
 			return false;
 		}
 		return true;
 	}
 
 	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public boolean removeAllFromSubfolder(@Nonnull String subfolder) {
-		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + "/" + subfolder + "/";
+		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + '/' + subfolder + '/';
 		Path file = Paths.get(absoluteFilePath);
 		try {
 			if (Files.exists(file) && Files.isDirectory(file)) {
 				FileUtils.cleanDirectory(file.toFile());
 				Files.deleteIfExists(file);
-				LOG.info("Deleting directory : " + absoluteFilePath);
+				LOG.info("Deleting directory : {}", absoluteFilePath);
 			}
 			return true;
 		} catch (IOException e) {
-			LOG.info("Can't delete directory: " + absoluteFilePath, e);
+			LOG.error("Can't delete directory: {}", absoluteFilePath, e);
 			return false;
 		}
 	}

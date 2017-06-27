@@ -13,6 +13,7 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import org.apache.commons.lang3.Validate;
 
 public final class FinanzSituationPrintGesuchstellerHelper {
 
@@ -32,6 +33,8 @@ public final class FinanzSituationPrintGesuchstellerHelper {
 	public static FinanzSituationPrintGesuchsteller getFinanzSituationGesuchsteller1(Gesuch gesuch) {
 
 		GesuchstellerContainer gesuchsteller1 = gesuch.getGesuchsteller1();
+		Validate.notNull(gesuchsteller1);
+		Validate.notNull(gesuchsteller1.getFinanzielleSituationContainer());
 		FinanzSituationPrintGesuchsteller finanzSituationPrintGesuchsteller = new FinanzSituationPrintGesuchsteller(gesuchsteller1.getFinanzielleSituationContainer().getFinanzielleSituationJA(), //
 				gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() : null, //
 				gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() : null, //
@@ -50,7 +53,7 @@ public final class FinanzSituationPrintGesuchstellerHelper {
 
 		GesuchstellerContainer gesuchsteller2 = gesuch.getGesuchsteller2();
 		if (gesuchsteller2 != null) {
-
+			Validate.notNull(gesuchsteller2.getFinanzielleSituationContainer());
 			FinanzSituationPrintGesuchsteller finanzSituationPrintGesuchsteller2 = new FinanzSituationPrintGesuchsteller(
 					gesuchsteller2.getFinanzielleSituationContainer().getFinanzielleSituationJA(), //
 					gesuchsteller2.getEinkommensverschlechterungContainer() != null ? gesuchsteller2.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() : null, //

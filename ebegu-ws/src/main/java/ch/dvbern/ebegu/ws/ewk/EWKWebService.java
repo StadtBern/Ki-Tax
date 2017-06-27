@@ -1,5 +1,23 @@
 package ch.dvbern.ebegu.ws.ewk;
 
+import java.io.IOException;
+import java.math.BigInteger;
+import java.net.URL;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import javax.xml.bind.DatatypeConverter;
+import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Service;
+import javax.xml.ws.handler.MessageContext;
+
 import ch.bern.e_gov.cra.ReturnMessage;
 import ch.bern.e_gov.e_begu.egov_002.PersonenSucheOB;
 import ch.bern.e_gov.e_begu.egov_002.PersonenSucheReq;
@@ -14,23 +32,6 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-import javax.xml.bind.DatatypeConverter;
-import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service;
-import javax.xml.ws.handler.MessageContext;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.net.URL;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Diese Klasse ruft den PersonenSuche Webservice des EWK auf
  */
@@ -42,6 +43,7 @@ public class EWKWebService implements IEWKWebService {
 	public static final BigInteger MAX_RESULTS_ID = BigInteger.ONE;
 	public static final BigInteger MAX_RESULTS_NAME = BigInteger.TEN;
 	private static final String RETURN_CODE_OKAY = "00";
+	private static final String RETURN_CODE_NO_RESULT = "01";
 
 	private static final Logger logger = LoggerFactory.getLogger(EWKWebService.class.getSimpleName());
 	public static final String METHOD_NAME_SUCHE_PERSON = "suchePerson";
@@ -77,7 +79,7 @@ public class EWKWebService implements IEWKWebService {
 		request.setNachname(name);
 		request.setVorname(vorname);
 		request.setGeburtsdatum(geburtsdatum);
-		ch.bern.e_gov.cra.Geschlecht geschlechtEWK = geschlecht.equals(Geschlecht.MAENNLICH) ? ch.bern.e_gov.cra.Geschlecht.M : ch.bern.e_gov.cra.Geschlecht.W;
+		ch.bern.e_gov.cra.Geschlecht geschlechtEWK = geschlecht == Geschlecht.MAENNLICH ? ch.bern.e_gov.cra.Geschlecht.M : ch.bern.e_gov.cra.Geschlecht.W;
 		request.setGeschlecht(geschlechtEWK);
 		request.setMaxTreffer(MAX_RESULTS_NAME);
 
@@ -95,7 +97,7 @@ public class EWKWebService implements IEWKWebService {
 		PersonenSucheReq request = new PersonenSucheReq();
 		request.setNachname(name);
 		request.setGeburtsdatum(geburtsdatum);
-		ch.bern.e_gov.cra.Geschlecht geschlechtEWK = geschlecht.equals(Geschlecht.MAENNLICH) ? ch.bern.e_gov.cra.Geschlecht.M : ch.bern.e_gov.cra.Geschlecht.W;
+		ch.bern.e_gov.cra.Geschlecht geschlechtEWK = geschlecht == Geschlecht.MAENNLICH ? ch.bern.e_gov.cra.Geschlecht.M : ch.bern.e_gov.cra.Geschlecht.W;
 		request.setGeschlecht(geschlechtEWK);
 		request.setMaxTreffer(MAX_RESULTS_NAME);
 
@@ -117,7 +119,7 @@ public class EWKWebService implements IEWKWebService {
 			throw new PersonenSucheServiceException("handleResponseStatus", "Status der Response muss gesetzt sein");
 		}
 		//wenn der Status nicht 0 ist ist es ein Fehler
-		if (!RETURN_CODE_OKAY.equals(returnMessage.getCode())) {
+		if (!RETURN_CODE_OKAY.equals(returnMessage.getCode()) && !RETURN_CODE_NO_RESULT.equals(returnMessage.getCode())) {
 			String msg = "EWK: Fehler bei Webservice Aufruf: " + returnMessage.getCode() + " / " + returnMessage.getText();
 			logger.error(msg);
 			throw new PersonenSucheServiceBusinessException("handleResponseStatus", returnMessage.getCode(), returnMessage.getText());
@@ -128,7 +130,7 @@ public class EWKWebService implements IEWKWebService {
 
 	/**
 	 * initialisiert den Service Port wenn noetig oder gibt ihn zurueck.
-	 * @throws SARIServiceNotAvailableException
+	 * @throws PersonenSucheServiceException
 	 */
 	private PersonenSucheOB getService() throws PersonenSucheServiceException {
 		if (port == null) {

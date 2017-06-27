@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Traegerschaft;
-
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Traegerschaft;
 
 /**
  * Service zum Verwalten von Traegerschaften
@@ -13,11 +14,10 @@ public interface TraegerschaftService {
 
 	/**
 	 * Speichert die Traegerschaft neu in der DB falls der Key noch nicht existiert.
-	 *
-	 * @param person Die Traegerschaft als DTO
+	 * @param traegerschaft Die Traegerschaft als DTO
 	 */
 	@Nonnull
-	Traegerschaft saveTraegerschaft(@Nonnull Traegerschaft person);
+	Traegerschaft saveTraegerschaft(@Nonnull Traegerschaft traegerschaft);
 
 	/**
 	 * @param traegerschaftId PK (id) der Traegerschaft
@@ -40,15 +40,11 @@ public interface TraegerschaftService {
 
 	/**
 	 * removes a Traegerschaft from the Databse
-	 *
-	 * @param traegerschaftId
 	 */
 	void removeTraegerschaft(@Nonnull String traegerschaftId);
 
 	/**
 	 * marks an Traegerschft as inactive on the Database.
-	 *
-	 * @param traegerschaftId
 	 */
 	void setInactive(@Nonnull String traegerschaftId);
 }

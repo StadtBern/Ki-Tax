@@ -10,18 +10,18 @@ MAINTAINER Markus Hofstetter <markus.hofstetter@dvbern.ch>
 #Sprache einstellen
 ENV LANG=de_CH.UTF-8
 
-RUN mkdir $JBOSS_HOME/customization
-WORKDIR $JBOSS_HOME/customization
+RUN mkdir ${JBOSS_HOME}/customization
+WORKDIR ${JBOSS_HOME}/customization
 COPY customization/ebegu-customization.cli ebegu-customization.cli
 
-RUN $JBOSS_HOME/bin/jboss-cli.sh --file=ebegu-customization.cli
+RUN ${JBOSS_HOME}/bin/jboss-cli.sh --file=ebegu-customization.cli
 
 #Wildfly Admin user einfuegen
-RUN $JBOSS_HOME/bin/add-user.sh ebegu-admin jbtwLs --silent
+RUN ${JBOSS_HOME}/bin/add-user.sh ebegu-admin jbtwLs --silent
 
 
 #JBOSS JVM configuration
-COPY customization/standalone-docker.conf $JBOSS_HOME/bin/standalone.conf
+COPY customization/standalone-docker.conf ${JBOSS_HOME}/bin/standalone.conf
 
 #Applikation hinzufuegen
 ADD ebegu-rest.war /opt/jboss/wildfly/standalone/deployments/
@@ -33,11 +33,11 @@ HEALTHCHECK CMD curl -f http://$(hostname -i || echo '127.0.0.1'):8080/ebegu/api
 # cleanup #
 ###########
 
-RUN rm -rf -- $JBOSS_HOME/customization
+RUN rm -rf  ${JBOSS_HOME}/customization
 RUN rm -rf /opt/jboss/wildfly/standalone/configuration/standalone_xml_history
 
 EXPOSE 9990
-WORKDIR $JBOSS_HOME
+WORKDIR ${JBOSS_HOME}
 # properties beim serverstart mitgeben
 COPY ebegu-docker.properties /opt/jboss/wildfly/standalone/configuration/ebegu.properties
 CMD ["--properties=/opt/jboss/wildfly/standalone/configuration/ebegu.properties", "-bmanagement", "0.0.0.0"]

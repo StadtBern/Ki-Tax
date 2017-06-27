@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Gesuch;
 
 import javax.annotation.Nonnull;
@@ -20,5 +21,5 @@ public interface SuperAdminService {
 	 * gesetzt ist.
 	 */
 	@Nonnull
-	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory);
+	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory, Benutzer saveAsUser);
 }

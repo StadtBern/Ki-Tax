@@ -1,13 +1,14 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
-import org.hibernate.envers.Audited;
+import java.math.BigDecimal;
 
-import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
-import java.math.BigDecimal;
+
+import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
+import ch.dvbern.ebegu.util.MathUtil;
+import org.hibernate.envers.Audited;
 
 /**
  * Entität für die Finanzielle Situation
@@ -68,5 +69,26 @@ public class FinanzielleSituation extends AbstractFinanzielleSituation {
 		mutation.setGeschaeftsgewinnBasisjahrMinus1(this.getGeschaeftsgewinnBasisjahrMinus1());
 		mutation.setGeschaeftsgewinnBasisjahrMinus2(this.getGeschaeftsgewinnBasisjahrMinus2());
 		return mutation;
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!super.isSame(other)) {
+			return false;
+		}
+		if (!(other instanceof FinanzielleSituation)) {
+			return false;
+		}
+		final FinanzielleSituation otherFinSit = (FinanzielleSituation) other;
+		return MathUtil.isSame(getNettolohn(), otherFinSit.getNettolohn()) &&
+			MathUtil.isSame(getGeschaeftsgewinnBasisjahrMinus1(), otherFinSit.getGeschaeftsgewinnBasisjahrMinus1()) &&
+			MathUtil.isSame(getGeschaeftsgewinnBasisjahrMinus2(), otherFinSit.getGeschaeftsgewinnBasisjahrMinus2());
 	}
 }

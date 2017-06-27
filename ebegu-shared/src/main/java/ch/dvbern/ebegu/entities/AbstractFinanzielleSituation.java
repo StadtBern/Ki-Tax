@@ -1,14 +1,15 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.util.MathUtil;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * Gemeinsame Basisklasse für FinanzielleSituation und Einkommensverschlechterung
@@ -142,5 +143,29 @@ public abstract class AbstractFinanzielleSituation extends AbstractEntity {
 		mutation.setGeschaeftsgewinnBasisjahr(this.getGeschaeftsgewinnBasisjahr());
 		mutation.setGeleisteteAlimente(this.getGeleisteteAlimente());
 		return mutation;
+	}
+
+	@SuppressWarnings("OverlyComplexMethod")
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!(other instanceof AbstractFinanzielleSituation)) {
+			return false;
+		}
+		final AbstractFinanzielleSituation otherFinSituation = (AbstractFinanzielleSituation) other;
+		return Objects.equals(getSteuerveranlagungErhalten(), otherFinSituation.getSteuerveranlagungErhalten()) &&
+			Objects.equals(getSteuererklaerungAusgefuellt(), otherFinSituation.getSteuererklaerungAusgefuellt()) &&
+			MathUtil.isSame(getFamilienzulage(), otherFinSituation.getFamilienzulage()) &&
+			MathUtil.isSame(getErsatzeinkommen(), otherFinSituation.getErsatzeinkommen()) &&
+			MathUtil.isSame(getErhalteneAlimente(), otherFinSituation.getErhalteneAlimente()) &&
+			MathUtil.isSame(getBruttovermoegen(), otherFinSituation.getBruttovermoegen()) &&
+			MathUtil.isSame(getSchulden(), otherFinSituation.getSchulden()) &&
+			MathUtil.isSame(getGeschaeftsgewinnBasisjahr(), otherFinSituation.getGeschaeftsgewinnBasisjahr()) &&
+			MathUtil.isSame(getGeleisteteAlimente(), otherFinSituation.getGeleisteteAlimente());
 	}
 }

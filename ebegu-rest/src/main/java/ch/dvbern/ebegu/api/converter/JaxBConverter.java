@@ -527,7 +527,7 @@ public class JaxBConverter {
 						return 0;
 					} else if (o1.extractGueltigkeit() == null) {
 						return 1;
-					} else if (o1.extractGueltigkeit() == null) {
+					} else if (o2.extractGueltigkeit() == null) {
 						return -1;
 					} else {
 						return o1.extractGueltigkeit().getGueltigAb().compareTo(o2.extractGueltigkeit().getGueltigAb());
@@ -1110,7 +1110,7 @@ public class JaxBConverter {
 
 	}
 
-
+	@Nonnull
 	public FinanzielleSituationContainer finanzielleSituationContainerToStorableEntity(@Nonnull final JaxFinanzielleSituationContainer containerJAX) {
 		Validate.notNull(containerJAX);
 		FinanzielleSituationContainer containerToMergeWith = new FinanzielleSituationContainer();
@@ -1291,6 +1291,7 @@ public class JaxBConverter {
 		return gesuchToEntity(gesuchToFind, gesuchToMergeWith);
 	}
 
+	@Nonnull
 	public FinanzielleSituationContainer finanzielleSituationContainerToEntity(@Nonnull final JaxFinanzielleSituationContainer containerJAX,
 																			   @Nonnull final FinanzielleSituationContainer container) {
 		Validate.notNull(container);
@@ -1310,7 +1311,9 @@ public class JaxBConverter {
 		return container;
 	}
 
-	public JaxFinanzielleSituationContainer finanzielleSituationContainerToJAX(final FinanzielleSituationContainer persistedFinanzielleSituation) {
+	@Nonnull
+	public JaxFinanzielleSituationContainer finanzielleSituationContainerToJAX(@Nonnull final FinanzielleSituationContainer
+		persistedFinanzielleSituation) {
 		final JaxFinanzielleSituationContainer jaxPerson = new JaxFinanzielleSituationContainer();
 		convertAbstractFieldsToJAX(persistedFinanzielleSituation, jaxPerson);
 		jaxPerson.setJahr(persistedFinanzielleSituation.getJahr());

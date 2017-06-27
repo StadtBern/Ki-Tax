@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.UserRoleName;
 
@@ -34,7 +35,7 @@ public class SuperAdminServiceBean implements SuperAdminService {
 	@Override
 	@Nonnull
 	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
-	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory) {
-		return gesuchService.updateGesuch(gesuch, saveInStatusHistory);
+	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory, Benutzer saveAsUser) {
+		return gesuchService.updateGesuch(gesuch, saveInStatusHistory, saveAsUser);
 	}
 }

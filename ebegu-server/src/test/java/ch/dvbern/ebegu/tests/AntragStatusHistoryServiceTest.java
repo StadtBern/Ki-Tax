@@ -1,6 +1,19 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.AntragStatusHistory;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.AntragStatusHistoryService;
@@ -16,14 +29,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Optional;
 
 /**
  * Arquillian Tests fuer die Klasse AntragStatusHistoryService
@@ -42,25 +47,38 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	private GesuchService gesuchService;
 
 	private Gesuch gesuch;
-	private Benutzer benutzer;
+	private Benutzer benutzerSuperAdmin;
 
 
 	@Before
 	public void setUp() {
-		benutzer = getDummySuperadmin(); // wir erstellen in superklasse schon einen superadmin
+		benutzerSuperAdmin = getDummySuperadmin(); // wir erstellen in superklasse schon einen superadmin
 		gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 	}
 
 	@Test
-	public void saveChanges() {
-
+	public void saveChangesCurrentUser() {
 		LocalDateTime time = LocalDateTime.now();
-		final AntragStatusHistory createdStatusHistory = statusHistoryService.saveStatusChange(gesuch);
+		final Benutzer benutzerJA = loginAsSachbearbeiterJA();
+		final AntragStatusHistory createdStatusHistory = statusHistoryService.saveStatusChange(gesuch, null);
 
+		assertSavedChanges(time, createdStatusHistory, benutzerJA);
+	}
+
+	@Test
+	public void saveChangesAsOtherUser() {
+		LocalDateTime time = LocalDateTime.now();
+		loginAsSachbearbeiterJA();
+		final AntragStatusHistory createdStatusHistory = statusHistoryService.saveStatusChange(gesuch, benutzerSuperAdmin);
+
+		assertSavedChanges(time, createdStatusHistory, benutzerSuperAdmin);
+	}
+
+	private void assertSavedChanges(LocalDateTime time, AntragStatusHistory createdStatusHistory, Benutzer user) {
 		Assert.assertNotNull(createdStatusHistory);
 		Assert.assertEquals(gesuch.getStatus(), createdStatusHistory.getStatus());
 		Assert.assertEquals(gesuch, createdStatusHistory.getGesuch());
-		Assert.assertEquals(benutzer, createdStatusHistory.getBenutzer());
+		Assert.assertEquals(user, createdStatusHistory.getBenutzer());
 		//just check that the generated date is after (or equals) the temporal one we created before
 		Assert.assertTrue(time.isBefore(createdStatusHistory.getTimestampVon()) || time.isEqual(createdStatusHistory.getTimestampVon()));
 	}
@@ -73,11 +91,11 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	@Ignore
 	public void findLastStatusChangeTest() {
 		gesuch.setStatus(AntragStatus.ERSTE_MAHNUNG);
-		statusHistoryService.saveStatusChange(gesuch);
+		statusHistoryService.saveStatusChange(gesuch, null);
 		gesuch.setStatus(AntragStatus.FREIGABEQUITTUNG);
-		statusHistoryService.saveStatusChange(gesuch);
+		statusHistoryService.saveStatusChange(gesuch, null);
 		gesuch.setStatus(AntragStatus.VERFUEGT);
-		statusHistoryService.saveStatusChange(gesuch);
+		statusHistoryService.saveStatusChange(gesuch, null);
 		final AntragStatusHistory lastStatusChange = statusHistoryService.findLastStatusChange(gesuch);
 		Assert.assertNotNull(lastStatusChange);
 		Assert.assertEquals(AntragStatus.VERFUEGT, lastStatusChange.getStatus());
@@ -113,7 +131,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	public void  testFindAllAntragStatusHistoryByGPFall() {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		gesuch.setStatus(AntragStatus.VERFUEGT);
-		gesuchService.updateGesuch(gesuch, true);
+		gesuchService.updateGesuch(gesuch, true, null);
 
 		final Collection<AntragStatusHistory> allStatus = statusHistoryService.findAllAntragStatusHistoryByGPFall(gesuch.getGesuchsperiode(), gesuch.getFall());
 
@@ -128,11 +146,11 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 		gesuch.setStatus(AntragStatus.VERFUEGT);
 		gesuch.setGueltig(true);
 		gesuch.setTimestampVerfuegt(LocalDateTime.now());
-		final Gesuch gesuchVerfuegt = gesuchService.updateGesuch(gesuch, true);
+		final Gesuch gesuchVerfuegt = gesuchService.updateGesuch(gesuch, true, null);
 		Optional<Gesuch> mutation = gesuchService.antragMutieren(gesuchVerfuegt.getId(), LocalDate.of(1980, Month.MARCH, 25));
 
 		mutation.get().setStatus(AntragStatus.VERFUEGT);
-		gesuchService.updateGesuch(mutation.get(), true);
+		gesuchService.updateGesuch(mutation.get(), true, null);
 
 		final Collection<AntragStatusHistory> allStatus = statusHistoryService
 			.findAllAntragStatusHistoryByGPFall(mutation.get().getGesuchsperiode(), mutation.get().getFall());
@@ -154,7 +172,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	public void testFindLastStatusChangeBeforeBeschwerde_NoBeschwerde() {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		gesuch.setStatus(AntragStatus.VERFUEGT);
-		gesuchService.updateGesuch(gesuch, true);
+		gesuchService.updateGesuch(gesuch, true, null);
 
 		try {
 			statusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuch);
@@ -168,7 +186,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	public void testFindLastStatusChangeBeforeBeschwerde_LessThanTwoPreviousStatus() {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		gesuch.setStatus(AntragStatus.BESCHWERDE_HAENGIG);
-		gesuchService.updateGesuch(gesuch, true);
+		gesuchService.updateGesuch(gesuch, true, null);
 
 		try {
 			statusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuch);
@@ -182,7 +200,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	public void testFindLastStatusChangeBeforeBeschwerde() {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		gesuch.setStatus(AntragStatus.VERFUEGT);
-		final Gesuch gesuchVerfuegt = gesuchService.updateGesuch(gesuch, true);
+		final Gesuch gesuchVerfuegt = gesuchService.updateGesuch(gesuch, true, null);
 		gesuchService.setBeschwerdeHaengigForPeriode(gesuchVerfuegt);
 
 		final AntragStatusHistory previousStatus = statusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuch);

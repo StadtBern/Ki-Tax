@@ -1,7 +1,39 @@
 package ch.dvbern.ebegu.services;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.activation.MimeTypeParseException;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
+import ch.dvbern.ebegu.entities.EbeguVorlage;
+import ch.dvbern.ebegu.entities.EbeguVorlage_;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Vorlage;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.UserRole;
@@ -17,21 +49,8 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.activation.MimeTypeParseException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.util.*;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Service fuer EbeguVorlage
@@ -40,7 +59,7 @@ import java.util.*;
 @Local(EbeguVorlageService.class)
 public class EbeguVorlageServiceBean extends AbstractBaseService implements EbeguVorlageService {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(EbeguVorlageServiceBean.class.getSimpleName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(EbeguVorlageServiceBean.class.getSimpleName());
 
 	@Inject
 	private Persistence<EbeguVorlage> persistence;
@@ -53,6 +72,7 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 
 	@Nonnull
 	@Override
+	@RolesAllowed({ADMIN, SUPER_ADMIN})
 	public EbeguVorlage saveEbeguVorlage(@Nonnull EbeguVorlage ebeguVorlage) {
 		Objects.requireNonNull(ebeguVorlage);
 		return persistence.merge(ebeguVorlage);
@@ -60,13 +80,15 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 
 	@Override
 	@Nonnull
-	public Optional<EbeguVorlage> getEbeguVorlageByDatesAndKey(LocalDate abDate, LocalDate bisDate, EbeguVorlageKey ebeguVorlageKey) {
+	@PermitAll
+	public Optional<EbeguVorlage> getEbeguVorlageByDatesAndKey(@Nonnull LocalDate abDate, @Nonnull LocalDate bisDate, @Nonnull EbeguVorlageKey ebeguVorlageKey) {
 		return getEbeguVorlageByDatesAndKey(abDate, bisDate, ebeguVorlageKey, persistence.getEntityManager());
 	}
 
 	@Override
 	@Nonnull
-	public Optional<EbeguVorlage> getEbeguVorlageByDatesAndKey(LocalDate abDate, LocalDate bisDate, EbeguVorlageKey ebeguVorlageKey, final EntityManager em) {
+	@PermitAll
+	public Optional<EbeguVorlage> getEbeguVorlageByDatesAndKey(@Nonnull LocalDate abDate, @Nonnull LocalDate bisDate, @Nonnull EbeguVorlageKey ebeguVorlageKey, final EntityManager em) {
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
 		final CriteriaQuery<EbeguVorlage> query = cb.createQuery(EbeguVorlage.class);
 		Root<EbeguVorlage> root = query.from(EbeguVorlage.class);
@@ -99,7 +121,8 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 
 	@Override
 	@Nonnull
-	public List<EbeguVorlage> getALLEbeguVorlageByGesuchsperiode(Gesuchsperiode gesuchsperiode) {
+	@PermitAll
+	public List<EbeguVorlage> getALLEbeguVorlageByGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<EbeguVorlage> query = cb.createQuery(EbeguVorlage.class);
 		Root<EbeguVorlage> root = query.from(EbeguVorlage.class);
@@ -123,6 +146,7 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	}
 
 	@Nonnull
+	@PermitAll
 	private Optional<EbeguVorlage> getNewestEbeguVorlageByKey(EbeguVorlageKey key) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<EbeguVorlage> query = cb.createQuery(EbeguVorlage.class);
@@ -146,17 +170,19 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 
 	@Override
 	@Nullable
+	@PermitAll
 	public EbeguVorlage updateEbeguVorlage(@Nonnull EbeguVorlage ebeguVorlage) {
 		Objects.requireNonNull(ebeguVorlage);
 		return persistence.merge(ebeguVorlage);
 	}
 
 	@Override
+	@RolesAllowed({ADMIN, SUPER_ADMIN})
 	public void removeVorlage(@Nonnull String id) {
 		Validate.notNull(id);
 		Optional<EbeguVorlage> ebeguVorlage = findById(id);
-		ebeguVorlage.orElseThrow(() -> new EbeguEntityNotFoundException("removeEbeguVorlage", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, id));
-		final EbeguVorlage ebeguVorlageEntity = ebeguVorlage.get();
+		EbeguVorlage ebeguVorlageEntity = ebeguVorlage.orElseThrow(() -> new EbeguEntityNotFoundException
+			("removeEbeguVorlage", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, id));
 
 		fileSaverService.remove(ebeguVorlageEntity.getVorlage().getFilepfad());
 
@@ -166,6 +192,7 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Optional<EbeguVorlage> findById(@Nonnull final String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
 		EbeguVorlage a = persistence.find(EbeguVorlage.class, id);
@@ -174,6 +201,7 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Collection<EbeguVorlage> getALLEbeguVorlageByDate(@Nonnull LocalDate date, boolean proGesuchsperiode) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<EbeguVorlage> query = cb.createQuery(EbeguVorlage.class);
@@ -194,14 +222,15 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	}
 
 	@Override
-	public void copyEbeguVorlageListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
+	@RolesAllowed({ADMIN, SUPER_ADMIN})
+	public void copyEbeguVorlageListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiodeToCopyTo) {
 		// Die Vorlagen des letzten Jahres suchen (datumAb -1 Tag)
 		Collection<EbeguVorlage> ebeguVorlageByDate = getALLEbeguVorlageByDate(
-			gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1), true);
+			gesuchsperiodeToCopyTo.getGueltigkeit().getGueltigAb().minusDays(1), true);
 		ebeguVorlageByDate.addAll(getEmptyVorlagen(ebeguVorlageByDate));
 
 		ebeguVorlageByDate.stream().filter(lastYearVoralge -> lastYearVoralge.getName().isProGesuchsperiode()).forEach(lastYearVorlage -> {
-			EbeguVorlage newVorlage = lastYearVorlage.copy(gesuchsperiode.getGueltigkeit());
+			EbeguVorlage newVorlage = lastYearVorlage.copy(gesuchsperiodeToCopyTo.getGueltigkeit());
 			if (lastYearVorlage.getVorlage() != null) {
 				fileSaverService.copy(lastYearVorlage.getVorlage(), "vorlagen");
 				newVorlage.setVorlage(lastYearVorlage.getVorlage().copy());
@@ -211,9 +240,13 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	}
 
 	@Override
+	@PermitAll
 	public Vorlage getBenutzerhandbuch() {
 		UserRole userRole = principalBean.discoverMostPrivilegedRole();
 		EbeguVorlageKey key = EbeguVorlageKey.getBenutzerHandbuchKeyForRole(userRole);
+		if (key == null) {
+			return null;
+		}
 
 		final Optional<EbeguVorlage> vorlageOptional = getNewestEbeguVorlageByKey(key);
 		EbeguVorlage ebeguVorlage = null;
@@ -225,22 +258,21 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 		}
 		if (ebeguVorlage.getVorlage() != null) {
 			return ebeguVorlage.getVorlage();
-		} else {
-			try {
-				Vorlage vorlage = new Vorlage();
-				vorlage.setFilesize("10");
-				vorlage.setFilename(key.name() + ".pdf");
-				// Das Defaultfile lesen und im Filesystem ablegen
-				InputStream is = EbeguVorlageServiceBean.class.getResourceAsStream(key.getDefaultVorlagePath());
-				byte[] bytes = IOUtils.toByteArray(is);
-				String folder = "benutzerhandbuch";
-				UploadFileInfo benutzerhandbuch = fileSaverService.save(bytes, vorlage.getFilename(), folder);
-				vorlage.setFilepfad(benutzerhandbuch.getPathWithoutFileName() + File.separator + benutzerhandbuch.getActualFilename());
-				return vorlage;
-			} catch (IOException | MimeTypeParseException e) {
-				LOGGER.error("Could not save vorlage!", e);
-				throw new EbeguRuntimeException("getBenutzerhandbuch", "Could not create Benutzerhandbuch", e);
-			}
+		}
+		try {
+			Vorlage vorlage = new Vorlage();
+			vorlage.setFilesize("10");
+			vorlage.setFilename(key.name() + ".pdf");
+			// Das Defaultfile lesen und im Filesystem ablegen
+			InputStream is = EbeguVorlageServiceBean.class.getResourceAsStream(key.getDefaultVorlagePath());
+			byte[] bytes = IOUtils.toByteArray(is);
+			String folder = "benutzerhandbuch";
+			UploadFileInfo benutzerhandbuch = fileSaverService.save(bytes, vorlage.getFilename(), folder);
+			vorlage.setFilepfad(benutzerhandbuch.getPathWithoutFileName() + File.separator + benutzerhandbuch.getActualFilename());
+			return vorlage;
+		} catch (IOException | MimeTypeParseException e) {
+			LOGGER.error("Could not save vorlage!", e);
+			throw new EbeguRuntimeException("getBenutzerhandbuch", "Could not create Benutzerhandbuch", e);
 		}
 	}
 
@@ -254,7 +286,7 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 		for (EbeguVorlageKey ebeguVorlageKey : ebeguVorlageKeys) {
 			boolean exist = false;
 			for (EbeguVorlage ebeguVorlage : persistedEbeguVorlagen) {
-				if (ebeguVorlage.getName().equals(ebeguVorlageKey)) {
+				if (ebeguVorlage.getName() == ebeguVorlageKey) {
 					exist = true;
 					break;
 				}

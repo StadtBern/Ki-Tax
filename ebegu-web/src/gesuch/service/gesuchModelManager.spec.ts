@@ -321,7 +321,6 @@ describe('gesuchModelManager', function () {
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN)).toEqual(TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.VERFUEGEN)).toEqual(TSAntragStatus.VERFUEGEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.VERFUEGT)).toEqual(TSAntragStatus.VERFUEGT);
-                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZURUECKGEWIESEN)).toEqual(TSAntragStatus.ZURUECKGEWIESEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZWEITE_MAHNUNG)).toEqual(TSAntragStatus.ZWEITE_MAHNUNG);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN)).toEqual(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
             });

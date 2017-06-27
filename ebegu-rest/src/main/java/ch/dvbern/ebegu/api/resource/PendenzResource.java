@@ -57,6 +57,7 @@ public class PendenzResource {
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/jugendamt")
 	public List<JaxAntragDTO> getAllPendenzenJA() {
 		Collection<Gesuch> gesucheList = gesuchService.getAllActiveGesuche();
 
@@ -74,7 +75,7 @@ public class PendenzResource {
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/{benutzername}")
+	@Path("/jugendamt/{benutzername}")
 	public List<JaxAntragDTO> getAllPendenzenJA(@Nonnull @NotNull @PathParam("benutzername") String benutzername) {
 		Validate.notNull(benutzername);
 		Collection<Gesuch> gesucheList = gesuchService.getAllActiveGesucheOfVerantwortlichePerson(benutzername);

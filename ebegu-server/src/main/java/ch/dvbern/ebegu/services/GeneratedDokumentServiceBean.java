@@ -303,7 +303,8 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		if (persistedDokument == null) {
 			LOGGER.error("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
-				"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp, expectedFilepath);
+				"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp,
+				id, expectedFilepath);
 		}
 
 		if (persistedDokument != null && !Files.exists(Paths.get(persistedDokument.getFilepfad()))) {
@@ -382,7 +383,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	}
 
 	@Override
-	public WriteProtectedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(final Gesuch gesuch, Betreuung betreuung, String manuelleBemerkungen, Boolean forceCreation) throws MimeTypeParseException, MergeDocException, IOException {
+	public WriteProtectedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(@Nonnull final Gesuch gesuch,
+			@Nonnull Betreuung betreuung, @Nonnull String manuelleBemerkungen,  @Nonnull Boolean forceCreation) throws
+			MimeTypeParseException, MergeDocException, IOException {
 
 		String bgNummer = betreuung.getBGNummer();
 		String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG, bgNummer);
@@ -394,7 +397,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		WriteProtectedDokument persistedDokument = null;
 
-		if (!forceCreation && Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
+		if (!forceCreation && Betreuungsstatus.VERFUEGT == betreuung.getBetreuungsstatus()) {
 
 			String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
 			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp, expectedFilepath);
@@ -405,9 +408,13 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		}
 		// Wenn die Betreuung nicht verfuegt ist oder das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es erstellen
 		// (Der Status wird auf Verfuegt gesetzt, BEVOR das Dokument erstellt wird!)
-		if (!Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) || persistedDokument == null) {
-			finanzielleSituationService.calculateFinanzDaten(gesuch);
-			final Gesuch gesuchWithVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
+		if (Betreuungsstatus.VERFUEGT != betreuung.getBetreuungsstatus() || persistedDokument == null) {
+			Gesuch gesuchWithVerfuegung = gesuch;
+			if (Betreuungsstatus.VERFUEGT != betreuung.getBetreuungsstatus()) {
+				// if the Betreuung is verfuegt it is not needed to recalculate the verfuegung
+				finanzielleSituationService.calculateFinanzDaten(gesuch);
+				gesuchWithVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
+			}
 
 			Betreuung matchedBetreuung = gesuchWithVerfuegung.extractBetreuungById(betreuung.getId());
 			if (matchedBetreuung != null) {
@@ -417,7 +424,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 				Optional<LocalDate> optVorherigeVerfuegungDate = verfuegungService.findVorgaengerVerfuegungDate(betreuung);
 				LocalDate letztesVerfDatum = optVorherigeVerfuegungDate.orElse(null);
-				boolean writeProtectPDF = Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus());
+				boolean writeProtectPDF = Betreuungsstatus.VERFUEGT == betreuung.getBetreuungsstatus();
 				final byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(matchedBetreuung, letztesVerfDatum, writeProtectPDF);
 
 
@@ -425,7 +432,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 					matchedBetreuung.getBGNummer());
 
 				// Wenn die Betreuung im Zustand Verfügt ist, soll das Dokument als schreibgeschützt gespeichert werden.
-				persistedDokument = (GeneratedDokument) saveGeneratedDokumentInDB(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG,
+				persistedDokument = saveGeneratedDokumentInDB(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG,
 					gesuch, fileNameForDocTyp, writeProtectPDF);
 			} else {
 				throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",

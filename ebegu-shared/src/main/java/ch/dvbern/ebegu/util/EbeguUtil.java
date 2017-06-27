@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.util;
 
+import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.FamiliensituationContainer;
@@ -49,5 +50,10 @@ public class EbeguUtil {
 			gesuchMap.put(antraege.get(0).getId(), antraege.get(0)); //nur neusten Antrag zurueckgeben
 		}
 		return gesuchMap;
+	}
+
+	public static boolean isSameObject(AbstractEntity thisEntity, AbstractEntity otherEntity) {
+		return (thisEntity == null && otherEntity == null)
+			|| (thisEntity != null && otherEntity != null && thisEntity.isSame(otherEntity));
 	}
 }

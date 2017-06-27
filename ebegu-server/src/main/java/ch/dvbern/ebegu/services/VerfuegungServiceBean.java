@@ -1,8 +1,35 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.activation.MimeTypeParseException;
+import javax.annotation.Nonnull;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
@@ -12,19 +39,19 @@ import ch.dvbern.ebegu.util.VerfuegungUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.*;
-
-import static ch.dvbern.ebegu.enums.UserRoleName.*;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
+import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
+import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.STEUERAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
- * Service fuer FinanzielleSituation
+ * Service zum berechnen und speichern der Verfuegung
  */
 @Stateless
 @Local(VerfuegungService.class)
@@ -55,6 +82,9 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Inject
 	private Authorizer authorizer;
 
+	@Inject
+	private GeneratedDokumentService generatedDokumentService;
+
 
 	@Nonnull
 	@Override
@@ -63,6 +93,16 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		setZahlungsstatus(verfuegung, betreuungId, ignorieren);
 		final Verfuegung persistedVerfuegung = persistVerfuegung(verfuegung, betreuungId, Betreuungsstatus.VERFUEGT);
 		wizardStepService.updateSteps(persistedVerfuegung.getBetreuung().extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
+
+		// Dokument erstellen
+		Betreuung betreuung = persistedVerfuegung.getBetreuung();
+		try {
+			generatedDokumentService
+				.getVerfuegungDokumentAccessTokenGeneratedDokument(betreuung.extractGesuch(), betreuung,"",true);
+		} catch (IOException | MimeTypeParseException | MergeDocException e) {
+			throw new EbeguRuntimeException("verfuegen", "Verfuegung-Dokument konnte nicht erstellt werden"
+				+ betreuungId, e);
+		}
 		return persistedVerfuegung;
 	}
 
@@ -124,6 +164,15 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		verfuegung.setKategorieNichtEintreten(true);
 		final Verfuegung persistedVerfuegung = persistVerfuegung(verfuegung, betreuungId, Betreuungsstatus.NICHT_EINGETRETEN);
 		wizardStepService.updateSteps(persistedVerfuegung.getBetreuung().extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
+		// Dokument erstellen
+		Betreuung betreuung = verfuegung.getBetreuung();
+		try {
+			generatedDokumentService
+				.getNichteintretenDokumentAccessTokenGeneratedDokument(betreuung, true);
+		} catch (IOException | MimeTypeParseException | MergeDocException e) {
+			throw new EbeguRuntimeException("nichtEintreten", "Nichteintretensverfuegung-Dokument konnte nicht "
+				+ "erstellt werden" + betreuungId, e);
+		}
 		return persistedVerfuegung;
 	}
 
@@ -149,7 +198,10 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		betreuung.setVerfuegung(verfuegung);
 		verfuegung.getZeitabschnitte().forEach(verfZeitabsch -> verfZeitabsch.setVerfuegung(verfuegung));
 		authorizer.checkWriteAuthorization(verfuegung);
-		return persistence.persist(verfuegung);
+
+		Verfuegung persist = persistence.persist(verfuegung);
+		persistence.merge(betreuung);
+		return persist;
 	}
 
 	@Nonnull
@@ -195,7 +247,6 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		Boolean enableDebugOutput = applicationPropertyService.findApplicationPropertyAsBoolean(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, true);
 		BetreuungsgutscheinEvaluator bgEvaluator = new BetreuungsgutscheinEvaluator(rules, enableDebugOutput);
 		BGRechnerParameterDTO calculatorParameters = loadCalculatorParameters(mandant, gesuch.getGesuchsperiode());
-
 		// Finde und setze die letzte Verfuegung für die Betreuung für den Merger und Vergleicher.
 		// Bei GESCHLOSSEN_OHNE_VERFUEGUNG wird solange ein Vorgänger gesucht, bis  dieser gefunden wird. (Rekursiv)
 		gesuch.getKindContainers()
@@ -206,7 +257,6 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 					betreuung.setVorgaengerVerfuegung(vorgaengerVerfuegung.orElse(null));
 				}
 			);
-
 
 		bgEvaluator.evaluate(gesuch, calculatorParameters);
 		authorizer.checkReadAuthorizationForAnyBetreuungen(gesuch.extractAllBetreuungen()); // betreuungen pruefen reicht hier glaub
@@ -226,12 +276,11 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		// Leseberechtigt bin, fuer die Mutation aber schon!
 		Betreuung vorgaengerbetreuung = persistence.find(Betreuung.class, betreuung.getVorgaengerId());
 		if (vorgaengerbetreuung != null) {
-			if (!vorgaengerbetreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)) {
+			if (vorgaengerbetreuung.getBetreuungsstatus() != Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
 				// Hier kann aus demselben Grund die Berechtigung fuer die Vorgaengerverfuegung nicht geprueft werden
 				return Optional.ofNullable(vorgaengerbetreuung.getVerfuegung());
-			} else {
-				return findVorgaengerVerfuegung(vorgaengerbetreuung);
 			}
+			return findVorgaengerVerfuegung(vorgaengerbetreuung);
 		}
 		return Optional.empty();
 	}
@@ -240,11 +289,14 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
 	public Optional<LocalDate> findVorgaengerVerfuegungDate(@Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
-		Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuung);
+		Optional<Verfuegung> vorgaengerVerfuegungOpt = findVorgaengerVerfuegung(betreuung);
 		LocalDate letztesVerfDatum = null;
-		if (vorgaengerVerfuegung.isPresent()) {
-			authorizer.checkReadAuthorization(vorgaengerVerfuegung.get());
-			letztesVerfDatum = vorgaengerVerfuegung.get().getTimestampErstellt().toLocalDate();
+		if (vorgaengerVerfuegungOpt.isPresent()) {
+			Verfuegung vorgaengerVerfuegung = vorgaengerVerfuegungOpt.get();
+			authorizer.checkReadAuthorization(vorgaengerVerfuegung);
+			if (vorgaengerVerfuegung.getTimestampErstellt() != null) {
+				letztesVerfDatum = vorgaengerVerfuegung.getTimestampErstellt().toLocalDate();
+			}
 		}
 		return Optional.ofNullable(letztesVerfDatum);
 	}
@@ -263,8 +315,10 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 					return zeitabschnitteOnVorgaengerVerfuegung;
 				}
 			}
-			// Es gab keine bereits Verrechneten Zeitabschnitte auf dieser Verfuegung -> eins weiter zurueckgehen
-			return findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, vorgaengerBetreuung);
+			if (vorgaengerBetreuung != null) {
+				// Es gab keine bereits Verrechneten Zeitabschnitte auf dieser Verfuegung -> eins weiter zurueckgehen
+				return findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, vorgaengerBetreuung);
+			}
 		}
 		return Collections.emptyList();
 	}
@@ -283,5 +337,4 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		}
 		return lastVerfuegungsZeitabschnitte;
 	}
-
 }
