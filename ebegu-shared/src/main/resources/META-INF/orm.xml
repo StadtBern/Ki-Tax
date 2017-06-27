@@ -198,25 +198,34 @@ FROM kind_container
                               (:toDateTime <= timestamp_abgeschlossen OR timestamp_abgeschlossen IS NULL))
                   ) Mahnungen ON Mahnungen.gesuch_id = gesuch.id
 
- LEFT OUTER JOIN(
+ LEFT OUTER JOIN (
+ 	SELECT
+ 		sum(AnzahlSteueramtAusgeloestTmp) as AnzahlSteueramtAusgeloest,
+		sum(AnzahlSteueramtGeprueftTmp) as AnzahlSteueramtGeprueft,
+		sum(AnzahlBeschwerdeTmp) as AnzahlBeschwerde,
+		gesuch_id
+	from (
 					SELECT
 						CASE WHEN antrag_status_history.status IN ('PRUEFUNG_STV')
-							THEN 1 END AnzahlSteueramtAusgeloest,
+							THEN 1 END AnzahlSteueramtAusgeloestTmp,
 						CASE WHEN antrag_status_history.status IN ('GEPRUEFT_STV')
-							THEN 1 END AnzahlSteueramtGeprueft,
+							THEN 1 END AnzahlSteueramtGeprueftTmp,
 						case WHEN antrag_status_history.status IN ('BESCHWERDE_HAENGIG')
-							THEN 1 END AnzahlBeschwerde,
+							THEN 1 END AnzahlBeschwerdeTmp,
 						gesuch.id AS gesuch_id
 					FROM antrag_status_history
 					INNER JOIN gesuch ON gesuch.id = antrag_status_history.gesuch_id
 					INNER JOIN gesuchsperiode ON gesuchsperiode.id = gesuch.gesuchsperiode_id
-                    WHERE antrag_status_history.status IN ('PRUEFUNG_STV', 'GEPRUEFT_STV', 'BESCHWERDE_HAENGIG')
+                     WHERE antrag_status_history.status IN ('PRUEFUNG_STV', 'GEPRUEFT_STV', 'BESCHWERDE_HAENGIG')
                         AND (
 							  timestamp_von BETWEEN :fromDateTime AND :toDateTime
 							  OR timestamp_bis BETWEEN :fromDateTime AND :toDateTime
 							  OR (:fromDateTime >= timestamp_von AND (:toDateTime <= timestamp_bis OR timestamp_bis IS NULL))
 						)
-				) Statuswechsel ON Statuswechsel.gesuch_id = gesuch.id
+						GROUP BY gesuch.id, antrag_status_history.status
+				) Result
+				GROUP BY gesuch_id
+  ) Statuswechsel ON Statuswechsel.gesuch_id = gesuch.id
 
   LEFT OUTER JOIN (
                     SELECT
