@@ -210,7 +210,11 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		}
 		if (!gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen() || persistedDokument == null) {
 			//  persistedDokument == null:  Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
-			authorizer.checkReadAuthorizationFinSit(gesuch);
+			if (!gesuch.hasOnlyBetreuungenOfSchulamt()) {
+				// Bei nur Schulamt prüfen wir die Berechtigung nicht, damit das JA solche Gesuche schliessen kann. Der UseCase ist, dass zuerst ein zweites
+				// Angebot vorhanden war, dieses aber durch das JA gelöscht wurde.
+				authorizer.checkReadAuthorizationFinSit(gesuch);
+			}
 			finanzielleSituationService.calculateFinanzDaten(gesuch);
 
 			final BetreuungsgutscheinEvaluator evaluator = initEvaluator(gesuch);
