@@ -8,11 +8,11 @@
 
     <md-dialog-actions layout-align="center center">
         <dv-loading-button class="ng-scope md-default-theme " type="button"
-                ng-click="vm.cancel()" aria-label="{{'LABEL_NEIN' | translate}}" style="">
+                button-click="vm.cancel()" aria-label="{{'LABEL_NEIN' | translate}}" style="">
             <span class="ng-binding ng-scope" data-translate="LABEL_NEIN"></span>
         </dv-loading-button>
         <dv-loading-button class="md-default-theme " type="button"
-                ng-click="vm.hide()" md-autofocus="dialog.$type==='alert'" aria-label="{{'LABEL_JA' | translate}}">
+                           button-click="vm.hide()" md-autofocus="dialog.$type==='alert'" aria-label="{{'LABEL_JA' | translate}}">
             <span class="ng-binding ng-scope" data-translate="LABEL_JA"></span>
         </dv-loading-button>
     </md-dialog-actions>

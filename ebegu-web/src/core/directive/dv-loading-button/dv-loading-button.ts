@@ -8,8 +8,8 @@ import IScope = angular.IScope;
 import IAugmentedJQuery = angular.IAugmentedJQuery;
 import IAttributes = angular.IAttributes;
 import IAngularEvent = angular.IAngularEvent;
+import ILogService = angular.ILogService;
 let template = require('./dv-loading-button.html');
-
 
 interface IDVLoadingButtonController {
     isDisabled: boolean;
@@ -61,7 +61,7 @@ export class DVLoadingButton implements IDirective {
  *
  */
 export class DVLoadingButtonController implements IDVLoadingButtonController {
-    static $inject: string[] = ['$http', '$scope', '$timeout'];
+    static $inject: string[] = ['$http', '$scope', '$timeout', '$attrs', '$log'];
 
     buttonClicked: () => void;
     isDisabled: boolean;
@@ -73,11 +73,17 @@ export class DVLoadingButtonController implements IDVLoadingButtonController {
     buttonClick: () => void;
 
     /* @ngInject */
-    constructor(private $http: IHttpService, private $scope: any, private $timeout: ITimeoutService) {
+    constructor(private $http: IHttpService, private $scope: any, private $timeout: ITimeoutService, private $attrs: IAttributes, private $log: ILogService) {
     }
 
     //wird von angular aufgerufen
     $onInit() {
+        if ('ngClick' in this.$attrs) {
+            this.$log.error('must not use ng-click on dv-loading-button');
+        }
+        if ('ngDisabled' in this.$attrs) {
+            this.$log.error('must not use ng-disabled on dv-loading-button');
+        }
         if (!this.type) {
             this.type = 'button'; //wenn kein expliziter type angegeben wurde nehmen wir default button
         }
@@ -115,7 +121,6 @@ export class DVLoadingButtonController implements IDVLoadingButtonController {
 
     }
 
-
     // beispiel wie man auf changes eines attributes von aussen reagieren kann
     $onChanges(changes: any) {
         if (changes.buttonDisabled && !changes.buttonDisabled.isFirstChange()) {
@@ -123,7 +128,6 @@ export class DVLoadingButtonController implements IDVLoadingButtonController {
         }
 
     }
-
 
     private getDelay(): number {
         if (this.delay) {
