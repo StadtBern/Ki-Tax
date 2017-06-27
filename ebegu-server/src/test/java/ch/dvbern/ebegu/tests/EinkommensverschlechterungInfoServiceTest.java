@@ -85,7 +85,8 @@ public class EinkommensverschlechterungInfoServiceTest extends AbstractEbeguLogi
 
 		einkommensverschlechterungInfo.getEinkommensverschlechterungInfoJA().setGrundFuerBasisJahrPlus2(TEST_123);
 
-		einkommensverschlechterungInfoService.updateEinkommensverschlechterungInfo(einkommensverschlechterungInfo);
+		einkommensverschlechterungInfoService.updateEinkommensVerschlechterungInfoAndGesuch(einkommensverschlechterungInfo
+			.getGesuch(), null, einkommensverschlechterungInfo);
 
 		final Optional<EinkommensverschlechterungInfoContainer> einkommensverschlechterungInfoUpdated = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(einkommensverschlechterungInfo.getId());
 

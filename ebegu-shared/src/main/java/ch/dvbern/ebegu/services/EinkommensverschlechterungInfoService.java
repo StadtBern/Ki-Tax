@@ -23,15 +23,6 @@ public interface EinkommensverschlechterungInfoService {
 	Optional<EinkommensverschlechterungInfoContainer> createEinkommensverschlechterungInfo(
 		@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo);
 
-	/**
-	 * Aktualisiert idn EinkommensverschlechterungInfoContainer in der DB
-	 *
-	 * @param einkommensverschlechterungInfo die EinkommensverschlechterungInfoContainer als DTO
-	 * @return Die aktualisierte EinkommensverschlechterungInfoContainer
-	 */
-	@Nonnull
-	EinkommensverschlechterungInfoContainer updateEinkommensverschlechterungInfo(
-		@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo);
 
 	/**
 	 * Aktualisiert idn EinkommensverschlechterungInfoContainer in der DB
