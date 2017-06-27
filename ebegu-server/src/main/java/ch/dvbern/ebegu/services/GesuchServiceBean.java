@@ -331,9 +331,16 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
 			Root<Gesuch> root = query.from(Gesuch.class);
+			// Fall
 			Predicate predicate = cb.equal(root.get(Gesuch_.fall), fallOptional.get());
+			// Keine Papier-Mutationen, die noch nicht verfuegt sind
+			Predicate predicatePapier = cb.equal(root.get(Gesuch_.eingangsart), Eingangsart.PAPIER);
+			Predicate predicateMutation = cb.equal(root.get(Gesuch_.typ), AntragTyp.MUTATION);
+			Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates()).not();
+			Predicate predicateNichtUnverfuegtePapierMutation = CriteriaQueryHelper.concatenateExpressions(cb, predicatePapier, predicateMutation, predicateStatus).not();
+
 			query.orderBy(cb.desc(root.get(Gesuch_.laufnummer)));
-			query.where(predicate);
+			query.where(predicate, predicateNichtUnverfuegtePapierMutation);
 
 			List<Gesuch> gesuche = persistence.getCriteriaResults(query);
 			authorizer.checkReadAuthorizationGesuche(gesuche);
@@ -393,7 +400,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Join<InstitutionStammdaten, Institution> institution = institutionstammdaten.join(InstitutionStammdaten_.institution, JoinType.LEFT);
 
 		//prepare predicates
-		List<Expression<Boolean>> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<>();
 
 		// General role based predicates
 		Predicate inClauseStatus = root.get(Gesuch_.status).in(allowedAntragStatus);
@@ -694,8 +701,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 			ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fallId");
 
-			List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
-			Expression<Boolean> fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
+			List<Predicate> predicatesToUse = new ArrayList<>();
+			Predicate fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
 			predicatesToUse.add(fallPredicate);
 
 			// Alle AUSSER Gesuchsteller, Institution und Trägerschaft muessen im Status eingeschraenkt werden,
@@ -751,7 +758,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fallId");
 
-		Expression<Boolean> fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
+		Predicate fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
 		query.where(fallPredicate);
 		TypedQuery<String> q = persistence.getEntityManager().createQuery(query);
 		q.setParameter(fallIdParam, fallId);

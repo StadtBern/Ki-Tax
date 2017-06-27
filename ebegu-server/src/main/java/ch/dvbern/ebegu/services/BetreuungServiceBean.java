@@ -188,7 +188,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 
 		Root<Betreuung> root = query.from(Betreuung.class);
-		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
+		List<Predicate> predicatesToUse = new ArrayList<>();
 
 		Predicate fallPredicate = cb.equal(root.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.fall), fall);
 		predicatesToUse.add(fallPredicate);
