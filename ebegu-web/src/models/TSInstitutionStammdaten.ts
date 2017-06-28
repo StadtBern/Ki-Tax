@@ -13,11 +13,11 @@ export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity 
     private _institution: TSInstitution;
     private _adresse: TSAdresse;
     private _kontoinhaber: string;
-    private _adresseKontoinhaber: TSAdresse = new TSAdresse();
+    private _adresseKontoinhaber: TSAdresse;
 
 
     constructor(iban?: string, oeffnungstage?: number, oeffnungsstunden?: number, betreuungsangebotTyp?: TSBetreuungsangebotTyp,
-                institution?: TSInstitution, adresse?: TSAdresse, gueltigkeit?: TSDateRange) {
+                institution?: TSInstitution, adresse?: TSAdresse, gueltigkeit?: TSDateRange, kontoinhaber?: string, adresseKontoinhaber?: TSAdresse) {
         super(gueltigkeit);
         this._iban = iban;
         this._oeffnungstage = oeffnungstage;
@@ -25,6 +25,8 @@ export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity 
         this._betreuungsangebotTyp = betreuungsangebotTyp;
         this._institution = institution;
         this._adresse = adresse;
+        this._kontoinhaber = kontoinhaber;
+        this._adresseKontoinhaber = adresseKontoinhaber;
     }
 
 
