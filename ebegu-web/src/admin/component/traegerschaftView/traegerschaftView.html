@@ -24,7 +24,8 @@
                                 <td ng-bind="row.name"></td>
                                 <td></td>
                                 <td>
-                                    <dv-loading-button type="button" button-click="vm.removeTraegerschaft(row)" button-class=" btn-sm">
+                                    <dv-loading-button type="button" button-click="vm.removeTraegerschaft(row)" button-class=" btn-sm"
+                                                       button-disabled="vm.isReadonly()">
                                         <i class="fa fa-minus"> </i>
                                     </dv-loading-button>
                                 </td>
