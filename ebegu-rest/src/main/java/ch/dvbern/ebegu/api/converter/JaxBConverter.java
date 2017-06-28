@@ -1079,6 +1079,10 @@ public class JaxBConverter {
 		jaxInstStammdaten.setBetreuungsangebotTyp(persistedInstStammdaten.getBetreuungsangebotTyp());
 		jaxInstStammdaten.setInstitution(institutionToJAX(persistedInstStammdaten.getInstitution()));
 		jaxInstStammdaten.setAdresse(adresseToJAX(persistedInstStammdaten.getAdresse()));
+		jaxInstStammdaten.setKontoinhaber(persistedInstStammdaten.getKontoinhaber());
+		if (persistedInstStammdaten.getAdresseKontoinhaber() != null) {
+			jaxInstStammdaten.setAdresseKontoinhaber(adresseToJAX(persistedInstStammdaten.getAdresseKontoinhaber()));
+		}
 		return jaxInstStammdaten;
 	}
 
@@ -1096,6 +1100,15 @@ public class JaxBConverter {
 			institutionStammdaten.setIban(new IBAN(institutionStammdatenJAXP.getIban()));
 		}
 		institutionStammdaten.setBetreuungsangebotTyp(institutionStammdatenJAXP.getBetreuungsangebotTyp());
+
+		institutionStammdaten.setKontoinhaber(institutionStammdatenJAXP.getKontoinhaber());
+		if (institutionStammdatenJAXP.getAdresseKontoinhaber() != null) {
+			if (institutionStammdaten.getAdresseKontoinhaber() != null) {
+				institutionStammdaten.setAdresseKontoinhaber(adresseToEntity(institutionStammdatenJAXP.getAdresseKontoinhaber(), institutionStammdaten.getAdresseKontoinhaber()));
+			} else {
+				institutionStammdaten.setAdresseKontoinhaber(adresseToEntity(institutionStammdatenJAXP.getAdresseKontoinhaber(), new Adresse()));
+			}
+		}
 
 		adresseToEntity(institutionStammdatenJAXP.getAdresse(), institutionStammdaten.getAdresse());
 

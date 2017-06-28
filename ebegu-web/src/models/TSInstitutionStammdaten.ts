@@ -12,6 +12,8 @@ export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity 
     private _betreuungsangebotTyp: TSBetreuungsangebotTyp;
     private _institution: TSInstitution;
     private _adresse: TSAdresse;
+    private _kontoinhaber: string;
+    private _adresseKontoinhaber: TSAdresse = new TSAdresse();
 
 
     constructor(iban?: string, oeffnungstage?: number, oeffnungsstunden?: number, betreuungsangebotTyp?: TSBetreuungsangebotTyp,
@@ -74,4 +76,19 @@ export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity 
         this._adresse = value;
     }
 
+    public get kontoinhaber(): string {
+        return this._kontoinhaber;
+    }
+
+    public set kontoinhaber(value: string) {
+        this._kontoinhaber = value;
+    }
+
+    public get adresseKontoinhaber(): TSAdresse {
+        return this._adresseKontoinhaber;
+    }
+
+    public set adresseKontoinhaber(value: TSAdresse) {
+        this._adresseKontoinhaber = value;
+    }
 }
