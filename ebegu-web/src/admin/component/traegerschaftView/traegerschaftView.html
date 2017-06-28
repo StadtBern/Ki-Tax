@@ -24,7 +24,8 @@
                                 <td ng-bind="row.name"></td>
                                 <td></td>
                                 <td>
-                                    <dv-loading-button type="button" button-click="vm.removeTraegerschaft(row)" button-class=" btn-sm">
+                                    <dv-loading-button type="button" button-click="vm.removeTraegerschaft(row)" button-class=" btn-sm"
+                                                       button-disabled="vm.isReadonly()">
                                         <i class="fa fa-minus"> </i>
                                     </dv-loading-button>
                                 </td>
@@ -97,7 +98,7 @@
                                         <div class="col-md-6">
                                             <dv-input-container class="form-group">
                                                 <dv-loading-button type="button"
-                                                                   ng-click="vm.createTraegerschaft(); form.$setPristine(); form.$setUntouched()"
+                                                                   button-click="vm.createTraegerschaft(); form.$setPristine(); form.$setUntouched()"
                                                                    button-class="dv-btn-sm color-success" button-disabled="vm.traegerschaft">
                                                     <i class="glyphicon glyphicon-plus"></i>
                                                     <span data-translate="TRAEGERSCHAFT_HINZUFUEGEN"></span>

@@ -780,6 +780,8 @@ export default class EbeguRestUtil {
             restInstitutionStammdaten.betreuungsangebotTyp = institutionStammdaten.betreuungsangebotTyp;
             restInstitutionStammdaten.institution = this.institutionToRestObject({}, institutionStammdaten.institution);
             restInstitutionStammdaten.adresse = this.adresseToRestObject({}, institutionStammdaten.adresse);
+            restInstitutionStammdaten.kontoinhaber = institutionStammdaten.kontoinhaber;
+            restInstitutionStammdaten.adresseKontoinhaber = this.adresseToRestObject({}, institutionStammdaten.adresseKontoinhaber);
             return restInstitutionStammdaten;
         }
         return undefined;
@@ -794,6 +796,8 @@ export default class EbeguRestUtil {
             institutionStammdatenTS.betreuungsangebotTyp = institutionStammdatenFromServer.betreuungsangebotTyp;
             institutionStammdatenTS.institution = this.parseInstitution(new TSInstitution(), institutionStammdatenFromServer.institution);
             institutionStammdatenTS.adresse = this.parseAdresse(new TSAdresse(), institutionStammdatenFromServer.adresse);
+            institutionStammdatenTS.kontoinhaber = institutionStammdatenFromServer.kontoinhaber;
+            institutionStammdatenTS.adresseKontoinhaber = this.parseAdresse(new TSAdresse(), institutionStammdatenFromServer.adresseKontoinhaber);
             return institutionStammdatenTS;
         }
         return undefined;
