@@ -25,11 +25,13 @@ import javax.persistence.criteria.Root;
 
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.GeneratedDokument;
 import ch.dvbern.ebegu.entities.GeneratedDokument_;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Pain001Dokument;
@@ -58,6 +60,7 @@ import ch.dvbern.lib.iso20022.AuszahlungDTO;
 import ch.dvbern.lib.iso20022.Pain001DTO;
 import ch.dvbern.lib.iso20022.Pain001Service;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -602,16 +605,21 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		zahlungsauftrag.getZahlungen().stream()
 			.filter(zahlung -> zahlung.getBetragTotalZahlung().signum() == 1)
 			.forEach(zahlung -> {
+				InstitutionStammdaten institutionStammdaten = zahlung.getInstitutionStammdaten();
 				AuszahlungDTO auszahlungDTO = new AuszahlungDTO();
 				auszahlungDTO.setBetragTotalZahlung(zahlung.getBetragTotalZahlung());
-				auszahlungDTO.setZahlungsempfaegerName(zahlung.getInstitutionStammdaten().getInstitution().getName());
-				auszahlungDTO.setZahlungsempfaegerStrasse(zahlung.getInstitutionStammdaten().getAdresse().getStrasse());
-				auszahlungDTO.setZahlungsempfaegerHausnummer(zahlung.getInstitutionStammdaten().getAdresse().getHausnummer());
-				auszahlungDTO.setZahlungsempfaegerPlz(zahlung.getInstitutionStammdaten().getAdresse().getPlz());
-				auszahlungDTO.setZahlungsempfaegerOrt(zahlung.getInstitutionStammdaten().getAdresse().getOrt());
-				auszahlungDTO.setZahlungsempfaegerLand(zahlung.getInstitutionStammdaten().getAdresse().getLand().toString());
-				auszahlungDTO.setZahlungsempfaegerIBAN(zahlung.getInstitutionStammdaten().getIban().toString());
-				auszahlungDTO.setZahlungsempfaegerBankClearingNumber(zahlung.getInstitutionStammdaten().getIban().extractClearingNumberWithoutLeadingZeros());
+				String kontoinhaber = StringUtils.isNotEmpty(institutionStammdaten.getKontoinhaber())
+					? institutionStammdaten.getKontoinhaber() : institutionStammdaten.getInstitution().getName();
+				Adresse adresseKontoinhaber = institutionStammdaten.getAdresseKontoinhaber() != null
+					? institutionStammdaten.getAdresseKontoinhaber() : institutionStammdaten.getAdresse();
+				auszahlungDTO.setZahlungsempfaegerName(kontoinhaber);
+				auszahlungDTO.setZahlungsempfaegerStrasse(adresseKontoinhaber.getStrasse());
+				auszahlungDTO.setZahlungsempfaegerHausnummer(adresseKontoinhaber.getHausnummer());
+				auszahlungDTO.setZahlungsempfaegerPlz(adresseKontoinhaber.getPlz());
+				auszahlungDTO.setZahlungsempfaegerOrt(adresseKontoinhaber.getOrt());
+				auszahlungDTO.setZahlungsempfaegerLand(adresseKontoinhaber.getLand().toString());
+				auszahlungDTO.setZahlungsempfaegerIBAN(institutionStammdaten.getIban().toString());
+				auszahlungDTO.setZahlungsempfaegerBankClearingNumber(institutionStammdaten.getIban().extractClearingNumberWithoutLeadingZeros());
 
 				pain001DTO.getAuszahlungen().add(auszahlungDTO);
 			});
