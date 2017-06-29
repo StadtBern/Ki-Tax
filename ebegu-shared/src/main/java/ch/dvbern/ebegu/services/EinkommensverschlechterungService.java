@@ -1,21 +1,14 @@
 package ch.dvbern.ebegu.services;
 
-
 import java.util.Collection;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
-import javax.annotation.security.RolesAllowed;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
-
-import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
-import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
-import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Service zum Verwalten von EinkommensverschlechterungContainerService
