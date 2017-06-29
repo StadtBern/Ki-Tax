@@ -144,19 +144,20 @@
                                             ng-required="true"
                                             ng-disabled="vm.erwerbspensumDisabled()">
                                     </select>
-
-                                    <input id="zuschlagsgrund_dvi" type="text"
-                                           ng-model="vm.model.erwerbspensumJA.zuschlagsgrund | translate"
-                                           class="form-control"
-                                           ng-disabled="vm.isGesuchReadonly()"
-                                           ng-if="vm.isGesuchReadonly()">
-                                    <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsgrund"
-                                               ja="vm.model.erwerbspensumJA.zuschlagsgrund"
-                                               show-if-bisher-none="false"
-                                               block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
-                                    <dv-error-messages for="vm.form.zuschlagsgrund.$error"
-                                                       class="error"></dv-error-messages>
                                 </div>
+                                <div class="dv-select-style" ng-if="vm.isGesuchReadonly()">
+                                    <input id="zuschlagsgrund_dvi" type="text"
+                                           value="{{vm.model.erwerbspensumJA.zuschlagsgrund | translate}}"
+                                           class="form-control"
+                                           ng-disabled="true"
+                                           ng-if="vm.isGesuchReadonly()">
+                                </div>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsgrund"
+                                           ja="vm.model.erwerbspensumJA.zuschlagsgrund"
+                                           show-if-bisher-none="false"
+                                           block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
+                                <dv-error-messages for="vm.form.zuschlagsgrund.$error"
+                                                   class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
