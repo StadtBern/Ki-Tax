@@ -335,16 +335,17 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			Predicate predicate = cb.equal(root.get(Gesuch_.fall), fallOptional.get());
 			// Keine Papier-Mutationen, die noch nicht verfuegt sind
 			Predicate predicatePapier = cb.equal(root.get(Gesuch_.eingangsart), Eingangsart.PAPIER);
-			Predicate predicateMutation = cb.notEqual(root.get(Gesuch_.typ), AntragTyp.ERSTGESUCH);
 			Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates()).not();
-			Predicate predicateNichtUnverfuegtePapierMutation = CriteriaQueryHelper.concatenateExpressions(cb, predicatePapier, predicateMutation, predicateStatus).not();
+			Predicate predicateUnverfuegtesPapiergesuch = CriteriaQueryHelper.concatenateExpressions(cb, predicatePapier, predicateStatus);
+			if (predicateUnverfuegtesPapiergesuch != null) {
+				Predicate predicateNichtUnverfuegtePapierGesuch = predicateUnverfuegtesPapiergesuch.not();
+				query.orderBy(cb.desc(root.get(Gesuch_.laufnummer)));
+				query.where(predicate, predicateNichtUnverfuegtePapierGesuch);
 
-			query.orderBy(cb.desc(root.get(Gesuch_.laufnummer)));
-			query.where(predicate, predicateNichtUnverfuegtePapierMutation);
-
-			List<Gesuch> gesuche = persistence.getCriteriaResults(query);
-			authorizer.checkReadAuthorizationGesuche(gesuche);
-			return gesuche;
+				List<Gesuch> gesuche = persistence.getCriteriaResults(query);
+				authorizer.checkReadAuthorizationGesuche(gesuche);
+				return gesuche;
+			}
 		}
 		return Collections.emptyList();
 	}
