@@ -311,7 +311,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Root<VerfuegungZeitabschnitt> root = query.from(VerfuegungZeitabschnitt.class);
 		Join<VerfuegungZeitabschnitt, Verfuegung> joinVerfuegung = root.join(VerfuegungZeitabschnitt_.verfuegung);
 		Join<Verfuegung, Betreuung> joinBetreuung = joinVerfuegung.join(Verfuegung_.betreuung);
-		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
+		List<Predicate> predicatesToUse = new ArrayList<>();
 
 		// startAbschnitt <= datumBis && endeAbschnitt >= datumVon
 		Predicate predicateStart = builder.lessThanOrEqualTo(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigAb), datumBis);
@@ -659,7 +659,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Root<VerfuegungZeitabschnitt> root = query.from(VerfuegungZeitabschnitt.class);
 		Join<VerfuegungZeitabschnitt, Verfuegung> joinVerfuegung = root.join(VerfuegungZeitabschnitt_.verfuegung);
 		Join<Verfuegung, Betreuung> joinBetreuung = joinVerfuegung.join(Verfuegung_.betreuung);
-		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
+		List<Predicate> predicatesToUse = new ArrayList<>();
 
 		// startAbschnitt <= datumBis && endeAbschnitt >= datumVon
 		Predicate predicateStart = builder.lessThanOrEqualTo(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigAb), datumBis);
@@ -708,7 +708,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Root<VerfuegungZeitabschnitt> root = query.from(VerfuegungZeitabschnitt.class);
 		Join<VerfuegungZeitabschnitt, Verfuegung> joinVerfuegung = root.join(VerfuegungZeitabschnitt_.verfuegung);
 		Join<Verfuegung, Betreuung> joinBetreuung = joinVerfuegung.join(Verfuegung_.betreuung);
-		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
+		List<Predicate> predicatesToUse = new ArrayList<>();
 
 		// Stichtag
 		Predicate intervalPredicate = builder.between(builder.literal(stichtag),

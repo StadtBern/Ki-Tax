@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
@@ -125,7 +124,7 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 		} else {
 			typePredicate = cb.equal(root.get(GesuchstellerAdresseContainer_.gesuchstellerAdresseJA).get(GesuchstellerAdresse_.adresseTyp), typParam);
 		}
-		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
+		List<Predicate> predicatesToUse = new ArrayList<>();
 
 		predicatesToUse.add(gesuchstellerPred);
 		predicatesToUse.add(typePredicate);
