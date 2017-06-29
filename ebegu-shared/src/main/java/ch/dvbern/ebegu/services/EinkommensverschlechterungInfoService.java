@@ -23,7 +23,6 @@ public interface EinkommensverschlechterungInfoService {
 	Optional<EinkommensverschlechterungInfoContainer> createEinkommensverschlechterungInfo(
 		@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo);
 
-
 	/**
 	 * Aktualisiert idn EinkommensverschlechterungInfoContainer in der DB
 	 */

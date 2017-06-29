@@ -117,10 +117,14 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 		if (!convertedEkvi.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus1()) {
 			einkommensverschlechterungService.removeAllEKVOfGesuch(gesuch, 1);
 			convertedEkvi.getEinkommensverschlechterungInfoJA().setGemeinsameSteuererklaerung_BjP1(null);
+			convertedEkvi.getEinkommensverschlechterungInfoJA().setStichtagFuerBasisJahrPlus1(null);
+			convertedEkvi.getEinkommensverschlechterungInfoJA().setGrundFuerBasisJahrPlus1(null);
 		}
 		if (!convertedEkvi.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2()) {
 			einkommensverschlechterungService.removeAllEKVOfGesuch(gesuch, 2);
 			convertedEkvi.getEinkommensverschlechterungInfoJA().setGemeinsameSteuererklaerung_BjP2(null);
+			convertedEkvi.getEinkommensverschlechterungInfoJA().setStichtagFuerBasisJahrPlus2(null);
+			convertedEkvi.getEinkommensverschlechterungInfoJA().setGrundFuerBasisJahrPlus2(null);
 		}
 	}
 
