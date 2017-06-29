@@ -1,17 +1,19 @@
 package ch.dvbern.ebegu.util;
 
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.FamiliensituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import com.google.common.collect.ArrayListMultimap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Allgemeine Utils fuer EBEGU
@@ -55,5 +57,14 @@ public class EbeguUtil {
 	public static boolean isSameObject(AbstractEntity thisEntity, AbstractEntity otherEntity) {
 		return (thisEntity == null && otherEntity == null)
 			|| (thisEntity != null && otherEntity != null && thisEntity.isSame(otherEntity));
+	}
+
+	/**
+	 * Returns true if both strings have the same content or both are null or emptystrings
+	 * or one is emptystring and the other is null
+	 */
+	public static boolean isSameOrNullStrings(String thisString, String otherString) {
+		return (StringUtils.isBlank(thisString) && StringUtils.isBlank(otherString))
+			|| Objects.equals(thisString, otherString);
 	}
 }
