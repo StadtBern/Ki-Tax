@@ -141,7 +141,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     }
 
     public getNextButtonText(): string {
-        if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
+        if (this.gesuchModelManager.isGesuchReadonly() || this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
             return this.$translate.instant('WEITER_ONLY_UPPER');
         }
         return this.$translate.instant('WEITER_UPPER');

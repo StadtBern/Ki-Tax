@@ -1,23 +1,14 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.MergeDocException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
-import ch.dvbern.ebegu.rules.Rule;
-import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.util.DokumenteUtil;
-import ch.dvbern.ebegu.util.UploadFileInfo;
-import ch.dvbern.lib.cdipersistence.Persistence;
-import ch.dvbern.lib.iso20022.AuszahlungDTO;
-import ch.dvbern.lib.iso20022.Pain001DTO;
-import ch.dvbern.lib.iso20022.Pain001Service;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
@@ -31,11 +22,47 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.util.*;
+
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Adresse;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.GeneratedDokument;
+import ch.dvbern.ebegu.entities.GeneratedDokument_;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Mahnung;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Pain001Dokument;
+import ch.dvbern.ebegu.entities.Pain001Dokument_;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.WriteProtectedDokument;
+import ch.dvbern.ebegu.entities.Zahlungsauftrag;
+import ch.dvbern.ebegu.entities.Zahlungsauftrag_;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
+import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
+import ch.dvbern.ebegu.enums.Zustelladresse;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
+import ch.dvbern.ebegu.rules.Rule;
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.DokumenteUtil;
+import ch.dvbern.ebegu.util.UploadFileInfo;
+import ch.dvbern.lib.cdipersistence.Persistence;
+import ch.dvbern.lib.iso20022.AuszahlungDTO;
+import ch.dvbern.lib.iso20022.Pain001DTO;
+import ch.dvbern.lib.iso20022.Pain001Service;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
@@ -210,7 +237,11 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		}
 		if (!gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen() || persistedDokument == null) {
 			//  persistedDokument == null:  Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
-			authorizer.checkReadAuthorizationFinSit(gesuch);
+			if (!gesuch.hasOnlyBetreuungenOfSchulamt()) {
+				// Bei nur Schulamt prüfen wir die Berechtigung nicht, damit das JA solche Gesuche schliessen kann. Der UseCase ist, dass zuerst ein zweites
+				// Angebot vorhanden war, dieses aber durch das JA gelöscht wurde.
+				authorizer.checkReadAuthorizationFinSit(gesuch);
+			}
 			finanzielleSituationService.calculateFinanzDaten(gesuch);
 
 			final BetreuungsgutscheinEvaluator evaluator = initEvaluator(gesuch);
@@ -555,7 +586,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		Pain001DTO pain001DTO = new Pain001DTO();
 
 		pain001DTO.setAuszahlungsDatum(zahlungsauftrag.getDatumFaellig());
-		pain001DTO.setAuszahlungsDatum(LocalDate.now());
+		pain001DTO.setGenerierungsDatum(zahlungsauftrag.getDatumGeneriert());
 
 		String debitorName = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEBTOR_NAME);
 		String debitorBic = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEBTOR_BIC);
@@ -567,21 +598,28 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		pain001DTO.setSchuldnerBIC(debitorBic == null ? DEF_DEBTOR_BIC : debitorBic);
 		pain001DTO.setSchuldnerIBAN_gebuehren(debitorIbanGebuehren == null ? pain001DTO.getSchuldnerIBAN() : debitorIbanGebuehren);
 		pain001DTO.setSoftwareName("Ki-Tax");
+		// we use the currentTimeMillis so that it is always different
+		pain001DTO.setMsgID("Ki-Tax_" + Long.toString(System.currentTimeMillis()));
 
 		pain001DTO.setAuszahlungen(new ArrayList<>());
 		zahlungsauftrag.getZahlungen().stream()
 			.filter(zahlung -> zahlung.getBetragTotalZahlung().signum() == 1)
 			.forEach(zahlung -> {
+				InstitutionStammdaten institutionStammdaten = zahlung.getInstitutionStammdaten();
 				AuszahlungDTO auszahlungDTO = new AuszahlungDTO();
 				auszahlungDTO.setBetragTotalZahlung(zahlung.getBetragTotalZahlung());
-				auszahlungDTO.setZahlungsempfaegerName(zahlung.getInstitutionStammdaten().getInstitution().getName());
-				auszahlungDTO.setZahlungsempfaegerStrasse(zahlung.getInstitutionStammdaten().getAdresse().getStrasse());
-				auszahlungDTO.setZahlungsempfaegerHausnummer(zahlung.getInstitutionStammdaten().getAdresse().getHausnummer());
-				auszahlungDTO.setZahlungsempfaegerPlz(zahlung.getInstitutionStammdaten().getAdresse().getPlz());
-				auszahlungDTO.setZahlungsempfaegerOrt(zahlung.getInstitutionStammdaten().getAdresse().getOrt());
-				auszahlungDTO.setZahlungsempfaegerLand(zahlung.getInstitutionStammdaten().getAdresse().getLand().toString());
-				auszahlungDTO.setZahlungsempfaegerIBAN(zahlung.getInstitutionStammdaten().getIban().toString());
-				auszahlungDTO.setZahlungsempfaegerBankClearingNumber(zahlung.getInstitutionStammdaten().getIban().extractClearingNumberWithoutLeadingZeros());
+				String kontoinhaber = StringUtils.isNotEmpty(institutionStammdaten.getKontoinhaber())
+					? institutionStammdaten.getKontoinhaber() : institutionStammdaten.getInstitution().getName();
+				Adresse adresseKontoinhaber = institutionStammdaten.getAdresseKontoinhaber() != null
+					? institutionStammdaten.getAdresseKontoinhaber() : institutionStammdaten.getAdresse();
+				auszahlungDTO.setZahlungsempfaegerName(kontoinhaber);
+				auszahlungDTO.setZahlungsempfaegerStrasse(adresseKontoinhaber.getStrasse());
+				auszahlungDTO.setZahlungsempfaegerHausnummer(adresseKontoinhaber.getHausnummer());
+				auszahlungDTO.setZahlungsempfaegerPlz(adresseKontoinhaber.getPlz());
+				auszahlungDTO.setZahlungsempfaegerOrt(adresseKontoinhaber.getOrt());
+				auszahlungDTO.setZahlungsempfaegerLand(adresseKontoinhaber.getLand().toString());
+				auszahlungDTO.setZahlungsempfaegerIBAN(institutionStammdaten.getIban().toString());
+				auszahlungDTO.setZahlungsempfaegerBankClearingNumber(institutionStammdaten.getIban().extractClearingNumberWithoutLeadingZeros());
 
 				pain001DTO.getAuszahlungen().add(auszahlungDTO);
 			});
