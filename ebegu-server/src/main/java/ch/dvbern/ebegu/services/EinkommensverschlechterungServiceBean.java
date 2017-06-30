@@ -124,7 +124,7 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 				removeEinkommensverschlechterung(gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1());
 				gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(null);
 			}
-			 else if (gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() != null) {
+			 else if (yearPlus == 2 && gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() != null) {
 				removeEinkommensverschlechterung(gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2());
 				gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(null);
 			}

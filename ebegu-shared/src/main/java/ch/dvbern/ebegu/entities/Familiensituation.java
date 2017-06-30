@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -134,7 +135,7 @@ public class Familiensituation extends AbstractEntity {
 		return Objects.equals(getAenderungPer(), otherFamiliensituation.getAenderungPer()) &&
 			Objects.equals(getFamilienstatus(), otherFamiliensituation.getFamilienstatus()) &&
 			Objects.equals(getGesuchstellerKardinalitaet(), otherFamiliensituation.getGesuchstellerKardinalitaet()) &&
-			Objects.equals(getGemeinsameSteuererklaerung(), otherFamiliensituation.getGemeinsameSteuererklaerung());
+			EbeguUtil.isSameOrNullBoolean(getGemeinsameSteuererklaerung(), otherFamiliensituation.getGemeinsameSteuererklaerung());
 
 	}
 }

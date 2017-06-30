@@ -67,4 +67,17 @@ public class EbeguUtil {
 		return (StringUtils.isBlank(thisString) && StringUtils.isBlank(otherString))
 			|| Objects.equals(thisString, otherString);
 	}
+
+	/**
+	 * Returns true if both strings have the same content or both are null or emptystrings
+	 * or one is emptystring and the other is null
+	 */
+	public static boolean isSameOrNullBoolean(Boolean thisBoolean, Boolean otherBoolean) {
+		return (isNullOrFalse(thisBoolean) && isNullOrFalse(otherBoolean))
+			|| Objects.equals(thisBoolean, otherBoolean);
+	}
+
+	public static boolean isNullOrFalse(Boolean value) {
+		return value == null || !value;
+	}
 }
