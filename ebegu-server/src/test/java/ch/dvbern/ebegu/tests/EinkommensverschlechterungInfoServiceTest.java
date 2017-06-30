@@ -82,17 +82,33 @@ public class EinkommensverschlechterungInfoServiceTest extends AbstractEbeguLogi
 
 		Collection<EinkommensverschlechterungInfoContainer> allEinkommensverschlechterungInfo = einkommensverschlechterungInfoService.getAllEinkommensverschlechterungInfo();
 		EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo = allEinkommensverschlechterungInfo.iterator().next();
+		Assert.assertFalse(einkommensverschlechterungInfo.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2());
+		Assert.assertNull(einkommensverschlechterungInfo.getEinkommensverschlechterungInfoJA().getGrundFuerBasisJahrPlus2());
 
+		//Add EKV_BasisJahr2
+		einkommensverschlechterungInfo.getEinkommensverschlechterungInfoJA().setEkvFuerBasisJahrPlus2(true);
 		einkommensverschlechterungInfo.getEinkommensverschlechterungInfoJA().setGrundFuerBasisJahrPlus2(TEST_123);
-
 		einkommensverschlechterungInfoService.updateEinkommensVerschlechterungInfoAndGesuch(einkommensverschlechterungInfo
 			.getGesuch(), null, einkommensverschlechterungInfo);
 
-		final Optional<EinkommensverschlechterungInfoContainer> einkommensverschlechterungInfoUpdated = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(einkommensverschlechterungInfo.getId());
+		final Optional<EinkommensverschlechterungInfoContainer> ekvInfoUpdated = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(einkommensverschlechterungInfo.getId());
 
-		final EinkommensverschlechterungInfoContainer info1 = einkommensverschlechterungInfoUpdated.get();
+		final EinkommensverschlechterungInfoContainer info1 = ekvInfoUpdated.get();
 		Assert.assertNotNull(info1);
-		Assert.assertEquals(info1.getEinkommensverschlechterungInfoJA().getGrundFuerBasisJahrPlus2(), TEST_123);
+		Assert.assertTrue(info1.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2());
+		Assert.assertEquals(TEST_123, info1.getEinkommensverschlechterungInfoJA().getGrundFuerBasisJahrPlus2());
+
+		//Remove EKV_BasisJahr2
+		info1.getEinkommensverschlechterungInfoJA().setEkvFuerBasisJahrPlus2(false);
+		einkommensverschlechterungInfoService.updateEinkommensVerschlechterungInfoAndGesuch(info1.getGesuch(), null, info1);
+
+		final Optional<EinkommensverschlechterungInfoContainer> ekvInfoUpdated2 = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(info1.getId());
+
+		final EinkommensverschlechterungInfoContainer info2 = ekvInfoUpdated2.get();
+		Assert.assertNotNull(info2);
+		Assert.assertFalse(info2.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2());
+		//even though GrundFuerBasisJahrPlus2 was not set to null it changes to null after saving
+		Assert.assertNull(info2.getEinkommensverschlechterungInfoJA().getGrundFuerBasisJahrPlus2());
 	}
 
 	@Test
