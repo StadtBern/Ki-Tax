@@ -311,10 +311,7 @@ export default class GesuchModelManager {
         return this.gesuchstellerRS.saveGesuchsteller(this.getStammdatenToWorkWith(), this.gesuch.id, this.gesuchstellerNumber, umzug)
             .then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
-                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
-                    this.getStammdatenToWorkWith().showUmzug = tempShowUmzug;
-                    return this.getStammdatenToWorkWith();
-                });
+                return this.getStammdatenToWorkWith();
             });
     }
 

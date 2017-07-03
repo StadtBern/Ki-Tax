@@ -79,10 +79,10 @@ export class DVLoadingButtonController implements IDVLoadingButtonController {
     //wird von angular aufgerufen
     $onInit() {
         if ('ngClick' in this.$attrs) {
-            this.$log.error('must not use ng-click on dv-loading-button');
+            this.$log.error('must not use ng-click on dv-loading-button', this);
         }
         if ('ngDisabled' in this.$attrs) {
-            this.$log.error('must not use ng-disabled on dv-loading-button');
+            this.$log.error('must not use ng-disabled on dv-loading-button', this);
         }
         if (!this.type) {
             this.type = 'button'; //wenn kein expliziter type angegeben wurde nehmen wir default button
