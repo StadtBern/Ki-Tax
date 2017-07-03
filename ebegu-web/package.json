@@ -86,7 +86,7 @@
     "@types/angular-mocks": "~1.5.9",
     "@types/angular-translate": "~2.4.35",
     "@types/jasmine": "~2.5.46",
-    "@types/jquery": "~2.0.41",
+    "@types/jquery": "2.0.41",
     "@types/node": "^6.0.45",
     "angular-mocks": "~1.6.3",
     "awesome-typescript-loader": "~3.1.2",

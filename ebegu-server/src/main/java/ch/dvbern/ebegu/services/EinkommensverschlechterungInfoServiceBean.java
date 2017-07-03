@@ -61,26 +61,21 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 	@Override
 	@Nonnull
 	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
-	public EinkommensverschlechterungInfoContainer updateEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo) {
-		Objects.requireNonNull(einkommensverschlechterungInfo);
-		return persistence.merge(einkommensverschlechterungInfo);
-	}
-
-	@Override
-	@Nonnull
-	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
 	public EinkommensverschlechterungInfoContainer updateEinkommensVerschlechterungInfoAndGesuch(Gesuch gesuch, EinkommensverschlechterungInfoContainer oldEVData,
 																								 EinkommensverschlechterungInfoContainer convertedEkvi) {
 		convertedEkvi.setGesuch(gesuch);
 		gesuch.setEinkommensverschlechterungInfoContainer(convertedEkvi);
-		convertedEkvi.setGesuch(gesuchService.updateGesuch(gesuch, false, null)); // saving gesuch cascades and saves Ekvi too
 
 		//Alle Daten des EV loeschen wenn man kein EV mehr eingeben will
-		removeEinkommensverschlechterungFromGesuchsteller(gesuch.getGesuchsteller1(), oldEVData, convertedEkvi);
-		removeEinkommensverschlechterungFromGesuchsteller(gesuch.getGesuchsteller2(), oldEVData, convertedEkvi);
+		removeEinkommensverschlechterungContFromGesuchsteller(gesuch.getGesuchsteller1(), oldEVData, convertedEkvi);
+		removeEinkommensverschlechterungContFromGesuchsteller(gesuch.getGesuchsteller2(), oldEVData, convertedEkvi);
+		removeEinkommensverschlechterungFromGesuch(gesuch, convertedEkvi);
+
+		convertedEkvi.setGesuch(gesuchService.updateGesuch(gesuch, false, null)); // saving gesuch cascades and saves Ekvi too
 
 		wizardStepService.updateSteps(gesuch.getId(), oldEVData,
 			convertedEkvi, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+
 		return convertedEkvi;
 	}
 
@@ -113,8 +108,28 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 			(EinkommensverschlechterungInfoContainer.class, einkommensverschlechterungInfoContainer.getId()));
 	}
 
-	private void removeEinkommensverschlechterungFromGesuchsteller(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfoContainer oldData, EinkommensverschlechterungInfoContainer convertedEkvi) {
-		if (isNeededToRemoveEinkommensverschlechterung(gesuchsteller, oldData, convertedEkvi)) {
+	/**
+	 * Removes all EKV of the given Gesuch if the year is not set. The field GemeinsameSteuererklaerung_BjPX will be
+	 * also set to null. If the year is set nothing will be done.
+	 */
+	private void removeEinkommensverschlechterungFromGesuch(Gesuch gesuch, EinkommensverschlechterungInfoContainer
+		convertedEkvi) {
+		if (!convertedEkvi.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus1()) {
+			einkommensverschlechterungService.removeAllEKVOfGesuch(gesuch, 1);
+			convertedEkvi.getEinkommensverschlechterungInfoJA().setGemeinsameSteuererklaerung_BjP1(null);
+			convertedEkvi.getEinkommensverschlechterungInfoJA().setStichtagFuerBasisJahrPlus1(null);
+			convertedEkvi.getEinkommensverschlechterungInfoJA().setGrundFuerBasisJahrPlus1(null);
+		}
+		if (!convertedEkvi.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2()) {
+			einkommensverschlechterungService.removeAllEKVOfGesuch(gesuch, 2);
+			convertedEkvi.getEinkommensverschlechterungInfoJA().setGemeinsameSteuererklaerung_BjP2(null);
+			convertedEkvi.getEinkommensverschlechterungInfoJA().setStichtagFuerBasisJahrPlus2(null);
+			convertedEkvi.getEinkommensverschlechterungInfoJA().setGrundFuerBasisJahrPlus2(null);
+		}
+	}
+
+	private void removeEinkommensverschlechterungContFromGesuchsteller(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfoContainer oldData, EinkommensverschlechterungInfoContainer convertedEkvi) {
+		if (isNeededToRemoveEinkommensverschlechterungCont(gesuchsteller, oldData, convertedEkvi)) {
 			//noinspection ConstantConditions
 			einkommensverschlechterungService.removeEinkommensverschlechterungContainer(gesuchsteller.getEinkommensverschlechterungContainer());
 			gesuchsteller.setEinkommensverschlechterungContainer(null);
@@ -124,9 +139,9 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 	/**
 	 * Returns true when the given GS already has an einkommensverschlechtrung and the new EVInfo says that no EV should be present
 	 */
-	private boolean isNeededToRemoveEinkommensverschlechterung(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfoContainer oldData, EinkommensverschlechterungInfoContainer newData) {
+	private boolean isNeededToRemoveEinkommensverschlechterungCont(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfoContainer oldData, EinkommensverschlechterungInfoContainer newData) {
 		return oldData != null && newData != null && gesuchsteller != null
-			&& oldData.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung() && !newData.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()
+			&& !newData.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()
 			&& gesuchsteller.getEinkommensverschlechterungContainer() != null;
 	}
 }

@@ -57,6 +57,7 @@ export class InstitutionViewController extends AbstractAdminViewController {
     selectedInstitutionStammdatenBetreuungsangebot: any = null;
     laenderList: TSLand[];
     errormessage: string = undefined;
+    hasDifferentZahlungsadresse: boolean = false;
 
 
     static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService', 'DvDialog', 'ListResourceRS', 'AuthServiceRS'];
@@ -182,6 +183,7 @@ export class InstitutionViewController extends AbstractAdminViewController {
         this.selectedInstitutionStammdaten = institutionStammdaten;
         this.selectedInstitutionStammdatenBetreuungsangebot = this.getBetreuungsangebotFromInstitutionList(institutionStammdaten.betreuungsangebotTyp);
         this.isSelectedStammdaten = true;
+        this.hasDifferentZahlungsadresse = !!this.selectedInstitutionStammdaten.adresseKontoinhaber;
     }
 
     getSelectedInstitutionStammdaten(): TSInstitutionStammdaten {
@@ -197,6 +199,14 @@ export class InstitutionViewController extends AbstractAdminViewController {
         this.selectedInstitutionStammdaten.adresse = new TSAdresse();
         this.selectedInstitutionStammdaten.institution = this.selectedInstitution;
         this.isSelectedStammdaten = true;
+    }
+
+    differentZahlungsadresseClicked(): void {
+        if (this.hasDifferentZahlungsadresse) {
+            this.selectedInstitutionStammdaten.adresseKontoinhaber = new TSAdresse();
+        } else {
+            this.selectedInstitutionStammdaten.adresseKontoinhaber = undefined;
+        }
     }
 
     saveInstitutionStammdaten(form: IFormController): void {
@@ -263,11 +273,14 @@ export class InstitutionViewController extends AbstractAdminViewController {
     }
 
     getDateString(dateRange: TSDateRange, format: string): string {
-        if (!dateRange.gueltigBis) {
-            return dateRange.gueltigAb.format(format);
-        } else {
-            return dateRange.gueltigAb.format(format) + ' - ' + dateRange.gueltigBis.format(format);
+        if (dateRange.gueltigAb) {
+            if (!dateRange.gueltigBis) {
+                return dateRange.gueltigAb.format(format);
+            } else {
+                return dateRange.gueltigAb.format(format) + ' - ' + dateRange.gueltigBis.format(format);
+            }
         }
+        return '';
     }
 
     private syncWithOpenIdm(): void {

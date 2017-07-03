@@ -1,12 +1,12 @@
 package ch.dvbern.ebegu.services;
 
-
 import java.util.Collection;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
+import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 
@@ -48,8 +48,21 @@ public interface EinkommensverschlechterungService {
 	void removeEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer);
 
 	/**
+	 * Removes the given Einkommensverschlechterung
+	 */
+	void removeEinkommensverschlechterung(@Nonnull Einkommensverschlechterung einkommensverschlechterung);
+
+	/**
 	 * Berechnet die Einkomensverschlechterung beider Gesuchsteller für das entsprechende BasisJahr 1 oder 2
 	 */
 	@Nonnull
 	FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch, int basisJahrPlus);
+
+	/**
+	 * Removes all Einkommensverschlechterungen of the given year for the given Gesuch. The year is 1 or 2 and will
+	 * be the difference between the BasisJahr and the one to remove.
+	 * @param gesuch the Gesuch
+	 * @param yearPlus 1 or 2. any other value won't do anything and will return false
+	 */
+	boolean removeAllEKVOfGesuch(@Nonnull Gesuch gesuch, int yearPlus);
 }
