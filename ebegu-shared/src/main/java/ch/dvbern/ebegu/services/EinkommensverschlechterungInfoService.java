@@ -25,16 +25,6 @@ public interface EinkommensverschlechterungInfoService {
 
 	/**
 	 * Aktualisiert idn EinkommensverschlechterungInfoContainer in der DB
-	 *
-	 * @param einkommensverschlechterungInfo die EinkommensverschlechterungInfoContainer als DTO
-	 * @return Die aktualisierte EinkommensverschlechterungInfoContainer
-	 */
-	@Nonnull
-	EinkommensverschlechterungInfoContainer updateEinkommensverschlechterungInfo(
-		@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo);
-
-	/**
-	 * Aktualisiert idn EinkommensverschlechterungInfoContainer in der DB
 	 */
 	@Nonnull
 	EinkommensverschlechterungInfoContainer updateEinkommensVerschlechterungInfoAndGesuch(Gesuch gesuch, EinkommensverschlechterungInfoContainer oldEVData,

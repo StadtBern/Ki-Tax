@@ -69,6 +69,9 @@ public class Testfall07_MeierMeret extends AbstractTestfall {
 		finanzielleSituationGS2.getFinanzielleSituationJA().setBruttovermoegen(MathUtil.DEFAULT.from(25496));
 		finanzielleSituationGS2.setGesuchsteller(gesuchsteller2);
 		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationGS2);
+
+		createEmptyEKVInfoContainer(gesuch);
+
 		return gesuch;
 	}
 

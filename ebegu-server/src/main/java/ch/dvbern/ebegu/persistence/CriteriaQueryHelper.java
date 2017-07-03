@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.persistence;
 
-import ch.dvbern.ebegu.entities.AbstractDateRangedEntity;
-import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.types.DateRange_;
-import ch.dvbern.lib.cdipersistence.Persistence;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -13,16 +14,22 @@ import javax.inject.Inject;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+
+import ch.dvbern.ebegu.entities.AbstractDateRangedEntity;
+import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.lib.cdipersistence.Persistence;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -99,9 +106,9 @@ public class CriteriaQueryHelper {
 	}
 
 	@Nullable
-	public static Expression<Boolean> concatenateExpressions(@Nonnull final CriteriaBuilder builder, @Nonnull final List<Expression<Boolean>> predicatesToUse) {
-		Expression<Boolean> concatenated = null;
-		for (final Expression<Boolean> expression : predicatesToUse) {
+	public static Predicate concatenateExpressions(@Nonnull final CriteriaBuilder builder, @Nonnull final List<Predicate> predicatesToUse) {
+		Predicate concatenated = null;
+		for (final Predicate expression : predicatesToUse) {
 			if (concatenated == null) {
 				// Dies ist die erste
 				concatenated = expression;
@@ -114,7 +121,7 @@ public class CriteriaQueryHelper {
 	}
 
 	@Nullable
-	public static Expression<Boolean> concatenateExpressions(@Nonnull final CriteriaBuilder builder, @Nonnull Expression<Boolean>... predicatesToUse) {
+	public static Predicate concatenateExpressions(@Nonnull final CriteriaBuilder builder, @Nonnull Predicate... predicatesToUse) {
 		return concatenateExpressions(builder, Arrays.asList(predicatesToUse));
 	}
 

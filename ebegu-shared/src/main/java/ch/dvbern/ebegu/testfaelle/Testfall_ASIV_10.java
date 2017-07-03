@@ -63,6 +63,8 @@ public class Testfall_ASIV_10 extends AbstractASIVTestfall {
 		finanzielleSituationGS2.setGesuchsteller(gesuchsteller2);
 		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationGS2);
 
+		createEmptyEKVInfoContainer(gesuch);
+
 		return erstgesuch;
 	}
 

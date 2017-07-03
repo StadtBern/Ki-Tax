@@ -20,7 +20,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
@@ -212,7 +211,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuungsmitteilung> query = cb.createQuery(Betreuungsmitteilung.class);
 		Root<Betreuungsmitteilung> root = query.from(Betreuungsmitteilung.class);
-		List<Expression<Boolean>> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<>();
 
 		Predicate predicateLinkedObject = cb.equal(root.get(Betreuungsmitteilung_.betreuung), betreuung);
 		predicates.add(predicateLinkedObject);
@@ -245,7 +244,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
-		List<Expression<Boolean>> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<>();
 
 		Predicate predicateLinkedObject = cb.equal(root.get(attribute), linkedEntity);
 		predicates.add(predicateLinkedObject);
@@ -274,7 +273,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
 
-		List<Expression<Boolean>> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<>();
 
 		// Keine Entwuerfe fuer Posteingang
 		Predicate predicateEntwurf = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ENTWURF);
@@ -315,7 +314,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
-		List<Expression<Boolean>> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<>();
 
 		Predicate predicateLinkedObject = cb.equal(root.get(attribute), linkedEntity);
 		predicates.add(predicateLinkedObject);
@@ -389,7 +388,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
-		List<Expression<Boolean>> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<>();
 
 		Predicate predicateFall = cb.equal(root.get(Mitteilung_.fall), fall);
 		predicates.add(predicateFall);
@@ -412,7 +411,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Long> query = cb.createQuery(Long.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
-		List<Expression<Boolean>> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<>();
 
 		Predicate predicateNew = cb.equal(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.NEU);
 		predicates.add(predicateNew);

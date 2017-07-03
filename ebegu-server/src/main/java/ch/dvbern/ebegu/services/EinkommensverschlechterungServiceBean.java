@@ -13,8 +13,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
+import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -91,9 +93,41 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 	}
 
 	@Override
+	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	public void removeEinkommensverschlechterung(@Nonnull Einkommensverschlechterung einkommensverschlechterung) {
+		Validate.notNull(einkommensverschlechterung);
+		persistence.remove(Einkommensverschlechterung.class, einkommensverschlechterung.getId());
+	}
+
+	@Override
 	@Nonnull
 	@PermitAll
 	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch, int basisJahrPlus) {
 		return finSitRechner.calculateResultateEinkommensverschlechterung(gesuch, basisJahrPlus, true);
+	}
+
+	@Override
+	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	public boolean removeAllEKVOfGesuch(@Nonnull Gesuch gesuch, int yearPlus) {
+		if (yearPlus != 1 && yearPlus != 2) {
+			return false;
+		}
+		removeAllEKVForGSAndYear(gesuch.getGesuchsteller1(), yearPlus);
+		removeAllEKVForGSAndYear(gesuch.getGesuchsteller2(), yearPlus);
+		return true;
+	}
+
+	private void removeAllEKVForGSAndYear(GesuchstellerContainer gesuchsteller, int yearPlus) {
+		if (gesuchsteller != null
+			&& gesuchsteller.getEinkommensverschlechterungContainer() != null) {
+			if (yearPlus == 1 && gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() != null) {
+				removeEinkommensverschlechterung(gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1());
+				gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(null);
+			}
+			 else if (yearPlus == 2 && gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() != null) {
+				removeEinkommensverschlechterung(gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2());
+				gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(null);
+			}
+		}
 	}
 }

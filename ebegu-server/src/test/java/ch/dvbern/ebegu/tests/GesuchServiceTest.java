@@ -938,7 +938,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		PropertyDescriptor[] propertyDescriptors = bean.getPropertyDescriptors(entity.getClass());
 		for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
 			Object property = bean.getProperty(entity, propertyDescriptor.getName());
-			if (property instanceof AbstractEntity) {
+			if (property instanceof AbstractEntity && !(property instanceof Gesuch)) { //to avoid loops
 				findAbstractEntitiesWithIds((AbstractEntity) property, ids);
 			}
 		}

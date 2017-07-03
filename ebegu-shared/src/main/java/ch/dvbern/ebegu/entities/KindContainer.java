@@ -217,7 +217,6 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 		}
 		final KindContainer otherKindContainer = (KindContainer) other;
 		return EbeguUtil.isSameObject(getKindJA(), otherKindContainer.getKindJA()) &&
-			Objects.equals(getKindNummer(), otherKindContainer.getKindNummer()) &&
-			Objects.equals(getNextNumberBetreuung(), otherKindContainer.getNextNumberBetreuung());
+			Objects.equals(getKindNummer(), otherKindContainer.getKindNummer());
 	}
 }

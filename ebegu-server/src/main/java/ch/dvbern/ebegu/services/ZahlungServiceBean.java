@@ -201,7 +201,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Join<VerfuegungZeitabschnitt, Verfuegung> joinVerfuegung = root.join(VerfuegungZeitabschnitt_.verfuegung);
 		Join<Verfuegung, Betreuung> joinBetreuung = joinVerfuegung.join(Verfuegung_.betreuung);
 
-		List<Expression<Boolean>> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<>();
 
 		// Datum Von
 		Predicate predicateStart = cb.lessThanOrEqualTo(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigAb), zeitabschnittBis);
@@ -241,7 +241,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Join<Betreuung, KindContainer> joinKindContainer = joinBetreuung.join(Betreuung_.kind);
 		Join<KindContainer, Gesuch> joinGesuch = joinKindContainer.join(KindContainer_.gesuch);
 
-		List<Expression<Boolean>> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<>();
 
 		// Datum Bis muss VOR dem regulaeren Auszahlungszeitraum sein (sonst ist es keine Korrektur und schon im obigen Statement enthalten)
 		Predicate predicateStart = cb.lessThanOrEqualTo(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigBis), zeitabschnittBis);
