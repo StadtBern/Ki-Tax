@@ -108,6 +108,12 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 			updateLuceneIndex(GesuchstellerContainer.class, gesuchsteller.getId());
 		}
 		final GesuchstellerContainer mergedGesuchsteller = persistence.merge(gesuchsteller);
+		if (gsNumber == 1) {
+			gesuch.setGesuchsteller1(mergedGesuchsteller);
+		}
+		else if (gsNumber == 2) {
+			gesuch.setGesuchsteller2(mergedGesuchsteller);
+		}
 		updateWizStepsForGesuchstellerView(gesuch, gsNumber, umzug, mergedGesuchsteller.getGesuchstellerJA());
 		return mergedGesuchsteller;
 	}

@@ -12,6 +12,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
@@ -156,6 +157,7 @@ public class Gesuchsteller extends AbstractPersonEntity {
 			Objects.equals(getMobile(), otherGesuchsteller.getMobile()) &&
 			Objects.equals(getTelefon(), otherGesuchsteller.getTelefon()) &&
 			Objects.equals(getTelefonAusland(), otherGesuchsteller.getTelefonAusland()) &&
+			EbeguUtil.isSameOrNullStrings(getEwkPersonId(), otherGesuchsteller.getEwkPersonId()) &&
 			Objects.equals(isDiplomatenstatus(), otherGesuchsteller.isDiplomatenstatus());
 	}
 

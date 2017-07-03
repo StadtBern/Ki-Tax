@@ -558,14 +558,24 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					}
 					//kann man effektiv sagen dass bei nur einem GS niemals Rote Schritte FinanzielleSituation und EVK gibt
 				} else if (!newEntity.hasSecondGesuchsteller() && wizardStep.getGesuch().getGesuchsteller1() != null) { // nur 1 GS
-					if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName()) && wizardStep.getWizardStepStatus().equals(WizardStepStatus.NOK)) {
-						wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+					if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
+						if (wizardStep.getGesuch().isMutation()) {
+							setWizardStepOkOrMutiert(wizardStep);
+						}
+						else if (wizardStep.getWizardStepStatus().equals(WizardStepStatus.NOK)) {
+							wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+						}
 
-					} else if ((WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
-						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))
-						&& wizardStep.getWizardStepStatus().equals(WizardStepStatus.NOK)) {
-						wizardStep.setVerfuegbar(true);
-						wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+					} else if (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
+						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
+						if (wizardStep.getGesuch().isMutation()) {
+							wizardStep.setVerfuegbar(true);
+							setWizardStepOkOrMutiert(wizardStep);
+						}
+						else if (wizardStep.getWizardStepStatus().equals(WizardStepStatus.NOK)) {
+							wizardStep.setVerfuegbar(true);
+							wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+						}
 					}
 				}
 			}
