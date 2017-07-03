@@ -80,6 +80,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
             if (gsNummer === this.gesuchModelManager.gesuchstellerNumber) {
                 this.model.gesuchstellerJA.ewkPersonId = ewkId;
                 this.model.gesuchstellerJA.ewkAbfrageDatum = DateUtil.today();
+                this.form.$dirty = true;
             }
         });
     }
