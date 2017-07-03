@@ -107,7 +107,7 @@ export class AbwesenheitViewController extends AbstractGesuchViewController<Arra
             if (!this.form.$dirty && !this.removed) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
-                return this.$q.when([this.gesuchModelManager.getBetreuungToWorkWith()]);
+                return this.$q.when([]);
             }
 
             //Zuerst loeschen wir alle Abwesenheiten jeder Betreuung
@@ -206,10 +206,15 @@ export class AbwesenheitViewController extends AbstractGesuchViewController<Arra
      * Betreuung der Liste changedBetreuungen hinzu, damit sie danach aktualisiert wird
      */
     public changedAngebot(oldKindID: string, oldBetreuungID: string): void {
-        this.gesuchModelManager.findKindById(oldKindID);
-        this.gesuchModelManager.findBetreuungById(oldBetreuungID);
-        if (this.gesuchModelManager.getBetreuungToWorkWith() && this.gesuchModelManager.getBetreuungToWorkWith().id) {
-            this.addChangedBetreuungToList(this.gesuchModelManager.getBetreuungToWorkWith());
+        // In case the Abwesenheit didn't exist before, the old IDs will be empty and there is no need to change
+        // anything
+        if (oldKindID && oldKindID !== '' && oldBetreuungID && oldBetreuungID !== '') {
+            this.gesuchModelManager.findKindById(oldKindID);
+            this.gesuchModelManager.findBetreuungById(oldBetreuungID);
+            let betreuungToWorkWith: TSBetreuung = this.gesuchModelManager.getBetreuungToWorkWith();
+            if (betreuungToWorkWith && betreuungToWorkWith.id) {
+                this.addChangedBetreuungToList(betreuungToWorkWith);
+            }
         }
     }
 
