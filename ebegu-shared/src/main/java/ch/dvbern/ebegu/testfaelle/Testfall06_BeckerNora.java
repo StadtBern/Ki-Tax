@@ -63,6 +63,8 @@ public class Testfall06_BeckerNora extends AbstractTestfall {
 		finanzielleSituationGS1.setGesuchsteller(gesuchsteller1);
 		gesuchsteller1.setFinanzielleSituationContainer(finanzielleSituationGS1);
 
+		createEmptyEKVInfoContainer(gesuch);
+
 		return gesuch;
 	}
 

@@ -87,6 +87,9 @@ public class Testfall08_UmzugAusInAusBern extends AbstractTestfall {
 		finanzielleSituationContainer.getFinanzielleSituationJA().setBruttovermoegen(MathUtil.DEFAULT.from(12147));
 		finanzielleSituationContainer.setGesuchsteller(gesuchsteller1);
 		gesuchsteller1.setFinanzielleSituationContainer(finanzielleSituationContainer);
+
+		createEmptyEKVInfoContainer(gesuch);
+
 		return gesuch;
 	}
 
