@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.annotation.Nullable;
+
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Familiensituation;
@@ -54,7 +56,7 @@ public class EbeguUtil {
 		return gesuchMap;
 	}
 
-	public static boolean isSameObject(AbstractEntity thisEntity, AbstractEntity otherEntity) {
+	public static boolean isSameObject(@Nullable AbstractEntity thisEntity, @Nullable AbstractEntity otherEntity) {
 		return (thisEntity == null && otherEntity == null)
 			|| (thisEntity != null && otherEntity != null && thisEntity.isSame(otherEntity));
 	}
@@ -63,7 +65,7 @@ public class EbeguUtil {
 	 * Returns true if both strings have the same content or both are null or emptystrings
 	 * or one is emptystring and the other is null
 	 */
-	public static boolean isSameOrNullStrings(String thisString, String otherString) {
+	public static boolean isSameOrNullStrings(@Nullable String thisString, @Nullable String otherString) {
 		return (StringUtils.isBlank(thisString) && StringUtils.isBlank(otherString))
 			|| Objects.equals(thisString, otherString);
 	}
@@ -72,12 +74,12 @@ public class EbeguUtil {
 	 * Returns true if both strings have the same content or both are null or emptystrings
 	 * or one is emptystring and the other is null
 	 */
-	public static boolean isSameOrNullBoolean(Boolean thisBoolean, Boolean otherBoolean) {
+	public static boolean isSameOrNullBoolean(@Nullable Boolean thisBoolean, @Nullable Boolean otherBoolean) {
 		return (isNullOrFalse(thisBoolean) && isNullOrFalse(otherBoolean))
 			|| Objects.equals(thisBoolean, otherBoolean);
 	}
 
-	public static boolean isNullOrFalse(Boolean value) {
+	public static boolean isNullOrFalse(@Nullable Boolean value) {
 		return value == null || !value;
 	}
 }
