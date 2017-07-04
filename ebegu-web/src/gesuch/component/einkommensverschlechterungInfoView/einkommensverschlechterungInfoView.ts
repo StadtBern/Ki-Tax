@@ -74,6 +74,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
             this.selectedStichtagBjP1_GS = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfoGS().stichtagFuerBasisJahrPlus1);
             this.selectedStichtagBjP2_GS = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfoGS().stichtagFuerBasisJahrPlus2);
         }
+        this.initializeEKVContainers();
     }
 
     public initEinkommensverschlechterungInfo(): void {
@@ -174,13 +175,9 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
             }
             this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, this.gesuchModelManager.getBasisjahr() + 1);
             this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, this.gesuchModelManager.getBasisjahr() + 2);
-            // Die Container initialisieren:
-            if (!this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer) {
-                this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
-            }
-            if (this.gesuchModelManager.isGesuchsteller2Required() && !this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer) {
-                this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
-            }
+
+            this.initializeEKVContainers();
+
         } else {
             //wenn keine EV eingetragen wird, setzen wir alles auf undefined, da keine Daten gespeichert werden sollen
             this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
@@ -201,6 +198,15 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
                 return ekvInfoRespo;
             });
 
+    }
+
+    private initializeEKVContainers(): void {
+        if (!this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer) {
+            this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
+        }
+        if (this.gesuchModelManager.isGesuchsteller2Required() && !this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer) {
+            this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
+        }
     }
 
     /**
