@@ -70,7 +70,14 @@ export default class EinkommensverschlechterungContainerRS {
 
     public findEinkommensverschlechterungContainer(einkommensverschlechterungID: string): IPromise<TSEinkommensverschlechterungContainer> {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(einkommensverschlechterungID)).then((httpresponse: any) => {
-            this.log.debug('PARSING finanzielle Situation  REST object ', httpresponse.data);
+            this.log.debug('PARSING EinkommensverschlechterungContainer REST object ', httpresponse.data);
+            return this.ebeguRestUtil.parseEinkommensverschlechterungContainer(new TSEinkommensverschlechterungContainer(), httpresponse.data);
+        });
+    }
+
+    public findEKVContainerForGesuchsteller(gesuchstellerID: string): IPromise<TSEinkommensverschlechterungContainer> {
+        return this.http.get(this.serviceURL + '/forGesuchsteller/' + encodeURIComponent(gesuchstellerID)).then((httpresponse: any) => {
+            this.log.debug('PARSING EinkommensverschlechterungContainer REST object ', httpresponse.data);
             return this.ebeguRestUtil.parseEinkommensverschlechterungContainer(new TSEinkommensverschlechterungContainer(), httpresponse.data);
         });
     }
