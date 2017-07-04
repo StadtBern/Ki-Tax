@@ -61,6 +61,8 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		finanzielleSituationContainer.setGesuchsteller(gesuchsteller1);
 		gesuchsteller1.setFinanzielleSituationContainer(finanzielleSituationContainer);
 
+		createEmptyEKVInfoContainer(gesuch);
+
 		return gesuch;
 	}
 

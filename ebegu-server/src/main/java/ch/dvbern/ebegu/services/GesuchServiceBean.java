@@ -333,7 +333,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			Root<Gesuch> root = query.from(Gesuch.class);
 			// Fall
 			Predicate predicate = cb.equal(root.get(Gesuch_.fall), fallOptional.get());
-			// Keine Papier-Mutationen, die noch nicht verfuegt sind
+			// Keine Papier-Antraege, die noch nicht verfuegt sind
 			Predicate predicatePapier = cb.equal(root.get(Gesuch_.eingangsart), Eingangsart.PAPIER);
 			Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates()).not();
 			Predicate predicateUnverfuegtesPapiergesuch = CriteriaQueryHelper.concatenateExpressions(cb, predicatePapier, predicateStatus);
@@ -733,6 +733,16 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				if (benutzer.getRole() == UserRole.SACHBEARBEITER_INSTITUTION) {
 					// es geht hier nicht um die institutionJoin des zugewiesenen benutzers sondern um die institutionJoin des eingeloggten benutzers
 					predicatesToUse.add(cb.equal(institutionJoin, benutzer.getInstitution()));
+				}
+			}
+			if (benutzer.getRole() == UserRole.GESUCHSTELLER) {
+				// Keine Papier-Antraege, die noch nicht verfuegt sind
+				Predicate predicatePapier = cb.equal(root.get(Gesuch_.eingangsart), Eingangsart.PAPIER);
+				Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates()).not();
+				Predicate predicateUnverfuegtesPapiergesuch = CriteriaQueryHelper.concatenateExpressions(cb, predicatePapier, predicateStatus);
+				if (predicateUnverfuegtesPapiergesuch != null) {
+					Predicate predicateNichtUnverfuegtePapierGesuch = predicateUnverfuegtesPapiergesuch.not();
+					predicatesToUse.add(predicateNichtUnverfuegtePapierGesuch);
 				}
 			}
 

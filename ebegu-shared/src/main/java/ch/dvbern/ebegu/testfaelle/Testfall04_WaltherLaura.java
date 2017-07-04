@@ -68,6 +68,9 @@ public class Testfall04_WaltherLaura extends AbstractTestfall {
 		finanzielleSituationGS2.getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahrMinus2(MathUtil.DEFAULT.from(46017));
 		finanzielleSituationGS2.setGesuchsteller(gesuchsteller2);
 		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationGS2);
+
+		createEmptyEKVInfoContainer(gesuch);
+
 		return gesuch;
 	}
 
