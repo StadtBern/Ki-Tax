@@ -367,7 +367,13 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		mutation.setInstitutionStammdaten(this.getInstitutionStammdaten());
 		// Bereits verfuegte Betreuungen werden als BESTAETIGT kopiert, alle anderen behalten ihren Status
 		if (this.getBetreuungsstatus().isGeschlossen()) {
-			mutation.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
+			// Falls sämtliche Betreuungspensum-Container dieser Betreuung ein effektives Pensum von 0 haben, handelt es sich um die
+			// Verfügung eines stornierten Platzes. Wir übernehmen diesen als "STORNIERT"
+			if (hasAnyPensum()) {
+				mutation.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
+			} else {
+				mutation.setBetreuungsstatus(Betreuungsstatus.STORNIERT);
+			}
 		} else {
 			mutation.setBetreuungsstatus(this.getBetreuungsstatus());
 		}
@@ -390,6 +396,14 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		return mutation;
 	}
 
+	private boolean hasAnyPensum() {
+		for (BetreuungspensumContainer betreuungspensumContainer : betreuungspensumContainers) {
+			if (betreuungspensumContainer.getBetreuungspensumJA().getPensum() > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@Nonnull
 	@Override
