@@ -7,6 +7,7 @@ import org.hibernate.envers.Audited;
 import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * Container-Entity für die GesuchstellerAdressen
@@ -18,6 +19,7 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 
 	private static final long serialVersionUID = -3084333639027795652L;
 
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuchstelleradresse_container_gesuchstellerContainer_id"))
 	private GesuchstellerContainer gesuchstellerContainer;

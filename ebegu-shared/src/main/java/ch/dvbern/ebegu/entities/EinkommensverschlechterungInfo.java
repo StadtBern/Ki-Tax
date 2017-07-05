@@ -196,14 +196,36 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 			return false;
 		}
 		final EinkommensverschlechterungInfo otherEKVInfo = (EinkommensverschlechterungInfo) other;
-		return Objects.equals(getEinkommensverschlechterung(), otherEKVInfo.getEinkommensverschlechterung()) &&
-			Objects.equals(getEkvFuerBasisJahrPlus1(), otherEKVInfo.getEkvFuerBasisJahrPlus1()) &&
-			Objects.equals(getEkvFuerBasisJahrPlus2(), otherEKVInfo.getEkvFuerBasisJahrPlus2()) &&
-			EbeguUtil.isSameOrNullBoolean(getGemeinsameSteuererklaerung_BjP1(), otherEKVInfo.getGemeinsameSteuererklaerung_BjP1()) &&
-			EbeguUtil.isSameOrNullBoolean(getGemeinsameSteuererklaerung_BjP2(), otherEKVInfo.getGemeinsameSteuererklaerung_BjP2()) &&
+		// if there is no EKV (einkommensverschlechterung==false) there is no need to compare the rest
+		//noinspection SimplifiableIfStatement -> for clarity sake
+		if (Objects.equals(getEinkommensverschlechterung(), otherEKVInfo.getEinkommensverschlechterung())
+			&& Boolean.FALSE.equals(getEinkommensverschlechterung())) {
+			return true;
+		}
+		return isSameBasisJahrPlus1(otherEKVInfo) && isSameBasisJahrPlus2(otherEKVInfo);
+	}
+
+	private boolean isSameBasisJahrPlus1(EinkommensverschlechterungInfo otherEKVInfo) {
+		// if BasisJahrPlus1 is not set (ekvFuerBasisJahrPlus1==false) there is no need to compare the rest
+		//noinspection SimplifiableIfStatement -> for clarity sake
+		if (Objects.equals(getEkvFuerBasisJahrPlus1(), otherEKVInfo.getEkvFuerBasisJahrPlus1())
+			&& Boolean.FALSE.equals(getEkvFuerBasisJahrPlus1())) {
+			return true;
+		}
+		return EbeguUtil.isSameOrNullBoolean(getGemeinsameSteuererklaerung_BjP1(), otherEKVInfo.getGemeinsameSteuererklaerung_BjP1()) &&
 			Objects.equals(getGrundFuerBasisJahrPlus1(), otherEKVInfo.getGrundFuerBasisJahrPlus1()) &&
+			Objects.equals(getStichtagFuerBasisJahrPlus1(), otherEKVInfo.getStichtagFuerBasisJahrPlus1());
+	}
+
+	private boolean isSameBasisJahrPlus2(EinkommensverschlechterungInfo otherEKVInfo) {
+		// if BasisJahrPlus2 is not set (ekvFuerBasisJahrPlus2==false) there is no need to compare the rest
+		//noinspection SimplifiableIfStatement -> for clarity sake
+		if (Objects.equals(getEkvFuerBasisJahrPlus2(), otherEKVInfo.getEkvFuerBasisJahrPlus2())
+			&& Boolean.FALSE.equals(getEkvFuerBasisJahrPlus2())) {
+			return true;
+		}
+		return EbeguUtil.isSameOrNullBoolean(getGemeinsameSteuererklaerung_BjP2(), otherEKVInfo.getGemeinsameSteuererklaerung_BjP2()) &&
 			Objects.equals(getGrundFuerBasisJahrPlus2(), otherEKVInfo.getGrundFuerBasisJahrPlus2()) &&
-			Objects.equals(getStichtagFuerBasisJahrPlus1(), otherEKVInfo.getStichtagFuerBasisJahrPlus1()) &&
 			Objects.equals(getStichtagFuerBasisJahrPlus2(), otherEKVInfo.getStichtagFuerBasisJahrPlus2());
 	}
 }

@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.Land;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -159,13 +160,13 @@ public class Adresse extends AbstractDateRangedEntity {
 		}
 		final Adresse otherAdr = (Adresse) other;
 		return Objects.equals(getStrasse(), otherAdr.getStrasse()) &&
-			Objects.equals(getHausnummer(), otherAdr.getHausnummer()) &&
-			Objects.equals(getZusatzzeile(), otherAdr.getZusatzzeile()) &&
+			EbeguUtil.isSameOrNullStrings(getHausnummer(), otherAdr.getHausnummer()) &&
+			EbeguUtil.isSameOrNullStrings(getZusatzzeile(), otherAdr.getZusatzzeile()) &&
 			Objects.equals(getPlz(), otherAdr.getPlz()) &&
 			Objects.equals(getOrt(), otherAdr.getOrt()) &&
 			getLand() == otherAdr.getLand() &&
 			Objects.equals(getGemeinde(), otherAdr.getGemeinde()) &&
-			Objects.equals(getOrganisation(), otherAdr.getOrganisation());
+			EbeguUtil.isSameOrNullStrings(getOrganisation(), otherAdr.getOrganisation());
 	}
 
 	public Adresse copyForMutation(Adresse mutation) {

@@ -297,7 +297,9 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 			statusSame = Objects.equals(this.getBetreuungsstatus(), otherBetreuung.getBetreuungsstatus());
 		}
 		boolean stammdatenSame = this.getInstitutionStammdaten().isSame(otherBetreuung.getInstitutionStammdaten());
-		return pensenSame && abwesenheitenSame && statusSame && stammdatenSame;
+		boolean erwBeduerfnisseSame = Objects.equals(getErweiterteBeduerfnisse(), otherBetreuung
+			.getErweiterteBeduerfnisse());
+		return pensenSame && abwesenheitenSame && statusSame && stammdatenSame && erwBeduerfnisseSame;
 	}
 
 	@Transient
