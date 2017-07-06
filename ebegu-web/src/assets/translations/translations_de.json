@@ -1055,5 +1055,10 @@
     "MANUELLE_SKRIPTS": "Manuelle Skripts ausführen",
     "ZAHLUNGSAUFTRAG_ENTWURF": "In Bearbeitung",
     "ZAHLUNGSAUFTRAG_BESTAETIGT": "Bestätigt",
-    "ZAHLUNGSAUFTRAG_AUSGELOEST": "Ausgelöst"
+    "ZAHLUNGSAUFTRAG_AUSGELOEST": "Ausgelöst",
+    "ZAHLUNG_ERSTELLEN_CONFIRM": "Sind Sie sicher, dass Sie diese Zahlung erstellen möchten?",
+    "ZAHLUNG_ERSTELLEN_INFO": "Nachdem Sie die Zahlung erstellt haben, kann diese nicht mehr gelöscht werden",
+    "ZAHLUNG_AUSLOESEN_CONFIRM": "Sind Sie sicher, dass Sie diese Zahlung auslösen möchten?",
+    "ZAHLUNG_AUSLOESEN_INFO": "Dies kann nicht rückgängig gemacht werden"
+
 }
