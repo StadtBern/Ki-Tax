@@ -370,6 +370,10 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         return this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT);
     }
 
+    public isBetreuungsstatusStorniert(): boolean {
+        return this.isBetreuungsstatus(TSBetreuungsstatus.STORNIERT);
+    }
+
     private isBetreuungsstatus(status: TSBetreuungsstatus): boolean {
         if (this.getBetreuungModel()) {
             return this.getBetreuungModel().betreuungsstatus === status;
@@ -404,13 +408,13 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public showFalscheAngaben(): boolean {
-        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen()) && !this.isGesuchReadonly()
-            && !this.isFromMutation();
+        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen())
+            && !this.isGesuchReadonly() && !this.isFromMutation();
     }
 
     public showAngabenKorrigieren(): boolean {
-        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen()) && !this.isGesuchReadonly()
-            && this.isFromMutation();
+        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen() || this.isBetreuungsstatusStorniert())
+            && !this.isGesuchReadonly() && this.isFromMutation();
     }
 
     public isFromMutation(): boolean {
