@@ -216,7 +216,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     private initializeEKVContainers(): void {
-        if (!this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer) {
+        if (this.gesuchModelManager.getGesuch().gesuchsteller1 && !this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer) {
             this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
         }
         if (this.gesuchModelManager.isGesuchsteller2Required() && !this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer) {
