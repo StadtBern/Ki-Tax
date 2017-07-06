@@ -369,7 +369,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		if (this.getBetreuungsstatus().isGeschlossen()) {
 			// Falls sämtliche Betreuungspensum-Container dieser Betreuung ein effektives Pensum von 0 haben, handelt es sich um die
 			// Verfügung eines stornierten Platzes. Wir übernehmen diesen als "STORNIERT"
-			if (hasAnyPensum()) {
+			if (hasAnyNonZeroPensum()) {
 				mutation.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
 			} else {
 				mutation.setBetreuungsstatus(Betreuungsstatus.STORNIERT);
@@ -396,7 +396,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		return mutation;
 	}
 
-	private boolean hasAnyPensum() {
+	private boolean hasAnyNonZeroPensum() {
 		for (BetreuungspensumContainer betreuungspensumContainer : betreuungspensumContainers) {
 			if (betreuungspensumContainer.getBetreuungspensumJA().getPensum() > 0) {
 				return true;
