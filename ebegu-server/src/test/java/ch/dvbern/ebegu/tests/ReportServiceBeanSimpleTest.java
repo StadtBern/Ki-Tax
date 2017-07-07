@@ -12,6 +12,8 @@ public class ReportServiceBeanSimpleTest {
 		Assert.assertEquals("IN_BEARBEITUNG_JA", AntragStatus.IN_BEARBEITUNG_JA.name());
 		Assert.assertEquals("FREIGABEQUITTUNG", AntragStatus.FREIGABEQUITTUNG.name());
 		Assert.assertEquals("BESCHWERDE_HAENGIG", AntragStatus.BESCHWERDE_HAENGIG.name());
+		Assert.assertEquals("PRUEFUNG_STV", AntragStatus.PRUEFUNG_STV.name());
+		Assert.assertEquals("GEPRUEFT_STV", AntragStatus.GEPRUEFT_STV.name());
 		Assert.assertEquals("TAGESSCHULE", BetreuungsangebotTyp.TAGESSCHULE.name());
 	}
 
