@@ -72,10 +72,10 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 			AuthorisierterBenutzer cachedUser = cache.get(effectiveToken);
 			if (cachedUser != null) {
 				//cache token gelten immer als valid (kein expired check)
-				LOG.debug("Cache HIT, found token in cache, no further checks neceasary" +effectiveToken );
+				LOG.debug("Cache HIT, found token in cache, no further checks necessary " + effectiveToken);
 				user = cachedUser;
 			} else {
-				LOG.debug("Cache MISS, could not find active cache entry for " +effectiveToken );
+				LOG.debug("Cache MISS, could not find active cache entry for " + effectiveToken);
 
 				Optional<AuthorisierterBenutzer> authUser = readUserFromDatabase(effectiveToken, doRefreshToken);
 				if (!authUser.isPresent()) {
@@ -118,9 +118,7 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 	 * @return
 	 */
 	private Optional<AuthorisierterBenutzer> readUserFromDatabase(String token, boolean doRefreshToken) {
-
 		return authService.validateAndRefreshLoginToken(token, doRefreshToken);
-
 	}
 
 	@Override
