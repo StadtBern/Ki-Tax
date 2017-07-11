@@ -137,14 +137,18 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	}
 
 	@Override
+	@Nonnull
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
-	public void mahnlaufBeenden(@Nonnull Gesuch gesuch) {
+	public Gesuch mahnlaufBeenden(@Nonnull Gesuch gesuch) {
+		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
+		gesuch = gesuchService.updateGesuch(gesuch, true, null);
 		// Alle Mahnungen auf erledigt stellen
 		Collection<Mahnung> mahnungenForGesuch = findMahnungenForGesuch(gesuch);
 		for (Mahnung mahnung : mahnungenForGesuch) {
 			mahnung.setTimestampAbgeschlossen(LocalDateTime.now());
 			persistence.persist(mahnung);
 		}
+		return gesuch;
 	}
 
 	@Override

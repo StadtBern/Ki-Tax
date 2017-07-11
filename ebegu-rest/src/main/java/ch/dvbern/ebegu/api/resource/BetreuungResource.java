@@ -1,11 +1,37 @@
 package ch.dvbern.ebegu.api.resource;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.resource.util.ResourceHelper;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -15,23 +41,6 @@ import ch.dvbern.ebegu.services.KindService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * REST Resource fuer Kinder
@@ -49,6 +58,9 @@ public class BetreuungResource {
 	private FallService fallService;
 	@Inject
 	private JaxBConverter converter;
+	@Inject
+	private ResourceHelper resourceHelper;
+
 
 
 	//TODO (hefr) Dieser Service wird immer nur fuer Betreuungen verwendet, nie fuer Abwesenheiten
@@ -63,6 +75,11 @@ public class BetreuungResource {
 		@Nonnull @NotNull @PathParam ("abwesenheit") Boolean abwesenheit,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
+
+		// Sicherstellen, dass der Status des Client-Objektes mindestens dem des Servers entspricht
+		if (betreuungJAXP.getTimestampErstellt() != null) {
+			resourceHelper.assertBetreuungStatus(betreuungJAXP);
+		}
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
@@ -87,6 +104,11 @@ public class BetreuungResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
+		// Sicherstellen, dass der Status des Client-Objektes mindestens dem des Servers entspricht
+		for (JaxBetreuung jaxBetreuung : betreuungenJAXP) {
+			resourceHelper.assertBetreuungStatus(jaxBetreuung);
+		}
+
 		List<JaxBetreuung> resultBetreuungen = new ArrayList<>();
 		betreuungenJAXP.forEach(betreuungJAXP -> {
 			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
@@ -107,6 +129,10 @@ public class BetreuungResource {
 		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(betreuungJAXP.getId());
+		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.WARTEN);
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
@@ -129,6 +155,10 @@ public class BetreuungResource {
 		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(betreuungJAXP.getId());
+		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.WARTEN);
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {

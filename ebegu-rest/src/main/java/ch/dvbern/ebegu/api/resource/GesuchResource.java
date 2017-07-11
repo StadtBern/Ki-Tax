@@ -34,6 +34,7 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.resource.util.ResourceHelper;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
@@ -102,6 +103,9 @@ public class GesuchResource {
 	@Inject
 	private JaxBConverter converter;
 
+	@Inject
+	private ResourceHelper resourceHelper;
+
 	@ApiOperation(value = "Creates a new Gesuch in the database. The transfer object also has a relation to Familiensituation " +
 		"which is stored in the database as well.")
 	@Nullable
@@ -133,6 +137,9 @@ public class GesuchResource {
 		@Nonnull @NotNull JaxGesuch gesuchJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
+
+		// Sicherstellen, dass der Status des Client-Objektes mindestens dem des Servers entspricht
+		resourceHelper.assertGesuchStatus(gesuchJAXP);
 
 		Validate.notNull(gesuchJAXP.getId());
 		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchJAXP.getId());
@@ -301,6 +308,9 @@ public class GesuchResource {
 		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam("statusDTO") AntragStatusDTO statusDTO) throws EbeguException {
 
+		// Sicherstellen, dass der Status des Client-Objektes mindestens dem des Servers entspricht
+		resourceHelper.assertGesuchStatus(gesuchJAXPId.getId(), statusDTO);
+
 		Validate.notNull(gesuchJAXPId.getId());
 		Validate.notNull(statusDTO);
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId));
@@ -458,6 +468,9 @@ public class GesuchResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
+		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		resourceHelper.assertGesuchStatusEqual(antragJaxId.getId(), AntragStatusDTO.IN_BEARBEITUNG_GS, AntragStatusDTO.FREIGABEQUITTUNG);
+
 		Validate.notNull(antragJaxId.getId());
 
 		final String antragId = converter.toEntityId(antragJaxId);
@@ -500,6 +513,9 @@ public class GesuchResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) {
 
+		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		resourceHelper.assertGesuchStatusEqual(antragJaxId.getId(), AntragStatusDTO.VERFUEGT);
+
 		Validate.notNull(antragJaxId.getId());
 		final String antragId = converter.toEntityId(antragJaxId);
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(antragId);
@@ -532,6 +548,9 @@ public class GesuchResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) {
 
+		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		resourceHelper.assertGesuchStatusEqual(antragJaxId.getId(), AntragStatusDTO.IN_BEARBEITUNG_STV);
+
 		Validate.notNull(antragJaxId.getId());
 		final String antragId = converter.toEntityId(antragJaxId);
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragId);
@@ -563,6 +582,9 @@ public class GesuchResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) {
 
+		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		resourceHelper.assertGesuchStatusEqual(antragJaxId.getId(), AntragStatusDTO.GEPRUEFT_STV);
+
 		Validate.notNull(antragJaxId.getId());
 		final String antragId = converter.toEntityId(antragJaxId);
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(antragId);
@@ -590,6 +612,9 @@ public class GesuchResource {
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
+
+		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		resourceHelper.assertGesuchStatusEqual(antragJaxId.getId(), AntragStatusDTO.BESCHWERDE_HAENGIG);
 
 		Validate.notNull(antragJaxId.getId());
 		final String antragId = converter.toEntityId(antragJaxId);
@@ -670,6 +695,9 @@ public class GesuchResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
+		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		resourceHelper.assertGesuchStatusEqual(antragJaxId.getId(), AntragStatusDTO.IN_BEARBEITUNG_JA);
+
 		Validate.notNull(antragJaxId.getId());
 		final String antragId = converter.toEntityId(antragJaxId);
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(antragId);
@@ -693,6 +721,9 @@ public class GesuchResource {
 		@PathParam("hasFSDocument") boolean hasFSDocument,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
+
+		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		resourceHelper.assertGesuchStatusEqual(antragJaxId.getId(), AntragStatusDTO.GEPRUEFT);
 
 		Validate.notNull(antragJaxId.getId());
 		final String antragId = converter.toEntityId(antragJaxId);

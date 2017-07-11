@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.Benutzer;
@@ -98,7 +99,7 @@ public abstract class AbstractTestfall {
 		return new Fall();
 	}
 
-	public void createGesuch(LocalDate eingangsdatum) {
+	public void createGesuch(@Nullable LocalDate eingangsdatum) {
 		// Fall
 		if (fall == null) {
 			fall = createFall(null);
@@ -111,7 +112,11 @@ public abstract class AbstractTestfall {
 		gesuch.setGesuchsperiode(gesuchsperiode);
 		gesuch.setFall(fall);
 		gesuch.setEingangsdatum(eingangsdatum);
-		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
+		if (eingangsdatum != null) {
+			gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
+		} else {
+			gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_GS);
+		}
 	}
 
 	protected Gesuch createAlleinerziehend() {
@@ -236,7 +241,7 @@ public abstract class AbstractTestfall {
 
 	protected InstitutionStammdaten createInstitutionStammdaten(BetreuungsangebotTyp betreuungsangebotTyp, String institutionsId) {
 		for (InstitutionStammdaten institutionStammdaten : institutionStammdatenList) {
-			if (institutionStammdaten.getBetreuungsangebotTyp().equals(betreuungsangebotTyp) && institutionStammdaten.getInstitution().getId().equals(institutionsId)) {
+			if (institutionStammdaten.getBetreuungsangebotTyp() == betreuungsangebotTyp && institutionStammdaten.getInstitution().getId().equals(institutionsId)) {
 				return institutionStammdaten;
 			}
 		}
