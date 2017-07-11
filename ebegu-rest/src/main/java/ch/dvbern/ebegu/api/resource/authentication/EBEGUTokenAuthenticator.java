@@ -1,10 +1,16 @@
 package ch.dvbern.ebegu.api.resource.authentication;
 
-import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
-import ch.dvbern.ebegu.services.AuthService;
-import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.util.MonitoringUtil;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.infinispan.Cache;
 import org.infinispan.manager.CacheContainer;
@@ -12,15 +18,12 @@ import org.omnifaces.security.jaspic.user.TokenAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
+import ch.dvbern.ebegu.services.AuthService;
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.MonitoringUtil;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import static java.util.Collections.emptyList;
 
@@ -68,18 +71,28 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 			}
 			AuthorisierterBenutzer cachedUser = cache.get(effectiveToken);
 			if (cachedUser != null) {
+				//cache token gelten immer als valid (kein expired check)
+				LOG.debug("Cache HIT, found token in cache, no further checks neceasary" +effectiveToken );
 				user = cachedUser;
 			} else {
+				LOG.debug("Cache MISS, could not find active cache entry for " +effectiveToken );
+
 				Optional<AuthorisierterBenutzer> authUser = readUserFromDatabase(effectiveToken, doRefreshToken);
 				if (!authUser.isPresent()) {
 					LOG.debug("Could not load authorisierter_benutzer with  token  " + effectiveToken);
 					return false;
 				}
 				user = authUser.get();
-				cache.putForExternalRead(effectiveToken, user);
+
 				boolean stillValid = verifyTokenStillValid();
+				LocalDateTime expiresAt = user.getLastLogin().plus(Constants.LOGIN_TIMEOUT_SECONDS, ChronoUnit.SECONDS);
+				LOG.debug("Found AuthorisierterBenutzer entry.  valid: {}; expires at {}", stillValid, expiresAt);
 				if (!stillValid) {
+					LOG.debug("Token {} was no longer valid in Database -> unauthorized ", effectiveToken);
 					return false;
+				} else{
+					cache.putForExternalRead(effectiveToken, user);
+					LOG.debug("Token {} is still valid in Database (and was probably renewed), cache was refreshed");
 				}
 			}
 
@@ -98,6 +111,12 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 		return true;
 	}
 
+	/**
+	 * reads user from database and optionally refreshes the login token in the database
+	 * @param token
+	 * @param doRefreshToken
+	 * @return
+	 */
 	private Optional<AuthorisierterBenutzer> readUserFromDatabase(String token, boolean doRefreshToken) {
 
 		return authService.validateAndRefreshLoginToken(token, doRefreshToken);
