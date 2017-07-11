@@ -1,4 +1,4 @@
-import {IHttpInterceptor, IRootScopeService, IQService} from 'angular';
+import {IHttpInterceptor, IQService, IRootScopeService} from 'angular';
 import {TSHTTPEvent} from '../events/TSHTTPEvent';
 
 /**
@@ -14,11 +14,7 @@ export default class HttpResponseInterceptor implements IHttpInterceptor {
 
     public responseError = (response: any) => {
         this.$rootScope.$broadcast(TSHTTPEvent[TSHTTPEvent.REQUEST_FINISHED], response);
-        if (response.config.url.indexOf('notokenrefresh') > 0) {
-            return response;
-        } else {
-            return this.$q.reject(response);
-        }
+        return this.$q.reject(response);
     }
 
     public response = (response: any) => {

@@ -1,9 +1,9 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, ILogService} from 'angular';
 import MitteilungRS from '../../service/mitteilungRS.rest';
-import IRootScopeService = angular.IRootScopeService;
 import {TSAuthEvent} from '../../../models/enums/TSAuthEvent';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import IRootScopeService = angular.IRootScopeService;
 let template = require('./dv-posteingang.html');
 
 export class DvPosteingangComponentConfig implements IComponentOptions {
@@ -19,9 +19,10 @@ export class DvPosteingangController {
     amountMitteilungen: number = 0;
     reloadAmountMitteilungenInterval: number;
 
-    static $inject: any[] = ['MitteilungRS', '$rootScope', 'AuthServiceRS'];
+    static $inject: any[] = ['MitteilungRS', '$rootScope', 'AuthServiceRS', '$log'];
 
-    constructor(private mitteilungRS: MitteilungRS, private $rootScope: IRootScopeService, private authServiceRS: AuthServiceRS) {
+    constructor(private mitteilungRS: MitteilungRS, private $rootScope: IRootScopeService, private authServiceRS: AuthServiceRS,
+        private $log: ILogService) {
         this.getAmountNewMitteilungen();
 
         this.$rootScope.$on('POSTEINGANG_MAY_CHANGED', (event: any) => {
@@ -47,10 +48,15 @@ export class DvPosteingangController {
 
     private getAmountNewMitteilungen(): void {
         this.mitteilungRS.getAmountMitteilungenForCurrentBenutzer().then((response: number) => {
-            if (!response) {
+            if (!response || isNaN(response)) { //wenn keine gueltige antwort
                 response = 0;
             }
             this.amountMitteilungen = response;
+        }).catch((err) => {
+            //Fehler bei deisem request (notokenrefresh )werden bis hier ohne Behandlung
+            // (unerwarteter Fehler anzeige, redirect etc.) weitergeschlauft
+            this.$log.debug('received error message while reading posteingang. Ignoring ...');
+            this.amountMitteilungen = 0;
         });
     }
 
