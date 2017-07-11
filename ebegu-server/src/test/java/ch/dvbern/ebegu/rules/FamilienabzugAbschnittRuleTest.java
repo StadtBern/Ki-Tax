@@ -22,17 +22,17 @@ import java.util.*;
 public class FamilienabzugAbschnittRuleTest {
 
 
-	private final BigDecimal pauschalabzugProPersonFamiliengroesse3 = BigDecimal.valueOf(1000);
-	private final BigDecimal pauschalabzugProPersonFamiliengroesse4 = BigDecimal.valueOf(2000);
-	private final BigDecimal pauschalabzugProPersonFamiliengroesse5 = BigDecimal.valueOf(3000);
-	private final BigDecimal pauschalabzugProPersonFamiliengroesse6 = BigDecimal.valueOf(4000);
+	private final BigDecimal pauschalabzugProPersonFamiliengroesse3 = BigDecimal.valueOf(3800);
+	private final BigDecimal pauschalabzugProPersonFamiliengroesse4 = BigDecimal.valueOf(5960);
+	private final BigDecimal pauschalabzugProPersonFamiliengroesse5 = BigDecimal.valueOf(7040);
+	private final BigDecimal pauschalabzugProPersonFamiliengroesse6 = BigDecimal.valueOf(7580);
 
 	private static final double DELTA = 1e-15;
 	public static final LocalDate DATE_2005 = LocalDate.of(2005, 12, 31);
 
 	private final FamilienabzugAbschnittRule famabAbschnittRule =
 		new FamilienabzugAbschnittRule(Constants.DEFAULT_GUELTIGKEIT, pauschalabzugProPersonFamiliengroesse3,
-			pauschalabzugProPersonFamiliengroesse4, pauschalabzugProPersonFamiliengroesse5,pauschalabzugProPersonFamiliengroesse6);
+			pauschalabzugProPersonFamiliengroesse4, pauschalabzugProPersonFamiliengroesse5, pauschalabzugProPersonFamiliengroesse6);
 
 
 	@Test
@@ -150,28 +150,28 @@ public class FamilienabzugAbschnittRuleTest {
 
 	@Test
 	public void testCalculateFamiliengroesseNullGesuch() {
-		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(null, null);
+		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(null, null).getKey();
 		Assert.assertEquals(0, familiengroesse, DELTA);
 	}
 
 	@Test
 	public void testCalculateFamiliengroesseNullDate() {
 		Gesuch gesuch = new Gesuch();
-		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, null);
+		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, null).getKey();
 		Assert.assertEquals(0, familiengroesse, DELTA);
 	}
 
 	@Test
 	public void testCalculateFamiliengroesseNoGesuchSteller() {
 		Gesuch gesuch = new Gesuch();
-		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005);
+		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005).getKey();
 		Assert.assertEquals(0, familiengroesse, DELTA);
 	}
 
 	@Test
 	public void testCalculateFamiliengroesseOneGesuchSteller() {
 		Gesuch gesuch = createGesuchWithOneGS();
-		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005);
+		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005).getKey();
 		Assert.assertEquals(1, familiengroesse, DELTA);
 	}
 
@@ -179,7 +179,7 @@ public class FamilienabzugAbschnittRuleTest {
 	public void testCalculateFamiliengroesseOneGesuchStellerErstges() {
 		Gesuch gesuch = createGesuchWithOneGS();
 		//aktuell alleinerziehend
-		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005);
+		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005).getKey();
 		Assert.assertEquals(1, familiengroesse, DELTA);
 		// jetzt wechseln auf verheiratet
 		Familiensituation erstFamiliensituation = new Familiensituation();
@@ -187,14 +187,14 @@ public class FamilienabzugAbschnittRuleTest {
 		erstFamiliensituation.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
 		erstFamiliensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
 		gesuch.getFamiliensituationContainer().setFamiliensituationErstgesuch(erstFamiliensituation);
-		double newFamGr = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005);
+		double newFamGr = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005).getKey();
 		Assert.assertEquals(2, newFamGr, DELTA);
 	}
 
 	@Test
 	public void testCalculateFamiliengroesseTwoGesuchSteller() {
 		Gesuch gesuch = createGesuchWithTwoGesuchsteller();
-		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005);
+		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005).getKey();
 		Assert.assertEquals(2, familiengroesse, DELTA);
 	}
 
@@ -202,7 +202,7 @@ public class FamilienabzugAbschnittRuleTest {
 	public void testCalculateFamiliengroesseWithGanzerAbzugKind() {
 		Gesuch gesuch = createGesuchWithKind(Kinderabzug.GANZER_ABZUG);
 
-		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now());
+		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now()).getKey();
 		Assert.assertEquals(3, familiengroesse, DELTA);
 	}
 
@@ -210,7 +210,7 @@ public class FamilienabzugAbschnittRuleTest {
 	public void testCalculateFamiliengroesseWithHalberAbzugKind() {
 		Gesuch gesuch = createGesuchWithKind(Kinderabzug.HALBER_ABZUG);
 
-		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now());
+		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now()).getKey();
 		Assert.assertEquals(2.5, familiengroesse, DELTA);
 	}
 
@@ -218,7 +218,7 @@ public class FamilienabzugAbschnittRuleTest {
 	public void testCalculateFamiliengroesseWithKeinAbzugKind() {
 		Gesuch gesuch = createGesuchWithKind(Kinderabzug.KEIN_ABZUG);
 
-		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now());
+		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now()).getKey();
 		Assert.assertEquals(2, familiengroesse, DELTA);
 	}
 
@@ -227,7 +227,7 @@ public class FamilienabzugAbschnittRuleTest {
 		//das Kind war noch nicht geboren
 		Gesuch gesuch = createGesuchWithKind(Kinderabzug.GANZER_ABZUG);
 
-		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.of(2005, 5, 25));
+		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.of(2005, 5, 25)).getKey();
 		Assert.assertEquals(2, familiengroesse, DELTA);
 	}
 
@@ -236,15 +236,70 @@ public class FamilienabzugAbschnittRuleTest {
 		//das Kind war schon geboren
 		Gesuch gesuch = createGesuchWithKind(Kinderabzug.GANZER_ABZUG);
 
-		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now());
+		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now()).getKey();
 		Assert.assertEquals(3, familiengroesse, DELTA);
 	}
 
 	@Test
 	public void testCalculateAbzugAufgrundFamiliengroesseZero() {
-		Assert.assertEquals(0, famabAbschnittRule.calculateAbzugAufgrundFamiliengroesse(0).intValue());
-		Assert.assertEquals(0, famabAbschnittRule.calculateAbzugAufgrundFamiliengroesse(1).intValue());
-		Assert.assertEquals(0, famabAbschnittRule.calculateAbzugAufgrundFamiliengroesse(2.5).intValue());
+		Assert.assertEquals(0, famabAbschnittRule.calculateAbzugAufgrundFamiliengroesse(0, 0).intValue());
+		Assert.assertEquals(0, famabAbschnittRule.calculateAbzugAufgrundFamiliengroesse(1, 1).intValue());
+		Assert.assertEquals(0, famabAbschnittRule.calculateAbzugAufgrundFamiliengroesse(1.5, 2).intValue());
+	}
+
+	@Test
+	public void testCalculateAbzugAufgrundFamiliengroesse_EBEGU_1185_NR32_Familiengroesse_Berechnung() {
+
+		/* Beispiel Nr. 1:
+		 * 1 Erwachsene Person (Alleinerziehend) und 1 Kind zu 50% in den Steuern abzugsberechtigt. Die Anzahl der Personen,
+		 * die im Haushalt wohnen, beträgt zwei, die anrechenbare Familiengrösse ist 1,5. Es ist damit kein Abzug möglich,
+		 * da 2-Personenhaushalt. Daher Fr. 0.00 in der Berechnung.
+		 */
+		Assert.assertEquals(0, famabAbschnittRule.calculateAbzugAufgrundFamiliengroesse(1.5, 2).intValue());
+
+		/* Beispiel Nr. 2:
+		 * 1 Erwachsene Person (Alleinerziehend) und 2 Kindern zu je 50% Abzugsmöglichkeit in den Steuern. Die Anzahl der Personen,
+		 * die im gleichen Haushalt wohnen, beträgt somit 3 Personen und es wird nun der Ansatz 3-Personenhaushalt von
+		 * Fr. 3'800.00 angenommen. Die anrechenbare Familiengrösse ist 2 und dieser Wert wird mit dem Ansatz von 3-Personenhaushalt
+		 * von Fr. 3'800.00 multipliziert; Ergebnis Fr. 7'600.00
+		 */
+		Assert.assertEquals(7600, famabAbschnittRule.calculateAbzugAufgrundFamiliengroesse(2, 3).intValue());
+
+		/* Beispiel Nr. 3:
+		 * 1 Erwachsene Person (Alleinerziehend) mit 3 Kindern, für die Kinder ist je 50% Kinderabzug möglich. Es sind insgesamt
+		 * 4 Personen im gleichen Haushalt wohnhaft, somit wird die Pauschale einer 4-Personenhaushalt von Fr. 5'960.00 genommen.
+		 * Die anrechenbare Familiengrösse beträgt 2,5 und dieser Wert wird mit der Pauschale 4-Personenhaushalt von
+		 * Fr. 5'960.00 multipliziert; Ergebnis Fr. 14'900.00.
+		*/
+		Assert.assertEquals(14900, famabAbschnittRule.calculateAbzugAufgrundFamiliengroesse(2.5, 4).intValue());
+
+		/*
+		 * Beispiel Nr. 4:
+		 * 1 Erwachsene Person (Alleinerziehend) mit 4 Kindern, für das erste Kind ist kein Abzug in der Steuererklärung möglich,
+		 * für das zweite Kind ist 100% möglich und für das dritte Kind 50%. Insgesamt sind 3 Personen im gleichen Haushalt
+		 * wohnhaft. Deshalb wird die Pauschale 3-Personenhaushalt genommen
+		 * (das erste Kind hat unter der Frage Kinderabzug "nein" stehen und zählt damit nicht dazu).
+		 * Die anrechenbare Familiengrösse beträgt 2,5 und diese Familiengrösse wird mit der
+		 * Pauschale 3-Personenhaushalt von Fr. 3'800.00 multipliziert; Ergebnis Fr. 9'500.00.
+		 */
+		Assert.assertEquals(9500, famabAbschnittRule.calculateAbzugAufgrundFamiliengroesse(2.5, 3).intValue());
+
+		/*
+		 * Beispiel Nr. 5:
+		 * 2 Erwachsene Personen (Konkubinat) und 4 Kindern, zwei eigene Kinder sind je 100% abzugsberechtigt in der
+		 * Steuererklärung und für zwei Kindern sind zu je 50% Abzug möglich. Insgesamt leben 6 Personen im gleichen Haushalt,
+		 * es wird nun der Ansatz von 6 Personenhaushalt von Fr. 7'580.00 genommen. Die anrechenbare Familiengrösse von 4,5
+		 * wird mit der Pauschale 6-Personenhaushalt von Fr. 7'580.00 multipliziert; Ergebnis Fr. 34'110.00.
+		 */
+		Assert.assertEquals(34110, famabAbschnittRule.calculateAbzugAufgrundFamiliengroesse(4.5, 6).intValue());
+
+		/*
+		 * Beispiel Nr. 6:
+		 * 2 Erwachsene Personen (verheiratet) und 2 Kindern mit je 100% Abzugsmöglichkeit in den Steuern. Somit beträgt
+		 * die Anzahl der Personen im gleichen Haushalt 4. Damit wird der Pauschalabzug von 4-Personenhaushalt angewendet.
+		 * Die anrechenbare Familiengrösse 4 wird mit 4-Personhaushalt von Fr. 5'960.00 multipliziert; Ergebnis Fr. 23'840.00.
+		 */
+		Assert.assertEquals(23840, famabAbschnittRule.calculateAbzugAufgrundFamiliengroesse(4.0, 4).intValue());
 	}
 
 	@Test
@@ -257,9 +312,9 @@ public class FamilienabzugAbschnittRuleTest {
 		famSitErstgesuch.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		gesuch.getFamiliensituationContainer().setFamiliensituationErstgesuch(famSitErstgesuch);
 
-		Assert.assertEquals(1, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.minusMonths(1)), DELTA);
-		Assert.assertEquals(1, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.withDayOfMonth(31)), DELTA);
-		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.plusMonths(1).withDayOfMonth(1)), DELTA);
+		Assert.assertEquals(1, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.minusMonths(1)).getKey(), DELTA);
+		Assert.assertEquals(1, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.withDayOfMonth(31)).getKey(), DELTA);
+		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.plusMonths(1).withDayOfMonth(1)).getKey(), DELTA);
 	}
 
 	@Test
@@ -272,9 +327,9 @@ public class FamilienabzugAbschnittRuleTest {
 		famSitErstgesuch.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
 		gesuch.getFamiliensituationContainer().setFamiliensituationErstgesuch(famSitErstgesuch);
 
-		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.minusMonths(1)), DELTA);
-		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.withDayOfMonth(31)), DELTA);
-		Assert.assertEquals(1, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.plusMonths(1).withDayOfMonth(1)), DELTA);
+		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.minusMonths(1)).getKey(), DELTA);
+		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.withDayOfMonth(31)).getKey(), DELTA);
+		Assert.assertEquals(1, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.plusMonths(1).withDayOfMonth(1)).getKey(), DELTA);
 	}
 
 	@Test
@@ -288,9 +343,9 @@ public class FamilienabzugAbschnittRuleTest {
 		gesuch.getFamiliensituationContainer().setFamiliensituationErstgesuch(famSitErstgesuch);
 
 
-		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.minusMonths(1)), DELTA);
-		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.withDayOfMonth(31)), DELTA);
-		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.plusMonths(1).withDayOfMonth(1)), DELTA);
+		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.minusMonths(1)).getKey(), DELTA);
+		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.withDayOfMonth(31)).getKey(), DELTA);
+		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.plusMonths(1).withDayOfMonth(1)).getKey(), DELTA);
 	}
 
 	@Test
@@ -322,10 +377,9 @@ public class FamilienabzugAbschnittRuleTest {
 		final VerfuegungZeitabschnitt zeitabschnitt1 = zeitabschnitte.get(1);
 		Assert.assertEquals(date.plusMonths(1).withDayOfMonth(1), zeitabschnitt1.getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis(), zeitabschnitt1.getGueltigkeit().getGueltigBis());
-		Assert.assertEquals(BigDecimal.valueOf(3000), zeitabschnitt1.getAbzugFamGroesse());
+		Assert.assertEquals(BigDecimal.valueOf(11400), zeitabschnitt1.getAbzugFamGroesse());
 		Assert.assertEquals(BigDecimal.valueOf(3.0), zeitabschnitt1.getFamGroesse());
 	}
-
 
 
 	@Nonnull
