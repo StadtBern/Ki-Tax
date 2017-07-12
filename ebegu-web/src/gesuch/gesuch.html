@@ -402,7 +402,7 @@
                                             ng-bind="beziehung.geburtsdatum | amDateFormat: 'DD.MM.YYYY'"></span>
                                         </div>
                                         <dv-accordion class="ewksubsub" allow-multiple-sections="true">
-                                            <dv-accordion-tab
+                                            <dv-accordion-tab ng-if="beziehung.adresse"
                                                 tabid="{{beziehung.adresse}}">
                                                 <tab-title>
                                                     {{beziehung.adresse.adresstypTxt}}
