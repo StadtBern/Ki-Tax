@@ -69,12 +69,12 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 		gesuch.setEinkommensverschlechterungInfoContainer(convertedEkvi);
 
 		//Alle Daten des EV loeschen wenn man kein EV mehr eingeben will
-		removeEinkommensverschlechterungContFromGesuchsteller(gesuch.getGesuchsteller1(), oldEVData, convertedEkvi);
-		removeEinkommensverschlechterungContFromGesuchsteller(gesuch.getGesuchsteller2(), oldEVData, convertedEkvi);
+		removeEKVContainerIfNotNeeded(gesuch.getGesuchsteller1(), oldEVData, convertedEkvi);
+		removeEKVContainerIfNotNeeded(gesuch.getGesuchsteller2(), oldEVData, convertedEkvi);
 		removeEinkommensverschlechterungFromGesuch(gesuch, convertedEkvi);
 		//All needed EKVContainer must be created if they don't exist yet
-		addEmptyEKVContainer(gesuch.getGesuchsteller1(), convertedEkvi);
-		addEmptyEKVContainer(gesuch.getGesuchsteller2(), convertedEkvi);
+		addEmptyEKVContainerIfNeeded(gesuch.getGesuchsteller1(), convertedEkvi);
+		addEmptyEKVContainerIfNeeded(gesuch.getGesuchsteller2(), convertedEkvi);
 
 		convertedEkvi.setGesuch(gesuchService.updateGesuch(gesuch, false, null)); // saving gesuch cascades and saves Ekvi too
 
@@ -133,7 +133,7 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 		}
 	}
 
-	private void removeEinkommensverschlechterungContFromGesuchsteller(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfoContainer oldData, EinkommensverschlechterungInfoContainer convertedEkvi) {
+	private void removeEKVContainerIfNotNeeded(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfoContainer oldData, EinkommensverschlechterungInfoContainer convertedEkvi) {
 		if (isNeededToRemoveEinkommensverschlechterungCont(gesuchsteller, oldData, convertedEkvi)) {
 			//noinspection ConstantConditions
 			einkommensverschlechterungService.removeEinkommensverschlechterungContainer(gesuchsteller.getEinkommensverschlechterungContainer());
@@ -154,7 +154,7 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 	 * This method creates all required EkvContainer and EKV. It uses the information contained in the EKVInfo to
 	 * know when these EKVCont and EKV must be created. They will be created using the values by default.
 	 */
-	private void addEmptyEKVContainer(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfoContainer ekvInfo) {
+	private void addEmptyEKVContainerIfNeeded(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfoContainer ekvInfo) {
 		if (gesuchsteller != null) {
 			if (gesuchsteller.getEinkommensverschlechterungContainer() == null
 				&& ekvInfo.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()) {
