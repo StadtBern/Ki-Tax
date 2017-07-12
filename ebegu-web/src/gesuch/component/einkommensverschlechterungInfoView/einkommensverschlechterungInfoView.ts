@@ -173,9 +173,16 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
      */
     private isThereSomethingNew() {
         return (this.model && this.model.isNew())
-            || (this.gesuchModelManager.isGesuchsteller2Required() && this.gesuchModelManager.getGesuch().gesuchsteller2
-            && (!this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer
-            || this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer.isNew()));
+            || this.isThereAnyEinkommenverschlechterung() && (this.gesuchModelManager.isGesuchsteller2Required() && this.gesuchModelManager.getGesuch().gesuchsteller2
+                && (!this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer
+                    || this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer.isNew()));
+    }
+
+    private isThereAnyEinkommenverschlechterung(): boolean {
+        return (
+            this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer &&
+            this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA &&
+            this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.einkommensverschlechterung);
     }
 
     private save(): IPromise<TSEinkommensverschlechterungInfoContainer> {
@@ -279,3 +286,4 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         return false;
     }
 }
+
