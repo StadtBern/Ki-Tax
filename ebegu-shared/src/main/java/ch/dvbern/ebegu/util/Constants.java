@@ -29,7 +29,7 @@ public interface Constants {
 	int UUID_LENGTH = 36;
 	int PLZ_LENGTH = 4;
 
-	int LOGIN_TIMEOUT_SECONDS = 60 * 2; //aktuell 1h
+	int LOGIN_TIMEOUT_SECONDS = 60 * 60; //aktuell 1h
 	int COOKIE_TIMEOUT_SECONDS = 60 * 60 * 12; //aktuell 12h
 
 	int ABWESENHEIT_DAYS_LIMIT = 30;
