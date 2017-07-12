@@ -146,7 +146,6 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		for (int i = 0; i < countMonate; i++) {
 			int position = i * 2;
 			// Pro Monat gibt es eine Korrekturbuchung und eine Neubuchung
-			// TODO: Magic number! Stimmt dieser Wert? Wie kann ich das überprüfen?
 			assertZahlungsdetail(zahlung.getZahlungspositionen().get(position), ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG, 988.45);
 			assertZahlungsdetail(zahlung.getZahlungspositionen().get(position + 1), ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG, -1074.40d);
 		}

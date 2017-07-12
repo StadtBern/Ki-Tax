@@ -163,11 +163,12 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 				if (kindContainer.getKindJA() != null && (date == null || kindContainer.getKindJA().getGeburtsdatum().isBefore(date))) {
 					if (kindContainer.getKindJA().getKinderabzug() == Kinderabzug.HALBER_ABZUG) {
 						famGrBeruecksichtigungAbzug += 0.5;
+						famGrAnzahlPersonen++;
 					}
-					if (kindContainer.getKindJA().getKinderabzug() == Kinderabzug.GANZER_ABZUG) {
+					else if (kindContainer.getKindJA().getKinderabzug() == Kinderabzug.GANZER_ABZUG) {
 						famGrBeruecksichtigungAbzug++;
+						famGrAnzahlPersonen++;
 					}
-					famGrAnzahlPersonen++;
 				}
 			}
 		}

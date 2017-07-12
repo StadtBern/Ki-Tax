@@ -10,11 +10,13 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
-
+import java.util.Map.Entry;
 
 /**
  * Tests fuer FamilienabzugAbschnittRule
@@ -200,7 +202,7 @@ public class FamilienabzugAbschnittRuleTest {
 
 	@Test
 	public void testCalculateFamiliengroesseWithGanzerAbzugKind() {
-		Gesuch gesuch = createGesuchWithKind(Kinderabzug.GANZER_ABZUG);
+		Gesuch gesuch = createGesuchWithKind(Kinderabzug.GANZER_ABZUG, null);
 
 		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now()).getKey();
 		Assert.assertEquals(3, familiengroesse, DELTA);
@@ -208,7 +210,7 @@ public class FamilienabzugAbschnittRuleTest {
 
 	@Test
 	public void testCalculateFamiliengroesseWithHalberAbzugKind() {
-		Gesuch gesuch = createGesuchWithKind(Kinderabzug.HALBER_ABZUG);
+		Gesuch gesuch = createGesuchWithKind(Kinderabzug.HALBER_ABZUG, null);
 
 		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now()).getKey();
 		Assert.assertEquals(2.5, familiengroesse, DELTA);
@@ -216,7 +218,7 @@ public class FamilienabzugAbschnittRuleTest {
 
 	@Test
 	public void testCalculateFamiliengroesseWithKeinAbzugKind() {
-		Gesuch gesuch = createGesuchWithKind(Kinderabzug.KEIN_ABZUG);
+		Gesuch gesuch = createGesuchWithKind(Kinderabzug.KEIN_ABZUG, null);
 
 		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now()).getKey();
 		Assert.assertEquals(2, familiengroesse, DELTA);
@@ -225,7 +227,7 @@ public class FamilienabzugAbschnittRuleTest {
 	@Test
 	public void testCalculateFamiliengroesseWithWrongGeburtsdatum() {
 		//das Kind war noch nicht geboren
-		Gesuch gesuch = createGesuchWithKind(Kinderabzug.GANZER_ABZUG);
+		Gesuch gesuch = createGesuchWithKind(Kinderabzug.GANZER_ABZUG, null);
 
 		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.of(2005, 5, 25)).getKey();
 		Assert.assertEquals(2, familiengroesse, DELTA);
@@ -234,10 +236,34 @@ public class FamilienabzugAbschnittRuleTest {
 	@Test
 	public void testCalculateFamiliengroesseWithCorrectGeburtsdatum() {
 		//das Kind war schon geboren
-		Gesuch gesuch = createGesuchWithKind(Kinderabzug.GANZER_ABZUG);
+		Gesuch gesuch = createGesuchWithKind(Kinderabzug.GANZER_ABZUG, null);
 
 		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now()).getKey();
 		Assert.assertEquals(3, familiengroesse, DELTA);
+	}
+
+	@Test
+	public void testCalculateFamiliengroesseWithTwoKinder() {
+		//das Kind war schon geboren
+		Gesuch gesuch = createGesuchWithKind(Kinderabzug.GANZER_ABZUG, Kinderabzug.HALBER_ABZUG);
+
+		final Entry<Double, Integer> famGroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch,LocalDate.now());
+		double familiengroesse = famGroesse.getKey();
+		double familienMitglieder = famGroesse.getValue();
+		Assert.assertEquals(3.5, familiengroesse, DELTA);
+		Assert.assertEquals(4, familienMitglieder, DELTA);
+	}
+
+	@Test
+	public void testCalculateFamiliengroesseWithTwoKinderKeinAbzug() {
+		//das Kind war schon geboren
+		Gesuch gesuch = createGesuchWithKind(Kinderabzug.HALBER_ABZUG, Kinderabzug.KEIN_ABZUG);
+
+		final Entry<Double, Integer> famGroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch,LocalDate.now());
+		double familiengroesse = famGroesse.getKey();
+		double familienMitglieder = famGroesse.getValue();
+		Assert.assertEquals(2.5, familiengroesse, DELTA);
+		Assert.assertEquals(3, familienMitglieder, DELTA);
 	}
 
 	@Test
@@ -410,18 +436,25 @@ public class FamilienabzugAbschnittRuleTest {
 	}
 
 	@Nonnull
-	private Gesuch createGesuchWithKind(Kinderabzug abzug) {
+	private Gesuch createGesuchWithKind(Kinderabzug abzug1, @Nullable Kinderabzug abzug2) {
 		Gesuch gesuch = createGesuchWithTwoGesuchsteller();
 		Set<KindContainer> kindContainers = new LinkedHashSet<>();
+		kindContainers.add(createKindContainer(abzug1));
+		if (abzug2 != null) {
+			kindContainers.add(createKindContainer(abzug2));
+		}
+		gesuch.setKindContainers(kindContainers);
+		return gesuch;
+	}
+
+	@Nonnull
+	private KindContainer createKindContainer(Kinderabzug abzug) {
 		KindContainer kindContainer = new KindContainer();
 		Kind kindJA = new Kind();
 		kindJA.setKinderabzug(abzug);
 		kindJA.setGeburtsdatum(LocalDate.of(2006, 5, 25));
 		kindContainer.setKindJA(kindJA);
-		kindContainers.add(kindContainer);
-		gesuch.setKindContainers(kindContainers);
-		return gesuch;
+		return kindContainer;
 	}
-
 
 }
