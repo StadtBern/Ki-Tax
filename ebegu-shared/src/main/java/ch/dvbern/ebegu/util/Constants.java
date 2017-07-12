@@ -10,12 +10,12 @@
 
 package ch.dvbern.ebegu.util;
 
-import ch.dvbern.ebegu.types.DateRange;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+
+import ch.dvbern.ebegu.types.DateRange;
 
 /**
  * Interface fuer Konstanten.

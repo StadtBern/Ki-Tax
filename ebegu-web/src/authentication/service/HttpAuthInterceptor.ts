@@ -1,4 +1,4 @@
-import {IHttpInterceptor, IRootScopeService, IQService} from 'angular';
+import {IHttpInterceptor, IQService, IRootScopeService} from 'angular';
 import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 import HttpBuffer from './HttpBuffer';
 
@@ -16,6 +16,11 @@ export default class HttpAuthInterceptor implements IHttpInterceptor {
             case 401:
                 // exclude requests from the login form
                 if (response.config && response.config.url === this.CONSTANTS.REST_API + 'auth/login') {
+                    return this.$q.reject(response);
+                }
+                //if this request was a background polling request we do not want to relogin or show errors
+                if (response.config && response.config.url.indexOf('notokenrefresh') > 0) {
+                    console.debug('rejecting failed notokenrefresh response');
                     return this.$q.reject(response);
                 }
                 // all requests that failed due to notAuthenticated are appended to httpBuffer. Use httpBuffer.retryAll to submit them.
