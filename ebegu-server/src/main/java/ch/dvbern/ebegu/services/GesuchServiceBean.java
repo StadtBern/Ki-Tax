@@ -21,6 +21,8 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Asynchronous;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.TypedQuery;
@@ -1200,6 +1202,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN})
 	public int warnGesuchNichtFreigegeben() {
 
@@ -1245,6 +1248,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN})
 	public int warnFreigabequittungFehlt() {
 
@@ -1252,6 +1256,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Integer anzahlTageBisLoeschungNachWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG);
 		if (anzahlTageBisWarnungQuittung == null) {
 			throw new EbeguRuntimeException("warnFreigabequittungFehlt", ApplicationPropertyKey.ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG.name() + " not defined");
+		}
+		if (anzahlTageBisLoeschungNachWarnungFreigabe == null) {
+			throw new EbeguRuntimeException("warnFreigabequittungFehlt", ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG.name() + " not defined");
 		}
 
 		LocalDate stichtag = LocalDate.now().minusDays(anzahlTageBisWarnungQuittung);
@@ -1285,6 +1292,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN})
 	public int deleteGesucheOhneFreigabeOderQuittung() {
 

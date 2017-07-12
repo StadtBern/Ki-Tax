@@ -1,19 +1,25 @@
 package ch.dvbern.ebegu.services;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Collection;
+import java.util.concurrent.Future;
+
+import javax.annotation.security.PermitAll;
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.security.PermitAll;
-import javax.ejb.*;
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.Collection;
-import java.util.concurrent.Future;
 
 /**
  * Service fuer Batch-Jobs
@@ -47,7 +53,9 @@ public class DailyBatchBean implements DailyBatch {
 	@Asynchronous
 	public void runBatchCleanDownloadFiles() {
 		try {
+			LOGGER.info("Starting Job Cleanup Download-Files...");
 		    downloadFileService.cleanUp();
+			LOGGER.info("... Job Cleanup Download-Files finished");
 		} catch (RuntimeException e) {
 			LOGGER.error("Batch-Job Cleanup Download-Files konnte nicht durchgefuehrt werden!", e);
 		}
@@ -58,6 +66,7 @@ public class DailyBatchBean implements DailyBatch {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Future<Boolean> runBatchMahnungFristablauf() {
 		try {
+			LOGGER.info("Starting Job Fristablauf...");
 			mahnungService.fristAblaufTimer();
 			AsyncResult<Boolean> booleanAsyncResult = new AsyncResult<>(Boolean.TRUE);
 			// Hier hat's evtl. einen Bug im Wildfly, koennte aber auch korrekt sein:
@@ -65,6 +74,7 @@ public class DailyBatchBean implements DailyBatch {
 			// das der Request-Scope nicht mehr aktiv ist und somit das @RequestScoped PrincipalBean fuer die validierung
 			// vom Mandant nicht mehr zur Verfuegung steht.
 			persistence.getEntityManager().flush();
+			LOGGER.info("... Job Fristablauf finished");
 			return booleanAsyncResult;
 		} catch (RuntimeException e) {
 			LOGGER.error("Batch-Job Fristablauf konnte nicht durchgefuehrt werden!", e);
@@ -76,8 +86,10 @@ public class DailyBatchBean implements DailyBatch {
 	@Asynchronous
 	public void runBatchWarnungGesuchNichtFreigegeben() {
 		try {
+			LOGGER.info("Starting Job WarnungGesuchNichtFreigegeben...");
 			final int anzahl = gesuchService.warnGesuchNichtFreigegeben();
 			LOGGER.info("Es wurden " + anzahl + " Gesuche gefunden, die noch nicht freigegeben wurden");
+			LOGGER.info("... Job WarnungGesuchNichtFreigegeben finished");
 		} catch (RuntimeException e) {
 			LOGGER.error("Batch-Job WarnungGesuchNichtFreigegeben konnte nicht durchgefuehrt werden!", e);
 		}
@@ -87,8 +99,10 @@ public class DailyBatchBean implements DailyBatch {
 	@Asynchronous
 	public void runBatchWarnungFreigabequittungFehlt() {
 		try {
+			LOGGER.info("Starting Job WarnungFreigabequittungFehlt...");
 			final int anzahl = gesuchService.warnFreigabequittungFehlt();
 			LOGGER.info("Es wurden " + anzahl + " Gesuche gefunden, bei denen die Freigabequittung fehlt");
+			LOGGER.info("... Job WarnungFreigabequittungFehlt finished");
 		} catch (RuntimeException e) {
 			LOGGER.error("Batch-Job WarnungFreigabequittungFehlt konnte nicht durchgefuehrt werden!", e);
 		}
@@ -98,8 +112,10 @@ public class DailyBatchBean implements DailyBatch {
 	@Asynchronous
 	public void runBatchGesucheLoeschen() {
 		try {
+			LOGGER.info("Starting Job GesucheLoeschen...");
 			final int anzahl = gesuchService.deleteGesucheOhneFreigabeOderQuittung();
 			LOGGER.info("Es wurden " + anzahl + " Gesuche ohne Freigabe oder Quittung gefunden, die geloescht werden muessen");
+			LOGGER.info("... Job GesucheLoeschen finished");
 		} catch (RuntimeException e) {
 			LOGGER.error("Batch-Job GesucheLoeschen konnte nicht durchgefuehrt werden!", e);
 		}
@@ -108,12 +124,14 @@ public class DailyBatchBean implements DailyBatch {
 	@Override
 	public void runBatchGesuchsperiodeLoeschen() {
 		try {
+			LOGGER.info("Starting Job GesuchsperiodeLoeschen...");
 			LocalDate stichtag = LocalDate.now().minusYears(10);
 			LOGGER.info("Deleting Gesuchsperioden older than " + Constants.DATE_FORMATTER.format(stichtag));
 			Collection<Gesuchsperiode> gesuchsperiodenBetween = gesuchsperiodeService.getGesuchsperiodenBetween(LocalDate.of(1900, Month.JANUARY, 1), stichtag);
 			for (Gesuchsperiode gesuchsperiode : gesuchsperiodenBetween) {
 				gesuchsperiodeService.removeGesuchsperiode(gesuchsperiode.getId());
 			}
+			LOGGER.info("... Job GesuchsperiodeLoeschen finished");
 		} catch (RuntimeException e) {
 			LOGGER.error("Batch-Job GesuchsperiodeLoeschen konnte nicht durchgefuehrt werden!", e);
 		}
