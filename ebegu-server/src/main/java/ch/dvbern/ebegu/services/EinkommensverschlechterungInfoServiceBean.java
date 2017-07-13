@@ -81,7 +81,9 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 		wizardStepService.updateSteps(gesuch.getId(), oldEVData,
 			convertedEkvi, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 
-		return convertedEkvi;
+		//cannot return convertedEkvi because it hasn't been updated after the Gesuch was saved. So we need to take
+		// it from the Gesuch
+		return gesuch.getEinkommensverschlechterungInfoContainer();
 	}
 
 	@Override

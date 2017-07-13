@@ -275,8 +275,19 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
      * @returns {boolean}
      */
     private isConfirmationRequired(): boolean {
-        return (this.initialEinkVersInfo && this.initialEinkVersInfo.einkommensverschlechterungInfoJA)
-            && (!this.getEinkommensverschlechterungsInfo() || !this.getEinkommensverschlechterungsInfo().einkommensverschlechterung);
+        return this.initialEinkVersInfo && this.initialEinkVersInfo.einkommensverschlechterungInfoJA
+            && this.getEinkommensverschlechterungsInfo() && !this.getEinkommensverschlechterungsInfo().einkommensverschlechterung
+            && this.hasGS1Ekv();
+    }
+
+    /**
+     * Checks whether the GS1 exists and has an Einkommensverschlechterung
+     */
+    private hasGS1Ekv(): boolean {
+        return this.gesuchModelManager.getGesuch().gesuchsteller1
+            && this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer !== null
+            && this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer !== undefined
+            && !this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer.isEmpty();
     }
 
     public isSteueramtLetzterStep(): boolean {
