@@ -170,7 +170,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
             joinGesuch.get(Gesuch_.id),
             joinGesuch.get(Gesuch_.fall).get(Fall_.fallNummer),
             cb.literal(kindContainer.getKindNummer()),
-            root.get(KindContainer_.kindNummer) ,
+            root.get(KindContainer_.kindNummer),
 			joinGesuch.get(Gesuch_.timestampErstellt)
         ).distinct(true);
 
@@ -182,7 +182,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
         Predicate predicateOtherFall = cb.notEqual(joinGesuch.get(Gesuch_.fall), kindContainer.getGesuch().getFall());
         // Nur das zuletzt gueltige Gesuch
         Predicate predicateStatus = joinGesuch.get(Gesuch_.status).in(AntragStatus.FOR_KIND_DUBLETTEN);
-        query.orderBy(cb.desc(joinGesuch.get(Gesuch_.timestampErstellt)));
+		query.orderBy(cb.desc(joinGesuch.get(Gesuch_.timestampErstellt)));
         query.where(predicateName, predicateVorname, predicateGeburtsdatum, predicateOtherFall, predicateStatus);
 
         return persistence.getCriteriaResults(query);
