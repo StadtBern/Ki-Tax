@@ -41,12 +41,13 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 	private CacheContainer cacheContainer;
 
 
-    private AuthorisierterBenutzer user;
+	private AuthorisierterBenutzer user;
 
 	@Inject
 	private AuthService authService;
 
 	private Cache<String, AuthorisierterBenutzer> cache;
+	private long expirationLifespan;
 
 	@SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH", justification = "should be injected")
 	@PostConstruct
@@ -56,10 +57,22 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 				"Ist die Infinispan Cache konfiguration im Standalone.xml korrekt und ist der Dependencies Eintrag im MANIFEST.MF gesetzt?");
 		}
 		this.cache = cacheContainer.getCache();
+		expirationLifespan = cache.getCacheConfiguration().expiration().lifespan() == -1 ?
+			Long.MAX_VALUE : cache.getCacheConfiguration().expiration().lifespan();
+		logCacheInfo();
 	}
 
-    @Override
-    public boolean authenticate(final String token) {
+	private void logCacheInfo() {
+		LOG.debug("Cache settings for EBEGUTokenAuthenticator:");
+		LOG.debug("\t lifespan: {}", cache.getCacheConfiguration().expiration().lifespan());
+		LOG.debug("\t wakeup Interval: {}", cache.getCacheConfiguration().expiration().wakeUpInterval());
+		LOG.debug("\t attributes: {}", cache.getCacheConfiguration().expiration().attributes());
+		LOG.debug("\t using expiration lifespan of " + expirationLifespan);
+
+	}
+
+	@Override
+	public boolean authenticate(final String token) {
 		return MonitoringUtil.monitor(EBEGUTokenAuthenticator.class, "auth", () -> {
 			boolean doRefreshToken = true;
 			// Wir muessen entscheiden, ob wir das Login verlaengern sollen. Dies wollen wir nur, wenn der ensprechende
@@ -69,11 +82,14 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 				effectiveToken = token.replaceAll(Constants.AUTH_TOKEN_SUFFIX_FOR_NO_TOKEN_REFRESH_REQUESTS, "");
 				doRefreshToken = false;
 			}
+
 			AuthorisierterBenutzer cachedUser = cache.get(effectiveToken);
-			if (cachedUser != null) {
+			if (cachedUser != null
+				&& cachedUser.getLastLogin().plus(expirationLifespan, ChronoUnit.MILLIS).isAfter(LocalDateTime.now())) {
 				//cache token gelten immer als valid (kein expired check)
-				LOG.debug("Cache HIT, found token in cache, no further checks necessary " + effectiveToken);
+				LOG.debug("Cache HIT, found token in cache, no further checks neceasary" + effectiveToken);
 				user = cachedUser;
+
 			} else {
 				LOG.debug("Cache MISS, could not find active cache entry for " + effectiveToken);
 
@@ -90,15 +106,15 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 				if (!stillValid) {
 					LOG.debug("Token {} was no longer valid in Database -> unauthorized ", effectiveToken);
 					return false;
-				} else{
+				} else {
 					cache.putForExternalRead(effectiveToken, user);
-					LOG.debug("Token {} is still valid in Database (and was probably renewed), cache was refreshed");
+					LOG.debug("Token {} is still valid in Database (and was probably renewed), cache was refreshed", effectiveToken);
 				}
 			}
 
 			return true;
 		});
-    }
+	}
 
 	private boolean verifyTokenStillValid() {
 		LocalDateTime now = LocalDateTime.now();
@@ -113,9 +129,6 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 
 	/**
 	 * reads user from database and optionally refreshes the login token in the database
-	 * @param token
-	 * @param doRefreshToken
-	 * @return
 	 */
 	private Optional<AuthorisierterBenutzer> readUserFromDatabase(String token, boolean doRefreshToken) {
 		return authService.validateAndRefreshLoginToken(token, doRefreshToken);
@@ -134,12 +147,12 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 
 	@SuppressFBWarnings("NM_CONFUSING")
 	@Override
-    public String getUserName() {
-        return user == null ? null : user.getUsername();
-    }
+	public String getUserName() {
+		return user == null ? null : user.getUsername();
+	}
 
-    @Override
-    public List<String> getApplicationRoles() {
+	@Override
+	public List<String> getApplicationRoles() {
 		if (user != null) {
 			List<String> result = new ArrayList<>();
 			result.add(user.getRole().toString());

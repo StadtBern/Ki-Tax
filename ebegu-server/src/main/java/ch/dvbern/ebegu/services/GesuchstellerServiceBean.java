@@ -123,7 +123,10 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 		// (i.e. von 1GS auf 2GS) wollen wir den Benutzer zwingen beide Gesuchsteller Seiten zu besuchen bevor wir auf ok setzten.
 		// Ansonsten setzten wir es sofort auf ok
 		if (umzug) {
-			wizardStepService.updateSteps(gesuch.getId(), null, gesuchsteller, WizardStepName.UMZUG);
+			// only if it is the last GS from both, we update the Step Umzug
+			if ((gesuch.getGesuchsteller2() == null && gsNumber == 1) || (gesuch.getGesuchsteller2() != null && gsNumber == 2)) {
+				wizardStepService.updateSteps(gesuch.getId(), null, gesuchsteller, WizardStepName.UMZUG);
+			}
 		} else {
 			WizardStep existingWizStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.GESUCHSTELLER);
 			WizardStepStatus gesuchStepStatus = existingWizStep != null ?  existingWizStep.getWizardStepStatus() : null;
