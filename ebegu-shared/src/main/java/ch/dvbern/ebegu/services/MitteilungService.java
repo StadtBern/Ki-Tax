@@ -44,6 +44,9 @@ public interface MitteilungService {
 	Collection<Betreuungsmitteilung> findAllBetreuungsmitteilungenForBetreuung(@Nonnull Betreuung betreuung);
 
 	@Nonnull
+	Collection<Mitteilung> findAllMitteilungenForBetreuung(Betreuung betreuung);
+
+	@Nonnull
 	Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Fall fall);
 
 	@Nonnull
