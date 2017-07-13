@@ -22,7 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Service fuer Batch-Jobs
+ * Service fuer Batch-Jobs.
+ * All services must be called in its own transaction. The reason is that the EntityManager seems to flush the
+ * queries after the method is finished, which means that the Context no longer exists and the Principalbean cannot
+ * be found, this implies a rollback of the Transaction and everything gets undone. Executing the service within a
+ * transaction flushes the queries before the method finishes and the context still exists.
  */
 @PermitAll
 @Stateless
