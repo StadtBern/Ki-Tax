@@ -140,39 +140,51 @@ FROM kind_container
   INNER JOIN fall ON fall.id = gesuch.fall_id
 
   LEFT OUTER JOIN (
-                    SELECT
-                      CASE WHEN eingangsart = 'ONLINE' AND (typ = 'ERSTGESUCH' OR typ = 'ERNEUERUNGSGESUCH')
-                        THEN 1 END AnzahlGesuchOnline,
-                      CASE WHEN eingangsart = 'PAPIER' AND (typ = 'ERSTGESUCH' OR typ = 'ERNEUERUNGSGESUCH')
-                        THEN 1 END AnzahlGesuchPapier,
-                      CASE WHEN eingangsart = 'ONLINE' AND typ = 'MUTATION'
-                        THEN 1 END AnzahlMutationOnline,
-                      CASE WHEN eingangsart = 'PAPIER' AND typ = 'MUTATION'
-                        THEN 1 END AnzahlMutationPapier,
-                      gesuch.id AS gesuch_id
-                    FROM gesuch
-                     WHERE eingangsdatum BETWEEN :fromDate AND :toDate
-                  ) EingegangeneGesuch ON EingegangeneGesuch.gesuch_id = gesuch.id
+	SELECT
+	  CASE WHEN eingangsart = 'ONLINE' AND (typ = 'ERSTGESUCH' OR typ = 'ERNEUERUNGSGESUCH')
+		THEN 1 END AnzahlGesuchOnline,
+	  CASE WHEN eingangsart = 'PAPIER' AND (typ = 'ERSTGESUCH' OR typ = 'ERNEUERUNGSGESUCH')
+		THEN 1 END AnzahlGesuchPapier,
+	  CASE WHEN eingangsart = 'ONLINE' AND typ = 'MUTATION'
+		THEN 1 END AnzahlMutationOnline,
+	  CASE WHEN eingangsart = 'PAPIER' AND typ = 'MUTATION'
+		THEN 1 END AnzahlMutationPapier,
+	  gesuch.id AS gesuch_id
+	FROM gesuch
+	 WHERE eingangsdatum BETWEEN :fromDate AND :toDate
+  ) EingegangeneGesuch ON EingegangeneGesuch.gesuch_id = gesuch.id
 
   LEFT OUTER JOIN
   (
-    SELECT
-      gesuch_id,
-      CASE WHEN wizard_step_name = 'EINKOMMENSVERSCHLECHTERUNG'
-        THEN 1 END AnzahlMutationEV,
-      CASE WHEN wizard_step_name = 'ERWERBSPENSUM'
-        THEN 1 END AnzahlMutationEwerbspensum,
-      CASE WHEN wizard_step_name = 'FAMILIENSITUATION'
-        THEN 1 END AnzahlMutationFamilienSitutation,
-      CASE WHEN wizard_step_name = 'FINANZIELLE_SITUATION'
-        THEN 1 END AnzahlMutationFinanzielleSituation,
-      CASE WHEN wizard_step_name = 'GESUCHSTELLER'
-        THEN 1 END AnzahlMutationGesuchsteller,
-      CASE WHEN wizard_step_name = 'UMZUG'
-        THEN 1 END AnzahlMutationUmzug
-    FROM wizard_step
-    WHERE wizard_step_status = 'MUTIERT'
-    AND wizard_step_name NOT IN ('ABWESENHEIT','BETREUUNG','KINDER')
+  	SELECT
+  	SUM(AnzahlMutationEV) AS AnzahlMutationEV,
+  	SUM(AnzahlMutationEwerbspensum) AS AnzahlMutationEwerbspensum,
+  	SUM(AnzahlMutationFamilienSitutation) AS AnzahlMutationFamilienSitutation,
+  	SUM(AnzahlMutationFinanzielleSituation) AS AnzahlMutationFinanzielleSituation,
+  	SUM(AnzahlMutationGesuchsteller) AS AnzahlMutationGesuchsteller,
+  	SUM(AnzahlMutationUmzug) AS AnzahlMutationUmzug,
+  	gesuch_id
+  	FROM
+		(
+		SELECT
+		  gesuch_id,
+		  CASE WHEN wizard_step_name = 'EINKOMMENSVERSCHLECHTERUNG'
+			THEN 1 END AnzahlMutationEV,
+		  CASE WHEN wizard_step_name = 'ERWERBSPENSUM'
+			THEN 1 END AnzahlMutationEwerbspensum,
+		  CASE WHEN wizard_step_name = 'FAMILIENSITUATION'
+			THEN 1 END AnzahlMutationFamilienSitutation,
+		  CASE WHEN wizard_step_name = 'FINANZIELLE_SITUATION'
+			THEN 1 END AnzahlMutationFinanzielleSituation,
+		  CASE WHEN wizard_step_name = 'GESUCHSTELLER'
+			THEN 1 END AnzahlMutationGesuchsteller,
+		  CASE WHEN wizard_step_name = 'UMZUG'
+			THEN 1 END AnzahlMutationUmzug
+		FROM wizard_step
+		WHERE wizard_step_status = 'MUTIERT'
+		AND wizard_step_name NOT IN ('DOKUMENTE','FREIGABE','GESUCH_ERSTELLEN','VERFUEGEN','ABWESENHEIT','BETREUUNG','KINDER')
+		) WizardSteps
+	GROUP BY gesuch_id
   ) Mutationen ON Mutationen.gesuch_id = gesuch.id
 
   LEFT OUTER JOIN (
@@ -188,11 +200,11 @@ FROM kind_container
 
  LEFT OUTER JOIN (
  	SELECT
- 		sum(AnzahlSteueramtAusgeloestTmp) as AnzahlSteueramtAusgeloest,
-		sum(AnzahlSteueramtGeprueftTmp) as AnzahlSteueramtGeprueft,
-		sum(AnzahlBeschwerdeTmp) as AnzahlBeschwerde,
+ 		SUM(AnzahlSteueramtAusgeloestTmp) AS AnzahlSteueramtAusgeloest,
+		SUM(AnzahlSteueramtGeprueftTmp) AS AnzahlSteueramtGeprueft,
+		SUM(AnzahlBeschwerdeTmp) AS AnzahlBeschwerde,
 		gesuch_id
-	from (
+	FROM (
 					SELECT
 						CASE WHEN antrag_status_history.status IN ('PRUEFUNG_STV')
 							THEN 1 END AnzahlSteueramtAusgeloestTmp,
@@ -229,6 +241,8 @@ FROM kind_container
                     WHERE timestamp_erstellt BETWEEN :fromDateTime AND :toDateTime
                   ) Verfuegungen ON Verfuegungen.id = betreuung.verfuegung_id
 WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
+	  AND gesuch.status IN ('VERFUEGT', 'NUR_SCHULAMT', 'NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN', 'BESCHWERDE_HAENGIG',
+			'PRUEFUNG_STV', 'IN_BEARBEITUNG_STV', 'GEPRUEFT_STV', 'KEIN_ANGEBOT')
  	  AND gesuch.eingangsdatum BETWEEN :fromDate AND :toDate
       AND (institution_stammdaten.betreuungsangebot_typ = 'TAGESSCHULE' OR :onlySchulamt = 0)
       AND (
