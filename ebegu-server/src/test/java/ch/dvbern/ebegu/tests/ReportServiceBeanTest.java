@@ -43,6 +43,10 @@ import static org.junit.Assert.assertNotNull;
 @Transactional(TransactionMode.DISABLED)
 public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
+	private static final int ANZAHL_FAELLE = 8;
+	private static final int ANZAHL_GESUCHE = 11;
+	private static final int ANZAHL_BETREUUNGEN = 17; // Davon 1 nicht verfuegt
+
 	@Rule
 	public UnitTestTempFolder unitTestTempfolder = new UnitTestTempFolder();
 
@@ -79,8 +83,8 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 		Assert.assertEquals("1 Mandant aus File, einer aus Superklasse", 2, allMandant.size());
 		Assert.assertEquals(1, allGesuchsperiode.size());
-		Assert.assertEquals(7, allFall.size());
-		Assert.assertEquals(10, allGesuch.size());
+		Assert.assertEquals(ANZAHL_FAELLE, allFall.size());
+		Assert.assertEquals(ANZAHL_GESUCHE, allGesuch.size());
 	}
 
 	@Test
@@ -114,7 +118,7 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 			.collect(Collectors.toList());
 
 		assertNotNull(rowsSorted);
-		assertEquals(15, rowsSorted.size());
+		assertEquals(ANZAHL_BETREUUNGEN, rowsSorted.size());
 
 		// 101 Verfuegt mit Nicht eintreten
 		// 102 Normal Verfuegt
@@ -126,42 +130,47 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 		// Fall 101: Verfuegt mit nichtEintreten
 		// Betreuung 1: Verfuegt mit Nicht-Eintreten
-		assertGesuchZeitraumDataRow(rowsSorted.get(0), "17.000101.1.1", 0, 0, 0, 0, 0, 1, 0, 1);
+		assertGesuchZeitraumDataRow(rowsSorted.get(0), "17.000101.1.1", 0, 0, 0, 0, 0, 0, 0, 1, 0, 1);
 		// Betreuung 2: Verfuegt normal
-		assertGesuchZeitraumDataRow(rowsSorted.get(1), "17.000101.1.2", 0, 0, 0,0, 0, 1, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(1), "17.000101.1.2", 0, 0, 0,0, 0, 0, 0, 1, 0, 0);
 
 		// Fall 102: Normal verfuegt, 2 Kinder
-		assertGesuchZeitraumDataRow(rowsSorted.get(2), "17.000102.1.1", 0, 0, 0,0, 0, 1, 1, 0);
-		assertGesuchZeitraumDataRow(rowsSorted.get(3), "17.000102.2.1", 0, 0, 0,0, 0, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(2), "17.000102.1.1", 0, 0, 0,0, 0, 0, 0, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(3), "17.000102.2.1", 0, 0, 0,0, 0, 0, 0, 1, 1, 0);
 
 		// Fall 103: Mahnung
-		assertGesuchZeitraumDataRow(rowsSorted.get(4), "17.000103.1.1", 0, 0, 0,1, 0, 0, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(4), "17.000103.1.1", 0, 0, 0,1, 0, 0, 0, 0, 0, 0);
 
 		// Fall 104: Verfuegt, mit Beschwerde
-		assertGesuchZeitraumDataRow(rowsSorted.get(5), "17.000104.1.1", 0, 0, 0,0, 1, 1, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(5), "17.000104.1.1", 0, 0, 0,0, 1, 0, 0, 1, 0, 0);
 
 		// Fall 105:
 		// Erstgesuch
-		assertGesuchZeitraumDataRow(rowsSorted.get(6), "17.000105.1.1", 0, 0, 0,0, 0, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(6), "17.000105.1.1", 0, 0, 0,0, 0, 0, 0, 1, 1, 0);
 		// Mutation
 		// Kind 1: Schon im Erstgesuch vorhanden, in Mutation unverändert
-		assertGesuchZeitraumDataRow(rowsSorted.get(7), "17.000105.1.1", 0, 0, 0,0, 0, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(7), "17.000105.1.1", 0, 0, 0,0, 0, 0, 0, 1, 1, 0);
 		// Kind 2: Neu auf Mutation inkl. Betreuung
-		assertGesuchZeitraumDataRow(rowsSorted.get(8), "17.000105.2.1", 0, 1, 1,0, 0, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(8), "17.000105.2.1", 0, 1, 1,0, 0, 0, 0, 1, 1, 0);
 
 		// Fall 106: Mutation mit Abwesenheit
 		// Erstgesuch
-		assertGesuchZeitraumDataRow(rowsSorted.get(9), "17.000106.1.1", 0, 0, 0,0, 0, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(9), "17.000106.1.1", 0, 0, 0,0, 0, 0, 0, 1, 1, 0);
 		// Mutation
-		assertGesuchZeitraumDataRow(rowsSorted.get(10), "17.000106.1.1", 1, 0, 0,0, 0, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(10), "17.000106.1.1", 1, 0, 0,0, 0, 0, 0, 1, 1, 0);
 
 		// Fall 107: Mutation Kind Name
 		// Betreuung 1
-		assertGesuchZeitraumDataRow(rowsSorted.get(11), "17.000107.1.1", 0, 0, 0,0, 0, 1, 0, 0);
-		assertGesuchZeitraumDataRow(rowsSorted.get(12), "17.000107.1.1", 0, 0, 1,0, 0, 1, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(11), "17.000107.1.1", 0, 0, 0,0, 0, 0, 0, 1, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(12), "17.000107.1.1", 0, 0, 1,0, 0, 0, 0, 1, 0, 0);
 		// Betreuung 2
-		assertGesuchZeitraumDataRow(rowsSorted.get(13), "17.000107.1.2", 0, 0, 0,0, 0, 1, 0, 0);
-		assertGesuchZeitraumDataRow(rowsSorted.get(14), "17.000107.1.2", 0, 0, 1,0, 0, 1, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(13), "17.000107.1.2", 0, 0, 0,0, 0, 0, 0, 1, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(14), "17.000107.1.2", 0, 0, 1,0, 0, 0, 0, 1, 0, 0);
+
+		// Fall 108: Verfügt, Beschwerde, Beschwerde aufgehoben, STV, STV geprüft
+		assertGesuchZeitraumDataRow(rowsSorted.get(15), "17.000108.1.1", 0, 0, 0,0, 1, 1, 1, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(16), "17.000108.2.1", 0, 0, 0,0, 1, 1, 1, 1, 1, 0);
+
 	}
 
 	private void assertGesuchStichtagDataRow(GesuchStichtagDataRow row, String bgNummer, Integer nichtFreigegeben, Integer mahnung, Integer beschwerde) {
@@ -174,7 +183,9 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 	private void assertGesuchZeitraumDataRow(GesuchZeitraumDataRow row, String bgNummer,
 											 Integer anzahlMutationAbwesenheit, Integer anzahlMutationBetreuung, Integer anzahlMutationKind,
-											 Integer anzahlMahnungen, Integer anzahlBeschwerde, Integer anzahlVerfuegungen,
+											 Integer anzahlMahnungen, Integer anzahlBeschwerde,
+											 Integer anzahlSteueramtAusgeloest, Integer anzahlSteueramtGeprueft,
+											 Integer anzahlVerfuegungen,
 											 Integer anzahlVerfuegungenNormal, Integer anzahlVerfuegungenNichtEintreten) {
 		assertNotNull(row);
 		assertEquals(bgNummer, row.getBgNummer());
@@ -183,6 +194,8 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 		assertEquals(anzahlMutationKind, row.getAnzahlMutationKinder());
 		assertEquals(anzahlMahnungen, row.getAnzahlMahnungen());
 		assertEquals(anzahlBeschwerde, row.getAnzahlBeschwerde());
+		assertEquals(anzahlSteueramtAusgeloest, row.getAnzahlSteueramtAusgeloest());
+		assertEquals(anzahlSteueramtGeprueft, row.getAnzahlSteueramtGeprueft());
 		assertEquals(anzahlVerfuegungen, row.getAnzahlVerfuegungen());
 		assertEquals(anzahlVerfuegungenNormal, row.getAnzahlVerfuegungenNormal());
 		assertEquals(anzahlVerfuegungenNichtEintreten, row.getAnzahlVerfuegungenNichtEintreten());
@@ -258,8 +271,8 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 		//case with both verfuegte Gesuche und Gesuche als Verantwortlicher
 		Assert.assertEquals("Superuser", reportMitarbeiterinnen.get(2).getName());
-		Assert.assertEquals(BigDecimal.valueOf(7), reportMitarbeiterinnen.get(2).getVerantwortlicheGesuche());
-		Assert.assertEquals(BigDecimal.valueOf(9), reportMitarbeiterinnen.get(2).getVerfuegungenAusgestellt()); // 8 VERFUEGT 1 BESCHWERDE_HAENGIG
+		Assert.assertEquals(BigDecimal.valueOf(8), reportMitarbeiterinnen.get(2).getVerantwortlicheGesuche());
+		Assert.assertEquals(BigDecimal.valueOf(15), reportMitarbeiterinnen.get(2).getVerfuegungenAusgestellt());
 
 		// case with no Gesuche at all are not shown
 

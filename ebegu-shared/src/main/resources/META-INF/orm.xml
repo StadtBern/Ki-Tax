@@ -123,7 +123,9 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
   IFNULL(Mutationen.AnzahlMutationUmzug, 0)                                  AnzahlMutationUmzug,
   IFNULL(Mutationen.AnzahlMutationVerfuegen, 0)                              AnzahlMutationVerfuegen,
   IFNULL(Mahnungen.AnzahlMahnungen, 0)                                       AnzahlMahnungen,
-  IFNULL(Beschwerde.AnzahlBeschwerde, 0)                                     AnzahlBeschwerde,
+  IFNULL(Statuswechsel.AnzahlBeschwerde, 0)                                  AnzahlBeschwerde,
+  IFNULL(Statuswechsel.AnzahlSteueramtAusgeloest, 0)						 AnzahlSteueramtAusgeloest,
+  IFNULL(Statuswechsel.AnzahlSteueramtGeprueft, 0)							 AnzahlSteueramtGeprueft,
   IFNULL(Verfuegungen.AnzahlVerfuegungen, 0)                                 AnzahlVerfuegungen,
   IFNULL(Verfuegungen.kategorie_normal, 0)                                   AnzahlVerfuegungenNormal,
   IFNULL(Verfuegungen.kategorie_max_einkommen, 0)                            AnzahlVerfuegungenMaxEinkommen,
@@ -196,20 +198,34 @@ FROM kind_container
                               (:toDateTime <= timestamp_abgeschlossen OR timestamp_abgeschlossen IS NULL))
                   ) Mahnungen ON Mahnungen.gesuch_id = gesuch.id
 
-  LEFT OUTER JOIN (
-                    SELECT
-                      1         AS AnzahlBeschwerde,
-                      gesuch.id AS gesuch_id
-                    FROM antrag_status_history
-                      INNER JOIN gesuch ON gesuch.id = antrag_status_history.gesuch_id
-                      INNER JOIN gesuchsperiode ON gesuchsperiode.id = gesuch.gesuchsperiode_id
-                    WHERE antrag_status_history.status IN ('BESCHWERDE_HAENGIG')
-                          AND (
-                            timestamp_von BETWEEN :fromDateTime AND :toDateTime
-                            OR timestamp_bis BETWEEN :fromDateTime AND :toDateTime
-                            OR (:fromDateTime >= timestamp_von AND (:toDateTime <= timestamp_bis OR timestamp_bis IS NULL))
-                          )
-                  ) Beschwerde ON Beschwerde.gesuch_id = gesuch.id
+ LEFT OUTER JOIN (
+ 	SELECT
+ 		sum(AnzahlSteueramtAusgeloestTmp) as AnzahlSteueramtAusgeloest,
+		sum(AnzahlSteueramtGeprueftTmp) as AnzahlSteueramtGeprueft,
+		sum(AnzahlBeschwerdeTmp) as AnzahlBeschwerde,
+		gesuch_id
+	from (
+					SELECT
+						CASE WHEN antrag_status_history.status IN ('PRUEFUNG_STV')
+							THEN 1 END AnzahlSteueramtAusgeloestTmp,
+						CASE WHEN antrag_status_history.status IN ('GEPRUEFT_STV')
+							THEN 1 END AnzahlSteueramtGeprueftTmp,
+						case WHEN antrag_status_history.status IN ('BESCHWERDE_HAENGIG')
+							THEN 1 END AnzahlBeschwerdeTmp,
+						gesuch.id AS gesuch_id
+					FROM antrag_status_history
+					INNER JOIN gesuch ON gesuch.id = antrag_status_history.gesuch_id
+					INNER JOIN gesuchsperiode ON gesuchsperiode.id = gesuch.gesuchsperiode_id
+                     WHERE antrag_status_history.status IN ('PRUEFUNG_STV', 'GEPRUEFT_STV', 'BESCHWERDE_HAENGIG')
+                        AND (
+							  timestamp_von BETWEEN :fromDateTime AND :toDateTime
+							  OR timestamp_bis BETWEEN :fromDateTime AND :toDateTime
+							  OR (:fromDateTime >= timestamp_von AND (:toDateTime <= timestamp_bis OR timestamp_bis IS NULL))
+						)
+						GROUP BY gesuch.id, antrag_status_history.status
+				) Result
+				GROUP BY gesuch_id
+  ) Statuswechsel ON Statuswechsel.gesuch_id = gesuch.id
 
   LEFT OUTER JOIN (
                     SELECT
@@ -224,6 +240,7 @@ FROM kind_container
                     WHERE timestamp_erstellt BETWEEN :fromDateTime AND :toDateTime
                   ) Verfuegungen ON Verfuegungen.id = betreuung.verfuegung_id
 WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
+	  AND gesuch.eingangsdatum BETWEEN :fromDate AND :toDate
       AND (institution_stammdaten.betreuungsangebot_typ = 'TAGESSCHULE' OR :onlySchulamt = 0)
       AND (
         IFNULL(EingegangeneGesuch.AnzahlGesuchOnline, 0) = 1
@@ -244,7 +261,9 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
         OR IFNULL(Mutationen.AnzahlMutationUmzug, 0) = 1
         OR IFNULL(Mutationen.AnzahlMutationVerfuegen, 0) = 1
         OR IFNULL(Mahnungen.AnzahlMahnungen, 0) = 1
-        OR IFNULL(Beschwerde.AnzahlBeschwerde, 0) = 1
+       	OR IFNULL(Statuswechsel.AnzahlSteueramtAusgeloest, 0) = 1
+        OR IFNULL(Statuswechsel.AnzahlSteueramtGeprueft, 0) = 1
+        OR IFNULL(Statuswechsel.AnzahlBeschwerde, 0) = 1
         OR IFNULL(Verfuegungen.AnzahlVerfuegungen, 0) = 1
         OR IFNULL(Verfuegungen.kategorie_normal, 0) = 1
         OR IFNULL(Verfuegungen.kategorie_max_einkommen, 0) = 1
