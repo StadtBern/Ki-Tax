@@ -81,7 +81,7 @@ public enum MergeFieldGesuchstellerKinderBetreuung implements MergeField {
 	kindName(STRING_CONVERTER, Type.SIMPLE),
 	kindVorname(STRING_CONVERTER, Type.SIMPLE),
 	kindGeburtsdatum(DATE_CONVERTER, Type.SIMPLE),
-	kindFachstelle(BOOLEAN_X_CONVERTER, Type.SIMPLE),
+	kindFachstelle(STRING_CONVERTER, Type.SIMPLE),
 	kindErwBeduerfnisse(BOOLEAN_X_CONVERTER, Type.SIMPLE),
 	kindDeutsch(BOOLEAN_X_CONVERTER, Type.SIMPLE),
 	eingeschult(BOOLEAN_X_CONVERTER, Type.SIMPLE),

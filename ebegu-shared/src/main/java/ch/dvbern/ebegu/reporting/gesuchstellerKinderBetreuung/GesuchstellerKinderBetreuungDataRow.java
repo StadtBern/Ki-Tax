@@ -76,7 +76,7 @@ public class GesuchstellerKinderBetreuungDataRow {
 	private String kindName;
 	private String kindVorname;
 	private LocalDate kindGeburtsdatum;
-	private Boolean kindFachstelle;
+	private String kindFachstelle;
 	private Boolean kindErwBeduerfnisse;
 	private Boolean kindDeutsch;
 	private Boolean kindEingeschult;
@@ -495,11 +495,11 @@ public class GesuchstellerKinderBetreuungDataRow {
 		this.kindGeburtsdatum = kindGeburtsdatum;
 	}
 
-	public Boolean getKindFachstelle() {
+	public String getKindFachstelle() {
 		return kindFachstelle;
 	}
 
-	public void setKindFachstelle(Boolean kindFachstelle) {
+	public void setKindFachstelle(String kindFachstelle) {
 		this.kindFachstelle = kindFachstelle;
 	}
 

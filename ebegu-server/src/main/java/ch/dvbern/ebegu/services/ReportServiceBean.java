@@ -98,6 +98,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import ch.dvbern.lib.excelmerger.ExcelMergeException;
 import ch.dvbern.lib.excelmerger.ExcelMerger;
 import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -839,7 +840,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		if (row.getKindGeburtsdatum() == null || row.getKindGeburtsdatum().isBefore(MIN_DATE)) {
 			row.setKindGeburtsdatum(MIN_DATE);
 		}
-		row.setKindFachstelle(kind.getPensumFachstelle() != null);
+		row.setKindFachstelle(kind.getPensumFachstelle() != null ? kind.getPensumFachstelle().getFachstelle().getName() : StringUtils.EMPTY);
 		row.setKindErwBeduerfnisse(zeitabschnitt.getVerfuegung().getBetreuung().getErweiterteBeduerfnisse());
 		row.setKindDeutsch(kind.getMutterspracheDeutsch());
 		row.setKindEingeschult(kind.getEinschulung());
