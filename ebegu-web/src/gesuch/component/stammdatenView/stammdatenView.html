@@ -26,7 +26,8 @@
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly()"
                                                     aria-described-by="geschlecht"
-                                                    aria-label="{{ 'GESCHLECHT' |translate}}" ng-click="vm.checkAllEwkRelevantDataPresent()">
+                                                    aria-label="{{ 'GESCHLECHT' |translate}}"
+                                                    ng-change="vm.checkAllEwkRelevantDataPresent()">
                                 </dv-radio-container>
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.geschlecht"
                                            ja="vm.getModel().gesuchstellerJA.geschlecht"></dv-bisher>

@@ -76,10 +76,10 @@ public class EinkommensverschlechterungResource {
 		if (gesuch.isPresent()) {
 			Optional<GesuchstellerContainer> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
 			if (gesuchsteller.isPresent()) {
-				EinkommensverschlechterungContainer convertedFinSitCont = converter.einkommensverschlechterungContainerToStorableEntity(einkommensverschlechterungContainerJAXP);
-				convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
+				EinkommensverschlechterungContainer convertedEKVCont = converter.einkommensverschlechterungContainerToStorableEntity(einkommensverschlechterungContainerJAXP);
+				convertedEKVCont.setGesuchsteller(gesuchsteller.get());
 				EinkommensverschlechterungContainer persistedEinkommensverschlechterungContainer =
-					einkVerschlService.saveEinkommensverschlechterungContainer(convertedFinSitCont, gesuch.get().getId());
+					einkVerschlService.saveEinkommensverschlechterungContainer(convertedEKVCont, gesuch.get().getId());
 
 				URI uri = uriInfo.getBaseUriBuilder()
 					.path(EinkommensverschlechterungResource.class)
@@ -111,6 +111,25 @@ public class EinkommensverschlechterungResource {
 		}
 		EinkommensverschlechterungContainer einkommensverschlechterungContainerToReturn = optional.get();
 		return converter.einkommensverschlechterungContainerToJAX(einkommensverschlechterungContainerToReturn);
+	}
+
+	@Nullable
+	@GET
+	@Path("/forGesuchsteller/{gesuchstellerId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxEinkommensverschlechterungContainer findEkvContainerForGesuchsteller(
+		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerId) throws EbeguException {
+
+		Validate.notNull(gesuchstellerId.getId());
+		String gsID = converter.toEntityId(gesuchstellerId);
+		Optional<GesuchstellerContainer> optionalGS = gesuchstellerService.findGesuchsteller(gsID);
+		if (!optionalGS.isPresent()) {
+			throw new EbeguEntityNotFoundException("findEkvContainerForGesuchsteller", ErrorCodeEnum
+				.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId not found: " + gesuchstellerId.getId());
+		}
+		GesuchstellerContainer gsContainer = optionalGS.get();
+		return converter.einkommensverschlechterungContainerToJAX(gsContainer.getEinkommensverschlechterungContainer());
 	}
 
 	@Nullable

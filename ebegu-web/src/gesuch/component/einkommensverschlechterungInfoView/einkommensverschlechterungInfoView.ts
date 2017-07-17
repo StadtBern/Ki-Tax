@@ -22,6 +22,7 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import EinkommensverschlechterungContainerRS from '../../service/einkommensverschlechterungContainerRS.rest';
 
 let template = require('./einkommensverschlechterungInfoView.html');
 require('./einkommensverschlechterungInfoView.less');
@@ -52,12 +53,13 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
 
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'EbeguUtil'
-        , 'WizardStepManager', 'DvDialog', '$q', 'EinkommensverschlechterungInfoRS', '$scope', 'AuthServiceRS'];
+        , 'WizardStepManager', 'DvDialog', '$q', 'EinkommensverschlechterungInfoRS', '$scope', 'AuthServiceRS',
+        'EinkommensverschlechterungContainerRS'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private CONSTANTS: any, private errorService: ErrorService, private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog, private $q: IQService, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
-                $scope: IScope, private authServiceRS: AuthServiceRS) {
+                $scope: IScope, private authServiceRS: AuthServiceRS, private ekvContainerRS: EinkommensverschlechterungContainerRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
         this.initialEinkVersInfo = angular.copy(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer);
         this.model = angular.copy(this.initialEinkVersInfo);
@@ -74,6 +76,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
             this.selectedStichtagBjP1_GS = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfoGS().stichtagFuerBasisJahrPlus1);
             this.selectedStichtagBjP2_GS = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfoGS().stichtagFuerBasisJahrPlus2);
         }
+        this.initializeEKVContainers();
     }
 
     public initEinkommensverschlechterungInfo(): void {
@@ -143,7 +146,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
 
     public confirmAndSave(): IPromise<TSEinkommensverschlechterungInfoContainer> {
         if (this.isGesuchValid()) {
-            if (!this.form.$dirty && this.model && !this.model.isNew()) {
+            if (!this.form.$dirty && !this.isThereSomethingNew()) {
                 // If the model is new (it hasn't been saved yet) we need to save it
                 // If there are no changes in form we don't need anything to update on Server and we could
                 // return the promise immediately
@@ -163,6 +166,25 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         return undefined;
     }
 
+    /**
+     * Sometimes there is something new to save though the form hasn't changed. This is the case when the model i.e.
+     * the Einkommensverschlechterung is new (it hasn't been saved yet) or when due to a change in the
+     * Familiensituation the GS2 is new and doesn't have an EKVContainer yet.
+     */
+    private isThereSomethingNew() {
+        return (this.model && this.model.isNew())
+            || this.isThereAnyEinkommenverschlechterung() && (this.gesuchModelManager.isGesuchsteller2Required() && this.gesuchModelManager.getGesuch().gesuchsteller2
+                && (!this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer
+                    || this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer.isNew()));
+    }
+
+    private isThereAnyEinkommenverschlechterung(): boolean {
+        return (
+            this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer &&
+            this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA &&
+            this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.einkommensverschlechterung);
+    }
+
     private save(): IPromise<TSEinkommensverschlechterungInfoContainer> {
         this.errorService.clearAll();
         if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) {
@@ -174,13 +196,9 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
             }
             this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, this.gesuchModelManager.getBasisjahr() + 1);
             this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, this.gesuchModelManager.getBasisjahr() + 2);
-            // Die Container initialisieren:
-            if (!this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer) {
-                this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
-            }
-            if (this.gesuchModelManager.isGesuchsteller2Required() && !this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer) {
-                this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
-            }
+
+            this.initializeEKVContainers();
+
         } else {
             //wenn keine EV eingetragen wird, setzen wir alles auf undefined, da keine Daten gespeichert werden sollen
             this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
@@ -197,28 +215,39 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
             this.getEinkommensverschlechterungsInfoContainer(), this.gesuchModelManager.getGesuch().id)
             .then((ekvInfoRespo: TSEinkommensverschlechterungInfoContainer) => {
                 this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer = ekvInfoRespo;
-                this.removeUnnecessaryEKV();
-                return ekvInfoRespo;
+                return this.loadEKVContainersFromServer().then(() => {
+                    return ekvInfoRespo;
+                });
             });
 
     }
 
-    /**
-     * Using the data contained in EKVInfoContainer it destroys all EKV that are not needed any more. This is the
-     * only way to update all EKV after saving the EKVInfo.
-     */
-    private removeUnnecessaryEKV(): void {
-        if (this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer
-            && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA) {
-            if (!this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus1) {
-                this.removeEkvBasisJahrPlus1(this.gesuchModelManager.getGesuch().gesuchsteller1);
-                this.removeEkvBasisJahrPlus1(this.gesuchModelManager.getGesuch().gesuchsteller2);
-            }
-            if (!this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus2) {
-                this.removeEkvBasisJahrPlus2(this.gesuchModelManager.getGesuch().gesuchsteller1);
-                this.removeEkvBasisJahrPlus2(this.gesuchModelManager.getGesuch().gesuchsteller2);
-            }
+    private initializeEKVContainers(): void {
+        if (this.gesuchModelManager.getGesuch().gesuchsteller1 && !this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer) {
+            this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
         }
+        if (this.gesuchModelManager.isGesuchsteller2Required() && !this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer) {
+            this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
+        }
+    }
+
+    private loadEKVContainersFromServer(): IPromise<TSEinkommensverschlechterungContainer> {
+        if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
+            return this.ekvContainerRS.findEKVContainerForGesuchsteller(this.gesuchModelManager.getGesuch().gesuchsteller1.id)
+                .then((responseGS1: TSEinkommensverschlechterungContainer) => {
+                    this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer = responseGS1;
+
+                    if (this.gesuchModelManager.isGesuchsteller2Required() && this.gesuchModelManager.getGesuch().gesuchsteller2) {
+                        return this.ekvContainerRS.findEKVContainerForGesuchsteller(this.gesuchModelManager.getGesuch().gesuchsteller2.id)
+                            .then((responseGS2: TSEinkommensverschlechterungContainer) => {
+                                return this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer = responseGS2;
+                            });
+                    } else {
+                        return this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer;
+                    }
+                });
+        }
+        return undefined;
     }
 
     private removeEkvBasisJahrPlus1(gesuchsteller: TSGesuchstellerContainer): void {
@@ -246,8 +275,19 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
      * @returns {boolean}
      */
     private isConfirmationRequired(): boolean {
-        return (this.initialEinkVersInfo && this.initialEinkVersInfo.einkommensverschlechterungInfoJA)
-            && (!this.getEinkommensverschlechterungsInfo() || !this.getEinkommensverschlechterungsInfo().einkommensverschlechterung);
+        return this.initialEinkVersInfo && this.initialEinkVersInfo.einkommensverschlechterungInfoJA
+            && this.getEinkommensverschlechterungsInfo() && !this.getEinkommensverschlechterungsInfo().einkommensverschlechterung
+            && this.hasGS1Ekv();
+    }
+
+    /**
+     * Checks whether the GS1 exists and has an Einkommensverschlechterung
+     */
+    private hasGS1Ekv(): boolean {
+        return this.gesuchModelManager.getGesuch().gesuchsteller1
+            && this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer !== null
+            && this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer !== undefined
+            && !this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer.isEmpty();
     }
 
     public isSteueramtLetzterStep(): boolean {
@@ -257,3 +297,4 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         return false;
     }
 }
+

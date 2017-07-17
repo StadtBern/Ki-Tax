@@ -63,6 +63,7 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 				return !(UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) ||
 					allowedInst.stream().anyMatch(institution -> institution.getId().equals(zahlung.getInstitutionStammdaten().getInstitution().getId()));
 			})
+			.sorted()
 			.forEach(zahlung -> {
 				zahlung.getZahlungspositionen().stream()
 					.filter(zahlungsposition -> zahlungsposition.getVerfuegungZeitabschnitt().getBgPensum() > 0)

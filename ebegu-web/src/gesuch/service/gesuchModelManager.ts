@@ -377,7 +377,7 @@ export default class GesuchModelManager {
         if (betreuungIndex >= 0) {
             this.betreuungIndex = betreuungIndex;
         } else {
-            this.kindIndex = 0;
+            this.setKindIndex(0);
         }
     }
 
@@ -690,11 +690,11 @@ export default class GesuchModelManager {
             let i: number = EbeguUtil.getIndexOfElementwithID(storedBetreuung, this.getKindToWorkWith().betreuungen);
             if (i >= 0) {
                 this.getKindToWorkWith().betreuungen[i] = storedBetreuung;
-                this.betreuungIndex = i;
+                this.setBetreuungIndex(i);
             }
         } else {
             this.getKindToWorkWith().betreuungen.push(storedBetreuung);  //neues kind anfuegen
-            this.betreuungIndex = this.getKindToWorkWith().betreuungen.length - 1;
+            this.setBetreuungIndex(this.getKindToWorkWith().betreuungen.length - 1);
         }
         return storedBetreuung;
     }
@@ -830,7 +830,7 @@ export default class GesuchModelManager {
      */
     public findKind(kind: TSKindContainer): number {
         if (this.gesuch.kindContainers.indexOf(kind) >= 0) {
-            this.kindIndex = this.gesuch.kindContainers.indexOf(kind);
+            this.setKindIndex(this.gesuch.kindContainers.indexOf(kind));
             return this.kindIndex;
         }
         return -1;
@@ -845,7 +845,7 @@ export default class GesuchModelManager {
         if (this.gesuch.kindContainers) {
             for (let i = 0; i < this.gesuch.kindContainers.length; i++) {
                 if (this.gesuch.kindContainers[i].id === kindID) {
-                    this.kindIndex = i;
+                    this.setKindIndex(i);
                     return this.kindIndex;
                 }
             }
@@ -862,7 +862,7 @@ export default class GesuchModelManager {
 
     public findBetreuung(betreuung: TSBetreuung): number {
         if (this.getKindToWorkWith() && this.getKindToWorkWith().betreuungen) {
-            this.betreuungIndex = this.getKindToWorkWith().betreuungen.indexOf(betreuung);
+            this.setBetreuungIndex(this.getKindToWorkWith().betreuungen.indexOf(betreuung));
             return this.betreuungIndex;
         }
         return -1;
@@ -874,10 +874,12 @@ export default class GesuchModelManager {
      * @returns {number}
      */
     public findBetreuungById(betreuungID: string): number {
-        if (this.getKindToWorkWith()) {
-            for (let i = 0; i < this.getKindToWorkWith().betreuungen.length; i++) {
-                if (this.getKindToWorkWith().betreuungen[i].id === betreuungID) {
-                    return this.betreuungIndex = i;
+        let kindToWorkWith: TSKindContainer = this.getKindToWorkWith();
+        if (kindToWorkWith) {
+            for (let i = 0; i < kindToWorkWith.betreuungen.length; i++) {
+                if (kindToWorkWith.betreuungen[i].id === betreuungID) {
+                    this.setBetreuungIndex(i);
+                    return this.betreuungIndex;
                 }
             }
         }
