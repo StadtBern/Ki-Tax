@@ -98,7 +98,9 @@ public class EWKConverter {
 		ewkBeziehung.setVorname(beziehung.getVorname());
 		ewkBeziehung.setRufname(beziehung.getRufname());
 		ewkBeziehung.setGeburtsdatum(beziehung.getGeburtsdatum());
-		ewkBeziehung.setAdresse(convertFromEWK(beziehung.getAdresse()));
+		if(beziehung.getAdresse() != null) {
+			ewkBeziehung.setAdresse(convertFromEWK(beziehung.getAdresse()));
+		}
 		return ewkBeziehung;
 	}
 }

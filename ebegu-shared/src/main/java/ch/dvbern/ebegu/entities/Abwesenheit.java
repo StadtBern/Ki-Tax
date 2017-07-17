@@ -1,12 +1,12 @@
 package ch.dvbern.ebegu.entities;
 
-import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.hibernate.envers.Audited;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.validation.Valid;
+
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.hibernate.envers.Audited;
 
 /**
  * Entity fuer Abwesenheit.
@@ -52,6 +52,7 @@ public class Abwesenheit extends AbstractDateRangedEntity implements Comparable<
 		if (this == other) {
 			return true;
 		}
+		//noinspection SimplifiableIfStatement
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}

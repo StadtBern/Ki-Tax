@@ -148,8 +148,8 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			return;
 		}
 		Mandant mandant = mandantEntity.getMandant();
-		if (!mandant.equals(principalBean.getMandant())) {
-			if (!principalBean.isCallerInRole(SUPER_ADMIN)) {
+		if (!principalBean.isCallerInRole(SUPER_ADMIN)) {
+			if (!mandant.equals(principalBean.getMandant())) {
 				throwMandantViolation(mandantEntity); // super admin darf auch wenn er keinen mandant hat
 			}
 		}

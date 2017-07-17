@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright (c) 2013 DV Bern AG, Switzerland
  *
  * Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich

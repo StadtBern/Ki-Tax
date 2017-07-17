@@ -1,5 +1,30 @@
 package ch.dvbern.ebegu.entities;
 
+import java.time.LocalDate;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import ch.dvbern.ebegu.dto.suchfilter.lucene.BGNummerBridge;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
@@ -18,18 +43,6 @@ import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.ClassBridge;
 import org.hibernate.search.annotations.Indexed;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Entity fuer Betreuungen.
@@ -284,7 +297,9 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 			statusSame = Objects.equals(this.getBetreuungsstatus(), otherBetreuung.getBetreuungsstatus());
 		}
 		boolean stammdatenSame = this.getInstitutionStammdaten().isSame(otherBetreuung.getInstitutionStammdaten());
-		return pensenSame && abwesenheitenSame && statusSame && stammdatenSame;
+		boolean erwBeduerfnisseSame = Objects.equals(getErweiterteBeduerfnisse(), otherBetreuung
+			.getErweiterteBeduerfnisse());
+		return pensenSame && abwesenheitenSame && statusSame && stammdatenSame && erwBeduerfnisseSame;
 	}
 
 	@Transient

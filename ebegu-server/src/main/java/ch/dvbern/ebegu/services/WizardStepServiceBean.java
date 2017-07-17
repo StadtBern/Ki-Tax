@@ -1,17 +1,12 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.MailException;
-import ch.dvbern.ebegu.errors.MergeDocException;
-import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
-import ch.dvbern.ebegu.util.DokumenteUtil;
-import ch.dvbern.ebegu.util.EbeguUtil;
-import ch.dvbern.lib.cdipersistence.Persistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
@@ -25,11 +20,42 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
+import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
+import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.WizardStep;
+import ch.dvbern.ebegu.entities.WizardStep_;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.enums.WizardStepStatus;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.MailException;
+import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.DokumenteUtil;
+import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.lib.cdipersistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static ch.dvbern.ebegu.enums.UserRole.*;
+import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_TRAEGERSCHAFT;
+import static ch.dvbern.ebegu.enums.UserRole.SCHULAMT;
 
 /**
  * Service fuer Gesuch
@@ -203,7 +229,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					|| (!oldEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2() && newEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2())) {
 					// beim Wechseln von KEIN_EV auf EV oder von KEIN_EV_FUER_BASISJAHR2 auf EV_FUER_BASISJAHR2
 					wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
-				} else if (wizardStep.getGesuch().isMutation()) {
+				} else if (wizardStep.getGesuch().isMutation() && WizardStepStatus.NOK != wizardStep.getWizardStepStatus()) {
 					setWizardStepOkOrMutiert(wizardStep);
 				}
 			}
@@ -455,9 +481,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private void addRelatedObjectsForUmzug(GesuchstellerContainer gesuchsteller, List<AbstractEntity> relatedObjects) {
 		if (gesuchsteller != null) {
 			for (GesuchstellerAdresseContainer adresse : gesuchsteller.getAdressen()) {
-				// todo beim this should not return the CURRENT adresse. already done????
-				if (!adresse.extractIsKorrespondenzAdresse() && adresse.getGesuchstellerAdresseJA().getGueltigkeit()
-					.isAfter(LocalDate.now())) {
+				if (!adresse.extractIsKorrespondenzAdresse() && !adresse.getGesuchstellerAdresseJA().getGueltigkeit()
+					.getGueltigAb().isEqual(Constants.START_OF_TIME)) { // only the first Adresse starts at START_OF_TIME
 					relatedObjects.add(adresse);
 				}
 			}
@@ -472,9 +497,12 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		gesuchsteller) {
 		if (gesuchsteller != null) {
 			relatedObjects.add(gesuchsteller.getGesuchstellerJA());
-			final GesuchstellerAdresseContainer korrespondezAdresse = gesuchsteller.extractKorrespondezAdresse();
-			if (korrespondezAdresse != null) {
-				relatedObjects.add(korrespondezAdresse);
+			for (GesuchstellerAdresseContainer adresse : gesuchsteller.getAdressen()) {
+				// add Korrespondezadresse and first Wohnadresse
+				if (adresse.extractIsKorrespondenzAdresse() || adresse.getGesuchstellerAdresseJA().getGueltigkeit()
+					.getGueltigAb().isEqual(Constants.START_OF_TIME)) { // only the first Wohnadresse starts at START_OF_TIME
+					relatedObjects.add(adresse);
+				}
 			}
 		}
 	}

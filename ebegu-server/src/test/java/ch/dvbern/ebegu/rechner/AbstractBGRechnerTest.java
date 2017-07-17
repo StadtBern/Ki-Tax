@@ -332,7 +332,7 @@ public class AbstractBGRechnerTest {
 				Verfuegung verfuegung = betreuung.getVerfuegung();
 				System.out.println(verfuegung);
 				Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());
-				Assert.assertEquals(MathUtil.GANZZAHL.from(0.00), verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommen());
+				Assert.assertEquals(MathUtil.GANZZAHL.from(MathUtil.DEFAULT.from(-7520)), verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommen());
 				// Erster Monat
 				VerfuegungZeitabschnitt august = verfuegung.getZeitabschnitte().get(0);
 				assertZeitabschnitt(august, 100, 100, 100, 1667.40, 1562.40, 105.00);
@@ -344,7 +344,7 @@ public class AbstractBGRechnerTest {
 				Verfuegung verfuegung = betreuung.getVerfuegung();
 				System.out.println(verfuegung);
 				Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());
-				Assert.assertEquals(MathUtil.GANZZAHL.from(0), verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommen());
+				Assert.assertEquals(MathUtil.GANZZAHL.from(MathUtil.DEFAULT.from(-7520)), verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommen());
 				// Erster Monat
 				VerfuegungZeitabschnitt august = verfuegung.getZeitabschnitte().get(0);
 				assertZeitabschnitt(august, 100, 60, 60, 1370.30, 1289.30, 81.00);

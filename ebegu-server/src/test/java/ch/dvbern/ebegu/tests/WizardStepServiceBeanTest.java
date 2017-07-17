@@ -532,7 +532,8 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		EinkommensverschlechterungInfoContainer oldDataCont = new EinkommensverschlechterungInfoContainer();
 		EinkommensverschlechterungInfo oldData = new EinkommensverschlechterungInfo();
 		oldData.setEinkommensverschlechterung(true);
-		oldData.setEkvFuerBasisJahrPlus1(false);
+		oldData.setEkvFuerBasisJahrPlus1(true); // actual difference
+		oldData.setGemeinsameSteuererklaerung_BjP1(true);
 		oldData.setEkvFuerBasisJahrPlus2(false);
 		oldDataCont.setGesuch(erstgesuch);
 		oldDataCont.setEinkommensverschlechterungInfoJA(oldData);
