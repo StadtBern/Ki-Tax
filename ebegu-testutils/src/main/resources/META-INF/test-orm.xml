@@ -111,17 +111,13 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
   IFNULL(EingegangeneGesuch.AnzahlMutationPapier, 0)                         AnzahlMutationPapier,
   IFNULL(betreuung.abwesenheit_mutiert, 0)                                   AnzahlMutationAbwesenheit,
   IFNULL(betreuung.betreuung_mutiert, 0)                                     AnzahlMutationBetreuung,
-  IFNULL(Mutationen.AnzahlMutationDokumente, 0)                              AnzahlMutationDokumente,
   IFNULL(Mutationen.AnzahlMutationEV, 0)                                     AnzahlMutationEV,
   IFNULL(Mutationen.AnzahlMutationEwerbspensum, 0)                           AnzahlMutationEwerbspensum,
   IFNULL(Mutationen.AnzahlMutationFamilienSitutation, 0)                     AnzahlMutationFamilienSitutation,
   IFNULL(Mutationen.AnzahlMutationFinanzielleSituation, 0)                   AnzahlMutationFinanzielleSituation,
-  IFNULL(Mutationen.AnzahlMutationFreigabe, 0)                               AnzahlMutationFreigabe,
-  IFNULL(Mutationen.AnzahlMutationGesuchErstellen, 0)                        AnzahlMutationGesuchErstellen,
   IFNULL(Mutationen.AnzahlMutationGesuchsteller, 0)                          AnzahlMutationGesuchsteller,
   IFNULL(kind_container.kind_mutiert, 0)                                     AnzahlMutationKinder,
   IFNULL(Mutationen.AnzahlMutationUmzug, 0)                                  AnzahlMutationUmzug,
-  IFNULL(Mutationen.AnzahlMutationVerfuegen, 0)                              AnzahlMutationVerfuegen,
   IFNULL(Mahnungen.AnzahlMahnungen, 0)                                       AnzahlMahnungen,
   IFNULL(Statuswechsel.AnzahlBeschwerde, 0)                                  AnzahlBeschwerde,
   IFNULL(Statuswechsel.AnzahlSteueramtAusgeloest, 0)						 AnzahlSteueramtAusgeloest,
@@ -144,47 +140,51 @@ FROM kind_container
   INNER JOIN fall ON fall.id = gesuch.fall_id
 
   LEFT OUTER JOIN (
-                    SELECT
-                      CASE WHEN eingangsart = 'ONLINE' AND (typ = 'ERSTGESUCH' OR typ = 'ERNEUERUNGSGESUCH')
-                        THEN 1 END AnzahlGesuchOnline,
-                      CASE WHEN eingangsart = 'PAPIER' AND (typ = 'ERSTGESUCH' OR typ = 'ERNEUERUNGSGESUCH')
-                        THEN 1 END AnzahlGesuchPapier,
-                      CASE WHEN eingangsart = 'ONLINE' AND typ = 'MUTATION'
-                        THEN 1 END AnzahlMutationOnline,
-                      CASE WHEN eingangsart = 'PAPIER' AND typ = 'MUTATION'
-                        THEN 1 END AnzahlMutationPapier,
-                      gesuch.id AS gesuch_id
-                    FROM gesuch
-                     WHERE eingangsdatum BETWEEN :fromDate AND :toDate
-                  ) EingegangeneGesuch ON EingegangeneGesuch.gesuch_id = gesuch.id
+	SELECT
+	  CASE WHEN eingangsart = 'ONLINE' AND (typ = 'ERSTGESUCH' OR typ = 'ERNEUERUNGSGESUCH')
+		THEN 1 END AnzahlGesuchOnline,
+	  CASE WHEN eingangsart = 'PAPIER' AND (typ = 'ERSTGESUCH' OR typ = 'ERNEUERUNGSGESUCH')
+		THEN 1 END AnzahlGesuchPapier,
+	  CASE WHEN eingangsart = 'ONLINE' AND typ = 'MUTATION'
+		THEN 1 END AnzahlMutationOnline,
+	  CASE WHEN eingangsart = 'PAPIER' AND typ = 'MUTATION'
+		THEN 1 END AnzahlMutationPapier,
+	  gesuch.id AS gesuch_id
+	FROM gesuch
+	 WHERE eingangsdatum BETWEEN :fromDate AND :toDate
+  ) EingegangeneGesuch ON EingegangeneGesuch.gesuch_id = gesuch.id
 
   LEFT OUTER JOIN
   (
-    SELECT
-      gesuch_id,
-      CASE WHEN wizard_step_name = 'DOKUMENTE'
-        THEN 1 END AnzahlMutationDokumente,
-      CASE WHEN wizard_step_name = 'EINKOMMENSVERSCHLECHTERUNG'
-        THEN 1 END AnzahlMutationEV,
-      CASE WHEN wizard_step_name = 'ERWERBSPENSUM'
-        THEN 1 END AnzahlMutationEwerbspensum,
-      CASE WHEN wizard_step_name = 'FAMILIENSITUATION'
-        THEN 1 END AnzahlMutationFamilienSitutation,
-      CASE WHEN wizard_step_name = 'FINANZIELLE_SITUATION'
-        THEN 1 END AnzahlMutationFinanzielleSituation,
-      CASE WHEN wizard_step_name = 'FREIGABE'
-        THEN 1 END AnzahlMutationFreigabe,
-      CASE WHEN wizard_step_name = 'GESUCH_ERSTELLEN'
-        THEN 1 END AnzahlMutationGesuchErstellen,
-      CASE WHEN wizard_step_name = 'GESUCHSTELLER'
-        THEN 1 END AnzahlMutationGesuchsteller,
-      CASE WHEN wizard_step_name = 'UMZUG'
-        THEN 1 END AnzahlMutationUmzug,
-      CASE WHEN wizard_step_name = 'VERFUEGEN'
-        THEN 1 END AnzahlMutationVerfuegen
-    FROM wizard_step
-    WHERE wizard_step_status = 'MUTIERT'
-    AND wizard_step_name NOT IN ('ABWESENHEIT','BETREUUNG','KINDER')
+  	SELECT
+  	SUM(AnzahlMutationEV) AS AnzahlMutationEV,
+  	SUM(AnzahlMutationEwerbspensum) AS AnzahlMutationEwerbspensum,
+  	SUM(AnzahlMutationFamilienSitutation) AS AnzahlMutationFamilienSitutation,
+  	SUM(AnzahlMutationFinanzielleSituation) AS AnzahlMutationFinanzielleSituation,
+  	SUM(AnzahlMutationGesuchsteller) AS AnzahlMutationGesuchsteller,
+  	SUM(AnzahlMutationUmzug) AS AnzahlMutationUmzug,
+  	gesuch_id
+  	FROM
+		(
+		SELECT
+		  gesuch_id,
+		  CASE WHEN wizard_step_name = 'EINKOMMENSVERSCHLECHTERUNG'
+			THEN 1 END AnzahlMutationEV,
+		  CASE WHEN wizard_step_name = 'ERWERBSPENSUM'
+			THEN 1 END AnzahlMutationEwerbspensum,
+		  CASE WHEN wizard_step_name = 'FAMILIENSITUATION'
+			THEN 1 END AnzahlMutationFamilienSitutation,
+		  CASE WHEN wizard_step_name = 'FINANZIELLE_SITUATION'
+			THEN 1 END AnzahlMutationFinanzielleSituation,
+		  CASE WHEN wizard_step_name = 'GESUCHSTELLER'
+			THEN 1 END AnzahlMutationGesuchsteller,
+		  CASE WHEN wizard_step_name = 'UMZUG'
+			THEN 1 END AnzahlMutationUmzug
+		FROM wizard_step
+		WHERE wizard_step_status = 'MUTIERT'
+		AND wizard_step_name NOT IN ('DOKUMENTE','FREIGABE','GESUCH_ERSTELLEN','VERFUEGEN','ABWESENHEIT','BETREUUNG','KINDER')
+		) WizardSteps
+	GROUP BY gesuch_id
   ) Mutationen ON Mutationen.gesuch_id = gesuch.id
 
   LEFT OUTER JOIN (
@@ -200,11 +200,11 @@ FROM kind_container
 
  LEFT OUTER JOIN (
  	SELECT
- 		sum(AnzahlSteueramtAusgeloestTmp) as AnzahlSteueramtAusgeloest,
-		sum(AnzahlSteueramtGeprueftTmp) as AnzahlSteueramtGeprueft,
-		sum(AnzahlBeschwerdeTmp) as AnzahlBeschwerde,
+ 		SUM(AnzahlSteueramtAusgeloestTmp) AS AnzahlSteueramtAusgeloest,
+		SUM(AnzahlSteueramtGeprueftTmp) AS AnzahlSteueramtGeprueft,
+		SUM(AnzahlBeschwerdeTmp) AS AnzahlBeschwerde,
 		gesuch_id
-	from (
+	FROM (
 					SELECT
 						CASE WHEN antrag_status_history.status IN ('PRUEFUNG_STV')
 							THEN 1 END AnzahlSteueramtAusgeloestTmp,
@@ -241,6 +241,8 @@ FROM kind_container
                     WHERE timestamp_erstellt BETWEEN :fromDateTime AND :toDateTime
                   ) Verfuegungen ON Verfuegungen.id = betreuung.verfuegung_id
 WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
+	  AND gesuch.status IN ('VERFUEGT', 'NUR_SCHULAMT', 'NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN', 'BESCHWERDE_HAENGIG',
+			'PRUEFUNG_STV', 'IN_BEARBEITUNG_STV', 'GEPRUEFT_STV', 'KEIN_ANGEBOT')
  	  AND gesuch.eingangsdatum BETWEEN :fromDate AND :toDate
       AND (institution_stammdaten.betreuungsangebot_typ = 'TAGESSCHULE' OR :onlySchulamt = 0)
       AND (
@@ -250,17 +252,13 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
         OR IFNULL(EingegangeneGesuch.AnzahlMutationPapier, 0) = 1
         OR IFNULL(betreuung.abwesenheit_mutiert, 0) = 1
         OR IFNULL(betreuung.betreuung_mutiert, 0) = 1
-        OR IFNULL(Mutationen.AnzahlMutationDokumente, 0) = 1
         OR IFNULL(Mutationen.AnzahlMutationEV, 0) = 1
         OR IFNULL(Mutationen.AnzahlMutationEwerbspensum, 0) = 1
         OR IFNULL(Mutationen.AnzahlMutationFamilienSitutation, 0) = 1
         OR IFNULL(Mutationen.AnzahlMutationFinanzielleSituation, 0) = 1
-        OR IFNULL(Mutationen.AnzahlMutationFreigabe, 0) = 1
-        OR IFNULL(Mutationen.AnzahlMutationGesuchErstellen, 0) = 1
         OR IFNULL(Mutationen.AnzahlMutationGesuchsteller, 0) = 1
         OR IFNULL(kind_container.kind_mutiert, 0) = 1
         OR IFNULL(Mutationen.AnzahlMutationUmzug, 0) = 1
-        OR IFNULL(Mutationen.AnzahlMutationVerfuegen, 0) = 1
         OR IFNULL(Mahnungen.AnzahlMahnungen, 0) = 1
         OR IFNULL(Statuswechsel.AnzahlSteueramtAusgeloest, 0) = 1
         OR IFNULL(Statuswechsel.AnzahlSteueramtGeprueft, 0) = 1
