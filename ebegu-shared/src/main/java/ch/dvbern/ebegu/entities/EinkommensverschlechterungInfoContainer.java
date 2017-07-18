@@ -43,9 +43,13 @@ public class EinkommensverschlechterungInfoContainer extends AbstractEntity {
 	}
 
 	public EinkommensverschlechterungInfoContainer(EinkommensverschlechterungInfoContainer other) {
-		this.einkommensverschlechterungInfoGS = other.einkommensverschlechterungInfoGS;
-		this.einkommensverschlechterungInfoJA = other.einkommensverschlechterungInfoJA;
-		this.gesuch = other.gesuch;
+		if (other != null) {
+			if (other.getEinkommensverschlechterungInfoGS() != null) {
+				this.einkommensverschlechterungInfoGS = new EinkommensverschlechterungInfo(other.getEinkommensverschlechterungInfoGS());
+			}
+			this.einkommensverschlechterungInfoJA = new EinkommensverschlechterungInfo(other.getEinkommensverschlechterungInfoJA());
+			this.gesuch = other.getGesuch();
+		}
 	}
 
 	public EinkommensverschlechterungInfoContainer copyForMutation(EinkommensverschlechterungInfoContainer mutation, Gesuch mutationGesuch) {
