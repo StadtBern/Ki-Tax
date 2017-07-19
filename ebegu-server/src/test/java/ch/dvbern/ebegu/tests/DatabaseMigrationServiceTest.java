@@ -2,6 +2,8 @@ package ch.dvbern.ebegu.tests;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
@@ -44,7 +46,7 @@ public class DatabaseMigrationServiceTest extends AbstractEbeguLoginTest {
 
 
 	@Test
-	public void testScript1204EKVInfoExists_NoEkvToAdd() {
+	public void testScript1204EKVInfoExists_NoEkvToAdd() throws ExecutionException, InterruptedException {
 		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
 		createWizardStepEKV();
 		final EinkommensverschlechterungInfoContainer ekvInfo = TestDataUtil.createDefaultEinkommensverschlechterungsInfoContainer(gesuch);
@@ -52,7 +54,8 @@ public class DatabaseMigrationServiceTest extends AbstractEbeguLoginTest {
 		gesuch = persistence.merge(gesuch);
 		timestampMutiert = gesuch.getTimestampMutiert();
 
-		dbMigrationService.processScript("1204");
+		final Future<Boolean> future = dbMigrationService.processScript("1204");
+		future.get();
 
 		final Gesuch updatedGesuch = persistence.find(Gesuch.class, gesuch.getId());
 		Assert.assertNotNull(updatedGesuch.getGesuchsteller1());
@@ -63,7 +66,7 @@ public class DatabaseMigrationServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void testScript1204_AllRequiredEkvExists() {
+	public void testScript1204_AllRequiredEkvExists() throws ExecutionException, InterruptedException {
 		gesuch = TestDataUtil.createAndPersistFeutzYvonneGesuch(instService, persistence, LocalDate.now());
 		createWizardStepEKV();
 		final EinkommensverschlechterungInfoContainer ekvInfo = TestDataUtil.createDefaultEinkommensverschlechterungsInfoContainer(gesuch);
@@ -80,7 +83,8 @@ public class DatabaseMigrationServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertNotNull(gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer());
 		Assert.assertNotNull(gesuch.getGesuchsteller2().getEinkommensverschlechterungContainer());
 
-		dbMigrationService.processScript("1204");
+		final Future<Boolean> future = dbMigrationService.processScript("1204");
+		future.get();
 
 		final Gesuch updatedGesuch = persistence.find(Gesuch.class, gesuch.getId());
 
@@ -93,7 +97,7 @@ public class DatabaseMigrationServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void testScript1204EKVInfoExists_AddingEkv() {
+	public void testScript1204EKVInfoExists_AddingEkv() throws ExecutionException, InterruptedException {
 		gesuch = TestDataUtil.createAndPersistFeutzYvonneGesuch(instService, persistence, LocalDate.now());
 		createWizardStepEKV();
 		final EinkommensverschlechterungInfoContainer ekvInfo = TestDataUtil.createDefaultEinkommensverschlechterungsInfoContainer(gesuch);
@@ -108,7 +112,8 @@ public class DatabaseMigrationServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertNotNull(gesuch.getGesuchsteller2());
 		Assert.assertNull(gesuch.getGesuchsteller2().getEinkommensverschlechterungContainer());
 
-		dbMigrationService.processScript("1204");
+		final Future<Boolean> future = dbMigrationService.processScript("1204");
+		future.get();
 
 		final Gesuch updatedGesuch = persistence.find(Gesuch.class, gesuch.getId());
 
@@ -121,7 +126,7 @@ public class DatabaseMigrationServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void testScript1204EKVInfoDoesntExist_SetItFalse() {
+	public void testScript1204EKVInfoDoesntExist_SetItFalse() throws ExecutionException, InterruptedException {
 		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
 		createWizardStepEKV();
 		gesuch.setEinkommensverschlechterungInfoContainer(null);
@@ -130,7 +135,9 @@ public class DatabaseMigrationServiceTest extends AbstractEbeguLoginTest {
 		//assert previous ekvInfo is null
 		Assert.assertNull(gesuch.getEinkommensverschlechterungInfoContainer());
 
-		dbMigrationService.processScript("1204");
+
+		final Future<Boolean> future = dbMigrationService.processScript("1204");
+		future.get();
 
 		final Gesuch updatedGesuch = persistence.find(Gesuch.class, gesuch.getId());
 		Assert.assertNotNull(updatedGesuch.getEinkommensverschlechterungInfoContainer());
@@ -146,7 +153,7 @@ public class DatabaseMigrationServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void testScript1204_Status_Unbesucht() {
+	public void testScript1204_Status_Unbesucht() throws ExecutionException, InterruptedException {
 		// in this case it shouldn't do anything because it is not needed. The user will do it when needed
 		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
 		wizardStepService.createWizardStepList(gesuch); // step is created with UNBESUCHT
@@ -156,7 +163,8 @@ public class DatabaseMigrationServiceTest extends AbstractEbeguLoginTest {
 		//assert previous ekvInfo is null
 		Assert.assertNull(gesuch.getEinkommensverschlechterungInfoContainer());
 
-		dbMigrationService.processScript("1204");
+		final Future<Boolean> future = dbMigrationService.processScript("1204");
+		future.get();
 
 		// it must still be null
 		Assert.assertNull(gesuch.getEinkommensverschlechterungInfoContainer());
