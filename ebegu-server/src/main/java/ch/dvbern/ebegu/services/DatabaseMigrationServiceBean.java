@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.services;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -16,6 +18,9 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.dvbern.ebegu.entities.AntragStatusHistory;
 import ch.dvbern.ebegu.entities.Betreuung;
@@ -35,8 +40,6 @@ import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -46,7 +49,7 @@ import org.slf4j.LoggerFactory;
 @Local(DatabaseMigrationService.class)
 @PermitAll
 @RunAs(UserRoleName.SUPER_ADMIN)
-@SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals", "LocalVariableNamingConvention", "PMD.NcssTypeCount", "InstanceMethodNamingConvention"})
+@SuppressWarnings(value = { "PMD.AvoidDuplicateLiterals", "LocalVariableNamingConvention", "PMD.NcssTypeCount", "InstanceMethodNamingConvention" })
 public class DatabaseMigrationServiceBean extends AbstractBaseService implements DatabaseMigrationService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseMigrationServiceBean.class.getSimpleName());
@@ -85,19 +88,19 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 	@Asynchronous
 	public Future<Boolean> processScript(@Nonnull String scriptId) {
 		switch (scriptId) {
-			case "1105":
-				processScript1105_GesuchGueltigDatumVerfuegt();
-				break;
-			case "1204":
-				processScript1204_CreateMissingEKV();
-				break;
+		case "1105":
+			processScript1105_GesuchGueltigDatumVerfuegt();
+			break;
+		case "1204":
+			processScript1204_CreateMissingEKV();
+			break;
 		}
 		// to avoid errors due to missing Context because Principal is set as RequestScoped
 		persistence.getEntityManager().flush();
 		return new AsyncResult<>(Boolean.TRUE);
 	}
 
-	@SuppressWarnings({"PMD.NcssMethodCount", "OverlyComplexMethod", "OverlyNestedMethod"})
+	@SuppressWarnings({ "PMD.NcssMethodCount", "OverlyComplexMethod", "OverlyNestedMethod" })
 	private void processScript1105_GesuchGueltigDatumVerfuegt() {
 		LOGGER.info("Starting Migration EBEGU-1105");
 		Collection<Gesuchsperiode> allGesuchsperioden = gesuchsperiodeService.getAllGesuchsperioden();
@@ -181,15 +184,17 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 	 * has no content at all.
 	 */
 	private void processScript1204_CreateMissingEKV() {
+		LocalDateTime startTime = LocalDateTime.now();
 		LOGGER.info("Starting Migration EBEGU-1204");
 		final Collection<Gesuch> allGesuche = gesuchService.getAllGesuche();
 		int i = 0;
+		int correctedNum = 0;
 		for (final Gesuch gesuch : allGesuche) {
-			LOGGER.info("{}/{} Processed", i, allGesuche.size());
+			LOGGER.debug("{}/{} Processed", i, allGesuche.size());
 			i++;
 			if (isEkvStepAlreadyFilledOut(gesuch)) {
 				if (gesuch.getEinkommensverschlechterungInfoContainer() == null) {
-					LOGGER.info("Found null EKVInfoContainer for Gesuch {}", gesuch.getId());
+					LOGGER.info("Found no EKVInfoContainer for Gesuch {}", gesuch.getId());
 					EinkommensverschlechterungInfoContainer ekvInfoContainer = new EinkommensverschlechterungInfoContainer();
 
 					ekvInfoContainer.setGesuch(gesuch);
@@ -200,10 +205,10 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 					ekvInfoContainer.setEinkommensverschlechterungInfoJA(ekvInfoJA);
 					gesuch.setSkipPreUpdate(true); // with this flag we skip the preUpdate and timestampMutiert doesn't get updated
 					ekvInfoService.createEinkommensverschlechterungInfo(ekvInfoContainer);
+					correctedNum++;
 					LOGGER.info("Default EKVInfoContainer created with 'false' for Gesuch {}", gesuch.getId());
-				}
-				else {
-					// if EKVInfo didn't exist it couldn't have it set to true. So we can do this in an else
+				} else {
+					// if EKVInfo didn't exist it couldn't have been set to true. So we can do this in an else
 					final EinkommensverschlechterungInfo ekvInfoJA = gesuch.getEinkommensverschlechterungInfoContainer().getEinkommensverschlechterungInfoJA();
 					if (ekvInfoJA.getEinkommensverschlechterung()) {
 						if (gesuch.getGesuchsteller1() != null) {
@@ -212,15 +217,17 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 									gesuch.getId()));
 						}
 						if (gesuch.getGesuchsteller2() != null) {
-							gesuch.getGesuchsteller2().setEinkommensverschlechterungContainer
-								(createNonExistingEKVContainerForGesuchsteller(gesuch.getGesuchsteller2(), ekvInfoJA,
+							gesuch.getGesuchsteller2().setEinkommensverschlechterungContainer(
+								createNonExistingEKVContainerForGesuchsteller(gesuch.getGesuchsteller2(), ekvInfoJA,
 									gesuch.getId()));
 						}
 					}
 				}
 			}
 		}
-		LOGGER.info("Finished Migration EBEGU-1204");
+		LocalDateTime stopTime = LocalDateTime.now();
+		long between = ChronoUnit.MILLIS.between(startTime, stopTime);
+		LOGGER.info("Finished Migration EBEGU-1204, took : " + between + " ms and corrected " + correctedNum);
 	}
 
 	/**
@@ -240,21 +247,21 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 	private EinkommensverschlechterungContainer createNonExistingEKVContainerForGesuchsteller(@NotNull GesuchstellerContainer gesuchsteller, @NotNull EinkommensverschlechterungInfo ekvInfoJA, String gesuchId) {
 		if (ekvInfoJA.getEkvFuerBasisJahrPlus1() || ekvInfoJA.getEkvFuerBasisJahrPlus2()) {
 			if (gesuchsteller.getEinkommensverschlechterungContainer() == null) {
-				LOGGER.info("Found null EKVContainer for Gesuchsteller {} in Gesuch {}. Created ", gesuchsteller.getId(), gesuchId);
+				LOGGER.info("Found no EKVContainer for Gesuchsteller {} in Gesuch {}. Created ", gesuchsteller.getId(), gesuchId);
 				final EinkommensverschlechterungContainer ekvContainer = new EinkommensverschlechterungContainer();
 				ekvContainer.setGesuchsteller(gesuchsteller);
 				gesuchsteller.setEinkommensverschlechterungContainer(ekvContainer);
 			}
 			//noinspection ConstantConditions
 			if (ekvInfoJA.getEkvFuerBasisJahrPlus1() && gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() == null) {
-				LOGGER.info("Found null EKVContainerBasisJahrPlus1 for Gesuchsteller {} in Gesuch {}. Created ", gesuchsteller.getId(), gesuchId);
+				LOGGER.info("Found no EKVContainerBasisJahrPlus1 for Gesuchsteller {} in Gesuch {}. Created ", gesuchsteller.getId(), gesuchId);
 				final Einkommensverschlechterung ekvBasisJahrPlus1 = new Einkommensverschlechterung();
 				ekvBasisJahrPlus1.setSteuerveranlagungErhalten(false);
 				ekvBasisJahrPlus1.setSteuererklaerungAusgefuellt(false);
 				gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(ekvBasisJahrPlus1);
 			}
 			if (ekvInfoJA.getEkvFuerBasisJahrPlus2() && gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() == null) {
-				LOGGER.info("Found null EKVContainerBasisJahrPlus2 for Gesuchsteller {} in Gesuch {}. Created ", gesuchsteller.getId(), gesuchId);
+				LOGGER.info("Found no EKVContainerBasisJahrPlus2 for Gesuchsteller {} in Gesuch {}. Created ", gesuchsteller.getId(), gesuchId);
 				final Einkommensverschlechterung ekvBasisJahrPlus2 = new Einkommensverschlechterung();
 				ekvBasisJahrPlus2.setSteuerveranlagungErhalten(false);
 				ekvBasisJahrPlus2.setSteuererklaerungAusgefuellt(false);
