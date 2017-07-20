@@ -41,7 +41,6 @@ import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.KindService;
-
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
 
