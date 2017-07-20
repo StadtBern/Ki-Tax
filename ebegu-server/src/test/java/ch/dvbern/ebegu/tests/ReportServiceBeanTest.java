@@ -214,8 +214,8 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void generateExcelReportGesuchZeitraum() throws Exception {
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchZeitraum(
-			LocalDateTime.now().minusDays(1),
-			LocalDateTime.now().plusDays(1),
+			LocalDateTime.of(2016, Month.JANUARY, 1, 0, 0, 0),
+			LocalDateTime.of(2017, Month.DECEMBER, 31, 0, 0, 0),
 			null);
 
 		assertNotNull(uploadFileInfo.getBytes());

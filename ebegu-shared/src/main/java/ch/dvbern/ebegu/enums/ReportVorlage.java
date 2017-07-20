@@ -20,7 +20,7 @@ public enum ReportVorlage {
 	// TODO Achtung mit Filename, da mehrere Dokumente mit gleichem Namen aber unterschiedlichem Inhalt gespeichert werden. Falls der Name geaendert wuerde, muesste das File wieder geloescht werden.
 	VORLAGE_REPORT_GESUCH_STICHTAG("/reporting/GesuchStichtag.xlsx", "GesuchStichtag.xlsx", Constants.DATA,
 		MergeFieldGesuchStichtag.class),
-	VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx", "GesuchZeitraum.xlsx", Constants.DATA,
+	VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx", "VerfuegteGesucheMutationenNachZeitraum.xlsx", Constants.DATA,
 		MergeFieldGesuchZeitraum.class),
 	VORLAGE_REPORT_KANTON("/reporting/Kanton.xlsx", "Kanton.xlsx", Constants.DATA,
 		MergeFieldKanton.class),

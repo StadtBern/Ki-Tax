@@ -12,6 +12,8 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
@@ -67,16 +69,21 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 		gesuch.setEinkommensverschlechterungInfoContainer(convertedEkvi);
 
 		//Alle Daten des EV loeschen wenn man kein EV mehr eingeben will
-		removeEinkommensverschlechterungContFromGesuchsteller(gesuch.getGesuchsteller1(), oldEVData, convertedEkvi);
-		removeEinkommensverschlechterungContFromGesuchsteller(gesuch.getGesuchsteller2(), oldEVData, convertedEkvi);
+		removeEKVContainerIfNotNeeded(gesuch.getGesuchsteller1(), oldEVData, convertedEkvi);
+		removeEKVContainerIfNotNeeded(gesuch.getGesuchsteller2(), oldEVData, convertedEkvi);
 		removeEinkommensverschlechterungFromGesuch(gesuch, convertedEkvi);
+		//All needed EKVContainer must be created if they don't exist yet
+		addEmptyEKVContainerIfNeeded(gesuch.getGesuchsteller1(), convertedEkvi);
+		addEmptyEKVContainerIfNeeded(gesuch.getGesuchsteller2(), convertedEkvi);
 
 		convertedEkvi.setGesuch(gesuchService.updateGesuch(gesuch, false, null)); // saving gesuch cascades and saves Ekvi too
 
 		wizardStepService.updateSteps(gesuch.getId(), oldEVData,
 			convertedEkvi, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 
-		return convertedEkvi;
+		//cannot return convertedEkvi because it hasn't been updated after the Gesuch was saved. So we need to take
+		// it from the Gesuch
+		return gesuch.getEinkommensverschlechterungInfoContainer();
 	}
 
 	@Override
@@ -128,7 +135,7 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 		}
 	}
 
-	private void removeEinkommensverschlechterungContFromGesuchsteller(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfoContainer oldData, EinkommensverschlechterungInfoContainer convertedEkvi) {
+	private void removeEKVContainerIfNotNeeded(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfoContainer oldData, EinkommensverschlechterungInfoContainer convertedEkvi) {
 		if (isNeededToRemoveEinkommensverschlechterungCont(gesuchsteller, oldData, convertedEkvi)) {
 			//noinspection ConstantConditions
 			einkommensverschlechterungService.removeEinkommensverschlechterungContainer(gesuchsteller.getEinkommensverschlechterungContainer());
@@ -143,5 +150,41 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 		return oldData != null && newData != null && gesuchsteller != null
 			&& !newData.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()
 			&& gesuchsteller.getEinkommensverschlechterungContainer() != null;
+	}
+
+	/**
+	 * This method creates all required EkvContainer and EKV. It uses the information contained in the EKVInfo to
+	 * know when these EKVCont and EKV must be created. They will be created using the values by default.
+	 */
+	private void addEmptyEKVContainerIfNeeded(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfoContainer ekvInfo) {
+		if (gesuchsteller != null) {
+			if (gesuchsteller.getEinkommensverschlechterungContainer() == null
+				&& ekvInfo.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()) {
+
+				EinkommensverschlechterungContainer ekvCont = new EinkommensverschlechterungContainer();
+				ekvCont.setGesuchsteller(gesuchsteller);
+				gesuchsteller.setEinkommensverschlechterungContainer(ekvCont);
+			}
+			if (ekvInfo.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus1()
+				&& gesuchsteller.getEinkommensverschlechterungContainer() != null
+				&& gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() == null) {
+
+				gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(createEmptyEKV());
+			}
+			if (ekvInfo.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2()
+				&& gesuchsteller.getEinkommensverschlechterungContainer() != null
+				&& gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() == null) {
+
+				gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(createEmptyEKV());
+			}
+		}
+	}
+
+	@Nonnull
+	private Einkommensverschlechterung createEmptyEKV() {
+		Einkommensverschlechterung ekvBasisPlus1 = new Einkommensverschlechterung();
+		ekvBasisPlus1.setSteuererklaerungAusgefuellt(false);
+		ekvBasisPlus1.setSteuerveranlagungErhalten(false);
+		return ekvBasisPlus1;
 	}
 }

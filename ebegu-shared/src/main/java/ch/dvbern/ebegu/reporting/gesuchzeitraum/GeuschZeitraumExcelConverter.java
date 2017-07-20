@@ -51,17 +51,13 @@ public class GeuschZeitraumExcelConverter implements ExcelConverter {
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationPapier, dataRow.getAnzahlMutationPapier());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationAbwesenheit, dataRow.getAnzahlMutationAbwesenheit());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationBetreuung, dataRow.getAnzahlMutationBetreuung());
-				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationDokumente, dataRow.getAnzahlMutationDokumente());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationEV, dataRow.getAnzahlMutationEV());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationEwerbspensum, dataRow.getAnzahlMutationEwerbspensum());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationFamilienSitutation, dataRow.getAnzahlMutationFamilienSitutation());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationFinanzielleSituation, dataRow.getAnzahlMutationFinanzielleSituation());
-				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationFreigabe, dataRow.getAnzahlMutationFreigabe());
-				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationGesuchErstellen, dataRow.getAnzahlMutationGesuchErstellen());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationGesuchsteller, dataRow.getAnzahlMutationGesuchsteller());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationKinder, dataRow.getAnzahlMutationKinder());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationUmzug, dataRow.getAnzahlMutationUmzug());
-				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMutationVerfuegen, dataRow.getAnzahlMutationVerfuegen());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlMahnungen, dataRow.getAnzahlMahnungen());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlSteueramtAusgeloest, dataRow.getAnzahlSteueramtAusgeloest());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.anzahlSteueramtGeprueft, dataRow.getAnzahlSteueramtGeprueft());

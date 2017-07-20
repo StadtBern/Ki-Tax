@@ -89,15 +89,13 @@ public class EinkommensverschlechterungResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Gesuch gesuch = gesuchService.findGesuch(gesuchJAXPId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("saveEinkommensverschlechterungContainer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId()));
-
 		// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
-		resourceHelper.assertGesuchStatusForBenutzerRole(gesuch);
-
-		GesuchstellerContainer gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("saveEinkommensverschlechterungContainer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId()));
-		EinkommensverschlechterungContainer convertedFinSitCont = converter.einkommensverschlechterungContainerToStorableEntity(einkommensverschlechterungContainerJAXP);
-		convertedFinSitCont.setGesuchsteller(gesuchsteller);
-		EinkommensverschlechterungContainer persistedEinkommensverschlechterungContainer =
-			einkVerschlService.saveEinkommensverschlechterungContainer(convertedFinSitCont, gesuch.getId());
+		resourceHelper.assertGesuchStatusForBenutzerRole (gesuch);
+			GesuchstellerContainer gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("saveEinkommensverschlechterungContainer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId()) );
+				EinkommensverschlechterungContainer convertedEKVCont = converter.einkommensverschlechterungContainerToStorableEntity(einkommensverschlechterungContainerJAXP);
+				convertedEKVCont.setGesuchsteller(gesuchsteller);
+				EinkommensverschlechterungContainer persistedEinkommensverschlechterungContainer =
+					einkVerschlService.saveEinkommensverschlechterungContainer(convertedEKVCont, gesuch.getId());
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(EinkommensverschlechterungResource.class)
@@ -126,6 +124,25 @@ public class EinkommensverschlechterungResource {
 		}
 		EinkommensverschlechterungContainer einkommensverschlechterungContainerToReturn = optional.get();
 		return converter.einkommensverschlechterungContainerToJAX(einkommensverschlechterungContainerToReturn);
+	}
+
+	@Nullable
+	@GET
+	@Path("/forGesuchsteller/{gesuchstellerId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxEinkommensverschlechterungContainer findEkvContainerForGesuchsteller(
+		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerId) throws EbeguException {
+
+		Validate.notNull(gesuchstellerId.getId());
+		String gsID = converter.toEntityId(gesuchstellerId);
+		Optional<GesuchstellerContainer> optionalGS = gesuchstellerService.findGesuchsteller(gsID);
+		if (!optionalGS.isPresent()) {
+			throw new EbeguEntityNotFoundException("findEkvContainerForGesuchsteller", ErrorCodeEnum
+				.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId not found: " + gesuchstellerId.getId());
+		}
+		GesuchstellerContainer gsContainer = optionalGS.get();
+		return converter.einkommensverschlechterungContainerToJAX(gsContainer.getEinkommensverschlechterungContainer());
 	}
 
 	@Nullable
