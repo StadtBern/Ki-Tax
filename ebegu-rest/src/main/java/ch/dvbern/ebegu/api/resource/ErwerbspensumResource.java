@@ -100,6 +100,7 @@ public class ErwerbspensumResource {
 
 	@ApiOperation("Returns the ErwerbspensumContainer with the specified ID ")
 	@Nullable
+	@GET
 	@Path("/{erwerbspensumContID}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)

@@ -696,7 +696,7 @@ public class GesuchResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
-		resourceHelper.assertGesuchStatusEqual(antragJaxId.getId(), AntragStatusDTO.IN_BEARBEITUNG_JA);
+		resourceHelper.assertGesuchStatusEqual(antragJaxId.getId(), AntragStatusDTO.GEPRUEFT);
 
 		Validate.notNull(antragJaxId.getId());
 		final String antragId = converter.toEntityId(antragJaxId);

@@ -86,7 +86,8 @@ public class GesuchstellerResource {
 		Gesuch gesuch = gesuchService.findGesuch(gesuchContJAXPId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("createGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchContJAXPId.getId()));
 
 		// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
-		resourceHelper.assertGesuchStatusForBenutzerRole(gesuch);
+		//TODO (team): Sobald das Speichern der Email/Telefon NACH dem Verfuegen in einem separaten Service ist, wieder einkommentieren
+//		resourceHelper.assertGesuchStatusForBenutzerRole(gesuch);
 
 		GesuchstellerContainer gesuchstellerToMerge = new GesuchstellerContainer();
 		if (gesuchstellerJAXP.getId() != null) {

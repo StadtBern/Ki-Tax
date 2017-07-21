@@ -123,9 +123,10 @@ public class MahnungResource {
 		if (!gesuchOptional.isPresent()) {
 			return Response.serverError().build();
 		}
-		Gesuch gesuchToReturn = gesuchOptional.get();
-		gesuchToReturn = mahnungService.mahnlaufBeenden(gesuchToReturn);
-		return Response.ok(gesuchToReturn).build();
+
+		final Gesuch gesuchToReturn = mahnungService.mahnlaufBeenden(gesuchOptional.get());
+
+		return Response.ok(converter.gesuchToJAX(gesuchToReturn)).build();
 	}
 
 	@Nonnull
