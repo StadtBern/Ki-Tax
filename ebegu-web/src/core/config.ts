@@ -50,6 +50,7 @@ export function configure($translateProvider: ITranslateProvider, $injector: IIn
     $httpProvider.interceptors.push('HttpErrorInterceptor');
     $httpProvider.interceptors.push('HttpAuthInterceptor');
     $httpProvider.interceptors.push('HttpResponseInterceptor');
+    $httpProvider.interceptors.push('HttpVersionInterceptor');
 
     $locationProvider.hashPrefix('');
 

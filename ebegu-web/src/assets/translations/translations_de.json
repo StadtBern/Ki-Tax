@@ -1059,6 +1059,8 @@
     "ZAHLUNG_ERSTELLEN_CONFIRM": "Sind Sie sicher, dass Sie diese Zahlung erstellen möchten?",
     "ZAHLUNG_ERSTELLEN_INFO": "Nachdem Sie die Zahlung erstellt haben, kann diese nicht mehr gelöscht werden",
     "ZAHLUNG_AUSLOESEN_CONFIRM": "Sind Sie sicher, dass Sie diese Zahlung auslösen möchten?",
-    "ZAHLUNG_AUSLOESEN_INFO": "Dies kann nicht rückgängig gemacht werden"
+    "ZAHLUNG_AUSLOESEN_INFO": "Dies kann nicht rückgängig gemacht werden",
+    "VERSION_INFO": "Version: Client {{frontendVersion}} / Server: {{backendVersion}}",
+    "VERSION_INFO_SINGLE": "Version {{version}}"
 
 }
