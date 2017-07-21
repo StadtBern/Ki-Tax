@@ -31,6 +31,9 @@ export class DvDownloadmenuController {
             .then((downloadFile: TSDownloadFile) => {
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
                 this.display = false;
+            })
+            .catch((ex) => {
+                win.close();
             });
     }
 }
