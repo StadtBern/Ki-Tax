@@ -1,12 +1,4 @@
-package ch.dvbern.ebegu.api.util.version;/*
- * Copyright © 2016 DV Bern AG, Switzerland
- *
- * Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
- * geschützt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulässig. Dies gilt
- * insbesondere für Vervielfältigungen, die Einspeicherung und Verarbeitung in
- * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
- * Ansicht übergeben, ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
- */
+package ch.dvbern.ebegu.api.util.version;
 
 import java.io.IOException;
 
@@ -19,6 +11,9 @@ import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
 
+/**
+ * All responses that are sent to the client get a new header-param with the server version.
+ */
 @Provider
 @Priority(Priorities.HEADER_DECORATOR)
 public class VersionHeaderFilter implements ContainerResponseFilter {
