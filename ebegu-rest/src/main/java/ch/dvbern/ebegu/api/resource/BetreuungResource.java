@@ -30,6 +30,7 @@ import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.resource.util.ResourceHelper;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -37,6 +38,7 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.FallService;
+import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.KindService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -60,6 +62,8 @@ public class BetreuungResource {
 	private JaxBConverter converter;
 	@Inject
 	private ResourceHelper resourceHelper;
+	@Inject
+	private GesuchService gesuchService;
 
 
 
@@ -83,6 +87,7 @@ public class BetreuungResource {
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
+			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch());
 			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
 			convertedBetreuung.setKind(kind.get());
 			Betreuung persistedBetreuung = this.betreuungService.saveBetreuung(convertedBetreuung, abwesenheit);
@@ -107,6 +112,12 @@ public class BetreuungResource {
 		// Sicherstellen, dass der Status des Client-Objektes mindestens dem des Servers entspricht
 		for (JaxBetreuung jaxBetreuung : betreuungenJAXP) {
 			resourceHelper.assertBetreuungStatus(jaxBetreuung);
+		}
+		if (!betreuungenJAXP.isEmpty()) {
+			if (betreuungenJAXP.get(0).getGesuchId() != null) {
+				final Optional<Gesuch> gesuch = gesuchService.findGesuch(betreuungenJAXP.get(0).getGesuchId());
+				gesuch.ifPresent(gesuch1 -> resourceHelper.assertGesuchStatusForBenutzerRole(gesuch1));
+			}
 		}
 
 		List<JaxBetreuung> resultBetreuungen = new ArrayList<>();
@@ -136,6 +147,9 @@ public class BetreuungResource {
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
+			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch());
+
 			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
 			convertedBetreuung.setKind(kind.get());
 			Betreuung persistedBetreuung = this.betreuungService.betreuungPlatzAbweisen(convertedBetreuung);
@@ -157,11 +171,15 @@ public class BetreuungResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(betreuungJAXP.getId());
+
 		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
 		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.WARTEN);
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
+			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch());
+
 			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
 			convertedBetreuung.setKind(kind.get());
 			Betreuung persistedBetreuung = this.betreuungService.betreuungPlatzBestaetigen(convertedBetreuung);
@@ -199,7 +217,10 @@ public class BetreuungResource {
 
 		Validate.notNull(betreuungJAXPId.getId());
 		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungJAXPId.getId());
+
 		if (betreuung.isPresent()) {
+			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+			resourceHelper.assertGesuchStatusForBenutzerRole(betreuung.get().extractGesuch());
 			betreuungService.removeBetreuung(converter.toEntityId(betreuungJAXPId));
 			return Response.ok().build();
 		}
