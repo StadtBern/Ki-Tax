@@ -80,11 +80,6 @@ public class BetreuungResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		// Sicherstellen, dass der Status des Client-Objektes mindestens dem des Servers entspricht
-		if (betreuungJAXP.getTimestampErstellt() != null) {
-			resourceHelper.assertBetreuungStatus(betreuungJAXP);
-		}
-
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
 			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch());
@@ -109,10 +104,6 @@ public class BetreuungResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		// Sicherstellen, dass der Status des Client-Objektes mindestens dem des Servers entspricht
-		for (JaxBetreuung jaxBetreuung : betreuungenJAXP) {
-			resourceHelper.assertBetreuungStatus(jaxBetreuung);
-		}
 		if (!betreuungenJAXP.isEmpty()) {
 			if (betreuungenJAXP.get(0).getGesuchId() != null) {
 				final Optional<Gesuch> gesuch = gesuchService.findGesuch(betreuungenJAXP.get(0).getGesuchId());

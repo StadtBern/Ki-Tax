@@ -40,7 +40,6 @@ public class ResourceHelper {
 
 	public static final String ASSERT_GESUCH_STATUS = "assertGesuchStatus";
 	public static final String ASSERT_GESUCH_STATUS_EQUAL = "assertGesuchStatusEqual";
-	public static final String ASSERT_BETREUUNG_STATUS = "assertBetreuungStatus";
 	public static final String ASSERT_BETREUUNG_STATUS_EQUAL = "assertBetreuungStatusEqual";
 	@Inject
 	private GesuchService gesuchService;
@@ -76,7 +75,7 @@ public class ResourceHelper {
 		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchId);
 		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException(ASSERT_GESUCH_STATUS, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId));
 		// Der Status des Client-Objektes darf nicht weniger weit sein als der des Server-Objektes
-		if (!isStatusTransitionAllowed(AntragStatusConverterUtil.convertStatusToEntity(antragStatusFromClient), gesuchFromDB.getStatus())) {
+		if (!isAntragStatusTransitionAllowed(AntragStatusConverterUtil.convertStatusToEntity(antragStatusFromClient), gesuchFromDB.getStatus())) {
 			String msg = "Cannot update GesuchStatus from " + gesuchFromDB.getStatus() + " to " + antragStatusFromClient;
 			LOGGER.error(msg);
 			throw new EbeguRuntimeException(ASSERT_GESUCH_STATUS, ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, gesuchId, msg);
@@ -118,22 +117,10 @@ public class ResourceHelper {
 		}
 	}
 
-	public void assertBetreuungStatus(@Nonnull JaxBetreuung jaxBetreuung) {
-		Validate.notNull(jaxBetreuung.getId());
-		Optional<Betreuung> optGesuch = betreuungService.findBetreuung(jaxBetreuung.getId());
-		Betreuung betreuungFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException(ASSERT_BETREUUNG_STATUS, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxBetreuung.getId()));
-		// Der Status des Client-Objektes darf nicht weniger weit sein als der des Server-Objektes
-		if (betreuungFromDB.getBetreuungsstatus().ordinal() > jaxBetreuung.getBetreuungsstatus().ordinal()) {
-			String msg = "Cannot update BetreuungStatus from " + betreuungFromDB.getBetreuungsstatus() + " to " + jaxBetreuung.getBetreuungsstatus();
-			LOGGER.error(msg);
-			throw new EbeguRuntimeException(ASSERT_BETREUUNG_STATUS, ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, jaxBetreuung.getId(), msg);
-		}
-	}
-
 	public void assertBetreuungStatusEqual(@Nonnull String betreuungId, @Nonnull Betreuungsstatus betreuungsstatusFromClient) {
 		Validate.notNull(betreuungId);
-		Optional<Betreuung> optGesuch = betreuungService.findBetreuung(betreuungId);
-		Betreuung betreuungFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException(ASSERT_BETREUUNG_STATUS_EQUAL, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuungId));
+		Optional<Betreuung> optBetreuung = betreuungService.findBetreuung(betreuungId);
+		Betreuung betreuungFromDB = optBetreuung.orElseThrow(() -> new EbeguEntityNotFoundException(ASSERT_BETREUUNG_STATUS_EQUAL, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuungId));
 		// Der Status des Client-Objektes darf nicht weniger weit sein als der des Server-Objektes
 		if (betreuungFromDB.getBetreuungsstatus() != betreuungsstatusFromClient) {
 			String msg = "Expected BetreuungStatus to be " + betreuungsstatusFromClient + " but was " + betreuungFromDB.getBetreuungsstatus();
@@ -146,7 +133,7 @@ public class ResourceHelper {
 	 * This method will check if it is allowed to change from the status that the gesuch has in the server to the
 	 * status that the client wants to save.
 	 */
-	private boolean isStatusTransitionAllowed(@NotNull AntragStatus clientStatus, @NotNull AntragStatus serverStatus) {
+	private boolean isAntragStatusTransitionAllowed(@NotNull AntragStatus clientStatus, @NotNull AntragStatus serverStatus) {
 		switch (clientStatus) {
 			case IN_BEARBEITUNG_GS:
 			case FREIGABEQUITTUNG: {
