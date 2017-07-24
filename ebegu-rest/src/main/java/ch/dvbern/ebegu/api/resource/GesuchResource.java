@@ -494,6 +494,9 @@ public class GesuchResource {
 		final String antragId = converter.toEntityId(antragJaxId);
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragId);
 
+		resourceHelper.assertGesuchStatusEqual(antragId, AntragStatusDTO.VERFUEGT, AntragStatusDTO.PRUEFUNG_STV,
+			AntragStatusDTO.IN_BEARBEITUNG_STV, AntragStatusDTO.GEPRUEFT_STV, AntragStatusDTO.KEIN_ANGEBOT);
+
 		if (gesuch.isPresent()) {
 			Gesuch persistedGesuch = gesuchService.setBeschwerdeHaengigForPeriode(gesuch.get());
 			return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
