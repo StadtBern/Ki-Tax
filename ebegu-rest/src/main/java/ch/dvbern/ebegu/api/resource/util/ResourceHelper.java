@@ -108,11 +108,11 @@ public class ResourceHelper {
 			return;
 		}
 		String msg = "Cannot update entity containing Gesuch " + gesuch.getId() + " in Status " + gesuch.getStatus() + " in UserRole " + userRole;
-		if (userRole == UserRole.GESUCHSTELLER && gesuch.getStatus().ordinal() > AntragStatus.IN_BEARBEITUNG_GS.ordinal()) {
+		if (userRole == UserRole.GESUCHSTELLER && gesuch.getStatus() != AntragStatus.IN_BEARBEITUNG_GS) {
 			LOGGER.error(msg);
 			throw new EbeguRuntimeException("assertGesuchStatusForBenutzerRole", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, gesuch.getId(), msg);
 		}
-		if (gesuch.getStatus().ordinal() > AntragStatus.VERFUEGEN.ordinal()) {
+		if (gesuch.getStatus().ordinal() >= AntragStatus.VERFUEGEN.ordinal()) {
 			LOGGER.error(msg);
 			throw new EbeguRuntimeException("assertGesuchStatusForBenutzerRole", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, gesuch.getId(), msg);
 		}
