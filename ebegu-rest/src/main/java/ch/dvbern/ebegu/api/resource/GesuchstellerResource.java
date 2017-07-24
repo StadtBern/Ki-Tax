@@ -62,9 +62,6 @@ public class GesuchstellerResource {
 	@Inject
 	private JaxBConverter converter;
 
-	@Inject
-	private ResourceHelper resourceHelper;
-
 
 	@ApiOperation(value = "Updates a Gesuchsteller or creates it if it doesn't exist in the database. The transfer object also has a relation to adressen " +
 		"(wohnadresse, umzugadresse, korrespondenzadresse) these are stored in the database as well. Note that wohnadresse and" +

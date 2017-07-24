@@ -8,7 +8,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
-import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.Betreuung;
@@ -184,16 +183,14 @@ public class ResourceHelper {
 			case GEPRUEFT: {
 				return AntragStatus.IN_BEARBEITUNG_JA == serverStatus;
 			}
-			case VERFUEGEN: {
+			case VERFUEGEN:
+			case KEIN_ANGEBOT: {
 				return AntragStatus.GEPRUEFT == serverStatus;
 			}
 			case VERFUEGT: {
 				return AntragStatus.VERFUEGEN == serverStatus
 					|| AntragStatus.GEPRUEFT_STV == serverStatus
 					|| AntragStatus.BESCHWERDE_HAENGIG == serverStatus;
-			}
-			case KEIN_ANGEBOT: {
-				return AntragStatus.GEPRUEFT == serverStatus;
 			}
 			case BESCHWERDE_HAENGIG: {
 				return AntragStatus.getAllVerfuegtStates().contains(serverStatus)

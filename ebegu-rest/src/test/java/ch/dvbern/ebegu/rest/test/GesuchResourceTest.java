@@ -167,6 +167,8 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 		gesuch.setGueltig(true);
 		gesuch.setTimestampVerfuegt(LocalDateTime.now());
 		gesuch = persistence.merge(gesuch);
+		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.GEPRUEFT);
+		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.VERFUEGEN);
 		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.VERFUEGT).getEntity();
 
 		final Response response = gesuchResource.antragMutieren(new JaxId(gesuch.getId()), LocalDate.now().toString(), null, null);
@@ -189,6 +191,10 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	@Test
 	public void testGesuchBySTVFreigeben() throws EbeguException {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.GEPRUEFT);
+		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.VERFUEGEN);
+		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.VERFUEGT);
+		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.PRUEFUNG_STV);
 		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.IN_BEARBEITUNG_STV);
 
 		final Response response = gesuchResource.gesuchBySTVFreigeben(new JaxId(gesuch.getId()), null, null);
@@ -235,6 +241,8 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	@Test
 	public void testSendGesuchToSTV_NullBemerkung() throws EbeguException {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.GEPRUEFT);
+		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.VERFUEGEN);
 		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.VERFUEGT);
 
 		final Response response = gesuchResource.sendGesuchToSTV(new JaxId(gesuch.getId()), null, null, null);
@@ -249,6 +257,8 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	@Test
 	public void testSendGesuchToSTV() throws EbeguException {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.GEPRUEFT);
+		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.VERFUEGEN);
 		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.VERFUEGT);
 
 		final Response response = gesuchResource.sendGesuchToSTV(new JaxId(gesuch.getId()), "bemerkSTV", null, null);

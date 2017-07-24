@@ -104,11 +104,9 @@ public class BetreuungResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		if (!betreuungenJAXP.isEmpty()) {
-			if (betreuungenJAXP.get(0).getGesuchId() != null) {
-				final Optional<Gesuch> gesuch = gesuchService.findGesuch(betreuungenJAXP.get(0).getGesuchId());
-				gesuch.ifPresent(gesuch1 -> resourceHelper.assertGesuchStatusForBenutzerRole(gesuch1));
-			}
+		if (!betreuungenJAXP.isEmpty() && betreuungenJAXP.get(0).getGesuchId() != null) {
+			final Optional<Gesuch> gesuch = gesuchService.findGesuch(betreuungenJAXP.get(0).getGesuchId());
+			gesuch.ifPresent(gesuch1 -> resourceHelper.assertGesuchStatusForBenutzerRole(gesuch1));
 		}
 
 		List<JaxBetreuung> resultBetreuungen = new ArrayList<>();
