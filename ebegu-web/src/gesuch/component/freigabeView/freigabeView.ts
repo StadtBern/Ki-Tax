@@ -108,9 +108,13 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, forceCreation, this.getZustelladresse())
             .then((downloadFile: TSDownloadFile) => {
                 // wir laden das Gesuch neu, da die Erstellung des Dokumentes auch Aenderungen im Gesuch verursacht
-                this.gesuchModelManager.openGesuch(this.gesuchModelManager.getGesuch().id).then(() => {
-                    this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
-                });
+                this.gesuchModelManager.openGesuch(this.gesuchModelManager.getGesuch().id)
+                    .then(() => {
+                        this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                    })
+                    .catch((ex) => {
+                        win.close();
+                    });
             });
     }
 

@@ -82,10 +82,15 @@ export class DVVorlageListController {
         this.$log.debug('download vorlage ' + ebeguVorlage.vorlage.filename);
         let win: Window = this.downloadRS.prepareDownloadWindow();
 
-        this.downloadRS.getAccessTokenVorlage(ebeguVorlage.vorlage.id).then((downloadFile: TSDownloadFile) => {
-            this.$log.debug('accessToken: ' + downloadFile.accessToken);
-            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment, win);
-        });
+        this.downloadRS.getAccessTokenVorlage(ebeguVorlage.vorlage.id)
+            .then((downloadFile: TSDownloadFile) => {
+                this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment, win);
+            })
+            .catch((ex) => {
+                win.close();
+                this.$log.error('An error occurred downloading the document, closing download window.');
+            });
     }
 
     uploadAnhaenge(files: any[], selectEbeguVorlage: TSEbeguVorlage) {

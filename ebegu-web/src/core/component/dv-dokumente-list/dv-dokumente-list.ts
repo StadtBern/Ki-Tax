@@ -139,10 +139,15 @@ export class DVDokumenteListController {
         this.$log.debug('download dokument ' + dokument.filename);
         let win: Window = this.downloadRS.prepareDownloadWindow();
 
-        this.downloadRS.getAccessTokenDokument(dokument.id).then((downloadFile: TSDownloadFile) => {
-            this.$log.debug('accessToken: ' + downloadFile.accessToken);
-            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment, win);
-        });
+        this.downloadRS.getAccessTokenDokument(dokument.id)
+            .then((downloadFile: TSDownloadFile) => {
+                this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment, win);
+            })
+            .catch((ex) => {
+                win.close();
+                this.$log.error('An error occurred downloading the document, closing download window.');
+            });
     }
 
     getWidth(): String {
