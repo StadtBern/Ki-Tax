@@ -12,8 +12,6 @@ import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.services.AuthService;
-import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
@@ -47,11 +45,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private GesuchResource gesuchResource;
 	@Inject
-	private AuthService authService;
-	@Inject
 	private InstitutionService institutionService;
-	@Inject
-	private BenutzerService benutzerService;
 	@Inject
 	private Persistence<Gesuch> persistence;
 	@Inject

@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -61,17 +62,13 @@ import org.hibernate.envers.Audited;
 				@ColumnResult(name = "anzahlMutationPapier", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationAbwesenheit", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationBetreuung", type = Integer.class),
-				@ColumnResult(name = "anzahlMutationDokumente", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationEV", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationEwerbspensum", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationFamilienSitutation", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationFinanzielleSituation", type = Integer.class),
-				@ColumnResult(name = "anzahlMutationFreigabe", type = Integer.class),
-				@ColumnResult(name = "anzahlMutationGesuchErstellen", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationGesuchsteller", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationKinder", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationUmzug", type = Integer.class),
-				@ColumnResult(name = "anzahlMutationVerfuegen", type = Integer.class),
 				@ColumnResult(name = "anzahlMahnungen", type = Integer.class),
 				@ColumnResult(name = "anzahlSteueramtAusgeloest", type = Integer.class),
 				@ColumnResult(name = "anzahlSteueramtGeprueft", type = Integer.class),
@@ -119,6 +116,14 @@ public abstract class AbstractEntity implements Serializable {
 	@Column(nullable = true, length = Constants.UUID_LENGTH)
 	@Size(min = Constants.UUID_LENGTH, max = Constants.UUID_LENGTH)
 	private String vorgaengerId;
+
+	/**
+	 * This variable is used to tell the AbstractEntityListener that it should skip the preUpdate method when saving
+	 * this object. This is a transient field, so that it will be removed with the java-object.
+	 * WARNING! set it to true only when you know what you are doing
+	 */
+	@Transient
+	private boolean skipPreUpdate = false;
 
 	public AbstractEntity() {
 		//da wir teilweise schon eine id brauchen bevor die Entities gespeichert werden initialisieren wir die uuid hier
@@ -184,6 +189,17 @@ public abstract class AbstractEntity implements Serializable {
 
 	public void setVorgaengerId(String vorgaengerId) {
 		this.vorgaengerId = vorgaengerId;
+	}
+
+	public boolean isSkipPreUpdate() {
+		return skipPreUpdate;
+	}
+
+	/**
+	 * WARNING! set it to true only when you know what you are doing.
+	 */
+	public void setSkipPreUpdate(boolean skipPreUpdate) {
+		this.skipPreUpdate = skipPreUpdate;
 	}
 
 	@SuppressWarnings("EqualsWhichDoesntCheckParameterClass")

@@ -26,17 +26,13 @@ public class GesuchZeitraumDataRow {
 	private Integer anzahlMutationPapier;
 	private Integer anzahlMutationAbwesenheit;
 	private Integer anzahlMutationBetreuung;
-	private Integer anzahlMutationDokumente;
 	private Integer anzahlMutationEV;
 	private Integer anzahlMutationEwerbspensum;
 	private Integer anzahlMutationFamilienSitutation;
 	private Integer anzahlMutationFinanzielleSituation;
-	private Integer anzahlMutationFreigabe;
-	private Integer anzahlMutationGesuchErstellen;
 	private Integer anzahlMutationGesuchsteller;
 	private Integer anzahlMutationKinder;
 	private Integer anzahlMutationUmzug;
-	private Integer anzahlMutationVerfuegen;
 	private Integer anzahlMahnungen;
 	private Integer anzahlBeschwerde;
 	private Integer anzahlVerfuegungen;
@@ -49,14 +45,15 @@ public class GesuchZeitraumDataRow {
 	private Integer anzahlSteueramtGeprueft;
 
 
-	public GesuchZeitraumDataRow(String bgNummer, Integer gesuchLaufNr, String institution, String betreuungsTyp, String periode, Integer anzahlGesuchOnline,
-			Integer anzahlGesuchPapier, Integer anzahlMutationOnline, Integer anzahlMutationPapier, Integer anzahlMutationAbwesenheit, Integer anzahlMutationBetreuung,
-			Integer anzahlMutationDokumente, Integer anzahlMutationEV, Integer anzahlMutationEwerbspensum, Integer anzahlMutationFamilienSitutation,
-			Integer anzahlMutationFinanzielleSituation, Integer anzahlMutationFreigabe, Integer anzahlMutationGesuchErstellen, Integer anzahlMutationGesuchsteller,
-			Integer anzahlMutationKinder, Integer anzahlMutationUmzug, Integer anzahlMutationVerfuegen, Integer anzahlMahnungen, Integer anzahlSteueramtAusgeloest,
-			Integer anzahlSteueramtGeprueft, Integer anzahlBeschwerde, Integer anzahlVerfuegungen, Integer anzahlVerfuegungenNormal,
-			Integer anzahlVerfuegungenMaxEinkommen, Integer anzahlVerfuegungenKeinPensum, Integer anzahlVerfuegungenZuschlagZumPensum,
-		Integer anzahlVerfuegungenNichtEintreten) {
+	public GesuchZeitraumDataRow(String bgNummer, Integer gesuchLaufNr, String institution, String betreuungsTyp,
+		String periode, Integer anzahlGesuchOnline, Integer anzahlGesuchPapier, Integer anzahlMutationOnline,
+		Integer anzahlMutationPapier, Integer anzahlMutationAbwesenheit, Integer anzahlMutationBetreuung,
+		Integer anzahlMutationEV, Integer anzahlMutationEwerbspensum, Integer anzahlMutationFamilienSitutation,
+		Integer anzahlMutationFinanzielleSituation, Integer  anzahlMutationGesuchsteller, Integer anzahlMutationKinder,
+		Integer anzahlMutationUmzug, Integer  anzahlMahnungen, Integer anzahlSteueramtAusgeloest,
+		Integer anzahlSteueramtGeprueft, Integer anzahlBeschwerde, Integer anzahlVerfuegungen,
+		Integer anzahlVerfuegungenNormal, Integer anzahlVerfuegungenMaxEinkommen, Integer anzahlVerfuegungenKeinPensum,
+		Integer anzahlVerfuegungenZuschlagZumPensum, Integer anzahlVerfuegungenNichtEintreten) {
 		this.bgNummer = bgNummer;
 		this.gesuchLaufNr = gesuchLaufNr;
 		this.institution = institution;
@@ -68,17 +65,13 @@ public class GesuchZeitraumDataRow {
 		this.anzahlMutationPapier = anzahlMutationPapier;
 		this.anzahlMutationAbwesenheit = anzahlMutationAbwesenheit;
 		this.anzahlMutationBetreuung = anzahlMutationBetreuung;
-		this.anzahlMutationDokumente = anzahlMutationDokumente;
 		this.anzahlMutationEV = anzahlMutationEV;
 		this.anzahlMutationEwerbspensum = anzahlMutationEwerbspensum;
 		this.anzahlMutationFamilienSitutation = anzahlMutationFamilienSitutation;
 		this.anzahlMutationFinanzielleSituation = anzahlMutationFinanzielleSituation;
-		this.anzahlMutationFreigabe = anzahlMutationFreigabe;
-		this.anzahlMutationGesuchErstellen = anzahlMutationGesuchErstellen;
 		this.anzahlMutationGesuchsteller = anzahlMutationGesuchsteller;
 		this.anzahlMutationKinder = anzahlMutationKinder;
 		this.anzahlMutationUmzug = anzahlMutationUmzug;
-		this.anzahlMutationVerfuegen = anzahlMutationVerfuegen;
 		this.anzahlMahnungen = anzahlMahnungen;
 		this.anzahlBeschwerde = anzahlBeschwerde;
 		this.anzahlVerfuegungen = anzahlVerfuegungen;
@@ -180,14 +173,6 @@ public class GesuchZeitraumDataRow {
 		this.anzahlMutationBetreuung = anzahlMutationBetreuung;
 	}
 
-	public Integer getAnzahlMutationDokumente() {
-		return anzahlMutationDokumente;
-	}
-
-	public void setAnzahlMutationDokumente(Integer anzahlMutationDokumente) {
-		this.anzahlMutationDokumente = anzahlMutationDokumente;
-	}
-
 	public Integer getAnzahlMutationEV() {
 		return anzahlMutationEV;
 	}
@@ -220,22 +205,6 @@ public class GesuchZeitraumDataRow {
 		this.anzahlMutationFinanzielleSituation = anzahlMutationFinanzielleSituation;
 	}
 
-	public Integer getAnzahlMutationFreigabe() {
-		return anzahlMutationFreigabe;
-	}
-
-	public void setAnzahlMutationFreigabe(Integer anzahlMutationFreigabe) {
-		this.anzahlMutationFreigabe = anzahlMutationFreigabe;
-	}
-
-	public Integer getAnzahlMutationGesuchErstellen() {
-		return anzahlMutationGesuchErstellen;
-	}
-
-	public void setAnzahlMutationGesuchErstellen(Integer anzahlMutationGesuchErstellen) {
-		this.anzahlMutationGesuchErstellen = anzahlMutationGesuchErstellen;
-	}
-
 	public Integer getAnzahlMutationGesuchsteller() {
 		return anzahlMutationGesuchsteller;
 	}
@@ -258,14 +227,6 @@ public class GesuchZeitraumDataRow {
 
 	public void setAnzahlMutationUmzug(Integer anzahlMutationUmzug) {
 		this.anzahlMutationUmzug = anzahlMutationUmzug;
-	}
-
-	public Integer getAnzahlMutationVerfuegen() {
-		return anzahlMutationVerfuegen;
-	}
-
-	public void setAnzahlMutationVerfuegen(Integer anzahlMutationVerfuegen) {
-		this.anzahlMutationVerfuegen = anzahlMutationVerfuegen;
 	}
 
 	public Integer getAnzahlMahnungen() {
