@@ -9,7 +9,6 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
 import TSKindDublette from '../../../models/TSKindDublette';
