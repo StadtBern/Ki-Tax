@@ -95,7 +95,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void findVorgaengerVerfuegung() {
-		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(2016, Month.MARCH, 25));
+		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(2016, Month.MARCH, 25), AntragStatus.VERFUEGT);
 		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		Set<KindContainer> kindContainers = gesuch.getKindContainers();
 		KindContainer kind = kindContainers.iterator().next();
@@ -105,7 +105,6 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 		Betreuung betreuung = betreuungen.iterator().next();
 		Integer betreuungNummer = betreuung.getBetreuungNummer();
 		Verfuegung verfuegung1 = betreuung.getVerfuegung();
-		gesuch.setStatus(AntragStatus.VERFUEGT);
 		LocalDateTime timestampVerfuegt = LocalDateTime.of(2016, Month.APRIL, 1, 0, 0);
 		gesuch.setTimestampVerfuegt(timestampVerfuegt);
 		gesuch.setGueltig(true);

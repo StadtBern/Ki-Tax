@@ -380,11 +380,10 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public mahnlaufBeenden(): void {
         // Gesuchstatus zuruecksetzen UND die Mahnungen auf erledigt setzen
-        this.setGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA).then(any => {
-            this.mahnungRS.mahnlaufBeenden(this.getGesuch()).then(any => {
-                this.mahnungRS.findMahnungen(this.getGesuch().id).then(reloadedMahnungen => {
-                    this.mahnungList = reloadedMahnungen;
-                });
+        this.mahnungRS.mahnlaufBeenden(this.getGesuch()).then((gesuch: TSGesuch) => {
+            this.mahnungRS.findMahnungen(this.getGesuch().id).then(reloadedMahnungen => {
+                this.mahnungList = reloadedMahnungen;
+                this.gesuchModelManager.getGesuch().status = TSAntragStatus.IN_BEARBEITUNG_JA;
             });
         });
     }
