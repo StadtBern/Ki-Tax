@@ -70,6 +70,20 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 	public EinkommensverschlechterungInfo() {
 	}
 
+	public EinkommensverschlechterungInfo(EinkommensverschlechterungInfo other) {
+		if (other != null) {
+			this.einkommensverschlechterung = other.getEinkommensverschlechterung();
+			this.ekvFuerBasisJahrPlus1 = other.getEkvFuerBasisJahrPlus1();
+			this.ekvFuerBasisJahrPlus2 = other.getEkvFuerBasisJahrPlus2();
+			this.gemeinsameSteuererklaerung_BjP1 = other.getGemeinsameSteuererklaerung_BjP1();
+			this.gemeinsameSteuererklaerung_BjP2 = other.getGemeinsameSteuererklaerung_BjP2();
+			this.grundFuerBasisJahrPlus1 = other.getGrundFuerBasisJahrPlus1();
+			this.grundFuerBasisJahrPlus2 = other.getGrundFuerBasisJahrPlus2();
+			this.stichtagFuerBasisJahrPlus1 = other.getStichtagFuerBasisJahrPlus1();
+			this.stichtagFuerBasisJahrPlus2 = other.getStichtagFuerBasisJahrPlus2();
+		}
+	}
+
 
 	public Boolean getEinkommensverschlechterung() {
 		return einkommensverschlechterung;
