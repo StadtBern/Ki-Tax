@@ -306,11 +306,10 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			persistedDokument = findGeneratedDokument(id, fileNameForGeneratedDokumentTyp, expectedFilepath);
 		}
 
-		if (persistedDokument == null && !ebeguConfiguration.getIsDevmode()) {
-			throw new EbeguEntityNotFoundException("getExistingGeneratedDokument",
-				ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, String.format("GeneratedDokument Entity nicht gefunden. Das "
-				+ "Dokument vom Typ: %s fuer Antragnummer %s konnte unter dem Pfad %s nicht gefunden werden obwohl "
-				+ "es existieren muesste.", dokumentTyp, id, expectedFilepath));
+		if (persistedDokument == null) {
+			LOGGER.error("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
+					"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp,
+				id, expectedFilepath);
 		}
 
 		if (persistedDokument != null && !Files.exists(Paths.get(persistedDokument.getFilepfad()))) {
@@ -408,11 +407,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
 			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp, expectedFilepath);
 
-			if (persistedDokument == null && !ebeguConfiguration.getIsDevmode()) {
-				throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
-					ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, String.format("Das Dokument vom Typ: %s fuer "
-					+ "Betreuungsnummer %s konnte unter dem Pfad %s " +
-					"nicht gefunden  werden obwohl es existieren muesste.", GeneratedDokumentTyp.VERFUEGUNG.name(), bgNummer, expectedFilepath));
+			if (persistedDokument == null) {
+				LOGGER.error("Das Dokument vom Typ: {} fuer Betreuungsnummer {} konnte unter dem Pfad {} " +
+					"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", GeneratedDokumentTyp.VERFUEGUNG.name(), bgNummer, expectedFilepath);
 			}
 		}
 		// Wenn die Betreuung nicht verfuegt ist oder das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es erstellen
