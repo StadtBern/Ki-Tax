@@ -308,9 +308,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		if (persistedDokument == null && !ebeguConfiguration.getIsDevmode()) {
 			throw new EbeguEntityNotFoundException("getExistingGeneratedDokument",
-				ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, String.format("GeneratedDokument Entity nicht gefunden. " +
-				"Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
-				"nicht gefunden werden obwohl es existieren muesste.", dokumentTyp, id, expectedFilepath));
+				ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, String.format("GeneratedDokument Entity nicht gefunden. Das "
+				+ "Dokument vom Typ: %s fuer Antragnummer %s konnte unter dem Pfad %s nicht gefunden werden obwohl "
+				+ "es existieren muesste.", dokumentTyp, id, expectedFilepath));
 		}
 
 		if (persistedDokument != null && !Files.exists(Paths.get(persistedDokument.getFilepfad()))) {
@@ -410,7 +410,8 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			if (persistedDokument == null && !ebeguConfiguration.getIsDevmode()) {
 				throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
-					ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, String.format("Das Dokument vom Typ: {} fuer Betreuungsnummer {} konnte unter dem Pfad {} " +
+					ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, String.format("Das Dokument vom Typ: %s fuer "
+					+ "Betreuungsnummer %s konnte unter dem Pfad %s " +
 					"nicht gefunden  werden obwohl es existieren muesste.", GeneratedDokumentTyp.VERFUEGUNG.name(), bgNummer, expectedFilepath));
 			}
 		}

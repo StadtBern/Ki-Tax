@@ -14,7 +14,6 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
-import ch.dvbern.ebegu.util.ServerMessageUtil;
 
 import java.math.BigDecimal;
 

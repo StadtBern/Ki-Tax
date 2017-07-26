@@ -1,19 +1,5 @@
 package ch.dvbern.ebegu.vorlagen.freigabequittung;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.DokumentGrund;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.enums.Zustelladresse;
-import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
-import ch.dvbern.ebegu.vorlagen.AufzaehlungPrintImpl;
-import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
-import ch.dvbern.ebegu.vorlagen.PrintUtil;
-import ch.dvbern.lib.doctemplate.docx.DocxImage;
-import org.krysalis.barcode4j.impl.datamatrix.DataMatrixBean;
-import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
-
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,6 +8,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.enums.Zustelladresse;
+import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
+import ch.dvbern.ebegu.vorlagen.AufzaehlungPrintImpl;
+import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
+import ch.dvbern.ebegu.vorlagen.PrintUtil;
+import ch.dvbern.lib.doctemplate.docx.DocxImage;
+import org.krysalis.barcode4j.impl.datamatrix.DataMatrixBean;
+import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
