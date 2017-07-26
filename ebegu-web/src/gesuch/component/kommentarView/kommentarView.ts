@@ -122,10 +122,15 @@ export class KommentarViewController {
                 this.$log.error('Kein Papiergesuch für Download vorhanden!');
             } else {
                 let newest: TSDokument = this.getNewest(this.dokumentePapiergesuch.dokumente);
-                this.downloadRS.getAccessTokenDokument(newest.id).then((response) => {
-                    let tempDokument: TSDownloadFile = angular.copy(response);
-                    this.downloadRS.startDownload(tempDokument.accessToken, newest.filename, false, win);
-                });
+                this.downloadRS.getAccessTokenDokument(newest.id)
+                    .then((response) => {
+                        let tempDokument: TSDownloadFile = angular.copy(response);
+                        this.downloadRS.startDownload(tempDokument.accessToken, newest.filename, false, win);
+                    })
+                    .catch((ex) => {
+                        win.close();
+                        this.$log.error('An error occurred downloading the document, closing download window.');
+                    });
             }
         });
     }

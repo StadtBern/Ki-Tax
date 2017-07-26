@@ -37,7 +37,7 @@
     "ERROR_MAX_DATE": "Datum wurde überschritten",
     "ERROR_NO_FUTURE_DATE": "Darf nicht in der Zukunft liegen",
     "ERROR_MINDESTENS_EIN_WERT": "Es muss mindestens ein Mutationsbereich gewählt werden",
-    "ERROR_DATUM_GESETZT_BEI_MUTATION": "Bei einer Mutation muss die Familiensituation geändert werden wenn ein Datum gesetzt ist",
+    "ERROR_DATUM_GESETZT_BEI_MUTATION": "Bei einer Mutation muss die Familiensituation geändert werden, wenn ein Datum gesetzt ist.",
     "ERSTGESUCH_WILLKOMMEN_TEXT": "Portal für die Vergünstigung von Betreuungsplätzen",
     "ERSTGESUCH_WILLKOMMEN_TEXT_2": "Ki-Tax führt Sie Schritt für Schritt durch das Gesuch um Vergünstigung der familienexternen Kinderbetreuung.",
     "ERSTGESUCH_WILLKOMMEN_TEXT_3": "Sollten Sie zu einer Angabe weitere Informationen benötigen, klicken Sie auf das Info-Feld.",

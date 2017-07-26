@@ -357,15 +357,24 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+            })
+            .catch((ex) => {
+                win.close();
+                this.$log.error('An error occurred downloading the document, closing download window.');
             });
     }
 
     public openExport(): void {
         let win: Window = this.downloadRS.prepareDownloadWindow();
-        this.downloadRS.getDokumentAccessTokenVerfuegungExport(this.getBetreuung().id)  .then((downloadFile: TSDownloadFile) => {
-            this.$log.debug('accessToken for export: ' + downloadFile.accessToken);
-            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, true, win);
-        });
+        this.downloadRS.getDokumentAccessTokenVerfuegungExport(this.getBetreuung().id)
+            .then((downloadFile: TSDownloadFile) => {
+                this.$log.debug('accessToken for export: ' + downloadFile.accessToken);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, true, win);
+            })
+            .catch((ex) => {
+                win.close();
+                this.$log.error('An error occurred downloading the document, closing download window.');
+            });
     }
 
     public openNichteintretenPDF(): void {
@@ -374,6 +383,10 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+            })
+            .catch((ex) => {
+                win.close();
+                this.$log.error('An error occurred downloading the document, closing download window.');
             });
     }
 

@@ -117,6 +117,9 @@ export class ZahlungsauftragViewController {
         return this.downloadRS.getPain001AccessTokenGeneratedDokument(zahlungsauftrag.id)
             .then((downloadFile: TSDownloadFile) => {
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, true, win);
+            })
+            .catch((ex) => {
+                win.close();
             });
     }
 
@@ -125,6 +128,9 @@ export class ZahlungsauftragViewController {
         this.reportRS.getZahlungsauftragReportExcel(zahlungsauftrag.id)
             .then((downloadFile: TSDownloadFile) => {
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+            })
+            .catch((ex) => {
+                win.close();
             });
     }
 
