@@ -34,7 +34,8 @@ public interface MahnungService {
 	/**
 	 * Setzt den Status zurueck auf "in Bearbeitung". Setzt die offenen Mahnungen auf inaktiv.
 	 */
-	void mahnlaufBeenden(@Nonnull Gesuch gesuch);
+	@Nonnull
+	Gesuch mahnlaufBeenden(@Nonnull Gesuch gesuch);
 
 	/**
 	 * Generiert den Vorschlag für die Bemerkungen aus den fehlenden Dokumenten.

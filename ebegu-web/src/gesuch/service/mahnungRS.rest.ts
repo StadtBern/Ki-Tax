@@ -38,11 +38,14 @@ export default class MahnungRS implements IEntityRS {
             });
     }
 
-    public mahnlaufBeenden(gesuch: TSGesuch): IHttpPromise<any> {
+    public mahnlaufBeenden(gesuch: TSGesuch): IHttpPromise<TSGesuch> {
         return this.http.put(this.serviceURL + '/' + encodeURIComponent(gesuch.id), {
             headers: {
                 'Content-Type': 'application/json'
             }
+        }).then((response: any) => {
+            this.$log.debug('PARSING gesuch REST object ', response.data);
+            return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
         });
     }
 

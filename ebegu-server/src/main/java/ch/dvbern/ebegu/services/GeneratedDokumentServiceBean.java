@@ -24,22 +24,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.entities.Adresse;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.GeneratedDokument;
-import ch.dvbern.ebegu.entities.GeneratedDokument_;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuch_;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.entities.Mahnung;
-import ch.dvbern.ebegu.entities.Mandant;
-import ch.dvbern.ebegu.entities.Pain001Dokument;
-import ch.dvbern.ebegu.entities.Pain001Dokument_;
-import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.entities.WriteProtectedDokument;
-import ch.dvbern.ebegu.entities.Zahlungsauftrag;
-import ch.dvbern.ebegu.entities.Zahlungsauftrag_;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
@@ -326,16 +311,17 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + id;
 
 		final WriteProtectedDokument persistedDokument;
-		if (!dokumentTyp.equals(GeneratedDokumentTyp.PAIN001)) {
-			persistedDokument = findGeneratedDokument(id, fileNameForGeneratedDokumentTyp, expectedFilepath);
-		} else {
+		if (dokumentTyp.equals(GeneratedDokumentTyp.PAIN001)) {
 			persistedDokument = findPain001Dokument(id, fileNameForGeneratedDokumentTyp, expectedFilepath);
+		} else {
+			persistedDokument = findGeneratedDokument(id, fileNameForGeneratedDokumentTyp, expectedFilepath);
 		}
 
-		if (persistedDokument == null) {
-			LOGGER.error("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
-				"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp,
-				id, expectedFilepath);
+		if (persistedDokument == null && !ebeguConfiguration.getIsDevmode()) {
+			throw new EbeguEntityNotFoundException("getExistingGeneratedDokument",
+				ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, String.format("GeneratedDokument Entity nicht gefunden. " +
+				"Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
+				"nicht gefunden werden obwohl es existieren muesste.", dokumentTyp, id, expectedFilepath));
 		}
 
 		if (persistedDokument != null && !Files.exists(Paths.get(persistedDokument.getFilepfad()))) {
@@ -432,9 +418,11 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
 			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp, expectedFilepath);
-			if (persistedDokument == null) {
-				LOGGER.error("Das Dokument vom Typ: {} fuer Betreuungsnummer {} konnte unter dem Pfad {} " +
-					"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", GeneratedDokumentTyp.VERFUEGUNG.name(), bgNummer, expectedFilepath);
+
+			if (persistedDokument == null && !ebeguConfiguration.getIsDevmode()) {
+				throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
+					ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, String.format("Das Dokument vom Typ: {} fuer Betreuungsnummer {} konnte unter dem Pfad {} " +
+					"nicht gefunden  werden obwohl es existieren muesste.", GeneratedDokumentTyp.VERFUEGUNG.name(), bgNummer, expectedFilepath));
 			}
 		}
 		// Wenn die Betreuung nicht verfuegt ist oder das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es erstellen

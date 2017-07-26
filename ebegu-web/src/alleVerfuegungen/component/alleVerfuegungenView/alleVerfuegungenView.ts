@@ -100,14 +100,23 @@ export class AlleVerfuegungenViewController {
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+            })
+            .catch((ex) => {
+                win.close();
+                this.$log.error('An error occurred downloading the document, closing download window.');
             });
     }
+
     public openNichteintretenPDF(betreuung: TSBetreuung): void {
         let win: Window = this.downloadRS.prepareDownloadWindow();
         this.downloadRS.getAccessTokenNichteintretenGeneratedDokument(betreuung.id, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+            })
+            .catch((ex) => {
+                win.close();
+                this.$log.error('An error occurred downloading the document, closing download window.');
             });
     }
 }
