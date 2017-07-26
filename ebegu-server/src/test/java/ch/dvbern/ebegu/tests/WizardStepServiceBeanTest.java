@@ -438,26 +438,6 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void updateWizardStepVerfuegenWARTEN() {
-		TestDataUtil.createAndPersistBenutzer(persistence);
-		updateStatus(verfStep, WizardStepStatus.WARTEN);
-		Iterator<Betreuung> iterator = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator();
-		Betreuung betreuung1 = iterator.next();
-		betreuung1.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
-		persistence.merge(betreuung1);
-		Betreuung betreuung2 = iterator.next();
-		betreuung2.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
-		persistence.merge(betreuung2);
-
-		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.VERFUEGEN);
-		Assert.assertEquals(11, wizardSteps.size());
-
-		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.VERFUEGEN).getWizardStepStatus());
-		final Gesuch persistedGesuch = persistence.find(Gesuch.class, gesuch.getId());
-		Assert.assertEquals(AntragStatus.VERFUEGT, persistedGesuch.getStatus());
-	}
-
-	@Test
 	public void updateWizardStepFamiliensitMutiertSameData() {
 		updateStatusMutiert(familienStep, WizardStepStatus.OK);
 		gesuch.extractFamiliensituation().setVorgaengerId(gesuch.extractFamiliensituation().getId()); // same data

@@ -74,8 +74,10 @@ export class ZahlungViewController {
         let win: Window = this.downloadRS.prepareDownloadWindow();
         this.reportRS.getZahlungReportExcel(zahlung.id)
             .then((downloadFile: TSDownloadFile) => {
-
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+            })
+            .catch((ex) => {
+                win.close();
             });
     }
 

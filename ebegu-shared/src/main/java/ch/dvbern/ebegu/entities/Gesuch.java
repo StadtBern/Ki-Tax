@@ -1,43 +1,9 @@
 package ch.dvbern.ebegu.entities;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.Transient;
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
 import ch.dvbern.ebegu.validators.CheckGesuchComplete;
@@ -47,6 +13,18 @@ import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
 /**
  * Entitaet zum Speichern von Gesuch in der Datenbank.
  */
@@ -55,6 +33,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 @Entity
 @Indexed
 @Analyzer(impl = EBEGUGermanAnalyzer.class)
+@EntityListeners({GesuchStatusListener.class})
 public class Gesuch extends AbstractEntity implements Searchable{
 
 	private static final long serialVersionUID = -8403487439884700618L;
@@ -132,6 +111,9 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	@Transient
 	private FinanzDatenDTO finanzDatenDTO_zuZweit;
+
+	@Transient
+	private AntragStatus preStatus;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -738,5 +720,13 @@ public class Gesuch extends AbstractEntity implements Searchable{
 			}
 		}
 		return null;
+	}
+
+	public AntragStatus getPreStatus() {
+		return preStatus;
+	}
+
+	public void setPreStatus(AntragStatus preStatus) {
+		this.preStatus = preStatus;
 	}
 }

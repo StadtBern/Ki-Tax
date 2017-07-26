@@ -23,11 +23,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.lang3.Validate;
-
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.resource.util.ResourceHelper;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.dto.KindDubletteDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
@@ -42,8 +41,8 @@ import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.KindService;
-
 import io.swagger.annotations.Api;
+import org.apache.commons.lang3.Validate;
 
 /**
  * REST Resource fuer Kinder
@@ -63,6 +62,9 @@ public class KindResource {
 	private InstitutionService institutionService;
 	@Inject
 	private BenutzerService benutzerService;
+	@Inject
+	private ResourceHelper resourceHelper;
+
 
 	@Nullable
 	@PUT
@@ -75,20 +77,21 @@ public class KindResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
-		if (gesuch.isPresent()) {
-			KindContainer kindToMerge = new KindContainer();
-			if (kindContainerJAXP.getId() != null) {
-				Optional<KindContainer> optional = kindService.findKind(kindContainerJAXP.getId());
-				kindToMerge = optional.orElse(new KindContainer());
-			}
-			KindContainer convertedKind = converter.kindContainerToEntity(kindContainerJAXP, kindToMerge);
-			convertedKind.setGesuch(gesuch.get());
-			KindContainer persistedKind = this.kindService.saveKind(convertedKind);
+		Gesuch gesuch = gesuchService.findGesuch(gesuchId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("saveKind", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId()));
 
-			return converter.kindContainerToJAX(persistedKind);
+		// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+		resourceHelper.assertGesuchStatusForBenutzerRole(gesuch);
+
+		KindContainer kindToMerge = new KindContainer();
+		if (kindContainerJAXP.getId() != null) {
+			Optional<KindContainer> optional = kindService.findKind(kindContainerJAXP.getId());
+			kindToMerge = optional.orElse(new KindContainer());
 		}
-		throw new EbeguEntityNotFoundException("saveKind", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
+		KindContainer convertedKind = converter.kindContainerToEntity(kindContainerJAXP, kindToMerge);
+		convertedKind.setGesuch(gesuch);
+		KindContainer persistedKind = this.kindService.saveKind(convertedKind);
+
+		return converter.kindContainerToJAX(persistedKind);
 	}
 
 
@@ -114,7 +117,7 @@ public class KindResource {
 			UserRole currentUserRole = currentBenutzer.get().getRole();
 			// Es wird gecheckt ob der Benutzer zu einer Institution/Traegerschaft gehoert. Wenn ja, werden die Kinder gefilter
 			// damit nur die relevanten Kinder geschickt werden
-			if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(currentUserRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(currentUserRole)) {
+			if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == currentUserRole || UserRole.SACHBEARBEITER_INSTITUTION == currentUserRole) {
 				Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
 				RestUtil.purgeSingleKindAndBetreuungenOfInstitutionen(jaxKindContainer, instForCurrBenutzer);
 			}
@@ -131,13 +134,13 @@ public class KindResource {
 		@Context HttpServletResponse response) {
 
 		Validate.notNull(kindJAXPId.getId());
-		Optional<KindContainer> kind = kindService.findKind(kindJAXPId.getId());
-		if (kind.isPresent()) {
-			kindService.removeKind(kind.get());
-			return Response.ok().build();
-		}
-		throw new EbeguEntityNotFoundException("removeKind", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindID invalid: " + kindJAXPId.getId());
+		KindContainer kind = kindService.findKind(kindJAXPId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("removeKind", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindID invalid: " + kindJAXPId.getId()));
 
+		// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+		resourceHelper.assertGesuchStatusForBenutzerRole(kind.getGesuch());
+
+		kindService.removeKind(kind);
+		return Response.ok().build();
 	}
 
 	@Nullable
