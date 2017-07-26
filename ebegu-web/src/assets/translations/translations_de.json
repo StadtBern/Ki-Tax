@@ -606,6 +606,7 @@
     "DATE_PLACEHOLDER": "tt.mm.jjjj",
     "PERCENTAGE_PLACEHOLDER": "Angabe in %",
     "FAM_ERGAENZENDE_BETREUUNG_HELP": "Besucht Ihr Kind in der Stadt Bern eine Kita, ein Tagi, Tageseltern oder eine Tagesschule? Oder ist der Besuch geplant?",
+    "FAM_ERGAENZENDE_BETREUUNG_NOT_EDITABLE": "Um dieses Feld editieren zu können, löschen Sie zuerst alle Betreuungen des Kindes",
     "MUTTERSPRACHE_DEUTSCH_HELP": "Die Gesundheits- und Fürsorgedirektion des Kantons Bern benötigt diese Angabe für statistische Erhebungen.",
     "EINSCHULUNG_HELP": "Bitte klicken Sie auf ‚ja‘, wenn Ihr Kind ab August neu oder wie bisher den Kindergarten oder die Schule besucht.",
     "INVOLVIERTE_FACHSTELLE_HELP": "Eine Fachstelle ist eine Institution, die bestätigt, dass Ihr Kind wegen <li>einer kindesschutzrechtlichen Massnahme,</li> <li>bei Gefährdung der sozialen Integration oder</li> <li>im Sinne der Chancengleichheit</li>familienexterne Betreuung benötigt.<br><br>Bitte wählen Sie in der Auswahlliste die Fachstelle, die Ihnen im Vorfeld bestätigt hat, dass Ihr Kind familienexterne Betreuung benötigt.<br><br>Falls Ihr Kind behindert ist, wenden Sie sich bitte direkt an eine der drei zuständigen Fachstellen oder ans Jugendamt: Tel. 031 321 51 15.",

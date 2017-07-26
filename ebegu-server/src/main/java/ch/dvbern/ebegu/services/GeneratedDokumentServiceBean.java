@@ -1,37 +1,8 @@
 package ch.dvbern.ebegu.services;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import javax.activation.MimeTypeParseException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
-import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
-import ch.dvbern.ebegu.enums.Zustelladresse;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -48,6 +19,24 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.activation.MimeTypeParseException;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.*;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
@@ -208,7 +197,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Override
 	public WriteProtectedDokument getFinSitDokumentAccessTokenGeneratedDokument(final Gesuch gesuch,
-																		   Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
+																				Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch.getJahrAndFallnummer());
 
@@ -246,7 +235,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Override
 	public WriteProtectedDokument getBegleitschreibenDokument(final Gesuch gesuch,
-														 Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
+															  Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getJahrAndFallnummer());
 
 		WriteProtectedDokument documentIfExistsAndIsWriteProtected = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), fileNameForGeneratedDokumentTyp, forceCreation);
@@ -273,7 +262,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Override
 	public WriteProtectedDokument getFreigabequittungAccessTokenGeneratedDokument(final Gesuch gesuch,
-																			 Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException {
+																				  Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException {
 
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch.getJahrAndFallnummer());
 
@@ -401,8 +390,8 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Override
 	public WriteProtectedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(@Nonnull final Gesuch gesuch,
-			@Nonnull Betreuung betreuung, @Nonnull String manuelleBemerkungen,  @Nonnull Boolean forceCreation) throws
-			MimeTypeParseException, MergeDocException, IOException {
+																					@Nonnull Betreuung betreuung, @Nonnull String manuelleBemerkungen, @Nonnull Boolean forceCreation) throws
+		MimeTypeParseException, MergeDocException, IOException {
 
 		String bgNummer = betreuung.getBGNummer();
 		String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG, bgNummer);

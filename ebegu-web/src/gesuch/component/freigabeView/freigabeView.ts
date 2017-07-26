@@ -15,8 +15,6 @@ import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyR
 import {FreigabeDialogController} from '../../dialog/FreigabeDialogController';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import ITranslateService = angular.translate.ITranslateService;
-import IFormController = angular.IFormController;
 import IScope = angular.IScope;
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
