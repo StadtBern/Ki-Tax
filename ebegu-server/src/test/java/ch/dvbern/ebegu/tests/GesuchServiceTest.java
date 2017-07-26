@@ -1,69 +1,12 @@
 
 package ch.dvbern.ebegu.tests;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.security.PrivilegedAction;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.ejb.EJBAccessException;
-import javax.inject.Inject;
-import javax.security.auth.Subject;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
-
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.entities.AntragStatusHistory;
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
-import ch.dvbern.ebegu.entities.DokumentGrund;
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Familiensituation;
-import ch.dvbern.ebegu.entities.GeneratedDokument;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.entities.Mandant;
-import ch.dvbern.ebegu.entities.Traegerschaft;
-import ch.dvbern.ebegu.entities.WizardStep;
-import ch.dvbern.ebegu.entities.Zahlungsposition;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.Eingangsart;
-import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
-import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.enums.WizardStepName;
-import ch.dvbern.ebegu.enums.WizardStepStatus;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.ebegu.services.AntragStatusHistoryService;
-import ch.dvbern.ebegu.services.ApplicationPropertyService;
-import ch.dvbern.ebegu.services.BenutzerService;
-import ch.dvbern.ebegu.services.DokumentGrundService;
-import ch.dvbern.ebegu.services.FallService;
-import ch.dvbern.ebegu.services.GeneratedDokumentService;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.GesuchsperiodeService;
-import ch.dvbern.ebegu.services.InstitutionService;
-import ch.dvbern.ebegu.services.MitteilungService;
-import ch.dvbern.ebegu.services.TestfaelleService;
-import ch.dvbern.ebegu.services.WizardStepService;
-import ch.dvbern.ebegu.services.ZahlungService;
+import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
@@ -80,6 +23,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
+import javax.ejb.EJBAccessException;
+import javax.inject.Inject;
+import javax.security.auth.Subject;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.security.PrivilegedAction;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.*;
 
 import static ch.dvbern.ebegu.tets.TestDataUtil.createAndPersistFeutzYvonneGesuch;
 
@@ -375,9 +332,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	@Test
 	public void testSearchWithRoleSachbearbeiterInst() {
 		loginAsAdmin();
-		Gesuch gesDagmar = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
-		gesDagmar.setStatus(AntragStatus.IN_BEARBEITUNG_GS);
-		gesDagmar = persistence.merge(gesDagmar);
+		Gesuch gesDagmar = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25), AntragStatus.IN_BEARBEITUNG_GS);
 		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
 		gesuch = persistence.merge(gesuch);
@@ -422,8 +377,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	public void testAntragMutieren() throws Exception {
 
 		// Voraussetzung: Ich habe einen verfuegten Antrag
-		Gesuch gesuchVerfuegt = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
-		gesuchVerfuegt.setStatus(AntragStatus.VERFUEGT);
+		Gesuch gesuchVerfuegt = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25), AntragStatus.VERFUEGT);
 		gesuchVerfuegt.setGueltig(true);
 		gesuchVerfuegt.setTimestampVerfuegt(LocalDateTime.now());
 		gesuchVerfuegt = gesuchService.updateGesuch(gesuchVerfuegt, true, null);
@@ -646,11 +600,10 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	@Test
 	public void testJAAntragMutierenWhenOnlineMutationExists() {
 		loginAsGesuchsteller("gesuchst");
-		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.VERFUEGT);
 		loginAsSachbearbeiterJA();
 		gesuch.setGueltig(true);
 		gesuch.setTimestampVerfuegt(LocalDateTime.now());
-		gesuch.setStatus(AntragStatus.VERFUEGT);
 		gesuch = gesuchService.updateGesuch(gesuch, true, null);
 		loginAsGesuchsteller("gesuchst");
 		final Optional<Gesuch> optMutation = gesuchService.antragMutieren(gesuch.getId(), LocalDate.now());
@@ -664,10 +617,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		} catch (EbeguRuntimeException e) {
 			// nop
 		}
-
-		optMutation.get().setStatus(AntragStatus.VERFUEGT);
-		gesuchService.updateGesuch(optMutation.get(), true, null);
-		gesuchService.antragMutieren(gesuch.getId(), LocalDate.now()); // nach dem die Mutation verfuegt ist, darf man es wieder mutieren
 	}
 
 	@Test
@@ -736,11 +685,11 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		final Gesuchsperiode otherPeriod = 	gesuchsperiodeService.saveGesuchsperiode(TestDataUtil.createCustomGesuchsperiode(2014, 2015));
 
-		Gesuch gesuch1516_1 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_JA);
+		Gesuch gesuch1516_1 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.VERFUEGT);
 		persistence.persist(gesuch1516_1);
-		Gesuch gesuch1516_2 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_JA);
+		Gesuch gesuch1516_2 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.VERFUEGT);
 		persistence.persist(gesuch1516_2);
-		Gesuch gesuch1415_1 = TestDataUtil.createGesuch(fall, otherPeriod, AntragStatus.IN_BEARBEITUNG_JA);
+		Gesuch gesuch1415_1 = TestDataUtil.createGesuch(fall, otherPeriod, AntragStatus.VERFUEGT);
 		persistence.persist(gesuch1415_1);
 
 		gesuchService.setBeschwerdeHaengigForPeriode(gesuch1516_1);
@@ -757,12 +706,12 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 					Assert.assertEquals(AntragStatus.BESCHWERDE_HAENGIG, foundGesuch.get().getStatus());
 				}
 				else {
-					Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, foundGesuch.get().getStatus()); // vergleicht mit IN_BEARBEITUNG_JA weil es so gesetzt wurde
+					Assert.assertEquals(AntragStatus.VERFUEGT, foundGesuch.get().getStatus()); // vergleicht mit IN_BEARBEITUNG_JA weil es so gesetzt wurde
 				}
 				Assert.assertTrue(foundGesuch.get().isGesperrtWegenBeschwerde());
 			}
 			else {
-				Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, foundGesuch.get().getStatus()); // vergleicht mit IN_BEARBEITUNG_JA weil es so gesetzt wurde
+				Assert.assertEquals(AntragStatus.VERFUEGT, foundGesuch.get().getStatus()); // vergleicht mit IN_BEARBEITUNG_JA weil es so gesetzt wurde
 				Assert.assertFalse(foundGesuch.get().isGesperrtWegenBeschwerde());
 			}
 		});
@@ -777,11 +726,11 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		final Gesuchsperiode otherPeriod = 	gesuchsperiodeService.saveGesuchsperiode(TestDataUtil.createCustomGesuchsperiode(2014, 2015));
 
-		Gesuch gesuch1516_1 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_JA);
+		Gesuch gesuch1516_1 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.VERFUEGT);
 		persistence.persist(gesuch1516_1);
-		Gesuch gesuch1516_2 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_JA);
+		Gesuch gesuch1516_2 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.VERFUEGT);
 		persistence.persist(gesuch1516_2);
-		Gesuch gesuch1415_1 = TestDataUtil.createGesuch(fall, otherPeriod, AntragStatus.IN_BEARBEITUNG_JA);
+		Gesuch gesuch1415_1 = TestDataUtil.createGesuch(fall, otherPeriod, AntragStatus.VERFUEGT);
 		persistence.persist(gesuch1415_1);
 
 		gesuch1516_1.setStatus(AntragStatus.VERFUEGT);
@@ -802,11 +751,11 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 					Assert.assertEquals(AntragStatus.VERFUEGT, foundGesuch.get().getStatus());
 				}
 				else {
-					Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, foundGesuch.get().getStatus());
+					Assert.assertEquals(AntragStatus.VERFUEGT, foundGesuch.get().getStatus());
 				}
 			}
 			else {
-				Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, foundGesuch.get().getStatus());
+				Assert.assertEquals(AntragStatus.VERFUEGT, foundGesuch.get().getStatus());
 			}
 			Assert.assertFalse(foundGesuch.get().isGesperrtWegenBeschwerde());
 		});
@@ -870,7 +819,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	@Test
 	public void testRemoveOnlineMutation() {
 		final Benutzer userGS = loginAsGesuchsteller("gesuchst");
-		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, null);
+		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, null, AntragStatus.VERFUEGT);
 		Benutzer sachbearbeiterJA = loginAsSachbearbeiterJA();
 		gesuch.setGueltig(true);
 		gesuch.setTimestampVerfuegt(LocalDateTime.now());
@@ -917,8 +866,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	private Gesuch createGesuchInBearbeitungGS(LocalDateTime timestampErstellt) {
-		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
-		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_GS);
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.IN_BEARBEITUNG_GS);
 		gesuch.setTimestampErstellt(timestampErstellt);
 		gesuch.setEingangsart(Eingangsart.ONLINE);
 		gesuch.getFall().setBesitzer(TestDataUtil.createAndPersistBenutzer(persistence));
@@ -929,8 +877,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	private Gesuch createGesuchFreigabequittung(LocalDate datumFreigabe) {
-		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
-		gesuch.setStatus(AntragStatus.FREIGABEQUITTUNG);
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.FREIGABEQUITTUNG);
 		gesuch.setFreigabeDatum(datumFreigabe);
 		gesuch.setEingangsart(Eingangsart.ONLINE);
 		gesuch.getFall().setBesitzer(TestDataUtil.createAndPersistBenutzer(persistence));
@@ -1015,7 +962,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	private Gesuch persistNewNurSchulamtGesuchEntity(AntragStatus status) {
-		Gesuch gesuch = TestDataUtil.createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		Gesuch gesuch = TestDataUtil.createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25), status);
 		gesuch.setStatus(status);
 		gesuch.setEingangsart(Eingangsart.PAPIER);
 		wizardStepService.createWizardStepList(gesuch);

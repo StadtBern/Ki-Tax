@@ -1,35 +1,5 @@
 package ch.dvbern.ebegu.api.resource;
 
-import java.net.URI;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
@@ -40,11 +10,7 @@ import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -52,11 +18,7 @@ import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.services.BenutzerService;
-import ch.dvbern.ebegu.services.FallService;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.GesuchsperiodeService;
-import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.DateUtil;
 import ch.dvbern.ebegu.util.MonitoringUtil;
@@ -69,6 +31,21 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * Resource fuer Gesuch
@@ -137,9 +114,6 @@ public class GesuchResource {
 		@Nonnull @NotNull JaxGesuch gesuchJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
-
-		// Sicherstellen, dass der Status des Client-Objektes mindestens dem des Servers entspricht
-		resourceHelper.assertGesuchStatus(gesuchJAXP);
 
 		Validate.notNull(gesuchJAXP.getId());
 		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchJAXP.getId());
@@ -307,9 +281,6 @@ public class GesuchResource {
 	public Response updateStatus(
 		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam("statusDTO") AntragStatusDTO statusDTO) throws EbeguException {
-
-		// Sicherstellen, dass der Status des Client-Objektes mindestens dem des Servers entspricht
-		resourceHelper.assertGesuchStatus(gesuchJAXPId.getId(), statusDTO);
 
 		Validate.notNull(gesuchJAXPId.getId());
 		Validate.notNull(statusDTO);

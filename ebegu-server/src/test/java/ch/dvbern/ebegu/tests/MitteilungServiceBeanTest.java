@@ -1,26 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.security.auth.login.LoginException;
-
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
-import ch.dvbern.ebegu.entities.BetreuungsmitteilungPensum;
-import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.entities.Mandant;
-import ch.dvbern.ebegu.entities.Mitteilung;
-import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
@@ -41,6 +21,15 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.inject.Inject;
+import javax.security.auth.login.LoginException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Tests fuer die Klasse MitteilungService
@@ -255,8 +244,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		prepareDependentObjects();
 
 		// Wir erstellen ein Erstgesuch und mutieren es
-		final Gesuch gesuch1 = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
-		gesuch1.setStatus(AntragStatus.VERFUEGT);
+		final Gesuch gesuch1 = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now(), AntragStatus.VERFUEGT);
 		gesuch1.setGueltig(true);
 		gesuch1.setTimestampVerfuegt(LocalDateTime.now());
 		gesuchService.updateGesuch(gesuch1, true, null);
