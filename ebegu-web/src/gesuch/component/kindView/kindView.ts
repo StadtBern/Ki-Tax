@@ -14,11 +14,11 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSRole} from '../../../models/enums/TSRole';
 import DateUtil from '../../../utils/DateUtil';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import * as moment from 'moment';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
+import * as moment from 'moment';
 
 
 let template = require('./kindView.html');
