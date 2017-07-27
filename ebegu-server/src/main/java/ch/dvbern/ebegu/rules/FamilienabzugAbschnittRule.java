@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.Kinderabzug;
@@ -12,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -159,8 +162,10 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 			// es gibt keine 'halben' Eltern, deswegen sind die Werte hier gleich.
 			famGrAnzahlPersonen = famGrBeruecksichtigungAbzug.intValue();
 
+			LocalDate dateToCompare = getRelevantDateForKinder(gesuch.getGesuchsperiode(), date);
+
 			for (KindContainer kindContainer : gesuch.getKindContainers()) {
-				if (kindContainer.getKindJA() != null && (date == null || kindContainer.getKindJA().getGeburtsdatum().isBefore(date))) {
+				if (kindContainer.getKindJA() != null && (dateToCompare == null || kindContainer.getKindJA().getGeburtsdatum().isBefore(dateToCompare))) {
 					if (kindContainer.getKindJA().getKinderabzug() == Kinderabzug.HALBER_ABZUG) {
 						famGrBeruecksichtigungAbzug += 0.5;
 						famGrAnzahlPersonen++;
@@ -173,6 +178,21 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 			}
 		}
 		return new AbstractMap.SimpleEntry(famGrBeruecksichtigungAbzug, famGrAnzahlPersonen);
+	}
+
+	/**
+	 * This method will check if date is before the beginning of the Gesuchsperiode. In that case the beginning of
+	 * the Gesuchsperiode will be returned. In case not, the date itself will be returned. If the passed date is null
+	 * then null will be returned regardless of the comparisson between boths dates.
+	 */
+	@Nullable
+	private LocalDate getRelevantDateForKinder(@NotNull Gesuchsperiode gesuchsperiode, @Nullable LocalDate date) {
+		LocalDate dateToCompare = null;
+		if (date != null) {
+			dateToCompare = (date.isBefore(gesuchsperiode.getGueltigkeit().getGueltigAb()))
+				? gesuchsperiode.getGueltigkeit().getGueltigAb() : date;
+		}
+		return dateToCompare;
 	}
 
 	/**
