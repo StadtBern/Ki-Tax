@@ -6,6 +6,8 @@ import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.StringUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -63,7 +65,12 @@ public abstract class AbstractTestfall {
 		return new Fall();
 	}
 
-	public void createGesuch(LocalDate eingangsdatum) {
+	public void createGesuch(@Nullable LocalDate eingangsdatum, AntragStatus status) {
+		createGesuch(eingangsdatum);
+		gesuch.setStatus(status);
+	}
+
+	public void createGesuch(@Nullable LocalDate eingangsdatum) {
 		// Fall
 		if (fall == null) {
 			fall = createFall(null);
@@ -76,7 +83,11 @@ public abstract class AbstractTestfall {
 		gesuch.setGesuchsperiode(gesuchsperiode);
 		gesuch.setFall(fall);
 		gesuch.setEingangsdatum(eingangsdatum);
-		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
+		if (eingangsdatum != null) {
+			gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
+		} else {
+			gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_GS);
+		}
 	}
 
 	protected Gesuch createAlleinerziehend() {
@@ -201,7 +212,7 @@ public abstract class AbstractTestfall {
 
 	protected InstitutionStammdaten createInstitutionStammdaten(BetreuungsangebotTyp betreuungsangebotTyp, String institutionsId) {
 		for (InstitutionStammdaten institutionStammdaten : institutionStammdatenList) {
-			if (institutionStammdaten.getBetreuungsangebotTyp().equals(betreuungsangebotTyp) && institutionStammdaten.getInstitution().getId().equals(institutionsId)) {
+			if (institutionStammdaten.getBetreuungsangebotTyp() == betreuungsangebotTyp && institutionStammdaten.getInstitution().getId().equals(institutionsId)) {
 				return institutionStammdaten;
 			}
 		}
@@ -259,6 +270,17 @@ public abstract class AbstractTestfall {
 			ekvContainer.setEkvJABasisJahrPlus2(ekv2);
 		}
 		return ekvContainer;
+	}
+
+	protected void createEmptyEKVInfoContainer(@Nonnull Gesuch gesuch) {
+		EinkommensverschlechterungInfoContainer ekvInfoContainer = new EinkommensverschlechterungInfoContainer();
+		ekvInfoContainer.setGesuch(gesuch);
+		gesuch.setEinkommensverschlechterungInfoContainer(ekvInfoContainer);
+		EinkommensverschlechterungInfo ekvInfoJA = new EinkommensverschlechterungInfo();
+		ekvInfoJA.setEinkommensverschlechterung(false);
+		ekvInfoJA.setEkvFuerBasisJahrPlus1(false);
+		ekvInfoJA.setEkvFuerBasisJahrPlus2(false);
+		ekvInfoContainer.setEinkommensverschlechterungInfoJA(ekvInfoJA);
 	}
 
 	protected EinkommensverschlechterungInfoContainer createEinkommensverschlechterungInfoContainer(LocalDate stichtagEKV1, LocalDate stichtagEKV2) {

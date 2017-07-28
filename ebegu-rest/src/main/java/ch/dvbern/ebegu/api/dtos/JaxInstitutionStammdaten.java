@@ -1,13 +1,14 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import java.math.BigDecimal;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
+
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 
 /**
  * Created by imanol on 17.03.16.
@@ -32,6 +33,12 @@ public class JaxInstitutionStammdaten extends JaxAbstractDateRangedDTO {
 
 	@NotNull
 	private JaxAdresse adresse;
+
+	@Nullable
+	private String kontoinhaber;
+	@Nullable
+	private JaxAdresse adresseKontoinhaber;
+
 
 	@Nullable
 	public String getIban() {
@@ -85,4 +92,21 @@ public class JaxInstitutionStammdaten extends JaxAbstractDateRangedDTO {
 		this.adresse = adresse;
 	}
 
+	@Nullable
+	public String getKontoinhaber() {
+		return kontoinhaber;
+	}
+
+	public void setKontoinhaber(@Nullable String kontoinhaber) {
+		this.kontoinhaber = kontoinhaber;
+	}
+
+	@Nullable
+	public JaxAdresse getAdresseKontoinhaber() {
+		return adresseKontoinhaber;
+	}
+
+	public void setAdresseKontoinhaber(@Nullable JaxAdresse adresseKontoinhaber) {
+		this.adresseKontoinhaber = adresseKontoinhaber;
+	}
 }

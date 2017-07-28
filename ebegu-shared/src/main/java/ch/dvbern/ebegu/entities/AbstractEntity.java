@@ -1,5 +1,25 @@
 package ch.dvbern.ebegu.entities;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.UUID;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
+import javax.persistence.EntityListeners;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.SqlResultSetMappings;
+import javax.persistence.Transient;
+import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.util.AbstractEntityListener;
@@ -8,16 +28,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.Hibernate;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.UUID;
 
 @SuppressWarnings("ClassReferencesSubclass")
 @MappedSuperclass
@@ -52,18 +62,16 @@ import java.util.UUID;
 				@ColumnResult(name = "anzahlMutationPapier", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationAbwesenheit", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationBetreuung", type = Integer.class),
-				@ColumnResult(name = "anzahlMutationDokumente", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationEV", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationEwerbspensum", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationFamilienSitutation", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationFinanzielleSituation", type = Integer.class),
-				@ColumnResult(name = "anzahlMutationFreigabe", type = Integer.class),
-				@ColumnResult(name = "anzahlMutationGesuchErstellen", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationGesuchsteller", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationKinder", type = Integer.class),
 				@ColumnResult(name = "anzahlMutationUmzug", type = Integer.class),
-				@ColumnResult(name = "anzahlMutationVerfuegen", type = Integer.class),
 				@ColumnResult(name = "anzahlMahnungen", type = Integer.class),
+				@ColumnResult(name = "anzahlSteueramtAusgeloest", type = Integer.class),
+				@ColumnResult(name = "anzahlSteueramtGeprueft", type = Integer.class),
 				@ColumnResult(name = "anzahlBeschwerde", type = Integer.class),
 				@ColumnResult(name = "anzahlVerfuegungen", type = Integer.class),
 				@ColumnResult(name = "anzahlVerfuegungenNormal", type = Integer.class),
@@ -108,6 +116,14 @@ public abstract class AbstractEntity implements Serializable {
 	@Column(nullable = true, length = Constants.UUID_LENGTH)
 	@Size(min = Constants.UUID_LENGTH, max = Constants.UUID_LENGTH)
 	private String vorgaengerId;
+
+	/**
+	 * This variable is used to tell the AbstractEntityListener that it should skip the preUpdate method when saving
+	 * this object. This is a transient field, so that it will be removed with the java-object.
+	 * WARNING! set it to true only when you know what you are doing
+	 */
+	@Transient
+	private boolean skipPreUpdate = false;
 
 	public AbstractEntity() {
 		//da wir teilweise schon eine id brauchen bevor die Entities gespeichert werden initialisieren wir die uuid hier
@@ -175,6 +191,17 @@ public abstract class AbstractEntity implements Serializable {
 		this.vorgaengerId = vorgaengerId;
 	}
 
+	public boolean isSkipPreUpdate() {
+		return skipPreUpdate;
+	}
+
+	/**
+	 * WARNING! set it to true only when you know what you are doing.
+	 */
+	public void setSkipPreUpdate(boolean skipPreUpdate) {
+		this.skipPreUpdate = skipPreUpdate;
+	}
+
 	@SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
 	@SuppressFBWarnings(value = "BC_EQUALS_METHOD_SHOULD_WORK_FOR_ALL_OBJECTS", justification = "Es wird Hibernate.getClass genutzt um von Proxies (LazyInit) die konkrete Klasse zu erhalten")
 	@Override
@@ -228,4 +255,6 @@ public abstract class AbstractEntity implements Serializable {
 		folgeEntity.setVorgaengerId(null); // Wir verlinken exlizit nicht mit der Vorperiode
 		return folgeEntity;
 	}
+
+	public abstract boolean isSame(AbstractEntity other);
 }

@@ -147,7 +147,7 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 	@Test
 	public void testGetEmailAddressForFallFromGS() {
 		loginAsGesuchsteller("gesuchst");
-		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.now());
+		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, null);
 
 		Assert.assertNotNull(gesuch.getGesuchsteller1().getGesuchstellerJA().getMail());
 		Assert.assertNotNull(gesuch.getFall().getBesitzer());

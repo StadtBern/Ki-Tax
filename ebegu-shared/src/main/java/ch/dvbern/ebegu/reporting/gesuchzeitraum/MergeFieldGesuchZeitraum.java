@@ -9,12 +9,14 @@
  */
 package ch.dvbern.ebegu.reporting.gesuchzeitraum;
 
+import javax.annotation.Nonnull;
+
 import ch.dvbern.lib.excelmerger.Converter;
 import ch.dvbern.lib.excelmerger.MergeField;
 
-import javax.annotation.Nonnull;
-
-import static ch.dvbern.lib.excelmerger.StandardConverters.*;
+import static ch.dvbern.lib.excelmerger.StandardConverters.INTEGER_CONVERTER;
+import static ch.dvbern.lib.excelmerger.StandardConverters.REPEAT_ROW_CONVERTER;
+import static ch.dvbern.lib.excelmerger.StandardConverters.STRING_CONVERTER;
 
 public enum MergeFieldGesuchZeitraum implements MergeField {
 
@@ -31,18 +33,16 @@ public enum MergeFieldGesuchZeitraum implements MergeField {
 	anzahlMutationPapier(INTEGER_CONVERTER, Type.SIMPLE),
 	anzahlMutationAbwesenheit(INTEGER_CONVERTER, Type.SIMPLE),
 	anzahlMutationBetreuung(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMutationDokumente(INTEGER_CONVERTER, Type.SIMPLE),
 	anzahlMutationEV(INTEGER_CONVERTER, Type.SIMPLE),
 	anzahlMutationEwerbspensum(INTEGER_CONVERTER, Type.SIMPLE),
 	anzahlMutationFamilienSitutation(INTEGER_CONVERTER, Type.SIMPLE),
 	anzahlMutationFinanzielleSituation(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMutationFreigabe(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMutationGesuchErstellen(INTEGER_CONVERTER, Type.SIMPLE),
 	anzahlMutationGesuchsteller(INTEGER_CONVERTER, Type.SIMPLE),
 	anzahlMutationKinder(INTEGER_CONVERTER, Type.SIMPLE),
 	anzahlMutationUmzug(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMutationVerfuegen(INTEGER_CONVERTER, Type.SIMPLE),
 	anzahlMahnungen(INTEGER_CONVERTER, Type.SIMPLE),
+	anzahlSteueramtAusgeloest(INTEGER_CONVERTER, Type.SIMPLE),
+	anzahlSteueramtGeprueft(INTEGER_CONVERTER, Type.SIMPLE),
 	anzahlBeschwerde(INTEGER_CONVERTER, Type.SIMPLE),
 	anzahlVerfuegungen(INTEGER_CONVERTER, Type.SIMPLE),
 	anzahlVerfuegungenNormal(INTEGER_CONVERTER, Type.SIMPLE),

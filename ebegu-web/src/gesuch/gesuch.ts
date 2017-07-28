@@ -20,6 +20,7 @@ import TSEWKResultat from '../models/TSEWKResultat';
 import {TSGesuchEvent} from '../models/enums/TSGesuchEvent';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import EwkRS from '../core/service/ewkRS.rest';
+import TSGesuchsteller from '../models/TSGesuchsteller';
 
 export class GesuchRouteController {
 
@@ -208,12 +209,14 @@ export class GesuchRouteController {
         return this.wizardStepManager.getCurrentStepName();
     }
 
-    public getGesuchstellerTitle(gesuchsteller: TSGesuchstellerContainer): string {
-        if (gesuchsteller && gesuchsteller.gesuchstellerJA) {
-            if (gesuchsteller.gesuchstellerJA.ewkPersonId) {
-                return gesuchsteller.gesuchstellerJA.getFullName() + ' (' + gesuchsteller.gesuchstellerJA.ewkPersonId + ')';
+    public getGesuchstellerTitle(gsnumber: number): string {
+        let gs: TSGesuchsteller = this.ewkRS.getGesuchsteller(gsnumber).gesuchstellerJA;
+        if (gs) {
+            let title: string = gs.getFullName();
+            if (gs.ewkPersonId) {
+                return title + ' (' + gs.ewkPersonId + ')';
             }
-            return gesuchsteller.gesuchstellerJA.getFullName();
+            return title;
         }
         return undefined;
     }

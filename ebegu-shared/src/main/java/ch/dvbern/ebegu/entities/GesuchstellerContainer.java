@@ -21,6 +21,7 @@ import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
 import ch.dvbern.ebegu.validators.CheckGesuchstellerContainerComplete;
 import org.hibernate.envers.Audited;
@@ -107,6 +108,20 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 
 	public void setAdressen(@Nonnull final List<GesuchstellerAdresseContainer> adressen) {
 		this.adressen = adressen;
+	}
+
+	/**
+	 * Returns the first korrespondezAdresse found for this GesuchstellerContainer. It should have only one.
+	 * If no korrespondezAdresse is set, null is returned
+	 */
+	@Nullable
+	public GesuchstellerAdresseContainer extractKorrespondezAdresse() {
+		for (GesuchstellerAdresseContainer adresse : getAdressen()) {
+			if (adresse.extractIsKorrespondenzAdresse()) {
+				return adresse;
+			}
+		}
+		return null;
 	}
 
 	@Nullable
@@ -274,5 +289,21 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 	@Override
 	public String getOwningGesuchId() {
 		return null;   //leider nicht ohne serviceabfrage verfuegbar
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!(other instanceof GesuchstellerContainer)) {
+			return false;
+		}
+		final GesuchstellerContainer otherGesuchstellerContainer = (GesuchstellerContainer) other;
+		return EbeguUtil.isSameObject(getGesuchstellerJA(), otherGesuchstellerContainer.getGesuchstellerJA());
 	}
 }

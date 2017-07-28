@@ -18,11 +18,12 @@ import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.SingularAttribute;
@@ -30,7 +31,10 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.constraints.NotNull;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
@@ -57,9 +61,6 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
@@ -77,11 +78,12 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(MitteilungService.class)
-@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION,
-	SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT})
+@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION,
+	SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT })
 @SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals"})
 public class MitteilungServiceBean extends AbstractBaseService implements MitteilungService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(MitteilungServiceBean.class.getSimpleName());
 
 	@Inject
 	private Persistence<Mitteilung> persistence;
@@ -104,15 +106,13 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@Inject
 	private BetreuungService betreuungService;
 
-	private final Logger LOG = LoggerFactory.getLogger(MitteilungServiceBean.class.getSimpleName());
-
 
 	@Override
 	@Nonnull
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public Mitteilung sendMitteilung(@Nonnull Mitteilung mitteilung) {
 		Objects.requireNonNull(mitteilung);
-		if (!MitteilungStatus.ENTWURF.equals(mitteilung.getMitteilungStatus())) {
+		if (MitteilungStatus.ENTWURF != mitteilung.getMitteilungStatus()) {
 			throw new IllegalArgumentException("Mitteilung ist nicht im Status ENTWURF und kann nicht gesendet werden");
 		}
 		mitteilung.setMitteilungStatus(MitteilungStatus.NEU);
@@ -129,7 +129,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				throw new ConstraintViolationException(validationErrors);
 			}
 
-			if (MitteilungTeilnehmerTyp.GESUCHSTELLER.equals(mitteilung.getEmpfaengerTyp()) && mitteilung.getEmpfaenger() != null) {
+			if (MitteilungTeilnehmerTyp.GESUCHSTELLER == mitteilung.getEmpfaengerTyp() && mitteilung.getEmpfaenger() != null) {
 				mailService.sendInfoMitteilungErhalten(mitteilung);
 			}
 
@@ -144,12 +144,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	/**
 	 * Falls der dazugehörige Fall noch keinen Verantwortlichen hat, so soll die Mitteilung beim vom Admin
 	 * definierten Default-Verantwortlichen angezeigt werden
-	 *
-	 * @param mitteilung
 	 */
 	private void ensureEmpfaengerIsSet(@Nonnull Mitteilung mitteilung) {
-
-		if (MitteilungTeilnehmerTyp.JUGENDAMT.equals(mitteilung.getEmpfaengerTyp())) {
+		if (MitteilungTeilnehmerTyp.JUGENDAMT == mitteilung.getEmpfaengerTyp()) {
 			mitteilung.setEmpfaenger(mitteilung.getFall().getVerantwortlicher());
 			if (mitteilung.getEmpfaenger() == null) {
 				String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
@@ -170,7 +167,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public Mitteilung saveEntwurf(@Nonnull Mitteilung mitteilung) {
 		Objects.requireNonNull(mitteilung);
-		if (!MitteilungStatus.ENTWURF.equals(mitteilung.getMitteilungStatus())) {
+		if (MitteilungStatus.ENTWURF != mitteilung.getMitteilungStatus()) {
 			throw new IllegalArgumentException("Mitteilung ist nicht im Status ENTWURF und kann nicht als Entwurf gespeichert werden");
 		}
 		return persistence.merge(mitteilung);
@@ -201,6 +198,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Override
 	@Nonnull
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, SCHULAMT})
 	public Optional<Betreuungsmitteilung> findBetreuungsmitteilung(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Betreuungsmitteilung mitteilung = persistence.find(Betreuungsmitteilung.class, key);
@@ -211,22 +209,58 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, SCHULAMT})
 	public Collection<Betreuungsmitteilung> findAllBetreuungsmitteilungenForBetreuung(@Nonnull Betreuung betreuung) {
-		Objects.requireNonNull(betreuung, "gesuch muss gesetzt sein");
+		Objects.requireNonNull(betreuung, "betreuung muss gesetzt sein");
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuungsmitteilung> query = cb.createQuery(Betreuungsmitteilung.class);
 		Root<Betreuungsmitteilung> root = query.from(Betreuungsmitteilung.class);
-		List<Expression<Boolean>> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<>();
 
-		Predicate predicateLinkedObject = cb.equal(root.get(Betreuungsmitteilung_.betreuung), betreuung);
+		ParameterExpression<Betreuung> betreuungParam = cb.parameter(Betreuung.class, "betreuunParam");
+		ParameterExpression<MitteilungStatus> statusParam = cb.parameter(MitteilungStatus.class, "statusParam");
+
+		Predicate predicateLinkedObject = cb.equal(root.get(Betreuungsmitteilung_.betreuung), betreuungParam);
 		predicates.add(predicateLinkedObject);
 
-		Predicate predicateEntwurf = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ENTWURF);
+		Predicate predicateEntwurf = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), statusParam);
 		predicates.add(predicateEntwurf);
 
 		query.orderBy(cb.desc(root.get(Mitteilung_.sentDatum)));
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-		return persistence.getCriteriaResults(query);
+
+		TypedQuery<Betreuungsmitteilung> tq = persistence.getEntityManager().createQuery(query);
+
+		tq.setParameter("betreuunParam", betreuung);
+		tq.setParameter("statusParam", MitteilungStatus.ENTWURF);
+
+		return tq.getResultList();
+	}
+
+	@Nonnull
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, SCHULAMT})
+	public Collection<Mitteilung> findAllMitteilungenForBetreuung(@Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, "betreuung muss gesetzt sein");
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
+		Root<Mitteilung> root = query.from(Mitteilung.class);
+		List<Predicate> predicates = new ArrayList<>();
+
+		ParameterExpression<Betreuung> betreuungParam = cb.parameter(Betreuung.class, "betreuunParam");
+
+		Predicate predicateLinkedObject = cb.equal(root.get(Mitteilung_.betreuung), betreuungParam);
+		predicates.add(predicateLinkedObject);
+
+
+		query.orderBy(cb.desc(root.get(Mitteilung_.sentDatum)));
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+
+		TypedQuery<Mitteilung> tq = persistence.getEntityManager().createQuery(query);
+
+		tq.setParameter("betreuunParam", betreuung);
+
+		return tq.getResultList();
 	}
 
 	@Nonnull
@@ -249,7 +283,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
-		List<Expression<Boolean>> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<>();
 
 		Predicate predicateLinkedObject = cb.equal(root.get(attribute), linkedEntity);
 		predicates.add(predicateLinkedObject);
@@ -278,7 +312,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
 
-		List<Expression<Boolean>> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<>();
 
 		// Keine Entwuerfe fuer Posteingang
 		Predicate predicateEntwurf = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ENTWURF);
@@ -297,7 +331,6 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		query.orderBy(cb.desc(root.get(Mitteilung_.sentDatum)));
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		return persistence.getCriteriaResults(query);
-
 	}
 
 	@Override
@@ -320,7 +353,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
-		List<Expression<Boolean>> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<>();
 
 		Predicate predicateLinkedObject = cb.equal(root.get(attribute), linkedEntity);
 		predicates.add(predicateLinkedObject);
@@ -378,7 +411,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	public Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(@Nonnull Fall fall) {
 		Collection<Mitteilung> mitteilungen = getMitteilungenForCurrentRolle(fall);
 		for (Mitteilung mitteilung : mitteilungen) {
-			if (MitteilungStatus.NEU.equals(mitteilung.getMitteilungStatus())) {
+			if (MitteilungStatus.NEU == mitteilung.getMitteilungStatus()) {
 				setMitteilungsStatusIfBerechtigt(mitteilung, MitteilungStatus.GELESEN, MitteilungStatus.NEU);
 			}
 		}
@@ -387,13 +420,14 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Override
 	@Nonnull
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, SCHULAMT})
 	public Collection<Mitteilung> getNewMitteilungenForCurrentRolleAndFall(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall, "fall muss gesetzt sein");
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
-		List<Expression<Boolean>> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<>();
 
 		Predicate predicateFall = cb.equal(root.get(Mitteilung_.fall), fall);
 		predicates.add(predicateFall);
@@ -411,11 +445,12 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Override
 	@Nonnull
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public Long getAmountNewMitteilungenForCurrentBenutzer() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Long> query = cb.createQuery(Long.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
-		List<Expression<Boolean>> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<>();
 
 		Predicate predicateNew = cb.equal(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.NEU);
 		predicates.add(predicateNew);
@@ -433,10 +468,10 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@RolesAllowed({SUPER_ADMIN, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public Betreuungsmitteilung sendBetreuungsmitteilung(Betreuungsmitteilung betreuungsmitteilung) {
 		Objects.requireNonNull(betreuungsmitteilung);
-		if (!MitteilungTeilnehmerTyp.INSTITUTION.equals(betreuungsmitteilung.getSenderTyp())) {
+		if (MitteilungTeilnehmerTyp.INSTITUTION != betreuungsmitteilung.getSenderTyp()) {
 			throw new IllegalArgumentException("Eine Betreuungsmitteilung darf nur bei einer Institution geschickt werden");
 		}
-		if (!MitteilungTeilnehmerTyp.JUGENDAMT.equals(betreuungsmitteilung.getEmpfaengerTyp())) {
+		if (MitteilungTeilnehmerTyp.JUGENDAMT != betreuungsmitteilung.getEmpfaengerTyp()) {
 			throw new IllegalArgumentException("Eine Betreuungsmitteilung darf nur an das Jugendamt geschickt werden");
 		}
 		betreuungsmitteilung.setMitteilungStatus(MitteilungStatus.NEU); // vorsichtshalber
@@ -448,7 +483,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
-	public Gesuch applyBetreuungsmitteilung(@NotNull Betreuungsmitteilung mitteilung) {
+	public Gesuch applyBetreuungsmitteilung(@Nonnull Betreuungsmitteilung mitteilung) {
 		final Gesuch gesuch = mitteilung.getBetreuung().extractGesuch();
 		// neustes Gesuch lesen
 		final Optional<Gesuch> neustesGesuchOpt;
@@ -468,7 +503,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			if (neustesGesuch.isGesperrtWegenBeschwerde()) {
 				throw new EbeguRuntimeException("applyBetreuungsmitteilung", ErrorCodeEnum.ERROR_MUTATIONSMELDUNG_FALL_GESPERRT);
 			}
-			else if (AntragStatus.VERFUEGEN.equals(neustesGesuch.getStatus())) {
+			else if (AntragStatus.VERFUEGEN == neustesGesuch.getStatus()) {
 				throw new EbeguRuntimeException("applyBetreuungsmitteilung", ErrorCodeEnum.ERROR_MUTATIONSMELDUNG_STATUS_VERFUEGEN);
 			}
 			else if (!AntragStatus.getVerfuegtAndSTVStates().contains(neustesGesuch.getStatus()) && neustesGesuch.isMutation()) {
@@ -493,6 +528,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, SCHULAMT})
 	public Optional<Betreuungsmitteilung> findNewestBetreuungsmitteilung(String betreuungId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuungsmitteilung> query = cb.createQuery(Betreuungsmitteilung.class);
@@ -557,17 +593,21 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		}
 	}
 
-	private Mitteilung setMitteilungsStatusIfBerechtigt(@Nonnull String mitteilungsId, MitteilungStatus statusRequested, @Nonnull MitteilungStatus... statusRequired) {
+	@SuppressWarnings("OverloadedVarargsMethod")
+	private Mitteilung setMitteilungsStatusIfBerechtigt(@Nonnull String mitteilungsId,
+		MitteilungStatus statusRequested, @Nonnull MitteilungStatus... statusRequired) {
 		Optional<Mitteilung> mitteilungOptional = findMitteilung(mitteilungsId);
 		Mitteilung mitteilung = mitteilungOptional.orElseThrow(() -> new EbeguRuntimeException("setMitteilungsStatusIfBerechtigt", "Mitteilung not found"));
 		return setMitteilungsStatusIfBerechtigt(mitteilung, statusRequested, statusRequired);
 	}
 
-	private Mitteilung setMitteilungsStatusIfBerechtigt(@Nonnull Mitteilung mitteilung, MitteilungStatus statusRequested, @Nonnull MitteilungStatus... statusRequired) {
+	@SuppressWarnings("OverloadedVarargsMethod")
+	private Mitteilung setMitteilungsStatusIfBerechtigt(@Nonnull Mitteilung mitteilung,
+		MitteilungStatus statusRequested, @Nonnull MitteilungStatus... statusRequired) {
 		if (!Arrays.asList(statusRequired).contains(mitteilung.getMitteilungStatus())) {
 			throw new IllegalStateException("Mitteilung " + mitteilung.getId() + " ist im falschen Status: " + mitteilung.getMitteilungStatus() + " anstatt " + Arrays.toString(statusRequired));
 		}
-		if (mitteilung.getEmpfaengerTyp().equals(getMitteilungTeilnehmerTypForCurrentUser())) {
+		if (mitteilung.getEmpfaengerTyp() == getMitteilungTeilnehmerTypForCurrentUser()) {
 			mitteilung.setMitteilungStatus(statusRequested);
 		}
 		return persistence.merge(mitteilung);

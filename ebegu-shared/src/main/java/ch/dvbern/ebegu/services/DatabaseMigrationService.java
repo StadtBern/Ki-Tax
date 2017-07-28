@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.services;
 
+import java.util.concurrent.Future;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -10,5 +12,5 @@ public interface DatabaseMigrationService {
 	/**
 	 * Fuehrt ein manuelles Script auf der Datenbank aus
 	 */
-	void processScript(@Nonnull String scriptId);
+	Future<Boolean> processScript(@Nonnull String scriptId);
 }

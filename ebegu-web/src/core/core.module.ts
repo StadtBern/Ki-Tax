@@ -89,6 +89,8 @@ import DVSTPersistPendenzen from './directive/dv-st-persist-pendenzen/dv-st-pers
 import {DvDownloadmenuComponentConfig} from './component/dv-downloadmenu/dv-downloadmenu';
 import {DVVorlageListConfig} from './component/dv-vorlage-list/dv-vorlage-list';
 import {DatabaseMigrationRS} from '../admin/service/databaseMigrationRS.rest';
+import HttpVersionInterceptor from './service/version/HttpVersionInterceptor';
+import {DVVersionComponentConfig} from './component/dv-version/dv-version';
 
 let dynamicDependencies = function (): string[] {
 
@@ -195,6 +197,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('FachstelleRS', FachstelleRS)
     .service('BerechnungsManager', BerechnungsManager)
     .service('HttpResponseInterceptor', HttpResponseInterceptor)
+    .service('HttpVersionInterceptor', HttpVersionInterceptor)
     .service('WizardStepManager', WizardStepManager)
     .service('NavigationLogger', NavigationLogger)
     .service('SearchIndexRS', SearchIndexRS)
@@ -222,6 +225,7 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvMitteilungList', new DVMitteilungListConfig())
     .component('dvAccordion', new DvAccordionComponentConfig())
     .component('dvAccordionTab', new DvAccordionTabComponentConfig())
+    .component('dvVersion', new DVVersionComponentConfig())
     .service('MahnungRS', MahnungRS)
     .service('ReportRS', ReportRS)
     .service('EwkRS', EwkRS)

@@ -14,12 +14,11 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSRole} from '../../../models/enums/TSRole';
 import DateUtil from '../../../utils/DateUtil';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import * as moment from 'moment';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
-import Moment = moment.Moment;
+import * as moment from 'moment';
 
 
 let template = require('./kindView.html');
@@ -188,6 +187,13 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         let tsKindContainer = new TSKindContainer(undefined, new TSKind());
         tsKindContainer.kindNummer = kindNumber;
         return tsKindContainer;
+    }
+
+    /**
+     * Returns true if the Kind has a Betreuung
+     */
+    public hasKindBetreuungen(): boolean {
+        return this.model.betreuungen && this.model.betreuungen.length > 0;
     }
 }
 

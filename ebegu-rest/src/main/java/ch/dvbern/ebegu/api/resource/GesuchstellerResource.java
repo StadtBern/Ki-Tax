@@ -1,5 +1,27 @@
 package ch.dvbern.ebegu.api.resource;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
@@ -18,21 +40,6 @@ import ch.dvbern.ebegu.util.DateUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriInfo;
-import java.time.LocalDate;
-import java.util.Optional;
 
 /**
  * REST Resource fuer Gesuchsteller
@@ -72,21 +79,22 @@ public class GesuchstellerResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchContJAXPId.getId());
-		if (gesuch.isPresent()) {
-			GesuchstellerContainer gesuchstellerToMerge = new GesuchstellerContainer();
-			if (gesuchstellerJAXP.getId() != null) {
-				Optional<GesuchstellerContainer> optional = gesuchstellerService.findGesuchsteller(gesuchstellerJAXP.getId());
-				gesuchstellerToMerge = optional.orElse(new GesuchstellerContainer());
-			}
+		Gesuch gesuch = gesuchService.findGesuch(gesuchContJAXPId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("createGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchContJAXPId.getId()));
 
-			GesuchstellerContainer convertedGesuchsteller = converter.gesuchstellerContainerToEntity(gesuchstellerJAXP, gesuchstellerToMerge);
-			GesuchstellerContainer persistedGesuchsteller = this.gesuchstellerService.saveGesuchsteller(convertedGesuchsteller, gesuch.get(), gsNumber, umzug);
+		// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+		//TODO (team): Sobald das Speichern der Email/Telefon NACH dem Verfuegen in einem separaten Service ist, wieder einkommentieren
+//		resourceHelper.assertGesuchStatusForBenutzerRole(gesuch);
 
-			return converter.gesuchstellerContainerToJAX(persistedGesuchsteller);
+		GesuchstellerContainer gesuchstellerToMerge = new GesuchstellerContainer();
+		if (gesuchstellerJAXP.getId() != null) {
+			Optional<GesuchstellerContainer> optional = gesuchstellerService.findGesuchsteller(gesuchstellerJAXP.getId());
+			gesuchstellerToMerge = optional.orElse(new GesuchstellerContainer());
 		}
-		throw new EbeguEntityNotFoundException("createGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchContJAXPId.getId());
 
+		GesuchstellerContainer convertedGesuchsteller = converter.gesuchstellerContainerToEntity(gesuchstellerJAXP, gesuchstellerToMerge);
+		GesuchstellerContainer persistedGesuchsteller = this.gesuchstellerService.saveGesuchsteller(convertedGesuchsteller, gesuch, gsNumber, umzug);
+
+		return converter.gesuchstellerContainerToJAX(persistedGesuchsteller);
 	}
 
 	@Nullable

@@ -93,10 +93,13 @@ public class AbstractEntityListener {
 
 	@PreUpdate
 	public void preUpdate(@Nonnull AbstractEntity entity) {
-		entity.setTimestampMutiert(LocalDateTime.now());
-		entity.setUserMutiert(getPrincipalName());
-		if (entity instanceof Verfuegung) {
-			throw new IllegalStateException("Verfuegung darf eigentlich nur einmal erstellt werden, wenn die Betreuung verfuegt ist, und nie mehr veraendert");
+		if (!entity.isSkipPreUpdate()) {
+			entity.setTimestampMutiert(LocalDateTime.now());
+			entity.setUserMutiert(getPrincipalName());
+			if (entity instanceof Verfuegung) {
+				throw new IllegalStateException("Verfuegung darf eigentlich nur einmal erstellt werden, wenn die Betreuung verfuegt ist, und nie mehr veraendert");
+
+			}
 		}
 	}
 

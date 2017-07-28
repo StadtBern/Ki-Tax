@@ -252,7 +252,7 @@
             </div>
             <div ng-repeat=" n in [1,2]" ng-if="vm.showAbfrageForGesuchsteller(n)">
 
-                <h3 ng-bind="vm.getGesuchstellerTitle(vm.getGesuchsteller(n))"></h3>
+                <h3 ng-bind="vm.getGesuchstellerTitle(n)"></h3>
                 <button type="button" class="dv-btn-operation"
                         ng-click="vm.searchGesuchsteller(n)">
                     <i class="fa fa-search"></i>
@@ -284,9 +284,17 @@
                                 <span class="ewk-label" data-translate="EWK_PERSON_ID"></span><span
                                 ng-bind="person.personID"></span>
                             </div>
-                            <div ng-repeat="code in person.einwohnercodes">
+                            <div ng-repeat-start="code in person.einwohnercodes">
                                 <span class="ewk-label" data-translate="EWK_EINWOHNERCODE"></span><span
                                 ng-bind="code.codeTxt"></span>
+                            </div>
+                            <div>
+                                <span class="ewk-label" data-translate="EWK_EINWOHNERCODE_VON"></span><span
+                                ng-bind="code.gueltigVon | amDateFormat: 'DD.MM.YYYY'"></span>
+                            </div>
+                            <div  ng-repeat-end>
+                                <span class="ewk-label" data-translate="EWK_EINWOHNERCODE_BIS"></span><span
+                                ng-bind="code.gueltigBis | amDateFormat: 'DD.MM.YYYY'"></span>
                             </div>
                             <div>
                                 <span class="ewk-label" data-translate="EWK_NACHNAME"></span><span
@@ -311,6 +319,14 @@
                             <div>
                                 <span class="ewk-label" data-translate="EWK_NATIONALITAET"></span><span
                                 ng-bind="person.nationalitaet"></span>
+                            </div>
+                            <div ng-if="person.bewilligungsartTxt">
+                                <span class="ewk-label" data-translate="EWK_BEWILLIGUNGSART"></span><span
+                                ng-bind="person.bewilligungsartTxt"></span>
+                            </div>
+                            <div ng-if="person.bewilligungBis">
+                                <span class="ewk-label" data-translate="EWK_BEWILLIGUNGSART_BIS"></span><span
+                                ng-bind="person.bewilligungBis | amDateFormat: 'DD.MM.YYYY'"></span>
                             </div>
                             <div>
                                 <span class="ewk-label" data-translate="EWK_ZIVILSTAND"></span><span
@@ -402,7 +418,7 @@
                                             ng-bind="beziehung.geburtsdatum | amDateFormat: 'DD.MM.YYYY'"></span>
                                         </div>
                                         <dv-accordion class="ewksubsub" allow-multiple-sections="true">
-                                            <dv-accordion-tab
+                                            <dv-accordion-tab ng-if="beziehung.adresse"
                                                 tabid="{{beziehung.adresse}}">
                                                 <tab-title>
                                                     {{beziehung.adresse.adresstypTxt}}

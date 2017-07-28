@@ -1,167 +1,13 @@
 package ch.dvbern.ebegu.api.converter;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-
-import ch.dvbern.ebegu.api.dtos.JaxAbstractDTO;
-import ch.dvbern.ebegu.api.dtos.JaxAbstractDateRangedDTO;
-import ch.dvbern.ebegu.api.dtos.JaxAbstractFinanzielleSituation;
-import ch.dvbern.ebegu.api.dtos.JaxAbstractPensumDTO;
-import ch.dvbern.ebegu.api.dtos.JaxAbstractPersonDTO;
-import ch.dvbern.ebegu.api.dtos.JaxAbwesenheit;
-import ch.dvbern.ebegu.api.dtos.JaxAbwesenheitContainer;
-import ch.dvbern.ebegu.api.dtos.JaxAdresse;
-import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
-import ch.dvbern.ebegu.api.dtos.JaxAntragStatusHistory;
-import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
-import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElement;
-import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
-import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
-import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
-import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilungPensum;
-import ch.dvbern.ebegu.api.dtos.JaxBetreuungspensum;
-import ch.dvbern.ebegu.api.dtos.JaxBetreuungspensumContainer;
-import ch.dvbern.ebegu.api.dtos.JaxDokument;
-import ch.dvbern.ebegu.api.dtos.JaxDokumentGrund;
-import ch.dvbern.ebegu.api.dtos.JaxDokumente;
-import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
-import ch.dvbern.ebegu.api.dtos.JaxEbeguParameter;
-import ch.dvbern.ebegu.api.dtos.JaxEbeguVorlage;
-import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterung;
-import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungContainer;
-import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungInfo;
-import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungInfoContainer;
-import ch.dvbern.ebegu.api.dtos.JaxEnversRevision;
-import ch.dvbern.ebegu.api.dtos.JaxErwerbspensum;
-import ch.dvbern.ebegu.api.dtos.JaxErwerbspensumContainer;
-import ch.dvbern.ebegu.api.dtos.JaxFachstelle;
-import ch.dvbern.ebegu.api.dtos.JaxFall;
-import ch.dvbern.ebegu.api.dtos.JaxFamiliensituation;
-import ch.dvbern.ebegu.api.dtos.JaxFamiliensituationContainer;
-import ch.dvbern.ebegu.api.dtos.JaxFile;
-import ch.dvbern.ebegu.api.dtos.JaxFinanzielleSituation;
-import ch.dvbern.ebegu.api.dtos.JaxFinanzielleSituationContainer;
-import ch.dvbern.ebegu.api.dtos.JaxGesuch;
-import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
-import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
-import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
-import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.api.dtos.JaxInstitution;
-import ch.dvbern.ebegu.api.dtos.JaxInstitutionStammdaten;
-import ch.dvbern.ebegu.api.dtos.JaxKind;
-import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
-import ch.dvbern.ebegu.api.dtos.JaxMahnung;
-import ch.dvbern.ebegu.api.dtos.JaxMandant;
-import ch.dvbern.ebegu.api.dtos.JaxMitteilung;
-import ch.dvbern.ebegu.api.dtos.JaxPensumFachstelle;
-import ch.dvbern.ebegu.api.dtos.JaxTraegerschaft;
-import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
-import ch.dvbern.ebegu.api.dtos.JaxVerfuegungZeitabschnitt;
-import ch.dvbern.ebegu.api.dtos.JaxVorlage;
-import ch.dvbern.ebegu.api.dtos.JaxWizardStep;
-import ch.dvbern.ebegu.api.dtos.JaxZahlung;
-import ch.dvbern.ebegu.api.dtos.JaxZahlungsauftrag;
+import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.entities.AbstractDateRangedEntity;
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
-import ch.dvbern.ebegu.entities.AbstractPensumEntity;
-import ch.dvbern.ebegu.entities.AbstractPersonEntity;
-import ch.dvbern.ebegu.entities.Abwesenheit;
-import ch.dvbern.ebegu.entities.AbwesenheitContainer;
-import ch.dvbern.ebegu.entities.Adresse;
-import ch.dvbern.ebegu.entities.AntragStatusHistory;
-import ch.dvbern.ebegu.entities.ApplicationProperty;
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
-import ch.dvbern.ebegu.entities.BetreuungsmitteilungPensum;
-import ch.dvbern.ebegu.entities.Betreuungspensum;
-import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
-import ch.dvbern.ebegu.entities.Dokument;
-import ch.dvbern.ebegu.entities.DokumentGrund;
-import ch.dvbern.ebegu.entities.DownloadFile;
-import ch.dvbern.ebegu.entities.EbeguParameter;
-import ch.dvbern.ebegu.entities.EbeguVorlage;
-import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
-import ch.dvbern.ebegu.entities.Erwerbspensum;
-import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
-import ch.dvbern.ebegu.entities.Fachstelle;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Familiensituation;
-import ch.dvbern.ebegu.entities.FamiliensituationContainer;
-import ch.dvbern.ebegu.entities.FileMetadata;
-import ch.dvbern.ebegu.entities.FinanzielleSituation;
-import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
-import ch.dvbern.ebegu.entities.GesuchstellerContainer;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.entities.Kind;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.entities.Mahnung;
-import ch.dvbern.ebegu.entities.Mandant;
-import ch.dvbern.ebegu.entities.Mitteilung;
-import ch.dvbern.ebegu.entities.PensumFachstelle;
-import ch.dvbern.ebegu.entities.Traegerschaft;
-import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-import ch.dvbern.ebegu.entities.Vorlage;
-import ch.dvbern.ebegu.entities.WizardStep;
-import ch.dvbern.ebegu.entities.Zahlung;
-import ch.dvbern.ebegu.entities.Zahlungsauftrag;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.AntragStatusDTO;
-import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.services.AdresseService;
-import ch.dvbern.ebegu.services.BenutzerService;
-import ch.dvbern.ebegu.services.BetreuungService;
-import ch.dvbern.ebegu.services.EinkommensverschlechterungInfoService;
-import ch.dvbern.ebegu.services.EinkommensverschlechterungService;
-import ch.dvbern.ebegu.services.ErwerbspensumService;
-import ch.dvbern.ebegu.services.FachstelleService;
-import ch.dvbern.ebegu.services.FallService;
-import ch.dvbern.ebegu.services.FamiliensituationService;
-import ch.dvbern.ebegu.services.FinanzielleSituationService;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.GesuchsperiodeService;
-import ch.dvbern.ebegu.services.GesuchstellerAdresseService;
-import ch.dvbern.ebegu.services.GesuchstellerService;
-import ch.dvbern.ebegu.services.InstitutionService;
-import ch.dvbern.ebegu.services.InstitutionStammdatenService;
-import ch.dvbern.ebegu.services.MandantService;
-import ch.dvbern.ebegu.services.PensumFachstelleService;
-import ch.dvbern.ebegu.services.TraegerschaftService;
-import ch.dvbern.ebegu.services.VerfuegungService;
+import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.Constants;
@@ -174,6 +20,15 @@ import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -527,7 +382,7 @@ public class JaxBConverter {
 						return 0;
 					} else if (o1.extractGueltigkeit() == null) {
 						return 1;
-					} else if (o1.extractGueltigkeit() == null) {
+					} else if (o2.extractGueltigkeit() == null) {
 						return -1;
 					} else {
 						return o1.extractGueltigkeit().getGueltigAb().compareTo(o2.extractGueltigkeit().getGueltigAb());
@@ -1079,6 +934,10 @@ public class JaxBConverter {
 		jaxInstStammdaten.setBetreuungsangebotTyp(persistedInstStammdaten.getBetreuungsangebotTyp());
 		jaxInstStammdaten.setInstitution(institutionToJAX(persistedInstStammdaten.getInstitution()));
 		jaxInstStammdaten.setAdresse(adresseToJAX(persistedInstStammdaten.getAdresse()));
+		jaxInstStammdaten.setKontoinhaber(persistedInstStammdaten.getKontoinhaber());
+		if (persistedInstStammdaten.getAdresseKontoinhaber() != null) {
+			jaxInstStammdaten.setAdresseKontoinhaber(adresseToJAX(persistedInstStammdaten.getAdresseKontoinhaber()));
+		}
 		return jaxInstStammdaten;
 	}
 
@@ -1096,6 +955,15 @@ public class JaxBConverter {
 			institutionStammdaten.setIban(new IBAN(institutionStammdatenJAXP.getIban()));
 		}
 		institutionStammdaten.setBetreuungsangebotTyp(institutionStammdatenJAXP.getBetreuungsangebotTyp());
+
+		institutionStammdaten.setKontoinhaber(institutionStammdatenJAXP.getKontoinhaber());
+		if (institutionStammdatenJAXP.getAdresseKontoinhaber() != null) {
+			if (institutionStammdaten.getAdresseKontoinhaber() != null) {
+				institutionStammdaten.setAdresseKontoinhaber(adresseToEntity(institutionStammdatenJAXP.getAdresseKontoinhaber(), institutionStammdaten.getAdresseKontoinhaber()));
+			} else {
+				institutionStammdaten.setAdresseKontoinhaber(adresseToEntity(institutionStammdatenJAXP.getAdresseKontoinhaber(), new Adresse()));
+			}
+		}
 
 		adresseToEntity(institutionStammdatenJAXP.getAdresse(), institutionStammdaten.getAdresse());
 
@@ -1350,15 +1218,17 @@ public class JaxBConverter {
 		return container;
 	}
 
-	public JaxEinkommensverschlechterungContainer einkommensverschlechterungContainerToJAX(final EinkommensverschlechterungContainer persistedEinkommensverschlechterung) {
-		final JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterung = new JaxEinkommensverschlechterungContainer();
-		convertAbstractFieldsToJAX(persistedEinkommensverschlechterung, jaxEinkommensverschlechterung);
-		jaxEinkommensverschlechterung.setEkvGSBasisJahrPlus1(einkommensverschlechterungToJAX(persistedEinkommensverschlechterung.getEkvGSBasisJahrPlus1()));
-		jaxEinkommensverschlechterung.setEkvGSBasisJahrPlus2(einkommensverschlechterungToJAX(persistedEinkommensverschlechterung.getEkvGSBasisJahrPlus2()));
-		jaxEinkommensverschlechterung.setEkvJABasisJahrPlus1(einkommensverschlechterungToJAX(persistedEinkommensverschlechterung.getEkvJABasisJahrPlus1()));
-		jaxEinkommensverschlechterung.setEkvJABasisJahrPlus2(einkommensverschlechterungToJAX(persistedEinkommensverschlechterung.getEkvJABasisJahrPlus2()));
-
-		return jaxEinkommensverschlechterung;
+	public JaxEinkommensverschlechterungContainer einkommensverschlechterungContainerToJAX(final EinkommensverschlechterungContainer persistedEkv) {
+		if (persistedEkv != null) {
+			final JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterung = new JaxEinkommensverschlechterungContainer();
+			convertAbstractFieldsToJAX(persistedEkv, jaxEinkommensverschlechterung);
+			jaxEinkommensverschlechterung.setEkvGSBasisJahrPlus1(einkommensverschlechterungToJAX(persistedEkv.getEkvGSBasisJahrPlus1()));
+			jaxEinkommensverschlechterung.setEkvGSBasisJahrPlus2(einkommensverschlechterungToJAX(persistedEkv.getEkvGSBasisJahrPlus2()));
+			jaxEinkommensverschlechterung.setEkvJABasisJahrPlus1(einkommensverschlechterungToJAX(persistedEkv.getEkvJABasisJahrPlus1()));
+			jaxEinkommensverschlechterung.setEkvJABasisJahrPlus2(einkommensverschlechterungToJAX(persistedEkv.getEkvJABasisJahrPlus2()));
+			return jaxEinkommensverschlechterung;
+		}
+		return null;
 	}
 
 	private AbstractFinanzielleSituation abstractFinanzielleSituationToEntity(@Nonnull final JaxAbstractFinanzielleSituation abstractFinanzielleSituationJAXP, @Nonnull final AbstractFinanzielleSituation abstractFinanzielleSituation) {

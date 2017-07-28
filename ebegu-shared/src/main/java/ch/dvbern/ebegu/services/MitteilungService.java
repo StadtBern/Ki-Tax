@@ -1,12 +1,17 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
+import java.util.Collection;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.Optional;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Mitteilung;
 
 /**
  * Service zum Verwalten von Mitteilungen
@@ -37,6 +42,9 @@ public interface MitteilungService {
 	 */
 	@Nonnull
 	Collection<Betreuungsmitteilung> findAllBetreuungsmitteilungenForBetreuung(@Nonnull Betreuung betreuung);
+
+	@Nonnull
+	Collection<Mitteilung> findAllMitteilungenForBetreuung(Betreuung betreuung);
 
 	@Nonnull
 	Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Fall fall);

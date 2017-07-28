@@ -1,16 +1,12 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.errors.MailException;
-import ch.dvbern.ebegu.errors.MergeDocException;
-import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
-import ch.dvbern.ebegu.util.DokumenteUtil;
-import ch.dvbern.ebegu.util.EbeguUtil;
-import ch.dvbern.lib.cdipersistence.Persistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
@@ -22,10 +18,44 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.*;
-import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
 
-import static ch.dvbern.ebegu.enums.UserRole.*;
+import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
+import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.WizardStep;
+import ch.dvbern.ebegu.entities.WizardStep_;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.enums.WizardStepStatus;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.MailException;
+import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.DokumenteUtil;
+import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.lib.cdipersistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_TRAEGERSCHAFT;
+import static ch.dvbern.ebegu.enums.UserRole.SCHULAMT;
 
 /**
  * Service fuer Gesuch
@@ -194,13 +224,14 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())
 				&& WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
 				if (!newEntity.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()) {
-					wizardStep.setWizardStepStatus(getWizardStepStatusOkOrMutiert(wizardStep));
+					setWizardStepOkOrMutiert(wizardStep);
 				} else if (oldEntity == null || !oldEntity.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()
+					|| (!oldEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus1() && newEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus1())
 					|| (!oldEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2() && newEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2())) {
 					// beim Wechseln von KEIN_EV auf EV oder von KEIN_EV_FUER_BASISJAHR2 auf EV_FUER_BASISJAHR2
 					wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
-				} else if (wizardStep.getGesuch().isMutation()) {
-					wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
+				} else if (wizardStep.getGesuch().isMutation() && WizardStepStatus.NOK != wizardStep.getWizardStepStatus()) {
+					setWizardStepOkOrMutiert(wizardStep);
 				}
 			}
 		}
@@ -213,7 +244,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 				&& WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())
 				&& wizardStep.getGesuch().isMutation()) {
 
-				wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
+				setWizardStepOkOrMutiert(wizardStep);
 			}
 		}
 	}
@@ -235,7 +266,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					}
 				}
 				if (allNeededDokumenteUploaded) {
-					wizardStep.setWizardStepStatus(getWizardStepStatusOkOrMutiert(wizardStep));
+					setWizardStepOkOrMutiert(wizardStep);
 				} else {
 					if (wizardStep.getGesuch().isMutation()) {
 						wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
@@ -346,21 +377,158 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private void updateAllStatusForFinSit(List<WizardStep> wizardSteps) {
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName()) && wizardStep.getGesuch().isMutation()) {
-				wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
+				setWizardStepOkOrMutiert(wizardStep);
 			}
 		}
 	}
 
-	private void setWizardStepOkOrMutiert(WizardStep wizardStep) {
+	@Override
+	public void setWizardStepOkOrMutiert(@NotNull WizardStep wizardStep) {
 		wizardStep.setWizardStepStatus(getWizardStepStatusOkOrMutiert(wizardStep));
 	}
 
 	private WizardStepStatus getWizardStepStatusOkOrMutiert(WizardStep wizardStep) {
-		if (AntragTyp.MUTATION.equals(wizardStep.getGesuch().getTyp())) {
-			return WizardStepStatus.MUTIERT;
-		} else {
+		if (AntragTyp.MUTATION != wizardStep.getGesuch().getTyp()) {
+			// just to avoid doing the calculation for Mutation if it is not needed
 			return WizardStepStatus.OK;
 		}
+
+		final List<AbstractEntity> newObjects = getStepRelatedObjects(wizardStep.getWizardStepName(), wizardStep.getGesuch());
+		Optional<Gesuch> vorgaengerGesuch = this.gesuchService.findGesuch(wizardStep.getGesuch().getVorgaengerId());
+		if (!vorgaengerGesuch.isPresent()) {
+			throw new EbeguEntityNotFoundException("getWizardStepStatusOkOrMutiert", ErrorCodeEnum
+				.ERROR_VORGAENGER_MISSING, "Vorgaenger Gesuch fuer Mutation nicht gefunden");
+		}
+		final List<AbstractEntity> vorgaengerObjects = getStepRelatedObjects(wizardStep.getWizardStepName(), vorgaengerGesuch.get());
+		boolean isMutiert = isObjectMutiert(newObjects, vorgaengerObjects);
+		if (AntragTyp.MUTATION.equals(wizardStep.getGesuch().getTyp()) && isMutiert) {
+			return WizardStepStatus.MUTIERT;
+		}
+		return WizardStepStatus.OK;
+	}
+
+	/**
+	 * Returns all Objects that are related to the given Step. For instance for the Step GESUCHSTELLER it returns
+	 * the object Gesuchsteller1 and Gesuchsteller2. These objects can then be used to check for changes.
+	 */
+	@SuppressWarnings("OverlyComplexMethod")
+	private List<AbstractEntity> getStepRelatedObjects(@NotNull WizardStepName wizardStepName, @NotNull Gesuch gesuch) {
+		List<AbstractEntity> relatedObjects = new ArrayList<>();
+		if (WizardStepName.FAMILIENSITUATION == wizardStepName
+			&& gesuch.getFamiliensituationContainer() != null) {
+			relatedObjects.add(gesuch.getFamiliensituationContainer().getFamiliensituationJA());
+		}
+		else if (WizardStepName.GESUCHSTELLER == wizardStepName) {
+			addRelatedObjectsForGesuchsteller(relatedObjects, gesuch.getGesuchsteller1());
+			addRelatedObjectsForGesuchsteller(relatedObjects, gesuch.getGesuchsteller2());
+		}
+		else if (WizardStepName.UMZUG == wizardStepName) {
+			addRelatedObjectsForUmzug(gesuch.getGesuchsteller1(), relatedObjects);
+			addRelatedObjectsForUmzug(gesuch.getGesuchsteller2(), relatedObjects);
+		}
+		else if (WizardStepName.KINDER == wizardStepName) {
+			relatedObjects.addAll(gesuch.getKindContainers());
+		}
+		else if (WizardStepName.BETREUUNG == wizardStepName) {
+			relatedObjects.addAll(gesuch.extractAllBetreuungen());
+		}
+		else if (WizardStepName.ABWESENHEIT == wizardStepName) {
+			relatedObjects.addAll(gesuch.extractAllAbwesenheiten());
+		}
+		else if (WizardStepName.ERWERBSPENSUM == wizardStepName) {
+			if (gesuch.getGesuchsteller1() != null) {
+				relatedObjects.addAll(gesuch.getGesuchsteller1().getErwerbspensenContainers());
+			}
+			if (gesuch.getGesuchsteller2() != null) {
+				relatedObjects.addAll(gesuch.getGesuchsteller2().getErwerbspensenContainers());
+			}
+		}
+		else if (WizardStepName.FINANZIELLE_SITUATION == wizardStepName) {
+			if (gesuch.getGesuchsteller1() != null) {
+				relatedObjects.add(gesuch.getGesuchsteller1().getFinanzielleSituationContainer());
+			}
+			if (gesuch.getGesuchsteller2() != null) {
+				relatedObjects.add(gesuch.getGesuchsteller2().getFinanzielleSituationContainer());
+			}
+		}
+		else if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStepName) {
+			if (gesuch != null) {
+				final EinkommensverschlechterungInfoContainer ekvInfo = gesuch.getEinkommensverschlechterungInfoContainer();
+				if (ekvInfo != null) {
+					relatedObjects.add(ekvInfo);
+					if (ekvInfo.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()) {
+						if (gesuch.getGesuchsteller1() != null && gesuch.getGesuchsteller1()
+							.getEinkommensverschlechterungContainer() != null) {
+							relatedObjects.add(gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer());
+						}
+						if (gesuch.getGesuchsteller2() != null && gesuch.getGesuchsteller2()
+							.getEinkommensverschlechterungContainer() != null) {
+							relatedObjects.add(gesuch.getGesuchsteller2().getEinkommensverschlechterungContainer());
+						}
+					}
+				}
+			}
+		}
+		else if (WizardStepName.DOKUMENTE == wizardStepName) {
+			relatedObjects.addAll(dokumentGrundService.findAllDokumentGrundByGesuch(gesuch));
+		}
+		return relatedObjects;
+	}
+
+	/**
+	 * Adds all Adressen of the given Gesuchsteller that are set as umzug
+	 */
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+	private void addRelatedObjectsForUmzug(GesuchstellerContainer gesuchsteller, List<AbstractEntity> relatedObjects) {
+		if (gesuchsteller != null) {
+			for (GesuchstellerAdresseContainer adresse : gesuchsteller.getAdressen()) {
+				if (!adresse.extractIsKorrespondenzAdresse() && !adresse.getGesuchstellerAdresseJA().getGueltigkeit()
+					.getGueltigAb().isEqual(Constants.START_OF_TIME)) { // only the first Adresse starts at START_OF_TIME
+					relatedObjects.add(adresse);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Adds the Gesuchsteller itself and her korrespondeyAdresse.
+	 */
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+	private void addRelatedObjectsForGesuchsteller(List<AbstractEntity> relatedObjects, GesuchstellerContainer
+		gesuchsteller) {
+		if (gesuchsteller != null) {
+			relatedObjects.add(gesuchsteller.getGesuchstellerJA());
+			for (GesuchstellerAdresseContainer adresse : gesuchsteller.getAdressen()) {
+				// add Korrespondezadresse and first Wohnadresse
+				if (adresse.extractIsKorrespondenzAdresse() || adresse.getGesuchstellerAdresseJA().getGueltigkeit()
+					.getGueltigAb().isEqual(Constants.START_OF_TIME)) { // only the first Wohnadresse starts at START_OF_TIME
+					relatedObjects.add(adresse);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Returns true when given list have different sizes. If not, it checks whether the content of each object
+	 * of the list newEntities is the same as it was in the list oldEntities. Any change will make the method return
+	 * true
+	 */
+	private boolean isObjectMutiert(@NotNull List<AbstractEntity> newEntities, @NotNull List<AbstractEntity> oldEntities) {
+		if (oldEntities.size() != newEntities.size()) {
+			return true;
+		}
+		for (AbstractEntity newEntity : newEntities) {
+			if (newEntity != null && newEntity.getVorgaengerId() == null) {
+				return true; // if there is no vorgaenger it must have changed
+			}
+			if (newEntity != null && newEntity.getVorgaengerId() != null) {
+				final AbstractEntity vorgaengerEntity = persistence.find(newEntity.getClass(), newEntity.getVorgaengerId());
+				if (vorgaengerEntity == null || !newEntity.isSame(vorgaengerEntity)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private void updateAllStatusForBetreuung(List<WizardStep> wizardSteps) {
@@ -419,14 +587,24 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					}
 					//kann man effektiv sagen dass bei nur einem GS niemals Rote Schritte FinanzielleSituation und EVK gibt
 				} else if (!newEntity.hasSecondGesuchsteller() && wizardStep.getGesuch().getGesuchsteller1() != null) { // nur 1 GS
-					if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName()) && wizardStep.getWizardStepStatus().equals(WizardStepStatus.NOK)) {
-						wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+					if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
+						if (wizardStep.getGesuch().isMutation()) {
+							setWizardStepOkOrMutiert(wizardStep);
+						}
+						else if (wizardStep.getWizardStepStatus().equals(WizardStepStatus.NOK)) {
+							wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+						}
 
-					} else if ((WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
-						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))
-						&& wizardStep.getWizardStepStatus().equals(WizardStepStatus.NOK)) {
-						wizardStep.setVerfuegbar(true);
-						wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+					} else if (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
+						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
+						if (wizardStep.getGesuch().isMutation()) {
+							wizardStep.setVerfuegbar(true);
+							setWizardStepOkOrMutiert(wizardStep);
+						}
+						else if (wizardStep.getWizardStepStatus().equals(WizardStepStatus.NOK)) {
+							wizardStep.setVerfuegbar(true);
+							wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+						}
 					}
 				}
 			}

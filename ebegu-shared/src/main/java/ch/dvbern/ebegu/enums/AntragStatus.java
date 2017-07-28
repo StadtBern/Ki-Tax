@@ -112,6 +112,7 @@ public enum AntragStatus {
 		IN_BEARBEITUNG_STV,
 		GEPRUEFT_STV);
 
+
 	public static final Set<AntragStatus> FIRST_STATUS_OF_VERFUEGT = EnumSet.of(VERFUEGT, NUR_SCHULAMT, KEIN_ANGEBOT);
 
     private static final Set<AntragStatus> all = EnumSet.allOf(AntragStatus.class);
@@ -188,6 +189,27 @@ public enum AntragStatus {
         }
     }
 
+    public static Set<AntragStatus> writeAllowedForRole(UserRole userRole) {
+		switch (userRole) {
+			case SUPER_ADMIN:
+				return  all;
+			case ADMIN:
+			case SACHBEARBEITER_JA:
+				return FOR_ADMIN_ROLE_WRITE;
+			case GESUCHSTELLER:
+				return FOR_GESUCHSTELLER_ROLE_WRITE;
+			case SACHBEARBEITER_INSTITUTION:
+			case SACHBEARBEITER_TRAEGERSCHAFT:
+				return FOR_INSTITUTION_ROLE_WRITE;
+			case STEUERAMT:
+				return FOR_STEUERAMT_ROLE_WRITE;
+			case SCHULAMT:
+				return FOR_SCHULAMT_ROLE_WRITE;
+			default:
+				return none;
+		}
+	}
+
 	public static Collection<AntragStatus> getAllVerfuegtStates() {
 		return Arrays.asList(VERFUEGT, NUR_SCHULAMT, NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN, BESCHWERDE_HAENGIG,
 			PRUEFUNG_STV, IN_BEARBEITUNG_STV, GEPRUEFT_STV, KEIN_ANGEBOT);
@@ -262,4 +284,58 @@ public enum AntragStatus {
 	public boolean isReadableByRevisor() {
 		return forRevisorRole.contains(this);
 	}
+
+	public static final Set<AntragStatus> FOR_ADMIN_ROLE_WRITE = EnumSet.of(
+		FREIGABEQUITTUNG,
+		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
+		IN_BEARBEITUNG_JA,
+		ERSTE_MAHNUNG,
+		ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
+		ERSTE_MAHNUNG_ABGELAUFEN,
+		ZWEITE_MAHNUNG,
+		ZWEITE_MAHNUNG_ABGELAUFEN,
+		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
+		GEPRUEFT,
+		VERFUEGEN,
+		VERFUEGT,
+		KEIN_ANGEBOT,
+		BESCHWERDE_HAENGIG,
+		PRUEFUNG_STV,
+		IN_BEARBEITUNG_STV,
+		GEPRUEFT_STV);
+
+	public static final Set<AntragStatus> FOR_INSTITUTION_ROLE_WRITE = EnumSet.of(
+		IN_BEARBEITUNG_GS,
+		FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
+		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
+		IN_BEARBEITUNG_JA,
+		ERSTE_MAHNUNG,
+		ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
+		ERSTE_MAHNUNG_ABGELAUFEN,
+		ZWEITE_MAHNUNG,
+		ZWEITE_MAHNUNG_ABGELAUFEN,
+		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
+		GEPRUEFT,
+		VERFUEGEN);
+
+	public static final Set<AntragStatus> FOR_GESUCHSTELLER_ROLE_WRITE = EnumSet.of(
+		IN_BEARBEITUNG_GS,
+		FREIGABEQUITTUNG,
+		ERSTE_MAHNUNG,
+		ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
+		ERSTE_MAHNUNG_ABGELAUFEN,
+		ZWEITE_MAHNUNG,
+		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
+		ZWEITE_MAHNUNG_ABGELAUFEN,
+		VERFUEGT // Damit eine Mutation erstellt werden kann
+	);
+
+	public static final Set<AntragStatus> FOR_SCHULAMT_ROLE_WRITE = EnumSet.of(
+		FREIGABEQUITTUNG);
+
+	public static final Set<AntragStatus> FOR_STEUERAMT_ROLE_WRITE = EnumSet.of(
+		PRUEFUNG_STV,
+		IN_BEARBEITUNG_STV,
+		GEPRUEFT_STV // Der Status wird schon vor dem Speichern gesetzt. Falls dies mal in eine separate Methode kommt, kann dieser Status entfernt werden
+	);
 }

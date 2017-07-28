@@ -1,11 +1,13 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.dto.KindDubletteDTO;
-import ch.dvbern.ebegu.entities.KindContainer;
-
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.dto.KindDubletteDTO;
+import ch.dvbern.ebegu.entities.KindContainer;
 
 /**
  * Service zum Verwalten von Kindern
@@ -57,5 +59,5 @@ public interface KindService {
 	 * Sucht Kinder mit gleichen Merkmalen in anderen Faellen.
 	 */
 	@Nonnull
-	List<KindDubletteDTO> getKindDubletten(@Nonnull String gesuchId);
+	Set<KindDubletteDTO> getKindDubletten(@Nonnull String gesuchId);
 }

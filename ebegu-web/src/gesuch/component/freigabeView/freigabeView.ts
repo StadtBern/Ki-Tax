@@ -15,8 +15,6 @@ import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyR
 import {FreigabeDialogController} from '../../dialog/FreigabeDialogController';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import ITranslateService = angular.translate.ITranslateService;
-import IFormController = angular.IFormController;
 import IScope = angular.IScope;
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
@@ -108,9 +106,13 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, forceCreation, this.getZustelladresse())
             .then((downloadFile: TSDownloadFile) => {
                 // wir laden das Gesuch neu, da die Erstellung des Dokumentes auch Aenderungen im Gesuch verursacht
-                this.gesuchModelManager.openGesuch(this.gesuchModelManager.getGesuch().id).then(() => {
-                    this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
-                });
+                this.gesuchModelManager.openGesuch(this.gesuchModelManager.getGesuch().id)
+                    .then(() => {
+                        this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                    })
+                    .catch((ex) => {
+                        win.close();
+                    });
             });
     }
 

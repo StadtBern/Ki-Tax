@@ -16,6 +16,7 @@ import ch.dvbern.lib.iso20022.AuszahlungDTO;
 import ch.dvbern.lib.iso20022.Pain001DTO;
 import ch.dvbern.lib.iso20022.Pain001Service;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -196,7 +197,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Override
 	public WriteProtectedDokument getFinSitDokumentAccessTokenGeneratedDokument(final Gesuch gesuch,
-																		   Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
+																				Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch.getJahrAndFallnummer());
 
@@ -210,7 +211,11 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		}
 		if (!gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen() || persistedDokument == null) {
 			//  persistedDokument == null:  Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
-			authorizer.checkReadAuthorizationFinSit(gesuch);
+			if (!gesuch.hasOnlyBetreuungenOfSchulamt()) {
+				// Bei nur Schulamt prüfen wir die Berechtigung nicht, damit das JA solche Gesuche schliessen kann. Der UseCase ist, dass zuerst ein zweites
+				// Angebot vorhanden war, dieses aber durch das JA gelöscht wurde.
+				authorizer.checkReadAuthorizationFinSit(gesuch);
+			}
 			finanzielleSituationService.calculateFinanzDaten(gesuch);
 
 			final BetreuungsgutscheinEvaluator evaluator = initEvaluator(gesuch);
@@ -230,7 +235,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Override
 	public WriteProtectedDokument getBegleitschreibenDokument(final Gesuch gesuch,
-														 Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
+															  Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getJahrAndFallnummer());
 
 		WriteProtectedDokument documentIfExistsAndIsWriteProtected = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), fileNameForGeneratedDokumentTyp, forceCreation);
@@ -257,7 +262,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Override
 	public WriteProtectedDokument getFreigabequittungAccessTokenGeneratedDokument(final Gesuch gesuch,
-																			 Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException {
+																				  Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException {
 
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch.getJahrAndFallnummer());
 
@@ -295,15 +300,15 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + id;
 
 		final WriteProtectedDokument persistedDokument;
-		if (!dokumentTyp.equals(GeneratedDokumentTyp.PAIN001)) {
-			persistedDokument = findGeneratedDokument(id, fileNameForGeneratedDokumentTyp, expectedFilepath);
-		} else {
+		if (dokumentTyp.equals(GeneratedDokumentTyp.PAIN001)) {
 			persistedDokument = findPain001Dokument(id, fileNameForGeneratedDokumentTyp, expectedFilepath);
+		} else {
+			persistedDokument = findGeneratedDokument(id, fileNameForGeneratedDokumentTyp, expectedFilepath);
 		}
 
 		if (persistedDokument == null) {
 			LOGGER.error("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
-				"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp,
+					"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp,
 				id, expectedFilepath);
 		}
 
@@ -384,8 +389,8 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Override
 	public WriteProtectedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(@Nonnull final Gesuch gesuch,
-			@Nonnull Betreuung betreuung, @Nonnull String manuelleBemerkungen,  @Nonnull Boolean forceCreation) throws
-			MimeTypeParseException, MergeDocException, IOException {
+																					@Nonnull Betreuung betreuung, @Nonnull String manuelleBemerkungen, @Nonnull Boolean forceCreation) throws
+		MimeTypeParseException, MergeDocException, IOException {
 
 		String bgNummer = betreuung.getBGNummer();
 		String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG, bgNummer);
@@ -401,6 +406,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
 			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp, expectedFilepath);
+
 			if (persistedDokument == null) {
 				LOGGER.error("Das Dokument vom Typ: {} fuer Betreuungsnummer {} konnte unter dem Pfad {} " +
 					"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", GeneratedDokumentTyp.VERFUEGUNG.name(), bgNummer, expectedFilepath);
@@ -555,7 +561,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		Pain001DTO pain001DTO = new Pain001DTO();
 
 		pain001DTO.setAuszahlungsDatum(zahlungsauftrag.getDatumFaellig());
-		pain001DTO.setAuszahlungsDatum(LocalDate.now());
+		pain001DTO.setGenerierungsDatum(zahlungsauftrag.getDatumGeneriert());
 
 		String debitorName = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEBTOR_NAME);
 		String debitorBic = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEBTOR_BIC);
@@ -567,21 +573,28 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		pain001DTO.setSchuldnerBIC(debitorBic == null ? DEF_DEBTOR_BIC : debitorBic);
 		pain001DTO.setSchuldnerIBAN_gebuehren(debitorIbanGebuehren == null ? pain001DTO.getSchuldnerIBAN() : debitorIbanGebuehren);
 		pain001DTO.setSoftwareName("Ki-Tax");
+		// we use the currentTimeMillis so that it is always different
+		pain001DTO.setMsgID("Ki-Tax_" + Long.toString(System.currentTimeMillis()));
 
 		pain001DTO.setAuszahlungen(new ArrayList<>());
 		zahlungsauftrag.getZahlungen().stream()
 			.filter(zahlung -> zahlung.getBetragTotalZahlung().signum() == 1)
 			.forEach(zahlung -> {
+				InstitutionStammdaten institutionStammdaten = zahlung.getInstitutionStammdaten();
 				AuszahlungDTO auszahlungDTO = new AuszahlungDTO();
 				auszahlungDTO.setBetragTotalZahlung(zahlung.getBetragTotalZahlung());
-				auszahlungDTO.setZahlungsempfaegerName(zahlung.getInstitutionStammdaten().getInstitution().getName());
-				auszahlungDTO.setZahlungsempfaegerStrasse(zahlung.getInstitutionStammdaten().getAdresse().getStrasse());
-				auszahlungDTO.setZahlungsempfaegerHausnummer(zahlung.getInstitutionStammdaten().getAdresse().getHausnummer());
-				auszahlungDTO.setZahlungsempfaegerPlz(zahlung.getInstitutionStammdaten().getAdresse().getPlz());
-				auszahlungDTO.setZahlungsempfaegerOrt(zahlung.getInstitutionStammdaten().getAdresse().getOrt());
-				auszahlungDTO.setZahlungsempfaegerLand(zahlung.getInstitutionStammdaten().getAdresse().getLand().toString());
-				auszahlungDTO.setZahlungsempfaegerIBAN(zahlung.getInstitutionStammdaten().getIban().toString());
-				auszahlungDTO.setZahlungsempfaegerBankClearingNumber(zahlung.getInstitutionStammdaten().getIban().extractClearingNumberWithoutLeadingZeros());
+				String kontoinhaber = StringUtils.isNotEmpty(institutionStammdaten.getKontoinhaber())
+					? institutionStammdaten.getKontoinhaber() : institutionStammdaten.getInstitution().getName();
+				Adresse adresseKontoinhaber = institutionStammdaten.getAdresseKontoinhaber() != null
+					? institutionStammdaten.getAdresseKontoinhaber() : institutionStammdaten.getAdresse();
+				auszahlungDTO.setZahlungsempfaegerName(kontoinhaber);
+				auszahlungDTO.setZahlungsempfaegerStrasse(adresseKontoinhaber.getStrasse());
+				auszahlungDTO.setZahlungsempfaegerHausnummer(adresseKontoinhaber.getHausnummer());
+				auszahlungDTO.setZahlungsempfaegerPlz(adresseKontoinhaber.getPlz());
+				auszahlungDTO.setZahlungsempfaegerOrt(adresseKontoinhaber.getOrt());
+				auszahlungDTO.setZahlungsempfaegerLand(adresseKontoinhaber.getLand().toString());
+				auszahlungDTO.setZahlungsempfaegerIBAN(institutionStammdaten.getIban().toString());
+				auszahlungDTO.setZahlungsempfaegerBankClearingNumber(institutionStammdaten.getIban().extractClearingNumberWithoutLeadingZeros());
 
 				pain001DTO.getAuszahlungen().add(auszahlungDTO);
 			});

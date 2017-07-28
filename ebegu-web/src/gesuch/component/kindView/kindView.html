@@ -113,11 +113,14 @@
                                     <span data-translate="FAM_ERGAENZENDE_BETREUUNG"></span>
                                     <dv-tooltip text="'FAM_ERGAENZENDE_BETREUUNG_HELP' | translate"></dv-tooltip>
                                 </h1>
+                                <span ng-if="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt() && vm.hasKindBetreuungen()"
+                                      class="inlineHint"
+                                      data-translate="FAM_ERGAENZENDE_BETREUUNG_NOT_EDITABLE"></span>
 
                                 <dv-radio-container name="familienErgaenzendeBetreuung" class="input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
+                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt() && !vm.hasKindBetreuungen()"
                                                     ng-required="true"
                                                     ng-model="vm.getModel().familienErgaenzendeBetreuung"
                                                     ng-change="vm.familienErgaenzendeBetreuungClicked()"

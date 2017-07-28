@@ -1,11 +1,12 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.util.MathUtil;
-import org.hibernate.envers.Audited;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import java.math.BigDecimal;
+
+import ch.dvbern.ebegu.util.MathUtil;
+import org.hibernate.envers.Audited;
 
 /**
  * Entität für die Einkommensverschlechterung
@@ -204,5 +205,38 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 		mutation.setNettolohnZus(this.getNettolohnZus());
 		mutation.setGeschaeftsgewinnBasisjahrMinus1(this.getGeschaeftsgewinnBasisjahrMinus1());
 		return mutation;
+	}
+
+	@SuppressWarnings("OverlyComplexMethod")
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!super.isSame(other)) {
+			return false;
+		}
+		if (!(other instanceof Einkommensverschlechterung)) {
+			return false;
+		}
+		final Einkommensverschlechterung otherEinkommensverschlechterung = (Einkommensverschlechterung) other;
+		return MathUtil.isSame(getNettolohnJan(), otherEinkommensverschlechterung.getNettolohnJan()) &&
+			MathUtil.isSame(getNettolohnFeb(), otherEinkommensverschlechterung.getNettolohnFeb()) &&
+			MathUtil.isSame(getNettolohnMrz(), otherEinkommensverschlechterung.getNettolohnMrz()) &&
+			MathUtil.isSame(getNettolohnApr(), otherEinkommensverschlechterung.getNettolohnApr()) &&
+			MathUtil.isSame(getNettolohnMai(), otherEinkommensverschlechterung.getNettolohnMai()) &&
+			MathUtil.isSame(getNettolohnJun(), otherEinkommensverschlechterung.getNettolohnJun()) &&
+			MathUtil.isSame(getNettolohnJul(), otherEinkommensverschlechterung.getNettolohnJul()) &&
+			MathUtil.isSame(getNettolohnAug(), otherEinkommensverschlechterung.getNettolohnAug()) &&
+			MathUtil.isSame(getNettolohnSep(), otherEinkommensverschlechterung.getNettolohnSep()) &&
+			MathUtil.isSame(getNettolohnOkt(), otherEinkommensverschlechterung.getNettolohnOkt()) &&
+			MathUtil.isSame(getNettolohnNov(), otherEinkommensverschlechterung.getNettolohnNov()) &&
+			MathUtil.isSame(getNettolohnDez(), otherEinkommensverschlechterung.getNettolohnDez()) &&
+			MathUtil.isSame(getNettolohnZus(), otherEinkommensverschlechterung.getNettolohnZus()) &&
+			MathUtil.isSame(getGeschaeftsgewinnBasisjahrMinus1(), otherEinkommensverschlechterung.getGeschaeftsgewinnBasisjahrMinus1());
 	}
 }

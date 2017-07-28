@@ -1,11 +1,12 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Mahnung;
-
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Mahnung;
 
 /**
  * Service zum Verwalten von Mahnungen
@@ -33,7 +34,8 @@ public interface MahnungService {
 	/**
 	 * Setzt den Status zurueck auf "in Bearbeitung". Setzt die offenen Mahnungen auf inaktiv.
 	 */
-	void mahnlaufBeenden(@Nonnull Gesuch gesuch);
+	@Nonnull
+	Gesuch mahnlaufBeenden(@Nonnull Gesuch gesuch);
 
 	/**
 	 * Generiert den Vorschlag für die Bemerkungen aus den fehlenden Dokumenten.
@@ -53,7 +55,6 @@ public interface MahnungService {
 
 	/**
 	 * Entfernt alle Mahnungen vom gegebenen Gesuch
-	 * @param gesuch
 	 */
 	void removeAllMahnungenFromGesuch(Gesuch gesuch);
 }

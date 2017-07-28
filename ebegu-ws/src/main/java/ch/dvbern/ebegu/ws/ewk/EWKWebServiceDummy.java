@@ -10,6 +10,18 @@
 
 package ch.dvbern.ebegu.ws.ewk;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.time.LocalDate;
+
+import javax.annotation.Nonnull;
+import javax.enterprise.context.Dependent;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+
 import ch.bern.e_gov.e_begu.egov_002.PersonenSucheResp;
 import ch.dvbern.ebegu.cdi.Dummy;
 import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
@@ -19,17 +31,6 @@ import ch.dvbern.ebegu.errors.PersonenSucheServiceException;
 import com.google.common.io.ByteStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.enterprise.context.Dependent;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import java.io.IOException;
-import java.io.StringReader;
-import java.time.LocalDate;
 
 /**
  * Dummy Implementation des EWK-Services

@@ -18,7 +18,9 @@
                         </h3>
                     </div>
                     <!-- Folgegesuch: Info, dass Daten uebernommen wurden -->
-                    <div ng-if="vm.gesuchModelManager.getGesuch().isFolgegesuch()" class="well well-status-warten">
+                    <div dv-show-expression="vm.gesuchModelManager.getGesuch().isFolgegesuch()" dv-show-element
+                         dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()"
+                         class="well well-status-warten">
                         <h3 data-translate="FOLGEGESUCH_HINT">
                         </h3>
                     </div>

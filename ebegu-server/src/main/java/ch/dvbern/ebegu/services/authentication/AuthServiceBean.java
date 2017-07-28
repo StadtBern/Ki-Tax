@@ -1,5 +1,32 @@
 package ch.dvbern.ebegu.services.authentication;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Resource;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.apache.commons.lang3.StringUtils;
+import org.infinispan.manager.CacheContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.authentication.AuthLoginElement;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
@@ -8,22 +35,6 @@ import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.util.Constants;
-import org.apache.commons.lang3.StringUtils;
-import org.infinispan.manager.CacheContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.*;
-import javax.persistence.criteria.*;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
 
 //Berechtigungen: PermitAll weggenommen weil wir das ohne user aus dem loginmodul aufrufen muessen, sonst wird anonymous genommen und man hat 2 principals nach dem loginmodul
 @SuppressWarnings("OverlyBroadCatchBlock")
@@ -143,7 +154,7 @@ public class AuthServiceBean implements AuthService {
 					authUser.setLastLogin(now);
 					entityManager.persist(authUser);
 					entityManager.flush();
-					LOG.trace("Valid auth Token was refreshed ");
+					LOG.trace("Valid auth Token '{0}' was refreshed" , token);
 				}
 				return Optional.of(authUser);
 

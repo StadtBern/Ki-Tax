@@ -1,16 +1,9 @@
 package ch.dvbern.ebegu.api.resource;
 
-import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.entities.DownloadFile;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.errors.MergeDocException;
-import ch.dvbern.lib.excelmerger.ExcelMergeException;
-import ch.dvbern.ebegu.services.ReportService;
-import ch.dvbern.ebegu.util.DateUtil;
-import ch.dvbern.ebegu.util.UploadFileInfo;
-import io.swagger.annotations.Api;
-import org.apache.commons.lang3.Validate;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,15 +11,27 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+
+import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.entities.DownloadFile;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.services.ReportService;
+import ch.dvbern.ebegu.util.DateUtil;
+import ch.dvbern.ebegu.util.UploadFileInfo;
+import ch.dvbern.lib.excelmerger.ExcelMergeException;
+import io.swagger.annotations.Api;
+import org.apache.commons.lang3.Validate;
 
 /**
  * REST Resource fuer Reports
@@ -163,15 +168,13 @@ public class ReportResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getZahlungsauftragReportExcel(
-		@QueryParam("zahlungsauftragID") @Nullable @Valid JaxId jaxId,
+		@QueryParam("zahlungsauftragID") @Nonnull @Valid JaxId jaxId,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
 		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
 
+		Validate.notNull(jaxId);
 		String ip = downloadResource.getIP(request);
-		String id = null;
-		if(jaxId!= null) {
-			id = converter.toEntityId(jaxId);
-		}
+		String id = converter.toEntityId(jaxId);
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportZahlungAuftrag(id);
 
@@ -186,15 +189,13 @@ public class ReportResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getZahlungReportExcel(
-		@QueryParam("zahlungID") @Nullable @Valid JaxId jaxId,
+		@QueryParam("zahlungID") @Nonnull @Valid JaxId jaxId,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
 		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
 
+		Validate.notNull(jaxId);
 		String ip = downloadResource.getIP(request);
-		String id = null;
-		if(jaxId!= null) {
-			id = converter.toEntityId(jaxId);
-		}
+		String id = converter.toEntityId(jaxId);
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportZahlung(id);
 
@@ -210,15 +211,13 @@ public class ReportResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getZahlungPeridoReportExcel(
-		@QueryParam("gesuchsperiodeID") @Nullable @Valid JaxId jaxId,
+		@QueryParam("gesuchsperiodeID") @Nonnull @Valid JaxId jaxId,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
 		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
 
+		Validate.notNull(jaxId);
 		String ip = downloadResource.getIP(request);
-		String id = null;
-		if(jaxId!= null) {
-			id = converter.toEntityId(jaxId);
-		}
+		String id = converter.toEntityId(jaxId);
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportZahlungPeriode(id);
 
