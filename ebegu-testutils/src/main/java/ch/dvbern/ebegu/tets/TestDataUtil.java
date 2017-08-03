@@ -20,6 +20,7 @@ import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -369,9 +370,19 @@ public final class TestDataUtil {
 	}
 
 	public static Gesuchsperiode createGesuchsperiode1718() {
+		return createGesuchsperiodeXXYY(2017, 2018);
+	}
+
+	public static Gesuchsperiode createGesuchsperiode1617() {
+		return createGesuchsperiodeXXYY(2016, 2017);
+	}
+
+	@Nonnull
+	private static Gesuchsperiode createGesuchsperiodeXXYY(int yearFrom, int yearTo) {
 		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
 		gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
-		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(2017, Month.AUGUST, 1), LocalDate.of(2018, Month.JULY, 31)));
+		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(yearFrom, Month.AUGUST, 1), LocalDate.of(yearTo,
+			Month.JULY, 31)));
 		return gesuchsperiode;
 	}
 
