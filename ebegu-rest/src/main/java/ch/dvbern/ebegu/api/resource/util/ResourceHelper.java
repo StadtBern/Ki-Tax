@@ -1,9 +1,20 @@
 package ch.dvbern.ebegu.api.resource.util;
 
+import java.util.Arrays;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.BetreuungService;
@@ -13,12 +24,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.Optional;
 
 /**
  * Helper fuer die Statusueberpruefung in Resourcen
@@ -30,7 +35,6 @@ public class ResourceHelper {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ResourceHelper.class);
 
-	public static final String ASSERT_GESUCH_STATUS = "assertGesuchStatus";
 	public static final String ASSERT_GESUCH_STATUS_EQUAL = "assertGesuchStatusEqual";
 	public static final String ASSERT_BETREUUNG_STATUS_EQUAL = "assertBetreuungStatusEqual";
 	@Inject
@@ -44,19 +48,34 @@ public class ResourceHelper {
 
 
 	@SuppressWarnings("ConstantConditions")
+	public void assertGesuchStatusForFreigabe(@Nonnull String gesuchId) {
+		Validate.notNull(gesuchId);
+		Optional<Gesuch> optGesuch = gesuchService.findGesuchForFreigabe(gesuchId);
+		Gesuch gesuch = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException(ASSERT_GESUCH_STATUS_EQUAL, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId));
+		assertGesuchStatus(gesuchId, gesuch, AntragStatusDTO.IN_BEARBEITUNG_GS, AntragStatusDTO.FREIGABEQUITTUNG);
+	}
+
+	@SuppressWarnings("ConstantConditions")
 	public void assertGesuchStatusEqual(@Nonnull String gesuchId, @Nonnull AntragStatusDTO... antragStatusFromClient) {
 		Validate.notNull(gesuchId);
 		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchId);
-		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException(ASSERT_GESUCH_STATUS_EQUAL, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId));
-		// Der Status des Client-Objektes darf nicht weniger weit sein als der des Server-Objektes
+		Gesuch gesuch = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException(ASSERT_GESUCH_STATUS_EQUAL, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId));
+		assertGesuchStatus(gesuchId, gesuch, antragStatusFromClient);
+	}
+
+	/**
+	 * Checks for the given gesuch if its status belongs to one of those that have been passed. If not an exception
+	 * is thrown.
+	 */
+	private void assertGesuchStatus(@Nonnull String gesuchId, Gesuch gesuch, @Nonnull AntragStatusDTO... antragStatusFromClient) {
 		for (AntragStatusDTO antragStatusDTO : antragStatusFromClient) {
-			if (gesuchFromDB.getStatus() == AntragStatusConverterUtil.convertStatusToEntity(antragStatusDTO)) {
+			if (gesuch.getStatus() == AntragStatusConverterUtil.convertStatusToEntity(antragStatusDTO)) {
 				return;
 			}
 		}
 		// Kein Status hat gepasst
 		String msg = "Expected GesuchStatus to be one of " + Arrays.toString(antragStatusFromClient) + " but was "
-			+ "" + gesuchFromDB.getStatus();
+			+ gesuch.getStatus();
 		LOGGER.error(msg);
 		throw new EbeguRuntimeException(ASSERT_GESUCH_STATUS_EQUAL, ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, gesuchId, msg);
 	}
