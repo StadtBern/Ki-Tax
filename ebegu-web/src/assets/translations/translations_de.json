@@ -824,7 +824,7 @@
     "CONFIRM_GESUCH_STATUS_VERFUEGEN": "Möchten Sie den Verfügungsprozess wirklich starten?",
     "CONFIRM_GESUCH_STATUS_KEIN_ANGEBOT": "Möchten Sie das Gesuch wirklich ohne Angebot beenden?",
     "BESCHREIBUNG_GESUCH_STATUS_WECHSELN": "Diese Änderung können Sie nicht mehr rückgängig machen",
-    "BESCHREIBUNG_GESUCH_STATUS_WECHSELN_SCHULAMT": "Da das Gesuch nur Schulamtangebote hat, wird der Status automatisch auf \"schulamt\" gesetzt. Diese Änderung können Sie nicht mehr rückgängig machen.",
+    "BESCHREIBUNG_GESUCH_STATUS_WECHSELN_SCHULAMT": "Das Gesuch enthält nur Schulangebote. Wenn Sie auf Ja klicken, ändert der Status des Gesuches auf \"Schulamt\" und kann nicht mehr vom Jugendamt bearbeitet werden. Wollen Sie wirklich fortfahren?",
     "CONFIRM_SAVE_VERFUEGUNG": "Möchten Sie das Betreuungsangebot wirklich verfügen?",
     "CONFIRM_SAVE_MUTIERTE_VERFUEGUNG": "Mutation führt zu Korrekturen bei bereits ausbezahlten Beträgen, trotzdem verfügen?",
     "CONFIRM_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN": "Möchten Sie das Betreuungsangebot wirklich schliessen ohne neu zu verfügen?",

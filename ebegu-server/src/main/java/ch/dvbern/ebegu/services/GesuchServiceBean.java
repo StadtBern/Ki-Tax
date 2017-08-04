@@ -1478,6 +1478,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		validateGesuchComplete(gesuch);
 
 		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
 			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
 			postGesuchVerfuegen(gesuch, false);
 		} else {
