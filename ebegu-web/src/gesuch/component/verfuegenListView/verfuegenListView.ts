@@ -236,9 +236,13 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public setGesuchStatusVerfuegen(): IPromise<TSGesuch> {
+        let deleteTextValue: string = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN';
+        if (this.gesuchModelManager.areThereOnlySchulamtAngebote()) {
+            deleteTextValue = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN_SCHULAMT';
+        }
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
-            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
+            deleteText: deleteTextValue
         }).then(() => {
 
             return this.gesuchRS.verfuegenStarten(
