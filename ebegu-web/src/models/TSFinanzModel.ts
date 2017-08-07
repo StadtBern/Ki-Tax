@@ -104,7 +104,21 @@ export default class TSFinanzModel {
                 console.log('illegal state: finanzielleSituationContainerGS2 exists but no gs2 is available');
             }
         }
+        this.resetSteuerveranlagungErhalten(gesuch);
         return gesuch;
+    }
+
+    /**
+     * if gemeinsameSteuererklaerung has been set to true and steuerveranlagungErhalten ist set to true for the GS1
+     * as well, then we need to set steuerveranlagungErhalten to true for the GS2 too, if it exists.
+     */
+    private resetSteuerveranlagungErhalten(gesuch: TSGesuch) {
+        if (gesuch.extractFamiliensituation().gemeinsameSteuererklaerung === true
+            && gesuch.gesuchsteller1 && gesuch.gesuchsteller2
+            && gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationJA.steuerveranlagungErhalten === true) {
+
+            gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationJA.steuerveranlagungErhalten = true;
+        }
     }
 
     copyEkvSitDataToGesuch(gesuch: TSGesuch): TSGesuch {

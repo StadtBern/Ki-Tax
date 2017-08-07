@@ -64,7 +64,8 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
             this.errorService.clearAll();
             return this.gesuchModelManager.updateGesuch()
                 .then((gesuch: TSGesuch) => {
-                    // Nötig, da nur das ganze Gesuch upgedated wird und die Aeenderng bei der FinSit sonst nicht bemerkt werden
+                    // Noetig, da nur das ganze Gesuch upgedated wird und die Aeenderng bei der FinSit sonst nicht
+                    // bemerkt werden
                     if (this.gesuchModelManager.getGesuch().isMutation()) {
                         this.wizardStepManager.updateCurrentWizardStepStatusMutiert();
                     }
