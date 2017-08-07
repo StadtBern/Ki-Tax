@@ -43,6 +43,7 @@ import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.DokumentService;
@@ -275,17 +276,22 @@ public class DownloadResource {
 		Validate.notNull(jaxGesuchId.getId());
 		String ip = getIP(request);
 
-		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
-		if (gesuch.isPresent()) {
-			WriteProtectedDokument generatedDokument = generatedDokumentService
-				.getFreigabequittungAccessTokenGeneratedDokument(gesuch.get(), forceCreation, Zustelladresse.valueOf(zustelladresse));
-			if (generatedDokument == null) {
-				return Response.noContent().build();
-			}
-			return getFileDownloadResponse(uriInfo, ip, generatedDokument);
+		final Optional<Gesuch> gesuchOpt = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
+		final Gesuch gesuch = gesuchOpt.orElseThrow(() -> new EbeguEntityNotFoundException("getFreigabequittungAccessTokenGeneratedDokument",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + jaxGesuchId.getId()));
+
+		// Only onlinegesuch have a freigabequittung
+		if (gesuch.getEingangsart().isPapierGesuch()) {
+			throw new EbeguRuntimeException("getFreigabequittungAccessTokenGeneratedDokument",
+				ErrorCodeEnum.ERROR_FREIGABEQUITTUNG_PAPIER, gesuch.getId());
 		}
-		throw new EbeguEntityNotFoundException("getFreigabequittungAccessTokenGeneratedDokument",
-			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + jaxGesuchId.getId());
+
+		WriteProtectedDokument generatedDokument = generatedDokumentService
+			.getFreigabequittungAccessTokenGeneratedDokument(gesuch, forceCreation, Zustelladresse.valueOf(zustelladresse));
+		if (generatedDokument == null) {
+			return Response.noContent().build();
+		}
+		return getFileDownloadResponse(uriInfo, ip, generatedDokument);
 	}
 
 	@Nonnull

@@ -2,7 +2,6 @@ import {IComponentOptions} from 'angular';
 import TSErwerbspensum from '../../../models/TSErwerbspensum';
 import TSErwerbspensumContainer from '../../../models/TSErwerbspensumContainer';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 
 let template = require('./dv-erwerbspensum-list.html');
 require('./dv-erwerbspensum-list.less');
