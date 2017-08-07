@@ -27,7 +27,10 @@ export function PosteingangFilter($filter: any, ebeguUtil: EbeguUtil, CONSTANTS:
             }
             // Familie
             if (expression.fall && expression.fall.besitzer && expression.fall.besitzer === expected) {
-                return actual.getFullName().toUpperCase().indexOf(expected.toUpperCase()) >= 0;
+                if (actual) {
+                    return actual.getFullName().toUpperCase().indexOf(expected.toUpperCase()) >= 0;
+                }
+                return false; // if actual is not defined we return false
             }
             // Datum gesendet
             if (expression.sentDatum && expression.sentDatum === expected) {
