@@ -47,11 +47,22 @@ public interface GesuchService {
 	/**
 	 * Laedt das Gesuch mit der id aus der DB. ACHTUNG zudem wird hier der Status auf IN_BEARBEITUNG_JA gesetzt
 	 * wenn der Benutzer ein JA Mitarbeiter ist und das Gesuch in FREIGEGEBEN ist
+	 * Die Berechtigungen werden geprueft
 	 * @param key PK (id) des Gesuches
 	 * @return Gesuch mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
 	Optional<Gesuch> findGesuch(@Nonnull String key);
+
+	/**
+	 * Laedt das Gesuch mit der id aus der DB. ACHTUNG zudem wird hier der Status auf IN_BEARBEITUNG_JA gesetzt
+	 * wenn der Benutzer ein JA Mitarbeiter ist und das Gesuch in FREIGEGEBEN ist
+	 * @param key PK (id) des Gesuches
+	 * @param doAuthCheck: Definiert, ob die Berechtigungen (Lesen/Schreiben) für dieses Gesuch geprüft werden muessen.
+	 * @return Gesuch mit dem gegebenen key oder null falls nicht vorhanden
+	 */
+	@Nonnull
+	Optional<Gesuch> findGesuch(@Nonnull String key, boolean doAuthCheck);
 
 	/**
 	 * Spezialmethode fuer die Freigabe. Kann Gesuche lesen die im Status Freigabequittung oder hoeher sind

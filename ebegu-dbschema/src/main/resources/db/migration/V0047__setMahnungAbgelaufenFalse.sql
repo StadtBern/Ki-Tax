@@ -1,0 +1,1 @@
+update mahnung set abgelaufen=false where abgelaufen is null;
