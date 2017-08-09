@@ -64,9 +64,8 @@
                         </div>
                     </div>
 
-                    <!--Gesuchsperioden. Nur fuer Erstgesuch-->
-
-                    <div ng-if="vm.gesuchModelManager.isGesuch() && vm.isGesuchsperiodeActive()">
+                    <!-- Gesuchsperiode: Auswahl -->
+                    <div ng-if="vm.canChangeGesuchsperiode()">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -91,7 +90,16 @@
                             </div>
                         </div>
                     </div>
-
+                    <!-- Gesuchsperiode: Readonly -->
+                    <div class="row" ng-if="!vm.canChangeGesuchsperiode()">
+                        <div class="col-sm-12">
+                            <dv-input-container>
+                                <label class="md-no-float" data-translate="GESUCHSPERIODE"
+                                       data-translate-value-gesuchsperiode="{{vm.getGesuchModel().gesuchsperiode.gesuchsperiodeString}}">
+                                </label>
+                            </dv-input-container>
+                        </div>
+                    </div>
 
                 </fieldset>
 
