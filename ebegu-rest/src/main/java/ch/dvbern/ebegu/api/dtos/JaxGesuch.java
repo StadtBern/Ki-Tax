@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -67,6 +68,9 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	private LocalDateTime timestampVerfuegt;
 
 	private boolean gueltig;
+
+	@NotNull
+	private GesuchBetreuungenStatus gesuchBetreuungenStatus;
 
 
 	public static long getSerialVersionUID() {
@@ -211,6 +215,14 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	public void setGueltig(boolean gueltig) {
 		this.gueltig = gueltig;
+	}
+
+	public GesuchBetreuungenStatus getGesuchBetreuungenStatus() {
+		return gesuchBetreuungenStatus;
+	}
+
+	public void setGesuchBetreuungenStatus(GesuchBetreuungenStatus gesuchBetreuungenStatus) {
+		this.gesuchBetreuungenStatus = gesuchBetreuungenStatus;
 	}
 }
 

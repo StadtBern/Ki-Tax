@@ -617,6 +617,7 @@ export default class EbeguRestUtil {
         restGesuch.bemerkungenSTV = gesuch.bemerkungenSTV;
         restGesuch.bemerkungenPruefungSTV = gesuch.bemerkungenPruefungSTV;
         restGesuch.laufnummer = gesuch.laufnummer;
+        restGesuch.gesuchBetreuungenStatus = gesuch.gesuchBetreuungenStatus;
         restGesuch.geprueftSTV = gesuch.geprueftSTV;
         restGesuch.hasFSDokument = gesuch.hasFSDokument;
         restGesuch.gesperrtWegenBeschwerde = gesuch.gesperrtWegenBeschwerde;
@@ -640,6 +641,7 @@ export default class EbeguRestUtil {
             gesuchTS.bemerkungenSTV = gesuchFromServer.bemerkungenSTV;
             gesuchTS.bemerkungenPruefungSTV = gesuchFromServer.bemerkungenPruefungSTV;
             gesuchTS.laufnummer = gesuchFromServer.laufnummer;
+            gesuchTS.gesuchBetreuungenStatus = gesuchFromServer.gesuchBetreuungenStatus;
             gesuchTS.geprueftSTV = gesuchFromServer.geprueftSTV;
             gesuchTS.hasFSDokument = gesuchFromServer.hasFSDokument;
             gesuchTS.gesperrtWegenBeschwerde = gesuchFromServer.gesperrtWegenBeschwerde;
@@ -1370,6 +1372,7 @@ export default class EbeguRestUtil {
         restPendenz.verfuegt = pendenz.verfuegt;
         restPendenz.beschwerdeHaengig = pendenz.beschwerdeHaengig;
         restPendenz.laufnummer = pendenz.laufnummer;
+        restPendenz.gesuchBetreuungenStatus = pendenz.gesuchBetreuungenStatus;
         restPendenz.eingangsart = pendenz.eingangsart;
         restPendenz.besitzerUsername = pendenz.besitzerUsername;
         return restPendenz;
@@ -1393,6 +1396,7 @@ export default class EbeguRestUtil {
         antragTS.verfuegt = antragFromServer.verfuegt;
         antragTS.beschwerdeHaengig = antragFromServer.beschwerdeHaengig;
         antragTS.laufnummer = antragFromServer.laufnummer;
+        antragTS.gesuchBetreuungenStatus = antragFromServer.gesuchBetreuungenStatus;
         antragTS.eingangsart = antragFromServer.eingangsart;
         antragTS.besitzerUsername = antragFromServer.besitzerUsername;
         return antragTS;

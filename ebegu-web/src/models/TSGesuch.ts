@@ -11,6 +11,7 @@ import {isSchulamt} from './enums/TSBetreuungsangebotTyp';
 import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
 import {TSAntragStatus} from './enums/TSAntragStatus';
 import * as moment from 'moment';
+import {TSGesuchBetreuungenStatus} from './enums/TSGesuchBetreuungenStatus';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 
@@ -28,6 +29,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _gesperrtWegenBeschwerde: boolean = false;
     private _datumGewarntNichtFreigegeben: moment.Moment;
     private _datumGewarntFehlendeQuittung: moment.Moment;
+    private _gesuchBetreuungenStatus: TSGesuchBetreuungenStatus;
 
     private _timestampVerfuegt: moment.Moment;
     private _gueltig: boolean;
@@ -171,6 +173,14 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     set gueltig(value: boolean) {
         this._gueltig = value;
+    }
+
+    public get gesuchBetreuungenStatus(): TSGesuchBetreuungenStatus {
+        return this._gesuchBetreuungenStatus;
+    }
+
+    public set gesuchBetreuungenStatus(value: TSGesuchBetreuungenStatus) {
+        this._gesuchBetreuungenStatus = value;
     }
 
     public isMutation(): boolean {
