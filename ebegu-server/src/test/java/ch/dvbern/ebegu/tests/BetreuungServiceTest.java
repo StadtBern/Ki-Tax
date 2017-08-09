@@ -7,6 +7,8 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.security.auth.login.LoginException;
 
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -66,10 +68,15 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		Betreuung betreuung = betreuungOpt.get();
 		Assert.assertEquals(persitedBetreuung.getBetreuungsstatus(), betreuung.getBetreuungsstatus());
 
+		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, betreuung.extractGesuch().getGesuchBetreuungenStatus());
+		betreuung.setGrundAblehnung("abgewiesen");
+		betreuung.setBetreuungsstatus(Betreuungsstatus.ABGEWIESEN);
 		betreuungService.saveBetreuung(betreuung, false);
 		Optional<Betreuung> updatedBetreuung = betreuungService.findBetreuung(persitedBetreuung.getId());
 		Assert.assertTrue(updatedBetreuung.isPresent());
 
+		Assert.assertEquals(GesuchBetreuungenStatus.ABGEWIESEN, updatedBetreuung.get().extractGesuch()
+			.getGesuchBetreuungenStatus());
 		Assert.assertEquals(new Integer(1), updatedBetreuung.get().getBetreuungNummer());
 		Assert.assertEquals(new Integer(2), kindService.findKind(betreuung.getKind().getId()).get().getNextNumberBetreuung());
 	}
@@ -80,9 +87,13 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		Betreuung persitedBetreuung = TestDataUtil.persistBetreuung(betreuungService, persistence);
 		Optional<Betreuung> betreuung = betreuungService.findBetreuung(persitedBetreuung.getId());
 		Assert.assertTrue(betreuung.isPresent());
+		final String gesuchId = betreuung.get().extractGesuch().getId();
 		betreuungService.removeBetreuung(betreuung.get().getId());
+
 		Optional<Betreuung> betreuungAfterRemove = betreuungService.findBetreuung(persitedBetreuung.getId());
 		Assert.assertFalse(betreuungAfterRemove.isPresent());
+		final Gesuch gesuch = persistence.find(Gesuch.class, gesuchId);
+		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, gesuch.getGesuchBetreuungenStatus());
 	}
 
 	@Test

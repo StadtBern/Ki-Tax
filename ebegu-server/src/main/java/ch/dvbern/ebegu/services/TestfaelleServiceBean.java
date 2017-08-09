@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Erwerbspensum;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
 import ch.dvbern.ebegu.entities.Fall;
@@ -575,8 +576,8 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 	private void saveBetreuungen(@Nonnull Gesuch gesuch, @Nonnull List<WizardStep> wizardStepsFromGesuch) {
 		setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.BETREUUNG, WizardStepStatus.IN_BEARBEITUNG);
-		gesuch.getKindContainers().forEach(kindContainer
-			-> kindContainer.getBetreuungen().forEach(betreuung -> betreuungService.saveBetreuung(betreuung, false)));
+		final List<Betreuung> allBetreuungen = gesuch.extractAllBetreuungen();
+		allBetreuungen.forEach(betreuung -> betreuungService.saveBetreuung(betreuung, false));
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.BETREUUNG);
 	}
 
