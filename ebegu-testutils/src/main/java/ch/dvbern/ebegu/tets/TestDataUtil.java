@@ -973,6 +973,7 @@ public final class TestDataUtil {
 		betreuung.getKind().setGesuch(gesuch);
 		persistence.persist(betreuung.getKind());
 
+		betreuung.setBetreuungsstatus(Betreuungsstatus.WARTEN);
 		betreuungService.saveBetreuung(betreuung, false);
 
 		return betreuung;

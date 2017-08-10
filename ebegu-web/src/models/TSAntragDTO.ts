@@ -4,6 +4,7 @@ import {TSAntragStatus} from './enums/TSAntragStatus';
 import {TSEingangsart} from './enums/TSEingangsart';
 import EbeguUtil from '../utils/EbeguUtil';
 import * as moment from 'moment';
+import {TSGesuchBetreuungenStatus} from './enums/TSGesuchBetreuungenStatus';
 
 export default class TSAntragDTO {
 
@@ -26,12 +27,13 @@ export default class TSAntragDTO {
     private _verfuegt: boolean;
     private _beschwerdeHaengig: boolean;
     private _laufnummer: number;
+    private _gesuchBetreuungenStatus: TSGesuchBetreuungenStatus;
 
     constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
                 eingangsdatum?: moment.Moment, eingangsdatumSTV?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
                 verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
                 verfuegt?: boolean, laufnummer?: number, besitzerUsername?: string, eingangsart?: TSEingangsart, beschwerdeHaengig?: boolean,
-                kinder?: Array<string>) {
+                kinder?: Array<string>, gesuchBetreuungenStatus?: TSGesuchBetreuungenStatus) {
 
         this._antragId = antragId;
         this._fallNummer = fallNummer;
@@ -52,6 +54,7 @@ export default class TSAntragDTO {
         this._eingangsart = eingangsart;
         this._beschwerdeHaengig = beschwerdeHaengig;
         this._kinder = kinder;
+        this._gesuchBetreuungenStatus = gesuchBetreuungenStatus;
     }
 
 
@@ -244,4 +247,11 @@ export default class TSAntragDTO {
         return true;
     }
 
+    public get gesuchBetreuungenStatus(): TSGesuchBetreuungenStatus {
+        return this._gesuchBetreuungenStatus;
+    }
+
+    public set gesuchBetreuungenStatus(value: TSGesuchBetreuungenStatus) {
+        this._gesuchBetreuungenStatus = value;
+    }
 }

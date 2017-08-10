@@ -1,20 +1,19 @@
 package ch.dvbern.ebegu.util;
 
-import ch.dvbern.ebegu.entities.Betreuung;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.UserRole;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Diese Klasse enthaelt Methoden, um den AntragStatus von DB in DTO umzuwandeln.
  */
+@SuppressWarnings("OverlyComplexMethod")
 public class AntragStatusConverterUtil {
 
 	private AntragStatusConverterUtil() {
@@ -83,18 +82,14 @@ public class AntragStatusConverterUtil {
 	 */
 	@Nonnull
 	private static AntragStatusDTO convertGeprueftStatusToDTO(Gesuch antrag) {
-		final List<Betreuung> allBetreuungenFromGesuch = antrag.extractAllBetreuungen();
-		AntragStatusDTO newAntragStatus = AntragStatusDTO.GEPRUEFT; // by default alle plaetze sind bestaetigt
-		for (final Betreuung betreuung : allBetreuungenFromGesuch) {
-			if (Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())) {
+		switch (antrag.getGesuchBetreuungenStatus()) {
+			case WARTEN:
 				return AntragStatusDTO.PLATZBESTAETIGUNG_WARTEN;
-			}
-			else if (Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus())) {
-				newAntragStatus = AntragStatusDTO.PLATZBESTAETIGUNG_ABGEWIESEN;
-				break;
-			}
+			case ABGEWIESEN:
+				return AntragStatusDTO.PLATZBESTAETIGUNG_ABGEWIESEN;
+			default:
+				return AntragStatusDTO.GEPRUEFT;
 		}
-		return newAntragStatus;
 	}
 
 	/**

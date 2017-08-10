@@ -21,6 +21,7 @@ import {TSGesuchEvent} from '../models/enums/TSGesuchEvent';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import EwkRS from '../core/service/ewkRS.rest';
 import TSGesuchsteller from '../models/TSGesuchsteller';
+import {TSGesuchBetreuungenStatus} from '../models/enums/TSGesuchBetreuungenStatus';
 
 export class GesuchRouteController {
 
@@ -136,8 +137,14 @@ export class GesuchRouteController {
         let isUserJA: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getJugendamtRole());
         let isUserSTV: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getSteueramtOnlyRoles());
 
-        if (toTranslate === TSAntragStatus.IN_BEARBEITUNG_GS && isUserGesuchsteller
-            || toTranslate === TSAntragStatus.IN_BEARBEITUNG_JA && isUserJA) {
+        if (toTranslate === TSAntragStatus.IN_BEARBEITUNG_GS && isUserGesuchsteller) {
+            if (TSGesuchBetreuungenStatus.ABGEWIESEN === this.gesuchModelManager.getGesuch().gesuchBetreuungenStatus) {
+                return this.ebeguUtil.translateString(TSAntragStatus[TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN]);
+            } else if (TSGesuchBetreuungenStatus.WARTEN === this.gesuchModelManager.getGesuch().gesuchBetreuungenStatus) {
+                return this.ebeguUtil.translateString(TSAntragStatus[TSAntragStatus.PLATZBESTAETIGUNG_WARTEN]);
+            }
+        }
+        if (toTranslate === TSAntragStatus.IN_BEARBEITUNG_JA && isUserJA) {
             return this.ebeguUtil.translateString(IN_BEARBEITUNG_BASE_NAME);
         }
         switch (toTranslate) {

@@ -39,6 +39,7 @@ import javax.persistence.criteria.SetJoin;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
@@ -75,8 +76,10 @@ import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.enums.WizardStepName;
@@ -1561,6 +1564,21 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			idsFuerGesuch.ifPresent(antraegeOfLastYear::add);
 		}
 		mailService.sendInfoFreischaltungGesuchsperiode(nextGesuchsperiode, antraegeOfLastYear);
+	}
+
+	@Override
+	public void updateBetreuungenStatus(@NotNull Gesuch gesuch) {
+		gesuch.setGesuchBetreuungenStatus(GesuchBetreuungenStatus.ALLE_BESTAETIGT);
+		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
+			if (Betreuungsstatus.ABGEWIESEN == betreuung.getBetreuungsstatus()) {
+				gesuch.setGesuchBetreuungenStatus(GesuchBetreuungenStatus.ABGEWIESEN);
+				break;
+			}
+			else if (Betreuungsstatus.WARTEN == betreuung.getBetreuungsstatus()) {
+				gesuch.setGesuchBetreuungenStatus(GesuchBetreuungenStatus.WARTEN);
+			}
+		}
+		persistence.merge(gesuch);
 	}
 
 	@Nonnull
