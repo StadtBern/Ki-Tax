@@ -31,7 +31,6 @@ import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
@@ -329,26 +328,22 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		Familiensituation newFamsit = getFamiliensituationZuZweit(aenderungPer);
 		Familiensituation oldFamsit = getFamiliensituationAlleine(null);
 
-		Optional<Gesuch> gesuchOptional = gesuchService.testfallMutieren(fallNummer, gesuchsperiodeId, eingangsdatum);
-		if (gesuchOptional.isPresent()) {
-			final Gesuch mutation = gesuchOptional.get();
-			final FamiliensituationContainer familiensituationContainer = mutation.getFamiliensituationContainer();
-			Validate.notNull(familiensituationContainer, "Familiensituation muss gesetzt sein");
-			familiensituationContainer.setFamiliensituationErstgesuch(familiensituationContainer.getFamiliensituationJA());
-			familiensituationContainer.setFamiliensituationJA(newFamsit);
+		Gesuch mutation = gesuchService.testfallMutieren(fallNummer, gesuchsperiodeId, eingangsdatum).orElseThrow(() -> new EbeguEntityNotFoundException
+			("mutierenHeirat", "Gesuch zum Mutieren nicht gefunden"));
+		final FamiliensituationContainer familiensituationContainer = mutation.getFamiliensituationContainer();
+		Validate.notNull(familiensituationContainer, "Familiensituation muss gesetzt sein");
+		familiensituationContainer.setFamiliensituationErstgesuch(familiensituationContainer.getFamiliensituationJA());
+		familiensituationContainer.setFamiliensituationJA(newFamsit);
 
-			familiensituationService.saveFamiliensituation(mutation, familiensituationContainer, oldFamsit);
-			Validate.notNull(mutation.getGesuchsteller1(), "Gesuchsteller 1 muss gesetzt sein");
-			final GesuchstellerContainer gesuchsteller2 = gesuchstellerService
-				.saveGesuchsteller(createGesuchstellerHeirat(mutation.getGesuchsteller1()), mutation, 2, false);
+		familiensituationService.saveFamiliensituation(mutation, familiensituationContainer, oldFamsit);
+		Validate.notNull(mutation.getGesuchsteller1(), "Gesuchsteller 1 muss gesetzt sein");
+		final GesuchstellerContainer gesuchsteller2 = gesuchstellerService
+			.saveGesuchsteller(createGesuchstellerHeirat(mutation.getGesuchsteller1()), mutation, 2, false);
 
-			mutation.setGesuchsteller2(gesuchsteller2);
-			gesuchService.createGesuch(mutation);
-			gesuchVerfuegenUndSpeichern(verfuegen, mutation, true);
-			return mutation;
-		}
-
-		return gesuchOptional.orElse(null);
+		mutation.setGesuchsteller2(gesuchsteller2);
+		gesuchService.createGesuch(mutation);
+		gesuchVerfuegenUndSpeichern(verfuegen, mutation, true);
+		return mutation;
 	}
 
 	@Override
@@ -513,7 +508,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		if (verfuegen) {
 			FreigabeCopyUtil.copyForFreigabe(gesuch);
 			verfuegungService.calculateVerfuegung(gesuch);
-			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId(), Betreuungsstatus.VERFUEGT)));
+			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.verfuegen(betreuung.getVerfuegung(), betreuung.getId(), false)));
 			gesuchService.postGesuchVerfuegen(gesuch);
 		}
 		wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.VERFUEGEN);
