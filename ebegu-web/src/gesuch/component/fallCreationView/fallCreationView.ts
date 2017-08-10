@@ -69,16 +69,9 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
                 this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;
             }
         }
-        // Falls es eine Mutation ist, dürfen auch bereits verwendete GPs ausgewählt werden
-        if (this.$stateParams.createMutation === 'true') {
-            this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: TSGesuchsperiode[]) => {
-                this.nichtAbgeschlosseneGesuchsperiodenList = angular.copy(response);
-            });
-        } else {
-            this.gesuchsperiodeRS.getAllNichtAbgeschlosseneNichtVerwendeteGesuchsperioden(this.$stateParams.fallId).then((response: TSGesuchsperiode[]) => {
-                this.nichtAbgeschlosseneGesuchsperiodenList = angular.copy(response);
-            });
-        }
+        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneNichtVerwendeteGesuchsperioden(this.$stateParams.fallId).then((response: TSGesuchsperiode[]) => {
+            this.nichtAbgeschlosseneGesuchsperiodenList = angular.copy(response);
+        });
     }
 
     save(): IPromise<TSGesuch> {

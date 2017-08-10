@@ -187,22 +187,28 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@PermitAll
 	public Collection<Gesuchsperiode> getAllNichtAbgeschlosseneNichtVerwendeteGesuchsperioden(String fallId) {
 		Fall fall = persistence.find(Fall.class, fallId);
-		Collection<Gesuchsperiode> gesuchsperiodenImStatus = getGesuchsperiodenImStatus(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV);
+		if (fall == null) {
+			throw new EbeguEntityNotFoundException("getAllNichtAbgeschlosseneNichtVerwendeteGesuchsperioden",
+				ErrorCodeEnum.ERROR_PARAMETER_NOT_FOUND, fallId);
+		}
+		final Collection<Gesuchsperiode> gesuchsperiodenImStatus = getGesuchsperiodenImStatus(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV);
+		if (!gesuchsperiodenImStatus.isEmpty()) {
+			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+			final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+			Root<Gesuch> root = query.from(Gesuch.class);
+			Predicate fallPredicate = cb.equal(root.get(Gesuch_.fall), fall);
+			Predicate gesuchsperiodePredicate = root.get(Gesuch_.gesuchsperiode).in(gesuchsperiodenImStatus);
+			// Es interessieren nur die Gesuche, die entweder Papier oder Online und freigegeben sind, also keine, die in Bearbeitung GS sind.
 
-		Root<Gesuch> root = query.from(Gesuch.class);
-		Predicate fallPredicate = cb.equal(root.get(Gesuch_.fall), fall);
-		Predicate gesuchsperiodePredicate = root.get(Gesuch_.gesuchsperiode).in(gesuchsperiodenImStatus);
-		// Es interessieren nur die Gesuche, die entweder Papier oder Online und freigegeben sind, also keine, die in Bearbeitung GS sind.
-		Predicate gesuchStatus = root.get(Gesuch_.status).in(AntragStatus.getInBearbeitungGSStates()).not();
+			Predicate gesuchStatus = root.get(Gesuch_.status).in(AntragStatus.getInBearbeitungGSStates()).not();
 
-		query.where(fallPredicate, gesuchsperiodePredicate, gesuchStatus);
-		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
-		// Die Gesuchsperioden, die jetzt in der Liste sind, sind sicher besetzt (eventuell noch weitere, sprich Online-Gesuche)
-		for (Gesuch criteriaResult : criteriaResults) {
-			gesuchsperiodenImStatus.remove(criteriaResult.getGesuchsperiode());
+			query.where(fallPredicate, gesuchsperiodePredicate, gesuchStatus);
+			List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
+			// Die Gesuchsperioden, die jetzt in der Liste sind, sind sicher besetzt (eventuell noch weitere, sprich Online-Gesuche)
+			for (Gesuch criteriaResult : criteriaResults) {
+				gesuchsperiodenImStatus.remove(criteriaResult.getGesuchsperiode());
+			}
 		}
 		return gesuchsperiodenImStatus;
 	}
