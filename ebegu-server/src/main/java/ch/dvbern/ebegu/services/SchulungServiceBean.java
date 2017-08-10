@@ -58,7 +58,7 @@ import ch.dvbern.ebegu.testfaelle.Testfall07_MeierMeret;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
-import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
+import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.ArrayUtils;
