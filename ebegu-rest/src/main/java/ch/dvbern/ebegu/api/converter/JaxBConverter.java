@@ -680,6 +680,7 @@ public class JaxBConverter {
 		antrag.setBemerkungenSTV(antragJAXP.getBemerkungenSTV());
 		antrag.setBemerkungenPruefungSTV(antragJAXP.getBemerkungenPruefungSTV());
 		antrag.setLaufnummer(antragJAXP.getLaufnummer());
+		antrag.setGesuchBetreuungenStatus(antragJAXP.getGesuchBetreuungenStatus());
 		antrag.setGeprueftSTV(antragJAXP.isGeprueftSTV());
 		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
 		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
@@ -809,6 +810,7 @@ public class JaxBConverter {
 		jaxGesuch.setBemerkungenSTV(persistedGesuch.getBemerkungenSTV());
 		jaxGesuch.setBemerkungenPruefungSTV(persistedGesuch.getBemerkungenPruefungSTV());
 		jaxGesuch.setLaufnummer(persistedGesuch.getLaufnummer());
+		jaxGesuch.setGesuchBetreuungenStatus(persistedGesuch.getGesuchBetreuungenStatus());
 		jaxGesuch.setGeprueftSTV(persistedGesuch.isGeprueftSTV());
 		jaxGesuch.setHasFSDokument(persistedGesuch.isHasFSDokument());
 		jaxGesuch.setGesperrtWegenBeschwerde(persistedGesuch.isGesperrtWegenBeschwerde());
@@ -2197,6 +2199,7 @@ public class JaxBConverter {
 		antrag.setLaufnummer(gesuch.getLaufnummer());
 		antrag.setEingangsart(gesuch.getEingangsart());
 		antrag.setBesitzerUsername(gesuch.getFall().getBesitzer() != null ? gesuch.getFall().getBesitzer().getUsername() : null);
+		antrag.setGesuchBetreuungenStatus(gesuch.getGesuchBetreuungenStatus());
 		return antrag;
 	}
 

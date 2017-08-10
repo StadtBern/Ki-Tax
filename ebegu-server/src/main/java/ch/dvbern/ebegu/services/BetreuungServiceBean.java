@@ -21,9 +21,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.AbwesenheitContainer;
 import ch.dvbern.ebegu.entities.AbwesenheitContainer_;
@@ -51,6 +48,8 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
@@ -80,6 +79,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Inject
 	private MitteilungService mitteilungService;
 	@Inject
+	private GesuchService gesuchService;
+	@Inject
 	private Authorizer authorizer;
 	@Inject
 	private MailService mailService;
@@ -108,6 +109,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		} else {
 			wizardStepService.updateSteps(mergedBetreuung.getKind().getGesuch().getId(), null, null, WizardStepName.BETREUUNG);
 		}
+
+		gesuchService.updateBetreuungenStatus(mergedBetreuung.extractGesuch());
 
 		return mergedBetreuung;
 	}
@@ -187,20 +190,19 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 			.forEach((mitteilung) ->
 			{
 				mitteilung.setBetreuung(null);
-				this.LOG.debug("Betreuung '{0}' will be removed. Removing Relation in Mitteilung: '{1}'", betreuungId, mitteilung.getId());
+				this.LOG.debug("Betreuung '{}' will be removed. Removing Relation in Mitteilung: '{}'", betreuungId, mitteilung.getId());
 				persistence.merge(mitteilung);
 			});
 
 		mitteilungenForBetreuung.stream()
 			.filter(mitteilung -> mitteilung.getClass().equals(Betreuungsmitteilung.class))
 			.forEach((betMitteilung) -> {
-				this.LOG.debug("Betreuung '{0}' will be removed. Removing dependent Betreuungsmitteilung: '{1}'", betreuungId, betMitteilung.getId());
+				this.LOG.debug("Betreuung '{}' will be removed. Removing dependent Betreuungsmitteilung: '{}'", betreuungId, betMitteilung.getId());
 				persistence.remove(Betreuungsmitteilung.class, betMitteilung.getId());
 			});
 
 		final String gesuchId = betreuungToRemove.getKind().getGesuch().getId();
-		authorizer.checkWriteAuthorization(betreuungToRemove);
-		persistence.remove(betreuungToRemove);
+		removeBetreuung(betreuungToRemove);
 		wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.BETREUUNG); //auch bei entfernen wizard updaten
 	}
 
@@ -209,7 +211,15 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	public void removeBetreuung(@Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung);
 		authorizer.checkWriteAuthorization(betreuung);
+		final Gesuch gesuch = betreuung.extractGesuch();
+
 		persistence.remove(betreuung);
+
+		// the betreuung needs to be removed from the object as well
+		gesuch.getKindContainers()
+			.forEach(kind -> kind.getBetreuungen().removeIf(bet -> bet.getId().equalsIgnoreCase(betreuung.getId())));
+
+		gesuchService.updateBetreuungenStatus(gesuch);
 	}
 
 	@Override

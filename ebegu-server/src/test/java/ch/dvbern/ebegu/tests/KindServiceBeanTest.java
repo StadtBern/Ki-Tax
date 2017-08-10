@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.KindService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -70,6 +71,9 @@ public class KindServiceBeanTest extends AbstractEbeguLoginTest {
 		kindService.removeKind(kind.get().getId());
 		Optional<KindContainer> kindAfterRemove = kindService.findKind(persitedKind.getId());
 		Assert.assertFalse(kindAfterRemove.isPresent());
+
+		gesuch = persistence.find(Gesuch.class, gesuch.getId());
+		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, gesuch.getGesuchBetreuungenStatus());
 	}
 
 	@Test

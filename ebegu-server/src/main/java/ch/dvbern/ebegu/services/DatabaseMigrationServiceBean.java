@@ -94,6 +94,9 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 		case "1204":
 			processScript1204_CreateMissingEKV();
 			break;
+		case "1098":
+			processScript1098_SetFlagGesuchBetreuungenStatus();
+			break;
 		}
 		// to avoid errors due to missing Context because Principal is set as RequestScoped
 		persistence.getEntityManager().flush();
@@ -116,12 +119,12 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 			Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(id);
 			if (gesuchOptional.isPresent()) {
 				Gesuch gesuch = gesuchOptional.get();
-				String gesuchInfo = gesuch.getFall().getFallNummer() + SEPARATOR + gesuch.getGesuchsperiode().getGesuchsperiodeString() + SEPARATOR + gesuch.getId();
 				Collection<AntragStatusHistory> allAntragStatusHistoryByGesuch = antragStatusHistoryService.findAllAntragStatusHistoryByGesuch(gesuch);
 				Optional<AntragStatusHistory> historyOptional = allAntragStatusHistoryByGesuch.stream()
 					.filter(history -> !AntragStatus.FIRST_STATUS_OF_VERFUEGT.contains(history.getStatus()))
 					.sorted(Comparator.comparing(AntragStatusHistory::getTimestampVon))
 					.findFirst();
+				String gesuchInfo = getGesuchInfo(gesuch);
 				if (historyOptional.isPresent()) {
 					// Das Gesuch ist verfuegt
 					gesuch.setTimestampVerfuegt(historyOptional.get().getTimestampVon());
@@ -174,6 +177,11 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 
 	private String getBetreuungInfo(Betreuung betreuung) {
 		return betreuung.getKind().getKindNummer() + SEPARATOR + betreuung.getBetreuungNummer() + SEPARATOR + betreuung.getBetreuungsstatus();
+	}
+
+	private String getGesuchInfo(Gesuch gesuch) {
+		String gesuchInfo = gesuch.getFall().getFallNummer() + SEPARATOR + gesuch.getGesuchsperiode().getGesuchsperiodeString() + SEPARATOR + gesuch.getId();
+		return gesuchInfo;
 	}
 
 	/**
@@ -272,6 +280,30 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 		}
 		return null;
 	}
+
+	/**
+	 * This Script will go through all existing Gesuche and will set the flag gesuchBetreuungenStatus to the right
+	 * value given by the status of all its Betreuungen.
+	 * The timestamp_mutiert is not modified by the process.
+	 */
+	private void processScript1098_SetFlagGesuchBetreuungenStatus() {
+		LocalDateTime startTime = LocalDateTime.now();
+		LOGGER.info("Starting Migration EBEGU-1098");
+		final Collection<Gesuch> allGesuche = gesuchService.getAllGesuche();
+		int i = 0;
+		for (final Gesuch gesuch : allGesuche) {
+			LOGGER.debug("{}/{} Processed. ID {}", i, allGesuche.size(), gesuch.getId());
+			LOGGER.info("Processing Gesuch {}", getGesuchInfo(gesuch));
+			for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
+				LOGGER.info("... processing Betreuung {}", getBetreuungInfo(betreuung));
+			}
+			gesuch.setSkipPreUpdate(true); // with this flag we skip the preUpdate and timestampMutiert doesn't get updated
+			gesuchService.updateBetreuungenStatus(gesuch);
+			LOGGER.info("... result: {}", gesuch.getGesuchBetreuungenStatus());
+			i++;
+		}
+		LocalDateTime stopTime = LocalDateTime.now();
+		long between = ChronoUnit.MILLIS.between(startTime, stopTime);
+		LOGGER.info("Finished Migration EBEGU-1098, took : " + between + " ms and processed " + allGesuche.size());
+	}
 }
-
-

@@ -1,6 +1,9 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -8,10 +11,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
+
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 
 /**
  * DTO fuer Faelle
@@ -67,6 +69,9 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	private LocalDateTime timestampVerfuegt;
 
 	private boolean gueltig;
+
+	@NotNull
+	private GesuchBetreuungenStatus gesuchBetreuungenStatus = GesuchBetreuungenStatus.ALLE_BESTAETIGT;
 
 
 	public static long getSerialVersionUID() {
@@ -211,6 +216,14 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	public void setGueltig(boolean gueltig) {
 		this.gueltig = gueltig;
+	}
+
+	public GesuchBetreuungenStatus getGesuchBetreuungenStatus() {
+		return gesuchBetreuungenStatus;
+	}
+
+	public void setGesuchBetreuungenStatus(GesuchBetreuungenStatus gesuchBetreuungenStatus) {
+		this.gesuchBetreuungenStatus = gesuchBetreuungenStatus;
 	}
 }
 

@@ -73,6 +73,11 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	@Enumerated(EnumType.STRING)
 	private Eingangsart eingangsart = Eingangsart.PAPIER;
 
+	@NotNull
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private GesuchBetreuungenStatus gesuchBetreuungenStatus = GesuchBetreuungenStatus.ALLE_BESTAETIGT;
+
 	@Valid
 	@Nullable
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -330,6 +335,14 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	public void setEingangsart(Eingangsart eingangsart) {
 		this.eingangsart = eingangsart;
+	}
+
+	public GesuchBetreuungenStatus getGesuchBetreuungenStatus() {
+		return gesuchBetreuungenStatus;
+	}
+
+	public void setGesuchBetreuungenStatus(GesuchBetreuungenStatus gesuchBetreuungenStatus) {
+		this.gesuchBetreuungenStatus = gesuchBetreuungenStatus;
 	}
 
 	@Nullable

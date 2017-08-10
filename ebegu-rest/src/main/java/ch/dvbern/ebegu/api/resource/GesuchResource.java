@@ -708,4 +708,22 @@ public class GesuchResource {
 
 		return Response.ok(converter.gesuchToJAX(closedGesuch)).build();
 	}
+
+	@Nullable
+	@GET
+	@Path("/gesuchBetreuungenStatus/{gesuchId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response findGesuchBetreuungenStatus(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) throws EbeguException {
+
+		Validate.notNull(gesuchJAXPId.getId());
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId));
+		if (!gesuchOptional.isPresent()) {
+			throw new EbeguEntityNotFoundException("findGesuchBetreuungenStatus", ErrorCodeEnum
+				.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + gesuchJAXPId.getId());
+		}
+		Gesuch gesuchToReturn = gesuchOptional.get();
+		return Response.ok(gesuchToReturn.getGesuchBetreuungenStatus()).build();
+	}
 }
