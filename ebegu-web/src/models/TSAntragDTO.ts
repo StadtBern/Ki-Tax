@@ -33,7 +33,7 @@ export default class TSAntragDTO {
                 eingangsdatum?: moment.Moment, eingangsdatumSTV?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
                 verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
                 verfuegt?: boolean, laufnummer?: number, besitzerUsername?: string, eingangsart?: TSEingangsart, beschwerdeHaengig?: boolean,
-                kinder?: Array<string>) {
+                kinder?: Array<string>, gesuchBetreuungenStatus?: TSGesuchBetreuungenStatus) {
 
         this._antragId = antragId;
         this._fallNummer = fallNummer;
@@ -54,6 +54,7 @@ export default class TSAntragDTO {
         this._eingangsart = eingangsart;
         this._beschwerdeHaengig = beschwerdeHaengig;
         this._kinder = kinder;
+        this._gesuchBetreuungenStatus = gesuchBetreuungenStatus;
     }
 
 
