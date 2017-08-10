@@ -27,6 +27,7 @@ import ch.dvbern.ebegu.entities.Gesuch_;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Gesuchsperiode_;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt_;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
@@ -179,6 +180,37 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@PermitAll
 	public Collection<Gesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden() {
 		return getGesuchsperiodenImStatus(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV);
+	}
+
+	@Override
+	@Nonnull
+	@PermitAll
+	public Collection<Gesuchsperiode> getAllNichtAbgeschlosseneNichtVerwendeteGesuchsperioden(String fallId) {
+		Fall fall = persistence.find(Fall.class, fallId);
+		if (fall == null) {
+			throw new EbeguEntityNotFoundException("getAllNichtAbgeschlosseneNichtVerwendeteGesuchsperioden",
+				ErrorCodeEnum.ERROR_PARAMETER_NOT_FOUND, fallId);
+		}
+		final Collection<Gesuchsperiode> gesuchsperiodenImStatus = getGesuchsperiodenImStatus(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV);
+		if (!gesuchsperiodenImStatus.isEmpty()) {
+			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+			final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+			Root<Gesuch> root = query.from(Gesuch.class);
+			Predicate fallPredicate = cb.equal(root.get(Gesuch_.fall), fall);
+			Predicate gesuchsperiodePredicate = root.get(Gesuch_.gesuchsperiode).in(gesuchsperiodenImStatus);
+			// Es interessieren nur die Gesuche, die entweder Papier oder Online und freigegeben sind, also keine, die in Bearbeitung GS sind.
+
+			Predicate gesuchStatus = root.get(Gesuch_.status).in(AntragStatus.getInBearbeitungGSStates()).not();
+
+			query.where(fallPredicate, gesuchsperiodePredicate, gesuchStatus);
+			List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
+			// Die Gesuchsperioden, die jetzt in der Liste sind, sind sicher besetzt (eventuell noch weitere, sprich Online-Gesuche)
+			for (Gesuch criteriaResult : criteriaResults) {
+				gesuchsperiodenImStatus.remove(criteriaResult.getGesuchsperiode());
+			}
+		}
+		return gesuchsperiodenImStatus;
 	}
 
 	private Collection<Gesuchsperiode> getGesuchsperiodenImStatus(GesuchsperiodeStatus... status) {
