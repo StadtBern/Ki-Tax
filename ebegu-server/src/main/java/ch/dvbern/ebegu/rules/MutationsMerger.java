@@ -49,7 +49,7 @@ public class MutationsMerger {
 		if (betreuung.extractGesuch().getTyp().isGesuch()) {
 			return zeitabschnitte;
 		}
-		final Verfuegung verfuegungOnGesuchForMuation = betreuung.getVorgaengerVerfuegung();
+		final Verfuegung verfuegungOnGesuchForMutation = betreuung.getVorgaengerVerfuegung();
 
 
 		final LocalDate mutationsEingansdatum = betreuung.extractGesuch().getEingangsdatum();
@@ -60,7 +60,7 @@ public class MutationsMerger {
 			final LocalDate zeitabschnittStart = verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb();
 			final int anspruchberechtigtesPensum = verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
 
-			final int anspruchberechtigtesPensumGSM = findAnspruchberechtigtesPensumAt(zeitabschnittStart, verfuegungOnGesuchForMuation);
+			final int anspruchberechtigtesPensumGSM = findAnspruchberechtigtesPensumAt(zeitabschnittStart, verfuegungOnGesuchForMutation);
 			VerfuegungZeitabschnitt zeitabschnitt = copy(verfuegungZeitabschnitt);
 
 			if (anspruchberechtigtesPensum > anspruchberechtigtesPensumGSM) {
@@ -83,8 +83,11 @@ public class MutationsMerger {
 			//SCHULKINDER: Sonderregel bei zu Mutation von zu spaet eingereichten Schulkindangeboten
 			//fuer Abschnitte ab dem Folgemonat des Mutationseingangs rechnen wir bisher, fuer alle vorherigen folgende Sonderregel
 			if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()
-				&& !isMeldungRechzeitig(zeitabschnitt, mutationsEingansdatum)) {
-				VerfuegungZeitabschnitt zeitabschnittInVorgaenger = findZeitabschnittInVorgaenger(zeitabschnittStart, verfuegungOnGesuchForMuation);
+				&& !isMeldungRechzeitig(zeitabschnitt, mutationsEingansdatum)
+				&& verfuegungOnGesuchForMutation != null) {
+
+
+				VerfuegungZeitabschnitt zeitabschnittInVorgaenger = findZeitabschnittInVorgaenger(zeitabschnittStart, verfuegungOnGesuchForMutation);
 				// Wenn der Benutzer vorher keine Verfuenstigung bekam weil er zu spaet eingereicht hat DANN bezahlt er auch in Mutation vollkosten
 				if (zeitabschnittInVorgaenger != null
 					&& zeitabschnittInVorgaenger.getVerguenstigung().compareTo(BigDecimal.ZERO) == 0
