@@ -15,7 +15,7 @@ import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.reporting.kanton.KantonDataRow;
 import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenDataRow;
 import ch.dvbern.ebegu.util.UploadFileInfo;
-import ch.dvbern.lib.excelmerger.ExcelMergeException;
+import ch.dvbern.oss.lib.excelmerger.ExcelMergeException;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland

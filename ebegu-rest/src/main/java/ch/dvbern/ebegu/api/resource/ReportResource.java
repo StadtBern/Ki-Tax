@@ -29,7 +29,7 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.services.ReportService;
 import ch.dvbern.ebegu.util.DateUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
-import ch.dvbern.lib.excelmerger.ExcelMergeException;
+import ch.dvbern.oss.lib.excelmerger.ExcelMergeException;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
 

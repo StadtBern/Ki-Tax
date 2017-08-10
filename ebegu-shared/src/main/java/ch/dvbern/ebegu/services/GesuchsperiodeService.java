@@ -1,12 +1,13 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
-
-import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 
 /**
  * Service zum Verwalten von Gesuchsperiode
@@ -60,6 +61,13 @@ public interface GesuchsperiodeService {
 	 */
 	@Nonnull
 	Collection<Gesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden();
+
+	/**
+	 * Gibt alle Gesuchsperioden zurueck, deren Ende-Datum noch nicht erreicht ist, und für die der angegebene
+	 * Fall noch kein Gesuch freigegeben hat.
+	 */
+	@Nonnull
+	Collection<Gesuchsperiode> getAllNichtAbgeschlosseneNichtVerwendeteGesuchsperioden(String fallId);
 
 	/**
 	 * Gibt die Gesuchsperiode zurueck, welche am uebergebenen Stichtag aktuell war/ist

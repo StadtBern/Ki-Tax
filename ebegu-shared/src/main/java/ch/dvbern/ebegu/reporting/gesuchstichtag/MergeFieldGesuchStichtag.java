@@ -9,53 +9,42 @@
  */
 package ch.dvbern.ebegu.reporting.gesuchstichtag;
 
-import ch.dvbern.lib.excelmerger.Converter;
-import ch.dvbern.lib.excelmerger.MergeField;
-
 import javax.annotation.Nonnull;
 
-import static ch.dvbern.lib.excelmerger.StandardConverters.*;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeField;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
+import ch.dvbern.oss.lib.excelmerger.mergefields.RepeatRowMergeField;
+import ch.dvbern.oss.lib.excelmerger.mergefields.SimpleMergeField;
 
-public enum MergeFieldGesuchStichtag implements MergeField {
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.INTEGER_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.STRING_CONVERTER;
 
-	repeatGesuchStichtagRow(REPEAT_ROW_CONVERTER, Type.REPEAT_ROW),
 
-	bgNummer(STRING_CONVERTER, Type.SIMPLE),
-	gesuchLaufNr(INTEGER_CONVERTER, Type.SIMPLE),
-	institution(STRING_CONVERTER, Type.SIMPLE),
-	betreuungsTyp(STRING_CONVERTER, Type.SIMPLE),
-	periode(STRING_CONVERTER, Type.SIMPLE),
-	nichtFreigegeben(INTEGER_CONVERTER, Type.SIMPLE),
-	mahnungen(INTEGER_CONVERTER, Type.SIMPLE),
-	beschwerde(INTEGER_CONVERTER, Type.SIMPLE);
+public enum MergeFieldGesuchStichtag implements MergeFieldProvider {
+
+	repeatGesuchStichtagRow(new RepeatRowMergeField("repeatGesuchStichtagRow")),
+
+	bgNummer(new SimpleMergeField<>("bgNummer", STRING_CONVERTER)),
+	gesuchLaufNr(new SimpleMergeField<>("gesuchLaufNr", INTEGER_CONVERTER)),
+	institution(new SimpleMergeField<>("institution", STRING_CONVERTER)),
+	betreuungsTyp(new SimpleMergeField<>("betreuungsTyp", STRING_CONVERTER)),
+	periode(new SimpleMergeField<>("periode", STRING_CONVERTER)),
+	nichtFreigegeben(new SimpleMergeField<>("nichtFreigegeben", INTEGER_CONVERTER)),
+	mahnungen(new SimpleMergeField<>("mahnungen", INTEGER_CONVERTER)),
+	beschwerde(new SimpleMergeField<>("beschwerde", INTEGER_CONVERTER));
 
 
 	@Nonnull
-	private final Converter converter;
+	private final MergeField<?> mergeField;
 
-	@Nonnull
-	private final Type type;
-
-	MergeFieldGesuchStichtag(@Nonnull Converter converter, @Nonnull Type repeatCol) {
-		this.converter = converter;
-		this.type = repeatCol;
+	<V> MergeFieldGesuchStichtag(@Nonnull MergeField<V> mergeField) {
+		this.mergeField = mergeField;
 	}
 
-	@Nonnull
 	@Override
-	public String getKey() {
-		return name();
-	}
-
 	@Nonnull
-	@Override
-	public Type getType() {
-		return type;
-	}
-
-	@Nonnull
-	@Override
-	public Converter getConverter() {
-		return converter;
+	public <V> MergeField<V> getMergeField() {
+		//noinspection unchecked
+		return (MergeField<V>) mergeField;
 	}
 }

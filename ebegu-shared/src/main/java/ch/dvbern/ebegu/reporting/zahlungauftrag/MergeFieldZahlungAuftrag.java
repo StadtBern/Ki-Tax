@@ -9,60 +9,52 @@
  */
 package ch.dvbern.ebegu.reporting.zahlungauftrag;
 
-import ch.dvbern.lib.excelmerger.Converter;
-import ch.dvbern.lib.excelmerger.MergeField;
-
 import javax.annotation.Nonnull;
 
-import static ch.dvbern.lib.excelmerger.StandardConverters.*;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeField;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
+import ch.dvbern.oss.lib.excelmerger.mergefields.RepeatRowMergeField;
+import ch.dvbern.oss.lib.excelmerger.mergefields.SimpleMergeField;
 
-public enum MergeFieldZahlungAuftrag implements MergeField {
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.BIGDECIMAL_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.BOOLEAN_X_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.DATETIME_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.DATE_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.STRING_CONVERTER;
 
-	repeatZahlungAuftragRow(REPEAT_ROW_CONVERTER, Type.REPEAT_ROW),
 
-	beschrieb(STRING_CONVERTER, Type.SIMPLE),
-	generiertAm(DATETIME_CONVERTER, Type.SIMPLE),
-	faelligAm(DATE_CONVERTER, Type.SIMPLE),
+public enum MergeFieldZahlungAuftrag implements MergeFieldProvider {
 
-	institution(STRING_CONVERTER, Type.SIMPLE),
-	name(STRING_CONVERTER, Type.SIMPLE),
-	vorname(STRING_CONVERTER, Type.SIMPLE),
-	gebDatum(DATE_CONVERTER, Type.SIMPLE),
-	verfuegung(STRING_CONVERTER, Type.SIMPLE),
-	vonDatum(DATE_CONVERTER, Type.SIMPLE),
-	bisDatum(DATE_CONVERTER, Type.SIMPLE),
-	bgPensum(BIGDECIMAL_CONVERTER, Type.SIMPLE),
-	betragCHF(BIGDECIMAL_CONVERTER, Type.SIMPLE),
-	isKorrektur(BOOLEAN_X_CONVERTER, Type.SIMPLE),
-	isIgnoriert(BOOLEAN_X_CONVERTER, Type.SIMPLE);
+	repeatZahlungAuftragRow(new RepeatRowMergeField("repeatZahlungAuftragRow")),
+
+	beschrieb(new SimpleMergeField<>("beschrieb", STRING_CONVERTER)),
+	generiertAm(new SimpleMergeField<>("generiertAm", DATETIME_CONVERTER)),
+	faelligAm(new SimpleMergeField<>("faelligAm", DATE_CONVERTER)),
+
+	institution(new SimpleMergeField<>("institution", STRING_CONVERTER)),
+	name(new SimpleMergeField<>("name", STRING_CONVERTER)),
+	vorname(new SimpleMergeField<>("vorname", STRING_CONVERTER)),
+	gebDatum(new SimpleMergeField<>("gebDatum", DATE_CONVERTER)),
+	verfuegung(new SimpleMergeField<>("verfuegung", STRING_CONVERTER)),
+	vonDatum(new SimpleMergeField<>("vonDatum", DATE_CONVERTER)),
+	bisDatum(new SimpleMergeField<>("bisDatum", DATE_CONVERTER)),
+	bgPensum(new SimpleMergeField<>("bgPensum", BIGDECIMAL_CONVERTER)),
+	betragCHF(new SimpleMergeField<>("betragCHF", BIGDECIMAL_CONVERTER)),
+	isKorrektur(new SimpleMergeField<>("isKorrektur", BOOLEAN_X_CONVERTER)),
+	isIgnoriert(new SimpleMergeField<>("isIgnoriert", BOOLEAN_X_CONVERTER));
 
 
 	@Nonnull
-	private final Converter converter;
+	private final MergeField<?> mergeField;
 
-	@Nonnull
-	private final Type type;
-
-	MergeFieldZahlungAuftrag(@Nonnull Converter converter, @Nonnull Type repeatCol) {
-		this.converter = converter;
-		this.type = repeatCol;
+	<V> MergeFieldZahlungAuftrag(@Nonnull MergeField<V> mergeField) {
+		this.mergeField = mergeField;
 	}
 
-	@Nonnull
 	@Override
-	public String getKey() {
-		return name();
-	}
-
 	@Nonnull
-	@Override
-	public Type getType() {
-		return type;
-	}
-
-	@Nonnull
-	@Override
-	public Converter getConverter() {
-		return converter;
+	public <V> MergeField<V> getMergeField() {
+		//noinspection unchecked
+		return (MergeField<V>) mergeField;
 	}
 }
