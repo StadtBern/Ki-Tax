@@ -9,16 +9,6 @@
  */
 package ch.dvbern.ebegu.reporting.zahlungauftrag;
 
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.Zahlung;
-import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.enums.ZahlungspositionStatus;
-import ch.dvbern.lib.excelmerger.ExcelConverter;
-import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
-import org.apache.poi.ss.usermodel.Sheet;
-
-import javax.annotation.Nonnull;
-import javax.enterprise.context.Dependent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -26,6 +16,17 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+
+import javax.annotation.Nonnull;
+import javax.enterprise.context.Dependent;
+
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.Zahlung;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.ZahlungspositionStatus;
+import ch.dvbern.oss.lib.excelmerger.ExcelConverter;
+import ch.dvbern.oss.lib.excelmerger.ExcelMergerDTO;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
