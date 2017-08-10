@@ -669,17 +669,26 @@ export default class GesuchModelManager {
         if (betreuungToSave.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN) {
             return this.betreuungRS.betreuungsPlatzAbweisen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
                 .then((storedBetreuung: any) => {
-                    return this.handleSavedBetreuung(storedBetreuung);
+                    return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
+                        this.gesuch.gesuchBetreuungenStatus = betreuungenStatus;
+                        return this.handleSavedBetreuung(storedBetreuung);
+                    });
                 });
         } else  if (betreuungToSave.betreuungsstatus === TSBetreuungsstatus.BESTAETIGT) {
             return this.betreuungRS.betreuungsPlatzBestaetigen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
                 .then((storedBetreuung: any) => {
-                    return this.handleSavedBetreuung(storedBetreuung);
+                    return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
+                        this.gesuch.gesuchBetreuungenStatus = betreuungenStatus;
+                        return this.handleSavedBetreuung(storedBetreuung);
+                    });
                 });
         } else {
             return this.betreuungRS.saveBetreuung(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id, abwesenheit)
                 .then((storedBetreuung: any) => {
-                    return this.handleSavedBetreuung(storedBetreuung);
+                    return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
+                        this.gesuch.gesuchBetreuungenStatus = betreuungenStatus;
+                        return this.handleSavedBetreuung(storedBetreuung);
+                    });
                 });
         }
     }
@@ -853,10 +862,13 @@ export default class GesuchModelManager {
         return -1;
     }
 
-    public removeKind(): IPromise<void> {
+    public removeKind(): IPromise<any> {
         return this.kindRS.removeKind(this.getKindToWorkWith().id, this.gesuch.id).then((responseKind: any) => {
             this.removeKindFromList();
-            this.updateGesuch();
+            return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
+                this.gesuch.gesuchBetreuungenStatus = betreuungenStatus;
+                return this.updateGesuch();
+            });
         });
     }
 
@@ -890,7 +902,10 @@ export default class GesuchModelManager {
     public removeBetreuung(): IPromise<void> {
         return this.betreuungRS.removeBetreuung(this.getBetreuungToWorkWith().id, this.gesuch.id).then((responseBetreuung: any) => {
             this.removeBetreuungFromKind();
-            this.kindRS.saveKind(this.getKindToWorkWith(), this.gesuch.id);
+            return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
+                this.gesuch.gesuchBetreuungenStatus = betreuungenStatus;
+                this.kindRS.saveKind(this.getKindToWorkWith(), this.gesuch.id);
+            });
         });
     }
 
