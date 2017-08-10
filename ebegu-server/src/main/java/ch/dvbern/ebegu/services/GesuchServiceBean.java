@@ -521,6 +521,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				}
 			}
 			if (predicateObjectDto.getStatus() != null) {
+				createPredicateGesuchBetreuungenStatus(cb, root, predicates, predicateObjectDto.getStatus());
 				// Achtung, hier muss von Client zu Server Status konvertiert werden!
 				Collection<AntragStatus> antragStatus = AntragStatusConverterUtil.convertStatusToEntityForRole(AntragStatusDTO.valueOf(predicateObjectDto.getStatus()), role);
 				predicates.add(root.get(Gesuch_.status).in(antragStatus));
@@ -580,6 +581,22 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				break;
 		}
 		return result;
+	}
+
+	/**
+	 * Adds a predicate to the predicates list if it is needed to filter by gesuchBetreuungenStatus. This will be
+	 * needed just when the Status is GEPRUEFT, PLATZBESTAETIGUNG_WARTEN or PLATZBESTAETIGUNG_ABGEWIESEN
+	 */
+	private void createPredicateGesuchBetreuungenStatus(CriteriaBuilder cb, Root<Gesuch> root, List<Predicate> predicates, String status) {
+		if (AntragStatusDTO.PLATZBESTAETIGUNG_WARTEN.toString().equalsIgnoreCase(status)) {
+			predicates.add(cb.equal(root.get(Gesuch_.gesuchBetreuungenStatus), GesuchBetreuungenStatus.WARTEN));
+		}
+		else if (AntragStatusDTO.PLATZBESTAETIGUNG_ABGEWIESEN.toString().equalsIgnoreCase(status)) {
+			predicates.add(cb.equal(root.get(Gesuch_.gesuchBetreuungenStatus), GesuchBetreuungenStatus.ABGEWIESEN));
+		}
+		else if (AntragStatusDTO.GEPRUEFT.toString().equalsIgnoreCase(status)) {
+			predicates.add(cb.equal(root.get(Gesuch_.gesuchBetreuungenStatus), GesuchBetreuungenStatus.ALLE_BESTAETIGT));
+		}
 	}
 
 	@SuppressWarnings("PMD.NcssMethodCount")
