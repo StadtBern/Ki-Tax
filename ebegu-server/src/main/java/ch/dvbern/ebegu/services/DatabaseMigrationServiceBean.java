@@ -119,12 +119,12 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 			Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(id);
 			if (gesuchOptional.isPresent()) {
 				Gesuch gesuch = gesuchOptional.get();
-				String gesuchInfo = gesuch.getFall().getFallNummer() + SEPARATOR + gesuch.getGesuchsperiode().getGesuchsperiodeString() + SEPARATOR + gesuch.getId();
 				Collection<AntragStatusHistory> allAntragStatusHistoryByGesuch = antragStatusHistoryService.findAllAntragStatusHistoryByGesuch(gesuch);
 				Optional<AntragStatusHistory> historyOptional = allAntragStatusHistoryByGesuch.stream()
 					.filter(history -> !AntragStatus.FIRST_STATUS_OF_VERFUEGT.contains(history.getStatus()))
 					.sorted(Comparator.comparing(AntragStatusHistory::getTimestampVon))
 					.findFirst();
+				String gesuchInfo = getGesuchInfo(gesuch);
 				if (historyOptional.isPresent()) {
 					// Das Gesuch ist verfuegt
 					gesuch.setTimestampVerfuegt(historyOptional.get().getTimestampVon());
@@ -177,6 +177,11 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 
 	private String getBetreuungInfo(Betreuung betreuung) {
 		return betreuung.getKind().getKindNummer() + SEPARATOR + betreuung.getBetreuungNummer() + SEPARATOR + betreuung.getBetreuungsstatus();
+	}
+
+	private String getGesuchInfo(Gesuch gesuch) {
+		String gesuchInfo = gesuch.getFall().getFallNummer() + SEPARATOR + gesuch.getGesuchsperiode().getGesuchsperiodeString() + SEPARATOR + gesuch.getId();
+		return gesuchInfo;
 	}
 
 	/**
@@ -288,8 +293,13 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 		int i = 0;
 		for (final Gesuch gesuch : allGesuche) {
 			LOGGER.debug("{}/{} Processed. ID {}", i, allGesuche.size(), gesuch.getId());
+			LOGGER.info("Processing Gesuch {}", getGesuchInfo(gesuch));
+			for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
+				LOGGER.info("... processing Betreuung {}", getBetreuungInfo(betreuung));
+			}
 			gesuch.setSkipPreUpdate(true); // with this flag we skip the preUpdate and timestampMutiert doesn't get updated
 			gesuchService.updateBetreuungenStatus(gesuch);
+			LOGGER.info("... result: {}", gesuch.getGesuchBetreuungenStatus());
 			i++;
 		}
 		LocalDateTime stopTime = LocalDateTime.now();
