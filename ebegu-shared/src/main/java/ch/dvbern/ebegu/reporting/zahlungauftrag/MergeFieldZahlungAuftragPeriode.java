@@ -9,49 +9,38 @@
  */
 package ch.dvbern.ebegu.reporting.zahlungauftrag;
 
-import ch.dvbern.lib.excelmerger.Converter;
-import ch.dvbern.lib.excelmerger.MergeField;
-
 import javax.annotation.Nonnull;
 
-import static ch.dvbern.lib.excelmerger.StandardConverters.*;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeField;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
+import ch.dvbern.oss.lib.excelmerger.mergefields.RepeatRowMergeField;
+import ch.dvbern.oss.lib.excelmerger.mergefields.SimpleMergeField;
 
-public enum MergeFieldZahlungAuftragPeriode implements MergeField {
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.BIGDECIMAL_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.DATE_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.STRING_CONVERTER;
 
-	repeatZahlungAuftragRow(REPEAT_ROW_CONVERTER, Type.REPEAT_ROW),
+public enum MergeFieldZahlungAuftragPeriode implements MergeFieldProvider {
 
-	periode(STRING_CONVERTER, Type.SIMPLE),
-	institution(STRING_CONVERTER, Type.SIMPLE),
-	bezahltAm(DATE_CONVERTER, Type.SIMPLE),
-	betragCHF(BIGDECIMAL_CONVERTER, Type.SIMPLE);
+	repeatZahlungAuftragRow(new RepeatRowMergeField("repeatZahlungAuftragRow")),
+
+	periode(new SimpleMergeField<>("periode", STRING_CONVERTER)),
+	institution(new SimpleMergeField<>("institution", STRING_CONVERTER)),
+	bezahltAm(new SimpleMergeField<>("bezahltAm", DATE_CONVERTER)),
+	betragCHF(new SimpleMergeField<>("betragCHF", BIGDECIMAL_CONVERTER));
 
 
 	@Nonnull
-	private final Converter converter;
+	private final MergeField<?> mergeField;
 
-	@Nonnull
-	private final Type type;
-
-	MergeFieldZahlungAuftragPeriode(@Nonnull Converter converter, @Nonnull Type repeatCol) {
-		this.converter = converter;
-		this.type = repeatCol;
+	<V> MergeFieldZahlungAuftragPeriode(@Nonnull MergeField<V> mergeField) {
+		this.mergeField = mergeField;
 	}
 
-	@Nonnull
 	@Override
-	public String getKey() {
-		return name();
-	}
-
 	@Nonnull
-	@Override
-	public Type getType() {
-		return type;
-	}
-
-	@Nonnull
-	@Override
-	public Converter getConverter() {
-		return converter;
+	public <V> MergeField<V> getMergeField() {
+		//noinspection unchecked
+		return (MergeField<V>) mergeField;
 	}
 }

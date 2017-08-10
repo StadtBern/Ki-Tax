@@ -1,53 +1,42 @@
 package ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen;
 
-import ch.dvbern.lib.excelmerger.Converter;
-import ch.dvbern.lib.excelmerger.MergeField;
-import static ch.dvbern.lib.excelmerger.StandardConverters.*;
-
 import javax.annotation.Nonnull;
+
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeField;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
+import ch.dvbern.oss.lib.excelmerger.mergefields.RepeatRowMergeField;
+import ch.dvbern.oss.lib.excelmerger.mergefields.SimpleMergeField;
+
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.BIGDECIMAL_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.DATE_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.STRING_CONVERTER;
 
 /**
  * Merger fuer Statistik fuer MitarbeiterInnen
  */
-public enum MergeFieldMitarbeiterinnen implements MergeField {
+public enum MergeFieldMitarbeiterinnen implements MergeFieldProvider {
 
-	auswertungVon(DATE_CONVERTER, Type.SIMPLE),
-	auswertungBis(DATE_CONVERTER, Type.SIMPLE),
+	auswertungVon(new SimpleMergeField<>("auswertungVon", DATE_CONVERTER)),
+	auswertungBis(new SimpleMergeField<>("auswertungBis", DATE_CONVERTER)),
 
-	repeatMitarbeiterinnenRow(REPEAT_ROW_CONVERTER, Type.REPEAT_ROW),
+	repeatMitarbeiterinnenRow(new RepeatRowMergeField("repeatMitarbeiterinnenRow")),
 
-	name(STRING_CONVERTER, Type.SIMPLE),
-	vorname(STRING_CONVERTER, Type.SIMPLE),
-	verantwortlicheGesuche(BIGDECIMAL_CONVERTER, Type.SIMPLE),
-	verfuegungenAusgestellt(BIGDECIMAL_CONVERTER, Type.SIMPLE);
-
-	@Nonnull
-	private final Converter converter;
+	name(new SimpleMergeField<>("name", STRING_CONVERTER)),
+	vorname(new SimpleMergeField<>("vorname", STRING_CONVERTER)),
+	verantwortlicheGesuche(new SimpleMergeField<>("verantwortlicheGesuche", BIGDECIMAL_CONVERTER)),
+	verfuegungenAusgestellt(new SimpleMergeField<>("verfuegungenAusgestellt", BIGDECIMAL_CONVERTER));
 
 	@Nonnull
-	private final Type type;
+	private final MergeField<?> mergeField;
 
-
-	MergeFieldMitarbeiterinnen(@Nonnull Converter converter, @Nonnull Type repeatCol) {
-		this.converter = converter;
-		this.type = repeatCol;
+	<V> MergeFieldMitarbeiterinnen(@Nonnull MergeField<V> mergeField) {
+		this.mergeField = mergeField;
 	}
 
-	@Nonnull
 	@Override
-	public String getKey() {
-		return name();
-	}
-
 	@Nonnull
-	@Override
-	public Type getType() {
-		return type;
-	}
-
-	@Nonnull
-	@Override
-	public Converter getConverter() {
-		return converter;
+	public <V> MergeField<V> getMergeField() {
+		//noinspection unchecked
+		return (MergeField<V>) mergeField;
 	}
 }

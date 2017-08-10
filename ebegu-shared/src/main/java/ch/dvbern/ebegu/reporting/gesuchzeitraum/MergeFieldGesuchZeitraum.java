@@ -11,73 +11,60 @@ package ch.dvbern.ebegu.reporting.gesuchzeitraum;
 
 import javax.annotation.Nonnull;
 
-import ch.dvbern.lib.excelmerger.Converter;
-import ch.dvbern.lib.excelmerger.MergeField;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeField;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
+import ch.dvbern.oss.lib.excelmerger.mergefields.RepeatRowMergeField;
+import ch.dvbern.oss.lib.excelmerger.mergefields.SimpleMergeField;
 
-import static ch.dvbern.lib.excelmerger.StandardConverters.INTEGER_CONVERTER;
-import static ch.dvbern.lib.excelmerger.StandardConverters.REPEAT_ROW_CONVERTER;
-import static ch.dvbern.lib.excelmerger.StandardConverters.STRING_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.INTEGER_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.STRING_CONVERTER;
 
-public enum MergeFieldGesuchZeitraum implements MergeField {
 
-	repeatGesuchZeitraumRow(REPEAT_ROW_CONVERTER, Type.REPEAT_ROW),
+public enum MergeFieldGesuchZeitraum implements MergeFieldProvider {
 
-	bgNummer(STRING_CONVERTER, Type.SIMPLE),
-	gesuchLaufNr(INTEGER_CONVERTER, Type.SIMPLE),
-	institution(STRING_CONVERTER, Type.SIMPLE),
-	betreuungsTyp(STRING_CONVERTER, Type.SIMPLE),
-	periode(STRING_CONVERTER, Type.SIMPLE),
-	anzahlGesuchOnline(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlGesuchPapier(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMutationOnline(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMutationPapier(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMutationAbwesenheit(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMutationBetreuung(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMutationEV(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMutationEwerbspensum(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMutationFamilienSitutation(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMutationFinanzielleSituation(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMutationGesuchsteller(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMutationKinder(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMutationUmzug(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlMahnungen(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlSteueramtAusgeloest(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlSteueramtGeprueft(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlBeschwerde(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlVerfuegungen(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlVerfuegungenNormal(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlVerfuegungenMaxEinkommen(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlVerfuegungenKeinPensum(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlVerfuegungenZuschlagZumPensum(INTEGER_CONVERTER, Type.SIMPLE),
-	anzahlVerfuegungenNichtEintreten(INTEGER_CONVERTER, Type.SIMPLE);
+	repeatGesuchZeitraumRow(new RepeatRowMergeField("repeatGesuchZeitraumRow")),
+
+	bgNummer(new SimpleMergeField<>("bgNummer", STRING_CONVERTER)),
+	gesuchLaufNr(new SimpleMergeField<>("gesuchLaufNr", INTEGER_CONVERTER)),
+	institution(new SimpleMergeField<>("institution", STRING_CONVERTER)),
+	betreuungsTyp(new SimpleMergeField<>("betreuungsTyp", STRING_CONVERTER)),
+	periode(new SimpleMergeField<>("periode", STRING_CONVERTER)),
+	anzahlGesuchOnline(new SimpleMergeField<>("anzahlGesuchOnline", INTEGER_CONVERTER)),
+	anzahlGesuchPapier(new SimpleMergeField<>("anzahlGesuchPapier", INTEGER_CONVERTER)),
+	anzahlMutationOnline(new SimpleMergeField<>("anzahlMutationOnline", INTEGER_CONVERTER)),
+	anzahlMutationPapier(new SimpleMergeField<>("anzahlMutationPapier", INTEGER_CONVERTER)),
+	anzahlMutationAbwesenheit(new SimpleMergeField<>("anzahlMutationAbwesenheit", INTEGER_CONVERTER)),
+	anzahlMutationBetreuung(new SimpleMergeField<>("anzahlMutationBetreuung", INTEGER_CONVERTER)),
+	anzahlMutationEV(new SimpleMergeField<>("anzahlMutationEV", INTEGER_CONVERTER)),
+	anzahlMutationEwerbspensum(new SimpleMergeField<>("anzahlMutationEwerbspensum", INTEGER_CONVERTER)),
+	anzahlMutationFamilienSitutation(new SimpleMergeField<>("anzahlMutationFamilienSitutation", INTEGER_CONVERTER)),
+	anzahlMutationFinanzielleSituation(new SimpleMergeField<>("anzahlMutationFinanzielleSituation", INTEGER_CONVERTER)),
+	anzahlMutationGesuchsteller(new SimpleMergeField<>("anzahlMutationGesuchsteller", INTEGER_CONVERTER)),
+	anzahlMutationKinder(new SimpleMergeField<>("anzahlMutationKinder", INTEGER_CONVERTER)),
+	anzahlMutationUmzug(new SimpleMergeField<>("anzahlMutationUmzug", INTEGER_CONVERTER)),
+	anzahlMahnungen(new SimpleMergeField<>("anzahlMahnungen", INTEGER_CONVERTER)),
+	anzahlSteueramtAusgeloest(new SimpleMergeField<>("anzahlSteueramtAusgeloest", INTEGER_CONVERTER)),
+	anzahlSteueramtGeprueft(new SimpleMergeField<>("anzahlSteueramtGeprueft", INTEGER_CONVERTER)),
+	anzahlBeschwerde(new SimpleMergeField<>("anzahlBeschwerde", INTEGER_CONVERTER)),
+	anzahlVerfuegungen(new SimpleMergeField<>("anzahlVerfuegungen", INTEGER_CONVERTER)),
+	anzahlVerfuegungenNormal(new SimpleMergeField<>("anzahlVerfuegungenNormal", INTEGER_CONVERTER)),
+	anzahlVerfuegungenMaxEinkommen(new SimpleMergeField<>("anzahlVerfuegungenMaxEinkommen", INTEGER_CONVERTER)),
+	anzahlVerfuegungenKeinPensum(new SimpleMergeField<>("anzahlVerfuegungenKeinPensum", INTEGER_CONVERTER)),
+	anzahlVerfuegungenZuschlagZumPensum(new SimpleMergeField<>("anzahlVerfuegungenZuschlagZumPensum", INTEGER_CONVERTER)),
+	anzahlVerfuegungenNichtEintreten(new SimpleMergeField<>("anzahlVerfuegungenNichtEintreten", INTEGER_CONVERTER));
 
 
 	@Nonnull
-	private final Converter converter;
+	private final MergeField<?> mergeField;
 
-	@Nonnull
-	private final Type type;
-
-	MergeFieldGesuchZeitraum(@Nonnull Converter converter, @Nonnull Type repeatCol) {
-		this.converter = converter;
-		this.type = repeatCol;
+	<V> MergeFieldGesuchZeitraum(@Nonnull MergeField<V> mergeField) {
+		this.mergeField = mergeField;
 	}
 
-	@Nonnull
 	@Override
-	public String getKey() {
-		return name();
-	}
-
 	@Nonnull
-	@Override
-	public Type getType() {
-		return type;
-	}
-
-	@Nonnull
-	@Override
-	public Converter getConverter() {
-		return converter;
+	public <V> MergeField<V> getMergeField() {
+		//noinspection unchecked
+		return (MergeField<V>) mergeField;
 	}
 }

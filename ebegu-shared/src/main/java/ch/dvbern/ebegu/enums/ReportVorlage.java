@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.enums;
 
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.MergeFieldGesuchstellerKinderBetreuung;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.MergeFieldGesuchStichtag;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.MergeFieldGesuchZeitraum;
@@ -8,9 +10,7 @@ import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MergeFieldMitarbeiterin
 import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftrag;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftragPeriode;
 import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.lib.excelmerger.MergeField;
-
-import javax.annotation.Nonnull;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
 
 /**
  * Enum fuer ReportVorlage
@@ -42,12 +42,12 @@ public enum ReportVorlage {
 	@Nonnull
 	private final String defaultExportFilename;
 	@Nonnull
-	private final Class<? extends MergeField> mergeFields;
+	private final Class<? extends MergeFieldProvider> mergeFields;
 	@Nonnull
 	private final String dataSheetName;
 
 	ReportVorlage(@Nonnull String templatePath, @Nonnull String defaultExportFilename,
-				   @Nonnull String dataSheetName, @Nonnull Class<? extends MergeField> mergeFields) {
+				   @Nonnull String dataSheetName, @Nonnull Class<? extends MergeFieldProvider> mergeFields) {
 		this.templatePath = templatePath;
 		this.defaultExportFilename = defaultExportFilename;
 		this.mergeFields = mergeFields;
@@ -65,7 +65,7 @@ public enum ReportVorlage {
 	}
 
 	@Nonnull
-	public MergeField[] getMergeFields() {
+	public MergeFieldProvider[] getMergeFields() {
 		return mergeFields.getEnumConstants();
 	}
 
