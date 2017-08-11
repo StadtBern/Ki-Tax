@@ -29,6 +29,12 @@ public interface VerfuegungService {
 	Verfuegung verfuegen(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId, boolean ignorieren);
 
 	/**
+	 * Generiert das Verfuegungsdokument.
+	 * @param betreuung Betreuung, fuer die das Dokument generiert werden soll.
+	 */
+	void generateVerfuegungDokument(@Nonnull Betreuung betreuung);
+
+	/**
 	 * Speichert die Verfuegung neu in der DB falls der Key noch nicht existiert.
 	 * Die Betreuung erhaelt den Status NICHT_EINGETRETEN
 	 * @param verfuegung Die Verfuegung als DTO

@@ -69,15 +69,11 @@ export class AlleVerfuegungenViewController {
 
     public openVerfuegung(betreuungNummer: string, kindNummer: number, gesuchId: string): void {
         if (betreuungNummer && kindNummer && gesuchId) {
-            let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(kindNummer);
-            if (kindIndex >= 0) {
-                this.gesuchModelManager.setKindIndex(kindIndex);
-                this.$state.go('gesuch.verfuegenView', {
-                    betreuungNumber: betreuungNummer,
-                    kindNumber: kindNummer,
-                    gesuchId: gesuchId
-                });
-            }
+            this.$state.go('gesuch.verfuegenView', {
+                betreuungNumber: betreuungNummer,
+                kindNumber: kindNummer,
+                gesuchId: gesuchId
+            });
         }
     }
 
