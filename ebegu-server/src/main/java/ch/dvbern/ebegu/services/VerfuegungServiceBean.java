@@ -96,14 +96,20 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 		// Dokument erstellen
 		Betreuung betreuung = persistedVerfuegung.getBetreuung();
+		generateVerfuegungDokument(betreuung);
+		return persistedVerfuegung;
+	}
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	public void generateVerfuegungDokument(@Nonnull Betreuung betreuung) {
 		try {
 			generatedDokumentService
 				.getVerfuegungDokumentAccessTokenGeneratedDokument(betreuung.extractGesuch(), betreuung,"",true);
 		} catch (IOException | MimeTypeParseException | MergeDocException e) {
-			throw new EbeguRuntimeException("verfuegen", "Verfuegung-Dokument konnte nicht erstellt werden"
-				+ betreuungId, e);
+			throw new EbeguRuntimeException("generateVerfuegungDokument", "Verfuegung-Dokument konnte nicht erstellt werden"
+				+ betreuung.getId(), e);
 		}
-		return persistedVerfuegung;
 	}
 
 	@SuppressWarnings("LocalVariableNamingConvention")
