@@ -6,6 +6,7 @@ export default class TSSearchResultEntry {
     private _entity: string;
     private _resultId: string;
     private _gesuchID: string;
+    private _fallID: string;
     private _text: string;
 
     constructor() {
@@ -49,6 +50,14 @@ export default class TSSearchResultEntry {
 
     set gesuchID(value: string) {
         this._gesuchID = value;
+    }
+
+    public get fallID(): string {
+        return this._fallID;
+    }
+
+    public set fallID(value: string) {
+        this._fallID = value;
     }
 
     get text(): string {

@@ -58,7 +58,7 @@ export class DvQuicksearchboxController {
         this.searchIndexRS.quickSearch(query).then((quickSearchResult: TSQuickSearchResult) => {
             this.limitResultsize(quickSearchResult);
             deferred.resolve(quickSearchResult.resultEntities);
-        }).catch(() => {
+        }).catch((ee) => {
             deferred.resolve([]);
             this.$log.warn('error during quicksearch');
         });
@@ -94,25 +94,30 @@ export class DvQuicksearchboxController {
 
     //TODO (hefr) ähnlicher code wie bei faelleListView. z.B. NavigationUtil o.ae.
     private navigateToFall() {
-        if (this.selectedItem && this.selectedItem.gesuchID) {
-            if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles()) && this.selectedItem.antragDTO) {
-                // Reload Gesuch in gesuchModelManager on Init in fallCreationView because  maybe it has been changed since last time
-                if (!this.gesuchModelManager) {
-                    this.gesuchModelManager = this.$injector.get<GesuchModelManager>('GesuchModelManager');
-                }
-                this.gesuchModelManager.clearGesuch();
-                if (isAnyStatusOfVerfuegt(this.selectedItem.antragDTO.status)) {
+        if (this.selectedItem) {
+            if (this.selectedItem.gesuchID) {
+                if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles()) && this.selectedItem.antragDTO) {
+                    // Reload Gesuch in gesuchModelManager on Init in fallCreationView because  maybe it has been changed since last time
+                    if (!this.gesuchModelManager) {
+                        this.gesuchModelManager = this.$injector.get<GesuchModelManager>('GesuchModelManager');
+                    }
+                    this.gesuchModelManager.clearGesuch();
+                    if (isAnyStatusOfVerfuegt(this.selectedItem.antragDTO.status)) {
 
-                    this.openGesuch(this.selectedItem.gesuchID, 'gesuch.verfuegen');
+                        this.openGesuch(this.selectedItem.gesuchID, 'gesuch.verfuegen');
+                    } else {
+                        this.openGesuch(this.selectedItem.gesuchID, 'gesuch.betreuungen');
+                    }
                 } else {
-                    this.openGesuch(this.selectedItem.gesuchID, 'gesuch.betreuungen');
+                    this.openGesuch(this.selectedItem.gesuchID, 'gesuch.fallcreation');
                 }
+            } else if (this.selectedItem.entity === 'FALL') {
+                //open mitteilung
+                this.$state.go('mitteilungen', {fallId: this.selectedItem.fallID});
             } else {
-                this.openGesuch(this.selectedItem.gesuchID, 'gesuch.fallcreation');
-            }
-        } else if (this.selectedItem) {
 
-            this.$state.go('search', {searchString: this.searchString});
+                this.$state.go('search', {searchString: this.searchString});
+            }
         }
     }
 
@@ -131,6 +136,29 @@ export class DvQuicksearchboxController {
             } else {
                 this.$state.go(urlToGoTo, {createNew: false, gesuchId: antragId});
             }
+        }
+    }
+
+    /**
+     * Depending on the kind of result we return different strings. If antragDTO is null an empty string should be
+     * returned
+     */
+    private getTextFromItem(item: TSSearchResultEntry): string {
+        if (item.antragDTO) {
+            return item.text ? ' (' + item.text + ') ' : '';
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * Depending on the kind of result we return different strings.
+     */
+    private getQuicksearchString(item: TSSearchResultEntry): string {
+        if (item.antragDTO) {
+            return item.antragDTO.getQuicksearchString();
+        } else {
+            return item.text;
         }
     }
 }

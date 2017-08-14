@@ -51,6 +51,16 @@ public class QuickSearchResultDTO implements Serializable {
 		numberOfResults += subResult.getNumberOfResults();
 	}
 
+	/**
+	 * Adds a result to the list
+	 */
+	public void addResult(SearchResultEntryDTO result) {
+		if (result != null) {
+			this.resultEntities.add(result);
+			this.numberOfResults++;
+		}
+	}
+
 
 	/**
 	 * this helper method removes all but one resultEntry for a given Gesuch. It does this by identifying the

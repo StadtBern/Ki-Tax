@@ -116,11 +116,30 @@ public class SearchIndexResource {
 	 * original QuckSearchResultDTO will be rturned
 	 */
 	private QuickSearchResultDTO convertQuicksearchResultToDTO(QuickSearchResultDTO quickSearch) {
+		final QuickSearchResultDTO faelleWithMitteilungResults = getFaelleWithMitteilungResults(quickSearch);
 		List<Gesuch> allowedGesuche = filterUnreadableGesuche(quickSearch); //nur erlaubte Gesuche
 		Map<String, Gesuch> gesucheToShow = EbeguUtil.groupByFallAndSelectNewestAntrag(allowedGesuche); //nur neustes gesuch
 		QuickSearchResultDTO filteredQuickSearch = mergeAllowedGesucheWithQuickSearchResult(quickSearch, gesucheToShow);//search result anpassen so dass nur noch sichtbare Antrage drin sind und Antragdtos gesetzt sind
-		return QuickSearchResultDTO.reduceToSingleEntyPerAntrag(filteredQuickSearch); // Gesuche die in mehreren Indizes gefunden wurden auslassen so dass jedes gesuch nur 1 mal drin ist
 
+		// Add all results from the list that are not yet freigegeben but have mitteilungen
+
+		final QuickSearchResultDTO quickSearchResultDTO = QuickSearchResultDTO.reduceToSingleEntyPerAntrag
+			(filteredQuickSearch); // Gesuche die in mehreren Indizes gefunden wurden auslassen so dass jedes gesuch nur 1 mal drin ist
+
+		quickSearchResultDTO.addSubResult(faelleWithMitteilungResults);
+
+		return quickSearchResultDTO;
+
+	}
+
+	private QuickSearchResultDTO getFaelleWithMitteilungResults(QuickSearchResultDTO quickSearch) {
+		QuickSearchResultDTO result = new QuickSearchResultDTO();
+		for (SearchResultEntryDTO searchResult : quickSearch.getResultEntities()) {
+			if (SearchEntityType.FALL == searchResult.getEntity() && searchResult.getGesuchID() == null) {
+				result.addResult(searchResult);
+			}
+		}
+		return result;
 	}
 
 	private List<Gesuch> filterUnreadableGesuche(QuickSearchResultDTO search) {

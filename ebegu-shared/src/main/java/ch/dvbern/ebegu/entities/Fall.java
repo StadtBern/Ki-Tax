@@ -2,11 +2,17 @@ package ch.dvbern.ebegu.entities;
 
 import java.util.Objects;
 
+import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
+import ch.dvbern.ebegu.util.Constants;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.bridge.builtin.LongBridge;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -29,7 +35,8 @@ import javax.validation.constraints.NotNull;
 		@Index(name = "IX_fall_mandant", columnList = "mandant_id")
 	}
 )
-public class Fall extends AbstractEntity implements HasMandant {
+@Indexed
+public class Fall extends AbstractEntity implements HasMandant, Searchable {
 
 	private static final long serialVersionUID = -9154456879261811678L;
 
@@ -47,6 +54,7 @@ public class Fall extends AbstractEntity implements HasMandant {
 	@Nullable
 	@ManyToOne(optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_fall_besitzer_id"))
+	@IndexedEmbedded
 	private Benutzer besitzer = null; // Erfassender (im IAM eingeloggter) Gesuchsteller
 
 	/**
@@ -121,5 +129,39 @@ public class Fall extends AbstractEntity implements HasMandant {
 		}
 		final Fall otherFall = (Fall) other;
 		return Objects.equals(getFallNummer(), otherFall.getFallNummer());
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultId() {
+		return getId();
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultSummary() {
+		String summary = StringUtils.leftPad(String.valueOf(getFallNummer()), Constants.FALLNUMMER_LENGTH, '0');
+		if (besitzer != null) {
+			summary = summary + " " + besitzer.getFullName();
+		}
+		return  summary;
+	}
+
+	@Nullable
+	@Override
+	public String getSearchResultAdditionalInformation() {
+		return toString();
+	}
+
+	@Nullable
+	@Override
+	public String getOwningGesuchId() {
+		//haben wir hier nicht da der Fall nicht zu einem Gesuch gehoert
+		return null;
+	}
+
+	@Override
+	public String getOwningFallId() {
+		return getId();
 	}
 }

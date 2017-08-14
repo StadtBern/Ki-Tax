@@ -1435,10 +1435,13 @@ export default class EbeguRestUtil {
     private parseSearchResultEntry(entry: TSSearchResultEntry, dataFromServer: any): TSSearchResultEntry {
         entry.additionalInformation = dataFromServer.additionalInformation;
         entry.gesuchID = dataFromServer.gesuchID;
+        entry.fallID = dataFromServer.fallID;
         entry.resultId = dataFromServer.resultId;
         entry.text = dataFromServer.text;
         entry.entity = dataFromServer.entity;
-        entry.antragDTO = this.parseAntragDTO(new TSAntragDTO(), dataFromServer.antragDTO);
+        if (dataFromServer.antragDTO) {
+            entry.antragDTO = this.parseAntragDTO(new TSAntragDTO(), dataFromServer.antragDTO);
+        }
         return entry;
     }
 

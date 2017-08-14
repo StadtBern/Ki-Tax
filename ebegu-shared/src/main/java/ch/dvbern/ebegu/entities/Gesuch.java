@@ -692,6 +692,11 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		return getId();
 	}
 
+	@Override
+	public String getOwningFallId() {
+		return getFall().getId();
+	}
+
 	@Nonnull
 	public Optional<Betreuung> extractBetreuungsFromBetreuungNummer(@NotNull Integer kindNummer, @NotNull Integer betreuungNummer) {
 		final List<Betreuung> allBetreuungen = extractAllBetreuungen();
