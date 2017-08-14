@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * DTO to pass around a result that was found in the Lucene index
  */
@@ -52,6 +54,20 @@ public class QuickSearchResultDTO implements Serializable {
 	}
 
 	/**
+	 * It adds the given list to the existing one but taking into account if the fallID has already been
+	 */
+	public void addSubResultsFaelle(QuickSearchResultDTO faelleQuickSearch) {
+		faelleQuickSearch.getResultEntities()
+			.forEach(searchResultEntryDTO -> {
+				if (searchResultEntryDTO.getEntity() == SearchEntityType.FALL && searchResultEntryDTO.getFallID() != null
+					&& !fallAlreadyInResultEntities(searchResultEntryDTO.getFallID())) {
+
+					addResult(searchResultEntryDTO);
+				}
+			});
+	}
+
+	/**
 	 * Adds a result to the list
 	 */
 	public void addResult(SearchResultEntryDTO result) {
@@ -89,5 +105,17 @@ public class QuickSearchResultDTO implements Serializable {
 		int numOfOmittedAntraege = quickSearch.getResultEntities().size() - mergedEntries.size();
 		return new QuickSearchResultDTO(mergedEntries, quickSearch.numberOfResults - numOfOmittedAntraege);
 
+	}
+
+	/**
+	 * Checks whether the given fall has already been found and added to the list
+	 */
+	private boolean fallAlreadyInResultEntities(@NotNull String fallID) {
+		for (SearchResultEntryDTO resultEntity : resultEntities) {
+			if (fallID.equalsIgnoreCase(resultEntity.getFallID())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -126,7 +126,7 @@ public class SearchIndexResource {
 		final QuickSearchResultDTO quickSearchResultDTO = QuickSearchResultDTO.reduceToSingleEntyPerAntrag
 			(filteredQuickSearch); // Gesuche die in mehreren Indizes gefunden wurden auslassen so dass jedes gesuch nur 1 mal drin ist
 
-		quickSearchResultDTO.addSubResult(faelleWithMitteilungResults);
+		quickSearchResultDTO.addSubResultsFaelle(faelleWithMitteilungResults);
 
 		return quickSearchResultDTO;
 
