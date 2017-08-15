@@ -2,10 +2,12 @@ package ch.dvbern.ebegu.entities;
 
 import java.util.Objects;
 
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
@@ -36,6 +38,7 @@ import javax.validation.constraints.NotNull;
 	}
 )
 @Indexed
+@Analyzer(impl = EBEGUGermanAnalyzer.class)
 public class Fall extends AbstractEntity implements HasMandant, Searchable {
 
 	private static final long serialVersionUID = -9154456879261811678L;
