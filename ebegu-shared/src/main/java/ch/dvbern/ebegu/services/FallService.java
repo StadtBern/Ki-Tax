@@ -4,6 +4,8 @@ import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 
 import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
+
 import java.util.Collection;
 import java.util.Optional;
 
@@ -78,4 +80,9 @@ public interface FallService {
 	 * die E-Mail zurueckgegeben die beim Besitzer des Falls eingegeben wurde (aus IAM importiert)
 	 */
 	Optional<String> getCurrentEmailAddress(String fallID);
+
+	/**
+	 * Checks whether the given Fall has at least a Mitteilung or not. Will throw an exception if the fall is not found.
+	 */
+	boolean hasFallAnyMitteilung(@NotNull String fallID);
 }

@@ -47,6 +47,9 @@ public class SearchIndexResource {
 	private InstitutionService institutionService;
 
 	@Inject
+	private FallService fallService;
+
+	@Inject
 	private JaxBConverter converter;
 
 	@Inject
@@ -132,10 +135,17 @@ public class SearchIndexResource {
 
 	}
 
+	/**
+	 * Returns a list of those results that match a Fall without Gesuch (or with a Gesuch that is still not available
+	 * for the current user) but with mitteilungen.
+	 * Will create a list with only those results that are of type FALL and have no gesuchID. These Faelle must also
+	 * have at least one Mitteilung.
+	 */
 	private QuickSearchResultDTO getFaelleWithMitteilungResults(QuickSearchResultDTO quickSearch) {
 		QuickSearchResultDTO result = new QuickSearchResultDTO();
 		for (SearchResultEntryDTO searchResult : quickSearch.getResultEntities()) {
-			if (SearchEntityType.FALL == searchResult.getEntity() && searchResult.getGesuchID() == null) {
+			if (SearchEntityType.FALL == searchResult.getEntity() && searchResult.getGesuchID() == null
+				&& searchResult.getFallID() != null && fallService.hasFallAnyMitteilung(searchResult.getFallID())) {
 				result.addResult(searchResult);
 			}
 		}
