@@ -17,8 +17,6 @@
 
 
     <properties>
-        <!--<ear.name>kita-scheduler</ear.name>-->
-
         <!-- Wird ggf. im Profil "development-mode' ueberschrieben -->
         <skip-code-validation>false</skip-code-validation>
 
