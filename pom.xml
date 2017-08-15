@@ -153,9 +153,9 @@
                 <version>1.5.0</version>
             </dependency>
             <dependency>
-                <groupId>ch.dvbern.oss.lib.dvbern-lib-beanvalidation</groupId>
-                <artifactId>dvbern-lib-beanvalidation</artifactId>
-                <version>1.0.5</version>
+                <groupId>ch.dvbern.oss.lib.beanvalidation</groupId>
+                <artifactId>lib-beanvalidation</artifactId>
+                <version>1.0.2</version>
             </dependency>
             <dependency>
                 <groupId>ch.dvbern.lib.dvbern-lib-doctemplate</groupId>
