@@ -53,7 +53,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	private static final Logger LOGGER = LoggerFactory.getLogger(GesuchsperiodeServiceBean.class.getSimpleName());
 
 	@Inject
-	private Persistence<Gesuchsperiode> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private PrincipalBean principalBean;

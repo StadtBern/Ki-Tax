@@ -43,7 +43,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class FinanzielleSituationServiceBean extends AbstractBaseService implements FinanzielleSituationService {
 
 	@Inject
-	private Persistence<FinanzielleSituationContainer> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;

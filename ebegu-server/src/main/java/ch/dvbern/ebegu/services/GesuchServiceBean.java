@@ -120,7 +120,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private static final Logger LOG = LoggerFactory.getLogger(GesuchServiceBean.class.getSimpleName());
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 

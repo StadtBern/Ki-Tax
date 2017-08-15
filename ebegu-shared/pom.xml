@@ -53,8 +53,8 @@
         </dependency>
 
         <dependency>
-            <groupId>ch.dvbern.oss.lib.beanvalidation</groupId>
-            <artifactId>lib-beanvalidation</artifactId>
+            <groupId>ch.dvbern.oss.lib.dvbern-lib-beanvalidation</groupId>
+            <artifactId>dvbern-lib-beanvalidation</artifactId>
         </dependency>
         <dependency>
             <groupId>ch.dvbern.oss.lib.excelmerger</groupId>

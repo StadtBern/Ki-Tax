@@ -1,5 +1,9 @@
 package ch.dvbern.ebegu.tests;
 
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.DokumentGrundService;
@@ -13,9 +17,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.util.Optional;
-
 /**
  * Tests fuer die Klasse DokumentGrundService
  */
@@ -28,7 +29,7 @@ public class DokumentGrundServiceTest extends AbstractEbeguLoginTest {
 	private DokumentGrundService dokumentGrundService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 
 

@@ -71,7 +71,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class BetreuungServiceBean extends AbstractBaseService implements BetreuungService {
 
 	@Inject
-	private Persistence<Betreuung> persistence;
+	private Persistence persistence;
 	@Inject
 	private WizardStepService wizardStepService;
 	@Inject

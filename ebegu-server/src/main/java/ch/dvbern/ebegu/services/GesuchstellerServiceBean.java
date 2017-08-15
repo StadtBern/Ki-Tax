@@ -50,7 +50,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class GesuchstellerServiceBean extends AbstractBaseService implements GesuchstellerService {
 
 	@Inject
-	private Persistence<GesuchstellerContainer> persistence;
+	private Persistence persistence;
 	@Inject
 	private WizardStepService wizardStepService;
 	@Inject

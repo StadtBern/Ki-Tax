@@ -31,7 +31,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class TraegerschaftServiceBean extends AbstractBaseService implements TraegerschaftService {
 
 	@Inject
-	private Persistence<Traegerschaft> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;

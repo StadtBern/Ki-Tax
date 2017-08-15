@@ -1,10 +1,21 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.AbstractEntity;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.Mandant;
-import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.services.AdresseService;
+import ch.dvbern.ebegu.services.BenutzerService;
+import ch.dvbern.ebegu.services.GesuchsperiodeService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.InstitutionStammdatenService;
+import ch.dvbern.ebegu.services.MandantService;
+import ch.dvbern.ebegu.services.SchulungService;
+import ch.dvbern.ebegu.services.TraegerschaftService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
@@ -14,11 +25,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Test fuer den SchulungsService
@@ -57,7 +63,7 @@ public class SchulungServiceBeanTest extends AbstractEbeguLoginTest {
 	private MandantService mandantService;
 
 	@Inject
-	private Persistence<AbstractEntity> persistence;
+	private Persistence persistence;
 
 
 	@Test

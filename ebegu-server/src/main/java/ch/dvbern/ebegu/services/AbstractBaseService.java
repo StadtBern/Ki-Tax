@@ -14,7 +14,6 @@ import javax.inject.Inject;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.EbeguParameter;
-import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
@@ -39,7 +38,7 @@ public abstract class AbstractBaseService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractBaseService.class.getSimpleName());
 
 	@Inject
-	private Persistence<Fall> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private EbeguParameterService ebeguParameterService;

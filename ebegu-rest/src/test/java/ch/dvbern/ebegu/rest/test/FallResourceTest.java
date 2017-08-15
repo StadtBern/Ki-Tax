@@ -1,5 +1,10 @@
 package ch.dvbern.ebegu.rest.test;
 
+import java.time.LocalDate;
+import java.time.Month;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
 import ch.dvbern.ebegu.api.dtos.JaxFall;
@@ -23,10 +28,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.Month;
-
 /**
  * Testet FallResource
  */
@@ -45,7 +46,7 @@ public class FallResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private BenutzerService benutzerService;
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private JaxBConverter converter;
 

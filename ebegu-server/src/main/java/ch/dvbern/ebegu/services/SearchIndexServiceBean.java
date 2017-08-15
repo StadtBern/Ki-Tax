@@ -1,7 +1,25 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.dto.suchfilter.lucene.*;
-import ch.dvbern.ebegu.entities.Sequence;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.LuceneUtil;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.QuickSearchResultDTO;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.SearchEntityType;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.SearchFilter;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.SearchResultEntryDTO;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -11,22 +29,24 @@ import org.apache.lucene.search.Query;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
-import org.hibernate.search.query.dsl.*;
+import org.hibernate.search.query.dsl.BooleanJunction;
+import org.hibernate.search.query.dsl.QueryBuilder;
+import org.hibernate.search.query.dsl.QueryContextBuilder;
+import org.hibernate.search.query.dsl.TermMatchingContext;
+import org.hibernate.search.query.dsl.TermTermination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import static ch.dvbern.ebegu.enums.UserRoleName.*;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
+import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
+import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.STEUERAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 @Stateless
 @RolesAllowed({SUPER_ADMIN, ADMIN})
@@ -52,7 +72,7 @@ public class SearchIndexServiceBean implements SearchIndexService {
 	private static final String WILDCARD = "*";
 
 	@Inject
-	private Persistence<Sequence> persistence;
+	private Persistence persistence;
 
 
 	@Override

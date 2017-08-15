@@ -33,7 +33,7 @@ public class DokumentServiceTest extends AbstractEbeguLoginTest {
 	private DokumentService dokumentService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 
 

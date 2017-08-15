@@ -70,7 +70,6 @@
                     <password>${database.jdbc.pwd}</password>
                     <locations>
                         <location>db/migration</location>
-                        <!--<location>ch.dvbern.ebegu.dbschema</location>-->
                     </locations>
                 </configuration>
             </plugin>
