@@ -872,7 +872,7 @@
                     <skip>${skip-code-validation}</skip>
                     <failOnViolation>true</failOnViolation>
                     <rulesets>
-                        <ruleset>http://sonar-neu/api/qualityprofiles/export?language=java&amp;name=E-BEGU&amp;exporterKey=pmd</ruleset>
+                        <ruleset>http://sonar-neu/api/qualityprofiles/export?language=java&amp;name=DV%20Bern%20E-BEGU%20(veraltet)&amp;exporterKey=pmd</ruleset>
                     </rulesets>
                 </configuration>
                 <executions>
