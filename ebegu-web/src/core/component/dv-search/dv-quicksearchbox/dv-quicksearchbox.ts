@@ -137,26 +137,4 @@ export class DvQuicksearchboxController {
         }
     }
 
-    /**
-     * Depending on the kind of result we return different strings. If antragDTO is null an empty string should be
-     * returned
-     */
-    private getTextFromItem(item: TSSearchResultEntry): string {
-        if (item.antragDTO instanceof TSAntragDTO) {
-            return item.text ? ' (' + item.text + ') ' : '';
-        } else {
-            return '';
-        }
-    }
-
-    /**
-     * Depending on the kind of result we return different strings.
-     */
-    private getQuicksearchString(item: TSSearchResultEntry): string {
-        if (item.antragDTO instanceof TSAntragDTO) {
-            return item.antragDTO.getQuicksearchString();
-        } else {
-            return item.text;
-        }
-    }
 }

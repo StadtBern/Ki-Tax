@@ -1,3 +1,5 @@
+import EbeguUtil from '../utils/EbeguUtil';
+
 export default class TSAbstractAntragDTO {
 
     private _fallNummer: number;
@@ -22,6 +24,17 @@ export default class TSAbstractAntragDTO {
 
     set familienName(value: string) {
         this._familienName = value;
+    }
+
+    public getQuicksearchString(): string {
+        let text = '';
+        if (this.fallNummer) {
+            text = EbeguUtil.addZerosToNumber(this.fallNummer, 6);
+        }
+        if (this.familienName) {
+            text = text + ' ' + this.familienName;
+        }
+        return text;
     }
 
 }

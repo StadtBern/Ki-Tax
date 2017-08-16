@@ -143,11 +143,7 @@ public class Fall extends AbstractEntity implements HasMandant, Searchable {
 	@Nonnull
 	@Override
 	public String getSearchResultSummary() {
-		String summary = StringUtils.leftPad(String.valueOf(getFallNummer()), Constants.FALLNUMMER_LENGTH, '0');
-		if (besitzer != null) {
-			summary = summary + " " + besitzer.getFullName();
-		}
-		return  summary;
+		return "";
 	}
 
 	@Nullable

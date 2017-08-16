@@ -139,31 +139,37 @@ export class DVPendenzenListController {
         return result;
     }
 
-    // todo refactor
     public editPendenzJA(pendenz: TSAbstractAntragDTO, event: any): void {
         if (pendenz) {
             let isCtrlKeyPressed: boolean = (event && event.ctrlKey);
             if (pendenz instanceof TSAntragDTO) {
-                if (pendenz.antragId) {
-                    let navObj: any = {
-                        createNew: false,
-                        gesuchId: pendenz.antragId
-                    };
-                    if (isCtrlKeyPressed) {
-                        let url = this.$state.href('gesuch.fallcreation', navObj);
-                        window.open(url, '_blank');
-                    } else {
-                        this.$state.go('gesuch.fallcreation', navObj);
-                    }
-                }
+                this.navigateToGesuch(pendenz, isCtrlKeyPressed);
             } else if (pendenz instanceof TSFallAntragDTO) {
-                //FallAntrag$
-                if (isCtrlKeyPressed) {
-                    let url = this.$state.href('mitteilungen', {fallId: pendenz.fallID});
-                    window.open(url, '_blank');
-                } else {
-                    this.$state.go('mitteilungen', {fallId: pendenz.fallID});
-                }
+                this.navigateToMitteilungen(isCtrlKeyPressed, pendenz);
+            }
+        }
+    }
+
+    private navigateToMitteilungen(isCtrlKeyPressed: boolean, pendenz: TSFallAntragDTO) {
+        if (isCtrlKeyPressed) {
+            let url = this.$state.href('mitteilungen', {fallId: pendenz.fallID});
+            window.open(url, '_blank');
+        } else {
+            this.$state.go('mitteilungen', {fallId: pendenz.fallID});
+        }
+    }
+
+    private navigateToGesuch(pendenz: TSAntragDTO, isCtrlKeyPressed: boolean) {
+        if (pendenz.antragId) {
+            let navObj: any = {
+                createNew: false,
+                gesuchId: pendenz.antragId
+            };
+            if (isCtrlKeyPressed) {
+                let url = this.$state.href('gesuch.fallcreation', navObj);
+                window.open(url, '_blank');
+            } else {
+                this.$state.go('gesuch.fallcreation', navObj);
             }
         }
     }
