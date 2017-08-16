@@ -15,6 +15,7 @@ import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.date.DateConvertUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionType;
@@ -1945,6 +1946,13 @@ public class JaxBConverter {
 		JaxDokument jaxDokument = convertAbstractFieldsToJAX(dokument, new JaxDokument());
 		convertFileToJax(dokument, jaxDokument);
 		jaxDokument.setTimestampUpload(dokument.getTimestampUpload());
+		if (StringUtils.isNotEmpty(dokument.getUserErstellt())) {
+			Optional<Benutzer> userUploadedOptional = benutzerService.findBenutzer(dokument.getUserErstellt());
+			if (userUploadedOptional.isPresent()) {
+				JaxAuthLoginElement jaxAuthLoginElement = benutzerToAuthLoginElement(userUploadedOptional.get());
+				jaxDokument.setUserUploaded(jaxAuthLoginElement);
+			}
+		}
 		return jaxDokument;
 	}
 

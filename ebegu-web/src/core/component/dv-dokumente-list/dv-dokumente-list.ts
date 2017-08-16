@@ -15,6 +15,7 @@ import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import ITranslateService = angular.translate.ITranslateService;
 import {TSDokumentGrundPersonType} from '../../../models/enums/TSDokumentGrundPersonType';
 import TSKindContainer from '../../../models/TSKindContainer';
+import {TSRole} from '../../../models/enums/TSRole';
 let template = require('./dv-dokumente-list.html');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 require('./dv-dokumente-list.less');
@@ -121,6 +122,26 @@ export class DVDokumenteListController {
 
     handleUpload(returnedDG: TSDokumentGrund) {
         this.onUploadDone({dokument: returnedDG});
+    }
+
+    isRemoveAllowed(dokumentGrund: TSDokumentGrund, dokument: TSDokument): boolean {
+        // Loeschen von Dokumenten ist nur in folgenden Faellen erlaubt:
+        // - GS bis Freigabe (d.h nicht readonlyForRole). In diesem Status kann es nur "seine" Dokumente geben
+        // - JA bis Verfuegen, aber nur die von JA hinzugefuegten: d.h. wenn noch nicht verfuegt: die eigenen, wenn readonly: nichts
+        // - Admin: Auch nach verfuegen, aber nur die vom JA hinzugefuegten: wenn noch nicht verfuegt oder readonly: die eigenen
+        // - Alle anderen Rollen: nichts
+        let readonly: boolean = this.isGesuchReadonly();
+        let roleLoggedIn: TSRole = this.authServiceRS.getPrincipalRole();
+        let roleDocumentUpload: TSRole = dokument.userUploaded.role;
+        let documentUploadedByJA: boolean = (roleDocumentUpload === TSRole.SACHBEARBEITER_JA || roleDocumentUpload === TSRole.ADMIN || roleDocumentUpload === TSRole.SUPER_ADMIN);
+        if (roleLoggedIn === TSRole.GESUCHSTELLER) {
+            return !readonly;
+        } else if (roleLoggedIn === TSRole.SACHBEARBEITER_JA) {
+            return !readonly &&  documentUploadedByJA;
+        } else if (roleLoggedIn === TSRole.ADMIN || roleLoggedIn === TSRole.SUPER_ADMIN) {
+            return documentUploadedByJA;
+        }
+        return false;
     }
 
     remove(dokumentGrund: TSDokumentGrund, dokument: TSDokument) {
