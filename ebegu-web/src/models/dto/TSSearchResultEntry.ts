@@ -1,8 +1,9 @@
-import TSAntragDTO from '../TSAntragDTO';
+import TSAbstractAntragDTO from '../TSAbstractAntragDTO';
+
 export default class TSSearchResultEntry {
 
     private _additionalInformation: string;
-    private _antragDTO: TSAntragDTO;
+    private _antragDTO: TSAbstractAntragDTO;
     private _entity: string;
     private _resultId: string;
     private _gesuchID: string;
@@ -20,11 +21,11 @@ export default class TSSearchResultEntry {
         this._additionalInformation = value;
     }
 
-    get antragDTO(): TSAntragDTO {
+    get antragDTO(): TSAbstractAntragDTO {
         return this._antragDTO;
     }
 
-    set antragDTO(value: TSAntragDTO) {
+    set antragDTO(value: TSAbstractAntragDTO) {
         this._antragDTO = value;
     }
 

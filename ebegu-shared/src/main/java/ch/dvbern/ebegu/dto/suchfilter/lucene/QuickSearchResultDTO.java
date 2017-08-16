@@ -1,6 +1,9 @@
 package ch.dvbern.ebegu.dto.suchfilter.lucene;
 
+import ch.dvbern.ebegu.dto.JaxAbstractAntragDTO;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
+import ch.dvbern.ebegu.dto.JaxFallAntragDTO;
+import ch.dvbern.ebegu.entities.Fall;
 import com.google.common.collect.ArrayListMultimap;
 
 import java.io.Serializable;
@@ -56,15 +59,23 @@ public class QuickSearchResultDTO implements Serializable {
 	/**
 	 * It adds the given list to the existing one but taking into account if the fallID has already been
 	 */
-	public void addSubResultsFaelle(QuickSearchResultDTO faelleQuickSearch) {
-		faelleQuickSearch.getResultEntities()
-			.forEach(searchResultEntryDTO -> {
-				if (searchResultEntryDTO.getEntity() == SearchEntityType.FALL && searchResultEntryDTO.getFallID() != null
-					&& !fallAlreadyInResultEntities(searchResultEntryDTO.getFallID())) {
+	public void addSubResultFall(SearchResultEntryDTO resultFall, @NotNull Fall fall) {
+		if (!fallAlreadyInResultEntities(fall.getId())) {
+			addResult(createFakeAntragDTO(resultFall, fall));
+		}
+	}
 
-					addResult(searchResultEntryDTO);
-				}
-			});
+	private SearchResultEntryDTO createFakeAntragDTO(@NotNull SearchResultEntryDTO searchResultEntryDTO, @NotNull Fall fall) {
+		if (searchResultEntryDTO.getAntragDTO() == null) {
+			final JaxFallAntragDTO antragDTO = new JaxFallAntragDTO();
+			antragDTO.setFallID(fall.getId());
+			antragDTO.setFallNummer(fall.getFallNummer());
+			if (fall.getBesitzer() != null) {
+				antragDTO.setFamilienName(fall.getBesitzer().getFullName());
+			}
+			searchResultEntryDTO.setAntragDTO(antragDTO);
+		}
+		return searchResultEntryDTO;
 	}
 
 	/**
@@ -90,9 +101,9 @@ public class QuickSearchResultDTO implements Serializable {
 		ArrayListMultimap<String, SearchResultEntryDTO> antragIdToEntryMultimap = ArrayListMultimap.create();
 		quickSearch.getResultEntities()
 			.forEach(searchResultEntryDTO -> {
-				JaxAntragDTO antragDTO = searchResultEntryDTO.getAntragDTO();
-				if (antragDTO != null) {
-					antragIdToEntryMultimap.put(antragDTO.getAntragId(), searchResultEntryDTO);
+				JaxAbstractAntragDTO antragDTO = searchResultEntryDTO.getAntragDTO();
+				if (antragDTO instanceof JaxAntragDTO) {
+					antragIdToEntryMultimap.put(((JaxAntragDTO)antragDTO).getAntragId(), searchResultEntryDTO);
 				}
 			});
 

@@ -9,10 +9,10 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
 import {IStateService} from 'angular-ui-router';
-import * as moment from 'moment';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import TSUser from '../../../models/TSUser';
-import Moment = moment.Moment;
+import TSAbstractAntragDTO from '../../../models/TSAbstractAntragDTO';
+import TSFallAntragDTO from '../../../models/TSFallAntragDTO';
 let template = require('./dv-pendenzen-list.html');
 require('./dv-pendenzen-list.less');
 
@@ -139,20 +139,41 @@ export class DVPendenzenListController {
         return result;
     }
 
-    public editPendenzJA(pendenz: TSAntragDTO, event: any): void {
+    // todo refactor
+    public editPendenzJA(pendenz: TSAbstractAntragDTO, event: any): void {
         if (pendenz) {
             let isCtrlKeyPressed: boolean = (event && event.ctrlKey);
-            let navObj: any = {
-                createNew: false,
-                gesuchId: pendenz.antragId
-            };
-            if (isCtrlKeyPressed) {
-                let url = this.$state.href('gesuch.fallcreation', navObj);
-                window.open(url, '_blank');
-            } else {
-                this.$state.go('gesuch.fallcreation', navObj);
+            if (pendenz instanceof TSAntragDTO) {
+                if (pendenz.antragId) {
+                    let navObj: any = {
+                        createNew: false,
+                        gesuchId: pendenz.antragId
+                    };
+                    if (isCtrlKeyPressed) {
+                        let url = this.$state.href('gesuch.fallcreation', navObj);
+                        window.open(url, '_blank');
+                    } else {
+                        this.$state.go('gesuch.fallcreation', navObj);
+                    }
+                }
+            } else if (pendenz instanceof TSFallAntragDTO) {
+                //FallAntrag$
+                if (isCtrlKeyPressed) {
+                    let url = this.$state.href('mitteilungen', {fallId: pendenz.fallID});
+                    window.open(url, '_blank');
+                } else {
+                    this.$state.go('mitteilungen', {fallId: pendenz.fallID});
+                }
             }
         }
+    }
+
+    private showOnlineGesuchIcon(row: TSAbstractAntragDTO): boolean {
+        return row instanceof TSAntragDTO && row.hasBesitzer();
+    }
+
+    private showPapierGesuchIcon(row: TSAbstractAntragDTO): boolean {
+        return row instanceof TSAntragDTO && !row.hasBesitzer();
     }
 }
 

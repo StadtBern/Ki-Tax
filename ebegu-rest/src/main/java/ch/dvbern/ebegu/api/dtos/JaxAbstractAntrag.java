@@ -19,7 +19,7 @@ import ch.dvbern.ebegu.enums.Eingangsart;
  */
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxAbstractAntragDTO extends JaxAbstractDTO {
+public class JaxAbstractAntrag extends JaxAbstractDTO {
 
 	private static final long serialVersionUID = -2597026918664190397L;
 

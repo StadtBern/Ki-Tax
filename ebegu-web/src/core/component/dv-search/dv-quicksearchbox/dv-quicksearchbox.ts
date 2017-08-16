@@ -1,5 +1,4 @@
-import {IComponentOptions, ILogService, IFilterService, IQService, IPromise} from 'angular';
-import * as moment from 'moment';
+import {IComponentOptions, IFilterService, ILogService, IPromise, IQService} from 'angular';
 import TSSearchResultEntry from '../../../../models/dto/TSSearchResultEntry';
 import TSQuickSearchResult from '../../../../models/dto/TSQuickSearchResult';
 import {IStateService} from 'angular-ui-router';
@@ -10,7 +9,6 @@ import GesuchModelManager from '../../../../gesuch/service/gesuchModelManager';
 import EbeguUtil from '../../../../utils/EbeguUtil';
 import {SearchIndexRS} from '../../../service/searchIndexRS.rest';
 import TSAntragDTO from '../../../../models/TSAntragDTO';
-import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IInjectorService = angular.auto.IInjectorService;
 let template = require('./dv-quicksearchbox.html');
@@ -95,7 +93,7 @@ export class DvQuicksearchboxController {
     //TODO (hefr) ähnlicher code wie bei faelleListView. z.B. NavigationUtil o.ae.
     private navigateToFall() {
         if (this.selectedItem) {
-            if (this.selectedItem.gesuchID) {
+            if (this.selectedItem.antragDTO instanceof TSAntragDTO && this.selectedItem.gesuchID) {
                 if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles()) && this.selectedItem.antragDTO) {
                     // Reload Gesuch in gesuchModelManager on Init in fallCreationView because  maybe it has been changed since last time
                     if (!this.gesuchModelManager) {
@@ -144,7 +142,7 @@ export class DvQuicksearchboxController {
      * returned
      */
     private getTextFromItem(item: TSSearchResultEntry): string {
-        if (item.antragDTO) {
+        if (item.antragDTO instanceof TSAntragDTO) {
             return item.text ? ' (' + item.text + ') ' : '';
         } else {
             return '';
@@ -155,7 +153,7 @@ export class DvQuicksearchboxController {
      * Depending on the kind of result we return different strings.
      */
     private getQuicksearchString(item: TSSearchResultEntry): string {
-        if (item.antragDTO) {
+        if (item.antragDTO instanceof TSAntragDTO) {
             return item.antragDTO.getQuicksearchString();
         } else {
             return item.text;

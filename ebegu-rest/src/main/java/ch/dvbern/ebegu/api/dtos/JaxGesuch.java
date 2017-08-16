@@ -20,7 +20,7 @@ import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
  */
 @XmlRootElement(name = "gesuch")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxGesuch extends JaxAbstractAntragDTO {
+public class JaxGesuch extends JaxAbstractAntrag {
 
 	private static final long serialVersionUID = -1217019901364130097L;
 
@@ -149,12 +149,11 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 		this.bemerkungenPruefungSTV = bemerkungenPruefungSTV;
 	}
 
-	@Nullable
 	public int getLaufnummer() {
 		return laufnummer;
 	}
 
-	public void setLaufnummer(@Nullable int laufnummer) {
+	public void setLaufnummer(int laufnummer) {
 		this.laufnummer = laufnummer;
 	}
 
@@ -166,12 +165,11 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 		this.geprueftSTV = geprueftSTV;
 	}
 
-	@Nullable
 	public boolean isHasFSDokument() {
 		return hasFSDokument;
 	}
 
-	public void setHasFSDokument(@Nullable boolean hasFSDokument) {
+	public void setHasFSDokument(boolean hasFSDokument) {
 		this.hasFSDokument = hasFSDokument;
 	}
 

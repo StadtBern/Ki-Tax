@@ -7,9 +7,12 @@ import ch.dvbern.ebegu.dto.suchfilter.lucene.QuickSearchResultDTO;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.SearchEntityType;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.SearchFilter;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.SearchResultEntryDTO;
+import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import io.swagger.annotations.Api;
@@ -129,7 +132,15 @@ public class SearchIndexResource {
 		final QuickSearchResultDTO quickSearchResultDTO = QuickSearchResultDTO.reduceToSingleEntyPerAntrag
 			(filteredQuickSearch); // Gesuche die in mehreren Indizes gefunden wurden auslassen so dass jedes gesuch nur 1 mal drin ist
 
-		quickSearchResultDTO.addSubResultsFaelle(faelleWithMitteilungResults);
+		faelleWithMitteilungResults.getResultEntities()
+			.forEach(searchResultEntryDTO -> {
+				if (searchResultEntryDTO.getEntity() == SearchEntityType.FALL && searchResultEntryDTO.getFallID() != null) {
+					final Optional<Fall> fallOpt = fallService.findFall(searchResultEntryDTO.getFallID());
+					final Fall fall = fallOpt.orElseThrow(() -> new EbeguEntityNotFoundException
+						("convertQuicksearchResultToDTO", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, searchResultEntryDTO.getFallID()));
+					quickSearchResultDTO.addSubResultFall(searchResultEntryDTO, fall);
+				}
+			});
 
 		return quickSearchResultDTO;
 

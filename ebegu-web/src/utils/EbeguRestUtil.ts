@@ -71,6 +71,7 @@ import TSEWKPerson from '../models/TSEWKPerson';
 import TSEWKEinwohnercode from '../models/TSEWKEinwohnercode';
 import TSEWKAdresse from '../models/TSEWKAdresse';
 import TSEWKBeziehung from '../models/TSEWKBeziehung';
+import TSFallAntragDTO from '../models/TSFallAntragDTO';
 
 
 export default class EbeguRestUtil {
@@ -1402,6 +1403,13 @@ export default class EbeguRestUtil {
         return antragTS;
     }
 
+    public parseFallAntragDTO(fallAntragTS: TSFallAntragDTO, antragFromServer: any): TSFallAntragDTO {
+        fallAntragTS.fallID = antragFromServer.fallID;
+        fallAntragTS.fallNummer = antragFromServer.fallNummer;
+        fallAntragTS.familienName = antragFromServer.familienName;
+        return fallAntragTS;
+    }
+
     public parseAntragDTOs(data: any): TSAntragDTO[] {
         let pendenzen: TSAntragDTO[] = [];
         if (data && Array.isArray(data)) {
@@ -1440,7 +1448,11 @@ export default class EbeguRestUtil {
         entry.text = dataFromServer.text;
         entry.entity = dataFromServer.entity;
         if (dataFromServer.antragDTO) {
-            entry.antragDTO = this.parseAntragDTO(new TSAntragDTO(), dataFromServer.antragDTO);
+            if (dataFromServer.antragDTO.fallID) {
+                entry.antragDTO = this.parseFallAntragDTO(new TSFallAntragDTO(), dataFromServer.antragDTO);
+            } else {
+                entry.antragDTO = this.parseAntragDTO(new TSAntragDTO(), dataFromServer.antragDTO);
+            }
         }
         return entry;
     }

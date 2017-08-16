@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.dto.suchfilter.lucene;
 
-import ch.dvbern.ebegu.dto.JaxAntragDTO;
+import ch.dvbern.ebegu.dto.JaxAbstractAntragDTO;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import javax.annotation.Nonnull;
@@ -30,7 +30,7 @@ public class SearchResultEntryDTO implements Serializable {
 	private String fallID;
 
 	@Nullable
-	private JaxAntragDTO antragDTO; //dto mit detailinfos
+	private JaxAbstractAntragDTO antragDTO; //dto mit detailinfos
 
 
 	public SearchResultEntryDTO(
@@ -69,6 +69,7 @@ public class SearchResultEntryDTO implements Serializable {
 		return additionalInformation;
 	}
 
+	@Nullable
 	@SuppressFBWarnings("NM_CONFUSING")
 	public String getGesuchID() {
 		return gesuchID;
@@ -89,23 +90,23 @@ public class SearchResultEntryDTO implements Serializable {
 	}
 
 	public static List<SearchResultEntryDTO> convertSearchResult(SearchFilter filter, List<Searchable> results) {
-		return results.stream().map(f -> new SearchResultEntryDTO(
+		return results.stream().map(result -> new SearchResultEntryDTO(
 			filter.getSearchEntityType(),
-			f.getSearchResultId(),
-			f.getSearchResultSummary(),
-			f.getSearchResultAdditionalInformation(),
-			f.getOwningGesuchId(),
-			f.getOwningFallId())
+			result.getSearchResultId(),
+			result.getSearchResultSummary(),
+			result.getSearchResultAdditionalInformation(),
+			result.getOwningGesuchId(),
+			result.getOwningFallId())
 		)
 			.collect(Collectors.toList());
 	}
 
 	@Nullable
-	public JaxAntragDTO getAntragDTO() {
+	public JaxAbstractAntragDTO getAntragDTO() {
 		return antragDTO;
 	}
 
-	public void setAntragDTO(@Nullable JaxAntragDTO antragDTO) {
+	public void setAntragDTO(@Nullable JaxAbstractAntragDTO antragDTO) {
 		this.antragDTO = antragDTO;
 	}
 }
