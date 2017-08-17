@@ -9,18 +9,20 @@
  */
 package ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Locale;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.enterprise.context.Dependent;
+
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.excelmerger.ExcelConverter;
 import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
 import org.apache.poi.ss.usermodel.Sheet;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.enterprise.context.Dependent;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -127,12 +129,21 @@ public class GesuchstellerKinderBetreuungExcelConverter implements ExcelConverte
 			excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.zeitabschnittVon, dataRow.getZeitabschnittVon());
 			excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.zeitabschnittBis, dataRow.getZeitabschnittBis());
 			excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.betreuungsPensum, dataRow.getBetreuungsPensum());
-			excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.anspruchsPensum, dataRow.getAnspruchsPensum());
-			excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.bgPensum, dataRow.getBgPensum());
-			excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.bgStunden, dataRow.getBgStunden());
-			excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.vollkosten, dataRow.getVollkosten());
-			excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.elternbeitrag, dataRow.getElternbeitrag());
-			excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.verguenstigt, dataRow.getVerguenstigt());
+			BigDecimal anspruchsPensum = dataRow.getAnspruchsPensum();
+			excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.anspruchsPensum, anspruchsPensum);
+			if (anspruchsPensum.compareTo(BigDecimal.ZERO) > 0) {
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.bgPensum, dataRow.getBgPensum());
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.bgStunden, dataRow.getBgStunden());
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.vollkosten, dataRow.getVollkosten());
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.elternbeitrag, dataRow.getElternbeitrag());
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.verguenstigt, dataRow.getVerguenstigt());
+			} else {
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.bgPensum, BigDecimal.ZERO);
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.bgStunden, BigDecimal.ZERO);
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.vollkosten, BigDecimal.ZERO);
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.elternbeitrag, BigDecimal.ZERO);
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.verguenstigt, BigDecimal.ZERO);
+			}
 		});
 	}
 }
