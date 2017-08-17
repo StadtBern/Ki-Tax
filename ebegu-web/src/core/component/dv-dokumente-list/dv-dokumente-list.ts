@@ -132,8 +132,11 @@ export class DVDokumenteListController {
         // - Alle anderen Rollen: nichts
         let readonly: boolean = this.isGesuchReadonly();
         let roleLoggedIn: TSRole = this.authServiceRS.getPrincipalRole();
-        let roleDocumentUpload: TSRole = dokument.userUploaded.role;
-        let documentUploadedByJA: boolean = (roleDocumentUpload === TSRole.SACHBEARBEITER_JA || roleDocumentUpload === TSRole.ADMIN || roleDocumentUpload === TSRole.SUPER_ADMIN);
+        let documentUploadedByJA: boolean = true; // by default true in case there is no uploadUser
+        if (dokument.userUploaded) {
+            let roleDocumentUpload: TSRole = dokument.userUploaded.role;
+            documentUploadedByJA = (roleDocumentUpload === TSRole.SACHBEARBEITER_JA || roleDocumentUpload === TSRole.ADMIN || roleDocumentUpload === TSRole.SUPER_ADMIN);
+        }
         if (roleLoggedIn === TSRole.GESUCHSTELLER) {
             return !readonly;
         } else if (roleLoggedIn === TSRole.SACHBEARBEITER_JA) {
