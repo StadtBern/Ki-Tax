@@ -1064,6 +1064,7 @@
     "ZAHLUNG_AUSLOESEN_CONFIRM": "Sind Sie sicher, dass Sie diese Zahlung auslösen möchten?",
     "ZAHLUNG_AUSLOESEN_INFO": "Dies kann nicht rückgängig gemacht werden",
     "VERSION_INFO": "Version: Client {{frontendVersion}} / Server: {{backendVersion}}",
-    "VERSION_INFO_SINGLE": "Version {{version}}"
+    "VERSION_INFO_SINGLE": "Version {{version}}",
+    "BESTAETIGUNG_DIALOG": "Bestätigungs"
 
 }
