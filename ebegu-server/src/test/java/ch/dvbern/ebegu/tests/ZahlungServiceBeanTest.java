@@ -300,7 +300,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 
 
 	private Gesuch createGesuch(boolean verfuegen) {
-		return testfaelleService.createAndSaveTestfaelle(TestfaelleService.BECKER_NORA, verfuegen, verfuegen);
+		return testfaelleService.createAndSaveTestfaelle(TestfaelleService.BeckerNora, verfuegen, verfuegen);
 	}
 
 	private Gesuch createMutation(Gesuch erstgesuch, boolean verfuegen) {

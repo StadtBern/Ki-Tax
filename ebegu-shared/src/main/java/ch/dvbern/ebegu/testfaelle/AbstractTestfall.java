@@ -1,16 +1,52 @@
 package ch.dvbern.ebegu.testfaelle;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.Constants;
-import org.apache.commons.lang.StringUtils;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import ch.dvbern.ebegu.entities.AdresseTyp;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuungspensum;
+import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
+import ch.dvbern.ebegu.entities.Erwerbspensum;
+import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.FamiliensituationContainer;
+import ch.dvbern.ebegu.entities.FinanzielleSituation;
+import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.EnumFamilienstatus;
+import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
+import ch.dvbern.ebegu.enums.Geschlecht;
+import ch.dvbern.ebegu.enums.Kinderabzug;
+import ch.dvbern.ebegu.enums.Land;
+import ch.dvbern.ebegu.enums.Taetigkeit;
+import ch.dvbern.ebegu.enums.Zuschlagsgrund;
+import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Superklasse für Testfaelle des JA
@@ -40,7 +76,7 @@ public abstract class AbstractTestfall {
 	protected boolean betreuungenBestaetigt;
 
 	public AbstractTestfall(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
-							boolean betreuungenBestaetigt) {
+		boolean betreuungenBestaetigt) {
 		this.gesuchsperiode = gesuchsperiode;
 		this.institutionStammdatenList = institutionStammdatenList;
 		this.betreuungenBestaetigt = betreuungenBestaetigt;
@@ -63,7 +99,12 @@ public abstract class AbstractTestfall {
 		return new Fall();
 	}
 
-	public void createGesuch(LocalDate eingangsdatum) {
+	public void createGesuch(@Nullable LocalDate eingangsdatum, AntragStatus status) {
+		createGesuch(eingangsdatum);
+		gesuch.setStatus(status);
+	}
+
+	public void createGesuch(@Nullable LocalDate eingangsdatum) {
 		// Fall
 		if (fall == null) {
 			fall = createFall(null);
@@ -76,7 +117,11 @@ public abstract class AbstractTestfall {
 		gesuch.setGesuchsperiode(gesuchsperiode);
 		gesuch.setFall(fall);
 		gesuch.setEingangsdatum(eingangsdatum);
-		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
+		if (eingangsdatum != null) {
+			gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
+		} else {
+			gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_GS);
+		}
 	}
 
 	protected Gesuch createAlleinerziehend() {
@@ -201,7 +246,7 @@ public abstract class AbstractTestfall {
 
 	protected InstitutionStammdaten createInstitutionStammdaten(BetreuungsangebotTyp betreuungsangebotTyp, String institutionsId) {
 		for (InstitutionStammdaten institutionStammdaten : institutionStammdatenList) {
-			if (institutionStammdaten.getBetreuungsangebotTyp().equals(betreuungsangebotTyp) && institutionStammdaten.getInstitution().getId().equals(institutionsId)) {
+			if (institutionStammdaten.getBetreuungsangebotTyp() == betreuungsangebotTyp && institutionStammdaten.getInstitution().getId().equals(institutionsId)) {
 				return institutionStammdaten;
 			}
 		}
@@ -259,6 +304,17 @@ public abstract class AbstractTestfall {
 			ekvContainer.setEkvJABasisJahrPlus2(ekv2);
 		}
 		return ekvContainer;
+	}
+
+	protected void createEmptyEKVInfoContainer(@Nonnull Gesuch gesuch) {
+		EinkommensverschlechterungInfoContainer ekvInfoContainer = new EinkommensverschlechterungInfoContainer();
+		ekvInfoContainer.setGesuch(gesuch);
+		gesuch.setEinkommensverschlechterungInfoContainer(ekvInfoContainer);
+		EinkommensverschlechterungInfo ekvInfoJA = new EinkommensverschlechterungInfo();
+		ekvInfoJA.setEinkommensverschlechterung(false);
+		ekvInfoJA.setEkvFuerBasisJahrPlus1(false);
+		ekvInfoJA.setEkvFuerBasisJahrPlus2(false);
+		ekvInfoContainer.setEinkommensverschlechterungInfoJA(ekvInfoJA);
 	}
 
 	protected EinkommensverschlechterungInfoContainer createEinkommensverschlechterungInfoContainer(LocalDate stichtagEKV1, LocalDate stichtagEKV2) {
