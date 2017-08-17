@@ -1602,6 +1602,7 @@ export default class EbeguRestUtil {
             dokument.filepfad = dokumentFromServer.filepfad;
             dokument.filesize = dokumentFromServer.filesize;
             dokument.timestampUpload = DateUtil.localDateTimeToMoment(dokumentFromServer.timestampUpload);
+            dokument.userUploaded = this.parseUser(new TSUser(), dokumentFromServer.userUploaded);
             return dokument;
         }
         return undefined;
