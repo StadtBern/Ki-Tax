@@ -20,8 +20,8 @@ import javax.enterprise.context.Dependent;
 
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.util.MathUtil;
-import ch.dvbern.lib.excelmerger.ExcelConverter;
-import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
+import ch.dvbern.oss.lib.excelmerger.ExcelConverter;
+import ch.dvbern.oss.lib.excelmerger.ExcelMergerDTO;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
