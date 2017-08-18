@@ -1,14 +1,15 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Abwesenheit;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Fall;
-
-import javax.annotation.Nonnull;
-import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.validation.Valid;
+
+import ch.dvbern.ebegu.entities.Abwesenheit;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Fall;
 
 /**
  * Service zum Verwalten von Betreuungen
@@ -44,6 +45,18 @@ public interface BetreuungService {
 	@Nonnull
 	Optional<Betreuung> findBetreuung(@Nonnull String key);
 
+	/**
+	 * @param key PK (id) der Betreuung
+	 * @param doAuthCheck: Definiert, ob die Berechtigungen (Lesen/Schreiben) für diese Betreuung geprüft werden muss.
+	 * @return Betreuung mit dem gegebenen key oder null falls nicht vorhanden
+	 */
+	@Nonnull
+	Optional<Betreuung> findBetreuung(@Nonnull String key, boolean doAuthCheck);
+
+	/**
+	 * @param key PK (id) der Betreuung
+	 * @return Betreuung mit dem gegebenen key inkl. Betreuungspensen oder null falls nicht vorhanden
+	 */
 	@Nonnull
 	Optional<Betreuung> findBetreuungWithBetreuungsPensen(@Nonnull String key);
 
