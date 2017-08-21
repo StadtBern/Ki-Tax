@@ -1,5 +1,11 @@
 package ch.dvbern.ebegu.tests;
 
+import java.time.LocalDate;
+import java.time.Month;
+
+import javax.activation.MimeTypeParseException;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.GeneratedDokument;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.WriteProtectedDokument;
@@ -15,11 +21,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.activation.MimeTypeParseException;
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.Month;
 
 /**
  * Testet GeneratedDokumentService
@@ -45,7 +46,7 @@ public class GeneratedDokumentServiceTest extends AbstractEbeguLoginTest {
 
 		generatedDokumentService.saveDokument(dokument);
 
-		final WriteProtectedDokument generatedDokument = generatedDokumentService.findGeneratedDokument(gesuch.getId(), dokument.getFilename(), dokument.getFilepfad());
+		final WriteProtectedDokument generatedDokument = generatedDokumentService.findGeneratedDokument(gesuch.getId(), dokument.getFilename());
 
 		Assert.assertNotNull(generatedDokument);
 		Assert.assertEquals(dokument, generatedDokument);
