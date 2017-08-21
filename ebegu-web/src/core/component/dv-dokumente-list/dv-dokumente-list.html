@@ -93,7 +93,7 @@
                                 ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
                             <td ng-bind="dokument.filesize"
                                 ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
-                            <td class="symbol" ng-if="!vm.gesuchModelManager.isKorrekturModusJugendamt() && vm.isGesuchReadonly()">
+                            <td class="symbol"ng-if="!vm.isRemoveAllowed(row, dokument)">
                             </td>
                             <td class="symbol">
                                 <span ng-click="vm.download(dokument, true)" class="fa fa-download" aria-hidden="true"
