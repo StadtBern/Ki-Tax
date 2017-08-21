@@ -1,11 +1,11 @@
 <div class="familiensituationView gesuchModul">
-
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
     <div class="row viewTitle">
         <div class="col-md-12">
-            <h1>
+            <h2>
                 <span ng-if="vm.isMutation()" data-translate="MUTATION_FAMSITUATION_TITLE"></span>
                 <span ng-if="!vm.isMutation()" data-translate="FAMILIENSITUATION"></span>
-            </h1>
+            </h2>
             <hr class="header"/>
             <p ng-if="vm.isMutation()" data-translate="MUTATION_FAMSITUATION_HINT"></p>
             <p ng-if="vm.showError()" role="alert" data-translate="ERROR_DATUM_GESETZT_BEI_MUTATION" class="dv-error-messages"></p>
