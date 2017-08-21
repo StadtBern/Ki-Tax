@@ -5,42 +5,45 @@
 </gesuch-toolbar-gesuchsteller>
 
 <div class="gesuchstellerDashboardView" flex="auto">
+    <h1 class="access-for-all-title" data-translate="AFA_DASHBOARD"></h1>
     <div class="dashboardHeader" flex="100" layout="row" layout-align="center center" layout-margin
          layout-xs="column"
          layout-align-xs="space-between center">
+
 
         <div ng-repeat="periode in vm.getActiveGesuchsperiodenList() | orderBy: 'gueltigkeit.gueltigAb'">
             <dv-loading-button layout="column" flex="nogrow" type="button" button-click="vm.openAntrag(periode)"
                                button-class="dashboardButton">
                 <div flex="none" class="labelBig" layout="column" layout-align="end center">
                     <div layout="column">
-                        <h2 flex="nogrow">
+                        <span class="ebeguH2" flex="nogrow">
                             <span data-translate="GESUCH"></span>
                             <span>{{periode.gesuchsperiodeString}}</span>
-                        </h2>
-                        <h3 flex="nogrow">
+                        </span>
+                        <span class="ebeguH3" flex="nogrow">
                             <span>{{periode.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YY'}} – {{periode.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YY'}}</span>
-                        </h3>
+                        </span>
                     </div>
                 </div>
                 <div flex="none" class="labelSmall">
-                    <h2><span>{{vm.getButtonText(periode)}}</span></h2>
+                    <span class="ebeguH2">{{vm.getButtonText(periode)}}</span>
                 </div>
             </dv-loading-button>
         </div>
 
         <dv-loading-button layout="column" flex="nogrow" type="button" button-click="vm.goToMitteilungenOeffen()"
                            button-class="dashboardButton">
-            <div flex="auto" class="labelBig" layout="column"><h2 data-translate="GSDASHBOARD_MITTEILUNGEN"></h2></div>
+            <div flex="auto" class="labelBig"
+                 layout="column"><span class="ebeguH2" data-translate="GSDASHBOARD_MITTEILUNGEN"></span></div>
             <div flex="auto" class="labelNotification" ng-bind="vm.getNumberMitteilungen()"></div>
-            <div class="labelSmall"><h2 data-translate="GSDASHBOARD_OEFFNEN"></h2></div>
+            <div class="labelSmall"><span class="ebeguH2" data-translate="GSDASHBOARD_OEFFNEN"></span></div>
         </dv-loading-button>
 
     </div>
 
     <div class="col-md-8 col-md-offset-2">
 
-        <h3 data-translate="GSDASHBOARD_ANTRAEGE"></h3>
+        <h2 data-translate="GSDASHBOARD_ANTRAEGE"></h2>
 
         <table st-table="displayedCollection" st-set-filter="pendenzFilter" st-safe-src="vm.getAntragList()"
                st-delay="20"
