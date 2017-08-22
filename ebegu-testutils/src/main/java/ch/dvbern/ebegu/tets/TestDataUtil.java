@@ -17,7 +17,7 @@ import ch.dvbern.ebegu.testfaelle.Testfall06_BeckerNora;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
-import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
+import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
@@ -919,7 +919,7 @@ public final class TestDataUtil {
 
 	@SuppressWarnings("MagicNumber")
 	public static Betreuungsmitteilung createBetreuungmitteilung(Fall fall, Benutzer empfaenger, MitteilungTeilnehmerTyp empfaengerTyp,
-													   Benutzer sender, MitteilungTeilnehmerTyp senderTyp) {
+		Benutzer sender, MitteilungTeilnehmerTyp senderTyp) {
 		final Betreuungsmitteilung mitteilung = new Betreuungsmitteilung();
 		fillOutMitteilung(fall, empfaenger, empfaengerTyp, sender, senderTyp, mitteilung);
 
@@ -937,7 +937,7 @@ public final class TestDataUtil {
 	}
 
 	public static Mitteilung createMitteilung(Fall fall, Benutzer empfaenger, MitteilungTeilnehmerTyp empfaengerTyp,
-											  Benutzer sender, MitteilungTeilnehmerTyp senderTyp) {
+		Benutzer sender, MitteilungTeilnehmerTyp senderTyp) {
 		Mitteilung mitteilung = new Mitteilung();
 		fillOutMitteilung(fall, empfaenger, empfaengerTyp, sender, senderTyp, mitteilung);
 		return mitteilung;
@@ -973,6 +973,7 @@ public final class TestDataUtil {
 		betreuung.getKind().setGesuch(gesuch);
 		persistence.persist(betreuung.getKind());
 
+		betreuung.setBetreuungsstatus(Betreuungsstatus.WARTEN);
 		betreuungService.saveBetreuung(betreuung, false);
 
 		return betreuung;

@@ -19,6 +19,7 @@ import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 
 /**
  * DTO fuer Pendenzen
@@ -120,6 +121,9 @@ public class JaxAntragDTO implements Serializable {
 	private boolean verfuegt;
 
 	private boolean beschwerdeHaengig;
+
+	@NotNull
+	private GesuchBetreuungenStatus gesuchBetreuungenStatus;
 
 	public JaxAntragDTO() {
 
@@ -280,5 +284,13 @@ public class JaxAntragDTO implements Serializable {
 
 	public void setKinder(Set<String> kinder) {
 		this.kinder = kinder;
+	}
+
+	public GesuchBetreuungenStatus getGesuchBetreuungenStatus() {
+		return gesuchBetreuungenStatus;
+	}
+
+	public void setGesuchBetreuungenStatus(GesuchBetreuungenStatus gesuchBetreuungenStatus) {
+		this.gesuchBetreuungenStatus = gesuchBetreuungenStatus;
 	}
 }

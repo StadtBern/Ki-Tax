@@ -10,15 +10,13 @@
 
     <groupId>ch.dvbern.ebegu</groupId>
     <artifactId>ebegu</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.2</version>
     <packaging>pom</packaging>
 
     <name>eBEGU - Multimodule Project</name>
 
 
     <properties>
-        <!--<ear.name>kita-scheduler</ear.name>-->
-
         <!-- Wird ggf. im Profil "development-mode' ueberschrieben -->
         <skip-code-validation>false</skip-code-validation>
 
@@ -156,9 +154,9 @@
             </dependency>
 
             <dependency>
-                <groupId>ch.dvbern.lib.beanvalidation</groupId>
-                <artifactId>dvbern-lib-beanvalidation</artifactId>
-                <version>1.0.0</version>
+                <groupId>ch.dvbern.oss.lib.beanvalidation</groupId>
+                <artifactId>lib-beanvalidation</artifactId>
+                <version>1.0.2</version>
             </dependency>
 
             <dependency>
@@ -331,9 +329,9 @@
                 <version>1.0.2</version>
             </dependency>
             <dependency>
-                <groupId>ch.dvbern.lib.excelmerger</groupId>
+                <groupId>ch.dvbern.oss.lib.excelmerger</groupId>
                 <artifactId>dvbern-lib-excelmerger-impl</artifactId>
-                <version>1.1.1</version>
+                <version>2.0.0</version>
             </dependency>
             <dependency>
                  <groupId>commons-logging</groupId>
@@ -874,7 +872,7 @@
                     <skip>${skip-code-validation}</skip>
                     <failOnViolation>true</failOnViolation>
                     <rulesets>
-                        <ruleset>http://sonar-neu/api/qualityprofiles/export?language=java&amp;name=E-BEGU&amp;exporterKey=pmd</ruleset>
+                        <ruleset>http://sonar-neu/api/qualityprofiles/export?language=java&amp;name=DV%20Bern%20E-BEGU%20(veraltet)&amp;exporterKey=pmd</ruleset>
                     </rulesets>
                 </configuration>
                 <executions>

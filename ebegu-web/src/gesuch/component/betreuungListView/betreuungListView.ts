@@ -16,7 +16,6 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
-import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
 import ILogService = angular.ILogService;

@@ -10,7 +10,6 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import * as moment from 'moment';
 import IPromise = angular.IPromise;
 import IRootScopeService = angular.IRootScopeService;
-import IScope = angular.IScope;
 let template = require('./dv-countdown.html');
 let dialogTemplate = require('../../../gesuch/dialog/okDialogTemplate.html');
 

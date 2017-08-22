@@ -855,6 +855,52 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(1, mitteilungenErstgesuch.size());
 	}
 
+	@Test
+	public void testupdateBetreuungenStatusAllWarten() {
+		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, null, AntragStatus.VERFUEGT);
+		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, gesuch.getGesuchBetreuungenStatus()); // by default
+
+		// 1st Betreuung=WARTEN, 2nd Betreuung=WARTEN
+		gesuchService.updateBetreuungenStatus(gesuch);
+		Assert.assertEquals(GesuchBetreuungenStatus.WARTEN, gesuch.getGesuchBetreuungenStatus());
+	}
+
+	@Test
+	public void testupdateBetreuungenStatusBestaetigtWarten() {
+		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, null, AntragStatus.VERFUEGT);
+		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, gesuch.getGesuchBetreuungenStatus()); // by default
+
+		// 1st Betreuung=BESTAETIGT, 2nd Betreuung=WARTEN
+		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().setBetreuungsstatus
+			(Betreuungsstatus.BESTAETIGT);
+		gesuchService.updateBetreuungenStatus(gesuch);
+		Assert.assertEquals(GesuchBetreuungenStatus.WARTEN, gesuch.getGesuchBetreuungenStatus());
+	}
+
+	@Test
+	public void testupdateBetreuungenStatusAlleBestaetigt() {
+		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, null, AntragStatus.VERFUEGT);
+		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, gesuch.getGesuchBetreuungenStatus()); // by default
+
+		// 1st Betreuung=BESTAETIGT, 2nd Betreuung=BESTAETIGT
+		gesuch.extractAllBetreuungen().forEach(betreuung -> betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT));
+		gesuchService.updateBetreuungenStatus(gesuch);
+		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, gesuch.getGesuchBetreuungenStatus());
+	}
+
+	@Test
+	public void testupdateBetreuungenStatusAbgewiesenWarten() {
+		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, null, AntragStatus.VERFUEGT);
+		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, gesuch.getGesuchBetreuungenStatus()); // by default
+
+		// 1st Betreuung=ABGEWIESEN, 2nd Betreuung=WARTEN
+		final Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		betreuung.setBetreuungsstatus(Betreuungsstatus.ABGEWIESEN);
+		betreuung.setGrundAblehnung("grund");
+		gesuchService.updateBetreuungenStatus(gesuch);
+		Assert.assertEquals(GesuchBetreuungenStatus.ABGEWIESEN, gesuch.getGesuchBetreuungenStatus());
+	}
+
 
 	// HELP METHOD
 

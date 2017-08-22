@@ -10,61 +10,52 @@
 package ch.dvbern.ebegu.reporting.kanton;
 
 
-import ch.dvbern.lib.excelmerger.Converter;
-import ch.dvbern.lib.excelmerger.MergeField;
-
 import javax.annotation.Nonnull;
 
-import static ch.dvbern.lib.excelmerger.StandardConverters.*;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeField;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
+import ch.dvbern.oss.lib.excelmerger.mergefields.RepeatRowMergeField;
+import ch.dvbern.oss.lib.excelmerger.mergefields.SimpleMergeField;
 
-public enum MergeFieldKanton implements MergeField {
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.BIGDECIMAL_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.DATE_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.PERCENT_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.STRING_CONVERTER;
 
-	auswertungVon(DATE_CONVERTER, Type.SIMPLE),
-	auswertungBis(DATE_CONVERTER, Type.SIMPLE),
 
-	repeatKantonRow(REPEAT_ROW_CONVERTER, Type.REPEAT_ROW),
+public enum MergeFieldKanton implements MergeFieldProvider {
 
-	bgNummer(STRING_CONVERTER, Type.SIMPLE),
-	gesuchId(STRING_CONVERTER, Type.SIMPLE),
-	name(STRING_CONVERTER, Type.SIMPLE),
-	vorname(STRING_CONVERTER, Type.SIMPLE),
-	geburtsdatum(DATE_CONVERTER, Type.SIMPLE),
-	zeitabschnittVon(DATE_CONVERTER, Type.SIMPLE),
-	zeitabschnittBis(DATE_CONVERTER, Type.SIMPLE),
-	bgPensum(PERCENT_CONVERTER, Type.SIMPLE),
-	elternbeitrag(BIGDECIMAL_CONVERTER, Type.SIMPLE),
-	verguenstigung(BIGDECIMAL_CONVERTER, Type.SIMPLE),
-	institution(STRING_CONVERTER, Type.SIMPLE),
-	betreuungsTyp(STRING_CONVERTER, Type.SIMPLE),
-	oeffnungstage(BIGDECIMAL_CONVERTER, Type.SIMPLE);
+	auswertungVon(new SimpleMergeField<>("auswertungVon", DATE_CONVERTER)),
+	auswertungBis(new SimpleMergeField<>("auswertungBis", DATE_CONVERTER)),
+
+	repeatKantonRow(new RepeatRowMergeField("repeatKantonRow")),
+
+	bgNummer(new SimpleMergeField<>("bgNummer", STRING_CONVERTER)),
+	gesuchId(new SimpleMergeField<>("gesuchId", STRING_CONVERTER)),
+	name(new SimpleMergeField<>("name", STRING_CONVERTER)),
+	vorname(new SimpleMergeField<>("vorname", STRING_CONVERTER)),
+	geburtsdatum(new SimpleMergeField<>("geburtsdatum", DATE_CONVERTER)),
+	zeitabschnittVon(new SimpleMergeField<>("zeitabschnittVon", DATE_CONVERTER)),
+	zeitabschnittBis(new SimpleMergeField<>("zeitabschnittBis", DATE_CONVERTER)),
+	bgPensum(new SimpleMergeField<>("bgPensum", PERCENT_CONVERTER)),
+	elternbeitrag(new SimpleMergeField<>("elternbeitrag", BIGDECIMAL_CONVERTER)),
+	verguenstigung(new SimpleMergeField<>("verguenstigung", BIGDECIMAL_CONVERTER)),
+	institution(new SimpleMergeField<>("institution", STRING_CONVERTER)),
+	betreuungsTyp(new SimpleMergeField<>("betreuungsTyp", STRING_CONVERTER)),
+	oeffnungstage(new SimpleMergeField<>("oeffnungstage", BIGDECIMAL_CONVERTER));
 
 
 	@Nonnull
-	private final Converter converter;
+	private final MergeField<?> mergeField;
 
-	@Nonnull
-	private final Type type;
-
-	MergeFieldKanton(@Nonnull Converter converter, @Nonnull Type repeatCol) {
-		this.converter = converter;
-		this.type = repeatCol;
+	<V> MergeFieldKanton(@Nonnull MergeField<V> mergeField) {
+		this.mergeField = mergeField;
 	}
 
-	@Nonnull
 	@Override
-	public String getKey() {
-		return name();
-	}
-
 	@Nonnull
-	@Override
-	public Type getType() {
-		return type;
-	}
-
-	@Nonnull
-	@Override
-	public Converter getConverter() {
-		return converter;
+	public <V> MergeField<V> getMergeField() {
+		//noinspection unchecked
+		return (MergeField<V>) mergeField;
 	}
 }

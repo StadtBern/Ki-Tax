@@ -69,8 +69,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
                 this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;
             }
         }
-
-        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: TSGesuchsperiode[]) => {
+        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneNichtVerwendeteGesuchsperioden(this.$stateParams.fallId).then((response: TSGesuchsperiode[]) => {
             this.nichtAbgeschlosseneGesuchsperiodenList = angular.copy(response);
         });
     }
@@ -141,6 +140,9 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     }
 
     public getNextButtonText(): string {
+        if (this.gesuchModelManager.getGesuch().isNew()) {
+            return this.$translate.instant('ERSTELLEN');
+        }
         if (this.gesuchModelManager.isGesuchReadonly() || this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
             return this.$translate.instant('WEITER_ONLY_UPPER');
         }
@@ -151,5 +153,9 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
         return this.getGesuchModel() && this.getGesuchModel().gesuchsperiode
             && this.getGesuchModel().gesuchsperiode.status === TSGesuchsperiodeStatus.INAKTIV
             && this.getGesuchModel().isNew();
+    }
+
+    public canChangeGesuchsperiode(): boolean {
+        return this.gesuchModelManager.isGesuch() && this.isGesuchsperiodeActive() && this.gesuchModelManager.getGesuch().isNew();
     }
 }

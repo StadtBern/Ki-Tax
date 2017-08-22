@@ -1,67 +1,24 @@
 package ch.dvbern.ebegu.services;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.MailException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.lib.cdipersistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.validation.Valid;
+import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ch.dvbern.ebegu.entities.Abwesenheit;
-import ch.dvbern.ebegu.entities.AbwesenheitContainer;
-import ch.dvbern.ebegu.entities.AbwesenheitContainer_;
-import ch.dvbern.ebegu.entities.Abwesenheit_;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuung_;
-import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuch_;
-import ch.dvbern.ebegu.entities.Gesuchsperiode_;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.entities.KindContainer_;
-import ch.dvbern.ebegu.entities.Mitteilung;
-import ch.dvbern.ebegu.entities.Verfuegung_;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
-import ch.dvbern.ebegu.enums.WizardStepName;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.MailException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.lib.cdipersistence.Persistence;
-
-import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
-import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
-import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
-import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
-import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
-import static ch.dvbern.ebegu.enums.UserRoleName.STEUERAMT;
-import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.*;
 
 /**
  * Service fuer Betreuung
@@ -79,6 +36,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	private InstitutionService institutionService;
 	@Inject
 	private MitteilungService mitteilungService;
+	@Inject
+	private GesuchService gesuchService;
 	@Inject
 	private Authorizer authorizer;
 	@Inject
@@ -108,6 +67,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		} else {
 			wizardStepService.updateSteps(mergedBetreuung.getKind().getGesuch().getId(), null, null, WizardStepName.BETREUUNG);
 		}
+
+		gesuchService.updateBetreuungenStatus(mergedBetreuung.extractGesuch());
 
 		return mergedBetreuung;
 	}
@@ -147,9 +108,16 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Nonnull
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
 	public Optional<Betreuung> findBetreuung(@Nonnull String key) {
+		return findBetreuung(key, true);
+	}
+
+	@Override
+	@Nonnull
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	public Optional<Betreuung> findBetreuung(@Nonnull String key, boolean doAuthCheck) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Betreuung betr = persistence.find(Betreuung.class, key);
-		if (betr != null) {
+		if (doAuthCheck && betr != null) {
 			authorizer.checkReadAuthorization(betr);
 		}
 		return Optional.ofNullable(betr);
@@ -187,20 +155,19 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 			.forEach((mitteilung) ->
 			{
 				mitteilung.setBetreuung(null);
-				this.LOG.debug("Betreuung '{0}' will be removed. Removing Relation in Mitteilung: '{1}'", betreuungId, mitteilung.getId());
+				this.LOG.debug("Betreuung '{}' will be removed. Removing Relation in Mitteilung: '{}'", betreuungId, mitteilung.getId());
 				persistence.merge(mitteilung);
 			});
 
 		mitteilungenForBetreuung.stream()
 			.filter(mitteilung -> mitteilung.getClass().equals(Betreuungsmitteilung.class))
 			.forEach((betMitteilung) -> {
-				this.LOG.debug("Betreuung '{0}' will be removed. Removing dependent Betreuungsmitteilung: '{1}'", betreuungId, betMitteilung.getId());
+				this.LOG.debug("Betreuung '{}' will be removed. Removing dependent Betreuungsmitteilung: '{}'", betreuungId, betMitteilung.getId());
 				persistence.remove(Betreuungsmitteilung.class, betMitteilung.getId());
 			});
 
 		final String gesuchId = betreuungToRemove.getKind().getGesuch().getId();
-		authorizer.checkWriteAuthorization(betreuungToRemove);
-		persistence.remove(betreuungToRemove);
+		removeBetreuung(betreuungToRemove);
 		wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.BETREUUNG); //auch bei entfernen wizard updaten
 	}
 
@@ -209,7 +176,15 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	public void removeBetreuung(@Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung);
 		authorizer.checkWriteAuthorization(betreuung);
+		final Gesuch gesuch = betreuung.extractGesuch();
+
 		persistence.remove(betreuung);
+
+		// the betreuung needs to be removed from the object as well
+		gesuch.getKindContainers()
+			.forEach(kind -> kind.getBetreuungen().removeIf(bet -> bet.getId().equalsIgnoreCase(betreuung.getId())));
+
+		gesuchService.updateBetreuungenStatus(gesuch);
 	}
 
 	@Override

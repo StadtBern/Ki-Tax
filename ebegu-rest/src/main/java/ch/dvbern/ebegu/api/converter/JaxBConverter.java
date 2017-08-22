@@ -13,8 +13,9 @@ import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
-import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
+import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.date.DateConvertUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionType;
@@ -680,6 +681,7 @@ public class JaxBConverter {
 		antrag.setBemerkungenSTV(antragJAXP.getBemerkungenSTV());
 		antrag.setBemerkungenPruefungSTV(antragJAXP.getBemerkungenPruefungSTV());
 		antrag.setLaufnummer(antragJAXP.getLaufnummer());
+		antrag.setGesuchBetreuungenStatus(antragJAXP.getGesuchBetreuungenStatus());
 		antrag.setGeprueftSTV(antragJAXP.isGeprueftSTV());
 		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
 		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
@@ -809,6 +811,7 @@ public class JaxBConverter {
 		jaxGesuch.setBemerkungenSTV(persistedGesuch.getBemerkungenSTV());
 		jaxGesuch.setBemerkungenPruefungSTV(persistedGesuch.getBemerkungenPruefungSTV());
 		jaxGesuch.setLaufnummer(persistedGesuch.getLaufnummer());
+		jaxGesuch.setGesuchBetreuungenStatus(persistedGesuch.getGesuchBetreuungenStatus());
 		jaxGesuch.setGeprueftSTV(persistedGesuch.isGeprueftSTV());
 		jaxGesuch.setHasFSDokument(persistedGesuch.isHasFSDokument());
 		jaxGesuch.setGesperrtWegenBeschwerde(persistedGesuch.isGesperrtWegenBeschwerde());
@@ -1943,6 +1946,13 @@ public class JaxBConverter {
 		JaxDokument jaxDokument = convertAbstractFieldsToJAX(dokument, new JaxDokument());
 		convertFileToJax(dokument, jaxDokument);
 		jaxDokument.setTimestampUpload(dokument.getTimestampUpload());
+		if (StringUtils.isNotEmpty(dokument.getUserErstellt())) {
+			Optional<Benutzer> userUploadedOptional = benutzerService.findBenutzer(dokument.getUserErstellt());
+			if (userUploadedOptional.isPresent()) {
+				JaxAuthLoginElement jaxAuthLoginElement = benutzerToAuthLoginElement(userUploadedOptional.get());
+				jaxDokument.setUserUploaded(jaxAuthLoginElement);
+			}
+		}
 		return jaxDokument;
 	}
 
@@ -2197,6 +2207,7 @@ public class JaxBConverter {
 		antrag.setLaufnummer(gesuch.getLaufnummer());
 		antrag.setEingangsart(gesuch.getEingangsart());
 		antrag.setBesitzerUsername(gesuch.getFall().getBesitzer() != null ? gesuch.getFall().getBesitzer().getUsername() : null);
+		antrag.setGesuchBetreuungenStatus(gesuch.getGesuchBetreuungenStatus());
 		return antrag;
 	}
 
