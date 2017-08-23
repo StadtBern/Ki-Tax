@@ -320,6 +320,8 @@ public enum AntragStatus {
 
 	public static final Set<AntragStatus> FOR_GESUCHSTELLER_ROLE_WRITE = EnumSet.of(
 		IN_BEARBEITUNG_GS,
+		NUR_SCHULAMT, // Damit eine Mutation erstellt werden kann
+		NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN, // Damit eine Mutation erstellt werden kann
 		FREIGABEQUITTUNG,
 		NUR_SCHULAMT, // damit eine Mutation erstellt werden kann
 		NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN, // damit eine Mutation erstellt werden kann
