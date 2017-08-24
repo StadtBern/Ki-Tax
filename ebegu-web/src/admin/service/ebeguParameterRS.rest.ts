@@ -1,6 +1,6 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSEbeguParameter from '../../models/TSEbeguParameter';
-import {IHttpService, IPromise} from 'angular';
+import {IHttpResponse, IHttpService, IPromise} from 'angular';
 import {TSEbeguParameterKey} from '../../models/enums/TSEbeguParameterKey';
 import DateUtil from '../../utils/DateUtil';
 import * as moment from 'moment';
@@ -78,8 +78,8 @@ export class EbeguParameterRS {
 
     public getEbeguParameterByKeyAndDate(dateParam: moment.Moment, keyParam: TSEbeguParameterKey): IPromise<TSEbeguParameter> {
         return this.http.get(this.serviceURL + '/name/' + keyParam)
-            .then((param: any) => {
-                return param;
+            .then((param: IHttpResponse<TSEbeguParameter>) => {
+                return param.data;
             });
     }
 }
