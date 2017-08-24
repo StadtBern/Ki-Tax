@@ -312,9 +312,9 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>ch.dvbern.oss.lib.dvbern-lib-cdi-persistence</groupId>
-                <artifactId>dvbern-lib-cdi-persistence-api</artifactId>
-                <version>2.0.1</version>
+                <groupId>ch.dvbern.oss.cdipersistence</groupId>
+                <artifactId>cdi-persistence-api</artifactId>
+                <version>2.0.2</version>
             </dependency>
             <dependency>
                 <groupId>ch.dvbern.lib</groupId>
