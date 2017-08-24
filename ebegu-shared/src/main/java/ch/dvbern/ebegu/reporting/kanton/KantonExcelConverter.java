@@ -9,6 +9,7 @@
  */
 package ch.dvbern.ebegu.reporting.kanton;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
@@ -38,21 +39,30 @@ public class KantonExcelConverter implements ExcelConverter {
 		sheet.addValue(MergeFieldKanton.auswertungBis, datumBis);
 
 		data.forEach(dataRow -> {
-				ExcelMergerDTO excelRowGroup = sheet.createGroup(MergeFieldKanton.repeatKantonRow);
-				excelRowGroup.addValue(MergeFieldKanton.bgNummer, dataRow.getBgNummer());
-				excelRowGroup.addValue(MergeFieldKanton.gesuchId, dataRow.getGesuchId());
-				excelRowGroup.addValue(MergeFieldKanton.name, dataRow.getName());
-				excelRowGroup.addValue(MergeFieldKanton.vorname, dataRow.getVorname());
-				excelRowGroup.addValue(MergeFieldKanton.geburtsdatum, dataRow.getGeburtsdatum());
-				excelRowGroup.addValue(MergeFieldKanton.zeitabschnittVon, dataRow.getZeitabschnittVon());
-				excelRowGroup.addValue(MergeFieldKanton.zeitabschnittBis, dataRow.getZeitabschnittBis());
-				excelRowGroup.addValue(MergeFieldKanton.bgPensum, dataRow.getBgPensum());
+			ExcelMergerDTO excelRowGroup = sheet.createGroup(MergeFieldKanton.repeatKantonRow);
+			excelRowGroup.addValue(MergeFieldKanton.bgNummer, dataRow.getBgNummer());
+			excelRowGroup.addValue(MergeFieldKanton.gesuchId, dataRow.getGesuchId());
+			excelRowGroup.addValue(MergeFieldKanton.name, dataRow.getName());
+			excelRowGroup.addValue(MergeFieldKanton.vorname, dataRow.getVorname());
+			excelRowGroup.addValue(MergeFieldKanton.geburtsdatum, dataRow.getGeburtsdatum());
+			excelRowGroup.addValue(MergeFieldKanton.zeitabschnittVon, dataRow.getZeitabschnittVon());
+			excelRowGroup.addValue(MergeFieldKanton.zeitabschnittBis, dataRow.getZeitabschnittBis());
+			BigDecimal anspruchsPensum = dataRow.getBgPensum();
+			excelRowGroup.addValue(MergeFieldKanton.bgPensum, anspruchsPensum);
+			if (anspruchsPensum.compareTo(BigDecimal.ZERO) > 0) {
 				excelRowGroup.addValue(MergeFieldKanton.elternbeitrag, dataRow.getElternbeitrag());
 				excelRowGroup.addValue(MergeFieldKanton.verguenstigung, dataRow.getVerguenstigung());
 				excelRowGroup.addValue(MergeFieldKanton.institution, dataRow.getInstitution());
 				excelRowGroup.addValue(MergeFieldKanton.betreuungsTyp, dataRow.getBetreuungsTyp());
 				excelRowGroup.addValue(MergeFieldKanton.oeffnungstage, dataRow.getOeffnungstage());
-			});
+			} else {
+				excelRowGroup.addValue(MergeFieldKanton.elternbeitrag, BigDecimal.ZERO);
+				excelRowGroup.addValue(MergeFieldKanton.verguenstigung, BigDecimal.ZERO);
+				excelRowGroup.addValue(MergeFieldKanton.institution, BigDecimal.ZERO);
+				excelRowGroup.addValue(MergeFieldKanton.betreuungsTyp, BigDecimal.ZERO);
+				excelRowGroup.addValue(MergeFieldKanton.oeffnungstage, BigDecimal.ZERO);
+			}
+		});
 
 		return sheet;
 	}

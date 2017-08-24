@@ -1005,7 +1005,7 @@ public final class TestDataUtil {
 
 	@SuppressWarnings("MagicNumber")
 	public static Betreuungsmitteilung createBetreuungmitteilung(Fall fall, Benutzer empfaenger, MitteilungTeilnehmerTyp empfaengerTyp,
-													   Benutzer sender, MitteilungTeilnehmerTyp senderTyp) {
+		Benutzer sender, MitteilungTeilnehmerTyp senderTyp) {
 		final Betreuungsmitteilung mitteilung = new Betreuungsmitteilung();
 		fillOutMitteilung(fall, empfaenger, empfaengerTyp, sender, senderTyp, mitteilung);
 
@@ -1023,7 +1023,7 @@ public final class TestDataUtil {
 	}
 
 	public static Mitteilung createMitteilung(Fall fall, Benutzer empfaenger, MitteilungTeilnehmerTyp empfaengerTyp,
-											  Benutzer sender, MitteilungTeilnehmerTyp senderTyp) {
+		Benutzer sender, MitteilungTeilnehmerTyp senderTyp) {
 		Mitteilung mitteilung = new Mitteilung();
 		fillOutMitteilung(fall, empfaenger, empfaengerTyp, sender, senderTyp, mitteilung);
 		return mitteilung;
