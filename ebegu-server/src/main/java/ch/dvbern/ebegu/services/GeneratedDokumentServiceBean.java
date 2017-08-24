@@ -600,7 +600,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		pain001DTO.setSchuldnerIBANGebuehren(debitorIbanGebuehren == null ? pain001DTO.getSchuldnerIBAN() : debitorIbanGebuehren);
 		pain001DTO.setSoftwareName("Ki-Tax");
 		// we use the currentTimeMillis so that it is always different
-		pain001DTO.setMsgId("Ki-Tax_" + Long.toString(System.currentTimeMillis()));
+		pain001DTO.setMsgId("KiTax" + Long.toString(System.currentTimeMillis()));
 
 		pain001DTO.setAuszahlungen(new ArrayList<>());
 		zahlungsauftrag.getZahlungen().stream()
