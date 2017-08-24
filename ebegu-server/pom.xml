@@ -66,8 +66,8 @@
             <artifactId>dvbern-lib-cdi-persistence-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>ch.dvbern.oss.lib</groupId>
-            <artifactId>dvbern-lib-iso20022-ch-impl</artifactId>
+            <groupId>ch.dvbern.oss.iso20022</groupId>
+            <artifactId>iso20022-ch-impl</artifactId>
         </dependency>
 
         <dependency>
