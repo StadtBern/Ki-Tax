@@ -1,5 +1,9 @@
 package ch.dvbern.ebegu.rules;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
@@ -7,10 +11,6 @@ import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.Constants;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 
 
@@ -23,7 +23,7 @@ public class EinkommenAbschnittRuleTest {
 	private static final BigDecimal EINKOMMEN_EKV_ABGELEHNT = new BigDecimal("80000");
 	private static final BigDecimal EINKOMMEN_EKV_ANGENOMMEN = new BigDecimal("79990");
 
-	private static BigDecimal MAX_EINKOMMEN = new BigDecimal("159000");
+	private static final BigDecimal MAX_EINKOMMEN = new BigDecimal("159000");
 	private final EinkommenAbschnittRule einkommenAbschnittRule = new EinkommenAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
 	private final EinkommenCalcRule einkommenCalcRule = new EinkommenCalcRule(Constants.DEFAULT_GUELTIGKEIT, MAX_EINKOMMEN);
 

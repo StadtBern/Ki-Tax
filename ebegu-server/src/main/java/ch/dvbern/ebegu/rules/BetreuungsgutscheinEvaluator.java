@@ -1,6 +1,18 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.rechner.AbstractBGRechner;
@@ -14,12 +26,6 @@ import ch.dvbern.ebegu.util.VerfuegungUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 
 /**
  * This is the Evaluator that runs all the rules and calculations for a given Antrag to determine the Betreuungsgutschein
@@ -30,10 +36,10 @@ public class BetreuungsgutscheinEvaluator {
 
 	private List<Rule> rules = new LinkedList<>();
 
-	private RestanspruchInitializer restanspruchInitializer = new RestanspruchInitializer();
-	private MonatsRule monatsRule = new MonatsRule(Constants.DEFAULT_GUELTIGKEIT);
-	private MutationsMerger mutationsMerger = new MutationsMerger();
-	private AbschlussNormalizer abschlussNormalizer = new AbschlussNormalizer();
+	private final RestanspruchInitializer restanspruchInitializer = new RestanspruchInitializer();
+	private final MonatsRule monatsRule = new MonatsRule(Constants.DEFAULT_GUELTIGKEIT);
+	private final MutationsMerger mutationsMerger = new MutationsMerger();
+	private final AbschlussNormalizer abschlussNormalizer = new AbschlussNormalizer();
 
 	public BetreuungsgutscheinEvaluator(List<Rule> rules) {
 		this.rules = rules;

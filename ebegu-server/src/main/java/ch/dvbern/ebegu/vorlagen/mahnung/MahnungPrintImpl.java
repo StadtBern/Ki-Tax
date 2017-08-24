@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  */
 public class MahnungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 
-	private Mahnung mahnung;
+	private final Mahnung mahnung;
 	private Mahnung vorgaengerMahnung;
 
 	public MahnungPrintImpl(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung) {
