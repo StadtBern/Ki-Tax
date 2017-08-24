@@ -1,6 +1,6 @@
 <md-menu-bar ng-if="vm.getPrincipal()" class="user-menu">
     <md-menu>
-        <button ng-click="$mdOpenMenu()" aria-label="{{vm.getPrincipal().getFullName()}}">
+        <button ng-click="$mdOpenMenu()" aria-label="{{vm.getPrincipal().getFullName()}}" id="usermenu" >
             <span ng-bind="vm.getPrincipal().getFullName()"></span>
             <i class="fa fa-angle-down"></i>
         </button>

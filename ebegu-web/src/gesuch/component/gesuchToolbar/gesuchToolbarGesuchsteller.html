@@ -1,5 +1,5 @@
 <!--gesuchtoolbar fuer normale Screens-->
-<div class="gesuch-toolbar-gesuchsteller" flex="100" hide-sm hide-xs>
+<div class="gesuch-toolbar-gesuchsteller desktop" flex="100" hide-sm hide-xs>
     <md-toolbar flex="100">
         <md-menu-bar flex="100" layout="row" layout-align="start center">
             <span class="gesuchName"><span ng-bind="vmgs.getGesuchName()"  title="{{vmgs.getBesitzer()}}"></span></span>
@@ -54,7 +54,7 @@
             <!-- Alle Verfuegungen -->
             <div dv-show-element
                  dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerJugendamtRoles()">
-                <button ng-click="vmgs.openAlleVerfuegungen()"
+                <button id="button" ng-click="vmgs.openAlleVerfuegungen()"
                         aria-label="{{TOOLBAR_ALLE_VERFUEGUNGEN | translate}}" style="text-align: center;">
                     <span data-translate="TOOLBAR_ALLE_VERFUEGUNGEN"></span>
                 </button>
@@ -70,12 +70,12 @@
             </div>
 
             <!--Kontakt-->
-            <md-menu>
-                <button ng-click="$mdOpenMenu()" aria-label="{{'ARIA_KONTAKT_MENU' | translate}}">
+            <md-menu aria-hidden>
+                <button aria-hidden ng-click="$mdOpenMenu()" aria-label="{{'ARIA_KONTAKT_MENU' | translate}}">
                     <i class="ellipsis-icon fa fa-envelope"></i>
                     <span data-translate="TOOLBAR_KONTAKT"></span>
                 </button>
-                <md-menu-content class="no-padding menu-item-container kontakt gesuchsteller">
+                <md-menu-content aria-hidden class="no-padding menu-item-container kontakt gesuchsteller">
                     <span>Jugendamt</span>
                     <span>Effingerstrasse 21</span>
                     <span>3008 Bern</span>
