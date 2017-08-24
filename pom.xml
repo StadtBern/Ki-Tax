@@ -154,9 +154,9 @@
             </dependency>
 
             <dependency>
-                <groupId>ch.dvbern.oss.lib.beanvalidation</groupId>
-                <artifactId>lib-beanvalidation</artifactId>
-                <version>1.0.2</version>
+                <groupId>ch.dvbern.oss.beanvalidation</groupId>
+                <artifactId>beanvalidation</artifactId>
+                <version>1.0.8</version>
             </dependency>
 
             <dependency>
