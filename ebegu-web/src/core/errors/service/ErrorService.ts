@@ -94,7 +94,7 @@ export default class ErrorService {
      * @param {Object} [args]
      */
     handleValidationError(isValid: boolean, msgKey: string, args?: any) {
-        if (!!isValid) {
+        if (isValid) {
             this.clearError(msgKey);
         } else {
             this.addValidationError(msgKey, args);
