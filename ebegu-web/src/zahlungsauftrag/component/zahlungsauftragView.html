@@ -34,7 +34,7 @@
                             <div class="form-group">
                                 <label class="md-no-float" data-translate="ZAHLUNG_BESCHRIEB"
                                        for="beschrieb"></label>
-                                <input id="beschrieb" type="text" name="beschrieb"
+                                <input id="beschrieb" name="beschrieb"
                                        ng-model="vm.beschrieb"
                                        class="input-element" required>
                                 <dv-error-messages for="vm.form.beschrieb.$error"
@@ -75,7 +75,7 @@
                         <th data-translate="ZAHLUNG_PAIN001_UPPER" dv-show-element class="zahlungsauftrag-percent-10"
                             dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']"></th>
                         <th data-translate="ZAHLUNG_DETAILPOSITIONEN_UPPER" class="zahlungsauftrag-percent-15"></th>
-                        <th class="zahlungsauftrag-percent-15"  st-sort="betragTotalAuftrag" class="sortable"
+                        <th class="zahlungsauftrag-percent-15 sortable"  st-sort="betragTotalAuftrag"
                             data-translate="ZAHLUNG_TOTAL_UPPER" id="betragTotalAuftrag"></th>
                         <th st-sort="beschrieb" class="sortable zahlungsauftrag-percent-45"
                             data-translate="ZAHLUNG_BESCHRIEB_UPPER"></th>
@@ -110,7 +110,7 @@
                         <td ellipsis-tooltip="{{row.datumGeneriert | amDateFormat : 'DD.MM.YYYY'}}"
                             ng-bind="row.datumGeneriert | amDateFormat : 'DD.MM.YYYY'"></td>
                         <!-- downloadPain -->
-                        <td class="symbol" ng-click="$event.stopPropagation()" dv-show-element
+                        <td class="symbol" dv-show-element
                             dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']">
                             <dv-loading-button type="button" button-click="vm.downloadPain(row)"
                                                button-class="dv-btn-operation">
@@ -118,7 +118,7 @@
                             </dv-loading-button>
                         </td>
                         <!-- downloadAllDetails -->
-                        <td class="symbol" ng-click="$event.stopPropagation()">
+                        <td class="symbol">
                             <dv-loading-button type="button" button-click="vm.downloadAllDetails(row)"
                                                button-class="dv-btn-operation">
                                 <i class="fa fa-lg fa-file-excel-o"></i>
@@ -133,7 +133,7 @@
                         <!-- beschrieb edit -->
                         <td ng-if="vm.isEditMode(row.id)" ng-click="$event.stopPropagation()">
                             <div class="form-group">
-                                <input id="beschriebRow" type="text" name="beschriebRow"
+                                <input id="beschriebRow" name="beschriebRow"
                                        ng-model="vm.zahlungsauftragToEdit.beschrieb"
                                        class="input-element" required>
                                 <div ng-messages="vm.form.beschriebRow.$error" role="alert" class="error"></div>

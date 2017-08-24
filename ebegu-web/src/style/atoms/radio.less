@@ -5,13 +5,18 @@ md-radio-group.radio, .radio {
 
     margin: 0;
     &:focus {
-        outline: none;
+        md-radio-button{
+           // outline: 2px solid @contrast-darkest;
+        }
         .md-container {
+            .md-on{
+                box-shadow: 0 0 0 3.5rem rgba(0,0,0,0.4);
+            }
             .md-off {
-                -webkit-box-shadow: 0 0 4px 0 #858585;
-                box-shadow: 0 0 4px 0 #858585;
+                //outline: 2px solid @contrast-darkest;
             }
         }
+        //outline: 1px solid @contrast-darkest;
     }
 }
 

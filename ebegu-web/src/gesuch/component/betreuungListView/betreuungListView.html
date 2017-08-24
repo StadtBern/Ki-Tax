@@ -51,8 +51,7 @@
                                 </td>
                                 <td dv-show-element
                                     dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                    dv-show-expression="vm.canRemoveBetreuung(betreuung)"
-                                    ng-click="$event.stopPropagation()">
+                                    dv-show-expression="vm.canRemoveBetreuung(betreuung)">
                                     <dv-loading-button type="button" button-click="vm.removeBetreuung(kind, betreuung)"
                                                        button-disabled="vm.isNotAllowedToRemove(betreuung)"
                                                        button-class="dv-btn-operation">

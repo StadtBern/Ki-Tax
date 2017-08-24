@@ -29,7 +29,7 @@
                                 ng-click="vm.setSelectedInstitution(row)">
                                 <td ng-bind="row.name"></td>
 
-                                <td ng-click="$event.stopPropagation()">
+                                <td>
                                     <dv-loading-button type="button" button-click="vm.removeInstitution(row)"
                                                        button-class="dv-btn-sm" button-disabled="vm.isReadonly()">
                                         <i class="fa fa-minus">
@@ -159,7 +159,7 @@
                                             <td ng-bind="vm.getBetreuungsangebotFromInstitutionList( row.betreuungsangebotTyp).value"></td>
                                             <td ng-bind="vm.getDateString( row.gueltigkeit, 'DD.MM.YYYY')"></td>
 
-                                            <td ng-click="$event.stopPropagation()">
+                                            <td>
                                                 <dv-loading-button type="button"
                                                                    button-click="vm.removeInstitutionStammdaten(row)"
                                                                    button-class="dv-btn-sm" button-disabled="vm.isReadonly()">
