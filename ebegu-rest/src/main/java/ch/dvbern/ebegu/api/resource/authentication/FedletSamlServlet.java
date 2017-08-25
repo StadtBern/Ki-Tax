@@ -202,7 +202,6 @@ public class FedletSamlServlet extends HttpServlet {
 		benutzer.setNachname(surname);
 		benutzer.setEmail(mail);
 
-		//todo team convert adress und speichers auf Benutzer
 		LOG.warn("The following attributes are received from IAM but not yet stored " + unusedAttr);
 		convertAndSetRoleAndInstitution(role, benutzer);
 
