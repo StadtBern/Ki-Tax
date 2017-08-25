@@ -1,7 +1,5 @@
 package ch.dvbern.ebegu.enums;
 
-import javax.annotation.Nonnull;
-
 import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.MergeFieldGesuchstellerKinderBetreuung;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.MergeFieldGesuchStichtag;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.MergeFieldGesuchZeitraum;
@@ -12,12 +10,15 @@ import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftragPeriode;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
 
+import javax.annotation.Nonnull;
+
 /**
  * Enum fuer ReportVorlage
  */
 public enum ReportVorlage {
 
-	// TODO Achtung mit Filename, da mehrere Dokumente mit gleichem Namen aber unterschiedlichem Inhalt gespeichert werden. Falls der Name geaendert wuerde, muesste das File wieder geloescht werden.
+	// Achtung mit Filename, da mehrere Dokumente mit gleichem Namen aber unterschiedlichem Inhalt gespeichert werden.
+	// Falls der Name geaendert wuerde, muesste das File wieder geloescht werden.
 	VORLAGE_REPORT_GESUCH_STICHTAG("/reporting/GesuchStichtag.xlsx", "GesuchStichtag.xlsx", Constants.DATA,
 		MergeFieldGesuchStichtag.class),
 	VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx", "VerfuegteGesucheMutationenNachZeitraum.xlsx", Constants.DATA,

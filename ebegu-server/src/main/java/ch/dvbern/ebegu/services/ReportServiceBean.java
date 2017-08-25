@@ -1,78 +1,8 @@
 package ch.dvbern.ebegu.services;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.Tuple;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
 import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.entities.Abwesenheit;
-import ch.dvbern.ebegu.entities.AntragStatusHistory;
-import ch.dvbern.ebegu.entities.AntragStatusHistory_;
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Benutzer_;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuung_;
-import ch.dvbern.ebegu.entities.Erwerbspensum;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Fall_;
-import ch.dvbern.ebegu.entities.Familiensituation;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuch_;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
-import ch.dvbern.ebegu.entities.GesuchstellerContainer;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
-import ch.dvbern.ebegu.entities.Kind;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.entities.KindContainer_;
-import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt_;
-import ch.dvbern.ebegu.entities.Verfuegung_;
-import ch.dvbern.ebegu.entities.Zahlung;
-import ch.dvbern.ebegu.entities.Zahlungsauftrag;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.ReportVorlage;
-import ch.dvbern.ebegu.enums.Taetigkeit;
-import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MergeDocException;
@@ -104,14 +34,29 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
-import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
-import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
-import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
-import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.Tuple;
+import javax.persistence.criteria.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static ch.dvbern.ebegu.enums.UserRoleName.*;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -191,7 +136,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	@Nonnull
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
-	public List<GesuchStichtagDataRow> getReportDataGesuchStichtag(@Nonnull LocalDateTime datetime, @Nullable String gesuchPeriodeID) {
+	public List<GesuchStichtagDataRow> getReportDataGesuchStichtag(@Nonnull LocalDate datetime, @Nullable String gesuchPeriodeID) {
 
 		Objects.requireNonNull(datetime, "Das Argument 'date' darf nicht leer sein");
 
@@ -202,7 +147,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		if (em != null) {
 			Query gesuchStichtagQuery = em.createNamedQuery("GesuchStichtagNativeSQLQuery");
 			// Wir rechnen zum Stichtag einen Tag dazu, damit es bis 24.00 des Vorabends gilt.
-			gesuchStichtagQuery.setParameter("stichTagDate", Constants.SQL_DATETIME_FORMAT.format(datetime.plusDays(1)));
+			gesuchStichtagQuery.setParameter("stichTagDate", Constants.SQL_DATE_FORMAT.format(datetime.plusDays(1)));
 			gesuchStichtagQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
 			gesuchStichtagQuery.setParameter("onlySchulamt", principalBean.isCallerInRole(SCHULAMT) ? 1 : 0);
 			results = gesuchStichtagQuery.getResultList();
@@ -212,7 +157,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
-	public UploadFileInfo generateExcelReportGesuchStichtag(@Nonnull LocalDateTime datetime, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
+	public UploadFileInfo generateExcelReportGesuchStichtag(@Nonnull LocalDate datetime, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 
 		Objects.requireNonNull(datetime, "Das Argument 'date' darf nicht leer sein");
 
@@ -240,7 +185,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
-	public List<GesuchZeitraumDataRow> getReportDataGesuchZeitraum(@Nonnull LocalDateTime datetimeVon, @Nonnull LocalDateTime datetimeBis, @Nullable String gesuchPeriodeID) throws IOException, URISyntaxException {
+	public List<GesuchZeitraumDataRow> getReportDataGesuchZeitraum(@Nonnull LocalDate datetimeVon, @Nonnull LocalDate datetimeBis, @Nullable String gesuchPeriodeID) throws IOException, URISyntaxException {
 
 		validateDateParams(datetimeVon, datetimeBis);
 
@@ -255,9 +200,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		if (em != null) {
 			Query gesuchPeriodeQuery = em.createNamedQuery("GesuchZeitraumNativeSQLQuery");
-			gesuchPeriodeQuery.setParameter("fromDateTime", Constants.SQL_DATETIME_FORMAT.format(datetimeVon));
+			gesuchPeriodeQuery.setParameter("fromDateTime", Constants.SQL_DATE_FORMAT.format(datetimeVon));
 			gesuchPeriodeQuery.setParameter("fromDate", Constants.SQL_DATE_FORMAT.format(datetimeVon));
-			gesuchPeriodeQuery.setParameter("toDateTime", Constants.SQL_DATETIME_FORMAT.format(datetimeBis));
+			gesuchPeriodeQuery.setParameter("toDateTime", Constants.SQL_DATE_FORMAT.format(datetimeBis));
 			gesuchPeriodeQuery.setParameter("toDate", Constants.SQL_DATE_FORMAT.format(datetimeBis));
 			gesuchPeriodeQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
 			gesuchPeriodeQuery.setParameter("onlySchulamt", principalBean.isCallerInRole(SCHULAMT) ? 1 : 0);
@@ -268,8 +213,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
-	public UploadFileInfo generateExcelReportGesuchZeitraum(@Nonnull LocalDateTime datetimeVon, @Nonnull LocalDateTime datetimeBis, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
+	public UploadFileInfo generateExcelReportGesuchZeitraum(@Nonnull LocalDate datetimeVon, @Nonnull LocalDate datetimeBis, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 
+		validateDateParams(datetimeVon, datetimeBis);
 		validateDateParams(datetimeVon, datetimeBis);
 
 		final ReportVorlage reportVorlage = ReportVorlage.VORLAGE_REPORT_GESUCH_ZEITRAUM;

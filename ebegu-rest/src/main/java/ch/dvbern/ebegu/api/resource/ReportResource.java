@@ -64,7 +64,7 @@ public class ReportResource {
 		String ip = downloadResource.getIP(request);
 
 		Validate.notNull(dateTimeStichtag);
-		LocalDateTime dateTime = DateUtil.parseStringToDateTimeOrReturnNow(dateTimeStichtag);
+		LocalDate dateTime = DateUtil.parseStringToDateOrReturnNow(dateTimeStichtag);
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchStichtag(dateTime,
 			gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null);
@@ -90,8 +90,8 @@ public class ReportResource {
 
 		Validate.notNull(dateTimeFromParam);
 		Validate.notNull(dateTimeToParam);
-		LocalDateTime dateTimeFrom = DateUtil.parseStringToDateTimeOrReturnNow(dateTimeFromParam);
-		LocalDateTime dateTimeTo = DateUtil.parseStringToDateTimeOrReturnNow(dateTimeToParam);
+		LocalDate dateTimeFrom = DateUtil.parseStringToDateOrReturnNow(dateTimeFromParam);
+		LocalDate dateTimeTo = DateUtil.parseStringToDateOrReturnNow(dateTimeToParam);
 
 		if (!dateTimeTo.isAfter(dateTimeFrom)) {
 			throw new EbeguRuntimeException("getGesuchZeitraumReportExcel", "Fehler beim erstellen Report Gesuch Zeitraum"

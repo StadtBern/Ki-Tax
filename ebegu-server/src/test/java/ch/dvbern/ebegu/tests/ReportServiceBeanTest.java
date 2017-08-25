@@ -8,11 +8,11 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenDataRow;
-import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.ReportService;
 import ch.dvbern.ebegu.tests.util.UnitTestTempFolder;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
-import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -26,7 +26,6 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Collection;
 import java.util.Comparator;
@@ -54,19 +53,7 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	private ReportService reportService;
 
 	@Inject
-	private Persistence<?> persistence;
-
-	@Inject
-	private InstitutionService institutionService;
-
-	@Inject
 	private GesuchService gesuchService;
-
-	@Inject
-	private WizardStepService wizardStepService;
-
-	@Inject
-	private ZahlungService zahlungService;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
@@ -89,7 +76,7 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testGetReportDataGesuchStichtag() throws Exception {
-		List<GesuchStichtagDataRow> reportData = reportService.getReportDataGesuchStichtag(LocalDateTime.now(), null);
+		List<GesuchStichtagDataRow> reportData = reportService.getReportDataGesuchStichtag(LocalDate.now(), null);
 
 		List<GesuchStichtagDataRow> rowsSorted = reportData
 			.stream()
@@ -108,8 +95,8 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void testGetReportDataGesuchZeitraumTest() throws Exception {
 		List<GesuchZeitraumDataRow> reportData = reportService.getReportDataGesuchZeitraum(
-			LocalDateTime.of(2016, Month.JANUARY, 1, 0, 0, 0),
-			LocalDateTime.of(2017, Month.DECEMBER, 31, 0, 0, 0),
+			LocalDate.of(2016, Month.JANUARY, 1),
+			LocalDate.of(2017, Month.DECEMBER, 31),
 			null);
 
 		List<GesuchZeitraumDataRow> rowsSorted = reportData
@@ -204,7 +191,7 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void generateExcelReportGesuchStichtag() throws Exception {
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchStichtag(
-			LocalDateTime.now(),
+			LocalDate.now(),
 			null);
 
 		assertNotNull(uploadFileInfo.getBytes());
@@ -214,8 +201,8 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void generateExcelReportGesuchZeitraum() throws Exception {
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchZeitraum(
-			LocalDateTime.of(2016, Month.JANUARY, 1, 0, 0, 0),
-			LocalDateTime.of(2017, Month.DECEMBER, 31, 0, 0, 0),
+			LocalDate.of(2016, Month.JANUARY, 1),
+			LocalDate.of(2017, Month.DECEMBER, 31),
 			null);
 
 		assertNotNull(uploadFileInfo.getBytes());
