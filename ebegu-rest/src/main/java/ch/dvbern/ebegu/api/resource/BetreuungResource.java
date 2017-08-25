@@ -221,7 +221,7 @@ public class BetreuungResource {
 
 	@ApiOperation(value = "Sucht alle verfügten Betreuungen aus allen Gesuchsperioden, welche zum übergebenen Fall " +
 		"vorhanden sind. Es werden nur diejenigen Betreuungen zurückgegeben, für welche der eingeloggte Benutzer " +
-		"berechtigt ist.", response = List.class)
+		"berechtigt ist.", responseContainer = "Collection", response = JaxBetreuung.class)
 	@Nullable
 	@GET
 	@Path("/alleBetreuungen/{fallId}")

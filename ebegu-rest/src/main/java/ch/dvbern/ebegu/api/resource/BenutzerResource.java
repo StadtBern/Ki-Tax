@@ -31,7 +31,7 @@ public class BenutzerResource {
 	@Inject
 	private JaxBConverter converter;
 
-	@ApiOperation(value = "Gibt alle Benutzer zurück", response = List.class)
+	@ApiOperation(value = "Gibt alle Benutzer zurück", responseContainer = "List", response = JaxAuthLoginElement.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
@@ -43,7 +43,7 @@ public class BenutzerResource {
 	}
 
 	@ApiOperation(value = "Gibt das Benutzer-Objekt des eingeloggten Benutzers zurück, falls es sich dabei um einen " +
-		"Jugendamt-Benutzer oder Administrator handelt", response = List.class)
+		"Jugendamt-Benutzer oder Administrator handelt", responseContainer = "List", response = JaxAuthLoginElement.class)
 	@Nonnull
 	@GET
 	@Path("/JAorAdmin")
@@ -56,7 +56,7 @@ public class BenutzerResource {
 	}
 
 	@ApiOperation(value = "Gibt das Benutzer-Objekt des eingeloggten Benutzers zurück, falls es sich dabei um einen " +
-		"Gesuchsteller handelt", response = List.class)
+		"Gesuchsteller handelt", responseContainer = "List", response = JaxAuthLoginElement.class)
 	@Nonnull
 	@GET
 	@Path("/gesuchsteller")

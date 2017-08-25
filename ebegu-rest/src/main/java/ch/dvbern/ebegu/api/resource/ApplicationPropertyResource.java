@@ -94,7 +94,7 @@ public class ApplicationPropertyResource {
 		return converter.applicationPropertyToJAX(prop);
 	}
 
-	@ApiOperation(value = "Returns all application properties", response = List.class)
+	@ApiOperation(value = "Returns all application properties", responseContainer = "List", response = JaxApplicationProperties.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
