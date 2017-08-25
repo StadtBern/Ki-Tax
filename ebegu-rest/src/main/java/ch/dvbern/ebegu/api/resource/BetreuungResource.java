@@ -1,29 +1,5 @@
 package ch.dvbern.ebegu.api.resource;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxId;
@@ -43,13 +19,31 @@ import ch.dvbern.ebegu.services.KindService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
+import org.jboss.resteasy.annotations.providers.jaxb.JAXBConfig;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
- * REST Resource fuer Kinder
+ * REST Resource fuer Betreuungen. Betreuung = ein Kind in einem Betreuungsangebot bei einer Institution.
  */
 @Path("betreuungen")
 @Stateless
-@Api
+@Api(description = "Resource zum Verwalten von Betreuungen (Ein Betreuungsangebot für ein Kind)")
 public class BetreuungResource {
 
 	@Inject
@@ -68,6 +62,7 @@ public class BetreuungResource {
 
 
 	//TODO (hefr) Dieser Service wird immer nur fuer Betreuungen verwendet, nie fuer Abwesenheiten
+	@ApiOperation(value = "Speichert eine Betreuung in der Datenbank", response = JaxBetreuung.class)
 	@Nonnull
 	@PUT
 	@Path("/betreuung/{kindId}/{abwesenheit}")
@@ -93,6 +88,7 @@ public class BetreuungResource {
 	}
 
 	//TODO (hefr) dieser service wird immer nur fuer Abwesenheiten verwendet
+	@ApiOperation(value = "Speichert eine Abwesenheit in der Datenbank.", responseContainer = "List", response = JaxBetreuung.class)
 	@Nonnull
 	@PUT
 	@Path("/all/{abwesenheit}")
@@ -119,6 +115,7 @@ public class BetreuungResource {
 		return resultBetreuungen;
 	}
 
+	@ApiOperation(value = "Betreuungsplatzanfrage wird durch die Institution abgelehnt", response = JaxBetreuung.class)
 	@Nonnull
 	@PUT
 	@Path("/abweisen/{kindId}")
@@ -148,6 +145,7 @@ public class BetreuungResource {
 		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
 	}
 
+	@ApiOperation(value = "Betreuungsplatzanfrage wird durch die Institution bestätigt", response = JaxBetreuung.class)
 	@Nonnull
 	@PUT
 	@Path("/bestaetigen/{kindId}")
@@ -178,6 +176,8 @@ public class BetreuungResource {
 		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
 	}
 
+	@ApiOperation(value = "Sucht die Betreuung mit der übergebenen Id in der Datenbank. Dabei wird geprüft, ob der " +
+		"eingeloggte Benutzer für die gesuchte Betreuung berechtigt ist", response = JaxBetreuung.class)
 	@Nullable
 	@GET
 	@Path("/{betreuungId}")
@@ -196,6 +196,9 @@ public class BetreuungResource {
 		return converter.betreuungToJAX(betreuungToReturn);
 	}
 
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+	@ApiOperation(value = "Löscht die Betreuung mit der übergebenen Id in der Datenbank. Dabei wird geprüft, ob der " +
+		"eingeloggte Benutzer für die gesuchte Betreuung berechtigt ist", response = Void.class)
 	@Nullable
 	@DELETE
 	@Path("/{betreuungId}")
@@ -216,7 +219,9 @@ public class BetreuungResource {
 		throw new EbeguEntityNotFoundException("removeBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungJAXPId.getId());
 	}
 
-	@ApiOperation(value = "gets all Betreuungen for a Fall across all Gesuchperioden")
+	@ApiOperation(value = "Sucht alle verfügten Betreuungen aus allen Gesuchsperioden, welche zum übergebenen Fall " +
+		"vorhanden sind. Es werden nur diejenigen Betreuungen zurückgegeben, für welche der eingeloggte Benutzer " +
+		"berechtigt ist.", response = List.class)
 	@Nullable
 	@GET
 	@Path("/alleBetreuungen/{fallId}")
@@ -229,7 +234,6 @@ public class BetreuungResource {
 
 		Optional<Fall> fallOptional = fallService.findFall(converter.toEntityId(fallId));
 
-
 		if (!fallOptional.isPresent()) {
 			return null;
 		}
@@ -238,10 +242,6 @@ public class BetreuungResource {
 		Collection<Betreuung> betreuungCollection = betreuungService.findAllBetreuungenWithVerfuegungFromFall(fall);
 		Collection<JaxBetreuung> jaxBetreuungList = converter.betreuungListToJax(betreuungCollection);
 
-
 		return Response.ok(jaxBetreuungList).build();
-
 	}
-
-
 }

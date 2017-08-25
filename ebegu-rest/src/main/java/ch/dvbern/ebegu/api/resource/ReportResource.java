@@ -1,27 +1,7 @@
 package ch.dvbern.ebegu.api.resource;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -31,14 +11,31 @@ import ch.dvbern.ebegu.util.DateUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergeException;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * REST Resource fuer Reports
  */
 @Path("reporting")
 @Stateless
-@Api
+@Api(description = "Resource für Statistiken und Reports")
 public class ReportResource {
 
 	public static final String DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN = "Das von-Datum muss vor dem bis-Datum sein.";
@@ -52,6 +49,7 @@ public class ReportResource {
 	@Inject
 	private JaxBConverter converter;
 
+	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Gesuch-Stichtag'", response = JaxDownloadFile.class)
 	@Nonnull
 	@GET
 	@Path("/excel/gesuchStichtag")
@@ -75,6 +73,7 @@ public class ReportResource {
 		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
 
+	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Gesuch-Zeitraum'", response = JaxDownloadFile.class)
 	@Nonnull
 	@GET
 	@Path("/excel/gesuchZeitraum")
@@ -108,6 +107,7 @@ public class ReportResource {
 		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
 
+	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Kanton'", response = JaxDownloadFile.class)
 	@Nonnull
 	@GET
 	@Path("/excel/kanton")
@@ -135,6 +135,7 @@ public class ReportResource {
 		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
 
+	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'MitarbeiterInnen'", response = JaxDownloadFile.class)
 	@Nonnull
 	@GET
 	@Path("/excel/mitarbeiterinnen")
@@ -162,6 +163,7 @@ public class ReportResource {
 		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
 
+	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Zahlungsauftrag'", response = JaxDownloadFile.class)
 	@Nonnull
 	@GET
 	@Path("/excel/zahlungsauftrag")
@@ -183,6 +185,7 @@ public class ReportResource {
 		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
 
+	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Zahlung'", response = JaxDownloadFile.class)
 	@Nonnull
 	@GET
 	@Path("/excel/zahlung")
@@ -204,7 +207,7 @@ public class ReportResource {
 		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
 
-
+	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Zahlungen pro Periode'", response = JaxDownloadFile.class)
 	@Nonnull
 	@GET
 	@Path("/excel/zahlungperiode")
@@ -226,6 +229,7 @@ public class ReportResource {
 		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
 
+	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Gesuchsteller-Kinder-Betreuung'", response = JaxDownloadFile.class)
 	@Nonnull
 	@GET
 	@Path("/excel/gesuchstellerkinderbetreuung")
@@ -258,6 +262,7 @@ public class ReportResource {
 		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
 
+	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Kinder'", response = JaxDownloadFile.class)
 	@Nonnull
 	@GET
 	@Path("/excel/kinder")
@@ -290,6 +295,7 @@ public class ReportResource {
 		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
 
+	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Gesuchsteller'", response = JaxDownloadFile.class)
 	@Nonnull
 	@GET
 	@Path("/excel/gesuchsteller")

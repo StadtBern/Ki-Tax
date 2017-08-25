@@ -7,6 +7,8 @@ import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.services.HistorizationService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.NotImplementedException;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionType;
 
@@ -25,12 +27,11 @@ import java.util.stream.Collectors;
 
 
 /**
- * Created by imanol on 04.03.16.
  * Resource fuer Historization
  */
 @Path("historization")
 @Stateless
-@Api
+@Api(description = "Resource für (technische) Historisierung")
 public class HistorizationResource {
 
 	@Inject
@@ -40,6 +41,8 @@ public class HistorizationResource {
 	private HistorizationService historizationService;
 
 
+	@ApiOperation(value = "Sucht alle Entities, die zur uebergebenen Envers-Revision gehoeren",
+		responseContainer = "List", response = JaxAbstractDTO.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.TEXT_PLAIN)
@@ -50,17 +53,20 @@ public class HistorizationResource {
 		@Nonnull @Min(1) @PathParam("revision") Integer revision,
 		@Context HttpServletResponse response) {
 
-		List<AbstractEntity> entityList = historizationService.getAllEntitiesByRevision(entityName, revision);
-		List<JaxAbstractDTO> resultList = new ArrayList<>();
-		if (entityList != null) {
-			resultList = entityList.stream().filter(entity -> entity instanceof ApplicationProperty)
-				.map(entity -> converter.applicationPropertyToJAX((ApplicationProperty) entity)).collect(Collectors.toList());
+		if (entityName.equals(ApplicationProperty.class.getSimpleName())) {
+			List<AbstractEntity> entityList = historizationService.getAllEntitiesByRevision(entityName, revision);
+			List<JaxAbstractDTO> resultList = new ArrayList<>();
+			if (entityList != null) {
+				resultList = entityList.stream().filter(entity -> entity instanceof ApplicationProperty)
+					.map(entity -> converter.applicationPropertyToJAX((ApplicationProperty) entity)).collect(Collectors.toList());
+			}
+			return Response.ok(resultList).build();
 		}
-		return Response.ok(resultList).build();
-
+		throw new NotImplementedException("Diese Methode ist erst fuer ApplicationProperties umgesetzt!");
 	}
 
-
+	@ApiOperation(value = "Sucht alle Entities, die zur uebergebenen Envers-Revision gehoeren",
+		responseContainer = "List", response = JaxEnversRevision.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.TEXT_PLAIN)
@@ -83,5 +89,4 @@ public class HistorizationResource {
 		}
 		return Response.ok(resultList).build();
 	}
-
 }

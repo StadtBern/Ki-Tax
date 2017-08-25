@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  */
 @Path("application-properties")
 @Stateless
-@Api
+@Api(description = "Resource zum Lesen der Applikationsproperties")
 public class ApplicationPropertyResource {
 
 	@Inject
@@ -57,9 +57,9 @@ public class ApplicationPropertyResource {
 		@Nonnull @PathParam("key") String keyParam,
 		@Context HttpServletResponse response) {
 
-		Optional<ApplicationProperty> propertyFromDB = this.applicationPropertyService.readApplicationProperty(keyParam);
-		propertyFromDB.orElseThrow(() -> new EbeguEntityNotFoundException("getByKey", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, keyParam));
-		return converter.applicationPropertyToJAX(propertyFromDB.get());
+		ApplicationProperty propertyFromDB = this.applicationPropertyService.readApplicationProperty(keyParam)
+			.orElseThrow(() -> new EbeguEntityNotFoundException("getByKey", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, keyParam));
+		return converter.applicationPropertyToJAX(propertyFromDB);
 	}
 
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
@@ -73,6 +73,7 @@ public class ApplicationPropertyResource {
 	}
 
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+	@ApiOperation(value = "Is Dummy-Login enabled?", response = Boolean.class)
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
@@ -93,6 +94,7 @@ public class ApplicationPropertyResource {
 		return converter.applicationPropertyToJAX(prop);
 	}
 
+	@ApiOperation(value = "Returns all application properties", response = List.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
@@ -104,10 +106,8 @@ public class ApplicationPropertyResource {
 			.collect(Collectors.toList());
 	}
 
-
 	@ApiOperation(value = "Create a new ApplicationProperty with the given key and value",
-		response = JaxApplicationProperties.class,
-		consumes = MediaType.TEXT_PLAIN)
+		response = JaxApplicationProperties.class, consumes = MediaType.TEXT_PLAIN)
 	@Nullable
 	@POST
 	@Path("/{key}")
@@ -126,13 +126,10 @@ public class ApplicationPropertyResource {
 			.build();
 
 		return Response.created(uri).entity(converter.applicationPropertyToJAX(modifiedProperty)).build();
-
-
 	}
 
 	@ApiOperation(value = "Aktualisiert ein bestehendes ApplicationProperty",
-			response = JaxApplicationProperties.class,
-			consumes = MediaType.TEXT_PLAIN)
+			response = JaxApplicationProperties.class, consumes = MediaType.TEXT_PLAIN)
 	@Nullable
 	@PUT
 	@Path("/{key}")
@@ -149,6 +146,8 @@ public class ApplicationPropertyResource {
 	}
 
 
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+	@ApiOperation(value = "Removes an application property")
 	@Nullable
 	@DELETE
 	@Path("/{key}")

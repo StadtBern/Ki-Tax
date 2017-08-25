@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  */
 @Path("traegerschaften")
 @Stateless
-@Api
+@Api(description = "Resource zur Verwaltung von Trägerschaften (Zusammenschluss von mehreren Institutionen)")
 public class TraegerschaftResource {
 
 	@Inject
@@ -54,8 +54,7 @@ public class TraegerschaftResource {
 	@Inject
 	private OpenIdmRestService openIdmRestService;
 
-//	private static final Logger LOG = LoggerFactory.getLogger(TraegerschaftResource.class.getSimpleName());
-
+	@ApiOperation(value = "Speichert eine Traegerschaft in der Datenbank", response = JaxTraegerschaft.class)
 	@Nullable
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -85,6 +84,7 @@ public class TraegerschaftResource {
 		return jaxTraegerschaft;
 	}
 
+	@SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
 	private boolean createOrUpdateInIDM(boolean createMode, Traegerschaft persistedTraegerschaft) {
 		final Optional<JaxOpenIdmResult> openIdmRestClientInstitution;
 		if (createMode) {
@@ -95,6 +95,7 @@ public class TraegerschaftResource {
 		return openIdmRestClientInstitution.isPresent();
 	}
 
+	@ApiOperation(value = "Gibt die Traegerschaft mit der uebergebenen id zurueck.", response = JaxTraegerschaft.class)
 	@Nullable
 	@GET
 	@Path("/id/{traegerschaftId}")
@@ -110,6 +111,8 @@ public class TraegerschaftResource {
 		return optional.map(traegerschaft -> converter.traegerschaftToJAX(traegerschaft)).orElse(null);
 	}
 
+	@ApiOperation(value = "Loescht die Traegerschaft mit der uebergebenen id", response = Void.class)
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@Nullable
 	@DELETE
 	@Path("/{traegerschaftId}")
@@ -130,6 +133,8 @@ public class TraegerschaftResource {
 		return Response.ok().build();
 	}
 
+	@ApiOperation(value = "Gibt alle Traegerschaften zurueck.",
+		responseContainer = "List", response = JaxTraegerschaft.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
@@ -140,7 +145,9 @@ public class TraegerschaftResource {
 			.collect(Collectors.toList());
 	}
 
-	@ApiOperation(value = "Find and return a list of all active Traegerschaften. An active Traegerschaft is a Traegerschaft where the active flag is true")
+	@ApiOperation(value = "Find and return a list of all active Traegerschaften. An active Traegerschaft is a " +
+		"Traegerschaft where the active flag is true",
+		responseContainer = "List", response = JaxTraegerschaft.class)
 	@Nonnull
 	@GET
 	@Path("/active")
@@ -209,5 +216,4 @@ public class TraegerschaftResource {
 		}
 		return responseString;
 	}
-
 }

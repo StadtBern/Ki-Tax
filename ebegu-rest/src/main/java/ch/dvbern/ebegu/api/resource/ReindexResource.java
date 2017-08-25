@@ -1,7 +1,10 @@
 package ch.dvbern.ebegu.api.resource;
 
+import ch.dvbern.ebegu.api.dtos.JaxAdresse;
 import ch.dvbern.ebegu.services.SearchIndexService;
 import ch.dvbern.ebegu.util.Constants;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -16,12 +19,14 @@ import java.time.LocalDateTime;
 
 @Path("admin/reindex")
 @Stateless
+@Api(description = "Resource zum Reindizieren des Lucene-Suchindexes")
 public class ReindexResource {
 
 
 	@Inject
 	private SearchIndexService searchIndexService;
 
+	@ApiOperation(value = "Erstellt den Suchindex neu")
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response reindex(@Context HttpServletRequest request) {

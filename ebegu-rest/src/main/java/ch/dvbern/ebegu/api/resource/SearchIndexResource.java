@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 @Path("search")
 @Stateless
-@Api
+@Api(description = "Resource für Suchanfragen")
 public class SearchIndexResource {
 
 
@@ -65,7 +65,8 @@ public class SearchIndexResource {
 	@Path("/parameterized/query/{searchString}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Perform a search for the searchString in the indexes determined by the filter objects", response = SearchResult.class)
+	@ApiOperation(value = "Perform a search for the searchString in the indexes determined by the filter objects",
+		response = SearchResult.class)
 	public Response searchQuery(@Nonnull @PathParam("searchString") String searchStringParam, List<SearchFilter> filters) {
 		QuickSearchResultDTO searchResult = searchIndexService.search(searchStringParam, filters);
 		return Response.ok(searchResult).build();
@@ -79,7 +80,8 @@ public class SearchIndexResource {
 	 */
 	@GET
 	@Path("/quicksearch/{searchString}")
-	@ApiOperation(value = "Perform a search for the searchString in all indizes returning only a small number of results", response = SearchResult.class)
+	@ApiOperation(value = "Perform a search for the searchString in all indizes returning only a small number of results",
+		response = SearchResult.class)
 	public Response quicksearch(@Context HttpServletRequest request, @Nonnull @PathParam("searchString") String searchStringParam) {
 		Validate.notEmpty(searchStringParam);
 		QuickSearchResultDTO search = searchIndexService.quicksearch(searchStringParam, true);
@@ -101,7 +103,8 @@ public class SearchIndexResource {
 	 */
 	@GET
 	@Path("/globalsearch/{searchString}")
-	@ApiOperation(value = "Perform a search for the searchString in all indizes without a result limit", response = SearchResult.class)
+	@ApiOperation(value = "Perform a search for the searchString in all indizes without a result limit",
+		response = SearchResult.class)
 	public Response globalsearch(@Context HttpServletRequest request, @Nonnull @PathParam("searchString") String searchStringParam) {
 		Validate.notEmpty(searchStringParam);
 		QuickSearchResultDTO search = searchIndexService.quicksearch(searchStringParam, false);
@@ -181,5 +184,4 @@ public class SearchIndexResource {
 		UserRole userRole = principalBean.discoverMostPrivilegedRole();
 		return UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole) || UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole);
 	}
-
 }
