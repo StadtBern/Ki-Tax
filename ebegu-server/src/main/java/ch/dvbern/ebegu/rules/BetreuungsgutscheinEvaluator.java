@@ -1,6 +1,18 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.rechner.AbstractBGRechner;
@@ -13,12 +25,6 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.VerfuegungUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 
 /**
@@ -110,8 +116,8 @@ public class BetreuungsgutscheinEvaluator {
 				if (!betreuung.getBetreuungsangebotTyp().isSchulamt()) {
 					//initiale Restansprueche vorberechnen
 					if (betreuung.getBetreuungsstatus() != null) {
-						if (betreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)
-							&& betreuung.getVerfuegungOrVorgaengerVerfuegung() == null) {
+						if ((betreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)
+							&& betreuung.getVerfuegungOrVorgaengerVerfuegung() == null) || betreuung.getBetreuungsstatus().equals(Betreuungsstatus.NICHT_EINGETRETEN)) {
 							// es kann sein dass eine neue Betreuung in der Mutation abgelehnt wird, dann gibts keinen Vorgaenger und keine aktuelle
 							//verfuegung und wir muessen keinenr restanspruch berechnen (vergl EBEGU-890)
 							continue;
@@ -128,7 +134,12 @@ public class BetreuungsgutscheinEvaluator {
 					List<VerfuegungZeitabschnitt> zeitabschnitte = restanspruchZeitabschnitte;
 					if (isDebug) {
 						LOG.info("BG-Nummer: " + betreuung.getBGNummer());
+						LOG.info(RestanspruchInitializer.class.getSimpleName() + ": ");
+						for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnitte) {
+							LOG.info(verfuegungZeitabschnitt.toString());
+						}
 					}
+
 					for (Rule rule : rulesToRun) {
 						zeitabschnitte = rule.calculate(betreuung, zeitabschnitte);
 						if (isDebug) {
