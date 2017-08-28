@@ -1077,6 +1077,7 @@
     "AFA_DASHBOARD": "Gesuchstellerdashboard",
     "AFA_TOOLBAR": "Hauptnavigation",
     "AFA_INDEXBAR": "Benutzernavigation",
-    "AFA_GESUCHSFORMULAR": "Gesuchsformular"
+    "AFA_GESUCHSFORMULAR": "Gesuchsformular",
+    "BESTAETIGUNG_DIALOG": "Bestätigungs"
 
 }
