@@ -42,7 +42,8 @@ export default class AntragStatusHistoryRS {
             return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuch.id))
                 .then((response: any) => {
                     this.log.debug('PARSING AntragStatusHistory REST object ', response.data);
-                    return this._lastChange = this.ebeguRestUtil.parseAntragStatusHistory(new TSAntragStatusHistory(), response.data);
+                    this._lastChange = this.ebeguRestUtil.parseAntragStatusHistory(new TSAntragStatusHistory(), response.data);
+                    return this._lastChange;
                 });
         } else {
             this._lastChange = undefined;

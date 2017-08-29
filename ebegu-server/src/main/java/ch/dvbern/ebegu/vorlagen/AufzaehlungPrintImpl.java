@@ -14,7 +14,7 @@ package ch.dvbern.ebegu.vorlagen;
 
 public class AufzaehlungPrintImpl implements AufzaehlungPrint {
 
-	private String text;
+	private final String text;
 
 	public AufzaehlungPrintImpl(String text) {
 		this.text = text.replaceAll("^(-|\\s)*", "");

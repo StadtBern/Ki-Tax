@@ -67,13 +67,13 @@ public abstract class AbstractTestfall {
 
 
 
-	protected Gesuchsperiode gesuchsperiode;
-	protected Collection<InstitutionStammdaten> institutionStammdatenList;
+	protected final Gesuchsperiode gesuchsperiode;
+	protected final Collection<InstitutionStammdaten> institutionStammdatenList;
 
 	protected String fixId = null;
 	protected Fall fall = null;
 	protected Gesuch gesuch = null;
-	protected boolean betreuungenBestaetigt;
+	protected final boolean betreuungenBestaetigt;
 
 	public AbstractTestfall(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
 		boolean betreuungenBestaetigt) {

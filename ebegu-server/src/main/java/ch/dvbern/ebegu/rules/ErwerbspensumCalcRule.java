@@ -1,14 +1,15 @@
 package ch.dvbern.ebegu.rules;
 
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.MathUtil;
-
-import javax.annotation.Nonnull;
-import java.util.Objects;
 
 /**
  * Berechnet die hoehe des ErwerbspensumRule eines bestimmten Erwerbspensums
@@ -19,7 +20,7 @@ import java.util.Objects;
  */
 public class ErwerbspensumCalcRule extends AbstractCalcRule {
 
-	private int maxZuschlagValue;
+	private final int maxZuschlagValue;
 
 
 	public ErwerbspensumCalcRule(DateRange validityPeriod, int maxZuschlagValue) {
