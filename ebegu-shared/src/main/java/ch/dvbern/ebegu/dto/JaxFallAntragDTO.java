@@ -7,7 +7,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * DTO for FallAntrag
- * All data for this class are taken from the Fall. This will replace an AntragDTO when a Fall exists without a Gesuch
+ * All data for this class are taken from the Fall. This will replace an AntragDTO when wen need to return a dto
+ * for a Fall that has no Gesuch yet
  */
 @XmlRootElement(name = "pendenz")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -17,6 +18,10 @@ public class JaxFallAntragDTO extends JaxAbstractAntragDTO {
 
 	@NotNull
 	private String fallID;
+
+	public JaxFallAntragDTO() {
+		super(JaxFallAntragDTO.class.getSimpleName());
+	}
 
 	public String getFallID() {
 		return fallID;

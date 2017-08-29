@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * DTO fuer AbstractAntragDTO
  */
-@XmlRootElement(name = "pendenz")
+@XmlRootElement(name = "abstAntragDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxAbstractAntragDTO implements Serializable {
 
@@ -22,6 +22,11 @@ public class JaxAbstractAntragDTO implements Serializable {
 	@NotNull
 	private String familienName;
 
+	protected String clazz;
+
+	public JaxAbstractAntragDTO(String clazz) {
+		this.clazz = clazz;
+	}
 
 	public long getFallNummer() {
 		return fallNummer;
@@ -38,4 +43,6 @@ public class JaxAbstractAntragDTO implements Serializable {
 	public void setFamilienName(String familienName) {
 		this.familienName = familienName;
 	}
+
+
 }

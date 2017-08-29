@@ -33,6 +33,7 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 	public JaxAntragDTO(String antragId, LocalDate gesuchsperiodeGueltigAb, LocalDate gesuchsperiodeGueltigBis,
 						@Nullable LocalDate eingangsdatum, @Nullable LocalDate eingangsdatumSTV, AntragTyp antragTyp,
 		int laufnummer, Eingangsart eingangsart) {
+		this();
 		this.antragId = antragId;
 		this.gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
 		this.gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
@@ -47,7 +48,7 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 	public JaxAntragDTO(String antragId, LocalDate gesuchsperiodeGueltigAb, LocalDate gesuchsperiodeGueltigBis,
 		@Nullable LocalDate eingangsdatum, @Nullable LocalDate eingangsdatumSTV, AntragTyp antragTyp,
 		AntragStatus antragStatus, int laufnummer, Eingangsart eingangsart, @Nullable String besitzerUsername) {
-
+		this();
 		this.antragId = antragId;
 		this.gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
 		this.gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
@@ -59,6 +60,10 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 		this.laufnummer = laufnummer;
 		this.eingangsart = eingangsart;
 		this.besitzerUsername = besitzerUsername;
+	}
+
+	public JaxAntragDTO() {
+		super(JaxAntragDTO.class.getSimpleName());
 	}
 
 	@NotNull
@@ -117,10 +122,6 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 
 	@NotNull
 	private GesuchBetreuungenStatus gesuchBetreuungenStatus;
-
-	public JaxAntragDTO() {
-
-	}
 
 	public String getAntragId() {
 		return antragId;

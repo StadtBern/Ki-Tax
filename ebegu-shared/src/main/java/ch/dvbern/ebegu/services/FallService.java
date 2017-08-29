@@ -1,13 +1,13 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Fall;
+import java.util.Collection;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
 
-import java.util.Collection;
-import java.util.Optional;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Fall;
 
 /**
  * Service zum Verwalten von Fallen
@@ -82,7 +82,7 @@ public interface FallService {
 	Optional<String> getCurrentEmailAddress(String fallID);
 
 	/**
-	 * Checks whether the given Fall has at least a Mitteilung or not. Will throw an exception if the fall is not found.
+	 * Checks whether the given Fall has at least one Mitteilung or not. Will throw an exception if the fall is not found.
 	 */
 	boolean hasFallAnyMitteilung(@NotNull String fallID);
 }

@@ -137,5 +137,4 @@ export class DvQuicksearchboxController {
             }
         }
     }
-
 }

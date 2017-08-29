@@ -1,13 +1,15 @@
 package ch.dvbern.ebegu.dto.suchfilter.lucene;
 
-import ch.dvbern.ebegu.dto.JaxAbstractAntragDTO;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import ch.dvbern.ebegu.dto.JaxAbstractAntragDTO;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Resultatdto fuer ein einzelnes Resultat aus dem Lucene index

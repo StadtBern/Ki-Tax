@@ -2,9 +2,20 @@ package ch.dvbern.ebegu.entities;
 
 import java.util.Objects;
 
-import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
-import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
-import ch.dvbern.ebegu.util.Constants;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyzer;
@@ -14,11 +25,9 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.bridge.builtin.LongBridge;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
+import ch.dvbern.ebegu.util.Constants;
 
 /**
  * Entitaet zum Speichern von Fall in der Datenbank.
@@ -134,6 +143,11 @@ public class Fall extends AbstractEntity implements HasMandant, Searchable {
 		return Objects.equals(getFallNummer(), otherFall.getFallNummer());
 	}
 
+	@Transient
+	public String getPaddedFallnummer(){
+		return StringUtils.leftPad(String.valueOf(this.getFallNummer()), Constants.FALLNUMMER_LENGTH, '0');
+	}
+
 	@Nonnull
 	@Override
 	public String getSearchResultId() {
@@ -143,7 +157,7 @@ public class Fall extends AbstractEntity implements HasMandant, Searchable {
 	@Nonnull
 	@Override
 	public String getSearchResultSummary() {
-		return "";
+		return getPaddedFallnummer();
 	}
 
 	@Nullable
