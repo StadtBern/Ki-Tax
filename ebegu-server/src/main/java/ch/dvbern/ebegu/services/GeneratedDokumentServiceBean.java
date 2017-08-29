@@ -242,9 +242,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			byte[] data = pdfService.generateFinanzielleSituation(gesuch, famGroessenVerfuegung, writeProtectPDF);
 			// FINANZIELLE_SITUATION in einem Zustand isAnyStatusOfVerfuegt oder Verfügen, soll das Dokument schreibgeschützt sein!
 			persistedDokument = saveGeneratedDokumentInDB(data, GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch,
-				fileNameForGeneratedDokumentTyp,
-				writeProtectPDF);
-
+				fileNameForGeneratedDokumentTyp, writeProtectPDF);
 
 		}
 		return persistedDokument;
@@ -256,13 +254,14 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getJahrAndFallnummer());
 
 		// Das Begleitschreiben wird per Definition immer erst nach dem Verfügen erstellt, da die Verfügungen bzw. Nicht-Eintretensverfügungen als
-		// Anhang im Brief erwähnt werden!
+		// Anhang im Brief erwähnt werden! Sollte das Gesuch ein Status von Verfuegt haben, wird es als writeprotected gespeichert
 		WriteProtectedDokument document = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), fileNameForGeneratedDokumentTyp, true);
 		if (document == null) {
+			boolean writeProtectPDF = gesuch.getStatus().isAnyStatusOfVerfuegt();
 			boolean addWatermark = !gesuch.getStatus().isAnyStatusOfVerfuegt();
 			byte[] data = pdfService.generateBegleitschreiben(gesuch, !addWatermark);
 			document = saveGeneratedDokumentInDB(data, GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch,
-				fileNameForGeneratedDokumentTyp, false);
+				fileNameForGeneratedDokumentTyp, writeProtectPDF);
 		}
 		return document;
 	}
@@ -347,6 +346,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		return Optional.ofNullable(persistedDokument);
 	}
 
+	@Nullable
 	private WriteProtectedDokument getDocumentIfExistsAndIsWriteProtected(String gesuchId, String fileNameForGeneratedDokumentTyp, @Nonnull Boolean forceCreation) {
 		Optional<WriteProtectedDokument> optionalDokument = getMaybeExistingGeneratedDokument(gesuchId, fileNameForGeneratedDokumentTyp);
 		if (optionalDokument.isPresent() && optionalDokument.get().isWriteProtected()) {
@@ -364,6 +364,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		return null;
 	}
 
+	@Nullable
 	private WriteProtectedDokument getPain001DocumentIfExistsAndIsWriteProtected(String zahlungsauftragId, String fileNameForGeneratedDokumentTyp, @Nonnull Boolean forceCreation) {
 		Optional<WriteProtectedDokument> optionalDokument = getMaybeExistingPain001Document(zahlungsauftragId, fileNameForGeneratedDokumentTyp);
 		if (optionalDokument.isPresent() && optionalDokument.get().isWriteProtected()) {
