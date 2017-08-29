@@ -49,10 +49,6 @@ public class TraegerschaftResourceTest {
 	@Inject
 	private EasyMockProvider mockProvider;
 
-	@Before
-	public void mockup() {
-
-	}
 
 	@Test
 	public void synchronizeTraegerschaftEmptyTest() {

@@ -36,10 +36,10 @@ public class BetreuungsgutscheinEvaluator {
 
 	private List<Rule> rules = new LinkedList<>();
 
-	private RestanspruchInitializer restanspruchInitializer = new RestanspruchInitializer();
-	private MonatsRule monatsRule = new MonatsRule(Constants.DEFAULT_GUELTIGKEIT);
-	private MutationsMerger mutationsMerger = new MutationsMerger();
-	private AbschlussNormalizer abschlussNormalizer = new AbschlussNormalizer();
+	private final RestanspruchInitializer restanspruchInitializer = new RestanspruchInitializer();
+	private final MonatsRule monatsRule = new MonatsRule(Constants.DEFAULT_GUELTIGKEIT);
+	private final MutationsMerger mutationsMerger = new MutationsMerger();
+	private final AbschlussNormalizer abschlussNormalizer = new AbschlussNormalizer();
 
 	public BetreuungsgutscheinEvaluator(List<Rule> rules) {
 		this.rules = rules;

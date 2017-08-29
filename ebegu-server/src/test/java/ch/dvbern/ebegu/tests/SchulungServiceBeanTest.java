@@ -1,10 +1,22 @@
 package ch.dvbern.ebegu.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.Mandant;
-import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.services.AdresseService;
+import ch.dvbern.ebegu.services.BenutzerService;
+import ch.dvbern.ebegu.services.GesuchsperiodeService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.InstitutionStammdatenService;
+import ch.dvbern.ebegu.services.MandantService;
+import ch.dvbern.ebegu.services.SchulungService;
+import ch.dvbern.ebegu.services.TraegerschaftService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
@@ -15,11 +27,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Test fuer den SchulungsService
  */
@@ -28,9 +35,9 @@ import java.util.List;
 @Transactional(TransactionMode.DISABLED)
 public class SchulungServiceBeanTest extends AbstractEbeguLoginTest {
 
-	private int anzahlUserSchonVorhanden = 1;
-	private int anzahlGesuchsteller = 16;
-	private int anzahlInstitutionsBenutzer = 2;
+	private final int anzahlUserSchonVorhanden = 1;
+	private final int anzahlGesuchsteller = 16;
+	private final int anzahlInstitutionsBenutzer = 2;
 
 	@Inject
 	private SchulungService schulungService;
