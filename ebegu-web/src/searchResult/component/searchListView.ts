@@ -1,13 +1,9 @@
 import {IComponentOptions} from 'angular';
-import {IComponentOptions} from 'angular';
-import TSAntragDTO from '../../models/TSAntragDTO';
 import {ISearchResultateStateParams} from '../search.route';
 import TSQuickSearchResult from '../../models/dto/TSQuickSearchResult';
 import {SearchIndexRS} from '../../core/service/searchIndexRS.rest';
 import EbeguUtil from '../../utils/EbeguUtil';
 import TSAbstractAntragDTO from '../../models/TSAbstractAntragDTO';
-import ILogService = angular.ILogService;
-
 import ILogService = angular.ILogService;
 
 let template = require('./searchListView.html');
