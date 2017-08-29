@@ -63,7 +63,8 @@ export class DvBisher {
         }
     }
 
-    public getBisher(): Array<string> {
+        public getBisher(): Array<string> {
+        // noinspection IfStatementWithTooManyBranchesJS
         if (this.specificBisherText) {
             this.bisherText = this.specificBisherText ? this.specificBisherText.split('\n') : undefined;
             // War es eine Loeschung, oder ein Hinzufuegen?

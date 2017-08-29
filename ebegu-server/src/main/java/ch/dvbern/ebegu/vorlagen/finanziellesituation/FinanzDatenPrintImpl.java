@@ -11,16 +11,17 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 23.08.2016
 */
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 /**
  * DTO fuer die Finazdaten die im Print gebraucht werden, implementiert den FinanzielleSituationPrint
@@ -28,10 +29,10 @@ import java.time.format.DateTimeFormatter;
 public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 
 	public static final int DEFAULT_WERT = 123456;
-	protected FinanzSituationPrintGesuchsteller fsGesuchsteller1;
+	protected final FinanzSituationPrintGesuchsteller fsGesuchsteller1;
 
 	@Nullable
-	protected FinanzSituationPrintGesuchsteller fsGesuchsteller2;
+	protected final FinanzSituationPrintGesuchsteller fsGesuchsteller2;
 
 	/**
 	 * Konstruktor

@@ -1,5 +1,28 @@
 package ch.dvbern.ebegu.services;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
@@ -15,18 +38,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.io.*;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
 
 /**
  * Service fuer diverse Admin-Aufgaben.
@@ -55,23 +66,23 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 	private static final Logger LOG = LoggerFactory.getLogger(AdministrationServiceBean.class);
 
 	private PrintWriter printWriter;
-	private String inputFile = "/institutionen/Institutionen_2017.03.01.xlsx";
-	private String outputFile = "insertInstitutionen.sql";
-	private int anzahlZeilen = 87;
+	private final static String INPUT_FILE = "/institutionen/Institutionen_2017.03.01.xlsx";
+	private final static String OUTPUT_FILE = "insertInstitutionen.sql";
+	private final static int ANZAHL_ZEILEN = 87;
 
-	private List<String> traegerschaftenMap = new LinkedList<>();
-	private List<String> institutionenMap = new LinkedList<>();
+	private final List<String> traegerschaftenMap = new LinkedList<>();
+	private final List<String> institutionenMap = new LinkedList<>();
 
-	private List<String> listTraegerschaften = new LinkedList<>();
-	private List<String> listAdressen = new LinkedList<>();
-	private List<String> listInstitutionen = new LinkedList<>();
-	private List<String> listInstitutionsStammdaten = new LinkedList<>();
+	private final List<String> listTraegerschaften = new LinkedList<>();
+	private final List<String> listAdressen = new LinkedList<>();
+	private final List<String> listInstitutionen = new LinkedList<>();
+	private final List<String> listInstitutionsStammdaten = new LinkedList<>();
 
 
 	@Override
 	public void createSQLSkriptInstutionsstammdaten() {
 		try {
-			InputStream resourceAsStream = AdministrationServiceBean.class.getResourceAsStream(inputFile);
+			InputStream resourceAsStream = AdministrationServiceBean.class.getResourceAsStream(INPUT_FILE);
 			XSSFWorkbook myWorkBook = new XSSFWorkbook(resourceAsStream);
 			XSSFSheet mySheet = myWorkBook.getSheetAt(0);
 			Iterator<Row> rowIterator = mySheet.iterator();
@@ -101,7 +112,7 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 
 	@SuppressWarnings("OverlyComplexMethod")
 	private void readRow(Row row) {
-		if (row.getRowNum() > anzahlZeilen) {
+		if (row.getRowNum() > ANZAHL_ZEILEN) {
 			return;
 		}
 		// Traegerschaften
@@ -152,7 +163,7 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 		sb.append("INSERT INTO traegerschaft ");
 		sb.append("(id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name, active, mail) ");
 		sb.append("VALUES (");
-		sb.append("'").append(id).append("', ");	// id
+		sb.append('\'').append(id).append("', ");	// id
 		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_erstellt
 		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_mutiert
 		sb.append("'flyway', "); 					// user_erstellt
@@ -206,14 +217,14 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 		sb.append("INSERT INTO institution ");
 		sb.append("(id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name, mandant_id, traegerschaft_id, active, mail) ");
 		sb.append("VALUES (");
-		sb.append("'").append(id).append("', ");	// id
+		sb.append('\'').append(id).append("', ");	// id
 		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_erstellt
 		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_mutiert
 		sb.append("'flyway', "); 					// user_erstellt
 		sb.append("'flyway', "); 					// user_mutiert
 		sb.append("0, ");					        // version,
 		sb.append(toStringOrNull(institutionsname)).append(", "); // name
-		sb.append("'").append(MANDANT_ID_BERN).append("', ");    // mandant_id,
+		sb.append('\'').append(MANDANT_ID_BERN).append("', ");    // mandant_id,
 		sb.append(toStringOrNull(traegerschaftId)).append(", "); // name
 		sb.append("true, "); // active
 		sb.append(toStringOrNull(institutionsEmail)); // mail
@@ -284,7 +295,7 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 		sb.append("INSERT INTO institution_stammdaten ");
 		sb.append("(id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, gueltig_ab, gueltig_bis, betreuungsangebot_typ, iban, oeffnungsstunden, oeffnungstage, institution_id, adresse_id) ");
 		sb.append("VALUES (");
-		sb.append("'").append(id).append("', ");	// id
+		sb.append('\'').append(id).append("', ");	// id
 		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_erstellt
 		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_mutiert
 		sb.append("'flyway', "); 					// user_erstellt
@@ -292,7 +303,7 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 		sb.append("0, ");					// version,
 		sb.append("'1000-01-01', "); 				// gueltig_ab,
 		sb.append("'9999-12-31', "); 				// gueltig_bis,
-		sb.append("'").append(typ.name()).append("', "); // betreuungsangebot_typ,
+		sb.append('\'').append(typ.name()).append("', "); // betreuungsangebot_typ,
 		sb.append(toStringOrNull(iban)).append(", "); // iban
 		sb.append(toBigDecimalOrNull(stunden)).append(", "); // oeffnungsstunden,
 		sb.append(toBigDecimalOrNull(tage)).append(", "); // oeffnungstage,
@@ -306,7 +317,7 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 		StringBuilder sb = new StringBuilder();
 		sb.append("UPDATE institution_stammdaten set");
 		sb.append(" betreuungsangebot_typ = ");
-		sb.append("'").append(typ.name()).append("'"); // typ
+		sb.append('\'').append(typ.name()).append('\''); // typ
 		sb.append(", iban = ");
 		sb.append(toStringOrNull(iban));  // ort
 		sb.append(", oeffnungsstunden = ");
@@ -324,7 +335,7 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 		sb.append("INSERT INTO adresse ");
 		sb.append("(id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, gemeinde, gueltig_ab, gueltig_bis, hausnummer, land, ort, plz, strasse, zusatzzeile) ");
 		sb.append("VALUES (");
-		sb.append("'").append(id).append("', ");	// id
+		sb.append('\'').append(id).append("', ");	// id
 		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_erstellt
 		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_mutiert
 		sb.append("'flyway', "); 					// user_erstellt
@@ -386,7 +397,7 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 		if (aStringOrNull == null) {
 			return "null";
 		} else {
-			return "'" + aStringOrNull + "'";
+			return '\'' + aStringOrNull + '\'';
 		}
 	}
 
@@ -406,7 +417,7 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 	private PrintWriter getPrintWriter() {
 		if (printWriter == null) {
 			try {
-				File output = new File(outputFile);
+				File output = new File(OUTPUT_FILE);
 				FileOutputStream fos = new FileOutputStream(output.getAbsolutePath());
 				printWriter = new PrintWriter(fos);
 				LOG.info("File generiert: " + output.getAbsolutePath());
@@ -484,13 +495,13 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 		if (StringUtils.isNotEmpty(s)) {
 			sb.append(s);
 		}
-		sb.append(",");
+		sb.append(',');
 	}
 
 	private void append(@Nonnull StringBuilder sb, @Nullable BigDecimal s) {
 		if (s != null) {
 			sb.append(s);
 		}
-		sb.append(",");
+		sb.append(',');
 	}
 }
