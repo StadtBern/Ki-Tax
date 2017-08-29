@@ -4,7 +4,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import EbeguUtil from '../../../utils/EbeguUtil';
-import {getTSMonthValues, TSMonth} from '../../../models/enums/TSMonth';
+import {getTSMonthValues, getTSMonthWithVorjahrValues, TSMonth} from '../../../models/enums/TSMonth';
 import TSEinkommensverschlechterungInfo from '../../../models/TSEinkommensverschlechterungInfo';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
@@ -35,6 +35,7 @@ export class EinkommensverschlechterungInfoViewComponentConfig implements ICompo
 export class EinkommensverschlechterungInfoViewController extends AbstractGesuchViewController<TSEinkommensverschlechterungInfoContainer> {
 
     monthsStichtage: Array<TSMonth>;
+    monthsStichtageWithVorjahr: Array<TSMonth>;
     selectedStichtagBjP1: TSMonth = undefined;
     selectedStichtagBjP2: TSMonth = undefined;
     selectedStichtagBjP1_GS: TSMonth = undefined;
@@ -65,11 +66,12 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     private initViewModel() {
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.monthsStichtage = getTSMonthValues();
-        this.selectedStichtagBjP1 = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1);
-        this.selectedStichtagBjP2 = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2);
+        this.monthsStichtageWithVorjahr = getTSMonthWithVorjahrValues();
+        this.selectedStichtagBjP1 = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1, 1);
+        this.selectedStichtagBjP2 = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2, 2);
         if (this.getEinkommensverschlechterungsInfoGS()) {
-            this.selectedStichtagBjP1_GS = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfoGS().stichtagFuerBasisJahrPlus1);
-            this.selectedStichtagBjP2_GS = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfoGS().stichtagFuerBasisJahrPlus2);
+            this.selectedStichtagBjP1_GS = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfoGS().stichtagFuerBasisJahrPlus1, 1);
+            this.selectedStichtagBjP2_GS = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfoGS().stichtagFuerBasisJahrPlus2, 2);
         }
     }
 
@@ -114,12 +116,20 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     /**
      * Gibt den Tag (Moment) anhand des Jahres und Monat enum zurück
      * @param monat
-     * @param jahr
+     * @param basisJahrPlus
      * @returns {any}
      */
-    getStichtagFromMonat(monat: TSMonth, jahr: number): moment.Moment {
+    private getStichtagFromMonat(monat: TSMonth, basisJahrPlus: number): moment.Moment {
         if (monat) {
-            return moment([jahr, this.monthsStichtage.indexOf(monat)]);
+            if (monat === TSMonth.VORJAHR) {
+                return moment([this.gesuchModelManager.getBasisjahr() + basisJahrPlus - 1, 11]);
+            }
+            let jahr: number = this.gesuchModelManager.getBasisjahr() + basisJahrPlus;
+            if (basisJahrPlus === 1) {
+                return moment([jahr, this.monthsStichtage.indexOf(monat)]);
+            } else {
+                return moment([jahr, this.monthsStichtageWithVorjahr.indexOf(monat)]);
+            }
         } else {
             return null;
         }
@@ -128,11 +138,16 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     /**
      * Gibt den Monat enum anhand des Stichtages zurück
      * @param stichtag
+     * @param basisJahrPlus
      * @returns {any}
      */
-    getMonatFromStichtag(stichtag: moment.Moment): TSMonth {
+    private getMonatFromStichtag(stichtag: moment.Moment, basisJahrPlus: number): TSMonth {
         if (stichtag) {
-            return this.monthsStichtage[stichtag.month()];
+            if ((this.gesuchModelManager.getBasisjahr() + basisJahrPlus) !== stichtag.year()) {
+                return TSMonth.VORJAHR;
+            } else {
+                return this.monthsStichtage[stichtag.month()];
+            }
         } else {
             return null;
         }
@@ -169,8 +184,8 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
                 this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
             }
 
-            this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, this.gesuchModelManager.getBasisjahr() + 1);
-            this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, this.gesuchModelManager.getBasisjahr() + 2);
+            this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, 1);
+            this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, 2);
         } else {
             //wenn keine EV eingetragen wird, setzen wir alles auf undefined, da keine Daten gespeichert werden sollen
             this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;

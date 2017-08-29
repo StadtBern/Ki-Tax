@@ -142,12 +142,14 @@
                     <div class="row">
                         <div class="form-group col-sm-12 dv-input-container-medium"
                              ng-if="vm.showEkvi() && vm.showJahrPlus2()">
-                            <label class="md-no-float required" data-translate="EKVI_MONAT_DES_EREIGNISSES"
-                                   for="stichtagBasisJahrPlus2"></label>
+                            <label class="md-no-float" for="stichtagBasisJahrPlus2">
+                                <span data-translate="EKVI_MONAT_DES_EREIGNISSES" class="required"></span>
+                                <dv-tooltip text="'EKVI_MONAT_DES_EREIGNISSES_HELP' | translate"></dv-tooltip>
+                            </label>
                             <div class="dv-select-style">
                                 <select name="stichtagBasisJahrPlus2" id="stichtagBasisJahrPlus2" class="form-control"
                                         ng-model="vm.selectedStichtagBjP2"
-                                        ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
+                                        ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtageWithVorjahr"
                                         ng-required="true">
                                 </select>
 
