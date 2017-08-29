@@ -10,6 +10,24 @@
 
 package ch.dvbern.ebegu.api.resource.authentication;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import ch.dvbern.ebegu.api.client.OpenIdmRestService;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElement;
@@ -24,7 +42,11 @@ import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.services.AuthService;
+import ch.dvbern.ebegu.services.BenutzerService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.MandantService;
+import ch.dvbern.ebegu.services.TraegerschaftService;
 import ch.dvbern.ebegu.util.Constants;
 import com.google.gson.Gson;
 import com.sun.identity.plugin.session.SessionException;
@@ -36,19 +58,6 @@ import com.sun.identity.saml2.profile.SPACSUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.Charset;
-import java.time.LocalDateTime;
-import java.util.*;
 
 import static ch.dvbern.ebegu.api.resource.authentication.AuthResource.COOKIE_PATH;
 import static ch.dvbern.ebegu.enums.UserRole.GESUCHSTELLER;
@@ -88,7 +97,7 @@ public class FedletSamlServlet extends HttpServlet {
 	@Inject
 	private OpenIdmRestService openIdmRestService;
 
-	private static String superUserEmail;
+	private static final String superUserEmail;
 
 	static {
 		superUserEmail =  System.getProperty(EbeguConfigurationImpl.EBEGU_SUPERUSER_MAIL, "eberhard.gugler@dvbern.ch");

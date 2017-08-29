@@ -1,18 +1,5 @@
 package ch.dvbern.ebegu.dto.dataexport;
 
-import ch.dvbern.ebegu.dto.dataexport.v1.*;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.Land;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
-import javax.annotation.Nonnull;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -23,13 +10,34 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+
+import ch.dvbern.ebegu.dto.dataexport.v1.AdresseExportDTO;
+import ch.dvbern.ebegu.dto.dataexport.v1.BetreuungExportDTO;
+import ch.dvbern.ebegu.dto.dataexport.v1.GesuchstellerExportDTO;
+import ch.dvbern.ebegu.dto.dataexport.v1.InstitutionExportDTO;
+import ch.dvbern.ebegu.dto.dataexport.v1.KindExportDTO;
+import ch.dvbern.ebegu.dto.dataexport.v1.VerfuegungExportDTO;
+import ch.dvbern.ebegu.dto.dataexport.v1.VerfuegungenExportDTO;
+import ch.dvbern.ebegu.dto.dataexport.v1.ZeitabschnittExportDTO;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Land;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
 /**
  * Testing Marshalling
  */
 public class ExportDTOMarshallingTest {
 
 	@Rule
-	public TemporaryFolder folder = new TemporaryFolder();
+	public final TemporaryFolder folder = new TemporaryFolder();
 
 	@Test
 	public void testMarshalling() throws JAXBException, IOException {

@@ -11,17 +11,17 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import java.util.List;
+
 import ch.dvbern.ebegu.vorlagen.EBEGUMergeSource;
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
 
-import java.util.List;
-
 public class FinanzielleSituationEinkommensverschlechterungPrintMergeSource implements EBEGUMergeSource {
 
-	private BerechnungsgrundlagenInformationPrint berechnung;
+	private final BerechnungsgrundlagenInformationPrint berechnung;
 	private boolean isPDFLongerThanExpected = false;
 
 	/**

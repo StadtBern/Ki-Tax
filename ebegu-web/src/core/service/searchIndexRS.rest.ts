@@ -1,6 +1,7 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpService, IHttpPromise, ILogService} from 'angular';
+import {IHttpResponse, IHttpService, ILogService} from 'angular';
 import TSQuickSearchResult from '../../models/dto/TSQuickSearchResult';
+import IPromise = angular.IPromise;
 
 
 export class SearchIndexRS {
@@ -21,8 +22,8 @@ export class SearchIndexRS {
      * @param query searchstring
      * @returns {IPromise<TSQuickSearchResult>}
      */
-    quickSearch(query: string): IHttpPromise<TSQuickSearchResult> {
-        return this.http.get(this.serviceURL + 'quicksearch' + '/' + query).then((response: any) => {
+    quickSearch(query: string): IPromise<TSQuickSearchResult> {
+        return this.http.get(this.serviceURL + 'quicksearch' + '/' + query).then((response: IHttpResponse<TSQuickSearchResult>) => {
             return this.ebeguRestUtil.parseQuickSearchResult(response.data);
         });
     }
@@ -33,11 +34,10 @@ export class SearchIndexRS {
      * @param query searchstring
      * @returns {IPromise<TSQuickSearchResult>}
      */
-    globalSearch(query: string): IHttpPromise<TSQuickSearchResult> {
-        return this.http.get(this.serviceURL + 'globalsearch' + '/' + query).then((response: any) => {
+    globalSearch(query: string): IPromise<TSQuickSearchResult> {
+        return this.http.get(this.serviceURL + 'globalsearch' + '/' + query).then((response: IHttpResponse<TSQuickSearchResult>) => {
             return this.ebeguRestUtil.parseQuickSearchResult(response.data);
         });
     }
-
 }
 

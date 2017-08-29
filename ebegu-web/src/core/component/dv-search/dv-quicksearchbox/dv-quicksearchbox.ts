@@ -52,7 +52,7 @@ export class DvQuicksearchboxController {
 
     public querySearch(query: string): IPromise<Array<TSSearchResultEntry>> {
         this.searchString = query;
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<TSSearchResultEntry>>();
         this.searchIndexRS.quickSearch(query).then((quickSearchResult: TSQuickSearchResult) => {
             this.limitResultsize(quickSearchResult);
             deferred.resolve(quickSearchResult.resultEntities);
@@ -60,6 +60,7 @@ export class DvQuicksearchboxController {
             deferred.resolve([]);
             this.$log.warn('error during quicksearch');
         });
+
         return deferred.promise;
 
     }

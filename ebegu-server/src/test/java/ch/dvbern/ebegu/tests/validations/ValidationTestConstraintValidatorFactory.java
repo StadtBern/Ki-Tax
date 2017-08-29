@@ -1,13 +1,13 @@
 package ch.dvbern.ebegu.tests.validations;
 
-import ch.dvbern.ebegu.services.EbeguParameterService;
-import ch.dvbern.ebegu.tests.services.EbeguDummyParameterServiceBean;
-import ch.dvbern.ebegu.validators.CheckBetreuungspensumValidator;
-
 import javax.persistence.EntityManagerFactory;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.Validation;
+
+import ch.dvbern.ebegu.services.EbeguParameterService;
+import ch.dvbern.ebegu.tests.services.EbeguDummyParameterServiceBean;
+import ch.dvbern.ebegu.validators.CheckBetreuungspensumValidator;
 
 /**
  * This class helps us thest our ConstraintValidators without actually starting a CDI container.
@@ -16,7 +16,7 @@ import javax.validation.Validation;
  */
 public class ValidationTestConstraintValidatorFactory implements ConstraintValidatorFactory {
 
-	EntityManagerFactory entityManagerFactory;
+	final EntityManagerFactory entityManagerFactory;
 
 	public ValidationTestConstraintValidatorFactory(EntityManagerFactory entityManagerFactory) {
 		this.entityManagerFactory = entityManagerFactory;

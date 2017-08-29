@@ -142,7 +142,7 @@ export class DownloadRS {
             let href: string = this.serviceURL + '/blobdata/' + accessToken;
             if (attachment) {
                 // add MatrixParam for to download file instead of opening it inline
-                href = href + ';attachment=true;';
+                href += ';attachment=true;';
             } else {
                 myWindow.focus();
             }
