@@ -11,15 +11,15 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 23.08.2016
 */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Implementiert den {@link BerechnungsgrundlagenInformationPrint}. Diese Klasse enthält die Daten fuer die
@@ -56,7 +56,7 @@ public class BerechnungsgrundlagenInformationPrintImpl extends BriefPrintImpl im
 
 		if (fG1.getEinkommensverschlechterungInfo() != null && fG1.getEinkommensverschlechterungInfo().getEinkommensverschlechterung()) {
 			// Einkommensverschleschtereung Jahr 1
-			if (fG1.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1()) {
+			if (fG1.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1() && !fG1.getEinkommensverschlechterungInfo().getEkvBasisJahrPlus1Abgelehnt()) {
 				String einkommensverschlechterungJahr1;
 				String ereigniseintritt1 = "";
 				if (fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1() != null) {
@@ -71,7 +71,7 @@ public class BerechnungsgrundlagenInformationPrintImpl extends BriefPrintImpl im
 			}
 
 			// Einkommensverschleschtereung Jahr 2
-			if (fG1.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2()) {
+			if (fG1.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2() && !fG1.getEinkommensverschlechterungInfo().getEkvBasisJahrPlus2Abgelehnt()) {
 				String einkommensverschlechterungJahr2;
 				String ereigniseintritt2 = "";
 				if (fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2() != null) {

@@ -4,7 +4,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import EbeguUtil from '../../../utils/EbeguUtil';
-import {TSMonth, getTSMonthValues} from '../../../models/enums/TSMonth';
+import {getTSMonthValues, TSMonth} from '../../../models/enums/TSMonth';
 import TSEinkommensverschlechterungInfo from '../../../models/TSEinkommensverschlechterungInfo';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
@@ -15,11 +15,10 @@ import {TSRole} from '../../../models/enums/TSRole';
 import TSEinkommensverschlechterungInfoContainer from '../../../models/TSEinkommensverschlechterungInfoContainer';
 import EinkommensverschlechterungInfoRS from '../../service/einkommensverschlechterungInfoRS.rest';
 import * as moment from 'moment';
-import ITranslateService = angular.translate.ITranslateService;
-import IQService = angular.IQService;
-import IScope = angular.IScope;
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import IQService = angular.IQService;
+import IScope = angular.IScope;
 
 let template = require('./einkommensverschlechterungInfoView.html');
 require('./einkommensverschlechterungInfoView.less');
@@ -217,4 +216,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         return false;
     }
 
+    public isJugendamt(): boolean {
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    }
 }

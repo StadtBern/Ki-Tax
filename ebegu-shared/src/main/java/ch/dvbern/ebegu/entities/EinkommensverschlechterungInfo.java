@@ -1,8 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 
-import ch.dvbern.ebegu.util.Constants;
-import org.hibernate.envers.Audited;
+import java.time.LocalDate;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -10,7 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
+
+import ch.dvbern.ebegu.util.Constants;
+import org.hibernate.envers.Audited;
 
 /**
  * Entity für die Erfassung von Einkommensverschlechterungen für das Gesuch
@@ -64,6 +65,15 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 	@Nullable
 	@Column(nullable = true)
 	private LocalDate stichtagFuerBasisJahrPlus2;
+
+	@NotNull
+	@Column(nullable = false)
+	private Boolean ekvBasisJahrPlus1Abgelehnt = false;
+
+	@NotNull
+	@Column(nullable = false)
+	private Boolean ekvBasisJahrPlus2Abgelehnt = false;
+
 
 	public EinkommensverschlechterungInfo() {
 	}
@@ -148,6 +158,22 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 		this.gemeinsameSteuererklaerung_BjP2 = gemeinsameSteuererklaerung_BjP2;
 	}
 
+	public Boolean getEkvBasisJahrPlus1Abgelehnt() {
+		return ekvBasisJahrPlus1Abgelehnt;
+	}
+
+	public void setEkvBasisJahrPlus1Abgelehnt(Boolean ekvBasisJahrPlus1Abgelehnt) {
+		this.ekvBasisJahrPlus1Abgelehnt = ekvBasisJahrPlus1Abgelehnt;
+	}
+
+	public Boolean getEkvBasisJahrPlus2Abgelehnt() {
+		return ekvBasisJahrPlus2Abgelehnt;
+	}
+
+	public void setEkvBasisJahrPlus2Abgelehnt(Boolean ekvBasisJahrPlus2Abgelehnt) {
+		this.ekvBasisJahrPlus2Abgelehnt = ekvBasisJahrPlus2Abgelehnt;
+	}
+
 	public EinkommensverschlechterungInfo copyForMutation(EinkommensverschlechterungInfo mutation) {
 		super.copyForMutation(mutation);
 		mutation.setEinkommensverschlechterung(this.getEinkommensverschlechterung());
@@ -159,6 +185,8 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 		mutation.setGrundFuerBasisJahrPlus2(this.getGrundFuerBasisJahrPlus2());
 		mutation.setStichtagFuerBasisJahrPlus1(this.getStichtagFuerBasisJahrPlus1());
 		mutation.setStichtagFuerBasisJahrPlus2(this.getStichtagFuerBasisJahrPlus2());
+		mutation.setEkvBasisJahrPlus1Abgelehnt(this.getEkvBasisJahrPlus1Abgelehnt());
+		mutation.setEkvBasisJahrPlus2Abgelehnt(this.getEkvBasisJahrPlus2Abgelehnt());
 		return mutation;
 	}
 

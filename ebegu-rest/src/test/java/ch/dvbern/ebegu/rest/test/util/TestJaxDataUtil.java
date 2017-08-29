@@ -1,17 +1,53 @@
 package ch.dvbern.ebegu.rest.test.util;
 
-import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
-import ch.dvbern.ebegu.api.dtos.*;
-import ch.dvbern.ebegu.entities.AdresseTyp;
-import ch.dvbern.ebegu.enums.*;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.annotation.Nullable;
+
+import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
+import ch.dvbern.ebegu.api.dtos.JaxAbstractFinanzielleSituation;
+import ch.dvbern.ebegu.api.dtos.JaxAdresse;
+import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
+import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
+import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
+import ch.dvbern.ebegu.api.dtos.JaxBetreuungspensum;
+import ch.dvbern.ebegu.api.dtos.JaxBetreuungspensumContainer;
+import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterung;
+import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungInfoContainer;
+import ch.dvbern.ebegu.api.dtos.JaxErwerbspensum;
+import ch.dvbern.ebegu.api.dtos.JaxErwerbspensumContainer;
+import ch.dvbern.ebegu.api.dtos.JaxFachstelle;
+import ch.dvbern.ebegu.api.dtos.JaxFall;
+import ch.dvbern.ebegu.api.dtos.JaxGesuch;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
+import ch.dvbern.ebegu.api.dtos.JaxInstitution;
+import ch.dvbern.ebegu.api.dtos.JaxInstitutionStammdaten;
+import ch.dvbern.ebegu.api.dtos.JaxKind;
+import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.dtos.JaxMandant;
+import ch.dvbern.ebegu.api.dtos.JaxPensumFachstelle;
+import ch.dvbern.ebegu.api.dtos.JaxTraegerschaft;
+import ch.dvbern.ebegu.entities.AdresseTyp;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.Geschlecht;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
+import ch.dvbern.ebegu.enums.Kinderabzug;
+import ch.dvbern.ebegu.enums.Land;
+import ch.dvbern.ebegu.enums.Taetigkeit;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.Zuschlagsgrund;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Generiert Testdaten fuer JAX DTOs
@@ -253,6 +289,8 @@ public class TestJaxDataUtil {
 		jaxEinkommensverschlechterungInfo.setStichtagFuerBasisJahrPlus1(LocalDate.now());
 		jaxEinkommensverschlechterungInfo.setGrundFuerBasisJahrPlus1("Grund fuer basis Jahr Plus 1");
 		jaxEinkommensverschlechterungInfo.setEkvFuerBasisJahrPlus2(false);
+		jaxEinkommensverschlechterungInfo.setEkvBasisJahrPlus1Abgelehnt(Boolean.FALSE);
+		jaxEinkommensverschlechterungInfo.setEkvBasisJahrPlus2Abgelehnt(Boolean.FALSE);
 		return jaxEinkommensverschlechterungInfo;
 	}
 

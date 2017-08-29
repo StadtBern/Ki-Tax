@@ -20,8 +20,13 @@ public class FinanzDatenDTO {
 	private LocalDate datumVonBasisjahrPlus1 = null; // 1. des ausgewählten Monats. Wird auch gesetzt, wenn die EKV abgelehnt wurde!
 	private LocalDate datumVonBasisjahrPlus2 = null; // 1. des ausgewählten Monats. Wird auch gesetzt, wenn die EKV abgelehnt wurde!
 
+	// 'accepted' bedeutet, dass die EKV mehr als den Grenzwert erreicht, z.B. > 20%
 	private boolean ekv1Accepted = false;
 	private boolean ekv2Accepted = false;
+
+	// Das JA kann aber trotzdem die EKV manuell ablehnen, wenn z.B. Dokumente nicht eingereicht werden
+	private boolean ekv1Abgelehnt = false;
+	private boolean ekv2Abgelehnt = false;
 
 
 
@@ -87,5 +92,21 @@ public class FinanzDatenDTO {
 
 	public void setEkv2Accepted(boolean ekv2Accepted) {
 		this.ekv2Accepted = ekv2Accepted;
+	}
+
+	public boolean isEkv1Abgelehnt() {
+		return ekv1Abgelehnt;
+	}
+
+	public void setEkv1Abgelehnt(boolean ekv1Abgelehnt) {
+		this.ekv1Abgelehnt = ekv1Abgelehnt;
+	}
+
+	public boolean isEkv2Abgelehnt() {
+		return ekv2Abgelehnt;
+	}
+
+	public void setEkv2Abgelehnt(boolean ekv2Abgelehnt) {
+		this.ekv2Abgelehnt = ekv2Abgelehnt;
 	}
 }

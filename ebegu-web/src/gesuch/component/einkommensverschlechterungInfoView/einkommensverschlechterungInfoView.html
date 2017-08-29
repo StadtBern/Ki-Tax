@@ -95,6 +95,22 @@
                                                    class="error"></dv-error-messages>
 
                             </dv-input-container>
+
+                        </div>
+                    </div>
+
+                    <!-- Ablehnung durch JA fuer Basisjahr plus 1 -->
+                    <div class="row marginBottom20">
+                        <div class="form-group col-sm-12 dv-input-container-medium" ng-if="vm.showEkvi() && vm.showJahrPlus1()">
+                            <div class="checkbox" ng-if="vm.isJugendamt()">
+                                <md-checkbox name="ekvBasisJahrPlus1Abgelehnt"
+                                             ng-model="vm.getEinkommensverschlechterungsInfo().ekvBasisJahrPlus1Abgelehnt"
+                                             aria-label="{{'EKVI_ABLEHNEN' | translate}}"
+                                             class="input-element"
+                                             ng-disabled="vm.isGesuchReadonly()">
+                                   <span data-translate="EKVI_ABLEHNEN"></span>
+                                </md-checkbox>
+                            </div>
                             <hr class="header"/>
                         </div>
                     </div>
@@ -163,6 +179,22 @@
 
                             </dv-input-container>
 
+                        </div>
+                    </div>
+
+
+                    <!-- Ablehnung durch JA fuer Basisjahr plus 2 -->
+                    <div class="row marginBottom20">
+                        <div class="form-group col-sm-12 dv-input-container-medium" ng-if="vm.showEkvi() && vm.showJahrPlus2()">
+                            <div class="checkbox" ng-if="vm.isJugendamt()">
+                                <md-checkbox name="ekvBasisJahrPlus2Abgelehnt"
+                                             ng-model="vm.getEinkommensverschlechterungsInfo().ekvBasisJahrPlus2Abgelehnt"
+                                             aria-label="{{'EKVI_ABLEHNEN' | translate}}"
+                                             class="input-element"
+                                             ng-disabled="vm.isGesuchReadonly()">
+                                    <span data-translate="EKVI_ABLEHNEN"></span>
+                                </md-checkbox>
+                            </div>
                         </div>
                     </div>
 
