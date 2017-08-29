@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class WohnsitzAbschnittRuleTest {
 
-	WohnsitzAbschnittRule wohnsitzRule = new WohnsitzAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
+	final WohnsitzAbschnittRule wohnsitzRule = new WohnsitzAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
 
 
 	@Test
