@@ -1,5 +1,26 @@
 package ch.dvbern.ebegu.entities;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import ch.dvbern.ebegu.dto.VerfuegungsBemerkung;
 import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
@@ -13,18 +34,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 import static java.math.BigDecimal.ZERO;
 
@@ -685,6 +694,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			.append(" EP-Zuschlag GS2: ").append(zuschlagErwerbspensumGS2).append("\t")
 			.append(" BetrPensum: ").append(betreuungspensum).append("\t")
 			.append(" Anspruch: ").append(anspruchberechtigtesPensum).append("\t")
+			.append(" Restanspruch: ").append(anspruchspensumRest).append("\t")
 			.append(" BG-Pensum: ").append(getBgPensum()).append("\t")
 			.append(" Vollkosten: ").append(vollkosten).append("\t")
 			.append(" Elternbeitrag: ").append(elternbeitrag).append("\t")

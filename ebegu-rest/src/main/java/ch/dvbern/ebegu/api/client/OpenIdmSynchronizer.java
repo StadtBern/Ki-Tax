@@ -1,18 +1,17 @@
 package ch.dvbern.ebegu.api.client;
 
 
-import ch.dvbern.ebegu.api.resource.InstitutionResource;
-import ch.dvbern.ebegu.api.resource.TraegerschaftResource;
-import ch.dvbern.ebegu.enums.UserRoleName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.PostConstruct;
 import javax.annotation.security.RunAs;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.inject.Inject;
+
+import ch.dvbern.ebegu.api.resource.InstitutionResource;
+import ch.dvbern.ebegu.api.resource.TraegerschaftResource;
+import ch.dvbern.ebegu.enums.UserRoleName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class synchronizes traegerschaften and institution with iam on server startup
@@ -29,19 +28,6 @@ public class OpenIdmSynchronizer {
 
 	@Inject
 	private InstitutionResource institutionResource;
-
-
-//	@Resource
-//	private TimerService timerService;
-
-	@PostConstruct
-	public void startControlBeans() {
-//  Habe das noch kurz mit Fraenzi besprochen und wir sehen den Nutzen des automatischen austauschs nicht ganz
-//  Lasse die Klase aber mal hier falls wir es spaeter doch brauchen
-// 	workaround for bug that prevens runAs to work on @Singleton or @Startup
-// @see https://issues.jboss.org/browse/WFLY-981 and  https://developer.jboss.org/thread/175108
-//		timerService.createTimer(5 * 1000, "");
-	}
 
 
 	@Timeout
