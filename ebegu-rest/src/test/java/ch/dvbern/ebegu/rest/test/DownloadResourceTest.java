@@ -98,7 +98,7 @@ public class DownloadResourceTest extends AbstractEbeguRestLoginTest {
 		UriInfo uri = new ResteasyUriInfo("uri", "query", "path");
 
 		final Response dokumentResponse = downloadResource
-			.getFinSitDokumentAccessTokenGeneratedDokument(new JaxId(gesuch.getId()),  true, request, uri);
+			.getFinSitDokumentAccessTokenGeneratedDokument(new JaxId(gesuch.getId()),  request, uri);
 
 		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.FINANZIELLE_SITUATION);
 	}
