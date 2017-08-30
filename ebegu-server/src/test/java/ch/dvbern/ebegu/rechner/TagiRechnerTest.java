@@ -1,21 +1,21 @@
 package ch.dvbern.ebegu.rechner;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Month;
+
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.Month;
 
 /**
  * Testet den Tagi-Rechner
  */
 public class TagiRechnerTest extends AbstractBGRechnerTest {
 
-	private BGRechnerParameterDTO parameterDTO = getParameter();
-	private TagiRechner tagiRechner = new TagiRechner();
+	private final BGRechnerParameterDTO parameterDTO = getParameter();
+	private final TagiRechner tagiRechner = new TagiRechner();
 
 	@Test
 	public void testEinTagHohesEinkommenAnspruch15() {

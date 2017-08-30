@@ -73,7 +73,7 @@ export function readDummyLoginEnabled(applicationPropertyRS: ApplicationProperty
             }
             return response;
         }).catch(() => {
-            let deferred = $q.defer();
+            let deferred = $q.defer<boolean>();
             deferred.resolve(undefined);
             $state.go('login');
             return deferred.promise;

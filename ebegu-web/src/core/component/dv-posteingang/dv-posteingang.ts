@@ -49,9 +49,10 @@ export class DvPosteingangController {
     private getAmountNewMitteilungen(): void {
         this.mitteilungRS.getAmountMitteilungenForCurrentBenutzer().then((response: number) => {
             if (!response || isNaN(response)) { //wenn keine gueltige antwort
-                response = 0;
+                this.amountMitteilungen = 0;
+            } else {
+                this.amountMitteilungen = response;
             }
-            this.amountMitteilungen = response;
         }).catch((err) => {
             //Fehler bei deisem request (notokenrefresh )werden bis hier ohne Behandlung
             // (unerwarteter Fehler anzeige, redirect etc.) weitergeschlauft

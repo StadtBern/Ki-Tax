@@ -31,7 +31,7 @@ public class BetreuungsgutscheinConfigurator {
 
 	private final DateRange defaultGueltigkeit = Constants.DEFAULT_GUELTIGKEIT;
 
-	private List<Rule> rules = new LinkedList<>();
+	private final List<Rule> rules = new LinkedList<>();
 
 	public List<Rule> configureRulesForMandant(@Nullable Mandant mandant, @Nonnull Map<EbeguParameterKey, EbeguParameter> ebeguRuleParameter) {
 		useBernerRules(ebeguRuleParameter);

@@ -17,7 +17,7 @@ import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
  */
 public class NichteintretenPrintImpl extends BriefPrintImpl implements NichteintretenPrint {
 
-	private Betreuung betreuung;
+	private final Betreuung betreuung;
 
 	public NichteintretenPrintImpl(Betreuung betreuung) {
 
