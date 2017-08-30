@@ -1,5 +1,11 @@
 package ch.dvbern.ebegu.tests;
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.Erwerbspensum;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -17,11 +23,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Optional;
-
 /**
  * Test fuer Erwerbspensum Service
  */
@@ -38,7 +39,7 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguLoginTest {
 	private InstitutionService instService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 
 	@Test

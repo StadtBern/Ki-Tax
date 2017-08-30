@@ -167,7 +167,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	private InstitutionService institutionService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private ZahlungService zahlungService;

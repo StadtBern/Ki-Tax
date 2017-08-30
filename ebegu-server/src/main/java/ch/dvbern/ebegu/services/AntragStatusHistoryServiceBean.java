@@ -57,7 +57,7 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 	private static final Logger LOG = LoggerFactory.getLogger(AntragStatusHistoryServiceBean.class.getSimpleName());
 
 	@Inject
-	private Persistence<AntragStatusHistory> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private BenutzerService benutzerService;

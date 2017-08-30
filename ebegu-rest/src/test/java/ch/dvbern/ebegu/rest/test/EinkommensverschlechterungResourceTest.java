@@ -39,7 +39,7 @@ public class EinkommensverschlechterungResourceTest extends AbstractEbeguRestLog
 	@Inject
 	private JaxBConverter converter;
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 	private final UriInfo uri = new ResteasyUriInfo("test", "test", "test");
 

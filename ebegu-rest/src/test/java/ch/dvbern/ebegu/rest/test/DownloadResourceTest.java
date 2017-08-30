@@ -1,5 +1,17 @@
 package ch.dvbern.ebegu.rest.test;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Collection;
+
+import javax.activation.MimeTypeParseException;
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.resource.DownloadResource;
@@ -22,22 +34,12 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.resteasy.spi.ResteasyUriInfo;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.activation.MimeTypeParseException;
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.Collection;
-
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 
 /**
  * Testet BetreuungResource
@@ -52,7 +54,7 @@ public class DownloadResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private InstitutionService instService;
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private CriteriaQueryHelper queryHelper;
 	@Inject

@@ -29,7 +29,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class AdresseServiceBean extends AbstractBaseService implements AdresseService {
 
 	@Inject
-	private Persistence<Adresse> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;

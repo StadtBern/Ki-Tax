@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.rest.test;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
-import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
@@ -37,7 +36,7 @@ public class NeedleTest {
 
 	@InjectIntoMany
 	@ObjectUnderTest
-	private final Persistence<Adresse> persistence = new PersistenceService<>();
+	private final Persistence persistence = new PersistenceService();
 
 	@InjectIntoMany
 	@ObjectUnderTest
