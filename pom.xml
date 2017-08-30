@@ -590,6 +590,10 @@
             <groupId>ch.dvbern.oss.datehelper</groupId>
             <artifactId>date-helper</artifactId>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>ch.dvbern.lib</groupId>-->
+            <!--<artifactId>dvbern-lib-date</artifactId>-->
+        <!--</dependency>-->
         <!-- Scope: test -->
         <dependency>
             <groupId>org.slf4j</groupId>

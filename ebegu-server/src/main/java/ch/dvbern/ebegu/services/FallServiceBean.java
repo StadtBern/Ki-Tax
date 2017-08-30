@@ -18,6 +18,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import javax.validation.constraints.NotNull;
+
 import java.util.*;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.*;
@@ -182,6 +184,14 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		}
 		return Optional.ofNullable(emailToReturn);
 
+	}
+
+	@Override
+	public boolean hasFallAnyMitteilung(@NotNull String fallID) {
+		final Optional<Fall> fallOpt = findFall(fallID);
+		final Fall fall = fallOpt.orElseThrow(() -> new EbeguEntityNotFoundException("hasFallAnyMitteilung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallID));
+		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForCurrentRolle(fall);
+		return !mitteilungenForCurrentRolle.isEmpty();
 	}
 
 	private String readBesitzerEmailForFall(String fallID) {

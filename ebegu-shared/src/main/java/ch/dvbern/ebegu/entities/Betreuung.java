@@ -442,4 +442,9 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	public String getOwningGesuchId() {
 		return extractGesuch().getId();
 	}
+
+	@Override
+	public String getOwningFallId() {
+		return extractGesuch().getFall().getId();
+	}
 }
