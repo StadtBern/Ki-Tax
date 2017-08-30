@@ -56,7 +56,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZahlungServiceBean.class.getSimpleName());
 
 	@Inject
-	private Persistence<Zahlungsauftrag> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;

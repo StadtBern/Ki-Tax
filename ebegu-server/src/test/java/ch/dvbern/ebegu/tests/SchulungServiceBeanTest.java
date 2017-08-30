@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.Mandant;
@@ -64,7 +63,7 @@ public class SchulungServiceBeanTest extends AbstractEbeguLoginTest {
 	private MandantService mandantService;
 
 	@Inject
-	private Persistence<AbstractEntity> persistence;
+	private Persistence persistence;
 
 
 	@Test

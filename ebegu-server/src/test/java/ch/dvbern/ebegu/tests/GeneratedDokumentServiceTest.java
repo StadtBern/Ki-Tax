@@ -35,7 +35,7 @@ public class GeneratedDokumentServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private InstitutionService instService;
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 
 	@Test

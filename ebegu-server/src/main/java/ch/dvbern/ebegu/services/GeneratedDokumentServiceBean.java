@@ -80,7 +80,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeneratedDokumentServiceBean.class.getSimpleName());
 
 	@Inject
-	private Persistence<GeneratedDokument> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private FileSaverService fileSaverService;

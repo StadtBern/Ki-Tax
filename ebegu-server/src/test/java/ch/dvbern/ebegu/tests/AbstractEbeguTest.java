@@ -68,7 +68,7 @@ public abstract class AbstractEbeguTest {
 	private TraegerschaftService traegerschaftService;
 
 	@Inject
-	private Persistence<?> persistence;
+	private Persistence persistence;
 
 	@Rule
 	public UnitTestTempFolder unitTestTempfolder = new UnitTestTempFolder();

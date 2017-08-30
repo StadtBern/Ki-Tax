@@ -1,7 +1,10 @@
 package ch.dvbern.ebegu.rest.test;
 
+import javax.inject.Inject;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+
 import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -11,10 +14,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
 
 import static ch.dvbern.ebegu.tets.util.JBossLoginContextFactory.createLoginContext;
 
@@ -29,7 +28,7 @@ public abstract class AbstractEbeguRestLoginTest extends AbstractEbeguRestTest {
 	private  LoginContext loginContext;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	private Benutzer dummyAdmin;
 
 	@Before

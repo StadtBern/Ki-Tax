@@ -1,5 +1,12 @@
 package ch.dvbern.ebegu.tests;
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.enums.AntragStatus;
@@ -16,12 +23,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Optional;
-
 /**
  * Arquillian Tests fuer die Klasse MahnungService
  */
@@ -34,7 +35,7 @@ public class MahnungServiceTest extends AbstractEbeguLoginTest {
 	private MahnungService mahnungService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 
 	@Test
