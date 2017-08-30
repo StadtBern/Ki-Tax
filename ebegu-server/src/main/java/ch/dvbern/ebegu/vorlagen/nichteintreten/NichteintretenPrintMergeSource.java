@@ -1,12 +1,12 @@
 package ch.dvbern.ebegu.vorlagen.nichteintreten;
 
+import java.util.List;
+
 import ch.dvbern.ebegu.vorlagen.EBEGUMergeSource;
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
-
-import java.util.List;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class NichteintretenPrintMergeSource implements EBEGUMergeSource {
 
-	private NichteintretenPrint nichteintreten;
+	private final NichteintretenPrint nichteintreten;
 	private boolean isPDFLongerThanExpected = false;
 
 	public NichteintretenPrintMergeSource(NichteintretenPrint nichteintreten) {

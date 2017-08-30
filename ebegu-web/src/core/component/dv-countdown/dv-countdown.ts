@@ -60,7 +60,11 @@ export class DvCountdownController {
     }
 
     public decrease() {
-        this.timer.asMilliseconds() <= 0 ? this.stopTimer() : this.timer = moment.duration(this.timer.asSeconds() - 1, 'seconds');
+        if (this.timer.asMilliseconds() <= 0) {
+            this.stopTimer();
+        } else {
+            this.timer = moment.duration(this.timer.asSeconds() - 1, 'seconds');
+        }
     }
 
     //Fuer Testzwecke hier auf 5 setzen, ab dann erscheint der Countdown

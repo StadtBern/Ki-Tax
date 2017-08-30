@@ -148,19 +148,19 @@
                 <version>2.4</version>
             </dependency>
             <dependency>
-                <groupId>ch.dvbern.lib</groupId>
-                <artifactId>dvbern-lib-date</artifactId>
-                <version>1.5.0</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.dvbern.oss.lib.beanvalidation</groupId>
-                <artifactId>lib-beanvalidation</artifactId>
+                <groupId>ch.dvbern.oss.datehelper</groupId>
+                <artifactId>date-helper</artifactId>
                 <version>1.0.2</version>
             </dependency>
             <dependency>
-                <groupId>ch.dvbern.lib.dvbern-lib-doctemplate</groupId>
+                <groupId>ch.dvbern.oss.beanvalidation</groupId>
+                <artifactId>beanvalidation</artifactId>
+                <version>1.0.8</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.dvbern.oss.doctemplate</groupId>
                 <artifactId>docx-engine</artifactId>
-                <version>1.8.11</version>
+                <version>2.4.0</version>
             </dependency>
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
@@ -327,9 +327,9 @@
                 <version>2.0.1</version>
             </dependency>
             <dependency>
-                <groupId>ch.dvbern.oss.lib.excelmerger</groupId>
-                <artifactId>dvbern-lib-excelmerger-impl</artifactId>
-                <version>2.0.0</version>
+                <groupId>ch.dvbern.oss.excelmerger</groupId>
+                <artifactId>excelmerger-impl</artifactId>
+                <version>2.0.1</version>
             </dependency>
             <dependency>
                  <groupId>commons-logging</groupId>
@@ -587,8 +587,8 @@
             <artifactId>log4j-over-slf4j</artifactId>
         </dependency>
         <dependency>
-            <groupId>ch.dvbern.lib</groupId>
-            <artifactId>dvbern-lib-date</artifactId>
+            <groupId>ch.dvbern.oss.datehelper</groupId>
+            <artifactId>date-helper</artifactId>
         </dependency>
         <!-- Scope: test -->
         <dependency>
@@ -648,6 +648,7 @@
 
 
     <profiles>
+
         <profile>
             <id>development-mode</id>
             <activation>
@@ -662,50 +663,7 @@
         </profile>
 
         <profile>
-            <!--INFO: Das funktioniert im Moment nicht da ein Nullpointer auftritt https://developer.jboss.org/message/723563-->
-            <id>arquillian-weld-ee-embedded</id>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>guava</artifactId>
-                        <version>14.0.1</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-            <dependencies>
-                <dependency>
-                    <groupId>org.jboss.spec</groupId>
-                    <artifactId>jboss-javaee-6.0</artifactId>
-                    <version>1.0.0.Final</version>
-                    <type>pom</type>
-                    <scope>provided</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.jboss.arquillian.container</groupId>
-                    <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
-                    <version>1.0.0.CR5</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.weld</groupId>
-                    <artifactId>weld-core</artifactId>
-                    <version>1.1.9.Final</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                    <version>1.6.4</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
             <id>wildfly10-embedded</id>
-
             <properties>
                 <!--embedded wird ans gleiche ort enpackt wie managed-->
                 <jbossHome>${project.build.directory}/wildfly-${version.wildfly.container}</jbossHome>
@@ -727,11 +685,8 @@
                     <version>2.0.10.Final</version>
                     <scope>test</scope>
                 </dependency>
-
             </dependencies>
-
         </profile>
-
 
         <profile>
             <activation>
@@ -741,7 +696,6 @@
                     <name>!disable-managed-wildfly</name>
                 </property>
             </activation>
-
             <id>test-wildfly-managed</id>
             <properties>
                 <jbossHome>${project.build.directory}/wildfly-${version.wildfly.container}</jbossHome>
@@ -755,19 +709,6 @@
                     <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-managed</artifactId>
                     <version>${version.wildfly-arquillian-containers}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <!-- Arquillian WildFly remote profile -->
-        <profile>
-            <id>arq-widlfly-remote</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.wildfly.arquillian</groupId>
-                    <artifactId>wildfly-arquillian-container-remote</artifactId>
-                    <version>1.1.0.Beta1</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
