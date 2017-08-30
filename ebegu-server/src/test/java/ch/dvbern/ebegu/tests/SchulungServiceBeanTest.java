@@ -34,9 +34,9 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class SchulungServiceBeanTest extends AbstractEbeguLoginTest {
 
-	private int anzahlUserSchonVorhanden = 1;
-	private int anzahlGesuchsteller = 16;
-	private int anzahlInstitutionsBenutzer = 2;
+	private final int anzahlUserSchonVorhanden = 1;
+	private final int anzahlGesuchsteller = 16;
+	private final int anzahlInstitutionsBenutzer = 2;
 
 	@Inject
 	private SchulungService schulungService;

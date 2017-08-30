@@ -57,7 +57,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-	private EbeguParameterKey PARAM_KEY = EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA;
+	private final EbeguParameterKey PARAM_KEY = EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA;
 
 
 

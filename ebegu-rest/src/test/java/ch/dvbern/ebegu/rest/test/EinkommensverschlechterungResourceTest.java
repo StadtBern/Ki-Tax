@@ -41,7 +41,7 @@ public class EinkommensverschlechterungResourceTest extends AbstractEbeguRestLog
 	@Inject
 	private Persistence persistence;
 
-	private UriInfo uri = new ResteasyUriInfo("test", "test", "test");
+	private final UriInfo uri = new ResteasyUriInfo("test", "test", "test");
 
 	@Test
 	public void createAndFindEinkommensverschlechterungsContainerTest() throws EbeguException {

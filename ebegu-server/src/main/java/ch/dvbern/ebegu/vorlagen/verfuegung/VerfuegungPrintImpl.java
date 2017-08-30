@@ -38,10 +38,10 @@ import org.apache.commons.lang.StringUtils;
  */
 public class VerfuegungPrintImpl extends BriefPrintImpl implements VerfuegungPrint {
 
-	private Betreuung betreuung;
+	private final Betreuung betreuung;
 
 	//formatiert
-	private String letzteVerfuegungDatum;
+	private final String letzteVerfuegungDatum;
 
 	/**
 	 * @param betreuung
