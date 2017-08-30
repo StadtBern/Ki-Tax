@@ -73,7 +73,7 @@
         </dependency>
 
         <dependency>
-            <groupId>ch.dvbern.lib.dvbern-lib-doctemplate</groupId>
+            <groupId>ch.dvbern.oss.doctemplate</groupId>
             <artifactId>docx-engine</artifactId>
         </dependency>
         <dependency>
