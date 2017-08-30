@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
@@ -43,6 +44,7 @@ import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.testfaelle.AbstractASIVTestfall;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
@@ -110,6 +112,8 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	private WizardStepService wizardStepService;
 	@Inject
 	private VerfuegungService verfuegungService;
+	@Inject
+	private GeneratedDokumentService genDokServiceBean;
 
 	@Override
 	@Nonnull
@@ -511,9 +515,21 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			verfuegungService.calculateVerfuegung(gesuch);
 			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId(), Betreuungsstatus.VERFUEGT)));
 			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.generateVerfuegungDokument(betreuung)));
+			generateDokFinSituation(gesuch); // the finSit document must be explicitly generated
 			gesuchService.postGesuchVerfuegen(gesuch);
 		}
 		wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.VERFUEGEN);
+	}
+
+	/**
+	 * Creates the document for the finanzielle Situation.
+	 */
+	private void generateDokFinSituation(@Nonnull Gesuch gesuch) {
+		try {
+			genDokServiceBean.getFinSitDokumentAccessTokenGeneratedDokument(gesuch, true);
+		} catch (MimeTypeParseException | MergeDocException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void saveVerfuegungen(@Nonnull Gesuch gesuch, @Nonnull List<WizardStep> wizardStepsFromGesuch) {

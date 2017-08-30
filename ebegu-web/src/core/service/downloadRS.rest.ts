@@ -38,8 +38,8 @@ export class DownloadRS {
             });
     }
 
-    public getFinSitDokumentAccessTokenGeneratedDokument(gesuchId: string, forceCreation: boolean): IPromise<TSDownloadFile> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/FINANZIELLE_SITUATION/' + forceCreation + '/generated')
+    public getFinSitDokumentAccessTokenGeneratedDokument(gesuchId: string): IPromise<TSDownloadFile> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/FINANZIELLE_SITUATION/generated')
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);

@@ -238,7 +238,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			final BetreuungsgutscheinEvaluator evaluator = initEvaluator(gesuch);
 			final Verfuegung famGroessenVerfuegung = evaluator.evaluateFamiliensituation(gesuch);
-			boolean writeProtectPDF = gesuch.getStatus().isAnyStatusOfVerfuegt() || gesuch.getStatus() == AntragStatus.VERFUEGEN;
+			boolean writeProtectPDF = forceCreation;
 			byte[] data = pdfService.generateFinanzielleSituation(gesuch, famGroessenVerfuegung, writeProtectPDF);
 			// FINANZIELLE_SITUATION in einem Zustand isAnyStatusOfVerfuegt oder Verfügen, soll das Dokument schreibgeschützt sein!
 			persistedDokument = saveGeneratedDokumentInDB(data, GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch,
