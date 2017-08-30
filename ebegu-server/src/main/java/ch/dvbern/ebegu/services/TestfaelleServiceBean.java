@@ -72,6 +72,8 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Service fuer erstellen und mutieren von Testfällen
@@ -80,6 +82,8 @@ import org.apache.commons.lang3.Validate;
 @Local(TestfaelleService.class)
 @RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
 public class TestfaelleServiceBean extends AbstractBaseService implements TestfaelleService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(TestfaelleServiceBean.class);
 
 
 	@Inject
@@ -528,7 +532,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		try {
 			genDokServiceBean.getFinSitDokumentAccessTokenGeneratedDokument(gesuch, true);
 		} catch (MimeTypeParseException | MergeDocException e) {
-			e.printStackTrace();
+			LOG.error("Dokument FinSit konnte nicht erstellt werden", e);
 		}
 	}
 
