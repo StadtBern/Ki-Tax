@@ -58,7 +58,7 @@ export class DvQuicksearchboxController {
             deferred.resolve(quickSearchResult.resultEntities);
         }).catch((ee) => {
             deferred.resolve([]);
-            this.$log.warn('error during quicksearch');
+            this.$log.warn('error during quicksearch', ee);
         });
 
         return deferred.promise;

@@ -44,5 +44,11 @@ public class JaxAbstractAntragDTO implements Serializable {
 		this.familienName = familienName;
 	}
 
+	public String getClazz() {
+		return clazz;
+	}
 
+	public void setClazz(String clazz) {
+		this.clazz = clazz;
+	}
 }

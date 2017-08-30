@@ -148,9 +148,9 @@
                 <version>2.4</version>
             </dependency>
             <dependency>
-                <groupId>ch.dvbern.lib</groupId>
-                <artifactId>dvbern-lib-date</artifactId>
-                <version>1.5.0</version>
+                <groupId>ch.dvbern.oss.datehelper</groupId>
+                <artifactId>date-helper</artifactId>
+                <version>1.0.2</version>
             </dependency>
 
             <dependency>
@@ -589,9 +589,13 @@
             <artifactId>log4j-over-slf4j</artifactId>
         </dependency>
         <dependency>
-            <groupId>ch.dvbern.lib</groupId>
-            <artifactId>dvbern-lib-date</artifactId>
+            <groupId>ch.dvbern.oss.datehelper</groupId>
+            <artifactId>date-helper</artifactId>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>ch.dvbern.lib</groupId>-->
+            <!--<artifactId>dvbern-lib-date</artifactId>-->
+        <!--</dependency>-->
         <!-- Scope: test -->
         <dependency>
             <groupId>org.slf4j</groupId>

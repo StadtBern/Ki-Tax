@@ -18,19 +18,21 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.handler.MessageContext;
 
-import ch.bern.e_gov.cra.ReturnMessage;
-import ch.bern.e_gov.e_begu.egov_002.PersonenSucheOB;
-import ch.bern.e_gov.e_begu.egov_002.PersonenSucheReq;
-import ch.bern.e_gov.e_begu.egov_002.PersonenSucheResp;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceBusinessException;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceException;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import ch.bern.e_gov.cra.ReturnMessage;
+import ch.bern.e_gov.e_begu.egov_002.PersonenSucheOB;
+import ch.bern.e_gov.e_begu.egov_002.PersonenSucheReq;
+import ch.bern.e_gov.e_begu.egov_002.PersonenSucheResp;
 
 /**
  * Diese Klasse ruft den PersonenSuche Webservice des EWK auf

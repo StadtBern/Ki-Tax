@@ -1450,9 +1450,9 @@ export default class EbeguRestUtil {
         return entry;
     }
 
-    private isFallAntragDTO(restObj: any): boolean {
-        if (restObj) {
-            return restObj.antragDTO.clazz === TSFallAntragDTO.serverClassName;
+    private isFallAntragDTO(antragRestObj: any): boolean {
+        if (antragRestObj) {
+            return antragRestObj.clazz === TSFallAntragDTO.serverClassName;
         }
         return false;
     }
