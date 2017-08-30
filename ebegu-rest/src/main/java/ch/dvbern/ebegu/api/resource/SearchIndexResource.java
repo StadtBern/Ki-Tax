@@ -1,5 +1,30 @@
 package ch.dvbern.ebegu.api.resource;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.naming.directory.SearchResult;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang3.Validate;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
@@ -7,26 +32,23 @@ import ch.dvbern.ebegu.dto.suchfilter.lucene.QuickSearchResultDTO;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.SearchEntityType;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.SearchFilter;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.SearchResultEntryDTO;
+import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.services.BooleanAuthorizer;
+import ch.dvbern.ebegu.services.FallService;
+import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.GesuchstellerService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.SearchIndexService;
 import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.ebegu.util.MonitoringUtil;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.Validate;
-
-import javax.annotation.Nonnull;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.naming.directory.SearchResult;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Path("search")
 @Stateless
@@ -47,6 +69,9 @@ public class SearchIndexResource {
 	private InstitutionService institutionService;
 
 	@Inject
+	private FallService fallService;
+
+	@Inject
 	private JaxBConverter converter;
 
 	@Inject
@@ -57,9 +82,6 @@ public class SearchIndexResource {
 
 	/**
 	 * Not used at the moment
-	 * @param searchStringParam
-	 * @param filters
-	 * @return
 	 */
 	@POST()
 	@Path("/parameterized/query/{searchString}")
@@ -116,11 +138,49 @@ public class SearchIndexResource {
 	 * original QuckSearchResultDTO will be rturned
 	 */
 	private QuickSearchResultDTO convertQuicksearchResultToDTO(QuickSearchResultDTO quickSearch) {
+		final QuickSearchResultDTO faelleWithMitteilungResults = getFaelleWithMitteilungResults(quickSearch); // muss gemacht werden bevor wir unerlaubte rausfiltern
 		List<Gesuch> allowedGesuche = filterUnreadableGesuche(quickSearch); //nur erlaubte Gesuche
 		Map<String, Gesuch> gesucheToShow = EbeguUtil.groupByFallAndSelectNewestAntrag(allowedGesuche); //nur neustes gesuch
 		QuickSearchResultDTO filteredQuickSearch = mergeAllowedGesucheWithQuickSearchResult(quickSearch, gesucheToShow);//search result anpassen so dass nur noch sichtbare Antrage drin sind und Antragdtos gesetzt sind
-		return QuickSearchResultDTO.reduceToSingleEntyPerAntrag(filteredQuickSearch); // Gesuche die in mehreren Indizes gefunden wurden auslassen so dass jedes gesuch nur 1 mal drin ist
 
+		// Add all results from the list that are not yet freigegeben but have mitteilungen
+
+		final QuickSearchResultDTO quickSearchResultDTO = QuickSearchResultDTO.reduceToSingleEntyPerAntrag
+			(filteredQuickSearch); // Gesuche die in mehreren Indizes gefunden wurden auslassen so dass jedes gesuch nur 1 mal drin ist
+
+		faelleWithMitteilungResults.getResultEntities()
+			.forEach(searchResultEntryDTO -> {
+				if (searchResultEntryDTO.getEntity() == SearchEntityType.FALL && searchResultEntryDTO.getFallID() != null) {
+					final Optional<Fall> fallOpt = fallService.findFall(searchResultEntryDTO.getFallID());
+					final Fall fall = fallOpt.orElseThrow(() -> new EbeguEntityNotFoundException
+						("convertQuicksearchResultToDTO", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, searchResultEntryDTO.getFallID()));
+					quickSearchResultDTO.addSubResultFall(searchResultEntryDTO, fall);
+				}
+			});
+
+		return quickSearchResultDTO;
+
+	}
+
+	/**
+	 * Returns a new list of those results that match in the Fall-index and that already have a Mitteilung
+	 * (but maybe no Gesuch or no Gesuch the current user may view). Later we add those as a Fall-Result
+	 * to the searchresult but only if they dont match in another index (to avoid duplicates)
+	 * Will create a list with only those results that are of type FALL and have no gesuchID. These Faelle must also
+	 * have at least one Mitteilung.
+	 */
+	private QuickSearchResultDTO getFaelleWithMitteilungResults(QuickSearchResultDTO quickSearch) {
+		return MonitoringUtil.monitor(SearchIndexResource.class, "add_faelle_withMitteilung", () -> {
+			//we remeber the results that we only found in the fall index and that had a mitteilung
+			QuickSearchResultDTO result = new QuickSearchResultDTO();
+			for (SearchResultEntryDTO searchResult : quickSearch.getResultEntities()) {
+				if (SearchEntityType.FALL == searchResult.getEntity() && searchResult.getGesuchID() == null
+					&& searchResult.getFallID() != null && fallService.hasFallAnyMitteilung(searchResult.getFallID())) {
+					result.addResult(searchResult);
+				}
+			}
+			return result;
+		});
 	}
 
 	private List<Gesuch> filterUnreadableGesuche(QuickSearchResultDTO search) {

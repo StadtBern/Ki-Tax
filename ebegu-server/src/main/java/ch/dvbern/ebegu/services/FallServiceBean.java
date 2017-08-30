@@ -41,16 +41,19 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
-import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
-import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
-import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
-import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
-import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
-import static ch.dvbern.ebegu.enums.UserRoleName.STEUERAMT;
-import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import javax.validation.constraints.NotNull;
+
+import java.util.*;
+
+import static ch.dvbern.ebegu.enums.UserRoleName.*;
 
 /**
  * Service fuer Fall
@@ -212,6 +215,14 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		}
 		return Optional.ofNullable(emailToReturn);
 
+	}
+
+	@Override
+	public boolean hasFallAnyMitteilung(@NotNull String fallID) {
+		final Optional<Fall> fallOpt = findFall(fallID);
+		final Fall fall = fallOpt.orElseThrow(() -> new EbeguEntityNotFoundException("hasFallAnyMitteilung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallID));
+		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForCurrentRolle(fall);
+		return !mitteilungenForCurrentRolle.isEmpty();
 	}
 
 	private String readBesitzerEmailForFall(String fallID) {
