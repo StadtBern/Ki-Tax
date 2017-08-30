@@ -152,13 +152,11 @@
                 <artifactId>date-helper</artifactId>
                 <version>1.0.2</version>
             </dependency>
-
             <dependency>
                 <groupId>ch.dvbern.oss.beanvalidation</groupId>
                 <artifactId>beanvalidation</artifactId>
                 <version>1.0.8</version>
             </dependency>
-
             <dependency>
                 <groupId>ch.dvbern.oss.doctemplate</groupId>
                 <artifactId>docx-engine</artifactId>
@@ -319,14 +317,14 @@
                 <version>1.7</version>
             </dependency>
             <dependency>
-                <groupId>ch.dvbern.lib</groupId>
-                <artifactId>dvbern-lib-iso20022-intf</artifactId>
-                <version>1.0.2</version>
+                <groupId>ch.dvbern.oss.iso20022</groupId>
+                <artifactId>iso20022-ch-intf</artifactId>
+                <version>2.0.1</version>
             </dependency>
             <dependency>
-                <groupId>ch.dvbern.lib</groupId>
-                <artifactId>dvbern-lib-iso20022-impl</artifactId>
-                <version>1.0.2</version>
+                <groupId>ch.dvbern.oss.iso20022</groupId>
+                <artifactId>iso20022-ch-impl</artifactId>
+                <version>2.0.1</version>
             </dependency>
             <dependency>
                 <groupId>ch.dvbern.oss.excelmerger</groupId>
