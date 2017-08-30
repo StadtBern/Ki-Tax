@@ -11,14 +11,14 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 03.10.2016
 */
 
+import java.math.BigDecimal;
+
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.Constants;
 
-import java.math.BigDecimal;
-
 public class BerechnungsblattPrintImpl implements BerechnungsblattPrint {
 
-	private VerfuegungZeitabschnitt verfuegungZeitabschnitt;
+	private final VerfuegungZeitabschnitt verfuegungZeitabschnitt;
 
 	public BerechnungsblattPrintImpl(VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		this.verfuegungZeitabschnitt = verfuegungZeitabschnitt;

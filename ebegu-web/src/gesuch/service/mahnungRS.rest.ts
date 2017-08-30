@@ -1,5 +1,5 @@
 import {IEntityRS} from '../../core/service/iEntityRS.rest';
-import {IHttpPromise, IHttpService, IPromise, ILogService} from 'angular';
+import {IHttpPromise, IHttpService, IPromise, ILogService, IHttpResponse} from 'angular';
 import TSGesuch from '../../models/TSGesuch';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSMahnung from '../../models/TSMahnung';
@@ -38,12 +38,12 @@ export default class MahnungRS implements IEntityRS {
             });
     }
 
-    public mahnlaufBeenden(gesuch: TSGesuch): IHttpPromise<TSGesuch> {
+    public mahnlaufBeenden(gesuch: TSGesuch): IPromise<TSGesuch> {
         return this.http.put(this.serviceURL + '/' + encodeURIComponent(gesuch.id), {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then((response: any) => {
+        }).then((response: IHttpResponse<TSGesuch>) => {
             this.$log.debug('PARSING gesuch REST object ', response.data);
             return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
         });

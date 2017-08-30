@@ -1,14 +1,15 @@
 package ch.dvbern.ebegu.errors;
 
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.ApplicationException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.ApplicationException;
+
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 
 /**
  * Created by imanol on 02.03.16.
@@ -19,8 +20,8 @@ public class EbeguRuntimeException extends RuntimeException {
 
 	private static final long serialVersionUID = 306424922900479199L;
 
-	private String methodName;
-	private List<Serializable> args;
+	private final String methodName;
+	private final List<Serializable> args;
 	private ErrorCodeEnum errorCodeEnum = null;
 	private String customMessage;
 
