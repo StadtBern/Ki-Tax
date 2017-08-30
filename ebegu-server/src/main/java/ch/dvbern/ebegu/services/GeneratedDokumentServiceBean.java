@@ -56,9 +56,9 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import ch.dvbern.lib.iso20022.AuszahlungDTO;
-import ch.dvbern.lib.iso20022.Pain001DTO;
-import ch.dvbern.lib.iso20022.Pain001Service;
+import ch.dvbern.oss.lib.iso20022.pain001.v00103ch02.AuszahlungDTO;
+import ch.dvbern.oss.lib.iso20022.pain001.v00103ch02.Pain001DTO;
+import ch.dvbern.oss.lib.iso20022.pain001.v00103ch02.Pain001Service;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -567,10 +567,10 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		pain001DTO.setSchuldnerName(debitorName == null ? DEF_DEBTOR_NAME : debitorName);
 		pain001DTO.setSchuldnerIBAN(debitorIban == null ? DEF_DEBTOR_IBAN : debitorIban);
 		pain001DTO.setSchuldnerBIC(debitorBic == null ? DEF_DEBTOR_BIC : debitorBic);
-		pain001DTO.setSchuldnerIBAN_gebuehren(debitorIbanGebuehren == null ? pain001DTO.getSchuldnerIBAN() : debitorIbanGebuehren);
+		pain001DTO.setSchuldnerIBANGebuehren(debitorIbanGebuehren == null ? pain001DTO.getSchuldnerIBAN() : debitorIbanGebuehren);
 		pain001DTO.setSoftwareName("Ki-Tax");
 		// we use the currentTimeMillis so that it is always different
-		pain001DTO.setMsgID("KiTax" + Long.toString(System.currentTimeMillis()));
+		pain001DTO.setMsgId("KiTax" + Long.toString(System.currentTimeMillis()));
 
 		pain001DTO.setAuszahlungen(new ArrayList<>());
 		zahlungsauftrag.getZahlungen().stream()

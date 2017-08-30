@@ -292,6 +292,11 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 	}
 
 	@Override
+	public String getOwningFallId() {
+		return null;   //leider nicht ohne serviceabfrage verfuegbar
+	}
+
+	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality
 		if (this == other) {
