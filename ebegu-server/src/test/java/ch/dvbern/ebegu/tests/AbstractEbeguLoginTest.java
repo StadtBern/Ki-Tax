@@ -7,7 +7,6 @@ import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
 import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Traegerschaft;
@@ -34,7 +33,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 	private  LoginContext loginContext;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	private Benutzer dummyAdmin;
 
 	@Inject

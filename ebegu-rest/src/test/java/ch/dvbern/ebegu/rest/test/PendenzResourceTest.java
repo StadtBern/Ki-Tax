@@ -1,5 +1,12 @@
 package ch.dvbern.ebegu.rest.test;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.resource.PendenzResource;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
@@ -17,9 +24,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.util.*;
-
 /**
  * Testet PendenzResource
  */
@@ -31,7 +35,7 @@ public class PendenzResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private PendenzResource pendenzResource;
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private JaxBConverter converter;
 

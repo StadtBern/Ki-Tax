@@ -1,5 +1,10 @@
 package ch.dvbern.ebegu.tests;
 
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.services.TraegerschaftService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -11,10 +16,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Tests fuer die Klasse TraegerschaftService
@@ -28,7 +29,7 @@ public class TraegerschaftServiceTest extends AbstractEbeguLoginTest {
 	private TraegerschaftService traegerschaftService;
 
 	@Inject
-	private Persistence<Traegerschaft> persistence;
+	private Persistence persistence;
 
 
 

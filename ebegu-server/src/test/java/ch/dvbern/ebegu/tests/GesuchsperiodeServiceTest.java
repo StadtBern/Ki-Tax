@@ -1,5 +1,10 @@
 package ch.dvbern.ebegu.tests;
 
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
@@ -13,10 +18,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Optional;
-
 /**
  * Arquillian Tests fuer die Klasse GesuchsperiodeService
  */
@@ -29,7 +30,7 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 	private GesuchsperiodeService gesuchsperiodeService;
 
 	@Inject
-	private Persistence<Gesuchsperiode> persistence;
+	private Persistence persistence;
 
 
 	@Test

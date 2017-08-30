@@ -1,5 +1,18 @@
 package ch.dvbern.ebegu.services;
 
+import java.time.LocalDate;
+
+import javax.annotation.Nonnull;
+import javax.annotation.PostConstruct;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Default;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.util.AnnotationLiteral;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.cdi.Dummy;
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
@@ -13,19 +26,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.PostConstruct;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Default;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Inject;
-import java.time.LocalDate;
-
-import static ch.dvbern.ebegu.enums.UserRoleName.*;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Service fuer die Personensuche
@@ -46,7 +49,7 @@ public class PersonenSucheServiceBean extends AbstractBaseService implements Per
 	private EbeguConfiguration config;
 
 	@Inject
-	private Persistence<Gesuchsteller> persistence;
+	private Persistence persistence;
 
 
 	@SuppressWarnings(value = {"PMD.UnusedPrivateMethod", "IfStatementWithIdenticalBranches"})

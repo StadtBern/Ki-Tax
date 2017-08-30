@@ -29,7 +29,7 @@ public class MandantServiceBean extends AbstractBaseService implements MandantSe
 	private static final Logger LOG = LoggerFactory.getLogger(MandantServiceBean.class);
 
 	@Inject
-	private Persistence<Mandant> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;

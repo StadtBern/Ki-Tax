@@ -50,7 +50,7 @@ public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRes
 	private JaxBConverter converter;
 
 	@Inject
-	private Persistence<Benutzer> persistence;
+	private Persistence persistence;
 
 
 	@Test

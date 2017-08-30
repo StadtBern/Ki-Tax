@@ -47,7 +47,7 @@ public class ExportServiceBeanTest extends AbstractEbeguLoginTest {
 	private ExportService exportService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private InstitutionService instService;
 

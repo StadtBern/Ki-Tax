@@ -36,7 +36,7 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 	private EinkommensverschlechterungInfoService evInfoService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 
 

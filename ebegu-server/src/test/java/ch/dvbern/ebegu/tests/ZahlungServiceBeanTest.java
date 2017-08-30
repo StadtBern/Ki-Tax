@@ -50,7 +50,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	private VerfuegungService verfuegungService;
 
 	@Inject
-	private Persistence<?> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;

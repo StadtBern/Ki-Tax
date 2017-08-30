@@ -36,7 +36,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class FamiliensituationServiceBean extends AbstractBaseService implements FamiliensituationService {
 
 	@Inject
-	private Persistence<FamiliensituationContainer> persistence;
+	private Persistence persistence;
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 	@Inject
