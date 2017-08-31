@@ -2,15 +2,32 @@ package ch.dvbern.ebegu.entities;
 
 import java.util.Objects;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.bridge.builtin.LongBridge;
-
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.bridge.builtin.LongBridge;
+
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
+import ch.dvbern.ebegu.util.Constants;
 
 /**
  * Entitaet zum Speichern von Fall in der Datenbank.
@@ -29,7 +46,9 @@ import javax.validation.constraints.NotNull;
 		@Index(name = "IX_fall_mandant", columnList = "mandant_id")
 	}
 )
-public class Fall extends AbstractEntity implements HasMandant {
+@Indexed
+@Analyzer(impl = EBEGUGermanAnalyzer.class)
+public class Fall extends AbstractEntity implements HasMandant, Searchable {
 
 	private static final long serialVersionUID = -9154456879261811678L;
 
@@ -47,6 +66,7 @@ public class Fall extends AbstractEntity implements HasMandant {
 	@Nullable
 	@ManyToOne(optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_fall_besitzer_id"))
+	@IndexedEmbedded
 	private Benutzer besitzer = null; // Erfassender (im IAM eingeloggter) Gesuchsteller
 
 	/**
@@ -121,5 +141,40 @@ public class Fall extends AbstractEntity implements HasMandant {
 		}
 		final Fall otherFall = (Fall) other;
 		return Objects.equals(getFallNummer(), otherFall.getFallNummer());
+	}
+
+	@Transient
+	public String getPaddedFallnummer(){
+		return StringUtils.leftPad(String.valueOf(this.getFallNummer()), Constants.FALLNUMMER_LENGTH, '0');
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultId() {
+		return getId();
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultSummary() {
+		return getPaddedFallnummer();
+	}
+
+	@Nullable
+	@Override
+	public String getSearchResultAdditionalInformation() {
+		return toString();
+	}
+
+	@Nullable
+	@Override
+	public String getOwningGesuchId() {
+		//haben wir hier nicht da der Fall nicht zu einem Gesuch gehoert
+		return null;
+	}
+
+	@Override
+	public String getOwningFallId() {
+		return getId();
 	}
 }

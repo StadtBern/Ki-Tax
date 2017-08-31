@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 @Stateless
 @Local(AdministrationService.class)
 @RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "ConstantConditions" })
 public class AdministrationServiceBean extends AbstractBaseService implements AdministrationService {
 
 
@@ -373,6 +373,7 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 		return sb.toString();
 	}
 
+	@Nullable
 	private String readString(Row row, int columnIndex) {
 		Cell cell = row.getCell(columnIndex);
 		if (cell != null) {
@@ -383,6 +384,7 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 		}
 	}
 
+	@Nullable
 	private String readDouble(Row row, int columnIndex) {
 		Cell cell = row.getCell(columnIndex);
 		if (cell != null) {

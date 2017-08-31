@@ -68,7 +68,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private static final Logger LOG = LoggerFactory.getLogger(WizardStepServiceBean.class);
 
 	@Inject
-	private Persistence<WizardStep> persistence;
+	private Persistence persistence;
 	@Inject
 	private BetreuungService betreuungService;
 	@Inject

@@ -55,7 +55,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	private GesuchService gesuchService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private BenutzerService benutzerService;
 	@Inject

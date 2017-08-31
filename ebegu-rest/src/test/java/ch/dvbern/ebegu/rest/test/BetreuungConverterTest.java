@@ -25,7 +25,7 @@ public class BetreuungConverterTest extends AbstractEbeguRestLoginTest {
 
 
 	@Inject
-	private Persistence<Betreuung> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private JaxBConverter converter;

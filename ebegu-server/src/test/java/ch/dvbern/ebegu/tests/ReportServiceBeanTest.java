@@ -54,7 +54,7 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	private ReportService reportService;
 
 	@Inject
-	private Persistence<?> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private InstitutionService institutionService;

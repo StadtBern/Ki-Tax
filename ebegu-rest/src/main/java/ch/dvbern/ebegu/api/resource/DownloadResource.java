@@ -31,7 +31,6 @@ import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxMahnung;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.FileMetadata;
@@ -101,7 +100,7 @@ public class DownloadResource {
 	private GeneratedDokumentService generatedDokumentService;
 
 	@Inject
-	private Persistence<AbstractEntity> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private EbeguVorlageService ebeguVorlageService;
