@@ -5,13 +5,12 @@ import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import WizardStepManager from '../service/wizardStepManager';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
-import IPromise = angular.IPromise;
-import IRootScopeService = angular.IRootScopeService;
 import TSExceptionReport from '../../models/TSExceptionReport';
-import IFormController = angular.IFormController;
-import IScope = angular.IScope;
 import {TSMessageEvent} from '../../models/enums/TSErrorEvent';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
+import IPromise = angular.IPromise;
+import IFormController = angular.IFormController;
+import IScope = angular.IScope;
 
 export default class AbstractGesuchViewController<T> {
 
@@ -59,18 +58,18 @@ export default class AbstractGesuchViewController<T> {
      */
     public isGesuchValid(): boolean {
         if (!this.form.$valid) {
-            let firstInvalid = angular.element('form .ng-invalid').first();
-            if (firstInvalid) {
-                if (firstInvalid.get(0).tagName === 'DIV') { // sollten wir in einem div sein, suchen wir den ersten subelement, das fehlt
-                    firstInvalid = firstInvalid.find('.ng-invalid').first();
-                }
-                if (firstInvalid.get(0).tagName !== 'INPUT') { // Fuer alle Elemente die kein INPUT sind, muessen wir den tabindex setzen, damit focus() funktioniert
-                    firstInvalid.attr('tabindex', -1).focus();
-                } else {
-                    firstInvalid.focus();
-                }
-
-            }
+            let firstInvalid = angular.element('md-radio-group.ng-invalid, .ng-invalid>input[type="text"],input[type="text"].ng-invalid').first().addClass('test').focus();
+            // if (firstInvalid) {
+            //     if (firstInvalid.get(0).tagName === 'DIV') { // sollten wir in einem div sein, suchen wir den ersten subelement, das fehlt
+            //         firstInvalid = firstInvalid.find('.ng-invalid').first();
+            //     }
+            //     if (firstInvalid.get(0).tagName !== 'INPUT') { // Fuer alle Elemente die kein INPUT sind, muessen wir den tabindex setzen, damit focus() funktioniert
+            //         firstInvalid.attr('tabindex', -1).focus();
+            //     } else {
+            //         firstInvalid.focus();
+            //     }
+            //
+            // }
         }
         return this.form.$valid;
     }
@@ -132,5 +131,13 @@ export default class AbstractGesuchViewController<T> {
             return this.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName();
         }
         return '';
+    }
+
+    public selectFirst(): void {
+        angular.element('md-radio-group,input,form button,select').first().focus();
+    }
+
+    $postLink() {
+       // this.selectFirst();
     }
 }

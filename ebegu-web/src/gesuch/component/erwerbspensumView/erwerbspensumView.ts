@@ -1,14 +1,10 @@
-import {IComponentOptions, IQService, IPromise, IScope} from 'angular';
+import {IComponentOptions, IPromise, IQService, IScope, ITimeoutService} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IErwerbspensumStateParams} from '../../gesuch.route';
 import TSErwerbspensumContainer from '../../../models/TSErwerbspensumContainer';
-import {TSTaetigkeit, getTSTaetigkeit} from '../../../models/enums/TSTaetigkeit';
-import {
-    TSZuschlagsgrund,
-    getTSZuschlagsgruendeForGS,
-    getTSZuschlagsgrunde
-} from '../../../models/enums/TSZuschlagsgrund';
+import {getTSTaetigkeit, TSTaetigkeit} from '../../../models/enums/TSTaetigkeit';
+import {getTSZuschlagsgruendeForGS, getTSZuschlagsgrunde, TSZuschlagsgrund} from '../../../models/enums/TSZuschlagsgrund';
 import TSErwerbspensum from '../../../models/TSErwerbspensum';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
@@ -23,14 +19,14 @@ import GlobalCacheService from '../../service/globalCacheService';
 import {EbeguParameterRS} from '../../../admin/service/ebeguParameterRS.rest';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import ITranslateService = angular.translate.ITranslateService;
+
 let template: string = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
-
 
 export class ErwerbspensumViewComponentConfig implements IComponentOptions {
     transclude: boolean;
     bindings: any;
-    template: string ;
+    template: string;
     controller: any;
     controllerAs: string;
 
@@ -43,7 +39,6 @@ export class ErwerbspensumViewComponentConfig implements IComponentOptions {
     }
 }
 
-
 export class ErwerbspensumViewController extends AbstractGesuchViewController<TSErwerbspensumContainer> {
 
     gesuchsteller: TSGesuchstellerContainer;
@@ -51,12 +46,14 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
     maxZuschlagsprozent: number = 100;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager',
-        'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS', 'WizardStepManager', '$q', '$translate', 'EbeguParameterRS', 'GlobalCacheService'];
+        'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS', 'WizardStepManager', '$q', '$translate', 'EbeguParameterRS', 'GlobalCacheService', '$timeout'];
+
     /* @ngInject */
     constructor($stateParams: IErwerbspensumStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, $scope: IScope, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $q: IQService,
-                private $translate: ITranslateService, private ebeguParameterRS: EbeguParameterRS, private globalCacheService: GlobalCacheService) {
+                private $translate: ITranslateService, private ebeguParameterRS: EbeguParameterRS, private globalCacheService: GlobalCacheService,
+                private $timeout: ITimeoutService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ERWERBSPENSUM);
         this.patternPercentage = this.CONSTANTS.PATTERN_PERCENTAGE;
         this.gesuchModelManager.setGesuchstellerNumber(parseInt($stateParams.gesuchstellerNumber));
@@ -173,6 +170,12 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
     public getZuschlagHelpText(): string {
         return this.$translate.instant('ZUSCHLAGSGRUND_HELP', {
             maxzuschlag: this.maxZuschlagsprozent
+        });
+    }
+
+    $postLink() {
+        this.$timeout(() => {
+            //this.selectFirst();
         });
     }
 }
