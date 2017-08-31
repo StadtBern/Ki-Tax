@@ -48,13 +48,13 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	private static final int ANZAHL_BETREUUNGEN = 17; // Davon 1 nicht verfuegt
 
 	@Rule
-	public UnitTestTempFolder unitTestTempfolder = new UnitTestTempFolder();
+	public final UnitTestTempFolder unitTestTempfolder = new UnitTestTempFolder();
 
 	@Inject
 	private ReportService reportService;
 
 	@Inject
-	private Persistence<?> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private InstitutionService institutionService;

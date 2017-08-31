@@ -17,6 +17,13 @@
  */
 package ch.dvbern.ebegu.tests;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
@@ -33,12 +40,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.Collection;
-import java.util.Optional;
-
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_FIXBETRAG_STADT_PRO_TAG_KITA;
 
 
@@ -54,9 +55,9 @@ public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 	private EbeguParameterService parameterService;
 
 	@Inject
-	private Persistence<EbeguParameter> persistence;
+	private Persistence persistence;
 
-	private EbeguParameterKey PARAM_KEY = EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA;
+	private final EbeguParameterKey PARAM_KEY = EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA;
 
 
 

@@ -14,7 +14,10 @@ public enum IndexedEBEGUFieldName {
 	KIND_NACHNAME("kindJA.vorname"),
 	KIND_GEBDATUM("kindJA.geburtsdatum", true),
 	BETREUUNG_BGNR("bGNummer"),
-	FALL_NUMMER("fall.fallNummer");
+	GESUCH_FALL_NUMMER("fall.fallNummer"),
+	FALL_BESITZER_NAME("besitzer.nachname"),
+	FALL_BESITZER_VORNAME("besitzer.vorname"),
+	FALL_NUMMER("fallNummer");
 
 
 	private final String indexedFieldName;

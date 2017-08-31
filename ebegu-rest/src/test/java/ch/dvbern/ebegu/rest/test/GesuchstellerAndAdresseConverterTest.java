@@ -30,7 +30,7 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestLogin
 
 
 	@Inject
-	private Persistence<Gesuchsteller> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private JaxBConverter converter;

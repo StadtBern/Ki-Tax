@@ -28,7 +28,7 @@ public class GesuchstellerAdresseServiceBeanTest extends AbstractEbeguLoginTest 
 	private GesuchstellerAdresseService adresseService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 
 

@@ -50,7 +50,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class GesuchstellerAdresseServiceBean extends AbstractBaseService implements GesuchstellerAdresseService {
 
 	@Inject
-	private Persistence<GesuchstellerAdresseContainer> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;

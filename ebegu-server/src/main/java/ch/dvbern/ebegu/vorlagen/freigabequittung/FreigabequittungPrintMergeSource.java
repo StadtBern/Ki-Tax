@@ -1,13 +1,13 @@
 package ch.dvbern.ebegu.vorlagen.freigabequittung;
 
+import java.io.IOException;
+import java.util.List;
+
 import ch.dvbern.ebegu.vorlagen.EBEGUMergeSource;
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -23,7 +23,7 @@ import java.util.List;
 public class FreigabequittungPrintMergeSource implements EBEGUMergeSource {
 
 	private boolean isPDFLongerThanExpected = false;
-	private FreigabequittungPrint quittung;
+	private final FreigabequittungPrint quittung;
 
 	public FreigabequittungPrintMergeSource(FreigabequittungPrint quittung) {
 		this.quittung = quittung;

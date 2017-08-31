@@ -11,7 +11,7 @@
     "rimraf": "rimraf",
     "tslint": "tslint --config tslint.json --project src/tsconfig.json",
     "typedoc": "typedoc",
-    "webpack": "webpack",
+    "webpack": "webpack --display-error-details",
     "webpack-dev-server": "webpack-dev-server",
     "webdriver-manager": "webdriver-manager",
     "protractor": "protractor",

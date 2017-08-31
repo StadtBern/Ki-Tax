@@ -1,15 +1,23 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
-import ch.dvbern.ebegu.enums.Zustelladresse;
-import ch.dvbern.ebegu.errors.MergeDocException;
+import java.io.IOException;
+import java.util.Collection;
 
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
-import java.util.Collection;
+
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.GeneratedDokument;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Mahnung;
+import ch.dvbern.ebegu.entities.Pain001Dokument;
+import ch.dvbern.ebegu.entities.WriteProtectedDokument;
+import ch.dvbern.ebegu.entities.Zahlungsauftrag;
+import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
+import ch.dvbern.ebegu.enums.Zustelladresse;
+import ch.dvbern.ebegu.errors.MergeDocException;
 
 /**
  * Service zum Verwalten von GeneratedDokumenten
@@ -19,17 +27,14 @@ public interface GeneratedDokumentService {
 
 	/**
 	 * Erstellt ein neues GeneratedDokument wenn es noch nicht existiert und sonst aktualisiert das Bestehende
-	 *
-	 * @param dokument
-	 * @return
 	 */
 	@Nonnull
 	WriteProtectedDokument saveDokument(@Nonnull WriteProtectedDokument dokument);
 
 	@Nullable
-	WriteProtectedDokument findGeneratedDokument(String gesuchId, String filename, String path);
+	WriteProtectedDokument findGeneratedDokument(String gesuchId, String filename);
 
-	Pain001Dokument findPain001Dokument(String zahlungsauftragId, String filename, String path);
+	Pain001Dokument findPain001Dokument(String zahlungsauftragId, String filename);
 
 	@Nonnull
 	WriteProtectedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, AbstractEntity entity, String fileName, boolean writeProtected) throws MimeTypeParseException;
@@ -37,8 +42,7 @@ public interface GeneratedDokumentService {
 	WriteProtectedDokument getFinSitDokumentAccessTokenGeneratedDokument(Gesuch gesuch,
 																	Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
 
-	WriteProtectedDokument getBegleitschreibenDokument(Gesuch gesuch,
-												  Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
+	WriteProtectedDokument getBegleitschreibenDokument(Gesuch gesuch) throws MimeTypeParseException, MergeDocException;
 
 	WriteProtectedDokument getFreigabequittungAccessTokenGeneratedDokument(Gesuch gesuch,
 																	  Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException;

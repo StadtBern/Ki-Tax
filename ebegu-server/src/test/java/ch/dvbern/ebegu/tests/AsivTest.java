@@ -1,10 +1,38 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
-import ch.dvbern.ebegu.services.*;
-import ch.dvbern.ebegu.testfaelle.*;
+import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.GesuchsperiodeService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.InstitutionStammdatenService;
+import ch.dvbern.ebegu.services.TestfaelleService;
+import ch.dvbern.ebegu.services.TraegerschaftService;
+import ch.dvbern.ebegu.services.VerfuegungService;
+import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_01;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_02;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_03;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_04;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_05;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_06;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_07;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_08;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_09;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_10;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
@@ -15,13 +43,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Tests fuer die ASIV Revision
@@ -45,7 +66,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 	private VerfuegungService verfuegungService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;

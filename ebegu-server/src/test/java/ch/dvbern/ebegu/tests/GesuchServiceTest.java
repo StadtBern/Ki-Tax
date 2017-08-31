@@ -55,7 +55,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	private GesuchService gesuchService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private BenutzerService benutzerService;
 	@Inject
@@ -537,6 +537,8 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertFalse(now.isAfter(eingereichtesGesuch.getFreigabeDatum()));
 		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(schulamtGesuch.getId(), WizardStepName.FREIGABE);
 		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
+
+		TestDataUtil.prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit(), persistence);
 		Benutzer schulamt = loginAsSchulamt();
 		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), schulamt.getUsername());
 		Assert.assertEquals(AntragStatus.NUR_SCHULAMT, eingelesenesGesuch.getStatus());

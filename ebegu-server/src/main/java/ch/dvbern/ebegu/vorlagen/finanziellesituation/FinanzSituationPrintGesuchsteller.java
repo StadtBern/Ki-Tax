@@ -20,10 +20,10 @@ import ch.dvbern.ebegu.entities.FinanzielleSituation;
  */
 public class FinanzSituationPrintGesuchsteller {
 
-	private FinanzielleSituation finanzielleSituation;
-	private Einkommensverschlechterung einkommensverschlechterung1;
-	private Einkommensverschlechterung einkommensverschlechterung2;
-	private EinkommensverschlechterungInfo einkommensverschlechterungInfo;
+	private final FinanzielleSituation finanzielleSituation;
+	private final Einkommensverschlechterung einkommensverschlechterung1;
+	private final Einkommensverschlechterung einkommensverschlechterung2;
+	private final EinkommensverschlechterungInfo einkommensverschlechterungInfo;
 
 	public FinanzSituationPrintGesuchsteller(FinanzielleSituation finanzielleSituation, Einkommensverschlechterung einkommensverschlechterung1,
 											 Einkommensverschlechterung einkommensverschlechterung2, EinkommensverschlechterungInfo einkommensverschlechterungInfo) {

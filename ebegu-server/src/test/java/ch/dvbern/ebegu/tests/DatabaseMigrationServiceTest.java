@@ -33,7 +33,7 @@ import org.junit.runner.RunWith;
 public class DatabaseMigrationServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private DatabaseMigrationService dbMigrationService;
 	@Inject
