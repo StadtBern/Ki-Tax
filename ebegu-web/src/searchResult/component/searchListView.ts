@@ -1,13 +1,11 @@
-import {IComponentOptions, IFilterService} from 'angular';
+import {IComponentOptions} from 'angular';
 import TSAntragDTO from '../../models/TSAntragDTO';
-import ITimeoutService = angular.ITimeoutService;
-import IPromise = angular.IPromise;
-import ILogService = angular.ILogService;
-import IQService = angular.IQService;
 import {ISearchResultateStateParams} from '../search.route';
 import TSQuickSearchResult from '../../models/dto/TSQuickSearchResult';
 import {SearchIndexRS} from '../../core/service/searchIndexRS.rest';
 import EbeguUtil from '../../utils/EbeguUtil';
+import ILogService = angular.ILogService;
+
 let template = require('./searchListView.html');
 require('./searchListView.less');
 

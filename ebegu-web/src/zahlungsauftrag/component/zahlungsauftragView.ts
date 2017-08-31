@@ -1,4 +1,4 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IHttpResponse} from 'angular';
 import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
 import EbeguUtil from '../../utils/EbeguUtil';
 import ZahlungRS from '../../core/service/zahlungRS.rest';
@@ -10,18 +10,16 @@ import {ReportRS} from '../../core/service/reportRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import * as moment from 'moment';
-import ITimeoutService = angular.ITimeoutService;
-import IPromise = angular.IPromise;
-import ILogService = angular.ILogService;
-import IQService = angular.IQService;
-import IStateService = angular.ui.IStateService;
-import IFormController = angular.IFormController;
-let template = require('./zahlungsauftragView.html');
-require('./zahlungsauftragView.less');
-import Moment = moment.Moment;
 import {DvDialog} from '../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../gesuch/dialog/RemoveDialogController';
+import IStateService = angular.ui.IStateService;
+import IFormController = angular.IFormController;
+import Moment = moment.Moment;
+let template = require('./zahlungsauftragView.html');
+require('./zahlungsauftragView.less');
+
 let removeDialogTemplate = require('../../gesuch/dialog/removeDialogTemplate.html');
+
 
 export class ZahlungsauftragViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -139,7 +137,7 @@ export class ZahlungsauftragViewController {
         })
             .then(() => {   //User confirmed removal
                 let index = EbeguUtil.getIndexOfElementwithID(zahlungsauftrag, this.zahlungsauftragen);
-                this.zahlungRS.zahlungsauftragLoeschen(zahlungsauftrag.id).then((response: TSZahlungsauftrag) => {
+                this.zahlungRS.zahlungsauftragLoeschen(zahlungsauftrag.id).then((response: IHttpResponse<TSZahlungsauftrag>) => {
                     this.zahlungsauftragen.splice(index, 1);
                 });
             });
