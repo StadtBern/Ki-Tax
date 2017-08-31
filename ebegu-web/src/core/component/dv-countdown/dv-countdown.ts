@@ -10,7 +10,6 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import * as moment from 'moment';
 import IPromise = angular.IPromise;
 import IRootScopeService = angular.IRootScopeService;
-import IScope = angular.IScope;
 let template = require('./dv-countdown.html');
 let dialogTemplate = require('../../../gesuch/dialog/okDialogTemplate.html');
 
@@ -61,7 +60,11 @@ export class DvCountdownController {
     }
 
     public decrease() {
-        this.timer.asMilliseconds() <= 0 ? this.stopTimer() : this.timer = moment.duration(this.timer.asSeconds() - 1, 'seconds');
+        if (this.timer.asMilliseconds() <= 0) {
+            this.stopTimer();
+        } else {
+            this.timer = moment.duration(this.timer.asSeconds() - 1, 'seconds');
+        }
     }
 
     //Fuer Testzwecke hier auf 5 setzen, ab dann erscheint der Countdown

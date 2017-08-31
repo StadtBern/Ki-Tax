@@ -120,7 +120,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private static final Logger LOG = LoggerFactory.getLogger(GesuchServiceBean.class.getSimpleName());
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
@@ -179,7 +179,16 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@PermitAll
 	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory, @Nullable Benutzer saveAsUser) {
-		authorizer.checkWriteAuthorization(gesuch);
+		return updateGesuch(gesuch, saveInStatusHistory, saveAsUser, true);
+	}
+
+	@Nonnull
+	@Override
+	@PermitAll
+	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory, @Nullable Benutzer saveAsUser, boolean doAuthCheck) {
+		if (doAuthCheck) {
+			authorizer.checkWriteAuthorization(gesuch);
+		}
 		Objects.requireNonNull(gesuch);
 		final Gesuch merged = persistence.merge(gesuch);
 		if (saveInStatusHistory) {
@@ -877,6 +886,18 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				gesuch.setFreigabeDatum(LocalDate.now());
 			}
 
+			// Falls es ein NUR_SCHULAMT Gesuch ist, muss hier bereits die Finanzielle Situation erstellt werden,
+			// da das Gesuch mit Einlesen der Freigabequittung als freigegeben gilt.
+			if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+				// Das Dokument der Finanziellen Situation erstellen
+				try {
+					generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(gesuch, true);
+				} catch (MimeTypeParseException | MergeDocException e) {
+					throw new EbeguRuntimeException("antragFreigeben", "FinSit-Dokument konnte nicht erstellt werden"
+						+ gesuch.getId(), e);
+				}
+			}
+
 			// Den Gesuchsstatus setzen
 			gesuch.setStatus(calculateFreigegebenStatus(gesuch));
 
@@ -964,7 +985,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			authorizer.checkWriteAuthorization(gesuch);
 			if (!isThereAnyOpenMutation(gesuch.getFall(), gesuch.getGesuchsperiode())) {
 				authorizer.checkReadAuthorization(gesuch);
-				Optional<Gesuch> gesuchForMutationOpt = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall());
+				Optional<Gesuch> gesuchForMutationOpt = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(), true);
 				Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
 				return getGesuchMutation(eingangsdatum, gesuchForMutation);
 			} else {
@@ -987,7 +1008,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		if (fall.isPresent() && gesuchsperiode.isPresent()) {
 			if (!isThereAnyOpenMutation(fall.get(), gesuchsperiode.get())) {
-				Optional<Gesuch> gesuchForMutationOpt = getNeustesVerfuegtesGesuchFuerGesuch(gesuchsperiode.get(), fall.get());
+				Optional<Gesuch> gesuchForMutationOpt = getNeustesVerfuegtesGesuchFuerGesuch(gesuchsperiode.get(), fall.get(), true);
 				Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer Fallnummer " + fallNummer));
 				return getGesuchMutation(eingangsdatum, gesuchForMutation);
 			} else {
@@ -1090,7 +1111,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Nonnull
-	private Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall) {
+	private Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall, boolean doAuthCheck) {
 		authorizer.checkReadAuthorizationFall(fall);
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
@@ -1110,7 +1131,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			return Optional.empty();
 		}
 		Gesuch gesuch = criteriaResults.get(0);
-		authorizer.checkReadAuthorization(gesuch);
+		if (doAuthCheck) {
+			authorizer.checkReadAuthorization(gesuch);
+		}
 		return Optional.of(gesuch);
 	}
 
@@ -1510,7 +1533,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
 			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
-			postGesuchVerfuegen(gesuch, false);
+			postGesuchVerfuegen(gesuch);
 		} else {
 			gesuch.setStatus(AntragStatus.VERFUEGEN);
 		}
@@ -1522,7 +1545,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isSchulamt()) {
 				betreuung.setGueltig(true);
 				if (betreuung.getVorgaengerId() != null) {
-					Optional<Betreuung> vorgaengerBetreuungOptional = betreuungService.findBetreuung(betreuung.getVorgaengerId());
+					Optional<Betreuung> vorgaengerBetreuungOptional = betreuungService.findBetreuung(betreuung.getVorgaengerId(), false);
 					vorgaengerBetreuungOptional.ifPresent(vorgaenger -> vorgaenger.setGueltig(false));
 				}
 			}
@@ -1551,21 +1574,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public void postGesuchVerfuegen(@Nonnull Gesuch gesuch) {
-		postGesuchVerfuegen(gesuch, true);
-	}
-
-	private void postGesuchVerfuegen(@Nonnull Gesuch gesuch, boolean checkAuthorization) {
-		if (checkAuthorization) {
-			authorizer.checkReadAuthorization(gesuch);
-		}
-		Optional<Gesuch> neustesVerfuegtesGesuchFuerGesuch = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall());
+		Optional<Gesuch> neustesVerfuegtesGesuchFuerGesuch = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(), false);
 		if (AntragStatus.FIRST_STATUS_OF_VERFUEGT.contains(gesuch.getStatus()) && gesuch.getTimestampVerfuegt() == null) {
 			// Status ist neuerdings verfuegt, aber das Datum noch nicht gesetzt -> dies war der Statuswechsel
 			gesuch.setTimestampVerfuegt(LocalDateTime.now());
 			gesuch.setGueltig(true);
 			if (neustesVerfuegtesGesuchFuerGesuch.isPresent() && !neustesVerfuegtesGesuchFuerGesuch.get().getId().equals(gesuch.getId())) {
 				neustesVerfuegtesGesuchFuerGesuch.get().setGueltig(false);
-				updateGesuch(neustesVerfuegtesGesuchFuerGesuch.get(), false, null);
+				updateGesuch(neustesVerfuegtesGesuchFuerGesuch.get(), false, null, false);
 			}
 		}
 	}

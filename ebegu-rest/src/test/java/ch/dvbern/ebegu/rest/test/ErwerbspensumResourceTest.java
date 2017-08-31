@@ -1,19 +1,19 @@
 package ch.dvbern.ebegu.rest.test;
 
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxErwerbspensumContainer;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.resource.ErwerbspensumResource;
 import ch.dvbern.ebegu.api.resource.GesuchstellerResource;
-import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
-import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -22,10 +22,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.ejb.EJBException;
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
 
 /**
  * Testet die Erwerbspensum Resource
@@ -40,7 +36,7 @@ public class ErwerbspensumResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private ErwerbspensumResource erwerbspensumResource;
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private JaxBConverter converter;
 	@Inject

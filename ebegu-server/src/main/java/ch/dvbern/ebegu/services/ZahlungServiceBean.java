@@ -56,7 +56,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZahlungServiceBean.class.getSimpleName());
 
 	@Inject
-	private Persistence<Zahlungsauftrag> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
@@ -141,7 +141,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 				}
 			}
 		}
-		// Korrekturen
+		// Korrekturen und Nachzahlungen
 		// Stichtag: Falls es eine Wiederholung des Auftrags ist, wurde der aktuelle Monat bereits ausbezahlt.
 		LocalDate stichtagKorrekturen = isRepetition ? zeitabschnittBis : zeitabschnittBis.minusMonths(1).with(TemporalAdjusters.lastDayOfMonth());
 		// Die Korrekturzahlungen werden seit dem letzten Zahlungsauftrag beruecksichtigt. Falls wir im TEST-Mode sind
@@ -215,6 +215,9 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		// Nur neueste Verfuegung jedes Falls beachten
 		Predicate predicateGueltig = cb.equal(joinBetreuung.get(Betreuung_.gueltig), Boolean.TRUE);
 		predicates.add(predicateGueltig);
+		// Status der Betreuung muss VERFUEGT oder STORINERT sein
+		Predicate predicateStatus = joinBetreuung.get(Betreuung_.betreuungsstatus).in(Betreuungsstatus.VERFUEGT, Betreuungsstatus.STORNIERT);
+		predicates.add(predicateStatus);
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		return persistence.getCriteriaResults(query);
@@ -255,6 +258,9 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		// Nur neueste Verfuegung jedes Falls beachten
 		Predicate predicateGueltig = cb.equal(joinBetreuung.get(Betreuung_.gueltig), Boolean.TRUE);
 		predicates.add(predicateGueltig);
+		// Status der Betreuung muss VERFUEGT oder STORINERT sein
+		Predicate predicateStatus = joinBetreuung.get(Betreuung_.betreuungsstatus).in(Betreuungsstatus.VERFUEGT, Betreuungsstatus.STORNIERT);
+		predicates.add(predicateStatus);
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		return persistence.getCriteriaResults(query);

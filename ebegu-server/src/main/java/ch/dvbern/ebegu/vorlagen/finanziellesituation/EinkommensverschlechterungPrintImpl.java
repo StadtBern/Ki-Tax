@@ -11,23 +11,23 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 22.08.2016
 */
 
+import java.math.BigDecimal;
+
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
-
-import java.math.BigDecimal;
 
 /**
  * Implementiert den {@link EinkommensverschlechterungPrint}
  */
 public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl implements EinkommensverschlechterungPrint {
 
-	private String einkommensverschlechterungJahr;
-	private String ereigniseintritt;
-	private String grund;
-	private Einkommensverschlechterung ekvGS1;
+	private final String einkommensverschlechterungJahr;
+	private final String ereigniseintritt;
+	private final String grund;
+	private final Einkommensverschlechterung ekvGS1;
 	private Einkommensverschlechterung ekvGS2;
-	private int basisJahrPlus;
+	private final int basisJahrPlus;
 
 	/**
 	 * Konstruktor
@@ -37,7 +37,7 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 	 * @param einkommensverschlechterungJahr das Jahr des Einkommenverschleschterung
 	 * @param ereigniseintritt               Ereingis datum
 	 * @param grund                          Grund
-	 * @param basisJahrPlus
+	 * @param basisJahrPlus					 Anzahl Jahre nach dem Basisjahr
 	 */
 	public EinkommensverschlechterungPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1, FinanzSituationPrintGesuchsteller fsGesuchsteller2,
 											   String einkommensverschlechterungJahr, String ereigniseintritt, String grund, int basisJahrPlus) {

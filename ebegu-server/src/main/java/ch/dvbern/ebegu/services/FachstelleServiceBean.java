@@ -1,10 +1,9 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Fachstelle;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.lib.cdipersistence.Persistence;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
@@ -12,10 +11,12 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+
+import ch.dvbern.ebegu.entities.Fachstelle;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.lib.cdipersistence.Persistence;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
@@ -29,7 +30,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class FachstelleServiceBean extends AbstractBaseService implements FachstelleService {
 
 	@Inject
-	private Persistence<Fachstelle> persistence;
+	private Persistence persistence;
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 

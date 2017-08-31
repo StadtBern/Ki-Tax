@@ -10,11 +10,7 @@
 
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Mandant;
-import ch.dvbern.ebegu.entities.Sequence;
-import ch.dvbern.ebegu.entities.Sequence_;
-import ch.dvbern.ebegu.enums.SequenceType;
-import ch.dvbern.lib.cdipersistence.Persistence;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
@@ -24,8 +20,17 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.LockModeType;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Sequence;
+import ch.dvbern.ebegu.entities.Sequence_;
+import ch.dvbern.ebegu.enums.SequenceType;
+import ch.dvbern.lib.cdipersistence.Persistence;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -36,7 +41,7 @@ public class SequenceServiceBean implements SequenceService {
 	private static final String SEQUENCE_TYPE = "sequenceType";
 
 	@Inject
-	private Persistence<Sequence> persistence;
+	private Persistence persistence;
 
 
 	@Nonnull

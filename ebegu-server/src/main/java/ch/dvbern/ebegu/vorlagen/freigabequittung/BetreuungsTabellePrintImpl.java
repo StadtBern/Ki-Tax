@@ -15,7 +15,7 @@ import ch.dvbern.ebegu.entities.Betreuung;
 
 public class BetreuungsTabellePrintImpl implements BetreuungsTabellePrint {
 
-	private Betreuung betreuungen;
+	private final Betreuung betreuungen;
 
 	public BetreuungsTabellePrintImpl(Betreuung betreuungen) {
 		this.betreuungen = betreuungen;

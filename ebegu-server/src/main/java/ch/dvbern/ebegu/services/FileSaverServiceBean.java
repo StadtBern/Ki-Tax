@@ -9,7 +9,6 @@ import java.util.UUID;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -18,6 +17,7 @@ import javax.inject.Inject;
 
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.FileMetadata;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.FileUtils;
@@ -47,7 +47,7 @@ public class FileSaverServiceBean implements FileSaverService {
 
 	@Override
 	@PermitAll
-	public boolean save(UploadFileInfo uploadFileInfo, String folderName) {
+	public void save(UploadFileInfo uploadFileInfo, String folderName) {
 		Validate.notNull(uploadFileInfo);
 		Validate.notNull(uploadFileInfo.getFilename());
 
@@ -70,12 +70,11 @@ public class FileSaverServiceBean implements FileSaverService {
 
 		} catch (IOException e) {
 			LOG.error("Can't save file in FileSystem: {}", uploadFileInfo.getFilename(), e);
-			return false;
+			throw new EbeguRuntimeException("save", "Could not save file in filesystem {0}", e, absoluteFilePath);
 		}
-		return true;
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
 	@PermitAll
 	public UploadFileInfo save(byte[] bytes, String fileName, String folderName) throws MimeTypeParseException {
@@ -83,16 +82,14 @@ public class FileSaverServiceBean implements FileSaverService {
 		return save(bytes, fileName, folderName, contentType);
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
 	@PermitAll
 	public UploadFileInfo save(byte[] bytes, String fileName, String folderName, MimeType contentType) {
 		final UploadFileInfo uploadFileInfo = new UploadFileInfo(fileName, contentType);
 		uploadFileInfo.setBytes(bytes);
-		if (save(uploadFileInfo, folderName)){
-			return uploadFileInfo;
-		}
-		return null;
+		save(uploadFileInfo, folderName);
+		return uploadFileInfo;
 	}
 
 	@Override

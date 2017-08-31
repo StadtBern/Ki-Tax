@@ -1,9 +1,10 @@
 package ch.dvbern.ebegu.rest.test;
 
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxErwerbspensumContainer;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
-import ch.dvbern.ebegu.entities.Erwerbspensum;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
@@ -17,8 +18,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-
 /**
  * Tests der die Konvertierung von Erwerbspensen prueft
  */
@@ -28,7 +27,7 @@ public class ErwerbspensumConverterTest extends AbstractEbeguRestLoginTest {
 
 
 	@Inject
-	private Persistence<Erwerbspensum> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private JaxBConverter converter;

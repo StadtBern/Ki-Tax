@@ -1,17 +1,5 @@
 package ch.dvbern.ebegu.api.resource.authentication;
 
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.util.crypto.PBKDF2PasswordHash;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -19,8 +7,20 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Properties;
 
+import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.crypto.PBKDF2PasswordHash;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * Hilfsklasse die die URL fuer SAML Anmeldungen ans IAM genau einmal zusammenstellen soll
+ * Hilfsklasse für die Anmeldungen aus LocalLogin
  */
 @Singleton
 public class UsernameRoleChecker {
@@ -34,19 +34,11 @@ public class UsernameRoleChecker {
 	/**
 	 * The name of the default properties resource containing user/passwords
 	 */
-	private String defaultUsersRsrcName = "dummylogin-users.properties";
+	private static final String DEFAULT_USERS_RSRC_NAME = "dummylogin-users.properties";
 	/**
 	 * The name of the default properties resource containing user/roles
 	 */
-	private String defaultRolesRsrcName = "dummylogin-roles.properties";
-	/**
-	 * The name of the properties resource containing user/passwords
-	 */
-	private String usersRsrcName = null;
-	/**
-	 * The name of the properties resource containing user/roles
-	 */
-	private String rolesRsrcName = null;
+	private static final String DEFAULT_ROLES_RSRC_NAME = "dummylogin-roles.properties";
 	/**
 	 * The users.properties mappings
 	 */
@@ -73,7 +65,7 @@ public class UsernameRoleChecker {
 	 * @throws IOException - thrown on failure to load the properties file.
 	 */
 	private void loadRoles() {
-		String pathToLoad = StringUtils.isEmpty(rolesRsrcName) ? defaultRolesRsrcName : rolesRsrcName;
+		String pathToLoad = DEFAULT_ROLES_RSRC_NAME;
 		URL url = this.getClass().getClassLoader().getResource(pathToLoad);
 		if (url == null) {
 			throw new EbeguRuntimeException("loadRoles()", ROLES_MISSING_MESSAGE + pathToLoad, pathToLoad);
@@ -96,7 +88,7 @@ public class UsernameRoleChecker {
 	 * @throws IOException - thrown on failure to load the properties file.
 	 */
 	private void loadUsers() {
-		String pathToLoad = StringUtils.isEmpty(usersRsrcName) ? defaultUsersRsrcName : usersRsrcName;
+		String pathToLoad = DEFAULT_USERS_RSRC_NAME;
 		URL url = this.getClass().getClassLoader().getResource(pathToLoad);
 		if (url == null) {
 			throw new EbeguRuntimeException("loadUsers", USER_MISSING_MESSAGE + pathToLoad, pathToLoad);

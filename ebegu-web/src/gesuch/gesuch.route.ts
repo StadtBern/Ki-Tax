@@ -13,6 +13,8 @@ import IQService = angular.IQService;
 import ILogService = angular.ILogService;
 import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../utils/TSRoleUtil';
+import TSMahnung from '../models/TSMahnung';
+import TSKindDublette from '../models/TSKindDublette';
 let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];
@@ -574,7 +576,7 @@ export function getMahnungen(MahnungRS: MahnungRS, $stateParams: IGesuchStatePar
         }
     }
     $log.warn('keine stateParams oder keine gesuchId, gebe undefined zurueck');
-    let deferred = $q.defer();
+    let deferred = $q.defer<TSMahnung[]>();
     deferred.resolve(undefined);
     return deferred.promise;
 }
@@ -595,7 +597,7 @@ export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, be
                 berechnungsManager.clear();
                 return gesuchModelManager.openGesuch(gesuchIdParam);
             } else {
-                let deferred = $q.defer();
+                let deferred = $q.defer<TSGesuch>();
                 deferred.resolve(gesuchModelManager.getGesuch());
                 return deferred.promise;
             }
@@ -603,7 +605,7 @@ export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, be
         }
     }
     $log.warn('keine stateParams oder keine gesuchId, gebe undefined zurueck');
-    let deferred = $q.defer();
+    let deferred = $q.defer<TSGesuch>();
     deferred.resolve(undefined);
     return deferred.promise;
 }
@@ -642,7 +644,7 @@ export function getKinderDubletten($stateParams: IGesuchStateParams, $q: IQServi
         let gesuchIdParam = $stateParams.gesuchId;
         return KindRS.getKindDubletten(gesuchIdParam);
     }
-    let deferred = $q.defer();
+    let deferred = $q.defer<TSKindDublette[]>();
     deferred.resolve(undefined);
     return deferred.promise;
 }
