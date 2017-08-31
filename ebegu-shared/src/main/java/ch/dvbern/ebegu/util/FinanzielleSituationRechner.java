@@ -163,13 +163,13 @@ public class FinanzielleSituationRechner {
 			}
 
 			BigDecimal massgebendesEinkommenVorjahr_alleine;
-			if (finanzDatenDTO_alleine.isEkv1Accepted()) {
+			if (finanzDatenDTO_alleine.isEkv1Accepted() && !finanzDatenDTO_alleine.isEkv1Abgelehnt()) {
 				massgebendesEinkommenVorjahr_alleine = resultateEKV1_alleine.getMassgebendesEinkVorAbzFamGr();
 			} else {
 				massgebendesEinkommenVorjahr_alleine = massgebendesEinkommenBasisjahr_alleine;
 			}
 			BigDecimal massgebendesEinkommenVorjahr_zuZweit;
-			if (ekvInfo.getEkvFuerBasisJahrPlus1()) {
+			if (finanzDatenDTO_zuZweit.isEkv1Accepted() && !finanzDatenDTO_zuZweit.isEkv1Abgelehnt()) {
 				massgebendesEinkommenVorjahr_zuZweit = resultateEKV1_zuZweit.getMassgebendesEinkVorAbzFamGr();
 			} else {
 				massgebendesEinkommenVorjahr_zuZweit = massgebendesEinkommenBasisjahr_zuZweit;

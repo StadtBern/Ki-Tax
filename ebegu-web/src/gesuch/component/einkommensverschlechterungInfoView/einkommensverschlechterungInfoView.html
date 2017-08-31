@@ -100,9 +100,9 @@
                     </div>
 
                     <!-- Ablehnung durch JA fuer Basisjahr plus 1 -->
-                    <div class="row marginBottom20">
-                        <div class="form-group col-sm-12 dv-input-container-medium" ng-if="vm.showEkvi() && vm.showJahrPlus1()">
-                            <div class="checkbox" ng-if="vm.isJugendamt()">
+                    <div class="row marginBottom20" ng-if="vm.showEkvi() && vm.showJahrPlus1() && vm.isJugendamt()">
+                        <div class="form-group col-sm-12 dv-input-container-medium">
+                            <div class="checkbox">
                                 <md-checkbox name="ekvBasisJahrPlus1Abgelehnt"
                                              ng-model="vm.getEinkommensverschlechterungsInfo().ekvBasisJahrPlus1Abgelehnt"
                                              aria-label="{{'EKVI_ABLEHNEN' | translate}}"
@@ -184,9 +184,9 @@
 
 
                     <!-- Ablehnung durch JA fuer Basisjahr plus 2 -->
-                    <div class="row marginBottom20">
-                        <div class="form-group col-sm-12 dv-input-container-medium" ng-if="vm.showEkvi() && vm.showJahrPlus2()">
-                            <div class="checkbox" ng-if="vm.isJugendamt()">
+                    <div class="row marginBottom20" ng-if="vm.showEkvi() && vm.showJahrPlus2() && vm.isJugendamt()">
+                        <div class="form-group col-sm-12 dv-input-container-medium">
+                            <div class="checkbox">
                                 <md-checkbox name="ekvBasisJahrPlus2Abgelehnt"
                                              ng-model="vm.getEinkommensverschlechterungsInfo().ekvBasisJahrPlus2Abgelehnt"
                                              aria-label="{{'EKVI_ABLEHNEN' | translate}}"

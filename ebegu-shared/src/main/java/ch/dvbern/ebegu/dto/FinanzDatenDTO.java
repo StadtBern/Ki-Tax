@@ -24,7 +24,8 @@ public class FinanzDatenDTO {
 	private boolean ekv1Accepted = false;
 	private boolean ekv2Accepted = false;
 
-	// Das JA kann aber trotzdem die EKV manuell ablehnen, wenn z.B. Dokumente nicht eingereicht werden
+	// Das JA kann aber trotzdem die EKV manuell ablehnen, wenn z.B. Dokumente nicht eingereicht werden oder die EKV
+	// vom GS im online Gesuch erfasst wurde, obwohl er sie nicht hätte erfassen sollen
 	private boolean ekv1Abgelehnt = false;
 	private boolean ekv2Abgelehnt = false;
 

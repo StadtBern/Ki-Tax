@@ -14,6 +14,8 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
@@ -88,6 +90,7 @@ public class BerechnungsgrundlagenInformationPrintImpl extends BriefPrintImpl im
 	}
 
 
+	@Nullable
 	@Override
 	public String getGesuchsteller1Name() {
 
