@@ -127,7 +127,11 @@ export default class AbstractGesuchViewController<T> {
     }
 
     public selectFirst(): void {
-        angular.element('md-radio-group,input,form button,select,md-checkbox,.dvb-loading-button button,tbody>tr[ng-click]').first().focus();
+        let tmp = angular.element('md-radio-group:not(disbaled),input:enabled,form button:enabled,select:enabled,md-checkbox:enabled,.dvb-loading-button'
+            + ' button:enabled,tbody>tr[ng-click]:not(disabled)').first();
+        if (tmp) {
+            tmp.focus();
+        }
     }
 
     $postLink() {
