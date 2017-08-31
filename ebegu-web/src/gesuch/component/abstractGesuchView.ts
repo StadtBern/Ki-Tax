@@ -58,7 +58,7 @@ export default class AbstractGesuchViewController<T> {
      */
     public isGesuchValid(): boolean {
         if (!this.form.$valid) {
-            let firstInvalid = angular.element('md-radio-group.ng-invalid, .ng-invalid>input[type="text"],input[type="text"].ng-invalid').first().addClass('test').focus();
+            let firstInvalid = angular.element('md-radio-group.ng-invalid, .ng-invalid>input[type="text"],input[type="text"].ng-invalid,select.ng-invalid,md-checkbox.ng-invalid').first().focus();
             // if (firstInvalid) {
             //     if (firstInvalid.get(0).tagName === 'DIV') { // sollten wir in einem div sein, suchen wir den ersten subelement, das fehlt
             //         firstInvalid = firstInvalid.find('.ng-invalid').first();
@@ -134,10 +134,10 @@ export default class AbstractGesuchViewController<T> {
     }
 
     public selectFirst(): void {
-        angular.element('md-radio-group,input,form button,select').first().focus();
+        angular.element('md-radio-group,input,form button,select,md-checkbox,.dvb-loading-button button,tr').first().focus();
     }
 
     $postLink() {
-       // this.selectFirst();
+        this.selectFirst();
     }
 }
