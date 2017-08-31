@@ -1,5 +1,4 @@
-import {IComponentOptions, ILogService, IFilterService, IQService, IPromise} from 'angular';
-import * as moment from 'moment';
+import {IComponentOptions, IFilterService, ILogService, IPromise, IQService} from 'angular';
 import TSSearchResultEntry from '../../../../models/dto/TSSearchResultEntry';
 import TSQuickSearchResult from '../../../../models/dto/TSQuickSearchResult';
 import {IStateService} from 'angular-ui-router';
@@ -10,7 +9,6 @@ import GesuchModelManager from '../../../../gesuch/service/gesuchModelManager';
 import EbeguUtil from '../../../../utils/EbeguUtil';
 import {SearchIndexRS} from '../../../service/searchIndexRS.rest';
 import TSAntragDTO from '../../../../models/TSAntragDTO';
-import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IInjectorService = angular.auto.IInjectorService;
 let template = require('./dv-quicksearchbox.html');
@@ -54,7 +52,7 @@ export class DvQuicksearchboxController {
 
     public querySearch(query: string): IPromise<Array<TSSearchResultEntry>> {
         this.searchString = query;
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<TSSearchResultEntry>>();
         this.searchIndexRS.quickSearch(query).then((quickSearchResult: TSQuickSearchResult) => {
             this.limitResultsize(quickSearchResult);
             deferred.resolve(quickSearchResult.resultEntities);
@@ -62,6 +60,7 @@ export class DvQuicksearchboxController {
             deferred.resolve([]);
             this.$log.warn('error during quicksearch');
         });
+
         return deferred.promise;
 
     }
