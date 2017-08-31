@@ -11,6 +11,7 @@ import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import IPromise = angular.IPromise;
 import IFormController = angular.IFormController;
 import IScope = angular.IScope;
+import ITimeoutService = angular.ITimeoutService;
 
 export default class AbstractGesuchViewController<T> {
 
@@ -22,15 +23,18 @@ export default class AbstractGesuchViewController<T> {
     TSRoleUtil: any;
     private _model: T;
     form: IFormController;
+    $timeout: ITimeoutService;
 
     constructor($gesuchModelManager: GesuchModelManager, $berechnungsManager: BerechnungsManager,
-                wizardStepManager: WizardStepManager, $scope: IScope, stepName: TSWizardStepName) {
+                wizardStepManager: WizardStepManager, $scope: IScope, stepName: TSWizardStepName,
+                $timeout: ITimeoutService) {
         this.gesuchModelManager = $gesuchModelManager;
         this.berechnungsManager = $berechnungsManager;
         this.wizardStepManager = wizardStepManager;
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
         this.$scope = $scope;
+        this.$timeout = $timeout;
         this.wizardStepManager.setCurrentStep(stepName);
     }
 
@@ -58,18 +62,7 @@ export default class AbstractGesuchViewController<T> {
      */
     public isGesuchValid(): boolean {
         if (!this.form.$valid) {
-            let firstInvalid = angular.element('md-radio-group.ng-invalid, .ng-invalid>input[type="text"],input[type="text"].ng-invalid,select.ng-invalid,md-checkbox.ng-invalid').first().focus();
-            // if (firstInvalid) {
-            //     if (firstInvalid.get(0).tagName === 'DIV') { // sollten wir in einem div sein, suchen wir den ersten subelement, das fehlt
-            //         firstInvalid = firstInvalid.find('.ng-invalid').first();
-            //     }
-            //     if (firstInvalid.get(0).tagName !== 'INPUT') { // Fuer alle Elemente die kein INPUT sind, muessen wir den tabindex setzen, damit focus() funktioniert
-            //         firstInvalid.attr('tabindex', -1).focus();
-            //     } else {
-            //         firstInvalid.focus();
-            //     }
-            //
-            // }
+            angular.element('md-radio-group.ng-invalid, .ng-invalid>input[type="text"],input[type="text"].ng-invalid,select.ng-invalid,md-checkbox.ng-invalid').first().focus();
         }
         return this.form.$valid;
     }
@@ -134,10 +127,12 @@ export default class AbstractGesuchViewController<T> {
     }
 
     public selectFirst(): void {
-        angular.element('md-radio-group,input,form button,select,md-checkbox,.dvb-loading-button button,tr').first().focus();
+        angular.element('md-radio-group,input,form button,select,md-checkbox,.dvb-loading-button button,tbody>tr[ng-click]').first().focus();
     }
 
     $postLink() {
-        this.selectFirst();
+        this.$timeout(() => {
+            this.selectFirst();
+        });
     }
 }

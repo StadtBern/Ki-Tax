@@ -4,7 +4,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import EbeguUtil from '../../../utils/EbeguUtil';
-import {TSMonth, getTSMonthValues} from '../../../models/enums/TSMonth';
+import {getTSMonthValues, TSMonth} from '../../../models/enums/TSMonth';
 import TSEinkommensverschlechterungInfo from '../../../models/TSEinkommensverschlechterungInfo';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
@@ -15,19 +15,18 @@ import {TSRole} from '../../../models/enums/TSRole';
 import TSEinkommensverschlechterungInfoContainer from '../../../models/TSEinkommensverschlechterungInfoContainer';
 import EinkommensverschlechterungInfoRS from '../../service/einkommensverschlechterungInfoRS.rest';
 import * as moment from 'moment';
-import ITranslateService = angular.translate.ITranslateService;
-import IQService = angular.IQService;
-import IScope = angular.IScope;
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import EinkommensverschlechterungContainerRS from '../../service/einkommensverschlechterungContainerRS.rest';
+import IQService = angular.IQService;
+import IScope = angular.IScope;
+import ITimeoutService = angular.ITimeoutService;
 
 let template = require('./einkommensverschlechterungInfoView.html');
 require('./einkommensverschlechterungInfoView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
-
 
 export class EinkommensverschlechterungInfoViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -51,16 +50,17 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         basisjahr: this.gesuchModelManager.getBasisjahr()
     };
 
-
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'EbeguUtil'
         , 'WizardStepManager', 'DvDialog', '$q', 'EinkommensverschlechterungInfoRS', '$scope', 'AuthServiceRS',
-        'EinkommensverschlechterungContainerRS'];
+        'EinkommensverschlechterungContainerRS', '$timeout'];
+
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private CONSTANTS: any, private errorService: ErrorService, private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog, private $q: IQService, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
-                $scope: IScope, private authServiceRS: AuthServiceRS, private ekvContainerRS: EinkommensverschlechterungContainerRS) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+                $scope: IScope, private authServiceRS: AuthServiceRS, private ekvContainerRS: EinkommensverschlechterungContainerRS,
+                $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG, $timeout);
         this.initialEinkVersInfo = angular.copy(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer);
         this.model = angular.copy(this.initialEinkVersInfo);
         this.initViewModel();

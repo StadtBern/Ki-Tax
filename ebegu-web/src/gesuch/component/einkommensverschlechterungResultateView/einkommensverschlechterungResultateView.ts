@@ -11,10 +11,12 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import TSFinanzModel from '../../../models/TSFinanzModel';
-import IQService = angular.IQService;
-import IScope = angular.IScope;
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import IQService = angular.IQService;
+import IScope = angular.IScope;
+import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./einkommensverschlechterungResultateView.html');
 require('./einkommensverschlechterungResultateView.less');
 
@@ -30,17 +32,18 @@ export class EinkommensverschlechterungResultateViewComponentConfig implements I
  */
 export class EinkommensverschlechterungResultateViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
-
     resultatBasisjahr: TSFinanzielleSituationResultateDTO;
     resultatProzent: string;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'WizardStepManager', '$q', '$scope', 'AuthServiceRS'];
+        'WizardStepManager', '$q', '$scope', 'AuthServiceRS', '$timeout'];
+
     /* @ngInject */
     constructor($stateParams: IEinkommensverschlechterungResultateStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, private authServiceRS: AuthServiceRS) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, private authServiceRS: AuthServiceRS,
+                $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG, $timeout);
         let parsedBasisJahrPlusNum = parseInt($stateParams.basisjahrPlus, 10);
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null, parsedBasisJahrPlusNum);
         this.model.copyEkvDataFromGesuch(this.gesuchModelManager.getGesuch());
@@ -181,7 +184,6 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
             this.resultatProzent = this.calculateVeraenderung();
         });
     }
-
 
     /**
      *

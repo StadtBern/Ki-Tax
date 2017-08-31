@@ -16,8 +16,9 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import GlobalCacheService from '../../service/globalCacheService';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
-import ICacheFactoryService = angular.ICacheFactoryService;
 import IScope = angular.IScope;
+import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./dokumenteView.html');
 require('./dokumenteView.less');
 
@@ -42,13 +43,14 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
     dokumentePapiergesuch: TSDokumentGrund[] = [];
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'DokumenteRS', '$log', 'WizardStepManager', 'EbeguUtil', 'GlobalCacheService', '$scope'];
+        'DokumenteRS', '$log', 'WizardStepManager', 'EbeguUtil', 'GlobalCacheService', '$scope', '$timeout'];
+
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
                 private dokumenteRS: DokumenteRS, private $log: ILogService, wizardStepManager: WizardStepManager,
-                private ebeguUtil: EbeguUtil, private globalCacheService: GlobalCacheService, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.DOKUMENTE);
+                private ebeguUtil: EbeguUtil, private globalCacheService: GlobalCacheService, $scope: IScope, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.DOKUMENTE, $timeout);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.calculate();

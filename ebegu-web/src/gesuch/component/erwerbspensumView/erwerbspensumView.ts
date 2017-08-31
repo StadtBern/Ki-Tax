@@ -53,8 +53,8 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, $scope: IScope, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $q: IQService,
                 private $translate: ITranslateService, private ebeguParameterRS: EbeguParameterRS, private globalCacheService: GlobalCacheService,
-                private $timeout: ITimeoutService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ERWERBSPENSUM);
+                $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ERWERBSPENSUM, $timeout);
         this.patternPercentage = this.CONSTANTS.PATTERN_PERCENTAGE;
         this.gesuchModelManager.setGesuchstellerNumber(parseInt($stateParams.gesuchstellerNumber));
         this.gesuchsteller = this.gesuchModelManager.getStammdatenToWorkWith();
@@ -173,9 +173,4 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
         });
     }
 
-    $postLink() {
-        this.$timeout(() => {
-            //this.selectFirst();
-        });
-    }
 }

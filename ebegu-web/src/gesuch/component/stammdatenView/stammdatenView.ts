@@ -26,6 +26,7 @@ import ITranslateService = angular.translate.ITranslateService;
 import IRootScopeService = angular.IRootScopeService;
 import DateUtil from '../../../utils/DateUtil';
 import EwkRS from '../../../core/service/ewkRS.rest';
+import ITimeoutService = angular.ITimeoutService;
 let template = require('./stammdatenView.html');
 require('./stammdatenView.less');
 
@@ -56,8 +57,8 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
                 berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService, $scope: IScope,
                 private $translate: ITranslateService, private authServiceRS: AuthServiceRS, private $rootScope: IRootScopeService,
-                private ewkRS: EwkRS) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.GESUCHSTELLER);
+                private ewkRS: EwkRS, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.GESUCHSTELLER, $timeout);
         this.ebeguRestUtil = ebeguRestUtil;
         this.gesuchstellerNumber = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(this.gesuchstellerNumber);

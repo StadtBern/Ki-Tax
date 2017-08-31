@@ -15,6 +15,7 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
 import IScope = angular.IScope;
+import ITimeoutService = angular.ITimeoutService;
 let template = require('./abwesenheitView.html');
 require('./abwesenheitView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -50,13 +51,13 @@ export class AbwesenheitViewController extends AbstractGesuchViewController<Arra
     private changedBetreuungen: Array<TSBetreuung> = [];
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'DvDialog',
-        '$translate', '$q', 'ErrorService', '$scope'];
+        '$translate', '$q', 'ErrorService', '$scope', '$timeout'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog, private $translate: ITranslateService,
-                private $q: IQService, private errorService: ErrorService, $scope: IScope) {
+                private $q: IQService, private errorService: ErrorService, $scope: IScope, $timeout: ITimeoutService) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ABWESENHEIT);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ABWESENHEIT, $timeout);
         this.initViewModel();
     }
 

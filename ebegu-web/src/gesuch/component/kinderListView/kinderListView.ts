@@ -9,14 +9,15 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import ITranslateService = angular.translate.ITranslateService;
-import IScope = angular.IScope;
 import TSKindDublette from '../../../models/TSKindDublette';
 import EbeguUtil from '../../../utils/EbeguUtil';
+import ITranslateService = angular.translate.ITranslateService;
+import IScope = angular.IScope;
+import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./kinderListView.html');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 require('./kinderListView.less');
-
 
 export class KinderListViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -33,12 +34,13 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
     kinderDubletten: TSKindDublette[] = [];
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$translate', 'DvDialog',
-        'WizardStepManager', '$scope', 'CONSTANTS'];
+        'WizardStepManager', '$scope', 'CONSTANTS', '$timeout'];
+
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private $translate: ITranslateService, private DvDialog: DvDialog,
-                wizardStepManager: WizardStepManager, $scope: IScope, private CONSTANTS: any) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.KINDER);
+                wizardStepManager: WizardStepManager, $scope: IScope, private CONSTANTS: any, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.KINDER, $timeout);
         this.initViewModel();
     }
 
