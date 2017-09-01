@@ -1,5 +1,10 @@
 package ch.dvbern.ebegu.tests;
 
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Traegerschaft;
@@ -14,10 +19,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Optional;
-
 /**
  * Tests fuer die Klasse InstitutionService
  */
@@ -29,7 +30,7 @@ public class InstitutionServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private InstitutionService institutionService;
 	@Inject
-	private Persistence<?> persistence;
+	private Persistence persistence;
 
 
 

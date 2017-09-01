@@ -44,6 +44,7 @@ export default class HttpErrorInterceptor implements IHttpInterceptor {
     private handleErrorResponse(response: any) {
         let errors: Array<TSExceptionReport>;
         // Alle daten loggen um das Debuggen zu vereinfachen
+        // noinspection IfStatementWithTooManyBranchesJS
         if (this.isDataViolationResponse(response.data)) {
             errors = this.convertViolationReport(response.data);
 

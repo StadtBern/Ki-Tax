@@ -62,7 +62,7 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	private static final Logger LOGGER = LoggerFactory.getLogger(EbeguVorlageServiceBean.class.getSimpleName());
 
 	@Inject
-	private Persistence<EbeguVorlage> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private FileSaverService fileSaverService;

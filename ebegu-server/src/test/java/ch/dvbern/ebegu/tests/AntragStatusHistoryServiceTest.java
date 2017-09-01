@@ -37,7 +37,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private AntragStatusHistoryService statusHistoryService;
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private GesuchService gesuchService;
 

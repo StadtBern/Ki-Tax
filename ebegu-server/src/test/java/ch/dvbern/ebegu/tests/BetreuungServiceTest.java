@@ -47,7 +47,7 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private MitteilungService mitteilungService;
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private KindService kindService;
 

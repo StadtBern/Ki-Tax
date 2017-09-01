@@ -41,7 +41,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class CriteriaQueryHelper {
 
 	@Inject
-	private Persistence<AbstractEntity> persistence;
+	private Persistence persistence;
 
 
 	@SuppressWarnings("unchecked")

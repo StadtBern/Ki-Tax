@@ -1,4 +1,4 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IHttpResponse} from 'angular';
 import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
 import EbeguUtil from '../../utils/EbeguUtil';
 import ZahlungRS from '../../core/service/zahlungRS.rest';
@@ -12,17 +12,15 @@ import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import * as moment from 'moment';
 import {DvDialog} from '../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../gesuch/dialog/RemoveDialogController';
-import ITimeoutService = angular.ITimeoutService;
-import IPromise = angular.IPromise;
-import ILogService = angular.ILogService;
-import IQService = angular.IQService;
 import IStateService = angular.ui.IStateService;
 import IFormController = angular.IFormController;
+import Moment = moment.Moment;
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./zahlungsauftragView.html');
 require('./zahlungsauftragView.less');
-import Moment = moment.Moment;
+
 let removeDialogTemplate = require('../../gesuch/dialog/removeDialogTemplate.html');
-import ITranslateService = angular.translate.ITranslateService;
+
 
 export class ZahlungsauftragViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -156,7 +154,7 @@ export class ZahlungsauftragViewController {
         })
             .then(() => {   //User confirmed removal
                 let index = EbeguUtil.getIndexOfElementwithID(zahlungsauftrag, this.zahlungsauftragen);
-                this.zahlungRS.zahlungsauftragLoeschen(zahlungsauftrag.id).then((response: TSZahlungsauftrag) => {
+                this.zahlungRS.zahlungsauftragLoeschen(zahlungsauftrag.id).then((response: IHttpResponse<TSZahlungsauftrag>) => {
                     this.zahlungsauftragen.splice(index, 1);
                 });
             });

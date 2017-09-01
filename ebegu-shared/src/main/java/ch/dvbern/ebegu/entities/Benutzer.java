@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Field;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
@@ -37,11 +38,13 @@ public class Benutzer extends AbstractEntity {
 	@NotNull
 	@Column(nullable = false)
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	@Field
 	private String nachname = null;
 
 	@NotNull
 	@Column(nullable = false)
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	@Field
 	private String vorname = null;
 
 	@NotNull

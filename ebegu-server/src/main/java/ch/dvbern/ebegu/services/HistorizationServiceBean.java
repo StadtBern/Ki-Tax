@@ -1,11 +1,7 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.enums.UserRoleName;
-import ch.dvbern.lib.cdipersistence.Persistence;
-import org.hibernate.envers.AuditReaderFactory;
-import org.hibernate.envers.query.AuditEntity;
-import org.hibernate.envers.query.AuditQuery;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.RolesAllowed;
@@ -13,8 +9,13 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.metamodel.EntityType;
-import java.util.ArrayList;
-import java.util.List;
+
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.enums.UserRoleName;
+import ch.dvbern.lib.cdipersistence.Persistence;
+import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.query.AuditEntity;
+import org.hibernate.envers.query.AuditQuery;
 
 /**
  * Service fuer Historization
@@ -25,7 +26,7 @@ import java.util.List;
 public class HistorizationServiceBean extends AbstractBaseService implements HistorizationService {
 
 	@Inject
-	private Persistence<AbstractEntity> persistence;
+	private Persistence persistence;
 
 	@Override
 	public List<Object[]> getAllRevisionsById(@Nonnull String entityName, @Nonnull String entityId) {
