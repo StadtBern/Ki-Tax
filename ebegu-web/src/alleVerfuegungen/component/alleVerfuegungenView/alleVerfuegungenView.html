@@ -9,12 +9,14 @@
 
 <div class="alleVerfuegungenView overflow-scroll" flex="auto">
     <div class="row">
-        <div class="col-md-11">
-            <h3 data-translate="ALLE_VERFUEGUNGEN_LIST"></h3>
-        </div>
-        <div class="col-md-1 text-right">
-            <h3 ng-bind="vm.getAlleVerfuegungen() ? vm.getAlleVerfuegungen().length : 0"></h3>
-        </div>
+        <h1>
+        <span class="col-md-11">
+            <span data-translate="ALLE_VERFUEGUNGEN_LIST"></span>
+        </span>
+        <span aria-hidden class="col-md-1 text-right">
+            <span ng-bind="vm.getAlleVerfuegungen() ? vm.getAlleVerfuegungen().length : 0"></span>
+        </span>
+            </h1>
     </div>
     <div class="row">
         <div class="col-md-12 table-responsive">
@@ -42,8 +44,8 @@
                     <td class="ellipsis" ellipsis-tooltip="{{row.timestampErstellt  | amDateFormat : 'DD.MM.YYYY'}}"
                         ng-bind="row.verfuegung.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.gesuchsperiode.gesuchsperiodeString}}" ng-bind="row.gesuchsperiode.gesuchsperiodeString"></td>
-                    <td class="symbol" ng-click="$event.stopPropagation()" ng-if="vm.showVerfuegungPdfLink(row)">
-                        <button type="button" ng-click="vm.openVerfuegungPDF(row)"
+                    <td class="symbol" ng-if="vm.showVerfuegungPdfLink(row)">
+                        <button type="button" ng-click="vm.openVerfuegungPDF(row);$event.stopPropagation();"
                                 class="dv-btn-operation">
                             <i class="fa fa-eye"></i>
                         </button>

@@ -39,7 +39,7 @@
                     <tr ng-repeat="row in displayedCollection">
                         <td class="ellipsis" ellipsis-tooltip="{{row.institutionsName}}"
                             ng-bind="row.institutionsName"></td>
-                        <td class="symbol" ng-click="$event.stopPropagation()">
+                        <td class="symbol">
                             <dv-loading-button type="button" button-click="vm.downloadDetails(row)"
                                                button-class="dv-btn-operation">
                                 <i class="fa fa-lg fa-file-excel-o"></i>

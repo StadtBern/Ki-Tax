@@ -16,6 +16,13 @@
 @import 'style/mediaqueries.less';
 @import 'style/typography.less';
 
+.access-for-all-title {
+    display: block;
+    font-size: 0;
+    width: 0;
+    height: 0;
+}
+
 dv-posteingang {
     width: 100%;
     height: 100%;
@@ -119,7 +126,7 @@ body {
 }
 
 dv-home-icon, dv-countdown, dv-downloadmenu {
-    &:first-child {
+    &:nth-child(2) {
         margin-left: auto;
     }
     display: flex;
@@ -211,8 +218,7 @@ form {
 
     }
     // style der den Hintergrund der inputs on-blur Rot markiert wenn nicht valid
-    .form-control.ng-invalid, .input-element.ng-invalid, md-radio-group.ng-invalid /*, :not(md-checkbox.input-element.ng-invalid)*/
-    {
+    .form-control.ng-invalid, .input-element.ng-invalid, md-radio-group.ng-invalid /*, :not(md-checkbox.input-element.ng-invalid)*/ {
         &.ng-touched {
             .ErrorInput
         }
@@ -331,6 +337,46 @@ dv-quicksearchbox {
             content: none;
         }
     }
+}
+
+.skiplinks {
+    .skiplinks__list{
+        list-style: none;
+        height:0;
+        margin:0;
+    }
+    .skip {
+        position: fixed;
+        z-index: 108;
+        top: -1000px;
+        left: -1000px;
+        height: 1px;
+        width: 1px;
+        text-align: left;
+        overflow: hidden;
+        &:active,
+        &:focus,
+        &:hover {
+            left: 0;
+            top: 0;
+            width: auto;
+            height: @navbar-height;
+            line-height: 3rem;
+            overflow: visible;
+            border-bottom: 2px solid @contrast-darkest;
+            border-right: 2px solid @contrast-darkest;
+            box-shadow: none;
+            outline: none;
+            background: @primary;
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: block;
+            padding: 1rem;
+            color: @contrast-lightest;
+            text-decoration: none;
+        }
+    }
+
 }
 
 /* Personal preference for BS modal.  The LESS below makes the backdrop white and

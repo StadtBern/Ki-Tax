@@ -22,17 +22,16 @@
     .dv-error-messages {
         overflow: visible;
         height: auto;
-        min-height:3rem;
-        margin-top:-3rem;
+        min-height: 3rem;
+        margin-top: -3rem;
     }
 }
-
 md-checkbox {
     //float:left;
-    font-size:0;
+    font-size: 0;
     position: relative;
     min-height: 1.7rem;
-    min-width:0;
+    min-width: 0;
     height: auto;
     width: auto;
     &:last-of-type {
@@ -60,9 +59,13 @@ md-checkbox {
         }
     }
     &.md-focused {
-        .md-icon{
-            -webkit-box-shadow: 0 0 4px 0 #858585;
-            box-shadow: 0 0 4px 0 #858585;
+        .md-icon {
+            //-webkit-box-shadow: 0 0 4px 0 #858585;
+            //box-shadow: 0 0 4px 0 #858585;
+            //outline: 2px solid @contrast-darkest;
+            transition: none;
+            box-shadow: 0 0 0 2px @contrast-darkest;
+
         }
     }
     .md-container {
@@ -74,7 +77,7 @@ md-checkbox {
         }
     }
     .md-label {
-        display:inline-block;
+        display: inline-block;
         margin-left: 3rem;
         height: auto;
         min-height: 1.7rem;
@@ -93,7 +96,7 @@ md-checkbox {
             vertical-align: middle;
         }
     }
-    .md-icon {
+    .md-icon, &:not(.md-checked) .md-icon{
         border: 1px solid @contrast-darkest;
         border-radius: 0.2rem;
         width: auto;
