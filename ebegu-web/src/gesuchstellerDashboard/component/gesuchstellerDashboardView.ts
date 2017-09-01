@@ -211,4 +211,16 @@ export class GesuchstellerDashboardListViewController {
         }
         return this.ebeguUtil.translateString(TSAntragStatus[status]);
     }
+
+    public getVerantwortlicherFullName(antrag: TSAntragDTO): string {
+        if (antrag) {
+            if (antrag.status === TSAntragStatus.NUR_SCHULAMT || antrag.status === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN) {
+                return this.ebeguUtil.translateString('VERANTWORTLICHER_SCHULAMT');
+            }
+            if (antrag.verantwortlicher) {
+                return antrag.verantwortlicher;
+            }
+        }
+        return '';
+    }
 }

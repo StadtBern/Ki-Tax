@@ -1,22 +1,23 @@
 package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.ejb.Stateless;
+
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 
-import javax.ejb.Stateless;
-import java.util.HashSet;
-import java.util.Set;
-
 @Stateless
 public class DokumentenverzeichnisEvaluator {
 
-	private AbstractDokumente familiensituationDokumente = new FamiliensituationDokumente();
-	private AbstractDokumente kindAnlagen = new KindDokumente();
-	private AbstractDokumente erwerbspensumDokumente = new ErwerbspensumDokumente();
-	private AbstractDokumente finanzielleSituationDokumente = new FinanzielleSituationDokumente();
-	private AbstractDokumente einkommensverschlechterungDokumente = new EinkommensverschlechterungDokumente();
+	private final AbstractDokumente familiensituationDokumente = new FamiliensituationDokumente();
+	private final AbstractDokumente kindAnlagen = new KindDokumente();
+	private final AbstractDokumente erwerbspensumDokumente = new ErwerbspensumDokumente();
+	private final AbstractDokumente finanzielleSituationDokumente = new FinanzielleSituationDokumente();
+	private final AbstractDokumente einkommensverschlechterungDokumente = new EinkommensverschlechterungDokumente();
 
 	public Set<DokumentGrund> calculate(Gesuch gesuch) {
 

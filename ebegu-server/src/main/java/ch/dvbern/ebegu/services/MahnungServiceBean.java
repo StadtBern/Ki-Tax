@@ -56,7 +56,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	private static final Logger LOG = LoggerFactory.getLogger(MahnungServiceBean.class.getSimpleName());
 
 	@Inject
-	private Persistence<Mahnung> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private DokumentGrundService dokumentGrundService;

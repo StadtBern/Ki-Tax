@@ -1,8 +1,19 @@
 package ch.dvbern.ebegu.rest.test;
 
+import javax.inject.Inject;
+import javax.ws.rs.core.UriInfo;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.*;
-import ch.dvbern.ebegu.api.resource.*;
+import ch.dvbern.ebegu.api.dtos.JaxFall;
+import ch.dvbern.ebegu.api.dtos.JaxGesuch;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
+import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.dtos.JaxPensumFachstelle;
+import ch.dvbern.ebegu.api.resource.FachstelleResource;
+import ch.dvbern.ebegu.api.resource.FallResource;
+import ch.dvbern.ebegu.api.resource.GesuchResource;
+import ch.dvbern.ebegu.api.resource.GesuchsperiodeResource;
+import ch.dvbern.ebegu.api.resource.KindResource;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.PensumFachstelle;
@@ -18,9 +29,6 @@ import org.jboss.resteasy.spi.ResteasyUriInfo;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import javax.ws.rs.core.UriInfo;
 
 /**
  * Testet KindResource
@@ -48,7 +56,7 @@ public class KindResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private JaxBConverter converter;
 	@Inject
-	private Persistence<?> persistence;
+	private Persistence persistence;
 
 
 	@Test

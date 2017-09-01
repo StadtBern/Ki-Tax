@@ -1,21 +1,21 @@
 package ch.dvbern.ebegu.rechner;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Month;
+
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.Month;
 
 /**
  * Testet den Kita-Rechner
  */
 public class KitaRechnerTest extends AbstractBGRechnerTest {
 
-	private BGRechnerParameterDTO parameterDTO = getParameter();
-	private KitaRechner kitaRechner = new KitaRechner();
+	private final BGRechnerParameterDTO parameterDTO = getParameter();
+	private final KitaRechner kitaRechner = new KitaRechner();
 
 
 	@Test

@@ -11,17 +11,17 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import java.util.List;
+
 import ch.dvbern.ebegu.vorlagen.EBEGUMergeSource;
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
 
-import java.util.List;
-
 public class BegleitschreibenPrintMergeSource implements EBEGUMergeSource {
 
-	private BegleitschreibenPrint begleitschreiben;
+	private final BegleitschreibenPrint begleitschreiben;
 	private boolean isPDFLongerThanExpected = false;
 
 	/**

@@ -1,5 +1,9 @@
 package ch.dvbern.ebegu.rest.test;
 
+import java.time.LocalDate;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
@@ -13,9 +17,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.time.LocalDate;
-
 /**
  * Tests der die Konvertierung von Gesuchsperiode prueft
  */
@@ -25,7 +26,7 @@ public class GesuchsperiodeConverterTest extends AbstractEbeguRestLoginTest {
 
 
 	@Inject
-	private Persistence<Gesuchsperiode> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private JaxBConverter converter;

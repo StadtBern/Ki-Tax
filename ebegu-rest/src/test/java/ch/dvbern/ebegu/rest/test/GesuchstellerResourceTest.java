@@ -1,5 +1,9 @@
 package ch.dvbern.ebegu.rest.test;
 
+import java.time.LocalDate;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
@@ -19,9 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.time.LocalDate;
-
 /**
  * Testet GesuchstellerResource
  */
@@ -34,7 +35,7 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private GesuchstellerResource gesuchstellerResource;
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private JaxBConverter converter;
 	private JaxId gesuchJAXPId;

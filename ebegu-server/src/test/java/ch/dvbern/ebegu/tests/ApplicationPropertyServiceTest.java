@@ -45,7 +45,7 @@ public class ApplicationPropertyServiceTest extends AbstractEbeguLoginTest {
 	private ApplicationPropertyService applicationPropertyService;
 
 	@Inject
-	private Persistence<ApplicationProperty> persistence;
+	private Persistence persistence;
 
 
 
