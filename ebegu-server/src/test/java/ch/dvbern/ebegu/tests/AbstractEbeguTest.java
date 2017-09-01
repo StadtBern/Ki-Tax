@@ -117,6 +117,7 @@ public abstract class AbstractEbeguTest {
 			.addAsResource("vorlagen/Begleitschreiben.docx", "vorlagen/Begleitschreiben.docx")
 			.addAsResource("vorlagen/1_Mahnung.docx", "vorlagen/1_Mahnung.docx")
 			.addAsResource("vorlagen/2_Mahnung.docx", "vorlagen/2_Mahnung.docx")
+			.addAsResource("vorlagen/entwurfWasserzeichen.png", "vorlagen/entwurfWasserzeichen.png")
 			.addAsResource("mail/templates/InfoBetreuungAbgelehnt.ftl", "mail/templates/InfoBetreuungAbgelehnt.ftl")
 			.addAsResource("mail/templates/InfoBetreuungenBestaetigt.ftl", "mail/templates/InfoBetreuungenBestaetigt.ftl")
 			.addAsResource("mail/templates/InfoMahnung.ftl", "mail/templates/InfoMahnung.ftl")

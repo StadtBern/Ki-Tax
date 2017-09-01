@@ -46,7 +46,7 @@ public class GeneratedDokumentServiceTest extends AbstractEbeguLoginTest {
 
 		generatedDokumentService.saveDokument(dokument);
 
-		final WriteProtectedDokument generatedDokument = generatedDokumentService.findGeneratedDokument(gesuch.getId(), dokument.getFilename(), dokument.getFilepfad());
+		final WriteProtectedDokument generatedDokument = generatedDokumentService.findGeneratedDokument(gesuch.getId(), dokument.getFilename());
 
 		Assert.assertNotNull(generatedDokument);
 		Assert.assertEquals(dokument, generatedDokument);

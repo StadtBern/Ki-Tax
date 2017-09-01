@@ -434,7 +434,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public openFinanzielleSituationPDF(): void {
         let win: Window = this.downloadRS.prepareDownloadWindow();
-        this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false)
+        this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);

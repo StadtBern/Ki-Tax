@@ -886,6 +886,18 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				gesuch.setFreigabeDatum(LocalDate.now());
 			}
 
+			// Falls es ein NUR_SCHULAMT Gesuch ist, muss hier bereits die Finanzielle Situation erstellt werden,
+			// da das Gesuch mit Einlesen der Freigabequittung als freigegeben gilt.
+			if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+				// Das Dokument der Finanziellen Situation erstellen
+				try {
+					generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(gesuch, true);
+				} catch (MimeTypeParseException | MergeDocException e) {
+					throw new EbeguRuntimeException("antragFreigeben", "FinSit-Dokument konnte nicht erstellt werden"
+						+ gesuch.getId(), e);
+				}
+			}
+
 			// Den Gesuchsstatus setzen
 			gesuch.setStatus(calculateFreigegebenStatus(gesuch));
 
