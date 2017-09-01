@@ -9,20 +9,24 @@
  */
 package ch.dvbern.ebegu.api.resource.authentication;
 
-import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElement;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.nio.charset.Charset;
+import java.util.Base64;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.Charset;
-import java.util.Base64;
-import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
+import ch.dvbern.ebegu.authentication.JaxAuthAccessElement;
+import ch.dvbern.ebegu.util.AuthConstants;
 
 /**
  * Util welches aus Requests die cookies extrahiert und aus den Cookies zum Beispiel den Principal
@@ -32,16 +36,11 @@ public final class AuthDataUtil {
 	private static final Logger LOG = LoggerFactory.getLogger(AuthDataUtil.class);
 
 
-	public static final String COOKIE_PRINCIPAL = "authId";
-	public static final String COOKIE_AUTH_TOKEN = "authToken";
-	public static final String PARAM_XSRF_TOKEN = "X-XSRF-TOKEN";
-	public static final String COOKIE_XSRF_TOKEN = "XSRF-TOKEN";
-
 	private AuthDataUtil() {
 	}
 
 	public static  Optional<JaxAuthAccessElement>  getAuthAccessElement(HttpServletRequest request) {
-		Cookie loginInfoCookie = extractCookie(request.getCookies(), AuthDataUtil.COOKIE_PRINCIPAL);
+		Cookie loginInfoCookie = extractCookie(request.getCookies(), AuthConstants.COOKIE_PRINCIPAL);
 		if (loginInfoCookie == null) {
 					return Optional.empty();
 				}
@@ -87,7 +86,7 @@ public final class AuthDataUtil {
 	 */
 	@Nonnull
 	public static  Optional<String> getAuthTokenFomCookie(HttpServletRequest request) {
-		Cookie authTokenCookie =  extractCookie(request.getCookies(), AuthDataUtil.COOKIE_AUTH_TOKEN);
+		Cookie authTokenCookie =  extractCookie(request.getCookies(), AuthConstants.COOKIE_AUTH_TOKEN);
 			String authToken = authTokenCookie != null ? authTokenCookie.getValue() : null;
 			if (StringUtils.isEmpty(authToken)) {
 				return Optional.empty();
