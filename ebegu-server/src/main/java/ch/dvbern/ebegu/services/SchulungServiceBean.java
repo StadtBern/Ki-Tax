@@ -58,8 +58,8 @@ import ch.dvbern.ebegu.testfaelle.Testfall07_MeierMeret;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
-import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -155,7 +155,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Inject
-	private Persistence<AuthorisierterBenutzer> persistence;
+	private Persistence persistence;
 
 
 	@Override

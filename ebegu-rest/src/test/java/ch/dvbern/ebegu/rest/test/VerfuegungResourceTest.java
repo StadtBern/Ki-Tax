@@ -36,7 +36,7 @@ public class VerfuegungResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private InstitutionService instService;
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 	@Test
 	public void saveVerfuegungTest() throws EbeguException {

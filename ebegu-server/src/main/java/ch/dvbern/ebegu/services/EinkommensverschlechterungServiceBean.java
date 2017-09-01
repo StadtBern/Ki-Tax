@@ -38,7 +38,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class EinkommensverschlechterungServiceBean extends AbstractBaseService implements EinkommensverschlechterungService {
 
 	@Inject
-	private Persistence<EinkommensverschlechterungContainer> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;

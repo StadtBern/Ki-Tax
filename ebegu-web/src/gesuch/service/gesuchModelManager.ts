@@ -296,7 +296,7 @@ export default class GesuchModelManager {
             });
         } else {
             this.log.warn('Es wurde versucht einen undefined Fall zu speichern');
-            let deferred = this.$q.defer();
+            let deferred = this.$q.defer<TSFall>();
             deferred.resolve(undefined);
             return deferred.promise;
         }
@@ -1304,7 +1304,7 @@ export default class GesuchModelManager {
                 return updatedBetreuungen;
             });
         } else {
-            let defer = this.$q.defer();
+            let defer = this.$q.defer<Array<TSBetreuung>>();
             defer.resolve();
             return defer.promise;
         }

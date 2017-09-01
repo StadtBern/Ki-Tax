@@ -69,7 +69,7 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	private TraegerschaftService traegerschaftService;
 
 	@Inject
-	private Persistence<?> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private EbeguParameterService ebeguParameterService;

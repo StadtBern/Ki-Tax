@@ -1,15 +1,23 @@
 package ch.dvbern.ebegu.rules;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.annotation.Nonnull;
+import javax.validation.Valid;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import javax.annotation.Nonnull;
-import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.*;
 
 /**
  * This defines a Rule that has a unique Name given by RuleKey. The Rule is valid for a specified validityPeriod and
@@ -20,12 +28,12 @@ public abstract class AbstractEbeguRule implements Rule {
 	/**
 	 * This is the name of the Rule, Can be used to create messages etc.
 	 */
-	private RuleKey ruleKey;
+	private final RuleKey ruleKey;
 
-	private RuleType ruleType;
+	private final RuleType ruleType;
 
 	@Valid
-	private DateRange validityPeriod;
+	private final DateRange validityPeriod;
 
 
 	public AbstractEbeguRule(@Nonnull RuleKey ruleKey, @Nonnull RuleType ruleType, @Nonnull DateRange validityPeriod) {

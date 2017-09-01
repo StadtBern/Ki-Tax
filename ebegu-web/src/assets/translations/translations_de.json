@@ -1,4 +1,5 @@
 {
+    "HOME": "Home",
     "AB": "ab",
     "AKTION": "Aktion",
     "AKTION_UPPER": "AKTION",
@@ -491,6 +492,7 @@
     "ANGEBOT_UPPER": "ANGEBOT",
     "VERANTWORTLICH_UPPER": "VERANTWORTLICH",
     "VERANTWORTLICHER": "Verantwortlicher: {{name}}",
+    "VERANTWORTLICHER_SCHULAMT": "Schulamt",
     "STATUS_UPPER": "STATUS",
     "EINGANG_UPPER": "EINGANG",
     "PERIODE_UPPER": "PERIODE",
@@ -897,6 +899,7 @@
     "ABWESENHEIT_ERFASSEN": "Abwesenheit erfassen",
     "ABWESENHEIT_FUER_WELCHES_KIND" : "Für welches Kind gilt die Abwesenheit?",
     "GS_BEARBEITEN": "Antrag bearbeiten",
+    "GS_DOKUMENT_HOCHLADEN": "Dokument hochladen",
     "GS_DOKUMENTE_HOCHLADEN": "Dokumente hochladen",
     "GS_MUTIEREN": "Antrag mutieren",
     "GS_BEANTRAGEN": "Antrag stellen",

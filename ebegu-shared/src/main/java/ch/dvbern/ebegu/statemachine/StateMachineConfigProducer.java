@@ -1,11 +1,11 @@
 package ch.dvbern.ebegu.statemachine;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Produces;
+
 import ch.dvbern.ebegu.enums.AntragEvents;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import com.github.oxo42.stateless4j.StateMachineConfig;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Produces;
 
 /**
  * CDI Producer fuer StateMachineConfig die wir in SERf benoetigen
@@ -17,7 +17,7 @@ import javax.enterprise.inject.Produces;
 public class StateMachineConfigProducer {
 
 
-	private StateMachineConfig<AntragStatus, AntragEvents> gesuchFSMConfig = new StateMachineConfig<>();
+	private final StateMachineConfig<AntragStatus, AntragEvents> gesuchFSMConfig = new StateMachineConfig<>();
 
 	@Produces
 	public StateMachineConfig<AntragStatus, AntragEvents> createStateMachineConfig() {

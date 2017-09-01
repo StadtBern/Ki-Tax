@@ -26,7 +26,7 @@ import javax.inject.Inject;
 public class DownloadFileServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private DownloadFileService downloadFileService;
