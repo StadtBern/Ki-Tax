@@ -30,12 +30,12 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     allowedRoles: Array<TSRole>;
     initialModel: TSFinanzModel;
 
-    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
+    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService',
         'WizardStepManager', '$q', '$scope', '$timeout'];
 
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private CONSTANTS: any, private errorService: ErrorService, wizardStepManager: WizardStepManager,
+                private errorService: ErrorService, wizardStepManager: WizardStepManager,
                 private $q: IQService, $scope: IScope, $timeout: ITimeoutService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG, $timeout);
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);

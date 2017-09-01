@@ -25,7 +25,6 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {isVerfuegtOrSTV} from '../../../models/enums/TSAntragStatus';
 import * as moment from 'moment';
 import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
-import Moment = moment.Moment;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ILogService = angular.ILogService;

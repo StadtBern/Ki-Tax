@@ -10,7 +10,6 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import * as moment from 'moment';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';

@@ -62,7 +62,11 @@ export default class AbstractGesuchViewController<T> {
      */
     public isGesuchValid(): boolean {
         if (!this.form.$valid) {
-            angular.element('md-radio-group.ng-invalid, .ng-invalid>input[type="text"],input[type="text"].ng-invalid,select.ng-invalid,md-checkbox.ng-invalid').first().focus();
+            let element: any = angular.element('md-radio-group.ng-invalid,'
+                + ' .ng-invalid>input,input.ng-invalid,select.ng-invalid,md-checkbox.ng-invalid').first();
+            if (element) {
+                element.focus();
+            }
         }
         return this.form.$valid;
     }
@@ -127,10 +131,15 @@ export default class AbstractGesuchViewController<T> {
     }
 
     public selectFirst(): void {
-        let tmp = angular.element('md-radio-group:not(disbaled),input:enabled,form button:enabled,select:enabled,md-checkbox:enabled,.dvb-loading-button'
-            + ' button:enabled,tbody>tr[ng-click]:not(disabled)').first();
+        let tmp = angular.element('md-radio-button:enabled,input:enabled,form'
+            + ' button:enabled,select:enabled,md-checkbox:enabled,.dvb-loading-button'
+            + ' button:enabled,tbody>tr[ng-click]:enabled,button.link-underline:enabled').first();
         if (tmp) {
-            tmp.focus();
+            if (tmp.prop('tagName') === 'MD-RADIO-BUTTON') {
+                tmp.parent().first().focus();
+            } else {
+                tmp.focus();
+            }
         }
     }
 
