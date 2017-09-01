@@ -117,8 +117,6 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
             }
         }
         this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
-        // Falls bereits Dokumente gemahnt wurden, muss das JA erfahren, wenn neue Dokumente hochgeladen wurden
-        this.resetAntragStatusIfNecessary();
     }
 
     removeDokument(dokumentGrund: TSDokumentGrund, dokument: TSDokument, dokumente: TSDokumentGrund[]) {
@@ -158,17 +156,5 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
         });
 
         this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
-    }
-
-    private resetAntragStatusIfNecessary(): void {
-        // Falls bereits Dokumente gemahnt wurden, muss das JA erfahren, wenn neue Dokumente hochgeladen wurden
-        let status = this.gesuchModelManager.getGesuch().status;
-        if (TSAntragStatus.ERSTE_MAHNUNG === status) {
-            this.setGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
-        } else if (TSAntragStatus.ZWEITE_MAHNUNG === status) {
-            this.setGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
-        } else if (TSAntragStatus.NUR_SCHULAMT === status) {
-            this.setGesuchStatus(TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN);
-        }
     }
 }

@@ -8,6 +8,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
@@ -16,6 +18,8 @@ import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
@@ -37,6 +41,7 @@ import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.jboss.ejb3.annotation.TransactionTimeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +90,8 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 
 	@Override
 	@Asynchronous
+	@TransactionTimeout(value = 360, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Future<Boolean> processScript(@Nonnull String scriptId) {
 		switch (scriptId) {
 		case "1105":
@@ -95,6 +102,9 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 			break;
 		case "1098":
 			processScript1098_SetFlagGesuchBetreuungenStatus();
+			break;
+		case "1136":
+			processScript1136_RemoveStatusDokumentHochgeladen();
 			break;
 		}
 		// to avoid errors due to missing Context because Principal is set as RequestScoped
@@ -304,5 +314,41 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 		LocalDateTime stopTime = LocalDateTime.now();
 		long between = ChronoUnit.MILLIS.between(startTime, stopTime);
 		LOGGER.info("Finished Migration EBEGU-1098, took : " + between + " ms and processed " + allGesuche.size());
+	}
+
+	/**
+	 * In Task 1136 we replaced the status "ERSTE_MAHNUNG_DOKUMENT_HOCHGELADEN", "ZWEITE_MAHNUNG_DOKUMENT_HOCHGELADEN" and "SCHULAMT_DOKUMENT_HOCHGELADEN" by
+	 * a Flag. All status history entries concerning those status must be replaced by the preceeding status. This leads to two entries with the same
+	 * status following each other. In this script we merge those.
+	 */
+	private void processScript1136_RemoveStatusDokumentHochgeladen() {
+		LOGGER.info("Processing script 1136...");
+		Collection<Gesuch> allGesuche = gesuchService.getAllGesuche();
+		List<String> toDelete = new ArrayList<>();
+		for (Gesuch gesuch : allGesuche) {
+			List<AntragStatusHistory> antragStatusHistories = antragStatusHistoryService.findAllAntragStatusHistoryByGesuch(gesuch)
+				.stream()
+				.sorted(Comparator.comparing(AntragStatusHistory::getTimestampVon))
+				.collect(Collectors.toList());
+			AntragStatusHistory lastHistory = null;
+			for (AntragStatusHistory antragStatusHistory : antragStatusHistories) {
+				if (lastHistory != null && lastHistory.getStatus() == antragStatusHistory.getStatus()) {
+					// Zusammenfassen
+					LOGGER.info("found consecutive history entries with same status: " + antragStatusHistory.getGesuch().getJahrAndFallnummer() + ' ' + antragStatusHistory.getStatus());
+					lastHistory.setTimestampBis(antragStatusHistory.getTimestampBis());
+					lastHistory = persistence.merge(lastHistory);
+					toDelete.add(antragStatusHistory.getId());
+				} else {
+					lastHistory = antragStatusHistory;
+				}
+			}
+			for (String historyToDeleteId : toDelete) {
+				AntragStatusHistory toDeleteHistory = persistence.find(AntragStatusHistory.class, historyToDeleteId);
+				if (toDeleteHistory != null) {
+					persistence.remove(toDeleteHistory);
+				}
+			}
+		}
+		LOGGER.info("... processing of script 1136 finished");
 	}
 }

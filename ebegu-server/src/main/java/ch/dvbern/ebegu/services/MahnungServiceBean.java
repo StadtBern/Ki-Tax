@@ -193,12 +193,10 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		List<Mahnung> gesucheMitAbgelaufenenMahnungen = persistence.getCriteriaResults(query);
 		for (Mahnung mahnung : gesucheMitAbgelaufenenMahnungen) {
 			final Gesuch gesuch = mahnung.getGesuch();
-			if (AntragStatus.ERSTE_MAHNUNG == gesuch.getStatus() ||
-				AntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN == gesuch.getStatus()) {
+			if (AntragStatus.ERSTE_MAHNUNG == gesuch.getStatus()) {
 				gesuch.setStatus(AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN);
 				gesuchService.updateGesuch(gesuch, true, null);
-			} else if (AntragStatus.ZWEITE_MAHNUNG == gesuch.getStatus() ||
-				AntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN == gesuch.getStatus()) {
+			} else if (AntragStatus.ZWEITE_MAHNUNG == gesuch.getStatus()) {
 				gesuch.setStatus(AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
 				gesuchService.updateGesuch(gesuch, true, null);
 			}

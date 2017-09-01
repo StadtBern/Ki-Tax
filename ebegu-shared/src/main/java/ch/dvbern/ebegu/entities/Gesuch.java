@@ -89,6 +89,10 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	@NotNull
 	@Column(nullable = false)
+	private Boolean dokumenteHochgeladen = false;
+
+	@NotNull
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private AntragTyp typ = AntragTyp.ERSTGESUCH;
 
@@ -465,6 +469,14 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	public void setGueltig(boolean gueltig) {
 		this.gueltig = gueltig;
+	}
+
+	public Boolean getDokumenteHochgeladen() {
+		return dokumenteHochgeladen;
+	}
+
+	public void setDokumenteHochgeladen(Boolean dokumenteHochgeladen) {
+		this.dokumenteHochgeladen = dokumenteHochgeladen;
 	}
 
 	@Override

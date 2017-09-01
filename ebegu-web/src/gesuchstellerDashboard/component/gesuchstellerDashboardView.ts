@@ -205,7 +205,7 @@ export class GesuchstellerDashboardListViewController {
             }
             return this.ebeguUtil.translateString(IN_BEARBEITUNG_BASE_NAME);
         }
-        if ((status === TSAntragStatus.NUR_SCHULAMT || status === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN)
+        if ((status === TSAntragStatus.NUR_SCHULAMT)
             && isUserGesuchsteller) {
             return this.ebeguUtil.translateString('ABGESCHLOSSEN');
         }
@@ -214,7 +214,7 @@ export class GesuchstellerDashboardListViewController {
 
     public getVerantwortlicherFullName(antrag: TSAntragDTO): string {
         if (antrag) {
-            if (antrag.status === TSAntragStatus.NUR_SCHULAMT || antrag.status === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN) {
+            if (antrag.status === TSAntragStatus.NUR_SCHULAMT) {
                 return this.ebeguUtil.translateString('VERANTWORTLICHER_SCHULAMT');
             }
             if (antrag.verantwortlicher) {

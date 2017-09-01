@@ -46,7 +46,6 @@ public class ReportServiceBeanSimpleTest {
 
 		Assert.assertEquals("VERFUEGT", AntragStatus.VERFUEGT.name());
 		Assert.assertEquals("NUR_SCHULAMT", AntragStatus.NUR_SCHULAMT.name());
-		Assert.assertEquals("NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN", AntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN.name());
 		Assert.assertEquals("BESCHWERDE_HAENGIG", AntragStatus.BESCHWERDE_HAENGIG.name());
 		Assert.assertEquals("PRUEFUNG_STV", AntragStatus.PRUEFUNG_STV.name());
 		Assert.assertEquals("IN_BEARBEITUNG_STV", AntragStatus.IN_BEARBEITUNG_STV.name());

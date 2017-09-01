@@ -13,7 +13,7 @@ import {
     TSAntragStatus,
     isAtLeastFreigegeben,
     isAnyStatusOfVerfuegt,
-    isAnyStatusOfVerfuegtButSchulamt
+    isAnyStatusOfVerfuegtButSchulamt, isAnyStatusOfMahnung
 } from '../../../models/enums/TSAntragStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
@@ -330,18 +330,11 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public showMahnlaufBeenden(): boolean {
-        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN))
-            && !this.isGesuchReadonly();
+        return isAnyStatusOfMahnung(this.getGesuch().status) && !this.isGesuchReadonly();
     }
 
     public showDokumenteNichtKomplett(): boolean {
-        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN))
+        return isAnyStatusOfMahnung(this.getGesuch().status) && this.getGesuch().dokumenteHochgeladen
             && !this.isGesuchReadonly();
     }
 
@@ -393,12 +386,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public dokumenteNichtKomplett(): void {
-        // Nur Gesuchstatus zuruecksetzen, und zwar zurueck auf MAHNUNG (die jeweils relevante)
-        if (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN)) {
-            this.setGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG);
-        } else if (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN)) {
-            this.setGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG);
-        }
+        this.gesuchModelManager.getGesuch().dokumenteHochgeladen = false;
+        this.gesuchModelManager.updateGesuch();
     }
 
     public zweiteMahnungNichtEingetreten(): void {

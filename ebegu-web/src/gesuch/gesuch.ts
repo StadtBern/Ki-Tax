@@ -160,7 +160,7 @@ export class GesuchRouteController {
 
         }
 
-        if ((toTranslate === TSAntragStatus.NUR_SCHULAMT || toTranslate === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN)
+        if ((toTranslate === TSAntragStatus.NUR_SCHULAMT)
             && isUserGesuchsteller) {
             return this.ebeguUtil.translateString('ABGESCHLOSSEN');
         }

@@ -321,7 +321,6 @@ describe('gesuchModelManager', function () {
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.IN_BEARBEITUNG_JA)).toEqual(TSAntragStatus.IN_BEARBEITUNG_JA);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.FREIGABEQUITTUNG)).toEqual(TSAntragStatus.FREIGABEQUITTUNG);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.NUR_SCHULAMT)).toEqual(TSAntragStatus.NUR_SCHULAMT);
-                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN)).toEqual(TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.VERFUEGEN)).toEqual(TSAntragStatus.VERFUEGEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.VERFUEGT)).toEqual(TSAntragStatus.VERFUEGT);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZWEITE_MAHNUNG)).toEqual(TSAntragStatus.ZWEITE_MAHNUNG);

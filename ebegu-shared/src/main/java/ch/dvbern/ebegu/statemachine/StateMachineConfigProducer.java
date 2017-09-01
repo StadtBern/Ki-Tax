@@ -54,16 +54,10 @@ public class StateMachineConfigProducer {
 			.permit(AntragEvents.BESCHWEREN, AntragStatus.BESCHWERDE_HAENGIG);
 
 		gesuchFSMConfig.configure(AntragStatus.NUR_SCHULAMT)
-			.permit(AntragEvents.DOKUMENT_HOCHLADEN, AntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN)
-			.permit(AntragEvents.BESCHWEREN, AntragStatus.BESCHWERDE_HAENGIG);
-
-		gesuchFSMConfig.configure(AntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN)
-			.permit(AntragEvents.DOKUMENTE_GEPRUEFT, AntragStatus.NUR_SCHULAMT)
 			.permit(AntragEvents.BESCHWEREN, AntragStatus.BESCHWERDE_HAENGIG);
 
 		gesuchFSMConfig.configure(AntragStatus.BESCHWERDE_HAENGIG)
 			.permit(AntragEvents.ZURUECK_NUR_SCHULAMT, AntragStatus.NUR_SCHULAMT)
-			.permit(AntragEvents.ZURUECK_NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN, AntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN)
 			.permit(AntragEvents.ZURUECK_VERFUEGT, AntragStatus.VERFUEGT)
 			.permit(AntragEvents.ZURUECK_KEIN_ANGEBOT, AntragStatus.KEIN_ANGEBOT)
 			.permit(AntragEvents.ZURUECK_PRUEFUNG_STV, AntragStatus.PRUEFUNG_STV)
@@ -83,32 +77,18 @@ public class StateMachineConfigProducer {
 			.permit(AntragEvents.PRUEFUNG_ABGESCHLOSSEN, AntragStatus.VERFUEGT);
 
 		gesuchFSMConfig.configure(AntragStatus.ERSTE_MAHNUNG)
-			.permit(AntragEvents.DOKUMENT_HOCHLADEN, AntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN)
-			.permit(AntragEvents.MAHNUNG_ABGELAUFEN, AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN)
-			.permit(AntragEvents.MAHNLAUF_BEENDEN, AntragStatus.IN_BEARBEITUNG_JA);
-
-		gesuchFSMConfig.configure(AntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN)
-			.permit(AntragEvents.DOKUMENTE_GEPRUEFT, AntragStatus.ERSTE_MAHNUNG)
 			.permit(AntragEvents.MAHNUNG_ABGELAUFEN, AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN)
 			.permit(AntragEvents.MAHNLAUF_BEENDEN, AntragStatus.IN_BEARBEITUNG_JA);
 
 		gesuchFSMConfig.configure(AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN)
-			.permit(AntragEvents.DOKUMENT_HOCHLADEN, AntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN)
 			.permit(AntragEvents.MAHNEN, AntragStatus.ZWEITE_MAHNUNG)
 			.permit(AntragEvents.MAHNLAUF_BEENDEN, AntragStatus.IN_BEARBEITUNG_JA);
 
 		gesuchFSMConfig.configure(AntragStatus.ZWEITE_MAHNUNG)
-			.permit(AntragEvents.DOKUMENT_HOCHLADEN, AntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN)
-			.permit(AntragEvents.MAHNUNG_ABGELAUFEN, AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN)
-			.permit(AntragEvents.MAHNLAUF_BEENDEN, AntragStatus.IN_BEARBEITUNG_JA);
-
-		gesuchFSMConfig.configure(AntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN)
-			.permit(AntragEvents.DOKUMENTE_GEPRUEFT, AntragStatus.ZWEITE_MAHNUNG)
 			.permit(AntragEvents.MAHNUNG_ABGELAUFEN, AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN)
 			.permit(AntragEvents.MAHNLAUF_BEENDEN, AntragStatus.IN_BEARBEITUNG_JA);
 
 		gesuchFSMConfig.configure(AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN)
-			.permit(AntragEvents.DOKUMENT_HOCHLADEN, AntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN)
 			.permit(AntragEvents.MAHNLAUF_BEENDEN, AntragStatus.IN_BEARBEITUNG_JA);
 
 		return gesuchFSMConfig;
