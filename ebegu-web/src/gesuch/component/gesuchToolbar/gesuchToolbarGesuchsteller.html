@@ -1,7 +1,9 @@
 <!--gesuchtoolbar fuer normale Screens-->
 <div class="gesuch-toolbar-gesuchsteller" flex="100" hide-sm hide-xs>
+
     <md-toolbar flex="100">
         <md-menu-bar flex="100" layout="row" layout-align="start center">
+            <h1 class="access-for-all-title" data-translate="AFA_TOOLBAR"></h1>
             <span class="gesuchName"><span ng-bind="vmgs.getGesuchName()"  title="{{vmgs.getBesitzer()}}"></span></span>
             <span flex="40"></span>
             <md-menu ng-if="vmgs.showGesuchPeriodeNavigationMenu()">
