@@ -13,6 +13,7 @@ import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -27,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.ejb.EJBAccessException;
 import javax.inject.Inject;
+import javax.persistence.OneToOne;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
@@ -56,8 +58,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private Persistence persistence;
-	@Inject
-	private BenutzerService benutzerService;
 	@Inject
 	private WizardStepService wizardStepService;
 	@Inject
@@ -979,6 +979,19 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		PropertyDescriptor[] propertyDescriptors = bean.getPropertyDescriptors(entity.getClass());
 		for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
 			Object property = bean.getProperty(entity, propertyDescriptor.getName());
+			// Bidirektionale Beziehungen fuehren zu einem Endlos-Loop. Wir nehmen nur die OwningSide,
+			// also ohne ...mappedBy
+			try {
+				OneToOne declaredAnnotationsByType = entity.getClass().getDeclaredField(propertyDescriptor.getName()).getDeclaredAnnotation(OneToOne.class);
+				if (declaredAnnotationsByType != null) {
+					String s = declaredAnnotationsByType.mappedBy();
+					if (StringUtils.isNotEmpty(s)) {
+						return;
+					}
+				}
+			} catch (NoSuchFieldException e) {
+				// do nothing, go on
+			}
 			if (property instanceof AbstractEntity && !(property instanceof Gesuch)) { //to avoid loops
 				findAbstractEntitiesWithIds((AbstractEntity) property, ids);
 			}
