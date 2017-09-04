@@ -7,14 +7,15 @@
  * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
  * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
  */
-package ch.dvbern.ebegu.api.dtos;
+package ch.dvbern.ebegu.authentication;
 
-import ch.dvbern.ebegu.enums.UserRole;
+import java.io.Serializable;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.enums.UserRole;
 
 /**
  * Response DTO Element fuer einen erfolgreichen Login Request
@@ -47,6 +48,13 @@ public class JaxAuthAccessElement implements Serializable {
 		this.email = Objects.requireNonNull(email);
 		this.role = Objects.requireNonNull(role);
 	}
+
+	public JaxAuthAccessElement(AuthAccessElement access) {
+		this(access.getAuthId(), String.valueOf(access.getNachname()),
+					String.valueOf(access.getVorname()), String.valueOf(access.getEmail()), access.getRole());
+	}
+
+
 
 	@Nonnull
 	public String getAuthId() {

@@ -89,14 +89,19 @@ public abstract class AbstractEbeguTest {
 		// wir fuegen die packages einzeln hinzu weil sonst klassen die im shared sind und das gleiche package haben
 		// doppelt eingefuegt werden
 
-		WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "test.war").addPackages(true, "ch/dvbern/ebegu/persistence").addPackages(true, "ch/dvbern/ebegu/rechner")
-			.addPackages(true, "ch/dvbern/ebegu/rules").addPackages(true, "ch/dvbern/ebegu/services").addPackages(true, "ch/dvbern/ebegu/validation")
+		WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "test.war")
+			.addPackages(true, "ch/dvbern/ebegu/persistence")
+			.addPackages(true, "ch/dvbern/ebegu/rechner")
+			.addPackages(true, "ch/dvbern/ebegu/rules")
+			.addPackages(true, "ch/dvbern/ebegu/services")
+			.addPackages(true, "ch/dvbern/ebegu/validation")
 			.addPackages(true, "ch/dvbern/ebegu/vorlagen")
 			.addPackages(true, "ch/dvbern/ebegu/tests")
 			.addPackages(true, "ch/dvbern/ebegu/tests/util")
 			.addPackages(true, "ch/dvbern/ebegu/mail")
 			.addPackages(true, "ch/dvbern/ebegu/ws/personensuche/service")
 			.addPackages(true, "ch/dvbern/ebegu/ewk")
+			.addPackages(true, "ch/dvbern/ebegu/reporting")
 			// .addPackages(true, "ch/dvbern/ebegu/enums")
 			.addClasses(AbstractEbeguLoginTest.class, Persistence.class, ISessionContextService.class, AbstractEntity.class)
 			.addPackages(true, "ch/dvbern/ebegu/services/authentication")

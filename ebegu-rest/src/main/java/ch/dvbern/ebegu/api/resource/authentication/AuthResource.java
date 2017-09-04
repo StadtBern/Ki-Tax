@@ -1,34 +1,5 @@
 package ch.dvbern.ebegu.api.resource.authentication;
 
-import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElement;
-import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
-import ch.dvbern.ebegu.authentication.AuthAccessElement;
-import ch.dvbern.ebegu.authentication.AuthLoginElement;
-import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.services.AuthService;
-import ch.dvbern.ebegu.services.BenutzerService;
-import ch.dvbern.ebegu.util.Constants;
-import com.google.gson.Gson;
-import com.sun.identity.saml2.common.SAML2Constants;
-import com.sun.identity.saml2.common.SAML2Utils;
-import org.apache.http.client.utils.URIBuilder;
-import org.owasp.esapi.ESAPI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.security.PermitAll;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -36,6 +7,49 @@ import java.util.Base64;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response;
+
+import org.apache.http.client.utils.URIBuilder;
+import org.owasp.esapi.ESAPI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.common.SAML2Utils;
+
+import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
+import ch.dvbern.ebegu.authentication.AuthAccessElement;
+import ch.dvbern.ebegu.authentication.AuthLoginElement;
+import ch.dvbern.ebegu.authentication.JaxAuthAccessElement;
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.services.AuthService;
+import ch.dvbern.ebegu.services.BenutzerService;
+import ch.dvbern.ebegu.util.AuthConstants;
+import ch.dvbern.ebegu.util.Constants;
 
 /**
  * This resource has functions to login or logout
@@ -45,9 +59,6 @@ import java.util.Optional;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthResource {
-
-	public static final String COOKIE_PATH = "/";
-	public static final String COOKIE_DOMAIN = null;
 
 	private static final Logger LOG = LoggerFactory.getLogger(AuthResource.class);
 
@@ -109,7 +120,7 @@ public class AuthResource {
 	@GET
 	@PermitAll
 	public Response initSingleLogout(@Nullable @QueryParam("relayPath") String relayPath,
-									 @CookieParam(AuthDataUtil.COOKIE_AUTH_TOKEN) Cookie authTokenCookie) {
+									 @CookieParam(AuthConstants.COOKIE_AUTH_TOKEN) Cookie authTokenCookie) {
 
 		if (authTokenCookie != null && authTokenCookie.getValue() != null) {
 			Optional<AuthorisierterBenutzer> currentAuthOpt = authService.validateAndRefreshLoginToken(authTokenCookie.getValue(), false);
@@ -177,19 +188,19 @@ public class AuthResource {
 				return Response.status(Response.Status.UNAUTHORIZED).build();
 			}
 			AuthAccessElement access = accessElement.get();
-			JaxAuthAccessElement element = converter.authAccessElementToJax(access);
+			JaxAuthAccessElement element = new JaxAuthAccessElement(access);
 
 			boolean cookieSecure = isCookieSecure();
 
 			// Cookie to store auth_token, HTTP-Only Cookie --> Protection from XSS
-			NewCookie authCookie = new NewCookie(AuthDataUtil.COOKIE_AUTH_TOKEN, access.getAuthToken(),
-				COOKIE_PATH, COOKIE_DOMAIN, "authentication", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, true);
+			NewCookie authCookie = new NewCookie(AuthConstants.COOKIE_AUTH_TOKEN, access.getAuthToken(),
+				AuthConstants.COOKIE_PATH, AuthConstants.COOKIE_DOMAIN, "authentication", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, true);
 			// Readable Cookie for XSRF Protection (the Cookie can only be read from our Domain)
-			NewCookie xsrfCookie = new NewCookie(AuthDataUtil.COOKIE_XSRF_TOKEN, access.getXsrfToken(),
-				COOKIE_PATH, COOKIE_DOMAIN, "XSRF", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, false);
+			NewCookie xsrfCookie = new NewCookie(AuthConstants.COOKIE_XSRF_TOKEN, access.getXsrfToken(),
+				AuthConstants.COOKIE_PATH, AuthConstants.COOKIE_DOMAIN, "XSRF", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, false);
 			// Readable Cookie storing user data
-			NewCookie principalCookie = new NewCookie(AuthDataUtil.COOKIE_PRINCIPAL, encodeAuthAccessElement(element),
-				COOKIE_PATH, COOKIE_DOMAIN, "principal", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, false);
+			NewCookie principalCookie = new NewCookie(AuthConstants.COOKIE_PRINCIPAL, encodeAuthAccessElement(element),
+				AuthConstants.COOKIE_PATH, AuthConstants.COOKIE_DOMAIN, "principal", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, false);
 
 			return Response.ok().cookie(authCookie, xsrfCookie, principalCookie).build();
 		} else {
@@ -206,7 +217,7 @@ public class AuthResource {
 	@POST
 	@Path("/logout")
 	@PermitAll
-	public Response logout(@CookieParam(AuthDataUtil.COOKIE_AUTH_TOKEN) Cookie authTokenCookie) {
+	public Response logout(@CookieParam(AuthConstants.COOKIE_AUTH_TOKEN) Cookie authTokenCookie) {
 		try {
 			if (authTokenCookie != null) {
 				String authToken = Objects.requireNonNull(authTokenCookie.getValue());
@@ -214,9 +225,9 @@ public class AuthResource {
 
 				if (authService.logout(authToken)) {
 					// Respond with expired cookies
-					NewCookie authCookie = expireCookie(AuthDataUtil.COOKIE_AUTH_TOKEN, cookieSecure, true);
-					NewCookie xsrfCookie = expireCookie(AuthDataUtil.COOKIE_XSRF_TOKEN, cookieSecure, false);
-					NewCookie principalCookie = expireCookie(AuthDataUtil.COOKIE_PRINCIPAL, cookieSecure, false);
+					NewCookie authCookie = expireCookie(AuthConstants.COOKIE_AUTH_TOKEN, cookieSecure, true);
+					NewCookie xsrfCookie = expireCookie(AuthConstants.COOKIE_XSRF_TOKEN, cookieSecure, false);
+					NewCookie principalCookie = expireCookie(AuthConstants.COOKIE_PRINCIPAL, cookieSecure, false);
 					return Response.ok().cookie(authCookie, xsrfCookie, principalCookie).build();
 				}
 			}
@@ -229,7 +240,7 @@ public class AuthResource {
 
 	@Nonnull
 	private NewCookie expireCookie(@Nonnull String name, boolean secure, boolean httpOnly) {
-		return new NewCookie(name, "", COOKIE_PATH, COOKIE_DOMAIN, "", 0, secure, httpOnly);
+		return new NewCookie(name, "", AuthConstants.COOKIE_PATH, AuthConstants.COOKIE_DOMAIN, "", 0, secure, httpOnly);
 	}
 
 	/**

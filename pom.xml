@@ -160,7 +160,7 @@
             <dependency>
                 <groupId>ch.dvbern.oss.doctemplate</groupId>
                 <artifactId>docx-engine</artifactId>
-                <version>2.4.0</version>
+                <version>2.4.1</version>
             </dependency>
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
@@ -559,6 +559,24 @@
                         <artifactId>slf4j-jdk14</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <!-- CVE-2014-0114 -->
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.9.3</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils-core</artifactId>
+                <version>1.8.3</version>
+            </dependency>
+            <!-- CVE-2014-8122 -->
+            <dependency>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>2.0</version>
             </dependency>
         </dependencies>
 

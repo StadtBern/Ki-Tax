@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.enums;
+package ch.dvbern.ebegu.reporting;
 
 import javax.annotation.Nonnull;
 
