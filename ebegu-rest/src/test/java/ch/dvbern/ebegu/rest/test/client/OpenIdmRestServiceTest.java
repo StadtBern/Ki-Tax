@@ -1,12 +1,10 @@
 package ch.dvbern.ebegu.rest.test.client;
 
 
-import ch.dvbern.ebegu.api.client.JaxOpenIdmResponse;
-import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
-import ch.dvbern.ebegu.api.client.OpenIdmRestService;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.Traegerschaft;
-import ch.dvbern.ebegu.rest.test.AbstractEbeguRestLoginTest;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -16,8 +14,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.util.Optional;
+import ch.dvbern.ebegu.api.client.JaxOpenIdmResponse;
+import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
+import ch.dvbern.ebegu.api.client.OpenIdmRestService;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.rest.test.AbstractEbeguRestLoginTest;
+import ch.dvbern.ebegu.util.OpenIDMUtil;
 
 /**
  * Testet die Verbindung zum OpenIdm Server.
@@ -101,17 +104,17 @@ public class OpenIdmRestServiceTest extends AbstractEbeguRestLoginTest {
 		//get and check
 		final Optional<JaxOpenIdmResult> institutionByUid1 = openIdmRestService.getInstitutionByUid(institution1.getId(), true);
 		Assert.assertTrue(institutionByUid1.isPresent());
-		Assert.assertEquals(institution1.getId(), openIdmRestService.convertToEBEGUID(institutionByUid1.get().get_id()));
+		Assert.assertEquals(institution1.getId(), OpenIDMUtil.convertToEBEGUID(institutionByUid1.get().get_id()));
 		Assert.assertEquals(institution1.getName(), institutionByUid1.get().getName());
 
 		final Optional<JaxOpenIdmResult> institutionByUid2 = openIdmRestService.getInstitutionByUid(institution2.getId(), true);
 		Assert.assertTrue(institutionByUid2.isPresent());
-		Assert.assertEquals(institution2.getId(), openIdmRestService.convertToEBEGUID(institutionByUid2.get().get_id()));
+		Assert.assertEquals(institution2.getId(), OpenIDMUtil.convertToEBEGUID(institutionByUid2.get().get_id()));
 		Assert.assertEquals(institution2.getName(), institutionByUid2.get().getName());
 
 		final Optional<JaxOpenIdmResult> traegerschaftByUid = openIdmRestService.getTraegerschaftByUid(traegerschaft.getId(), true);
 		Assert.assertTrue(traegerschaftByUid.isPresent());
-		Assert.assertEquals(traegerschaft.getId(), openIdmRestService.convertToEBEGUID(traegerschaftByUid.get().get_id()));
+		Assert.assertEquals(traegerschaft.getId(), OpenIDMUtil.convertToEBEGUID(traegerschaftByUid.get().get_id()));
 		Assert.assertEquals(traegerschaft.getName(), traegerschaftByUid.get().getName());
 
 		//Update
@@ -126,12 +129,12 @@ public class OpenIdmRestServiceTest extends AbstractEbeguRestLoginTest {
 		//get and check Updated
 		optUpdateInstitution1 = openIdmRestService.getInstitutionByUid(institution1.getId(), true);
 		Assert.assertTrue(optUpdateInstitution1.isPresent());
-		Assert.assertEquals(institution1.getId(), openIdmRestService.convertToEBEGUID(optUpdateInstitution1.get().get_id()));
+		Assert.assertEquals(institution1.getId(), OpenIDMUtil.convertToEBEGUID(optUpdateInstitution1.get().get_id()));
 		Assert.assertEquals(institution1.getName(), optUpdateInstitution1.get().getName());
 
 		optUpdateTraegerschaft1 = openIdmRestService.getTraegerschaftByUid(traegerschaft.getId(), true);
 		Assert.assertTrue(optUpdateTraegerschaft1.isPresent());
-		Assert.assertEquals(traegerschaft.getId(), openIdmRestService.convertToEBEGUID(optUpdateTraegerschaft1.get().get_id()));
+		Assert.assertEquals(traegerschaft.getId(), OpenIDMUtil.convertToEBEGUID(optUpdateTraegerschaft1.get().get_id()));
 		Assert.assertEquals(traegerschaft.getName(), optUpdateTraegerschaft1.get().getName());
 	}
 
