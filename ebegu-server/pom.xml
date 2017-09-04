@@ -150,7 +150,10 @@
             <artifactId>ebegu-ws</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>ch.dvbern.oss.excelmerger</groupId>
+            <artifactId>excelmerger-impl</artifactId>
+        </dependency>
     </dependencies>
 
     <profiles>

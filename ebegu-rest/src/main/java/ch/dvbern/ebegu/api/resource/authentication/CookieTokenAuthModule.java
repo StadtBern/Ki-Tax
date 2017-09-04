@@ -12,9 +12,15 @@
  */
 package ch.dvbern.ebegu.api.resource.authentication;
 
-import ch.dvbern.ebegu.api.EbeguApplicationV1;
-import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.util.Constants;
+import java.io.IOException;
+import java.util.NoSuchElementException;
+
+import javax.security.auth.message.AuthException;
+import javax.security.auth.message.AuthStatus;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.omnifaces.security.jaspic.core.AuthParameters;
 import org.omnifaces.security.jaspic.core.HttpMsgContext;
@@ -24,13 +30,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import javax.security.auth.message.AuthException;
-import javax.security.auth.message.AuthStatus;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.NoSuchElementException;
+import ch.dvbern.ebegu.api.EbeguApplicationV1;
+import ch.dvbern.ebegu.api.util.RestUtil;
+import ch.dvbern.ebegu.util.AuthConstants;
+import ch.dvbern.ebegu.util.Constants;
 
 import static javax.security.auth.message.AuthStatus.SEND_FAILURE;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
@@ -169,10 +172,10 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	private boolean verifyXSFRHeader(HttpServletRequest request) {
-		String xsrfTokenHeader = request.getHeader(AuthDataUtil.PARAM_XSRF_TOKEN);
+		String xsrfTokenHeader = request.getHeader(AuthConstants.PARAM_XSRF_TOKEN);
 
 
-		Cookie xsrfTokenCookie = AuthDataUtil.extractCookie(request.getCookies(), AuthDataUtil.COOKIE_XSRF_TOKEN);
+		Cookie xsrfTokenCookie = AuthDataUtil.extractCookie(request.getCookies(), AuthConstants.COOKIE_XSRF_TOKEN);
 		boolean isValidFileDownload = StringUtils.isEmpty(xsrfTokenHeader)
 			&& xsrfTokenCookie != null
 			&& RestUtil.isFileDownloadRequest(request);
