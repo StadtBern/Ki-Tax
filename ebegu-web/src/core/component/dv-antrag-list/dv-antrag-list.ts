@@ -60,6 +60,7 @@ export class DVAntragListController {
     selectedAenderungsdatum: string;
     selectedEingangsdatumSTV: string;
     selectedVerantwortlicher: TSUser;
+    selectedDokumenteHochgeladen: string;
 
     tableId: string;
     tableTitle: string;
@@ -158,6 +159,10 @@ export class DVAntragListController {
     public getAntragStatus(): Array<TSAntragStatus> {
         return getTSAntragStatusValuesByRole(this.authServiceRS.getPrincipalRole());
     }
+
+    // public getDokumentHochgeladenOptions(): Array<boolean> {
+    //     return [true, false];
+    // }
 
     /**
      * Alle Betreuungsangebot typen fuer das Filterdropdown

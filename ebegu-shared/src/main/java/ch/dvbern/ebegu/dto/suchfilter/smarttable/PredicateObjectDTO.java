@@ -26,6 +26,7 @@ public class PredicateObjectDTO implements Serializable {
 	private String eingangsdatumSTV;  //Gesuch.eingangsdatumSTV
 	private String aenderungsdatum;  //Gesuch.antragStatusHistory
 	private String status;       //Gesuch.status
+	private Boolean dokumenteHochgeladen;
 	private String angebote;        //Gesuch.kindContainers.betreuungen.institutionStammdaten.betreuungsangebotTyp
 	private String institutionen;   //Gesuch.kindContainers.betreuungen.institutionStammdaten.institution.name
 	private String verantwortlicher; //Fall.verwantwortlicher.name
@@ -103,6 +104,14 @@ public class PredicateObjectDTO implements Serializable {
 		this.status = status;
 	}
 
+	public Boolean getDokumenteHochgeladen() {
+		return dokumenteHochgeladen;
+	}
+
+	public void setDokumenteHochgeladen(Boolean dokumenteHochgeladen) {
+		this.dokumenteHochgeladen = dokumenteHochgeladen;
+	}
+
 	public String getAngebote() {
 		return angebote;
 	}
@@ -137,6 +146,7 @@ public class PredicateObjectDTO implements Serializable {
 			.append("gesuchsperiodeString", gesuchsperiodeString)
 			.append("eingangsdatum", eingangsdatum)
 			.append("status", status)
+			.append("dokumenteHochgeladen", dokumenteHochgeladen)
 			.append("angebote", angebote)
 			.append("institutionen", institutionen)
 			.append("verantwortlicher", verantwortlicher)
