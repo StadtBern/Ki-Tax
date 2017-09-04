@@ -16,6 +16,8 @@ import {FreigabeDialogController} from '../../dialog/FreigabeDialogController';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import IScope = angular.IScope;
+import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
 let dialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -36,14 +38,15 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     TSRoleUtil: any;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$scope', 'ApplicationPropertyRS', '$window', 'AuthServiceRS'];
+        'DvDialog', 'DownloadRS', '$scope', 'ApplicationPropertyRS', 'AuthServiceRS', '$timeout'];
+
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
                 private downloadRS: DownloadRS, $scope: IScope, private applicationPropertyRS: ApplicationPropertyRS,
-                private $window: ng.IWindowService, private authServiceRS: AuthServiceRS) {
+                private authServiceRS: AuthServiceRS, $timeout: ITimeoutService) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FREIGABE);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FREIGABE, $timeout);
         this.initViewModel();
     }
 
@@ -174,5 +177,11 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
      */
     public isThereFreigabequittung(): boolean {
         return this.gesuchModelManager.isGesuch() || this.gesuchModelManager.areAllJAAngeboteNew();
+    }
+
+    $postLink() {
+        this.$timeout(() => {
+            this.selectFirst();
+        }, 100);
     }
 }

@@ -1,9 +1,10 @@
 <div class="betreuungListView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
     <div class="row viewTitle">
         <div class="col-md-12">
-            <h1>
+            <h2>
                 <span data-translate="KINDER_MIT_BETREUUNG"></span>
-            </h1>
+            </h2>
             <hr class="header"/>
         </div>
     </div>
@@ -51,9 +52,9 @@
                                 </td>
                                 <td dv-show-element
                                     dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                    dv-show-expression="vm.canRemoveBetreuung(betreuung)"
-                                    ng-click="$event.stopPropagation()">
-                                    <dv-loading-button type="button" button-click="vm.removeBetreuung(kind, betreuung)"
+                                    dv-show-expression="vm.canRemoveBetreuung(betreuung)">
+                                    <dv-loading-button aria-label="{{'BETREUUNG_DELETE'|translate}}" type="button"
+                                                       button-click="vm.removeBetreuung(kind, betreuung)"
                                                        button-disabled="vm.isNotAllowedToRemove(betreuung)"
                                                        button-class="dv-btn-operation">
                                         <i class="fa fa-lg fa-trash-o">
