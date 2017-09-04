@@ -131,9 +131,10 @@ export default class AbstractGesuchViewController<T> {
     }
 
     public selectFirst(): void {
-        let tmp = angular.element('md-radio-button:enabled,input:enabled,form'
-            + ' button:enabled,select:enabled,md-checkbox:enabled,.dvb-loading-button'
-            + ' button:enabled,tbody>tr[ng-click]:enabled,button.link-underline:enabled').first();
+        let tmp = angular.element('md-radio-button:not([disabled="disabled"]),fieldset:not([disabled="disabled"],.dv-adresse__fieldset) input:not([disabled="disabled"]),form'
+            + ' button:not([disabled="disabled"]),fieldset:not([disabled="disabled"],.dv-adresse__fieldset)'
+            + ' select:not([disabled="disabled"]),fieldset:not([disabled="disabled"],.dv-adresse__fieldset) md-checkbox:not([disabled="disabled"]),.dvb-loading-button'
+            + ' button:not([disabled="disabled"]),tbody>tr[ng-click]:not([disabled="disabled"]),button.link-underline:not([disabled="disabled"])').first();
         if (tmp) {
             if (tmp.prop('tagName') === 'MD-RADIO-BUTTON') {
                 tmp.parent().first().focus();
