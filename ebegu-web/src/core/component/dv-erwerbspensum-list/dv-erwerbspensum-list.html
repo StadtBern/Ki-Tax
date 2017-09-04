@@ -27,7 +27,8 @@
                     <td ng-if="vm.isRemoveAllowed(row)">
                         <dv-loading-button type="button" button-click="vm.removeClicked(row)"
                                            button-class="dv-btn-operation" title="{{vm.removeButtonTitle}}"
-                                           button-disabled="!vm.addButtonEnabled">
+                                           button-disabled="!vm.addButtonEnabled"
+                                           aria-label="{{'ERWERBSPENSUM_DELETE'|translate}}">
                             <i class="fa fa-lg fa-trash-o">
                             </i>
                         </dv-loading-button>

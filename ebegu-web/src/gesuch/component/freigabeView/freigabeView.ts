@@ -178,4 +178,10 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     public isThereFreigabequittung(): boolean {
         return this.gesuchModelManager.isGesuch() || this.gesuchModelManager.areAllJAAngeboteNew();
     }
+
+    $postLink() {
+        this.$timeout(() => {
+            this.selectFirst();
+        }, 100);
+    }
 }

@@ -167,6 +167,7 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
             if (indexOf >= 0) {
                 this.model.splice(indexOf, 1);
             }
+            this.$timeout(() => this.selectFirst(), 100);
         });
     }
 
@@ -179,6 +180,8 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
 
         this.model.push(umzugAdresse);
         this.dirty = true;
+        this.$postLink();
+        //todo focus on specific id, so the newly added umzug will be selected not the first in the DOM
     }
 
     private createAdressContainer() {

@@ -45,7 +45,8 @@
                     <td ng-if="vm.canRemoveKind(row)">
                         <dv-loading-button type="button" button-click="vm.removeKind(row);"
                                            button-class="dv-btn-operation"
-                                           button-disabled="vm.isKorrekturModusJugendamt()">
+                                           button-disabled="vm.isKorrekturModusJugendamt()"
+                                           aria-label="{{'KINDER_DELETE'|translate}}">
                             <i class="fa fa-lg fa-trash-o">
                             </i>
                         </dv-loading-button>

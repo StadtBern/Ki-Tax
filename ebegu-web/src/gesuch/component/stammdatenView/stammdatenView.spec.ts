@@ -5,13 +5,12 @@ import {StammdatenViewController} from './stammdatenView';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
 import IScope = angular.IScope;
 import IQService = angular.IQService;
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import EwkRS from '../../../core/service/ewkRS.rest';
+import {ITimeoutService} from 'angular';
 
 describe('stammdatenView', function () {
 
@@ -22,6 +21,7 @@ describe('stammdatenView', function () {
     let $rootScope:  any;
     let $scope: IScope;
     let ewkRS: EwkRS;
+    let $timeout: ITimeoutService;
 
     beforeEach(angular.mock.module('ebeguWeb.gesuch'));
 
@@ -37,9 +37,10 @@ describe('stammdatenView', function () {
         $rootScope = $injector.get('$rootScope');
         ewkRS = $injector.get('EwkRS');
         $scope = $rootScope.$new();
+        $timeout = $injector.get('$timeout');
         stammdatenViewController = new StammdatenViewController($stateParams, undefined, gesuchModelManager,
             undefined, undefined, wizardStepManager, $injector.get('CONSTANTS'), $q, $scope, $injector.get('$translate'),
-            undefined, $rootScope, ewkRS);
+            undefined, $rootScope, ewkRS, $timeout);
     }));
 
     describe('disableWohnadresseFor2GS', function () {

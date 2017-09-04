@@ -131,10 +131,15 @@ export default class AbstractGesuchViewController<T> {
     }
 
     public selectFirst(): void {
-        let tmp = angular.element('md-radio-button:not([disabled="disabled"]),fieldset:not([disabled="disabled"],.dv-adresse__fieldset) input:not([disabled="disabled"]),form'
-            + ' button:not([disabled="disabled"]),fieldset:not([disabled="disabled"],.dv-adresse__fieldset)'
-            + ' select:not([disabled="disabled"]),fieldset:not([disabled="disabled"],.dv-adresse__fieldset) md-checkbox:not([disabled="disabled"]),.dvb-loading-button'
-            + ' button:not([disabled="disabled"]),tbody>tr[ng-click]:not([disabled="disabled"]),button.link-underline:not([disabled="disabled"])').first();
+        let tmp = angular.element('md-radio-button:not([disabled="disabled"]),'
+            + 'fieldset:not([disabled="disabled"],.dv-adresse__fieldset) input:not([disabled="disabled"]),'
+            + 'fieldset:not([disabled="disabled"],.dv-adresse__fieldset) select:not([disabled="disabled"]),'
+            + 'fieldset:not([disabled="disabled"],.dv-adresse__fieldset) md-checkbox:not([disabled="disabled"]),'
+            + '#gesuchContainer button:not([disabled="disabled"]),'
+            + '#gesuchContainer .dvb-loading-button button:not([disabled="disabled"]),'
+            + 'tbody>tr[ng-click]:not(.disabled-row),'
+            + '#gesuchContainer button.link-underline:not([disabled="disabled"]),'
+            + '.dv-dokumente-list a:not([disabled="disabled"])').first();
         if (tmp) {
             if (tmp.prop('tagName') === 'MD-RADIO-BUTTON') {
                 tmp.parent().first().focus();
