@@ -68,11 +68,11 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 
 	@NotNull
 	@Column(nullable = false)
-	private Boolean ekvBasisJahrPlus1Abgelehnt = false;
+	private Boolean ekvBasisJahrPlus1Annulliert = false;
 
 	@NotNull
 	@Column(nullable = false)
-	private Boolean ekvBasisJahrPlus2Abgelehnt = false;
+	private Boolean ekvBasisJahrPlus2Annulliert = false;
 
 
 	public EinkommensverschlechterungInfo() {
@@ -158,20 +158,20 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 		this.gemeinsameSteuererklaerung_BjP2 = gemeinsameSteuererklaerung_BjP2;
 	}
 
-	public Boolean getEkvBasisJahrPlus1Abgelehnt() {
-		return ekvBasisJahrPlus1Abgelehnt;
+	public Boolean getEkvBasisJahrPlus1Annulliert() {
+		return ekvBasisJahrPlus1Annulliert;
 	}
 
-	public void setEkvBasisJahrPlus1Abgelehnt(Boolean ekvBasisJahrPlus1Abgelehnt) {
-		this.ekvBasisJahrPlus1Abgelehnt = ekvBasisJahrPlus1Abgelehnt;
+	public void setEkvBasisJahrPlus1Annulliert(Boolean ekvBasisJahrPlus1Annulliert) {
+		this.ekvBasisJahrPlus1Annulliert = ekvBasisJahrPlus1Annulliert;
 	}
 
-	public Boolean getEkvBasisJahrPlus2Abgelehnt() {
-		return ekvBasisJahrPlus2Abgelehnt;
+	public Boolean getEkvBasisJahrPlus2Annulliert() {
+		return ekvBasisJahrPlus2Annulliert;
 	}
 
-	public void setEkvBasisJahrPlus2Abgelehnt(Boolean ekvBasisJahrPlus2Abgelehnt) {
-		this.ekvBasisJahrPlus2Abgelehnt = ekvBasisJahrPlus2Abgelehnt;
+	public void setEkvBasisJahrPlus2Annulliert(Boolean ekvBasisJahrPlus2Annulliert) {
+		this.ekvBasisJahrPlus2Annulliert = ekvBasisJahrPlus2Annulliert;
 	}
 
 	public EinkommensverschlechterungInfo copyForMutation(EinkommensverschlechterungInfo mutation) {
@@ -185,8 +185,8 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 		mutation.setGrundFuerBasisJahrPlus2(this.getGrundFuerBasisJahrPlus2());
 		mutation.setStichtagFuerBasisJahrPlus1(this.getStichtagFuerBasisJahrPlus1());
 		mutation.setStichtagFuerBasisJahrPlus2(this.getStichtagFuerBasisJahrPlus2());
-		mutation.setEkvBasisJahrPlus1Abgelehnt(this.getEkvBasisJahrPlus1Abgelehnt());
-		mutation.setEkvBasisJahrPlus2Abgelehnt(this.getEkvBasisJahrPlus2Abgelehnt());
+		mutation.setEkvBasisJahrPlus1Annulliert(this.getEkvBasisJahrPlus1Annulliert());
+		mutation.setEkvBasisJahrPlus2Annulliert(this.getEkvBasisJahrPlus2Annulliert());
 		return mutation;
 	}
 

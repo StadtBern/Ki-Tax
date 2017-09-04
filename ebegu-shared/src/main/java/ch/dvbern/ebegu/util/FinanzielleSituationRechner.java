@@ -151,9 +151,9 @@ public class FinanzielleSituationRechner {
 			BigDecimal massgebendesEinkommenBasisjahr_zuZweit = finanzielleSituationResultateDTO_zuZweit.getMassgebendesEinkVorAbzFamGr();
 
 			if (ekvInfo.getEkvFuerBasisJahrPlus1() != null && ekvInfo.getEkvFuerBasisJahrPlus1()) {
-				if (ekvInfo.getEkvBasisJahrPlus1Abgelehnt()) {
-					finanzDatenDTO_alleine.setEkv1Abgelehnt(Boolean.TRUE);
-					finanzDatenDTO_zuZweit.setEkv1Abgelehnt(Boolean.TRUE);
+				if (ekvInfo.getEkvBasisJahrPlus1Annulliert()) {
+					finanzDatenDTO_alleine.setEkv1Annulliert(Boolean.TRUE);
+					finanzDatenDTO_zuZweit.setEkv1Annulliert(Boolean.TRUE);
 				}
 				// In der EKV 1 vergleichen wir immer mit dem Basisjahr
 				handleEKV1(finanzDatenDTO_alleine, ekvInfo.getStichtagGueltigFuerBasisJahrPlus1(), resultateEKV1_alleine.getMassgebendesEinkVorAbzFamGr(),
@@ -163,13 +163,13 @@ public class FinanzielleSituationRechner {
 			}
 
 			BigDecimal massgebendesEinkommenVorjahr_alleine;
-			if (finanzDatenDTO_alleine.isEkv1Accepted() && !finanzDatenDTO_alleine.isEkv1Abgelehnt()) {
+			if (finanzDatenDTO_alleine.isEkv1Accepted() && !finanzDatenDTO_alleine.isEkv1Annulliert()) {
 				massgebendesEinkommenVorjahr_alleine = resultateEKV1_alleine.getMassgebendesEinkVorAbzFamGr();
 			} else {
 				massgebendesEinkommenVorjahr_alleine = massgebendesEinkommenBasisjahr_alleine;
 			}
 			BigDecimal massgebendesEinkommenVorjahr_zuZweit;
-			if (finanzDatenDTO_zuZweit.isEkv1Accepted() && !finanzDatenDTO_zuZweit.isEkv1Abgelehnt()) {
+			if (finanzDatenDTO_zuZweit.isEkv1Accepted() && !finanzDatenDTO_zuZweit.isEkv1Annulliert()) {
 				massgebendesEinkommenVorjahr_zuZweit = resultateEKV1_zuZweit.getMassgebendesEinkVorAbzFamGr();
 			} else {
 				massgebendesEinkommenVorjahr_zuZweit = massgebendesEinkommenBasisjahr_zuZweit;
@@ -177,9 +177,9 @@ public class FinanzielleSituationRechner {
 
 
 			if (ekvInfo.getEkvFuerBasisJahrPlus2() != null && ekvInfo.getEkvFuerBasisJahrPlus2()) {
-				if (ekvInfo.getEkvBasisJahrPlus2Abgelehnt()) {
-					finanzDatenDTO_alleine.setEkv2Abgelehnt(Boolean.TRUE);
-					finanzDatenDTO_zuZweit.setEkv2Abgelehnt(Boolean.TRUE);
+				if (ekvInfo.getEkvBasisJahrPlus2Annulliert()) {
+					finanzDatenDTO_alleine.setEkv2Annulliert(Boolean.TRUE);
+					finanzDatenDTO_zuZweit.setEkv2Annulliert(Boolean.TRUE);
 				}
 				FinanzielleSituationResultateDTO resultateEKV2_alleine = calculateResultateEinkommensverschlechterung(gesuch, 2, false);
 				FinanzielleSituationResultateDTO resultateEKV2_zuZweit = calculateResultateEinkommensverschlechterung(gesuch, 2, true);

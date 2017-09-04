@@ -58,7 +58,7 @@ public class BerechnungsgrundlagenInformationPrintImpl extends BriefPrintImpl im
 
 		if (fG1.getEinkommensverschlechterungInfo() != null && fG1.getEinkommensverschlechterungInfo().getEinkommensverschlechterung()) {
 			// Einkommensverschleschtereung Jahr 1
-			if (fG1.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1() && !fG1.getEinkommensverschlechterungInfo().getEkvBasisJahrPlus1Abgelehnt()) {
+			if (fG1.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1() && !fG1.getEinkommensverschlechterungInfo().getEkvBasisJahrPlus1Annulliert()) {
 				String einkommensverschlechterungJahr1;
 				String ereigniseintritt1 = "";
 				if (fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1() != null) {
@@ -73,7 +73,7 @@ public class BerechnungsgrundlagenInformationPrintImpl extends BriefPrintImpl im
 			}
 
 			// Einkommensverschleschtereung Jahr 2
-			if (fG1.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2() && !fG1.getEinkommensverschlechterungInfo().getEkvBasisJahrPlus2Abgelehnt()) {
+			if (fG1.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2() && !fG1.getEinkommensverschlechterungInfo().getEkvBasisJahrPlus2Annulliert()) {
 				String einkommensverschlechterungJahr2;
 				String ereigniseintritt2 = "";
 				if (fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2() != null) {

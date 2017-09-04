@@ -17,8 +17,8 @@ export default class TSEinkommensverschlechterungInfo extends TSAbstractEntity {
     private _gemeinsameSteuererklaerung_BjP1: boolean;
     private _gemeinsameSteuererklaerung_BjP2: boolean;
 
-    private _ekvBasisJahrPlus1Abgelehnt: boolean = false;
-    private _ekvBasisJahrPlus2Abgelehnt: boolean = false;
+    private _ekvBasisJahrPlus1Annulliert: boolean = false;
+    private _ekvBasisJahrPlus2Annulliert: boolean = false;
 
 
     get einkommensverschlechterung(): boolean {
@@ -93,19 +93,19 @@ export default class TSEinkommensverschlechterungInfo extends TSAbstractEntity {
         this._gemeinsameSteuererklaerung_BjP2 = value;
     }
 
-    get ekvBasisJahrPlus1Abgelehnt(): boolean {
-        return this._ekvBasisJahrPlus1Abgelehnt;
+    get ekvBasisJahrPlus1Annulliert(): boolean {
+        return this._ekvBasisJahrPlus1Annulliert;
     }
 
-    set ekvBasisJahrPlus1Abgelehnt(value: boolean) {
-        this._ekvBasisJahrPlus1Abgelehnt = value;
+    set ekvBasisJahrPlus1Annulliert(value: boolean) {
+        this._ekvBasisJahrPlus1Annulliert = value;
     }
 
-    get ekvBasisJahrPlus2Abgelehnt(): boolean {
-        return this._ekvBasisJahrPlus2Abgelehnt;
+    get ekvBasisJahrPlus2Annulliert(): boolean {
+        return this._ekvBasisJahrPlus2Annulliert;
     }
 
-    set ekvBasisJahrPlus2Abgelehnt(value: boolean) {
-        this._ekvBasisJahrPlus2Abgelehnt = value;
+    set ekvBasisJahrPlus2Annulliert(value: boolean) {
+        this._ekvBasisJahrPlus2Annulliert = value;
     }
 }

@@ -729,7 +729,7 @@
     "EKVI__HINT_VERANLAGUNGSVERFUEGUNG": "Alle Angaben können der Veranlagungsverfügung des Jahres {{basisjahr}} entnommen werden.",
     "EKV_RESULTATE": "Resultate Einkommensverschlechterung {{basisjahr}}",
     "EKV_RESULTATE_PRUEFUNG": "Prüfung Einkommensverschlechterung {{basisjahr}}",
-    "EKVI_ABLEHNEN": "Einkommensverschlechterung annullieren",
+    "EKVI_ABLEHNEN": "Einkommensverschlechterung annulliert",
     "EVK_EINKOMMEN_JAHR": "Einkommen {{basisjahr}}",
     "EVK_IN_PROZENT": "Einkommensverschlechterung in %",
     "TRAEGERSCHAFTEN_NOCH_KEINE": "Noch keine Trägerschaften",

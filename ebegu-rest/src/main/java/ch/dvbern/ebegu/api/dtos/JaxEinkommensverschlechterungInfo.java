@@ -54,10 +54,10 @@ public class JaxEinkommensverschlechterungInfo extends JaxAbstractDTO {
 	private LocalDate stichtagFuerBasisJahrPlus2;
 
 	@NotNull
-	private Boolean ekvBasisJahrPlus1Abgelehnt;
+	private Boolean ekvBasisJahrPlus1Annulliert;
 
 	@NotNull
-	private Boolean ekvBasisJahrPlus2Abgelehnt;
+	private Boolean ekvBasisJahrPlus2Annulliert;
 
 
 	public Boolean getEinkommensverschlechterung() {
@@ -138,19 +138,19 @@ public class JaxEinkommensverschlechterungInfo extends JaxAbstractDTO {
 		this.gemeinsameSteuererklaerung_BjP2 = gemeinsameSteuererklaerung_BjP2;
 	}
 
-	public Boolean getEkvBasisJahrPlus1Abgelehnt() {
-		return ekvBasisJahrPlus1Abgelehnt;
+	public Boolean getEkvBasisJahrPlus1Annulliert() {
+		return ekvBasisJahrPlus1Annulliert;
 	}
 
-	public void setEkvBasisJahrPlus1Abgelehnt(Boolean ekvBasisJahrPlus1Abgelehnt) {
-		this.ekvBasisJahrPlus1Abgelehnt = ekvBasisJahrPlus1Abgelehnt;
+	public void setEkvBasisJahrPlus1Annulliert(Boolean ekvBasisJahrPlus1Annulliert) {
+		this.ekvBasisJahrPlus1Annulliert = ekvBasisJahrPlus1Annulliert;
 	}
 
-	public Boolean getEkvBasisJahrPlus2Abgelehnt() {
-		return ekvBasisJahrPlus2Abgelehnt;
+	public Boolean getEkvBasisJahrPlus2Annulliert() {
+		return ekvBasisJahrPlus2Annulliert;
 	}
 
-	public void setEkvBasisJahrPlus2Abgelehnt(Boolean ekvBasisJahrPlus2Abgelehnt) {
-		this.ekvBasisJahrPlus2Abgelehnt = ekvBasisJahrPlus2Abgelehnt;
+	public void setEkvBasisJahrPlus2Annulliert(Boolean ekvBasisJahrPlus2Annulliert) {
+		this.ekvBasisJahrPlus2Annulliert = ekvBasisJahrPlus2Annulliert;
 	}
 }
