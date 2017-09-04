@@ -125,11 +125,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
             if (monat === TSMonth.VORJAHR) {
                 return moment([jahr - 1, 11]); // 1. Dezember des Vorjahres
             }
-            if (basisJahrPlus === 1) {
-                return moment([jahr, this.monthsStichtage.indexOf(monat)]);
-            } else {
-                return moment([jahr, this.monthsStichtageWithVorjahr.indexOf(monat)]);
-            }
+            return moment([jahr, this.monthsStichtage.indexOf(monat)]);
         } else {
             return null;
         }
@@ -145,13 +141,8 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         if (stichtag) {
             if ((this.gesuchModelManager.getBasisjahr() + basisJahrPlus) !== stichtag.year()) {
                 return TSMonth.VORJAHR;
-            } else {
-                if (basisJahrPlus === 1) {
-                    return this.monthsStichtage[stichtag.month()];
-                } else {
-                    return this.monthsStichtageWithVorjahr[stichtag.month()];
-                }
             }
+            return this.monthsStichtage[stichtag.month()];
         } else {
             return null;
         }
