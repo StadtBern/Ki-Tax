@@ -13,10 +13,8 @@ import DokumenteRS from '../../service/dokumenteRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import GlobalCacheService from '../../service/globalCacheService';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
-import ICacheFactoryService = angular.ICacheFactoryService;
 import IScope = angular.IScope;
 let template = require('./dokumenteView.html');
 require('./dokumenteView.less');
@@ -156,5 +154,14 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
         });
 
         this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
+    }
+
+    public showDokumenteGeprueftButton(): boolean {
+        return this.gesuchModelManager.getGesuch().dokumenteHochgeladen;
+    }
+
+    public setDokumenteGeprueft(): void {
+        this.gesuchModelManager.getGesuch().dokumenteHochgeladen = false;
+        this.gesuchModelManager.updateGesuch();
     }
 }

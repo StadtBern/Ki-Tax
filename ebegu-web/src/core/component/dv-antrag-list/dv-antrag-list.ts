@@ -160,10 +160,6 @@ export class DVAntragListController {
         return getTSAntragStatusValuesByRole(this.authServiceRS.getPrincipalRole());
     }
 
-    // public getDokumentHochgeladenOptions(): Array<boolean> {
-    //     return [true, false];
-    // }
-
     /**
      * Alle Betreuungsangebot typen fuer das Filterdropdown
      * @returns {Array<TSBetreuungsangebotTyp>}

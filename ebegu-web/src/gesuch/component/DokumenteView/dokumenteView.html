@@ -63,8 +63,21 @@
                 </div>
 
                 <!-- -------------------------------------------Navigation--------------------------------------------  -->
-                <dv-navigation dv-previous="true" dv-next="true">
-                </dv-navigation>
+
+
+                <div class="nav-row-dokumente">
+
+                    <div dv-show-element
+                         dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
+                        <dv-loading-button type="button" button-click="vm.setDokumenteGeprueft()"
+                                           aria-label="{{'DOKUMENTE_GEPRUEFT' | translate}}" ng-if="vm.showDokumenteGeprueftButton()">
+                            <span data-translate="DOKUMENTE_GEPRUEFT"></span>
+                        </dv-loading-button>
+                    </div>
+
+                    <dv-navigation dv-previous="true" dv-next="true" class="dokumente-nav"></dv-navigation>
+
+                </div>
 
             </form>
 
