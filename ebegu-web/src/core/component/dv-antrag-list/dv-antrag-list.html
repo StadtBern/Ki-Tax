@@ -41,6 +41,11 @@
                         dv-display-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
                     </th>
                     <th st-sort="status" class="sortable row-status" data-translate="STATUS_UPPER"></th>
+
+                    <th st-sort="dokumenteHochgeladen" class="sortable row-dokumenteHochgeladen" data-translate="DOKUMENTE_HOCHGELADEN_UPPER"
+                        dv-display-element
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
+                    </th>
                     <th st-sort="angebote" class="sortable row-angebot" data-translate="ANGEBOT_UPPER"
                         dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
@@ -106,6 +111,17 @@
                             </select>
                         </div>
                     </th>
+                    <th>
+                        <div class="dv-select-style">
+                            <select st-input-event="change" name="dokumenteHochgeladen" id="dokumenteHochgeladen" st-search="dokumenteHochgeladen"
+                                    class="form-control"
+                                    ng-model="vm.selectedDokumenteHochgeladen">
+                                <option value="">{{"ALLE" | translate}}</option>
+                                <option value="{{true}}">{{"LABEL_JA" | translate}}</option>
+                                <option value="{{false}}">{{"LABEL_NEIN" | translate}}</option>
+                            </select>
+                        </div>
+                    </th>
                     <th dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                         <div class="dv-select-style">
@@ -165,7 +181,13 @@
                         dv-display-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
                     </td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.status | translate}}"
-                        ng-bind="row.status | translate"></td>
+                        ng-bind="row.status | translate">
+                    </td>
+                    <td class="ellipsis" ellipsis-tooltip="{{row.dokumenteHochgeladen | translate}}"
+                        dv-display-element
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
+                        <i class="fa fa-file-o" aria-hidden="true" ng-show="row.dokumenteHochgeladen"></i>
+                    </td>
                     <td class="ellipsis" ellipsis-tooltip="{{vm.translateBetreuungsangebotTypList(row.angebote)}}"
                         ng-bind="vm.translateBetreuungsangebotTypList(row.angebote)"
                         dv-display-element
