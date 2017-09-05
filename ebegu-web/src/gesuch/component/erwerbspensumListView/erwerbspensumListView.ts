@@ -18,6 +18,7 @@ import {TSRole} from '../../../models/enums/TSRole';
 import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import * as moment from 'moment';
+import ITimeoutService = angular.ITimeoutService;
 let template: string = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 require('./erwerbspensumListView.less');
@@ -47,12 +48,12 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     erwerbspensenGS2: Array<TSErwerbspensumContainer>;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$log', 'DvDialog',
-        'ErrorService', 'WizardStepManager', '$scope', 'AuthServiceRS'];
+        'ErrorService', 'WizardStepManager', '$scope', 'AuthServiceRS', '$timeout'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, $scope: IScope,  private authServiceRS: AuthServiceRS) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ERWERBSPENSUM);
+                wizardStepManager: WizardStepManager, $scope: IScope,  private authServiceRS: AuthServiceRS, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ERWERBSPENSUM, $timeout);
         this.initErwerbspensumStepStatus();
     }
 

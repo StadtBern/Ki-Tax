@@ -5,7 +5,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
-import {IHttpBackendService, IQService} from 'angular';
+import {IHttpBackendService, IQService, ITimeoutService} from 'angular';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
@@ -15,7 +15,6 @@ import WizardStepManager from '../../service/wizardStepManager';
 import TSKindContainer from '../../../models/TSKindContainer';
 import {IBetreuungStateParams} from '../../gesuch.route';
 import TSGesuch from '../../../models/TSGesuch';
-import IFormController = angular.IFormController;
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
@@ -35,6 +34,7 @@ describe('betreuungView', function () {
     let authServiceRS: AuthServiceRS;
     let wizardStepManager: WizardStepManager;
     let $stateParams: IBetreuungStateParams;
+    let $timeout: ITimeoutService;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -46,6 +46,7 @@ describe('betreuungView', function () {
         $httpBackend = $injector.get('$httpBackend');
         $q = $injector.get('$q');
         $stateParams = $injector.get('$stateParams');
+        $timeout = $injector.get('$timeout');
 
         betreuung = new TSBetreuung();
         betreuung.timestampErstellt = DateUtil.today();
@@ -67,7 +68,8 @@ describe('betreuungView', function () {
         wizardStepManager = $injector.get('WizardStepManager');
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
             $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS,
-            wizardStepManager, $stateParams, $injector.get('MitteilungRS'), $injector.get('DvDialog'), $injector.get('$log'));
+            wizardStepManager, $stateParams, $injector.get('MitteilungRS'), $injector.get('DvDialog'), $injector.get('$log'),
+            $timeout);
         betreuungView.$onInit();
         $rootScope.$apply();
         betreuungView.model = betreuung;
@@ -85,7 +87,7 @@ describe('betreuungView', function () {
         describe('Object creation', () => {
             it('create an empty list of Betreuungspensen for a role different than Institution', () => {
                 let myBetreuungView: BetreuungViewController = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, null,
-                    $rootScope, null, null, authServiceRS, wizardStepManager, $stateParams, undefined, undefined, undefined);
+                    $rootScope, null, null, authServiceRS, wizardStepManager, $stateParams, undefined, undefined, undefined, $timeout);
                 myBetreuungView.model = betreuung;
                 expect(myBetreuungView.getBetreuungspensen()).toBeDefined();
                 expect(myBetreuungView.getBetreuungspensen().length).toEqual(0);

@@ -11,10 +11,8 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
-import IPromise = angular.IPromise;
-import IQService = angular.IQService;
-import IFormController = angular.IFormController;
 import IStateService = angular.ui.IStateService;
+import ITimeoutService = angular.ITimeoutService;
 import ILogService = angular.ILogService;
 import EbeguUtil from '../../../utils/EbeguUtil';
 
@@ -35,12 +33,14 @@ export class AlleVerfuegungenViewController {
     itemsByPage: number = 20;
     TSRoleUtil = TSRoleUtil;
 
-    static $inject: string[] = ['$state', '$stateParams', 'AuthServiceRS', 'FallRS', 'EbeguUtil', 'BetreuungRS', 'GesuchModelManager', 'DownloadRS', '$log'];
+    static $inject: string[] = ['$state', '$stateParams', 'AuthServiceRS', 'FallRS', 'EbeguUtil', 'BetreuungRS',
+        'GesuchModelManager', 'DownloadRS', '$log', '$timeout'];
+
     /* @ngInject */
     constructor(private $state: IStateService, private $stateParams: IAlleVerfuegungenStateParams,
                 private authServiceRS: AuthServiceRS, private fallRS: FallRS, private ebeguUtil: EbeguUtil,
                 private betreuungRS: BetreuungRS, private gesuchModelManager: GesuchModelManager,
-                private downloadRS: DownloadRS, private $log: ILogService) {
+                private downloadRS: DownloadRS, private $log: ILogService, private $timeout: ITimeoutService) {
     }
 
     $onInit() {
@@ -114,5 +114,11 @@ export class AlleVerfuegungenViewController {
                 win.close();
                 this.$log.error('An error occurred downloading the document, closing download window.');
             });
+    }
+
+    $postLink() {
+        this.$timeout(() => {
+            EbeguUtil.selectFirst();
+        }, 500); // this is the only way because it needs a little until everything is loaded
     }
 }

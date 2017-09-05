@@ -1,9 +1,10 @@
 <div class="kindView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
     <div class="row viewTitle">
         <div class="col-md-12">
-            <h1>
+            <h2>
                 <span data-translate="KIND"></span> {{vm.getContainer() ? vm.getContainer().kindNummer : ''}}
-            </h1>
+            </h2>
             <hr class="header"/>
             <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
         </div>
@@ -26,7 +27,7 @@
                                                     ng-required="true" items="vm.geschlechter"
                                                     ng-model="vm.getModel().geschlecht"
                                                     aria-described-by="geschlecht"
-                                                    aria-label="{{ 'GESCHLECHT' |translate}}">
+                                                    >
                                 </dv-radio-container>
                                 <dv-bisher gs="vm.getContainer().kindGS.geschlecht"
                                            ja="vm.getContainer().kindJA.geschlecht"></dv-bisher>

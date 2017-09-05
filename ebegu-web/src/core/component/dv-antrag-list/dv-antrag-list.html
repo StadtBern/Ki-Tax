@@ -203,8 +203,8 @@
                     </td>
 
 
-                    <td class="ellipsis" ng-if="vm.isActionsVisible()">
-                        <dv-loading-button type="button" button-click="vm.removeClicked(row); $event.stopPropagation()"
+                    <td class="ellipsis" ng-if="vm.isActionsVisible()" role="cell" tabindex="-1" ng-click="$event.stopPropagation()">
+                        <dv-loading-button type="button" button-click="vm.removeClicked(row)"
                                            button-class="dv-btn-sm" title="{{vm.removeButtonTitle}}">
                             <i class="fa fa-minus">
                             </i>

@@ -2,7 +2,6 @@ import {IComponentOptions, ILogService} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
-import ErrorService from '../../../core/errors/service/ErrorService';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import TSDokumenteDTO from '../../../models/dto/TSDokumenteDTO';
 import {TSDokumentGrundTyp} from '../../../models/enums/TSDokumentGrundTyp';
@@ -16,6 +15,8 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import GlobalCacheService from '../../service/globalCacheService';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import IScope = angular.IScope;
+import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./dokumenteView.html');
 require('./dokumenteView.less');
 
@@ -39,14 +40,14 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
     dokumenteSonst: TSDokumentGrund[] = [];
     dokumentePapiergesuch: TSDokumentGrund[] = [];
 
-    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'DokumenteRS', '$log', 'WizardStepManager', 'EbeguUtil', 'GlobalCacheService', '$scope'];
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager',
+        'DokumenteRS', '$log', 'WizardStepManager', 'EbeguUtil', 'GlobalCacheService', '$scope', '$timeout'];
+
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
+    constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private dokumenteRS: DokumenteRS, private $log: ILogService, wizardStepManager: WizardStepManager,
-                private ebeguUtil: EbeguUtil, private globalCacheService: GlobalCacheService, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.DOKUMENTE);
+                private ebeguUtil: EbeguUtil, private globalCacheService: GlobalCacheService, $scope: IScope, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.DOKUMENTE, $timeout);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.calculate();

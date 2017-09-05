@@ -1,9 +1,10 @@
 <div class="stammdatenView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
     <div class="row viewTitle">
         <div class="col-md-12">
-            <h1>
+            <h2>
                 <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchModelManager.getGesuchstellerNumber()}}
-            </h1>
+            </h2>
             <hr class="header"/>
             <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
         </div>
@@ -111,7 +112,7 @@
                     </div>
 
                     <!-- Adresse. Bei Mutationen nicht editierbar-->
-                    <fieldset ng-disabled="vm.disableWohnadresseFor2GS()">
+                    <fieldset ng-disabled="vm.disableWohnadresseFor2GS()" class="dv-adresse__fieldset">
                         <!-- Dieses disabled wird vom obigen disabled ueberschrieben wenn VERFUEGT -->
                         <dv-adresse adresse="vm.getModel().getWohnAdresse()" show-nicht-in-gemeinde="true"
                                     prefix="wohn"></dv-adresse>

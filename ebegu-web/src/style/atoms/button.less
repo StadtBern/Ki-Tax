@@ -68,13 +68,18 @@ dv-navigation {
     span {
         line-height: normal;
     }
-    &[disabled], &[disabled]:hover, &:focus {
+    &[disabled], &[disabled]:hover {
 
         background: none;
         outline: 0;
         -webkit-box-shadow: none;
         box-shadow: none;
+        &:focus {
+            outline: 2px solid @contrast-darkest;
+
+        }
     }
+
 }
 
 .dv-btn-sm {
@@ -111,7 +116,7 @@ dv-navigation {
 
     }
     &:hover, &:focus {
-        outline: 0;
+        outline: 2px solid @contrast-darkest;
         -webkit-box-shadow: none;
         box-shadow: none;
         .fa {
@@ -124,7 +129,7 @@ dv-navigation {
     }
 
     &:active, &:hover {
-        outline: none !important;
+        outline: none;
         text-decoration: none !important;
     }
 
@@ -176,11 +181,11 @@ button, .dv-btn {
     }
 
     &:active, &:hover {
-        outline: none !important;
+        outline: none ;
         text-decoration: none !important;
     }
     &:focus {
-        outline: 1px solid #000000;
+        outline: 2px solid @contrast-darkest;
         outline-offset: 0;
 
     }
