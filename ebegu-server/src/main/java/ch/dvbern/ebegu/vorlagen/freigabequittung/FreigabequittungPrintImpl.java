@@ -35,10 +35,10 @@ import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
  */
 public class FreigabequittungPrintImpl extends BriefPrintImpl implements FreigabequittungPrint {
 
-	private Gesuch gesuch;
-	private Zustelladresse zustellAmt;
-	private List<DokumentGrund> dokumentGrunds;
-	private List<AufzaehlungPrint> unterlagen;
+	private final Gesuch gesuch;
+	private final Zustelladresse zustellAmt;
+	private final List<DokumentGrund> dokumentGrunds;
+	private final List<AufzaehlungPrint> unterlagen;
 
 	public FreigabequittungPrintImpl(Gesuch gesuch, Zustelladresse zustellAmt, List<DokumentGrund> dokumentGrunds) {
 

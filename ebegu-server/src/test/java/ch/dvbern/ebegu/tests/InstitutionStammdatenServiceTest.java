@@ -33,7 +33,7 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguLoginTest {
 	private InstitutionStammdatenService institutionStammdatenService;
 
 	@Inject
-	private Persistence<InstitutionStammdaten> persistence;
+	private Persistence persistence;
 
 
 

@@ -1,6 +1,17 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.io.File;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.security.auth.login.LoginException;
+
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
@@ -32,11 +43,6 @@ import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.security.auth.login.LoginException;
-import java.io.File;
-
 /**
  * Diese Klasse implementiert die Methode "Deployment" fuer die Arquillian Tests und muss von allen Testklassen
  * erweitert werden.
@@ -62,7 +68,7 @@ public abstract class AbstractEbeguTest {
 	private TraegerschaftService traegerschaftService;
 
 	@Inject
-	private Persistence<?> persistence;
+	private Persistence persistence;
 
 	@Rule
 	public UnitTestTempFolder unitTestTempfolder = new UnitTestTempFolder();
@@ -83,14 +89,19 @@ public abstract class AbstractEbeguTest {
 		// wir fuegen die packages einzeln hinzu weil sonst klassen die im shared sind und das gleiche package haben
 		// doppelt eingefuegt werden
 
-		WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "test.war").addPackages(true, "ch/dvbern/ebegu/persistence").addPackages(true, "ch/dvbern/ebegu/rechner")
-			.addPackages(true, "ch/dvbern/ebegu/rules").addPackages(true, "ch/dvbern/ebegu/services").addPackages(true, "ch/dvbern/ebegu/validation")
+		WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "test.war")
+			.addPackages(true, "ch/dvbern/ebegu/persistence")
+			.addPackages(true, "ch/dvbern/ebegu/rechner")
+			.addPackages(true, "ch/dvbern/ebegu/rules")
+			.addPackages(true, "ch/dvbern/ebegu/services")
+			.addPackages(true, "ch/dvbern/ebegu/validation")
 			.addPackages(true, "ch/dvbern/ebegu/vorlagen")
 			.addPackages(true, "ch/dvbern/ebegu/tests")
 			.addPackages(true, "ch/dvbern/ebegu/tests/util")
 			.addPackages(true, "ch/dvbern/ebegu/mail")
 			.addPackages(true, "ch/dvbern/ebegu/ws/personensuche/service")
 			.addPackages(true, "ch/dvbern/ebegu/ewk")
+			.addPackages(true, "ch/dvbern/ebegu/reporting")
 			// .addPackages(true, "ch/dvbern/ebegu/enums")
 			.addClasses(AbstractEbeguLoginTest.class, Persistence.class, ISessionContextService.class, AbstractEntity.class)
 			.addPackages(true, "ch/dvbern/ebegu/services/authentication")
@@ -111,6 +122,7 @@ public abstract class AbstractEbeguTest {
 			.addAsResource("vorlagen/Begleitschreiben.docx", "vorlagen/Begleitschreiben.docx")
 			.addAsResource("vorlagen/1_Mahnung.docx", "vorlagen/1_Mahnung.docx")
 			.addAsResource("vorlagen/2_Mahnung.docx", "vorlagen/2_Mahnung.docx")
+			.addAsResource("vorlagen/entwurfWasserzeichen.png", "vorlagen/entwurfWasserzeichen.png")
 			.addAsResource("mail/templates/InfoBetreuungAbgelehnt.ftl", "mail/templates/InfoBetreuungAbgelehnt.ftl")
 			.addAsResource("mail/templates/InfoBetreuungenBestaetigt.ftl", "mail/templates/InfoBetreuungenBestaetigt.ftl")
 			.addAsResource("mail/templates/InfoMahnung.ftl", "mail/templates/InfoMahnung.ftl")

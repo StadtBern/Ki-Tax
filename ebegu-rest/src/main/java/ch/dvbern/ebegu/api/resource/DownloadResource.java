@@ -77,7 +77,7 @@ public class DownloadResource {
 	private GeneratedDokumentService generatedDokumentService;
 
 	@Inject
-	private Persistence<AbstractEntity> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private EbeguVorlageService ebeguVorlageService;
@@ -182,12 +182,11 @@ public class DownloadResource {
 		"&uuml;bergebenen Id.")
 	@Nonnull
 	@GET
-	@Path("/{gesuchid}/FINANZIELLE_SITUATION/{forceCreation}/generated")
+	@Path("/{gesuchid}/FINANZIELLE_SITUATION/generated")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getFinSitDokumentAccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
-		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, MimeTypeParseException {
 
 		Validate.notNull(jaxGesuchId.getId());
@@ -195,7 +194,8 @@ public class DownloadResource {
 
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
-			WriteProtectedDokument generatedDokument = generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(gesuch.get(), forceCreation);
+			WriteProtectedDokument generatedDokument = generatedDokumentService
+				.getFinSitDokumentAccessTokenGeneratedDokument(gesuch.get(), false);
 			if (generatedDokument == null) {
 				return Response.noContent().build();
 			}
@@ -231,7 +231,7 @@ public class DownloadResource {
 
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
-			WriteProtectedDokument generatedDokument = generatedDokumentService.getBegleitschreibenDokument(gesuch.get(), forceCreation);
+			WriteProtectedDokument generatedDokument = generatedDokumentService.getBegleitschreibenDokument(gesuch.get());
 			if (generatedDokument == null) {
 				return Response.noContent().build();
 			}

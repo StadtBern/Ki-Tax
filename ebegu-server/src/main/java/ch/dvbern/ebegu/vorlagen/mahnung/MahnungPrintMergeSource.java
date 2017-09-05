@@ -1,12 +1,12 @@
 package ch.dvbern.ebegu.vorlagen.mahnung;
 
+import java.util.List;
+
 import ch.dvbern.ebegu.vorlagen.EBEGUMergeSource;
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
-
-import java.util.List;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class MahnungPrintMergeSource implements EBEGUMergeSource {
 
-	private ManhungPrint mahnung;
+	private final ManhungPrint mahnung;
 	private boolean isPDFLongerThanExpected = false;
 
 	public MahnungPrintMergeSource(ManhungPrint mahnung) {

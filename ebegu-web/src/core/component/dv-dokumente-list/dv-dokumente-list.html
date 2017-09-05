@@ -56,10 +56,12 @@
                        aria-hidden="true"></i>
                 </td>
 
-                <td width="5%" class="symbol" ng-click="$event.stopPropagation()"
+                <td width="5%" class="symbol" tabindex="-1" ng-click="$event.stopPropagation()"
                     ng-class="{'documents-vailable': vm.hasDokuments(row),'no-documents': !vm.hasDokuments(row),'no-color' : vm.sonstige}">
                     <a ngf-select="vm.uploadAnhaenge($files, row)" ngf-multiple="true"
-                       class="fa fa-upload" aria-hidden="true" style="color: black" ng-disabled="vm.isDokumenteUploadDisabled()"></a>
+                       class="fa fa-upload dv-btn-operation" title="{{'GS_DOKUMENT_HOCHLADEN' | translate}}"
+                       aria-label="{{'GS_DOKUMENT_HOCHLADEN' | translate}}"
+                       style="color: black" ng-disabled="vm.isDokumenteUploadDisabled()" tabindex="0"></a>
                 </td>
 
             </tr>
@@ -96,16 +98,19 @@
                             <td class="symbol"ng-if="!vm.isRemoveAllowed(row, dokument)">
                             </td>
                             <td class="symbol">
-                                <span ng-click="vm.download(dokument, true)" class="fa fa-download" aria-hidden="true"
+                                <span ng-click="vm.download(dokument, true)" class="fa fa-download"
+                                      aria-label="{{'DOKUMENT_DOWNLOAD' | translate}}"
                                       style="color: black"></span>
                             </td>
                             <td class="symbol">
-                                <span ng-click="vm.download(dokument, false)" class="fa fa-eye" aria-hidden="true"
+                                <span ng-click="vm.download(dokument, false)" class="fa fa-eye"
+                                      aria-label="{{'DOKUMENT_LOOK' | translate}}"
                                       style="color: black"></span>
                             </td>
                             <td class="symbol" ng-if="vm.isRemoveAllowed(row, dokument)">
                                 <span
-                                      ng-click="vm.remove(row, dokument)" class="fa fa-trash" aria-hidden="true"
+                                      ng-click="vm.remove(row, dokument)" class="fa fa-trash"
+                                      aria-label="{{'DOKUMENT_DELETE' | translate}}"
                                       style="color: black"></span>
                             </td>
                         </tr>

@@ -38,8 +38,8 @@ export class DownloadRS {
             });
     }
 
-    public getFinSitDokumentAccessTokenGeneratedDokument(gesuchId: string, forceCreation: boolean): IPromise<TSDownloadFile> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/FINANZIELLE_SITUATION/' + forceCreation + '/generated')
+    public getFinSitDokumentAccessTokenGeneratedDokument(gesuchId: string): IPromise<TSDownloadFile> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/FINANZIELLE_SITUATION/generated')
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
@@ -142,7 +142,7 @@ export class DownloadRS {
             let href: string = this.serviceURL + '/blobdata/' + accessToken;
             if (attachment) {
                 // add MatrixParam for to download file instead of opening it inline
-                href = href + ';attachment=true;';
+                href += ';attachment=true;';
             } else {
                 myWindow.focus();
             }

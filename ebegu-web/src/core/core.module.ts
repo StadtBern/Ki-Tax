@@ -91,6 +91,7 @@ import {DVVorlageListConfig} from './component/dv-vorlage-list/dv-vorlage-list';
 import {DatabaseMigrationRS} from '../admin/service/databaseMigrationRS.rest';
 import HttpVersionInterceptor from './service/version/HttpVersionInterceptor';
 import {DVVersionComponentConfig} from './component/dv-version/dv-version';
+import {DvSkiplinksComponentConfig} from './component/dv-skiplinks/dv-skiplinks';
 
 let dynamicDependencies = function (): string[] {
 
@@ -212,6 +213,7 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvPulldownUserMenu', new DvPulldownUserMenuComponentConfig())
     .component('dvMobileNavigationToggle', new DvMobileNavigationToggleComponentConfig())
     .component('dvHomeIcon', new DvHomeIconComponentConfig())
+    .component('dvSkiplinks', new DvSkiplinksComponentConfig())
     .component('dvDownloadmenu', new DvDownloadmenuComponentConfig())
     .component('dvCountdown', new DvCountdownComponentConfig())
     .component('dvPosteingang', new DvPosteingangComponentConfig())

@@ -23,10 +23,10 @@ import java.util.Set;
 public class DokumentenverzeichnisEvaluatorTest {
 
 
-	private DokumentenverzeichnisEvaluator evaluator = new DokumentenverzeichnisEvaluator();
-	private KindDokumente kindDokumente = new KindDokumente();
-	private ErwerbspensumDokumente erwerbspensumDokumente = new ErwerbspensumDokumente();
-	private FinanzielleSituationDokumente finanzielleSituationDokumente = new FinanzielleSituationDokumente();
+	private final DokumentenverzeichnisEvaluator evaluator = new DokumentenverzeichnisEvaluator();
+	private final KindDokumente kindDokumente = new KindDokumente();
+	private final ErwerbspensumDokumente erwerbspensumDokumente = new ErwerbspensumDokumente();
+	private final FinanzielleSituationDokumente finanzielleSituationDokumente = new FinanzielleSituationDokumente();
 	private Gesuch testgesuch;
 
 	@Before

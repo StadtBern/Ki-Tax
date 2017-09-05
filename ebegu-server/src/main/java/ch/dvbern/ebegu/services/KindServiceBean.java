@@ -53,7 +53,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class KindServiceBean extends AbstractBaseService implements KindService {
 
 	@Inject
-	private Persistence<KindContainer> persistence;
+	private Persistence persistence;
 	@Inject
 	private WizardStepService wizardStepService;
 

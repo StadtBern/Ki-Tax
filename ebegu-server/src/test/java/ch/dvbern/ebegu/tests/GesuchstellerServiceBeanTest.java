@@ -30,7 +30,7 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguLoginTest {
 	private GesuchstellerService gesuchstellerService;
 
 	@Inject
-	private Persistence<Gesuchsteller> persistence;
+	private Persistence persistence;
 
 
 	@Test

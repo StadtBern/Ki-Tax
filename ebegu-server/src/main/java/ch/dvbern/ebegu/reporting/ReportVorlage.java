@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.enums;
+package ch.dvbern.ebegu.reporting;
 
 import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.MergeFieldGesuchstellerKinderBetreuung;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.MergeFieldGesuchStichtag;

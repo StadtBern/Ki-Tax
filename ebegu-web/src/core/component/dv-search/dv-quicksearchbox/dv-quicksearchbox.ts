@@ -1,5 +1,4 @@
-import {IComponentOptions, ILogService, IFilterService, IQService, IPromise} from 'angular';
-import * as moment from 'moment';
+import {IComponentOptions, IFilterService, ILogService, IPromise, IQService} from 'angular';
 import TSSearchResultEntry from '../../../../models/dto/TSSearchResultEntry';
 import TSQuickSearchResult from '../../../../models/dto/TSQuickSearchResult';
 import {IStateService} from 'angular-ui-router';
@@ -10,7 +9,6 @@ import GesuchModelManager from '../../../../gesuch/service/gesuchModelManager';
 import EbeguUtil from '../../../../utils/EbeguUtil';
 import {SearchIndexRS} from '../../../service/searchIndexRS.rest';
 import TSAntragDTO from '../../../../models/TSAntragDTO';
-import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IInjectorService = angular.auto.IInjectorService;
 let template = require('./dv-quicksearchbox.html');
@@ -54,14 +52,15 @@ export class DvQuicksearchboxController {
 
     public querySearch(query: string): IPromise<Array<TSSearchResultEntry>> {
         this.searchString = query;
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<TSSearchResultEntry>>();
         this.searchIndexRS.quickSearch(query).then((quickSearchResult: TSQuickSearchResult) => {
             this.limitResultsize(quickSearchResult);
             deferred.resolve(quickSearchResult.resultEntities);
-        }).catch(() => {
+        }).catch((ee) => {
             deferred.resolve([]);
-            this.$log.warn('error during quicksearch');
+            this.$log.warn('error during quicksearch', ee);
         });
+
         return deferred.promise;
 
     }
@@ -92,25 +91,30 @@ export class DvQuicksearchboxController {
     }
 
     private navigateToFall() {
-        if (this.selectedItem && this.selectedItem.gesuchID) {
-            if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles()) && this.selectedItem.antragDTO) {
-                // Reload Gesuch in gesuchModelManager on Init in fallCreationView because  maybe it has been changed since last time
-                if (!this.gesuchModelManager) {
-                    this.gesuchModelManager = this.$injector.get<GesuchModelManager>('GesuchModelManager');
-                }
-                this.gesuchModelManager.clearGesuch();
-                if (isAnyStatusOfVerfuegt(this.selectedItem.antragDTO.status)) {
+        if (this.selectedItem) {
+            if (this.selectedItem.antragDTO instanceof TSAntragDTO && this.selectedItem.gesuchID) {
+                if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles()) && this.selectedItem.antragDTO) {
+                    // Reload Gesuch in gesuchModelManager on Init in fallCreationView because  maybe it has been changed since last time
+                    if (!this.gesuchModelManager) {
+                        this.gesuchModelManager = this.$injector.get<GesuchModelManager>('GesuchModelManager');
+                    }
+                    this.gesuchModelManager.clearGesuch();
+                    if (isAnyStatusOfVerfuegt(this.selectedItem.antragDTO.status)) {
 
-                    this.openGesuch(this.selectedItem.gesuchID, 'gesuch.verfuegen');
+                        this.openGesuch(this.selectedItem.gesuchID, 'gesuch.verfuegen');
+                    } else {
+                        this.openGesuch(this.selectedItem.gesuchID, 'gesuch.betreuungen');
+                    }
                 } else {
-                    this.openGesuch(this.selectedItem.gesuchID, 'gesuch.betreuungen');
+                    this.openGesuch(this.selectedItem.gesuchID, 'gesuch.fallcreation');
                 }
+            } else if (this.selectedItem.entity === 'FALL') {
+                //open mitteilung
+                this.$state.go('mitteilungen', {fallId: this.selectedItem.fallID});
             } else {
-                this.openGesuch(this.selectedItem.gesuchID, 'gesuch.fallcreation');
-            }
-        } else if (this.selectedItem) {
 
-            this.$state.go('search', {searchString: this.searchString});
+                this.$state.go('search', {searchString: this.searchString});
+            }
         }
     }
 

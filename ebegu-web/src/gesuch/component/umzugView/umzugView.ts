@@ -14,9 +14,12 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../../../models/TSAdresseContainer';
+import EbeguUtil from '../../../utils/EbeguUtil';
 import ITranslateService = angular.translate.ITranslateService;
+import ITimeoutService = angular.ITimeoutService;
 import IQService = angular.IQService;
 import IScope = angular.IScope;
+
 let template = require('./umzugView.html');
 require('./umzugView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -34,14 +37,15 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
     dirty = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'ErrorService', '$translate',
-        'DvDialog', '$q', '$scope'];
+        'DvDialog', '$q', '$scope', '$timeout'];
+
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private errorService: ErrorService,
                 private $translate: ITranslateService, private DvDialog: DvDialog, private $q: IQService,
-                $scope: IScope) {
+                $scope: IScope, $timeout: ITimeoutService) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.UMZUG);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.UMZUG, $timeout);
         this.initViewModel();
     }
 
@@ -164,6 +168,7 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
             if (indexOf >= 0) {
                 this.model.splice(indexOf, 1);
             }
+            this.$timeout(() => EbeguUtil.selectFirst(), 100);
         });
     }
 
@@ -176,6 +181,8 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
 
         this.model.push(umzugAdresse);
         this.dirty = true;
+        this.$postLink();
+        //todo focus on specific id, so the newly added umzug will be selected not the first in the DOM
     }
 
     private createAdressContainer() {

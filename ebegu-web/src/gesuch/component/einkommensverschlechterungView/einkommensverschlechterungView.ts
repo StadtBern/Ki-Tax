@@ -11,12 +11,13 @@ import WizardStepManager from '../../service/wizardStepManager';
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
 import {TSRole} from '../../../models/enums/TSRole';
 import TSFinanzModel from '../../../models/TSFinanzModel';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import IScope = angular.IScope;
 import ITranslateService = angular.translate.ITranslateService;
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./einkommensverschlechterungView.html');
 require('./einkommensverschlechterungView.less');
-
 
 export class EinkommensverschlechterungViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -36,14 +37,15 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     allowedRoles: Array<TSRole>;
     public initialModel: TSFinanzModel;
 
-    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', '$log',
-        'WizardStepManager', '$q', '$scope', '$translate'];
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', '$log',
+        'WizardStepManager', '$q', '$scope', '$translate', '$timeout'];
 
     /* @ngInject */
     constructor($stateParams: IEinkommensverschlechterungStateParams, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, private $log: ILogService,
-                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, private $translate: ITranslateService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+                berechnungsManager: BerechnungsManager, private errorService: ErrorService, private $log: ILogService,
+                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, private $translate: ITranslateService,
+                $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG, $timeout);
         let parsedGesuchstelllerNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         let parsedBasisJahrPlusNum: number = parseInt($stateParams.basisjahrPlus, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedGesuchstelllerNum);
@@ -63,11 +65,11 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         this.initGeschaeftsgewinnFromFS();
         this.showSelbstaendig = this.model.getFiSiConToWorkWith().finanzielleSituationJA.isSelbstaendig()
             || (this.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr !== null
-            && this.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr !== undefined);
+                && this.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr !== undefined);
         if (this.model.getFiSiConToWorkWith().finanzielleSituationGS && this.model.getEkvToWorkWith_GS()) {
             this.showSelbstaendigGS = this.model.getFiSiConToWorkWith().finanzielleSituationGS.isSelbstaendig()
                 || (this.model.getEkvToWorkWith_GS().geschaeftsgewinnBasisjahr !== null
-                && this.model.getEkvToWorkWith_GS().geschaeftsgewinnBasisjahr !== undefined);
+                    && this.model.getEkvToWorkWith_GS().geschaeftsgewinnBasisjahr !== undefined);
         }
     }
 

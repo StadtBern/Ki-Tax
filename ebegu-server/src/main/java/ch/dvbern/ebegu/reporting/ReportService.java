@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.services;
+package ch.dvbern.ebegu.reporting;
 
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;

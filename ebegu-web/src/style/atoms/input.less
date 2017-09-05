@@ -48,7 +48,7 @@ input[type="text"], input[type="number"], input[type="email"], textarea, textare
 
 
     &:focus {
-        outline: 1px solid #000000;
+        outline: 2px solid @contrast-darkest;
         outline-offset: 0;
         -webkit-box-shadow: none /*@secondary-dark*/;
         box-shadow: none /*@secondary-dark*/;
@@ -113,6 +113,7 @@ input[type="number"] {
     }
 }
 
+//noinspection CssInvalidPropertyValue
 @-moz-document url-prefix() {
     .dv-select-style {
         overflow: hidden;
