@@ -197,6 +197,13 @@ export default class GesuchRS implements IEntityRS {
             });
     }
 
+    public removePapiergesuch(gesuchId: string): IPromise<boolean> {
+        return this.http.delete(this.serviceURL + '/removePapiergesuch/' + encodeURIComponent(gesuchId))
+            .then((response: any) => {
+                return response.data;
+            });
+    }
+
     public closeWithoutAngebot(antragId: string): IPromise<TSGesuch> {
         return this.http.post(this.serviceURL + '/closeWithoutAngebot/' + encodeURIComponent(antragId), null).then((response) => {
             return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);

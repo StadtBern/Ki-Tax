@@ -873,6 +873,7 @@
     "TOOLBAR_VERLAUF": "VERLAUF",
     "TOOLBAR_ALLE_VERFUEGUNGEN": "ALLE VERFÜGUNGEN",
     "TOOLBAR_KONTAKT": "KONTAKT",
+    "TOOLBAR_LOESCHEN": "LÖSCHEN",
     "TESTFALL_ERSTELLEN": "Testfall {{gsname}} einfügen",
     "TESTFAELLE_EINFUEGEN": "Testfälle einfügen",
     "GSDASHBOARD_BEANTRAGEN": "BEANTRAGEN",
@@ -1088,6 +1089,8 @@
     "BETREUUNG_DELETE": "Betreuung löschen",
     "KINDER_DELETE": "Eintrag löschen",
     "ERWERBSPENSUM_DELETE": "Erwerbspensum löschen",
-    "OPEN_VERFUEGUNG": "Verfügung öffnen"
+    "OPEN_VERFUEGUNG": "Verfügung öffnen",
+    "CONFIRM_GESUCH_LOESCHEN": "Möchten Sie wirklich diesen Antrag löschen?",
+    "BESCHREIBUNG_GESUCH_LOESCHEN": "Wenn Sie mit dem Löschen fortfahren, werden alle Daten endgültig gelöscht"
 
 }

@@ -269,6 +269,11 @@ public interface GesuchService {
 	void removeOnlineFolgegesuch(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
+	 * Loescht das angegebene Gesuch, falls dies erlaubt ist. Wenn es sich um ein Papier-Erstgesuch handelt, wird auch der Fall gelöscht.
+	 */
+	void removePapiergesuch(@Nonnull Gesuch gesuch);
+
+	/**
 	 * Schliesst ein Gesuch, das sich im Status GEPRUEFT befindet und kein Angebot hat
 	 * Das Gesuch bekommt den Status KEIN_ANGEBOT und der WizardStep VERFUEGEN den Status OK
 	 */

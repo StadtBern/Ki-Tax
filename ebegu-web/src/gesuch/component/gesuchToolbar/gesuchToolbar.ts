@@ -10,22 +10,26 @@ import TSAntragDTO from '../../../models/TSAntragDTO';
 import {IGesuchStateParams} from '../../gesuch.route';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
+import {isAnyStatusOfVerfuegt, isStatusVerfuegenVerfuegt} from '../../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import * as moment from 'moment';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
-import Moment = moment.Moment;
-import ITranslateService = angular.translate.ITranslateService;
-import IScope = angular.IScope;
 import {TSRole} from '../../../models/enums/TSRole';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 import FallRS from '../../service/fallRS.rest';
 import TSFall from '../../../models/TSFall';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import Moment = moment.Moment;
+import IScope = angular.IScope;
+import IPromise = angular.IPromise;
+
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
+let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 require('./gesuchToolbar.less');
 
 export class GesuchToolbarComponentConfig implements IComponentOptions {
@@ -79,7 +83,7 @@ export class GesuchToolbarController {
 
     static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
         '$state', '$stateParams', '$scope', 'GesuchModelManager', 'AuthServiceRS',
-        '$mdSidenav', '$log', 'GesuchsperiodeRS', 'FallRS'];
+        '$mdSidenav', '$log', 'GesuchsperiodeRS', 'FallRS', 'DvDialog'];
 
     constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
                 private CONSTANTS: any, private gesuchRS: GesuchRS,
@@ -89,7 +93,7 @@ export class GesuchToolbarController {
                 private $mdSidenav: ng.material.ISidenavService,
                 private $log: ILogService,
                 private gesuchsperiodeRS: GesuchsperiodeRS,
-                private fallRS: FallRS) {
+                private fallRS: FallRS, private dvDialog: DvDialog) {
 
     }
 
@@ -564,6 +568,23 @@ export class GesuchToolbarController {
     public openVerlauf(): void {
         this.$state.go('verlauf', {
             gesuchId: this.getGesuch().id
+        });
+    }
+
+    public showGesuchLoeschen(): boolean {
+        // Darf nicht verfuegen oder verfuegt sein
+        if (isStatusVerfuegenVerfuegt(this.getGesuch().status) || this.getGesuch().eingangsart === TSEingangsart.ONLINE) {
+            return false;
+        }
+        return true;
+    }
+
+    public gesuchLoeschen(): IPromise<void> {
+        return this.dvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'CONFIRM_GESUCH_LOESCHEN',
+            deleteText: 'BESCHREIBUNG_GESUCH_LOESCHEN'
+        }).then(() => {
+            this.gesuchRS.removePapiergesuch(this.getGesuch().id);
         });
     }
 

@@ -57,6 +57,17 @@
             </span>
 
             <span flex=""></span>
+
+            <!-- Gesuch loeschen -->
+            <div dv-show-element
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getAdministratorRoles()" dv-show-expression="vmx.showGesuchLoeschen()">
+                <button ng-click="vmx.gesuchLoeschen()"
+                        aria-label="{{TOOLBAR_LOESCHEN | translate}}" style="text-align: center;">
+                    <span data-translate="TOOLBAR_LOESCHEN"></span>
+                </button>
+            </div>
+
+
             <!--Verlauf-->
             <div dv-show-element
                  dv-show-allowed-roles="vmx.TSRoleUtil.getJugendamtAndSchulamtRole()" dv-show-expression="vmx.showVerlauf()">
@@ -65,6 +76,8 @@
                     <span data-translate="TOOLBAR_VERLAUF"></span>
                 </button>
             </div>
+
+            <!-- Verfuegungen -->
             <div dv-show-element
                  dv-show-allowed-roles="vmx.TSRoleUtil.getAllRolesForMenuAlleVerfuegungen()"
                  dv-show-expression="!vmx.getGesuch().isNew()">

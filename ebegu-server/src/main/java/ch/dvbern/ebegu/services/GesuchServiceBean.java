@@ -1499,6 +1499,26 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN })
+	public void removePapiergesuch(@Nonnull Gesuch gesuch) {
+		logDeletingOfPapierAntrag(gesuch);
+		// Antrag muss Papier sein, und darf noch nicht verfuegen/verfuegt sein
+		if (gesuch.getEingangsart().isOnlineGesuch()) {
+			throw new EbeguRuntimeException("removeAntrag", "Online Antrag darf nicht gelöscht werden");
+		}
+		if (gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen()) {
+			throw new EbeguRuntimeException("removeAntrag", "Antrag ist im Status " + gesuch.getStatus() + " und darf nicht mehr gelöscht werden!");
+		}
+		// Bei Erstgesuch wird auch der Fall mitgelöscht
+		if (gesuch.getTyp() == AntragTyp.ERSTGESUCH) {
+			fallService.removeFall(gesuch.getFall());
+		} else {
+			removeGesuch(gesuch.getId());
+		}
+		LOG.info("Deleting Gesuch!");
+	}
+
+	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Gesuch closeWithoutAngebot(@Nonnull Gesuch gesuch) {
 		if (gesuch.getStatus() != AntragStatus.GEPRUEFT) {
@@ -1640,6 +1660,16 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		LOG.info("Benutzer: " + principalBean.getBenutzer().getUsername());
 		LOG.info("Fall: " + fall.getFallNummer());
 		LOG.info("Gesuchsperiode: " + gesuchsperiode.getGesuchsperiodeString());
+		LOG.info("****************************************************");
+	}
+
+	private void logDeletingOfPapierAntrag(@Nonnull Gesuch gesuch) {
+		LOG.info("****************************************************");
+		LOG.info("Papier-Gesuch wird gelöscht:");
+		LOG.info("Benutzer: " + principalBean.getBenutzer().getUsername());
+		LOG.info("Fall: " + gesuch.getFall().getFallNummer());
+		LOG.info("Gesuchsperiode: " + gesuch.getGesuchsperiode().getGesuchsperiodeString());
+		LOG.info("Gesuch-Id: " + gesuch.getId());
 		LOG.info("****************************************************");
 	}
 }
