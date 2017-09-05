@@ -12,6 +12,7 @@ import IPromise = angular.IPromise;
 import IFormController = angular.IFormController;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
+import EbeguUtil from '../../utils/EbeguUtil';
 
 export default class AbstractGesuchViewController<T> {
 
@@ -130,28 +131,11 @@ export default class AbstractGesuchViewController<T> {
         return '';
     }
 
-    public selectFirst(): void {
-        let tmp = angular.element('md-radio-button:not([disabled="disabled"]),'
-            + 'fieldset:not([disabled="disabled"],.dv-adresse__fieldset) input:not([disabled="disabled"]),'
-            + 'fieldset:not([disabled="disabled"],.dv-adresse__fieldset) select:not([disabled="disabled"]),'
-            + 'fieldset:not([disabled="disabled"],.dv-adresse__fieldset) md-checkbox:not([disabled="disabled"]),'
-            + '#gesuchContainer button:not([disabled="disabled"]),'
-            + '#gesuchContainer .dvb-loading-button button:not([disabled="disabled"]),'
-            + 'tbody>tr[ng-click]:not(.disabled-row),'
-            + '#gesuchContainer button.link-underline:not([disabled="disabled"]),'
-            + '.dv-dokumente-list a:not([disabled="disabled"])').first();
-        if (tmp) {
-            if (tmp.prop('tagName') === 'MD-RADIO-BUTTON') {
-                tmp.parent().first().focus();
-            } else {
-                tmp.focus();
-            }
-        }
-    }
+
 
     $postLink() {
         this.$timeout(() => {
-            this.selectFirst();
+            EbeguUtil.selectFirst();
         });
     }
 }

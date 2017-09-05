@@ -42,7 +42,7 @@
                               ng-click="vm.gotoKindDublette(dublette); $event.stopPropagation();"
                               ng-show="dublette.fallNummer" ng-bind="vm.getFallNummer(dublette) + ($last ? ' ' : ', ')"></span>
                     </td>
-                    <td ng-if="vm.canRemoveKind(row)">
+                    <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
                         <dv-loading-button type="button" button-click="vm.removeKind(row);"
                                            button-class="dv-btn-operation"
                                            button-disabled="vm.isKorrekturModusJugendamt()"

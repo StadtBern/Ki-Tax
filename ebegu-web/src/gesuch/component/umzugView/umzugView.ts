@@ -14,6 +14,7 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../../../models/TSAdresseContainer';
+import EbeguUtil from '../../../utils/EbeguUtil';
 import ITranslateService = angular.translate.ITranslateService;
 import ITimeoutService = angular.ITimeoutService;
 import IQService = angular.IQService;
@@ -167,7 +168,7 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
             if (indexOf >= 0) {
                 this.model.splice(indexOf, 1);
             }
-            this.$timeout(() => this.selectFirst(), 100);
+            this.$timeout(() => EbeguUtil.selectFirst(), 100);
         });
     }
 
