@@ -8,40 +8,42 @@
             </h2>
             <hr class="header"/>
             <p ng-if="vm.isMutation()" data-translate="MUTATION_FAMSITUATION_HINT"></p>
-            <p ng-if="vm.showError()" role="alert" data-translate="ERROR_DATUM_GESETZT_BEI_MUTATION" class="dv-error-messages"></p>
+            <p ng-if="vm.showError()" role="alert" data-translate="ERROR_DATUM_GESETZT_BEI_MUTATION"
+               class="dv-error-messages"></p>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
 
-            <form role="form" name="vm.form" class="" novalidate unsaved-warning-form >
-                <!--Aenderung per-->
-                <div class="row" ng-if="vm.isMutation()">
-                    <div class="col-md-12">
-                        <dv-input-container class="form-group">
+            <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
+                <fieldset>
+                    <!--Aenderung per-->
+                    <div class="row" ng-if="vm.isMutation()">
+                        <div class="col-md-12">
+                            <dv-input-container class="form-group">
 
-                            <div class="row">
-                                <div class="col-xs-12 dv-input-container-small">
-                                    <label class="md-no-float" data-translate="AENDERUNG_PER" for="aenderungPer_ID">
-                                    </label>
-                                    <dv-datepicker input-id="aenderungPer_ID" name="aenderungPer"
-                                                   ng-model="vm.getFamiliensituation().aenderungPer"
-                                                   class="input-element"
-                                                   ng-required="vm.isKorrekturModusJugendamt() && vm.gesuchstellerHasChangedZivilstand()"
-                                                   dv-on-blur="vm.onDatumBlur()"
-                                                   ng-disabled="vm.isGesuchReadonly() || (vm.isKorrekturModusJugendamt() && !vm.gesuchstellerHasChangedZivilstand())">
-                                    </dv-datepicker>
-                                    <dv-bisher gs="vm.model.familiensituationGS.aenderungPer"
-                                               ja="vm.model.familiensituationJA.aenderungPer"></dv-bisher>
-                                    <dv-error-messages input-id="aenderungPer_ID" for="vm.form.aenderungPer.$error"
-                                                       class="error"></dv-error-messages>
+                                <div class="row">
+                                    <div class="col-xs-12 dv-input-container-small">
+                                        <label class="md-no-float" data-translate="AENDERUNG_PER" for="aenderungPer_ID">
+                                        </label>
+                                        <dv-datepicker input-id="aenderungPer_ID" name="aenderungPer"
+                                                       ng-model="vm.getFamiliensituation().aenderungPer"
+                                                       class="input-element"
+                                                       ng-required="vm.isKorrekturModusJugendamt() && vm.gesuchstellerHasChangedZivilstand()"
+                                                       dv-on-blur="vm.onDatumBlur()"
+                                                       ng-disabled="vm.isGesuchReadonly() || (vm.isKorrekturModusJugendamt() && !vm.gesuchstellerHasChangedZivilstand())">
+                                        </dv-datepicker>
+                                        <dv-bisher gs="vm.model.familiensituationGS.aenderungPer"
+                                                   ja="vm.model.familiensituationJA.aenderungPer"></dv-bisher>
+                                        <dv-error-messages input-id="aenderungPer_ID" for="vm.form.aenderungPer.$error"
+                                                           class="error"></dv-error-messages>
+                                    </div>
                                 </div>
-                            </div>
 
 
-                        </dv-input-container>
+                            </dv-input-container>
+                        </div>
                     </div>
-                </div>
 
 
                 <!--familienstatus-->
@@ -57,9 +59,8 @@
                                                 dv-enable-allowed-roles="vm.allowedRoles"
                                                 dv-enable-expression="vm.isEnabled()"
                             aria-label="{{ 'FAMILIENSITUATION_FRAGE_1' |translate}}"
-                                                aria-described-by="familienstatus-error">
-                            </dv-radio-container>
-                            <dv-error-messages input-id="familienstatus" for="vm.form.familienstatus.$error"
+                            aria-described-by="familienstatus-error"></dv-radio-container>
+                            <dv-error-messages input-id="familienstatus"for="vm.form.familienstatus.$error"
                                                class="error"></dv-error-messages>
                         </div>
                     </div>
@@ -81,14 +82,13 @@
                                                 dv-enable-allowed-roles="vm.allowedRoles"
                                                 dv-enable-expression="vm.isEnabled()"
                                                 aria-label="{{ 'FAMILIENSITUATION_FRAGE_2' |translate}}"
-                                                aria-described-by="gesuchstellerKardinalitaet-error">
-                            </dv-radio-container>
-                            <dv-error-messages input-id="gesuchstellerKardinalitaet" for="vm.form.gesuchstellerKardinalitaet.$error"
+                            aria-described-by="gesuchstellerKardinalitaet-error"></dv-radio-container>
+                            <dv-error-messages input-id="gesuchstellerKardinalitaet"for="vm.form.gesuchstellerKardinalitaet.$error"
                                                class="error"></dv-error-messages>
                         </div>
                     </div>
                 </div>
-
+</fieldset>
                 <div class="row">
                     <div class="col-md-12">
                         <dv-navigation dv-show-element

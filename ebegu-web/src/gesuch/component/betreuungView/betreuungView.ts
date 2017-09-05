@@ -25,8 +25,8 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {isVerfuegtOrSTV} from '../../../models/enums/TSAntragStatus';
 import * as moment from 'moment';
 import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
-import Moment = moment.Moment;
 import IScope = angular.IScope;
+import ITimeoutService = angular.ITimeoutService;
 import ILogService = angular.ILogService;
 import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 let template = require('./betreuungView.html');
@@ -55,13 +55,14 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     isNewestGesuch: boolean;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
-        'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log'];
+        'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $stateParams: IBetreuungStateParams,
-                private mitteilungRS: MitteilungRS, private dvDialog: DvDialog, private $log: ILogService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
+                private mitteilungRS: MitteilungRS, private dvDialog: DvDialog, private $log: ILogService,
+                $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG, $timeout);
 
     }
 

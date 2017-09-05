@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.services;
+package ch.dvbern.ebegu.reporting;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

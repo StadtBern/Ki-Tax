@@ -4,20 +4,27 @@
 md-radio-group.radio, .radio {
 
     margin: 0;
-    &:focus {
-        md-radio-button{
-           // outline: 2px solid @contrast-darkest;
-        }
-        .md-container {
-            .md-on{
-                box-shadow: 0 0 0 3.5rem rgba(0,0,0,0.4);
-            }
-            .md-off {
-                //outline: 2px solid @contrast-darkest;
+    &:not(.ng-not-empty):focus {
+        md-radio-button {
+            &:first-child {
+                .md-off {
+                    box-shadow: 0 0 0 0.3rem rgba(0, 0, 0, 0.4);
+                    background: rgba(0, 0, 0, 0.4);
+                }
             }
         }
-        //outline: 1px solid @contrast-darkest;
     }
+    &.ng-not-empty:focus {
+        md-radio-button {
+
+            &.md-checked {
+                .md-on {
+                    box-shadow: 0 0 0 3.5rem rgba(0, 0, 0, 0.4);
+                }
+            }
+        }
+    }
+
 }
 
 md-radio-button {

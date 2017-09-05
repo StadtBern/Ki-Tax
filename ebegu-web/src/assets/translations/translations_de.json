@@ -1081,6 +1081,13 @@
     "AFA_TOOLBAR": "Hauptnavigation",
     "AFA_INDEXBAR": "Benutzernavigation",
     "AFA_GESUCHSFORMULAR": "Gesuchsformular",
-    "BESTAETIGUNG_DIALOG": "Bestätigungs"
+    "BESTAETIGUNG_DIALOG": "Bestätigungs",
+    "DOKUMENT_DOWNLOAD": "Dokument herunterladen",
+    "DOKUMENT_LOOK": "Dokument betrachten",
+    "DOKUMENT_DELETE": "Dokument löschen",
+    "BETREUUNG_DELETE": "Betreuung löschen",
+    "KINDER_DELETE": "Eintrag löschen",
+    "ERWERBSPENSUM_DELETE": "Erwerbspensum löschen",
+    "OPEN_VERFUEGUNG": "Verfügung öffnen"
 
 }

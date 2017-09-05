@@ -10,23 +10,24 @@
 
 package ch.dvbern.ebegu.api.client;
 
-import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.Traegerschaft;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.util.OpenIDMUtil;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
@@ -88,7 +89,7 @@ public class OpenIdmRestService {
 	}
 
 	public Optional<JaxOpenIdmResult> getInstitutionByUid(String uid, boolean force) {
-		return getById(force, convertToOpenIdmInstitutionsUID(uid));
+		return getById(force, OpenIDMUtil.convertToOpenIdmInstitutionsUID(uid));
 	}
 
 	public Optional<JaxOpenIdmResult> getTraegerschaftByUid(String uid) {
@@ -96,7 +97,7 @@ public class OpenIdmRestService {
 	}
 
 	public Optional<JaxOpenIdmResult> getTraegerschaftByUid(String uid, boolean force) {
-		return getById(force, convertToOpenIdmTraegerschaftUID(uid));
+		return getById(force, OpenIDMUtil.convertToOpenIdmTraegerschaftUID(uid));
 	}
 
 	private Optional<JaxOpenIdmResult> getById(boolean force, String openIdmTraegerschaftUID) {
@@ -131,34 +132,16 @@ public class OpenIdmRestService {
 	}
 
 	public Optional<JaxOpenIdmResult> createInstitution(Institution institution, boolean force) {
-		return create(force, institution.getName(), INSTITUTION, convertToOpenIdmInstitutionsUID(institution.getId()), institution.getMail());
+		return create(force, institution.getName(), INSTITUTION, OpenIDMUtil.convertToOpenIdmInstitutionsUID(institution.getId()), institution.getMail());
 	}
 
-	@Nonnull
-	public String convertToOpenIdmInstitutionsUID(@Nonnull String institutionId) {
-		return "I-" + institutionId;
-	}
-
-	@Nonnull
-	public String convertToOpenIdmTraegerschaftUID(@Nonnull String traegerschaftId) {
-		return "T-" + traegerschaftId;
-	}
-
-	@Nonnull
-	public final String convertToEBEGUID(@Nullable String openIdmUid) {
-		if (openIdmUid != null && openIdmUid.length() > 2) {
-			return openIdmUid.substring(2);
-		} else {
-			return "";
-		}
-	}
 
 	public Optional<JaxOpenIdmResult> createTraegerschaft(Traegerschaft traegerschaft) {
 		return createTraegerschaft(traegerschaft, false);
 	}
 
 	public Optional<JaxOpenIdmResult> createTraegerschaft(Traegerschaft traegerschaft, boolean force) {
-		return create(force, traegerschaft.getName(), TRAEGERSCHAFT, convertToOpenIdmTraegerschaftUID(traegerschaft.getId()), traegerschaft.getMail());
+		return create(force, traegerschaft.getName(), TRAEGERSCHAFT, OpenIDMUtil.convertToOpenIdmTraegerschaftUID(traegerschaft.getId()), traegerschaft.getMail());
 	}
 
 
@@ -253,7 +236,7 @@ public class OpenIdmRestService {
 	}
 
 	public boolean deleteInstitution(String institutionId, boolean force) {
-		return deleteByOpenIdmUid(convertToOpenIdmInstitutionsUID(institutionId), force);
+		return deleteByOpenIdmUid(OpenIDMUtil.convertToOpenIdmInstitutionsUID(institutionId), force);
 	}
 
 	public boolean deleteTraegerschaft(String openIDMTraegerschaftUID) {
