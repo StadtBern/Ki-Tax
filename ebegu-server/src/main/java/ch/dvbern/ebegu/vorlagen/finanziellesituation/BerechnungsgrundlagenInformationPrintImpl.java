@@ -11,17 +11,17 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 23.08.2016
 */
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementiert den {@link BerechnungsgrundlagenInformationPrint}. Diese Klasse enthält die Daten fuer die
@@ -62,11 +62,11 @@ public class BerechnungsgrundlagenInformationPrintImpl extends BriefPrintImpl im
 				String einkommensverschlechterungJahr1;
 				String ereigniseintritt1 = "";
 				if (fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1() != null) {
-					einkommensverschlechterungJahr1 = Integer.toString(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1().getYear());
+					einkommensverschlechterungJahr1 = Integer.toString(gesuch.getGesuchsperiode().getBasisJahrPlus1());
 					ereigniseintritt1 = Constants.DATE_FORMATTER.format(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1());
 				}
 				else {
-					einkommensverschlechterungJahr1 = Integer.toString(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear());
+					einkommensverschlechterungJahr1 = Integer.toString(gesuch.getGesuchsperiode().getBasisJahr());
 				}
 				String grundEv1 = fG1.getEinkommensverschlechterungInfo().getGrundFuerBasisJahrPlus1();
 				ev1 = new EinkommensverschlechterungPrintImpl(fG1, fG2, einkommensverschlechterungJahr1, ereigniseintritt1, grundEv1, 1);
@@ -77,11 +77,16 @@ public class BerechnungsgrundlagenInformationPrintImpl extends BriefPrintImpl im
 				String einkommensverschlechterungJahr2;
 				String ereigniseintritt2 = "";
 				if (fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2() != null) {
-					einkommensverschlechterungJahr2 = Integer.toString(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2().getYear());
-					ereigniseintritt2 = Constants.DATE_FORMATTER.format(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2());
+					einkommensverschlechterungJahr2 = Integer.toString(gesuch.getGesuchsperiode().getBasisJahrPlus2());
+					if (fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2().getYear() < gesuch.getGesuchsperiode().getBasisJahrPlus2()) {
+						// Das Ereignisdatum ist in diesem Fall 01.12.VORJAHR, dies wollen wir nicht so drucken
+						ereigniseintritt2 = ServerMessageUtil.getMessage("Einkommensverschlechterung_VORJAHR");
+					} else {
+						ereigniseintritt2 = Constants.DATE_FORMATTER.format(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2());
+					}
 				}
 				else {
-					einkommensverschlechterungJahr2 = Integer.toString(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear() + 1);
+					einkommensverschlechterungJahr2 = Integer.toString(gesuch.getGesuchsperiode().getBasisJahrPlus1());
 				}
 				String grundEv2 = fG1.getEinkommensverschlechterungInfo().getGrundFuerBasisJahrPlus2();
 				ev2 = new EinkommensverschlechterungPrintImpl(fG1, fG2, einkommensverschlechterungJahr2, ereigniseintritt2, grundEv2, 2);
