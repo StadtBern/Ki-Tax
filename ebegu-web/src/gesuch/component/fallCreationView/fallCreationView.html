@@ -59,7 +59,7 @@
                                                ng-model="vm.getGesuchModel().eingangsdatum" ng-required="true"
                                                class="input-element">
                                 </dv-datepicker>
-                                <dv-error-messages for="vm.form.eingangsdatum.$error"
+                                <dv-error-messages input-id="eingangsdatum_ID" for="vm.form.eingangsdatum.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -81,11 +81,13 @@
                                             <md-radio-button
                                                 ng-repeat="current in vm.getAllActiveGesuchsperioden()"
                                                 ng-value="current.id" aria-label="{{current.gesuchsperiodeString}}"
-                                                ng-disabled="vm.isGesuchReadonly()  || vm.isKorrekturModusJugendamt()">
+                                                ng-disabled="vm.isGesuchReadonly()  || vm.isKorrekturModusJugendamt()"
+                                                aria-describedby="gesuchsperioden-error">
                                                 <span>{{current.gesuchsperiodeString}}</span>
                                             </md-radio-button>
                                         </md-radio-group>
-                                        <dv-error-messages for="vm.form.gesuchsperioden.$error"></dv-error-messages>
+                                        <dv-error-messages input-id="gesuchsperioden"
+                                                           for="vm.form.gesuchsperioden.$error"></dv-error-messages>
                                     </div>
                                 </div>
                             </div>

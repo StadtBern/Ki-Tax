@@ -22,10 +22,12 @@
                                 <input id="bezeichnung" type="text" name="bezeichnung"
                                        ng-model="vm.model.erwerbspensumJA.bezeichnung"
                                        dv-max-length class="form-control" ng-required="false"
-                                       ng-disabled="vm.erwerbspensumDisabled()">
+                                       ng-disabled="vm.erwerbspensumDisabled()"
+                                aria-describedby="bezeichnung-error">
                                 <dv-bisher gs="vm.model.erwerbspensumGS.bezeichnung"
                                            ja="vm.model.erwerbspensumJA.bezeichnung"></dv-bisher>
-                                <dv-error-messages for="vm.form.bezeichnung.$error"></dv-error-messages>
+                                <dv-error-messages input-id="bezeichnung"
+                                                   for="vm.form.bezeichnung.$error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -39,7 +41,8 @@
                                     <dv-tooltip text="'TAETIGKEIT_WAEHLEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <div class="dv-select-style">
-                                    <select name="taetigkeit" id="taetigkeit"
+                                    <select aria-describedby="taetigkeit-error"
+                                            name="taetigkeit" id="taetigkeit"
                                             ng-model="vm.model.erwerbspensumJA.taetigkeit"
                                             class="form-control"
                                             ng-options="(taetigkeit| translate) for taetigkeit in vm.getTaetigkeitenList() "
@@ -49,7 +52,7 @@
 
                                 <dv-bisher gs="vm.model.erwerbspensumGS.taetigkeit"
                                            ja="vm.model.erwerbspensumJA.taetigkeit"></dv-bisher>
-                                <dv-error-messages for="vm.form.taetigkeit.$error"
+                                <dv-error-messages input-id="taetigkeit" for="vm.form.taetigkeit.$error"
                                                    class="error"></dv-error-messages>
                                 </div>
                             </div>
@@ -61,7 +64,8 @@
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="PENSUM" for="taetigkeitPensum"></label>
-                                <input id="taetigkeitPensum" type="number" name="taetigkeitPensum"
+                                <input aria-describedby="taetigkeitPensum-error"
+                                       id="taetigkeitPensum" type="number" name="taetigkeitPensum"
                                        ng-model="vm.model.erwerbspensumJA.pensum"
                                        dv-max-length class="form-control" max="100"
                                        ng-required="true" ng-pattern="vm.patternPercentage"
@@ -69,7 +73,7 @@
                                        ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                                 <dv-bisher gs="vm.model.erwerbspensumGS.pensum"
                                            ja="vm.model.erwerbspensumJA.pensum"></dv-bisher>
-                                <dv-error-messages for="vm.form.taetigkeitPensum.$error"
+                                <dv-error-messages input-id="taetigkeitPensum" for="vm.form.taetigkeitPensum.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -89,7 +93,7 @@
                                 </dv-datepicker>
                                 <dv-bisher gs="vm.model.erwerbspensumGS.gueltigkeit.gueltigAb"
                                            ja="vm.model.erwerbspensumJA.gueltigkeit.gueltigAb"></dv-bisher>
-                                <dv-error-messages for="vm.form.taetigkeitAb.$error"
+                                <dv-error-messages input-id="taetigkeitAbID" for="vm.form.taetigkeitAb.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -104,7 +108,7 @@
                                 </dv-datepicker>
                                 <dv-bisher gs="vm.model.erwerbspensumGS.gueltigkeit.gueltigBis"
                                            ja="vm.model.erwerbspensumJA.gueltigkeit.gueltigBis"></dv-bisher>
-                                <dv-error-messages for="vm.form.taetigkeitBis.$error"
+                                <dv-error-messages input-id="taetigkeitBisID" for="vm.form.taetigkeitBis.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -147,7 +151,8 @@
                                     </select>
                                 </div>
                                 <div class="dv-select-style" ng-if="vm.isGesuchReadonly()">
-                                    <input id="zuschlagsgrund_dvi" type="text"
+                                    <input aria-describedby="zuschlagsgrund_dvi-error" id="zuschlagsgrund_dvi"
+                                           type="text"
                                            value="{{vm.model.erwerbspensumJA.zuschlagsgrund | translate}}"
                                            class="form-control"
                                            ng-disabled="true"
@@ -157,7 +162,7 @@
                                            ja="vm.model.erwerbspensumJA.zuschlagsgrund"
                                            show-if-bisher-none="false"
                                            block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
-                                <dv-error-messages for="vm.form.zuschlagsgrund.$error"
+                                <dv-error-messages input-id="zuschlagsgrund_dvi" for="vm.form.zuschlagsgrund.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
@@ -169,7 +174,8 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="ZUSCHLAGSPROZENT"  data-translate-value-max="{{vm.maxZuschlagsprozent}}"
                                        for="zuschlagsprozent"></label>
-                                <input type="number" id="zuschlagsprozent" name="zuschlagsprozent"
+                                <input  aria-describedby="zuschlagsprozent-error" type="number" id="zuschlagsprozent"
+                                        name="zuschlagsprozent"
                                        ng-model="vm.model.erwerbspensumJA.zuschlagsprozent"
                                        dv-max-length class="form-control" max="{{vm.maxZuschlagsprozent}}"
                                        ng-required="true" ng-pattern="vm.patternPercentage"
@@ -179,7 +185,7 @@
                                            ja="vm.model.erwerbspensumJA.zuschlagsprozent"
                                            show-if-bisher-none="false"
                                            block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
-                                <dv-error-messages for="vm.form.zuschlagsprozent.$error"
+                                <dv-error-messages input-id="zuschlagsprozent" for="vm.form.zuschlagsprozent.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
