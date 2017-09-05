@@ -28,7 +28,7 @@
                     <label class="md-no-float" data-translate="ADRESSE_STRASSE" for="{{vm.prefix}}-strasse">
                     </label>
                     <input id="{{vm.prefix}}-strasse" type="text" name="adresseStrasse" ng-model="vm.getModel().adresseJA.strasse"
-                           dv-max-length class="form-control" required>
+                           dv-max-length  maxlength="60" class="form-control" required>
                     <dv-bisher gs="vm.getModel().adresseGS.strasse"
                                ja="vm.getModel().adresseJA.strasse"
                                show-if-bisher-none="vm.showIfBisherNone === true"
@@ -92,7 +92,7 @@
                     <label class="md-no-float" data-translate="ADRESSE_ORT" for="{{vm.prefix}}-ort">
                     </label>
                     <input id="{{vm.prefix}}-ort" type="text" name="adresseOrt" ng-model="vm.getModel().adresseJA.ort"
-                           dv-max-length class="form-control" required>
+                           dv-max-length maxlength="40" class="form-control" required>
                     <dv-bisher gs="vm.getModel().adresseGS.ort"
                                ja="vm.getModel().adresseJA.ort"
                                show-if-bisher-none="vm.showIfBisherNone === true"
