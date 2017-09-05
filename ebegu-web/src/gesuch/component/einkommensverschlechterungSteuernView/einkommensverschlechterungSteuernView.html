@@ -21,8 +21,9 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group">
-                                <h1 class="required" aria-hidden="true" id="gemeinsameSteuererklaerung_BjP1" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
-                                    translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1), namegs2: vm.extractFullNameGS2()}"></h1>
+                                <span class="ebeguH1 required" id="gemeinsameSteuererklaerung_BjP1"
+                                    data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
+                                    translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1), namegs2: vm.extractFullNameGS2()}"></span>
                                 <dv-radio-container name="gemeinsameSteuererklaerung_BjP1"
                                                     ng-model="vm.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1"
                                                     ng-required="true" class="radio input-element"
@@ -42,8 +43,9 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question" ng-if="vm.showSteuerveranlagung_BjP1()">
                             <div class="form-group">
-                                <h1 class="required" aria-hidden="true" id="steuerveranlagung_BjP1" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
-                                    translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1)}"></h1>
+                                <span class="ebeguH1 required" id="steuerveranlagung_BjP1"
+                                    data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
+                                    translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1)}"></span>
                                 <dv-radio-container name="steuerveranlagung_BjP1"
                                                     ng-model="vm.getEkv_GS1_Bjp1().steuerveranlagungErhalten"
                                                     ng-required="true" class="radio input-element"
@@ -64,8 +66,9 @@
                         <div class="col-xs-12 dv-input-container-question"
                              ng-if="vm.showSteuerveranlagung_BjP1() && vm.showSteuererklaerung_BjP1()">
                             <div class="form-group">
-                                <h1 class="required" aria-hidden="true" id="steuererklaerung_BjP1" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
-                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(1)}}}"></h1>
+                                <span class="ebeguH1 required" id="steuererklaerung_BjP1"
+                                   data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
+                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(1)}}}"></span>
                                 <dv-radio-container name="steuererklaerung_BjP1"
                                                     ng-model="vm.getEkv_GS1_Bjp1().steuererklaerungAusgefuellt"
                                                     ng-required="true" class="radio input-element"
