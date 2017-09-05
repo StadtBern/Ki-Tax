@@ -1,46 +1,35 @@
 # Ki-Tax
 
-System zur Verwaltung von Vergünstigungen für die externe Kinderbetreuung
+System for the management of external childcare subsidies
 
 ## Getting Started
 
-Ki-Tax is a online portal through which parents can apply for financial support for childcare outside of the family. It 
-was implemented in 2017 for the City of Bern.
-
+Ki-Tax is an online portal through which parents can apply for financial support for childcare outside of the family. It was implemented in 2017 for the City of Bern.
+ 
 The following childcare services are available:
+ 
+* Kitas, for children not yet at school (Youth Office)
+* Tagis, for school-age children (Youth Office)
+* All-day schools (Education Office)
+* Childminders (Youth Office)
 
-* Kitas, for children not yet at school (Jugendamt)
-* Tagis, for school-age children (Jugendamt)
-* All-day schools (Schulamt)
-* Childminders (Jugendamt)
-
-In Ki-Tax sind folgende Rollen abgebildet:
-* Gesuchsteller: Stellt einen Antrag mit einem oder mehreren Betreuungsangeboten für ein oder mehrere Kinder
-* Sachbearbeiter Jugendamt: Bearbeitet die eingehenden Gesuche und Mutationsmeldungen. Geht das Gesuch auf dem Postweg 
-ein, werden die Gesuchdaten durch den Sachbearbeiter erfasst. Darüber hinaus kann der Sachbearbeiter die Zahlungen an 
-die Kitas einsehen und freigeben sowie als ISO20022-File exportieren. Auch Statistiken können durch den Sachbearbeiter
-Jugendamt erstellt werden.
-* Rechtsdienst / Jurist: Wird involviert, wenn eine Beschwerde eingereicht wird. Der Rechtsdienst hat nur Lesezugriff
-* Revisor: Der Revisor des Jugendamts fungiert als Revisionsstelle und prüft die Auszahlungen, die das Jugendamt an die 
-Institutionen getätigt hat. Dazu erhält er Lesezugriff auf die relevanten Daten.
-* Administrator: Neben den Funktionen die für den Sachbearbeiter freigeschaltet sind, hat dieser Benutzer Zugriff auf 
-Administrationsfunktionen, wie z.B. die Verwaltung der Institutionen und Trägerschaften
-* Schulamt: Die Schulamt User übernehmen fachlich eine ähnliche Funktion wie die Sachbearbeiter des Jugendamts. Das 
-heisst, sie prüfen die vom Gesuchsteller eingegebenen Daten und entscheiden über deren Annahme. Sie prüfen nur Gesuche 
-die das Betreuungsangebot Tagesschule betreffen
-* Steuerverwaltung: Die Benutzer der Steuerverwaltung können im Auftrag des Jugendamts gemeldete Einkommens- und 
-Vermögensdaten der Gesuchsteller prüfen. Diese Rolle hat Zugriff auf Dossiers die vom Sachbearbeiter zur Prüfung durch 
-die Steuerverwaltung markiert wurden. Der Benutzer kann lesend auf die eingegebenen Gesuchdaten zugreifen und wo 
-vorgesehen kommentieren.
+The following roles are represented in Ki-Tax:
+ 
+* **Applicant**: Can place an online application for one or more childcare services for one or more children.
+* **Youth Office**: Processes incoming and updated applications. If an application is submitted by post, the application is entered into the system by the clerk. In addition, they can also view and approve payments to childcare centres, as well as export as an ISO20022 file. Statistics can also be created by this role.
+* **Legal services / Lawyer**: Are involved when a dispute relating to an application has been submitted. The legal services have read only access.
+* **Auditor**: The auditor of the Youth Office acts as a revision body and audits the subsidies which the Youth Office has made to institutions. For this purpose, they receive read access to relevant data.
+* **Administrator**: In addition to the functions that are enabled for the clerk, this user has access to functions such as the administration of institutions and sponsors.
+* **Education Office**: The Education Office takes on a similar role to the Youth Office.  They can assess and process applications but only those involving all-day schools.
+* **Tax Office**: Tax Office users can validate the income and assets of the applicants on behalf of the Youth Office. This role has access to dossiers that have been marked by the administrator for review by the Tax Office. Read only access to the application is provided with the ability to comment where relevant.
 
 ### Installation
 
-Im Dokument 'Ki-Tax_Installationsanweisung' finden Sie weitere Informationen zu Installation und Betrieb.
+Refer to the 'Ki-Tax Installation Instructions' (german) for more information on installation and operation.
 
 ## Built With
 
 * [Maven](https://maven.apache.org/) - Dependency Management
-
 
 ## Contributing Guidelines
 
