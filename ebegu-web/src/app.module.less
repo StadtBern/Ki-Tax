@@ -159,8 +159,9 @@ dv-pulldown-user-menu {
     height: @navbar-height;
     width: @navbar-height;
     line-height: @navbar-height;
-    &:hover {
-        background-color: @contrast-light;
+    &:hover, &:focus {
+        background-color: @contrast;
+        outline: none;
     }
 }
 

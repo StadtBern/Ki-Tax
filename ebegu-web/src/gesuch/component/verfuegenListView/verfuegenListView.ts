@@ -518,4 +518,10 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public isSuperAdmin(): boolean {
         return this.authServiceRs.isRole(TSRole.SUPER_ADMIN);
     }
+
+    $postLink() {
+        this.$timeout(() => {
+            EbeguUtil.selectFirst();
+        }, 500);
+    }
 }

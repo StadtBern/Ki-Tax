@@ -17,6 +17,7 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
+import EbeguUtil from '../../../utils/EbeguUtil';
 
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
@@ -181,7 +182,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
 
     $postLink() {
         this.$timeout(() => {
-            this.selectFirst();
+            EbeguUtil.selectFirst();
         }, 100);
     }
 }
