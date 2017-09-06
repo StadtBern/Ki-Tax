@@ -16,7 +16,8 @@
                 <div class="row">
                     <div class="col-xs-12 dv-input-container-question">
                         <div class="form-group">
-                            <h1 class="required" aria-hidden="true" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
+                            <h1 class="required" aria-hidden="true"
+                                data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
                                 translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr(), namegs2: vm.extractFullNameGS2()}"></h1>
                             <dv-radio-container name="gemeinsameSteuererklaerung" class="input-element"
                                                 ng-model="vm.model.gemeinsameSteuererklaerung"
@@ -25,9 +26,10 @@
                                                 dv-enable-allowed-roles="vm.allowedRoles"
                                                 dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
                                                 aria-label="{{ 'FINANZIELLE_SITUATION_STEK_GEMEINSAM' |translate}}"
-                            aria-described-by="gemeinsameSteuererklaerung-error">
+                                                aria-described-by="gemeinsameSteuererklaerung-error">
                             </dv-radio-container>
-                            <dv-error-messages input-id="gemeinsameSteuererklaerung" for="vm.form.gemeinsameSteuererklaerung.$error"
+                            <dv-error-messages input-id="gemeinsameSteuererklaerung"
+                                               for="vm.form.gemeinsameSteuererklaerung.$error"
                                                class="error"></dv-error-messages>
                         </div>
                     </div>

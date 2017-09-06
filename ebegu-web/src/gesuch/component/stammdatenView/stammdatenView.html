@@ -45,7 +45,8 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="VORNAME" for="vorname_ID"></label>
                                 <input id="vorname_ID" type="text" name="vorname" ng-model="vm.getModelJA().vorname"
-                                       dv-max-length class="form-control input-dv" required ng-blur="vm.checkAllEwkRelevantDataPresent()">
+                                       dv-max-length class="form-control input-dv" required ng-blur="vm.checkAllEwkRelevantDataPresent()"
+                                       aria-describedby="vorname_ID-error">
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.vorname"
                                            ja="vm.getModel().gesuchstellerJA.vorname"></dv-bisher>
                                 <dv-error-messages for="vm.form.vorname.$error"
