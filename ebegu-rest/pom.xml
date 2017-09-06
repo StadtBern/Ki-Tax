@@ -38,6 +38,10 @@
     <dependencies>
         <dependency>
             <groupId>ch.dvbern.ebegu</groupId>
+            <artifactId>ebegu-rest-shared</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.dvbern.ebegu</groupId>
             <artifactId>ebegu-server</artifactId>
             <type>ejb</type>
         </dependency>

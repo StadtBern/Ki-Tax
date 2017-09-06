@@ -1,15 +1,10 @@
 package ch.dvbern.ebegu.rest.test;
 
-import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
-import ch.dvbern.ebegu.api.resource.GesuchsperiodeResource;
-import ch.dvbern.ebegu.api.resource.authentication.AuthResource;
-import ch.dvbern.ebegu.api.resource.authentication.FedletSamlServlet;
-import ch.dvbern.ebegu.api.resource.authentication.FedletURLInitializer;
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
-import ch.dvbern.ebegu.tets.util.LoginmoduleAndCacheSetupTask;
-import ch.dvbern.lib.cdipersistence.ISessionContextService;
-import ch.dvbern.lib.cdipersistence.Persistence;
+import java.io.File;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+
 import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
@@ -25,9 +20,15 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.jboss.shrinkwrap.resolver.api.maven.strategy.RejectDependenciesStrategy;
 
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import java.io.File;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
+import ch.dvbern.ebegu.api.resource.GesuchsperiodeResource;
+import ch.dvbern.ebegu.api.resource.authentication.AuthResource;
+import ch.dvbern.ebegu.api.resource.authentication.FedletURLInitializer;
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
+import ch.dvbern.ebegu.tets.util.LoginmoduleAndCacheSetupTask;
+import ch.dvbern.lib.cdipersistence.ISessionContextService;
+import ch.dvbern.lib.cdipersistence.Persistence;
 
 /**
  * Diese Klasse implementiert die Methode "Deployment" fuer die Arquillian Tests und muss
@@ -75,7 +76,6 @@ public abstract class AbstractEbeguRestTest {
 
 			// entfernt unnoetige Klassen, die vielleicht Dependency-Konflikten ergeben wuerden, login erfolgt im test nicht ueber openam
 			.deleteClass(AuthResource.class)
-			.deleteClass(FedletSamlServlet.class)
 			.deleteClass(FedletURLInitializer.class)
 
 			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")

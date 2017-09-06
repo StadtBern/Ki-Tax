@@ -32,6 +32,8 @@ import ch.dvbern.ebegu.authentication.AuthLoginElement;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer_;
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.util.Constants;
@@ -105,13 +107,20 @@ public class AuthServiceBean implements AuthService {
 	}
 
 
-
 	@Override
 	public AuthAccessElement createLoginFromIAM(AuthorisierterBenutzer authorisierterBenutzer) {
 		try {
+			Benutzer benutzerFromDB = benutzerService.findBenutzer(authorisierterBenutzer.getUsername())
+				.orElseThrow(() -> {
+					LOG.error("Could not find Benutzer during login from IAM. Benutzer should have been created"
+						+ "(e.g. via REST call) prior to creating the AuthorisierterBenutzer entry.");
+					return new EbeguEntityNotFoundException("createLoginFromIam", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, authorisierterBenutzer.getUsername());
+				});
+			authorisierterBenutzer.setBenutzer(benutzerFromDB);
+
 			entityManager.persist(authorisierterBenutzer);
 		} catch (RuntimeException ex) {
-			LOG.error("Could not create Login from IAM for user " + authorisierterBenutzer);
+			LOG.error("Could not create Login from IAM for user " + authorisierterBenutzer, ex);
 			throw ex;
 		}
 		Benutzer existingUser = authorisierterBenutzer.getBenutzer();
@@ -127,41 +136,45 @@ public class AuthServiceBean implements AuthService {
 
 	@Override
 	public Optional<AuthorisierterBenutzer> validateAndRefreshLoginToken(String token, boolean doRefreshToken) {
-
+		if (token == null) {
+			Throwable t = new Throwable();  //to get stack trace
+			LOG.warn("Tried to refresh a login token without actually passing a token", t);
+			return Optional.empty();
+		}
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-			ParameterExpression<String> authTokenParam = cb.parameter(String.class, "authToken");
+		ParameterExpression<String> authTokenParam = cb.parameter(String.class, "authToken");
 
-			CriteriaQuery<AuthorisierterBenutzer> query = cb.createQuery(AuthorisierterBenutzer.class);
-			Root<AuthorisierterBenutzer> root = query.from(AuthorisierterBenutzer.class);
-			Predicate authTokenPredicate = cb.equal(root.get(AuthorisierterBenutzer_.authToken), authTokenParam);
-			query.where(authTokenPredicate);
+		CriteriaQuery<AuthorisierterBenutzer> query = cb.createQuery(AuthorisierterBenutzer.class);
+		Root<AuthorisierterBenutzer> root = query.from(AuthorisierterBenutzer.class);
+		Predicate authTokenPredicate = cb.equal(root.get(AuthorisierterBenutzer_.authToken), authTokenParam);
+		query.where(authTokenPredicate);
 
-			try {
-				TypedQuery<AuthorisierterBenutzer> tq = entityManager.createQuery(query)
-					.setLockMode(LockModeType.PESSIMISTIC_WRITE)
-					.setParameter(authTokenParam, token);
+		try {
+			TypedQuery<AuthorisierterBenutzer> tq = entityManager.createQuery(query)
+				.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+				.setParameter(authTokenParam, token);
 
-				AuthorisierterBenutzer authUser = tq.getSingleResult();
+			AuthorisierterBenutzer authUser = tq.getSingleResult();
 
-				// Das Login verlaengern, falls es sich nicht um einen Timer handelt
-				if (doRefreshToken) {
-					LocalDateTime now = LocalDateTime.now();
-					LocalDateTime maxDateFromNow = now.minus(Constants.LOGIN_TIMEOUT_SECONDS, ChronoUnit.SECONDS);
-					if (authUser.getLastLogin().isBefore(maxDateFromNow)) {
-						LOG.debug("Token is no longer valid: " + token);
-						return Optional.empty();
-					}
-					authUser.setLastLogin(now);
-					entityManager.persist(authUser);
-					entityManager.flush();
-					LOG.trace("Valid auth Token '{0}' was refreshed" , token);
+			// Das Login verlaengern, falls es sich nicht um einen Timer handelt
+			if (doRefreshToken) {
+				LocalDateTime now = LocalDateTime.now();
+				LocalDateTime maxDateFromNow = now.minus(Constants.LOGIN_TIMEOUT_SECONDS, ChronoUnit.SECONDS);
+				if (authUser.getLastLogin().isBefore(maxDateFromNow)) {
+					LOG.debug("Token is no longer valid: " + token);
+					return Optional.empty();
 				}
-				return Optional.of(authUser);
-
-			} catch (NoResultException ignored) {
-				LOG.debug("Could not load Authorisierterbenutzer for token '" +
-					token + "'");
-				return Optional.empty();
+				authUser.setLastLogin(now);
+				entityManager.persist(authUser);
+				entityManager.flush();
+				LOG.trace("Valid auth Token '{0}' was refreshed", token);
 			}
+			return Optional.of(authUser);
+
+		} catch (NoResultException ignored) {
+			LOG.debug("Could not load Authorisierterbenutzer for token '" +
+				token + "'");
+			return Optional.empty();
+		}
 	}
 }

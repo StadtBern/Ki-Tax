@@ -124,7 +124,7 @@ public class InstitutionResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxInstitution findInstitution(
-		@Nonnull @NotNull @PathParam("institutionId") JaxId institutionJAXPId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("institutionId") JaxId institutionJAXPId){
 
 		Validate.notNull(institutionJAXPId.getId());
 		String institutionID = converter.toEntityId(institutionJAXPId);

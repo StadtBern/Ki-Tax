@@ -139,4 +139,31 @@ public interface EbeguConfiguration {
 	 * Gibt das Passwort für den EWK-Service zurueck.
 	 */
 	String getPersonenSuchePassword();
+
+	/**
+	 * Gibt die URL des API Endpunkt des LoginConnectors zurueck.
+	 * Ueber diesen list  KI-TAX die URLS zum single-login und single-logout
+	 *
+	 * @return REST API Endpunkt ueber den Ki-TAX die URLS fuer login/logout requests lesen kann
+	 */
+	String getLoginProviderAPIUrl();
+
+	/**
+	 *
+	 * @return true if LoginConnector may access REST interface remotly, otherwise only local access is allowed
+	 */
+	boolean isRemoteLoginConnectorAllowed();
+
+
+	/**
+	 *
+	 * @return den Benutzernamen des internen API users
+	 */
+	String getInternalAPIUser();
+
+	/**
+	 *
+	 * @return das Benutzerpasswort fuer den internen API USER
+	 */
+	String getInternalAPIPassword();
 }

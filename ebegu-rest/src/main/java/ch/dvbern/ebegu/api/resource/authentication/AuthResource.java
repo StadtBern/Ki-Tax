@@ -1,7 +1,5 @@
 package ch.dvbern.ebegu.api.resource.authentication;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.NoSuchElementException;
@@ -27,14 +25,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
-import org.apache.http.client.utils.URIBuilder;
-import org.owasp.esapi.ESAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
-import com.sun.identity.saml2.common.SAML2Constants;
-import com.sun.identity.saml2.common.SAML2Utils;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
@@ -45,7 +39,6 @@ import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.util.AuthConstants;
@@ -82,6 +75,9 @@ public class AuthResource {
 	@Inject
 	private EbeguConfiguration configuration;
 
+	@Inject
+	private LoginProviderInfoRestService loginProviderInfoRestService;
+
 
 	@Path("/singleSignOn")
 	@Consumes(MediaType.WILDCARD)
@@ -89,30 +85,35 @@ public class AuthResource {
 	@GET
 	@PermitAll
 	public Response initSSOLogin(@Nullable @QueryParam("relayPath") String relayPath) {
-		try {
 
-			URIBuilder builder = new URIBuilder(fedletURLInitializer.getSSOInitURI());
-			//prueft ob er relay state param in der Liste der relayStateUrlList in der config entahlten ist
-			if (isRelayStateURLValid(relayPath)) {
-				builder.addParameter("RelayState", relayPath);
-			} else {
-				LOG.warn("RelayState Param '{}' seems to be invalid, ignoring", relayPath);
-			}
-			String initSSOURI = request.getContextPath() + builder.build();
-			return Response.ok(initSSOURI).build();
+		String url = this.loginProviderInfoRestService.getSSOLoginInitURL(relayPath);
+		LOG.warn("Received URL to init single sign on login '{}'", url);
+		return Response.ok(url).build();
 
-			//wahrscheinlich muss man redirect url hier als string zurueckgeben da der aufruf ja nicht async sein sollte
-		} catch (URISyntaxException e) {
-			throw new EbeguRuntimeException("initSSOLogin", "Could not appendRelay Path to  SSOURL for Saml Login", e);
-		}
+//		try {
+//
+//			URIBuilder builder = new URIBuilder(fedletURLInitializer.getSSOInitURI());
+//			//prueft ob er relay state param in der Liste der relayStateUrlList in der config entahlten ist
+//			if (isRelayStateURLValid(relayPath)) {
+//				builder.addParameter("RelayState", relayPath);
+//			} else {
+//				LOG.warn("RelayState Param '{}' seems to be invalid, ignoring", relayPath);
+//			}
+//			String initSSOURI = request.getContextPath() + builder.build();
+//			return Response.ok(initSSOURI).build();
+//
+//			//wahrscheinlich muss man redirect url hier als string zurueckgeben da der aufruf ja nicht async sein sollte
+//		} catch (URISyntaxException e) {
+//			throw new EbeguRuntimeException("initSSOLogin", "Could not appendRelay Path to  SSOURL for Saml Login", e);
+//		}
 
 	}
 
-	private boolean isRelayStateURLValid(String relayPath) {
-		return relayPath != null && !relayPath.isEmpty()
-			&& SAML2Utils.isRelayStateURLValid(fedletURLInitializer.getSpMetaAlias(), relayPath, SAML2Constants.SP_ROLE)
-			&& ESAPI.validator().isValidInput("RelayState", relayPath, "URL", 2000, true);
-	}
+//	private boolean isRelayStateURLValid(String relayPath) {
+//		return relayPath != null && !relayPath.isEmpty()
+//			&& SAML2Utils.isRelayStateURLValid(fedletURLInitializer.getSpMetaAlias(), relayPath, SAML2Constants.SP_ROLE)
+//			&& ESAPI.validator().isValidInput("RelayState", relayPath, "URL", 2000, true);
+//	}
 
 	@Path("/singleLogout")
 	@Consumes(MediaType.WILDCARD)
@@ -120,7 +121,7 @@ public class AuthResource {
 	@GET
 	@PermitAll
 	public Response initSingleLogout(@Nullable @QueryParam("relayPath") String relayPath,
-									 @CookieParam(AuthConstants.COOKIE_AUTH_TOKEN) Cookie authTokenCookie) {
+		@CookieParam(AuthConstants.COOKIE_AUTH_TOKEN) Cookie authTokenCookie) {
 
 		if (authTokenCookie != null && authTokenCookie.getValue() != null) {
 			Optional<AuthorisierterBenutzer> currentAuthOpt = authService.validateAndRefreshLoginToken(authTokenCookie.getValue(), false);
@@ -128,20 +129,9 @@ public class AuthResource {
 				String nameID = currentAuthOpt.get().getSamlNameId();
 				String sessionID = currentAuthOpt.get().getSessionIndex();
 				if (sessionID != null) {
-					try {
-						URI logoutURI = fedletURLInitializer.createLogoutURI(nameID, sessionID);
-						URIBuilder builder = new URIBuilder(logoutURI);
-						if (isRelayStateURLValid(relayPath)) {
-							builder.addParameter("RelayState", relayPath);
-						} else {
-							LOG.warn("RelayState Param '{}' seems to be invalid, ignoring", relayPath);
-						}
-						//context path prependen
-						String logoutRedirectURI = request.getContextPath() + builder.build();
-						return Response.ok(logoutRedirectURI).build();
-					} catch (URISyntaxException e) {
-						throw new EbeguRuntimeException("initSSOLogin", "Could not appendRelay Path to  SSOURL for Saml Login", e);
-					}
+					String logoutUrl = loginProviderInfoRestService.getSingleLogoutURL(relayPath, nameID, sessionID);
+
+					return Response.ok(logoutUrl).build();
 				}
 			}
 		}

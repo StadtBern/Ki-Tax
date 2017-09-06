@@ -10,16 +10,21 @@
 
 package ch.dvbern.ebegu.config;
 
-import org.apache.commons.configuration.SystemConfiguration;
+import java.io.Serializable;
 
 import javax.enterprise.context.Dependent;
-import java.io.Serializable;
+
+import org.apache.commons.configuration.SystemConfiguration;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Konfiguration von Kurstool. Liest system Properties aus
  */
 @Dependent
 public class EbeguConfigurationImpl extends SystemConfiguration implements EbeguConfiguration, Serializable {
+	private final Logger LOG = LoggerFactory.getLogger(EbeguConfigurationImpl.class.getSimpleName());
 
 
 	private static final long serialVersionUID = 463057263479503486L;
@@ -47,6 +52,10 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_PERSONENSUCHE_WSDL = "ebegu.personensuche.wsdl";
 	private static final String EBEGU_PERSONENSUCHE_USERNAME = "ebegu.personensuche.username";
 	private static final String EBEGU_PERSONENSUCHE_PASSWORD = "ebegu.personensuche.password";
+	private static final String EBEGU_LOGIN_PROVIDER_API_URL = "ebegu.login.provider.api.url";
+	private static final String EBEGU_LOGIN_API_ALLOW_REMOTE = "ebegu.login.api.allow.remote";
+	private static final String EBEGU_LOGIN_API_INTERNAL_USER = "ebegu.login.api.internal.user";
+	private static final String EBEGU_LOGIN_API_INTERNAL_PASSWORD = "ebegu.login.api.internal.password";
 
 	public EbeguConfigurationImpl() {
 
@@ -165,5 +174,37 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	@Override
 	public String getPersonenSuchePassword() {
 		return getString(EBEGU_PERSONENSUCHE_PASSWORD);
+	}
+
+	@Override
+	public String getLoginProviderAPIUrl() {
+		return getString(EBEGU_LOGIN_PROVIDER_API_URL, "http://localhost:8080/connector/api/v1");
+	}
+
+	@Override
+	public boolean isRemoteLoginConnectorAllowed() {
+		return getBoolean(EBEGU_LOGIN_API_ALLOW_REMOTE, false);
+	}
+
+	@Override
+	public String getInternalAPIUser() {
+		String user = getString(EBEGU_LOGIN_API_INTERNAL_USER);
+		if (StringUtils.isEmpty(user)) {
+			LOG.error("Internal API User  must be set in the properties (key: {}) to use the LoginConnector API ",
+				EBEGU_LOGIN_API_INTERNAL_USER);
+
+
+		}
+		return user;
+	}
+
+	@Override
+	public String getInternalAPIPassword() {
+		String internalUserPW = getString(EBEGU_LOGIN_API_INTERNAL_PASSWORD);
+		if (StringUtils.isEmpty(internalUserPW)) {
+			LOG.error("Internal API password must be set in the properties (key: {}) to use the LoginConnector API ",
+				EBEGU_LOGIN_API_INTERNAL_PASSWORD);
+		}
+		return internalUserPW;
 	}
 }

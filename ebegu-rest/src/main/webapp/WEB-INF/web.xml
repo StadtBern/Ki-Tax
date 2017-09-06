@@ -30,6 +30,7 @@
 			<url-pattern>/api/v1/swagger.json</url-pattern>
 			<url-pattern>/api/v1/login</url-pattern>
 			<url-pattern>/api/v1/auth/login</url-pattern>
+			<url-pattern>/api/v1/connector/heartbeat</url-pattern>
 			<url-pattern>/api/v1/auth/logout</url-pattern>
 			<url-pattern>/api/v1/auth/singleSignOn</url-pattern>
 			<url-pattern>/api/v1/auth/singleLogout</url-pattern>
@@ -101,7 +102,7 @@
 
 
 	<!--Die hier definierten Servlets dienen Mehrheitlich dem SAML login-->
-	<servlet>
+<!--	<servlet>
 		<servlet-name>fedletSloInit</servlet-name>
 		<jsp-file>/saml2/jsp/spSingleLogoutInit.jsp</jsp-file>
 	</servlet>
@@ -113,7 +114,7 @@
 		<description>Dies ist das Servlet welche die SAML2 Antwort der IDP entegegennimmt</description>
 		<servlet-name>fedletapplication</servlet-name>
 		<servlet-class>ch.dvbern.ebegu.api.resource.authentication.FedletSamlServlet</servlet-class>
-		<!--<jsp-file>/fedletSampleApp.jsp</jsp-file>-->
+		&lt;!&ndash;<jsp-file>/fedletSampleApp.jsp</jsp-file>&ndash;&gt;
 	</servlet>
 	<servlet>
 		<servlet-name>fedletlogout</servlet-name>
@@ -126,9 +127,10 @@
 	<servlet>
 		<servlet-name>fedletSloPOST</servlet-name>
 		<jsp-file>/saml2/jsp/spSingleLogoutPOST.jsp</jsp-file>
-	</servlet>
+	</servlet>-->
 
 	<!-- Add one servlet mapping entry like this per module -->
+<!--
 	<servlet-mapping>
 		<servlet-name>fedletapplication</servlet-name>
 		<url-pattern>/fedletapplication</url-pattern>
@@ -153,6 +155,7 @@
 		<servlet-name>fedletSloRedirect</servlet-name>
 		<url-pattern>/fedletSloRedirect</url-pattern>
 	</servlet-mapping>
+-->
 
 
 </web-app>

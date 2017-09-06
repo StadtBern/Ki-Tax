@@ -187,6 +187,11 @@
                 <type>ejb</type>
             </dependency>
             <dependency>
+                <groupId>ch.dvbern.ebegu</groupId>
+                <artifactId>ebegu-rest-shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>ebegu-dbschema</artifactId>
                 <version>${project.version}</version>
@@ -999,6 +1004,7 @@
         <module>ebegu-server</module>
         <module>ebegu-testutils</module>
         <module>ebegu-rest</module>
+        <module>ebegu-rest-shared</module>
         <module>ebegu-web</module>
         <module>ebegu-runconfig</module>
         <module>ebegu-ws</module>

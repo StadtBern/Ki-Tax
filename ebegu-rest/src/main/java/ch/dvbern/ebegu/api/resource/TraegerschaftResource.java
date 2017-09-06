@@ -112,7 +112,7 @@ public class TraegerschaftResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxTraegerschaft findTraegerschaft(
-		@Nonnull @NotNull @PathParam("traegerschaftId") JaxId traegerschaftJAXPId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("traegerschaftId") JaxId traegerschaftJAXPId) {
 
 		Validate.notNull(traegerschaftJAXPId.getId());
 		String traegerschaftID = converter.toEntityId(traegerschaftJAXPId);
