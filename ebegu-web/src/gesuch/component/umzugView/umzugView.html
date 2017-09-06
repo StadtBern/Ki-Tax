@@ -33,14 +33,15 @@
                                     <label data-translate="BETROFFENE_WAEHLEN" for="betroffene">
                                     </label>
                                     <div class="dv-select-style">
-                                        <select name="betroffene-{{$index}}" id="betroffene-{{$index}}"
+                                        <select aria-describedby="betroffene-{{$index}}-error"
+                                                name="betroffene-{{$index}}" id="betroffene-{{$index}}"
                                                 ng-model="umzugAdresse.betroffene"
                                                 class="form-control"
                                                 ng-disabled="vm.isKorrekturModusJugendamt()"
                                                 ng-options="(vm.getNameFromBetroffene(betroffene)) for betroffene in vm.getBetroffenenList()"
                                                 ng-required="true">
                                         </select>
-                                        <dv-error-messages for="vm.form['betroffene-' + $index].$error"
+                                        <dv-error-messages input-id="betroffene-{{$index}}" for="vm.form['betroffene-' + $index].$error"
                                                            class="error"></dv-error-messages>
                                     </div>
                                 </div>
