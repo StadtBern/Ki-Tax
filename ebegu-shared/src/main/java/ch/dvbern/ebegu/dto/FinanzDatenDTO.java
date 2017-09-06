@@ -110,4 +110,12 @@ public class FinanzDatenDTO {
 	public void setEkv2Annulliert(boolean ekv2Annulliert) {
 		this.ekv2Annulliert = ekv2Annulliert;
 	}
+
+	public boolean isEkv1AcceptedAndNotAnnuliert() {
+		return ekv1Accepted && !ekv1Annulliert;
+	}
+
+	public boolean isEkv2AcceptedAndNotAnnuliert() {
+		return ekv2Accepted && !ekv2Annulliert;
+	}
 }
