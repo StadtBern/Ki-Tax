@@ -27,8 +27,14 @@ import Moment = moment.Moment;
 import IScope = angular.IScope;
 import IPromise = angular.IPromise;
 
+import {ShowTooltipController} from '../../dialog/ShowTooltipController';
+import Moment = moment.Moment;
+import IScope = angular.IScope;
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
+let showKontaktTemplate = require('../../../gesuch/dialog/showKontaktTemplate.html');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 require('./gesuchToolbar.less');
 
@@ -74,9 +80,9 @@ export class GesuchToolbarController {
     forceLoadingFromFall: boolean;
     fall: TSFall;
 
-    gesuchsperiodeList: {[key: string]: Array<TSAntragDTO>} = {};
-    gesuchNavigationList: {[key: string]: Array<string>} = {};   //mapped z.B. '2006 / 2007' auf ein array mit den Namen der Antraege
-    antragTypList: {[key: string]: TSAntragDTO} = {};
+    gesuchsperiodeList: { [key: string]: Array<TSAntragDTO> } = {};
+    gesuchNavigationList: { [key: string]: Array<string> } = {};   //mapped z.B. '2006 / 2007' auf ein array mit den Namen der Antraege
+    antragTypList: { [key: string]: TSAntragDTO } = {};
     mutierenPossibleForCurrentAntrag: boolean = false;
     erneuernPossibleForCurrentAntrag: boolean = false;
     neuesteGesuchsperiode: TSGesuchsperiode;
@@ -93,7 +99,8 @@ export class GesuchToolbarController {
                 private $mdSidenav: ng.material.ISidenavService,
                 private $log: ILogService,
                 private gesuchsperiodeRS: GesuchsperiodeRS,
-                private fallRS: FallRS, private dvDialog: DvDialog) {
+                private fallRS: FallRS,
+                private DvDialog: DvDialog) {
 
     }
 
@@ -300,7 +307,7 @@ export class GesuchToolbarController {
         }
     }
 
-    getKeys(map: {[key: string]: Array<TSAntragDTO>}): Array<String> {
+    getKeys(map: { [key: string]: Array<TSAntragDTO> }): Array<String> {
         let keys: Array<String> = [];
         for (let key in map) {
             if (map.hasOwnProperty(key)) {
@@ -424,11 +431,11 @@ export class GesuchToolbarController {
                 this.$state.go('gesuch.familiensituation', {gesuchId: gesuchId});
             } else {
                 this.$state.go('gesuch.fallcreation', {
-                    createNew: false, gesuchId: gesuchId});
+                    createNew: false, gesuchId: gesuchId
+                });
             }
         }
     }
-
 
     public setAntragTypDatum(antragTypDatumKey: string) {
         let selectedAntragTypGesuch = this.antragTypList[antragTypDatumKey];
@@ -436,19 +443,19 @@ export class GesuchToolbarController {
     }
 
     public showButtonMutieren(): boolean {
-       if (this.hideActionButtons) {
-           return false;
-       }
-       if (this.getGesuch()) {
-           if (this.getGesuch().isNew()) {
-               return false;
-           }
-           // Wenn die Gesuchsperiode geschlossen ist, kann sowieso keine Mutation mehr gemacht werden
-           if (this.getGesuch().gesuchsperiode && this.getGesuch().gesuchsperiode.status === TSGesuchsperiodeStatus.GESCHLOSSEN) {
-               return false;
-           }
-       }
-       return this.mutierenPossibleForCurrentAntrag;
+        if (this.hideActionButtons) {
+            return false;
+        }
+        if (this.getGesuch()) {
+            if (this.getGesuch().isNew()) {
+                return false;
+            }
+            // Wenn die Gesuchsperiode geschlossen ist, kann sowieso keine Mutation mehr gemacht werden
+            if (this.getGesuch().gesuchsperiode && this.getGesuch().gesuchsperiode.status === TSGesuchsperiodeStatus.GESCHLOSSEN) {
+                return false;
+            }
+        }
+        return this.mutierenPossibleForCurrentAntrag;
     }
 
     private antragMutierenPossible(): void {
@@ -624,5 +631,16 @@ export class GesuchToolbarController {
 
     public hasGesuch(): boolean {
         return this.antragList && this.antragList.length > 0;
+    }
+
+    public showKontakt(): void {
+        this.DvDialog.showDialog(showKontaktTemplate, ShowTooltipController, {
+            title: '',
+            text: '<span>Jugendamt</span><br>'
+            + '<span>Effingerstrasse 21</span><br>'
+            + '<span>3008 Bern</span><br>'
+            + '<a href="tel:0313215115"><span>031 321 51 15</span></a><br>'
+            + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>'
+        });
     }
 }
