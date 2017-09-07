@@ -64,6 +64,18 @@
                                             <outputDirectory>${project.build.directory}/clientToAddToDocker
                                             </outputDirectory>
                                         </artifactItem>
+                                        <!--Login connector artefact-->
+                                        <artifactItem>
+                                            <groupId>ch.dvbern.ebegu</groupId>
+                                            <artifactId>ebegu-iam-connector-war</artifactId>
+                                            <!--todo reviewer, specify version-->
+                                            <version>1.0.0-SNAPSHOT</version>
+                                            <type>war</type>
+                                            <destFileName>ebegu-iam-connector-war.war</destFileName>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${project.build.directory}/warToAddToDocker
+                                            </outputDirectory>
+                                        </artifactItem>
                                     </artifactItems>
                                     <overWriteReleases>false</overWriteReleases>
                                     <overWriteSnapshots>true</overWriteSnapshots>
@@ -100,6 +112,7 @@
                                             <targetPath>/</targetPath>
                                             <directory>${project.build.directory}/warToAddToDocker</directory>
                                             <include>ebegu-rest.war</include>
+                                            <include>ebegu-iam-connector-war.war</include>
                                         </resource>
                                     </resources>
                                 </configuration>
