@@ -10,7 +10,7 @@ import TSAntragDTO from '../../../models/TSAntragDTO';
 import {IGesuchStateParams} from '../../gesuch.route';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {isAnyStatusOfVerfuegt, isStatusVerfuegenVerfuegt} from '../../../models/enums/TSAntragStatus';
+import {isAnyStatusOfVerfuegt, isAtLeastFreigegebenOrFreigabequittung, isStatusVerfuegenVerfuegt} from '../../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import * as moment from 'moment';
@@ -572,9 +572,19 @@ export class GesuchToolbarController {
     }
 
     public showGesuchLoeschen(): boolean {
-        // Darf nicht verfuegen oder verfuegt sein
-        if (isStatusVerfuegenVerfuegt(this.getGesuch().status) || this.getGesuch().eingangsart === TSEingangsart.ONLINE) {
+        if (this.getGesuch().isNew()) {
             return false;
+        }
+        if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
+            // GS darf nur vor der Freigabe loeschen
+            if (this.hideActionButtons || this.isDashboardScreen || isAtLeastFreigegebenOrFreigabequittung(this.getGesuch().status)) {
+                return false;
+            }
+        } else {
+            // JA: Darf nicht verfuegen oder verfuegt sein und muss Papier sein
+            if (isStatusVerfuegenVerfuegt(this.getGesuch().status) || this.getGesuch().eingangsart === TSEingangsart.ONLINE) {
+                return false;
+            }
         }
         return true;
     }
@@ -584,7 +594,15 @@ export class GesuchToolbarController {
             title: 'CONFIRM_GESUCH_LOESCHEN',
             deleteText: 'BESCHREIBUNG_GESUCH_LOESCHEN'
         }).then(() => {
-            this.gesuchRS.removePapiergesuch(this.getGesuch().id);
+            if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
+                this.gesuchRS.removeGesuchstellerAntrag(this.getGesuch().id);
+                this.gesuchModelManager.setGesuch(new TSGesuch());
+                this.resetNavigationParameters();
+                this.$state.go('gesuchstellerDashboard');
+            } else {
+                this.gesuchRS.removePapiergesuch(this.getGesuch().id);
+                this.$state.go('pendenzen');
+            }
         });
     }
 

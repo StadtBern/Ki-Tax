@@ -83,6 +83,9 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	@Inject
 	private MitteilungService mitteilungService;
 
+	@Inject
+	private SuperAdminService superAdminService;
+
 
 	@Nonnull
 	@Override
@@ -147,6 +150,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	}
 
 	@Override
+	@RolesAllowed(SUPER_ADMIN)
 	public void removeFall(@Nonnull Fall fall) {
 		Validate.notNull(fall);
 		Optional<Fall> fallToRemove = findFall(fall.getId());
@@ -159,7 +163,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		allGesucheForFall
 			.forEach(gesuchId -> gesuchService.findGesuch(gesuchId)
 				.ifPresent((gesuch) -> {
-					gesuchService.removeGesuch(gesuch.getId());
+					superAdminService.removeGesuch(gesuch.getId());
 				}));
 		//Finally remove the Fall when all other objects are really removed
 		persistence.remove(loadedFall);

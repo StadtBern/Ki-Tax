@@ -1501,21 +1501,34 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public void removePapiergesuch(@Nonnull Gesuch gesuch) {
-		logDeletingOfPapierAntrag(gesuch);
+		logDeletingOfAntrag(gesuch);
 		// Antrag muss Papier sein, und darf noch nicht verfuegen/verfuegt sein
 		if (gesuch.getEingangsart().isOnlineGesuch()) {
-			throw new EbeguRuntimeException("removeAntrag", "Online Antrag darf nicht gelöscht werden");
+			throw new EbeguRuntimeException("removeAntrag", "Online Antrag darf nicht durch JA gelöscht werden");
 		}
 		if (gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen()) {
 			throw new EbeguRuntimeException("removeAntrag", "Antrag ist im Status " + gesuch.getStatus() + " und darf nicht mehr gelöscht werden!");
 		}
 		// Bei Erstgesuch wird auch der Fall mitgelöscht
 		if (gesuch.getTyp() == AntragTyp.ERSTGESUCH) {
-			fallService.removeFall(gesuch.getFall());
+			superAdminService.removeFall(gesuch.getFall());
 		} else {
-			removeGesuch(gesuch.getId());
+			superAdminService.removeGesuch(gesuch.getId());
 		}
-		LOG.info("Deleting Gesuch!");
+	}
+
+	@Override
+	@RolesAllowed(GESUCHSTELLER)
+	public void removeGesuchstellerAntrag(@Nonnull Gesuch gesuch) {
+		logDeletingOfAntrag(gesuch);
+		// Antrag muss Online sein, und darf noch nicht freigegeben sein
+		if (gesuch.getEingangsart().isPapierGesuch()) {
+			throw new EbeguRuntimeException("removeAntrag", "Papier Antrag darf nicht durch GS gelöscht werden");
+		}
+		if (gesuch.getStatus() != AntragStatus.IN_BEARBEITUNG_GS) {
+			throw new EbeguRuntimeException("removeAntrag", "Antrag ist nicht in Bearbeitung GS und darf nicht mehr gelöscht werden!");
+		}
+		superAdminService.removeGesuch(gesuch.getId());
 	}
 
 	@Override
@@ -1663,9 +1676,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		LOG.info("****************************************************");
 	}
 
-	private void logDeletingOfPapierAntrag(@Nonnull Gesuch gesuch) {
+	private void logDeletingOfAntrag(@Nonnull Gesuch gesuch) {
 		LOG.info("****************************************************");
-		LOG.info("Papier-Gesuch wird gelöscht:");
+		LOG.info("Gesuch wird gelöscht:");
 		LOG.info("Benutzer: " + principalBean.getBenutzer().getUsername());
 		LOG.info("Fall: " + gesuch.getFall().getFallNummer());
 		LOG.info("Gesuchsperiode: " + gesuch.getGesuchsperiode().getGesuchsperiodeString());

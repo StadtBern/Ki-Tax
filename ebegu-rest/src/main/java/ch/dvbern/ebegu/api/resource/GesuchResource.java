@@ -691,8 +691,22 @@ public class GesuchResource {
 		Validate.notNull(gesuchJaxId.getId());
 
 		Gesuch gesuch = gesuchService.findGesuch(gesuchJaxId.getId(), true).orElseThrow(()
-			-> new EbeguEntityNotFoundException("removeAntrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJaxId.getId()));
+			-> new EbeguEntityNotFoundException("removePapiergesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJaxId.getId()));
 		gesuchService.removePapiergesuch(gesuch);
+		return Response.ok().build();
+	}
+
+	@DELETE
+	@Path("/removeGesuchstellerAntrag/{gesuchId}")
+	@Consumes(MediaType.WILDCARD)
+	public Response removeGesuchstellerAntrag(@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJaxId,
+		@Context HttpServletResponse response) {
+
+		Validate.notNull(gesuchJaxId.getId());
+
+		Gesuch gesuch = gesuchService.findGesuch(gesuchJaxId.getId(), true).orElseThrow(()
+			-> new EbeguEntityNotFoundException("removeGesuchstellerAntrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJaxId.getId()));
+		gesuchService.removeGesuchstellerAntrag(gesuch);
 		return Response.ok().build();
 	}
 
