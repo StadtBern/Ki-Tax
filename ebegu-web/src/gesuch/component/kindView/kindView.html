@@ -88,11 +88,11 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <dv-input-container class="form-group">
-                                <h1 class="required" aria-hidden="true">
+                                <span class="ebeguH1 required">
                                     <span data-translate="KINDERABZUG"></span>
                                     <dv-tooltip input-id="kinderabzug"
                                                 text="'KINDERABZUG_HELP' | translate"></dv-tooltip>
-                                </h1>
+                                </span>
                                 <dv-radio-container name="kinderabzug" ng-model="vm.getModel().kinderabzug"
                                                     ng-required="true"
                                                     dv-enable-element
@@ -114,11 +114,11 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group">
-                                <h1 class="required" aria-hidden="true">
+                                <span class="ebeguH1 required">
                                     <span data-translate="FAM_ERGAENZENDE_BETREUUNG"></span>
                                     <dv-tooltip input-id="familienErgaenzendeBetreuung" text="'FAM_ERGAENZENDE_BETREUUNG_HELP' | translate">
                                     </dv-tooltip>
-                                </h1>
+                                </span>
                                 <span ng-if="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt() && vm.hasKindBetreuungen()"
                                       class="inlineHint"
                                       data-translate="FAM_ERGAENZENDE_BETREUUNG_NOT_EDITABLE"></span>
@@ -145,10 +145,11 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
-                                <h1 class="required" aria-hidden="true"><span data-translate="MUTTERSPRACHE_DEUTSCH"></span>
+                                <span class="ebeguH1 required"><span
+                                    data-translate="MUTTERSPRACHE_DEUTSCH"></span>
                                     <dv-tooltip input-id="mutterspracheDeutsch"
                                         text="'MUTTERSPRACHE_DEUTSCH_HELP' | translate"></dv-tooltip>
-                                </h1>
+                                </span>
 
                                 <dv-radio-container name="mutterspracheDeutsch" class="input-element"
                                                     dv-enable-element
@@ -171,11 +172,11 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
-                                <h1 class="required" aria-hidden="true">
+                                <span class="ebeguH1 required">
                                     <span data-translate="EINSCHULUNG"
                                           data-translate-value-date="{{vm.getDatumEinschulung() | amDateFormat : 'DD.MM.YYYY'}}"> </span>
                                     <dv-tooltip input-id="einschulung" text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
-                                </h1>
+                                </span>
                                 <dv-radio-container name="einschulung" class="input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
