@@ -24,8 +24,9 @@ describe('betreuungListViewTest', function () {
         let dialog = $injector.get('DvDialog');
         let ebeguRestUtil = $injector.get('EbeguRestUtil');
         let errorService = $injector.get('ErrorService');
+        let $timeout = $injector.get('$timeout');
         betreuungListView = new BetreuungListViewController($state, gesuchModelManager, mddialog, dialog, ebeguRestUtil, undefined,
-            errorService, wizardStepManager, undefined, $injector.get('$rootScope'), undefined);
+            errorService, wizardStepManager, undefined, $injector.get('$rootScope'), undefined, $timeout);
     }));
 
     describe('Public API', function () {

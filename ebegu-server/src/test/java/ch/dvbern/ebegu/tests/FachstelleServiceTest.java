@@ -1,5 +1,11 @@
 package ch.dvbern.ebegu.tests;
 
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.Fachstelle;
 import ch.dvbern.ebegu.services.FachstelleService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -11,11 +17,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Arquillian Tests fuer die Klasse FachstelleService
@@ -29,7 +30,7 @@ public class FachstelleServiceTest extends AbstractEbeguLoginTest {
 	private FachstelleService fachstelleService;
 
 	@Inject
-	private Persistence<Fachstelle> persistence;
+	private Persistence persistence;
 
 
 

@@ -1,5 +1,27 @@
 package ch.dvbern.ebegu.services;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
@@ -13,17 +35,6 @@ import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.time.LocalDate;
-import java.util.*;
-
 /**
  * Service fuer InstitutionStammdaten
  */
@@ -33,7 +44,7 @@ import java.util.*;
 public class InstitutionStammdatenServiceBean extends AbstractBaseService implements InstitutionStammdatenService {
 
 	@Inject
-	private Persistence<InstitutionStammdaten> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;

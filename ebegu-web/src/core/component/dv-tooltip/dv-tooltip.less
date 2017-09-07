@@ -1,14 +1,15 @@
 @import '../../../style/variables.less';
 @import '../../../style/mixins.less';
+
 dv-tooltip {
     font-size: 1.6rem;
-    i:focus{
-        outline:0;
-        color:@primary;
+    i:focus {
+        outline:2px solid @contrast-darkest;
+        color: @primary;
     }
-    &:hover{
-        i{
-            color:@primary;
+    &:hover {
+        i {
+            color: @primary;
         }
     }
 }
@@ -24,8 +25,8 @@ md-dialog.md-dialog-fullscreen.dv-tooltip-dialog {
     }
     md-dialog-content {
         padding: 2.5rem;
-        padding-top:0;
-        margin-top:2.5rem;
+        padding-top: 0;
+        margin-top: 2.5rem;
         flex: 1;
     }
     md-dialog-actions {
@@ -34,7 +35,7 @@ md-dialog.md-dialog-fullscreen.dv-tooltip-dialog {
     a {
         font-size: 1.6rem;
     }
-    li{
+    li {
         text-align: -webkit-match-parent;
         -webkit-margin-before: 1rem;
         -webkit-margin-after: 1rem;

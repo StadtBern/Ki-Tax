@@ -38,7 +38,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	@Inject
 	private WizardStepService wizardStepService;
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private InstitutionService instService;
 

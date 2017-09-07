@@ -71,7 +71,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	private PrincipalBean principalBean;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private FallService fallService;

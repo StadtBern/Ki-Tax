@@ -1,9 +1,7 @@
 import {IComponentOptions} from 'angular';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import {ShowTooltipController} from '../../../gesuch/dialog/ShowTooltipController';
-import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
-import IScope = angular.IScope;
 let template = require('./dv-tooltip.html');
 require('./dv-tooltip.less');
 let showTooltipTemplate = require('../../../gesuch/dialog/showTooltipTemplate.html');

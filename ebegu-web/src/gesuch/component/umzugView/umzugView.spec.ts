@@ -12,11 +12,11 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import TSAdresseContainer from '../../../models/TSAdresseContainer';
-import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
 import IScope = angular.IScope;
+import {ITimeoutService} from 'angular';
 
 describe('umzugView', function () {
 
@@ -30,6 +30,7 @@ describe('umzugView', function () {
     let $q: IQService;
     let $rootScope: IScope;
     let $httpBackend: IHttpBackendService;
+    let $timeout: ITimeoutService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -44,12 +45,13 @@ describe('umzugView', function () {
         $q = $injector.get('$q');
         $rootScope = $injector.get('$rootScope');
         $httpBackend = $injector.get('$httpBackend');
+        $timeout = $injector.get('$timeout');
     }));
 
     describe('getNameFromBetroffene', function () {
         beforeEach(function () {
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate, dialog, $q, $rootScope);
+                wizardStepManager, errorService, $translate, dialog, $q, $rootScope, $timeout);
         });
         it('should return the names of the GS or beide Gesuchsteller', function () {
             let gesuch: TSGesuch = new TSGesuch();
@@ -74,7 +76,7 @@ describe('umzugView', function () {
     describe('getBetroffenenList', function () {
         beforeEach(function () {
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate, dialog, $q, $rootScope);
+                wizardStepManager, errorService, $translate, dialog, $q, $rootScope, $timeout);
         });
         it('should return a list with only GS1', function () {
             let gesuch: TSGesuch = new TSGesuch();
@@ -104,7 +106,7 @@ describe('umzugView', function () {
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(undefined);
 
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate, dialog, $q, $rootScope);
+                wizardStepManager, errorService, $translate, dialog, $q, $rootScope, $timeout);
 
             expect(umzugController.getUmzugAdressenList().length).toBe(0);
         });
@@ -125,7 +127,7 @@ describe('umzugView', function () {
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
 
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate, dialog, $q, $rootScope);
+                wizardStepManager, errorService, $translate, dialog, $q, $rootScope, $timeout);
 
             expect(umzugController.getUmzugAdressenList().length).toBe(2);
             expect(umzugController.getUmzugAdressenList()[0].betroffene).toBe(TSBetroffene.GESUCHSTELLER_1);
@@ -147,7 +149,7 @@ describe('umzugView', function () {
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
 
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate, dialog, $q, $rootScope);
+                wizardStepManager, errorService, $translate, dialog, $q, $rootScope, $timeout);
 
             expect(umzugController.getUmzugAdressenList().length).toBe(1);
             expect(umzugController.getUmzugAdressenList()[0].betroffene).toBe(TSBetroffene.BEIDE_GESUCHSTELLER);
@@ -171,7 +173,7 @@ describe('umzugView', function () {
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
 
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate, dialog, $q, $rootScope);
+                wizardStepManager, errorService, $translate, dialog, $q, $rootScope, $timeout);
 
 
             expect(umzugController.getUmzugAdressenList().length).toBe(1);

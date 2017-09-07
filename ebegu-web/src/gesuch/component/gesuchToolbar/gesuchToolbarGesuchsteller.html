@@ -1,8 +1,9 @@
 <!--gesuchtoolbar fuer normale Screens-->
-<div class="gesuch-toolbar-gesuchsteller" flex="100" hide-sm hide-xs>
+<div class="gesuch-toolbar-gesuchsteller desktop" flex="100" hide-sm hide-xs>
     <md-toolbar flex="100">
         <md-menu-bar flex="100" layout="row" layout-align="start center">
-            <span class="gesuchName"><span ng-bind="vmgs.getGesuchName()"  title="{{vmgs.getBesitzer()}}"></span></span>
+            <h1 class="access-for-all-title" data-translate="AFA_TOOLBAR"></h1>
+            <span class="gesuchName"><span ng-bind="vmgs.getGesuchName()" title="{{vmgs.getBesitzer()}}"></span></span>
             <span flex="40"></span>
             <md-menu ng-if="vmgs.showGesuchPeriodeNavigationMenu()">
                 <button ng-click="$mdOpenMenu()"
@@ -54,7 +55,7 @@
             <!-- Alle Verfuegungen -->
             <div dv-show-element
                  dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerJugendamtRoles()">
-                <button ng-click="vmgs.openAlleVerfuegungen()"
+                <button id="button" ng-click="vmgs.openAlleVerfuegungen()"
                         aria-label="{{TOOLBAR_ALLE_VERFUEGUNGEN | translate}}" style="text-align: center;">
                     <span data-translate="TOOLBAR_ALLE_VERFUEGUNGEN"></span>
                 </button>
@@ -68,28 +69,24 @@
                     <span data-translate="TOOLBAR_MITTEILUNGEN"></span>
                 </button>
             </div>
-
             <!--Kontakt-->
-            <md-menu>
-                <button ng-click="$mdOpenMenu()" aria-label="{{'ARIA_KONTAKT_MENU' | translate}}">
+            <div dv-show-element
+                 dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerJugendamtOtherAmtRoles()">
+                <button ng-click="vmgs.showKontakt()"
+                        aria-label="{{'ARIA_KONTAKT_MENU' | translate}}">
                     <i class="ellipsis-icon fa fa-envelope"></i>
                     <span data-translate="TOOLBAR_KONTAKT"></span>
                 </button>
-                <md-menu-content class="no-padding menu-item-container kontakt gesuchsteller">
-                    <span>Jugendamt</span>
-                    <span>Effingerstrasse 21</span>
-                    <span>3008 Bern</span>
-                    <a href="tel:0313215115"><span>031 321 51 15</span></a>
-                    <a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>
-                </md-menu-content>
-            </md-menu>
+            </div>
+
         </md-menu-bar>
     </md-toolbar>
 </div>
 <!--Definition der Toolbar  fuer kleine Screens als Sidebar-->
 <md-sidenav md-component-id="gesuch-toolbar-mobile" class="md-sidenav-right gesuch-toolbar-mobile" flex="100"
             layout="column" layout-align="start center" hide-gt-sm>
-    <button class="gesuch-toolbar-mobile-close" ng-click="vmgs.toggleSidenav('gesuch-toolbar-mobile')" aria-label="Schliessen">
+    <button class="gesuch-toolbar-mobile-close" ng-click="vmgs.toggleSidenav('gesuch-toolbar-mobile')"
+            aria-label="Schliessen">
         <!--close knopf-->
         <i class="fa fa-times" aria-hidden="true"></i>
     </button>

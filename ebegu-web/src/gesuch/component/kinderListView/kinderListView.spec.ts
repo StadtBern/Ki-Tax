@@ -3,8 +3,6 @@ import 'angular-mocks';
 import {EbeguWebGesuch} from '../../gesuch.module';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {KinderListViewController} from './kinderListView';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 
 describe('kinderListView', function () {
@@ -23,7 +21,7 @@ describe('kinderListView', function () {
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
         kinderListViewController = new KinderListViewController(null, gesuchModelManager,
-            null, null, null, wizardStepManager, scope, null);
+            null, null, null, wizardStepManager, scope, null, $injector.get('$timeout'));
     }));
 
     beforeEach(function () {

@@ -1,9 +1,10 @@
 <div class="kinderListView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
     <div class="row viewTitle">
         <div class="col-md-12">
-            <h1>
+            <h2>
                 <span data-translate="KINDER"></span>
-            </h1>
+            </h2>
             <hr class="header"/>
             <p>
                 <span data-translate="KINDER_HINT1">
@@ -38,14 +39,15 @@
                     <td dv-show-element
                         dv-show-allowed-roles="vm.TSRoleUtil.getJugendamtRole()">
                         <span class="betreuung" ng-repeat="dublette in vm.getDubletten(row)"
-                              ng-click="vm.gotoKindDublette(dublette); $event.stopPropagation()"
+                              ng-click="vm.gotoKindDublette(dublette); $event.stopPropagation();"
                               ng-show="dublette.fallNummer" ng-bind="vm.getFallNummer(dublette) + ($last ? ' ' : ', ')"></span>
                     </td>
-                    <td ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
-                        <dv-loading-button type="button" button-click="vm.removeKind(row)"
+                    <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
+                        <dv-loading-button type="button" button-click="vm.removeKind(row);"
                                            button-class="dv-btn-operation"
-                                           button-disabled="vm.isKorrekturModusJugendamt()">
-                            <i class="fa fa-lg fa-trash-o">
+                                           button-disabled="vm.isKorrekturModusJugendamt()"
+                                           aria-label="{{'KINDER_DELETE'|translate}}">
+                            <i class="fa fa-lg fa-trash-o" aria-label="{{'KINDER_DELETE' | translate}}">
                             </i>
                         </dv-loading-button>
                     </td>

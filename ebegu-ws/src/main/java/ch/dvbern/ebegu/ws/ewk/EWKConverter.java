@@ -1,22 +1,31 @@
 package ch.dvbern.ebegu.ws.ewk;
 
+import java.math.BigInteger;
+
+import javax.annotation.Nonnull;
+
 import ch.bern.e_gov.cra.Adresse;
 import ch.bern.e_gov.cra.Beziehung;
 import ch.bern.e_gov.cra.Einwohnercode;
 import ch.bern.e_gov.e_begu.egov_002.PersonenInformationen;
 import ch.bern.e_gov.e_begu.egov_002.PersonenSucheResp;
-import ch.dvbern.ebegu.dto.personensuche.*;
+import ch.dvbern.ebegu.dto.personensuche.EWKAdresse;
+import ch.dvbern.ebegu.dto.personensuche.EWKBeziehung;
+import ch.dvbern.ebegu.dto.personensuche.EWKEinwohnercode;
+import ch.dvbern.ebegu.dto.personensuche.EWKPerson;
+import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
 import ch.dvbern.ebegu.enums.Geschlecht;
-
-import javax.annotation.Nonnull;
-import java.math.BigInteger;
 
 /**
  * Konverter zwischen EWK-Objekten und unseren DTOs
  */
-public class EWKConverter {
+public final class EWKConverter {
 
 	public static final String MANN = "M";
+
+	private EWKConverter() {
+		// Util-Class, should not be initialized
+	}
 
 	public static EWKResultat convertFromEWK(@Nonnull PersonenSucheResp response, BigInteger maxResults) {
 		EWKResultat resultat = new EWKResultat();

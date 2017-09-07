@@ -54,7 +54,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private InstitutionService institutionService;
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private JaxBConverter converter;
 

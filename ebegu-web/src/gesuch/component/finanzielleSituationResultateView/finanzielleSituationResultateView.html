@@ -1,10 +1,11 @@
 <div class="finanzielleSituation gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
     <div class="row viewTitle">
         <div class="col-md-12">
-            <h1>
+            <h2>
             <span data-translate="FINANZIELLE_SITUATION_RESULTATE"
                   translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></span>
-            </h1>
+            </h2>
             <hr class="header"/>
         </div>
     </div>
@@ -53,7 +54,7 @@
                                     <dv-bisher
                                         gs="vm.getFinanzielleSituationGS1().finanzielleSituationGS.bruttovermoegen"
                                         ja="vm.getFinanzielleSituationGS1().finanzielleSituationJA.bruttovermoegen"></dv-bisher>
-                                    <dv-error-messages for="vm.form.bruttovermoegen1.$error"
+                                    <dv-error-messages input-id="bruttovermoegen1" for="vm.form.bruttovermoegen1.$error"
                                                        class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
@@ -79,7 +80,7 @@
                                     <dv-bisher
                                         gs="vm.getFinanzielleSituationGS2().finanzielleSituationGS.bruttovermoegen"
                                         ja="vm.getFinanzielleSituationGS2().finanzielleSituationJA.bruttovermoegen"></dv-bisher>
-                                    <dv-error-messages for="vm.form.bruttovermoegen2.$error"
+                                    <dv-error-messages input-id="bruttovermoegen2" for="vm.form.bruttovermoegen2.$error"
                                                        class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
@@ -104,7 +105,7 @@
                                     </dv-valueinput>
                                     <dv-bisher gs="vm.getFinanzielleSituationGS1().finanzielleSituationGS.schulden"
                                                ja="vm.getFinanzielleSituationGS1().finanzielleSituationJA.schulden"></dv-bisher>
-                                    <dv-error-messages for="vm.form.schulden1.$error" class="error"></dv-error-messages>
+                                    <dv-error-messages input-id="schulden1" for="vm.form.schulden1.$error" class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
                         </div>
@@ -128,7 +129,7 @@
                                     </dv-valueinput>
                                     <dv-bisher gs="vm.getFinanzielleSituationGS2().finanzielleSituationGS.schulden"
                                                ja="vm.getFinanzielleSituationGS2().finanzielleSituationJA.schulden"></dv-bisher>
-                                    <dv-error-messages for="vm.form.schulden2.$error" class="error"></dv-error-messages>
+                                    <dv-error-messages input-id="schulden2" for="vm.form.schulden2.$error" class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
                         </div>

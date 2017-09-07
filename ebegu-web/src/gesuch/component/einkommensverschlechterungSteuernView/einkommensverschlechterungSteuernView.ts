@@ -10,12 +10,13 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSRole} from '../../../models/enums/TSRole';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSFinanzModel from '../../../models/TSFinanzModel';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import IQService = angular.IQService;
 import IScope = angular.IScope;
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./einkommensverschlechterungSteuernView.html');
 require('./einkommensverschlechterungSteuernView.less');
-
 
 export class EinkommensverschlechterungSteuernViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -29,13 +30,14 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     allowedRoles: Array<TSRole>;
     initialModel: TSFinanzModel;
 
-    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'WizardStepManager', '$q', '$scope'];
+    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService',
+        'WizardStepManager', '$q', '$scope', '$timeout'];
+
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private CONSTANTS: any, private errorService: ErrorService, wizardStepManager: WizardStepManager,
-                private $q: IQService, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+                private errorService: ErrorService, wizardStepManager: WizardStepManager,
+                private $q: IQService, $scope: IScope, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG, $timeout);
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
         this.model.copyEkvDataFromGesuch(this.gesuchModelManager.getGesuch());
         this.initialModel = angular.copy(this.model);
@@ -69,7 +71,6 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     showSteuererklaerung_BjP1(): boolean {
         return this.isSteuerveranlagungErhaltenGS1_Bjp1() === false;
     }
-
 
     isSteuerveranlagungErhaltenGS1_Bjp1(): boolean {
         if (this.getEkv_GS1_Bjp1()) {
@@ -105,7 +106,6 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
         return this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1;
     }
 
-
     public getEkv_GS2_Bjp1(): TSEinkommensverschlechterung {
         return this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus1;
     }
@@ -128,7 +128,6 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
             this.initViewModel();  //review @gapa fragen ist das nicht ein change genueber vorher
         }
     }
-
 
     /**
      * Es muss ein Wert geschrieben werden, um ekv persisierten zu können
@@ -179,6 +178,5 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
             this.getEkv_GS2_Bjp1().steuererklaerungAusgefuellt = this.getEkv_GS1_Bjp1().steuererklaerungAusgefuellt;
         }
     }
-
 
 }

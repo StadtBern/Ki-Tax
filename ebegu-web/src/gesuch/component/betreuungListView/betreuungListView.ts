@@ -17,8 +17,10 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import ITranslateService = angular.translate.ITranslateService;
+import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
 import ILogService = angular.ILogService;
+
 let template = require('./betreuungListView.html');
 require('./betreuungListView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -38,14 +40,15 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
     TSRoleUtil = TSRoleUtil;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguUtil', 'BerechnungsManager',
-        'ErrorService', 'WizardStepManager', 'AuthServiceRS', '$scope', '$log'];
+        'ErrorService', 'WizardStepManager', 'AuthServiceRS', '$scope', '$log', '$timeout'];
+
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager,
                 private $translate: ITranslateService,
                 private DvDialog: DvDialog, private ebeguUtil: EbeguUtil, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager,
-                private authServiceRS: AuthServiceRS, $scope: IScope, private $log: ILogService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
+                private authServiceRS: AuthServiceRS, $scope: IScope, private $log: ILogService, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG, $timeout);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
 
     }
@@ -75,7 +78,6 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         }
         return false;
     }
-
 
     public createBetreuung(kind: TSKindContainer): void {
         let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);

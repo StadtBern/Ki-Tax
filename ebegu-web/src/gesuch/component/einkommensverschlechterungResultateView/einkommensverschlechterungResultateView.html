@@ -1,11 +1,12 @@
 <div class="einkommensverschlechterungResultate gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
     <div class="row viewTitle">
         <div class="col-md-12">
 
-            <h1>
+            <h2>
             <span data-translate="EKV_RESULTATE"
                   translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrToWorkWith()}"></span>
-            </h1>
+            </h2>
             <hr class="header"/>
         </div>
     </div>
@@ -53,7 +54,7 @@
                                     </dv-valueinput>
                                     <dv-bisher gs="vm.getEinkommensverschlechterungGS1_GS().bruttovermoegen"
                                                ja="vm.getEinkommensverschlechterungGS1_JA().bruttovermoegen"></dv-bisher>
-                                    <dv-error-messages for="vm.form.bruttovermoegen1.$error"
+                                    <dv-error-messages input-id="bruttovermoegen1" for="vm.form.bruttovermoegen1.$error"
                                                        class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
@@ -79,7 +80,7 @@
                                     </dv-valueinput>
                                     <dv-bisher gs="vm.getEinkommensverschlechterungGS2_GS().bruttovermoegen"
                                                ja="vm.getEinkommensverschlechterungGS2_JA().bruttovermoegen"></dv-bisher>
-                                    <dv-error-messages for="vm.form.bruttovermoegen2.$error"
+                                    <dv-error-messages input-id="bruttovermoegen2" for="vm.form.bruttovermoegen2.$error"
                                                        class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
@@ -106,7 +107,7 @@
                                     </dv-valueinput>
                                     <dv-bisher gs="vm.getEinkommensverschlechterungGS1_GS().schulden"
                                                ja="vm.getEinkommensverschlechterungGS1_JA().schulden"></dv-bisher>
-                                    <dv-error-messages for="vm.form.schulden1.$error" class="error"></dv-error-messages>
+                                    <dv-error-messages input-id="schulden1" for="vm.form.schulden1.$error" class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
                         </div>
@@ -131,7 +132,7 @@
                                     </dv-valueinput>
                                     <dv-bisher gs="vm.getEinkommensverschlechterungGS2_GS().schulden"
                                                ja="vm.getEinkommensverschlechterungGS2_JA().schulden"></dv-bisher>
-                                    <dv-error-messages for="vm.form.schulden2.$error" class="error"></dv-error-messages>
+                                    <dv-error-messages input-id="schulden2" for="vm.form.schulden2.$error" class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
                         </div>

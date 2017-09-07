@@ -32,10 +32,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuung_;
@@ -61,6 +57,9 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
@@ -86,7 +85,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	private static final Logger LOG = LoggerFactory.getLogger(MitteilungServiceBean.class.getSimpleName());
 
 	@Inject
-	private Persistence<Mitteilung> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private BenutzerService benutzerService;

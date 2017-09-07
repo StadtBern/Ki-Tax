@@ -70,7 +70,8 @@ import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.ReportVorlage;
+import ch.dvbern.ebegu.reporting.ReportService;
+import ch.dvbern.ebegu.reporting.ReportVorlage;
 import ch.dvbern.ebegu.enums.Taetigkeit;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -167,7 +168,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	private InstitutionService institutionService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private ZahlungService zahlungService;

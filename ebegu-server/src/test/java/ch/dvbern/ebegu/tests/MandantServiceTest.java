@@ -1,5 +1,9 @@
 package ch.dvbern.ebegu.tests;
 
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.services.MandantService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -11,9 +15,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.util.Optional;
 
 /**
  * Tests fuer die Klasse MandantService
@@ -27,7 +28,7 @@ public class MandantServiceTest extends AbstractEbeguLoginTest {
 	private MandantService mandantService;
 
 	@Inject
-	private Persistence<Mandant> persistence;
+	private Persistence persistence;
 
 
 

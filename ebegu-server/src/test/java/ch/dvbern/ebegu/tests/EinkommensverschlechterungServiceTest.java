@@ -33,7 +33,7 @@ public class EinkommensverschlechterungServiceTest extends AbstractEbeguLoginTes
 	private EinkommensverschlechterungService einkommensverschlechterungService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 
 	@Test

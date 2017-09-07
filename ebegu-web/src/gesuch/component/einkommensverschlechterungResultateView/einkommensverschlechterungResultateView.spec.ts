@@ -8,12 +8,11 @@ import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanziell
 import WizardStepManager from '../../service/wizardStepManager';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
 import IStateService = angular.ui.IStateService;
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import IScope = angular.IScope;
+import {ITimeoutService} from 'angular';
 
 describe('einkommensverschlechterungResultateView', function () {
 
@@ -32,6 +31,7 @@ describe('einkommensverschlechterungResultateView', function () {
     let errorservice: any;
     let wizardStepManager: WizardStepManager;
     let $rootScope: IScope;
+    let $timeout: ITimeoutService;
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         $componentController = $injector.get('$componentController');
@@ -44,6 +44,7 @@ describe('einkommensverschlechterungResultateView', function () {
         consta = $injector.get('CONSTANTS');
         errorservice = $injector.get('ErrorService');
         wizardStepManager = $injector.get('WizardStepManager');
+        $timeout = $injector.get('$timeout');
 
 
         spyOn(berechnungsManager, 'calculateFinanzielleSituation').and.returnValue($q.when({}));
@@ -68,7 +69,7 @@ describe('einkommensverschlechterungResultateView', function () {
     describe('calculateVeraenderung', () => {
         beforeEach(function () {
             ekvrvc = new EinkommensverschlechterungResultateViewController(stateParams, gesuchModelManager,
-                berechnungsManager, consta, errorservice, wizardStepManager, null, $rootScope, null);
+                berechnungsManager, errorservice, wizardStepManager, null, $rootScope, null, $timeout);
             ekvrvc.model = new TSFinanzModel(gesuchModelManager.getBasisjahr(), gesuchModelManager.isGesuchsteller2Required(), null, null);
             ekvrvc.model.copyEkvDataFromGesuch(gesuchModelManager.getGesuch());
             ekvrvc.model.copyFinSitDataFromGesuch(gesuchModelManager.getGesuch());

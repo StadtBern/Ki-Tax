@@ -1,10 +1,10 @@
 <div class="umzugView gesuchModul">
-
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
     <div class="row viewTitle">
         <div class="col-md-12">
-            <h1>
+            <h2>
                 <span data-translate="UMZUG_TITLE"></span>
-            </h1>
+            </h2>
             <hr class="header"/>
             <div ng-if="!vm.isGesuchReadonly()" >
                 <p dv-show-element
@@ -29,17 +29,19 @@
                         <div class="row">
                             <div class="col-sm-12 dv-input-container-medium">
                                 <div class="form-group">
+                                    <!--suppress XmlInvalidId -->
                                     <label data-translate="BETROFFENE_WAEHLEN" for="betroffene">
                                     </label>
                                     <div class="dv-select-style">
-                                        <select name="betroffene-{{$index}}" id="betroffene-{{$index}}"
+                                        <select aria-describedby="betroffene-{{$index}}-error"
+                                                name="betroffene-{{$index}}" id="betroffene-{{$index}}"
                                                 ng-model="umzugAdresse.betroffene"
                                                 class="form-control"
                                                 ng-disabled="vm.isKorrekturModusJugendamt()"
                                                 ng-options="(vm.getNameFromBetroffene(betroffene)) for betroffene in vm.getBetroffenenList()"
                                                 ng-required="true">
                                         </select>
-                                        <dv-error-messages for="vm.form['betroffene-' + $index].$error"
+                                        <dv-error-messages input-id="betroffene-{{$index}}" for="vm.form['betroffene-' + $index].$error"
                                                            class="error"></dv-error-messages>
                                     </div>
                                 </div>

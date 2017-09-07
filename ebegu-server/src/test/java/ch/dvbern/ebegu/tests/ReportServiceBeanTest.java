@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.reporting.ReportService;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenDataRow;
@@ -48,13 +49,13 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	private static final int ANZAHL_BETREUUNGEN = 17; // Davon 1 nicht verfuegt
 
 	@Rule
-	public UnitTestTempFolder unitTestTempfolder = new UnitTestTempFolder();
+	public final UnitTestTempFolder unitTestTempfolder = new UnitTestTempFolder();
 
 	@Inject
 	private ReportService reportService;
 
 	@Inject
-	private Persistence<?> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private InstitutionService institutionService;

@@ -58,18 +58,25 @@ public class EWKWebServiceDummy implements IEWKWebService {
 	@Override
 	public EWKResultat suchePerson(@Nonnull String id) throws PersonenSucheServiceException, PersonenSucheServiceBusinessException {
 		PersonenSucheResp response = null;
-		if (ID_MICHAEL_SCHUHMACHER.equals(id)) {
+		switch (id) {
+		case ID_MICHAEL_SCHUHMACHER:
 			response = parse(FILE_MICHAEL_SCHUHMACHER);
-		} else if (ID_SIMONE_MEIER.equals(id)) {
+			break;
+		case ID_SIMONE_MEIER:
 			response = parse(FILE_SIMONE_MEIER);
-		} else if (ID_FANNY_HUBER.equals(id)) {
+			break;
+		case ID_FANNY_HUBER:
 			response = parse(FILE_FANNY_HUBER);
-		} else if (ID_SANDRA_ANDEREGG.equals(id)) {
+			break;
+		case ID_SANDRA_ANDEREGG:
 			response = parse(FILE_SANDRA_ANDEREGG);
-		} else if (ID_HERBERT_GERBER.equals(id)) {
+			break;
+		case ID_HERBERT_GERBER:
 			response = parse(FILE_HERBERT_GERBER);
-		} else {
+			break;
+		default:
 			response = parse(FILE_NO_RESULT);
+			break;
 		}
 		return EWKConverter.convertFromEWK(response, EWKWebService.MAX_RESULTS_ID);
 	}
@@ -108,8 +115,8 @@ public class EWKWebServiceDummy implements IEWKWebService {
 
 	private PersonenSucheResp parse(String filename) throws PersonenSucheServiceException {
 		try {
-			byte[] bytes = ByteStreams.toByteArray(EWKWebServiceDummy.class.getResourceAsStream("/" + filename));
-			String contents = new String(bytes);
+			byte[] bytes = ByteStreams.toByteArray(EWKWebServiceDummy.class.getResourceAsStream('/' + filename));
+			String contents = new String(bytes, UTF8);
 			JAXBContext jaxbContext = JAXBContext.newInstance(PersonenSucheResp.class);
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 			// Root-Element: PersonenSucheResp Hat kein @XmlRootElement-Annotation, darum muss hier angegeben werden, was wir zurueck erwarten

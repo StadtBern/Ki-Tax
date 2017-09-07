@@ -7,11 +7,11 @@ import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 
 import ch.dvbern.ebegu.entities.DownloadFile;
@@ -37,7 +37,7 @@ public class DownloadFileServiceBean implements DownloadFileService {
 	private static final Logger LOG = LoggerFactory.getLogger(DownloadFileServiceBean.class);
 
 	@Inject
-	private Persistence<DownloadFile> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;

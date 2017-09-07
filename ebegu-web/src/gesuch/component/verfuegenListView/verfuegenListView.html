@@ -1,10 +1,11 @@
 <div class="verfuegenListView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
 
     <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
 
         <div class="row viewTitle">
             <div class="col-md-12">
-                <h1 data-translate="VERFUEGUNGEN"></h1>
+                <h2 data-translate="VERFUEGUNGEN"></h2>
                 <hr class="header"/>
             </div>
         </div>
@@ -95,7 +96,7 @@
                 <!-- Liste der bisherige Mahnungen -->
                 <div class="row text-left" ng-if="vm.getMahnungList().length > 0">
                     <div class="col-md-12">
-                        <h1 data-translate="MAHNUNGEN"></h1>
+                        <h2 data-translate="MAHNUNGEN"></h2>
                         <hr class="header"/>
                     </div>
                     <div class="col-md-12" ng-repeat="mahn in vm.getMahnungList()">
@@ -117,18 +118,18 @@
                 <!-- Mahnungsdetails, neue Mahnung erstellen -->
                 <div class="row text-left" ng-if="vm.showErsteMahnungAusloesen() || vm.showZweiteMahnungAusloesen()">
                     <div class="col-md-12">
-                        <h1 data-translate="ERSTE_MAHNUNG" ng-if="vm.showErsteMahnungAusloesen()"></h1>
-                        <h1 data-translate="ZWEITE_MAHNUNG" ng-if="vm.showZweiteMahnungAusloesen()"></h1>
+                        <h2 data-translate="ERSTE_MAHNUNG" ng-if="vm.showErsteMahnungAusloesen()"></h2>
+                        <h2 data-translate="ZWEITE_MAHNUNG" ng-if="vm.showZweiteMahnungAusloesen()"></h2>
                         <hr class="header"/>
                         <div class="row">
                             <dv-input-container class="col-md-12 form-group kommentar-feld">
                                 <label class="md-no-float" for="bemerkungenID"
                                        data-translate="MAHNUNG_FEHLENDE_DOKUMENTE"></label>
-                                <textarea name="bemerkungen" md-no-autogrow class="form-control input-element" rows="4"
+                                <textarea aria-describedby="bemerkungenID-error" name="bemerkungen" md-no-autogrow class="form-control input-element" rows="4"
                                           id="bemerkungenID"
                                           ng-model="vm.mahnung.bemerkungen" ng-required="true" maxlength="4000">
                         </textarea>
-                                <dv-error-messages for="vm.form.bemerkungen.$error" class="error"></dv-error-messages>
+                                <dv-error-messages input-id="bemerkungenID" for="vm.form.bemerkungen.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                         <div class="row">
@@ -139,7 +140,7 @@
                                                class="input-element-small"
                                                ng-model="vm.mahnung.datumFristablauf" ng-required="true">
                                 </dv-datepicker>
-                                <dv-error-messages for="vm.form.datumFristablauf.$error"
+                                <dv-error-messages input-id="datumFristablaufID" for="vm.form.datumFristablauf.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>

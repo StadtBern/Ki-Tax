@@ -1,11 +1,12 @@
 package ch.dvbern.ebegu.rules.initalizer;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 
 /**
  * Hilfsklasse die nach der eigentlich Evaluation einer Betreuung angewendet wird um den Restanspruch zu uebernehmen fuer die
@@ -15,7 +16,7 @@ import java.util.List;
  * Bei Angeboten fuer Schulkinder ist der Restanspruch nicht tangiert
  * Verweis 15.9.5
  *
- * <h3>Vorgehensskizze Restanspruchberechnung</h3>
+ * <h1>Vorgehensskizze Restanspruchberechnung</h1>
  * <ul>
  *  <li>Der Restanspruch ist bei der ersten Betreuung auf -1 gesetzt</li>
  *  <li>Wir berechnen die Verfügung für diese erste Betreuung. Dabei wird in allen Regeln die den Anspruch benoetigen das Feld AnspruchberechtigtesPensum verwendet (nicht AnspruchspensumRest)</li>

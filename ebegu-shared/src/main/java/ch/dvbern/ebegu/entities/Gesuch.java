@@ -1,29 +1,53 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.dto.FinanzDatenDTO;
-import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
-import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
-import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
-import ch.dvbern.ebegu.validators.CheckGesuchComplete;
-import org.apache.commons.lang.StringUtils;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import ch.dvbern.ebegu.dto.FinanzDatenDTO;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
+import ch.dvbern.ebegu.validators.CheckGesuchComplete;
 
 /**
  * Entitaet zum Speichern von Gesuch in der Datenbank.
@@ -470,7 +494,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 			return "-";
 		}
 		return Integer.toString(getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2)
-			+ '.' + StringUtils.leftPad(String.valueOf(getFall().getFallNummer()), Constants.FALLNUMMER_LENGTH, '0');
+			+ '.' + getFall().getPaddedFallnummer();
 	}
 
 	@Transient
@@ -690,6 +714,11 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	@Override
 	public String getOwningGesuchId() {
 		return getId();
+	}
+
+	@Override
+	public String getOwningFallId() {
+		return getFall().getId();
 	}
 
 	@Nonnull

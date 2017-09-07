@@ -5,7 +5,8 @@ let errTemplate = require('./dv-error-messages.html');
 export class DvErrorMessagesComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {
-        errorObject: '<for'
+        errorObject: '<for',
+        inputid: '@inputId'
     };
     template = errTemplate;
     controller = DvErrorMessages;

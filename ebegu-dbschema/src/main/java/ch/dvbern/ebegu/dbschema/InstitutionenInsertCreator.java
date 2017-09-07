@@ -1,5 +1,19 @@
 package ch.dvbern.ebegu.dbschema;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.services.AdministrationService;
 import ch.dvbern.ebegu.util.MathUtil;
@@ -11,10 +25,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.math.BigDecimal;
-import java.util.*;
 
 /**
  * Liest die Liste der Institutionen (Excel) ein
@@ -28,18 +38,18 @@ public class InstitutionenInsertCreator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(InstitutionenInsertCreator.class);
 
-	private Map<String, String> traegerschaftenMap = new HashMap<>();
-	private Map<String, String> institutionenMap = new HashMap<>();
+	private final Map<String, String> traegerschaftenMap = new HashMap<>();
+	private final Map<String, String> institutionenMap = new HashMap<>();
 
-	private List<String> insertTraegerschaften = new LinkedList<>();
-	private List<String> insertAdressen = new LinkedList<>();
-	private List<String> insertInstitutionen = new LinkedList<>();
-	private List<String> insertInstitutionsStammdaten = new LinkedList<>();
+	private final List<String> insertTraegerschaften = new LinkedList<>();
+	private final List<String> insertAdressen = new LinkedList<>();
+	private final List<String> insertInstitutionen = new LinkedList<>();
+	private final List<String> insertInstitutionsStammdaten = new LinkedList<>();
 
 	private PrintWriter printWriter;
-	private String inputFile = "/institutionen/institutionen-24.02.2017.xlsx";
-	private int anzahlZeilen = 87;
-	private String outoutFile = "insertInstitutionen.sql";
+	private static final String INPUT_FILE = "/institutionen/institutionen-24.02.2017.xlsx";
+	private static final int ANZAHL_ZEILEN = 87;
+	private static final String OUTPUT_FILE = "insertInstitutionen.sql";
 
 
 	public static void main(String[] args) {
@@ -52,7 +62,7 @@ public class InstitutionenInsertCreator {
 	}
 
 	private void readExcel() throws IOException {
-		InputStream resourceAsStream = InstitutionenInsertCreator.class.getResourceAsStream(inputFile);
+		InputStream resourceAsStream = InstitutionenInsertCreator.class.getResourceAsStream(INPUT_FILE);
 		XSSFWorkbook myWorkBook = new XSSFWorkbook(resourceAsStream);
 		XSSFSheet mySheet = myWorkBook.getSheetAt(0);
 		Iterator<Row> rowIterator = mySheet.iterator();
@@ -79,7 +89,7 @@ public class InstitutionenInsertCreator {
 
 	@SuppressWarnings("OverlyComplexMethod")
 	private void readRow(Row row) {
-		if (row.getRowNum() > anzahlZeilen) {
+		if (row.getRowNum() > ANZAHL_ZEILEN) {
 			return;
 		}
 		// Traegerschaften
@@ -336,7 +346,7 @@ public class InstitutionenInsertCreator {
 	private PrintWriter getPrintWriter() {
 		if (printWriter == null) {
 			try {
-				File output = new File(outoutFile);
+				File output = new File(OUTPUT_FILE);
 				FileOutputStream fos = new FileOutputStream(output.getAbsolutePath());
 				printWriter = new PrintWriter(fos);
 				LOG.info("File generiert: " + output.getAbsolutePath());

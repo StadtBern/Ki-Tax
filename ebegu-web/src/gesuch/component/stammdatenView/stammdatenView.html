@@ -1,9 +1,10 @@
 <div class="stammdatenView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
     <div class="row viewTitle">
         <div class="col-md-12">
-            <h1>
+            <h2>
                 <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchModelManager.getGesuchstellerNumber()}}
-            </h1>
+            </h2>
             <hr class="header"/>
             <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
         </div>
@@ -25,13 +26,13 @@
                                                     ng-model="vm.getModelJA().geschlecht" dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly()"
-                                                    aria-described-by="geschlecht"
                                                     aria-label="{{ 'GESCHLECHT' |translate}}"
-                                                    ng-change="vm.checkAllEwkRelevantDataPresent()">
+                                                    ng-change="vm.checkAllEwkRelevantDataPresent()"
+                                                    aria-described-by="geschlecht-error">
                                 </dv-radio-container>
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.geschlecht"
                                            ja="vm.getModel().gesuchstellerJA.geschlecht"></dv-bisher>
-                                <dv-error-messages for="vm.form.geschlecht.$error"
+                                <dv-error-messages input-id="geschlecht" for="vm.form.geschlecht.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
@@ -43,21 +44,23 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="VORNAME" for="vorname_ID"></label>
                                 <input id="vorname_ID" type="text" name="vorname" ng-model="vm.getModelJA().vorname"
-                                       dv-max-length class="form-control input-dv" required ng-blur="vm.checkAllEwkRelevantDataPresent()">
+                                       dv-max-length class="form-control input-dv" required ng-blur="vm.checkAllEwkRelevantDataPresent()"
+                                       aria-describedby="vorname_ID-error">
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.vorname"
                                            ja="vm.getModel().gesuchstellerJA.vorname"></dv-bisher>
                                 <dv-error-messages for="vm.form.vorname.$error"
+                                                   input-id="vorname_ID"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group secondColumn">
                                 <label class="md-no-float" data-translate="NAME" for="name_ID"></label>
-                                <input id="name_ID" type="text" name="name" ng-model="vm.getModelJA().nachname"
+                                <input aria-describedby="name_ID-error" id="name_ID" type="text" name="name" ng-model="vm.getModelJA().nachname"
                                        dv-max-length class="form-control" required ng-blur="vm.checkAllEwkRelevantDataPresent()">
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.nachname"
                                            ja="vm.getModel().gesuchstellerJA.nachname"></dv-bisher>
-                                <dv-error-messages for="vm.form.name.$error"
+                                <dv-error-messages input-id="name_ID" for="vm.form.name.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -76,7 +79,7 @@
                                 </dv-datepicker>
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.geburtsdatum"
                                            ja="vm.getModel().gesuchstellerJA.geburtsdatum"></dv-bisher>
-                                <dv-error-messages for="vm.form.geburtsdatum.$error"
+                                <dv-error-messages input-id="geburtsdatum_ID" for="vm.form.geburtsdatum.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -88,10 +91,11 @@
                             <dv-input-container class="form-group secondColumn">
                                 <label class="md-no-float" data-translate="EWK_PERSON_ID" for="personId">
                                 </label>
-                                <input id="personId" type="text" name="personId" ng-model="vm.getModelJA().ewkPersonId"
+                                <input aria-describedby="personId-error" id="personId" type="text" name="personId"
+                                       ng-model="vm.getModelJA().ewkPersonId"
                                        dv-max-length class="form-control input-dv"
                                        ng-blur="vm.checkAllEwkRelevantDataPresent()">
-                                <dv-error-messages for="vm.form.ewkPersonId.$error"
+                                <dv-error-messages input-id="personId" for="vm.form.ewkPersonId.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -104,14 +108,14 @@
                                            ng-model="vm.getModelJA().ewkAbfrageDatum"
                                            class="input-element" ng-disabled="true" placeholder="">
                             </dv-datepicker>
-                            <dv-error-messages for="vm.form.ewkAbfrageDatum.$error"
+                            <dv-error-messages input-id="abfrageDatum" for="vm.form.ewkAbfrageDatum.$error"
                                                class="error"></dv-error-messages>
                         </dv-input-container>
                         </div>
                     </div>
 
                     <!-- Adresse. Bei Mutationen nicht editierbar-->
-                    <fieldset ng-disabled="vm.disableWohnadresseFor2GS()">
+                    <fieldset ng-disabled="vm.disableWohnadresseFor2GS()" class="dv-adresse__fieldset">
                         <!-- Dieses disabled wird vom obigen disabled ueberschrieben wenn VERFUEGT -->
                         <dv-adresse adresse="vm.getModel().getWohnAdresse()" show-nicht-in-gemeinde="true"
                                     prefix="wohn"></dv-adresse>
@@ -186,12 +190,12 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EMAIL" for="email_ID">
                                 </label>
-                                <input id="email_ID" type="email" name="email" ng-model="vm.getModelJA().mail"
+                                <input aria-describedby="email_ID-error" id="email_ID" type="email" name="email" ng-model="vm.getModelJA().mail"
                                        dv-max-length class="form-control" required placeholder="hans.muster@example.com"
                                        ng-pattern="vm.CONSTANTS.PATTERN_EMAIL">
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.mail"
                                            ja="vm.getModel().gesuchstellerJA.mail"></dv-bisher>
-                                <dv-error-messages for="vm.form.email.$error"
+                                <dv-error-messages input-id="email_ID" for="vm.form.email.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -203,12 +207,12 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="MOBILE" for="mobile_ID">
                                 </label>
-                                <input id="mobile_ID" type="text" name="mobile" ng-model="vm.getModelJA().mobile"
+                                <input aria-describedby="mobile_ID-error" id="mobile_ID" type="text" name="mobile" ng-model="vm.getModelJA().mobile"
                                        dv-max-length class="form-control" placeholder="e.g: +41 79 123 44 55"
                                        ng-pattern="vm.CONSTANTS.PATTERN_MOBILE">
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.mobile"
                                            ja="vm.getModel().gesuchstellerJA.mobile"></dv-bisher>
-                                <dv-error-messages for="vm.form.mobile.$error"
+                                <dv-error-messages input-id="mobile_ID" for="vm.form.mobile.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -216,12 +220,12 @@
                             <dv-input-container class="form-group secondColumn">
                                 <label class="md-no-float" data-translate="TELEFON" for="tel_ID">
                                 </label>
-                                <input id="tel_ID" type="text" name="telefon" ng-model="vm.getModelJA().telefon"
+                                <input aria-describedby="tel_ID-error" id="tel_ID" type="text" name="telefon" ng-model="vm.getModelJA().telefon"
                                        dv-max-length class="form-control" placeholder="e.g: +41 33 123 45 67"
                                        ng-pattern="vm.CONSTANTS.PATTERN_PHONE">
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.telefon"
                                            ja="vm.getModel().gesuchstellerJA.telefon"></dv-bisher>
-                                <dv-error-messages for="vm.form.telefon.$error"
+                                <dv-error-messages input-id="tel_ID" for="vm.form.telefon.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -232,12 +236,12 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="TELEFON_AUSLAND" for="ausl_tel">
                                 </label>
-                                <input id="ausl_tel" type="text" name="telefonAusland"
+                                <input aria-describedby="ausl_tel-error" id="ausl_tel" type="text" name="telefonAusland"
                                        ng-model="vm.getModelJA().telefonAusland"
                                        dv-max-length class="form-control">
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.telefonAusland"
                                            ja="vm.getModel().gesuchstellerJA.telefonAusland"></dv-bisher>
-                                <dv-error-messages for="vm.form.telefonAusland.$error"
+                                <dv-error-messages input-id="ausl_tel" for="vm.form.telefonAusland.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
