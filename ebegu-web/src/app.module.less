@@ -21,8 +21,8 @@
     font-size: 0;
     width: 0;
     height: 0;
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
 }
 
 dv-posteingang {
@@ -159,9 +159,18 @@ dv-pulldown-user-menu {
     height: @navbar-height;
     width: @navbar-height;
     line-height: @navbar-height;
-    &:hover, &:focus {
-        background-color: @contrast;
-        outline: none;
+    &:hover, &:focus:hover {
+        background: @contrast;
+        outline: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+    &:focus {
+        outline: 2px solid @contrast-darkest !important;
+        background: @contrast;
+        outline-offset: -1rem;
+        -webkit-box-shadow: none;
+        box-shadow: none;
     }
 }
 
@@ -343,10 +352,10 @@ dv-quicksearchbox {
 }
 
 .skiplinks {
-    .skiplinks__list{
+    .skiplinks__list {
         list-style: none;
-        height:0;
-        margin:0;
+        height: 0;
+        margin: 0;
     }
     .skip {
         position: fixed;
