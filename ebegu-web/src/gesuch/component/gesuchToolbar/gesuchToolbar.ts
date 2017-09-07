@@ -23,14 +23,11 @@ import FallRS from '../../service/fallRS.rest';
 import TSFall from '../../../models/TSFall';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
-import Moment = moment.Moment;
-import IScope = angular.IScope;
-import IPromise = angular.IPromise;
 
 import {ShowTooltipController} from '../../dialog/ShowTooltipController';
+import IPromise = angular.IPromise;
 import Moment = moment.Moment;
 import IScope = angular.IScope;
-import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
