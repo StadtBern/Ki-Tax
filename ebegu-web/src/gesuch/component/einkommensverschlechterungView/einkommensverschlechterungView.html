@@ -51,9 +51,9 @@
                         <div class="col-xs-12 dv-input-container-question"
                              ng-if="vm.showSteuerveranlagung() && vm.showSteuererklaerung()">
                             <div class="form-group">
-                                <h1 class="ebeguH1 required"
+                                <span class="ebeguH1 required"
                                     data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
-                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></h1>
+                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></span>
                                 <dv-radio-container name="steuererklaerung"
                                                     ng-model="vm.model.getEkvToWorkWith().steuererklaerungAusgefuellt"
                                                     ng-required="true" class="radio input-element"
