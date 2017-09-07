@@ -1088,6 +1088,7 @@
     "BETREUUNG_DELETE": "Betreuung löschen",
     "KINDER_DELETE": "Eintrag löschen",
     "ERWERBSPENSUM_DELETE": "Erwerbspensum löschen",
-    "OPEN_VERFUEGUNG": "Verfügung öffnen"
+    "OPEN_VERFUEGUNG": "Verfügung öffnen",
+    "ADDITIONAL_INFORMATION": "Weitere Informationen"
 
 }

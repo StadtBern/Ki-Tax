@@ -90,7 +90,8 @@
                             <dv-input-container class="form-group">
                                 <h1 class="required" aria-hidden="true">
                                     <span data-translate="KINDERABZUG"></span>
-                                    <dv-tooltip text="'KINDERABZUG_HELP' | translate"></dv-tooltip>
+                                    <dv-tooltip input-id="kinderabzug"
+                                                text="'KINDERABZUG_HELP' | translate"></dv-tooltip>
                                 </h1>
                                 <dv-radio-container name="kinderabzug" ng-model="vm.getModel().kinderabzug"
                                                     ng-required="true"
@@ -115,7 +116,8 @@
                             <div class="form-group">
                                 <h1 class="required" aria-hidden="true">
                                     <span data-translate="FAM_ERGAENZENDE_BETREUUNG"></span>
-                                    <dv-tooltip text="'FAM_ERGAENZENDE_BETREUUNG_HELP' | translate"></dv-tooltip>
+                                    <dv-tooltip input-id="familienErgaenzendeBetreuung" text="'FAM_ERGAENZENDE_BETREUUNG_HELP' | translate">
+                                    </dv-tooltip>
                                 </h1>
                                 <span ng-if="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt() && vm.hasKindBetreuungen()"
                                       class="inlineHint"
@@ -144,7 +146,7 @@
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
                                 <h1 class="required" aria-hidden="true"><span data-translate="MUTTERSPRACHE_DEUTSCH"></span>
-                                    <dv-tooltip
+                                    <dv-tooltip input-id="mutterspracheDeutsch"
                                         text="'MUTTERSPRACHE_DEUTSCH_HELP' | translate"></dv-tooltip>
                                 </h1>
 
@@ -172,7 +174,7 @@
                                 <h1 class="required" aria-hidden="true">
                                     <span data-translate="EINSCHULUNG"
                                           data-translate-value-date="{{vm.getDatumEinschulung() | amDateFormat : 'DD.MM.YYYY'}}"> </span>
-                                    <dv-tooltip text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
+                                    <dv-tooltip input-id="einschulung" text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
                                 </h1>
                                 <dv-radio-container name="einschulung" class="input-element"
                                                     dv-enable-element
@@ -199,7 +201,8 @@
                                     <label class="md-no-float"
                                            for="gleichemHaushalt">
                                         <span data-translate="WOHNHAFT_IM_GLEICHEN_HAUSHALT" class="ebeguH1"> </span>
-                                        <dv-tooltip text="'WOHNHAFT_IM_GLEICHEN_HAUSHALT_HELP' | translate"></dv-tooltip>
+                                        <dv-tooltip input-id="gleichemHaushalt"
+                                                    text="'WOHNHAFT_IM_GLEICHEN_HAUSHALT_HELP' | translate"></dv-tooltip>
                                     </label>
                                     <div class="dv-input-container-small" style="padding-right:32px;">
                                         <input aria-describedby="gleichemHaushalt-error" id="gleichemHaushalt"
@@ -223,13 +226,14 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class=" checkbox" ng-show="vm.getModel().familienErgaenzendeBetreuung">
-                                <md-checkbox ng-model="vm.showFachstelle" name="showFachstelle"
+                                <md-checkbox ng-model="vm.showFachstelle" name="showFachstelle" id="showFachstelle"
                                              aria-label="{{'INVOLVIERTE_FACHSTELLE'|translate}}"
                                              ng-disabled="vm.isGesuchReadonly()"
                                              ng-change="vm.showFachstelleClicked()">
                                     <span data-translate="INVOLVIERTE_FACHSTELLE"></span>
                                 </md-checkbox>
-                                <dv-tooltip text="'INVOLVIERTE_FACHSTELLE_HELP' | translate"></dv-tooltip>
+                                <dv-tooltip input-id="showFachstelle"
+                                            text="'INVOLVIERTE_FACHSTELLE_HELP' | translate"></dv-tooltip>
                                 <dv-bisher gs="vm.showFachstelleGS"
                                            ja="vm.showFachstelle"
                                            specific-bisher-text="vm.getTextFachstelleKorrekturJA()"></dv-bisher>

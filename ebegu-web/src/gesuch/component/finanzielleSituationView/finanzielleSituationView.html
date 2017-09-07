@@ -72,7 +72,8 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" for="nettolohn">
                                     <span data-translate="FINANZIELLE_SITUATION_NETTOLOHN"></span>
-                                    <dv-tooltip text="'FINANZIELLE_SITUATION_NETTOLOHN_HELP' | translate"></dv-tooltip>
+                                    <dv-tooltip input-id="nettolohn"
+                                                text="'FINANZIELLE_SITUATION_NETTOLOHN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <dv-valueinput input-id="nettolohn" name="nettolohn"
                                                ng-model="vm.getModel().finanzielleSituationJA.nettolohn"
@@ -91,7 +92,7 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" for="familienzulage">
                                     <span data-translate="FINANZIELLE_SITUATION_FAMILIENZULAGE"></span>
-                                    <dv-tooltip
+                                    <dv-tooltip input-id="familienzulage"
                                         text="'FINANZIELLE_SITUATION_FAMILIENZULAGE_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <dv-valueinput input-id="familienzulage" name="familienzulage"
@@ -112,7 +113,7 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" for="ersatzeinkommen">
                                     <span data-translate="FINANZIELLE_SITUATION_ERSATZEINKOMMEN"></span>
-                                    <dv-tooltip
+                                    <dv-tooltip input-id="ersatzeinkommen"
                                         text="'FINANZIELLE_SITUATION_ERSATZEINKOMMEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <dv-valueinput input-id="ersatzeinkommen" name="ersatzeinkommen"
@@ -133,7 +134,7 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" for="erhalteneAlimente">
                                     <span data-translate="FINANZIELLE_SITUATION_ERHALTENEALIMENTE"></span>
-                                    <dv-tooltip
+                                    <dv-tooltip input-id="erhalteneAlimente"
                                         text="'FINANZIELLE_SITUATION_ERHALTENEALIMENTE_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <dv-valueinput input-id="erhalteneAlimente" name="erhalteneAlimente"
@@ -152,13 +153,13 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="checkbox">
-                                <md-checkbox ng-model="vm.showSelbstaendig" name="showSelbstaendig"
+                                <md-checkbox ng-model="vm.showSelbstaendig" name="showSelbstaendig" id="showSelbstaendig"
                                              aria-label="{{'FINANZIELLE_SITUATION_SELBSTAENDIGKEIT'|translate}}"
                                              ng-change="vm.showSelbstaendigClicked()"
                                              ng-disabled="vm.isGesuchReadonly()" style="margin-bottom:3rem;">
                                     <span data-translate="FINANZIELLE_SITUATION_SELBSTAENDIGKEIT"></span>
                                 </md-checkbox>
-                                <dv-tooltip
+                                <dv-tooltip input-id="showSelbstaendig"
                                     text="'FINANZIELLE_SITUATION_SELBSTAENDIGKEIT_HELP' | translate"></dv-tooltip>
                                 <dv-bisher gs="vm.showSelbstaendigGS" class="dv-bisher-break"
                                            ja="vm.showSelbstaendig"
@@ -299,7 +300,7 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" for="geleisteteAlimente">
                                     <span data-translate="FINANZIELLE_SITUATION_GELEISTETEALIMENTE"></span>
-                                    <dv-tooltip
+                                    <dv-tooltip input-id="geleisteteAlimente"
                                         text="'FINANZIELLE_SITUATION_GELEISTETEALIMENTE_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <dv-valueinput input-id="geleisteteAlimente" name="geleisteteAlimente"
