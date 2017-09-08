@@ -160,14 +160,15 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class=" checkbox">
-                                <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr"
+                                <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr" id="korrespondenzAdr"
                                              aria-label="{{'KORRESPONDENZADR'|translate}}" ng-change="vm.korrespondenzAdrClicked()"
                                              dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                              dv-enable-expression="!vm.isGesuchReadonly()">
                                     <span data-translate="KORRESPONDENZADR"></span>
                                 </md-checkbox>
-                                <dv-tooltip text="'KORRESPONDENZADR_HELP' | translate"></dv-tooltip>
+                                <dv-tooltip input-id="korrespondenzAdr"
+                                            text="'KORRESPONDENZADR_HELP' | translate"></dv-tooltip>
                                 <dv-bisher gs="vm.showKorrespondadrGS" class="dv-bisher-break"
                                            ja="vm.showKorrespondadr"
                                            specific-bisher-text="vm.getTextKorrespondenzaddrKorrekturJA()"></dv-bisher>
