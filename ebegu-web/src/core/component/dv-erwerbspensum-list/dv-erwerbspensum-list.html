@@ -29,7 +29,7 @@
                         <dv-loading-button type="button" button-click="vm.editClicked(row);"
                                            button-class="dv-btn-operation dv-btn-row"
                                            aria-label="{{'TABLE_EDIT'|translate}}">
-                            <i class="fa fa-lg fa-arrow-right" aria-label="{{'TABLE_EDIT'|translate}}">
+                            <i class="fa fa-lg fa-arrow-right" title="{{'TABLE_EDIT'|translate}}" aria-label="{{'TABLE_EDIT'|translate}}">
                             </i>
                         </dv-loading-button>
                     </td>
@@ -38,7 +38,7 @@
                                            button-class="dv-btn-operation" title="{{vm.removeButtonTitle}}"
                                            button-disabled="!vm.addButtonEnabled"
                                            aria-label="{{'ERWERBSPENSUM_DELETE'|translate}}">
-                            <i class="fa fa-lg fa-trash-o" aria-label="{{'ERWERBSPENSUM_DELETE' | translate}}">
+                            <i class="fa fa-lg fa-trash-o" title="{{'ERWERBSPENSUM_DELETE' | translate}}" aria-label="{{'ERWERBSPENSUM_DELETE' | translate}}">
                             </i>
                         </dv-loading-button>
                     </td>

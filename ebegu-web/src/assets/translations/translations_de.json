@@ -1090,8 +1090,10 @@
     "DOKUMENT_LOOK": "Dokument betrachten",
     "DOKUMENT_DELETE": "Dokument löschen",
     "BETREUUNG_DELETE": "Betreuung löschen",
+    "BETREUUNGSPENSUM_DELETE": "Betreuungspensum löschen",
     "KINDER_DELETE": "Eintrag löschen",
     "ERWERBSPENSUM_DELETE": "Erwerbspensum löschen",
+    "ABWESENHEIT_DELETE": "Abwesenheit löschen",
     "OPEN_VERFUEGUNG": "Verfügung öffnen",
     "ADDITIONAL_INFORMATION": "Weitere Informationen",
     "TABLE_EDIT": "Eintrag öffnen/bearbeiten"

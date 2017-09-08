@@ -99,17 +99,20 @@
                             </td>
                             <td class="symbol">
                                 <span ng-click="vm.download(dokument, true)" class="fa fa-download"
+                                      title="{{'DOKUMENT_DOWNLOAD' | translate}}"
                                       aria-label="{{'DOKUMENT_DOWNLOAD' | translate}}"
                                       style="color: black"></span>
                             </td>
                             <td class="symbol">
                                 <span ng-click="vm.download(dokument, false)" class="fa fa-eye"
+                                      title="{{'DOKUMENT_LOOK' | translate}}"
                                       aria-label="{{'DOKUMENT_LOOK' | translate}}"
                                       style="color: black"></span>
                             </td>
                             <td class="symbol" ng-if="vm.isRemoveAllowed(row, dokument)">
                                 <span
                                       ng-click="vm.remove(row, dokument)" class="fa fa-trash"
+                                      title="{{'DOKUMENT_DELETE' | translate}}"
                                       aria-label="{{'DOKUMENT_DELETE' | translate}}"
                                       style="color: black"></span>
                             </td>
