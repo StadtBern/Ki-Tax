@@ -28,11 +28,12 @@
                         dv-show-element
                         dv-show-allowed-roles="vm.TSRoleUtil.getJugendamtRole()"></th>
                     <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                    ng-click="vm.editKind(row)">
+                    ng-click="vm.editKind(row)" role="row" tabindex="-1">
                     <td ng-bind="row.kindJA.vorname"></td>
                     <td ng-bind="row.kindJA.nachname"></td>
                     <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
@@ -42,7 +43,15 @@
                               ng-click="vm.gotoKindDublette(dublette); $event.stopPropagation();"
                               ng-show="dublette.fallNummer" ng-bind="vm.getFallNummer(dublette) + ($last ? ' ' : ', ')"></span>
                     </td>
-                    <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
+                    <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%">
+                        <dv-loading-button type="button" button-click="vm.editKind(row);"
+                                           button-class="dv-btn-operation dv-btn-row"
+                                           aria-label="{{'TABLE_EDIT'|translate}}">
+                            <i class="fa fa-lg fa-arrow-right" aria-label="{{'TABLE_EDIT'|translate}}">
+                            </i>
+                        </dv-loading-button>
+                    </td>
+                    <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)" width="5%">
                         <dv-loading-button type="button" button-click="vm.removeKind(row);"
                                            button-class="dv-btn-operation"
                                            button-disabled="vm.isKorrekturModusJugendamt()"
