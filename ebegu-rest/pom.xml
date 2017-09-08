@@ -38,7 +38,7 @@
     <dependencies>
         <dependency>
             <groupId>ch.dvbern.ebegu</groupId>
-            <artifactId>ebegu-rest-shared</artifactId>
+            <artifactId>ebegu-external-api</artifactId>
         </dependency>
         <dependency>
             <groupId>ch.dvbern.ebegu</groupId>
