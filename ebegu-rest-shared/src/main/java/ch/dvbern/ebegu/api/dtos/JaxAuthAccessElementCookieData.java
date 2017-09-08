@@ -7,7 +7,7 @@
  * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
  * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
  */
-package ch.dvbern.ebegu.authentication;
+package ch.dvbern.ebegu.api.dtos;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -15,13 +15,11 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import ch.dvbern.ebegu.enums.UserRole;
-
 /**
  * Response DTO Element fuer einen erfolgreichen Login Request
  */
 @XmlRootElement(name = "authAccessElement")
-public class JaxAuthAccessElement implements Serializable {
+public class JaxAuthAccessElementCookieData implements Serializable {
 
 	private static final long serialVersionUID = 5211944101244853396L;
 
@@ -34,14 +32,14 @@ public class JaxAuthAccessElement implements Serializable {
 	@Nonnull
 	private String email = "";
 	@Nonnull
-	private UserRole role;
+	private String role;
 
-	public JaxAuthAccessElement() {
+	public JaxAuthAccessElementCookieData() {
 		// jaxb/jaxrs only
 	}
 
-	public JaxAuthAccessElement(@Nonnull String authId, @Nonnull String nachname,
-								@Nonnull String vorname, @Nonnull String email, @Nonnull UserRole role) {
+	public JaxAuthAccessElementCookieData(@Nonnull String authId, @Nonnull String nachname,
+		@Nonnull String vorname, @Nonnull String email, @Nonnull String role) {
 		this.authId = Objects.requireNonNull(authId);
 		this.nachname = Objects.requireNonNull(nachname);
 		this.vorname = Objects.requireNonNull(vorname);
@@ -49,11 +47,13 @@ public class JaxAuthAccessElement implements Serializable {
 		this.role = Objects.requireNonNull(role);
 	}
 
-	public JaxAuthAccessElement(AuthAccessElement access) {
-		this(access.getAuthId(), String.valueOf(access.getNachname()),
-					String.valueOf(access.getVorname()), String.valueOf(access.getEmail()), access.getRole());
+	public JaxAuthAccessElementCookieData(JaxExternalAuthAccessElement access) {
+		this(access.getAuthId(),
+			access.getNachname(),
+			access.getVorname(),
+			access.getEmail(),
+			access.getRole());
 	}
-
 
 
 	@Nonnull
@@ -93,11 +93,11 @@ public class JaxAuthAccessElement implements Serializable {
 	}
 
 	@Nonnull
-	public UserRole getRole() {
+	public String getRole() {
 		return role;
 	}
 
-	public void setRole(@Nonnull UserRole role) {
+	public void setRole(@Nonnull String role) {
 		this.role = role;
 	}
 }

@@ -84,8 +84,6 @@ import ch.dvbern.ebegu.api.dtos.JaxWizardStep;
 import ch.dvbern.ebegu.api.dtos.JaxZahlung;
 import ch.dvbern.ebegu.api.dtos.JaxZahlungsauftrag;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.authentication.AuthAccessElement;
-import ch.dvbern.ebegu.authentication.JaxAuthAccessElement;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.AbstractDateRangedEntity;
 import ch.dvbern.ebegu.entities.AbstractEntity;

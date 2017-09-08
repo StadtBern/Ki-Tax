@@ -1,11 +1,9 @@
-package ch.dvbern.ebegu.api.connector;
+package ch.dvbern.ebegu.api.dtos;
 
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-
-import ch.dvbern.ebegu.enums.UserRole;
 
 /**
  * This Transfer Object is used to pass on Info about an external Benutzer from an external Login
@@ -23,7 +21,7 @@ public class JaxExternalBenutzer implements Serializable {
 	private String institutionId;
 	private String traegerschaftId;
 	private String mandantId;
-	private UserRole role;
+	private String role;
 
 	private String commonName;
 	private String telephoneNumber;
@@ -93,15 +91,15 @@ public class JaxExternalBenutzer implements Serializable {
 		this.traegerschaftId = traegerschaftId;
 	}
 
-	public UserRole getRole() {
+	public String getRole() {
 		return role;
 	}
 
-	public void setRole(UserRole role) {
+	public void setRole(String role) {
 		this.role = role;
 	}
 
-	//unused attributes
+//unused attributes
 
 
 	public String getCommonName() {

@@ -108,6 +108,7 @@ public class AuthServiceBean implements AuthService {
 
 
 	@Override
+	@Nonnull
 	public AuthAccessElement createLoginFromIAM(AuthorisierterBenutzer authorisierterBenutzer) {
 		try {
 			Benutzer benutzerFromDB = benutzerService.findBenutzer(authorisierterBenutzer.getUsername())

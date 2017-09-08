@@ -60,7 +60,7 @@ public class MandantResource {
 	@Path("/first")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxMandant getFirst() throws EbeguException {
+	public JaxMandant getFirst(){
 
 		Mandant mandant = mandantService.getFirst();
 		return converter.mandantToJAX(mandant);

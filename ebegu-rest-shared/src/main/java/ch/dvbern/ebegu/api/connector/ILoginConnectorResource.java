@@ -1,21 +1,16 @@
 package ch.dvbern.ebegu.api.connector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.api.dtos.JaxInstitution;
-import ch.dvbern.ebegu.api.dtos.JaxMandant;
-import ch.dvbern.ebegu.api.dtos.JaxTraegerschaft;
-import ch.dvbern.ebegu.authentication.AuthAccessElement;
+import ch.dvbern.ebegu.api.dtos.JaxExternalAuthAccessElement;
+import ch.dvbern.ebegu.api.dtos.JaxExternalAuthorisierterBenutzer;
+import ch.dvbern.ebegu.api.dtos.JaxExternalBenutzer;
 
 @Path("/connector")
 public interface ILoginConnectorResource {
@@ -46,31 +41,15 @@ public interface ILoginConnectorResource {
 		@Nonnull JaxExternalBenutzer benutzer
 	);
 
-	@GET
-	@Path("/institution/{institutionId}")
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	JaxInstitution findInstitution(
-		@Nonnull @PathParam("institutionId") JaxId institutionJAXPId);
-
-	@Nullable
-	@GET
-	@Path("/traegerschaft/{traegerschaftId}")
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	JaxTraegerschaft findTraegerschaft(
-		@Nonnull @NotNull @PathParam("traegerschaftId") JaxId traegerschaftJAXPId);
-
-
 	/**
 	 * @return the first and only Mandant that currently exists
 	 */
 	@Nonnull
 	@GET
-	@Path("/mandant/first")
+	@Path("/mandant")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	JaxMandant getFirst();
+	String getMandant();
 
 	/**
 	 * This service exists to allow external login modules to create logins in Ki-Tax
@@ -82,7 +61,7 @@ public interface ILoginConnectorResource {
 	@Path("/extauth")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	AuthAccessElement createLoginFromIAM(
+	JaxExternalAuthAccessElement createLoginFromIAM(
 		@Nonnull JaxExternalAuthorisierterBenutzer jaxExtAuthUser);
 
 }

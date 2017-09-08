@@ -24,8 +24,6 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.dvbern.ebegu.client.ClientRequestLogger;
-import ch.dvbern.ebegu.client.ClientResponseLogger;
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;

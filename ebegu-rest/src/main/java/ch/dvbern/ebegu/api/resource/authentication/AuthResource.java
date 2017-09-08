@@ -30,19 +30,18 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
+import ch.dvbern.ebegu.api.AuthConstants;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElementCookieData;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.authentication.AuthLoginElement;
-import ch.dvbern.ebegu.authentication.JaxAuthAccessElement;
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
-import ch.dvbern.ebegu.util.AuthConstants;
-import ch.dvbern.ebegu.util.Constants;
 
 /**
  * This resource has functions to login or logout
@@ -178,19 +177,18 @@ public class AuthResource {
 				return Response.status(Response.Status.UNAUTHORIZED).build();
 			}
 			AuthAccessElement access = accessElement.get();
-			JaxAuthAccessElement element = new JaxAuthAccessElement(access);
-
+			JaxAuthAccessElementCookieData element = convertToJaxAuthAccessElement(access);
 			boolean cookieSecure = isCookieSecure();
 
 			// Cookie to store auth_token, HTTP-Only Cookie --> Protection from XSS
 			NewCookie authCookie = new NewCookie(AuthConstants.COOKIE_AUTH_TOKEN, access.getAuthToken(),
-				AuthConstants.COOKIE_PATH, AuthConstants.COOKIE_DOMAIN, "authentication", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, true);
+				AuthConstants.COOKIE_PATH, AuthConstants.COOKIE_DOMAIN, "authentication", AuthConstants.COOKIE_TIMEOUT_SECONDS, cookieSecure, true);
 			// Readable Cookie for XSRF Protection (the Cookie can only be read from our Domain)
 			NewCookie xsrfCookie = new NewCookie(AuthConstants.COOKIE_XSRF_TOKEN, access.getXsrfToken(),
-				AuthConstants.COOKIE_PATH, AuthConstants.COOKIE_DOMAIN, "XSRF", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, false);
+				AuthConstants.COOKIE_PATH, AuthConstants.COOKIE_DOMAIN, "XSRF", AuthConstants.COOKIE_TIMEOUT_SECONDS, cookieSecure, false);
 			// Readable Cookie storing user data
 			NewCookie principalCookie = new NewCookie(AuthConstants.COOKIE_PRINCIPAL, encodeAuthAccessElement(element),
-				AuthConstants.COOKIE_PATH, AuthConstants.COOKIE_DOMAIN, "principal", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, false);
+				AuthConstants.COOKIE_PATH, AuthConstants.COOKIE_DOMAIN, "principal", AuthConstants.COOKIE_TIMEOUT_SECONDS, cookieSecure, false);
 
 			return Response.ok().cookie(authCookie, xsrfCookie, principalCookie).build();
 		} else {
@@ -199,6 +197,16 @@ public class AuthResource {
 		}
 
 	}
+
+	private JaxAuthAccessElementCookieData convertToJaxAuthAccessElement(AuthAccessElement access) {
+		return new JaxAuthAccessElementCookieData(
+			access.getAuthId(),
+			String.valueOf(access.getNachname()),
+			String.valueOf(access.getVorname()),
+			String.valueOf(access.getEmail()),
+			access.getRole() != null ? String.valueOf(access.getRole()) : null);
+	}
+
 
 	private boolean isCookieSecure() {
 		return request.isSecure();
@@ -237,7 +245,7 @@ public class AuthResource {
 	 * @param element zu codirendes AuthAccessElement
 	 * @return Base64 encoded JSON representation
 	 */
-	private String encodeAuthAccessElement(JaxAuthAccessElement element) {
+	private String encodeAuthAccessElement(JaxAuthAccessElementCookieData element) {
 		Gson gson = new Gson();
 		return Base64.getEncoder().encodeToString(gson.toJson(element).getBytes(Charset.forName("UTF-8")));
 	}

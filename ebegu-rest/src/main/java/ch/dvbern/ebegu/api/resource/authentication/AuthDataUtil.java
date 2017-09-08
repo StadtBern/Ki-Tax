@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-import ch.dvbern.ebegu.authentication.JaxAuthAccessElement;
-import ch.dvbern.ebegu.util.AuthConstants;
+import ch.dvbern.ebegu.api.AuthConstants;
+import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElementCookieData;
 
 /**
  * Util welches aus Requests die cookies extrahiert und aus den Cookies zum Beispiel den Principal
@@ -39,7 +39,7 @@ public final class AuthDataUtil {
 	private AuthDataUtil() {
 	}
 
-	public static  Optional<JaxAuthAccessElement>  getAuthAccessElement(HttpServletRequest request) {
+	public static  Optional<JaxAuthAccessElementCookieData>  getAuthAccessElement(HttpServletRequest request) {
 		Cookie loginInfoCookie = extractCookie(request.getCookies(), AuthConstants.COOKIE_PRINCIPAL);
 		if (loginInfoCookie == null) {
 					return Optional.empty();
@@ -54,7 +54,7 @@ public final class AuthDataUtil {
 					new String(
 						Base64.getDecoder().decode(encodedPrincipalJson), Charset.forName("UTF-8")
 					),
-					JaxAuthAccessElement.class));
+					JaxAuthAccessElementCookieData.class));
 			} catch (JsonSyntaxException | IllegalArgumentException e) {
 				LOG.warn("Failed to get the AuthAccessElement from the principal Cookie", e);
 				return Optional.empty();

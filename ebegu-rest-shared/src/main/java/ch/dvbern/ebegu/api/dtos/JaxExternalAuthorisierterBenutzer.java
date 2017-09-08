@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.api.connector;
+package ch.dvbern.ebegu.api.dtos;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -9,8 +9,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
-import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.lib.date.converters.LocalDateTimeXMLConverter;
+
 
 /**
  * This transfer Object is used to pass the relevant Info about a successfull login
@@ -44,7 +44,7 @@ public class JaxExternalAuthorisierterBenutzer implements Serializable{
 	 * Wiederholung von benutzer.role damit wir nicht joinen muessen
 	 */
 	@NotNull
-	private UserRole role;
+	private String role;
 
 	@Nullable
 	private String sessionIndex;
@@ -90,11 +90,11 @@ public class JaxExternalAuthorisierterBenutzer implements Serializable{
 		this.username = username;
 	}
 
-	public UserRole getRole() {
+	public String getRole() {
 		return role;
 	}
 
-	public void setRole(UserRole role) {
+	public void setRole(String role) {
 		this.role = role;
 	}
 

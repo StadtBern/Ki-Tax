@@ -1,13 +1,14 @@
 package ch.dvbern.ebegu.dto.personensuche;
 
-import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+import java.io.Serializable;
+import java.time.LocalDate;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
-import java.time.LocalDate;
+
+import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 
 /**
  * Enum für Einwohnercodes aus dem EWK

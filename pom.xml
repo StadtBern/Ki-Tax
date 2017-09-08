@@ -150,7 +150,7 @@
             <dependency>
                 <groupId>ch.dvbern.oss.datehelper</groupId>
                 <artifactId>date-helper</artifactId>
-                <version>1.0.2</version>
+                <version>1.0.3</version>
             </dependency>
             <dependency>
                 <groupId>ch.dvbern.oss.beanvalidation</groupId>
@@ -485,6 +485,11 @@
                 <groupId>org.jboss.resteasy</groupId>
                 <artifactId>resteasy-client</artifactId>
                 <version>3.0.13.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>2.6.1</version>
             </dependency>
             <dependency>
                 <groupId>xalan</groupId>

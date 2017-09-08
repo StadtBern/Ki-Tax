@@ -15,12 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.dvbern.ebegu.api.connector.ILoginConnectorResource;
-import ch.dvbern.ebegu.api.connector.JaxExternalAuthorisierterBenutzer;
-import ch.dvbern.ebegu.api.connector.JaxExternalBenutzer;
-import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.api.dtos.JaxInstitution;
+import ch.dvbern.ebegu.api.dtos.JaxExternalAuthAccessElement;
+import ch.dvbern.ebegu.api.dtos.JaxExternalAuthorisierterBenutzer;
+import ch.dvbern.ebegu.api.dtos.JaxExternalBenutzer;
 import ch.dvbern.ebegu.api.dtos.JaxMandant;
-import ch.dvbern.ebegu.api.dtos.JaxTraegerschaft;
 import ch.dvbern.ebegu.api.resource.InstitutionResource;
 import ch.dvbern.ebegu.api.resource.MandantResource;
 import ch.dvbern.ebegu.api.resource.TraegerschaftResource;
@@ -35,7 +33,6 @@ import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -130,7 +127,7 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 		user.setEmail(benutzer.getEmail());
 		user.setNachname(benutzer.getNachname());
 		user.setVorname(benutzer.getVorname());
-		user.setRole(benutzer.getRole());
+		user.setRole(convertRoleString(benutzer.getRole()));
 
 		String unusedAttr = StringUtils.join(benutzer.getCommonName(), benutzer.getTelephoneNumber(),
 			benutzer.getMobile(), benutzer.getPreferredLang(), benutzer.getPostalCode(), benutzer.getState(),
@@ -146,7 +143,7 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 			});
 		user.setMandant(mandant);
 
-		if (SACHBEARBEITER_INSTITUTION == benutzer.getRole()) {
+		if (SACHBEARBEITER_INSTITUTION == convertRoleString(benutzer.getRole())) {
 			Institution instFromDB = this.institutionService.findInstitution(benutzer.getInstitutionId()).orElseThrow(() -> {
 				LOG.error("Institution not found for passed id: '{}' that was received in Benutzer from externalLoginModul",
 					benutzer.getInstitutionId());
@@ -155,7 +152,7 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 			user.setInstitution(instFromDB);
 		}
 
-		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == benutzer.getRole()) {
+		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == convertRoleString(benutzer.getRole())) {
 
 			Traegerschaft traegerschaftFromDB = this.traegerschaftService.findTraegerschaft(benutzer.getTraegerschaftId()).orElseThrow(() -> {
 				LOG.error("Traegerschaft not found for passed id: '{}' that was received in Benutzer from externalLoginModul",
@@ -175,7 +172,7 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 		jaxExternalBenutzer.setEmail(storedUser.getEmail());
 		jaxExternalBenutzer.setNachname(storedUser.getNachname());
 		jaxExternalBenutzer.setVorname(storedUser.getVorname());
-		jaxExternalBenutzer.setRole(storedUser.getRole());
+		jaxExternalBenutzer.setRole(storedUser.getRole() != null ? storedUser.getRole().name() : null);
 		jaxExternalBenutzer.setMandantId(storedUser.getMandant().getId());
 		if (storedUser.getInstitution() != null) {
 			jaxExternalBenutzer.setInstitutionId(storedUser.getInstitution().getId());
@@ -187,31 +184,21 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 
 	}
 
-	@Override
-	public JaxInstitution findInstitution(@Nonnull JaxId institutionJAXPId) {
-		return institutionResource.findInstitution(institutionJAXPId);
-	}
-
-	@Nullable
-	@Override
-	public JaxTraegerschaft findTraegerschaft(@Nonnull JaxId traegerschaftJAXPId) {
-		return traegerschaftResource.findTraegerschaft(traegerschaftJAXPId);
-	}
 
 	@Nonnull
 	@Override
-	public JaxMandant getFirst() {
-		//todo exception handling
-		try {
-			return mandantResource.getFirst();
-		} catch (EbeguException e) {
-			LOG.error("error in connector", e);
-			throw new EbeguEntityNotFoundException("getFrist", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
+	public String getMandant() {
+		final JaxMandant first = mandantResource.getFirst();
+		if (first.getId() == null) {
+			LOG.error("error while loading mandant");
+			throw new EbeguEntityNotFoundException("getFirst", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
+		} else{
+			return first.getId();
 		}
 	}
 
 	@Override
-	public AuthAccessElement createLoginFromIAM(@Nonnull JaxExternalAuthorisierterBenutzer jaxExtAuthUser) {
+	public JaxExternalAuthAccessElement createLoginFromIAM(@Nonnull JaxExternalAuthorisierterBenutzer jaxExtAuthUser) {
 		Validate.notNull(jaxExtAuthUser, "Passed JaxExternalAuthorisierterBenutzer may not be null");
 
 		LOG.debug("ExternalLogin System is creating Authorization for user " + jaxExtAuthUser.getUsername());
@@ -220,8 +207,23 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 		checkLocalAccessOnly();
 
 		AuthorisierterBenutzer authUser = convertExternalLogin(jaxExtAuthUser);
-		AuthAccessElement loginFromIAM = this.authService.createLoginFromIAM(authUser);
-		return loginFromIAM;
+		AuthAccessElement loginDataForCookie = this.authService.createLoginFromIAM(authUser);
+		return convertToJaxExternalAuthAccessElement(loginDataForCookie);
+	}
+
+	@Nonnull
+	private JaxExternalAuthAccessElement convertToJaxExternalAuthAccessElement(@Nonnull AuthAccessElement loginDataForCookie) {
+		Validate.notNull(loginDataForCookie, "login data to convert may not be null");
+		return new JaxExternalAuthAccessElement(
+			loginDataForCookie.getAuthId(),
+			loginDataForCookie.getAuthToken(),
+			loginDataForCookie.getXsrfToken(),
+			loginDataForCookie.getNachname(),
+			loginDataForCookie.getVorname(),
+			loginDataForCookie.getEmail(),
+			loginDataForCookie.getRole().name()
+		);
+
 	}
 
 	/**
@@ -240,16 +242,30 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 		}
 	}
 
+	@Nonnull
 	private AuthorisierterBenutzer convertExternalLogin(JaxExternalAuthorisierterBenutzer jaxExtAuthBen) {
 		AuthorisierterBenutzer authUser = new AuthorisierterBenutzer();
 		authUser.setUsername(jaxExtAuthBen.getUsername());
 		authUser.setAuthToken(jaxExtAuthBen.getAuthToken());
 		authUser.setLastLogin(jaxExtAuthBen.getLastLogin());
-		authUser.setRole(jaxExtAuthBen.getRole());
+		authUser.setRole(convertRoleString(jaxExtAuthBen.getRole()));
 		authUser.setSamlIDPEntityID(jaxExtAuthBen.getSamlIDPEntityID());
 		authUser.setSamlSPEntityID(jaxExtAuthBen.getSamlSPEntityID());
 		authUser.setSamlNameId(jaxExtAuthBen.getSamlNameId());
 		authUser.setSessionIndex(jaxExtAuthBen.getSessionIndex());
 		return authUser;
+	}
+
+	@Nullable
+	private UserRole convertRoleString(@Nullable String roleString) {
+		if (roleString == null) {
+			return null;
+		}
+		try {
+			return UserRole.valueOf(roleString);
+		} catch (IllegalArgumentException e) {
+			LOG.error("Invalid Value for role, Could not convert {} to a valid UserRole", roleString);
+			throw e;
+		}
 	}
 }

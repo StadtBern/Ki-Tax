@@ -33,11 +33,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import ch.dvbern.ebegu.api.AuthConstants;
 import ch.dvbern.ebegu.api.EbeguApplicationV1;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.util.AuthConstants;
 import ch.dvbern.ebegu.util.Constants;
 
 import static javax.security.auth.message.AuthStatus.SEND_FAILURE;

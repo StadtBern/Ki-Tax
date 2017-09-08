@@ -1,17 +1,18 @@
 
 package ch.dvbern.ebegu.dto.personensuche;
 
-import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
-import ch.dvbern.ebegu.enums.Geschlecht;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+
+import ch.dvbern.ebegu.enums.Geschlecht;
+import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 
 
 /**
