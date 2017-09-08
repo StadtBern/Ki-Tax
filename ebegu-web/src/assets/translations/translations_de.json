@@ -1093,6 +1093,6 @@
     "KINDER_DELETE": "Eintrag löschen",
     "ERWERBSPENSUM_DELETE": "Erwerbspensum löschen",
     "OPEN_VERFUEGUNG": "Verfügung öffnen",
-    "ADDITIONAL_INFORMATION": "Weitere Informationen"
-
+    "ADDITIONAL_INFORMATION": "Weitere Informationen",
+    "TABLE_EDIT": "Eintrag öffnen/bearbeiten"
 }

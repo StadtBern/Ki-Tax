@@ -390,6 +390,42 @@ dv-quicksearchbox {
     }
 
 }
+.row-button__th, .row-button__td{
+    width:0;
+    padding: 0 !important;
+    margin : 0!important;
+
+}
+.row-button__button{
+    position: fixed;
+    z-index: 108;
+    top: -1000px;
+    left: -1000px;
+    height: 1px;
+    width: 1px;
+    text-align: left;
+    overflow: hidden;
+    &:active,
+    &:focus,
+    &:hover {
+        position: static;
+
+        height: 100%;
+        width:100%;
+        line-height: 3rem;
+        overflow: visible;
+        border: 2px solid @contrast-darkest;
+        box-shadow: none;
+        outline: none;
+        background: @primary;
+        font-size: 1.8rem;
+        font-weight: bold;
+        display: block;
+        padding:0;
+        color: @contrast-lightest;
+        text-decoration: none;
+    }
+}
 
 /* Personal preference for BS modal.  The LESS below makes the backdrop white and
    causes the modal to fade in rather than slide in. */

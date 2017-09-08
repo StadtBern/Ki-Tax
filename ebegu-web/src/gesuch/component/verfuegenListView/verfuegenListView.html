@@ -22,15 +22,16 @@
                                 <th data-translate="INSTITUTION" width="20%"></th>
                                 <th data-translate="BETREUUNGSANGEBOT" width="20%"></th>
                                 <th data-translate="ID" width="20%"></th>
-                                <th data-translate="STATUS" width="20%"></th>
+                                <th data-translate="STATUS" width="15%"></th>
                                 <th data-translate="GUELTIGE_BETREUUNG" width="20%" ng-show="vm.isSuperAdmin()"></th>
+                                <th width="5%"></th>
                             </tr>
                             </thead>
                             <tbody ng-repeat="kindContainer in displayedCollection">
                             <tr ng-repeat="betreuung in kindContainer.betreuungen" st-select-row="betreuung"
                                 st-select-mode="single"
                                 ng-class="{'disabled-row': !vm.kannVerfuegungOeffnen(betreuung)}"
-                                ng-click="vm.openVerfuegung(kindContainer, betreuung)">
+                                ng-click="vm.openVerfuegung(kindContainer, betreuung)" role="row" tabindex="-1">
                                 <td ng-bind="kindContainer.kindJA.getFullName()"></td>
                                 <td ng-bind="betreuung.institutionStammdaten.institution.name"></td>
                                 <td ng-bind="betreuung.institutionStammdaten.betreuungsangebotTyp | translate"></td>
@@ -41,7 +42,15 @@
                                 </td>
                                 <td ng-show="vm.isSuperAdmin()">
                                     <span>{{betreuung.gueltig ? 'Ja' : 'Nein'}}</span>
-                                </td>
+                                </td> <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%">
+                                <dv-loading-button type="button"
+                                                   button-click="vm.openVerfuegung(kindContainer, betreuung);"
+                                                   button-class="dv-btn-operation dv-btn-row"
+                                                   aria-label="{{'TABLE_EDIT'|translate}}">
+                                    <i class="fa fa-lg fa-arrow-right" aria-label="{{'TABLE_EDIT'|translate}}">
+                                    </i>
+                                </dv-loading-button>
+                            </td>
                             </tr>
                             </tbody>
                             <tbody ng-if="vm.getKinderWithBetreuungList().length === 0">
