@@ -32,6 +32,7 @@
                     <th st-sort="verfuegung.timestampErstellt" class="sortable text-uppercase" data-translate="VERFUEGUNGS_DATUM"></th>
                     <th st-sort="gesuchsperiode.gesuchsperiodeString" class="sortable text-uppercase" data-translate="GESUCHSPERIODEN"></th>
                     <th width="5%"></th>
+                    <th width="5%"></th>
 
                 </tr>
                 </thead>
@@ -44,6 +45,13 @@
                     <td class="ellipsis" ellipsis-tooltip="{{row.timestampErstellt  | amDateFormat : 'DD.MM.YYYY'}}"
                         ng-bind="row.verfuegung.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.gesuchsperiode.gesuchsperiodeString}}" ng-bind="row.gesuchsperiode.gesuchsperiodeString"></td>
+                    <td class="ellipsis" role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%" hide-sm
+                        hide-xs>
+                        <dv-loading-button type="button" button-click="vm.openVerfuegung(row.betreuungNummer, row.kindNummer, row.gesuchId);"
+                                           button-class="dv-btn-operation" aria-label="{{'TABLE_EDIT'|translate}}">
+                            <i class="fa fa-lg fa-arrow-right" aria-label="{{'TABLE_EDIT'|translate}}"></i>
+                        </dv-loading-button>
+                    </td>
                     <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()"
                         class="symbol" ng-if="vm.showVerfuegungPdfLink(row)">
                         <dv-loading-button type="button" button-click="vm.openVerfuegungPDF(row);"
