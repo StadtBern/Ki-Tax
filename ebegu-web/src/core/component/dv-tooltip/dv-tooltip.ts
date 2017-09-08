@@ -2,6 +2,7 @@ import {IComponentOptions} from 'angular';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import {ShowTooltipController} from '../../../gesuch/dialog/ShowTooltipController';
 import ITranslateService = angular.translate.ITranslateService;
+import {IDVFocusableController} from '../IDVFocusableController';
 let template = require('./dv-tooltip.html');
 require('./dv-tooltip.less');
 let showTooltipTemplate = require('../../../gesuch/dialog/showTooltipTemplate.html');
@@ -17,7 +18,7 @@ export class DvTooltipComponentConfig implements IComponentOptions {
     };
 }
 
-export class DvTooltipController {
+export class DvTooltipController implements IDVFocusableController {
 
     private inputId: string;
 

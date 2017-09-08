@@ -1,7 +1,7 @@
 import {IPromise} from 'angular';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
-import {DvTooltipController} from '../../core/component/dv-tooltip/dv-tooltip';
+import {IDVFocusableController} from '../../core/component/IDVFocusableController';
 
 export class ShowTooltipController {
 
@@ -11,7 +11,7 @@ export class ShowTooltipController {
     text: string;
 
     constructor(private $mdDialog: IDialogService, $translate: ITranslateService, title: string, text: string,
-                private parentController: DvTooltipController) {
+                private parentController: IDVFocusableController) {
         if (text !== undefined && text !== null) {
             this.text = $translate.instant(text);
         } else {
@@ -24,7 +24,9 @@ export class ShowTooltipController {
     }
 
     public cancel(): void {
-        this.parentController.setFocusBack();
+        if (this.parentController) {
+            this.parentController.setFocusBack();
+        }
         this.$mdDialog.cancel();
     }
 }
