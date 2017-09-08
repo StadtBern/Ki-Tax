@@ -38,7 +38,8 @@
                             <div class="form-group">
                                 <label class="md-no-float required" for="taetigkeit">
                                     <span data-translate="TAETIGKEIT_WAEHLEN"></span>
-                                    <dv-tooltip text="'TAETIGKEIT_WAEHLEN_HELP' | translate"></dv-tooltip>
+                                    <dv-tooltip input-id="taetigkeit"
+                                                text="'TAETIGKEIT_WAEHLEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <div class="dv-select-style">
                                     <select aria-describedby="taetigkeit-error"
@@ -119,12 +120,12 @@
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"
-                                             name="zuschlag"
+                                             name="zuschlag" id="zuschlag"
                                              ng-disabled="vm.isGesuchReadonly() || vm.erwerbspensumDisabled() || !vm.viewZuschlag()"
                                              aria-label="{{'ZUSCHLAG_ZU_ERWERBSPENSUM' | translate}}">
                                     <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
                                 </md-checkbox>
-                                <dv-tooltip text="vm.getZuschlagHelpText()"></dv-tooltip>
+                                <dv-tooltip input-id="zuschlag" text="vm.getZuschlagHelpText()"></dv-tooltip>
                                 <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum"
                                            ja="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"
                                            specific-bisher-text="vm.getTextZuschlagErwerbspensumKorrekturJA()"></dv-bisher>
