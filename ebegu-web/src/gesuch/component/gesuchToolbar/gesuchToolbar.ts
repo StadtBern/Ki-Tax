@@ -97,7 +97,7 @@ export class GesuchToolbarController {
                 private $log: ILogService,
                 private gesuchsperiodeRS: GesuchsperiodeRS,
                 private fallRS: FallRS,
-                private DvDialog: DvDialog) {
+                private dvDialog: DvDialog) {
 
     }
 
@@ -605,7 +605,15 @@ export class GesuchToolbarController {
                 this.$state.go('gesuchstellerDashboard');
             } else {
                 this.gesuchRS.removePapiergesuch(this.getGesuch().id);
-                this.$state.go('pendenzen');
+                if (this.antragList.length > 0) {
+                    let navObj: any = {
+                        createNew: false,
+                        gesuchId: this.antragList[0].antragId
+                    };
+                    this.$state.go('gesuch.fallcreation', navObj);
+                } else {
+                    this.$state.go('pendenzen');
+                }
             }
         });
     }
@@ -631,7 +639,7 @@ export class GesuchToolbarController {
     }
 
     public showKontakt(): void {
-        this.DvDialog.showDialog(showKontaktTemplate, ShowTooltipController, {
+        this.dvDialog.showDialog(showKontaktTemplate, ShowTooltipController, {
             title: '',
             text: '<span>Jugendamt</span><br>'
             + '<span>Effingerstrasse 21</span><br>'
