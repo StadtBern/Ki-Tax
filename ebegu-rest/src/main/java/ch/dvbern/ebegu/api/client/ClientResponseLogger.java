@@ -1,12 +1,11 @@
 
-package ch.dvbern.ebegu.client;
+package ch.dvbern.ebegu.api.client;
 
 import java.io.IOException;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;
-import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +29,6 @@ public class ClientResponseLogger implements ClientResponseFilter {
 		LOG.info("ClientResponse Body: ");
 		LOG.info("Status: " + responseContext.getStatus() + "; StatusInfo: " + responseContext.getStatusInfo());
 		LOG.info("EntityTag: " + responseContext.getEntityTag() + "; length: " + responseContext.getLength());
-		if (responseContext.getStatus() >= Response.Status.MOVED_PERMANENTLY.getStatusCode()) {
-			LOG.info(requestContext.getEntity().toString());
-		}
 
 	}
 }

@@ -7,8 +7,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
+import ch.dvbern.lib.date.converters.LocalDateTimeXMLConverter;
 
 /**
  * DTO fuer AntragStatusHistory

@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.hibernate.envers.RevisionType;
 
-import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
+import ch.dvbern.lib.date.converters.LocalDateTimeXMLConverter;
 
 /**
  * DTO fuer Application Propertie

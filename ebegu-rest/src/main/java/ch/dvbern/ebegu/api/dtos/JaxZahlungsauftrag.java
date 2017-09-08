@@ -13,9 +13,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
-import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
+import ch.dvbern.lib.date.converters.LocalDateTimeXMLConverter;
+import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 
 /**
  * DTO fuer Zahlungsauftrag

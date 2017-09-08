@@ -1,5 +1,5 @@
 
-package ch.dvbern.ebegu.client;
+package ch.dvbern.ebegu.api.client;
 
 import java.io.IOException;
 

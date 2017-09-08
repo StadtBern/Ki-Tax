@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
+import ch.dvbern.lib.date.converters.LocalDateTimeXMLConverter;
 
 @XmlRootElement(name = "dokument")
 @XmlAccessorType(XmlAccessType.FIELD)
