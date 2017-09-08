@@ -102,19 +102,30 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 			verfuegungZeitabschnitt.setEinkommensjahr(basisjahr);
 		}
 
-		// Sonderfall: Die EKV1 ist im Dezember und die EKV2 im "Vorjahr", d.h. ebenfalls im Dezember.
-		// In diesem Fall haben wir im selben Zeitabschnitt eigentlich 2 Einkommensverschlechterungen, die entweder
-		// beide akzeptiert oder abgelehnt oder ignoriert bzw. alle Kombinationen davon sein können.
-		// In diesen Fällen müssen die Kommentare für EKV1 noch angepasst werden
-		if (finanzDatenDTO.getDatumVonBasisjahrPlus1() != null && finanzDatenDTO.getDatumVonBasisjahrPlus2() != null){
+		handleSpecialCases(finanzDatenDTO, verfuegungZeitabschnitt, basisjahrPlus1);
+
+	}
+
+	/**
+	 * This method will handle all special cases that can happen with the data of EKV
+	 *
+	 * Sonderfall: Die EKV1 ist im Dezember und die EKV2 im "Vorjahr", d.h. ebenfalls im Dezember.
+	 * In diesem Fall haben wir im selben Zeitabschnitt eigentlich 2 Einkommensverschlechterungen, die entweder
+	 * beide akzeptiert oder abgelehnt oder ignoriert bzw. alle Kombinationen davon sein können.
+	 * In diesen Fällen müssen die Kommentare für EKV1 noch angepasst werden
+	 */
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
+	private void handleSpecialCases(FinanzDatenDTO finanzDatenDTO, VerfuegungZeitabschnitt verfuegungZeitabschnitt,
+		int basisjahrPlus1) {
+		if (finanzDatenDTO.getDatumVonBasisjahrPlus1() != null && finanzDatenDTO.getDatumVonBasisjahrPlus2() != null) {
 			if (finanzDatenDTO.getDatumVonBasisjahrPlus1().isEqual(finanzDatenDTO.getDatumVonBasisjahrPlus2())) {
 				if (finanzDatenDTO.isEkv1AcceptedAndNotAnnuliert()) {
 					// Die EKV1 kommt zum Zuge, wird aber durch die EKV2 "überschrieben"
-					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ACCEPT_MSG, "" + basisjahrPlus1);
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ACCEPT_MSG, String.valueOf(basisjahrPlus1));
 				} else if (finanzDatenDTO.isEkv1Annulliert()) {
-					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ANNULLIERT_MSG, "" + basisjahrPlus1);
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ANNULLIERT_MSG, String.valueOf(basisjahrPlus1));
 				} else {
-					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, "" + basisjahrPlus1);
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, String.valueOf(basisjahrPlus1));
 				}
 			}
 		}
