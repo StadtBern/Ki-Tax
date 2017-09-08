@@ -873,6 +873,10 @@
     "TOOLBAR_VERLAUF": "VERLAUF",
     "TOOLBAR_ALLE_VERFUEGUNGEN": "ALLE VERFÜGUNGEN",
     "TOOLBAR_KONTAKT": "KONTAKT",
+    "TOOLBAR_GESUCHSPERIODE": "Gesuchsperiode wählen, aktuell: {{gp}} ",
+    "TOOLBAR_GESUCHSPERIODE_ITEM": "Gesuchsperiode {{gp}} ",
+    "TOOLBAR_GESUCHSTYP": "Gesuch auswählen, aktuell: {{gt}} der Gesuchsperiode {{gp}}",
+    "TOOLBAR_GESUCHSTYP_ITEM": "{{gt}} der Gesuchsperiode {{gp}}",
     "TESTFALL_ERSTELLEN": "Testfall {{gsname}} einfügen",
     "TESTFAELLE_EINFUEGEN": "Testfälle einfügen",
     "GSDASHBOARD_BEANTRAGEN": "BEANTRAGEN",
@@ -1088,6 +1092,7 @@
     "BETREUUNG_DELETE": "Betreuung löschen",
     "KINDER_DELETE": "Eintrag löschen",
     "ERWERBSPENSUM_DELETE": "Erwerbspensum löschen",
-    "OPEN_VERFUEGUNG": "Verfügung öffnen"
+    "OPEN_VERFUEGUNG": "Verfügung öffnen",
+    "ADDITIONAL_INFORMATION": "Weitere Informationen"
 
 }
