@@ -127,8 +127,9 @@
                 <!-- Mahnungsdetails, neue Mahnung erstellen -->
                 <div class="row text-left" ng-if="vm.showErsteMahnungAusloesen() || vm.showZweiteMahnungAusloesen()">
                     <div class="col-md-12">
-                        <h2 data-translate="ERSTE_MAHNUNG" ng-if="vm.showErsteMahnungAusloesen()"></h2>
-                        <h2 data-translate="ZWEITE_MAHNUNG" ng-if="vm.showZweiteMahnungAusloesen()"></h2>
+                        <h3 class="ebeguH2" data-translate="ERSTE_MAHNUNG" ng-if="vm.showErsteMahnungAusloesen()"></h3>
+                        <h3 class="ebeguH2" data-translate="ZWEITE_MAHNUNG"
+                            ng-if="vm.showZweiteMahnungAusloesen()"></h3>
                         <hr class="header"/>
                         <div class="row">
                             <dv-input-container class="col-md-12 form-group kommentar-feld">
