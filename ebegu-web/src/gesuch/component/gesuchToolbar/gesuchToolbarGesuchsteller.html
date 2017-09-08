@@ -56,7 +56,7 @@
             <div dv-show-element
                  dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerJugendamtRoles()">
                 <button id="button" ng-click="vmgs.openAlleVerfuegungen()"
-                        aria-label="{{TOOLBAR_ALLE_VERFUEGUNGEN | translate}}" style="text-align: center;">
+                        aria-label="{{'TOOLBAR_ALLE_VERFUEGUNGEN' | translate}}" style="text-align: center;">
                     <span data-translate="TOOLBAR_ALLE_VERFUEGUNGEN"></span>
                 </button>
             </div>
@@ -65,7 +65,7 @@
             <div dv-show-element
                  dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerJugendamtOtherAmtRoles()">
                 <button ng-click="vmgs.openMitteilungen()"
-                        aria-label="{{TOOLBAR_MITTEILUNGEN | translate}}" style="text-align: center;">
+                        aria-label="{{'TOOLBAR_MITTEILUNGEN' | translate}}" style="text-align: center;">
                     <span data-translate="TOOLBAR_MITTEILUNGEN"></span>
                 </button>
             </div>
@@ -121,7 +121,7 @@
     <div dv-show-element
          dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerJugendamtRoles()" class="gesuchsperioden-container">
         <button ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.openMitteilungen()"
-                aria-label="{{TOOLBAR_MITTEILUNGEN | translate}}" class="gesuchsperiode-button">
+                aria-label="{{'TOOLBAR_MITTEILUNGEN' | translate}}" class="gesuchsperiode-button">
             <span data-translate="TOOLBAR_MITTEILUNGEN"></span>
         </button>
     </div>
