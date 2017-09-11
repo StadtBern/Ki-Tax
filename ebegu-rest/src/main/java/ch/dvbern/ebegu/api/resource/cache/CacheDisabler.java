@@ -31,7 +31,7 @@ public class CacheDisabler implements ContainerResponseFilter {
 		headers.putSingle(HttpHeaders.CACHE_CONTROL, "no-cache, no-store");
 
 		/*
-		 TODO, eine selektives deaktivieren des Caches (auf Resource-Ebene) waere wuenschenswert, ist aber nicht zwingend,
+		 eine selektives deaktivieren des Caches (auf Resource-Ebene) waere wuenschenswert, ist aber nicht zwingend,
 		 da Requests bereits in Frontend selektiv gecached werden.
 		 Ein Ansatz mit Annotationen auf den Resource Methoden ist z.B. beschrieben in
 		 http://alex.nederlof.com/blog/2013/07/28/caching-using-annotations-with-jersey/

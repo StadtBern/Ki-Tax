@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.api.resource.wizard;
+package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
@@ -11,6 +11,7 @@ import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.WizardStepService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.Validate;
 
 import javax.annotation.Nonnull;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
  */
 @Path("wizard-steps")
 @Stateless
-@Api()
+@Api(description = "Resource für die Darstellung des Antrags-Wizards")
 public class WizardStepResource {
 
 	@Inject
@@ -42,6 +43,8 @@ public class WizardStepResource {
 	private JaxBConverter converter;
 
 
+	@ApiOperation(value = "Gibt alle Wizardsteps des Gesuchs mit der uebergebenen id zurueck",
+		responseContainer = "Collection", response = JaxWizardStep.class)
 	@GET
 	@Path("/{gesuchId}")
 	@Consumes(MediaType.WILDCARD)
@@ -63,6 +66,10 @@ public class WizardStepResource {
 	 * @return
 	 * @throws EbeguException
 	 */
+	@ApiOperation(value = "Creates all required WizardSteps for the given Gesuch and returns them as a List. Status " +
+		"for all Steps will be UNBESUCHT except for GESUCH_ERSTELLEN, which gets OK, because this step is already " +
+		"done when the gesuch is created.",
+		responseContainer = "List", response = JaxWizardStep.class)
 	@Nullable
 	@GET
 	@Path("/createWizardSteps/{gesuchId}")
@@ -80,6 +87,7 @@ public class WizardStepResource {
 		return null;
 	}
 
+	@ApiOperation(value = "Speichert den uebergebenen Wizardstep", response = JaxWizardStep.class)
 	@Nullable
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -102,6 +110,7 @@ public class WizardStepResource {
 		throw new EbeguEntityNotFoundException("saveWizardStep", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + wizardStepJAXP.getGesuchId());
 	}
 
+	@ApiOperation(value = "Setzt den Status des uebergebenen Wizardsteps auf MUTIERT", response = JaxWizardStep.class)
 	@Nullable
 	@POST
 	@Path("/setWizardStepMutiert/{gesuchId}")
@@ -117,5 +126,4 @@ public class WizardStepResource {
 		WizardStep persistedWizardStep = this.wizardStepService.saveWizardStep(wizardStep);
 		return converter.wizardStepToJAX(persistedWizardStep);
 	}
-
 }

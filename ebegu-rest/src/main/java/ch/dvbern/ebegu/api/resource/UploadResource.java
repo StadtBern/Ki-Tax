@@ -14,6 +14,7 @@ import ch.dvbern.ebegu.util.UploadFileInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -46,12 +47,12 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * REST Resource fuer Institution
+ * REST Resource zum Upload von Dokumenten
  */
 @SuppressWarnings("OverlyBroadCatchBlock")
 @Path("upload")
 @Stateless
-@Api
+@Api(description = "Resource zum Upload von Dokumenten")
 public class UploadResource {
 
 	@Inject
@@ -74,6 +75,7 @@ public class UploadResource {
 	private static final Logger LOG = LoggerFactory.getLogger(UploadResource.class);
 
 
+	@ApiOperation(value = "Speichert ein Dokument in der Datenbank", response = JaxDokumentGrund.class)
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response save(@Context HttpServletRequest request, @Context UriInfo uriInfo, MultipartFormDataInput input)
@@ -107,7 +109,7 @@ public class UploadResource {
 		}
 
 		// Convert DokumentGrund from inputStream
-		JaxDokumentGrund jaxDokumentGrund = null;
+		JaxDokumentGrund jaxDokumentGrund;
 		try (InputStream dokGrund = input.getFormDataPart(PART_DOKUMENT_GRUND, InputStream.class, null)) {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.registerModule(new JavaTimeModule());
@@ -197,6 +199,7 @@ public class UploadResource {
 		}
 	}
 
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	private void addFileToDokumentGrund(JaxDokumentGrund jaxDokumentGrund, UploadFileInfo uploadFileInfo) {
 		Validate.notNull(jaxDokumentGrund.getDokumente());
 

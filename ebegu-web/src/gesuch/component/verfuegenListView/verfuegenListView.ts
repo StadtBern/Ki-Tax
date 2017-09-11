@@ -98,7 +98,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
         }
-        //todo wenn man aus der verfuegung zurueck kommt muss man hier nicht neu berechnen
         this.refreshKinderListe();
     }
 

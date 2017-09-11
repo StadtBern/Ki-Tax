@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAntragStatusHistory;
+import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.AntragStatusHistory;
 import ch.dvbern.ebegu.entities.Fall;
@@ -15,6 +16,7 @@ import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -32,7 +34,7 @@ import java.util.Optional;
  */
 @Path("antragStatusHistory")
 @Stateless
-@Api(description = "Resource zum verwalten von Kindern eines Gesuchstellers")
+@Api(description = "Resource zum Lesen der History von Gesuchen / Mutationen (Anträgen)")
 public class AntragStatusHistoryResource {
 
 	@Inject
@@ -47,6 +49,7 @@ public class AntragStatusHistoryResource {
 	private AntragStatusHistoryService antragStatusHistoryService;
 
 
+	@ApiOperation(value = "Ermittelt den letzten Statusübergang des Antrags mit der übergebenen Id.", response = JaxAntragStatusHistory.class)
 	@Nullable
 	@GET
 	@Path("/{gesuchId}")
@@ -68,6 +71,7 @@ public class AntragStatusHistoryResource {
 		return null;
 	}
 
+	@ApiOperation(value = "Ermittelt alle Statusübergänge des Antrags mit der übergebenen Id.", response = Collection.class)
 	@Nullable
 	@GET
 	@Path("/verlauf/{gesuchsperiodeId}/{fallId}")

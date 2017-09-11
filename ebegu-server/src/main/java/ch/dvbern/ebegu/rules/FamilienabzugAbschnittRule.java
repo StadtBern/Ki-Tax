@@ -28,6 +28,7 @@ import java.util.*;
  * Ereigniseintritt (e.g. Geburt) berücksichtigt werden. Dasselbe gilt bei der Aenderung des Zivilstands. Bei einer Mutation
  * der Familiensituation ist das Datum "Aendern per" relevant.
  */
+@SuppressWarnings("MethodParameterNamingConvention")
 public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 
 	private final Logger LOG = LoggerFactory.getLogger(FamilienabzugAbschnittRule.class.getSimpleName());
@@ -49,7 +50,6 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 		this.pauschalabzugProPersonFamiliengroesse6 = pauschalabzugProPersonFamiliengroesse6;
 	}
 
-	//TODO (gapa) Achtung, bei einer Aenderung der Familiensituation durch eine Mutation muss noch das Datum der Mutation berücksichtigt werden! Mutationen werden spaeter behandelt
 
 	@Override
 	@Nonnull
@@ -93,7 +93,6 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 	}
 
 	public List<VerfuegungZeitabschnitt> createInitialenFamilienAbzug(Gesuch gesuch) {
-		List<VerfuegungZeitabschnitt> initialFamAbzugList = new ArrayList<>();
 		VerfuegungZeitabschnitt initialFamAbzug = new VerfuegungZeitabschnitt(gesuch.getGesuchsperiode().getGueltigkeit());
 		//initial gilt die Familiengroesse die am letzten Tag vor dem Start der neuen Gesuchsperiode vorhanden war
 		Double famGrBeruecksichtigungAbzug = 0.0;
@@ -108,6 +107,7 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 		initialFamAbzug.setAbzugFamGroesse(abzugAufgrundFamiliengroesse);
 		initialFamAbzug.setFamGroesse(new BigDecimal(String.valueOf(famGrBeruecksichtigungAbzug)));
 
+		List<VerfuegungZeitabschnitt> initialFamAbzugList = new ArrayList<>();
 		initialFamAbzugList.add(initialFamAbzug);
 		return initialFamAbzugList;
 	}
