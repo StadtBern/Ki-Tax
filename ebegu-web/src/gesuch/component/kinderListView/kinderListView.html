@@ -45,18 +45,18 @@
                     </td>
                     <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%">
                         <dv-loading-button type="button" button-click="vm.editKind(row);"
-                                           button-class="dv-btn-operation dv-btn-row"
+                                           button-class="dv-btn-operation dv-btn-row" title="{{'TABLE_EDIT'|translate}}"
                                            aria-label="{{'TABLE_EDIT'|translate}}">
-                            <i class="fa fa-lg fa-arrow-right" aria-label="{{'TABLE_EDIT'|translate}}">
+                            <i class="fa fa-lg fa-arrow-right" title="{{'TABLE_EDIT'|translate}}" aria-label="{{'TABLE_EDIT'|translate}}">
                             </i>
                         </dv-loading-button>
                     </td>
                     <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)" width="5%">
                         <dv-loading-button type="button" button-click="vm.removeKind(row);"
-                                           button-class="dv-btn-operation"
+                                           button-class="dv-btn-operation" title="{{'EINTRAG_DELETE' | translate}}"
                                            button-disabled="vm.isKorrekturModusJugendamt()"
-                                           aria-label="{{'KINDER_DELETE'|translate}}">
-                            <i class="fa fa-lg fa-trash-o" aria-label="{{'KINDER_DELETE' | translate}}">
+                                           aria-label="{{'EINTRAG_DELETE'|translate}}">
+                            <i class="fa fa-lg fa-trash-o" aria-label="{{'EINTRAG_DELETE' | translate}}">
                             </i>
                         </dv-loading-button>
                     </td>

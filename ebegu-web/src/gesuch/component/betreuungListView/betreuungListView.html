@@ -54,6 +54,7 @@
                                 <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%">
                                     <dv-loading-button type="button" button-click="vm.editBetreuung(kind, betreuung);"
                                                        button-class="dv-btn-operation dv-btn-row"
+                                                       title="{{'TABLE_EDIT'|translate}}"
                                                        aria-label="{{'TABLE_EDIT'|translate}}">
                                         <i class="fa fa-lg fa-arrow-right" aria-label="{{'TABLE_EDIT'|translate}}">
                                         </i>
@@ -64,6 +65,7 @@
                                     dv-show-expression="vm.canRemoveBetreuung(betreuung)"
                                      role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%">
                                     <dv-loading-button aria-label="{{'BETREUUNG_DELETE'|translate}}" type="button"
+                                                       title="{{'BETREUUNG_DELETE' | translate}}"
                                                        button-click="vm.removeBetreuung(kind, betreuung)"
                                                        button-disabled="vm.isNotAllowedToRemove(betreuung)"
                                                        button-class="dv-btn-operation">

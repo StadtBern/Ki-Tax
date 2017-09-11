@@ -89,8 +89,9 @@
                                 <dv-loading-button type="button"
                                                    button-click="vm.removeAbwesenheitConfirm(abwesenheitInstance)"
                                                    button-class="dv-btn-operation"
-                                                   button-disabled="vm.isKorrekturModusJugendamt()">
-                                    <i class="fa fa-lg fa-trash-o"></i>
+                                                   button-disabled="vm.isKorrekturModusJugendamt()"
+                                                   title="{{'ABWESENHEIT_DELETE' | translate}}" >
+                                    <i class="fa fa-lg fa-trash-o" aria-label="{{'ABWESENHEIT_DELETE' | translate}}"></i>
                                     <span data-translate="ABWESENHEIT_ENTFERNEN"></span>
                                 </dv-loading-button>
                                 <hr class="header"/>

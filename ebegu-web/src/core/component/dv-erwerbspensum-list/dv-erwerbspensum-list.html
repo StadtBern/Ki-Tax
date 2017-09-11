@@ -28,6 +28,7 @@
                     <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()">
                         <dv-loading-button type="button" button-click="vm.editClicked(row);"
                                            button-class="dv-btn-operation dv-btn-row"
+                                           title="{{'TABLE_EDIT'|translate}}"
                                            aria-label="{{'TABLE_EDIT'|translate}}">
                             <i class="fa fa-lg fa-arrow-right" aria-label="{{'TABLE_EDIT'|translate}}">
                             </i>
@@ -35,7 +36,7 @@
                     </td>
                     <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" ng-if="vm.isRemoveAllowed(row)">
                         <dv-loading-button type="button" button-click="vm.removeClicked(row)"
-                                           button-class="dv-btn-operation" title="{{vm.removeButtonTitle}}"
+                                           button-class="dv-btn-operation" title="{{'ERWERBSPENSUM_DELETE' | translate}}"
                                            button-disabled="!vm.addButtonEnabled"
                                            aria-label="{{'ERWERBSPENSUM_DELETE'|translate}}">
                             <i class="fa fa-lg fa-trash-o" aria-label="{{'ERWERBSPENSUM_DELETE' | translate}}">
@@ -45,7 +46,7 @@
                     <td ng-if="!vm.addButtonVisible"></td>
                 </tr>
                 <tr ng-if="vm.erwerbspensen.length === 0">
-                    <td colspan="6" class="empty-table" data-translate="KEIN_EINTRAG">...</td>
+                    <td colspan="7" class="empty-table" data-translate="KEIN_EINTRAG">...</td>
                 </tr>
                 </tbody>
             </table>

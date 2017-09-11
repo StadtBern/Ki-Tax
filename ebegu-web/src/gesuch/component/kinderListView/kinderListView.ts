@@ -123,7 +123,7 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
     }
 
     public getColsNumber(): number {
-        return this.kinderDubletten ? 5 : 4;
+        return this.kinderDubletten ? 6 : 5;
     }
 
 }
