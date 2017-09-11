@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxAdresse;
 import ch.dvbern.ebegu.api.dtos.JaxEbeguVorlage;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxVorlage;
@@ -15,6 +16,7 @@ import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
@@ -46,11 +48,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * REST Resource fuer Dokumente
+ * REST Resource fuer Dokument-Vorlagen
  */
 @Path("ebeguVorlage")
 @Stateless
-@Api
+@Api(description = "Resource fuer Dokument-Vorlagen")
 public class EbeguVorlageResource {
 
 	private static final String PART_FILE = "file";
@@ -76,6 +78,8 @@ public class EbeguVorlageResource {
 	private GesuchsperiodeService gesuchsperiodeService;
 
 
+	@ApiOperation(value = "Gibt alle Vorlagen fuer die Gesuchsperiode mit der uebergebenen Id zurueck",
+		responseContainer = "List", response = JaxEbeguVorlage.class)
 	@Nullable
 	@GET
 	@Path("/gesuchsperiode/{id}")
@@ -106,6 +110,8 @@ public class EbeguVorlageResource {
 		return Collections.emptyList();
 	}
 
+	@ApiOperation(value = "Gibt alle Vorlagen zurueck, welche nicht zu einer Gesuchsperiode gehoeren.",
+		responseContainer = "List", response = JaxEbeguVorlage.class)
 	@Nullable
 	@GET
 	@Path("/nogesuchsperiode/")
@@ -123,6 +129,7 @@ public class EbeguVorlageResource {
 			.collect(Collectors.toList());
 	}
 
+	@ApiOperation(value = "Speichert eine Vorlage in der Datenbank")
 	@POST
 	@SuppressWarnings("PMD.NcssMethodCount")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -171,7 +178,6 @@ public class EbeguVorlageResource {
 			gueltigBis = gesuchsperiode.get().getGueltigkeit().getGueltigBis();
 		}
 
-
 		List<InputPart> inputParts = input.getFormDataMap().get(PART_FILE);
 		if (inputParts == null || !inputParts.stream().findAny().isPresent()) {
 			return Response.serverError().entity("form-parameter 'file' not found").build();
@@ -205,14 +211,12 @@ public class EbeguVorlageResource {
 			jaxEbeguVorlage.getGueltigBis(), jaxEbeguVorlage.getName());
 		EbeguVorlage ebeguVorlageToMerge = ebeguVorlageOptional.orElse(new EbeguVorlage());
 
-
 		EbeguVorlage ebeguVorlageConverted = converter.ebeguVorlageToEntity(jaxEbeguVorlage, ebeguVorlageToMerge);
 
 		// save modified EbeguVorlage to DB
 		EbeguVorlage persistedEbeguVorlage = ebeguVorlageService.updateEbeguVorlage(ebeguVorlageConverted);
 
 		final JaxEbeguVorlage jaxEbeguVorlageToReturn = converter.ebeguVorlageToJax(persistedEbeguVorlage);
-
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(EbeguVorlageResource.class)
@@ -222,11 +226,13 @@ public class EbeguVorlageResource {
 		return Response.created(uri).entity(jaxEbeguVorlageToReturn).build();
 	}
 
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+	@ApiOperation(value = "Loescht die Vorlage mit der uebergebenen Id aus der Datenbank.", response = Void.class)
 	@Nullable
 	@DELETE
 	@Path("/{ebeguVorlageId}")
 	@Consumes(MediaType.WILDCARD)
-	public Response removeInstitutionStammdaten(
+	public Response removeEbeguVorlage(
 		@Nonnull @NotNull @PathParam("ebeguVorlageId") JaxId ebeguVorlageId,
 		@Context HttpServletResponse response) {
 
@@ -234,6 +240,4 @@ public class EbeguVorlageResource {
 		ebeguVorlageService.removeVorlage(converter.toEntityId(ebeguVorlageId));
 		return Response.ok().build();
 	}
-
-
 }

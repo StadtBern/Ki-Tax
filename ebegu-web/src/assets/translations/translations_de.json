@@ -632,9 +632,9 @@
     "GESUCHSPERIODE_DIALOG_TEXT_AKTIV": "Im Status AKTIV wird die Gesuchsperiode für die Gesuchsteller geöffnet. Achtung: Beim Aktivieren wird eine E-Mail an alle Gesuchsteller der vergangenen Periode gesendet!",
     "GESUCHSPERIODE_DIALOG_TEXT_INAKTIV": "Im Status INAKTIV kann das Jugendamt weiterhin Anträge für diese Gesuchsperiode erstellen. Für den Gesuchsteller wird die Periode jedoch gesperrt.",
     "GESUCHSPERIODE_DIALOG_TEXT_GESCHLOSSEN": "Im Status GESCHLOSSEN kann weder das Jugendamt noch die Gesuchsteller Anträge für diese Gesuchsperiode erfassen. Die Periode kann nur geschlossen werden, wenn keine Pendenzen (inkl. Beschwerden und Steuerverwaltung) mehr offen sind.",
-    "PARAMETER_PRO_GESUCHSPERIODE": "E-BEGU Parameter für Gesuchsperiode",
-    "VORLAGE_PRO_GESUCHSPERIODE": "E-BEGU Vorlagen für Gesuchsperiode",
-    "PARAMETER_PRO_JAHR": "Jahresabhängige E-BEGU Parameter",
+    "PARAMETER_PRO_GESUCHSPERIODE": "Ki-Tax Parameter für Gesuchsperiode",
+    "VORLAGE_PRO_GESUCHSPERIODE": "Ki-Tax Vorlagen für Gesuchsperiode",
+    "PARAMETER_PRO_JAHR": "Jahresabhängige Ki-Tax Parameter",
     "BENUTZERHANDBUCH_LIST": "Benutzerhandbücher",
     "PARAMETER_JAHR": "Jahr",
     "PARAM_FIXBETRAG_STADT_PRO_TAG_KITA": "Fixbeitrag der Stadt pro Tag",
@@ -873,6 +873,10 @@
     "TOOLBAR_VERLAUF": "VERLAUF",
     "TOOLBAR_ALLE_VERFUEGUNGEN": "ALLE VERFÜGUNGEN",
     "TOOLBAR_KONTAKT": "KONTAKT",
+    "TOOLBAR_GESUCHSPERIODE": "Gesuchsperiode wählen, aktuell: {{gp}} ",
+    "TOOLBAR_GESUCHSPERIODE_ITEM": "Gesuchsperiode {{gp}} ",
+    "TOOLBAR_GESUCHSTYP": "Gesuch auswählen, aktuell: {{gt}} der Gesuchsperiode {{gp}}",
+    "TOOLBAR_GESUCHSTYP_ITEM": "{{gt}} der Gesuchsperiode {{gp}}",
     "TESTFALL_ERSTELLEN": "Testfall {{gsname}} einfügen",
     "TESTFAELLE_EINFUEGEN": "Testfälle einfügen",
     "GSDASHBOARD_BEANTRAGEN": "BEANTRAGEN",
@@ -1088,6 +1092,7 @@
     "BETREUUNG_DELETE": "Betreuung löschen",
     "KINDER_DELETE": "Eintrag löschen",
     "ERWERBSPENSUM_DELETE": "Erwerbspensum löschen",
-    "OPEN_VERFUEGUNG": "Verfügung öffnen"
-
+    "OPEN_VERFUEGUNG": "Verfügung öffnen",
+    "ADDITIONAL_INFORMATION": "Weitere Informationen",
+    "TABLE_EDIT": "Eintrag öffnen/bearbeiten"
 }

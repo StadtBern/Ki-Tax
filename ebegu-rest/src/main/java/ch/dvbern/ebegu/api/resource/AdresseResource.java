@@ -3,9 +3,12 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAdresse;
 import ch.dvbern.ebegu.entities.Adresse;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.AdresseService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -20,16 +23,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
-import java.util.Optional;
 
 /**
- * Created by imanol on 17.03.16.
- *
  * REST Resource fuer Adressen
  */
 @Path("adressen")
 @Stateless
-@Api
+@Api(description = "Resource zum Speichern von Adressen")
 public class AdresseResource {
 
 	@Inject
@@ -38,7 +38,7 @@ public class AdresseResource {
 	@Inject
 	private JaxBConverter converter;
 
-
+	@ApiOperation(value = "Erstellt eine neue Adresse in der Datenbank.", response = JaxAdresse.class)
 	@Nullable
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -57,9 +57,9 @@ public class AdresseResource {
 			.build();
 
 		return Response.created(uri).entity(converter.adresseToJAX(persistedAdresse)).build();
-
 	}
 
+	@ApiOperation(value = "Aktualisiert eine Adresse in der Datenbank.", response = JaxAdresse.class)
 	@Nullable
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -70,11 +70,10 @@ public class AdresseResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(adresseJAXP.getId());
-		Optional<Adresse> adrFromDB = adresseService.findAdresse(adresseJAXP.getId());
-		Adresse adrToMerge = converter.adresseToEntity(adresseJAXP, adrFromDB.get());
+		Adresse adrFromDB = adresseService.findAdresse(adresseJAXP.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, adresseJAXP.getId()));
+		Adresse adrToMerge = converter.adresseToEntity(adresseJAXP, adrFromDB);
 		Adresse modifiedAdresse = this.adresseService.updateAdresse(adrToMerge);
 
 		return converter.adresseToJAX(modifiedAdresse);
 	}
-
 }

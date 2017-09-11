@@ -58,11 +58,12 @@
                 <th st-sort="status" class="sortable" data-translate="STATUS_UPPER"></th>
                 <th st-sort="verantwortlicher" class="sortable" data-translate="VERANTWORTLICH_UPPER" hide-sm
                     hide-xs></th>
+                <th hide-sm hide-xs width="5%"></th>
             </tr>
             </thead>
             <tbody>
             <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                ng-click="vm.editAntrag(row)" role="row">
+                ng-click="vm.editAntrag(row)" role="row" role="row" tabindex="-1">
                 <td class="ellipsis" ellipsis-tooltip="{{row.antragTyp | translate}}"
                     ng-bind="row.antragTyp | translate"></td>
                 <td class="ellipsis"
@@ -75,18 +76,27 @@
                     ng-bind="vm.translateStatus(row)"></td>
                 <td class="ellipsis" ellipsis-tooltip="{{vm.getVerantwortlicherFullName(row)}}"
                     ng-bind="vm.getVerantwortlicherFullName(row)" hide-sm hide-xs></td>
+                <td class="ellipsis" role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%" hide-sm
+                    hide-xs>
+                    <dv-loading-button type="button" button-click="vm.editAntrag(row)"
+                                       button-class="dv-btn-operation dv-btn-operation--white dv-btn-row"
+                                       aria-label="{{'TABLE_EDIT'|translate}}">
+                        <i class="fa fa-lg fa-arrow-right" aria-label="{{'TABLE_EDIT'|translate}}">
+                        </i>
+                    </dv-loading-button>
+                </td>
             </tr>
             <tr ng-if="vm.getAntragList().length === 0">
-                <td colspan="3" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-gt-sm></td>
-                <td colspan="5" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-sm hide-xs></td>
+                <td colspan="4" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-gt-sm></td>
+                <td colspan="6" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-sm hide-xs></td>
             </tr>
             </tbody>
             <tfoot>
             <tr>
-                <td colspan="5" class="text-center" hide-sm hide-xs>
+                <td colspan="6" class="text-center" hide-sm hide-xs>
                     <div st-pagination="" st-items-by-page="10" st-displayed-pages="5"></div>
                 </td>
-                <td colspan="3" class="text-center" hide-gt-sm>
+                <td colspan="4" class="text-center" hide-gt-sm>
                     <div st-pagination="" st-items-by-page="10" st-displayed-pages="5"></div>
                 </td>
             </tr>

@@ -1,10 +1,7 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxDokument;
-import ch.dvbern.ebegu.api.dtos.JaxDokumentGrund;
-import ch.dvbern.ebegu.api.dtos.JaxDokumente;
-import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.entities.Dokument;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -42,7 +39,7 @@ import java.util.Set;
  */
 @Path("dokumente")
 @Stateless
-@Api
+@Api(description = "Resource für die Verwaltung von Dokumenten")
 public class DokumenteResource {
 
 	@SuppressWarnings("CdiInjectionPointsInspection")
@@ -62,6 +59,8 @@ public class DokumenteResource {
 	private FileSaverService fileSaverService;
 
 
+	@ApiOperation(value = "Gibt alle Dokumente zurück, welche zum übergebenen Gesuch vorhanden sind.",
+		response = JaxDokumente.class)
 	@Nullable
 	@GET
 	@Path("/{gesuchId}")
@@ -72,20 +71,18 @@ public class DokumenteResource {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
 		if (gesuch.isPresent()) {
-
 			final Set<DokumentGrund> dokumentGrundsNeeded = dokumentenverzeichnisEvaluator.calculate(gesuch.get());
 			dokumentenverzeichnisEvaluator.addSonstige(dokumentGrundsNeeded);
 			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded, gesuch.get());
-
 			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.findAllDokumentGrundByGesuch(gesuch.get());
-
 			final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrund, gesuch.get());
-
 			return converter.dokumentGruendeToJAX(dokumentGrundsMerged);
 		}
 		throw new EbeguEntityNotFoundException("getDokumente", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}
 
+	@ApiOperation(value = "Gibt alle Dokumente eines bestimmten Typs zurück, die zu einem Gesuch vorhanden sind",
+		response = JaxDokumente.class)
 	@Nullable
 	@GET
 	@Path("/byTyp/{gesuchId}/{dokumentGrundTyp}")
@@ -97,22 +94,17 @@ public class DokumenteResource {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
 		if (gesuch.isPresent()) {
-
 			final Set<DokumentGrund> dokumentGrundsNeeded = new HashSet<>();
-
 			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded, gesuch.get());
-
 			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.findAllDokumentGrundByGesuchAndDokumentType(gesuch.get(), dokumentGrundTyp);
-
 			final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrund, gesuch.get());
-
 			return converter.dokumentGruendeToJAX(dokumentGrundsMerged);
 		}
 		throw new EbeguEntityNotFoundException("getDokumente", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}
 
 
-	@ApiOperation(value = "Update a Institution in the database.")
+	@ApiOperation(value = "Aktualisiert ein Dokument in der Datenbank", response = JaxDokumentGrund.class)
 	@Nullable
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -142,19 +134,17 @@ public class DokumenteResource {
 		if (modifiedDokumentGrund == null) {
 			return null;
 		}
-
 		return converter.dokumentGrundToJax(modifiedDokumentGrund);
-
 	}
 
 	/**
 	 * Gibt Liste von Dokumenten zurück, welche auf der DB vorhanden sind auf dem jaxB Objekt jedoch nicht mehr.
 	 */
 	private Set<Dokument> findDokumentToRemove(JaxDokumentGrund dokumentGrundJAXP, DokumentGrund dokumentGrundFromDB) {
-		Set<Dokument> dokumentsToRemove = new HashSet<>();
 		Validate.notNull(dokumentGrundFromDB.getDokumente());
 		Validate.notNull(dokumentGrundJAXP.getDokumente());
 
+		Set<Dokument> dokumentsToRemove = new HashSet<>();
 		for (Dokument dokument : dokumentGrundFromDB.getDokumente()) {
 			boolean found = false;
 			for (JaxDokument jaxDokument : dokumentGrundJAXP.getDokumente()) {
@@ -169,5 +159,4 @@ public class DokumenteResource {
 		}
 		return dokumentsToRemove;
 	}
-
 }

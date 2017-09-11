@@ -175,6 +175,7 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import ch.dvbern.lib.date.DateConvertUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -437,6 +438,8 @@ public class JaxBConverter {
 		final JaxEnversRevision jaxEnversRevision = new JaxEnversRevision();
 		if (abstractEntity instanceof ApplicationProperty) {
 			jaxEnversRevision.setEntity(applicationPropertyToJAX((ApplicationProperty) abstractEntity));
+		} else {
+			throw new NotImplementedException("Diese Funktion ist erst fuer ApplicationProperties umgesetzt!");
 		}
 		jaxEnversRevision.setRev(revisionEntity.getId());
 		jaxEnversRevision.setRevTimeStamp(DateConvertUtils.asLocalDateTime(revisionEntity.getRevisionDate()));
