@@ -25,6 +25,7 @@ import {ShowTooltipController} from '../../dialog/ShowTooltipController';
 import Moment = moment.Moment;
 import IScope = angular.IScope;
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
@@ -61,7 +62,7 @@ export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOpti
     controllerAs = 'vmgs';
 }
 
-export class GesuchToolbarController {
+export class GesuchToolbarController implements IDVFocusableController {
 
     userList: Array<TSUser>;
     antragList: Array<TSAntragDTO>;
@@ -598,7 +599,15 @@ export class GesuchToolbarController {
             + '<span>Effingerstrasse 21</span><br>'
             + '<span>3008 Bern</span><br>'
             + '<a href="tel:0313215115"><span>031 321 51 15</span></a><br>'
-            + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>'
+            + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>',
+            parentController: this
         });
+    }
+
+    /**
+     * Sets the focus back to the Kontakt icon.
+     */
+    public setFocusBack(): void {
+        angular.element('#kontaktButton').first().focus();
     }
 }

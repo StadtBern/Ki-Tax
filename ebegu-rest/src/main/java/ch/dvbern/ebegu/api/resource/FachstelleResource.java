@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.entities.Fachstelle;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.FachstelleService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
  */
 @Path("fachstellen")
 @Stateless
-@Api
+@Api(description = "Resource zur Verwaltung von Fachstellen")
 public class FachstelleResource {
 
 	@Inject
@@ -41,7 +42,7 @@ public class FachstelleResource {
 	private JaxBConverter converter;
 
 
-
+	@ApiOperation(value = "Saves a Fachstelle in the database", response = JaxFachstelle.class)
 	@Nullable
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -62,6 +63,7 @@ public class FachstelleResource {
 		return converter.fachstelleToJAX(persistedFachstelle);
 	}
 
+	@ApiOperation(value = "Returns all Fachstellen", responseContainer = "List", response = JaxFachstelle.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
@@ -72,6 +74,8 @@ public class FachstelleResource {
 			.collect(Collectors.toList());
 	}
 
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+	@ApiOperation(value = "Removes a Fachstelle from the database", response = Void.class)
 	@Nullable
 	@DELETE
 	@Path("/{fachstelleJAXPID}")
@@ -86,6 +90,7 @@ public class FachstelleResource {
 			return Response.ok().build();
 	}
 
+	@ApiOperation(value = "Returns the Fachstelle with the given Id", response = JaxFachstelle.class)
 	@Nullable
 	@GET
 	@Path("/{fachstelleId}")
@@ -100,9 +105,6 @@ public class FachstelleResource {
 		if (!fachstelleFromDB.isPresent()) {
 			return null;
 		}
-
 		return converter.fachstelleToJAX(fachstelleFromDB.get());
-
 	}
-
 }

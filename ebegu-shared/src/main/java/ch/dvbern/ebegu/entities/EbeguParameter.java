@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
- * Entitaet zum Speichern von zeitabhängigen Parametern in E-BEGU
+ * Entitaet zum Speichern von zeitabhängigen Parametern in Ki-Tax
  */
 @Audited
 @Entity

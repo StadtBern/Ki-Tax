@@ -28,7 +28,7 @@ import java.util.Optional;
  */
 @Path("falle")
 @Stateless
-@Api
+@Api(description = "Resource zum Verwalten von Fällen (Familien)")
 public class FallResource {
 
 	@Inject
@@ -38,7 +38,7 @@ public class FallResource {
 
 
 	@ApiOperation(value = "Creates a new Fall in the database. The transfer object also has a relation to Gesuch " +
-		"which is stored in the database as well.")
+		"which is stored in the database as well.", response = JaxFall.class)
 	@Nullable
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -59,6 +59,7 @@ public class FallResource {
 		return converter.fallToJAX(persistedFall);
 	}
 
+	@ApiOperation(value = "Returns the Fall with the given Id.", response = JaxFall.class)
 	@Nullable
 	@GET
 	@Path("/id/{fallId}")
@@ -77,6 +78,7 @@ public class FallResource {
 		return converter.fallToJAX(fallToReturn);
 	}
 
+	@ApiOperation(value = "Returns the Fall having the current Benutzer as owner", response = JaxFall.class)
 	@Nullable
 	@GET
 	@Path("/currentbenutzer")
@@ -91,7 +93,7 @@ public class FallResource {
 		return converter.fallToJAX(fallToReturn);
 	}
 
-	@ApiOperation(value = "Creates a new Fall in the database with the current user as owner.")
+	@ApiOperation(value = "Creates a new Fall in the database with the current user as owner.", response = JaxFall.class)
 	@NotNull
 	@PUT
 	@Path("/createforcurrentbenutzer")

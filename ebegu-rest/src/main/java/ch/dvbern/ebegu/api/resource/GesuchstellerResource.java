@@ -1,27 +1,5 @@
 package ch.dvbern.ebegu.api.resource;
 
-import java.time.LocalDate;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriInfo;
-
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
@@ -41,12 +19,27 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
+import java.time.LocalDate;
+import java.util.Optional;
+
 /**
  * REST Resource fuer Gesuchsteller
  */
 @Path("gesuchsteller")
 @Stateless
-@Api
+@Api(description = "Resource für Gesuchsteller")
 public class GesuchstellerResource {
 
 	@Inject
@@ -62,10 +55,11 @@ public class GesuchstellerResource {
 	private JaxBConverter converter;
 
 
-	@ApiOperation(value = "Updates a Gesuchsteller or creates it if it doesn't exist in the database. The transfer object also has a relation to adressen " +
-		"(wohnadresse, umzugadresse, korrespondenzadresse) these are stored in the database as well. Note that wohnadresse and" +
-		"umzugadresse are both stored as consecutive wohnadressen in the database. Umzugs flag wird gebraucht, um WizardSteps" +
-		"richtig zu setzen.")
+	@ApiOperation(value = "Updates a Gesuchsteller or creates it if it doesn't exist in the database. The transfer " +
+		"object also has a relation to adressen (wohnadresse, umzugadresse, korrespondenzadresse) these are stored in " +
+		"the database as well. Note that wohnadresse and umzugadresse are both stored as consecutive wohnadressen " +
+		"in the database. Umzugs flag wird gebraucht, um WizardSteps richtig zu setzen.",
+		response = JaxGesuchstellerContainer.class)
 	@Nullable
 	@PUT
 	@Path("/{gesuchId}/gsNumber/{gsNumber}/{umzug}")
@@ -97,6 +91,8 @@ public class GesuchstellerResource {
 		return converter.gesuchstellerContainerToJAX(persistedGesuchsteller);
 	}
 
+	@ApiOperation(value = "Sucht den Gesuchsteller mit der uebergebenen Id in der Datenbank.",
+		response = JaxGesuchstellerContainer.class)
 	@Nullable
 	@GET
 	@Path("/id/{gesuchstellerId}")
@@ -117,6 +113,8 @@ public class GesuchstellerResource {
 		return converter.gesuchstellerContainerToJAX(gesuchstellerToReturn);
 	}
 
+	@ApiOperation(value = "Sucht eine Person im EWK nach Name, Vorname, Geburtsdatum und Geschlecht.",
+		response = EWKResultat.class)
 	@Nullable
 	@GET
 	@Path("/ewk/search/attributes")
@@ -135,6 +133,7 @@ public class GesuchstellerResource {
         return personenSucheService.suchePerson(nachname, geburtsdatumDate, Geschlecht.valueOf(geschlecht));
 	}
 
+	@ApiOperation(value = "Sucht eine Person im EWK nach EWK-Id.", response = EWKResultat.class)
 	@Nullable
 	@GET
 	@Path("/ewk/search/id/{personId}")
@@ -144,6 +143,8 @@ public class GesuchstellerResource {
 		return personenSucheService.suchePerson(personId);
 	}
 
+	@ApiOperation(value = "Verknuepft einen Gesuchsteller mit einer Person aus dem EWK. Die EWK-Id wird auf dem " +
+		"Gesuchsteller gesetzt.", response = Gesuchsteller.class)
 	@Nullable
 	@PUT
 	@Path("/ewk/{gesuchstellerId}/{ewkPersonId}")

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Interface für alle Berechnungs-Regeln in E-BEGU.
+ * Interface für alle Berechnungs-Regeln in Ki-Tax.
  */
 public interface Rule {
 
