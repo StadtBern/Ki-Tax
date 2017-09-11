@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
-import ch.dvbern.ebegu.util.Constants;
+import java.time.LocalDate;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -10,7 +9,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.time.LocalDate;
+
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+import ch.dvbern.ebegu.util.Constants;
 
 /**
  * DTO fuer Familiensituationen
@@ -51,6 +52,13 @@ public class JaxEinkommensverschlechterungInfo extends JaxAbstractDTO {
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate stichtagFuerBasisJahrPlus2;
+
+	@NotNull
+	private Boolean ekvBasisJahrPlus1Annulliert;
+
+	@NotNull
+	private Boolean ekvBasisJahrPlus2Annulliert;
+
 
 	public Boolean getEinkommensverschlechterung() {
 		return einkommensverschlechterung;
@@ -128,5 +136,21 @@ public class JaxEinkommensverschlechterungInfo extends JaxAbstractDTO {
 
 	public void setGemeinsameSteuererklaerung_BjP2(@Nullable Boolean gemeinsameSteuererklaerung_BjP2) {
 		this.gemeinsameSteuererklaerung_BjP2 = gemeinsameSteuererklaerung_BjP2;
+	}
+
+	public Boolean getEkvBasisJahrPlus1Annulliert() {
+		return ekvBasisJahrPlus1Annulliert;
+	}
+
+	public void setEkvBasisJahrPlus1Annulliert(Boolean ekvBasisJahrPlus1Annulliert) {
+		this.ekvBasisJahrPlus1Annulliert = ekvBasisJahrPlus1Annulliert;
+	}
+
+	public Boolean getEkvBasisJahrPlus2Annulliert() {
+		return ekvBasisJahrPlus2Annulliert;
+	}
+
+	public void setEkvBasisJahrPlus2Annulliert(Boolean ekvBasisJahrPlus2Annulliert) {
+		this.ekvBasisJahrPlus2Annulliert = ekvBasisJahrPlus2Annulliert;
 	}
 }

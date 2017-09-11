@@ -57,41 +57,78 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 		}
 	}
 
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	private void setMassgebendesEinkommen(boolean isEkv1, boolean isEkv2, FinanzDatenDTO finanzDatenDTO, VerfuegungZeitabschnitt verfuegungZeitabschnitt, Betreuung betreuung) {
 		int basisjahr = betreuung.extractGesuchsperiode().getBasisJahr();
 		int basisjahrPlus1 = betreuung.extractGesuchsperiode().getBasisJahrPlus1();
 		int basisjahrPlus2 = betreuung.extractGesuchsperiode().getBasisJahrPlus2();
 		if (isEkv1) {
-			if (finanzDatenDTO.isEkv1Accepted()) {
+			if (finanzDatenDTO.isEkv1AcceptedAndNotAnnuliert()) {
 				verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP1VorAbzFamGr());
 				verfuegungZeitabschnitt.setEinkommensjahr(basisjahrPlus1);
 				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ACCEPT_MSG, String.valueOf(basisjahrPlus1));
 			} else {
 				verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjVorAbzFamGr());
 				verfuegungZeitabschnitt.setEinkommensjahr(basisjahr);
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, String.valueOf(basisjahrPlus1));
+				// Je nachdem, ob es (manuell) annulliert war oder die 20% nicht erreicht hat, kommt eine andere Meldung
+				if (finanzDatenDTO.isEkv1Annulliert()) {
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ANNULLIERT_MSG, "" + basisjahrPlus1);
+				} else {
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, "" + basisjahrPlus1);
+				}
 			}
 
 		} else if (isEkv2) {
-			if (finanzDatenDTO.isEkv2Accepted()) {
+			if (finanzDatenDTO.isEkv2AcceptedAndNotAnnuliert()) {
 				// EKV 1 accepted -> basisjahr + 2
 				verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP2VorAbzFamGr());
 				verfuegungZeitabschnitt.setEinkommensjahr(basisjahrPlus2);
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ACCEPT_MSG, String.valueOf(basisjahrPlus2));
-			} else if (verfuegungZeitabschnitt.isEkv1NotExisting() || !finanzDatenDTO.isEkv1Accepted()) {
-				// EKV 2 not accepted and no EKV 1 present or accepted -> basisjahr
-				verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjVorAbzFamGr());
-				verfuegungZeitabschnitt.setEinkommensjahr(basisjahr);
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, String.valueOf(basisjahrPlus2));
-			} else {
-				// EKV 2 not accepted, but EKV 1 accepted -> basisjahr + 1
-				verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP1VorAbzFamGr());
-				verfuegungZeitabschnitt.setEinkommensjahr(basisjahrPlus1);
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, String.valueOf(basisjahrPlus2));
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ACCEPT_MSG, "" + basisjahrPlus2);
+			} else  {
+				if (verfuegungZeitabschnitt.isEkv1NotExisting() || finanzDatenDTO.isEkv1Annulliert()) {
+					verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjVorAbzFamGr());
+					verfuegungZeitabschnitt.setEinkommensjahr(basisjahr);
+				} else {
+					verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP1VorAbzFamGr());
+					verfuegungZeitabschnitt.setEinkommensjahr(basisjahrPlus1);
+				}
+				if (finanzDatenDTO.isEkv2Annulliert()) {
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ANNULLIERT_MSG, "" + basisjahrPlus2);
+				} else {
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, "" + basisjahrPlus2);
+				}
 			}
 		} else {
 			verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjVorAbzFamGr());
 			verfuegungZeitabschnitt.setEinkommensjahr(basisjahr);
+		}
+
+		handleSpecialCases(finanzDatenDTO, verfuegungZeitabschnitt, basisjahrPlus1);
+
+	}
+
+	/**
+	 * This method will handle all special cases that can happen with the data of EKV
+	 *
+	 * Sonderfall: Die EKV1 ist im Dezember und die EKV2 im "Vorjahr", d.h. ebenfalls im Dezember.
+	 * In diesem Fall haben wir im selben Zeitabschnitt eigentlich 2 Einkommensverschlechterungen, die entweder
+	 * beide akzeptiert oder abgelehnt oder ignoriert bzw. alle Kombinationen davon sein können.
+	 * In diesen Fällen müssen die Kommentare für EKV1 noch angepasst werden
+	 */
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
+	private void handleSpecialCases(FinanzDatenDTO finanzDatenDTO, VerfuegungZeitabschnitt verfuegungZeitabschnitt,
+		int basisjahrPlus1) {
+		if (finanzDatenDTO.getDatumVonBasisjahrPlus1() != null && finanzDatenDTO.getDatumVonBasisjahrPlus2() != null) {
+			if (finanzDatenDTO.getDatumVonBasisjahrPlus1().isEqual(finanzDatenDTO.getDatumVonBasisjahrPlus2())) {
+				if (finanzDatenDTO.isEkv1AcceptedAndNotAnnuliert()) {
+					// Die EKV1 kommt zum Zuge, wird aber durch die EKV2 "überschrieben"
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ACCEPT_MSG, String.valueOf(basisjahrPlus1));
+				} else if (finanzDatenDTO.isEkv1Annulliert()) {
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ANNULLIERT_MSG, String.valueOf(basisjahrPlus1));
+				} else {
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, String.valueOf(basisjahrPlus1));
+				}
+			}
 		}
 	}
 
