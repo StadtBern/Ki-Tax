@@ -30,7 +30,6 @@ export class DVErwerbspensumListController {
     erwerbspensen: TSErwerbspensum[];
     tableId: string;
     tableTitle: string;
-    removeButtonTitle: string;
     addButtonText: string;
     addButtonVisible: boolean;
     addButtonEnabled: boolean;
@@ -44,7 +43,6 @@ export class DVErwerbspensumListController {
     }
 
     $onInit() {
-        this.removeButtonTitle = 'Eintrag entfernen';
         if (!this.addButtonText) {
             this.addButtonText = 'add item';
         }
