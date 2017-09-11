@@ -35,7 +35,7 @@
                                         </dv-datepicker>
                                         <dv-bisher gs="vm.model.familiensituationGS.aenderungPer"
                                                    ja="vm.model.familiensituationJA.aenderungPer"></dv-bisher>
-                                        <dv-error-messages for="vm.form.aenderungPer.$error"
+                                        <dv-error-messages input-id="aenderungPer_ID" for="vm.form.aenderungPer.$error"
                                                            class="error"></dv-error-messages>
                                     </div>
                                 </div>
@@ -50,8 +50,8 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group">
-                                <h1 class="required" aria-hidden><span
-                                    data-translate="FAMILIENSITUATION_FRAGE_1"></span></h1>
+                                <span class="ebeguH1 required"
+                                      data-translate="FAMILIENSITUATION_FRAGE_1"></span>
                                 <dv-radio-container name="familienstatus"
                                                     ng-model="vm.getFamiliensituation().familienstatus"
                                                     ng-required="true"
@@ -59,9 +59,9 @@
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="vm.isEnabled()"
-                                                    aria-label="{{ 'FAMILIENSITUATION_FRAGE_1' |translate}}">
-                                </dv-radio-container>
-                                <dv-error-messages for="vm.form.familienstatus.$error"
+                                                    aria-label="{{ 'FAMILIENSITUATION_FRAGE_1' |translate}}"
+                                                    aria-described-by="familienstatus-error"></dv-radio-container>
+                                <dv-error-messages input-id="familienstatus" for="vm.form.familienstatus.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
@@ -71,10 +71,11 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question" ng-if="vm.showGesuchstellerKardinalitaet()">
                             <div class="form-group">
-                                <h1 class="required" aria-hidden="true">
+                                <span class="ebeguH1 required">
                                     <span data-translate="FAMILIENSITUATION_FRAGE_2"></span>
-                                    <dv-tooltip text="'FAMILIENSITUATION_HELP' | translate"></dv-tooltip>
-                                </h1>
+                                    <dv-tooltip input-id="gesuchstellerKardinalitaet"
+                                                text="'FAMILIENSITUATION_HELP' | translate"></dv-tooltip>
+                                </span>
                                 <dv-radio-container name="gesuchstellerKardinalitaet"
                                                     ng-model="vm.getFamiliensituation().gesuchstellerKardinalitaet"
                                                     ng-required="true"
@@ -82,9 +83,10 @@
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="vm.isEnabled()"
-                                                    aria-label="{{ 'FAMILIENSITUATION_FRAGE_2' |translate}}">
-                                </dv-radio-container>
-                                <dv-error-messages for="vm.form.gesuchstellerKardinalitaet.$error"
+                                                    aria-label="{{ 'FAMILIENSITUATION_FRAGE_2' |translate}}"
+                                                    aria-described-by="gesuchstellerKardinalitaet-error"></dv-radio-container>
+                                <dv-error-messages input-id="gesuchstellerKardinalitaet"
+                                                   for="vm.form.gesuchstellerKardinalitaet.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
