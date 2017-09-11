@@ -86,7 +86,7 @@ public class AuthResource {
 	public Response initSSOLogin(@Nullable @QueryParam("relayPath") String relayPath) {
 
 		String url = this.loginProviderInfoRestService.getSSOLoginInitURL(relayPath);
-		LOG.warn("Received URL to init single sign on login '{}'", url);
+		LOG.debug("Received URL to initialize singleSignOn login '{}'", url);
 		return Response.ok(url).build();
 
 //		try {
@@ -129,7 +129,8 @@ public class AuthResource {
 				String sessionID = currentAuthOpt.get().getSessionIndex();
 				if (sessionID != null) {
 					String logoutUrl = loginProviderInfoRestService.getSingleLogoutURL(relayPath, nameID, sessionID);
-
+					String url = this.loginProviderInfoRestService.getSSOLoginInitURL(relayPath);
+					LOG.debug("Received URL to initialize SSLogout '{}'", url);
 					return Response.ok(logoutUrl).build();
 				}
 			}
@@ -198,6 +199,11 @@ public class AuthResource {
 
 	}
 
+	/**
+	 * convert to dto that can be passed to login-connector
+	 * @param access AuthAccessElement to convert
+	 * @return DTO used to create cookie in login-connector
+	 */
 	private JaxAuthAccessElementCookieData convertToJaxAuthAccessElement(AuthAccessElement access) {
 		return new JaxAuthAccessElementCookieData(
 			access.getAuthId(),

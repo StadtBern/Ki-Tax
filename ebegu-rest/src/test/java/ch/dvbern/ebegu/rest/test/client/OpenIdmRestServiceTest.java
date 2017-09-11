@@ -17,10 +17,10 @@ import org.junit.runner.RunWith;
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResponse;
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
 import ch.dvbern.ebegu.api.client.OpenIdmRestService;
+import ch.dvbern.ebegu.api.util.OpenIDMUtil;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.rest.test.AbstractEbeguRestLoginTest;
-import ch.dvbern.ebegu.util.OpenIDMUtil;
 
 /**
  * Testet die Verbindung zum OpenIdm Server.

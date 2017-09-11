@@ -52,7 +52,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_PERSONENSUCHE_WSDL = "ebegu.personensuche.wsdl";
 	private static final String EBEGU_PERSONENSUCHE_USERNAME = "ebegu.personensuche.username";
 	private static final String EBEGU_PERSONENSUCHE_PASSWORD = "ebegu.personensuche.password";
-	private static final String EBEGU_LOGIN_PROVIDER_API_URL = "ebegu.login.provider.api.url";
+	public static final String EBEGU_LOGIN_PROVIDER_API_URL = "ebegu.login.provider.api.url";
 	private static final String EBEGU_LOGIN_API_ALLOW_REMOTE = "ebegu.login.api.allow.remote";
 	private static final String EBEGU_LOGIN_API_INTERNAL_USER = "ebegu.login.api.internal.user";
 	private static final String EBEGU_LOGIN_API_INTERNAL_PASSWORD = "ebegu.login.api.internal.password";
@@ -178,7 +178,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 
 	@Override
 	public String getLoginProviderAPIUrl() {
-		return getString(EBEGU_LOGIN_PROVIDER_API_URL, "http://localhost:8080/connector/api/v1");
+		return getString(EBEGU_LOGIN_PROVIDER_API_URL);
 	}
 
 	@Override

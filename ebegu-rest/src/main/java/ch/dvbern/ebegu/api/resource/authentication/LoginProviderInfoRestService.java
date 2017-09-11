@@ -6,16 +6,20 @@ import javax.annotation.Nullable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.dvbern.ebegu.api.AuthConstants;
 import ch.dvbern.ebegu.api.client.ClientRequestLogger;
 import ch.dvbern.ebegu.api.client.ClientResponseLogger;
 import ch.dvbern.ebegu.api.connector.clientinfo.ILoginProviderInfoResource;
 import ch.dvbern.ebegu.config.EbeguConfiguration;
+
+import static ch.dvbern.ebegu.config.EbeguConfigurationImpl.EBEGU_LOGIN_PROVIDER_API_URL;
 
 /**
  * Service managing a REST Client {@link ILoginProviderInfoResource} that can grab infos from the LoginProvider that is used
@@ -41,6 +45,10 @@ public class LoginProviderInfoRestService {
 
 
 	public String getSSOLoginInitURL(@Nullable String relayPath) {
+		if (this.isConnectorEndpointSpecified()) {
+			LOG.debug("No external Login connector specified, redirecting to locallogin");
+			return AuthConstants.LOCALLOGIN_PATH;
+		}
 		return getLoginProviderInfoProxClient().getSSOLoginInitURL(relayPath);
 	}
 
@@ -52,6 +60,12 @@ public class LoginProviderInfoRestService {
 	private ILoginProviderInfoResource getLoginProviderInfoProxClient() {
 		if (loginProviderInfoRESTService == null) {
 			String baseURL = configuration.getLoginProviderAPIUrl();
+			if (baseURL == null) {
+				final String errMsg = "Can not construct LoginConnectorService because API-URI of connectoris not specified via property";
+				LOG.error(errMsg);
+				LOG.error("The required URI must be specified using the property " + EBEGU_LOGIN_PROVIDER_API_URL);
+				throw new IllegalStateException(errMsg);
+			}
 			LOG.debug("Creating REST Client for URL {}", baseURL);
 			ResteasyClient client = buildClient();
 			ResteasyWebTarget target = client.target(baseURL);
@@ -62,6 +76,10 @@ public class LoginProviderInfoRestService {
 
 		}
 		return loginProviderInfoRESTService;
+	}
+
+	private boolean isConnectorEndpointSpecified() {
+		return !StringUtils.isEmpty(configuration.getLoginProviderAPIUrl());
 	}
 
 	/**

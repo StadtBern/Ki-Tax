@@ -1,7 +1,9 @@
-package ch.dvbern.ebegu.util;
+package ch.dvbern.ebegu.api.util;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import ch.dvbern.ebegu.api.AuthConstants;
 
 /**
  * Helper to convert IDs from IAM to our id format and vice versa
@@ -22,11 +24,11 @@ public final class OpenIDMUtil {
 
 	@Nonnull
 	public static String convertToOpenIdmInstitutionsUID(@Nonnull String institutionId) {
-			return "I-" + institutionId;
+			return AuthConstants.OPENIDM_INST_PREFIX +  institutionId;
 		}
 
 	@Nonnull
 	public static String convertToOpenIdmTraegerschaftUID(@Nonnull String traegerschaftId) {
-		return "T-" + traegerschaftId;
+		return AuthConstants.OENIDM_TRAEGERSCHAFT_PREFIX + traegerschaftId;
 	}
 }
