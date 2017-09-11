@@ -368,9 +368,9 @@ public class DownloadResource {
 	 * Dazu wird das File fuer die entsprechende Betreuung generiert und auf dem Server fuer eine gewisse Zeit
 	 * zum download bereitgestellt.
 	 */
-	@Nonnull
 	@ApiOperation(value = "Generate Exportfile of a Verfuegung and return Token a token to download the generated file",
 		response = JaxDownloadFile.class)
+	@Nonnull
 	@GET
 	@Path("/{betreuungId}/EXPORT")
 	@Consumes(MediaType.WILDCARD)

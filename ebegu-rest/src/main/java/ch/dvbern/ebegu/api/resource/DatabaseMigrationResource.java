@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.api.resource;
 
-import ch.dvbern.ebegu.api.dtos.JaxAdresse;
 import ch.dvbern.ebegu.services.DatabaseMigrationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

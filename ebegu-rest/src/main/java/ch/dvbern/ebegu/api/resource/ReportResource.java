@@ -28,7 +28,6 @@ import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * REST Resource fuer Reports
@@ -64,9 +63,9 @@ public class ReportResource {
 		String ip = downloadResource.getIP(request);
 
 		Validate.notNull(dateTimeStichtag);
-		LocalDate dateTime = DateUtil.parseStringToDateOrReturnNow(dateTimeStichtag);
+		LocalDate date = DateUtil.parseStringToDateOrReturnNow(dateTimeStichtag);
 
-		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchStichtag(dateTime,
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchStichtag(date,
 			gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null);
 		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
 
@@ -90,16 +89,16 @@ public class ReportResource {
 
 		Validate.notNull(dateTimeFromParam);
 		Validate.notNull(dateTimeToParam);
-		LocalDate dateTimeFrom = DateUtil.parseStringToDateOrReturnNow(dateTimeFromParam);
-		LocalDate dateTimeTo = DateUtil.parseStringToDateOrReturnNow(dateTimeToParam);
+		LocalDate dateFrom = DateUtil.parseStringToDateOrReturnNow(dateTimeFromParam);
+		LocalDate dateTo = DateUtil.parseStringToDateOrReturnNow(dateTimeToParam);
 
-		if (!dateTimeTo.isAfter(dateTimeFrom)) {
+		if (!dateTo.isAfter(dateFrom)) {
 			throw new EbeguRuntimeException("getGesuchZeitraumReportExcel", "Fehler beim erstellen Report Gesuch Zeitraum"
 				, DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN);
 		}
 
-		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchZeitraum(dateTimeFrom,
-			dateTimeTo,
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchZeitraum(dateFrom,
+			dateTo,
 			gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null);
 
 		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);

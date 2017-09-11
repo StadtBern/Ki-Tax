@@ -83,12 +83,12 @@ public class SearchIndexResource {
 	/**
 	 * Not used at the moment
 	 */
-	@POST()
+	@ApiOperation(value = "Perform a search for the searchString in the indexes determined by the filter objects",
+		response = SearchResult.class)
+	@POST
 	@Path("/parameterized/query/{searchString}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Perform a search for the searchString in the indexes determined by the filter objects",
-		response = SearchResult.class)
 	public Response searchQuery(@Nonnull @PathParam("searchString") String searchStringParam, List<SearchFilter> filters) {
 		QuickSearchResultDTO searchResult = searchIndexService.search(searchStringParam, filters);
 		return Response.ok(searchResult).build();
@@ -100,10 +100,10 @@ public class SearchIndexResource {
 	 * In case there are no results left after filtering  objects that are not visible for the current user
 	 * the search is performed again with no max result limit.
 	 */
-	@GET
-	@Path("/quicksearch/{searchString}")
 	@ApiOperation(value = "Perform a search for the searchString in all indizes returning only a small number of results",
 		response = SearchResult.class)
+	@GET
+	@Path("/quicksearch/{searchString}")
 	public Response quicksearch(@Context HttpServletRequest request, @Nonnull @PathParam("searchString") String searchStringParam) {
 		Validate.notEmpty(searchStringParam);
 		QuickSearchResultDTO search = searchIndexService.quicksearch(searchStringParam, true);
@@ -123,10 +123,10 @@ public class SearchIndexResource {
 	 * The search is limited to a small number of results. In case there are no results left after filtering
 	 * objects that are not visible for the current user then the search is performed again with no max result limit.
 	 */
-	@GET
-	@Path("/globalsearch/{searchString}")
 	@ApiOperation(value = "Perform a search for the searchString in all indizes without a result limit",
 		response = SearchResult.class)
+	@GET
+	@Path("/globalsearch/{searchString}")
 	public Response globalsearch(@Context HttpServletRequest request, @Nonnull @PathParam("searchString") String searchStringParam) {
 		Validate.notEmpty(searchStringParam);
 		QuickSearchResultDTO search = searchIndexService.quicksearch(searchStringParam, false);

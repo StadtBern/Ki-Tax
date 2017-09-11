@@ -19,7 +19,6 @@ import ch.dvbern.ebegu.services.KindService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
-import org.jboss.resteasy.annotations.providers.jaxb.JAXBConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -196,13 +195,13 @@ public class BetreuungResource {
 		return converter.betreuungToJAX(betreuungToReturn);
 	}
 
-	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@ApiOperation(value = "Löscht die Betreuung mit der übergebenen Id in der Datenbank. Dabei wird geprüft, ob der " +
 		"eingeloggte Benutzer für die gesuchte Betreuung berechtigt ist", response = Void.class)
 	@Nullable
 	@DELETE
 	@Path("/{betreuungId}")
 	@Consumes(MediaType.WILDCARD)
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	public Response removeBetreuung(
 		@Nonnull @NotNull @PathParam("betreuungId") JaxId betreuungJAXPId,
 		@Context HttpServletResponse response) {

@@ -30,21 +30,21 @@ public interface ReportService {
 
 	// Gesuch Stichtag
 	@Nonnull
-	List<GesuchStichtagDataRow> getReportDataGesuchStichtag(@Nonnull LocalDate datetime, @Nullable String gesuchPeriodeID)
+	List<GesuchStichtagDataRow> getReportDataGesuchStichtag(@Nonnull LocalDate date, @Nullable String gesuchPeriodeID)
 		throws IOException, URISyntaxException;
 
 	@Nullable
-	UploadFileInfo generateExcelReportGesuchStichtag(@Nonnull LocalDate datetime, @Nullable String gesuchPeriodeID)
+	UploadFileInfo generateExcelReportGesuchStichtag(@Nonnull LocalDate date, @Nullable String gesuchPeriodeID)
 		throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
 
 	// Gesuch Zeitraum
 
 	@Nonnull
-	List<GesuchZeitraumDataRow> getReportDataGesuchZeitraum(@Nonnull LocalDate datetimeVon, @Nonnull LocalDate datetimeBis, @Nullable String gesuchPeriodeID)
+	List<GesuchZeitraumDataRow> getReportDataGesuchZeitraum(@Nonnull LocalDate dateVon, @Nonnull LocalDate dateBis, @Nullable String gesuchPeriodeID)
 		throws IOException, URISyntaxException;
 
 	@Nullable
-	UploadFileInfo generateExcelReportGesuchZeitraum(@Nonnull LocalDate datetimeVon, @Nonnull LocalDate datetimeBis, @Nullable String gesuchPeriodeID)
+	UploadFileInfo generateExcelReportGesuchZeitraum(@Nonnull LocalDate dateVon, @Nonnull LocalDate dateBis, @Nullable String gesuchPeriodeID)
 		throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
 
 	// Kanton

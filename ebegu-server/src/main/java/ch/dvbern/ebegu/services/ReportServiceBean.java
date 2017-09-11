@@ -172,9 +172,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	@Nonnull
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
-	public List<GesuchStichtagDataRow> getReportDataGesuchStichtag(@Nonnull LocalDate datetime, @Nullable String gesuchPeriodeID) {
+	public List<GesuchStichtagDataRow> getReportDataGesuchStichtag(@Nonnull LocalDate date, @Nullable String gesuchPeriodeID) {
 
-		Objects.requireNonNull(datetime, "Das Argument 'date' darf nicht leer sein");
+		Objects.requireNonNull(date, "Das Argument 'date' darf nicht leer sein");
 
 		EntityManager em = persistence.getEntityManager();
 
@@ -183,7 +183,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		if (em != null) {
 			Query gesuchStichtagQuery = em.createNamedQuery("GesuchStichtagNativeSQLQuery");
 			// Wir rechnen zum Stichtag einen Tag dazu, damit es bis 24.00 des Vorabends gilt.
-			gesuchStichtagQuery.setParameter("stichTagDate", Constants.SQL_DATE_FORMAT.format(datetime.plusDays(1)));
+			gesuchStichtagQuery.setParameter("stichTagDate", Constants.SQL_DATE_FORMAT.format(date.plusDays(1)));
 			gesuchStichtagQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
 			gesuchStichtagQuery.setParameter("onlySchulamt", principalBean.isCallerInRole(SCHULAMT) ? 1 : 0);
 			results = gesuchStichtagQuery.getResultList();
@@ -193,9 +193,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
-	public UploadFileInfo generateExcelReportGesuchStichtag(@Nonnull LocalDate datetime, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
+	public UploadFileInfo generateExcelReportGesuchStichtag(@Nonnull LocalDate date, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 
-		Objects.requireNonNull(datetime, "Das Argument 'date' darf nicht leer sein");
+		Objects.requireNonNull(date, "Das Argument 'date' darf nicht leer sein");
 
 		final ReportVorlage reportVorlage = ReportVorlage.VORLAGE_REPORT_GESUCH_STICHTAG;
 
@@ -205,7 +205,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportVorlage.getDataSheetName());
 
-		List<GesuchStichtagDataRow> reportData = getReportDataGesuchStichtag(datetime, gesuchPeriodeID);
+		List<GesuchStichtagDataRow> reportData = getReportDataGesuchStichtag(date, gesuchPeriodeID);
 		ExcelMergerDTO excelMergerDTO = geuschStichtagExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault());
 
 		mergeData(sheet, excelMergerDTO, reportVorlage.getMergeFields());
@@ -221,9 +221,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
-	public List<GesuchZeitraumDataRow> getReportDataGesuchZeitraum(@Nonnull LocalDate datetimeVon, @Nonnull LocalDate datetimeBis, @Nullable String gesuchPeriodeID) throws IOException, URISyntaxException {
+	public List<GesuchZeitraumDataRow> getReportDataGesuchZeitraum(@Nonnull LocalDate dateVon, @Nonnull LocalDate dateBis, @Nullable String gesuchPeriodeID) throws IOException, URISyntaxException {
 
-		validateDateParams(datetimeVon, datetimeBis);
+		validateDateParams(dateVon, dateBis);
 
 		// Bevor wir die Statistik starten, muessen gewissen Werte nachgefuehrt werden
 		runStatisticsBetreuung();
@@ -236,10 +236,10 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		if (em != null) {
 			Query gesuchPeriodeQuery = em.createNamedQuery("GesuchZeitraumNativeSQLQuery");
-			gesuchPeriodeQuery.setParameter("fromDateTime", Constants.SQL_DATE_FORMAT.format(datetimeVon));
-			gesuchPeriodeQuery.setParameter("fromDate", Constants.SQL_DATE_FORMAT.format(datetimeVon));
-			gesuchPeriodeQuery.setParameter("toDateTime", Constants.SQL_DATE_FORMAT.format(datetimeBis));
-			gesuchPeriodeQuery.setParameter("toDate", Constants.SQL_DATE_FORMAT.format(datetimeBis));
+			gesuchPeriodeQuery.setParameter("fromDateTime", Constants.SQL_DATE_FORMAT.format(dateVon));
+			gesuchPeriodeQuery.setParameter("fromDate", Constants.SQL_DATE_FORMAT.format(dateVon));
+			gesuchPeriodeQuery.setParameter("toDateTime", Constants.SQL_DATE_FORMAT.format(dateBis));
+			gesuchPeriodeQuery.setParameter("toDate", Constants.SQL_DATE_FORMAT.format(dateBis));
 			gesuchPeriodeQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
 			gesuchPeriodeQuery.setParameter("onlySchulamt", principalBean.isCallerInRole(SCHULAMT) ? 1 : 0);
 			results = gesuchPeriodeQuery.getResultList();
@@ -249,10 +249,10 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
-	public UploadFileInfo generateExcelReportGesuchZeitraum(@Nonnull LocalDate datetimeVon, @Nonnull LocalDate datetimeBis, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
+	public UploadFileInfo generateExcelReportGesuchZeitraum(@Nonnull LocalDate dateVon, @Nonnull LocalDate dateBis, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 
-		validateDateParams(datetimeVon, datetimeBis);
-		validateDateParams(datetimeVon, datetimeBis);
+		validateDateParams(dateVon, dateBis);
+		validateDateParams(dateVon, dateBis);
 
 		final ReportVorlage reportVorlage = ReportVorlage.VORLAGE_REPORT_GESUCH_ZEITRAUM;
 
@@ -262,7 +262,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportVorlage.getDataSheetName());
 
-		List<GesuchZeitraumDataRow> reportData = getReportDataGesuchZeitraum(datetimeVon, datetimeBis, gesuchPeriodeID);
+		List<GesuchZeitraumDataRow> reportData = getReportDataGesuchZeitraum(dateVon, dateBis, gesuchPeriodeID);
 		ExcelMergerDTO excelMergerDTO = geuschZeitraumExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault());
 
 		mergeData(sheet, excelMergerDTO, reportVorlage.getMergeFields());
