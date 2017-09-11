@@ -21,8 +21,8 @@
     font-size: 0;
     width: 0;
     height: 0;
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
 }
 
 dv-posteingang {
@@ -159,9 +159,18 @@ dv-pulldown-user-menu {
     height: @navbar-height;
     width: @navbar-height;
     line-height: @navbar-height;
-    &:hover, &:focus {
-        background-color: @contrast;
-        outline: none;
+    &:hover, &:focus:hover {
+        background: @contrast;
+        outline: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+    &:focus {
+        outline: 2px solid @contrast-darkest !important;
+        background: @contrast;
+        outline-offset: -1rem;
+        -webkit-box-shadow: none;
+        box-shadow: none;
     }
 }
 
@@ -200,7 +209,6 @@ dv-pulldown-user-menu {
     background-color: @background-error-color;
 }
 
-//todo (mrra) das braucht es wohl gar nicht mehr
 .form-horizontal {
     dv-error-messages {
         padding-left: 0.1rem;
@@ -257,7 +265,7 @@ md-dialog.md-default-theme, md-dialog {
 
 .md-virtual-repeat-container.md-autocomplete-suggestions-container {
     max-height: 99999999px !important;
-    z-index: @z-index-mobile-toolbar; //todo (mrra) Kannst du das  anschauen? das ist evtl. nicht so gut
+    z-index: @z-index-mobile-toolbar;
     box-shadow: none;
 }
 
@@ -343,10 +351,10 @@ dv-quicksearchbox {
 }
 
 .skiplinks {
-    .skiplinks__list{
+    .skiplinks__list {
         list-style: none;
-        height:0;
-        margin:0;
+        height: 0;
+        margin: 0;
     }
     .skip {
         position: fixed;
@@ -380,6 +388,42 @@ dv-quicksearchbox {
         }
     }
 
+}
+.row-button__th, .row-button__td{
+    width:0;
+    padding: 0 !important;
+    margin : 0!important;
+
+}
+.row-button__button{
+    position: fixed;
+    z-index: 108;
+    top: -1000px;
+    left: -1000px;
+    height: 1px;
+    width: 1px;
+    text-align: left;
+    overflow: hidden;
+    &:active,
+    &:focus,
+    &:hover {
+        position: static;
+
+        height: 100%;
+        width:100%;
+        line-height: 3rem;
+        overflow: visible;
+        border: 2px solid @contrast-darkest;
+        box-shadow: none;
+        outline: none;
+        background: @primary;
+        font-size: 1.8rem;
+        font-weight: bold;
+        display: block;
+        padding:0;
+        color: @contrast-lightest;
+        text-decoration: none;
+    }
 }
 
 /* Personal preference for BS modal.  The LESS below makes the backdrop white and

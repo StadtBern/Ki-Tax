@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxAdresse;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxZahlung;
 import ch.dvbern.ebegu.api.dtos.JaxZahlungsauftrag;
@@ -16,6 +17,7 @@ import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.ZahlungService;
 import ch.dvbern.ebegu.util.DateUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
 import javax.activation.MimeTypeParseException;
@@ -38,11 +40,11 @@ import java.util.stream.Collectors;
 import static ch.dvbern.ebegu.enums.UserRole.*;
 
 /**
- * resource fuer Zahlungen
+ * Resource fuer Zahlungen
  */
 @Path("zahlungen")
 @Stateless
-@Api(description = "Resource zum verwalten von Zahlungen")
+@Api(description = "Resource zum Verwalten von Zahlungen")
 public class ZahlungResource {
 
 
@@ -62,6 +64,8 @@ public class ZahlungResource {
 	private PrincipalBean principalBean;
 
 
+	@ApiOperation(value = "Gibt alle Zahlungsauftraege zurueck.",
+		responseContainer = "List", response = JaxZahlungsauftrag.class)
 	@Nullable
 	@GET
 	@Path("/all")
@@ -76,6 +80,9 @@ public class ZahlungResource {
 		return Collections.emptyList();
 	}
 
+	@ApiOperation(value = "Gibt alle Zahlungsauftraege aller Institutionen zurueck, fuer welche der eingeloggte " +
+		"Benutzer zustaendig ist.",
+		responseContainer = "List", response = JaxZahlungsauftrag.class)
 	@Nullable
 	@GET
 	@Path("/institution")
@@ -91,7 +98,8 @@ public class ZahlungResource {
 			.collect(Collectors.toList());
 	}
 
-
+	@ApiOperation(value = "Gibt den Zahlungsauftrag mit der uebebergebenen Id zurueck.",
+		response = JaxZahlungsauftrag.class)
 	@Nullable
 	@GET
 	@Path("/zahlungsauftrag/{zahlungsauftragId}")
@@ -111,11 +119,11 @@ public class ZahlungResource {
 			return converter.zahlungsauftragToJAX(optional.get(), true);
 		}
 		return new JaxZahlungsauftrag();
-
-
 	}
 
-
+	@ApiOperation(value = "Gibt den Zahlungsauftrag mit der uebebergebenen Id zurueck, jedoch nur mit den Eintraegen " +
+		"derjenigen Institutionen, fuer welche der eingeloggte Benutzer zustaendig ist",
+		response = JaxZahlungsauftrag.class)
 	@Nullable
 	@GET
 	@Path("/zahlungsauftraginstitution/{zahlungsauftragId}")
@@ -136,7 +144,8 @@ public class ZahlungResource {
 		return converter.zahlungsauftragToJAX(optional.get(), principalBean.discoverMostPrivilegedRole(), allowedInst);
 	}
 
-
+	@ApiOperation(value = "Setzt den Status des Zahlungsautrags auf ausgeloest. Danach kann er nicht mehr veraendert " +
+		"werden", response = JaxZahlungsauftrag.class)
 	@Nullable
 	@PUT
 	@Path("/ausloesen/{zahlungsauftragId}")
@@ -156,7 +165,7 @@ public class ZahlungResource {
 		return converter.zahlungsauftragToJAX(zahlungsauftrag, false);
 	}
 
-
+	@ApiOperation(value = "Erstellt einen neue Zahlungsauftrag", response = JaxZahlungsauftrag.class)
 	@Nullable
 	@GET
 	@Path("/create")
@@ -180,6 +189,7 @@ public class ZahlungResource {
 		return converter.zahlungsauftragToJAX(zahlungsauftrag, false);
 	}
 
+	@ApiOperation(value = "Aktualisiert einen Zahlungsauftrag", response = JaxZahlungsauftrag.class)
 	@Nullable
 	@GET
 	@Path("/update")
@@ -191,12 +201,11 @@ public class ZahlungResource {
 		@QueryParam("id") String id) throws EbeguRuntimeException {
 
 		LocalDate faelligkeitsdatum = DateUtil.parseStringToDateOrReturnNow(stringFaelligkeitsdatum);
-
 		final Zahlungsauftrag zahlungsauftragUpdated = zahlungService.zahlungsauftragAktualisieren(id, faelligkeitsdatum, beschrieb);
-
 		return converter.zahlungsauftragToJAX(zahlungsauftragUpdated, false);
 	}
 
+	@ApiOperation(value = "Setzt eine Zahlung eines Zahlungsauftrags auf bestaetigt", response = JaxZahlung.class)
 	@Nullable
 	@PUT
 	@Path("/bestaetigen/{zahlungId}")
@@ -212,6 +221,7 @@ public class ZahlungResource {
 		return converter.zahlungToJAX(zahlung);
 	}
 
+	@ApiOperation(value = "Loescht einen Zahlungsauftrag", response = Void.class)
 	@Nullable
 	@DELETE
 	@Path("/delete/{zahlungsauftragId}")

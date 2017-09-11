@@ -41,7 +41,7 @@
                                 <label class="md-no-float" for="bruttovermoegen1">
                                     <span data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GS_1"
                                           translate-values="{namegs1: vm.extractFullNameGS1()}"></span>
-                                    <dv-tooltip
+                                    <dv-tooltip input-id="bruttovermoegen1"
                                         text="'EINKOMMENSVERSCHLECHTERUNG_VERMOEGEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <div class="dv-input-container-medium-label">
@@ -54,7 +54,7 @@
                                     </dv-valueinput>
                                     <dv-bisher gs="vm.getEinkommensverschlechterungGS1_GS().bruttovermoegen"
                                                ja="vm.getEinkommensverschlechterungGS1_JA().bruttovermoegen"></dv-bisher>
-                                    <dv-error-messages for="vm.form.bruttovermoegen1.$error"
+                                    <dv-error-messages input-id="bruttovermoegen1" for="vm.form.bruttovermoegen1.$error"
                                                        class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
@@ -67,7 +67,7 @@
                                 <label class="md-no-float" for="bruttovermoegen2">
                                     <span data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GS_2"
                                           translate-values="{namegs2: vm.extractFullNameGS2()}"></span>
-                                    <dv-tooltip
+                                    <dv-tooltip input-id="bruttovermoegen2"
                                         text="'EINKOMMENSVERSCHLECHTERUNG_VERMOEGEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <div class="dv-input-container-medium-label">
@@ -80,7 +80,7 @@
                                     </dv-valueinput>
                                     <dv-bisher gs="vm.getEinkommensverschlechterungGS2_GS().bruttovermoegen"
                                                ja="vm.getEinkommensverschlechterungGS2_JA().bruttovermoegen"></dv-bisher>
-                                    <dv-error-messages for="vm.form.bruttovermoegen2.$error"
+                                    <dv-error-messages input-id="bruttovermoegen2" for="vm.form.bruttovermoegen2.$error"
                                                        class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
@@ -94,7 +94,7 @@
                                 <label class="md-no-float" for="schulden1">
                                     <span data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_1"
                                           translate-values="{namegs1: vm.extractFullNameGS1()}"></span>
-                                    <dv-tooltip
+                                    <dv-tooltip input-id="schulden1"
                                         text="'EINKOMMENSVERSCHLECHTERUNG_SCHULDEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <div class="dv-input-container-medium-label">
@@ -107,7 +107,7 @@
                                     </dv-valueinput>
                                     <dv-bisher gs="vm.getEinkommensverschlechterungGS1_GS().schulden"
                                                ja="vm.getEinkommensverschlechterungGS1_JA().schulden"></dv-bisher>
-                                    <dv-error-messages for="vm.form.schulden1.$error" class="error"></dv-error-messages>
+                                    <dv-error-messages input-id="schulden1" for="vm.form.schulden1.$error" class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
                         </div>
@@ -119,7 +119,7 @@
                                 <label class="md-no-float" for="schulden2">
                                     <span data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_2"
                                           translate-values="{namegs2: vm.extractFullNameGS2()}"></span>
-                                    <dv-tooltip
+                                    <dv-tooltip input-id="schulden2"
                                         text="'EINKOMMENSVERSCHLECHTERUNG_SCHULDEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <div class="dv-input-container-medium-label">
@@ -132,7 +132,7 @@
                                     </dv-valueinput>
                                     <dv-bisher gs="vm.getEinkommensverschlechterungGS2_GS().schulden"
                                                ja="vm.getEinkommensverschlechterungGS2_JA().schulden"></dv-bisher>
-                                    <dv-error-messages for="vm.form.schulden2.$error" class="error"></dv-error-messages>
+                                    <dv-error-messages input-id="schulden2" for="vm.form.schulden2.$error" class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
                         </div>
@@ -162,7 +162,7 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" for="anrechenbaresEinkommen">
                                     <span data-translate="FINANZIELLE_SITUATION_ANRECHENBARES_EINKOMMEN"></span>
-                                    <dv-tooltip
+                                    <dv-tooltip input-id="anrechenbaresEinkommen"
                                         text="'EINKOMMENSVERSCHLECHTERUNG_ANRECHENBARES_EINKOMMEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <dv-valueinput input-id="anrechenbaresEinkommen"
@@ -221,10 +221,10 @@
 
                     <div ng-if="vm.showResult()">
 
-                        <h1 class="mainTitle">
+                        <h2 class="mainTitle">
                     <span data-translate="EKV_RESULTATE_PRUEFUNG"
                           translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrToWorkWith()}"></span>
-                        </h1>
+                        </h2>
                         <hr class="header"/>
 
                         <!-- Einkommen Vorjahr -->

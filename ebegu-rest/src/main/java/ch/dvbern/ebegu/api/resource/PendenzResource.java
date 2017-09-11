@@ -1,22 +1,5 @@
 package ch.dvbern.ebegu.api.resource;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.commons.lang3.Validate;
-
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxPendenzInstitution;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
@@ -25,15 +8,26 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.GesuchService;
-
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.Validate;
+
+import javax.annotation.Nonnull;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * REST Resource fuer Pendenzen
  */
 @Path("pendenzen")
 @Stateless
-@Api
+@Api(description = "Resource für die Verwaltung der Pendenzlisten")
 public class PendenzResource {
 
 	@Inject
@@ -53,6 +47,8 @@ public class PendenzResource {
 	 * Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck.
 	 * Sollte keine Pendenze gefunden werden oder ein Fehler passieren, wird eine leere Liste zurueckgegeben.
 	 */
+	@ApiOperation(value = "Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck",
+		responseContainer = "List", response = JaxAntragDTO.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
@@ -71,6 +67,8 @@ public class PendenzResource {
 	 * Gibt eine Liste mit allen Pendenzen des übergebenen Benutzers des JA zurueck.
 	 * Sollte keine Pendenze gefunden werden oder ein Fehler passieren, wird eine leere Liste zurueckgegeben.
 	 */
+	@ApiOperation(value = "Gibt eine Liste mit allen Pendenzen des übergebenen Benutzers des JA zurueck.",
+		responseContainer = "List", response = JaxAntragDTO.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
@@ -86,6 +84,8 @@ public class PendenzResource {
 		return pendenzenList;
 	}
 
+	@ApiOperation(value = "Gibt eine Liste mit allen Pendenzen der Institution oder Traegerschaft des eingeloggten " +
+		"Benutzers zurueck.", responseContainer = "List", response = JaxPendenzInstitution.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
@@ -124,6 +124,8 @@ public class PendenzResource {
 	/**
 	 * Gibt eine Liste der Faelle des Gesuchstellers zurueck.
 	 */
+	@ApiOperation(value = "Gibt alle Antraege des eingeloggten Gesuchstellers zurueck.",
+		responseContainer = "List", response = JaxAntragDTO.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)

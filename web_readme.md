@@ -1,4 +1,4 @@
-# Installation E-BEGU GUI
+# Installation Ki-Tax GUI
 
 ## nvm installieren
 NVM dient der Verwaltung der benutzten node (npm) Version
@@ -12,11 +12,11 @@ ebegu benoetigt ca Version 4.4 von Node. Kann mit nvm install v4.4.3 installiert
  
  
 ## Projektdependencies installieren (einmalig, bzw. nach Änderung)
-- hefr@PDVB:~/workspaces/ebegu/ebegu-web$ npm install
+- <home>:~/workspaces/ebegu/ebegu-web$ npm install
 
 ## Starten
-- hefr@PDVB:~/workspaces/ebegu/ebegu-web$ npm run hotstart
-- hefr@PDVB:~/workspaces/ebegu/ebegu-web$ npm run server:dev
+- <home>:~/workspaces/ebegu/ebegu-web$ npm run hotstart
+- <home>:~/workspaces/ebegu/ebegu-web$ npm run server:dev
 
 
 ## Formularstruktur

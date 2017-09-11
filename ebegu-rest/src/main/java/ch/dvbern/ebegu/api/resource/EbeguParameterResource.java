@@ -34,11 +34,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Resource fuer E-BEGU Parameter
+ * Resource fuer Parameter
  */
 @Path("parameter")
 @Stateless
-@Api
+@Api(description = "Resource fuer Parameter")
 public class EbeguParameterResource {
 
 	@Inject
@@ -51,7 +51,7 @@ public class EbeguParameterResource {
 	private JaxBConverter converter;
 
 
-	@ApiOperation(value = "Create a new or update an existing E-BEGU parameter with the given key and value",
+	@ApiOperation(value = "Create a new or update an existing Ki-Tax parameter with the given key and value",
 		response = JaxEbeguParameter.class,
 		consumes = MediaType.APPLICATION_JSON)
 	@Nullable
@@ -80,7 +80,7 @@ public class EbeguParameterResource {
 		return Response.created(uri).entity(converter.ebeguParameterToJAX(persistedEbeguParameter)).build();
 	}
 
-	@ApiOperation(value = "Get all E-BEGU parameter")
+	@ApiOperation(value = "Get all Ki-Tax parameter", responseContainer = "List", response = JaxEbeguParameter.class)
 	@Nonnull
 	@GET
 	@Path("/all")
@@ -91,7 +91,8 @@ public class EbeguParameterResource {
 			.collect(Collectors.toList());
 	}
 
-	@ApiOperation(value = "Get all E-BEGU parameter that are valid at a certain date")
+	@ApiOperation(value = "Get all Ki-Tax parameter that are valid at a certain date",
+		responseContainer = "List", response = JaxEbeguParameter.class)
 	@Nonnull
 	@GET
 	@Path("/date")
@@ -106,7 +107,8 @@ public class EbeguParameterResource {
 			.collect(Collectors.toList());
 	}
 
-	@ApiOperation(value = "Get all E-BEGU parameter for a specific Gesuchsperiode. The id of the gesuchsperiode is passed  as a pathParam")
+	@ApiOperation(value = "Get all Ki-Tax parameter for a specific Gesuchsperiode. The id of the gesuchsperiode is " +
+		"passed  as a pathParam", responseContainer = "List", response = JaxEbeguParameter.class)
 	@Nonnull
 	@GET
 	@Path("/gesuchsperiode/{id}")
@@ -126,7 +128,7 @@ public class EbeguParameterResource {
 		return Collections.emptyList();
 	}
 
-	@ApiOperation(value = "Get all E-BEGU for a year")
+	@ApiOperation(value = "Get all Ki-Tax for a year", responseContainer = "List", response = JaxEbeguParameter.class)
 	@Nonnull
 	@GET
 	@Path("/year/{year}")
@@ -140,7 +142,8 @@ public class EbeguParameterResource {
 			.collect(Collectors.toList());
 	}
 
-	@ApiOperation(value = "Get all E-BEGU that can change within a year (for all years)")
+	@ApiOperation(value = "Get all Ki-Tax that can change within a year (for all years)",
+		responseContainer = "List", response = JaxEbeguParameter.class)
 	@Nonnull
 	@GET
 	@Path("/yeardependent")
@@ -153,7 +156,7 @@ public class EbeguParameterResource {
 
 	}
 
-	@ApiOperation(value = "Get all E-BEGU parameter by key and date")
+	@ApiOperation(value = "Get a specific Ki-Tax parameter by key and date", response = JaxEbeguParameter.class)
 	@Nullable
 	@GET
 	@Path("/name/{name}")
@@ -166,9 +169,6 @@ public class EbeguParameterResource {
 		LocalDate date = DateUtil.parseStringToDateOrReturnNow(stringDate);
 		EbeguParameterKey ebeguParameterKey = EbeguParameterKey.valueOf(name);
 		Optional<EbeguParameter> optional  = ebeguParameterService.getEbeguParameterByKeyAndDate(ebeguParameterKey, date);
-		if (optional.isPresent()) {
-			return converter.ebeguParameterToJAX(optional.get());
-		}
-		return null;
+		return optional.map(ebeguParameter -> converter.ebeguParameterToJAX(ebeguParameter)).orElse(null);
 	}
 }
