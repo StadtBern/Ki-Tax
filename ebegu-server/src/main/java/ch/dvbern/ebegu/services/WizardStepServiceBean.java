@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.services;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,7 +25,6 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
-import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuch_;
@@ -37,7 +35,6 @@ import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.entities.WizardStep_;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
@@ -578,6 +575,11 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()) {
 						wizardStep.setVerfuegbar(false);
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+					} else if (WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()) {
+						if (erwerbspensumService.isErwerbspensumRequired(wizardStep.getGesuch())) {
+							wizardStep.setVerfuegbar(true);
+							wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+						}
 					}
 					//kann man effektiv sagen dass bei nur einem GS niemals Rote Schritte FinanzielleSituation und EVK gibt
 				} else if (!newEntity.hasSecondGesuchsteller() && wizardStep.getGesuch().getGesuchsteller1() != null) { // nur 1 GS
@@ -637,24 +639,28 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 */
 	@SuppressWarnings({"LocalVariableNamingConvention", "NonBooleanMethodNameMayNotStartWithQuestion"})
 	private void checkStepStatusForErwerbspensum(WizardStep wizardStep, boolean changesBecauseOtherStates) {
-		final List<Betreuung> allBetreuungRequiringErwerbspensum = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId())
-			.stream().filter(betreuung ->
-				betreuung.getKind().getKindJA().getPensumFachstelle() == null
-					&& (BetreuungsangebotTyp.KITA == betreuung.getBetreuungsangebotTyp()
-					|| BetreuungsangebotTyp.TAGESELTERN_KLEINKIND == betreuung.getBetreuungsangebotTyp()))
-			.collect(Collectors.toList());
+		Gesuch gesuch = wizardStep.getGesuch();
+		boolean erwerbspensumRequired = erwerbspensumService.isErwerbspensumRequired(wizardStep.getGesuch());
 
-		final Collection<ErwerbspensumContainer> erwerbspensenForGesuch = erwerbspensumService.findErwerbspensenFromGesuch(wizardStep.getGesuch().getId());
-
-		WizardStepStatus status;
-		if (!allBetreuungRequiringErwerbspensum.isEmpty() && erwerbspensenForGesuch.size() <= 0) {
-			status = WizardStepStatus.NOK;
+		WizardStepStatus status = null;
+		if (erwerbspensumRequired) {
+			if (gesuch.getGesuchsteller1() != null) {
+				if (erwerbspensumService.findErwerbspensenForGesuchsteller(gesuch.getGesuchsteller1()).isEmpty()) {
+					status = WizardStepStatus.NOK;
+				}
+			}
+			if (gesuch.getGesuchsteller2() != null) {
+				if (erwerbspensumService.findErwerbspensenForGesuchsteller(gesuch.getGesuchsteller2()).isEmpty()) {
+					status = WizardStepStatus.NOK;
+				}
+			}
 		} else if (changesBecauseOtherStates && wizardStep.getWizardStepStatus() != WizardStepStatus.MUTIERT) {
 			status = WizardStepStatus.OK;
-		} else {
+		}
+		// Ansonsten OK bzw. MUTIERT
+		if (status == null) {
 			status = getWizardStepStatusOkOrMutiert(wizardStep);
 		}
-
 		wizardStep.setWizardStepStatus(status);
 	}
 
