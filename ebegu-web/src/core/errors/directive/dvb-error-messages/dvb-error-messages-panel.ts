@@ -65,7 +65,9 @@ export class DvErrorMessagesPanelComponent {
     private removeOnlineMutation(objectId: string, gesuchsperiodeId: string): void {
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             title: 'REMOVE_ONLINE_MUTATION_CONFIRMATION',
-            deleteText: 'REMOVE_ONLINE_MUTATION_BESCHREIBUNG'
+            deleteText: 'REMOVE_ONLINE_MUTATION_BESCHREIBUNG',
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {   //User confirmed removal
             this.gesuchRS.removeOnlineMutation(objectId, gesuchsperiodeId).then((response) => {});
         });
@@ -74,7 +76,9 @@ export class DvErrorMessagesPanelComponent {
     private removeOnlineErneuerungsgesuch(objectId: string, gesuchsperiodeId: string): void {
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             title: 'REMOVE_ONLINE_ERNEUERUNGSGESUCH_CONFIRMATION',
-            deleteText: 'REMOVE_ONLINE_ERNEUERUNGSGESUCH_BESCHREIBUNG'
+            deleteText: 'REMOVE_ONLINE_ERNEUERUNGSGESUCH_BESCHREIBUNG',
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {   //User confirmed removal
             this.gesuchRS.removeOnlineFolgegesuch(objectId, gesuchsperiodeId).then((response) => {});
         });

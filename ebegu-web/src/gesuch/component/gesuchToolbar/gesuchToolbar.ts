@@ -607,7 +607,7 @@ export class GesuchToolbarController implements IDVFocusableController {
     /**
      * Sets the focus back to the Kontakt icon.
      */
-    public setFocusBack(): void {
+    public setFocusBack(elementID: string): void {
         angular.element('#kontaktButton').first().focus();
     }
 }

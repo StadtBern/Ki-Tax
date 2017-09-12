@@ -18,7 +18,8 @@ export class DVErwerbspensumListConfig implements IComponentOptions {
         tableTitle: '@',
         addButtonVisible: '<',
         addButtonEnabled: '<',
-        addButtonText: '@'
+        addButtonText: '@',
+        inputId: '@'
     };
     template = template;
     controller = DVErwerbspensumListController;
@@ -30,6 +31,7 @@ export class DVErwerbspensumListController {
     erwerbspensen: TSErwerbspensum[];
     tableId: string;
     tableTitle: string;
+    inputId: string;
     addButtonText: string;
     addButtonVisible: boolean;
     addButtonEnabled: boolean;
@@ -60,8 +62,8 @@ export class DVErwerbspensumListController {
         }
     }
 
-    removeClicked(pensumToRemove: TSErwerbspensumContainer) {
-        this.onRemove({pensum: pensumToRemove});
+    removeClicked(pensumToRemove: TSErwerbspensumContainer, index: any) {
+        this.onRemove({pensum: pensumToRemove, index: index});
     }
 
     editClicked(pensumToEdit: any) {

@@ -1,6 +1,6 @@
 <div class="dvb-loading-button">
     <span ng-disabled="vm.buttonDisabled || vm.isDisabled">
-        <button type="{{vm.type}}" aria-label="{{vm.ariaLabel}}" class="{{vm.buttonClass}}"
+        <button type="{{vm.type}}" aria-label="{{vm.ariaLabel}}" class="{{vm.buttonClass}}" id="{{vm.inputId}}"
                 ng-click="vm.buttonClicked($event)" ng-disabled="vm.buttonDisabled || vm.isDisabled">
             <ng-transclude></ng-transclude>
         </button>
