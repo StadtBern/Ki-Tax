@@ -1,11 +1,13 @@
-import TSAntragDTO from '../TSAntragDTO';
+import TSAbstractAntragDTO from '../TSAbstractAntragDTO';
+
 export default class TSSearchResultEntry {
 
     private _additionalInformation: string;
-    private _antragDTO: TSAntragDTO;
+    private _antragDTO: TSAbstractAntragDTO;
     private _entity: string;
     private _resultId: string;
     private _gesuchID: string;
+    private _fallID: string;
     private _text: string;
 
     constructor() {
@@ -19,11 +21,11 @@ export default class TSSearchResultEntry {
         this._additionalInformation = value;
     }
 
-    get antragDTO(): TSAntragDTO {
+    get antragDTO(): TSAbstractAntragDTO {
         return this._antragDTO;
     }
 
-    set antragDTO(value: TSAntragDTO) {
+    set antragDTO(value: TSAbstractAntragDTO) {
         this._antragDTO = value;
     }
 
@@ -49,6 +51,14 @@ export default class TSSearchResultEntry {
 
     set gesuchID(value: string) {
         this._gesuchID = value;
+    }
+
+    public get fallID(): string {
+        return this._fallID;
+    }
+
+    public set fallID(value: string) {
+        this._fallID = value;
     }
 
     get text(): string {

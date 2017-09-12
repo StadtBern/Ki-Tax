@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
- * Entitaet zum Speichern von zeitabhängigen Vorlagen in E-BEGU
+ * Entitaet zum Speichern von zeitabhängigen Vorlagen in Ki-Tax
  */
 @Audited
 @Entity

@@ -28,7 +28,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class PensumFachstelleServiceBean extends AbstractBaseService implements PensumFachstelleService {
 
 	@Inject
-	private Persistence<PensumFachstelle> persistence;
+	private Persistence persistence;
 
 	@Override
 	@Nonnull

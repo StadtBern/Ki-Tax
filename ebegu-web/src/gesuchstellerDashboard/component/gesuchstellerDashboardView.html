@@ -5,42 +5,45 @@
 </gesuch-toolbar-gesuchsteller>
 
 <div class="gesuchstellerDashboardView" flex="auto">
+    <h1 class="access-for-all-title" data-translate="AFA_DASHBOARD"></h1>
     <div class="dashboardHeader" flex="100" layout="row" layout-align="center center" layout-margin
          layout-xs="column"
          layout-align-xs="space-between center">
+
 
         <div ng-repeat="periode in vm.getActiveGesuchsperiodenList() | orderBy: 'gueltigkeit.gueltigAb'">
             <dv-loading-button layout="column" flex="nogrow" type="button" button-click="vm.openAntrag(periode)"
                                button-class="dashboardButton">
                 <div flex="none" class="labelBig" layout="column" layout-align="end center">
                     <div layout="column">
-                        <h2 flex="nogrow">
+                        <span class="ebeguH2" flex="nogrow">
                             <span data-translate="GESUCH"></span>
                             <span>{{periode.gesuchsperiodeString}}</span>
-                        </h2>
-                        <h3 flex="nogrow">
+                        </span>
+                        <span class="ebeguH3" flex="nogrow">
                             <span>{{periode.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YY'}} – {{periode.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YY'}}</span>
-                        </h3>
+                        </span>
                     </div>
                 </div>
                 <div flex="none" class="labelSmall">
-                    <h2><span>{{vm.getButtonText(periode)}}</span></h2>
+                    <span class="ebeguH2">{{vm.getButtonText(periode)}}</span>
                 </div>
             </dv-loading-button>
         </div>
 
         <dv-loading-button layout="column" flex="nogrow" type="button" button-click="vm.goToMitteilungenOeffen()"
                            button-class="dashboardButton">
-            <div flex="auto" class="labelBig" layout="column"><h2 data-translate="GSDASHBOARD_MITTEILUNGEN"></h2></div>
+            <div flex="auto" class="labelBig"
+                 layout="column"><span class="ebeguH2" data-translate="GSDASHBOARD_MITTEILUNGEN"></span></div>
             <div flex="auto" class="labelNotification" ng-bind="vm.getNumberMitteilungen()"></div>
-            <div class="labelSmall"><h2 data-translate="GSDASHBOARD_OEFFNEN"></h2></div>
+            <div class="labelSmall"><span class="ebeguH2" data-translate="GSDASHBOARD_OEFFNEN"></span></div>
         </dv-loading-button>
 
     </div>
 
     <div class="col-md-8 col-md-offset-2">
 
-        <h3 data-translate="GSDASHBOARD_ANTRAEGE"></h3>
+        <h2 data-translate="GSDASHBOARD_ANTRAEGE"></h2>
 
         <table st-table="displayedCollection" st-set-filter="pendenzFilter" st-safe-src="vm.getAntragList()"
                st-delay="20"
@@ -55,11 +58,12 @@
                 <th st-sort="status" class="sortable" data-translate="STATUS_UPPER"></th>
                 <th st-sort="verantwortlicher" class="sortable" data-translate="VERANTWORTLICH_UPPER" hide-sm
                     hide-xs></th>
+                <th hide-sm hide-xs width="5%"></th>
             </tr>
             </thead>
             <tbody>
             <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                ng-click="vm.editAntrag(row)">
+                ng-click="vm.editAntrag(row)" role="row" role="row" tabindex="-1">
                 <td class="ellipsis" ellipsis-tooltip="{{row.antragTyp | translate}}"
                     ng-bind="row.antragTyp | translate"></td>
                 <td class="ellipsis"
@@ -70,20 +74,30 @@
                     ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                 <td class="ellipsis" ellipsis-tooltip="{{vm.translate(row.status)}}"
                     ng-bind="vm.translateStatus(row)"></td>
-                <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"
-                    ng-bind="row.verantwortlicher" hide-sm hide-xs></td>
+                <td class="ellipsis" ellipsis-tooltip="{{vm.getVerantwortlicherFullName(row)}}"
+                    ng-bind="vm.getVerantwortlicherFullName(row)" hide-sm hide-xs></td>
+                <td class="ellipsis" role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%" hide-sm
+                    hide-xs>
+                    <dv-loading-button type="button" button-click="vm.editAntrag(row)"
+                                       button-class="dv-btn-operation dv-btn-operation--white dv-btn-row"
+                                       title="{{'TABLE_EDIT'|translate}}"
+                                       aria-label="{{'TABLE_EDIT'|translate}}">
+                        <i class="fa fa-lg fa-arrow-right" aria-label="{{'TABLE_EDIT'|translate}}">
+                        </i>
+                    </dv-loading-button>
+                </td>
             </tr>
             <tr ng-if="vm.getAntragList().length === 0">
-                <td colspan="3" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-gt-sm></td>
-                <td colspan="5" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-sm hide-xs></td>
+                <td colspan="4" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-gt-sm></td>
+                <td colspan="6" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-sm hide-xs></td>
             </tr>
             </tbody>
             <tfoot>
             <tr>
-                <td colspan="5" class="text-center" hide-sm hide-xs>
+                <td colspan="6" class="text-center" hide-sm hide-xs>
                     <div st-pagination="" st-items-by-page="10" st-displayed-pages="5"></div>
                 </td>
-                <td colspan="3" class="text-center" hide-gt-sm>
+                <td colspan="4" class="text-center" hide-gt-sm>
                     <div st-pagination="" st-items-by-page="10" st-displayed-pages="5"></div>
                 </td>
             </tr>

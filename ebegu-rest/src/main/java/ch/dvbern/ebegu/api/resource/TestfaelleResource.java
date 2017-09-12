@@ -1,25 +1,19 @@
 package ch.dvbern.ebegu.api.resource;
 
-import java.time.LocalDate;
-
-import javax.annotation.Nullable;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.SchulungService;
 import ch.dvbern.ebegu.services.TestfaelleService;
 import ch.dvbern.ebegu.util.DateUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+import javax.annotation.Nullable;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.time.LocalDate;
 
 /**
  * REST Resource zur Erstellung von (vordefinierten) Testfaellen.
@@ -28,7 +22,7 @@ import io.swagger.annotations.Api;
  */
 @Path("testfaelle")
 @Stateless
-@Api
+@Api(description = "Resource zur Erstellung von (vordefinierten) Testfaellen")
 public class TestfaelleResource {
 
 	private static final String FALL = "Fall ";
@@ -39,6 +33,8 @@ public class TestfaelleResource {
 	@Inject
 	private SchulungService schulungService;
 
+	@ApiOperation(value = "Erstellt einen Testfall aus mehreren vordefinierten Testfaellen. Folgende Einstellungen " +
+		"sind moeglich: Gesuchsperiode, Status der Betreuungen, Gesuch verfuegen", response = String.class)
 	@GET
 	@Path("/testfall/{fallid}/{gesuchsperiodeId}/{betreuungenBestaetigt}/{verfuegen}")
 	@Consumes(MediaType.WILDCARD)
@@ -53,6 +49,9 @@ public class TestfaelleResource {
 		return Response.ok(responseString.toString()).build();
 	}
 
+	@ApiOperation(value = "Erstellt einen Testfall aus mehreren vordefinierten Testfaellen fuer einen Gesuchsteller " +
+		"(Online Gesuch). Folgende Einstellungen sind moeglich: Gesuchsperiode, Status der Betreuungen, Gesuch " +
+		"verfuegen, gewuenschter Gesuchsteller", response = String.class)
 	@GET
 	@Path("/testfallgs/{fallid}/{gesuchsperiodeId}/{betreuungenBestaetigt}/{verfuegen}/{username}")
 	@Consumes(MediaType.WILDCARD)
@@ -68,6 +67,8 @@ public class TestfaelleResource {
 		return Response.ok(responseString.toString()).build();
 	}
 
+	@ApiOperation(value = "Loescht alle Antraege des uebergebenen Gesuchstellers.", response = String.class)
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@DELETE
 	@Path("/testfallgs/{username}")
 	@Consumes(MediaType.WILDCARD)
@@ -78,6 +79,7 @@ public class TestfaelleResource {
 		return Response.ok().build();
 	}
 
+	@ApiOperation(value = "Simuliert fuer den uebergebenen Testfall eine Heirat", response = String.class)
 	@GET
 	@Path("/mutationHeirat/{fallNummer}/{gesuchsperiodeid}")
 	@Consumes(MediaType.WILDCARD)
@@ -98,6 +100,7 @@ public class TestfaelleResource {
 		return Response.ok(FALL + fallNummer + " konnte nicht mutiert").build();
 	}
 
+	@ApiOperation(value = "Simuliert fuer den uebergebenen Testfall eine Scheidung", response = String.class)
 	@GET
 	@Path("/mutationScheidung/{fallNummer}/{gesuchsperiodeid}")
 	@Consumes(MediaType.WILDCARD)
@@ -118,6 +121,7 @@ public class TestfaelleResource {
 		return Response.ok(FALL + fallNummer + " konnte nicht mutiert").build();
 	}
 
+	@ApiOperation(value = "Setzt die Schulungsdaten zurueck", response = String.class)
 	@GET
 	@Path("/schulung/reset")
 	@Consumes(MediaType.WILDCARD)
@@ -127,6 +131,7 @@ public class TestfaelleResource {
 		return Response.ok("Schulungsdaten zurückgesetzt").build();
 	}
 
+	@ApiOperation(value = "Loescht alle in der Schulung erstellten Daten.", response = String.class)
 	@DELETE
 	@Path("/schulung/delete")
 	@Consumes(MediaType.WILDCARD)
@@ -136,6 +141,7 @@ public class TestfaelleResource {
 		return Response.ok("Schulungsdaten gelöscht").build();
 	}
 
+	@ApiOperation(value = "Erstellt die Schulungsdaten", response = String.class)
 	@GET
 	@Path("/schulung/create")
 	@Consumes(MediaType.WILDCARD)
@@ -145,6 +151,8 @@ public class TestfaelleResource {
 		return Response.ok("Schulungsdaten erstellt").build();
 	}
 
+	@ApiOperation(value = "Gibt eine Liste der Schulungsbenutzer zurueck",
+		responseContainer = "Array", response = String.class)
 	@GET
 	@Path("/schulung/public/user")
 	@Consumes(MediaType.WILDCARD)

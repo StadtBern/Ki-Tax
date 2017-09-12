@@ -1,5 +1,10 @@
 package ch.dvbern.ebegu.rules;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import ch.dvbern.ebegu.entities.AbwesenheitContainer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
@@ -8,18 +13,13 @@ import ch.dvbern.ebegu.util.Constants;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * Tests fuer AbwesenheitAbschnittRule
  */
 @SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 public class AbwesenheitAbschnittRuleTest {
 
-	AbwesenheitAbschnittRule abwesenheitRule = new AbwesenheitAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
+	final AbwesenheitAbschnittRule abwesenheitRule = new AbwesenheitAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
 
 	@Test
 	public void testAbschnitteWithoutAbwesenheit() {

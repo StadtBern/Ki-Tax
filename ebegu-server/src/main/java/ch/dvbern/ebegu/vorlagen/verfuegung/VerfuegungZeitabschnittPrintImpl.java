@@ -11,14 +11,14 @@ package ch.dvbern.ebegu.vorlagen.verfuegung;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import java.math.BigDecimal;
+
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.Constants;
 
-import java.math.BigDecimal;
-
 public class VerfuegungZeitabschnittPrintImpl implements VerfuegungZeitabschnittPrint {
 
-	private VerfuegungZeitabschnitt verfuegungZeitabschnitt;
+	private final VerfuegungZeitabschnitt verfuegungZeitabschnitt;
 
 	public VerfuegungZeitabschnittPrintImpl(VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		this.verfuegungZeitabschnitt = verfuegungZeitabschnitt;

@@ -31,7 +31,7 @@ public class EinkommensverschlechterungInfoServiceTest extends AbstractEbeguLogi
 	private EinkommensverschlechterungInfoService einkommensverschlechterungInfoService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 
 

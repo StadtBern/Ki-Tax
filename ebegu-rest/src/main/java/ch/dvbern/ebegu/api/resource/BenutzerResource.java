@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
 import ch.dvbern.ebegu.services.BenutzerService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Stateless;
@@ -17,11 +18,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * REST Resource fuer Benutzer  (Auf client userRS.rest.ts also eingetlich die UserResources)
+ * REST Resource fuer Benutzer  (Auf client userRS.rest.ts also eigentlich die UserResources)
  */
 @Path("benutzer")
 @Stateless
-@Api
+@Api(description = "Resource für die Verwaltung der Benutzer (User)")
 public class BenutzerResource {
 
 	@Inject
@@ -30,6 +31,7 @@ public class BenutzerResource {
 	@Inject
 	private JaxBConverter converter;
 
+	@ApiOperation(value = "Gibt alle Benutzer zurück", responseContainer = "List", response = JaxAuthLoginElement.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
@@ -40,9 +42,8 @@ public class BenutzerResource {
 			.collect(Collectors.toList());
 	}
 
-	/**
-	 * nur Benutzer Sachbearbeiter_JA oder Admin
-	 */
+	@ApiOperation(value = "Gibt das Benutzer-Objekt des eingeloggten Benutzers zurück, falls es sich dabei um einen " +
+		"Jugendamt-Benutzer oder Administrator handelt", responseContainer = "List", response = JaxAuthLoginElement.class)
 	@Nonnull
 	@GET
 	@Path("/JAorAdmin")
@@ -53,9 +54,9 @@ public class BenutzerResource {
 			.map(benutzer -> converter.benutzerToAuthLoginElement(benutzer))
 			.collect(Collectors.toList());
 	}
-	/**
-	 * nur Gesuchsteller
-	 */
+
+	@ApiOperation(value = "Gibt das Benutzer-Objekt des eingeloggten Benutzers zurück, falls es sich dabei um einen " +
+		"Gesuchsteller handelt", responseContainer = "List", response = JaxAuthLoginElement.class)
 	@Nonnull
 	@GET
 	@Path("/gesuchsteller")

@@ -1,12 +1,13 @@
 <div class="betreuungView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
     <div class="row viewTitle">
         <div class="col-md-12">
-            <h1>
+            <h2>
                 <!--eventuell nummer noch anders lesen per methode-->
                     <span data-translate="BETREUUNGSANGEBOT_NUMBER"
                           data-translate-value-kindname="{{vm.getKindModel().kindJA.getFullName()}}"
                           data-translate-value-betreuungnumber="{{vm.model.betreuungNummer}}"></span>
-            </h1>
+            </h2>
             <hr class="header"/>
         </div>
     </div>
@@ -85,17 +86,19 @@
                                 <label class="md-no-float"
                                        for="betreuungsangebot">
                                     <span data-translate="BETREUUNGSANGEBOT_WAEHLEN" class="required"></span>
-                                    <dv-tooltip text="'BETREUUNGSANGEBOT_WAEHLEN_HELP' | translate"></dv-tooltip>
+                                    <dv-tooltip input-id="betreuungsangebot"
+                                                text="'BETREUUNGSANGEBOT_WAEHLEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <div class="dv-select-style">
-                                    <select name="betreuungsangebot" id="betreuungsangebot"
+                                    <select aria-describedby="betreuungsangebot-error" name="betreuungsangebot" id="betreuungsangebot"
                                             ng-model="vm.betreuungsangebot"
                                             class="form-control"
                                             ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues"
                                             ng-required="true" ng-disabled="!vm.isEnabled()"
                                             ng-change="vm.changedAngebot()">
                                     </select>
-                                    <dv-error-messages for="vm.form.betreuungsangebot.$error"></dv-error-messages>
+                                    <dv-error-messages input-id="betreuungsangebot"
+                                                       for="vm.form.betreuungsangebot.$error"></dv-error-messages>
                                 </div>
                             </div>
                         </div>
@@ -107,13 +110,14 @@
                             <label class="md-no-float required" data-translate="INSTITUTION" for="institution">
                             </label>
                             <div class="dv-select-style">
-                                <select name="institution" id="institution" ng-model="vm.instStammId"
+                                <select aria-describedby="institution-error" name="institution" id="institution"
+                                        ng-model="vm.instStammId"
                                         class="form-control"
                                         ng-options="institutionSD.id as institutionSD.institution.name for institutionSD in vm.getInstitutionenSDList() | orderBy: 'institution.name'"
                                         ng-required="true" ng-change="vm.setSelectedInstitutionStammdaten()"
                                         ng-disabled="!vm.isEnabled()">
                                 </select>
-                                <dv-error-messages for="vm.form.institution.$error"></dv-error-messages>
+                                <dv-error-messages input-id="institution" for="vm.form.institution.$error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
@@ -122,12 +126,12 @@
                         <div class="col-sm-12 dv-input-container-medium form-group">
                             <label class="md-no-float" data-translate="INSTITUTION" for="institution">
                             </label>
-                            <input name="institution" id="institutioninput" type="text"
+                            <input aria-describedby="institutioninput-error" name="institution" id="institutioninput" type="text"
                                    ng-model="vm.getInstitutionSD().institution.name"
                                    class="form-control"
                                    ng-required="true"
                                    ng-disabled="!vm.isEnabled()">
-                            <dv-error-messages for="vm.form.institutioninput.$error"
+                            <dv-error-messages input-id="institutioninput" for="vm.form.institutioninput.$error"
                                                class="error"></dv-error-messages>
                         </div>
                     </div>
@@ -186,7 +190,7 @@
                                             <label class="md-no-float" data-translate="BETREUUNGSPENSUM"
                                                    data-translate-value-betreuungspensumnumber="{{$index + 1}}"
                                                    for="betreuungspensum-{{$index}}"></label>
-                                            <input id="betreuungspensum-{{$index}}" type="number"
+                                            <input aria-describedby="betreuungspensum-{{$index}}-error"  id="betreuungspensum-{{$index}}" type="number"
                                                    name="betreuungspensum-{{$index}}"
                                                    ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.pensum"
                                                    dv-max-length class="form-control"
@@ -195,7 +199,7 @@
                                                    ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                                             <!--<dv-bisher gs="vm.getBetreuungspensum($index).betreuungspensumGS.pensum"-->
                                                        <!--ja="vm.getBetreuungspensum($index).betreuungspensumJA.pensum"></dv-bisher>-->
-                                            <dv-error-messages
+                                            <dv-error-messages input-id="betreuungspensum-{{$index}}"
                                                 for="vm.form['betreuungspensum-' + $index].$error"></dv-error-messages>
 
 
@@ -218,7 +222,7 @@
                                             <!--<dv-bisher-->
                                                 <!--gs="vm.getBetreuungspensum($index).betreuungspensumGS.gueltigkeit.gueltigAb"-->
                                                 <!--ja="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigAb"></dv-bisher>-->
-                                            <dv-error-messages
+                                            <dv-error-messages input-id="datumAb-{{$index}}"
                                                 for="vm.form['datumAb-' + $index].$error"></dv-error-messages>
                                         </dv-input-container>
                                     </div>
@@ -236,7 +240,7 @@
                                             <!--<dv-bisher-->
                                                 <!--gs="vm.getBetreuungspensum($index).betreuungspensumGS.gueltigkeit.gueltigBis"-->
                                                 <!--ja="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigBis"></dv-bisher>-->
-                                            <dv-error-messages
+                                            <dv-error-messages input-id="datumBis-{{$index}}"
                                                 for="vm.form['datumBis-' + $index].$error"></dv-error-messages>
                                         </dv-input-container>
                                     </div>
@@ -251,7 +255,8 @@
                                                            button-click="vm.removeBetreuungspensum(betpen)"
                                                            button-class="dv-btn-operation"
                                                            button-disabled="!((vm.isBetreuungsstatusWarten() && !vm.isSavingData) || vm.isMutationsmeldungStatus)">
-                                            <i class="fa fa-lg fa-trash-o"></i>
+                                            <i class="fa fa-lg fa-trash-o" title="{{'BETREUUNGSPENSUM_DELETE' | translate}}"
+                                               aria-label="{{'BETREUUNGSPENSUM_DELETE' | translate}}"></i>
                                             <span data-translate="BETREUUNGSPENSUM_ENTFERNEN_INDEX"
                                                   data-translate-value-betreuungspensumnumber="{{$index + 1}}"></span>
                                         </dv-loading-button>

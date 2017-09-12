@@ -1,12 +1,13 @@
 <!--suppress ALL -->
 <div class="finanzielleSituation gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
     <div class="row viewTitle">
         <div class="col-md-12">
 
-            <h1>
+            <h2>
             <span data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_FUER_BASISJAHR"
                   translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrToWorkWith(), gesuchsteller:vm.gesuchModelManager.getStammdatenToWorkWith().extractFullName()}"></span>
-            </h1>
+            </h2>
             <hr class="header"/>
             <!-- Infotext -->
             <p class="inlineHint" data-translate="EKVI__HINT_STEUERERKLAERUNG"
@@ -26,8 +27,9 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question" ng-if="vm.showSteuerveranlagung()">
                             <div class="form-group">
-                                <h1 class="required" aria-hidden="true" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
-                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></h1>
+                                <span class="ebeguH1 required"
+                                   data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
+                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></span>
                                 <dv-radio-container name="steuerveranlagung"
                                                     ng-model="vm.model.getEkvToWorkWith().steuerveranlagungErhalten"
                                                     ng-required="true" class="radio input-element"
@@ -35,9 +37,10 @@
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
-                                                    aria-label="{{ 'FINANZIELLE_SITUATION_STEUERVERANLAGUNG' |translate}}">
+                                                    aria-label="{{ 'FINANZIELLE_SITUATION_STEUERVERANLAGUNG' |translate}}"
+                                                    aria-described-by="steuerveranlagung-error">
                                 </dv-radio-container>
-                                <dv-error-messages for="vm.form.steuerveranlagung.$error"
+                                <dv-error-messages input-id="steuerveranlagung" for="vm.form.steuerveranlagung.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
@@ -48,17 +51,19 @@
                         <div class="col-xs-12 dv-input-container-question"
                              ng-if="vm.showSteuerveranlagung() && vm.showSteuererklaerung()">
                             <div class="form-group">
-                                <h1 class="required" aria-hidden="true" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
-                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></h1>
+                                <span class="ebeguH1 required"
+                                    data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
+                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></span>
                                 <dv-radio-container name="steuererklaerung"
                                                     ng-model="vm.model.getEkvToWorkWith().steuererklaerungAusgefuellt"
                                                     ng-required="true" class="radio input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
-                                                    aria-label="{{ 'FINANZIELLE_SITUATION_STEUERERKLAERUNG' |translate}}">
+                                                    aria-label="{{ 'FINANZIELLE_SITUATION_STEUERERKLAERUNG' |translate}}"
+                                                    aria-described-by="steuererklaerung-error">
                                 </dv-radio-container>
-                                <dv-error-messages for="vm.form.steuererklaerung.$error"
+                                <dv-error-messages input-id="steuererklaerung" for="vm.form.steuererklaerung.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
@@ -79,7 +84,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnJan"
                                     ja="vm.model.getEkvToWorkWith().nettolohnJan"></dv-bisher>
-                                <dv-error-messages for="vm.form.nettolohn_Jan.$error" class="error"></dv-error-messages>
+                                <dv-error-messages input-id="nettolohn_Jan" for="vm.form.nettolohn_Jan.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -98,7 +103,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnFeb"
                                     ja="vm.model.getEkvToWorkWith().nettolohnFeb"></dv-bisher>
-                                <dv-error-messages for="vm.form.nettolohn_Feb.$error" class="error"></dv-error-messages>
+                                <dv-error-messages input-id="nettolohn_Feb" for="vm.form.nettolohn_Feb.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -117,7 +122,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnMrz"
                                     ja="vm.model.getEkvToWorkWith().nettolohnMrz"></dv-bisher>
-                                <dv-error-messages for="vm.form.nettolohn_Mrz.$error" class="error"></dv-error-messages>
+                                <dv-error-messages input-id="nettolohn_Mrz" for="vm.form.nettolohn_Mrz.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -136,7 +141,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnApr"
                                     ja="vm.model.getEkvToWorkWith().nettolohnApr"></dv-bisher>
-                                <dv-error-messages for="vm.form.nettolohn_Apr.$error" class="error"></dv-error-messages>
+                                <dv-error-messages input-id="nettolohn_Apr" for="vm.form.nettolohn_Apr.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -155,7 +160,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnMai"
                                     ja="vm.model.getEkvToWorkWith().nettolohnMai"></dv-bisher>
-                                <dv-error-messages for="vm.form.nettolohn_Mai.$error" class="error"></dv-error-messages>
+                                <dv-error-messages input-id="nettolohn_Mai" for="vm.form.nettolohn_Mai.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -174,7 +179,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnJun"
                                     ja="vm.model.getEkvToWorkWith().nettolohnJun"></dv-bisher>
-                                <dv-error-messages for="vm.form.nettolohn_Jun.$error" class="error"></dv-error-messages>
+                                <dv-error-messages input-id="nettolohn_Jun" for="vm.form.nettolohn_Jun.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -193,7 +198,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnJul"
                                     ja="vm.model.getEkvToWorkWith().nettolohnJul"></dv-bisher>
-                                <dv-error-messages for="vm.form.nettolohn_Jul.$error" class="error"></dv-error-messages>
+                                <dv-error-messages input-id="nettolohn_Jul" for="vm.form.nettolohn_Jul.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -212,7 +217,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnAug"
                                     ja="vm.model.getEkvToWorkWith().nettolohnAug"></dv-bisher>
-                                <dv-error-messages for="vm.form.nettolohn_Aug.$error" class="error"></dv-error-messages>
+                                <dv-error-messages input-id="nettolohn_Aug" for="vm.form.nettolohn_Aug.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -231,7 +236,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnSep"
                                     ja="vm.model.getEkvToWorkWith().nettolohnSep"></dv-bisher>
-                                <dv-error-messages for="vm.form.nettolohn_Sep.$error" class="error"></dv-error-messages>
+                                <dv-error-messages input-id="nettolohn_Sep" for="vm.form.nettolohn_Sep.$error" class="error"></dv-error-messages>
 
                             </dv-input-container>
                         </div>
@@ -251,7 +256,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnOkt"
                                     ja="vm.model.getEkvToWorkWith().nettolohnOkt"></dv-bisher>
-                                <dv-error-messages for="vm.form.nettolohn_Okt.$error" class="error"></dv-error-messages>
+                                <dv-error-messages input-id="nettolohn_Okt" for="vm.form.nettolohn_Okt.$error" class="error"></dv-error-messages>
 
                             </dv-input-container>
                         </div>
@@ -271,7 +276,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnNov"
                                     ja="vm.model.getEkvToWorkWith().nettolohnNov"></dv-bisher>
-                                <dv-error-messages for="vm.form.nettolohn_Nov.$error" class="error"></dv-error-messages>
+                                <dv-error-messages input-id="nettolohn_Nov" for="vm.form.nettolohn_Nov.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -290,7 +295,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnDez"
                                     ja="vm.model.getEkvToWorkWith().nettolohnDez"></dv-bisher>
-                                <dv-error-messages for="vm.form.nettolohn_Dez.$error" class="error"></dv-error-messages>
+                                <dv-error-messages input-id="nettolohn_Dez" for="vm.form.nettolohn_Dez.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -309,7 +314,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnZus"
                                     ja="vm.model.getEkvToWorkWith().nettolohnZus"></dv-bisher>
-                                <dv-error-messages for="vm.form.nettolohn_Zus.$error" class="error"></dv-error-messages>
+                                <dv-error-messages input-id="nettolohn_Zus" for="vm.form.nettolohn_Zus.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -320,7 +325,7 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" for="familienzulage">
                                     <span data-translate="FINANZIELLE_SITUATION_FAMILIENZULAGE"></span>
-                                    <dv-tooltip
+                                    <dv-tooltip input-id="familienzulage"
                                         text="'EINKOMMENSVERSCHLECHTERUNG_FAMILIENZULAGE_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <dv-valueinput input-id="familienzulage"
@@ -331,7 +336,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().familienzulage"
                                     ja="vm.model.getEkvToWorkWith().familienzulage"></dv-bisher>
-                                <dv-error-messages for="vm.form.familienzulage.$error"
+                                <dv-error-messages input-id="familienzulage" for="vm.form.familienzulage.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -343,7 +348,7 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" for="ersatzeinkommen">
                                     <span data-translate="FINANZIELLE_SITUATION_ERSATZEINKOMMEN"></span>
-                                    <dv-tooltip
+                                    <dv-tooltip input-id="ersatzeinkommen"
                                         text="'EINKOMMENSVERSCHLECHTERUNG_ERSATZEINKOMMEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <dv-valueinput input-id="ersatzeinkommen"
@@ -354,7 +359,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().ersatzeinkommen"
                                     ja="vm.model.getEkvToWorkWith().ersatzeinkommen"></dv-bisher>
-                                <dv-error-messages for="vm.form.ersatzeinkommen.$error"
+                                <dv-error-messages input-id="ersatzeinkommen" for="vm.form.ersatzeinkommen.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -366,7 +371,7 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" for="erhalteneAlimente">
                                     <span data-translate="FINANZIELLE_SITUATION_ERHALTENEALIMENTE"></span>
-                                    <dv-tooltip
+                                    <dv-tooltip input-id="erhalteneAlimente"
                                         text="'EINKOMMENSVERSCHLECHTERUNG_ERHALTENEALIMENTE_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <dv-valueinput input-id="erhalteneAlimente"
@@ -377,7 +382,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().erhalteneAlimente"
                                     ja="vm.model.getEkvToWorkWith().erhalteneAlimente"></dv-bisher>
-                                <dv-error-messages for="vm.form.erhalteneAlimente.$error"
+                                <dv-error-messages input-id="erhalteneAlimente" for="vm.form.erhalteneAlimente.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -388,14 +393,14 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="checkbox">
-                                <md-checkbox ng-model="vm.showSelbstaendig" name="showSelbstaendig"
+                                <md-checkbox ng-model="vm.showSelbstaendig" name="showSelbstaendig" id="showSelbstaendig"
                                              aria-label="{{'FINANZIELLE_SITUATION_SELBSTAENDIGKEIT' | translate}}"
                                              ng-change="vm.showSelbstaendigClicked()"
                                              ng-disabled="evm.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.isSelbstaendig() || vm.isGesuchReadonly()"
                                 style="margin-bottom:3rem;">
                                     <span data-translate="FINANZIELLE_SITUATION_SELBSTAENDIGKEIT"></span>
                                 </md-checkbox>
-                                <dv-tooltip
+                                <dv-tooltip input-id="showSelbstaendig"
                                     text="'EINKOMMENSVERSCHLECHTERUNG_SELBSTAENDIGKEIT_HELP' | translate"></dv-tooltip>
                                 <dv-bisher gs="vm.showSelbstaendigGS" class="dv-bisher-break"
                                            ja="vm.showSelbstaendig"
@@ -426,7 +431,7 @@
                                         ja="vm.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr"
                                         show-if-bisher-none="false"
                                         block-existed="vm.showSelbstaendigGS === true"></dv-bisher>
-                                    <dv-error-messages for="vm.form.geschaeftsgewinnBasisjahr.$error"
+                                    <dv-error-messages input-id="geschaeftsgewinnBasisjahr" for="vm.form.geschaeftsgewinnBasisjahr.$error"
                                                        class="error"></dv-error-messages>
                                 </dv-input-container>
                             </div>
@@ -472,7 +477,7 @@
                                         ja="vm.geschaeftsgewinnBasisjahrMinus1"
                                         show-if-bisher-none="false"
                                         block-existed="vm.showSelbstaendigGS === true"></dv-bisher>
-                                    <dv-error-messages for="vm.form.geschaeftsgewinnBasisjahrMinus1.$error"
+                                    <dv-error-messages input-id="geschaeftsgewinnBasisjahrMinus1" for="vm.form.geschaeftsgewinnBasisjahrMinus1.$error"
                                                        class="error"></dv-error-messages>
                                 </dv-input-container>
                             </div>
@@ -538,7 +543,7 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" for="geleisteteAlimente">
                                     <span data-translate="FINANZIELLE_SITUATION_GELEISTETEALIMENTE"></span>
-                                    <dv-tooltip
+                                    <dv-tooltip input-id="geleisteteAlimente"
                                         text="'FINANZIELLE_SITUATION_GELEISTETEALIMENTE_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <dv-valueinput input-id="geleisteteAlimente"
@@ -549,7 +554,7 @@
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().geleisteteAlimente"
                                     ja="vm.model.getEkvToWorkWith().geleisteteAlimente"></dv-bisher>
-                                <dv-error-messages for="vm.form.geleisteteAlimente.$error"
+                                <dv-error-messages input-id="geleisteteAlimente" for="vm.form.geleisteteAlimente.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>

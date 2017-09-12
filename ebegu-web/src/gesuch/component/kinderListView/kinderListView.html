@@ -1,9 +1,10 @@
 <div class="kinderListView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
     <div class="row viewTitle">
         <div class="col-md-12">
-            <h1>
+            <h2>
                 <span data-translate="KINDER"></span>
-            </h1>
+            </h2>
             <hr class="header"/>
             <p>
                 <span data-translate="KINDER_HINT1">
@@ -27,25 +28,36 @@
                         dv-show-element
                         dv-show-allowed-roles="vm.TSRoleUtil.getJugendamtRole()"></th>
                     <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                    ng-click="vm.editKind(row)">
+                    ng-click="vm.editKind(row)" role="row" tabindex="-1">
                     <td ng-bind="row.kindJA.vorname"></td>
                     <td ng-bind="row.kindJA.nachname"></td>
                     <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td dv-show-element
                         dv-show-allowed-roles="vm.TSRoleUtil.getJugendamtRole()">
                         <span class="betreuung" ng-repeat="dublette in vm.getDubletten(row)"
-                              ng-click="vm.gotoKindDublette(dublette); $event.stopPropagation()"
+                              ng-click="vm.gotoKindDublette(dublette); $event.stopPropagation();"
                               ng-show="dublette.fallNummer" ng-bind="vm.getFallNummer(dublette) + ($last ? ' ' : ', ')"></span>
                     </td>
-                    <td ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
-                        <dv-loading-button type="button" button-click="vm.removeKind(row)"
-                                           button-class="dv-btn-operation"
-                                           button-disabled="vm.isKorrekturModusJugendamt()">
-                            <i class="fa fa-lg fa-trash-o">
+                    <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%">
+                        <dv-loading-button type="button" button-click="vm.editKind(row);"
+                                           button-class="dv-btn-operation dv-btn-row" title="{{'TABLE_EDIT'|translate}}"
+                                           aria-label="{{'TABLE_EDIT'|translate}}">
+                            <i class="fa fa-lg fa-arrow-right" title="{{'TABLE_EDIT'|translate}}" aria-label="{{'TABLE_EDIT'|translate}}">
+                            </i>
+                        </dv-loading-button>
+                    </td>
+                    <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)" width="5%">
+                        <dv-loading-button type="button" button-click="vm.removeKind(row,$index);"
+                                           button-class="dv-btn-operation" input-id="{{'removeKindButton_'+$index}}"
+                                           title="{{'EINTRAG_DELETE' | translate}}"
+                                           button-disabled="vm.isKorrekturModusJugendamt()" delay="0"
+                                           aria-label="{{'KINDER_DELETE'|translate}}">
+                            <i class="fa fa-lg fa-trash-o" aria-label="{{'KINDER_DELETE' | translate}}">
                             </i>
                         </dv-loading-button>
                     </td>

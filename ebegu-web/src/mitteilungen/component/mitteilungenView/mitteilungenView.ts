@@ -1,13 +1,12 @@
 import IComponentOptions = angular.IComponentOptions;
-import FallRS from '../../../gesuch/service/fallRS.rest';
 import {IMitteilungenStateParams} from '../../mitteilungen.route';
 import TSFall from '../../../models/TSFall';
-import IPromise = angular.IPromise;
-import IQService = angular.IQService;
 import IFormController = angular.IFormController;
 import IStateService = angular.ui.IStateService;
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import ITimeoutService = angular.ITimeoutService;
 
 let template = require('./mitteilungenView.html');
 require('./mitteilungenView.less');
@@ -26,10 +25,11 @@ export class MitteilungenViewController {
     fallId: string;
     TSRoleUtil = TSRoleUtil;
 
-    static $inject: string[] = ['$state', '$stateParams', 'FallRS', 'AuthServiceRS', '$q'];
+    static $inject: string[] = ['$state', '$stateParams', 'AuthServiceRS', '$timeout'];
+
     /* @ngInject */
     constructor(private $state: IStateService, private $stateParams: IMitteilungenStateParams,
-                private fallRS: FallRS, private authServiceRS: AuthServiceRS, private $q: IQService) {
+                private authServiceRS: AuthServiceRS, private $timeout: ITimeoutService) {
     }
 
     $onInit() {
@@ -44,5 +44,11 @@ export class MitteilungenViewController {
         } else {
             this.$state.go('posteingang');
         }
+    }
+
+    $postLink() {
+        this.$timeout(() => {
+            EbeguUtil.selectFirst();
+        }, 500); // this is the only way because it needs a little until everything is loaded
     }
 }

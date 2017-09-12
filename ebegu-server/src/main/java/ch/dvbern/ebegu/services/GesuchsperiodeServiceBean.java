@@ -53,7 +53,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	private static final Logger LOGGER = LoggerFactory.getLogger(GesuchsperiodeServiceBean.class.getSimpleName());
 
 	@Inject
-	private Persistence<Gesuchsperiode> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private PrincipalBean principalBean;
@@ -88,6 +88,8 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 		}
 		// Überprüfen, ob der Statusübergang zulässig ist
 		if (!gesuchsperiode.getStatus().equals(statusBisher)) {
+			// Alle Statusuebergaenge werden geloggt
+			logStatusChange(gesuchsperiode, statusBisher);
 			// Superadmin darf alles
 			if (!principalBean.isCallerInRole(UserRole.SUPER_ADMIN)) {
 				if (!isStatusUebergangValid(statusBisher, gesuchsperiode.getStatus())) {
@@ -263,5 +265,15 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 		} else {
 			return false;
 		}
+	}
+
+	private void logStatusChange(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull GesuchsperiodeStatus statusBisher) {
+		LOGGER.info("****************************************************");
+		LOGGER.info("Status Gesuchsperiode wurde geändert:");
+		LOGGER.info("Benutzer: " + principalBean.getBenutzer().getUsername());
+		LOGGER.info("Gesuchsperiode: " + gesuchsperiode.getGesuchsperiodeString() + " (" + gesuchsperiode.getId() + ")");
+		LOGGER.info("Neuer Status: " + gesuchsperiode.getStatus());
+		LOGGER.info("Bisheriger Status: " + statusBisher);
+		LOGGER.info("****************************************************");
 	}
 }

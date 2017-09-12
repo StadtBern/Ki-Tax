@@ -11,6 +11,12 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
@@ -20,18 +26,12 @@ import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
 /**
  * Transferobjekt
  */
 public class BegleitschreibenPrintImpl extends BriefPrintImpl implements BegleitschreibenPrint {
 
-	private List<AufzaehlungPrint> beilagen = new ArrayList<>();
+	private final List<AufzaehlungPrint> beilagen = new ArrayList<>();
 
 	/**
 	 * @param gesuch

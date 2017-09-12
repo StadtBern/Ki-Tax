@@ -16,9 +16,12 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
+import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 import ITranslateService = angular.translate.ITranslateService;
+import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
 import ILogService = angular.ILogService;
+
 let template = require('./betreuungListView.html');
 require('./betreuungListView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -33,19 +36,20 @@ export class BetreuungListViewComponentConfig implements IComponentOptions {
 /**
  * View fuer die Liste der Betreeungen der eingegebenen Kinder
  */
-export class BetreuungListViewController extends AbstractGesuchViewController<any> {
+export class BetreuungListViewController extends AbstractGesuchViewController<any> implements IDVFocusableController {
 
     TSRoleUtil = TSRoleUtil;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguUtil', 'BerechnungsManager',
-        'ErrorService', 'WizardStepManager', 'AuthServiceRS', '$scope', '$log'];
+        'ErrorService', 'WizardStepManager', 'AuthServiceRS', '$scope', '$log', '$timeout'];
+
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager,
                 private $translate: ITranslateService,
                 private DvDialog: DvDialog, private ebeguUtil: EbeguUtil, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager,
-                private authServiceRS: AuthServiceRS, $scope: IScope, private $log: ILogService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
+                private authServiceRS: AuthServiceRS, $scope: IScope, private $log: ILogService, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG, $timeout);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
 
     }
@@ -76,7 +80,6 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         return false;
     }
 
-
     public createBetreuung(kind: TSKindContainer): void {
         let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
         if (kindIndex >= 0) {
@@ -87,7 +90,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         }
     }
 
-    public removeBetreuung(kind: TSKindContainer, betreuung: TSBetreuung): void {
+    public removeBetreuung(kind: TSKindContainer, betreuung: TSBetreuung, index: any): void {
         this.gesuchModelManager.findKind(kind);     //kind index setzen
         let remTitleText: any = this.$translate.instant('BETREUUNG_LOESCHEN', {
             kindname: this.gesuchModelManager.getKindToWorkWith().kindJA.getFullName(),
@@ -95,7 +98,9 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         });
         this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             title: remTitleText,
-            deleteText: 'BETREUUNG_LOESCHEN_BESCHREIBUNG'
+            deleteText: 'BETREUUNG_LOESCHEN_BESCHREIBUNG',
+            parentController: this,
+            elementID: 'removeBetreuungButton' + kind.kindNummer + '_' + index
         }).then(() => {   //User confirmed removal
             this.errorService.clearAll();
             let betreuungIndex: number = this.gesuchModelManager.findBetreuung(betreuung);
@@ -144,5 +149,9 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
             betreuungId: betreuung.id,
             mitteilungId: undefined
         });
+    }
+
+    public setFocusBack(elementID: string): void {
+        angular.element('#' + elementID).first().focus();
     }
 }

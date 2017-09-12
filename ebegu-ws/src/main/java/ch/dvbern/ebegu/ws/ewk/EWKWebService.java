@@ -18,19 +18,21 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.handler.MessageContext;
 
-import ch.bern.e_gov.cra.ReturnMessage;
-import ch.bern.e_gov.e_begu.egov_002.PersonenSucheOB;
-import ch.bern.e_gov.e_begu.egov_002.PersonenSucheReq;
-import ch.bern.e_gov.e_begu.egov_002.PersonenSucheResp;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceBusinessException;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceException;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import ch.bern.e_gov.cra.ReturnMessage;
+import ch.bern.e_gov.e_begu.egov_002.PersonenSucheOB;
+import ch.bern.e_gov.e_begu.egov_002.PersonenSucheReq;
+import ch.bern.e_gov.e_begu.egov_002.PersonenSucheResp;
 
 /**
  * Diese Klasse ruft den PersonenSuche Webservice des EWK auf
@@ -52,6 +54,7 @@ public class EWKWebService implements IEWKWebService {
 	@Inject
 	private EbeguConfiguration config;
 
+	@SuppressWarnings("InstanceVariableMayNotBeInitialized")
 	private PersonenSucheOB port;
 
 	@Nonnull
@@ -130,7 +133,7 @@ public class EWKWebService implements IEWKWebService {
 
 	/**
 	 * initialisiert den Service Port wenn noetig oder gibt ihn zurueck.
-	 * @throws PersonenSucheServiceException
+	 * @throws PersonenSucheServiceException, if the service cannot be initialised
 	 */
 	private PersonenSucheOB getService() throws PersonenSucheServiceException {
 		if (port == null) {
@@ -139,7 +142,7 @@ public class EWKWebService implements IEWKWebService {
 		return port;
 	}
 
-	@SuppressWarnings({"PMD.NcssMethodCount"})
+	@SuppressWarnings("PMD.NcssMethodCount")
 	private void initPersonenSucheServicePort() throws PersonenSucheServiceException {
 		logger.info("Initialising PersonenSucheService:");
 		if (port == null) {
@@ -192,9 +195,9 @@ public class EWKWebService implements IEWKWebService {
 
 				// Authorization-Header setzen
 				Map<String, List<String>> headers = new HashMap<>();
-				String usernameAndPassword = username + ":" + password;
+				String usernameAndPassword = username + ':' + password;
 				String authorizationHeaderName = "Authorization";
-				String authorizationHeaderValue = "Basic " + DatatypeConverter.printBase64Binary( usernameAndPassword.getBytes() );
+				String authorizationHeaderValue = "Basic " + DatatypeConverter.printBase64Binary( usernameAndPassword.getBytes(UTF8));
 				headers.put(authorizationHeaderName, Collections.singletonList(authorizationHeaderValue));
 				bp.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, headers);
 				logger.info("PersonenSucheService Authorization Header set");

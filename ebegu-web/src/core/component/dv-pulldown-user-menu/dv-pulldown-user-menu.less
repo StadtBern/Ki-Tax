@@ -2,11 +2,14 @@
 @import '../../../style/mixins.less';
 
 .user-menu {
-    md-menu-item > a.md-button{
+    md-menu-item > a.md-button {
         padding: 0 16px 0;
     }
     md-menu-bar button {
         padding: 0;
+    }
+    md-menu-item:focus{
+        background: @contrast;
     }
     padding: 0;
     float: right;
@@ -26,7 +29,7 @@
         }
     }
     .md-button:not([disabled]):hover, &:focus {
-        background: @contrast-light;
+        background: @contrast;
     }
     button {
         letter-spacing: normal;
@@ -43,14 +46,20 @@
             margin-left: 1rem;
             vertical-align: middle;
         }
-        &:hover {
+        &:hover, &:focus:hover {
             color: @contrast-darkest;
-            background: @contrast-light;
-        }
-        &:focus{
+            background: @contrast;
             outline: 0;
+        }
+        &:focus {
+            outline: 2px solid @contrast-darkest;
+            background: @contrast;
+            outline-offset: -1rem;
             -webkit-box-shadow: none;
             box-shadow: none;
         }
+    }
+    .versionInfo{
+        color: @dred;
     }
 }

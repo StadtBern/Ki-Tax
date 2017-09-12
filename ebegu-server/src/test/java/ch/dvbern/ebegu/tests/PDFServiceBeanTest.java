@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
 public class PDFServiceBeanTest {
 
 	@Rule
-	public UnitTestTempFolder unitTestTempfolder = new UnitTestTempFolder();
+	public final UnitTestTempFolder unitTestTempfolder = new UnitTestTempFolder();
 
 	@Rule
 	public NeedleRule needleRule = new NeedleRule();
@@ -66,7 +66,7 @@ public class PDFServiceBeanTest {
 
 	private Gesuch gesuch_1GS, gesuch_2GS;
 
-	private boolean writeProtectPDF = false;
+	private final boolean writeProtectPDF = false;
 
 	protected BetreuungsgutscheinEvaluator evaluator;
 

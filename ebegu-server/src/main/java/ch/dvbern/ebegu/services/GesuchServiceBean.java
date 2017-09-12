@@ -120,7 +120,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private static final Logger LOG = LoggerFactory.getLogger(GesuchServiceBean.class.getSimpleName());
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
@@ -220,7 +220,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, GESUCHSTELLER })
 	public Optional<Gesuch> findGesuchForFreigabe(@Nonnull String gesuchId) {
 		Objects.requireNonNull(gesuchId, "gesuchId muss gesetzt sein");
 		Gesuch gesuch = persistence.find(Gesuch.class, gesuchId);
@@ -884,6 +884,18 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			if (gesuch.getStatus() != AntragStatus.FREIGABEQUITTUNG) {
 				// Es handelt sich um eine Mutation ohne Freigabequittung: Wir setzen das Tagesdatum als FreigabeDatum an dem es der Gesuchsteller einreicht
 				gesuch.setFreigabeDatum(LocalDate.now());
+			}
+
+			// Falls es ein NUR_SCHULAMT Gesuch ist, muss hier bereits die Finanzielle Situation erstellt werden,
+			// da das Gesuch mit Einlesen der Freigabequittung als freigegeben gilt.
+			if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+				// Das Dokument der Finanziellen Situation erstellen
+				try {
+					generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(gesuch, true);
+				} catch (MimeTypeParseException | MergeDocException e) {
+					throw new EbeguRuntimeException("antragFreigeben", "FinSit-Dokument konnte nicht erstellt werden"
+						+ gesuch.getId(), e);
+				}
 			}
 
 			// Den Gesuchsstatus setzen

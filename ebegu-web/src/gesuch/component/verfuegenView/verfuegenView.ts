@@ -1,4 +1,4 @@
-import {IComponentOptions, IPromise, ILogService, IScope} from 'angular';
+import {IComponentOptions, ILogService, IPromise, IScope} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -20,11 +20,12 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import ExportRS from '../../service/exportRS.rest';
 import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
 import {ThreeButtonsDialogController} from '../../dialog/ThreeButtonsDialogController';
+import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 let threeButtonsDialogTempl = require('../../dialog/threeButtonsDialog.html');
-
 
 export class VerfuegenViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -39,7 +40,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public bemerkungen: string;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$log', '$stateParams', '$window' , 'ExportRS', 'ApplicationPropertyRS'];
+        'DvDialog', 'DownloadRS', '$log', '$stateParams', '$window', 'ExportRS', 'ApplicationPropertyRS', '$timeout'];
 
     private verfuegungen: TSVerfuegung[] = [];
     private showSchemas: boolean;
@@ -50,9 +51,10 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, $scope: IScope, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService, $stateParams: IBetreuungStateParams,
-                private $window: ng.IWindowService, private exportRS: ExportRS, private applicationPropertyRS: ApplicationPropertyRS) {
+                private $window: ng.IWindowService, private exportRS: ExportRS, private applicationPropertyRS: ApplicationPropertyRS,
+                $timeout: ITimeoutService) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN, $timeout);
 
         let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber, 10));
         if (kindIndex === -1) {
@@ -286,7 +288,9 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public saveVerfuegung(): IPromise<TSVerfuegung> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_SAVE_VERFUEGUNG',
-            deleteText: 'BESCHREIBUNG_SAVE_VERFUEGUNG'
+            deleteText: 'BESCHREIBUNG_SAVE_VERFUEGUNG',
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {
             this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
             return this.gesuchModelManager.saveVerfuegung(false);
@@ -309,7 +313,9 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public verfuegungSchliessenOhenVerfuegen(): IPromise<void> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN',
-            deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN'
+            deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN',
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {
             this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
             this.gesuchModelManager.verfuegungSchliessenOhenVerfuegen();
@@ -319,7 +325,9 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public verfuegungNichtEintreten(): IPromise<TSVerfuegung> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_CLOSE_VERFUEGUNG_NICHT_EINTRETEN',
-            deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_NICHT_EINTRETEN'
+            deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_NICHT_EINTRETEN',
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {
             this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
             return this.gesuchModelManager.verfuegungSchliessenNichtEintreten();

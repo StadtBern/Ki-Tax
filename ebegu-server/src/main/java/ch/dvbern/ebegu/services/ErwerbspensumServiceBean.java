@@ -32,7 +32,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.*;
 public class ErwerbspensumServiceBean extends AbstractBaseService implements ErwerbspensumService {
 
 	@Inject
-	private Persistence<ErwerbspensumContainer> persistence;
+	private Persistence persistence;
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 	@Inject

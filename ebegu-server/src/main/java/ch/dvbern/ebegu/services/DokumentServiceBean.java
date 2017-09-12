@@ -1,14 +1,15 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Dokument;
-import ch.dvbern.lib.cdipersistence.Persistence;
+import java.util.Objects;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.Objects;
-import java.util.Optional;
+
+import ch.dvbern.ebegu.entities.Dokument;
+import ch.dvbern.lib.cdipersistence.Persistence;
 
 /**
  * Service fuer Dokument
@@ -18,7 +19,7 @@ import java.util.Optional;
 public class DokumentServiceBean extends AbstractBaseService implements DokumentService {
 
 	@Inject
-	private Persistence<Dokument> persistence;
+	private Persistence persistence;
 
 
 	@Override

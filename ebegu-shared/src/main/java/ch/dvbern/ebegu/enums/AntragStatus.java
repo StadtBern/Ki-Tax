@@ -323,6 +323,8 @@ public enum AntragStatus {
 		NUR_SCHULAMT, // Damit eine Mutation erstellt werden kann
 		NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN, // Damit eine Mutation erstellt werden kann
 		FREIGABEQUITTUNG,
+		NUR_SCHULAMT, // damit eine Mutation erstellt werden kann
+		NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN, // damit eine Mutation erstellt werden kann
 		ERSTE_MAHNUNG,
 		ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		ERSTE_MAHNUNG_ABGELAUFEN,

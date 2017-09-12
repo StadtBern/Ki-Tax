@@ -3,7 +3,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>2.1.2</version>
+        <version>2.1.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -35,7 +35,7 @@
             <version>${version.hibernate}</version>
         </dependency>
         <dependency>
-            <groupId>ch.dvbern.lib.dvbern-lib-doctemplate</groupId>
+            <groupId>ch.dvbern.oss.doctemplate</groupId>
             <artifactId>docx-engine</artifactId>
         </dependency>
         <dependency>
@@ -53,13 +53,8 @@
         </dependency>
 
         <dependency>
-            <groupId>ch.dvbern.oss.lib.beanvalidation</groupId>
-            <artifactId>lib-beanvalidation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.dvbern.oss.lib.excelmerger</groupId>
-            <artifactId>dvbern-lib-excelmerger-impl</artifactId>
-            <version>2.0.0</version>
+            <groupId>ch.dvbern.oss.beanvalidation</groupId>
+            <artifactId>beanvalidation</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>

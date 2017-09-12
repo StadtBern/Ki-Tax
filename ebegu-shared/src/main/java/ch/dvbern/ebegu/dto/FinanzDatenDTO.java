@@ -17,11 +17,17 @@ public class FinanzDatenDTO {
 	private BigDecimal massgebendesEinkBjP2VorAbzFamGr = BigDecimal.ZERO;
 
 	private LocalDate datumVonBasisjahr = null; // Start Gesuchsperiode
-	private LocalDate datumVonBasisjahrPlus1 = null; // 1. des ausgewählten Monats. Wird auch gesetzt, wenn die EKV abgelehnt wurde!
-	private LocalDate datumVonBasisjahrPlus2 = null; // 1. des ausgewählten Monats. Wird auch gesetzt, wenn die EKV abgelehnt wurde!
+	private LocalDate datumVonBasisjahrPlus1 = null; // 1. des ausgewählten Monats. Wird auch gesetzt, wenn die EKV annulliert wurde!
+	private LocalDate datumVonBasisjahrPlus2 = null; // 1. des ausgewählten Monats. Wird auch gesetzt, wenn die EKV annulliert wurde!
 
+	// 'accepted' bedeutet, dass die EKV mehr als den Grenzwert erreicht, z.B. > 20%
 	private boolean ekv1Accepted = false;
 	private boolean ekv2Accepted = false;
+
+	// Das JA kann aber trotzdem die EKV manuell ablehnen, wenn z.B. Dokumente nicht eingereicht werden oder die EKV
+	// vom GS im online Gesuch erfasst wurde, obwohl er sie nicht hätte erfassen sollen
+	private boolean ekv1Annulliert = false;
+	private boolean ekv2Annulliert = false;
 
 
 
@@ -87,5 +93,29 @@ public class FinanzDatenDTO {
 
 	public void setEkv2Accepted(boolean ekv2Accepted) {
 		this.ekv2Accepted = ekv2Accepted;
+	}
+
+	public boolean isEkv1Annulliert() {
+		return ekv1Annulliert;
+	}
+
+	public void setEkv1Annulliert(boolean ekv1Annulliert) {
+		this.ekv1Annulliert = ekv1Annulliert;
+	}
+
+	public boolean isEkv2Annulliert() {
+		return ekv2Annulliert;
+	}
+
+	public void setEkv2Annulliert(boolean ekv2Annulliert) {
+		this.ekv2Annulliert = ekv2Annulliert;
+	}
+
+	public boolean isEkv1AcceptedAndNotAnnuliert() {
+		return ekv1Accepted && !ekv1Annulliert;
+	}
+
+	public boolean isEkv2AcceptedAndNotAnnuliert() {
+		return ekv2Accepted && !ekv2Annulliert;
 	}
 }
