@@ -16,11 +16,11 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
+import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 import ITranslateService = angular.translate.ITranslateService;
 import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
 import ILogService = angular.ILogService;
-import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 
 let template = require('./betreuungListView.html');
 require('./betreuungListView.less');
@@ -90,7 +90,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         }
     }
 
-    public removeBetreuung(kind: TSKindContainer, betreuung: TSBetreuung): void {
+    public removeBetreuung(kind: TSKindContainer, betreuung: TSBetreuung, index: any): void {
         this.gesuchModelManager.findKind(kind);     //kind index setzen
         let remTitleText: any = this.$translate.instant('BETREUUNG_LOESCHEN', {
             kindname: this.gesuchModelManager.getKindToWorkWith().kindJA.getFullName(),
@@ -100,7 +100,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
             title: remTitleText,
             deleteText: 'BETREUUNG_LOESCHEN_BESCHREIBUNG',
             parentController: this,
-            elementID: undefined
+            elementID: 'removeBetreuungButton' + kind.kindNummer + '_' + index
         }).then(() => {   //User confirmed removal
             this.errorService.clearAll();
             let betreuungIndex: number = this.gesuchModelManager.findBetreuung(betreuung);
@@ -152,6 +152,6 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
     }
 
     public setFocusBack(elementID: string): void {
-        angular.element('#removeBetreuungButton').first().focus();
+        angular.element('#' + elementID).first().focus();
     }
 }

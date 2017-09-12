@@ -62,8 +62,8 @@ export class DVErwerbspensumListController {
         }
     }
 
-    removeClicked(pensumToRemove: TSErwerbspensumContainer) {
-        this.onRemove({pensum: pensumToRemove});
+    removeClicked(pensumToRemove: TSErwerbspensumContainer, index: any) {
+        this.onRemove({pensum: pensumToRemove, index: index});
     }
 
     editClicked(pensumToEdit: any) {

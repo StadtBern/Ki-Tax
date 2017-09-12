@@ -11,10 +11,10 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import TSKindDublette from '../../../models/TSKindDublette';
 import EbeguUtil from '../../../utils/EbeguUtil';
+import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
-import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 
 let template = require('./kinderListView.html');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -96,13 +96,13 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
         return EbeguUtil.addZerosToNumber(dublette.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
     }
 
-    removeKind(kind: any): void {
+    removeKind(kind: any, index: any): void {
         let remTitleText = this.$translate.instant('KIND_LOESCHEN', {kindname: kind.kindJA.getFullName()});
         this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: remTitleText,
             deleteText: 'KIND_LOESCHEN_BESCHREIBUNG',
             parentController: this,
-            elementID: undefined
+            elementID: 'removeKindButton_' + index
         })
             .then(() => {   //User confirmed removal
                 let kindIndex: number = this.gesuchModelManager.findKind(kind);
@@ -130,7 +130,7 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
     }
 
     public setFocusBack(elementID: string): void {
-        angular.element('#removeKindButton').first().focus();
+        angular.element('#' + elementID).first().focus();
     }
 
 }

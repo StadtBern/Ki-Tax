@@ -52,8 +52,8 @@
                         </dv-loading-button>
                     </td>
                     <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)" width="5%">
-                        <dv-loading-button type="button" button-click="vm.removeKind(row);"
-                                           button-class="dv-btn-operation" input-id="removeKindButton"
+                        <dv-loading-button type="button" button-click="vm.removeKind(row,$index);"
+                                           button-class="dv-btn-operation" input-id="{{'removeKindButton_'+$index}}"
                                            title="{{'EINTRAG_DELETE' | translate}}"
                                            button-disabled="vm.isKorrekturModusJugendamt()" delay="0"
                                            aria-label="{{'KINDER_DELETE'|translate}}">

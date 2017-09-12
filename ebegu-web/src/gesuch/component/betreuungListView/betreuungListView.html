@@ -60,15 +60,16 @@
                                         </i>
                                     </dv-loading-button>
                                 </td>
-                                <td  dv-show-element
+                                <td dv-show-element
                                     dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                     dv-show-expression="vm.canRemoveBetreuung(betreuung)"
-                                     role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%">
+                                    role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%">
                                     <dv-loading-button aria-label="{{'BETREUUNG_DELETE'|translate}}" type="button"
                                                        title="{{'BETREUUNG_DELETE' | translate}}"
-                                                       button-click="vm.removeBetreuung(kind, betreuung)"
+                                                       button-click="vm.removeBetreuung(kind, betreuung,$index)"
                                                        button-disabled="vm.isNotAllowedToRemove(betreuung)"
-                                                       input-id="removeBetreuungButton" delay="0"
+                                                       input-id="{{'removeBetreuungButton'+kind.kindNummer+'_'+$index}}"
+                                                       delay="0"
                                                        button-class="dv-btn-operation">
                                         <i class="fa fa-lg fa-trash-o" aria-label="{{'BETREUUNG_DELETE' | translate}}">
                                         </i>
