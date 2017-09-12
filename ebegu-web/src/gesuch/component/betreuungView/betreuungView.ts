@@ -456,7 +456,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         if (this.isGesuchValid() && this.mutationsmeldungModel) {
             this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
                 title: 'MUTATIONSMELDUNG_CONFIRMATION',
-                deleteText: 'MUTATIONSMELDUNG_BESCHREIBUNG'
+                deleteText: 'MUTATIONSMELDUNG_BESCHREIBUNG',
+                parentController: undefined,
+                elementID: undefined
             }).then(() => {   //User confirmed removal
                 this.mitteilungRS.sendbetreuungsmitteilung(this.gesuchModelManager.getGesuch().fall,
                     this.mutationsmeldungModel).then((response) => {

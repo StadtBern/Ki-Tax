@@ -82,7 +82,9 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
                 });
                 return this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
                     title: 'FAMILIENSITUATION_WARNING',
-                    deleteText: descriptionText
+                    deleteText: descriptionText,
+                    parentController: undefined,
+                    elementID: undefined
                 }).then(() => {   //User confirmed changes
                     return this.save();
                 });

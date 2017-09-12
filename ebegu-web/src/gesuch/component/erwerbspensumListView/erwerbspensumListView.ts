@@ -19,6 +19,7 @@ import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import * as moment from 'moment';
 import ITimeoutService = angular.ITimeoutService;
+import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 let template: string = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 require('./erwerbspensumListView.less');
@@ -42,7 +43,7 @@ export class ErwerbspensumListViewComponentConfig implements IComponentOptions {
 }
 
 
-export class ErwerbspensumListViewController extends AbstractGesuchViewController<any> {
+export class ErwerbspensumListViewController extends AbstractGesuchViewController<any> implements IDVFocusableController {
 
     erwerbspensenGS1: Array<TSErwerbspensumContainer> = undefined;
     erwerbspensenGS2: Array<TSErwerbspensumContainer>;
@@ -99,14 +100,16 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
         this.openErwerbspensumView(gesuchstellerNumber, undefined);
     }
 
-    removePensum(pensum: TSErwerbspensumContainer, gesuchstellerNumber: number): void {
+    removePensum(pensum: TSErwerbspensumContainer, gesuchstellerNumber: number, element_id: string): void {
         // Spezielle Meldung, wenn es ein GS ist, der in einer Mutation loescht
         let gsInMutation: boolean = (this.authServiceRS.getPrincipalRole() === TSRole.GESUCHSTELLER && pensum.vorgaengerId !== undefined);
         let pensumLaufendOderVergangen: boolean = pensum.erwerbspensumJA.gueltigkeit.gueltigAb.isBefore(moment(moment.now()));
         this.errorService.clearAll();
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: (gsInMutation && pensumLaufendOderVergangen) ? 'ERWERBSPENSUM_LOESCHEN_GS_MUTATION' : '',
-            title: 'ERWERBSPENSUM_LOESCHEN'
+            title: 'ERWERBSPENSUM_LOESCHEN',
+            parentController: this,
+            elementID: element_id
         })
             .then(() => {   //User confirmed removal
                 this.gesuchModelManager.setGesuchstellerNumber(gesuchstellerNumber);
@@ -161,5 +164,9 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
             erwerbspensenNumber += this.getErwerbspensenListGS2().length;
         }
         return this.isErwerbspensumRequired() && erwerbspensenNumber <= 0;
+    }
+
+    public setFocusBack(elementID: string): void {
+        angular.element('#' + elementID).first().focus();
     }
 }

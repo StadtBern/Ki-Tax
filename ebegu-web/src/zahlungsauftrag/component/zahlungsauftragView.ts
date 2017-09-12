@@ -99,7 +99,9 @@ export class ZahlungsauftragViewController {
         if (this.form.$valid) {
             this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
                 title: this.$translate.instant('ZAHLUNG_ERSTELLEN_CONFIRM'),
-                deleteText: this.$translate.instant('ZAHLUNG_ERSTELLEN_INFO')
+                deleteText: this.$translate.instant('ZAHLUNG_ERSTELLEN_INFO'),
+                parentController: undefined,
+                elementID: undefined
             }).then(() => {   //User confirmed removal
                 this.zahlungRS.createZahlungsauftrag(this.beschrieb, this.faelligkeitsdatum, this.datumGeneriert).then((response: TSZahlungsauftrag) => {
                     this.zahlungsauftragen.push(response);
@@ -135,7 +137,9 @@ export class ZahlungsauftragViewController {
     public ausloesen(zahlungsauftragId: string) {
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             title: this.$translate.instant('ZAHLUNG_AUSLOESEN_CONFIRM'),
-            deleteText: this.$translate.instant('ZAHLUNG_AUSLOESEN_INFO')
+            deleteText: this.$translate.instant('ZAHLUNG_AUSLOESEN_INFO'),
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {   //User confirmed removal
             this.zahlungRS.zahlungsauftragAusloesen(zahlungsauftragId).then((response: TSZahlungsauftrag) => {
                 let index = EbeguUtil.getIndexOfElementwithID(response, this.zahlungsauftragen);
@@ -150,7 +154,9 @@ export class ZahlungsauftragViewController {
     public remove(zahlungsauftrag: TSZahlungsauftrag) {
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: 'ZAHLUNG_LOESCHEN_DIALOG_TEXT',
-            title: 'ZAHLUNG_LOESCHEN_DIALOG_TITLE'
+            title: 'ZAHLUNG_LOESCHEN_DIALOG_TITLE',
+            parentController: undefined,
+            elementID: undefined
         })
             .then(() => {   //User confirmed removal
                 let index = EbeguUtil.getIndexOfElementwithID(zahlungsauftrag, this.zahlungsauftragen);

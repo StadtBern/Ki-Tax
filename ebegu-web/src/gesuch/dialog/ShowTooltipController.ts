@@ -25,7 +25,7 @@ export class ShowTooltipController {
 
     public cancel(): void {
         if (this.parentController) {
-            this.parentController.setFocusBack();
+            this.parentController.setFocusBack(undefined); // no need to pass the element
         }
         this.$mdDialog.cancel();
     }

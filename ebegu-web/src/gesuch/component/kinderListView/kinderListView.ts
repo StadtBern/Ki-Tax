@@ -14,6 +14,7 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
+import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 
 let template = require('./kinderListView.html');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -29,7 +30,7 @@ export class KinderListViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class KinderListViewController extends AbstractGesuchViewController<any> {
+export class KinderListViewController extends AbstractGesuchViewController<any> implements IDVFocusableController {
 
     kinderDubletten: TSKindDublette[] = [];
 
@@ -99,7 +100,9 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
         let remTitleText = this.$translate.instant('KIND_LOESCHEN', {kindname: kind.kindJA.getFullName()});
         this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: remTitleText,
-            deleteText: 'KIND_LOESCHEN_BESCHREIBUNG'
+            deleteText: 'KIND_LOESCHEN_BESCHREIBUNG',
+            parentController: this,
+            elementID: undefined
         })
             .then(() => {   //User confirmed removal
                 let kindIndex: number = this.gesuchModelManager.findKind(kind);
@@ -124,6 +127,10 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
 
     public getColsNumber(): number {
         return this.kinderDubletten ? 6 : 5;
+    }
+
+    public setFocusBack(elementID: string): void {
+        angular.element('#removeKindButton').first().focus();
     }
 
 }

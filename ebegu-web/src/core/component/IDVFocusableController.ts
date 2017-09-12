@@ -4,6 +4,9 @@
  */
 export interface IDVFocusableController {
 
-    setFocusBack(): void;
+    /**
+     * This funktion must be called to set the focus back to the given element.
+     */
+    setFocusBack(elementID: string): void;
 
 }

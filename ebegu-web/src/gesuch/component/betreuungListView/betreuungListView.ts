@@ -20,6 +20,7 @@ import ITranslateService = angular.translate.ITranslateService;
 import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
 import ILogService = angular.ILogService;
+import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 
 let template = require('./betreuungListView.html');
 require('./betreuungListView.less');
@@ -35,7 +36,7 @@ export class BetreuungListViewComponentConfig implements IComponentOptions {
 /**
  * View fuer die Liste der Betreeungen der eingegebenen Kinder
  */
-export class BetreuungListViewController extends AbstractGesuchViewController<any> {
+export class BetreuungListViewController extends AbstractGesuchViewController<any> implements IDVFocusableController {
 
     TSRoleUtil = TSRoleUtil;
 
@@ -97,7 +98,9 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         });
         this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             title: remTitleText,
-            deleteText: 'BETREUUNG_LOESCHEN_BESCHREIBUNG'
+            deleteText: 'BETREUUNG_LOESCHEN_BESCHREIBUNG',
+            parentController: this,
+            elementID: undefined
         }).then(() => {   //User confirmed removal
             this.errorService.clearAll();
             let betreuungIndex: number = this.gesuchModelManager.findBetreuung(betreuung);
@@ -146,5 +149,9 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
             betreuungId: betreuung.id,
             mitteilungId: undefined
         });
+    }
+
+    public setFocusBack(elementID: string): void {
+        angular.element('#removeBetreuungButton').first().focus();
     }
 }

@@ -165,7 +165,9 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
             if (this.isConfirmationRequired()) {
                 return this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
                     title: 'EINKVERS_WARNING',
-                    deleteText: 'EINKVERS_WARNING_BESCHREIBUNG'
+                    deleteText: 'EINKVERS_WARNING_BESCHREIBUNG',
+                    parentController: undefined,
+                    elementID: undefined
                 }).then(() => {   //User confirmed changes
                     return this.save();
                 });

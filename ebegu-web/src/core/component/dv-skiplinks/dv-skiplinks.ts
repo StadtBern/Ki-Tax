@@ -65,7 +65,7 @@ export class DvSkiplinksController implements IDVFocusableController {
     /**
      * Sets the focus back to the Kontakt icon.
      */
-    public setFocusBack(): void {
+    public setFocusBack(elementID: string): void {
         angular.element('#SKIP_4').first().focus();
     }
 }
