@@ -45,10 +45,7 @@ import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.AntragStatusDTO;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -75,7 +72,7 @@ import org.slf4j.LoggerFactory;
  */
 @Path("gesuche")
 @Stateless
-@Api
+@Api(description = "Resource für Anträge (Erstgesuch oder Mutation)")
 public class GesuchResource {
 
 	public static final String GESUCH_ID_INVALID = "GesuchId invalid: ";
@@ -106,8 +103,8 @@ public class GesuchResource {
 	@Inject
 	private ResourceHelper resourceHelper;
 
-	@ApiOperation(value = "Creates a new Gesuch in the database. The transfer object also has a relation to Familiensituation " +
-		"which is stored in the database as well.")
+	@ApiOperation(value = "Creates a new Antrag in the database. The transfer object also has a relation to " +
+		"Familiensituation which is stored in the database as well.", response = JaxGesuch.class)
 	@Nullable
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -129,6 +126,7 @@ public class GesuchResource {
 		return Response.created(uri).entity(jaxGesuch).build();
 	}
 
+	@ApiOperation(value = "Updates a Antrag in the database", response = JaxGesuch.class)
 	@Nullable
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -149,6 +147,8 @@ public class GesuchResource {
 		return converter.gesuchToJAX(modifiedGesuch);
 	}
 
+	@ApiOperation(value = "Gibt den Antrag mit der uebergebenen Id zurueck. Dabei wird geprueft, ob der eingeloggte " +
+		"Benutzer ueberhaupt fuer das Gesuch berechtigt ist.", response = JaxGesuch.class)
 	@Nullable
 	@GET
 	@Path("/{gesuchId}")
@@ -174,6 +174,9 @@ public class GesuchResource {
 	 * @param gesuchJAXPId gesuchID des Gesuchs im Status Freigabequittung oder hoeher
 	 * @return DTO mit den relevanten Informationen zum Gesuch
 	 */
+	@ApiOperation(value = "Gibt den Antrag mit der uebergebenen Id zurueck. Da beim Einscannen Gesuche eingelesen " +
+		"werden die noch im Status Freigabequittung sind brauchen wir hier eine separate Methode um das Lesen der " +
+		"noetigen Informationen dieser Gesuche zuzulassen.", response = JaxGesuch.class)
 	@Nullable
 	@GET
 	@Path("/freigabe/{gesuchId}")
@@ -202,6 +205,9 @@ public class GesuchResource {
 	 * @return filtriertes Gesuch mit nur den relevanten Daten
 	 * @throws EbeguException
 	 */
+	@ApiOperation(value = "Gibt den Antrag mit der uebergebenen Id zurueck. Methode fuer Benutzer mit Rolle " +
+		"SACHBEARBEITER_INSTITUTION oder SACHBEARBEITER_TRAEGERSCHAFT. Das ganze Gesuch wird gefiltert so dass nur " +
+		"die relevanten Daten zum Client geschickt werden.", response = JaxGesuch.class)
 	@Nullable
 	@GET
 	@Path("/institution/{gesuchId}")
@@ -248,6 +254,7 @@ public class GesuchResource {
 		return completeGesuch;
 	}
 
+	@ApiOperation(value = "Aktualisiert die Bemerkungen fuer ein Gesuch.", response = Void.class)
 	@Nullable
 	@PUT
 	@Path("/bemerkung/{gesuchId}")
@@ -272,6 +279,7 @@ public class GesuchResource {
 		throw new EbeguEntityNotFoundException("updateBemerkung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + gesuchJAXPId.getId());
 	}
 
+	@ApiOperation(value = "Aktualisiert die Bemerkungen der Steuerverwaltung fuer ein Gesuch.", response = Void.class)
 	@Nullable
 	@PUT
 	@Path("/bemerkungPruefungSTV/{gesuchId}")
@@ -296,6 +304,7 @@ public class GesuchResource {
 		throw new EbeguEntityNotFoundException("updateBemerkungPruefungSTV", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + gesuchJAXPId.getId());
 	}
 
+	@ApiOperation(value = "Aktualisiert den Status eines Gesuchs", response = Void.class)
 	@Nullable
 	@PUT
 	@Path("/status/{gesuchId}/{statusDTO}")
@@ -321,6 +330,8 @@ public class GesuchResource {
 		throw new EbeguEntityNotFoundException("updateStatus", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + gesuchJAXPId.getId());
 	}
 
+	@ApiOperation(value = "Sucht Antraege mit den uebergebenen Suchkriterien/Filtern. Es werden nur Antraege zurueck " +
+		"gegeben, fuer die der eingeloggte Benutzer berechtigt ist.", response = JaxAntragSearchresultDTO.class)
 	@Nonnull
 	@POST
 	@Path("/search")
@@ -369,13 +380,14 @@ public class GesuchResource {
 		Set<Gesuch> gesuchSet = new LinkedHashSet<>();
 		for (Gesuch gesuch : foundAntraege) {
 			List<Gesuch> antraege = fallToAntragMultimap.get(gesuch.getFall());
-			antraege.sort((Comparator<Gesuch>) (o1, o2) -> o1.getEingangsdatum().compareTo(o2.getEingangsdatum()));
+			antraege.sort(Comparator.comparing(Gesuch::getEingangsdatum));
 			gesuchSet.add(antraege.get(0)); //nur neusten zurueckgeben
 		}
 		return gesuchSet;
 	}
 
-
+	@ApiOperation(value = "Gibt alle Antraege (Gesuche und Mutationen) eines Falls zurueck",
+		responseContainer = "List", response = JaxAntragDTO.class)
 	@Nonnull
 	@GET
 	@Path("/fall/{fallId}")
@@ -387,7 +399,7 @@ public class GesuchResource {
 		return gesuchService.getAllAntragDTOForFall(converter.toEntityId(fallJAXPId));
 	}
 
-	@ApiOperation(value = "Creates a new Antrag of type Mutation in the database")
+	@ApiOperation(value = "Creates a new Antrag of type Mutation in the database", response = JaxGesuch.class)
 	@Nullable
 	@POST
 	@Path("/mutieren/{antragId}")
@@ -418,7 +430,7 @@ public class GesuchResource {
 		return Response.ok(converter.gesuchToJAX(mutationToReturn)).build();
 	}
 
-	@ApiOperation(value = "Creates a new Antrag of type Erneuerungsgesuch in the database")
+	@ApiOperation(value = "Creates a new Antrag of type Erneuerungsgesuch in the database", response = JaxGesuch.class)
 	@Nullable
 	@POST
 	@Path("/erneuern/{gesuchsperiodeId}/{antragId}")
@@ -450,7 +462,8 @@ public class GesuchResource {
 		return Response.ok(converter.gesuchToJAX(gesuchToReturn)).build();
 	}
 
-	@ApiOperation(value = "Gibt den Antrag frei und bereitet ihn vor für die Bearbeitung durch das Jugendamt")
+	@ApiOperation(value = "Gibt den Antrag frei und bereitet ihn vor für die Bearbeitung durch das Jugendamt",
+		response = JaxGesuch.class)
 	@Nullable
 	@POST
 	@Path("/freigeben/{antragId}")
@@ -473,7 +486,8 @@ public class GesuchResource {
 		return Response.ok(converter.gesuchToJAX(gesuch)).build();
 	}
 
-	@ApiOperation(value = "Setzt das gegebene Gesuch als Beschwerde hängig und bei allen Gescuhen der Periode den Flag gesperrtWegenBeschwerde auf true")
+	@ApiOperation(value = "Setzt das gegebene Gesuch als Beschwerde haengig und bei allen Gesuchen der Periode das " +
+		"Flag gesperrtWegenBeschwerde auf true", response = JaxGesuch.class)
 	@Nullable
 	@POST
 	@Path("/setBeschwerde/{antragId}")
@@ -498,7 +512,7 @@ public class GesuchResource {
 		throw new EbeguEntityNotFoundException("setBeschwerdeHaengig", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
 	}
 
-	@ApiOperation(value = "Setzt das gegebene Gesuch als PRUEFUNG_STV")
+	@ApiOperation(value = "Setzt das gegebene Gesuch als PRUEFUNG_STV", response = JaxGesuch.class)
 	@Nullable
 	@POST
 	@Path("/sendToSTV/{antragId}")
@@ -534,7 +548,8 @@ public class GesuchResource {
 		return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 	}
 
-	@ApiOperation(value = "Setzt das gegebene Gesuch als GEPRUEFT_STV und das Flag geprueftSTV als true")
+	@ApiOperation(value = "Setzt das gegebene Gesuch als GEPRUEFT_STV und das Flag geprueftSTV als true",
+		response = JaxGesuch.class)
 	@Nullable
 	@POST
 	@Path("/freigebenSTV/{antragId}")
@@ -568,7 +583,8 @@ public class GesuchResource {
 
 	}
 
-	@ApiOperation(value = "Setzt das gegebene Gesuch als VERFUEGT und das Flag geprueftSTV als true")
+	@ApiOperation(value = "Setzt das gegebene Gesuch als VERFUEGT und das Flag geprueftSTV als true",
+		response = JaxGesuch.class)
 	@Nullable
 	@POST
 	@Path("/stvPruefungAbschliessen/{antragId}")
@@ -599,7 +615,9 @@ public class GesuchResource {
 
 	}
 
-	@ApiOperation(value = "Setzt das gegebene Gesuch als VERFUEGT und bei allen Gescuhen der Periode den Flag gesperrtWegenBeschwerde auf false")
+	@ApiOperation(value = "Setzt das gegebene Gesuch als VERFUEGT und bei allen Gescuhen der Periode den Flag " +
+		"gesperrtWegenBeschwerde auf false", response = JaxGesuch.class)
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@Nullable
 	@POST
 	@Path("/removeBeschwerde/{antragId}")
@@ -624,6 +642,8 @@ public class GesuchResource {
 		throw new EbeguEntityNotFoundException("removeBeschwerdeHaengig", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
 	}
 
+	@ApiOperation(value = "Ueberprueft, ob das Gesuch mit der uebergebenen Id das neueste Gesuch dieses Falls ist",
+		response = Boolean.class)
 	@GET
 	@Path("/neuestesgesuch/{gesuchId}")
 	@Consumes(MediaType.WILDCARD)
@@ -636,6 +656,8 @@ public class GesuchResource {
 		return gesuchOptional.map(gesuch -> gesuchService.isNeustesGesuch(gesuch)).orElse(false);
 	}
 
+	@ApiOperation(value = "Loescht eine online Mutation", response = Void.class)
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@DELETE
 	@Path("/removeOnlineMutation/{fallId}/{gesuchsperiodeId}")
 	@Consumes(MediaType.WILDCARD)
@@ -658,6 +680,8 @@ public class GesuchResource {
 		return Response.ok().build();
 	}
 
+	@ApiOperation(value = "Loescht ein online Erneuerungsgesuch", response = Void.class)
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@DELETE
 	@Path("/removeOnlineFolgegesuch/{fallId}/{gesuchsperiodeId}")
 	@Consumes(MediaType.WILDCARD)
@@ -710,7 +734,7 @@ public class GesuchResource {
 		return Response.ok().build();
 	}
 
-	@ApiOperation(value = "Schliesst ein Gesuch ab, das kein Angebot hat")
+	@ApiOperation(value = "Schliesst ein Gesuch ab, das kein Angebot hat", response = JaxGesuch.class)
 	@Nullable
 	@POST
 	@Path("/closeWithoutAngebot/{antragId}")
@@ -736,7 +760,8 @@ public class GesuchResource {
 		return Response.ok(converter.gesuchToJAX(closedGesuch)).build();
 	}
 
-	@ApiOperation(value = "Aendert den Status des Gesuchs auf VERFUEGEN. Sollte es nur Schulangebote geben, dann wechselt auf NUR_SCHULAMT")
+	@ApiOperation(value = "Aendert den Status des Gesuchs auf VERFUEGEN. Sollte es nur Schulangebote geben, dann " +
+		"wechselt der Status auf NUR_SCHULAMT", response = JaxGesuch.class)
 	@Nullable
 	@POST
 	@Path("/verfuegenStarten/{antragId}/{hasFSDocument}")
@@ -761,6 +786,8 @@ public class GesuchResource {
 		return Response.ok(converter.gesuchToJAX(closedGesuch)).build();
 	}
 
+	@ApiOperation(value = "Ermittelt den Gesamtstatus aller Betreuungen des Gesuchs mit der uebergebenen Id.",
+		response = GesuchBetreuungenStatus.class)
 	@Nullable
 	@GET
 	@Path("/gesuchBetreuungenStatus/{gesuchId}")

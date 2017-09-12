@@ -71,7 +71,7 @@ public class ExportResource {
 
 	}
 
-	@ApiOperation(value = "Exports an xsd of the ExportDTOs")
+	@ApiOperation(value = "Exports an xsd of the ExportDTOs", response = String.class)
 	@Path("/meta/xsd")
 	@GET
 	@Produces({MediaType.APPLICATION_XML})
@@ -79,8 +79,6 @@ public class ExportResource {
 		JAXBContext jaxbContext = JAXBContext.newInstance(VerfuegungenExportDTO.class);
 		EbeguSchemaOutputResolver sor = new EbeguSchemaOutputResolver();
 		jaxbContext.generateSchema(sor);
-		String schema = sor.getSchema();
-		return schema;
+		return sor.getSchema();
 	}
-
 }

@@ -10,6 +10,7 @@ import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.InstitutionStammdatenService;
 import ch.dvbern.ebegu.util.DateUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
  */
 @Path("institutionstammdaten")
 @Stateless
-@Api
+@Api(description = "Resource für InstitutionsStammdaten (Daten zu einem konkreten Betreuungsangebot einer Institution)")
 public class InstitutionStammdatenResource {
 
 	@Inject
@@ -44,7 +45,7 @@ public class InstitutionStammdatenResource {
 	@Inject
 	private JaxBConverter converter;
 
-
+	@ApiOperation(value = "Speichert ein InstitutionsStammdaten", response = JaxInstitutionStammdaten.class)
 	@Nullable
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -70,6 +71,8 @@ public class InstitutionStammdatenResource {
 
 	}
 
+	@ApiOperation(value = "Sucht die InstitutionsStammdaten mit der uebergebenen Id in der Datenbank",
+		response = JaxInstitutionStammdaten.class)
 	@Nullable
 	@GET
 	@Path("/id/{institutionStammdatenId}")
@@ -88,6 +91,8 @@ public class InstitutionStammdatenResource {
 		return converter.institutionStammdatenToJAX(optional.get());
 	}
 
+	@ApiOperation(value = "Gibt alle vorhandenen Institutionsstammdaten zurueck",
+		responseContainer = "List", response = JaxInstitutionStammdaten.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
@@ -98,6 +103,8 @@ public class InstitutionStammdatenResource {
 			.collect(Collectors.toList());
 	}
 
+	@ApiOperation(value = "Loescht die InstitutionsStammdaten mit der uebergebenen Id aus der Datenbank",
+		response = Void.class)
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@Nullable
 	@DELETE
@@ -119,6 +126,8 @@ public class InstitutionStammdatenResource {
 	 * @param stringDate Date als String mit Format "yyyy-MM-dd". Wenn null, heutiges Datum gesetzt
 	 * @return Liste mit allen InstitutionStammdaten die den Bedingungen folgen
 	 */
+	@ApiOperation(value = "Gibt alle Institutionsstammdaten zurueck, welche am angegebenen Datum existieren",
+		responseContainer = "List", response = JaxInstitutionStammdaten.class)
 	@Nonnull
 	@GET
 	@Path("/date")
@@ -140,6 +149,8 @@ public class InstitutionStammdatenResource {
 	 * @param stringDate Date als String mit Format "yyyy-MM-dd". Wenn null, heutiges Datum gesetzt
 	 * @return Liste mit allen InstitutionStammdaten die den Bedingungen folgen
 	 */
+	@ApiOperation(value = "Gibt alle Institutionsstammdaten zurueck, welche am angegebenen Datum existieren und aktiv sind",
+		responseContainer = "List", response = JaxInstitutionStammdaten.class)
 	@Nonnull
 	@GET
 	@Path("/date/active")
@@ -160,6 +171,8 @@ public class InstitutionStammdatenResource {
 	 * @param institutionJAXPId ID der gesuchten Institution
 	 * @return Liste mit allen InstitutionStammdaten die der Bedingung folgen
 	 */
+	@ApiOperation(value = "Gibt alle Institutionsstammdaten der uebergebenen Institution zurueck.",
+		responseContainer = "List", response = JaxInstitutionStammdaten.class)
 	@Nonnull
 	@GET
 	@Path("/institution/{institutionId}")
@@ -178,6 +191,10 @@ public class InstitutionStammdatenResource {
 	/**
 	 * Gibt alle BetreuungsangebotsTypen zurueck, welche die Institutionen des eingeloggten Benutzers anbieten
 	 */
+	@ApiOperation(value = "Gibt alle BetreuungsangebotTypen aller Institutionen zurueck, zu welchen der eingeloggte " +
+		"Benutzer zugeordnet ist",
+		responseContainer = "List", response = JaxInstitutionStammdaten.class)
+	@SuppressWarnings("InstanceMethodNamingConvention")
 	@Nonnull
 	@GET
 	@Path("/currentuser")

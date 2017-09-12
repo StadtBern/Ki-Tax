@@ -50,7 +50,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @Path("institutionen")
 @Stateless
-@Api
+@Api(description = "Resource für Institutionen (Anbieter eines Betreuungsangebotes)")
 public class InstitutionResource {
 
 	@Inject
@@ -62,7 +62,7 @@ public class InstitutionResource {
 	@Inject
 	private OpenIdmRestService openIdmRestService;
 
-	@ApiOperation(value = "Creates a new Institution in the database.")
+	@ApiOperation(value = "Creates a new Institution in the database.", response = JaxInstitution.class)
 	@Nullable
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -90,7 +90,7 @@ public class InstitutionResource {
 		return Response.created(uri).entity(jaxInstitution).build();
 	}
 
-	@ApiOperation(value = "Update a Institution in the database.")
+	@ApiOperation(value = "Update a Institution in the database.", response = JaxInstitution.class)
 	@Nullable
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -117,7 +117,8 @@ public class InstitutionResource {
 		return jaxInstitution;
 	}
 
-	@ApiOperation(value = "Find and return an Institution by his institution id as parameter")
+	@ApiOperation(value = "Find and return an Institution by his institution id as parameter",
+		response = JaxInstitution.class)
 	@Nullable
 	@GET
 	@Path("/id/{institutionId}")
@@ -136,7 +137,8 @@ public class InstitutionResource {
 		return converter.institutionToJAX(optional.get());
 	}
 
-	@ApiOperation(value = "Remove an Institution logically by his institution-id as parameter")
+	@ApiOperation(value = "Remove an Institution logically by his institution-id as parameter", response = Void.class)
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@Nullable
 	@DELETE
 	@Path("/{institutionId}")
@@ -153,7 +155,8 @@ public class InstitutionResource {
 		return Response.ok().build();
 	}
 
-	@ApiOperation(value = "Find and return a list of Institution by the Traegerschaft as parameter")
+	@ApiOperation(value = "Find and return a list of Institution by the Traegerschaft as parameter",
+		responseContainer = "List", response = JaxInstitution.class)
 	@Nonnull
 	@GET
 	@Path("/traegerschaft/{traegerschaftId}")
@@ -170,7 +173,8 @@ public class InstitutionResource {
 	}
 
 
-	@ApiOperation(value = "Find and return a list of all Institutionen")
+	@ApiOperation(value = "Find and return a list of all Institutionen",
+		responseContainer = "List", response = JaxInstitution.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
@@ -181,7 +185,8 @@ public class InstitutionResource {
 			.collect(Collectors.toList());
 	}
 
-	@ApiOperation(value = "Find and return a list of all active Institutionen. An active Institution is a Institution where the active flag is true")
+	@ApiOperation(value = "Find and return a list of all active Institutionen. An active Institution is a Institution " +
+		"where the active flag is true", responseContainer = "List", response = JaxInstitution.class)
 	@Nonnull
 	@GET
 	@Path("/active")
@@ -193,7 +198,8 @@ public class InstitutionResource {
 			.collect(Collectors.toList());
 	}
 
-	@ApiOperation(value = "Find and return a list of all Institutionen of the currently logged in Benutzer. Retruns all for admins")
+	@ApiOperation(value = "Find and return a list of all Institutionen of the currently logged in Benutzer. Retruns " +
+		"all for admins", responseContainer = "List", response = JaxInstitution.class)
 	@Nonnull
 	@GET
 	@Path("/currentuser")
@@ -263,6 +269,4 @@ public class InstitutionResource {
 		}
 		return responseString;
 	}
-
-
 }

@@ -32,12 +32,13 @@
                                 <th data-translate="STATUS"></th>
                                 <th data-translate="MITTEILUNG" ng-if="vm.showMitteilung()"></th>
                                 <th></th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr ng-repeat="betreuung in displayedCollection" st-select-row="betreuung"
                                 st-select-mode="single"
-                                ng-click="vm.editBetreuung(kind, betreuung)">
+                                ng-click="vm.editBetreuung(kind, betreuung)" role="row" tabindex="-1">
                                 <td ng-bind="vm.getBetreuungsangebotTyp(betreuung) | translate"
                                     class="betreuung-table-header"></td>
                                 <td class="betreuung-status ng-class:betreuung.betreuungsstatus;">
@@ -50,13 +51,25 @@
                                         <i class="fa fa-lg fa-envelope-o"></i>
                                     </dv-loading-button>
                                 </td>
-                                <td  dv-show-element
+                                <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%">
+                                    <dv-loading-button type="button" button-click="vm.editBetreuung(kind, betreuung);"
+                                                       button-class="dv-btn-operation dv-btn-row"
+                                                       title="{{'TABLE_EDIT'|translate}}"
+                                                       aria-label="{{'TABLE_EDIT'|translate}}">
+                                        <i class="fa fa-lg fa-arrow-right" aria-label="{{'TABLE_EDIT'|translate}}">
+                                        </i>
+                                    </dv-loading-button>
+                                </td>
+                                <td dv-show-element
                                     dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                     dv-show-expression="vm.canRemoveBetreuung(betreuung)"
-                                     role="cell" tabindex="-1" ng-click="$event.stopPropagation()">
+                                    role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%">
                                     <dv-loading-button aria-label="{{'BETREUUNG_DELETE'|translate}}" type="button"
-                                                       button-click="vm.removeBetreuung(kind, betreuung)"
+                                                       title="{{'BETREUUNG_DELETE' | translate}}"
+                                                       button-click="vm.removeBetreuung(kind, betreuung,$index)"
                                                        button-disabled="vm.isNotAllowedToRemove(betreuung)"
+                                                       input-id="{{'removeBetreuungButton'+kind.kindNummer+'_'+$index}}"
+                                                       delay="0"
                                                        button-class="dv-btn-operation">
                                         <i class="fa fa-lg fa-trash-o" aria-label="{{'BETREUUNG_DELETE' | translate}}">
                                         </i>

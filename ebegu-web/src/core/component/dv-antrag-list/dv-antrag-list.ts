@@ -65,7 +65,6 @@ export class DVAntragListController {
     tableTitle: string;
     actionVisible: string;
 
-    removeButtonTitle: string;
     addButtonText: string;
     addButtonVisible: string = 'false';
     onRemove: (pensumToRemove: any) => void;
@@ -80,7 +79,7 @@ export class DVAntragListController {
     constructor(private ebeguUtil: EbeguUtil, private $filter: IFilterService, private $log: ILogService,
                 private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 private CONSTANTS: any, private authServiceRS: AuthServiceRS, private $window: ng.IWindowService) {
-        this.removeButtonTitle = 'Eintrag entfernen';
+
         this.initViewModel();
         this.TSRoleUtil = TSRoleUtil;
     }

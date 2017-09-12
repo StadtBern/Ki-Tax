@@ -20,6 +20,7 @@
                                 <span class="ebeguH1 required"
                                     data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN"
                                     data-translate-values="{{vm.basisJahrUndPeriode}}"></span>
+                                <dv-tooltip text="'EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN_HELP' | translate"></dv-tooltip>
                                 <dv-radio-container name="einkommensverschlechterung"
                                                     ng-model="vm.getEinkommensverschlechterungsInfo().einkommensverschlechterung"
                                                     ng-required="true" class="radio input-element"
@@ -47,6 +48,7 @@
                                    <span data-translate="EKVI_FUER_JAHR"
                                          translate-values="{basisjahr: vm.getBasisJahrPlusAsString(0)}"></span>
                                 </md-checkbox>
+                                <dv-tooltip text="'EKVI_MONAT_DES_EREIGNISSES_1_HELP' | translate"></dv-tooltip>
                                 <div class="dv-error-messages">
                                     <div ng-messages="vm.form.ekvFuerBasisJahrPlus1.$error" role="alert" class="error">
                                         <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
@@ -98,6 +100,22 @@
                                                    class="error"></dv-error-messages>
 
                             </dv-input-container>
+
+                        </div>
+                    </div>
+
+                    <!-- Ablehnung durch JA fuer Basisjahr plus 1 -->
+                    <div class="row marginBottom20" ng-if="vm.showEkvi() && vm.showJahrPlus1() && vm.isJugendamt()">
+                        <div class="form-group col-sm-12 dv-input-container-medium">
+                            <div class="checkbox">
+                                <md-checkbox name="ekvBasisJahrPlus1Annulliert"
+                                             ng-model="vm.getEinkommensverschlechterungsInfo().ekvBasisJahrPlus1Annulliert"
+                                             aria-label="{{'EKVI_ABLEHNEN' | translate}}"
+                                             class="input-element"
+                                             ng-disabled="vm.isGesuchReadonly()">
+                                   <span data-translate="EKVI_ABLEHNEN"></span>
+                                </md-checkbox>
+                            </div>
                             <hr class="header"/>
                         </div>
                     </div>
@@ -112,9 +130,10 @@
                                              aria-label="{vm.getBasisJahrPlusAsString(1)}"
                                              ng-required="vm.isRequired(2)" class="input-element"
                                              ng-disabled="vm.isGesuchReadonly() || vm.isKorrekturModusJugendamt()">
-                                <span data-translate="EKVI_FUER_JAHR"
-                                      translate-values="{basisjahr: vm.getBasisJahrPlusAsString(1)}"></span>
+                                    <span data-translate="EKVI_FUER_JAHR"
+                                          translate-values="{basisjahr: vm.getBasisJahrPlusAsString(1)}"></span>
                                 </md-checkbox>
+                                <dv-tooltip text="'EKVI_MONAT_DES_EREIGNISSES_2_HELP' | translate"></dv-tooltip>
                                 <div class="dv-error-messages">
                                     <div ng-messages="vm.form.ekvFuerBasisJahrPlus2.$error" role="alert" class="error">
                                         <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
@@ -129,12 +148,13 @@
                     <div class="row">
                         <div class="form-group col-sm-12 dv-input-container-medium"
                              ng-if="vm.showEkvi() && vm.showJahrPlus2()">
-                            <label class="md-no-float required" data-translate="EKVI_MONAT_DES_EREIGNISSES"
-                                   for="stichtagBasisJahrPlus2"></label>
+                            <label class="md-no-float" for="stichtagBasisJahrPlus2">
+                                <span data-translate="EKVI_MONAT_DES_EREIGNISSES" class="required"></span>
+                            </label>
                             <div class="dv-select-style">
                                 <select aria-describedby="stichtagBasisJahrPlus2-error" name="stichtagBasisJahrPlus2" id="stichtagBasisJahrPlus2" class="form-control"
                                         ng-model="vm.selectedStichtagBjP2"
-                                        ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
+                                        ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtageWithVorjahr"
                                         ng-required="true">
                                 </select>
 
@@ -166,6 +186,22 @@
 
                             </dv-input-container>
 
+                        </div>
+                    </div>
+
+
+                    <!-- Ablehnung durch JA fuer Basisjahr plus 2 -->
+                    <div class="row marginBottom20" ng-if="vm.showEkvi() && vm.showJahrPlus2() && vm.isJugendamt()">
+                        <div class="form-group col-sm-12 dv-input-container-medium">
+                            <div class="checkbox">
+                                <md-checkbox name="ekvBasisJahrPlus2Annulliert"
+                                             ng-model="vm.getEinkommensverschlechterungsInfo().ekvBasisJahrPlus2Annulliert"
+                                             aria-label="{{'EKVI_ABLEHNEN' | translate}}"
+                                             class="input-element"
+                                             ng-disabled="vm.isGesuchReadonly()">
+                                    <span data-translate="EKVI_ABLEHNEN"></span>
+                                </md-checkbox>
+                            </div>
                         </div>
                     </div>
 

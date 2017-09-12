@@ -14,6 +14,7 @@
     table {
         background-color: transparent !important;
         margin-bottom: 0;
+        border-collapse: collapse;
     }
 
     td.documents-vailable {
@@ -63,15 +64,19 @@
     .dateientable {
         font-size: 1.2rem;
         margin-bottom: 0;
-        td, th {
+        &-td, &-th {
             border: none;
             background-color: transparent;
-            height: 3rem;
+            height: 3rem!important;
+            font-size: 1.2rem;
+            margin-bottom: 0;
         }
-        & > thead:first-child > tr:first-child > th, & > thead > tr > th, & > thead > tr:first-child > th:empty, & > thead:first-child > tr:first-child > th:empty {
-            border-top: none;
-            height: 3rem;
-            background-color: transparent;
+        &-th, &-th:empty  {
+            border-top:0;
+            border-bottom: 1px solid @contrast-darkest;
+        }
+        &-td > span,&-th > span{
+            font-size: 1.2rem;
         }
     }
     table > thead:first-child > tr:first-child > th, table > thead > tr > th {
@@ -112,13 +117,6 @@
             border-top: 1px solid @contrast-darkest;
         }
 
-    }
-
-    table.dateientable > thead:first-child > tr:first-child > th, table.dateientable > thead > tr > th, table.dateientable > tbody > tr > td, table.dateientable > tbody > tr:first-child > td {
-        font-size: 1.2rem;
-        span {
-            font-size: 1.2rem;
-        }
     }
 
 }

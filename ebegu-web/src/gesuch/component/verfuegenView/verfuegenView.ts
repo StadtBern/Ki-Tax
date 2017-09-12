@@ -288,7 +288,9 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public saveVerfuegung(): IPromise<TSVerfuegung> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_SAVE_VERFUEGUNG',
-            deleteText: 'BESCHREIBUNG_SAVE_VERFUEGUNG'
+            deleteText: 'BESCHREIBUNG_SAVE_VERFUEGUNG',
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {
             this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
             return this.gesuchModelManager.saveVerfuegung(false);
@@ -311,7 +313,9 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public verfuegungSchliessenOhenVerfuegen(): IPromise<void> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN',
-            deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN'
+            deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN',
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {
             this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
             this.gesuchModelManager.verfuegungSchliessenOhenVerfuegen();
@@ -321,7 +325,9 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public verfuegungNichtEintreten(): IPromise<TSVerfuegung> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_CLOSE_VERFUEGUNG_NICHT_EINTRETEN',
-            deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_NICHT_EINTRETEN'
+            deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_NICHT_EINTRETEN',
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {
             this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
             return this.gesuchModelManager.verfuegungSchliessenNichtEintreten();

@@ -90,8 +90,6 @@ export class DvQuicksearchboxController {
 
     }
 
-
-    //TODO (hefr) ähnlicher code wie bei faelleListView. z.B. NavigationUtil o.ae.
     private navigateToFall() {
         if (this.selectedItem) {
             if (this.selectedItem.antragDTO instanceof TSAntragDTO && this.selectedItem.gesuchID) {
@@ -119,7 +117,6 @@ export class DvQuicksearchboxController {
             }
         }
     }
-
 
     /**
      * Oeffnet das Gesuch und geht zur gegebenen Seite (route)

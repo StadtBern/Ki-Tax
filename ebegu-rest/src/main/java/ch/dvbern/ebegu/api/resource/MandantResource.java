@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.MandantService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -23,7 +24,7 @@ import java.util.Optional;
  */
 @Path("mandanten")
 @Stateless
-@Api
+@Api(description = "Resource für Mandanten")
 public class MandantResource {
 
 	@Inject
@@ -32,6 +33,7 @@ public class MandantResource {
 	@Inject
 	private JaxBConverter converter;
 
+	@ApiOperation(value = "Gibt den Mandanten mit der angegebenen id zurueck.", response = JaxMandant.class)
 	@Nullable
 	@GET
 	@Path("/id/{mandantId}")
@@ -48,6 +50,8 @@ public class MandantResource {
 		return converter.mandantToJAX(optional.get());
 	}
 
+	@ApiOperation(value = "Gibt den ersten Mandanten aus der Datenbank zurueck. Convenience-Methode, da im Moment " +
+		"nur ein Mandant vorhanden ist.", response = JaxMandant.class)
 	@Nullable
 	@GET
 	@Path("/first")

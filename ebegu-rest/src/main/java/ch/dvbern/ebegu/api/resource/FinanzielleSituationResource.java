@@ -1,29 +1,5 @@
 package ch.dvbern.ebegu.api.resource;
 
-import java.net.URI;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.Resource;
-import javax.ejb.EJBContext;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxFinanzModel;
 import ch.dvbern.ebegu.api.dtos.JaxFinanzielleSituationContainer;
@@ -44,12 +20,29 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.Resource;
+import javax.ejb.EJBContext;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
+import java.util.Optional;
+
 /**
  * REST Resource fuer FinanzielleSituation
  */
 @Path("finanzielleSituation")
 @Stateless
-@Api
+@Api(description = "Resource für die finanzielle Situation")
 public class FinanzielleSituationResource {
 
 	@Inject
@@ -71,8 +64,8 @@ public class FinanzielleSituationResource {
 	private ResourceHelper resourceHelper;
 
 
-	@ApiOperation("Create a new FinanzielleSituation in the database. The transfer object also has a relation to FinanzielleSituation, " +
-		"it is stored in the database as well.")
+	@ApiOperation(value = "Create a new JaxFinanzielleSituationContainer in the database. The transfer object also has a " +
+		"relation to FinanzielleSituation, it is stored in the database as well.", response = JaxFinanzielleSituationContainer.class)
 	@Nullable
 	@PUT
 	@Path("/{gesuchstellerId}/{gesuchId}")
@@ -104,6 +97,8 @@ public class FinanzielleSituationResource {
 		return Response.created(uri).entity(jaxFinanzielleSituation).build();
 	}
 
+	@ApiOperation(value = "Berechnet die FinanzielleSituation fuer das Gesuch mit der uebergebenen Id. Die Berechnung " +
+		"nicht gespeichert.", response = FinanzielleSituationResultateDTO.class)
 	@Nullable
 	@POST
 	@Path("/calculate")
@@ -124,6 +119,9 @@ public class FinanzielleSituationResource {
 	/**
 	 * Finanzielle Situation wird hier im gegensatz zur /calculate mehtode nur als DTO mitgegeben statt als ganzes gesuch
 	 */
+	@ApiOperation(value = "Berechnet die FinanzielleSituation fuer das Gesuch mit der uebergebenen Id. Die Berechnung " +
+		"nicht gespeichert. Die FinanzielleSituation wird hier im Gegensatz zur /calculate mehtode nur als DTO " +
+		"mitgegeben statt als ganzes Gesuch", response = FinanzielleSituationResultateDTO.class)
 	@Nullable
 	@POST
 	@Path("/calculateTemp")
@@ -139,11 +137,13 @@ public class FinanzielleSituationResource {
 		gesuch.extractFamiliensituation().setGemeinsameSteuererklaerung(jaxFinSitModel.isGemeinsameSteuererklaerung());
 		if (jaxFinSitModel.getFinanzielleSituationContainerGS1() != null) {
 			gesuch.setGesuchsteller1(new GesuchstellerContainer());
+			//noinspection ConstantConditions
 			gesuch.getGesuchsteller1().setFinanzielleSituationContainer(
 				converter.finanzielleSituationContainerToEntity(jaxFinSitModel.getFinanzielleSituationContainerGS1(), new FinanzielleSituationContainer()));
 		}
 		if (jaxFinSitModel.getFinanzielleSituationContainerGS2() != null) {
 			gesuch.setGesuchsteller2(new GesuchstellerContainer());
+			//noinspection ConstantConditions
 			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(
 				converter.finanzielleSituationContainerToEntity(jaxFinSitModel.getFinanzielleSituationContainerGS2(), new FinanzielleSituationContainer()));
 		}
@@ -154,6 +154,8 @@ public class FinanzielleSituationResource {
 		return Response.ok(finanzielleSituationResultateDTO).build();
 	}
 
+	@ApiOperation(value = "Sucht die FinanzielleSituation mit der uebergebenen Id in der Datenbank",
+		response = JaxFinanzielleSituationContainer.class)
 	@Nullable
 	@GET
 	@Path("/{finanzielleSituationId}")

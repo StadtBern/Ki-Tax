@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 
@@ -12,6 +13,9 @@ import java.util.List;
 
 /**
  * Setzt das massgebende Einkommen in die benoetigten Zeitabschnitte
+ * ACHTUNG: Die Regel fuer Einkommensverschlechterung besagt (aktuell), dass die Veraenderung ab dem Folgemonat gilt
+ * Dies wird nicht hier in der Regel bestimmt, sondern bereits im FinanzielleSituationRechner entsprechend abgelegt.
+ * Siehe auch {@link EinkommensverschlechterungInfo#getStichtagGueltigFuerBasisJahrPlus1()}
  */
 public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 

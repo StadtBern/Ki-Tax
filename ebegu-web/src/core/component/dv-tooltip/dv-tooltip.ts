@@ -2,6 +2,7 @@ import {IComponentOptions} from 'angular';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import {ShowTooltipController} from '../../../gesuch/dialog/ShowTooltipController';
 import ITranslateService = angular.translate.ITranslateService;
+import {IDVFocusableController} from '../IDVFocusableController';
 let template = require('./dv-tooltip.html');
 require('./dv-tooltip.less');
 let showTooltipTemplate = require('../../../gesuch/dialog/showTooltipTemplate.html');
@@ -12,11 +13,14 @@ export class DvTooltipComponentConfig implements IComponentOptions {
     controller = DvTooltipController;
     controllerAs = 'vm';
     bindings: any = {
-        text: '<'
+        text: '<',
+        inputId: '@'
     };
 }
 
-export class DvTooltipController {
+export class DvTooltipController implements IDVFocusableController {
+
+    private inputId: string;
 
     static $inject: any[] = ['$translate', 'DvDialog'];
     /* @ngInject */
@@ -26,8 +30,16 @@ export class DvTooltipController {
     showTooltip(info: any): void {
         this.DvDialog.showDialogFullscreen(showTooltipTemplate, ShowTooltipController, {
             title: '',
-            text: info
+            text: info,
+            parentController: this
         });
+    }
+
+    /**
+     * Sets the focus back to the tooltip icon.
+     */
+    public setFocusBack(elementID: string): void {
+        angular.element('#' + this.inputId + '.fa.fa-info-circle').first().focus();
     }
 }
 

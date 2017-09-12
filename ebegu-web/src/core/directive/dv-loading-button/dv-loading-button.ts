@@ -25,8 +25,8 @@ export class DVLoadingButton implements IDirective {
         forceWaitService: '@',
         buttonDisabled: '<',
         ariaLabel: '@',
-        buttonClick: '&'
-
+        buttonClick: '&',
+        inputId: '@'
     };
     template = template;
     controller = DVLoadingButtonController;
@@ -131,11 +131,11 @@ export class DVLoadingButtonController implements IDVLoadingButtonController {
     private getDelay(): number {
         if (this.delay) {
             let parsedNum = parseInt(this.delay);
-            if (parsedNum) {
+            if (parsedNum !== undefined && parsedNum !== null) {
                 return parsedNum;
             }
         }
-        return 4000;   //default delay = 400 MS
+        return 4000;   //default delay = 4000 MS
     }
 
     /**
