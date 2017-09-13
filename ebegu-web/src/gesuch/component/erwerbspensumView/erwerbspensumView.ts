@@ -150,8 +150,8 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
         }
         if (this.model.erwerbspensumJA.taetigkeit === TSTaetigkeit.KEINE) {
             this.model.erwerbspensumJA.pensum = 0;
-            this.model.erwerbspensumJA.gueltigkeit.gueltigAb = this.gesuchModelManager.getGesuchsperiodeBegin();
-            this.model.erwerbspensumJA.gueltigkeit.gueltigBis = DateUtil.localDateToMoment('9999-12-31');
+            this.model.erwerbspensumJA.gueltigkeit.gueltigAb = this.gesuchModelManager.getGesuchsperiode().gueltigkeit.gueltigAb;
+            this.model.erwerbspensumJA.gueltigkeit.gueltigBis = this.gesuchModelManager.getGesuchsperiode().gueltigkeit.gueltigBis;
         } else if (this.lastTaetigkeit === TSTaetigkeit.KEINE) {
             // Wechsel von KEINE zu etwas anderes -> die (fuer KEINE unsichtbaren) Defaults entfernen
             this.model.erwerbspensumJA.pensum = undefined;
