@@ -17,6 +17,7 @@ import {IDVFocusableController} from '../../../core/component/IDVFocusableContro
 import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 
 let template: string = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -56,7 +57,14 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     }
 
     private initViewModel() {
-        this.checkErwerbspensumRequired();
+        this.gesuchModelManager.isErwerbspensumRequired(this.getGesuchId()).then((response: boolean) => {
+            this.erwerbspensumRequired = response;
+            if (this.isSaveDisabled()) {
+                this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
+            } else {
+                this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+            }
+        });
     }
 
     getErwerbspensenListGS1(): Array<TSErwerbspensumContainer> {
@@ -121,17 +129,6 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
             gesuchstellerNumber: gesuchstellerNumber,
             erwerbspensumNum: erwerbspensumNum,
             gesuchId: this.getGesuchId()
-        });
-    }
-
-    /**
-     * Erwerbspensum muss nur erfasst werden, falls mind. 1 Kita oder 1 Tageseltern Kleinkind Angebot erfasst wurde
-     * und mind. eines dieser Kinder keine Fachstelle involviert hat
-     * @returns {boolean}
-     */
-    private checkErwerbspensumRequired(): void {
-        this.gesuchModelManager.isErwerbspensumRequired(this.getGesuchId()).then((response: boolean) => {
-            this.erwerbspensumRequired = response;
         });
     }
 
