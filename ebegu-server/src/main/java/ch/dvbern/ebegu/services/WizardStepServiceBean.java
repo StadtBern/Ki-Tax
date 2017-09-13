@@ -575,11 +575,10 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()) {
 						wizardStep.setVerfuegbar(false);
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
-					} else if (WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()) {
-						if (erwerbspensumService.isErwerbspensumRequired(wizardStep.getGesuch())) {
+					} else if (WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()
+						&& erwerbspensumService.isErwerbspensumRequired(wizardStep.getGesuch())) {
 							wizardStep.setVerfuegbar(true);
 							wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
-						}
 					}
 					//kann man effektiv sagen dass bei nur einem GS niemals Rote Schritte FinanzielleSituation und EVK gibt
 				} else if (!newEntity.hasSecondGesuchsteller() && wizardStep.getGesuch().getGesuchsteller1() != null) { // nur 1 GS
@@ -644,15 +643,11 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 		WizardStepStatus status = null;
 		if (erwerbspensumRequired) {
-			if (gesuch.getGesuchsteller1() != null) {
-				if (erwerbspensumService.findErwerbspensenForGesuchsteller(gesuch.getGesuchsteller1()).isEmpty()) {
-					status = WizardStepStatus.NOK;
-				}
+			if (gesuch.getGesuchsteller1() != null && erwerbspensumService.findErwerbspensenForGesuchsteller(gesuch.getGesuchsteller1()).isEmpty()) {
+				status = WizardStepStatus.NOK;
 			}
-			if (gesuch.getGesuchsteller2() != null) {
-				if (erwerbspensumService.findErwerbspensenForGesuchsteller(gesuch.getGesuchsteller2()).isEmpty()) {
-					status = WizardStepStatus.NOK;
-				}
+			if (gesuch.getGesuchsteller2() != null && erwerbspensumService.findErwerbspensenForGesuchsteller(gesuch.getGesuchsteller2()).isEmpty()) {
+				status = WizardStepStatus.NOK;
 			}
 		} else if (changesBecauseOtherStates && wizardStep.getWizardStepStatus() != WizardStepStatus.MUTIERT) {
 			status = WizardStepStatus.OK;
