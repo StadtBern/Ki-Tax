@@ -40,6 +40,7 @@
             <div class="sidenav gesuch-status" ng-cloak>
                 <h2 class="access-for-all-title" data-translate="AFA_GESUCHSTATUS"></h2>
                 <span class="status" ng-bind="vm.getGesuchStatusTranslation()"></span>
+                <i class="uploaded-document fa fa-file-o" ng-if="vm.isDocumentUploaded()"></i>
                 <br>
                 <span class="zuletzt" data-translate="ZULETZT_BEARBEITER"
                       data-translate-value-username="{{vm.getUserFullname()}}"></span>

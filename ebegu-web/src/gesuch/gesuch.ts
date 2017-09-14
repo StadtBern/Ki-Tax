@@ -331,4 +331,8 @@ export class GesuchRouteController {
     public isSuperAdmin(): boolean {
         return  this.authServiceRS.isRole(TSRole.SUPER_ADMIN);
     }
+
+    public isDocumentUploaded(): boolean {
+        return this.getGesuch() && this.getGesuch().dokumenteHochgeladen;
+    }
 }
