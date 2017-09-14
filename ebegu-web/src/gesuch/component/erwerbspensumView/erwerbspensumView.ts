@@ -19,7 +19,6 @@ import GlobalCacheService from '../../service/globalCacheService';
 import {EbeguParameterRS} from '../../../admin/service/ebeguParameterRS.rest';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import ITranslateService = angular.translate.ITranslateService;
-import DateUtil from '../../../utils/DateUtil';
 
 let template: string = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
