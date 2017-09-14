@@ -667,6 +667,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		mutation.setDatumGewarntFehlendeQuittung(null);
 		mutation.setTimestampVerfuegt(null);
 		mutation.setGueltig(false);
+		mutation.setDokumenteHochgeladen(false);
 		return mutation;
 	}
 
@@ -702,6 +703,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		folgegesuch.setDatumGewarntFehlendeQuittung(null);
 		folgegesuch.setTimestampVerfuegt(null);
 		folgegesuch.setGueltig(false);
+		folgegesuch.setDokumenteHochgeladen(false);
 		return folgegesuch;
 	}
 

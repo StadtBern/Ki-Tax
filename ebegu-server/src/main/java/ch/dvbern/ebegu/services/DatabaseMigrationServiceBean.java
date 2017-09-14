@@ -104,7 +104,7 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 			processScript1098_SetFlagGesuchBetreuungenStatus();
 			break;
 		case "1136":
-			processScript1136_RemoveStatusDokumentHochgeladen();
+			processScript1136_RemoveDuplicatedStatusTransition();
 			break;
 		}
 		// to avoid errors due to missing Context because Principal is set as RequestScoped
@@ -321,7 +321,7 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 	 * a Flag. All status history entries concerning those status must be replaced by the preceeding status. This leads to two entries with the same
 	 * status following each other. In this script we merge those.
 	 */
-	private void processScript1136_RemoveStatusDokumentHochgeladen() {
+	private void processScript1136_RemoveDuplicatedStatusTransition() {
 		LOGGER.info("Processing script 1136...");
 		Collection<Gesuch> allGesuche = gesuchService.getAllGesuche();
 		List<String> toDelete = new ArrayList<>();
