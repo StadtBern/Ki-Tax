@@ -12,7 +12,6 @@ import DokumenteRS from '../../service/dokumenteRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import GlobalCacheService from '../../service/globalCacheService';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import IScope = angular.IScope;
@@ -117,8 +116,6 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
             }
         }
         this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
-        // Falls bereits Dokumente gemahnt wurden, muss das JA erfahren, wenn neue Dokumente hochgeladen wurden
-        this.resetAntragStatusIfNecessary();
     }
 
     removeDokument(dokumentGrund: TSDokumentGrund, dokument: TSDokument, dokumente: TSDokumentGrund[]) {
@@ -160,15 +157,12 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
         this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
     }
 
-    private resetAntragStatusIfNecessary(): void {
-        // Falls bereits Dokumente gemahnt wurden, muss das JA erfahren, wenn neue Dokumente hochgeladen wurden
-        let status = this.gesuchModelManager.getGesuch().status;
-        if (TSAntragStatus.ERSTE_MAHNUNG === status) {
-            this.setGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
-        } else if (TSAntragStatus.ZWEITE_MAHNUNG === status) {
-            this.setGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
-        } else if (TSAntragStatus.NUR_SCHULAMT === status) {
-            this.setGesuchStatus(TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN);
-        }
+    public showDokumenteGeprueftButton(): boolean {
+        return this.gesuchModelManager.getGesuch().dokumenteHochgeladen;
+    }
+
+    public setDokumenteGeprueft(): void {
+        this.gesuchModelManager.getGesuch().dokumenteHochgeladen = false;
+        this.gesuchModelManager.updateGesuch();
     }
 }

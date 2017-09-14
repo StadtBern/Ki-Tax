@@ -241,7 +241,7 @@ FROM kind_container
                     WHERE timestamp_erstellt BETWEEN :fromDateTime AND :toDateTime
                   ) Verfuegungen ON Verfuegungen.id = betreuung.verfuegung_id
 WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
-	  AND gesuch.status IN ('VERFUEGT', 'NUR_SCHULAMT', 'NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN', 'BESCHWERDE_HAENGIG',
+	  AND gesuch.status IN ('VERFUEGT', 'NUR_SCHULAMT', 'BESCHWERDE_HAENGIG',
 			'PRUEFUNG_STV', 'IN_BEARBEITUNG_STV', 'GEPRUEFT_STV', 'KEIN_ANGEBOT')
  	  AND gesuch.eingangsdatum BETWEEN :fromDate AND :toDate
       AND (institution_stammdaten.betreuungsangebot_typ = 'TAGESSCHULE' OR :onlySchulamt = 0)
