@@ -72,6 +72,9 @@ public class GesuchResource {
 	private FallService fallService;
 
 	@Inject
+	private MailService mailService;
+
+	@Inject
 	private PrincipalBean principalBean;
 
 	@Inject
@@ -653,7 +656,11 @@ public class GesuchResource {
 		if (!gesuchsperiode.isPresent()) {
 			throw new EbeguEntityNotFoundException("removeOnlineMutation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Gesuchsperiode_ID invalid " + gesuchsperiodeId.getId());
 		}
+		List<Betreuung> betreuungen = new ArrayList<>();
+		Gesuch gesuch = gesuchService.findOnlineMutation(fall.get(), gesuchsperiode.get());
+		betreuungen.addAll(gesuch.extractAllBetreuungen());
 		gesuchService.removeOnlineMutation(fall.get(), gesuchsperiode.get());
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
 		return Response.ok().build();
 	}
 
@@ -678,7 +685,11 @@ public class GesuchResource {
 		if (!gesuchsperiode.isPresent()) {
 			throw new EbeguEntityNotFoundException("removeOnlineFolgegesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchsperiodeId invalid: " + gesuchsperiodeJAXPId.getId());
 		}
+		List<Betreuung> betreuungen = new ArrayList<>();
+		Gesuch gesuch = gesuchService.findOnlineFolgegesuch(fall.get(), gesuchsperiode.get());
+		betreuungen.addAll(gesuch.extractAllBetreuungen());
 		gesuchService.removeOnlineFolgegesuch(fall.get(), gesuchsperiode.get());
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
 		return Response.ok().build();
 	}
 

@@ -12,10 +12,7 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.BetreuungService;
-import ch.dvbern.ebegu.services.FallService;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.KindService;
+import ch.dvbern.ebegu.services.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -57,6 +54,8 @@ public class BetreuungResource {
 	private ResourceHelper resourceHelper;
 	@Inject
 	private GesuchService gesuchService;
+	@Inject
+	private MailService mailService;
 
 
 
@@ -213,6 +212,9 @@ public class BetreuungResource {
 			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
 			resourceHelper.assertGesuchStatusForBenutzerRole(betreuung.get().extractGesuch());
 			betreuungService.removeBetreuung(converter.toEntityId(betreuungJAXPId));
+			List<Betreuung> betreuungen = new ArrayList<>();
+			betreuungen.add(betreuung.get());
+			mailService.sendInfoBetreuungGeloescht(betreuungen);
 			return Response.ok().build();
 		}
 		throw new EbeguEntityNotFoundException("removeBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungJAXPId.getId());

@@ -10,6 +10,7 @@
 
 package ch.dvbern.ebegu.config;
 
+import javax.annotation.Priority;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Alternative;
 
@@ -18,6 +19,7 @@ import javax.enterprise.inject.Alternative;
  */
 @Alternative
 @Dependent
+@Priority(value = 1)
 public class EbeguConfigurationDummyImpl extends EbeguConfigurationImpl {
 
 	private static final long serialVersionUID = 7880484074016308515L;

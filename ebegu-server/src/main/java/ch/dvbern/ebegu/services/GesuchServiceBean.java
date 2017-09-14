@@ -1,93 +1,12 @@
 package ch.dvbern.ebegu.services;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.activation.MimeTypeParseException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Asynchronous;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Fetch;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.SetJoin;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.constraints.NotNull;
-
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
-import ch.dvbern.ebegu.entities.AbstractEntity_;
-import ch.dvbern.ebegu.entities.AntragStatusHistory;
-import ch.dvbern.ebegu.entities.AntragStatusHistory_;
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Benutzer_;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuung_;
-import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Fall_;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuch_;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.Gesuchsperiode_;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.GesuchstellerContainer;
-import ch.dvbern.ebegu.entities.GesuchstellerContainer_;
-import ch.dvbern.ebegu.entities.Gesuchsteller_;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
-import ch.dvbern.ebegu.entities.Institution_;
-import ch.dvbern.ebegu.entities.Kind;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.entities.KindContainer_;
-import ch.dvbern.ebegu.entities.Kind_;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.AntragStatusDTO;
-import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.enums.Eingangsart;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
-import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
-import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.enums.WizardStepName;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.errors.MailException;
-import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.errors.*;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
@@ -102,11 +21,27 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
-import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
-import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
-import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+import javax.activation.MimeTypeParseException;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.*;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static ch.dvbern.ebegu.enums.UserRoleName.*;
 
 /**
  * Service fuer Gesuch
@@ -1377,6 +1312,23 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@RolesAllowed(SUPER_ADMIN)
 	public int deleteGesucheOhneFreigabeOderQuittung() {
 
+		List<Gesuch> criteriaResults = getGesuchesOhneFreigabeOderQuittung();
+		int anzahl = criteriaResults.size();
+		for (Gesuch gesuch : criteriaResults) {
+			try {
+				mailService.sendInfoGesuchGeloescht(gesuch);
+				removeGesuch(gesuch.getId());
+			} catch (MailException e) {
+				LOG.error("Mail InfoGesuchGeloescht konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+				anzahl--;
+			}
+		}
+		return anzahl;
+	}
+
+	@Override
+	@RolesAllowed(SUPER_ADMIN)
+	public List<Gesuch> getGesuchesOhneFreigabeOderQuittung() {
 		Integer anzahlTageBisLoeschungNachWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE);
 		Integer anzahlTageBisLoeschungNachWarnungQuittung = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG);
 		if (anzahlTageBisLoeschungNachWarnungFreigabe == null || anzahlTageBisLoeschungNachWarnungQuittung == null) {
@@ -1415,18 +1367,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		query.select(root);
 		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
 
-		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
-		int anzahl = criteriaResults.size();
-		for (Gesuch gesuch : criteriaResults) {
-			try {
-				mailService.sendInfoGesuchGeloescht(gesuch);
-				removeGesuch(gesuch.getId());
-			} catch (MailException e) {
-				LOG.error("Mail InfoGesuchGeloescht konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
-				anzahl--;
-			}
-		}
-		return anzahl;
+		return persistence.getCriteriaResults(query);
 	}
 
 	@Override
@@ -1452,17 +1393,23 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public void removeOnlineMutation(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		logDeletingOfGesuchstellerAntrag(fall, gesuchsperiode);
+		final Gesuch onlineMutation = findOnlineMutation(fall, gesuchsperiode);
+		moveBetreuungmitteilungenToPreviousAntrag(onlineMutation);
+		superAdminService.removeGesuch(onlineMutation.getId());
+	}
+
+	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN })
+	public Gesuch findOnlineMutation(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		List<Gesuch> criteriaResults = findExistingOpenMutationen(fall, gesuchsperiode);
 		if (criteriaResults.size() > 1) {
 			// It should be impossible that there are more than one open Mutation
-			throw new EbeguRuntimeException("removeOnlineMutation", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
+			throw new EbeguRuntimeException("findOnlineMutation", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
 		}
 		if (criteriaResults.size() <= 0) {
-			throw new EbeguEntityNotFoundException("removeOnlineMutation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
+			throw new EbeguEntityNotFoundException("findOnlineMutation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
 		}
-		final Gesuch onlineMutation = criteriaResults.get(0);
-		moveBetreuungmitteilungenToPreviousAntrag(onlineMutation);
-		superAdminService.removeGesuch(onlineMutation.getId());
+		return criteriaResults.get(0);
 	}
 
 	/**
@@ -1490,12 +1437,18 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public void removeOnlineFolgegesuch(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		logDeletingOfGesuchstellerAntrag(fall, gesuchsperiode);
+		Gesuch gesuch = findOnlineFolgegesuch(fall, gesuchsperiode);
+		superAdminService.removeGesuch(gesuch.getId());
+	}
+
+	@Override
+	public Gesuch findOnlineFolgegesuch(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		List<Gesuch> criteriaResults = findExistingFolgegesuch(fall, gesuchsperiode);
 		if (criteriaResults.size() > 1) {
 			// It should be impossible that there are more than one open Folgegesuch for one period
-			throw new EbeguRuntimeException("removeOnlineFolgegesuch", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
+			throw new EbeguRuntimeException("findOnlineFolgegesuch", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
 		}
-		superAdminService.removeGesuch(criteriaResults.get(0).getId());
+		return criteriaResults.get(0);
 	}
 
 	@Override

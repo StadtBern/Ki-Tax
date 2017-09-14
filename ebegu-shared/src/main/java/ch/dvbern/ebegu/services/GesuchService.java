@@ -1,16 +1,5 @@
 package ch.dvbern.ebegu.services;
 
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.security.PermitAll;
-import javax.ejb.Asynchronous;
-import javax.validation.constraints.NotNull;
-
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
@@ -19,6 +8,16 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.ejb.Asynchronous;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Service zum Verwalten von Gesuche
@@ -40,7 +39,7 @@ public interface GesuchService {
 	 *
 	 * @param gesuch              das Gesuch als DTO
 	 * @param saveInStatusHistory true wenn gewollt, dass die Aenderung in der Status gespeichert wird
-	 * @param saveAsUser 		  wenn gesetzt, die Statusaenderung des Gesuchs wird mit diesem User gespeichert, sonst mit currentUser
+	 * @param saveAsUser          wenn gesetzt, die Statusaenderung des Gesuchs wird mit diesem User gespeichert, sonst mit currentUser
 	 * @return Das aktualisierte Gesuch
 	 */
 	@Nonnull
@@ -51,8 +50,8 @@ public interface GesuchService {
 	 *
 	 * @param gesuch              das Gesuch als DTO
 	 * @param saveInStatusHistory true wenn gewollt, dass die Aenderung in der Status gespeichert wird
-	 * @param saveAsUser 		  wenn gesetzt, die Statusaenderung des Gesuchs wird mit diesem User gespeichert, sonst mit currentUser
-	 * @param doAuthCheck: 		  Definiert, ob die Berechtigungen (Lesen/Schreiben) geprüft werden muessen.
+	 * @param saveAsUser          wenn gesetzt, die Statusaenderung des Gesuchs wird mit diesem User gespeichert, sonst mit currentUser
+	 * @param doAuthCheck:        Definiert, ob die Berechtigungen (Lesen/Schreiben) geprüft werden muessen.
 	 * @return Das aktualisierte Gesuch
 	 */
 	@Nonnull
@@ -72,7 +71,7 @@ public interface GesuchService {
 	/**
 	 * Laedt das Gesuch mit der id aus der DB. ACHTUNG zudem wird hier der Status auf IN_BEARBEITUNG_JA gesetzt
 	 * wenn der Benutzer ein JA Mitarbeiter ist und das Gesuch in FREIGEGEBEN ist
-	 * @param key PK (id) des Gesuches
+	 * @param key          PK (id) des Gesuches
 	 * @param doAuthCheck: Definiert, ob die Berechtigungen (Lesen/Schreiben) für dieses Gesuch geprüft werden muessen.
 	 * @return Gesuch mit dem gegebenen key oder null falls nicht vorhanden
 	 */
@@ -131,7 +130,7 @@ public interface GesuchService {
 
 	/**
 	 * Gibt alle Antraege des aktuell eingeloggten Benutzers
-     */
+	 */
 	@Nonnull
 	List<Gesuch> getAntraegeByCurrentBenutzer();
 
@@ -159,7 +158,7 @@ public interface GesuchService {
 	 */
 	@Nonnull
 	Optional<Gesuch> testfallMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
-									@Nonnull LocalDate eingangsdatum);
+									  @Nonnull LocalDate eingangsdatum);
 
 	/**
 	 * Erstellt ein Erneuerungsgesuch fuer die Gesuchsperiode und Fall des übergebenen Antrags. Es wird immer der
@@ -248,6 +247,12 @@ public interface GesuchService {
 	int deleteGesucheOhneFreigabeOderQuittung();
 
 	/**
+	 * gibt alle Gesuche zurueck die nach einer konfigurierten Frist nach Erstellung nicht freigegeben bzw. nach Freigabe
+	 * die Quittung nicht geschickt haben.
+	 */
+	List<Gesuch> getGesuchesOhneFreigabeOderQuittung();
+
+	/**
 	 * Prüft, ob alle Anträge dieser Periode im Status VERFUEGT oder NUR_SCHULAMT sind
 	 */
 	boolean canGesuchsperiodeBeClosed(@Nonnull Gesuchsperiode gesuchsperiode);
@@ -256,17 +261,35 @@ public interface GesuchService {
 	 * Sucht die neueste Online Mutation, die zu dem gegebenen Antrag gehoert und loescht sie.
 	 * Diese Mutation muss Online und noch nicht freigegeben sein. Diese Methode darf nur bei ADMIN oder SUPER_ADMIN
 	 * aufgerufen werden, wegen loescherechten wird es dann immer mir RunAs/SUPER_ADMIN) ausgefuehrt.
-	 * @param fall Der Antraege, zu denen die Mutation gehoert, die geloescht werden muss
+	 * @param fall           Der Antraege, zu denen die Mutation gehoert, die geloescht werden muss
 	 * @param gesuchsperiode Gesuchsperiode, in der die Gesuche geloescht werden sollen
 	 */
 	void removeOnlineMutation(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
-	 * Sucht ein Folgegesuch fuer den gegebenen Antrag in der gegebenen Gesuchsperiode
-	 * @param fall Der Antraeg des Falles
+	 * Sucht die neueste Online Mutation, die zu dem gegebenen Antrag gehoert
+	 * Diese Mutation muss Online und noch nicht freigegeben sein. Diese Methode darf nur bei ADMIN oder SUPER_ADMIN
+	 * aufgerufen werden, wegen loescherechten wird es dann immer mir RunAs/SUPER_ADMIN) ausgefuehrt.
+	 * @param fall           Der Antraege, zu denen die Mutation gehoert
+	 * @param gesuchsperiode Gesuchsperiode
+	 */
+	Gesuch findOnlineMutation(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
+	 * Sucht und entfernt ein Folgegesuch fuer den gegebenen Antrag in der gegebenen Gesuchsperiode
+	 *
+	 * @param fall           Der Antraeg des Falles
 	 * @param gesuchsperiode Gesuchsperiode in der das Folgegesuch gesucht werden muss
 	 */
 	void removeOnlineFolgegesuch(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
+	 * Sucht ein Folgegesuch fuer den gegebenen Antrag in der gegebenen Gesuchsperiode
+	 * @param fall			Der Antraeg des Falles
+	 * @param gesuchsperiode Gesuchsperiode in der das Folgegesuch gesucht werden muss
+	 * @return
+	 */
+	Gesuch findOnlineFolgegesuch(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
 	 * Schliesst ein Gesuch, das sich im Status GEPRUEFT befindet und kein Angebot hat
