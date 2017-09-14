@@ -13,6 +13,7 @@ import TSGesuch from '../../../models/TSGesuch';
 import TSFall from '../../../models/TSFall';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import IScope = angular.IScope;
 import FallRS from '../../service/fallRS.rest';
 
@@ -34,6 +35,7 @@ describe('gesuchToolbar', function () {
     let $mdSidenav: ng.material.ISidenavService;
     let gesuchsperiodeRS: GesuchsperiodeRS;
     let fallRS: FallRS;
+    let dvDialog: DvDialog;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -55,10 +57,11 @@ describe('gesuchToolbar', function () {
         $stateParams.gesuchId = '123456789';
         gesuchsperiodeRS = $injector.get('GesuchsperiodeRS');
         fallRS = $injector.get('FallRS');
+        dvDialog = $injector.get('DvDialog');
 
         gesuchToolbarController = new GesuchToolbarController(userRS, ebeguUtil,
             CONSTANTS, gesuchRS, $state, $stateParams, $scope, gesuchModelManager,
-            authServiceRS, $mdSidenav, undefined, gesuchsperiodeRS, fallRS);
+            authServiceRS, $mdSidenav, undefined, gesuchsperiodeRS, fallRS, dvDialog);
     }));
 
     describe('getVerantwortlicherFullName', () => {

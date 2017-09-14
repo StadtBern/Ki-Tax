@@ -33,14 +33,15 @@
                                     <label data-translate="BETROFFENE_WAEHLEN" for="betroffene">
                                     </label>
                                     <div class="dv-select-style">
-                                        <select name="betroffene-{{$index}}" id="betroffene-{{$index}}"
+                                        <select aria-describedby="betroffene-{{$index}}-error"
+                                                name="betroffene-{{$index}}" id="betroffene-{{$index}}"
                                                 ng-model="umzugAdresse.betroffene"
                                                 class="form-control"
                                                 ng-disabled="vm.isKorrekturModusJugendamt()"
                                                 ng-options="(vm.getNameFromBetroffene(betroffene)) for betroffene in vm.getBetroffenenList()"
                                                 ng-required="true">
                                         </select>
-                                        <dv-error-messages for="vm.form['betroffene-' + $index].$error"
+                                        <dv-error-messages input-id="betroffene-{{$index}}" for="vm.form['betroffene-' + $index].$error"
                                                            class="error"></dv-error-messages>
                                     </div>
                                 </div>
@@ -62,7 +63,7 @@
                                 <dv-loading-button type="button" button-click="vm.removeUmzugAdresse(umzugAdresse)"
                                                    button-class="dv-btn-operation"
                                                    button-disabled="vm.isKorrekturModusJugendamt()">
-                                    <i class="fa fa-lg fa-trash-o"></i>
+                                    <i class="fa fa-lg fa-trash-o" title="{{'UMZUG_ENTFERNEN' | translate}}" aria-label="{{'UMZUG_ENTFERNEN' | translate}}"></i>
                                     <span data-translate="UMZUG_ENTFERNEN"></span>
                                 </dv-loading-button>
                                 <hr class="header"/>

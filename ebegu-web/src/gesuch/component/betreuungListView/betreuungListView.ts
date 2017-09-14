@@ -16,6 +16,7 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
+import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 import ITranslateService = angular.translate.ITranslateService;
 import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
@@ -35,7 +36,7 @@ export class BetreuungListViewComponentConfig implements IComponentOptions {
 /**
  * View fuer die Liste der Betreeungen der eingegebenen Kinder
  */
-export class BetreuungListViewController extends AbstractGesuchViewController<any> {
+export class BetreuungListViewController extends AbstractGesuchViewController<any> implements IDVFocusableController {
 
     TSRoleUtil = TSRoleUtil;
 
@@ -89,7 +90,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         }
     }
 
-    public removeBetreuung(kind: TSKindContainer, betreuung: TSBetreuung): void {
+    public removeBetreuung(kind: TSKindContainer, betreuung: TSBetreuung, index: any): void {
         this.gesuchModelManager.findKind(kind);     //kind index setzen
         let remTitleText: any = this.$translate.instant('BETREUUNG_LOESCHEN', {
             kindname: this.gesuchModelManager.getKindToWorkWith().kindJA.getFullName(),
@@ -97,7 +98,9 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         });
         this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             title: remTitleText,
-            deleteText: 'BETREUUNG_LOESCHEN_BESCHREIBUNG'
+            deleteText: 'BETREUUNG_LOESCHEN_BESCHREIBUNG',
+            parentController: this,
+            elementID: 'removeBetreuungButton' + kind.kindNummer + '_' + index
         }).then(() => {   //User confirmed removal
             this.errorService.clearAll();
             let betreuungIndex: number = this.gesuchModelManager.findBetreuung(betreuung);
@@ -146,5 +149,9 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
             betreuungId: betreuung.id,
             mitteilungId: undefined
         });
+    }
+
+    public setFocusBack(elementID: string): void {
+        angular.element('#' + elementID).first().focus();
     }
 }

@@ -104,7 +104,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
         }
-        //todo wenn man aus der verfuegung zurueck kommt muss man hier nicht neu berechnen
         this.refreshKinderListe();
     }
 
@@ -215,7 +214,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public setGesuchStatusGeprueft(): IPromise<TSAntragStatus> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_GEPRUEFT',
-            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
+            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN',
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {
             return this.setGesuchStatus(TSAntragStatus.GEPRUEFT);
         });
@@ -224,7 +225,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public closeWithoutAngebot(): IPromise<TSGesuch> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_KEIN_ANGEBOT',
-            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
+            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN',
+            parentController: undefined,
+            elementID: undefined
 
         }).then(() => {
             return this.gesuchRS.closeWithoutAngebot(this.gesuchModelManager.getGesuch().id).then((response) => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
@@ -244,7 +247,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         }
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
-            deleteText: deleteTextValue
+            deleteText: deleteTextValue,
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {
 
             return this.gesuchRS.verfuegenStarten(
@@ -297,7 +302,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public stvPruefungAbschliessen(): void {
         this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'STV_PRUEFUNG_ABSCHLIESSEN_CONFIRMATION',
-            deleteText: ''
+            deleteText: '',
+            parentController: undefined,
+            elementID: undefined
         }).then((bemerkung: string) => {
             this.gesuchRS.stvPruefungAbschliessen(this.getGesuch().id).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);
@@ -483,7 +490,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public setGesuchStatusBeschwerdeHaengig(): IPromise<TSGesuch> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'BESCHWERDE_HAENGIG',
-            deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_HAENGIG'
+            deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_HAENGIG',
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {
             return this.gesuchRS.setBeschwerdeHaengig(this.getGesuch().id).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);
@@ -495,7 +504,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public setGesuchStatusBeschwerdeAbschliessen(): IPromise<TSGesuch> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'BESCHWERDE_ABSCHLIESSEN',
-            deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_ABSCHLIESSEN'
+            deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_ABSCHLIESSEN',
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {
             return this.gesuchRS.removeBeschwerdeHaengig(this.getGesuch().id).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);

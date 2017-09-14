@@ -197,7 +197,7 @@ export default class EbeguUtil {
             + 'fieldset:not([disabled="disabled"],.dv-adresse__fieldset) md-checkbox:not([disabled="disabled"]),'
             + '#gesuchContainer button:not([disabled="disabled"]),'
             + '#gesuchContainer .dvb-loading-button button:not([disabled="disabled"]),'
-            + 'tbody>tr[ng-click]:not(.disabled-row),'
+            + '.dv-btn-row,'
             + '#gesuchContainer button.link-underline:not([disabled="disabled"]),'
             + '.dv-dokumente-list a:not([disabled="disabled"])').first();
         if (tmp) {

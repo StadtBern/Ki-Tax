@@ -1,4 +1,5 @@
-<input type="text"
+<input aria-describedby="{{vm.inputId + '-error'}}"
+       type="text"
        id="{{vm.inputId}}"
        ng-model="vm.date"
        ng-model-options="{debounce: 100}"

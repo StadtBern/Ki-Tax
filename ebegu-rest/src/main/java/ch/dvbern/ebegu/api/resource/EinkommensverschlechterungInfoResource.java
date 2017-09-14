@@ -1,25 +1,5 @@
 package ch.dvbern.ebegu.api.resource;
 
-import java.net.URI;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungInfoContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
@@ -34,12 +14,27 @@ import ch.dvbern.ebegu.services.GesuchService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
+import java.util.Optional;
+
 /**
  * REST Resource fuer Einkommensverschlechterung
  */
 @Path("einkommensverschlechterungInfo")
 @Stateless
-@Api
+@Api(description = "Resource für EinkommensverschlechterungInfo (pro Familie)")
 public class EinkommensverschlechterungInfoResource {
 
 	@Inject
@@ -55,7 +50,8 @@ public class EinkommensverschlechterungInfoResource {
 	private ResourceHelper resourceHelper;
 
 
-	@ApiOperation(value = "Create a new EinkommensverschlechterungInfoContainer in the database.")
+	@ApiOperation(value = "Create a new EinkommensverschlechterungInfoContainer in the database.",
+		response = JaxEinkommensverschlechterungInfoContainer.class)
 	@Nullable
 	@PUT
 	@Path("/{gesuchId}")
@@ -63,7 +59,7 @@ public class EinkommensverschlechterungInfoResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveEinkommensverschlechterungInfo(
 		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchId,
-		@Nonnull @NotNull @Valid JaxEinkommensverschlechterungInfoContainer jaxEinkommensverschlechterungInfoContainer,
+		@Nonnull @NotNull @Valid JaxEinkommensverschlechterungInfoContainer jaxEkvInfoContainer,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
@@ -75,14 +71,14 @@ public class EinkommensverschlechterungInfoResource {
 		EinkommensverschlechterungInfoContainer oldEVData = null;
 		EinkommensverschlechterungInfoContainer ekviToMerge = new EinkommensverschlechterungInfoContainer();
 
-		if (jaxEinkommensverschlechterungInfoContainer.getId() != null) {
+		if (jaxEkvInfoContainer.getId() != null) {
 			Optional<EinkommensverschlechterungInfoContainer> optional = einkommensverschlechterungInfoService.
-				findEinkommensverschlechterungInfo(jaxEinkommensverschlechterungInfoContainer.getId());
+				findEinkommensverschlechterungInfo(jaxEkvInfoContainer.getId());
 			ekviToMerge = optional.orElse(new EinkommensverschlechterungInfoContainer());
 			oldEVData = new EinkommensverschlechterungInfoContainer(ekviToMerge); //wir muessen uns merken wie die Daten vorher waren damit wir nachher vergleichen koennen
 		}
 		EinkommensverschlechterungInfoContainer convertedEkvi = converter
-			.einkommensverschlechterungInfoContainerToEntity(jaxEinkommensverschlechterungInfoContainer, ekviToMerge);
+			.einkommensverschlechterungInfoContainerToEntity(jaxEkvInfoContainer, ekviToMerge);
 
 		EinkommensverschlechterungInfoContainer persistedEkvi = einkommensverschlechterungInfoService
 			.updateEinkommensVerschlechterungInfoAndGesuch(gesuch, oldEVData, convertedEkvi);
@@ -92,7 +88,7 @@ public class EinkommensverschlechterungInfoResource {
 			.path('/' + convertedEkvi.getId())
 			.build();
 
-		JaxEinkommensverschlechterungInfoContainer jaxEinkommensverschlechterungInfoContainerReturn = converter.einkommensverschlechterungInfoContainerToJAX(persistedEkvi);
-		return Response.created(uri).entity(jaxEinkommensverschlechterungInfoContainerReturn).build();
+		JaxEinkommensverschlechterungInfoContainer jaxEkvInfoContainerReturn = converter.einkommensverschlechterungInfoContainerToJAX(persistedEkvi);
+		return Response.created(uri).entity(jaxEkvInfoContainerReturn).build();
 	}
 }

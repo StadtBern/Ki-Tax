@@ -1,28 +1,7 @@
 package ch.dvbern.ebegu.api.resource;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxMahnung;
 import ch.dvbern.ebegu.api.resource.util.ResourceHelper;
@@ -34,14 +13,30 @@ import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.MahnungService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Resource fuer Mahnungen
  */
 @Path("mahnung")
 @Stateless
-@Api
+@Api(description = "Resource zum Verwalten eines Mahnlaufes")
 public class MahnungResource {
 
 	@Inject
@@ -57,6 +52,7 @@ public class MahnungResource {
 	private ResourceHelper resourceHelper;
 
 
+	@ApiOperation(value = "Speichert eine Mahnung in der Datenbank", response = JaxMahnung.class)
 	@Nullable
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -84,6 +80,8 @@ public class MahnungResource {
 		return converter.mahnungToJAX(persistedMahnung);
 	}
 
+	@ApiOperation(value = "Gibt alle Mahnungen zum Gesuch mit der uebergebenen Id zurueck",
+		responseContainer = "List", response = JaxMahnung.class)
 	@Nullable
 	@GET
 	@Path("/{gesuchId}")
@@ -105,6 +103,8 @@ public class MahnungResource {
 			.collect(Collectors.toList());
 	}
 
+	@ApiOperation(value = "Beendet einen Mahnlauf und setzt alle vorhandenen Mahnungen auf erledigt. Der Gesuchsstatus " +
+		"geht zurueck auf IN_BEARBEITUNG_JA.", response = JaxGesuch.class)
 	@Nonnull
 	@PUT
 	@Path("/{gesuchId}")
@@ -129,6 +129,8 @@ public class MahnungResource {
 		return Response.ok(converter.gesuchToJAX(gesuchToReturn)).build();
 	}
 
+	@ApiOperation(value = "Generiert die Bemerkungen fuer eine zu erstellende Mahnung. Die Bemerkungen werden aus den" +
+		" fehlenden Dokumenten zusammengestellt.", response = String.class)
 	@Nonnull
 	@GET
 	@Path("/bemerkungen/{gesuchId}")

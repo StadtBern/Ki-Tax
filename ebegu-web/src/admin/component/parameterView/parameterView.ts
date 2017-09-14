@@ -112,7 +112,9 @@ export class ParameterViewController extends AbstractAdminViewController {
             let dialogText = this.getGesuchsperiodeSaveDialogText();
             this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
                 title: 'GESUCHSPERIODE_DIALOG_TITLE',
-                deleteText: dialogText
+                deleteText: dialogText,
+                parentController: undefined,
+                elementID: undefined
             }).then(() => {
                 this.doSave();
             });

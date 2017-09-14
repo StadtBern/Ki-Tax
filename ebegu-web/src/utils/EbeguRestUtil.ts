@@ -491,7 +491,8 @@ export default class EbeguRestUtil {
             restEinkommensverschlechterungInfo.stichtagFuerBasisJahrPlus2 = DateUtil.momentToLocalDate(einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus2);
             restEinkommensverschlechterungInfo.gemeinsameSteuererklaerung_BjP1 = einkommensverschlechterungInfo.gemeinsameSteuererklaerung_BjP1;
             restEinkommensverschlechterungInfo.gemeinsameSteuererklaerung_BjP2 = einkommensverschlechterungInfo.gemeinsameSteuererklaerung_BjP2;
-
+            restEinkommensverschlechterungInfo.ekvBasisJahrPlus1Annulliert = einkommensverschlechterungInfo.ekvBasisJahrPlus1Annulliert;
+            restEinkommensverschlechterungInfo.ekvBasisJahrPlus2Annulliert = einkommensverschlechterungInfo.ekvBasisJahrPlus2Annulliert;
             return restEinkommensverschlechterungInfo;
         }
         return undefined;
@@ -559,6 +560,8 @@ export default class EbeguRestUtil {
             einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus2 = DateUtil.localDateToMoment(einkommensverschlechterungInfoFromServer.stichtagFuerBasisJahrPlus2);
             einkommensverschlechterungInfo.gemeinsameSteuererklaerung_BjP1 = einkommensverschlechterungInfoFromServer.gemeinsameSteuererklaerung_BjP1;
             einkommensverschlechterungInfo.gemeinsameSteuererklaerung_BjP2 = einkommensverschlechterungInfoFromServer.gemeinsameSteuererklaerung_BjP2;
+            einkommensverschlechterungInfo.ekvBasisJahrPlus1Annulliert = einkommensverschlechterungInfoFromServer.ekvBasisJahrPlus1Annulliert;
+            einkommensverschlechterungInfo.ekvBasisJahrPlus2Annulliert = einkommensverschlechterungInfoFromServer.ekvBasisJahrPlus2Annulliert;
             return einkommensverschlechterungInfo;
         }
         return undefined;

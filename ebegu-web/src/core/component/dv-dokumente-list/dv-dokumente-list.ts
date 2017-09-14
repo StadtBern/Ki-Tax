@@ -152,7 +152,9 @@ export class DVDokumenteListController {
         this.$log.debug('component -> remove dokument ' + dokument.filename);
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: '',
-            title: 'FILE_LOESCHEN'
+            title: 'FILE_LOESCHEN',
+            parentController: undefined,
+            elementID: undefined
         })
             .then(() => {   //User confirmed removal
                 this.onRemove({dokumentGrund: dokumentGrund, dokument: dokument});

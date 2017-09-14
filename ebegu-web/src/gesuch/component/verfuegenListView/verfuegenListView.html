@@ -22,15 +22,16 @@
                                 <th data-translate="INSTITUTION" width="20%"></th>
                                 <th data-translate="BETREUUNGSANGEBOT" width="20%"></th>
                                 <th data-translate="ID" width="20%"></th>
-                                <th data-translate="STATUS" width="20%"></th>
+                                <th data-translate="STATUS" width="15%"></th>
                                 <th data-translate="GUELTIGE_BETREUUNG" width="20%" ng-show="vm.isSuperAdmin()"></th>
+                                <th width="5%"></th>
                             </tr>
                             </thead>
                             <tbody ng-repeat="kindContainer in displayedCollection">
                             <tr ng-repeat="betreuung in kindContainer.betreuungen" st-select-row="betreuung"
                                 st-select-mode="single"
                                 ng-class="{'disabled-row': !vm.kannVerfuegungOeffnen(betreuung)}"
-                                ng-click="vm.openVerfuegung(kindContainer, betreuung)">
+                                ng-click="vm.openVerfuegung(kindContainer, betreuung)" role="row" tabindex="-1">
                                 <td ng-bind="kindContainer.kindJA.getFullName()"></td>
                                 <td ng-bind="betreuung.institutionStammdaten.institution.name"></td>
                                 <td ng-bind="betreuung.institutionStammdaten.betreuungsangebotTyp | translate"></td>
@@ -41,7 +42,15 @@
                                 </td>
                                 <td ng-show="vm.isSuperAdmin()">
                                     <span>{{betreuung.gueltig ? 'Ja' : 'Nein'}}</span>
-                                </td>
+                                </td> <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%">
+                                <dv-loading-button type="button"
+                                                   button-click="vm.openVerfuegung(kindContainer, betreuung);"
+                                                   button-class="dv-btn-operation dv-btn-row"
+                                                   aria-label="{{'TABLE_EDIT'|translate}}">
+                                    <i class="fa fa-lg fa-arrow-right" title="{{'TABLE_EDIT'|translate}}" aria-label="{{'TABLE_EDIT'|translate}}">
+                                    </i>
+                                </dv-loading-button>
+                            </td>
                             </tr>
                             </tbody>
                             <tbody ng-if="vm.getKinderWithBetreuungList().length === 0">
@@ -118,18 +127,19 @@
                 <!-- Mahnungsdetails, neue Mahnung erstellen -->
                 <div class="row text-left" ng-if="vm.showErsteMahnungAusloesen() || vm.showZweiteMahnungAusloesen()">
                     <div class="col-md-12">
-                        <h2 data-translate="ERSTE_MAHNUNG" ng-if="vm.showErsteMahnungAusloesen()"></h2>
-                        <h2 data-translate="ZWEITE_MAHNUNG" ng-if="vm.showZweiteMahnungAusloesen()"></h2>
+                        <h3 class="ebeguH2" data-translate="ERSTE_MAHNUNG" ng-if="vm.showErsteMahnungAusloesen()"></h3>
+                        <h3 class="ebeguH2" data-translate="ZWEITE_MAHNUNG"
+                            ng-if="vm.showZweiteMahnungAusloesen()"></h3>
                         <hr class="header"/>
                         <div class="row">
                             <dv-input-container class="col-md-12 form-group kommentar-feld">
                                 <label class="md-no-float" for="bemerkungenID"
                                        data-translate="MAHNUNG_FEHLENDE_DOKUMENTE"></label>
-                                <textarea name="bemerkungen" md-no-autogrow class="form-control input-element" rows="4"
+                                <textarea aria-describedby="bemerkungenID-error" name="bemerkungen" md-no-autogrow class="form-control input-element" rows="4"
                                           id="bemerkungenID"
                                           ng-model="vm.mahnung.bemerkungen" ng-required="true" maxlength="4000">
                         </textarea>
-                                <dv-error-messages for="vm.form.bemerkungen.$error" class="error"></dv-error-messages>
+                                <dv-error-messages input-id="bemerkungenID" for="vm.form.bemerkungen.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                         <div class="row">
@@ -140,7 +150,7 @@
                                                class="input-element-small"
                                                ng-model="vm.mahnung.datumFristablauf" ng-required="true">
                                 </dv-datepicker>
-                                <dv-error-messages for="vm.form.datumFristablauf.$error"
+                                <dv-error-messages input-id="datumFristablaufID" for="vm.form.datumFristablauf.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>

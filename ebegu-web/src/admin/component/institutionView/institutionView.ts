@@ -114,7 +114,9 @@ export class InstitutionViewController extends AbstractAdminViewController {
     removeInstitution(institution: any): void {
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: '',
-            title: 'LOESCHEN_DIALOG_TITLE'
+            title: 'LOESCHEN_DIALOG_TITLE',
+            parentController: undefined,
+            elementID: undefined
         })
         .then(() => {   //User confirmed removal
             this.selectedInstitution = null;
@@ -238,7 +240,9 @@ export class InstitutionViewController extends AbstractAdminViewController {
     removeInstitutionStammdaten(institutionStammdaten: TSInstitutionStammdaten): void {
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: '',
-            title: 'LOESCHEN_DIALOG_TITLE'
+            title: 'LOESCHEN_DIALOG_TITLE',
+            parentController: undefined,
+            elementID: undefined
         })
         .then(() => {   //User confirmed removal
             this.institutionStammdatenRS.removeInstitutionStammdaten(institutionStammdaten.id).then((result) => {

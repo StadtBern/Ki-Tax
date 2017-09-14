@@ -3,6 +3,7 @@ import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {IStateService} from 'angular-ui-router';
 import {ShowTooltipController} from '../../../gesuch/dialog/ShowTooltipController';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
+import {IDVFocusableController} from '../IDVFocusableController';
 
 let template = require('./dv-skiplinks.html');
 let showKontaktTemplate = require('../../../gesuch/dialog/showKontaktTemplate.html');
@@ -15,7 +16,7 @@ export class DvSkiplinksComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class DvSkiplinksController {
+export class DvSkiplinksController implements IDVFocusableController {
 
     TSRoleUtil: any;
 
@@ -56,7 +57,15 @@ export class DvSkiplinksController {
             + '<span>Effingerstrasse 21</span><br>'
             + '<span>3008 Bern</span><br>'
             + '<a href="tel:0313215115"><span>031 321 51 15</span></a><br>'
-            + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>'
+            + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>',
+            parentController: this
         });
+    }
+
+    /**
+     * Sets the focus back to the Kontakt icon.
+     */
+    public setFocusBack(elementID: string): void {
+        angular.element('#SKIP_4').first().focus();
     }
 }

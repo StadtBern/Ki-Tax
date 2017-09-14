@@ -17,6 +17,10 @@ export default class TSEinkommensverschlechterungInfo extends TSAbstractEntity {
     private _gemeinsameSteuererklaerung_BjP1: boolean;
     private _gemeinsameSteuererklaerung_BjP2: boolean;
 
+    private _ekvBasisJahrPlus1Annulliert: boolean = false;
+    private _ekvBasisJahrPlus2Annulliert: boolean = false;
+
+
     get einkommensverschlechterung(): boolean {
         return this._einkommensverschlechterung;
     }
@@ -87,5 +91,21 @@ export default class TSEinkommensverschlechterungInfo extends TSAbstractEntity {
 
     set gemeinsameSteuererklaerung_BjP2(value: boolean) {
         this._gemeinsameSteuererklaerung_BjP2 = value;
+    }
+
+    get ekvBasisJahrPlus1Annulliert(): boolean {
+        return this._ekvBasisJahrPlus1Annulliert;
+    }
+
+    set ekvBasisJahrPlus1Annulliert(value: boolean) {
+        this._ekvBasisJahrPlus1Annulliert = value;
+    }
+
+    get ekvBasisJahrPlus2Annulliert(): boolean {
+        return this._ekvBasisJahrPlus2Annulliert;
+    }
+
+    set ekvBasisJahrPlus2Annulliert(value: boolean) {
+        this._ekvBasisJahrPlus2Annulliert = value;
     }
 }
