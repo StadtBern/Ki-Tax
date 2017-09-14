@@ -44,6 +44,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
     gesuchsteller: TSGesuchstellerContainer;
     patternPercentage: string;
     maxZuschlagsprozent: number = 100;
+    lastTaetigkeit: TSTaetigkeit = undefined;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager',
         'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS', 'WizardStepManager', '$q', '$translate', 'EbeguParameterRS', 'GlobalCacheService', '$timeout'];
@@ -80,8 +81,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
                 }
             }
         });
-
-        //hier muessen wir den event beim verlassen nicht abfangen da wir die daten erst beim erfolgreichen speichern ins model einfuegen
+        this.lastTaetigkeit = this.model.erwerbspensumJA.taetigkeit;
     }
 
     getTaetigkeitenList(): Array<TSTaetigkeit> {
@@ -147,11 +147,26 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
             this.model.erwerbspensumJA.zuschlagsprozent = undefined;
             this.model.erwerbspensumJA.zuschlagsgrund = undefined;
         }
+        if (this.model.erwerbspensumJA.taetigkeit === TSTaetigkeit.KEINE) {
+            this.model.erwerbspensumJA.pensum = 0;
+            this.model.erwerbspensumJA.gueltigkeit.gueltigAb = this.gesuchModelManager.getGesuchsperiode().gueltigkeit.gueltigAb;
+            this.model.erwerbspensumJA.gueltigkeit.gueltigBis = this.gesuchModelManager.getGesuchsperiode().gueltigkeit.gueltigBis;
+        } else if (this.lastTaetigkeit === TSTaetigkeit.KEINE) {
+            // Wechsel von KEINE zu etwas anderes -> die (fuer KEINE unsichtbaren) Defaults entfernen
+            this.model.erwerbspensumJA.pensum = undefined;
+            this.model.erwerbspensumJA.gueltigkeit.gueltigAb = undefined;
+            this.model.erwerbspensumJA.gueltigkeit.gueltigBis = undefined;
+        }
+        this.lastTaetigkeit = this.model.erwerbspensumJA.taetigkeit;
     }
 
     erwerbspensumDisabled(): boolean {
         // Disabled wenn Mutation, ausser bei Bearbeiter Jugendamt
         return this.model.erwerbspensumJA.vorgaengerId && !this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    }
+
+    erwerbspensumVisible(): boolean {
+        return this.model.erwerbspensumJA.taetigkeit !== TSTaetigkeit.KEINE;
     }
 
     public getTextZuschlagErwerbspensumKorrekturJA(): string {

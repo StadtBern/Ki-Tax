@@ -1,13 +1,14 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import java.util.Collection;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
-import java.util.Collection;
-import java.util.Optional;
+
+import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 
 /**
  * Service zum Verwalten von Erwerbspensen
@@ -54,4 +55,8 @@ public interface ErwerbspensumService {
 	 */
 	void removeErwerbspensum(@Nonnull String erwerbspensumContainerID, Gesuch gesuch);
 
+	/**
+	 * Gibt zurück, ob fuer das uebergebene Gesuch ein Erwerbspensum erfasst werden muss.
+	 */
+	boolean isErwerbspensumRequired(@Nonnull Gesuch gesuch);
 }
