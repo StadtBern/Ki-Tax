@@ -1510,10 +1510,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		logDeletingOfAntrag(gesuch);
 		// Antrag muss Papier sein, und darf noch nicht verfuegen/verfuegt sein
 		if (gesuch.getEingangsart().isOnlineGesuch()) {
-			throw new EbeguRuntimeException("removeAntrag", "Online Antrag darf nicht durch JA gelöscht werden");
+			throw new EbeguRuntimeException("removeAntrag", ErrorCodeEnum.ERROR_DELETION_NOT_ALLOWED_FOR_JA);
 		}
 		if (gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen()) {
-			throw new EbeguRuntimeException("removeAntrag", "Antrag ist im Status " + gesuch.getStatus() + " und darf nicht mehr gelöscht werden!");
+			throw new EbeguRuntimeException("removeAntrag", ErrorCodeEnum.ERROR_DELETION_ANTRAG_NOT_ALLOWED,  gesuch.getStatus());
 		}
 		// Bei Erstgesuch wird auch der Fall mitgelöscht
 		if (gesuch.getTyp() == AntragTyp.ERSTGESUCH) {
@@ -1529,10 +1529,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		logDeletingOfAntrag(gesuch);
 		// Antrag muss Online sein, und darf noch nicht freigegeben sein
 		if (gesuch.getEingangsart().isPapierGesuch()) {
-			throw new EbeguRuntimeException("removeAntrag", "Papier Antrag darf nicht durch GS gelöscht werden");
+			throw new EbeguRuntimeException("removeGesuchstellerAntrag", ErrorCodeEnum.ERROR_DELETION_NOT_ALLOWED_FOR_GS);
 		}
 		if (gesuch.getStatus() != AntragStatus.IN_BEARBEITUNG_GS) {
-			throw new EbeguRuntimeException("removeAntrag", "Antrag ist nicht in Bearbeitung GS und darf nicht mehr gelöscht werden!");
+			throw new EbeguRuntimeException("removeGesuchstellerAntrag", ErrorCodeEnum.ERROR_DELETION_ANTRAG_NOT_ALLOWED,  gesuch.getStatus());
 		}
 		superAdminService.removeGesuch(gesuch.getId());
 	}

@@ -125,10 +125,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	@Nonnull
 	public Optional<Fall> findFallByCurrentBenutzerAsBesitzer() {
 		Optional<Benutzer> currentBenutzerOptional = benutzerService.getCurrentBenutzer();
-		if (currentBenutzerOptional.isPresent()) {
-			return findFallByBesitzer(currentBenutzerOptional.get());
-		}
-		return Optional.empty();
+		return currentBenutzerOptional.flatMap(this::findFallByBesitzer);
 	}
 
 	@Override
