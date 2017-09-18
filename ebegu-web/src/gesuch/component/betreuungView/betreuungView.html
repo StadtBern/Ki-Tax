@@ -290,7 +290,8 @@
                                                data-translate="GRUND_ABLEHNUNG"></label>
                                         <textarea md-no-autogrow class="form-control" rows="6" id="grundAblehnung"
                                                   ng-model="vm.getBetreuungModel().grundAblehnung"
-                                                  ng-disabled="!vm.isBetreuungsstatusWarten() || vm.isSavingData">
+                                                  ng-disabled="!vm.isBetreuungsstatusWarten() || vm.isSavingData"
+                                                  maxlength="4000">
                             </textarea>
                                     </dv-input-container>
                                 </div>
