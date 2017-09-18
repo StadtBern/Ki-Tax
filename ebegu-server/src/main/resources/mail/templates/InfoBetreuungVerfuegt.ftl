@@ -3,9 +3,10 @@
 <#-- @ftlvariable name="fall" type="ch.dvbern.ebegu.entities.Fall" -->
 <#-- @ftlvariable name="gesuchsteller" type="ch.dvbern.ebegu.entities.Gesuchsteller" -->
 <#-- @ftlvariable name="institution" type="ch.dvbern.ebegu.entities.Institution" -->
+<#-- @ftlvariable name="empfaengerMail" type="java.lang.String" -->
+<#-- @ftlvariable name="birthday" type="java.lang.String" -->
 <#-- @ftlvariable name="templateConfiguration" type="ch.dvbern.ebegu.mail.MailTemplateConfiguration" -->
 <#-- @ftlvariable name="configuration" type="ch.dvbern.ebegu.config.EbeguConfiguration" -->
-<#-- @ftlvariable name="empfaengerMail" type="java.lang.String" -->
 From: ${configuration.senderAddress}
 To: ${institution.name} <${empfaengerMail}>
 Subject: <@base64Header>Ki-Tax - Betreuung verfügt</@base64Header>
@@ -31,14 +32,14 @@ ${templateConfiguration.mailCss}
     </p>
     <table>
         <tbody>
+        <#--TODO with Reviewer format fallnummer (0000... vornedrann) ??? -->
         <tr>
-            <td width="200">Fall:</td>
-            <td width="280">${fall.fallNummer} ${gesuchsteller.nachname}</td>
+            <td width="300">Fall:</td>
+            <td width="300">${fall.fallNummer} ${gesuchsteller.nachname}</td>
         </tr>
         <tr>
             <td>Kind:</td>
-        <#--TODO with Reviewer format date -->
-            <td>${kind.fullName}, ${kind.geburtsdatum}</td>
+            <td>${kind.fullName}, ${birthday} </td>
         </tr>
         <tr>
             <td>Betreuungsangebot:</td>
@@ -61,7 +62,7 @@ ${templateConfiguration.mailCss}
     <br/>
     <p>
         <#--TODO with Reviewer add link of betreuung-->
-        Die Betreuung finden Sie <a href="">hier</a>.
+        Die Betreuungen finden Sie <a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/betreuungen/${betreuung.extractGesuch().id}">hier</a>.
     </p>
     <p>
         Freundliche Grüsse <br/>

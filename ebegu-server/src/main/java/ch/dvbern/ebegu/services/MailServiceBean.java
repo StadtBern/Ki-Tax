@@ -16,6 +16,7 @@ import javax.ejb.Asynchronous;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Future;
@@ -225,8 +226,10 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			Gesuchsteller gesuchsteller1 = betreuung.extractGesuch().extractGesuchsteller1();
 			Kind kind = betreuung.getKind().getKindJA();
 			Betreuungsstatus status = betreuung.getBetreuungsstatus();
+			LocalDate datumErstellung = betreuung.getTimestampErstellt().toLocalDate();
+			LocalDate birthdayKind = kind.getGeburtsdatum();
 
-			String message = mailTemplateConfig.getInfoBetreuungGeloescht(betreuung, fall, gesuchsteller1, kind, institution, mailaddress);
+			String message = mailTemplateConfig.getInfoBetreuungGeloescht(betreuung, fall, gesuchsteller1, kind, institution, mailaddress,datumErstellung, birthdayKind);
 
 			try {
 				if (gesuch.getTyp().isMutation()) {
@@ -275,8 +278,9 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 		Fall fall = gesuch.getFall();
 		Gesuchsteller gesuchsteller1 = betreuung.extractGesuch().extractGesuchsteller1();
 		Kind kind = betreuung.getKind().getKindJA();
+		LocalDate birthdayKind = kind.getGeburtsdatum();
 
-		String message = mailTemplateConfig.getInfoBetreuungVerfuegt(betreuung, fall, gesuchsteller1, kind, institution, mailaddress);
+		String message = mailTemplateConfig.getInfoBetreuungVerfuegt(betreuung, fall, gesuchsteller1, kind, institution, mailaddress, birthdayKind);
 
 		try{
 			sendMessageWithTemplate(message,mailaddress);
