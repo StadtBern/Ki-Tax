@@ -1,4 +1,4 @@
-import {IComponentOptions, ILogService} from 'angular';
+import {IComponentOptions, IFormController, ILogService} from 'angular';
 import UserRS from '../../../core/service/userRS.rest';
 import TSUser from '../../../models/TSUser';
 import EbeguUtil from '../../../utils/EbeguUtil';
@@ -87,7 +87,7 @@ export class GesuchToolbarController implements IDVFocusableController {
 
     static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
         '$state', '$stateParams', '$scope', 'GesuchModelManager', 'AuthServiceRS',
-        '$mdSidenav', '$log', 'GesuchsperiodeRS', 'FallRS', 'DvDialog'];
+        '$mdSidenav', '$log', 'GesuchsperiodeRS', 'FallRS', 'DvDialog', 'unsavedWarningSharedService'];
 
     constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
                 private CONSTANTS: any, private gesuchRS: GesuchRS,
@@ -98,7 +98,8 @@ export class GesuchToolbarController implements IDVFocusableController {
                 private $log: ILogService,
                 private gesuchsperiodeRS: GesuchsperiodeRS,
                 private fallRS: FallRS,
-                private dvDialog: DvDialog) {
+                private dvDialog: DvDialog,
+                private unsavedWarningSharedService: any) {
 
     }
 
@@ -577,7 +578,7 @@ export class GesuchToolbarController implements IDVFocusableController {
     }
 
     public showGesuchLoeschen(): boolean {
-        if (this.getGesuch().isNew()) {
+        if (!this.getGesuch() ||  this.getGesuch().isNew()) {
             return false;
         }
         if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
@@ -597,26 +598,40 @@ export class GesuchToolbarController implements IDVFocusableController {
     public gesuchLoeschen(): IPromise<void> {
         return this.dvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_LOESCHEN',
-            deleteText: 'BESCHREIBUNG_GESUCH_LOESCHEN'
+            deleteText: 'BESCHREIBUNG_GESUCH_LOESCHEN',
+            parentController: this,
+            elementID: 'gesuchLoeschenButton'
         }).then(() => {
+            this.setAllFormsPristine();
             if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
-                this.gesuchRS.removeGesuchstellerAntrag(this.getGesuch().id);
-                this.gesuchModelManager.setGesuch(new TSGesuch());
-                this.resetNavigationParameters();
-                this.$state.go('gesuchstellerDashboard');
+                this.gesuchRS.removeGesuchstellerAntrag(this.getGesuch().id).then(result => {
+                    this.gesuchModelManager.setGesuch(new TSGesuch());
+                    this.resetNavigationParameters();
+                    this.$state.go('gesuchstellerDashboard');
+                });
             } else {
-                this.gesuchRS.removePapiergesuch(this.getGesuch().id);
-                if (this.antragList.length > 0) {
-                    let navObj: any = {
-                        createNew: false,
-                        gesuchId: this.antragList[0].antragId
-                    };
-                    this.$state.go('gesuch.fallcreation', navObj);
-                } else {
-                    this.$state.go('pendenzen');
-                }
+                this.gesuchRS.removePapiergesuch(this.getGesuch().id).then(result => {
+                    if (this.antragList.length > 1) {
+                        let navObj: any = {
+                            createNew: false,
+                            gesuchId: this.antragList[0].antragId
+                        };
+                        this.$state.go('gesuch.fallcreation', navObj);
+                    } else {
+                        this.$state.go('pendenzen');
+                    }
+                });
             }
         });
+    }
+
+    private setAllFormsPristine(): void {
+        let forms: [IFormController] = this.unsavedWarningSharedService.allForms();
+        for (let index = 0; index < forms.length; index++) {
+            let form: IFormController = forms[index];
+            form.$setPristine();
+            form.$setUntouched();
+        }
     }
 
     public openAlleVerfuegungen(): void {

@@ -62,7 +62,8 @@
             <div dv-show-element
                  dv-show-allowed-roles="vmx.TSRoleUtil.getAdministratorRoles()" dv-show-expression="vmx.showGesuchLoeschen()">
                 <button ng-click="vmx.gesuchLoeschen()"
-                        aria-label="{{TOOLBAR_LOESCHEN | translate}}" style="text-align: center;">
+                        aria-label="{{TOOLBAR_LOESCHEN | translate}}" style="text-align: center;"
+                        input-id="{{'gesuchLoeschenButton'}}" type="reset">
                     <span data-translate="TOOLBAR_LOESCHEN"></span>
                 </button>
             </div>
