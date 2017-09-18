@@ -7,7 +7,7 @@
                     <label class="md-no-float" for="kommentarIntern" data-translate="BEMERKUNGEN_INTERN"></label>
                     <textarea md-no-autogrow class="form-control" rows="4" id="kommentarIntern"
                               ng-blur="vm.saveStepBemerkung()" name="kommentarIntern"
-                              ng-model="vm.getCurrentWizardStep().bemerkungen" maxlength="1000"
+                              ng-model="vm.getCurrentWizardStep().bemerkungen" maxlength="4000"
                               dv-enable-element dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
                         </textarea>
                 </dv-input-container>
@@ -28,7 +28,7 @@
                 <dv-input-container class="form-group kommentar-feld">
                     <label class="md-no-float" for="kommentarSTV_JA" data-translate="BEMERKUNGEN_STV_JA"></label>
                     <textarea md-no-autogrow class="form-control" rows="4" id="kommentarSTV_JA"
-                              ng-model="vm.getGesuch().bemerkungenSTV" maxlength="1000" name="kommentarSTV_JA"
+                              ng-model="vm.getGesuch().bemerkungenSTV" maxlength="4000" name="kommentarSTV_JA"
                               ng-disabled="true"></textarea>
                 </dv-input-container>
             </div>
@@ -41,7 +41,7 @@
                     <label class="md-no-float" for="kommentarPruefungSTV" data-translate="BEMERKUNGEN_PRUEFUNG_STV"></label>
                     <textarea md-no-autogrow class="form-control" rows="4" id="kommentarPruefungSTV"
                               ng-blur="vm.saveBemerkungPruefungSTV()" name="kommentarPruefungSTV"
-                              ng-model="vm.getGesuch().bemerkungenPruefungSTV" maxlength="1000"
+                              ng-model="vm.getGesuch().bemerkungenPruefungSTV" maxlength="4000"
                               dv-enable-element
                               dv-enable-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()"
                               dv-enable-expression="vm.isInBearbeitungSTV()"></textarea>
@@ -69,7 +69,7 @@
                     <textarea md-no-autogrow class="form-control" rows="4" id="kommentarVerfuegung"
                               ng-blur="vm.saveBemerkungZurVerfuegung()" name="kommentarVerfuegung"
                               ng-disabled="vm.isGesuchReadonly()"
-                              ng-model="vm.getGesuch().bemerkungen" maxlength="1000">
+                              ng-model="vm.getGesuch().bemerkungen" maxlength="4000">
                         </textarea>
                 </dv-input-container>
             </div>
