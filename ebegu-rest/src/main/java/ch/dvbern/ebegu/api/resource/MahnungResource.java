@@ -114,8 +114,8 @@ public class MahnungResource {
 		Validate.notNull(gesuchJAXPId.getId());
 
 		resourceHelper.assertGesuchStatusEqual(gesuchJAXPId.getId(),
-			AntragStatusDTO.ERSTE_MAHNUNG, AntragStatusDTO.ERSTE_MAHNUNG_ABGELAUFEN, AntragStatusDTO.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
-			AntragStatusDTO.ZWEITE_MAHNUNG, AntragStatusDTO.ZWEITE_MAHNUNG_ABGELAUFEN, AntragStatusDTO.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+			AntragStatusDTO.ERSTE_MAHNUNG, AntragStatusDTO.ERSTE_MAHNUNG_ABGELAUFEN,
+			AntragStatusDTO.ZWEITE_MAHNUNG, AntragStatusDTO.ZWEITE_MAHNUNG_ABGELAUFEN);
 
 		String gesuchID = converter.toEntityId(gesuchJAXPId);
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);

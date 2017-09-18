@@ -55,6 +55,8 @@ export class DVPendenzenListController {
     selectedAntragStatus: string;
     selectedInstitution: TSInstitution;
     selectedGesuchsperiode: string;
+    selectedDokumenteHochgeladen: string;
+
     institutionenList: Array<TSInstitution>;
     gesuchsperiodenList: Array<string>;
     onUserChanged: (user: any) => void;

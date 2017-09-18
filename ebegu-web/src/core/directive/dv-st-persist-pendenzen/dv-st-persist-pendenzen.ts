@@ -49,6 +49,7 @@ export default class DVSTPersistPendenzen implements IDirective {
                     pendenzenListController.selectedFamilienName = savedState.search.predicateObject.familienName;
                     pendenzenListController.selectedKinder = savedState.search.predicateObject.kinder;
                     pendenzenListController.selectedEingangsdatum = savedState.search.predicateObject.eingangsdatum;
+                    pendenzenListController.selectedDokumenteHochgeladen = savedState.search.predicateObject.dokumenteHochgeladen;
                     this.setUserFromName(pendenzenListController, savedState.search.predicateObject.verantwortlicher);
                 }
                 let tableState = stTableCtrl.tableState();

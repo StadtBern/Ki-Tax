@@ -30,6 +30,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _datumGewarntNichtFreigegeben: moment.Moment;
     private _datumGewarntFehlendeQuittung: moment.Moment;
     private _gesuchBetreuungenStatus: TSGesuchBetreuungenStatus;
+    private _dokumenteHochgeladen: boolean;
 
     private _timestampVerfuegt: moment.Moment;
     private _gueltig: boolean;
@@ -175,12 +176,20 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         this._gueltig = value;
     }
 
-    public get gesuchBetreuungenStatus(): TSGesuchBetreuungenStatus {
+    get gesuchBetreuungenStatus(): TSGesuchBetreuungenStatus {
         return this._gesuchBetreuungenStatus;
     }
 
-    public set gesuchBetreuungenStatus(value: TSGesuchBetreuungenStatus) {
+    set gesuchBetreuungenStatus(value: TSGesuchBetreuungenStatus) {
         this._gesuchBetreuungenStatus = value;
+    }
+
+    get dokumenteHochgeladen(): boolean {
+        return this._dokumenteHochgeladen;
+    }
+
+    set dokumenteHochgeladen(value: boolean) {
+        this._dokumenteHochgeladen = value;
     }
 
     public isMutation(): boolean {

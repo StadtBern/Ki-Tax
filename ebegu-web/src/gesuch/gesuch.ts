@@ -160,7 +160,7 @@ export class GesuchRouteController {
 
         }
 
-        if ((toTranslate === TSAntragStatus.NUR_SCHULAMT || toTranslate === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN)
+        if ((toTranslate === TSAntragStatus.NUR_SCHULAMT)
             && isUserGesuchsteller) {
             return this.ebeguUtil.translateString('ABGESCHLOSSEN');
         }
@@ -330,5 +330,9 @@ export class GesuchRouteController {
 
     public isSuperAdmin(): boolean {
         return  this.authServiceRS.isRole(TSRole.SUPER_ADMIN);
+    }
+
+    public isDocumentUploaded(): boolean {
+        return this.getGesuch() && this.getGesuch().dokumenteHochgeladen;
     }
 }

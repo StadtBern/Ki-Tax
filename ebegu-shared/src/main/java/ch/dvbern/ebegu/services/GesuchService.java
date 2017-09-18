@@ -284,6 +284,17 @@ public interface GesuchService {
 	void removeOnlineFolgegesuch(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
+	 * Loescht das angegebene Gesuch falls es sich um ein Papiergesuch handelt, das noch nicht im Status "verfuegen" oder verfuegt ist.
+	 * Wenn es sich um ein Papier-Erstgesuch handelt, wird auch der Fall gelöscht.
+	 */
+	void removePapiergesuch(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Loescht das angegebene Gesuch, falls es sich um ein Onlinegesuch handelt, das noch nicht freigegeben wurde. Der Fall wird dabei nie geloescht.
+	 */
+	void removeGesuchstellerAntrag(@Nonnull Gesuch gesuch);
+
+	/**
 	 * Sucht ein Folgegesuch fuer den gegebenen Antrag in der gegebenen Gesuchsperiode
 	 * @param fall			Der Antraeg des Falles
 	 * @param gesuchsperiode Gesuchsperiode in der das Folgegesuch gesucht werden muss
