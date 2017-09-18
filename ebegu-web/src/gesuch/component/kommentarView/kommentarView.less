@@ -6,9 +6,6 @@
     height: 100%;
     & > form {
         height: inherit;
-        & > div {
-            padding: 1rem;
-        }
     }
     md-input-container {
         label:not(.md-container-ignore) {
@@ -67,3 +64,10 @@
     }
 
 }
+.kommentar-padding{
+    padding:2rem;
+    & + & {
+        padding-top:0rem;
+    }
+}
+
