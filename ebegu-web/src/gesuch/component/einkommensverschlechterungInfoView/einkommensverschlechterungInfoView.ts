@@ -312,11 +312,25 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     public isJugendamt(): boolean {
         return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
     }
+
     public isGesuchFreigegeben(): boolean {
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().status) {
             return isAtLeastFreigegeben(this.gesuchModelManager.getGesuch().status);
         }
         return false;
     }
+
+    public showAblehnungBasisJahrPlus1(): boolean {
+        return (!this.isJugendamt() && this.showEkvi() && this.showJahrPlus1()
+            && this.getEinkommensverschlechterungsInfo().ekvBasisJahrPlus1Annulliert && this.isGesuchFreigegeben())
+            || (this.isJugendamt() && this.showEkvi() && this.showJahrPlus1());
+    }
+
+    public showAblehnungBasisJahrPlus2(): boolean {
+        return (!this.isJugendamt() && this.showEkvi() && this.showJahrPlus2()
+            && this.getEinkommensverschlechterungsInfo().ekvBasisJahrPlus2Annulliert && this.isGesuchFreigegeben())
+            || (this.isJugendamt() && this.showEkvi() && this.showJahrPlus2());
+    }
+
 }
 
