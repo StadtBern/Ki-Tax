@@ -879,6 +879,7 @@
     "TOOLBAR_VERLAUF": "VERLAUF",
     "TOOLBAR_ALLE_VERFUEGUNGEN": "ALLE VERFÜGUNGEN",
     "TOOLBAR_KONTAKT": "KONTAKT",
+    "TOOLBAR_LOESCHEN": "LÖSCHEN",
     "TOOLBAR_GESUCHSPERIODE": "Gesuchsperiode wählen, aktuell: {{gp}} ",
     "TOOLBAR_GESUCHSPERIODE_ITEM": "Gesuchsperiode {{gp}} ",
     "TOOLBAR_GESUCHSTYP": "Gesuch auswählen, aktuell: {{gt}} der Gesuchsperiode {{gp}}",
@@ -1102,5 +1103,8 @@
     "ABWESENHEIT_DELETE": "Abwesenheit löschen",
     "OPEN_VERFUEGUNG_PDF": "PDF ansehen",
     "ADDITIONAL_INFORMATION": "Weitere Informationen",
-    "TABLE_EDIT": "Eintrag öffnen/bearbeiten"
+    "TABLE_EDIT": "Eintrag öffnen/bearbeiten",
+    "CONFIRM_GESUCH_LOESCHEN": "Möchten Sie wirklich diesen Antrag löschen?",
+    "BESCHREIBUNG_GESUCH_LOESCHEN": "Wenn Sie mit dem Löschen fortfahren, werden alle Daten endgültig gelöscht"
+
 }

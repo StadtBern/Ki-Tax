@@ -24,7 +24,7 @@ export class BetreuungMitteilungViewController extends AbstractGesuchViewControl
 
     form: IFormController;
 
-    static $inject = ['$state', 'GesuchModelManager', '$scope', 'BerechnungsManager', 'WizardStepManager', ' $timeout'];
+    static $inject = ['$state', 'GesuchModelManager', '$scope', 'BerechnungsManager', 'WizardStepManager', '$timeout'];
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, $scope: IScope,
