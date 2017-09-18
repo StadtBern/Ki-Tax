@@ -95,6 +95,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		}
 		Mahnung persistedMahnung = persistence.persist(mahnung);
 		Gesuch gesuch = persistedMahnung.getGesuch();
+		gesuch.setDokumenteHochgeladen(Boolean.FALSE);
 		// Das Mahnungsdokument drucken
 		try {
 			generatedDokumentService.getMahnungDokumentAccessTokenGeneratedDokument(mahnung, true);
@@ -143,6 +144,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
 	public Gesuch mahnlaufBeenden(@Nonnull Gesuch gesuch) {
 		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
+		gesuch.setDokumenteHochgeladen(Boolean.FALSE);
 		gesuch = gesuchService.updateGesuch(gesuch, true, null);
 		// Alle Mahnungen auf erledigt stellen
 		Collection<Mahnung> mahnungenForGesuch = findMahnungenForGesuch(gesuch);
@@ -193,12 +195,10 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		List<Mahnung> gesucheMitAbgelaufenenMahnungen = persistence.getCriteriaResults(query);
 		for (Mahnung mahnung : gesucheMitAbgelaufenenMahnungen) {
 			final Gesuch gesuch = mahnung.getGesuch();
-			if (AntragStatus.ERSTE_MAHNUNG == gesuch.getStatus() ||
-				AntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN == gesuch.getStatus()) {
+			if (AntragStatus.ERSTE_MAHNUNG == gesuch.getStatus()) {
 				gesuch.setStatus(AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN);
 				gesuchService.updateGesuch(gesuch, true, null);
-			} else if (AntragStatus.ZWEITE_MAHNUNG == gesuch.getStatus() ||
-				AntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN == gesuch.getStatus()) {
+			} else if (AntragStatus.ZWEITE_MAHNUNG == gesuch.getStatus()) {
 				gesuch.setStatus(AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
 				gesuchService.updateGesuch(gesuch, true, null);
 			}

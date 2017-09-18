@@ -16,6 +16,7 @@ import ITranslateService = angular.translate.ITranslateService;
 import {TSDokumentGrundPersonType} from '../../../models/enums/TSDokumentGrundPersonType';
 import TSKindContainer from '../../../models/TSKindContainer';
 import {TSRole} from '../../../models/enums/TSRole';
+import {isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
 let template = require('./dv-dokumente-list.html');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 require('./dv-dokumente-list.less');
@@ -195,7 +196,9 @@ export class DVDokumenteListController {
     public isDokumenteUploadDisabled(): boolean {
         // Dokument-Upload ist eigentlich in jedem Status möglich, aber nicht für alle Rollen. Also nicht
         // gleichbedeutend mit readonly auf dem Gesuch
-        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getReadOnlyRoles());
+        // Jedoch darf der Gesuchsteller nach der Verfuegung nichts mehr hochladen
+        let gsAndVerfuegt: boolean = isAnyStatusOfVerfuegt(this.gesuchModelManager.getGesuch().status) && this.authServiceRS.isRole(TSRole.GESUCHSTELLER);
+        return gsAndVerfuegt || this.authServiceRS.isOneOfRoles(TSRoleUtil.getReadOnlyRoles());
     }
 
     /**

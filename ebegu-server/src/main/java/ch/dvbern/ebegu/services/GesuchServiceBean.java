@@ -535,6 +535,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				Collection<AntragStatus> antragStatus = AntragStatusConverterUtil.convertStatusToEntityForRole(AntragStatusDTO.valueOf(predicateObjectDto.getStatus()), role);
 				predicates.add(root.get(Gesuch_.status).in(antragStatus));
 			}
+			if (predicateObjectDto.getDokumenteHochgeladen() != null) {
+				predicates.add(cb.equal(root.get(Gesuch_.dokumenteHochgeladen), predicateObjectDto.getDokumenteHochgeladen()));
+			}
 			if (predicateObjectDto.getAngebote() != null) {
 				predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.valueOf(predicateObjectDto.getAngebote())));
 			}
@@ -668,6 +671,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					break;
 				case "kinder":
 					expression = kinder.get(Kind_.vorname);
+					break;
+				case "dokumenteHochgeladen":
+					expression = root.get(Gesuch_.dokumenteHochgeladen);
 					break;
 				default:
 					LOG.warn("Using default sort by FallNummer because there is no specific clause for predicate " + antragTableFilterDto.getSort().getPredicate());

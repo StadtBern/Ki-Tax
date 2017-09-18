@@ -89,6 +89,10 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	@NotNull
 	@Column(nullable = false)
+	private Boolean dokumenteHochgeladen = false;
+
+	@NotNull
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private AntragTyp typ = AntragTyp.ERSTGESUCH;
 
@@ -467,6 +471,14 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		this.gueltig = gueltig;
 	}
 
+	public Boolean getDokumenteHochgeladen() {
+		return dokumenteHochgeladen;
+	}
+
+	public void setDokumenteHochgeladen(Boolean dokumenteHochgeladen) {
+		this.dokumenteHochgeladen = dokumenteHochgeladen;
+	}
+
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality
@@ -655,6 +667,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		mutation.setDatumGewarntFehlendeQuittung(null);
 		mutation.setTimestampVerfuegt(null);
 		mutation.setGueltig(false);
+		mutation.setDokumenteHochgeladen(false);
 		return mutation;
 	}
 
@@ -690,6 +703,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		folgegesuch.setDatumGewarntFehlendeQuittung(null);
 		folgegesuch.setTimestampVerfuegt(null);
 		folgegesuch.setGueltig(false);
+		folgegesuch.setDokumenteHochgeladen(false);
 		return folgegesuch;
 	}
 
