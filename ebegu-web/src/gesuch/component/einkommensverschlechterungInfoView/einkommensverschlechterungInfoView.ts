@@ -23,6 +23,7 @@ import EinkommensverschlechterungContainerRS from '../../service/einkommensversc
 import IQService = angular.IQService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
+import {isAtLeastFreigegeben} from '../../../models/enums/TSAntragStatus';
 
 let template = require('./einkommensverschlechterungInfoView.html');
 require('./einkommensverschlechterungInfoView.less');
@@ -310,6 +311,12 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
 
     public isJugendamt(): boolean {
         return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    }
+    public isGesuchFreigegeben(): boolean {
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().status) {
+            return isAtLeastFreigegeben(this.gesuchModelManager.getGesuch().status);
+        }
+        return false;
     }
 }
 
