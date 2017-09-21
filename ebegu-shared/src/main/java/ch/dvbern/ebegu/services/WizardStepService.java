@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.enums.WizardStepName;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import java.util.List;
@@ -50,7 +51,7 @@ public interface WizardStepService {
 	 * @param stepName name des Steps der Aktualisiert wurde.
 	 * @return die Liste mit allen aktualisierten Status
 	 */
-	List<WizardStep> updateSteps(String gesuchId, AbstractEntity oldEntity, AbstractEntity newEntity, WizardStepName stepName);
+	List<WizardStep> updateSteps(String gesuchId, @Nullable AbstractEntity oldEntity, @Nullable AbstractEntity newEntity, WizardStepName stepName);
 
 	/**
 	 * Erstellt eine Liste mit allen notwendigen WizardSteps fuer das gegebene Gesuch. Fuer Mutationen bekommen alle Steps

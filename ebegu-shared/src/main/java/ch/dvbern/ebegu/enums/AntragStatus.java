@@ -217,17 +217,17 @@ public enum AntragStatus {
 	 * ob ein Gesuch verfuegt ist.
 	 */
 	public boolean isAnyStatusOfVerfuegtOrVefuegen() {
-		return getAllVerfuegtStates().contains(this) || this.equals(VERFUEGEN);
+		return getAllVerfuegtStates().contains(this) || this == VERFUEGEN;
 	}
 
 	public boolean inBearbeitung() { return inBearbeitung.contains(this); }
 
 	public boolean isAnyOfInBearbeitungGS(){
-		return this.equals(FREIGABEQUITTUNG) || this.equals(IN_BEARBEITUNG_GS);
+		return this == FREIGABEQUITTUNG || this == IN_BEARBEITUNG_GS;
 	}
 
 	public boolean isAnyOfSchulamtOnly(){
-		return this.equals(NUR_SCHULAMT);
+		return this == NUR_SCHULAMT;
 	}
 
 
@@ -244,7 +244,6 @@ public enum AntragStatus {
 
 	/**
 	 * schulamt darf eigentlich alle Status lesen ausser denen die noch vom GS bearbeitet werden
-	 * @return
 	 */
 	public boolean isReadableBySchulamtSachbearbeiter() {
 		return !(this.isAnyOfInBearbeitungGS());
@@ -255,7 +254,7 @@ public enum AntragStatus {
 	 */
 	public boolean isReadableBySteueramt() {
 		// GEPRUEFT_STV ist dabei, weil es beim Freigeben schon in diesem Status ist
-		return forSteueramt.contains(this) || this.equals(GEPRUEFT_STV);
+		return forSteueramt.contains(this) || this == GEPRUEFT_STV;
 	}
 
 	public boolean isReadableByJurist() {

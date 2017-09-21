@@ -268,7 +268,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	}
 
 	public FinanzDatenDTO getFinanzDatenDTO() {
-		if (extractFamiliensituation().hasSecondGesuchsteller()) {
+		if (extractFamiliensituation() != null && extractFamiliensituation().hasSecondGesuchsteller()) {
 			return finanzDatenDTO_zuZweit;
 		}
 		return finanzDatenDTO_alleine;
@@ -321,7 +321,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		return eingangsdatum;
 	}
 
-	public final void setEingangsdatum(LocalDate eingangsdatum) {
+	public final void setEingangsdatum(@Nullable LocalDate eingangsdatum) {
 		this.eingangsdatum = eingangsdatum;
 	}
 
@@ -443,7 +443,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		return datumGewarntNichtFreigegeben;
 	}
 
-	public void setDatumGewarntNichtFreigegeben(LocalDate datumGewarntNichtFreigegeben) {
+	public void setDatumGewarntNichtFreigegeben(@Nullable LocalDate datumGewarntNichtFreigegeben) {
 		this.datumGewarntNichtFreigegeben = datumGewarntNichtFreigegeben;
 	}
 
@@ -451,7 +451,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		return datumGewarntFehlendeQuittung;
 	}
 
-	public void setDatumGewarntFehlendeQuittung(LocalDate datumGewarntFehlendeQuittung) {
+	public void setDatumGewarntFehlendeQuittung(@Nullable LocalDate datumGewarntFehlendeQuittung) {
 		this.datumGewarntFehlendeQuittung = datumGewarntFehlendeQuittung;
 	}
 
@@ -459,7 +459,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		return timestampVerfuegt;
 	}
 
-	public void setTimestampVerfuegt(LocalDateTime datumVerfuegt) {
+	public void setTimestampVerfuegt(@Nullable LocalDateTime datumVerfuegt) {
 		this.timestampVerfuegt = datumVerfuegt;
 	}
 
@@ -529,6 +529,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		return list;
 	}
 
+	@Nullable
 	@Transient
 	public Betreuung extractBetreuungById(String betreuungId) {
 		for (KindContainer kind : getKindContainers()) {
@@ -606,6 +607,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 			.anyMatch(betreuung -> betreuung.getBetreuungsangebotTyp().isSchulamt());
 	}
 
+	@Nullable
 	public Familiensituation extractFamiliensituation() {
 		if (familiensituationContainer != null) {
 			return familiensituationContainer.extractFamiliensituation();
@@ -613,6 +615,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		return null;
 	}
 
+	@Nullable
 	public Familiensituation extractFamiliensituationErstgesuch() {
 		if (familiensituationContainer != null) {
 			return familiensituationContainer.getFamiliensituationErstgesuch();
@@ -691,7 +694,8 @@ public class Gesuch extends AbstractEntity implements Searchable{
 			folgegesuch.setGesuchsteller1(this.getGesuchsteller1().copyForErneuerung(new GesuchstellerContainer(), gesuchsperiode));
 		}
 		// Den zweiten GS nur kopieren, wenn er laut aktuellem Zivilstand noch benoetigt wird
-		if (this.getGesuchsteller2() != null && folgegesuch.getFamiliensituationContainer().getFamiliensituationJA().hasSecondGesuchsteller()) {
+		if (this.getGesuchsteller2() != null && folgegesuch.getFamiliensituationContainer().getFamiliensituationJA() != null
+			&& folgegesuch.getFamiliensituationContainer().getFamiliensituationJA().hasSecondGesuchsteller()) {
 			folgegesuch.setGesuchsteller2(this.getGesuchsteller2().copyForErneuerung(new GesuchstellerContainer(), gesuchsperiode));
 		}
 		for (KindContainer kindContainer : this.getKindContainers()) {
@@ -759,6 +763,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		return "";
 	}
 
+	@Nullable
 	public Gesuchsteller extractGesuchsteller1() {
 		if (this.getGesuchsteller1() != null) {
 			return this.getGesuchsteller1().getGesuchstellerJA();
