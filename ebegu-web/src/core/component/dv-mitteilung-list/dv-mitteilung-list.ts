@@ -1,30 +1,30 @@
 import {IComponentOptions, IPromise} from 'angular';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import TSMitteilung from '../../../models/TSMitteilung';
+import {IStateService} from 'angular-ui-router';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
+import FallRS from '../../../gesuch/service/fallRS.rest';
+import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
+import {IMitteilungenStateParams} from '../../../mitteilungen/mitteilungen.route';
+import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
 import {TSMitteilungStatus} from '../../../models/enums/TSMitteilungStatus';
 import {TSMitteilungTeilnehmerTyp} from '../../../models/enums/TSMitteilungTeilnehmerTyp';
 import {TSRole} from '../../../models/enums/TSRole';
-import TSFall from '../../../models/TSFall';
 import TSBetreuung from '../../../models/TSBetreuung';
-import {IMitteilungenStateParams} from '../../../mitteilungen/mitteilungen.route';
-import MitteilungRS from '../../service/mitteilungRS.rest';
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import BetreuungRS from '../../service/betreuungRS.rest';
-import FallRS from '../../../gesuch/service/fallRS.rest';
-import TSUser from '../../../models/TSUser';
-import {IStateService} from 'angular-ui-router';
-import EbeguUtil from '../../../utils/EbeguUtil';
 import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
+import TSFall from '../../../models/TSFall';
+import TSMitteilung from '../../../models/TSMitteilung';
+import TSUser from '../../../models/TSUser';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
-import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
-import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
-import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
-
+import BetreuungRS from '../../service/betreuungRS.rest';
+import MitteilungRS from '../../service/mitteilungRS.rest';
 import IFormController = angular.IFormController;
 import IQService = angular.IQService;
-import IWindowService = angular.IWindowService;
 import IRootScopeService = angular.IRootScopeService;
 import IScope = angular.IScope;
+import IWindowService = angular.IWindowService;
+
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -58,6 +58,7 @@ export class DVMitteilungListController {
 
     static $inject: any[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS', 'FallRS', 'BetreuungRS',
         '$q', '$window', '$rootScope', '$state', 'EbeguUtil', 'DvDialog', 'GesuchModelManager', '$scope'];
+
     /* @ngInject */
     constructor(private $stateParams: IMitteilungenStateParams, private mitteilungRS: MitteilungRS,
                 private authServiceRS: AuthServiceRS,
@@ -210,7 +211,7 @@ export class DVMitteilungListController {
                 return this.currentMitteilung;
             }).finally(() => {
                 this.form.$setPristine();
-               this.form.$setUntouched();
+                this.form.$setUntouched();
             });
 
         } else if (this.isMitteilungEmpty() && !this.currentMitteilung.isNew() && this.currentMitteilung.id) {
@@ -355,8 +356,8 @@ export class DVMitteilungListController {
                     this.loadAllMitteilungen();
                     if (response.id === this.gesuchModelManager.getGesuch().id) {
                         // Dies wird gebraucht wenn das Gesuch der Mitteilung schon geladen ist, weil die Daten der
-						// Betreuung geaendert wurden und deshalb neugeladen werden müssen. reloadGesuch ist einfacher
-						// als die entsprechende Betreuung neu zu laden
+                        // Betreuung geaendert wurden und deshalb neugeladen werden müssen. reloadGesuch ist einfacher
+                        // als die entsprechende Betreuung neu zu laden
                         this.gesuchModelManager.reloadGesuch();
                     } else if (response.id) { // eine neue Mutation wurde aus der Muttationsmitteilung erstellt
                         // informieren, dass eine neue Mutation erstellt wurde

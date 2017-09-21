@@ -1,4 +1,3 @@
-import 'angular';
 import './core.module.less';
 import {appRun} from './core.route';
 import {configure} from './config';
@@ -47,7 +46,6 @@ import {DvAccordionComponentConfig} from './component/dv-accordion/dv-accordion'
 import {DvAccordionTabComponentConfig} from './component/dv-accordion/dv-accordion-tab/dv-accordion-tab';
 import HttpResponseInterceptor from './service/HttpResponseInterceptor';
 import DVSubmitevent from './directive/dv-submitevent/dv-submitevent';
-import 'ng-file-upload';
 import {UploadRS} from './service/uploadRS.rest';
 import {DownloadRS} from './service/downloadRS.rest';
 import VerfuegungRS from './service/verfuegungRS.rest';
@@ -125,7 +123,6 @@ const dependencies: string[] = [
     'ngFileUpload',
     'unsavedChanges'
 ];
-
 
 export const EbeguWebCore: angular.IModule = angular
     .module('ebeguWeb.core', dependencies.concat(dynamicDependencies()))

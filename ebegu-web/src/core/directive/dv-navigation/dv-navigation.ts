@@ -597,7 +597,7 @@ export class NavigatorController {
                 }
             }
         }
-    };
+    }
 
     private navigatePreviousEVSubStep4(): void {
         if (this.gesuchModelManager.getBasisJahrPlusNumber() === 2) {
@@ -625,7 +625,7 @@ export class NavigatorController {
                 this.navigateToStepEinkommensverschlechterung('1', '1'); // gehe ekv 1/1
             }
         }
-    };
+    }
 
     private navigateNextEVSubStep4(): void {
         if (this.gesuchModelManager.getBasisJahrPlusNumber() === 1
@@ -636,6 +636,6 @@ export class NavigatorController {
                 this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
             });
         }
-    };
+    }
 
 }

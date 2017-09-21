@@ -1,12 +1,16 @@
+import {IComponentControllerService, IRootScopeService} from 'angular';
+import {DvInputContainerComponentConfig} from './dv-input-container';
+
 describe('dvInputContainer', function () {
 
     beforeEach(angular.mock.module('ebeguWeb.core'));
 
-    var component : any;
-    var scope : angular.IScope;
-    var $componentController : any;
+    let component: DvInputContainerComponentConfig;
+    let scope: angular.IScope;
+    let $componentController: IComponentControllerService;
 
-    beforeEach(angular.mock.inject(function (_$componentController_, $rootScope) {
+    beforeEach(angular.mock.inject(function (_$componentController_: IComponentControllerService,
+                                             $rootScope: IRootScopeService) {
         $componentController = _$componentController_;
         scope = $rootScope.$new();
     }));
@@ -16,7 +20,7 @@ describe('dvInputContainer', function () {
          To initialise your component controller you have to setup your (mock) bindings and
          pass them to $componentController.
          */
-        var bindings: {};
+        let bindings: {};
         component = $componentController('dvInputContainer', {$scope: scope}, bindings);
         expect(component).toBeDefined();
     });

@@ -15,7 +15,7 @@ import ITranslateService = angular.translate.ITranslateService;
 import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
 import TSEWKPerson from '../models/TSEWKPerson';
 import GesuchstellerRS from '../core/service/gesuchstellerRS.rest';
-import {ILogService, IRootScopeService} from '@types/angular';
+import {ILogService, IRootScopeService} from 'angular';
 import TSEWKResultat from '../models/TSEWKResultat';
 import {TSGesuchEvent} from '../models/enums/TSGesuchEvent';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
