@@ -46,7 +46,11 @@ import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -729,7 +733,10 @@ public class GesuchResource {
 
 		Gesuch gesuch = gesuchService.findGesuch(gesuchJaxId.getId(), true).orElseThrow(()
 			-> new EbeguEntityNotFoundException("removePapiergesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJaxId.getId()));
+		List<Betreuung> betreuungen = new ArrayList<>();
+		betreuungen.addAll(gesuch.extractAllBetreuungen());
 		gesuchService.removePapiergesuch(gesuch);
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
 		return Response.ok().build();
 	}
 
@@ -743,7 +750,10 @@ public class GesuchResource {
 
 		Gesuch gesuch = gesuchService.findGesuch(gesuchJaxId.getId(), true).orElseThrow(()
 			-> new EbeguEntityNotFoundException("removeGesuchstellerAntrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJaxId.getId()));
+		List<Betreuung> betreuungen = new ArrayList<>();
+		betreuungen.addAll(gesuch.extractAllBetreuungen());
 		gesuchService.removeGesuchstellerAntrag(gesuch);
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
 		return Response.ok().build();
 	}
 
