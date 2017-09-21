@@ -33,10 +33,9 @@ ${templateConfiguration.mailCss}
     </p>
     <table>
         <tbody>
-        <#--TODO with Reviewer format fallnummer (0000... vornedrann) ??? -->
         <tr>
             <td width="300">Fall:</td>
-            <td width="300">${fall.fallNummer} ${gesuchsteller.nachname}</td>
+            <td width="300">${fall.getPaddedFallnummer()} ${gesuchsteller.nachname}</td>
         </tr>
         <tr>
             <td>Kind:</td>

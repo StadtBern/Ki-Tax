@@ -296,7 +296,7 @@ public interface GesuchService {
 
 	/**
 	 * Sucht ein Folgegesuch fuer den gegebenen Antrag in der gegebenen Gesuchsperiode
-	 * @param fall			Der Antraeg des Falles
+	 * @param fall			 Der Antraeg des Falles
 	 * @param gesuchsperiode Gesuchsperiode in der das Folgegesuch gesucht werden muss
 	 * @return
 	 */

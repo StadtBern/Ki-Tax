@@ -214,7 +214,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT })
 	public void sendInfoBetreuungGeloescht(@Nonnull List<Betreuung> betreuungen) {
 
 		for (Betreuung betreuung : betreuungen) {
@@ -223,13 +223,14 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			String mailaddress = institution.getMail();
 			Gesuch gesuch = betreuung.extractGesuch();
 			Fall fall = gesuch.getFall();
-			Gesuchsteller gesuchsteller1 = betreuung.extractGesuch().extractGesuchsteller1();
+			Gesuchsteller gesuchsteller1 = gesuch.extractGesuchsteller1();
 			Kind kind = betreuung.getKind().getKindJA();
 			Betreuungsstatus status = betreuung.getBetreuungsstatus();
 			LocalDate datumErstellung = betreuung.getTimestampErstellt().toLocalDate();
 			LocalDate birthdayKind = kind.getGeburtsdatum();
 
-			String message = mailTemplateConfig.getInfoBetreuungGeloescht(betreuung, fall, gesuchsteller1, kind, institution, mailaddress,datumErstellung, birthdayKind);
+			String message = mailTemplateConfig.getInfoBetreuungGeloescht(betreuung, fall, gesuchsteller1, kind,
+				institution, mailaddress, datumErstellung, birthdayKind);
 
 			try {
 				if (gesuch.getTyp().isMutation()) {
@@ -237,21 +238,17 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 					Optional<Betreuung> vorgaengerBetreuung = betreuungService.findBetreuung(betreuung.getVorgaengerId());
 					if (vorgaengerBetreuung.isPresent()) {
 						//wenn Vorgaengerbetreuung vorhanden
-						if (status.equals(Betreuungsstatus.BESTAETIGT) && !betreuung.isSame(vorgaengerBetreuung.get())) {
+						if ((status.equals(Betreuungsstatus.BESTAETIGT) && !betreuung.isSame(vorgaengerBetreuung.get()))
+							|| (status.equals(Betreuungsstatus.WARTEN) || status.equals(Betreuungsstatus.ABGEWIESEN))) {
 							//wenn status der aktuellen Betreuung bestaetigt ist UND wenn vorgaenger NICHT die gleiche ist wie die aktuelle
-							sendMessageWithTemplate(message, mailaddress);
-						} else if (status.equals(Betreuungsstatus.WARTEN) || status.equals(Betreuungsstatus.ABGEWIESEN)) {
-							//wenn status der aktuellen Betreuung warten oder abgewiesen ist
+							//oder wenn status der aktuellen Betreuung warten oder abgewiesen ist
 							sendMessageWithTemplate(message, mailaddress);
 							LOG.debug("Email fuer InfoBetreuungGeloescht wurde versendet an {}", mailaddress);
 						}
-					} else {
-						//wenn keine Vorgaenderbetreuung vorhanden ist
-						if (status.isSendToInstitution()) {
-							//wenn status warten, abgewiesen oder bestaetigt ist
-							sendMessageWithTemplate(message, mailaddress);
-							LOG.debug("Email fuer InfoBetreuungGeloescht wurde versendet an {}", mailaddress);
-						}
+					} else if (status.isSendToInstitution()) {
+						//wenn status warten, abgewiesen oder bestaetigt ist
+						sendMessageWithTemplate(message, mailaddress);
+						LOG.debug("Email fuer InfoBetreuungGeloescht wurde versendet an {}", mailaddress);
 					}
 				} else {
 					//wenn es keine Mutation ist
@@ -269,25 +266,25 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT })
 	public void sendInfoBetreuungVerfuegt(@Nonnull Betreuung betreuung) {
 
 		Institution institution = betreuung.getInstitutionStammdaten().getInstitution();
 		String mailaddress = institution.getMail();
 		Gesuch gesuch = betreuung.extractGesuch();
 		Fall fall = gesuch.getFall();
-		Gesuchsteller gesuchsteller1 = betreuung.extractGesuch().extractGesuchsteller1();
+		Gesuchsteller gesuchsteller1 = gesuch.extractGesuchsteller1();
 		Kind kind = betreuung.getKind().getKindJA();
 		LocalDate birthdayKind = kind.getGeburtsdatum();
 
-		String message = mailTemplateConfig.getInfoBetreuungVerfuegt(betreuung, fall, gesuchsteller1, kind, institution, mailaddress, birthdayKind);
+		String message = mailTemplateConfig.getInfoBetreuungVerfuegt(betreuung, fall, gesuchsteller1, kind,
+			institution, mailaddress, birthdayKind);
 
-		try{
-			sendMessageWithTemplate(message,mailaddress);
+		try {
+			sendMessageWithTemplate(message, mailaddress);
 			LOG.debug("Email fuer InfoBetreuungVerfuegt wurde versendet an {}", mailaddress);
-		}catch (MailException e){
+		} catch (MailException e) {
 			LOG.error("Mail InfoBetreuungVerfuegt konnte nicht verschickt werden fuer Betreuung {}", betreuung.getId(), e);
-			e.printStackTrace();
 		}
 	}
 

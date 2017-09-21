@@ -32,10 +32,9 @@ ${templateConfiguration.mailCss}
     </p>
     <table>
         <tbody>
-        <#--TODO with Reviewer format fallnummer (0000... vornedrann) ??? -->
         <tr>
             <td width="300">Fall:</td>
-            <td width="300">${fall.fallNummer} ${gesuchsteller.nachname}</td>
+            <td width="300">${fall.getPaddedFallnummer()} ${gesuchsteller.nachname}</td>
         </tr>
         <tr>
             <td>Kind:</td>
@@ -53,15 +52,10 @@ ${templateConfiguration.mailCss}
             <td>Periode:</td>
             <td>${betreuung.extractGesuchsperiode().getGesuchsperiodeString()}</td>
         </tr>
-        <tr>
-            <td>Status der verfügten Betreuung:</td>
-            <td>${betreuung.getBetreuungsstatus().toString()}</td>
-        </tr>
         </tbody>
     </table>
     <br/>
     <p>
-        <#--TODO with Reviewer add link of betreuung-->
         Die Betreuungen finden Sie <a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/betreuungen/${betreuung.extractGesuch().id}">hier</a>.
     </p>
     <p>

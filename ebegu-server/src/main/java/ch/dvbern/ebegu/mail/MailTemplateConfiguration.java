@@ -54,14 +54,18 @@ public class MailTemplateConfiguration {
 		return processTemplateGesuch("InfoBetreuungenBestaetigt.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
 	}
 
-	public String getInfoBetreuungGeloescht(@Nonnull Betreuung betreuung, @Nonnull Fall fall, @Nonnull Gesuchsteller gesuchsteller1, @Nonnull Kind kind, @Nonnull Institution institution, @Nonnull String empfaengerMail, @Nonnull LocalDate datumErstellung, @Nonnull LocalDate birthdayKind) {
+	public String getInfoBetreuungGeloescht(@Nonnull Betreuung betreuung, @Nonnull Fall fall, @Nonnull Gesuchsteller gesuchsteller1, @Nonnull Kind kind,
+		@Nonnull Institution institution, @Nonnull String empfaengerMail, @Nonnull LocalDate datumErstellung, @Nonnull LocalDate birthdayKind) {
+
 		return processTemplateBetreuungGeloescht("InfoBetreuungGeloescht.ftl", betreuung, fall, kind, gesuchsteller1, institution,
 				toArgumentPair(EMPFAENGER_MAIL, empfaengerMail),
 				toArgumentPair("datumErstellung", Constants.DATE_FORMATTER.format(datumErstellung)),
 				toArgumentPair("birthday", Constants.DATE_FORMATTER.format(birthdayKind)));
 	}
 
-	public String getInfoBetreuungVerfuegt(@Nonnull Betreuung betreuung, @Nonnull Fall fall, @Nonnull Gesuchsteller gesuchsteller1, @Nonnull Kind kind, @Nonnull Institution institution, @Nonnull String empfaengerMail, @Nonnull LocalDate birthdayKind) {
+	public String getInfoBetreuungVerfuegt(@Nonnull Betreuung betreuung, @Nonnull Fall fall, @Nonnull Gesuchsteller gesuchsteller1, @Nonnull Kind kind,
+		@Nonnull Institution institution, @Nonnull String empfaengerMail, @Nonnull LocalDate birthdayKind) {
+
 		return processTemplateBetreuungVerfuegt("InfoBetreuungVerfuegt.ftl", betreuung, fall, kind, gesuchsteller1, institution,
 				toArgumentPair(EMPFAENGER_MAIL, empfaengerMail),
 				toArgumentPair("birthday", Constants.DATE_FORMATTER.format(birthdayKind)));
@@ -121,7 +125,7 @@ public class MailTemplateConfiguration {
 		return doProcessTemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
 	}
 
-
+	@SuppressWarnings("Duplicates")
 	private String processTemplateBetreuungGeloescht(String nameOfTemplate, Betreuung betreuung, Fall fall, Kind kind, Gesuchsteller gesuchsteller1, Institution institution, Object[]... extraValuePairs) {
 		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 5);
 		paramsToPass[paramsToPass.length - 1] = new Object[] { "betreuung", betreuung };
@@ -132,6 +136,7 @@ public class MailTemplateConfiguration {
 		return doProcessTemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
 	}
 
+	@SuppressWarnings("Duplicates")
 	private String processTemplateBetreuungVerfuegt(String nameOfTemplate, Betreuung betreuung, Fall fall, Kind kind, Gesuchsteller gesuchsteller1, Institution institution, Object[]... extraValuePairs) {
 		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 5);
 		paramsToPass[paramsToPass.length - 1] = new Object[] { "betreuung", betreuung };

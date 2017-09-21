@@ -40,6 +40,11 @@ public class EbeguConfigurationDummyImpl extends EbeguConfigurationImpl {
 	}
 
 	@Override
+	public String getHostname() {
+		return "localhost";
+	}
+
+	@Override
 	public boolean getIsZahlungenTestMode() {
 		return true;
 	}
