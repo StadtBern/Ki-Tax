@@ -36,6 +36,7 @@ public enum MergeFieldGesuchstellerKinderBetreuung implements MergeFieldProvider
 	institution(new SimpleMergeField<>("institution", STRING_CONVERTER)),
 	betreuungsTyp(new SimpleMergeField<>("betreuungsTyp", STRING_CONVERTER)),
 	periode(new SimpleMergeField<>("periode", STRING_CONVERTER)),
+	gesuchStatus(new SimpleMergeField<>("gesuchStatus", STRING_CONVERTER)),
 
 	eingangsdatum(new SimpleMergeField<>("eingangsdatum", DATE_CONVERTER)),
 	verfuegungsdatum(new SimpleMergeField<>("verfuegungsdatum", DATE_CONVERTER)),
@@ -95,6 +96,7 @@ public enum MergeFieldGesuchstellerKinderBetreuung implements MergeFieldProvider
 
 	zeitabschnittVon(new SimpleMergeField<>("zeitabschnittVon", DATE_CONVERTER)),
 	zeitabschnittBis(new SimpleMergeField<>("zeitabschnittBis", DATE_CONVERTER)),
+	betreuungsStatus(new SimpleMergeField<>("betreuungsStatus", STRING_CONVERTER)),
 	betreuungsPensum(new SimpleMergeField<>("betreuungsPensum", PERCENT_CONVERTER)),
 	anspruchsPensum(new SimpleMergeField<>("anspruchsPensum", PERCENT_CONVERTER)),
 	bgPensum(new SimpleMergeField<>("bgPensum", PERCENT_CONVERTER)),
