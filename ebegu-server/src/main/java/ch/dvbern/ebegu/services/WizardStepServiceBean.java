@@ -343,7 +343,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (WizardStepName.GESUCHSTELLER == wizardStep.getWizardStepName()) {
 				setWizardStepOkOrMutiert(wizardStep);
 			} else if ((WizardStepName.FINANZIELLE_SITUATION == wizardStep.getWizardStepName()
-				|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName())
+				|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()
+				|| WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName())
 				&& !wizardStep.getVerfuegbar()
 				&& WizardStepStatus.UNBESUCHT != wizardStep.getWizardStepStatus()) {
 				wizardStep.setVerfuegbar(true);
@@ -573,13 +574,12 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						wizardStep.setVerfuegbar(true);
 
 					} else if (WizardStepName.FINANZIELLE_SITUATION == wizardStep.getWizardStepName()
-						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()) {
+						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()
+						|| (WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()
+						&& erwerbspensumService.isErwerbspensumRequired(wizardStep.getGesuch()))) {
 						wizardStep.setVerfuegbar(false);
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
-					} else if (WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()
-						&& erwerbspensumService.isErwerbspensumRequired(wizardStep.getGesuch())) {
-							wizardStep.setVerfuegbar(true);
-							wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+
 					}
 					//kann man effektiv sagen dass bei nur einem GS niemals Rote Schritte FinanzielleSituation und EVK gibt
 				} else if (!newEntity.hasSecondGesuchsteller() && wizardStep.getGesuch().getGesuchsteller1() != null) { // nur 1 GS
@@ -592,18 +592,38 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						}
 
 					} else if (WizardStepName.FINANZIELLE_SITUATION == wizardStep.getWizardStepName()
-						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()) {
-						if (wizardStep.getGesuch().isMutation()) {
-							wizardStep.setVerfuegbar(true);
-							setWizardStepOkOrMutiert(wizardStep);
+						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()
+						|| (WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()
+						&& !erwerbspensumService.isErwerbspensumRequired(wizardStep.getGesuch()))) {
+
+						setVerfuegbarAndOK(wizardStep);
+
+					} else if (WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()
+						&& erwerbspensumService.isErwerbspensumRequired(wizardStep.getGesuch())) {
+
+						if (wizardStep.getGesuch().getGesuchsteller1().getErwerbspensenContainers().isEmpty()) {
+							if (wizardStep.getWizardStepStatus() != WizardStepStatus.NOK) {
+								wizardStep.setVerfuegbar(true);
+								wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+							}
 						}
-						else if (wizardStep.getWizardStepStatus() == WizardStepStatus.NOK) {
-							wizardStep.setVerfuegbar(true);
-							wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+						else {
+							setVerfuegbarAndOK(wizardStep);
 						}
 					}
 				}
 			}
+		}
+	}
+
+	private void setVerfuegbarAndOK(WizardStep wizardStep) {
+		if (wizardStep.getGesuch().isMutation()) {
+			wizardStep.setVerfuegbar(true);
+			setWizardStepOkOrMutiert(wizardStep);
+		}
+		else if (wizardStep.getWizardStepStatus() == WizardStepStatus.NOK) {
+			wizardStep.setVerfuegbar(true);
+			wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 		}
 	}
 
@@ -647,7 +667,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (gesuch.getGesuchsteller1() != null && erwerbspensumService.findErwerbspensenForGesuchsteller(gesuch.getGesuchsteller1()).isEmpty()) {
 				status = WizardStepStatus.NOK;
 			}
-			if (gesuch.getGesuchsteller2() != null && erwerbspensumService.findErwerbspensenForGesuchsteller(gesuch.getGesuchsteller2()).isEmpty()) {
+			if (status != WizardStepStatus.NOK && gesuch.getGesuchsteller2() != null && erwerbspensumService.findErwerbspensenForGesuchsteller(gesuch.getGesuchsteller2()).isEmpty()) {
 				status = WizardStepStatus.NOK;
 			}
 		} else if (changesBecauseOtherStates && wizardStep.getWizardStepStatus() != WizardStepStatus.MUTIERT) {
