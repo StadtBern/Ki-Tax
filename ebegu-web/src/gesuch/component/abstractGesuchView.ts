@@ -8,11 +8,11 @@ import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import TSExceptionReport from '../../models/TSExceptionReport';
 import {TSMessageEvent} from '../../models/enums/TSErrorEvent';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
+import EbeguUtil from '../../utils/EbeguUtil';
 import IPromise = angular.IPromise;
 import IFormController = angular.IFormController;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
-import EbeguUtil from '../../utils/EbeguUtil';
 
 export default class AbstractGesuchViewController<T> {
 
@@ -134,11 +134,9 @@ export default class AbstractGesuchViewController<T> {
         return '';
     }
 
-
-
     $postLink() {
         this.$timeout(() => {
             EbeguUtil.selectFirst();
-        });
+        }, 200);
     }
 }

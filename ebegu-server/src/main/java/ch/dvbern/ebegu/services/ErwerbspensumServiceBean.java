@@ -118,15 +118,16 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 		// Erwerbspensum ist zwingend, wenn mindestens 1 Kind eine Kleinkind-Betreuung ohne Fachstelle hat
 		Set<KindContainer> kindContainers = gesuch.getKindContainers();
 		for (KindContainer kindContainer : kindContainers) {
-			if (kindContainer.getKindJA().getPensumFachstelle() == null) {
-				Set<Betreuung> betreuungen = kindContainer.getBetreuungen();
-				for (Betreuung betreuung : betreuungen) {
-					if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
-						return true;
-					}
+			if (kindContainer.getKindJA().getPensumFachstelle() != null) {
+				return false;
+			}
+			Set<Betreuung> betreuungen = kindContainer.getBetreuungen();
+			for (Betreuung betreuung : betreuungen) {
+				if (!betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+					return false;
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 }

@@ -70,8 +70,8 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 			});
 		}
 		// Falls es der Gesuchsteller war, der das Dokument hochgeladen hat, soll das Flag auf dem Gesuch gesetzt werden,
-		// damit das Jugendamt es sieht
-		if (principalBean.isCallerInRole(UserRole.GESUCHSTELLER)) {
+		// damit das Jugendamt es sieht. Allerdings nur wenn das Gesuch schon freigegeben wurde
+		if (principalBean.isCallerInRole(UserRole.GESUCHSTELLER) && !dokumentGrund.getGesuch().getStatus().isAnyOfInBearbeitungGS()) {
 			dokumentGrund.getGesuch().setDokumenteHochgeladen(Boolean.TRUE);
 		}
 		final DokumentGrund mergedDokumentGrund = persistence.merge(dokumentGrund);

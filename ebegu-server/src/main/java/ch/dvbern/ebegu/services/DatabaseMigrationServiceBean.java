@@ -326,6 +326,7 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 		Collection<Gesuch> allGesuche = gesuchService.getAllGesuche();
 		List<String> toDelete = new ArrayList<>();
 		for (Gesuch gesuch : allGesuche) {
+			gesuch.setSkipPreUpdate(true);
 			List<AntragStatusHistory> antragStatusHistories = antragStatusHistoryService.findAllAntragStatusHistoryByGesuch(gesuch)
 				.stream()
 				.sorted(Comparator.comparing(AntragStatusHistory::getTimestampVon))
@@ -336,6 +337,7 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 					// Zusammenfassen
 					LOGGER.info("found consecutive history entries with same status: " + antragStatusHistory.getGesuch().getJahrAndFallnummer() + ' ' + antragStatusHistory.getStatus());
 					lastHistory.setTimestampBis(antragStatusHistory.getTimestampBis());
+					lastHistory.setSkipPreUpdate(true);
 					lastHistory = persistence.merge(lastHistory);
 					toDelete.add(antragStatusHistory.getId());
 				} else {

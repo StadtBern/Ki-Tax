@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -133,7 +134,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	}
 
 	@Override
-	public List<WizardStep> updateSteps(String gesuchId, AbstractEntity oldEntity, AbstractEntity newEntity, WizardStepName stepName) {
+	public List<WizardStep> updateSteps(String gesuchId, @Nullable AbstractEntity oldEntity, @Nullable AbstractEntity newEntity,
+		WizardStepName stepName) {
 		final List<WizardStep> wizardSteps = findWizardStepsFromGesuch(gesuchId);
 		updateAllStatus(wizardSteps, oldEntity, newEntity, stepName);
 		wizardSteps.forEach(this::saveWizardStep);
@@ -182,7 +184,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * Steps von diesen Aenderungen beeinflusst wurden. Mit dieser Information werden alle betroffenen Status dementsprechend geaendert.
 	 * Dazu werden die Angaben in oldEntity mit denen in newEntity verglichen und dann wird entsprechend reagiert
 	 */
-	private void updateAllStatus(List<WizardStep> wizardSteps, AbstractEntity oldEntity, AbstractEntity newEntity, WizardStepName stepName) {
+	private void updateAllStatus(List<WizardStep> wizardSteps, @Nullable AbstractEntity oldEntity, @Nullable AbstractEntity newEntity, WizardStepName stepName) {
 		if (WizardStepName.FAMILIENSITUATION == stepName && oldEntity instanceof Familiensituation && newEntity instanceof Familiensituation) {
 			updateAllStatusForFamiliensituation(wizardSteps, (Familiensituation) oldEntity, (Familiensituation) newEntity);
 		} else if (WizardStepName.GESUCHSTELLER == stepName) {
@@ -341,7 +343,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (WizardStepName.GESUCHSTELLER == wizardStep.getWizardStepName()) {
 				setWizardStepOkOrMutiert(wizardStep);
 			} else if ((WizardStepName.FINANZIELLE_SITUATION == wizardStep.getWizardStepName()
-				|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName())
+				|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()
+				|| WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName())
 				&& !wizardStep.getVerfuegbar()
 				&& WizardStepStatus.UNBESUCHT != wizardStep.getWizardStepStatus()) {
 				wizardStep.setVerfuegbar(true);
@@ -470,7 +473,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * Adds all Adressen of the given Gesuchsteller that are set as umzug
 	 */
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
-	private void addRelatedObjectsForUmzug(GesuchstellerContainer gesuchsteller, List<AbstractEntity> relatedObjects) {
+	private void addRelatedObjectsForUmzug(@Nullable GesuchstellerContainer gesuchsteller, List<AbstractEntity> relatedObjects) {
 		if (gesuchsteller != null) {
 			for (GesuchstellerAdresseContainer adresse : gesuchsteller.getAdressen()) {
 				if (!adresse.extractIsKorrespondenzAdresse() && !adresse.getGesuchstellerAdresseJA().getGueltigkeit()
@@ -485,8 +488,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * Adds the Gesuchsteller itself and her korrespondeyAdresse.
 	 */
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
-	private void addRelatedObjectsForGesuchsteller(List<AbstractEntity> relatedObjects, GesuchstellerContainer
-		gesuchsteller) {
+	private void addRelatedObjectsForGesuchsteller(List<AbstractEntity> relatedObjects, @Nullable GesuchstellerContainer gesuchsteller) {
 		if (gesuchsteller != null) {
 			relatedObjects.add(gesuchsteller.getGesuchstellerJA());
 			for (GesuchstellerAdresseContainer adresse : gesuchsteller.getAdressen()) {
@@ -572,13 +574,12 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						wizardStep.setVerfuegbar(true);
 
 					} else if (WizardStepName.FINANZIELLE_SITUATION == wizardStep.getWizardStepName()
-						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()) {
+						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()
+						|| (WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()
+						&& erwerbspensumService.isErwerbspensumRequired(wizardStep.getGesuch()))) {
 						wizardStep.setVerfuegbar(false);
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
-					} else if (WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()
-						&& erwerbspensumService.isErwerbspensumRequired(wizardStep.getGesuch())) {
-							wizardStep.setVerfuegbar(true);
-							wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+
 					}
 					//kann man effektiv sagen dass bei nur einem GS niemals Rote Schritte FinanzielleSituation und EVK gibt
 				} else if (!newEntity.hasSecondGesuchsteller() && wizardStep.getGesuch().getGesuchsteller1() != null) { // nur 1 GS
@@ -591,18 +592,38 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						}
 
 					} else if (WizardStepName.FINANZIELLE_SITUATION == wizardStep.getWizardStepName()
-						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()) {
-						if (wizardStep.getGesuch().isMutation()) {
-							wizardStep.setVerfuegbar(true);
-							setWizardStepOkOrMutiert(wizardStep);
+						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()
+						|| (WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()
+						&& !erwerbspensumService.isErwerbspensumRequired(wizardStep.getGesuch()))) {
+
+						setVerfuegbarAndOK(wizardStep);
+
+					} else if (WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()
+						&& erwerbspensumService.isErwerbspensumRequired(wizardStep.getGesuch())) {
+
+						if (wizardStep.getGesuch().getGesuchsteller1().getErwerbspensenContainers().isEmpty()) {
+							if (wizardStep.getWizardStepStatus() != WizardStepStatus.NOK) {
+								wizardStep.setVerfuegbar(true);
+								wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+							}
 						}
-						else if (wizardStep.getWizardStepStatus() == WizardStepStatus.NOK) {
-							wizardStep.setVerfuegbar(true);
-							wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+						else {
+							setVerfuegbarAndOK(wizardStep);
 						}
 					}
 				}
 			}
+		}
+	}
+
+	private void setVerfuegbarAndOK(WizardStep wizardStep) {
+		if (wizardStep.getGesuch().isMutation()) {
+			wizardStep.setVerfuegbar(true);
+			setWizardStepOkOrMutiert(wizardStep);
+		}
+		else if (wizardStep.getWizardStepStatus() == WizardStepStatus.NOK) {
+			wizardStep.setVerfuegbar(true);
+			wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 		}
 	}
 
@@ -646,7 +667,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (gesuch.getGesuchsteller1() != null && erwerbspensumService.findErwerbspensenForGesuchsteller(gesuch.getGesuchsteller1()).isEmpty()) {
 				status = WizardStepStatus.NOK;
 			}
-			if (gesuch.getGesuchsteller2() != null && erwerbspensumService.findErwerbspensenForGesuchsteller(gesuch.getGesuchsteller2()).isEmpty()) {
+			if (status != WizardStepStatus.NOK && gesuch.getGesuchsteller2() != null && erwerbspensumService.findErwerbspensenForGesuchsteller(gesuch.getGesuchsteller2()).isEmpty()) {
 				status = WizardStepStatus.NOK;
 			}
 		} else if (changesBecauseOtherStates && wizardStep.getWizardStepStatus() != WizardStepStatus.MUTIERT) {

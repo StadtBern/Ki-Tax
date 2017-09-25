@@ -90,7 +90,7 @@ public class Familiensituation extends AbstractEntity {
 			switch (this.familienstatus) {
 				case ALLEINERZIEHEND:
 				case WENIGER_FUENF_JAHRE:
-					return EnumGesuchstellerKardinalitaet.ZU_ZWEIT.equals(this.getGesuchstellerKardinalitaet());
+					return EnumGesuchstellerKardinalitaet.ZU_ZWEIT == this.getGesuchstellerKardinalitaet();
 				case VERHEIRATET:
 				case KONKUBINAT:
 				case LAENGER_FUENF_JAHRE:

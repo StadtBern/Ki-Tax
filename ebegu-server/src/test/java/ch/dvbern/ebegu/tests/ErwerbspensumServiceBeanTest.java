@@ -6,10 +6,14 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Erwerbspensum;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.PensumFachstelle;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.services.ErwerbspensumService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -40,6 +44,8 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private Persistence persistence;
+
+	private Gesuch gesuch;
 
 
 	@Test
@@ -99,6 +105,7 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguLoginTest {
 		Collection<ErwerbspensumContainer> erwerbspensenFromGesuch = erwerbspensumService.findErwerbspensenFromGesuch(gesuch.getId());
 
 		Assert.assertEquals(1, erwerbspensenFromGesuch.size());
+		Assert.assertNotNull(gesuch.getGesuchsteller1());
 		Assert.assertEquals(gesuch.getGesuchsteller1().getErwerbspensenContainers().iterator().next(),
 			erwerbspensenFromGesuch.iterator().next());
 	}
@@ -115,8 +122,49 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(0, erwerbspensumService.getAllErwerbspensenenContainer().size());
 	}
 
+	@Test
+	public void isErwerbspensumRequired_KITA_Required() {
+		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
+
+		Assert.assertTrue(erwerbspensumService.isErwerbspensumRequired(gesuch));
+	}
+
+	@Test
+	public void isErwerbspensumRequired_KITA_TAGESELTERNKLEINKIND_Required() {
+		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
+		final KindContainer kind = gesuch.getKindContainers().iterator().next();
+		final Betreuung betreuung = kind.getBetreuungen().iterator().next();
+		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESELTERN_KLEINKIND);
+		persistence.merge(betreuung.getInstitutionStammdaten());
+
+		Assert.assertTrue(erwerbspensumService.isErwerbspensumRequired(gesuch));
+	}
+
+	@Test
+	public void isErwerbspensumRequired_TAGI_NotRequired() {
+		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
+		final KindContainer kind = gesuch.getKindContainers().iterator().next();
+		final Betreuung betreuung = kind.getBetreuungen().iterator().next();
+		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGI);
+		persistence.merge(betreuung.getInstitutionStammdaten());
+
+		Assert.assertFalse(erwerbspensumService.isErwerbspensumRequired(gesuch));
+	}
+
+	@Test
+	public void isErwerbspensumRequired_Fachstelle_NotRequired() {
+		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
+		final KindContainer kind = gesuch.getKindContainers().iterator().next();
+		final PensumFachstelle pensumFachstelle = TestDataUtil.createDefaultPensumFachstelle();
+		kind.getKindJA().setPensumFachstelle(pensumFachstelle);
+		persistence.persist(pensumFachstelle.getFachstelle());
+		persistence.persist(pensumFachstelle);
+
+		Assert.assertFalse(erwerbspensumService.isErwerbspensumRequired(gesuch));
+	}
+
 	private ErwerbspensumContainer insertNewEntity() {
-		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		ErwerbspensumContainer container = TestDataUtil.createErwerbspensumContainer();
 		gesuchsteller.addErwerbspensumContainer(container);
