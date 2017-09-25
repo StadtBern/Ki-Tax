@@ -57,6 +57,8 @@ public interface ErwerbspensumService {
 
 	/**
 	 * Gibt zurück, ob fuer das uebergebene Gesuch ein Erwerbspensum erfasst werden muss.
+	 * Ein Erwerbspensum muss fuer alle Gesuchsteller erfasst werden wenn es keine Fachstelle erfasst wurde und es
+	 * kein Angebot des Types Tagesschule, TAGI oder Tageseltern für Schulkind gibt
 	 */
 	boolean isErwerbspensumRequired(@Nonnull Gesuch gesuch);
 }
