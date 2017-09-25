@@ -307,7 +307,8 @@ public enum AntragStatus {
 	);
 
 	public static final Set<AntragStatus> FOR_SCHULAMT_ROLE_WRITE = EnumSet.of(
-		FREIGABEQUITTUNG);
+		FREIGABEQUITTUNG,
+		NUR_SCHULAMT); // Wegen Dokumente-Upload Button
 
 	public static final Set<AntragStatus> FOR_STEUERAMT_ROLE_WRITE = EnumSet.of(
 		PRUEFUNG_STV,

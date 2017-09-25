@@ -12,11 +12,12 @@ import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import ITranslateService = angular.translate.ITranslateService;
 import {TSDokumentGrundPersonType} from '../../../models/enums/TSDokumentGrundPersonType';
 import TSKindContainer from '../../../models/TSKindContainer';
 import {TSRole} from '../../../models/enums/TSRole';
-import {isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
+import {isAnyStatusOfVerfuegtButSchulamt} from '../../../models/enums/TSAntragStatus';
+import ITranslateService = angular.translate.ITranslateService;
+
 let template = require('./dv-dokumente-list.html');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 require('./dv-dokumente-list.less');
@@ -197,7 +198,7 @@ export class DVDokumenteListController {
         // Dokument-Upload ist eigentlich in jedem Status möglich, aber nicht für alle Rollen. Also nicht
         // gleichbedeutend mit readonly auf dem Gesuch
         // Jedoch darf der Gesuchsteller nach der Verfuegung nichts mehr hochladen
-        let gsAndVerfuegt: boolean = isAnyStatusOfVerfuegt(this.gesuchModelManager.getGesuch().status) && this.authServiceRS.isRole(TSRole.GESUCHSTELLER);
+        let gsAndVerfuegt: boolean = isAnyStatusOfVerfuegtButSchulamt(this.gesuchModelManager.getGesuch().status) && this.authServiceRS.isRole(TSRole.GESUCHSTELLER);
         return gsAndVerfuegt || this.authServiceRS.isOneOfRoles(TSRoleUtil.getReadOnlyRoles());
     }
 

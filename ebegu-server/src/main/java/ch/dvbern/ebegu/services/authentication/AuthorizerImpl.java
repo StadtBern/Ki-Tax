@@ -523,7 +523,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		}
 
 		if (principalBean.isCallerInRole(SCHULAMT) && gesuch.hasOnlyBetreuungenOfSchulamt()) {
-			return AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus()); //Schulamt darf Freigabequittung scannen
+			return AntragStatus.writeAllowedForRole(userRole).contains(gesuch.getStatus()); //Schulamt darf Freigabequittung scannen und Dokumente-Button setzen
 		}
 
 		if (isGSOwner(gesuch::getFall, principalName)) {
