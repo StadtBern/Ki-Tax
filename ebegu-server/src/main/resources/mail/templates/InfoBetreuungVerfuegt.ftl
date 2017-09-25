@@ -28,7 +28,7 @@ ${templateConfiguration.mailCss}
         Guten Tag
     </p>
     <p>
-        Folgende Betreuung wurde verfügt:
+        Die folgende familienexterne Betreuung wurde verfügt:
     </p>
     <table>
         <tbody>
@@ -42,7 +42,7 @@ ${templateConfiguration.mailCss}
         </tr>
         <tr>
             <td>Betreuungsangebot:</td>
-            <td>${betreuung.betreuungsangebotTyp.toString()}</td>
+            <td>${betreuung.betreuungsangebotTypTranslated}</td>
         </tr>
         <tr>
             <td>Institution:</td>
@@ -56,7 +56,7 @@ ${templateConfiguration.mailCss}
     </table>
     <br/>
     <p>
-        Die Betreuungen finden Sie <a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/betreuungen/${betreuung.extractGesuch().id}">hier</a>.
+        Die Details finden Sie <a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/betreuungen/${betreuung.extractGesuch().id}">hier</a>.
     </p>
     <p>
         Freundliche Grüsse <br/>

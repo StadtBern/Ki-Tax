@@ -2,6 +2,8 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.mail.MailTemplateConfiguration;
 import org.apache.commons.lang.StringUtils;
@@ -235,20 +237,24 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			try {
 				if (gesuch.getTyp().isMutation()) {
 					//wenn Gesuch Mutation ist
-					Optional<Betreuung> vorgaengerBetreuung = betreuungService.findBetreuung(betreuung.getVorgaengerId());
-					if (vorgaengerBetreuung.isPresent()) {
+					if (betreuung.getVorgaengerId() == null) { //this is a new Betreuung for this Antrag
+						if (status.isSendToInstitution()) { //wenn status warten, abgewiesen oder bestaetigt ist
+							sendMessageWithTemplate(message, mailaddress);
+							LOG.debug("Email fuer InfoBetreuungGeloescht wurde versendet an {}", mailaddress);
+						}
+					} else {
+						Betreuung vorgaengerBetreuung = betreuungService.findBetreuung(betreuung
+							.getVorgaengerId()).orElseThrow(() -> new EbeguEntityNotFoundException
+							("sendInfoBetreuungGeloescht", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuung.getVorgaengerId()));
+
 						//wenn Vorgaengerbetreuung vorhanden
-						if ((status.equals(Betreuungsstatus.BESTAETIGT) && !betreuung.isSame(vorgaengerBetreuung.get()))
-							|| (status.equals(Betreuungsstatus.WARTEN) || status.equals(Betreuungsstatus.ABGEWIESEN))) {
+						if ((status == Betreuungsstatus.BESTAETIGT && !betreuung.isSame(vorgaengerBetreuung))
+							|| (status == Betreuungsstatus.WARTEN || status == Betreuungsstatus.ABGEWIESEN)) {
 							//wenn status der aktuellen Betreuung bestaetigt ist UND wenn vorgaenger NICHT die gleiche ist wie die aktuelle
 							//oder wenn status der aktuellen Betreuung warten oder abgewiesen ist
 							sendMessageWithTemplate(message, mailaddress);
 							LOG.debug("Email fuer InfoBetreuungGeloescht wurde versendet an {}", mailaddress);
 						}
-					} else if (status.isSendToInstitution()) {
-						//wenn status warten, abgewiesen oder bestaetigt ist
-						sendMessageWithTemplate(message, mailaddress);
-						LOG.debug("Email fuer InfoBetreuungGeloescht wurde versendet an {}", mailaddress);
 					}
 				} else {
 					//wenn es keine Mutation ist

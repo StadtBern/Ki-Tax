@@ -29,7 +29,7 @@ ${templateConfiguration.mailCss}
         Guten Tag
     </p>
     <p>
-        Folgende Betreuung wurde entfernt:
+		Der folgende Betreuungseintrag wurde entfernt:
     </p>
     <table>
         <tbody>
@@ -43,7 +43,7 @@ ${templateConfiguration.mailCss}
         </tr>
         <tr>
             <td>Betreuungsangebot:</td>
-            <td>${betreuung.betreuungsangebotTyp.toString()}</td>
+            <td>${betreuung.betreuungsangebotTypTranslated}</td>
         </tr>
         <tr>
             <td>Institution:</td>
@@ -61,8 +61,7 @@ ${templateConfiguration.mailCss}
     </table>
     <br/>
     <p>
-        Die Betreuung wurde erstellt am ${datumErstellung}.
-        Die aktuell gültigen Betreuungen finden Sie <a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/betreuungen/${betreuung.extractGesuch().id}">hier</a>.
+		Der Betreuungseintrag war am ${datumErstellung} erstellt worden.
     </p>
     <p>
         Freundliche Grüsse <br/>

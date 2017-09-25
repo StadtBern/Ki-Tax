@@ -131,10 +131,10 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN,})
 	public void removeAllDokumentGrundeFromGesuch(@Nonnull Gesuch gesuch) {
-		LOGGER.info("Deleting Dokument-Gruende of Gesuch: " + gesuch.getFall() + " / " + gesuch.getGesuchsperiode().getGesuchsperiodeString());
+		LOGGER.info("Deleting Dokument-Gruende of Gesuch: {} / {}", gesuch.getFall(), gesuch.getGesuchsperiode().getGesuchsperiodeString());
 		Collection<DokumentGrund> dokumentsFromGesuch = findAllDokumentGrundByGesuch(gesuch);
 		for (DokumentGrund dokument : dokumentsFromGesuch) {
-			LOGGER.info("Deleting DokumentGrund: " + dokument.getId());
+			LOGGER.info("Deleting DokumentGrund: {}", dokument.getId());
 			persistence.remove(DokumentGrund.class, dokument.getId());
 		}
 	}
