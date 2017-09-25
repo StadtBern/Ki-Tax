@@ -1,7 +1,7 @@
 // @AngularClass
 
 module.exports = function (config) {
-    var testWebpackConfig = require('./webpack.test.js');
+    var testWebpackConfig = require('./webpack.test.ts');
 
     config.set({
 
@@ -30,7 +30,7 @@ module.exports = function (config) {
             }
         },
 
-        // Webpack Config at ./webpack.test.js
+        // Webpack Config at ./webpack.test.ts
         webpack: testWebpackConfig,
 
         coverageReporter: {

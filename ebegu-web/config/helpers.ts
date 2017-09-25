@@ -1,25 +1,23 @@
-var path = require('path');
+import * as path from 'path';
 
 // Helper functions
-var _root = path.resolve(__dirname, '..');
+let _root = path.resolve(__dirname, '..');
 
-console.log('root directory:', root());
-
-function hasProcessFlag(flag) {
+export function hasProcessFlag(flag) {
     return process.argv.join('').indexOf(flag) > -1;
 }
 
-function root(args) {
+export function root(...args) {
     args = Array.prototype.slice.call(arguments, 0);
     return path.join.apply(path, [_root].concat(args));
 }
 
-function rootNode(args) {
+export function rootNode(args) {
     args = Array.prototype.slice.call(arguments, 0);
     return root.apply(path, ['node_modules'].concat(args));
 }
 
-function prependExt(extensions, args) {
+export function prependExt(extensions, args) {
     args = args || [];
     if (!Array.isArray(args)) {
         args = [args];
@@ -31,11 +29,11 @@ function prependExt(extensions, args) {
     }, ['']);
 }
 
-function packageSort(packages) {
+export function packageSort(packages) {
     // packages = ['polyfills', 'vendor', 'main']
-    var len = packages.length - 1;
-    var first = packages[0];
-    var last = packages[len];
+    let len = packages.length - 1;
+    let first = packages[0];
+    let last = packages[len];
     return function sort(a, b) {
         // polyfills always first
         if (a.names[0] === first) {
@@ -51,19 +49,9 @@ function packageSort(packages) {
         } else {
             return 1;
         }
-        // a must be equal to b
-        return 0;
     };
 }
 
-function reverse(arr) {
+export function reverse(arr) {
     return arr.reverse();
 }
-
-exports.reverse = reverse;
-exports.hasProcessFlag = hasProcessFlag;
-exports.root = root;
-exports.rootNode = rootNode;
-exports.prependExt = prependExt;
-exports.prepend = prependExt;
-exports.packageSort = packageSort;

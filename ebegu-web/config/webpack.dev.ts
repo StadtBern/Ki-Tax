@@ -1,20 +1,20 @@
-var webpack = require('webpack');
-var helpers = require('./helpers');
-var webpackMerge = require('webpack-merge'); //Used to merge webpack configs
-var commonConfig = require('./webpack.common.js'); //The settings that are common to prod and dev
+import * as webpack from 'webpack';
+import * as webpackMerge from 'webpack-merge';
+import {hasProcessFlag, root} from './helpers';
+import commonConfig from './webpack.common';
 
 /**
  * Webpack Plugins
  */
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const LoaderOptionsPlugin = require("webpack/lib/LoaderOptionsPlugin");
+const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 
 /**
  * Webpack Constants
  */
 const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
-const HMR = helpers.hasProcessFlag('hot');
+const HMR = hasProcessFlag('hot');
 //* to allow everybody to access the server
 const METADATA = {
     title: 'ebegu Webpack',
@@ -22,11 +22,11 @@ const METADATA = {
     host: '0.0.0.0',
     port: 3000,
     ENV: ENV,
-    HMR: HMR
+    HMR: HMR,
+    buildtstamp: {}
 };
 
-module.exports = webpackMerge(commonConfig,  {
-
+export default (env: any): webpack.Configuration => webpackMerge(commonConfig(env), {
 
     // Developer tool to enhance debugging
     //
@@ -34,12 +34,11 @@ module.exports = webpackMerge(commonConfig,  {
     // See: https://github.com/webpack/docs/wiki/build-performance#sourcemaps
     devtool: 'cheap-module-eval-source-map',
 
-
-    output:{
+    output: {
         // The output directory as absolute path (required).
         //
         // See: http://webpack.github.io/docs/configuration.html#output-path
-        path: helpers.root('dist'),
+        path: root('dist'),
 
         // Specifies the name of each output file on disk.
         // IMPORTANT: You must not specify an absolute path here!
@@ -63,13 +62,11 @@ module.exports = webpackMerge(commonConfig,  {
 
     plugins: [
         new LoaderOptionsPlugin({
-           debug: true
-         }),
+            debug: true
+        }),
         new ExtractTextPlugin({
-          filename: '[name].css'
-         }),
-
-
+            filename: '[name].css'
+        }),
 
         // Plugin: DefinePlugin
         // Description: Define free variables.

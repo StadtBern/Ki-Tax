@@ -11,16 +11,13 @@
         "preserveConstEnums": true,
         "noImplicitReturns": true,
         "allowSyntheticDefaultImports": true,
-        "outDir": "temp/js"
+        "outDir": "../temp/js"
     },
-
-    "files": [
-        "customDeclarations/declarations.d.ts",
-        "customDeclarations/override.d.ts"
-    ],
     "exclude": [
-        "node_modules/*",
-        "**/*-aot.ts"
+        "../node_modules",
+        "dist",
+        "temp",
+        "target"
     ],
     "compileOnSave": false,
     "buildOnSave": false

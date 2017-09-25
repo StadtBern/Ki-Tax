@@ -1,23 +1,23 @@
-// jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+import * as webpack from 'webpack';
+import * as webpackMerge from 'webpack-merge';
+import {root} from './helpers';
+import commonConfig, {METADATA} from './webpack.common';
+
 /**
  * @author: @AngularClass
  */
 
-var helpers = require('./helpers'); // Helper: root(), and rootDir() are defined at the bottom
-var webpackMerge = require('webpack-merge'); //Used to merge webpack configs
-var commonConfig = require('./webpack.common.js'); //The settings that are common to prod and dev
-
-
 /**
  * Webpack Plugins
  */
-var CopyWebpackPlugin = require('copy-webpack-plugin');
-var DefinePlugin = require('webpack/lib/DefinePlugin');
-var UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
-const LoaderOptionsPlugin = require("webpack/lib/LoaderOptionsPlugin");
-var CompressionPlugin = require('compression-webpack-plugin');
-var WebpackMd5Hash = require('webpack-md5-hash');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const DefinePlugin = require('webpack/lib/DefinePlugin');
+const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
+const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
+const CompressionPlugin = require('compression-webpack-plugin');
+const WebpackMd5Hash = require('webpack-md5-hash');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const BundleAnalyzer = require('webpack-bundle-analyzer');
 
 /**
  * Webpack Constants
@@ -25,15 +25,11 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ENV = process.env.NODE_ENV = process.env.ENV = 'production';
 const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 80;
-const METADATA = webpackMerge(commonConfig.metadata, {
-    host: HOST,
-    port: PORT,
-    ENV: ENV,
-    HMR: false
-});
+METADATA.ENV = ENV;
+METADATA.HOST = HOST;
+METADATA.PORT = PORT;
 
-module.exports = webpackMerge(commonConfig, {
-
+export default (env: any): webpack.Configuration => webpackMerge(commonConfig(env), {
 
     // Developer tool to enhance debugging
     //
@@ -49,7 +45,7 @@ module.exports = webpackMerge(commonConfig, {
         // The output directory as absolute path (required).
         //
         // See: http://webpack.github.io/docs/configuration.html#output-path
-        path: helpers.root('dist'),
+        path: root('dist'),
 
         // Specifies the name of each output file on disk.
         // IMPORTANT: You must not specify an absolute path here!
@@ -77,9 +73,9 @@ module.exports = webpackMerge(commonConfig, {
     plugins: [
 
         new LoaderOptionsPlugin({
-           debug: false,
+            debug: false,
             minimize: true
-         }),
+        }),
 
         new ExtractTextPlugin('[name].[hash].css'),
 
@@ -88,8 +84,6 @@ module.exports = webpackMerge(commonConfig, {
         //
         // See: https://www.npmjs.com/package/webpack-md5-hash
         new WebpackMd5Hash(),
-
-
 
         // Plugin: DefinePlugin
         // Description: Define free variables.
@@ -110,6 +104,15 @@ module.exports = webpackMerge(commonConfig, {
                 'HMR': METADATA.HMR,
             }
         }),
+
+        // Create bundle report
+        // See https://github.com/th0r/webpack-bundle-analyzer
+        new BundleAnalyzer.BundleAnalyzerPlugin({
+            analyzerMode: 'static',
+            openAnalyzer: false,
+            reportFilename: 'bundle-report.html',
+        }),
+
         // Plugin: UglifyJsPlugin
         // Description: Minimize all JavaScript output of chunks.
         // Loaders are switched into minimizing mode.
@@ -192,11 +195,12 @@ module.exports = webpackMerge(commonConfig, {
              }, // prod
              */
             compress: {
-                screw_ie8: true
+                screw_ie8: true,
+                // warnings are from vendor libraries that are safely to ignore
+                warnings: false,
             }, //prod
             comments: false //prod
         }),
-
 
         // Plugin: CompressionPlugin
         // Description: Prepares compressed versions of assets to serve
@@ -213,10 +217,6 @@ module.exports = webpackMerge(commonConfig, {
         ])
 
     ],
-
-
-
-
 
     node: {
         global: true,
