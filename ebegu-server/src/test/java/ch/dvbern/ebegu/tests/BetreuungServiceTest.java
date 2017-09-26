@@ -68,7 +68,7 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		Betreuung betreuung = betreuungOpt.get();
 		Assert.assertEquals(persitedBetreuung.getBetreuungsstatus(), betreuung.getBetreuungsstatus());
 
-		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, betreuung.extractGesuch().getGesuchBetreuungenStatus());
+		Assert.assertEquals(GesuchBetreuungenStatus.WARTEN, betreuung.extractGesuch().getGesuchBetreuungenStatus());
 		betreuung.setGrundAblehnung("abgewiesen");
 		betreuung.setBetreuungsstatus(Betreuungsstatus.ABGEWIESEN);
 		betreuungService.saveBetreuung(betreuung, false);
