@@ -37,6 +37,10 @@ public enum Betreuungsstatus {
 		return VERFUEGT.equals(this) || STORNIERT.equals(this) || SCHULAMT.equals(this);
 	}
 
+	public boolean isSendToInstitution(){
+		return ABGEWIESEN.equals(this) || BESTAETIGT.equals(this)|| WARTEN.equals(this);
+	}
+
 	@SuppressWarnings("Duplicates")
 	public static Set<Betreuungsstatus> allowedRoles(UserRole userRole) {
 		switch (userRole) {
