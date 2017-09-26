@@ -14,6 +14,8 @@ import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -29,12 +31,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+
 /**
  * Resource fuer ApplicationProperties
  */
 @Path("application-properties")
 @Stateless
 @Api(description = "Resource zum Lesen der Applikationsproperties")
+@PermitAll
 public class ApplicationPropertyResource {
 
 	@Inject
@@ -129,7 +134,7 @@ public class ApplicationPropertyResource {
 	}
 
 	@ApiOperation(value = "Aktualisiert ein bestehendes ApplicationProperty",
-			response = JaxApplicationProperties.class, consumes = MediaType.TEXT_PLAIN)
+		response = JaxApplicationProperties.class, consumes = MediaType.TEXT_PLAIN)
 	@Nullable
 	@PUT
 	@Path("/{key}")
@@ -165,5 +170,18 @@ public class ApplicationPropertyResource {
 	@Path("/public/zahlungentestmode")
 	public Response isZahlungenTestMode(@Context HttpServletResponse response) {
 		return Response.ok(ebeguConfiguration.getIsZahlungenTestMode()).build();
+	}
+
+	@RolesAllowed({SUPER_ADMIN})
+	@ApiOperation(value = "Gibt den Wert des Properties zurück", response = Boolean.class)
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	@Path("/property/{key}")
+	public Response getProperty(@Nonnull @PathParam("key") String keyParam, @Context HttpServletResponse response) {
+		if (keyParam.startsWith("ebegu")) {
+			return Response.ok(System.getProperty(keyParam)).build();
+		}
+		return Response.noContent().build();
 	}
 }
