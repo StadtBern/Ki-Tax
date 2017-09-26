@@ -1,7 +1,14 @@
 package ch.dvbern.ebegu.services;
 
-import java.util.List;
-import java.util.concurrent.Future;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.MailException;
+import ch.dvbern.ebegu.mail.MailTemplateConfiguration;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
@@ -11,26 +18,12 @@ import javax.ejb.Asynchronous;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Future;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.Mitteilung;
-import ch.dvbern.ebegu.errors.MailException;
-import ch.dvbern.ebegu.mail.MailTemplateConfiguration;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
-import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
-import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
-import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.*;
 
 /**
  * Service fuer Senden von E-Mails
@@ -48,6 +41,9 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 	@Inject
 	private FallService fallService;
+
+	@Inject
+	private BetreuungService betreuungService;
 
 
 	@Override
@@ -217,6 +213,85 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			}
 		}
 		return new AsyncResult<>(i);
+	}
+
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT })
+	public void sendInfoBetreuungGeloescht(@Nonnull List<Betreuung> betreuungen) {
+
+		for (Betreuung betreuung : betreuungen) {
+
+			Institution institution = betreuung.getInstitutionStammdaten().getInstitution();
+			String mailaddress = institution.getMail();
+			Gesuch gesuch = betreuung.extractGesuch();
+			Fall fall = gesuch.getFall();
+			Gesuchsteller gesuchsteller1 = gesuch.extractGesuchsteller1();
+			Kind kind = betreuung.getKind().getKindJA();
+			Betreuungsstatus status = betreuung.getBetreuungsstatus();
+			LocalDate datumErstellung = betreuung.getTimestampErstellt().toLocalDate();
+			LocalDate birthdayKind = kind.getGeburtsdatum();
+
+			String message = mailTemplateConfig.getInfoBetreuungGeloescht(betreuung, fall, gesuchsteller1, kind,
+				institution, mailaddress, datumErstellung, birthdayKind);
+
+			try {
+				if (gesuch.getTyp().isMutation()) {
+					//wenn Gesuch Mutation ist
+					if (betreuung.getVorgaengerId() == null) { //this is a new Betreuung for this Antrag
+						if (status.isSendToInstitution()) { //wenn status warten, abgewiesen oder bestaetigt ist
+							sendMessageWithTemplate(message, mailaddress);
+							LOG.debug("Email fuer InfoBetreuungGeloescht wurde versendet an {}", mailaddress);
+						}
+					} else {
+						Betreuung vorgaengerBetreuung = betreuungService.findBetreuung(betreuung
+							.getVorgaengerId()).orElseThrow(() -> new EbeguEntityNotFoundException
+							("sendInfoBetreuungGeloescht", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuung.getVorgaengerId()));
+
+						//wenn Vorgaengerbetreuung vorhanden
+						if ((status == Betreuungsstatus.BESTAETIGT && !betreuung.isSame(vorgaengerBetreuung))
+							|| (status == Betreuungsstatus.WARTEN || status == Betreuungsstatus.ABGEWIESEN)) {
+							//wenn status der aktuellen Betreuung bestaetigt ist UND wenn vorgaenger NICHT die gleiche ist wie die aktuelle
+							//oder wenn status der aktuellen Betreuung warten oder abgewiesen ist
+							sendMessageWithTemplate(message, mailaddress);
+							LOG.debug("Email fuer InfoBetreuungGeloescht wurde versendet an {}", mailaddress);
+						}
+					}
+				} else {
+					//wenn es keine Mutation ist
+					if (status.isSendToInstitution()) {
+						//wenn status warten, abgewiesen oder bestaetigt ist
+						sendMessageWithTemplate(message, mailaddress);
+						LOG.debug("Email fuer InfoBetreuungGeloescht wurde versendet an {}", mailaddress);
+					}
+
+				}
+			} catch (MailException e) {
+				LOG.error("Mail InfoBetreuungGeloescht konnte nicht verschickt werden fuer Betreuung {}", betreuung.getId(), e);
+			}
+		}
+	}
+
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT })
+	public void sendInfoBetreuungVerfuegt(@Nonnull Betreuung betreuung) {
+
+		Institution institution = betreuung.getInstitutionStammdaten().getInstitution();
+		String mailaddress = institution.getMail();
+		Gesuch gesuch = betreuung.extractGesuch();
+		Fall fall = gesuch.getFall();
+		Gesuchsteller gesuchsteller1 = gesuch.extractGesuchsteller1();
+		Kind kind = betreuung.getKind().getKindJA();
+		LocalDate birthdayKind = kind.getGeburtsdatum();
+
+		String message = mailTemplateConfig.getInfoBetreuungVerfuegt(betreuung, fall, gesuchsteller1, kind,
+			institution, mailaddress, birthdayKind);
+
+		try {
+			sendMessageWithTemplate(message, mailaddress);
+			LOG.debug("Email fuer InfoBetreuungVerfuegt wurde versendet an {}", mailaddress);
+		} catch (MailException e) {
+			LOG.error("Mail InfoBetreuungVerfuegt konnte nicht verschickt werden fuer Betreuung {}", betreuung.getId(), e);
+		}
 	}
 
 	/**
