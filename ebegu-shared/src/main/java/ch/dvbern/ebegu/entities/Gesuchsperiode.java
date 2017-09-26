@@ -1,17 +1,18 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
-import ch.dvbern.ebegu.types.DateRange;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.envers.Audited;
+import java.time.LocalDate;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
+import ch.dvbern.ebegu.types.DateRange;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.envers.Audited;
 
 /**
  * Entity fuer Gesuchsperiode.
@@ -30,6 +31,9 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 	// Wir merken uns, wann die Periode aktiv geschalten wurde, damit z.B. die Mails nicht 2 mal verschickt werden
 	@Column(nullable = true)
 	private LocalDate datumAktiviert;
+
+	@Column(nullable = true)
+	private LocalDate datumFreischaltungTagesschule;
 
 
 	public GesuchsperiodeStatus getStatus() {
@@ -58,6 +62,14 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 
 	public void setDatumAktiviert(LocalDate datumAktiviert) {
 		this.datumAktiviert = datumAktiviert;
+	}
+
+	public LocalDate getDatumFreischaltungTagesschule() {
+		return datumFreischaltungTagesschule;
+	}
+
+	public void setDatumFreischaltungTagesschule(LocalDate datumFreischaltungTagesschule) {
+		this.datumFreischaltungTagesschule = datumFreischaltungTagesschule;
 	}
 
 	@SuppressWarnings({"OverlyComplexBooleanExpression"})

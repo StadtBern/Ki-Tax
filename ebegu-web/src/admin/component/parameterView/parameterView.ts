@@ -17,8 +17,10 @@ import AbstractAdminViewController from '../../abstractAdminView';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {getTSGesuchsperiodeStatusValues, TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import * as moment from 'moment';
 import ITranslateService = angular.translate.ITranslateService;
 import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./parameterView.html');
 let style = require('./parameterView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -48,6 +50,7 @@ export class ParameterViewController extends AbstractAdminViewController {
     ebeguParameterListJahr: TSEbeguParameter[]; // enthält alle Params für nur 1 Jahr
 
     statusChanged: boolean = false;
+    datumFreischaltungTagesschule: moment.Moment;
 
     /* @ngInject */
     constructor(ebeguParameterRS: EbeguParameterRS, private gesuchsperiodeRS: GesuchsperiodeRS,
@@ -87,6 +90,7 @@ export class ParameterViewController extends AbstractAdminViewController {
         if (gesuchsperiode.isSelected) {
             this.gesuchsperiode = gesuchsperiode;
             this.readEbeguParameterByGesuchsperiode();
+            this.datumFreischaltungTagesschule = undefined;
         } else {
             this.cancelGesuchsperiode();
         }
@@ -99,11 +103,13 @@ export class ParameterViewController extends AbstractAdminViewController {
 
     createGesuchsperiode(): void {
         this.gesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.ENTWURF, new TSDateRange());
+        this.datumFreischaltungTagesschule = undefined;
         if (this.gesuchsperiodenList) {
             let prevGesPer: TSGesuchsperiode = this.gesuchsperiodenList[0];
             this.gesuchsperiode.gueltigkeit.gueltigAb = prevGesPer.gueltigkeit.gueltigAb.clone().add('years', 1);
             this.gesuchsperiode.gueltigkeit.gueltigBis = prevGesPer.gueltigkeit.gueltigBis.clone().add('years', 1);
         }
+        this.gesuchsperiode.datumFreischaltungTagesschule = this.gesuchsperiode.gueltigkeit.gueltigAb;
     }
 
     saveGesuchsperiode(): void {
@@ -116,6 +122,23 @@ export class ParameterViewController extends AbstractAdminViewController {
                 parentController: undefined,
                 elementID: undefined
             }).then(() => {
+                this.saveGesuchsperiodeFreischaltungTagesschule();
+            });
+        } else {
+            this.saveGesuchsperiodeFreischaltungTagesschule();
+        }
+    }
+
+    saveGesuchsperiodeFreischaltungTagesschule(): void {
+        // Zweite Rückfrage falls neu ein Datum für die Freischaltung der Tagesschulen gesetzt wurde
+        if (!this.gesuchsperiode.isTagesschulenFreigeschaltet() && this.datumFreischaltungTagesschule) {
+            this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                title: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TITLE',
+                deleteText: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TEXT',
+                parentController: undefined,
+                elementID: undefined
+            }).then(() => {
+                this.gesuchsperiode.datumFreischaltungTagesschule = this.datumFreischaltungTagesschule;
                 this.doSave();
             });
         } else {
@@ -126,6 +149,7 @@ export class ParameterViewController extends AbstractAdminViewController {
     private doSave(): void {
         this.gesuchsperiodeRS.updateGesuchsperiode(this.gesuchsperiode).then((response: TSGesuchsperiode) => {
             this.gesuchsperiode = response;
+            this.datumFreischaltungTagesschule = undefined;
 
             let index: number = EbeguUtil.getIndexOfElementwithID(response, this.gesuchsperiodenList);
             if (index !== -1) {
@@ -169,7 +193,20 @@ export class ParameterViewController extends AbstractAdminViewController {
 
     cancelGesuchsperiode(): void {
         this.gesuchsperiode = undefined;
+        this.datumFreischaltungTagesschule = undefined;
         this.ebeguParameterListGesuchsperiode = undefined;
+    }
+
+    getStatusTagesschulenFreischaltung(gp: TSGesuchsperiode): string {
+        if (gp.hasTagesschulenFreischaltung()) {
+            if (gp.isTagesschulenFreigeschaltet()) {
+                return this.$translate.instant('FREISCHALTUNG_TAGESSCHULE_AKTIV');
+            } else {
+                return this.$translate.instant('FREISCHALTUNG_TAGESSCHULE_NOT_YET');
+            }
+        } else {
+            return this.$translate.instant('FREISCHALTUNG_TAGESSCHULE_NONE');
+        }
     }
 
     cancelJahresabhaengig(): void {
@@ -189,6 +226,7 @@ export class ParameterViewController extends AbstractAdminViewController {
         this.gesuchsperiodeRS.updateActiveGesuchsperiodenList();
         this.gesuchsperiodeRS.updateNichtAbgeschlosseneGesuchsperiodenList();
         this.gesuchsperiode = undefined;
+        this.datumFreischaltungTagesschule = undefined;
     }
 
     saveParameterByJahr(): void {

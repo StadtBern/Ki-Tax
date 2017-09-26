@@ -2017,12 +2017,14 @@ public class JaxBConverter {
 		final JaxGesuchsperiode jaxGesuchsperiode = new JaxGesuchsperiode();
 		convertAbstractDateRangedFieldsToJAX(persistedGesuchsperiode, jaxGesuchsperiode);
 		jaxGesuchsperiode.setStatus(persistedGesuchsperiode.getStatus());
+		jaxGesuchsperiode.setDatumFreischaltungTagesschule(persistedGesuchsperiode.getDatumFreischaltungTagesschule());
 		return jaxGesuchsperiode;
 	}
 
 	public Gesuchsperiode gesuchsperiodeToEntity(final JaxGesuchsperiode jaxGesuchsperiode, final Gesuchsperiode gesuchsperiode) {
 		convertAbstractDateRangedFieldsToEntity(jaxGesuchsperiode, gesuchsperiode);
 		gesuchsperiode.setStatus(jaxGesuchsperiode.getStatus());
+		gesuchsperiode.setDatumFreischaltungTagesschule(jaxGesuchsperiode.getDatumFreischaltungTagesschule());
 		return gesuchsperiode;
 	}
 
