@@ -74,14 +74,20 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 	public void removeBetreuungTest() {
 		Assert.assertNotNull(betreuungService);
 		Betreuung persitedBetreuung = TestDataUtil.persistBetreuung(betreuungService, persistence);
-		Optional<Betreuung> betreuung = betreuungService.findBetreuung(persitedBetreuung.getId());
-		Assert.assertTrue(betreuung.isPresent());
-		final String gesuchId = betreuung.get().extractGesuch().getId();
-		betreuungService.removeBetreuung(betreuung.get().getId());
+		Optional<Betreuung> betreuungOptional = betreuungService.findBetreuung(persitedBetreuung.getId());
+		Assert.assertTrue(betreuungOptional.isPresent());
+		Betreuung betreuung = betreuungOptional.get();
+
+		Gesuch gesuch = betreuung.extractGesuch();
+		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer(gesuch));
+		persistence.merge(gesuch);
+
+		final String gesuchId = betreuung.extractGesuch().getId();
+		betreuungService.removeBetreuung(betreuung.getId());
 
 		Optional<Betreuung> betreuungAfterRemove = betreuungService.findBetreuung(persitedBetreuung.getId());
 		Assert.assertFalse(betreuungAfterRemove.isPresent());
-		final Gesuch gesuch = persistence.find(Gesuch.class, gesuchId);
+		gesuch = persistence.find(Gesuch.class, gesuchId);
 		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, gesuch.getGesuchBetreuungenStatus());
 	}
 
