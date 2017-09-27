@@ -59,9 +59,6 @@ public class VerfuegungResource {
 	@Inject
 	private BenutzerService benutzerService;
 
-	@Inject
-	private MailService mailService;
-
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
 	private JaxBConverter converter;
@@ -152,7 +149,6 @@ public class VerfuegungResource {
 				Verfuegung convertedVerfuegung = converter.verfuegungToEntity(verfuegungJAXP, verfuegungToMerge);
 
 				Verfuegung persistedVerfuegung = this.verfuegungService.verfuegen(convertedVerfuegung, betreuung.get().getId(), ignorieren);
-				mailService.sendInfoBetreuungVerfuegt(betreuung.get());
 
 				return converter.verfuegungToJax(persistedVerfuegung);
 			}
