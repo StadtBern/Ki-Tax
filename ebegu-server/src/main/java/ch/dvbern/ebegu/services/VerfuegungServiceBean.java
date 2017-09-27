@@ -78,9 +78,6 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		Betreuung betreuung = persistedVerfuegung.getBetreuung();
 		generateVerfuegungDokument(betreuung);
 
-		// Den EntityManager flushen, damit es eine Exception gibt, falls etwas schief gegangen wäre
-		persistence.getEntityManager().flush();
-		// Und nur wenn kein Problem auftrat das Mail schicken
 		mailService.sendInfoBetreuungVerfuegt(betreuung);
 		return persistedVerfuegung;
 	}
