@@ -51,6 +51,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static ch.dvbern.ebegu.enums.UserRole.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_INSTITUTION;
 import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_TRAEGERSCHAFT;
 import static ch.dvbern.ebegu.enums.UserRole.SCHULAMT;
@@ -529,9 +530,9 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (WizardStepStatus.UNBESUCHT != wizardStep.getWizardStepStatus()) {
 				if (WizardStepName.BETREUUNG == wizardStep.getWizardStepName()) {
 					checkStepStatusForBetreuung(wizardStep, false);
-				} else if (!principalBean.isCallerInAnyOfRole(SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT)
+				} else if (!principalBean.isCallerInAnyOfRole(SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT)
 					&& WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()) {
-					// SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION und SCHULAMT duerfen beim Aendern einer Betreuung
+					// SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION und SCHULAMT, ADMINISTRATOR_SCHULAMT duerfen beim Aendern einer Betreuung
 					// den Status von ERWERBPENSUM nicht aendern
 					checkStepStatusForErwerbspensum(wizardStep, true);
 				}

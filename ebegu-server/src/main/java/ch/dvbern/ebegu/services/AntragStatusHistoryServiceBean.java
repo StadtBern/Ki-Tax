@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
 import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
 import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
@@ -51,7 +52,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(AntragStatusHistoryService.class)
-@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR,  SCHULAMT,  STEUERAMT, GESUCHSTELLER})
+@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, ADMINISTRATOR_SCHULAMT, SCHULAMT, STEUERAMT, GESUCHSTELLER})
 public class AntragStatusHistoryServiceBean extends AbstractBaseService implements AntragStatusHistoryService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AntragStatusHistoryServiceBean.class.getSimpleName());
