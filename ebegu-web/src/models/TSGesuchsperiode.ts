@@ -2,7 +2,6 @@ import {TSAbstractDateRangedEntity} from './TSAbstractDateRangedEntity';
 import {TSDateRange} from './types/TSDateRange';
 import {TSGesuchsperiodeStatus} from './enums/TSGesuchsperiodeStatus';
 import * as moment from 'moment';
-import DateUtil from '../utils/DateUtil';
 
 export default class TSGesuchsperiode extends TSAbstractDateRangedEntity {
 
@@ -46,7 +45,7 @@ export default class TSGesuchsperiode extends TSAbstractDateRangedEntity {
     }
 
     isTageschulenAnmeldungAktiv(): boolean {
-        return this.isTagesschulenAnmeldungKonfiguriert() && this.datumFreischaltungTagesschule.isBefore(DateUtil.today());
+        return this.isTagesschulenAnmeldungKonfiguriert() && this.datumFreischaltungTagesschule.isBefore(moment());
     }
 
     hasTagesschulenAnmeldung(): boolean {
