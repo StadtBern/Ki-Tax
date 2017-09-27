@@ -46,9 +46,6 @@ public class DailyBatchBean implements DailyBatch {
 	@Inject
 	private GesuchService gesuchService;
 
-	@Inject
-	private MailService mailService;
-
 
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
@@ -118,13 +115,9 @@ public class DailyBatchBean implements DailyBatch {
 	public void runBatchGesucheLoeschen() {
 		try {
 			LOGGER.info("Starting Job GesucheLoeschen...");
-			List<Betreuung> betreuungen = new ArrayList<>();
-			List<Gesuch> gesuche = gesuchService.getGesuchesOhneFreigabeOderQuittung();
-			for (Gesuch gesuch : gesuche) {
-				betreuungen.addAll(gesuch.extractAllBetreuungen());
-			}
+
 			final int anzahl = gesuchService.deleteGesucheOhneFreigabeOderQuittung();
-			mailService.sendInfoBetreuungGeloescht(betreuungen);
+
 			LOGGER.info("Es wurden " + anzahl + " Gesuche ohne Freigabe oder Quittung gefunden, die geloescht werden muessen");
 			LOGGER.info("... Job GesucheLoeschen finished");
 		} catch (RuntimeException e) {

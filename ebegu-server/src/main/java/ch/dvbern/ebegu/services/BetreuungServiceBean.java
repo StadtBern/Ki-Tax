@@ -173,6 +173,10 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		final String gesuchId = betreuungToRemove.getKind().getGesuch().getId();
 		removeBetreuung(betreuungToRemove);
 		wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.BETREUUNG); //auch bei entfernen wizard updaten
+
+		List<Betreuung> betreuungen = new ArrayList<>();
+		betreuungen.add(betreuungToRemove);
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
 	}
 
 	@Override
