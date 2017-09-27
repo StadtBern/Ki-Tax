@@ -80,8 +80,6 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
                 }
             }
         });
-
-        //hier muessen wir den event beim verlassen nicht abfangen da wir die daten erst beim erfolgreichen speichern ins model einfuegen
     }
 
     getTaetigkeitenList(): Array<TSTaetigkeit> {

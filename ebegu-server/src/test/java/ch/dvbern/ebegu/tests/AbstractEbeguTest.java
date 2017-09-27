@@ -1,17 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
-import java.io.File;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.security.auth.login.LoginException;
-
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.entities.Mandant;
-import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
@@ -42,6 +31,11 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.security.auth.login.LoginException;
+import java.io.File;
 
 /**
  * Diese Klasse implementiert die Methode "Deployment" fuer die Arquillian Tests und muss von allen Testklassen
@@ -125,6 +119,8 @@ public abstract class AbstractEbeguTest {
 			.addAsResource("vorlagen/entwurfWasserzeichen.png", "vorlagen/entwurfWasserzeichen.png")
 			.addAsResource("mail/templates/InfoBetreuungAbgelehnt.ftl", "mail/templates/InfoBetreuungAbgelehnt.ftl")
 			.addAsResource("mail/templates/InfoBetreuungenBestaetigt.ftl", "mail/templates/InfoBetreuungenBestaetigt.ftl")
+			.addAsResource("mail/templates/InfoBetreuungGeloescht.ftl", "mail/templates/InfoBetreuungGeloescht.ftl")
+			.addAsResource("mail/templates/InfoBetreuungVerfuegt.ftl", "mail/templates/InfoBetreuungVerfuegt.ftl")
 			.addAsResource("mail/templates/InfoMahnung.ftl", "mail/templates/InfoMahnung.ftl")
 			.addAsResource("mail/templates/InfoVerfuegtGesuch.ftl", "mail/templates/InfoVerfuegtGesuch.ftl")
 			.addAsResource("mail/templates/InfoVerfuegtMutation.ftl", "mail/templates/InfoVerfuegtMutation.ftl")

@@ -31,6 +31,7 @@ import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.validators.CheckAbwesenheitDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
@@ -325,12 +326,18 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		return BetreuungsangebotTyp.TAGESELTERN_KLEINKIND.equals(getBetreuungsangebotTyp());
 	}
 
+	@Nullable
 	@Transient
 	public BetreuungsangebotTyp getBetreuungsangebotTyp() {
 		if (getInstitutionStammdaten() != null) {
 			return getInstitutionStammdaten().getBetreuungsangebotTyp();
 		}
 		return null;
+	}
+
+	@Transient
+	public String getBetreuungsangebotTypTranslated() {
+		return ServerMessageUtil.translateEnumValue(getBetreuungsangebotTyp());
 	}
 
 	/**
@@ -340,9 +347,9 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@SuppressFBWarnings("NM_CONFUSING")
 	public String getBGNummer() {
 		if (getKind().getGesuch() != null) {
-			String kind = "" + getKind().getKindNummer();
-			String betreuung = "" + getBetreuungNummer();
-			return getKind().getGesuch().getJahrAndFallnummer() + "." + kind + "." + betreuung;
+			String kind = String.valueOf(getKind().getKindNummer());
+			String betreuung = String.valueOf(getBetreuungNummer());
+			return getKind().getGesuch().getJahrAndFallnummer() + '.' + kind + '.' + betreuung;
 		}
 		return "";
 	}
