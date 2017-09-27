@@ -113,21 +113,21 @@
 
                                 <div class="row" ng-show="!vm.gesuchsperiode.isEntwurf()">
                                     <div class="col-md-6 form-group">
-                                        <div class="row col-md-12" ng-show="!vm.gesuchsperiode.hasTagesschulenFreischaltung()">
+                                        <div class="row col-md-12" ng-show="!vm.gesuchsperiode.hasTagesschulenAnmeldung()">
                                             <label data-translate="FREISCHALTUNG_TAGESSCHULE_NONE"/>
                                         </div>
-                                        <div class="row" ng-show="vm.gesuchsperiode.hasTagesschulenFreischaltung()">
+                                        <div class="row" ng-show="vm.gesuchsperiode.hasTagesschulenAnmeldung()">
                                             <div class="col-md-4">
                                                 <label data-translate="FREISCHALTUNG_TAGESSCHULE" for="datumFreischaltungTagesschule_ID"/>
                                             </div>
                                             <div class="col-md-8 ">
-                                                <div ng-show="!vm.gesuchsperiode.isTagesschulenFreigeschaltet()">
+                                                <div ng-show="!vm.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert()">
                                                     <dv-datepicker input-id="datumFreischaltungTagesschule_ID" name="datumFreischaltungTagesschule"
                                                                    ng-model="vm.datumFreischaltungTagesschule"
                                                                    class="input-element contrast">
                                                     </dv-datepicker>
                                                 </div>
-                                                <div ng-show="vm.gesuchsperiode.isTagesschulenFreigeschaltet()">
+                                                <div ng-show="vm.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert()">
                                                     <dv-datepicker input-id="datumFreischaltungTagesschule_ID" name="datumFreischaltungTagesschule"
                                                                    ng-model="vm.gesuchsperiode.datumFreischaltungTagesschule"
                                                                    class="input-element contrast"

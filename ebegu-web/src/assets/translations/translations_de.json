@@ -1109,10 +1109,11 @@
     "BESCHREIBUNG_GESUCH_LOESCHEN": "Wenn Sie mit dem Löschen fortfahren, werden alle Daten endgültig gelöscht",
     "FREISCHALTUNG_TAGESSCHULE": "Freischaltung Tagesschule",
     "FREISCHALTUNG_TAGESSCHULE_BUTTON": "Anmeldungen für Tagesschule freischalten",
-    "FREISCHALTUNG_TAGESSCHULE_AKTIV": "Anmeldungen für Tagesschule aktiv",
-    "FREISCHALTUNG_TAGESSCHULE_NOT_YET": "Anmeldungen für Tagesschule noch nicht freigeschaltet",
+    "FREISCHALTUNG_TAGESSCHULE_KONFIGURIERT": "Anmeldungen für Tagesschule konfiguriert",
+    "FREISCHALTUNG_TAGESSCHULE_NOT_YET": "Anmeldungen für Tagesschule noch nicht konfiguriert",
     "FREISCHALTUNG_TAGESSCHULE_NONE": "Keine Anmeldungen für Tagesschule möglich",
     "FREISCHALTUNG_TAGESSCHULE_DIALOG_TITLE": "Wollen Sie die Anmeldung für Tagesschulen wirklich freischalten?",
-    "FREISCHALTUNG_TAGESSCHULE_DIALOG_TEXT": "Ab diesem Zeitpunkt können Gesuchsteller sich für Tagesschulen anmelden."
+    "FREISCHALTUNG_TAGESSCHULE_DIALOG_TEXT": "Ab diesem Zeitpunkt können Gesuchsteller sich für Tagesschulen anmelden.",
+    "FREISCHALTUNG_TAGESSCHULE_INFO": "Die Anmeldung ist im Moment noch nicht möglich. Die Funktionalität wird erst mit dem Versand der Stundenpläne aufgeschaltet."
 
 }

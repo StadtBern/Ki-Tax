@@ -131,7 +131,7 @@ export class ParameterViewController extends AbstractAdminViewController {
 
     saveGesuchsperiodeFreischaltungTagesschule(): void {
         // Zweite Rückfrage falls neu ein Datum für die Freischaltung der Tagesschulen gesetzt wurde
-        if (!this.gesuchsperiode.isTagesschulenFreigeschaltet() && this.datumFreischaltungTagesschule) {
+        if (!this.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert() && this.datumFreischaltungTagesschule) {
             this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
                 title: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TITLE',
                 deleteText: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TEXT',
@@ -198,9 +198,9 @@ export class ParameterViewController extends AbstractAdminViewController {
     }
 
     getStatusTagesschulenFreischaltung(gp: TSGesuchsperiode): string {
-        if (gp.hasTagesschulenFreischaltung()) {
-            if (gp.isTagesschulenFreigeschaltet()) {
-                return this.$translate.instant('FREISCHALTUNG_TAGESSCHULE_AKTIV');
+        if (gp.hasTagesschulenAnmeldung()) {
+            if (gp.isTagesschulenAnmeldungKonfiguriert()) {
+                return this.$translate.instant('FREISCHALTUNG_TAGESSCHULE_KONFIGURIERT');
             } else {
                 return this.$translate.instant('FREISCHALTUNG_TAGESSCHULE_NOT_YET');
             }
