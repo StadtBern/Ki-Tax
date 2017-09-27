@@ -63,14 +63,7 @@ export default class AbstractGesuchViewController<T> {
      */
     public isGesuchValid(): boolean {
         if (!this.form.$valid) {
-            let element: any = angular.element('md-radio-group.ng-invalid,'
-                + ' .ng-invalid>input,'
-                + 'input.ng-invalid,'
-                + 'select.ng-invalid,'
-                + 'md-checkbox.ng-invalid').first();
-            if (element) {
-                element.focus();
-            }
+           EbeguUtil.selectFirstInvalid();
         }
         return this.form.$valid;
     }

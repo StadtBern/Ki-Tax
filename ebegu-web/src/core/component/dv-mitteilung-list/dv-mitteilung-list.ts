@@ -1,4 +1,4 @@
-import {IComponentOptions, IPromise} from 'angular';
+import {IComponentOptions, IPromise, ITimeoutService} from 'angular';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import TSMitteilung from '../../../models/TSMitteilung';
 import {TSMitteilungStatus} from '../../../models/enums/TSMitteilungStatus';
@@ -57,7 +57,7 @@ export class DVMitteilungListController {
     ebeguUtil: EbeguUtil;
 
     static $inject: any[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS', 'FallRS', 'BetreuungRS',
-        '$q', '$window', '$rootScope', '$state', 'EbeguUtil', 'DvDialog', 'GesuchModelManager', '$scope'];
+        '$q', '$window', '$rootScope', '$state', 'EbeguUtil', 'DvDialog', 'GesuchModelManager', '$scope', '$timeout'];
     /* @ngInject */
     constructor(private $stateParams: IMitteilungenStateParams, private mitteilungRS: MitteilungRS,
                 private authServiceRS: AuthServiceRS,
@@ -65,7 +65,8 @@ export class DVMitteilungListController {
                 private $window: IWindowService,
                 private $rootScope: IRootScopeService, private $state: IStateService, ebeguUtil: EbeguUtil,
                 private DvDialog: DvDialog,
-                private gesuchModelManager: GesuchModelManager, private $scope: IScope) {
+                private gesuchModelManager: GesuchModelManager, private $scope: IScope,
+                private $timeout: ITimeoutService) {
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
         this.ebeguUtil = ebeguUtil;
@@ -182,6 +183,7 @@ export class DVMitteilungListController {
      */
     public sendMitteilung(): IPromise<TSMitteilung> {
         if (this.form.$invalid) {
+            EbeguUtil.selectFirstInvalid();
             return undefined;
         }
         if (!this.isMitteilungEmpty()) {
@@ -340,6 +342,12 @@ export class DVMitteilungListController {
 
     public canApplyBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
         return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    }
+
+    $postLink() {
+        this.$timeout(() => {
+            EbeguUtil.selectFirst();
+        }, 200);
     }
 
     public applyBetreuungsmitteilung(mitteilung: TSMitteilung): void {
