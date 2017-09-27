@@ -183,7 +183,7 @@ export class DVMitteilungListController {
      */
     public sendMitteilung(): IPromise<TSMitteilung> {
         if (this.form.$invalid) {
-            EbeguUtil.selectFirst();
+            EbeguUtil.selectFirstInvalid();
             return undefined;
         }
         if (!this.isMitteilungEmpty()) {

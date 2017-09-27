@@ -193,6 +193,7 @@ export default class EbeguUtil {
     public static selectFirst(): void {
         let tmp = angular.element('md-radio-button:not([disabled="disabled"]),'
             + 'fieldset:not([disabled="disabled"],.dv-adresse__fieldset) input:not([disabled="disabled"]),'
+            + 'fieldset:not([disabled="disabled"],.dv-adresse__fieldset) textarea:not([disabled="disabled"]),'
             + 'fieldset:not([disabled="disabled"],.dv-adresse__fieldset) select:not([disabled="disabled"]),'
             + 'fieldset:not([disabled="disabled"],.dv-adresse__fieldset) md-checkbox:not([disabled="disabled"]),'
             + '#gesuchContainer button:not([disabled="disabled"]),'
@@ -206,6 +207,18 @@ export default class EbeguUtil {
             } else {
                 tmp.focus();
             }
+        }
+    }
+
+    public static selectFirstInvalid(): void {
+        let tmp: any = angular.element('md-radio-group.ng-invalid,'
+            + ' .ng-invalid>input,'
+            + 'input.ng-invalid,'
+            + 'textarea.ng-invalid,'
+            + 'select.ng-invalid,'
+            + 'md-checkbox.ng-invalid').first();
+        if (tmp) {
+            tmp.focus();
         }
     }
 
