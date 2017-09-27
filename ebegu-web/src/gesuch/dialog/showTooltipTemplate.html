@@ -2,8 +2,9 @@
            class="md-default-theme md-transition-in dv-tooltip-dialog" tabindex="-1">
     <div class="tooltip-close-button">
         <span flex></span>
-        <button class="md-icon-button" ng-click="vm.cancel()" md-autofocus>
+        <button class="md-icon-button" ng-click="vm.cancel()" md-autofocus aria-label="{{'SCHLIESSEN' | translate}}">
             <i class="fa fa-times" aria-hidden="true"></i>
+            <span data-translate="SCHLIESSEN"></span>
         </button>
     </div>
     <md-dialog-content class="md-dialog-content" role="document" tabindex="-1" id="dialogContent">
