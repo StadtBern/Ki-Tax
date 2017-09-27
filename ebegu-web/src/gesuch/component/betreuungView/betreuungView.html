@@ -401,7 +401,26 @@
 
                             <!-- Modulauswahl Tagesschule -->
                             <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">
+
+                                <!-- Tagesschulen -->
+                                <div class="row" ng-if="vm.isEnabled() && vm.isTagesschule()">
+                                    <div class="col-sm-12 dv-input-container-medium form-group">
+                                        <label class="md-no-float required" data-translate="TAGESSCHULE" for="tagesschule"></label>
+                                        <div class="dv-select-style">
+                                            <select aria-describedby="tagesschule-error" name="tagesschule" id="tagesschule"
+                                                    ng-model="vm.instStammId"
+                                                    class="form-control"
+                                                    ng-options="institutionSD.id as institutionSD.institution.name for institutionSD in vm.getInstitutionenSDList() | orderBy: 'institution.name'"
+                                                    ng-required="true" ng-change="vm.setSelectedInstitutionStammdaten()"
+                                                    ng-disabled="!vm.isEnabled()">
+                                            </select>
+                                            <dv-error-messages input-id="tagesschule" for="vm.form.tagesschule.$error"></dv-error-messages>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <span>TODO Hier kommt dann die Modulauswahl für die Anmeldung</span>
+
                             </div>
 
                             <!-- Hinweis, dass Tageschulanmeldung ncoh nicht freigeschaltet -->
