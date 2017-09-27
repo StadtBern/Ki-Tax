@@ -1320,15 +1320,18 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		List<Gesuch> criteriaResults = getGesuchesOhneFreigabeOderQuittung();
 		int anzahl = criteriaResults.size();
+		List<Betreuung> betreuungen = new ArrayList<>();
 		for (Gesuch gesuch : criteriaResults) {
 			try {
 				mailService.sendInfoGesuchGeloescht(gesuch);
+				betreuungen.addAll(gesuch.extractAllBetreuungen());
 				removeGesuch(gesuch.getId());
 			} catch (MailException e) {
 				LOG.error("Mail InfoGesuchGeloescht konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
 				anzahl--;
 			}
 		}
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
 		return anzahl;
 	}
 
@@ -1401,7 +1404,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		logDeletingOfGesuchstellerAntrag(fall, gesuchsperiode);
 		final Gesuch onlineMutation = findOnlineMutation(fall, gesuchsperiode);
 		moveBetreuungmitteilungenToPreviousAntrag(onlineMutation);
+		List<Betreuung> betreuungen = new ArrayList<>();
+		betreuungen.addAll(onlineMutation.extractAllBetreuungen());
 		superAdminService.removeGesuch(onlineMutation.getId());
+
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
 	}
 
 	@Override
@@ -1444,7 +1451,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public void removeOnlineFolgegesuch(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		logDeletingOfGesuchstellerAntrag(fall, gesuchsperiode);
 		Gesuch gesuch = findOnlineFolgegesuch(fall, gesuchsperiode);
+		List<Betreuung> betreuungen = new ArrayList<>();
+		betreuungen.addAll(gesuch.extractAllBetreuungen());
 		superAdminService.removeGesuch(gesuch.getId());
+
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
 	}
 
 	@Override
@@ -1468,12 +1479,16 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		if (gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen()) {
 			throw new EbeguRuntimeException("removeAntrag", ErrorCodeEnum.ERROR_DELETION_ANTRAG_NOT_ALLOWED,  gesuch.getStatus());
 		}
+		List<Betreuung> betreuungen = new ArrayList<>();
+		betreuungen.addAll(gesuch.extractAllBetreuungen());
 		// Bei Erstgesuch wird auch der Fall mitgelöscht
 		if (gesuch.getTyp() == AntragTyp.ERSTGESUCH) {
 			superAdminService.removeFall(gesuch.getFall());
 		} else {
 			superAdminService.removeGesuch(gesuch.getId());
 		}
+
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
 	}
 
 	@Override
@@ -1487,7 +1502,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		if (gesuch.getStatus() != AntragStatus.IN_BEARBEITUNG_GS) {
 			throw new EbeguRuntimeException("removeGesuchstellerAntrag", ErrorCodeEnum.ERROR_DELETION_ANTRAG_NOT_ALLOWED,  gesuch.getStatus());
 		}
+		List<Betreuung> betreuungen = new ArrayList<>();
+		betreuungen.addAll(gesuch.extractAllBetreuungen());
 		superAdminService.removeGesuch(gesuch.getId());
+
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
 	}
 
 	@Override
