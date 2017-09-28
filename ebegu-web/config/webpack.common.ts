@@ -17,6 +17,7 @@ let currentTime = new Date();
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 /**
  * Webpack Constants
  */
@@ -102,6 +103,15 @@ export default (env: string): webpack.Configuration => {
                 'window.jquery': 'jquery',
                 'moment': 'moment'
             }),
+
+
+        // run TypeScript checker in a separate thread for build performance gain
+        new ForkTsCheckerWebpackPlugin({
+            checkSyntacticErrors: true,
+            // tslint runs through tslint-loader
+            tslint: true,
+            tsconfig: root('src', 'tsconfig.json')
+        }),
 
             // Plugin: ForkCheckerPlugin
             // Description: Do type checking in a separate process, so webpack don't need to wait.

@@ -43,7 +43,7 @@ export class DvPosteingangController {
         });
 
         // Das Interval muss nach jedem LOGOUT entfernt werden, um zu vermeiden dass es bei Benutzern auftritt die
-		// keinen Mitteilungen haben
+        // keinen Mitteilungen haben
         this.$rootScope.$on(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], () => {
             clearInterval(this.reloadAmountMitteilungenInterval);
         });

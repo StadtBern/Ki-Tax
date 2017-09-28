@@ -1,4 +1,4 @@
-import {IComponentControllerService, IRootScopeService} from "angular";
+import {IComponentControllerService, IRootScopeService} from 'angular';
 import {ErwerbspensumViewComponentConfig} from './erwerbspensumView';
 
 describe('erwerbspensumView', function () {

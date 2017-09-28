@@ -9,49 +9,31 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 export default (): Rule[] => {
 
     return [
-
-        {
-            // Static analysis linter for TypeScript advanced options configuration
-            // Description: An extensible linter for the TypeScript language.
-            //
-            // See: https://github.com/wbuchwalter/tslint-loader
-            test: /\.ts$/,
-            enforce: 'pre',
-            use: {
-                loader: 'tslint-loader',
-                options: {
-                    // can specify a custom config file relative to current directory or with absolute path
-                    // 'tslint-custom.json'
-                    configFile: 'tslint.json',
-
-                    // tslint errors are displayed by default as warnings
-                    // set emitErrors to true to display them as errors
-                    emitErrors: false,
-
-                    // tslint does not interrupt the compilation by default
-                    // if you want any file with tslint errors to fail
-                    // set failOnHint to true
-                    failOnHint: true,
-
-                    // enables type checked rules like 'for-in-array'
-                    // uses tsconfig.json from current working directory
-                    typeCheck: false,
-
-                    // automatically fix linting errors
-                    fix: false,
-
-                    // // can specify a custom tsconfig file relative to current directory or with absolute path
-                    // // to be used with type checked rules
-                    // tsConfigFile: '../src/tsconfig.json'
-                }
-            }
-        },
         {
             test: /\.ts$/,
-            use: {
-                loader: 'awesome-typescript-loader',
-                options: {configFileName: root('src', 'tsconfig.json')}
-            }
+            exclude: /node_modules/,
+            use: [
+                {
+                    loader: 'cache-loader',
+                },
+                {
+                    loader: 'thread-loader',
+                    options: {
+                        // there should be 1 cpu for the fork-ts-checker-webpack-plugin
+                        workers: require('os').cpus().length - 1,
+                        name: 'tsPool',
+                    },
+                },
+                {
+                    loader: 'ts-loader',
+                    options: {
+                        silent: true, // avoid breaking up webpack progress
+                        // disable type checker - we will use it in fork plugin
+                        transpileOnly: true,
+                        happyPackMode: true,
+                    },
+                },
+            ],
         },
 
         // Html loader advanced options
