@@ -698,6 +698,7 @@
     "TSRole_REVISOR": "Revisor Jugendamt",
     "TSRole_STEUERAMT": "Sachbearbeiter Steueramt",
     "TSRole_SCHULAMT": "Sachbearbeiter Schulamt",
+    "TSRole_ADMINISTRATOR_SCHULAMT": "Administrator Schulamt",
     "PARAM_GRENZWERT_EINKOMMENSVERSCHLECHTERUNG": "Minimale Einkommenveschlechterung (%)",
     "PARAM_BABY_FAKTOR": "Baby Faktor",
     "PARAM_BABY_ALTER_IN_MONATEN": "Maximales Alter für Baby Faktor",
