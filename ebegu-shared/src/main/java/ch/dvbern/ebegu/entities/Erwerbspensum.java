@@ -1,12 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.Taetigkeit;
-import ch.dvbern.ebegu.enums.Zuschlagsgrund;
-import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.util.ServerMessageUtil;
-import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumZuschlagUndGrund;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.envers.Audited;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -16,7 +10,15 @@ import javax.persistence.Enumerated;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.enums.Taetigkeit;
+import ch.dvbern.ebegu.enums.Zuschlagsgrund;
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
+import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumZuschlagUndGrund;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.envers.Audited;
 
 /**
  * Erwerbspensum eines Gesuchstellers
@@ -87,12 +89,30 @@ public class Erwerbspensum extends AbstractPensumEntity {
 		this.zuschlagsgrund = zuschlagsgrund;
 	}
 
-	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
-	public boolean isSame(Erwerbspensum otherErwerbspensum) {
+	@SuppressWarnings({"OverlyComplexBooleanExpression"})
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!super.isSame(other)) {
+			return false;
+		}
+		if (!(other instanceof Erwerbspensum)) {
+			return false;
+		}
+		final Erwerbspensum otherErwerbspensum = (Erwerbspensum) other;
 		boolean pensumIsSame = super.isSame(otherErwerbspensum);
 		boolean taetigkeitSame = Objects.equals(taetigkeit, otherErwerbspensum.getTaetigkeit());
 		boolean zuschlagSame = Objects.equals(zuschlagZuErwerbspensum, otherErwerbspensum.getZuschlagZuErwerbspensum());
-		return pensumIsSame && taetigkeitSame && zuschlagSame;
+		boolean bezeichnungSame = EbeguUtil.isSameOrNullStrings(bezeichnung, otherErwerbspensum.getBezeichnung());
+		boolean zuschlagsgrundSame = Objects.equals(zuschlagsgrund, otherErwerbspensum.getZuschlagsgrund());
+		boolean zuschlagsprozentSame = Objects.equals(zuschlagsprozent, otherErwerbspensum.getZuschlagsprozent());
+		return pensumIsSame && taetigkeitSame && zuschlagSame && bezeichnungSame && zuschlagsgrundSame && zuschlagsprozentSame;
 	}
 
 	public String getName() {

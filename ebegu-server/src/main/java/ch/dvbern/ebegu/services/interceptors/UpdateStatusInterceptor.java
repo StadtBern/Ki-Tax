@@ -37,7 +37,7 @@ public class UpdateStatusInterceptor {
 	private PrincipalBean principalBean;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private GesuchService gesuchService;

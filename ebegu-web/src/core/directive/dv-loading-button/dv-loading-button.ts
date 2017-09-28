@@ -1,14 +1,11 @@
 import {IDirective, IDirectiveFactory} from 'angular';
 import {TSHTTPEvent} from '../../events/TSHTTPEvent';
-import INgModelController = angular.INgModelController;
 import IHttpService = angular.IHttpService;
 import ITimeoutService = angular.ITimeoutService;
 import IFormController = angular.IFormController;
-import IScope = angular.IScope;
-import IAugmentedJQuery = angular.IAugmentedJQuery;
 import IAttributes = angular.IAttributes;
-import IAngularEvent = angular.IAngularEvent;
 import ILogService = angular.ILogService;
+
 let template = require('./dv-loading-button.html');
 
 interface IDVLoadingButtonController {
@@ -28,8 +25,8 @@ export class DVLoadingButton implements IDirective {
         forceWaitService: '@',
         buttonDisabled: '<',
         ariaLabel: '@',
-        buttonClick: '&'
-
+        buttonClick: '&',
+        inputId: '@'
     };
     template = template;
     controller = DVLoadingButtonController;
@@ -46,8 +43,8 @@ export class DVLoadingButton implements IDirective {
 /**
  * Button that disables itself after clicking to prevent multiclicks. If embedded in a form-controller it will check if
  * the form is valid first. If not it will not disable itself.
- * By default the button will be disabled till the next REST servicecall returns (not neceserally the one that was triggered
- * by this button) or till 400 ms have expired
+ * By default the button will be disabled till the next REST servicecall returns (not neceserally the one that was
+ * triggered by this button) or till 400 ms have expired
  * @example:
  *
  <dv-loading-button type="submit"
@@ -57,13 +54,12 @@ export class DVLoadingButton implements IDirective {
  <i class="glyphicon glyphicon-plus"></i>
  <span data-translate="SAVE"></span>
  </dv-loading-button>
-
  *
  */
 export class DVLoadingButtonController implements IDVLoadingButtonController {
     static $inject: string[] = ['$http', '$scope', '$timeout', '$attrs', '$log'];
 
-    buttonClicked: () => void;
+    buttonClicked: ($event: any) => void;
     isDisabled: boolean;
     formCtrl: IFormController;
     delay: string;
@@ -73,27 +69,30 @@ export class DVLoadingButtonController implements IDVLoadingButtonController {
     buttonClick: () => void;
 
     /* @ngInject */
-    constructor(private $http: IHttpService, private $scope: any, private $timeout: ITimeoutService, private $attrs: IAttributes, private $log: ILogService) {
+    constructor(private $http: IHttpService, private $scope: any, private $timeout: ITimeoutService,
+                private $attrs: IAttributes, private $log: ILogService) {
     }
 
     //wird von angular aufgerufen
     $onInit() {
         if ('ngClick' in this.$attrs) {
-            this.$log.error('must not use ng-click on dv-loading-button');
+            this.$log.error('must not use ng-click on dv-loading-button', this);
         }
         if ('ngDisabled' in this.$attrs) {
-            this.$log.error('must not use ng-disabled on dv-loading-button');
+            this.$log.error('must not use ng-disabled on dv-loading-button', this);
         }
         if (!this.type) {
             this.type = 'button'; //wenn kein expliziter type angegeben wurde nehmen wir default button
         }
 
-        this.buttonClicked = () => {
+        this.buttonClicked = ($event: any) => {
             //wenn der button disabled ist machen wir mal gar nichts
             if (this.buttonDisabled || this.isDisabled) {
                 return;
             }
-            this.buttonClick();  //falls ein button-click callback uebergeben wurde ausfuehren
+            this.buttonClick();
+            $event.stopPropagation();
+            //falls ein button-click callback uebergeben wurde ausfuehren
 
             //timeout wird gebraucht damit der request nach dem disablen ueberhaupt uebermittelt wird
             this.$timeout(() => {
@@ -132,11 +131,11 @@ export class DVLoadingButtonController implements IDVLoadingButtonController {
     private getDelay(): number {
         if (this.delay) {
             let parsedNum = parseInt(this.delay);
-            if (parsedNum) {
+            if (parsedNum !== undefined && parsedNum !== null) {
                 return parsedNum;
             }
         }
-        return 4000;   //default delay = 400 MS
+        return 4000;   //default delay = 4000 MS
     }
 
     /**

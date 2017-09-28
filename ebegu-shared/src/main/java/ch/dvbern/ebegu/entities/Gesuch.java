@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -31,6 +32,11 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
@@ -38,14 +44,10 @@ import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
 import ch.dvbern.ebegu.validators.CheckGesuchComplete;
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
 
 /**
  * Entitaet zum Speichern von Gesuch in der Datenbank.
@@ -55,6 +57,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 @Entity
 @Indexed
 @Analyzer(impl = EBEGUGermanAnalyzer.class)
+@EntityListeners({GesuchStatusListener.class})
 public class Gesuch extends AbstractEntity implements Searchable{
 
 	private static final long serialVersionUID = -8403487439884700618L;
@@ -94,6 +97,11 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	@Enumerated(EnumType.STRING)
 	private Eingangsart eingangsart = Eingangsart.PAPIER;
 
+	@NotNull
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private GesuchBetreuungenStatus gesuchBetreuungenStatus = GesuchBetreuungenStatus.ALLE_BESTAETIGT;
+
 	@Valid
 	@Nullable
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -132,6 +140,9 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	@Transient
 	private FinanzDatenDTO finanzDatenDTO_zuZweit;
+
+	@Transient
+	private AntragStatus preStatus;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -350,6 +361,14 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		this.eingangsart = eingangsart;
 	}
 
+	public GesuchBetreuungenStatus getGesuchBetreuungenStatus() {
+		return gesuchBetreuungenStatus;
+	}
+
+	public void setGesuchBetreuungenStatus(GesuchBetreuungenStatus gesuchBetreuungenStatus) {
+		this.gesuchBetreuungenStatus = gesuchBetreuungenStatus;
+	}
+
 	@Nullable
 	public Set<DokumentGrund> getDokumentGrunds() {
 		return dokumentGrunds;
@@ -448,17 +467,22 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		this.gueltig = gueltig;
 	}
 
-	@SuppressWarnings("ObjectEquality")
-	public boolean isSame(Gesuch otherAntrag) {
-		if (this == otherAntrag) {
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		if (otherAntrag == null || getClass() != otherAntrag.getClass()) {
+		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-		return (Objects.equals(this.getEingangsdatum(), otherAntrag.getEingangsdatum())
+		if (!(other instanceof Gesuch)) {
+			return false;
+		}
+		final Gesuch otherAntrag = (Gesuch) other;
+		return Objects.equals(this.getEingangsdatum(), otherAntrag.getEingangsdatum())
 			&& Objects.equals(this.getFall(), otherAntrag.getFall())
-			&& Objects.equals(this.getGesuchsperiode(), otherAntrag.getGesuchsperiode()));
+			&& Objects.equals(this.getGesuchsperiode(), otherAntrag.getGesuchsperiode());
 	}
 
 	/**
@@ -470,7 +494,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 			return "-";
 		}
 		return Integer.toString(getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2)
-			+ "." + StringUtils.leftPad("" + getFall().getFallNummer(), Constants.FALLNUMMER_LENGTH, '0');
+			+ '.' + getFall().getPaddedFallnummer();
 	}
 
 	@Transient
@@ -478,6 +502,17 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		final List<Betreuung> list = new ArrayList<>();
 		for (final KindContainer kind : getKindContainers()) {
 			list.addAll(kind.getBetreuungen());
+		}
+		return list;
+	}
+
+	@Transient
+	public List<AbwesenheitContainer> extractAllAbwesenheiten() {
+		final List<AbwesenheitContainer> list = new ArrayList<>();
+		for (final KindContainer kind : getKindContainers()) {
+			for (final Betreuung betreuung : kind.getBetreuungen()) {
+				list.addAll(betreuung.getAbwesenheitContainers());
+			}
 		}
 		return list;
 	}
@@ -543,9 +578,9 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	public boolean areAllBetreuungenBestaetigt() {
 		List<Betreuung> betreuungs = extractAllBetreuungen();
 		for (Betreuung betreuung : betreuungs) {
-			if (Betreuungsstatus.AUSSTEHEND.equals(betreuung.getBetreuungsstatus()) ||
-				Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus()) ||
-				Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus())) {
+			if (Betreuungsstatus.AUSSTEHEND == betreuung.getBetreuungsstatus() ||
+				Betreuungsstatus.WARTEN == betreuung.getBetreuungsstatus() ||
+				Betreuungsstatus.ABGEWIESEN == betreuung.getBetreuungsstatus()) {
 				return false;
 			}
 		}
@@ -681,6 +716,11 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		return getId();
 	}
 
+	@Override
+	public String getOwningFallId() {
+		return getFall().getId();
+	}
+
 	@Nonnull
 	public Optional<Betreuung> extractBetreuungsFromBetreuungNummer(@NotNull Integer kindNummer, @NotNull Integer betreuungNummer) {
 		final List<Betreuung> allBetreuungen = extractAllBetreuungen();
@@ -722,5 +762,13 @@ public class Gesuch extends AbstractEntity implements Searchable{
 			}
 		}
 		return null;
+	}
+
+	public AntragStatus getPreStatus() {
+		return preStatus;
+	}
+
+	public void setPreStatus(AntragStatus preStatus) {
+		this.preStatus = preStatus;
 	}
 }

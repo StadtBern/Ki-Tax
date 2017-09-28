@@ -57,7 +57,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private JaxBConverter converter;
 	@Inject
-	private Persistence<?> persistence;
+	private Persistence persistence;
 
 
 	@Test
@@ -145,6 +145,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 		JaxGesuch returnedGesuch = (JaxGesuch) gesuchResource.create(jaxGesuch, uri, null).getEntity();
 
 		KindContainer returnedKind = TestDataUtil.createDefaultKindContainer();
+		returnedKind.setGesuch(converter.gesuchToEntity(returnedGesuch, new Gesuch()));
 		JaxKindContainer jaxKind = converter.kindContainerToJAX(returnedKind);
 		JaxPensumFachstelle jaxPensumFachstelle = jaxKind.getKindGS().getPensumFachstelle();
 		jaxPensumFachstelle.setFachstelle(fachstelleResource.saveFachstelle(jaxPensumFachstelle.getFachstelle(), null, null));

@@ -6,6 +6,8 @@ import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.enums.WizardStepName;
 
 import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -58,6 +60,12 @@ public interface WizardStepService {
 	 */
 	@Nonnull
 	List<WizardStep> createWizardStepList(Gesuch gesuch);
+
+	/**
+	 * Sets the Status of the given Step to OK or MUTIERT. In order to be set to MUTIERT the data must have been
+	 * changed in comparisson to the vorgaenger. If not it will be set to OK.
+	 */
+	void setWizardStepOkOrMutiert(@NotNull WizardStep wizardStep);
 
 	/**
 	 * Damit ein Gesuch removed werden kann meussen allse sseine WizardSteps entfernt werden

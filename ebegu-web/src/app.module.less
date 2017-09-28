@@ -16,6 +16,15 @@
 @import 'style/mediaqueries.less';
 @import 'style/typography.less';
 
+.access-for-all-title {
+    display: block;
+    font-size: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+}
+
 dv-posteingang {
     width: 100%;
     height: 100%;
@@ -119,7 +128,7 @@ body {
 }
 
 dv-home-icon, dv-countdown, dv-downloadmenu {
-    &:first-child {
+    &:nth-child(2) {
         margin-left: auto;
     }
     display: flex;
@@ -150,8 +159,18 @@ dv-pulldown-user-menu {
     height: @navbar-height;
     width: @navbar-height;
     line-height: @navbar-height;
-    &:hover {
-        background-color: @contrast-light;
+    &:hover, &:focus:hover {
+        background: @contrast;
+        outline: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+    &:focus {
+        outline: 2px solid @contrast-darkest !important;
+        background: @contrast;
+        outline-offset: -1rem;
+        -webkit-box-shadow: none;
+        box-shadow: none;
     }
 }
 
@@ -190,7 +209,6 @@ dv-pulldown-user-menu {
     background-color: @background-error-color;
 }
 
-//todo (mrra) das braucht es wohl gar nicht mehr
 .form-horizontal {
     dv-error-messages {
         padding-left: 0.1rem;
@@ -211,8 +229,7 @@ form {
 
     }
     // style der den Hintergrund der inputs on-blur Rot markiert wenn nicht valid
-    .form-control.ng-invalid, .input-element.ng-invalid, md-radio-group.ng-invalid /*, :not(md-checkbox.input-element.ng-invalid)*/
-    {
+    .form-control.ng-invalid, .input-element.ng-invalid, md-radio-group.ng-invalid /*, :not(md-checkbox.input-element.ng-invalid)*/ {
         &.ng-touched {
             .ErrorInput
         }
@@ -248,7 +265,7 @@ md-dialog.md-default-theme, md-dialog {
 
 .md-virtual-repeat-container.md-autocomplete-suggestions-container {
     max-height: 99999999px !important;
-    z-index: @z-index-mobile-toolbar; //todo (mrra) Kannst du das  anschauen? das ist evtl. nicht so gut
+    z-index: @z-index-mobile-toolbar;
     box-shadow: none;
 }
 
@@ -330,6 +347,82 @@ dv-quicksearchbox {
         &:after {
             content: none;
         }
+    }
+}
+
+.skiplinks {
+    .skiplinks__list {
+        list-style: none;
+        height: 0;
+        margin: 0;
+    }
+    .skip {
+        position: fixed;
+        z-index: 108;
+        top: -1000px;
+        left: -1000px;
+        height: 1px;
+        width: 1px;
+        text-align: left;
+        overflow: hidden;
+        &:active,
+        &:focus,
+        &:hover {
+            left: 0;
+            top: 0;
+            width: auto;
+            height: @navbar-height;
+            line-height: 3rem;
+            overflow: visible;
+            border-bottom: 2px solid @contrast-darkest;
+            border-right: 2px solid @contrast-darkest;
+            box-shadow: none;
+            outline: none;
+            background: @primary;
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: block;
+            padding: 1rem;
+            color: @contrast-lightest;
+            text-decoration: none;
+        }
+    }
+
+}
+.row-button__th, .row-button__td{
+    width:0;
+    padding: 0 !important;
+    margin : 0!important;
+
+}
+.row-button__button{
+    position: fixed;
+    z-index: 108;
+    top: -1000px;
+    left: -1000px;
+    height: 1px;
+    width: 1px;
+    text-align: left;
+    overflow: hidden;
+    &:active,
+    &:focus,
+    &:hover {
+        position: static;
+
+        height: 100%;
+        width:100%;
+        line-height: 3rem;
+        overflow: visible;
+        border: 2px solid @contrast-darkest;
+        box-shadow: none;
+        outline: none;
+        background: @primary;
+        font-size: 1.8rem;
+        font-weight: bold;
+        display: block;
+        padding:0;
+        color: @contrast-lightest;
+        text-decoration: none;
     }
 }
 

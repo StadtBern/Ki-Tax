@@ -2,14 +2,13 @@ import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import {TSAntragTyp} from './enums/TSAntragTyp';
 import {TSAntragStatus} from './enums/TSAntragStatus';
 import {TSEingangsart} from './enums/TSEingangsart';
-import EbeguUtil from '../utils/EbeguUtil';
 import * as moment from 'moment';
+import {TSGesuchBetreuungenStatus} from './enums/TSGesuchBetreuungenStatus';
+import TSAbstractAntragDTO from './TSAbstractAntragDTO';
 
-export default class TSAntragDTO {
+export default class TSAntragDTO extends TSAbstractAntragDTO {
 
     private _antragId: string;
-    private _fallNummer: number;
-    private _familienName: string;
     private _antragTyp: TSAntragTyp;
     private _eingangsart: TSEingangsart;
     private _eingangsdatum: moment.Moment;
@@ -26,16 +25,16 @@ export default class TSAntragDTO {
     private _verfuegt: boolean;
     private _beschwerdeHaengig: boolean;
     private _laufnummer: number;
+    private _gesuchBetreuungenStatus: TSGesuchBetreuungenStatus;
 
     constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
                 eingangsdatum?: moment.Moment, eingangsdatumSTV?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
                 verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
                 verfuegt?: boolean, laufnummer?: number, besitzerUsername?: string, eingangsart?: TSEingangsart, beschwerdeHaengig?: boolean,
-                kinder?: Array<string>) {
+                kinder?: Array<string>, gesuchBetreuungenStatus?: TSGesuchBetreuungenStatus) {
 
+        super(fallNummer, familienName);
         this._antragId = antragId;
-        this._fallNummer = fallNummer;
-        this._familienName = familienName;
         this._antragTyp = antragTyp;
         this._eingangsdatum = eingangsdatum;
         this._eingangsdatumSTV = eingangsdatumSTV;
@@ -52,6 +51,7 @@ export default class TSAntragDTO {
         this._eingangsart = eingangsart;
         this._beschwerdeHaengig = beschwerdeHaengig;
         this._kinder = kinder;
+        this._gesuchBetreuungenStatus = gesuchBetreuungenStatus;
     }
 
 
@@ -61,22 +61,6 @@ export default class TSAntragDTO {
 
     set antragId(value: string) {
         this._antragId = value;
-    }
-
-    get fallNummer(): number {
-        return this._fallNummer;
-    }
-
-    set fallNummer(value: number) {
-        this._fallNummer = value;
-    }
-
-    get familienName(): string {
-        return this._familienName;
-    }
-
-    set familienName(value: string) {
-        this._familienName = value;
     }
 
     get antragTyp(): TSAntragTyp {
@@ -199,7 +183,7 @@ export default class TSAntragDTO {
         this._besitzerUsername = value;
     }
 
-    private hasBesitzer(): boolean {
+    public hasBesitzer(): boolean {
         return this._besitzerUsername !== undefined && this.besitzerUsername !== null;
     }
 
@@ -209,17 +193,6 @@ export default class TSAntragDTO {
 
     set beschwerdeHaengig(value: boolean) {
         this._beschwerdeHaengig = value;
-    }
-
-    public getQuicksearchString(): string {
-        let text = '';
-        if (this.fallNummer) {
-            text = EbeguUtil.addZerosToNumber(this.fallNummer, 6);
-        }
-        if (this.familienName) {
-            text = text + ' ' + this.familienName;
-        }
-        return text;
     }
 
 
@@ -244,4 +217,11 @@ export default class TSAntragDTO {
         return true;
     }
 
+    public get gesuchBetreuungenStatus(): TSGesuchBetreuungenStatus {
+        return this._gesuchBetreuungenStatus;
+    }
+
+    public set gesuchBetreuungenStatus(value: TSGesuchBetreuungenStatus) {
+        this._gesuchBetreuungenStatus = value;
+    }
 }

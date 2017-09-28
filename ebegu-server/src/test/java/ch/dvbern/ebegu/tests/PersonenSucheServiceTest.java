@@ -1,5 +1,11 @@
 package ch.dvbern.ebegu.tests;
 
+import java.time.LocalDate;
+import java.time.Month;
+
+import javax.ejb.EJBException;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.Geschlecht;
@@ -13,11 +19,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.ejb.EJBException;
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.Month;
 
 /**
  * Arquillian Tests fuer den PersonenSuche Service
@@ -34,7 +35,7 @@ public class PersonenSucheServiceTest extends AbstractEbeguLoginTest {
 	private PersonenSucheService personenSucheService;
 
 	@Inject
-	private Persistence<Gesuchsteller> persistence;
+	private Persistence persistence;
 
 	@Test
 	public void suchePersonById() throws Exception {

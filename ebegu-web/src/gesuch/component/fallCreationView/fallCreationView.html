@@ -1,9 +1,10 @@
 <div class="fallCreationView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
     <div class="row viewTitle">
         <div class="col-md-12">
-            <h1>
+            <h2>
                 <span ng-bind="vm.getTitle()"></span>
-            </h1>
+            </h2>
             <hr class="header"/>
         </div>
     </div>
@@ -14,19 +15,21 @@
 
                     <!-- Bei neuen Gesuchen für inaktive Periode: Warnen -->
                     <div ng-if="vm.isSelectedGesuchsperiodeInaktiv()" class="well well-status-warten">
-                        <h3 data-translate="GESUCHSPERIODE_INAKTIV_HINT">
-                        </h3>
+                        <p class="ebeguH3" data-translate="GESUCHSPERIODE_INAKTIV_HINT">
+                        </p>
                     </div>
                     <!-- Folgegesuch: Info, dass Daten uebernommen wurden -->
-                    <div ng-if="vm.gesuchModelManager.getGesuch().isFolgegesuch()" class="well well-status-warten">
-                        <h3 data-translate="FOLGEGESUCH_HINT">
-                        </h3>
+                    <div dv-show-expression="vm.gesuchModelManager.getGesuch().isFolgegesuch()" dv-show-element
+                         dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()"
+                         class="well well-status-warten">
+                        <p class="ebeguH3" data-translate="FOLGEGESUCH_HINT">
+                        </p>
                     </div>
 
                     <!--Willkommnstext bei Erstgesuch-->
                     <div ng-if="vm.gesuchModelManager.isGesuch()">
 
-                        <h1 data-translate="ERSTGESUCH_WILLKOMMEN_TEXT"></h1>
+                        <h3 class="ebeguH2" data-translate="ERSTGESUCH_WILLKOMMEN_TEXT"></h3>
                         <br>
                         <p>
                             {{"ERSTGESUCH_WILLKOMMEN_TEXT_2"|translate}} {{"ERSTGESUCH_WILLKOMMEN_TEXT_3"|translate}}
@@ -37,7 +40,7 @@
                     <!--Mutationelemente auswaehlen. Nur fuer Mutationen-->
                     <div ng-if="!vm.gesuchModelManager.isGesuch()">
 
-                        <h1 data-translate="MUTATION_AUSWAHL_TEXT_1"></h1>
+                        <h3 class="ebeguH2" data-translate="MUTATION_AUSWAHL_TEXT_1"></h3>
                         <br>
                         <p>
                             {{"MUTATION_AUSWAHL_TEXT_2"|translate}} {{"MUTATION_AUSWAHL_TEXT_3"|translate}}
@@ -56,15 +59,14 @@
                                                ng-model="vm.getGesuchModel().eingangsdatum" ng-required="true"
                                                class="input-element">
                                 </dv-datepicker>
-                                <dv-error-messages for="vm.form.eingangsdatum.$error"
+                                <dv-error-messages input-id="eingangsdatum_ID" for="vm.form.eingangsdatum.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
 
-                    <!--Gesuchsperioden. Nur fuer Erstgesuch-->
-
-                    <div ng-if="vm.gesuchModelManager.isGesuch() && vm.isGesuchsperiodeActive()">
+                    <!-- Gesuchsperiode: Auswahl -->
+                    <div ng-if="vm.canChangeGesuchsperiode()">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -79,17 +81,28 @@
                                             <md-radio-button
                                                 ng-repeat="current in vm.getAllActiveGesuchsperioden()"
                                                 ng-value="current.id" aria-label="{{current.gesuchsperiodeString}}"
-                                                ng-disabled="vm.isGesuchReadonly()  || vm.isKorrekturModusJugendamt()">
+                                                ng-disabled="vm.isGesuchReadonly()  || vm.isKorrekturModusJugendamt()"
+                                                aria-describedby="gesuchsperioden-error">
                                                 <span>{{current.gesuchsperiodeString}}</span>
                                             </md-radio-button>
                                         </md-radio-group>
-                                        <dv-error-messages for="vm.form.gesuchsperioden.$error"></dv-error-messages>
+                                        <dv-error-messages input-id="gesuchsperioden"
+                                                           for="vm.form.gesuchsperioden.$error"></dv-error-messages>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
+                    <!-- Gesuchsperiode: Readonly -->
+                    <div class="row" ng-if="!vm.canChangeGesuchsperiode()">
+                        <div class="col-sm-12">
+                            <dv-input-container>
+                                <label class="md-no-float" data-translate="GESUCHSPERIODE"
+                                       data-translate-value-gesuchsperiode="{{vm.getGesuchModel().gesuchsperiode.gesuchsperiodeString}}">
+                                </label>
+                            </dv-input-container>
+                        </div>
+                    </div>
 
                 </fieldset>
 

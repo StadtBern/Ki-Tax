@@ -1,9 +1,10 @@
 <div class="erwerbspensumListView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
     <div class="row viewTitle">
         <div class="col-md-12">
-            <h1>
+            <h2>
                 <span data-translate="ERWERBSPENSEN_LIST_TITLE"></span>
-            </h1>
+            </h2>
             <hr class="header"/>
             <p ng-if="vm.gesuchModelManager.getGesuch().isMutation() && !vm.isGesuchReadonly()" class="inlineHint"
                data-translate="ERWERBSPENSUM_HINT"></p>
@@ -17,30 +18,32 @@
 
     <!--Erwerbspensen von Gesuchsteller 1-->
     <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller1" class="marginBottom80">
-        <h2>
+        <h3 class="ebeguH2">
             <span ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller1.extractFullName()"></span>
-        </h2>
+        </h3>
         <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS1()" table-id="erwerbspensenGS1"
                                add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
                                add-button-Visible="!vm.isGesuchReadonly()"
                                add-button-enabled="!vm.isKorrekturModusJugendamt()"
+                               input-id="removeEWPButton1_"
                                on-add="vm.createErwerbspensum(1)"
                                on-edit="vm.editPensum(pensum, 1)"
-                               on-remove="vm.removePensum(pensum, 1)"></dv-erwerbspensum-list>
+                               on-remove="vm.removePensum(pensum, 1, 'removeEWPButton1_',index)"></dv-erwerbspensum-list>
 
     </div>
     <!--Erwerbspensen von Gesuchsteller 2-->
     <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller2">
-        <h2>
+        <h3 class="ebeguH3">
             <span ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName()"></span>
-        </h2>
+        </h3>
         <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS2()" table-id="erwerbspensenGS2"
                                add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
                                add-button-Visible="!vm.isGesuchReadonly()"
                                add-button-enabled="!vm.isKorrekturModusJugendamt()"
+                               input-id="removeEWPButton2_"
                                on-add="vm.createErwerbspensum(2)"
                                on-edit="vm.editPensum(pensum, 2)"
-                               on-remove="vm.removePensum(pensum, 2)"></dv-erwerbspensum-list>
+                               on-remove="vm.removePensum(pensum, 2, 'removeEWPButton2_')"></dv-erwerbspensum-list>
     </div>
 
     <div class="row">

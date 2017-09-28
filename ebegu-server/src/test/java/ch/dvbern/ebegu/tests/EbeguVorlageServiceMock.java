@@ -1,15 +1,16 @@
 package ch.dvbern.ebegu.tests;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.persistence.EntityManager;
+
 import ch.dvbern.ebegu.entities.EbeguVorlage;
 import ch.dvbern.ebegu.entities.Vorlage;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.services.EbeguVorlageServiceBean;
 import ch.dvbern.ebegu.types.DateRange;
-
-import javax.annotation.Nonnull;
-import javax.persistence.EntityManager;
-import java.time.LocalDate;
-import java.util.Optional;
 
 
 /**
@@ -27,7 +28,7 @@ public class EbeguVorlageServiceMock extends EbeguVorlageServiceBean {
 
 	@Nonnull
 	@Override
-	public Optional<EbeguVorlage> getEbeguVorlageByDatesAndKey(LocalDate abDate, LocalDate bisDate, EbeguVorlageKey ebeguVorlageKey, EntityManager em) {
+	public Optional<EbeguVorlage> getEbeguVorlageByDatesAndKey(@Nonnull LocalDate abDate, @Nonnull LocalDate bisDate, @Nonnull EbeguVorlageKey ebeguVorlageKey, EntityManager em) {
 		EbeguVorlage ebeguVorlage = new EbeguVorlage(ebeguVorlageKey, new DateRange(abDate, bisDate));
 		Vorlage vorlage = new Vorlage();
 
@@ -70,7 +71,6 @@ public class EbeguVorlageServiceMock extends EbeguVorlageServiceBean {
 		}
 
 		ebeguVorlage.setVorlage(vorlage);
-
 		return Optional.of(ebeguVorlage);
 	}
 }

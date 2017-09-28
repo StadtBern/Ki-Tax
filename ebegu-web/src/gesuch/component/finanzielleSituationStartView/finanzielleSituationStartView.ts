@@ -1,7 +1,6 @@
 import {IComponentOptions, IPromise} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {IStammdatenStateParams} from '../../gesuch.route';
 import TSFinanzielleSituation from '../../../models/TSFinanzielleSituation';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
@@ -13,9 +12,10 @@ import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import IQService = angular.IQService;
 import IScope = angular.IScope;
+import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./finanzielleSituationStartView.html');
 require('./finanzielleSituationStartView.less');
-
 
 export class FinanzielleSituationStartViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -29,13 +29,13 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     allowedRoles: Array<TSRoleUtil>;
     private initialModel: TSFinanzModel;
 
-    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'WizardStepManager', '$q', '$scope'];
+    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService',
+        'WizardStepManager', '$q', '$scope', '$timeout'];
+
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FINANZIELLE_SITUATION);
+    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
+                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FINANZIELLE_SITUATION, $timeout);
 
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
         this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
@@ -64,9 +64,10 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
             this.errorService.clearAll();
             return this.gesuchModelManager.updateGesuch()
                 .then((gesuch: TSGesuch) => {
-                    // Nötig, da nur das ganze Gesuch upgedated wird und die Aeenderng bei der FinSit sonst nicht bemerkt werden
+                    // Noetig, da nur das ganze Gesuch upgedated wird und die Aeenderng bei der FinSit sonst nicht
+                    // bemerkt werden
                     if (this.gesuchModelManager.getGesuch().isMutation()) {
-                        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.MUTIERT);
+                        this.wizardStepManager.updateCurrentWizardStepStatusMutiert();
                     }
                     return gesuch;
                 });

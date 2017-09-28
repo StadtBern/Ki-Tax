@@ -53,6 +53,9 @@ public class Testfall_ASIV_01 extends AbstractASIVTestfall {
 		finanzielleSituationContainer.getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(70000));
 		finanzielleSituationContainer.setGesuchsteller(gesuchsteller1);
 		gesuchsteller1.setFinanzielleSituationContainer(finanzielleSituationContainer);
+
+		createEmptyEKVInfoContainer(gesuch);
+
 		return erstgesuch;
 	}
 

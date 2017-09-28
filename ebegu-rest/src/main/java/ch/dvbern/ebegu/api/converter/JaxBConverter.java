@@ -19,6 +19,13 @@ import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.hibernate.envers.DefaultRevisionEntity;
+import org.hibernate.envers.RevisionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.dvbern.ebegu.api.dtos.JaxAbstractDTO;
 import ch.dvbern.ebegu.api.dtos.JaxAbstractDateRangedDTO;
 import ch.dvbern.ebegu.api.dtos.JaxAbstractFinanzielleSituation;
@@ -30,7 +37,6 @@ import ch.dvbern.ebegu.api.dtos.JaxAdresse;
 import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
 import ch.dvbern.ebegu.api.dtos.JaxAntragStatusHistory;
 import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
-import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElement;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
@@ -79,6 +85,7 @@ import ch.dvbern.ebegu.api.dtos.JaxZahlung;
 import ch.dvbern.ebegu.api.dtos.JaxZahlungsauftrag;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
+import ch.dvbern.ebegu.authentication.JaxAuthAccessElement;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.AbstractDateRangedEntity;
 import ch.dvbern.ebegu.entities.AbstractEntity;
@@ -167,13 +174,9 @@ import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
-import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.date.DateConvertUtils;
-import org.apache.commons.lang3.Validate;
-import org.hibernate.envers.DefaultRevisionEntity;
-import org.hibernate.envers.RevisionType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.NotImplementedException;
+import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -435,6 +438,8 @@ public class JaxBConverter {
 		final JaxEnversRevision jaxEnversRevision = new JaxEnversRevision();
 		if (abstractEntity instanceof ApplicationProperty) {
 			jaxEnversRevision.setEntity(applicationPropertyToJAX((ApplicationProperty) abstractEntity));
+		} else {
+			throw new NotImplementedException("Diese Funktion ist erst fuer ApplicationProperties umgesetzt!");
 		}
 		jaxEnversRevision.setRev(revisionEntity.getId());
 		jaxEnversRevision.setRevTimeStamp(DateConvertUtils.asLocalDateTime(revisionEntity.getRevisionDate()));
@@ -527,7 +532,7 @@ public class JaxBConverter {
 						return 0;
 					} else if (o1.extractGueltigkeit() == null) {
 						return 1;
-					} else if (o1.extractGueltigkeit() == null) {
+					} else if (o2.extractGueltigkeit() == null) {
 						return -1;
 					} else {
 						return o1.extractGueltigkeit().getGueltigAb().compareTo(o2.extractGueltigkeit().getGueltigAb());
@@ -828,6 +833,7 @@ public class JaxBConverter {
 		antrag.setBemerkungenSTV(antragJAXP.getBemerkungenSTV());
 		antrag.setBemerkungenPruefungSTV(antragJAXP.getBemerkungenPruefungSTV());
 		antrag.setLaufnummer(antragJAXP.getLaufnummer());
+		antrag.setGesuchBetreuungenStatus(antragJAXP.getGesuchBetreuungenStatus());
 		antrag.setGeprueftSTV(antragJAXP.isGeprueftSTV());
 		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
 		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
@@ -957,6 +963,7 @@ public class JaxBConverter {
 		jaxGesuch.setBemerkungenSTV(persistedGesuch.getBemerkungenSTV());
 		jaxGesuch.setBemerkungenPruefungSTV(persistedGesuch.getBemerkungenPruefungSTV());
 		jaxGesuch.setLaufnummer(persistedGesuch.getLaufnummer());
+		jaxGesuch.setGesuchBetreuungenStatus(persistedGesuch.getGesuchBetreuungenStatus());
 		jaxGesuch.setGeprueftSTV(persistedGesuch.isGeprueftSTV());
 		jaxGesuch.setHasFSDokument(persistedGesuch.isHasFSDokument());
 		jaxGesuch.setGesperrtWegenBeschwerde(persistedGesuch.isGesperrtWegenBeschwerde());
@@ -1366,15 +1373,17 @@ public class JaxBConverter {
 		return container;
 	}
 
-	public JaxEinkommensverschlechterungContainer einkommensverschlechterungContainerToJAX(final EinkommensverschlechterungContainer persistedEinkommensverschlechterung) {
-		final JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterung = new JaxEinkommensverschlechterungContainer();
-		convertAbstractFieldsToJAX(persistedEinkommensverschlechterung, jaxEinkommensverschlechterung);
-		jaxEinkommensverschlechterung.setEkvGSBasisJahrPlus1(einkommensverschlechterungToJAX(persistedEinkommensverschlechterung.getEkvGSBasisJahrPlus1()));
-		jaxEinkommensverschlechterung.setEkvGSBasisJahrPlus2(einkommensverschlechterungToJAX(persistedEinkommensverschlechterung.getEkvGSBasisJahrPlus2()));
-		jaxEinkommensverschlechterung.setEkvJABasisJahrPlus1(einkommensverschlechterungToJAX(persistedEinkommensverschlechterung.getEkvJABasisJahrPlus1()));
-		jaxEinkommensverschlechterung.setEkvJABasisJahrPlus2(einkommensverschlechterungToJAX(persistedEinkommensverschlechterung.getEkvJABasisJahrPlus2()));
-
-		return jaxEinkommensverschlechterung;
+	public JaxEinkommensverschlechterungContainer einkommensverschlechterungContainerToJAX(final EinkommensverschlechterungContainer persistedEkv) {
+		if (persistedEkv != null) {
+			final JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterung = new JaxEinkommensverschlechterungContainer();
+			convertAbstractFieldsToJAX(persistedEkv, jaxEinkommensverschlechterung);
+			jaxEinkommensverschlechterung.setEkvGSBasisJahrPlus1(einkommensverschlechterungToJAX(persistedEkv.getEkvGSBasisJahrPlus1()));
+			jaxEinkommensverschlechterung.setEkvGSBasisJahrPlus2(einkommensverschlechterungToJAX(persistedEkv.getEkvGSBasisJahrPlus2()));
+			jaxEinkommensverschlechterung.setEkvJABasisJahrPlus1(einkommensverschlechterungToJAX(persistedEkv.getEkvJABasisJahrPlus1()));
+			jaxEinkommensverschlechterung.setEkvJABasisJahrPlus2(einkommensverschlechterungToJAX(persistedEkv.getEkvJABasisJahrPlus2()));
+			return jaxEinkommensverschlechterung;
+		}
+		return null;
 	}
 
 	private AbstractFinanzielleSituation abstractFinanzielleSituationToEntity(@Nonnull final JaxAbstractFinanzielleSituation abstractFinanzielleSituationJAXP, @Nonnull final AbstractFinanzielleSituation abstractFinanzielleSituation) {
@@ -2015,11 +2024,6 @@ public class JaxBConverter {
 		return gesuchsperiode;
 	}
 
-	@Nonnull
-	public JaxAuthAccessElement authAccessElementToJax(@Nonnull final AuthAccessElement access) {
-		return new JaxAuthAccessElement(access.getAuthId(), String.valueOf(access.getNachname()),
-			String.valueOf(access.getVorname()), String.valueOf(access.getEmail()), access.getRole());
-	}
 
 	public Benutzer authLoginElementToBenutzer(JaxAuthLoginElement loginElement, Benutzer benutzer) {
 		benutzer.setUsername(loginElement.getUsername());
@@ -2089,6 +2093,13 @@ public class JaxBConverter {
 		JaxDokument jaxDokument = convertAbstractFieldsToJAX(dokument, new JaxDokument());
 		convertFileToJax(dokument, jaxDokument);
 		jaxDokument.setTimestampUpload(dokument.getTimestampUpload());
+		if (StringUtils.isNotEmpty(dokument.getUserErstellt())) {
+			Optional<Benutzer> userUploadedOptional = benutzerService.findBenutzer(dokument.getUserErstellt());
+			if (userUploadedOptional.isPresent()) {
+				JaxAuthLoginElement jaxAuthLoginElement = benutzerToAuthLoginElement(userUploadedOptional.get());
+				jaxDokument.setUserUploaded(jaxAuthLoginElement);
+			}
+		}
 		return jaxDokument;
 	}
 
@@ -2343,6 +2354,7 @@ public class JaxBConverter {
 		antrag.setLaufnummer(gesuch.getLaufnummer());
 		antrag.setEingangsart(gesuch.getEingangsart());
 		antrag.setBesitzerUsername(gesuch.getFall().getBesitzer() != null ? gesuch.getFall().getBesitzer().getUsername() : null);
+		antrag.setGesuchBetreuungenStatus(gesuch.getGesuchBetreuungenStatus());
 		return antrag;
 	}
 

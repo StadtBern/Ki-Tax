@@ -33,7 +33,7 @@ public class FinanzielleSituationServiceBeanTest extends AbstractEbeguLoginTest 
 	private FinanzielleSituationService finanzielleSituationService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 
 

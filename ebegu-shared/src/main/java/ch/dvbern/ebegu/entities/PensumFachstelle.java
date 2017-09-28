@@ -1,12 +1,13 @@
 package ch.dvbern.ebegu.entities;
 
-import org.hibernate.envers.Audited;
-
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+
+import ch.dvbern.ebegu.util.EbeguUtil;
+import org.hibernate.envers.Audited;
 
 /**
  * Entity fuer PensumFachstelle.
@@ -49,5 +50,25 @@ public class PensumFachstelle extends AbstractPensumEntity {
 
 	private void copyForMutationOrErneuerung(PensumFachstelle mutation) {
 		mutation.setFachstelle(this.getFachstelle());
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		//noinspection SimplifiableIfStatement
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!super.isSame(other)) {
+			return false;
+		}
+		if (!(other instanceof PensumFachstelle)) {
+			return false;
+		}
+		final PensumFachstelle otherPensumFachstelle = (PensumFachstelle) other;
+		return EbeguUtil.isSameObject(getFachstelle(), otherPensumFachstelle.getFachstelle());
 	}
 }

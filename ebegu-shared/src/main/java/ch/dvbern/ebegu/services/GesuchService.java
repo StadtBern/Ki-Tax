@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Asynchronous;
+import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
@@ -61,11 +62,22 @@ public interface GesuchService {
 	/**
 	 * Laedt das Gesuch mit der id aus der DB. ACHTUNG zudem wird hier der Status auf IN_BEARBEITUNG_JA gesetzt
 	 * wenn der Benutzer ein JA Mitarbeiter ist und das Gesuch in FREIGEGEBEN ist
+	 * Die Berechtigungen werden geprueft
 	 * @param key PK (id) des Gesuches
 	 * @return Gesuch mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
 	Optional<Gesuch> findGesuch(@Nonnull String key);
+
+	/**
+	 * Laedt das Gesuch mit der id aus der DB. ACHTUNG zudem wird hier der Status auf IN_BEARBEITUNG_JA gesetzt
+	 * wenn der Benutzer ein JA Mitarbeiter ist und das Gesuch in FREIGEGEBEN ist
+	 * @param key PK (id) des Gesuches
+	 * @param doAuthCheck: Definiert, ob die Berechtigungen (Lesen/Schreiben) für dieses Gesuch geprüft werden muessen.
+	 * @return Gesuch mit dem gegebenen key oder null falls nicht vorhanden
+	 */
+	@Nonnull
+	Optional<Gesuch> findGesuch(@Nonnull String key, boolean doAuthCheck);
 
 	/**
 	 * Spezialmethode fuer die Freigabe. Kann Gesuche lesen die im Status Freigabequittung oder hoeher sind
@@ -76,8 +88,6 @@ public interface GesuchService {
 	/**
 	 * Gibt alle Gesuche zurueck die in der Liste der gesuchIds auftauchen und fuer die der Benutzer berechtigt ist.
 	 * Gesuche fuer die der Benutzer nicht berechtigt ist werden uebersprungen
-	 * @param gesuchIds
-	 *
 	 */
 	List<Gesuch> findReadableGesuche(@Nullable Collection<String> gesuchIds);
 
@@ -127,8 +137,6 @@ public interface GesuchService {
 
 	/**
 	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
-	 *
-	 * @param antragTableFilterDto
 	 * @return Resultatpaar, der erste Wert im Paar ist die Anzahl Resultate, der zweite Wert ist die Resultatliste
 	 */
 	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragTableFilterDto);
@@ -150,7 +158,7 @@ public interface GesuchService {
 	 * hilfsmethode zur mutation von faellen ueber das gui. Wird fuer testzwecke benoetigt
 	 */
 	@Nonnull
-	Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
+	Optional<Gesuch> testfallMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
 									@Nonnull LocalDate eingangsdatum);
 
 	/**
@@ -163,8 +171,6 @@ public interface GesuchService {
 	/**
 	 * Gibt das neueste Gesuch der im selben Fall und Periode wie das gegebene Gesuch ist.
 	 * Es wird nach Erstellungsdatum geschaut
-	 * @param gesuch
-	 * @return
 	 */
 	@Nonnull
 	Optional<Gesuch> getNeustesGesuchFuerGesuch(@Nonnull Gesuch gesuch);
@@ -177,16 +183,12 @@ public interface GesuchService {
 
 	/**
 	 * Alle Gesuche fuer den gegebenen Fall in der gegebenen Periode
-	 * @param fall
-	 * @param gesuchsperiode
 	 */
 	@Nonnull
 	List<Gesuch> getAllGesucheForFallAndPeriod(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
 	 * Das gegebene Gesuch wird mit heutigem Datum freigegeben und den Step FREIGABE auf OK gesetzt
-	 * @param gesuch
-	 * @param statusToChangeTo
 	 */
 	Gesuch antragFreigabequittungErstellen(@Nonnull Gesuch gesuch, AntragStatus statusToChangeTo);
 
@@ -255,7 +257,7 @@ public interface GesuchService {
 	 * Diese Mutation muss Online und noch nicht freigegeben sein. Diese Methode darf nur bei ADMIN oder SUPER_ADMIN
 	 * aufgerufen werden, wegen loescherechten wird es dann immer mir RunAs/SUPER_ADMIN) ausgefuehrt.
 	 * @param fall Der Antraege, zu denen die Mutation gehoert, die geloescht werden muss
-	 * @param gesuchsperiode
+	 * @param gesuchsperiode Gesuchsperiode, in der die Gesuche geloescht werden sollen
 	 */
 	void removeOnlineMutation(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
 
@@ -275,8 +277,6 @@ public interface GesuchService {
 	/**
 	 * Wenn das Gesuch nicht nur Schulangebote hat, wechselt der Status auf VERFUEGEN. Falls es
 	 * nur Schulangebote hat, wechselt der Status auf NUR_SCHULAMT, da es keine Verfuegung noetig ist
-	 * @param gesuch
-	 * @return
 	 */
 	Gesuch verfuegenStarten(@Nonnull Gesuch gesuch);
 
@@ -294,4 +294,11 @@ public interface GesuchService {
 	 */
 	@Asynchronous
 	void sendMailsToAllGesuchstellerOfLastGesuchsperiode(@Nonnull Gesuchsperiode lastGesuchsperiode, @Nonnull Gesuchsperiode nextGesuchsperiode);
+
+	/**
+	 * Checks all Betreuungen of the given Gesuch and updates the flag gesuchBetreuungenStatus with the corresponding
+	 * value.
+	 * @param gesuch
+	 */
+	void updateBetreuungenStatus(@NotNull Gesuch gesuch);
 }

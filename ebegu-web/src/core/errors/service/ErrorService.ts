@@ -94,6 +94,7 @@ export default class ErrorService {
      * @param {Object} [args]
      */
     handleValidationError(isValid: boolean, msgKey: string, args?: any) {
+        // noinspection PointlessBooleanExpressionJS
         if (!!isValid) {
             this.clearError(msgKey);
         } else {

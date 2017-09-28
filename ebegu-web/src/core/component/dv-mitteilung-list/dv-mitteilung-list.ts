@@ -346,7 +346,9 @@ export class DVMitteilungListController {
         if (mitteilung instanceof TSBetreuungsmitteilung) {
             this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
                 title: 'MUTATIONSMELDUNG_UEBERNEHMEN',
-                deleteText: 'MUTATIONSMELDUNG_UEBERNEHMEN_BESCHREIBUNG'
+                deleteText: 'MUTATIONSMELDUNG_UEBERNEHMEN_BESCHREIBUNG',
+                parentController: undefined,
+                elementID: undefined
             }).then(() => {   //User confirmed message
                 let betreuungsmitteilung: TSBetreuungsmitteilung = <TSBetreuungsmitteilung>mitteilung;
                 this.mitteilungRS.applyBetreuungsmitteilung(betreuungsmitteilung.id).then((response: any) => { // JaxID kommt als response

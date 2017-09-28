@@ -11,6 +11,17 @@ package ch.dvbern.ebegu.vorlagen.verfuegung;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Kind;
 import ch.dvbern.ebegu.entities.Verfuegung;
@@ -22,22 +33,15 @@ import ch.dvbern.ebegu.vorlagen.AufzaehlungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
 import org.apache.commons.lang.StringUtils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
-
 /**
  * Transferobjekt
  */
 public class VerfuegungPrintImpl extends BriefPrintImpl implements VerfuegungPrint {
 
-	private Betreuung betreuung;
+	private final Betreuung betreuung;
 
 	//formatiert
-	private String letzteVerfuegungDatum;
+	private final String letzteVerfuegungDatum;
 
 	/**
 	 * @param betreuung

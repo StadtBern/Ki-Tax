@@ -1,14 +1,19 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxMahnung;
+import ch.dvbern.ebegu.api.resource.util.ResourceHelper;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Mahnung;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
+import ch.dvbern.ebegu.enums.MahnungTyp;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.MahnungService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -31,7 +36,7 @@ import java.util.stream.Collectors;
  */
 @Path("mahnung")
 @Stateless
-@Api
+@Api(description = "Resource zum Verwalten eines Mahnlaufes")
 public class MahnungResource {
 
 	@Inject
@@ -43,7 +48,11 @@ public class MahnungResource {
 	@Inject
 	private JaxBConverter converter;
 
+	@Inject
+	private ResourceHelper resourceHelper;
 
+
+	@ApiOperation(value = "Speichert eine Mahnung in der Datenbank", response = JaxMahnung.class)
 	@Nullable
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -54,6 +63,16 @@ public class MahnungResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(mahnungJAXP);
+		Validate.notNull(mahnungJAXP.getGesuch());
+		Validate.notNull(mahnungJAXP.getGesuch().getId());
+
+		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		if (MahnungTyp.ERSTE_MAHNUNG == mahnungJAXP.getMahnungTyp()) {
+			resourceHelper.assertGesuchStatusEqual(mahnungJAXP.getGesuch().getId(), AntragStatusDTO.IN_BEARBEITUNG_JA);
+		} else {
+			resourceHelper.assertGesuchStatusEqual(mahnungJAXP.getGesuch().getId(), AntragStatusDTO.ERSTE_MAHNUNG_ABGELAUFEN);
+		}
+
 		Mahnung mahnung = converter.mahnungToEntity(mahnungJAXP, new Mahnung());
 		Mahnung persistedMahnung = mahnungService.createMahnung(mahnung);
 
@@ -61,6 +80,8 @@ public class MahnungResource {
 		return converter.mahnungToJAX(persistedMahnung);
 	}
 
+	@ApiOperation(value = "Gibt alle Mahnungen zum Gesuch mit der uebergebenen Id zurueck",
+		responseContainer = "List", response = JaxMahnung.class)
 	@Nullable
 	@GET
 	@Path("/{gesuchId}")
@@ -82,6 +103,8 @@ public class MahnungResource {
 			.collect(Collectors.toList());
 	}
 
+	@ApiOperation(value = "Beendet einen Mahnlauf und setzt alle vorhandenen Mahnungen auf erledigt. Der Gesuchsstatus " +
+		"geht zurueck auf IN_BEARBEITUNG_JA.", response = JaxGesuch.class)
 	@Nonnull
 	@PUT
 	@Path("/{gesuchId}")
@@ -89,17 +112,25 @@ public class MahnungResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response mahnlaufBeenden(@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) {
 		Validate.notNull(gesuchJAXPId.getId());
+
+		resourceHelper.assertGesuchStatusEqual(gesuchJAXPId.getId(),
+			AntragStatusDTO.ERSTE_MAHNUNG, AntragStatusDTO.ERSTE_MAHNUNG_ABGELAUFEN, AntragStatusDTO.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
+			AntragStatusDTO.ZWEITE_MAHNUNG, AntragStatusDTO.ZWEITE_MAHNUNG_ABGELAUFEN, AntragStatusDTO.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+
 		String gesuchID = converter.toEntityId(gesuchJAXPId);
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
 
 		if (!gesuchOptional.isPresent()) {
 			return Response.serverError().build();
 		}
-		Gesuch gesuchToReturn = gesuchOptional.get();
-		mahnungService.mahnlaufBeenden(gesuchToReturn);
-		return Response.ok().build();
+
+		final Gesuch gesuchToReturn = mahnungService.mahnlaufBeenden(gesuchOptional.get());
+
+		return Response.ok(converter.gesuchToJAX(gesuchToReturn)).build();
 	}
 
+	@ApiOperation(value = "Generiert die Bemerkungen fuer eine zu erstellende Mahnung. Die Bemerkungen werden aus den" +
+		" fehlenden Dokumenten zusammengestellt.", response = String.class)
 	@Nonnull
 	@GET
 	@Path("/bemerkungen/{gesuchId}")

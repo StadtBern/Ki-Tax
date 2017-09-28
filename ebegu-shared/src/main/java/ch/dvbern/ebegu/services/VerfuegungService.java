@@ -1,13 +1,17 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-
-import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 
 /**
  * Service zum berechnen und speichern der Verfuegung
@@ -23,6 +27,12 @@ public interface VerfuegungService {
 	 */
 	@Nonnull
 	Verfuegung verfuegen(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId, boolean ignorieren);
+
+	/**
+	 * Generiert das Verfuegungsdokument.
+	 * @param betreuung Betreuung, fuer die das Dokument generiert werden soll.
+	 */
+	void generateVerfuegungDokument(@Nonnull Betreuung betreuung);
 
 	/**
 	 * Speichert die Verfuegung neu in der DB falls der Key noch nicht existiert.
@@ -69,7 +79,6 @@ public interface VerfuegungService {
 	/**
 	 * gibt die Verfuegung der vorherigen verfuegten Betreuung zurueck.
 	 * kann null sein
-	 * @param betreuung
 	 * @return Verfuegung oder null falls nicht vorhanden
 	 */
 	@Nonnull

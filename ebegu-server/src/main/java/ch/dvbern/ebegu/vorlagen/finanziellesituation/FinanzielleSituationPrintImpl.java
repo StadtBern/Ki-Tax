@@ -16,8 +16,8 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
  */
 public class FinanzielleSituationPrintImpl extends FinanzDatenPrintImpl implements FinanzielleSituationPrint {
 
-	private String finanzielleSituationJahr;
-	private String fallNummer;
+	private final String finanzielleSituationJahr;
+	private final String fallNummer;
 
 	/**
 	 * Konstruktor

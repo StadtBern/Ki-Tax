@@ -14,7 +14,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -44,7 +43,7 @@ public class DailyBatchBean implements DailyBatch {
 	private MahnungService mahnungService;
 
 	@Inject
-	private Persistence<AbstractEntity> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private GesuchService gesuchService;

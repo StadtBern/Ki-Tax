@@ -38,7 +38,7 @@ export default class MahnungRS implements IEntityRS {
             });
     }
 
-    public mahnlaufBeenden(gesuch: TSGesuch): IPromise<any> {
+    public mahnlaufBeenden(gesuch: TSGesuch): IPromise<TSGesuch> {
         return this.http.put(this.serviceURL + '/' + encodeURIComponent(gesuch.id), {
             headers: {
                 'Content-Type': 'application/json'

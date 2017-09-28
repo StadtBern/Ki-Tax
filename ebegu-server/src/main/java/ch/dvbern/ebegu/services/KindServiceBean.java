@@ -53,7 +53,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class KindServiceBean extends AbstractBaseService implements KindService {
 
 	@Inject
-	private Persistence<KindContainer> persistence;
+	private Persistence persistence;
 	@Inject
 	private WizardStepService wizardStepService;
 
@@ -71,7 +71,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 			updateLuceneIndex(KindContainer.class, kind.getId());
 		}
 		final KindContainer mergedKind = persistence.merge(kind);
-		wizardStepService.updateSteps(kind.getGesuch().getId(), null, null, WizardStepName.KINDER);
+		wizardStepService.updateSteps(kind.getGesuch().getId(), null, mergedKind.getKindJA(), WizardStepName.KINDER);
 		return mergedKind;
 	}
 
@@ -110,9 +110,15 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	@Override
 	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
 	public void removeKind(@Nonnull KindContainer kind) {
-		final String gesuchId = kind.getGesuch().getId();
+		final Gesuch gesuch = kind.getGesuch();
+		final String gesuchId = gesuch.getId();
 		persistence.remove(kind);
 		wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.KINDER);
+
+		// the kind needs to be removed from the object as well
+		gesuch.getKindContainers().removeIf(k -> k.getId().equalsIgnoreCase(kind.getId()));
+
+		gesuchService.updateBetreuungenStatus(gesuch);
 	}
 
 	@Override

@@ -16,6 +16,7 @@ md-input-container {
 [disabled] md-input-container .md-input {
     background: @contrast;
     color: @contrast-darkest;
+    .ebeguDisabledPlaceholder();
 }
 
 input[type="text"], input[type="number"], input[type="email"], textarea, textarea.md-input, .form-control, .dv-select-style select {
@@ -27,6 +28,7 @@ input[type="text"], input[type="number"], input[type="email"], textarea, textare
         background: @contrast;
         color: @contrast-darkest;
         -webkit-text-fill-color:@contrast-darkest;
+        .ebeguDisabledPlaceholder();
     }
     .ebeguPlaceholder();
     .ebeguSemi-bold();
@@ -46,7 +48,7 @@ input[type="text"], input[type="number"], input[type="email"], textarea, textare
 
 
     &:focus {
-        outline: 1px solid #000000;
+        outline: 2px solid @contrast-darkest;
         outline-offset: 0;
         -webkit-box-shadow: none /*@secondary-dark*/;
         box-shadow: none /*@secondary-dark*/;
@@ -111,6 +113,7 @@ input[type="number"] {
     }
 }
 
+//noinspection CssInvalidPropertyValue
 @-moz-document url-prefix() {
     .dv-select-style {
         overflow: hidden;

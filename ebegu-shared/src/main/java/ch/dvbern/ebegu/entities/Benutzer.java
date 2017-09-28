@@ -6,11 +6,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Field;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import java.util.Objects;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -35,11 +38,13 @@ public class Benutzer extends AbstractEntity {
 	@NotNull
 	@Column(nullable = false)
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	@Field
 	private String nachname = null;
 
 	@NotNull
 	@Column(nullable = false)
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	@Field
 	private String vorname = null;
 
 	@NotNull
@@ -147,5 +152,21 @@ public class Benutzer extends AbstractEntity {
 			.append("username", username)
 			.append("role", role)
 			.toString();
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!(other instanceof Benutzer)) {
+			return false;
+		}
+		final Benutzer otherBenutzer = (Benutzer) other;
+		return Objects.equals(getUsername(), otherBenutzer.getUsername());
 	}
 }

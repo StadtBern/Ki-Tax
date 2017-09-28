@@ -29,11 +29,15 @@ import static ch.dvbern.ebegu.enums.UserRoleName.*;
 public class BetreuungServiceBean extends AbstractBaseService implements BetreuungService {
 
 	@Inject
-	private Persistence<Betreuung> persistence;
+	private Persistence persistence;
 	@Inject
 	private WizardStepService wizardStepService;
 	@Inject
 	private InstitutionService institutionService;
+	@Inject
+	private MitteilungService mitteilungService;
+	@Inject
+	private GesuchService gesuchService;
 	@Inject
 	private Authorizer authorizer;
 	@Inject
@@ -63,6 +67,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		} else {
 			wizardStepService.updateSteps(mergedBetreuung.getKind().getGesuch().getId(), null, null, WizardStepName.BETREUUNG);
 		}
+
+		gesuchService.updateBetreuungenStatus(mergedBetreuung.extractGesuch());
 
 		return mergedBetreuung;
 	}
@@ -138,14 +144,30 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER })
 	public void removeBetreuung(@Nonnull String betreuungId) {
 		Objects.requireNonNull(betreuungId);
 		Optional<Betreuung> betrToRemoveOpt = findBetreuung(betreuungId);
 		Betreuung betreuungToRemove = betrToRemoveOpt.orElseThrow(() -> new EbeguEntityNotFoundException("removeBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuungId));
+		Collection<Mitteilung> mitteilungenForBetreuung = this.mitteilungService.findAllMitteilungenForBetreuung(betreuungToRemove);
+		mitteilungenForBetreuung.stream()
+			.filter(mitteilung -> mitteilung.getClass().equals(Mitteilung.class))
+			.forEach((mitteilung) ->
+			{
+				mitteilung.setBetreuung(null);
+				this.LOG.debug("Betreuung '{}' will be removed. Removing Relation in Mitteilung: '{}'", betreuungId, mitteilung.getId());
+				persistence.merge(mitteilung);
+			});
+
+		mitteilungenForBetreuung.stream()
+			.filter(mitteilung -> mitteilung.getClass().equals(Betreuungsmitteilung.class))
+			.forEach((betMitteilung) -> {
+				this.LOG.debug("Betreuung '{}' will be removed. Removing dependent Betreuungsmitteilung: '{}'", betreuungId, betMitteilung.getId());
+				persistence.remove(Betreuungsmitteilung.class, betMitteilung.getId());
+			});
+
 		final String gesuchId = betreuungToRemove.getKind().getGesuch().getId();
-		authorizer.checkWriteAuthorization(betreuungToRemove);
-		persistence.remove(betreuungToRemove);
+		removeBetreuung(betreuungToRemove);
 		wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.BETREUUNG); //auch bei entfernen wizard updaten
 	}
 
@@ -154,7 +176,15 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	public void removeBetreuung(@Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung);
 		authorizer.checkWriteAuthorization(betreuung);
+		final Gesuch gesuch = betreuung.extractGesuch();
+
 		persistence.remove(betreuung);
+
+		// the betreuung needs to be removed from the object as well
+		gesuch.getKindContainers()
+			.forEach(kind -> kind.getBetreuungen().removeIf(bet -> bet.getId().equalsIgnoreCase(betreuung.getId())));
+
+		gesuchService.updateBetreuungenStatus(gesuch);
 	}
 
 	@Override
@@ -195,7 +225,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 
 		Root<Betreuung> root = query.from(Betreuung.class);
-		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
+		List<Predicate> predicatesToUse = new ArrayList<>();
 
 		Predicate fallPredicate = cb.equal(root.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.fall), fall);
 		predicatesToUse.add(fallPredicate);

@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -42,9 +43,13 @@ public class EinkommensverschlechterungInfoContainer extends AbstractEntity {
 	}
 
 	public EinkommensverschlechterungInfoContainer(EinkommensverschlechterungInfoContainer other) {
-		this.einkommensverschlechterungInfoGS = other.einkommensverschlechterungInfoGS;
-		this.einkommensverschlechterungInfoJA = other.einkommensverschlechterungInfoJA;
-		this.gesuch = other.gesuch;
+		if (other != null) {
+			if (other.getEinkommensverschlechterungInfoGS() != null) {
+				this.einkommensverschlechterungInfoGS = new EinkommensverschlechterungInfo(other.getEinkommensverschlechterungInfoGS());
+			}
+			this.einkommensverschlechterungInfoJA = new EinkommensverschlechterungInfo(other.getEinkommensverschlechterungInfoJA());
+			this.gesuch = other.getGesuch();
+		}
 	}
 
 	public EinkommensverschlechterungInfoContainer copyForMutation(EinkommensverschlechterungInfoContainer mutation, Gesuch mutationGesuch) {
@@ -83,5 +88,21 @@ public class EinkommensverschlechterungInfoContainer extends AbstractEntity {
 			(gesuch.getEinkommensverschlechterungInfoContainer() == null || !gesuch.getEinkommensverschlechterungInfoContainer().equals(this))) {
 			gesuch.setEinkommensverschlechterungInfoContainer(this);
 		}
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!(other instanceof EinkommensverschlechterungInfoContainer)) {
+			return false;
+		}
+		final EinkommensverschlechterungInfoContainer otherEKVInfoContainer = (EinkommensverschlechterungInfoContainer) other;
+		return EbeguUtil.isSameObject(getEinkommensverschlechterungInfoJA(), otherEKVInfoContainer.getEinkommensverschlechterungInfoJA());
 	}
 }

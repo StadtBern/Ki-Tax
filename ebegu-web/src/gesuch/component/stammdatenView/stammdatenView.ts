@@ -19,13 +19,15 @@ import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {TSGesuchEvent} from '../../../models/enums/TSGesuchEvent';
+import DateUtil from '../../../utils/DateUtil';
+import EwkRS from '../../../core/service/ewkRS.rest';
 import IQService = angular.IQService;
 import IPromise = angular.IPromise;
 import IScope = angular.IScope;
 import ITranslateService = angular.translate.ITranslateService;
 import IRootScopeService = angular.IRootScopeService;
-import DateUtil from '../../../utils/DateUtil';
-import EwkRS from '../../../core/service/ewkRS.rest';
+import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./stammdatenView.html');
 require('./stammdatenView.less');
 
@@ -37,7 +39,6 @@ export class StammdatenViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-
 export class StammdatenViewController extends AbstractGesuchViewController<TSGesuchstellerContainer> {
     geschlechter: Array<string>;
     showKorrespondadr: boolean;
@@ -48,16 +49,16 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     private initialModel: TSGesuchstellerContainer;
     private isLastVerfuegtesGesuch: boolean = false;
 
-
     static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
-        'CONSTANTS', '$q', '$scope', '$translate', 'AuthServiceRS', '$rootScope', 'EwkRS'];
+        'CONSTANTS', '$q', '$scope', '$translate', 'AuthServiceRS', '$rootScope', 'EwkRS', '$timeout'];
+
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, ebeguRestUtil: EbeguRestUtil, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService, $scope: IScope,
                 private $translate: ITranslateService, private authServiceRS: AuthServiceRS, private $rootScope: IRootScopeService,
-                private ewkRS: EwkRS) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.GESUCHSTELLER);
+                private ewkRS: EwkRS, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.GESUCHSTELLER, $timeout);
         this.ebeguRestUtil = ebeguRestUtil;
         this.gesuchstellerNumber = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(this.gesuchstellerNumber);
@@ -80,6 +81,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
             if (gsNummer === this.gesuchModelManager.gesuchstellerNumber) {
                 this.model.gesuchstellerJA.ewkPersonId = ewkId;
                 this.model.gesuchstellerJA.ewkAbfrageDatum = DateUtil.today();
+                this.form.$dirty = true;
             }
         });
     }
@@ -158,7 +160,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     public disableWohnadresseFor2GS(): boolean {
         return this.isMutation() && (this.gesuchstellerNumber === 1
             || (this.model.vorgaengerId !== null
-            && this.model.vorgaengerId !== undefined));
+                && this.model.vorgaengerId !== undefined));
     }
 
     public isThereAnyUmzug(): boolean {
@@ -234,13 +236,13 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
             //     this.getModelJA().vorname &&
             //     this.getModelJA().geschlecht &&
             //     this.getModelJA().geburtsdatum) {
-                if (this.gesuchModelManager.gesuchstellerNumber === 1) {
-                    this.ewkRS.gesuchsteller1 = this.getModel();
-                } else if (this.gesuchModelManager.gesuchstellerNumber === 2) {
-                    this.ewkRS.gesuchsteller2 = this.getModel();
-                } else {
-                    console.log('Unbekannte Gesuchstellernummer', this.gesuchstellerNumber);
-                }
+            if (this.gesuchModelManager.gesuchstellerNumber === 1) {
+                this.ewkRS.gesuchsteller1 = this.getModel();
+            } else if (this.gesuchModelManager.gesuchstellerNumber === 2) {
+                this.ewkRS.gesuchsteller2 = this.getModel();
+            } else {
+                console.log('Unbekannte Gesuchstellernummer', this.gesuchstellerNumber);
+            }
             // }
         }
     }

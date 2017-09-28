@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.dto;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -19,13 +18,14 @@ import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 
 /**
  * DTO fuer Pendenzen
  */
 @XmlRootElement(name = "pendenz")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxAntragDTO implements Serializable {
+public class JaxAntragDTO extends JaxAbstractAntragDTO {
 
 	private static final long serialVersionUID = -1277026654764135397L;
 
@@ -33,6 +33,7 @@ public class JaxAntragDTO implements Serializable {
 	public JaxAntragDTO(String antragId, LocalDate gesuchsperiodeGueltigAb, LocalDate gesuchsperiodeGueltigBis,
 						@Nullable LocalDate eingangsdatum, @Nullable LocalDate eingangsdatumSTV, AntragTyp antragTyp,
 		int laufnummer, Eingangsart eingangsart) {
+		this();
 		this.antragId = antragId;
 		this.gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
 		this.gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
@@ -45,9 +46,9 @@ public class JaxAntragDTO implements Serializable {
 
 	//constructor fuer query
 	public JaxAntragDTO(String antragId, LocalDate gesuchsperiodeGueltigAb, LocalDate gesuchsperiodeGueltigBis,
-						@Nullable LocalDate eingangsdatum,  @Nullable LocalDate eingangsdatumSTV, AntragTyp antragTyp,
-		AntragStatus antragStatus, int laufnummer,
-						Eingangsart eingangsart, String besitzerUsername) {
+		@Nullable LocalDate eingangsdatum, @Nullable LocalDate eingangsdatumSTV, AntragTyp antragTyp,
+		AntragStatus antragStatus, int laufnummer, Eingangsart eingangsart, @Nullable String besitzerUsername) {
+		this();
 		this.antragId = antragId;
 		this.gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
 		this.gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
@@ -61,6 +62,10 @@ public class JaxAntragDTO implements Serializable {
 		this.besitzerUsername = besitzerUsername;
 	}
 
+	public JaxAntragDTO() {
+		super(JaxAntragDTO.class.getSimpleName());
+	}
+
 	@NotNull
 	private String antragId = null;
 
@@ -69,12 +74,6 @@ public class JaxAntragDTO implements Serializable {
 
 	@Nullable
 	private String besitzerUsername;
-
-	@NotNull
-	private long fallNummer;
-
-	@NotNull
-	private String familienName;
 
 	@NotNull
 	private AntragTyp antragTyp;
@@ -121,9 +120,8 @@ public class JaxAntragDTO implements Serializable {
 
 	private boolean beschwerdeHaengig;
 
-	public JaxAntragDTO() {
-
-	}
+	@NotNull
+	private GesuchBetreuungenStatus gesuchBetreuungenStatus;
 
 	public String getAntragId() {
 		return antragId;
@@ -131,22 +129,6 @@ public class JaxAntragDTO implements Serializable {
 
 	public void setAntragId(String antragId) {
 		this.antragId = antragId;
-	}
-
-	public long getFallNummer() {
-		return fallNummer;
-	}
-
-	public void setFallNummer(long fallNummer) {
-		this.fallNummer = fallNummer;
-	}
-
-	public String getFamilienName() {
-		return familienName;
-	}
-
-	public void setFamilienName(String familienName) {
-		this.familienName = familienName;
 	}
 
 	public AntragTyp getAntragTyp() {
@@ -248,12 +230,11 @@ public class JaxAntragDTO implements Serializable {
 		this.beschwerdeHaengig = beschwerdeHaengig;
 	}
 
-	@Nullable
 	public int getLaufnummer() {
 		return laufnummer;
 	}
 
-	public void setLaufnummer(@Nullable int laufnummer) {
+	public void setLaufnummer(int laufnummer) {
 		this.laufnummer = laufnummer;
 	}
 
@@ -280,5 +261,13 @@ public class JaxAntragDTO implements Serializable {
 
 	public void setKinder(Set<String> kinder) {
 		this.kinder = kinder;
+	}
+
+	public GesuchBetreuungenStatus getGesuchBetreuungenStatus() {
+		return gesuchBetreuungenStatus;
+	}
+
+	public void setGesuchBetreuungenStatus(GesuchBetreuungenStatus gesuchBetreuungenStatus) {
+		this.gesuchBetreuungenStatus = gesuchBetreuungenStatus;
 	}
 }

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -24,15 +25,19 @@ import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Service fuer den Download von Dokumenten
+ */
 @Stateless
 @Local(DownloadFileService.class)
+@PermitAll
 public class DownloadFileServiceBean implements DownloadFileService {
 
 
 	private static final Logger LOG = LoggerFactory.getLogger(DownloadFileServiceBean.class);
 
 	@Inject
-	private Persistence<DownloadFile> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
@@ -56,15 +61,12 @@ public class DownloadFileServiceBean implements DownloadFileService {
 		if (!tempDokumentOptional.isPresent()) {
 			return null;
 		}
-
 		DownloadFile downloadFile = tempDokumentOptional.get();
 
 		if (isFileDownloadExpired(downloadFile)) {
 			return null;
 		}
-
 		return downloadFile;
-
 	}
 
 	@Override
@@ -81,7 +83,6 @@ public class DownloadFileServiceBean implements DownloadFileService {
 			String msg = "Unexpected error while deleting old TempDocuments";
 			LOG.error(msg, rte);
 		}
-
 	}
 
 	/**
@@ -91,6 +92,4 @@ public class DownloadFileServiceBean implements DownloadFileService {
 		LocalDateTime timestampMutiert = checkNotNull(tempBlob.getTimestampMutiert());
 		return timestampMutiert.isBefore(LocalDateTime.now().minus(Constants.MAX_TEMP_DOWNLOAD_AGE_MINUTES, ChronoUnit.MINUTES));
 	}
-
-
 }

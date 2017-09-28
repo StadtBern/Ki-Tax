@@ -1,14 +1,20 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
-import ch.dvbern.ebegu.validators.CheckFamiliensituationContainerComplete;
-import org.hibernate.envers.Audited;
+import ch.dvbern.ebegu.util.EbeguUtil;
+import java.time.LocalDate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.validation.Valid;
-import java.time.LocalDate;
+
+import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
+import ch.dvbern.ebegu.validators.CheckFamiliensituationContainerComplete;
+import org.hibernate.envers.Audited;
 
 /**
  * Entitaet zum Speichern von FamiliensituationContainer in der Datenbank.
@@ -101,5 +107,21 @@ public class FamiliensituationContainer extends AbstractEntity {
 		} else {
 			return getFamiliensituationErstgesuch();
 		}
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!(other instanceof FamiliensituationContainer)) {
+			return false;
+		}
+		final FamiliensituationContainer otherFamSitContainer = (FamiliensituationContainer) other;
+		return EbeguUtil.isSameObject(getFamiliensituationJA(), otherFamSitContainer.getFamiliensituationJA());
 	}
 }

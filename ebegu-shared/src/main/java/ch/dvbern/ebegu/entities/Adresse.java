@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.Land;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -141,23 +142,31 @@ public class Adresse extends AbstractDateRangedEntity {
 		this.organisation = organisation;
 	}
 
-	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
-	public boolean isSame(Adresse otherAdr) {
-		if (this == otherAdr) {
+	@SuppressWarnings("OverlyComplexMethod")
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		if (otherAdr == null || getClass() != otherAdr.getClass()) {
+		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-		return Objects.equals(strasse, otherAdr.strasse) &&
-			Objects.equals(hausnummer, otherAdr.hausnummer) &&
-			Objects.equals(zusatzzeile, otherAdr.zusatzzeile) &&
-			Objects.equals(plz, otherAdr.plz) &&
-			Objects.equals(ort, otherAdr.ort) &&
-			land == otherAdr.land &&
-			Objects.equals(gemeinde, otherAdr.gemeinde) &&
-			Objects.equals(organisation, otherAdr.organisation) &&
-			Objects.equals(getGueltigkeit(), otherAdr.getGueltigkeit());
+		if (!super.isSame(other)) {
+			return false;
+		}
+		if (!(other instanceof Adresse)) {
+			return false;
+		}
+		final Adresse otherAdr = (Adresse) other;
+		return Objects.equals(getStrasse(), otherAdr.getStrasse()) &&
+			EbeguUtil.isSameOrNullStrings(getHausnummer(), otherAdr.getHausnummer()) &&
+			EbeguUtil.isSameOrNullStrings(getZusatzzeile(), otherAdr.getZusatzzeile()) &&
+			Objects.equals(getPlz(), otherAdr.getPlz()) &&
+			Objects.equals(getOrt(), otherAdr.getOrt()) &&
+			getLand() == otherAdr.getLand() &&
+			Objects.equals(getGemeinde(), otherAdr.getGemeinde()) &&
+			EbeguUtil.isSameOrNullStrings(getOrganisation(), otherAdr.getOrganisation());
 	}
 
 	public Adresse copyForMutation(Adresse mutation) {

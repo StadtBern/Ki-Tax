@@ -11,11 +11,11 @@ import FallRS from '../../gesuch/service/fallRS.rest';
 import {TSAntragStatus, IN_BEARBEITUNG_BASE_NAME, isAnyStatusOfVerfuegt} from '../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import EbeguUtil from '../../utils/EbeguUtil';
-import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import ITranslateService = angular.translate.ITranslateService;
 import MitteilungRS from '../../core/service/mitteilungRS.rest';
+import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
 let template = require('./gesuchstellerDashboardView.html');
 require('./gesuchstellerDashboardView.less');
 
@@ -194,9 +194,15 @@ export class GesuchstellerDashboardListViewController {
     /**
      * Status muss speziell uebersetzt werden damit Gesuchsteller nur "In Bearbeitung" sieht und nicht in "Bearbeitung Gesuchsteller"
      */
-    public translate(status: TSAntragStatus) {
+    public translateStatus(antrag: TSAntragDTO) {
+        let status: TSAntragStatus = antrag.status;
         let isUserGesuchsteller: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles());
         if (status === TSAntragStatus.IN_BEARBEITUNG_GS && isUserGesuchsteller) {
+            if (TSGesuchBetreuungenStatus.ABGEWIESEN === antrag.gesuchBetreuungenStatus) {
+                return this.ebeguUtil.translateString(TSAntragStatus[TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN]);
+            } else if (TSGesuchBetreuungenStatus.WARTEN === antrag.gesuchBetreuungenStatus) {
+                return this.ebeguUtil.translateString(TSAntragStatus[TSAntragStatus.PLATZBESTAETIGUNG_WARTEN]);
+            }
             return this.ebeguUtil.translateString(IN_BEARBEITUNG_BASE_NAME);
         }
         if ((status === TSAntragStatus.NUR_SCHULAMT || status === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN)
@@ -204,5 +210,17 @@ export class GesuchstellerDashboardListViewController {
             return this.ebeguUtil.translateString('ABGESCHLOSSEN');
         }
         return this.ebeguUtil.translateString(TSAntragStatus[status]);
+    }
+
+    public getVerantwortlicherFullName(antrag: TSAntragDTO): string {
+        if (antrag) {
+            if (antrag.status === TSAntragStatus.NUR_SCHULAMT || antrag.status === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN) {
+                return this.ebeguUtil.translateString('VERANTWORTLICHER_SCHULAMT');
+            }
+            if (antrag.verantwortlicher) {
+                return antrag.verantwortlicher;
+            }
+        }
+        return '';
     }
 }

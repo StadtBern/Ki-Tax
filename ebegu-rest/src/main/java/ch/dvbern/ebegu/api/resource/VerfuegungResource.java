@@ -1,22 +1,8 @@
 package ch.dvbern.ebegu.api.resource;
 
-import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxGesuch;
-import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
-import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
-import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.*;
-import ch.dvbern.lib.cdipersistence.Persistence;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,21 +13,50 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
+
+import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxGesuch;
+import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
+import ch.dvbern.ebegu.api.util.RestUtil;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.services.BenutzerService;
+import ch.dvbern.ebegu.services.BetreuungService;
+import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.VerfuegungService;
+import ch.dvbern.lib.cdipersistence.Persistence;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * REST Resource fuer FinanzielleSituation
+ * REST Resource fuer Verfügungen
  */
 @Path("verfuegung")
 @Stateless
-@Api
+@Api(description = "Resource für Verfügungen, inkl. Berechnung der Vergünstigung")
 public class VerfuegungResource {
 
 	@Inject
@@ -67,12 +82,14 @@ public class VerfuegungResource {
 	private EJBContext context;    //fuer rollback
 
 	@Inject
-	private Persistence<AbstractEntity> persistence;
+	private Persistence persistence;
 
 	private static final Logger LOG = LoggerFactory.getLogger(VerfuegungResource.class.getSimpleName());
 
 
-	@ApiOperation(value = "Calculates the Verfuegung of the Gesuch with the given id, does nothing if the Gesuch does not exists. Note: Nothing is stored in the Databse")
+	@ApiOperation(value = "Calculates the Verfuegung of the Gesuch with the given id, does nothing if the Gesuch " +
+		"does not exists. Note: Nothing is stored in the Database",
+		responseContainer = "Set", response = JaxKindContainer.class)
 	@Nullable
 	@GET
 	@Path("/calculate/{gesuchId}")
@@ -123,6 +140,7 @@ public class VerfuegungResource {
 
 	//vorschlag: hier koennten wir auch nur die Bemerkungen vom client mitgeben und die Verfuegung nochmal neu berechnen.
 	// Das ware sicherer gegen client manipulationen.
+	@ApiOperation(value = "Speichert eine Verfuegung in der Datenbank", response = JaxVerfuegung.class)
 	@Nullable
 	@PUT
 	@Path("/{gesuchId}/{betreuungId}/{ignorieren}")
@@ -154,6 +172,7 @@ public class VerfuegungResource {
 		throw new EbeguEntityNotFoundException("saveVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}
 
+	@ApiOperation(value = "Schliesst eine Betreuung ab, ohne sie zu verfuegen", response = Void.class)
 	@Nullable
 	@POST
 	@Path("/schliessenOhneVerfuegen/{betreuungId}")
@@ -170,6 +189,7 @@ public class VerfuegungResource {
 		throw new EbeguEntityNotFoundException("verfuegungSchliessenOhneVerfuegen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
 	}
 
+	@ApiOperation(value = "Erstellt eine Nichteintretens-Verfuegung", response = JaxVerfuegung.class)
 	@Nullable
 	@PUT
 	@Path("/nichtEintreten/{betreuungId}")

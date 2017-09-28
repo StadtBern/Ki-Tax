@@ -121,6 +121,9 @@
             <logger category="com.arjuna">
                 <level name="WARN"/>
             </logger>
+			<logger category="com.github.oxo42.stateless4j">
+				<level name="WARN"/>
+			</logger>
             <logger category="org.jboss.as.config">
                 <level name="DEBUG"/>
             </logger>

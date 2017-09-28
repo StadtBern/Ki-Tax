@@ -1,8 +1,8 @@
 package ch.dvbern.ebegu.entities;
 
 
-import ch.dvbern.ebegu.util.Constants;
-import org.hibernate.envers.Audited;
+import java.time.LocalDate;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
@@ -10,7 +10,10 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
+
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.EbeguUtil;
+import org.hibernate.envers.Audited;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -133,4 +136,29 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		super.copyForErneuerung(mutation);
 		return copyForMutationOrErneuerung(mutation);
 	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!super.isSame(other)) {
+			return false;
+		}
+		if (!(other instanceof Gesuchsteller)) {
+			return false;
+		}
+		final Gesuchsteller otherGesuchsteller = (Gesuchsteller) other;
+		return Objects.equals(getMail(), otherGesuchsteller.getMail()) &&
+			Objects.equals(getMobile(), otherGesuchsteller.getMobile()) &&
+			Objects.equals(getTelefon(), otherGesuchsteller.getTelefon()) &&
+			Objects.equals(getTelefonAusland(), otherGesuchsteller.getTelefonAusland()) &&
+			EbeguUtil.isSameOrNullStrings(getEwkPersonId(), otherGesuchsteller.getEwkPersonId()) &&
+			Objects.equals(isDiplomatenstatus(), otherGesuchsteller.isDiplomatenstatus());
+	}
+
 }

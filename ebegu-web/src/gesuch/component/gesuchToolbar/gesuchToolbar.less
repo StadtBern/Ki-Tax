@@ -55,8 +55,20 @@
     .menu-item-link();
     background: @primary;
     color: @contrast-lightest;
-    &:hover {
-        background: @primary-dark;
+    button {
+        &:hover, &:focus:hover {
+            background: @primary-dark;
+            outline: 0;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+        &:focus {
+            outline: 2px solid @contrast-darkest !important;
+            background: @primary-dark;
+            outline-offset: -1rem;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
     }
     a {
         .menu-item-link();
@@ -236,10 +248,16 @@
             background: @primary;
             text-align: left;
             margin: 0;
-
-            &:hover, &:focus {
+            &:hover, &:focus:hover {
                 background: @primary-dark;
                 outline: 0;
+                -webkit-box-shadow: none;
+                box-shadow: none;
+            }
+            &:focus {
+                outline: 2px solid @contrast-darkest !important;
+                background: @primary-dark;
+                outline-offset: -1rem;
                 -webkit-box-shadow: none;
                 box-shadow: none;
             }
@@ -321,7 +339,7 @@
         &.active, &:active, &:hover, &:focus {
             background-color: transparent;
             color: @contrast-lightest;
-            outline: none !important;
+            outline: none ;
             text-decoration: none !important;
             outline: 0;
             -webkit-box-shadow: none;
@@ -403,7 +421,7 @@
         &.active, &:active, &:hover, &:focus {
             background-color: transparent;
             color: @contrast-lightest;
-            outline: none !important;
+            outline: none ;
             text-decoration: none !important;
             outline: 0;
             -webkit-box-shadow: none;

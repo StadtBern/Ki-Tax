@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	@Inject
 	private WizardStepService wizardStepService;
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	@Inject
 	private InstitutionService instService;
 
@@ -59,6 +58,8 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	@Before
 	public void setUp() {
 		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		gesuch.setVorgaengerId(gesuch.getId()); // by default and to simplify itself
+		gesuch = persistence.merge(gesuch);
 
 		wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK));
 		familienStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.UNBESUCHT));
@@ -115,8 +116,11 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		updateStatus(gesuchstellerStep, WizardStepStatus.IN_BEARBEITUNG);
 
 		//oldData ist eine leere Familiensituation
+		final Familiensituation newFamiliensituation = TestDataUtil.createDefaultFamiliensituation();
+		final Familiensituation vorgaenger = TestDataUtil.createDefaultFamiliensituation();
+		newFamiliensituation.setVorgaengerId(vorgaenger.getId());
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(),
-			new Familiensituation(), TestDataUtil.createDefaultFamiliensituation(), WizardStepName.FAMILIENSITUATION);
+			new Familiensituation(), newFamiliensituation, WizardStepName.FAMILIENSITUATION);
 		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.FAMILIENSITUATION).getWizardStepStatus());
@@ -132,6 +136,8 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		Familiensituation oldFamiliensituation = new Familiensituation(gesuch.getFamiliensituationContainer().getFamiliensituationJA());
 		final Familiensituation newFamiliensituation = gesuch.extractFamiliensituation();
 		newFamiliensituation.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
+		final Familiensituation vorgaenger = TestDataUtil.createDefaultFamiliensituation();
+		newFamiliensituation.setVorgaengerId(vorgaenger.getId());
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), oldFamiliensituation,
 			newFamiliensituation, WizardStepName.FAMILIENSITUATION);
@@ -432,28 +438,23 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void updateWizardStepVerfuegenWARTEN() {
-		TestDataUtil.createAndPersistBenutzer(persistence);
-		updateStatus(verfStep, WizardStepStatus.WARTEN);
-		Iterator<Betreuung> iterator = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator();
-		Betreuung betreuung1 = iterator.next();
-		betreuung1.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
-		persistence.merge(betreuung1);
-		Betreuung betreuung2 = iterator.next();
-		betreuung2.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
-		persistence.merge(betreuung2);
-
-		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.VERFUEGEN);
+	public void updateWizardStepFamiliensitMutiertSameData() {
+		updateStatusMutiert(familienStep, WizardStepStatus.OK);
+		gesuch.extractFamiliensituation().setVorgaengerId(gesuch.extractFamiliensituation().getId()); // same data
+		persistence.merge(gesuch.extractFamiliensituation());
+		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), gesuch.extractFamiliensituation(),
+			gesuch.extractFamiliensituation(), WizardStepName.FAMILIENSITUATION);
 		Assert.assertEquals(11, wizardSteps.size());
 
-		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.VERFUEGEN).getWizardStepStatus());
-		final Gesuch persistedGesuch = persistence.find(Gesuch.class, gesuch.getId());
-		Assert.assertEquals(AntragStatus.VERFUEGT, persistedGesuch.getStatus());
+		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.FAMILIENSITUATION).getWizardStepStatus());
 	}
 
 	@Test
 	public void updateWizardStepFamiliensitMutiert() {
 		updateStatusMutiert(familienStep, WizardStepStatus.OK);
+		final Familiensituation vorgaenger = TestDataUtil.createDefaultFamiliensituation();
+		vorgaenger.setFamilienstatus(EnumFamilienstatus.KONKUBINAT);
+		gesuch.extractFamiliensituation().setVorgaengerId(vorgaenger.getId());
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), gesuch.extractFamiliensituation(),
 			gesuch.extractFamiliensituation(), WizardStepName.FAMILIENSITUATION);
 		Assert.assertEquals(11, wizardSteps.size());
@@ -503,17 +504,37 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void updateWizardStepEkvMutiert() {
+		Gesuch erstgesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of
+			(1980, Month.MARCH, 25));
+
 		updateStatusMutiert(einkVerStep, WizardStepStatus.OK);
 
 		EinkommensverschlechterungInfoContainer oldDataCont = new EinkommensverschlechterungInfoContainer();
 		EinkommensverschlechterungInfo oldData = new EinkommensverschlechterungInfo();
 		oldData.setEinkommensverschlechterung(true);
+		oldData.setEkvFuerBasisJahrPlus1(true); // actual difference
+		oldData.setGemeinsameSteuererklaerung_BjP1(true);
+		oldData.setEkvFuerBasisJahrPlus2(false);
+		oldDataCont.setGesuch(erstgesuch);
 		oldDataCont.setEinkommensverschlechterungInfoJA(oldData);
+
+		erstgesuch.setEinkommensverschlechterungInfoContainer(oldDataCont);
+		erstgesuch = persistence.merge(erstgesuch);
 
 		EinkommensverschlechterungInfoContainer newDataCont = new EinkommensverschlechterungInfoContainer();
 		EinkommensverschlechterungInfo newData = new EinkommensverschlechterungInfo();
 		newData.setEinkommensverschlechterung(false);
+		newData.setEkvFuerBasisJahrPlus1(false);
+		newData.setEkvFuerBasisJahrPlus2(false);
+		gesuch = persistence.find(Gesuch.class, gesuch.getId()); //reload gesuch to avoid transaction problems
+		newDataCont.setGesuch(gesuch);
 		newDataCont.setEinkommensverschlechterungInfoJA(newData);
+		newDataCont.setVorgaengerId(oldDataCont.getId());
+
+		gesuch.setEinkommensverschlechterungInfoContainer(newDataCont);
+		gesuch.setVorgaengerId(erstgesuch.getId());
+		newDataCont = persistence.persist(newDataCont);
+		gesuch = persistence.merge(gesuch);
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(),
 			oldDataCont, newDataCont, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);

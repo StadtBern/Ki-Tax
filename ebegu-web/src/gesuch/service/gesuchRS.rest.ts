@@ -10,6 +10,7 @@ import DateUtil from '../../utils/DateUtil';
 import * as moment from 'moment';
 import {TSMitteilungEvent} from '../../models/enums/TSMitteilungEvent';
 import IRootScopeService = angular.IRootScopeService;
+import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
 
 export default class GesuchRS implements IEntityRS {
     serviceURL: string;
@@ -206,5 +207,12 @@ export default class GesuchRS implements IEntityRS {
         return this.http.post(this.serviceURL + '/verfuegenStarten/' + encodeURIComponent(antragId) + '/' + hasFSDocument, null).then((response) => {
             return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
         });
+    }
+
+    public getGesuchBetreuungenStatus(gesuchId: string): IPromise<TSGesuchBetreuungenStatus> {
+        return this.http.get(this.serviceURL + '/gesuchBetreuungenStatus/' + encodeURIComponent(gesuchId))
+            .then((response: any) => {
+                return response.data;
+            });
     }
 }

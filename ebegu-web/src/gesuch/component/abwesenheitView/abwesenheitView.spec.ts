@@ -13,6 +13,7 @@ import TSKindContainer from '../../../models/TSKindContainer';
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
 import IScope = angular.IScope;
+import {ITimeoutService} from 'angular';
 
 describe('abwesenheitView', function () {
 
@@ -25,6 +26,7 @@ describe('abwesenheitView', function () {
     let dialog: DvDialog;
     let $q: IQService;
     let $scope: IScope;
+    let $timeout: ITimeoutService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -38,12 +40,13 @@ describe('abwesenheitView', function () {
         dialog = $injector.get('DvDialog');
         $q = $injector.get('$q');
         $scope = $injector.get('$rootScope');
+        $timeout = $injector.get('$timeout');
     }));
 
     describe('getNameFromBetroffene', function () {
         beforeEach(function () {
             abwesenheitController = new AbwesenheitViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, dialog, $translate, $q, errorService, $scope);
+                wizardStepManager, dialog, $translate, $q, errorService, $scope, $timeout);
         });
         it('should return empty string for undefined kindBetreuung', function () {
             let kindBetreuung: KindBetreuungUI = new KindBetreuungUI();

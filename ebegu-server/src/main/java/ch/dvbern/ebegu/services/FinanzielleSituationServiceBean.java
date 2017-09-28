@@ -43,7 +43,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class FinanzielleSituationServiceBean extends AbstractBaseService implements FinanzielleSituationService {
 
 	@Inject
-	private Persistence<FinanzielleSituationContainer> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
@@ -69,7 +69,8 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 		authorizer.checkCreateAuthorizationFinSit(finanzielleSituation);
 		FinanzielleSituationContainer finanzielleSituationPersisted = persistence.merge(finanzielleSituation);
 		if(gesuchId != null) {
-			wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.FINANZIELLE_SITUATION);
+			wizardStepService.updateSteps(gesuchId, null, finanzielleSituationPersisted.getFinanzielleSituationJA(), WizardStepName
+				.FINANZIELLE_SITUATION);
 		}
 		return finanzielleSituationPersisted;
 	}

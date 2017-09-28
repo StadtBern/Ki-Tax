@@ -20,7 +20,8 @@ public enum SearchEntityType {
 	// Reihenfolge bitte entsprechend in der Wichtigkeit im GUI
 	GESUCHSTELLER_CONTAINER(GesuchstellerContainer.class, new IndexedEBEGUFieldName[]{GS_NACHNAME, GS_VORNAME, GS_GEBDATUM}),
 	KIND_CONTAINER(KindContainer.class, new IndexedEBEGUFieldName[]{KIND_NACHNAME, KIND_VORNAME, KIND_GEBDATUM}),
-	GESUCH(Gesuch.class, new IndexedEBEGUFieldName[]{FALL_NUMMER}),
+	GESUCH(Gesuch.class, new IndexedEBEGUFieldName[]{ GESUCH_FALL_NUMMER }),
+	FALL(Fall.class, new IndexedEBEGUFieldName[]{ FALL_NUMMER, FALL_BESITZER_NAME, FALL_BESITZER_VORNAME}),
 	BETREUUNG(Betreuung.class, new IndexedEBEGUFieldName[]{BETREUUNG_BGNR});
 
 

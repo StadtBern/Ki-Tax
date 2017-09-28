@@ -1,6 +1,9 @@
 package ch.dvbern.ebegu.entities;
 
 
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.EbeguUtil;
+import org.hibernate.envers.Audited;
 import java.time.LocalDate;
 
 import javax.annotation.Nullable;
@@ -10,8 +13,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import ch.dvbern.ebegu.util.Constants;
-import org.hibernate.envers.Audited;
+import java.util.Objects;
 
 /**
  * Entity für die Erfassung von Einkommensverschlechterungen für das Gesuch
@@ -76,6 +78,20 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 
 
 	public EinkommensverschlechterungInfo() {
+	}
+
+	public EinkommensverschlechterungInfo(EinkommensverschlechterungInfo other) {
+		if (other != null) {
+			this.einkommensverschlechterung = other.getEinkommensverschlechterung();
+			this.ekvFuerBasisJahrPlus1 = other.getEkvFuerBasisJahrPlus1();
+			this.ekvFuerBasisJahrPlus2 = other.getEkvFuerBasisJahrPlus2();
+			this.gemeinsameSteuererklaerung_BjP1 = other.getGemeinsameSteuererklaerung_BjP1();
+			this.gemeinsameSteuererklaerung_BjP2 = other.getGemeinsameSteuererklaerung_BjP2();
+			this.grundFuerBasisJahrPlus1 = other.getGrundFuerBasisJahrPlus1();
+			this.grundFuerBasisJahrPlus2 = other.getGrundFuerBasisJahrPlus2();
+			this.stichtagFuerBasisJahrPlus1 = other.getStichtagFuerBasisJahrPlus1();
+			this.stichtagFuerBasisJahrPlus2 = other.getStichtagFuerBasisJahrPlus2();
+		}
 	}
 
 
@@ -206,5 +222,52 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 			return stichtagFuerBasisJahrPlus2.plusMonths(1);
 		}
 		return null;
+	}
+
+	@SuppressWarnings("OverlyComplexMethod")
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!(other instanceof EinkommensverschlechterungInfo)) {
+			return false;
+		}
+		final EinkommensverschlechterungInfo otherEKVInfo = (EinkommensverschlechterungInfo) other;
+		// if there is no EKV (einkommensverschlechterung==false) there is no need to compare the rest
+		//noinspection SimplifiableIfStatement -> for clarity sake
+		if (Objects.equals(getEinkommensverschlechterung(), otherEKVInfo.getEinkommensverschlechterung())
+			&& Boolean.FALSE.equals(getEinkommensverschlechterung())) {
+			return true;
+		}
+		return isSameBasisJahrPlus1(otherEKVInfo) && isSameBasisJahrPlus2(otherEKVInfo);
+	}
+
+	private boolean isSameBasisJahrPlus1(EinkommensverschlechterungInfo otherEKVInfo) {
+		// if BasisJahrPlus1 is not set (ekvFuerBasisJahrPlus1==false) there is no need to compare the rest
+		//noinspection SimplifiableIfStatement -> for clarity sake
+		if (Objects.equals(getEkvFuerBasisJahrPlus1(), otherEKVInfo.getEkvFuerBasisJahrPlus1())
+			&& Boolean.FALSE.equals(getEkvFuerBasisJahrPlus1())) {
+			return true;
+		}
+		return EbeguUtil.isSameOrNullBoolean(getGemeinsameSteuererklaerung_BjP1(), otherEKVInfo.getGemeinsameSteuererklaerung_BjP1()) &&
+			Objects.equals(getGrundFuerBasisJahrPlus1(), otherEKVInfo.getGrundFuerBasisJahrPlus1()) &&
+			Objects.equals(getStichtagFuerBasisJahrPlus1(), otherEKVInfo.getStichtagFuerBasisJahrPlus1());
+	}
+
+	private boolean isSameBasisJahrPlus2(EinkommensverschlechterungInfo otherEKVInfo) {
+		// if BasisJahrPlus2 is not set (ekvFuerBasisJahrPlus2==false) there is no need to compare the rest
+		//noinspection SimplifiableIfStatement -> for clarity sake
+		if (Objects.equals(getEkvFuerBasisJahrPlus2(), otherEKVInfo.getEkvFuerBasisJahrPlus2())
+			&& Boolean.FALSE.equals(getEkvFuerBasisJahrPlus2())) {
+			return true;
+		}
+		return EbeguUtil.isSameOrNullBoolean(getGemeinsameSteuererklaerung_BjP2(), otherEKVInfo.getGemeinsameSteuererklaerung_BjP2()) &&
+			Objects.equals(getGrundFuerBasisJahrPlus2(), otherEKVInfo.getGrundFuerBasisJahrPlus2()) &&
+			Objects.equals(getStichtagFuerBasisJahrPlus2(), otherEKVInfo.getStichtagFuerBasisJahrPlus2());
 	}
 }

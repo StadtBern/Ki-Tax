@@ -235,6 +235,7 @@
             <div class="row marginTop10">
                 <div class="col-md-12 dv-input-container-small">
                     <dv-input-container class="form-group">
+                        <!--suppress XmlInvalidId -->
                         <label class="md-no-float" data-translate="EINGANGSDATUM" for="mutationsdatum">
                         </label>
                         <dv-datepicker input-id="mutationsdatum" name="mutationsdatum" placeholder=""
@@ -250,6 +251,7 @@
                 <div class="col-md-12 form-group">
                     <div class="row">
                         <div class="col-md-4">
+                            <!--suppress XmlInvalidId -->
                             <label class="" data-translate="AENDERUNG_PER" for="aenderungper">
                             </label>
                         </div>
@@ -275,6 +277,7 @@
                 <div class="col-md-12 form-group">
                     <div class="row">
                         <div class="col-md-4">
+                            <!--suppress XmlInvalidId -->
                             <label class="" data-translate="AENDERUNG_PER" for="aenderungper">
                             </label>
                         </div>
@@ -317,10 +320,26 @@
                 <div class="viewTitle marginTop10">
                     <h2 data-translate="MANUELLE_SKRIPTS"></h2>
                 </div>
-                <button type="button" class=" btn-testfall"
-                        ng-click="vm.processScript('1105')">
-                    <span>EBEGU-1105: Gueltig-Flag auf Gesuch und Betreuung</span>
-                </button>
+                <div>
+                    <button type="button" class=" btn-testfall"
+                            ng-click="vm.processScript('1105')">
+                        <span>EBEGU-1105: Gueltig-Flag auf Gesuch und Betreuung</span>
+                    </button>
+                </div>
+                <div>
+                    <br/>
+                    <button type="button" class=" btn-testfall"
+                            ng-click="vm.processScript('1204')">
+                        <span>EBEGU-1204: nicht existierende EKV erstellen</span>
+                    </button>
+                </div>
+                <div>
+                    <br/>
+                    <button type="button" class=" btn-testfall"
+                            ng-click="vm.processScript('1098')">
+                        <span>EBEGU-1098: Kita Statusfilterung</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
@@ -55,7 +56,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	private static final Logger LOG = LoggerFactory.getLogger(MahnungServiceBean.class.getSimpleName());
 
 	@Inject
-	private Persistence<Mahnung> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private DokumentGrundService dokumentGrundService;
@@ -78,6 +79,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 
 	@Override
 	@Nonnull
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
 	public Mahnung createMahnung(@Nonnull Mahnung mahnung) {
 		Objects.requireNonNull(mahnung);
 		// Sicherstellen, dass keine offene Mahnung desselben Typs schon existiert
@@ -104,13 +106,14 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		try {
 			mailService.sendInfoMahnung(gesuch);
 		} catch (Exception e) {
-			LOG.error("Mail InfoMahnung konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+			LOG.error("Mail InfoMahnung konnte nicht verschickt werden fuer Gesuch {}", gesuch.getId(), e);
 		}
 		return persistedMahnung;
 	}
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Optional<Mahnung> findMahnung(@Nonnull String mahnungId) {
 		Objects.requireNonNull(mahnungId, "mahnungId muss gesetzt sein");
 		Mahnung mahnung = persistence.find(Mahnung.class, mahnungId);
@@ -122,6 +125,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Collection<Mahnung> findMahnungenForGesuch(@Nonnull Gesuch gesuch) {
 		authorizer.checkReadAuthorization(gesuch);
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -135,17 +139,23 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	}
 
 	@Override
-	public void mahnlaufBeenden(@Nonnull Gesuch gesuch) {
+	@Nonnull
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
+	public Gesuch mahnlaufBeenden(@Nonnull Gesuch gesuch) {
+		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
+		gesuch = gesuchService.updateGesuch(gesuch, true, null);
 		// Alle Mahnungen auf erledigt stellen
 		Collection<Mahnung> mahnungenForGesuch = findMahnungenForGesuch(gesuch);
 		for (Mahnung mahnung : mahnungenForGesuch) {
 			mahnung.setTimestampAbgeschlossen(LocalDateTime.now());
 			persistence.persist(mahnung);
 		}
+		return gesuch;
 	}
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public String getInitialeBemerkungen(@Nonnull Gesuch gesuch) {
 		authorizer.checkReadAuthorization(gesuch);
 		List<DokumentGrund> dokumentGrundsMerged = new ArrayList<>();
@@ -166,6 +176,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	}
 
 	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void fristAblaufTimer() {
 		// Es muessen alle ueberprueft werden, die noch aktiv sind und deren Ablaufdatum < NOW liegt
@@ -182,10 +193,12 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		List<Mahnung> gesucheMitAbgelaufenenMahnungen = persistence.getCriteriaResults(query);
 		for (Mahnung mahnung : gesucheMitAbgelaufenenMahnungen) {
 			final Gesuch gesuch = mahnung.getGesuch();
-			if (AntragStatus.ERSTE_MAHNUNG == gesuch.getStatus() || AntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN == gesuch.getStatus()) {
+			if (AntragStatus.ERSTE_MAHNUNG == gesuch.getStatus() ||
+				AntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN == gesuch.getStatus()) {
 				gesuch.setStatus(AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN);
 				gesuchService.updateGesuch(gesuch, true, null);
-			} else if (AntragStatus.ZWEITE_MAHNUNG == gesuch.getStatus() || AntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN == gesuch.getStatus()) {
+			} else if (AntragStatus.ZWEITE_MAHNUNG == gesuch.getStatus() ||
+				AntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN == gesuch.getStatus()) {
 				gesuch.setStatus(AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
 				gesuchService.updateGesuch(gesuch, true, null);
 			}
@@ -196,6 +209,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public  Optional<Mahnung> findAktiveErstMahnung(Gesuch gesuch) {
 		authorizer.checkReadAuthorization(gesuch);
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();

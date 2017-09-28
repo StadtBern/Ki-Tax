@@ -26,6 +26,7 @@ import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
 import IPromise = angular.IPromise;
+import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
 
 describe('gesuchModelManager', function () {
 
@@ -85,6 +86,7 @@ describe('gesuchModelManager', function () {
                 spyOn(kindRS, 'findKind').and.returnValue($q.when(kindToWorkWith));
                 spyOn(betreuungRS, 'saveBetreuung').and.returnValue($q.when(betreuung));
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
+                spyOn(gesuchRS, 'getGesuchBetreuungenStatus').and.returnValue($q.when(TSGesuchBetreuungenStatus.ALLE_BESTAETIGT));
 
                 gesuchModelManager.saveBetreuung(gesuchModelManager.getKindToWorkWith().betreuungen[0], false);
                 scope.$apply();
@@ -92,6 +94,7 @@ describe('gesuchModelManager', function () {
                 expect(betreuungRS.saveBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb', undefined, false);
                 expect(kindRS.findKind).toHaveBeenCalledWith('2afc9d9a-957e-4550-9a22-97624a000feb');
                 expect(gesuchModelManager.getKindToWorkWith().nextNumberBetreuung).toEqual(5);
+                expect(gesuchModelManager.getGesuch().gesuchBetreuungenStatus).toEqual(TSGesuchBetreuungenStatus.ALLE_BESTAETIGT);
             });
         });
         describe('saveGesuchAndFall', () => {

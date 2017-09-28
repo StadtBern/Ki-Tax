@@ -60,7 +60,8 @@ export default class GesuchsperiodeRS {
     public updateActiveGesuchsperiodenList(): IPromise<TSGesuchsperiode[]> {
         return this.http.get(this.serviceURL + '/active').then((response: any) => {
             let gesuchsperioden: TSGesuchsperiode[] = this.ebeguRestUtil.parseGesuchsperioden(response.data);
-            return this.activeGesuchsperiodenList = angular.copy(gesuchsperioden);
+            this.activeGesuchsperiodenList = angular.copy(gesuchsperioden);
+            return this.activeGesuchsperiodenList;
         });
     }
 
@@ -82,7 +83,8 @@ export default class GesuchsperiodeRS {
     public updateNichtAbgeschlosseneGesuchsperiodenList(): IPromise<TSGesuchsperiode[]> {
         return this.http.get(this.serviceURL + '/unclosed').then((response: any) => {
             let gesuchsperioden: TSGesuchsperiode[] = this.ebeguRestUtil.parseGesuchsperioden(response.data);
-            return this.nichtAbgeschlosseneGesuchsperiodenList = angular.copy(gesuchsperioden);
+            this.nichtAbgeschlosseneGesuchsperiodenList = angular.copy(gesuchsperioden);
+            return this.nichtAbgeschlosseneGesuchsperiodenList;
         });
     }
 
@@ -93,5 +95,11 @@ export default class GesuchsperiodeRS {
             });
         }
         return this.$q.when(this.nichtAbgeschlosseneGesuchsperiodenList); // we need to return a promise
+    }
+
+    public getAllNichtAbgeschlosseneNichtVerwendeteGesuchsperioden(fallId: string): IPromise<TSGesuchsperiode[]> {
+        return this.http.get(this.serviceURL + '/unclosed/' + fallId).then((response: any) => {
+            return this.ebeguRestUtil.parseGesuchsperioden(response.data);
+        });
     }
 }

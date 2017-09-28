@@ -12,11 +12,12 @@
                     <th data-translate="PENSUM"></th>
                     <th data-translate="ZUSCHLAG"></th>
                     <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                    ng-click="vm.editClicked(row)">
+                    ng-click="vm.editClicked(row)" role="row" tabindex="-1">
                     <td ng-if="!row.erwerbspensumJA.bezeichnung"
                         ng-bind="row.erwerbspensumJA.taetigkeit | translate"></td>
                     <td ng-if="row.erwerbspensumJA.bezeichnung" ng-bind="row.erwerbspensumJA.bezeichnung"></td>
@@ -24,18 +25,29 @@
                     <td ng-bind="(row.erwerbspensumJA.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY')== '31.12.9999' ? '': row.erwerbspensumJA.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td ng-bind="row.erwerbspensumJA.pensum + '%'"></td>
                     <td ng-bind="row.erwerbspensumJA.zuschlagZuErwerbspensum ?  row.erwerbspensumJA.zuschlagsprozent+'%' : ''"></td>
-                    <td ng-if="vm.isRemoveAllowed(row)" ng-click="$event.stopPropagation()">
-                        <dv-loading-button type="button" button-click="vm.removeClicked(row); $event.stopPropagation()"
-                                           button-class="dv-btn-operation" title="{{vm.removeButtonTitle}}"
-                                           button-disabled="!vm.addButtonEnabled">
-                            <i class="fa fa-lg fa-trash-o">
+                    <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()">
+                        <dv-loading-button type="button" button-click="vm.editClicked(row);"
+                                           button-class="dv-btn-operation dv-btn-row"
+                                           title="{{'TABLE_EDIT'|translate}}"
+                                           aria-label="{{'TABLE_EDIT'|translate}}">
+                            <i class="fa fa-lg fa-arrow-right" aria-label="{{'TABLE_EDIT'|translate}}">
+                            </i>
+                        </dv-loading-button>
+                    </td>
+                    <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()" ng-if="vm.isRemoveAllowed(row)">
+                        <dv-loading-button type="button" button-click="vm.removeClicked(row,$index)"
+                                           button-class="dv-btn-operation" title="{{'ERWERBSPENSUM_DELETE' | translate}}"
+                                           input-id="{{vm.inputId + $index}}"
+                                           button-disabled="!vm.addButtonEnabled" delay="0"
+                                           aria-label="{{'ERWERBSPENSUM_DELETE'|translate}}">
+                            <i class="fa fa-lg fa-trash-o" aria-label="{{'ERWERBSPENSUM_DELETE' | translate}}">
                             </i>
                         </dv-loading-button>
                     </td>
                     <td ng-if="!vm.addButtonVisible"></td>
                 </tr>
                 <tr ng-if="vm.erwerbspensen.length === 0">
-                    <td colspan="6" class="empty-table" data-translate="KEIN_EINTRAG">...</td>
+                    <td colspan="7" class="empty-table" data-translate="KEIN_EINTRAG">...</td>
                 </tr>
                 </tbody>
             </table>

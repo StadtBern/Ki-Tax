@@ -19,7 +19,7 @@ import ch.dvbern.ebegu.types.DateRange;
 public class EinkommenCalcRule extends AbstractCalcRule {
 
 
-	private BigDecimal maximalesEinkommen;
+	private final BigDecimal maximalesEinkommen;
 
 
 	public EinkommenCalcRule(DateRange validityPeriod, BigDecimal maximalesEinkommen) {
@@ -66,23 +66,27 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 			if (finanzDatenDTO.isEkv1AcceptedAndNotAnnuliert()) {
 				verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP1VorAbzFamGr());
 				verfuegungZeitabschnitt.setEinkommensjahr(basisjahrPlus1);
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ACCEPT_MSG, "" + basisjahrPlus1);
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ACCEPT_MSG, String.valueOf(basisjahrPlus1));
 			} else {
 				verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjVorAbzFamGr());
 				verfuegungZeitabschnitt.setEinkommensjahr(basisjahr);
 				// Je nachdem, ob es (manuell) annulliert war oder die 20% nicht erreicht hat, kommt eine andere Meldung
 				if (finanzDatenDTO.isEkv1Annulliert()) {
-					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ANNULLIERT_MSG, "" + basisjahrPlus1);
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey
+						.EINKOMMENSVERSCHLECHTERUNG_ANNULLIERT_MSG, String.valueOf(basisjahrPlus1));
 				} else {
-					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, "" + basisjahrPlus1);
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey
+						.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, String.valueOf(basisjahrPlus1));
 				}
 			}
 
 		} else if (isEkv2) {
 			if (finanzDatenDTO.isEkv2AcceptedAndNotAnnuliert()) {
+				// EKV 1 accepted -> basisjahr + 2
 				verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP2VorAbzFamGr());
 				verfuegungZeitabschnitt.setEinkommensjahr(basisjahrPlus2);
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ACCEPT_MSG, "" + basisjahrPlus2);
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ACCEPT_MSG,
+					String.valueOf(basisjahrPlus2));
 			} else  {
 				if (verfuegungZeitabschnitt.isEkv1NotExisting() || finanzDatenDTO.isEkv1Annulliert()) {
 					verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjVorAbzFamGr());
@@ -92,9 +96,11 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 					verfuegungZeitabschnitt.setEinkommensjahr(basisjahrPlus1);
 				}
 				if (finanzDatenDTO.isEkv2Annulliert()) {
-					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ANNULLIERT_MSG, "" + basisjahrPlus2);
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey
+						.EINKOMMENSVERSCHLECHTERUNG_ANNULLIERT_MSG, String.valueOf(basisjahrPlus2));
 				} else {
-					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, "" + basisjahrPlus2);
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey
+						.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, String.valueOf(basisjahrPlus2));
 				}
 			}
 		} else {

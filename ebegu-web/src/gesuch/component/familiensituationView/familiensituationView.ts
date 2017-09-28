@@ -3,11 +3,8 @@ import {IComponentOptions, IPromise} from 'angular';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSFamiliensituation from '../../../models/TSFamiliensituation';
 import './familiensituationView.less';
-import {TSFamilienstatus, getTSFamilienstatusValues} from '../../../models/enums/TSFamilienstatus';
-import {
-    TSGesuchstellerKardinalitaet,
-    getTSGesuchstellerKardinalitaetValues
-} from '../../../models/enums/TSGesuchstellerKardinalitaet';
+import {getTSFamilienstatusValues, TSFamilienstatus} from '../../../models/enums/TSFamilienstatus';
+import {getTSGesuchstellerKardinalitaetValues, TSGesuchstellerKardinalitaet} from '../../../models/enums/TSGesuchstellerKardinalitaet';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {TSRole} from '../../../models/enums/TSRole';
@@ -21,10 +18,11 @@ import FamiliensituationRS from '../../service/familiensituationRS.rest';
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
 import IScope = angular.IScope;
+import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./familiensituationView.html');
 require('./familiensituationView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
-
 
 export class FamiliensituationViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -34,7 +32,6 @@ export class FamiliensituationViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-
 export class FamiliensituationViewController extends AbstractGesuchViewController<TSFamiliensituationContainer> {
     familienstatusValues: Array<TSFamilienstatus>;
     gesuchstellerKardinalitaetValues: Array<TSGesuchstellerKardinalitaet>;
@@ -43,14 +40,15 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     savedClicked: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
-        'DvDialog', '$translate', '$q', '$scope', 'FamiliensituationRS'];
+        'DvDialog', '$translate', '$q', '$scope', 'FamiliensituationRS', '$timeout'];
+
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
                 private $translate: ITranslateService, private $q: IQService, $scope: IScope,
-                private familiensituationRS: FamiliensituationRS) {
+                private familiensituationRS: FamiliensituationRS, $timeout: ITimeoutService) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FAMILIENSITUATION);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FAMILIENSITUATION, $timeout);
         this.gesuchModelManager.initFamiliensituation();
         this.model = angular.copy(this.gesuchModelManager.getGesuch().familiensituationContainer);
         this.initialFamiliensituation = angular.copy(this.gesuchModelManager.getFamiliensituation());
@@ -65,7 +63,6 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
-
 
     public confirmAndSave(): IPromise<TSFamiliensituationContainer> {
         this.savedClicked = true;
@@ -85,7 +82,9 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
                 });
                 return this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
                     title: 'FAMILIENSITUATION_WARNING',
-                    deleteText: descriptionText
+                    deleteText: descriptionText,
+                    parentController: undefined,
+                    elementID: undefined
                 }).then(() => {   //User confirmed changes
                     return this.save();
                 });
@@ -152,7 +151,6 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
         return this.initialFamiliensituation.hasSecondGesuchsteller()
             && !this.getFamiliensituation().hasSecondGesuchsteller();
     }
-
 
     public isMutationAndDateSet(): boolean {
         if (!this.isMutation()) {

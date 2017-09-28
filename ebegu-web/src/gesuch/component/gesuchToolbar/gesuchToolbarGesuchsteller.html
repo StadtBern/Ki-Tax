@@ -1,12 +1,13 @@
 <!--gesuchtoolbar fuer normale Screens-->
-<div class="gesuch-toolbar-gesuchsteller" flex="100" hide-sm hide-xs>
+<div class="gesuch-toolbar-gesuchsteller desktop" flex="100" hide-sm hide-xs>
     <md-toolbar flex="100">
         <md-menu-bar flex="100" layout="row" layout-align="start center">
-            <span class="gesuchName"><span ng-bind="vmgs.getGesuchName()"  title="{{vmgs.getBesitzer()}}"></span></span>
+            <h1 class="access-for-all-title" data-translate="AFA_TOOLBAR"></h1>
+            <span class="gesuchName"><span ng-bind="vmgs.getGesuchName()" title="{{vmgs.getBesitzer()}}"></span></span>
             <span flex="40"></span>
             <md-menu ng-if="vmgs.showGesuchPeriodeNavigationMenu()">
                 <button ng-click="$mdOpenMenu()"
-                        aria-label="{{vmgs.getCurrentGesuchsperiode()}}">
+                        aria-label="{{ 'TOOLBAR_GESUCHSPERIODE' | translate:{gp:vmgs.getCurrentGesuchsperiode()} }}">
                     <span ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
                     <i class="ellipsis-icon fa fa-chevron-down"></i>
                 </button>
@@ -15,7 +16,7 @@
                                   ng-repeat="gesuchsperiodeString in vmgs.getKeys(vmgs.gesuchNavigationList)"
                                   ng-value="gesuchsperiodeString">
                         <md-button ng-click="vmgs.setGesuchsperiode(gesuchsperiodeString)"
-                                   aria-label="{{gesuchsperiodeString}}">
+                                   aria-label="{{ 'TOOLBAR_GESUCHSPERIODE_ITEM' | translate:{gp:gesuchsperiodeString} }}">
                                 <span>
                                     <a href="javascript:void(0)" aria-hidden>{{gesuchsperiodeString}}</a>
                                 </span>
@@ -29,7 +30,7 @@
 
             <!--Gesuchstyp-->
             <md-menu ng-if="vmgs.showAntragTypListNavigationMenu()">
-                <button ng-click="$mdOpenMenu()" aria-label="{{vmgs.getAntragTyp()}}">
+                <button ng-click="$mdOpenMenu()" aria-label="{{ 'TOOLBAR_GESUCHSTYP' | translate:{gt:vmgs.getAntragTyp(), gp:vmgs.getCurrentGesuchsperiode()} }}">
                     <span ng-bind="vmgs.getAntragTyp()"></span>
                     <i class="ellipsis-icon fa fa-chevron-down"></i>
                 </button>
@@ -38,7 +39,7 @@
                                   ng-repeat="antragTypDatum in vmgs.gesuchNavigationList[vmgs.getCurrentGesuchsperiode()]"
                                   ng-value="antragTypDatum">
                         <md-button ng-click="vmgs.setAntragTypDatum(antragTypDatum)"
-                                   aria-label="{{antragTypDatum}}">
+                                   aria-label="{{ 'TOOLBAR_GESUCHSTYP_ITEM' | translate:{gt:antragTypDatum, gp:vmgs.getCurrentGesuchsperiode()} }}">
                                 <span>
                                     <a href="javascript:void(0)" aria-hidden>{{antragTypDatum}}</a>
                                 </span>
@@ -54,8 +55,8 @@
             <!-- Alle Verfuegungen -->
             <div dv-show-element
                  dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerJugendamtRoles()">
-                <button ng-click="vmgs.openAlleVerfuegungen()"
-                        aria-label="{{TOOLBAR_ALLE_VERFUEGUNGEN | translate}}" style="text-align: center;">
+                <button id="button" ng-click="vmgs.openAlleVerfuegungen()"
+                        aria-label="{{'TOOLBAR_ALLE_VERFUEGUNGEN' | translate}}" style="text-align: center;">
                     <span data-translate="TOOLBAR_ALLE_VERFUEGUNGEN"></span>
                 </button>
             </div>
@@ -64,32 +65,28 @@
             <div dv-show-element
                  dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerJugendamtOtherAmtRoles()">
                 <button ng-click="vmgs.openMitteilungen()"
-                        aria-label="{{TOOLBAR_MITTEILUNGEN | translate}}" style="text-align: center;">
+                        aria-label="{{'TOOLBAR_MITTEILUNGEN' | translate}}" style="text-align: center;">
                     <span data-translate="TOOLBAR_MITTEILUNGEN"></span>
                 </button>
             </div>
-
             <!--Kontakt-->
-            <md-menu>
-                <button ng-click="$mdOpenMenu()" aria-label="{{'ARIA_KONTAKT_MENU' | translate}}">
+            <div dv-show-element
+                 dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerJugendamtOtherAmtRoles()">
+                <button ng-click="vmgs.showKontakt()" id="kontaktButton"
+                        aria-label="{{'ARIA_KONTAKT_MENU' | translate}}">
                     <i class="ellipsis-icon fa fa-envelope"></i>
                     <span data-translate="TOOLBAR_KONTAKT"></span>
                 </button>
-                <md-menu-content class="no-padding menu-item-container kontakt gesuchsteller">
-                    <span>Jugendamt</span>
-                    <span>Effingerstrasse 21</span>
-                    <span>3008 Bern</span>
-                    <a href="tel:0313215115"><span>031 321 51 15</span></a>
-                    <a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>
-                </md-menu-content>
-            </md-menu>
+            </div>
+
         </md-menu-bar>
     </md-toolbar>
 </div>
 <!--Definition der Toolbar  fuer kleine Screens als Sidebar-->
 <md-sidenav md-component-id="gesuch-toolbar-mobile" class="md-sidenav-right gesuch-toolbar-mobile" flex="100"
             layout="column" layout-align="start center" hide-gt-sm>
-    <button class="gesuch-toolbar-mobile-close" ng-click="vmgs.toggleSidenav('gesuch-toolbar-mobile')" aria-label="Schliessen">
+    <button class="gesuch-toolbar-mobile-close" ng-click="vmgs.toggleSidenav('gesuch-toolbar-mobile')"
+            aria-label="Schliessen">
         <!--close knopf-->
         <i class="fa fa-times" aria-hidden="true"></i>
     </button>
@@ -124,7 +121,7 @@
     <div dv-show-element
          dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerJugendamtRoles()" class="gesuchsperioden-container">
         <button ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.openMitteilungen()"
-                aria-label="{{TOOLBAR_MITTEILUNGEN | translate}}" class="gesuchsperiode-button">
+                aria-label="{{'TOOLBAR_MITTEILUNGEN' | translate}}" class="gesuchsperiode-button">
             <span data-translate="TOOLBAR_MITTEILUNGEN"></span>
         </button>
     </div>

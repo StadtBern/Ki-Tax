@@ -1,12 +1,18 @@
 package ch.dvbern.ebegu.tests;
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.services.InstitutionStammdatenService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -14,11 +20,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Tests fuer die Klasse PersonService
@@ -32,7 +33,7 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguLoginTest {
 	private InstitutionStammdatenService institutionStammdatenService;
 
 	@Inject
-	private Persistence<InstitutionStammdaten> persistence;
+	private Persistence persistence;
 
 
 

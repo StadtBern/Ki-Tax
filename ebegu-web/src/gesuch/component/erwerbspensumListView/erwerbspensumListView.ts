@@ -13,12 +13,17 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSKindContainer from '../../../models/TSKindContainer';
 import {TSBetreuungsangebotTypUtil} from '../../../utils/TSBetreuungsangebotTypUtil';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRole} from '../../../models/enums/TSRole';
+import * as moment from 'moment';
+import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 import ILogService = angular.ILogService;
 import IScope = angular.IScope;
+import ITimeoutService = angular.ITimeoutService;
+
 let template: string = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 require('./erwerbspensumListView.less');
-
 
 export class ErwerbspensumListViewComponentConfig implements IComponentOptions {
     transclude: boolean;
@@ -26,7 +31,6 @@ export class ErwerbspensumListViewComponentConfig implements IComponentOptions {
     template: string;
     controller: any;
     controllerAs: string;
-
 
     constructor() {
         this.transclude = false;
@@ -37,19 +41,19 @@ export class ErwerbspensumListViewComponentConfig implements IComponentOptions {
     }
 }
 
-
-export class ErwerbspensumListViewController extends AbstractGesuchViewController<any> {
+export class ErwerbspensumListViewController extends AbstractGesuchViewController<any> implements IDVFocusableController {
 
     erwerbspensenGS1: Array<TSErwerbspensumContainer> = undefined;
     erwerbspensenGS2: Array<TSErwerbspensumContainer>;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$log', 'DvDialog',
-        'ErrorService', 'WizardStepManager', '$scope'];
+        'ErrorService', 'WizardStepManager', '$scope', 'AuthServiceRS', '$timeout'];
+
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ERWERBSPENSUM);
+                wizardStepManager: WizardStepManager, $scope: IScope, private authServiceRS: AuthServiceRS, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ERWERBSPENSUM, $timeout);
         this.initErwerbspensumStepStatus();
     }
 
@@ -90,16 +94,20 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
 
     }
 
-
     createErwerbspensum(gesuchstellerNumber: number): void {
         this.openErwerbspensumView(gesuchstellerNumber, undefined);
     }
 
-    removePensum(pensum: any, gesuchstellerNumber: number): void {
+    removePensum(pensum: TSErwerbspensumContainer, gesuchstellerNumber: number, element_id: string, index: any): void {
+        // Spezielle Meldung, wenn es ein GS ist, der in einer Mutation loescht
+        let gsInMutation: boolean = (this.authServiceRS.getPrincipalRole() === TSRole.GESUCHSTELLER && pensum.vorgaengerId !== undefined);
+        let pensumLaufendOderVergangen: boolean = pensum.erwerbspensumJA.gueltigkeit.gueltigAb.isBefore(moment(moment.now()));
         this.errorService.clearAll();
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
-            deleteText: '',
-            title: 'ERWERBSPENSUM_LOESCHEN'
+            deleteText: (gsInMutation && pensumLaufendOderVergangen) ? 'ERWERBSPENSUM_LOESCHEN_GS_MUTATION' : '',
+            title: 'ERWERBSPENSUM_LOESCHEN',
+            parentController: this,
+            elementID: element_id + index
         })
             .then(() => {   //User confirmed removal
                 this.gesuchModelManager.setGesuchstellerNumber(gesuchstellerNumber);
@@ -154,5 +162,9 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
             erwerbspensenNumber += this.getErwerbspensenListGS2().length;
         }
         return this.isErwerbspensumRequired() && erwerbspensenNumber <= 0;
+    }
+
+    public setFocusBack(elementID: string): void {
+        angular.element('#' + elementID).first().focus();
     }
 }

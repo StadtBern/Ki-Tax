@@ -1,10 +1,17 @@
 package ch.dvbern.ebegu.tests;
 
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+
 import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -12,10 +19,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
 
 import static ch.dvbern.ebegu.tets.util.JBossLoginContextFactory.createLoginContext;
 
@@ -30,8 +33,11 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 	private  LoginContext loginContext;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 	private Benutzer dummyAdmin;
+
+	@Inject
+	private BenutzerService benutzerService;
 
 	@Before
 	public  void performLogin() {
@@ -65,7 +71,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 
 	protected Benutzer loginAsGesuchsteller(String username) {
 		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
-		Benutzer user = TestDataUtil.createBenutzer(UserRole.GESUCHSTELLER, username, null, null, mandant);
+		Benutzer user = createOrFindBenutzer(UserRole.GESUCHSTELLER, username, null, null, mandant);
 		user = persistence.merge(user);
 		try {
 			createLoginContext(username, username).login();
@@ -76,7 +82,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		//theoretisch sollten wir wohl zuerst ausloggen bevor wir wieder einloggen aber es scheint auch so zu gehen
 	}
 
-	protected void loginAsSchulamt() {
+	protected Benutzer loginAsSchulamt() {
 		try {
 			createLoginContext("schulamt", "schulamt").login();
 		} catch (LoginException e) {
@@ -84,8 +90,8 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		}
 
 		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
-		Benutzer schulamt = TestDataUtil.createBenutzer(UserRole.SCHULAMT, "schulamt", null, null, mandant);
-		persistence.persist(schulamt);
+		Benutzer schulamt = createOrFindBenutzer(UserRole.SCHULAMT, "schulamt", null, null, mandant);
+		return persistence.merge(schulamt);
 	}
 
 	protected void loginAsSteueramt() {
@@ -96,8 +102,8 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		}
 
 		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
-		Benutzer steueramt = TestDataUtil.createBenutzer(UserRole.STEUERAMT, "steueramt", null, null, mandant);
-		persistence.persist(steueramt);
+		Benutzer steueramt = createOrFindBenutzer(UserRole.STEUERAMT, "steueramt", null, null, mandant);
+		persistence.merge(steueramt);
 	}
 
 	protected Benutzer loginAsSachbearbeiterJA() {
@@ -108,8 +114,8 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		}
 
 		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
-		Benutzer saja = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, "saja", null, null, mandant);
-		persistence.persist(saja);
+		Benutzer saja = createOrFindBenutzer(UserRole.SACHBEARBEITER_JA, "saja", null, null, mandant);
+		persistence.merge(saja);
 		return saja;
 	}
 
@@ -121,12 +127,12 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		}
 
 		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
-		Benutzer admin = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
-		persistence.persist(admin);
+		Benutzer admin = createOrFindBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
+		persistence.merge(admin);
 	}
 
 	protected Benutzer loginAsSachbearbeiterInst(String username, Institution institutionToSet) {
-		Benutzer user = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_INSTITUTION, username, null, institutionToSet, institutionToSet.getMandant());
+		Benutzer user = createOrFindBenutzer(UserRole.SACHBEARBEITER_INSTITUTION, username, null, institutionToSet, institutionToSet.getMandant());
 		user = persistence.merge(user);
 		try {
 			createLoginContext(username, username).login();
@@ -135,5 +141,10 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		}
 		return user;
 		//theoretisch sollten wir wohl zuerst ausloggen bevor wir wieder einloggen aber es scheint auch so zu gehen
+	}
+
+	private Benutzer createOrFindBenutzer(UserRole role, String userName, Traegerschaft traegerschaft, Institution institution, Mandant mandant) {
+		Optional<Benutzer> benutzer = benutzerService.findBenutzer(userName);
+		return benutzer.orElseGet(() -> TestDataUtil.createBenutzer(role, userName, traegerschaft, institution, mandant));
 	}
 }

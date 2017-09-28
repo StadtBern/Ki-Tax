@@ -15,6 +15,7 @@ import {RemoveDialogController} from '../../gesuch/dialog/RemoveDialogController
 import IStateService = angular.ui.IStateService;
 import IFormController = angular.IFormController;
 import Moment = moment.Moment;
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./zahlungsauftragView.html');
 require('./zahlungsauftragView.less');
 
@@ -37,17 +38,17 @@ export class ZahlungsauftragViewController {
     beschrieb: string;
     faelligkeitsdatum: Moment;
     datumGeneriert: Moment;
-
     itemsByPage: number = 12;
     testMode: boolean = false;
 
     static $inject: string[] = ['ZahlungRS', 'CONSTANTS', '$state', 'DownloadRS', 'ApplicationPropertyRS', 'ReportRS',
-        'AuthServiceRS', 'EbeguUtil', 'DvDialog'];
+        'AuthServiceRS', 'EbeguUtil', 'DvDialog', '$translate'];
 
     constructor(private zahlungRS: ZahlungRS, private CONSTANTS: any,
-                private $state: IStateService, private downloadRS: DownloadRS, private applicationPropertyRS: ApplicationPropertyRS,
+                private $state: IStateService, private downloadRS: DownloadRS,
+                private applicationPropertyRS: ApplicationPropertyRS,
                 private reportRS: ReportRS, private authServiceRS: AuthServiceRS, private ebeguUtil: EbeguUtil,
-                private dvDialog: DvDialog) {
+                private dvDialog: DvDialog, private $translate: ITranslateService) {
         this.initViewModel();
     }
 
@@ -96,10 +97,17 @@ export class ZahlungsauftragViewController {
 
     public createZahlungsauftrag() {
         if (this.form.$valid) {
-            this.zahlungRS.createZahlungsauftrag(this.beschrieb, this.faelligkeitsdatum, this.datumGeneriert).then((response: TSZahlungsauftrag) => {
-                this.zahlungsauftragen.push(response);
-                this.resetEditZahlungsauftrag();
-                this.resetForm();
+            this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                title: this.$translate.instant('ZAHLUNG_ERSTELLEN_CONFIRM'),
+                deleteText: this.$translate.instant('ZAHLUNG_ERSTELLEN_INFO'),
+                parentController: undefined,
+                elementID: undefined
+            }).then(() => {   //User confirmed removal
+                this.zahlungRS.createZahlungsauftrag(this.beschrieb, this.faelligkeitsdatum, this.datumGeneriert).then((response: TSZahlungsauftrag) => {
+                    this.zahlungsauftragen.push(response);
+                    this.resetEditZahlungsauftrag();
+                    this.resetForm();
+                });
             });
         }
     }
@@ -109,6 +117,9 @@ export class ZahlungsauftragViewController {
         return this.downloadRS.getPain001AccessTokenGeneratedDokument(zahlungsauftrag.id)
             .then((downloadFile: TSDownloadFile) => {
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, true, win);
+            })
+            .catch((ex) => {
+                win.close();
             });
     }
 
@@ -117,23 +128,35 @@ export class ZahlungsauftragViewController {
         this.reportRS.getZahlungsauftragReportExcel(zahlungsauftrag.id)
             .then((downloadFile: TSDownloadFile) => {
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+            })
+            .catch((ex) => {
+                win.close();
             });
     }
 
     public ausloesen(zahlungsauftragId: string) {
-        this.zahlungRS.zahlungsauftragAusloesen(zahlungsauftragId).then((response: TSZahlungsauftrag) => {
-            let index = EbeguUtil.getIndexOfElementwithID(response, this.zahlungsauftragen);
-            if (index > -1) {
-                this.zahlungsauftragen[index] = response;
-            }
-            this.ebeguUtil.handleSmarttablesUpdateBug(this.zahlungsauftragen);
+        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            title: this.$translate.instant('ZAHLUNG_AUSLOESEN_CONFIRM'),
+            deleteText: this.$translate.instant('ZAHLUNG_AUSLOESEN_INFO'),
+            parentController: undefined,
+            elementID: undefined
+        }).then(() => {   //User confirmed removal
+            this.zahlungRS.zahlungsauftragAusloesen(zahlungsauftragId).then((response: TSZahlungsauftrag) => {
+                let index = EbeguUtil.getIndexOfElementwithID(response, this.zahlungsauftragen);
+                if (index > -1) {
+                    this.zahlungsauftragen[index] = response;
+                }
+                this.ebeguUtil.handleSmarttablesUpdateBug(this.zahlungsauftragen);
+            });
         });
     }
 
     public remove(zahlungsauftrag: TSZahlungsauftrag) {
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: 'ZAHLUNG_LOESCHEN_DIALOG_TEXT',
-            title: 'ZAHLUNG_LOESCHEN_DIALOG_TITLE'
+            title: 'ZAHLUNG_LOESCHEN_DIALOG_TITLE',
+            parentController: undefined,
+            elementID: undefined
         })
             .then(() => {   //User confirmed removal
                 let index = EbeguUtil.getIndexOfElementwithID(zahlungsauftrag, this.zahlungsauftragen);
@@ -183,7 +206,6 @@ export class ZahlungsauftragViewController {
         }
         return false;
     }
-
 
     private resetEditZahlungsauftrag() {
         this.zahlungsauftragToEdit = null;

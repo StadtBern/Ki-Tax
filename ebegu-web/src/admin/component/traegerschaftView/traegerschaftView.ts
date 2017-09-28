@@ -49,7 +49,9 @@ export class TraegerschaftViewController extends AbstractAdminViewController {
     removeTraegerschaft(traegerschaft: any): void {
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: '',
-            title: 'LOESCHEN_DIALOG_TITLE'
+            title: 'LOESCHEN_DIALOG_TITLE',
+            parentController: undefined,
+            elementID: undefined
         })
             .then(() => {   //User confirmed removal
                 this.traegerschaft = undefined;

@@ -56,9 +56,9 @@ export class DvQuicksearchboxController {
         this.searchIndexRS.quickSearch(query).then((quickSearchResult: TSQuickSearchResult) => {
             this.limitResultsize(quickSearchResult);
             deferred.resolve(quickSearchResult.resultEntities);
-        }).catch(() => {
+        }).catch((ee) => {
             deferred.resolve([]);
-            this.$log.warn('error during quicksearch');
+            this.$log.warn('error during quicksearch', ee);
         });
 
         return deferred.promise;
@@ -90,31 +90,33 @@ export class DvQuicksearchboxController {
 
     }
 
-
-    //TODO (hefr) ähnlicher code wie bei faelleListView. z.B. NavigationUtil o.ae.
     private navigateToFall() {
-        if (this.selectedItem && this.selectedItem.gesuchID) {
-            if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles()) && this.selectedItem.antragDTO) {
-                // Reload Gesuch in gesuchModelManager on Init in fallCreationView because  maybe it has been changed since last time
-                if (!this.gesuchModelManager) {
-                    this.gesuchModelManager = this.$injector.get<GesuchModelManager>('GesuchModelManager');
-                }
-                this.gesuchModelManager.clearGesuch();
-                if (isAnyStatusOfVerfuegt(this.selectedItem.antragDTO.status)) {
+        if (this.selectedItem) {
+            if (this.selectedItem.antragDTO instanceof TSAntragDTO && this.selectedItem.gesuchID) {
+                if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles()) && this.selectedItem.antragDTO) {
+                    // Reload Gesuch in gesuchModelManager on Init in fallCreationView because  maybe it has been changed since last time
+                    if (!this.gesuchModelManager) {
+                        this.gesuchModelManager = this.$injector.get<GesuchModelManager>('GesuchModelManager');
+                    }
+                    this.gesuchModelManager.clearGesuch();
+                    if (isAnyStatusOfVerfuegt(this.selectedItem.antragDTO.status)) {
 
-                    this.openGesuch(this.selectedItem.gesuchID, 'gesuch.verfuegen');
+                        this.openGesuch(this.selectedItem.gesuchID, 'gesuch.verfuegen');
+                    } else {
+                        this.openGesuch(this.selectedItem.gesuchID, 'gesuch.betreuungen');
+                    }
                 } else {
-                    this.openGesuch(this.selectedItem.gesuchID, 'gesuch.betreuungen');
+                    this.openGesuch(this.selectedItem.gesuchID, 'gesuch.fallcreation');
                 }
+            } else if (this.selectedItem.entity === 'FALL') {
+                //open mitteilung
+                this.$state.go('mitteilungen', {fallId: this.selectedItem.fallID});
             } else {
-                this.openGesuch(this.selectedItem.gesuchID, 'gesuch.fallcreation');
-            }
-        } else if (this.selectedItem) {
 
-            this.$state.go('search', {searchString: this.searchString});
+                this.$state.go('search', {searchString: this.searchString});
+            }
         }
     }
-
 
     /**
      * Oeffnet das Gesuch und geht zur gegebenen Seite (route)

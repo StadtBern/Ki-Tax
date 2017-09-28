@@ -21,10 +21,8 @@ import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {IStateService} from 'angular-ui-router';
-import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
-import ICacheFactoryService = angular.ICacheFactoryService;
 import ITranslateService = angular.translate.ITranslateService;
 import IRootScopeService = angular.IRootScopeService;
 let template = require('./kommentarView.html');
@@ -122,10 +120,15 @@ export class KommentarViewController {
                 this.$log.error('Kein Papiergesuch für Download vorhanden!');
             } else {
                 let newest: TSDokument = this.getNewest(this.dokumentePapiergesuch.dokumente);
-                this.downloadRS.getAccessTokenDokument(newest.id).then((response) => {
-                    let tempDokument: TSDownloadFile = angular.copy(response);
-                    this.downloadRS.startDownload(tempDokument.accessToken, newest.filename, false, win);
-                });
+                this.downloadRS.getAccessTokenDokument(newest.id)
+                    .then((response) => {
+                        let tempDokument: TSDownloadFile = angular.copy(response);
+                        this.downloadRS.startDownload(tempDokument.accessToken, newest.filename, false, win);
+                    })
+                    .catch((ex) => {
+                        win.close();
+                        this.$log.error('An error occurred downloading the document, closing download window.');
+                    });
             }
         });
     }
@@ -206,7 +209,9 @@ export class KommentarViewController {
     public freigebenSTV(): void {
         this.dvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'FREIGABE_JA',
-            deleteText: 'FREIGABE_JA_BESCHREIBUNG'
+            deleteText: 'FREIGABE_JA_BESCHREIBUNG',
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {
             return this.gesuchRS.gesuchBySTVFreigeben(this.getGesuch().id).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);

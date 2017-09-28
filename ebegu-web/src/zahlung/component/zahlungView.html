@@ -27,7 +27,7 @@
                     <thead>
                     <tr>
                         <th st-sort="institutionsName" class="sortable row-institutionsName"
-                            data-translate="ZAHLUNG_INSTITUION_UPPER"></th>
+                            data-translate="ZAHLUNG_INSTITUTION_UPPER" st-sort-default="true"></th>
                         <th data-translate="ZAHLUNG_DETAILPOSITIONEN_UPPER"></th>
                         <th st-sort="betragTotalZahlung" class="sortable row-status"
                             data-translate="ZAHLUNG_BETRAG_UPPER" id="betragTotalZahlung"></th>
@@ -39,7 +39,7 @@
                     <tr ng-repeat="row in displayedCollection">
                         <td class="ellipsis" ellipsis-tooltip="{{row.institutionsName}}"
                             ng-bind="row.institutionsName"></td>
-                        <td class="symbol" ng-click="$event.stopPropagation()">
+                        <td class="symbol">
                             <dv-loading-button type="button" button-click="vm.downloadDetails(row)"
                                                button-class="dv-btn-operation">
                                 <i class="fa fa-lg fa-file-excel-o"></i>
