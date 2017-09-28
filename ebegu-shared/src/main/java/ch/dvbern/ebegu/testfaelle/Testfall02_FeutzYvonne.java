@@ -76,6 +76,9 @@ public class Testfall02_FeutzYvonne extends AbstractTestfall {
 		finanzielleSituationGS2.getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(98521));
 		finanzielleSituationGS2.setGesuchsteller(gesuchsteller2);
 		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationGS2);
+
+		createEmptyEKVInfoContainer(gesuch);
+
 		return gesuch;
 	}
 

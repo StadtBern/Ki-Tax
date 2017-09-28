@@ -17,8 +17,8 @@ import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import IHttpBackendService = angular.IHttpBackendService;
 import IFormController = angular.IFormController;
-import IWindowService = angular.IWindowService;
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {ITimeoutService} from 'angular';
 
 describe('freigabeView', function () {
 
@@ -31,8 +31,8 @@ describe('freigabeView', function () {
     let gesuchModelManager: GesuchModelManager;
     let $httpBackend: IHttpBackendService;
     let applicationPropertyRS: any;
-    let $window: IWindowService;
     let authServiceRS: AuthServiceRS;
+    let $timeout: ITimeoutService;
 
     let gesuch: TSGesuch;
 
@@ -55,15 +55,15 @@ describe('freigabeView', function () {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $httpBackend = $injector.get('$httpBackend');
         applicationPropertyRS = $injector.get('ApplicationPropertyRS');
-        $window = $injector.get('$window');
         authServiceRS = $injector.get('AuthServiceRS');
+        $timeout = $injector.get('$timeout');
 
         spyOn(applicationPropertyRS , 'isDevMode').and.returnValue($q.when(false));
         spyOn(authServiceRS , 'isOneOfRoles').and.returnValue(true);
         spyOn(wizardStepManager, 'updateCurrentWizardStepStatus').and.returnValue({});
 
         controller = new FreigabeViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
-            wizardStepManager, dialog, downloadRS, $scope, applicationPropertyRS, $window, authServiceRS);
+            wizardStepManager, dialog, downloadRS, $scope, applicationPropertyRS, authServiceRS, $timeout);
         controller.form = <IFormController>{};
 
         spyOn(controller, 'isGesuchValid').and.callFake(function () {

@@ -1,15 +1,17 @@
 import {IPromise} from 'angular';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
+import {IDVFocusableController} from '../../core/component/IDVFocusableController';
 
 export class RemoveDialogController {
 
-    static $inject = ['$mdDialog', '$translate', 'title', 'deleteText'];
+    static $inject = ['$mdDialog', '$translate', 'title', 'deleteText', 'parentController', 'elementID'];
 
     deleteText: string;
     title: string;
 
-    constructor(private $mdDialog: IDialogService, $translate: ITranslateService, title: string, deleteText: string) {
+    constructor(private $mdDialog: IDialogService, $translate: ITranslateService, title: string, deleteText: string,
+                private parentController: IDVFocusableController, private elementID: string) {
         if (deleteText !== undefined && deleteText !== null) {
             this.deleteText = $translate.instant(deleteText);
         } else {
@@ -29,6 +31,9 @@ export class RemoveDialogController {
     }
 
     public cancel(): void {
+        if (this.parentController) {
+            this.parentController.setFocusBack(this.elementID);
+        }
         this.$mdDialog.cancel();
     }
 }

@@ -1,4 +1,4 @@
-import {IDirective, IDirectiveFactory, IAugmentedJQuery, IDirectiveLinkFn, INgModelController} from 'angular';
+import {IAugmentedJQuery, IDirective, IDirectiveFactory, IDirectiveLinkFn, INgModelController} from 'angular';
 import ITimeoutService = angular.ITimeoutService;
 declare let require: any;
 declare let angular: any;
@@ -15,7 +15,8 @@ export class DVValueinput implements IDirective {
         allowNegative: '<',
         float: '<',
         fixedDecimals: '@',
-        dvOnBlur: '&?'
+        dvOnBlur: '&?',
+        inputName: '@?',
     };
     controller = ValueinputController;
     controllerAs = 'vm';
@@ -148,7 +149,7 @@ export class ValueinputController {
         return '';
     }
 
-    private static stringToNumber(string: string): number | undefined {
+    private static stringToNumber(string: string): number | undefined  | null {
         if (string) {
             return Number(ValueinputController.formatFromNumberString(string));
         }
@@ -156,9 +157,12 @@ export class ValueinputController {
     }
 
     private static formatToNumberString(valueString: string): string {
-        let parts = valueString.split('.');
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, "'");
-        return parts.join('.');
+        if (valueString !== null && valueString !== undefined) {
+            let parts = valueString.split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+            return parts.join('.');
+        }
+        return valueString;
     }
 
     private static formatFromNumberString(numberString: string): string {
@@ -202,7 +206,7 @@ export class ValueinputController {
         if (transformedInput) {
             let pointIndex = transformedInput.indexOf('.');
             //only parse if there is either no floating point or the floating point is not at the end. Also dont parse
-			// if 0 at end
+            // if 0 at end
             if (pointIndex === -1 || (pointIndex !== (transformedInput.length - 1) && transformedInput.lastIndexOf('0') !== (transformedInput.length - 1) )) {
                 // parse to float to remove unwanted  digits like leading zeros and then back to string
                 transformedInput = parseFloat(transformedInput).toString();

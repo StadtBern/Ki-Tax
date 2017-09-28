@@ -64,7 +64,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 	private GesuchService gesuchService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 	private Mandant mandant;
 	private Fall fall;
@@ -255,8 +255,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		prepareDependentObjects();
 
 		// Wir erstellen ein Erstgesuch und mutieren es
-		final Gesuch gesuch1 = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
-		gesuch1.setStatus(AntragStatus.VERFUEGT);
+		final Gesuch gesuch1 = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now(), AntragStatus.VERFUEGT);
 		gesuch1.setGueltig(true);
 		gesuch1.setTimestampVerfuegt(LocalDateTime.now());
 		gesuchService.updateGesuch(gesuch1, true, null);

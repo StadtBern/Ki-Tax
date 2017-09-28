@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
+import java.util.Collection;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
+
+import ch.dvbern.ebegu.entities.*;
 
 /**
  * Service zum Verwalten von AntragStatusHistory
@@ -15,35 +16,38 @@ public interface AntragStatusHistoryService {
 	 * Erstellt einen neuen Datensatz mit aktuellerStatus gleich wie der Status des uebergebenden Gesuchs
 	 * und alterStatus, der Status der es vorher hatte. Wenn saveAsUser null ist wird der eingeloggte Benutzer
 	 * wird als benutzer hinterlegt, sonst wird saveAsUser als benutzer hinterlegt
-	 * @param gesuch
-	 * @param saveAsUser
-	 * @return
 	 */
 	@Nonnull
 	AntragStatusHistory saveStatusChange(@Nonnull Gesuch gesuch, @Nullable Benutzer saveAsUser);
 
 	/**
 	 * Findet den letzten StatusChange furs gegebene Gesuch und gibt ihn zurueck
-	 * @param gesuch
-	 * @return
 	 */
 	@Nullable
 	AntragStatusHistory findLastStatusChange(@Nonnull Gesuch gesuch);
 
 	/**
 	 * Entfernt alle AntrasStatusHistory Objekte vom gegebenen Gesuch
-	 * @param gesuch
 	 */
-	void removeAllAntragStatusHistoryFromGesuch(Gesuch gesuch);
+	void removeAllAntragStatusHistoryFromGesuch(@Nonnull Gesuch gesuch);
 
+	/**
+	 * Gibt eine Collection aller StatusHistory Objekte des uebergebenen Gesuchs zurueck-
+	 */
 	@Nonnull
 	Collection<AntragStatusHistory> findAllAntragStatusHistoryByGesuch(@Nonnull Gesuch gesuch);
 
+	/**
+	 * Gibt eine Collection aller StatusHistory Objekte fuer den uebergebenen Fall in der uebergebenen
+	 * Gesuchsperiode zurueck.
+	 */
 	@Nonnull
-	Collection<AntragStatusHistory> findAllAntragStatusHistoryByGPFall(@Nonnull Gesuchsperiode gesuchsperiode, Fall fall);
+	Collection<AntragStatusHistory> findAllAntragStatusHistoryByGPFall(@Nonnull Gesuchsperiode gesuchsperiode,
+		@Nonnull Fall fall);
 
 	/**
 	 * Prueft dass die letzte Statusaenderung auf BESCHWERDE_HAENGIG war und dann gibt die vorletzte Statusaenderung zurueck.
 	 */
-	AntragStatusHistory findLastStatusChangeBeforeBeschwerde(Gesuch gesuch);
+	@Nonnull
+	AntragStatusHistory findLastStatusChangeBeforeBeschwerde(@Nonnull Gesuch gesuch);
 }

@@ -1,10 +1,8 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungContainer;
-import ch.dvbern.ebegu.api.dtos.JaxFinanzModel;
-import ch.dvbern.ebegu.api.dtos.JaxGesuch;
-import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.*;
+import ch.dvbern.ebegu.api.resource.util.ResourceHelper;
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -39,7 +37,7 @@ import java.util.Optional;
  */
 @Path("einkommensverschlechterung")
 @Stateless
-@Api
+@Api(description = "Resource fuer Einkommensverschlechterung (pro Gesuchsteller)")
 public class EinkommensverschlechterungResource {
 
 	@Inject
@@ -57,9 +55,13 @@ public class EinkommensverschlechterungResource {
 	@Resource
 	private EJBContext context;    //fuer rollback
 
+	@Inject
+	private ResourceHelper resourceHelper;
 
-	@ApiOperation(value = "Create a new EinkommensverschlechterungContainer in the database. The transfer object also has a relation to EinkommensverschlechterungContainer, " +
-		"it is stored in the database as well.")
+
+	@ApiOperation(value = "Create a new EinkommensverschlechterungContainer in the database. The transfer object also " +
+		"has a relation to EinkommensverschlechterungContainer, it is stored in the database as well.",
+		response = JaxEinkommensverschlechterungContainer.class)
 	@Nullable
 	@PUT
 	@Path("/{gesuchstellerId}/{gesuchId}")
@@ -68,67 +70,88 @@ public class EinkommensverschlechterungResource {
 	public Response saveEinkommensverschlechterungContainer(
 		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerId,
-		@Nonnull @NotNull @Valid JaxEinkommensverschlechterungContainer einkommensverschlechterungContainerJAXP,
+		@Nonnull @NotNull @Valid JaxEinkommensverschlechterungContainer ekvContainerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
-		if (gesuch.isPresent()) {
-			Optional<GesuchstellerContainer> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
-			if (gesuchsteller.isPresent()) {
-				EinkommensverschlechterungContainer convertedFinSitCont = converter.einkommensverschlechterungContainerToStorableEntity(einkommensverschlechterungContainerJAXP);
-				convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
-				EinkommensverschlechterungContainer persistedEinkommensverschlechterungContainer =
-					einkVerschlService.saveEinkommensverschlechterungContainer(convertedFinSitCont, gesuch.get().getId());
+		Gesuch gesuch = gesuchService.findGesuch(gesuchJAXPId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("saveEinkommensverschlechterungContainer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId()));
+		// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+		resourceHelper.assertGesuchStatusForBenutzerRole (gesuch);
+		GesuchstellerContainer gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("saveEinkommensverschlechterungContainer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId()) );
+		EinkommensverschlechterungContainer convertedEKVCont = converter.einkommensverschlechterungContainerToStorableEntity(ekvContainerJAXP);
+		convertedEKVCont.setGesuchsteller(gesuchsteller);
+		EinkommensverschlechterungContainer persistedEkvContainer =
+			einkVerschlService.saveEinkommensverschlechterungContainer(convertedEKVCont, gesuch.getId());
 
-				URI uri = uriInfo.getBaseUriBuilder()
-					.path(EinkommensverschlechterungResource.class)
-					.path("/" + persistedEinkommensverschlechterungContainer.getId())
-					.build();
+		URI uri = uriInfo.getBaseUriBuilder()
+			.path(EinkommensverschlechterungResource.class)
+			.path('/' + persistedEkvContainer.getId())
+			.build();
 
-				JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer = converter.einkommensverschlechterungContainerToJAX(persistedEinkommensverschlechterungContainer);
-				return Response.created(uri).entity(jaxEinkommensverschlechterungContainer).build();
-			}
-		}
-		throw new EbeguEntityNotFoundException("saveEinkommensverschlechterungContainer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId());
+		JaxEinkommensverschlechterungContainer jaxEkvContainer = converter.einkommensverschlechterungContainerToJAX(persistedEkvContainer);
+		return Response.created(uri).entity(jaxEkvContainer).build();
 	}
 
-
+	@ApiOperation(value = "Sucht den EinkommensverschlechterungsContainer mit der uebergebenen Id in der Datenbank",
+		response = JaxEinkommensverschlechterungContainer.class)
 	@Nullable
 	@GET
-	@Path("/{einkommensverschlechterungContainerId}")
+	@Path("/{ekvContainerId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxEinkommensverschlechterungContainer findEinkommensverschlechterungContainer(
-		@Nonnull @NotNull @PathParam("einkommensverschlechterungContainerId") JaxId einkommensverschlechterungContainerId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("ekvContainerId") JaxId ekvContainerId) throws EbeguException {
 
-		Validate.notNull(einkommensverschlechterungContainerId.getId());
-		String einkommensverschlechterungContainerID = converter.toEntityId(einkommensverschlechterungContainerId);
-		Optional<EinkommensverschlechterungContainer> optional = einkVerschlService.findEinkommensverschlechterungContainer(einkommensverschlechterungContainerID);
+		Validate.notNull(ekvContainerId.getId());
+		String ekvContainerID = converter.toEntityId(ekvContainerId);
+		Optional<EinkommensverschlechterungContainer> optional = einkVerschlService.findEinkommensverschlechterungContainer(ekvContainerID);
 
 		if (!optional.isPresent()) {
 			return null;
 		}
-		EinkommensverschlechterungContainer einkommensverschlechterungContainerToReturn = optional.get();
-		return converter.einkommensverschlechterungContainerToJAX(einkommensverschlechterungContainerToReturn);
+		EinkommensverschlechterungContainer ekvContainerToReturn = optional.get();
+		return converter.einkommensverschlechterungContainerToJAX(ekvContainerToReturn);
 	}
 
+	@ApiOperation(value = "Sucht den EinkommensverschlechterungsContainer des Gesuchstellers mit der uebergebenen Id in " +
+		"der Datenbank", response = JaxEinkommensverschlechterungContainer.class)
+	@Nullable
+	@GET
+	@Path("/forGesuchsteller/{gesuchstellerId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxEinkommensverschlechterungContainer findEkvContainerForGesuchsteller(
+		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerId) throws EbeguException {
+
+		Validate.notNull(gesuchstellerId.getId());
+		String gsID = converter.toEntityId(gesuchstellerId);
+		Optional<GesuchstellerContainer> optionalGS = gesuchstellerService.findGesuchsteller(gsID);
+		if (!optionalGS.isPresent()) {
+			throw new EbeguEntityNotFoundException("findEkvContainerForGesuchsteller", ErrorCodeEnum
+				.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId not found: " + gesuchstellerId.getId());
+		}
+		GesuchstellerContainer gsContainer = optionalGS.get();
+		return converter.einkommensverschlechterungContainerToJAX(gsContainer.getEinkommensverschlechterungContainer());
+	}
+
+	@ApiOperation(value = "Berechnet eine Einkommensverschlechterung fuer das Jahr 'Basisjahr + basisJahrPlus'. Die " +
+		"Berechnung wird retourniert, aber nicht in der Datenbank gespeichert bzw. aktualisiert.",
+		response = FinanzielleSituationResultateDTO.class)
 	@Nullable
 	@POST
-	@Path("/calculate/{basisJahrPlusID}")
+	@Path("/calculate/{basisJahrPlus}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response calculateEinkommensverschlechterung (
-		@Nonnull @NotNull @PathParam("basisJahrPlusID") JaxId basisJahrPlusID,
+		@Nonnull @NotNull @PathParam("basisJahrPlus") String basisJahrPlus,
 		@Nonnull @NotNull @Valid JaxGesuch gesuchJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Validate.notNull(basisJahrPlusID.getId());
-		int basisJahrPlus = Integer.parseInt(converter.toEntityId(basisJahrPlusID));
+		Validate.notNull(basisJahrPlus);
 
 		Gesuch gesuch = converter.gesuchToStoreableEntity(gesuchJAXP);
-		FinanzielleSituationResultateDTO abstFinSitResultateDTO = einkVerschlService.calculateResultate(gesuch, basisJahrPlus);
+		FinanzielleSituationResultateDTO abstFinSitResultateDTO = einkVerschlService.calculateResultate(gesuch, Integer.parseInt(basisJahrPlus));
 		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
 		context.setRollbackOnly();
 		return Response.ok(abstFinSitResultateDTO).build();
@@ -138,30 +161,35 @@ public class EinkommensverschlechterungResource {
 	 * Diese Methode ist aehnlich wie {@link this.calculateEinkommensverschlechterung}
 	 * Hier wird die  Finanzielle Situation als eigenes Model uebergeben statt das ganzes Gesuch
 	 */
+	@ApiOperation(value = "Berechnet eine Einkommensverschlechterung fuer das Jahr 'Basisjahr + basisJahrPlus'. Die " +
+		"Berechnung wird retourniert, aber nicht in der Datenbank gespeichert bzw. aktualisiert. Hier wird die  " +
+		"Finanzielle Situation als eigenes Model uebergeben statt das ganzes Gesuch",
+		response = FinanzielleSituationResultateDTO.class)
 	@Nullable
 	@POST
-	@Path("/calculateTemp/{basisJahrPlusID}")
+	@Path("/calculateTemp/{basisJahrPlus}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response calculateEinkommensverschlechterungTemp (
-		@Nonnull @NotNull @PathParam("basisJahrPlusID") JaxId basisJahrPlusID,
+		@Nonnull @NotNull @PathParam("basisJahrPlus") String basisJahrPlus,
 		@Nonnull @NotNull @Valid JaxFinanzModel jaxFinSitModel,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Validate.notNull(basisJahrPlusID.getId());
-		int basisJahrPlus = Integer.parseInt(converter.toEntityId(basisJahrPlusID));
+		Validate.notNull(basisJahrPlus);
 		Gesuch gesuch = new Gesuch();
 		gesuch.initFamiliensituationContainer();
 		gesuch.extractFamiliensituation().setGemeinsameSteuererklaerung(jaxFinSitModel.isGemeinsameSteuererklaerung());
 		if (jaxFinSitModel.getFinanzielleSituationContainerGS1() != null) {
 			gesuch.setGesuchsteller1(new GesuchstellerContainer());
+			//noinspection ConstantConditions
 			gesuch.getGesuchsteller1().setGesuchstellerJA(new Gesuchsteller());
 			gesuch.getGesuchsteller1().setFinanzielleSituationContainer(
 				converter.finanzielleSituationContainerToEntity(jaxFinSitModel.getFinanzielleSituationContainerGS1(), new FinanzielleSituationContainer()));
 		}
 		if (jaxFinSitModel.getFinanzielleSituationContainerGS2() != null) {
 			gesuch.setGesuchsteller2(new GesuchstellerContainer());
+			//noinspection ConstantConditions
 			gesuch.getGesuchsteller2().setGesuchstellerJA(new Gesuchsteller());
 			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(
 				converter.finanzielleSituationContainerToEntity(jaxFinSitModel.getFinanzielleSituationContainerGS2(), new FinanzielleSituationContainer()));
@@ -187,7 +215,7 @@ public class EinkommensverschlechterungResource {
 				converter.einkommensverschlechterungInfoContainerToEntity(jaxFinSitModel.getEinkommensverschlechterungInfoContainer(), new EinkommensverschlechterungInfoContainer()));
 		}
 
-		FinanzielleSituationResultateDTO abstFinSitResultateDTO = einkVerschlService.calculateResultate(gesuch, basisJahrPlus);
+		FinanzielleSituationResultateDTO abstFinSitResultateDTO = einkVerschlService.calculateResultate(gesuch, Integer.parseInt(basisJahrPlus));
 		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
 		context.setRollbackOnly();
 		return Response.ok(abstFinSitResultateDTO).build();

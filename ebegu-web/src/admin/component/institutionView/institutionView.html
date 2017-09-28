@@ -29,7 +29,7 @@
                                 ng-click="vm.setSelectedInstitution(row)">
                                 <td ng-bind="row.name"></td>
 
-                                <td ng-click="$event.stopPropagation()">
+                                <td>
                                     <dv-loading-button type="button" button-click="vm.removeInstitution(row)"
                                                        button-class="dv-btn-sm" button-disabled="vm.isReadonly()">
                                         <i class="fa fa-minus">
@@ -127,7 +127,7 @@
 
                                     <div class="row" ng-if="vm.errormessage">
                                         <div  class="well well-status-warten">
-                                            <h3 data-translate="{{vm.errormessage}}"></h3>
+                                            <p class="ebeguH3" data-translate="{{vm.errormessage}}"></p>
                                         </div>
                                     </div>
 
@@ -135,7 +135,7 @@
                                     <table st-table="displayedCollection"
                                            st-safe-src="vm.getSelectedInstitutionStammdatenList()"
                                            class="table table-striped table-hover" st-delay="20"
-                                           disabled="vm.isCreateInstitutionsMode()">
+                                           ng-disabled="vm.isCreateInstitutionsMode()">
                                         <thead>
                                         <tr>
                                             <th st-sort="betreuungsangebotTyp" class="sortable"
@@ -159,7 +159,7 @@
                                             <td ng-bind="vm.getBetreuungsangebotFromInstitutionList( row.betreuungsangebotTyp).value"></td>
                                             <td ng-bind="vm.getDateString( row.gueltigkeit, 'DD.MM.YYYY')"></td>
 
-                                            <td ng-click="$event.stopPropagation()">
+                                            <td>
                                                 <dv-loading-button type="button"
                                                                    button-click="vm.removeInstitutionStammdaten(row)"
                                                                    button-class="dv-btn-sm" button-disabled="vm.isReadonly()">

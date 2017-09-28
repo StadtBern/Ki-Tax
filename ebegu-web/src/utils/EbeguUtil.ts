@@ -6,9 +6,9 @@ import DateUtil from './DateUtil';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import TSBetreuungsnummerParts from '../models/dto/TSBetreuungsnummerParts';
 import * as moment from 'moment';
+import TSGesuch from '../models/TSGesuch';
 import ITranslateService = angular.translate.ITranslateService;
 import Moment = moment.Moment;
-import TSGesuch from '../models/TSGesuch';
 
 /**
  * Klasse die allgemeine utils Methoden implementiert
@@ -188,6 +188,47 @@ export default class EbeguUtil {
             }
         }
         return text;
+    }
+
+    public static selectFirst(): void {
+        let tmp = angular.element('md-radio-button:not([disabled="disabled"]),'
+            + 'fieldset:not([disabled="disabled"],.dv-adresse__fieldset) input:not([disabled="disabled"]),'
+            + 'fieldset:not([disabled="disabled"],.dv-adresse__fieldset) textarea:not([disabled="disabled"]),'
+            + 'fieldset:not([disabled="disabled"],.dv-adresse__fieldset) select:not([disabled="disabled"]),'
+            + 'fieldset:not([disabled="disabled"],.dv-adresse__fieldset) md-checkbox:not([disabled="disabled"]),'
+            + '#gesuchContainer button:not([disabled="disabled"]),'
+            + '#gesuchContainer .dvb-loading-button button:not([disabled="disabled"]),'
+            + '.dv-btn-row,'
+            + '#gesuchContainer button.link-underline:not([disabled="disabled"]),'
+            + '.dv-dokumente-list a:not([disabled="disabled"])').first();
+        if (tmp) {
+            let tmpAria = tmp.attr('aria-describedby') === undefined ? '' : tmp.attr('aria-describedby') + ' ';
+            let h2 = angular.element('h2:not(.access-for-all-title)').first();
+            let h2Id = h2.attr('id') === undefined ? 'aria-describe-form-h2' : h2.attr('id');
+            h2.attr('id', h2Id);
+            tmpAria += h2Id;
+            let h3 = angular.element('h3:not(.access-for-all-title)').first();
+            let h3Id = h3.attr('id') === undefined ? 'aria-describe-form-h3' : h3.attr('id');
+            h3.attr('id', h3Id);
+            tmpAria += ' ' + h3Id;
+            tmp.attr('aria-describedby', tmpAria);
+            if (tmp.prop('tagName') === 'MD-RADIO-BUTTON') {
+                tmp = tmp.parent().first();
+            }
+            tmp.focus();
+        }
+    }
+
+    public static selectFirstInvalid(): void {
+        let tmp: any = angular.element('md-radio-group.ng-invalid,'
+            + ' .ng-invalid>input,'
+            + 'input.ng-invalid,'
+            + 'textarea.ng-invalid,'
+            + 'select.ng-invalid,'
+            + 'md-checkbox.ng-invalid').first();
+        if (tmp) {
+            tmp.focus();
+        }
     }
 
 }

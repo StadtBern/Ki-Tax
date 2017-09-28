@@ -1,10 +1,10 @@
 package ch.dvbern.ebegu.services;
 
 
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.dto.dataexport.v1.VerfuegungenExportDTO;
 import ch.dvbern.ebegu.util.UploadFileInfo;
-
-import javax.annotation.Nonnull;
 
 /**
  * Service to export Verfuegungen for usage in other applications
@@ -20,7 +20,11 @@ public interface ExportService {
 	@Nonnull
 	VerfuegungenExportDTO exportAllVerfuegungenOfAntrag(@Nonnull String antragId);
 
-
+	/**
+	 * exports all existing Verfuegungen of a single Betreuung
+	 * @param antragId ID of the Betreuung
+	 * @return DTO containing containing a list of verfuegungen belonging to the given betreuung
+	 */
 	@Nonnull
 	VerfuegungenExportDTO exportVerfuegungOfBetreuung(String betreuungID);
 

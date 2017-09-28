@@ -45,9 +45,15 @@
             text-align: left;
             padding: 0;
             display: block;
-            &:focus, &:active, &:hover {
-                outline: none !important;
-                text-decoration: none !important;
+            &:active, &:hover {
+                outline: none;
+                text-decoration: none;
+            }
+            &:focus {
+                outline: 2px solid @contrast-darkest;
+                text-decoration: underline;
+                outline-offset: -1.5rem;
+
             }
             &[disabled] span {
                 color: @contrast-dark;

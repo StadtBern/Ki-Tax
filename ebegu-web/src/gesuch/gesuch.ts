@@ -20,6 +20,8 @@ import TSEWKResultat from '../models/TSEWKResultat';
 import {TSGesuchEvent} from '../models/enums/TSGesuchEvent';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import EwkRS from '../core/service/ewkRS.rest';
+import TSGesuchsteller from '../models/TSGesuchsteller';
+import {TSGesuchBetreuungenStatus} from '../models/enums/TSGesuchBetreuungenStatus';
 
 export class GesuchRouteController {
 
@@ -135,8 +137,14 @@ export class GesuchRouteController {
         let isUserJA: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getJugendamtRole());
         let isUserSTV: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getSteueramtOnlyRoles());
 
-        if (toTranslate === TSAntragStatus.IN_BEARBEITUNG_GS && isUserGesuchsteller
-            || toTranslate === TSAntragStatus.IN_BEARBEITUNG_JA && isUserJA) {
+        if (toTranslate === TSAntragStatus.IN_BEARBEITUNG_GS && isUserGesuchsteller) {
+            if (TSGesuchBetreuungenStatus.ABGEWIESEN === this.gesuchModelManager.getGesuch().gesuchBetreuungenStatus) {
+                return this.ebeguUtil.translateString(TSAntragStatus[TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN]);
+            } else if (TSGesuchBetreuungenStatus.WARTEN === this.gesuchModelManager.getGesuch().gesuchBetreuungenStatus) {
+                return this.ebeguUtil.translateString(TSAntragStatus[TSAntragStatus.PLATZBESTAETIGUNG_WARTEN]);
+            }
+        }
+        if (toTranslate === TSAntragStatus.IN_BEARBEITUNG_JA && isUserJA) {
             return this.ebeguUtil.translateString(IN_BEARBEITUNG_BASE_NAME);
         }
         switch (toTranslate) {
@@ -152,7 +160,7 @@ export class GesuchRouteController {
 
         }
 
-        if ((toTranslate === TSAntragStatus.NUR_SCHULAMT || toTranslate === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN)
+        if ((toTranslate === TSAntragStatus.NUR_SCHULAMT)
             && isUserGesuchsteller) {
             return this.ebeguUtil.translateString('ABGESCHLOSSEN');
         }
@@ -208,12 +216,14 @@ export class GesuchRouteController {
         return this.wizardStepManager.getCurrentStepName();
     }
 
-    public getGesuchstellerTitle(gesuchsteller: TSGesuchstellerContainer): string {
-        if (gesuchsteller && gesuchsteller.gesuchstellerJA) {
-            if (gesuchsteller.gesuchstellerJA.ewkPersonId) {
-                return gesuchsteller.gesuchstellerJA.getFullName() + ' (' + gesuchsteller.gesuchstellerJA.ewkPersonId + ')';
+    public getGesuchstellerTitle(gsnumber: number): string {
+        let gs: TSGesuchsteller = this.ewkRS.getGesuchsteller(gsnumber).gesuchstellerJA;
+        if (gs) {
+            let title: string = gs.getFullName();
+            if (gs.ewkPersonId) {
+                return title + ' (' + gs.ewkPersonId + ')';
             }
-            return gesuchsteller.gesuchstellerJA.getFullName();
+            return title;
         }
         return undefined;
     }
@@ -320,5 +330,9 @@ export class GesuchRouteController {
 
     public isSuperAdmin(): boolean {
         return  this.authServiceRS.isRole(TSRole.SUPER_ADMIN);
+    }
+
+    public isDocumentUploaded(): boolean {
+        return this.getGesuch() && this.getGesuch().dokumenteHochgeladen;
     }
 }

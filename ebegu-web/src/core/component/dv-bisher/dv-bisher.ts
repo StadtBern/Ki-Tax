@@ -5,6 +5,10 @@ import * as moment from 'moment';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import ILogService = angular.ILogService;
+import {
+    isAtLeastFreigegeben
+} from '../../../models/enums/TSAntragStatus';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 let template = require('./dv-bisher.html');
 require('./dv-bisher.less');
 
@@ -59,7 +63,8 @@ export class DvBisher {
         }
     }
 
-    public getBisher(): Array<string> {
+        public getBisher(): Array<string> {
+        // noinspection IfStatementWithTooManyBranchesJS
         if (this.specificBisherText) {
             this.bisherText = this.specificBisherText ? this.specificBisherText.split('\n') : undefined;
             // War es eine Loeschung, oder ein Hinzufuegen?
@@ -86,7 +91,12 @@ export class DvBisher {
     }
 
     public showBisher(): boolean {
-        return ((this.showIfBisherNone || this.blockExisted === true) || this.hasBisher()) && this.gesuchModelManager.isKorrekturModusJugendamt();
+        return ((this.showIfBisherNone || this.blockExisted === true) || this.hasBisher()) && this.isKorrekturModusJugendamtOrFreigegeben();
+    }
+
+    private isKorrekturModusJugendamtOrFreigegeben(): boolean {
+        return isAtLeastFreigegeben(this.gesuchModelManager.getGesuch().status)
+            && (TSEingangsart.ONLINE === this.gesuchModelManager.getGesuch().eingangsart);
     }
 
     public equals(gs: any, ja: any): boolean {

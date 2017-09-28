@@ -21,6 +21,7 @@
             <!--Tabelle-->
             <table class="table table-striped fixedtable">
                 <thead>
+                <!--Sortierspalten-->
                 <tr>
                     <th st-sort="fallNummer" class="sortable row-fallnr" data-translate="FALL_UPPER"></th>
                     <th st-sort="familienName" class="sortable row-name" data-translate="FAMILIE_UPPER"></th>
@@ -31,11 +32,14 @@
                     <th st-sort="eingangsdatum" st-sort-default="reverse" class="sortable row-geandert"
                         data-translate="EINGANG_UPPER"></th>
                     <th st-sort="status" class="sortable row-status" data-translate="STATUS_UPPER"></th>
+                    <th st-sort="dokumenteHochgeladen" class="sortable row-dokumenteHochgeladen"
+                        data-translate="DOKUMENTE_HOCHGELADEN_UPPER"></th>
                     <th st-sort="angebote" class="sortable row-angebot" data-translate="ANGEBOT_UPPER"></th>
                     <th st-sort="institutionen[0]" class="sortable row-inst" data-translate="INSTITUTION_UPPER"></th>
                     <th st-sort="verantwortlicher" class="sortable row-ver"
                         data-translate="VERANTWORTLICH_UPPER"></th>
                 </tr>
+                <!--Filterspalten-->
                 <tr>
                     <th><input st-search="fallNummer" class="form-control" type="text"
                                ng-model="vm.selectedFallNummer"/></th>
@@ -77,6 +81,17 @@
                     </th>
                     <th>
                         <div class="dv-select-style">
+                            <select st-input-event="change" name="dokumenteHochgeladen" id="dokumenteHochgeladen" st-search="dokumenteHochgeladen"
+                                    class="form-control"
+                                    ng-model="vm.selectedDokumenteHochgeladen">
+                                <option value="">{{"ALLE" | translate}}</option>
+                                <option value="{{true}}">{{"LABEL_JA" | translate}}</option>
+                                <option value="{{false}}">{{"LABEL_NEIN" | translate}}</option>
+                            </select>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="dv-select-style">
                             <select st-input-event="change" name="angebote" id="angebote" st-search="angebote"
                                     class="form-control"
                                     ng-options="typ | translate for typ in vm.getBetreuungsangebotTypen() track by typ"
@@ -103,6 +118,7 @@
                     </th>
                 </tr>
                 </thead>
+                <!--Spaltendefinitionen-->
                 <tbody>
                 <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                     ng-click="vm.editPendenzJA(row, $event)">
@@ -111,8 +127,8 @@
                     <td class="ellipsis" ellipsis-tooltip="{{row.familienName}}" ng-bind="row.familienName"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.kinder | arrayToString}}" ng-bind="row.kinder | arrayToString"></td>
                     <td class="ellipsis"  title="{{row.antragTyp | translate}}">
-                        <i class="fa fa-desktop" aria-hidden="true" ng-show="row.hasBesitzer()"></i>
-                        <i class="fa fa-file-text-o" aria-hidden="true" ng-show="!row.hasBesitzer()"></i>
+                        <i class="fa fa-desktop" aria-hidden="true" ng-show="vm.showOnlineGesuchIcon(row)"></i>
+                        <i class="fa fa-file-text-o" aria-hidden="true" ng-show="vm.showPapierGesuchIcon(row)"></i>
                         <span  ng-bind="row.antragTyp | translate" class="marginLeft5"></span>
                     </td>
                     <td class="ellipsis"
@@ -122,6 +138,9 @@
                         ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.status | translate}}"
                         ng-bind="row.status | translate"></td>
+                    <td class="ellipsis" ellipsis-tooltip="{{row.dokumenteHochgeladen | translate}}">
+                        <i class="fa fa-file-o" aria-hidden="true" ng-show="row.dokumenteHochgeladen"></i>
+                    </td>
                     <td class="ellipsis" ellipsis-tooltip="{{vm.translateBetreuungsangebotTypList(row.angebote)}}"
                         ng-bind="vm.translateBetreuungsangebotTypList(row.angebote)">
                     </td>

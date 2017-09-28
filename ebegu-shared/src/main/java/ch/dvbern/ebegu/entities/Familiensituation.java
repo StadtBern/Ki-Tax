@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -9,6 +10,7 @@ import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * Entitaet zum Speichern von Familiensituation in der Datenbank.
@@ -40,10 +42,12 @@ public class Familiensituation extends AbstractEntity {
 	}
 
 	public Familiensituation(Familiensituation that) {
-		this.familienstatus = that.familienstatus;
-		this.gemeinsameSteuererklaerung = that.gemeinsameSteuererklaerung;
-		this.gesuchstellerKardinalitaet = that.gesuchstellerKardinalitaet;
-		this.aenderungPer = that.aenderungPer;
+		if (that != null) {
+			this.familienstatus = that.getFamilienstatus();
+			this.gemeinsameSteuererklaerung = that.getGemeinsameSteuererklaerung();
+			this.gesuchstellerKardinalitaet = that.getGesuchstellerKardinalitaet();
+			this.aenderungPer = that.getAenderungPer();
+		}
 	}
 
 	@Nonnull
@@ -86,7 +90,7 @@ public class Familiensituation extends AbstractEntity {
 			switch (this.familienstatus) {
 				case ALLEINERZIEHEND:
 				case WENIGER_FUENF_JAHRE:
-					return EnumGesuchstellerKardinalitaet.ZU_ZWEIT.equals(this.getGesuchstellerKardinalitaet());
+					return EnumGesuchstellerKardinalitaet.ZU_ZWEIT == this.getGesuchstellerKardinalitaet();
 				case VERHEIRATET:
 				case KONKUBINAT:
 				case LAENGER_FUENF_JAHRE:
@@ -115,5 +119,25 @@ public class Familiensituation extends AbstractEntity {
 		mutation.setGemeinsameSteuererklaerung(this.getGemeinsameSteuererklaerung());
 		mutation.setGesuchstellerKardinalitaet(this.gesuchstellerKardinalitaet);
 		return mutation;
+	}
+
+	@Override
+	public boolean isSame(@Nullable AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!(other instanceof Familiensituation)) {
+			return false;
+		}
+		final Familiensituation otherFamiliensituation = (Familiensituation) other;
+		return Objects.equals(getAenderungPer(), otherFamiliensituation.getAenderungPer()) &&
+			Objects.equals(getFamilienstatus(), otherFamiliensituation.getFamilienstatus()) &&
+			Objects.equals(getGesuchstellerKardinalitaet(), otherFamiliensituation.getGesuchstellerKardinalitaet()) &&
+			EbeguUtil.isSameOrNullBoolean(getGemeinsameSteuererklaerung(), otherFamiliensituation.getGemeinsameSteuererklaerung());
+
 	}
 }

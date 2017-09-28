@@ -4,17 +4,20 @@
 </gesuch-toolbar>
 
 <gesuch-toolbar-gesuchsteller flex="nogrow" class="gesuch-toolbar-gesuchsteller" fallid="{{vm.fall.id}}"
+                              hide-action-buttons="{{true}}"
                               dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()">
 </gesuch-toolbar-gesuchsteller>
 
 <div class="alleVerfuegungenView overflow-scroll" flex="auto">
     <div class="row">
-        <div class="col-md-11">
-            <h3 data-translate="ALLE_VERFUEGUNGEN_LIST"></h3>
-        </div>
-        <div class="col-md-1 text-right">
-            <h3 ng-bind="vm.getAlleVerfuegungen() ? vm.getAlleVerfuegungen().length : 0"></h3>
-        </div>
+        <span class="col-md-11">
+            <h1>
+                <span data-translate="ALLE_VERFUEGUNGEN_LIST"></span>
+            </h1>
+        </span>
+        <span aria-hidden class="col-md-1 text-right ebeguH1">
+            <span ng-bind="vm.getAlleVerfuegungen() ? vm.getAlleVerfuegungen().length : 0"></span>
+        </span>
     </div>
     <div class="row">
         <div class="col-md-12 table-responsive">
@@ -30,29 +33,42 @@
                     <th st-sort="verfuegung.timestampErstellt" class="sortable text-uppercase" data-translate="VERFUEGUNGS_DATUM"></th>
                     <th st-sort="gesuchsperiode.gesuchsperiodeString" class="sortable text-uppercase" data-translate="GESUCHSPERIODEN"></th>
                     <th width="5%"></th>
+                    <th width="5%"></th>
 
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                    ng-click="vm.openVerfuegung(row.betreuungNummer, row.kindNummer, row.gesuchId)">
+                    ng-click="vm.openVerfuegung(row.betreuungNummer, row.kindNummer, row.gesuchId)" role="row" tabindex="-1">
                     <td class="ellipsis" ellipsis-tooltip="{{row.kindFullname}}" ng-bind="row.kindFullname"></td>
                      <td class="ellipsis" ellipsis-tooltip="{{row.institutionStammdaten.institution.name}}" ng-bind="row.institutionStammdaten.institution.name"></td>
                     <td ng-bind="vm.ebeguUtil.calculateBetreuungsId(row.gesuchsperiode, vm.fall, row.kindNummer, row.betreuungNummer)"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.timestampErstellt  | amDateFormat : 'DD.MM.YYYY'}}"
                         ng-bind="row.verfuegung.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.gesuchsperiode.gesuchsperiodeString}}" ng-bind="row.gesuchsperiode.gesuchsperiodeString"></td>
-                    <td class="symbol" ng-click="$event.stopPropagation()" ng-if="vm.showVerfuegungPdfLink(row)">
-                        <button type="button" ng-click="vm.openVerfuegungPDF(row)"
-                                class="dv-btn-operation">
-                            <i class="fa fa-eye"></i>
-                        </button>
+                    <td class="ellipsis" role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%" hide-sm
+                        hide-xs>
+                        <dv-loading-button type="button" button-click="vm.openVerfuegung(row.betreuungNummer, row.kindNummer, row.gesuchId);"
+                                           button-class="dv-btn-operation" aria-label="{{'TABLE_EDIT'|translate}}"
+                                           title="{{'TABLE_EDIT'|translate}}">
+                            <i class="fa fa-lg fa-arrow-right" aria-label="{{'TABLE_EDIT'|translate}}"></i>
+                        </dv-loading-button>
                     </td>
-                    <td class="symbol" ng-if="!vm.showVerfuegungPdfLink(row)">
-                        <button type="button" ng-click="vm.openNichteintretenPDF(row)"
-                                class="dv-btn-operation">
-                            <i class="fa fa-eye"></i>
-                        </button>
+                    <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()"
+                        class="symbol" ng-if="vm.showVerfuegungPdfLink(row)">
+                        <dv-loading-button type="button" button-click="vm.openVerfuegungPDF(row);"
+                                           button-class="dv-btn-operation" title="{{'OPEN_VERFUEGUNG_PDF' | translate}}"
+                                           aria-label="{{'OPEN_VERFUEGUNG_PDF' | translate}}">
+                            <i class="fa fa-eye" aria-label="{{'OPEN_VERFUEGUNG_PDF' | translate}}"></i>
+                        </dv-loading-button>
+                    </td>
+                    <td role="cell" tabindex="-1" ng-click="$event.stopPropagation()"
+                        class="symbol" ng-if="!vm.showVerfuegungPdfLink(row)">
+                        <dv-loading-button type="button" button-click="vm.openNichteintretenPDF(row);"
+                                           button-class="dv-btn-operation" title="{{'OPEN_VERFUEGUNG_PDF' | translate}}"
+                                           aria-label="{{'OPEN_VERFUEGUNG_PDF' | translate}}">
+                            <i class="fa fa-eye" aria-label="{{'OPEN_VERFUEGUNG_PDF' | translate}}"></i>
+                        </dv-loading-button>
                     </td>
                 </tr>
 

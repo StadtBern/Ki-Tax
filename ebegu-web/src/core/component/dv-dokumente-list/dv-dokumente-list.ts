@@ -12,9 +12,12 @@ import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import ITranslateService = angular.translate.ITranslateService;
 import {TSDokumentGrundPersonType} from '../../../models/enums/TSDokumentGrundPersonType';
 import TSKindContainer from '../../../models/TSKindContainer';
+import {TSRole} from '../../../models/enums/TSRole';
+import {isAnyStatusOfVerfuegtButSchulamt} from '../../../models/enums/TSAntragStatus';
+import ITranslateService = angular.translate.ITranslateService;
+
 let template = require('./dv-dokumente-list.html');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 require('./dv-dokumente-list.less');
@@ -123,11 +126,36 @@ export class DVDokumenteListController {
         this.onUploadDone({dokument: returnedDG});
     }
 
+    isRemoveAllowed(dokumentGrund: TSDokumentGrund, dokument: TSDokument): boolean {
+        // Loeschen von Dokumenten ist nur in folgenden Faellen erlaubt:
+        // - GS bis Freigabe (d.h nicht readonlyForRole). In diesem Status kann es nur "seine" Dokumente geben
+        // - JA bis Verfuegen, aber nur die von JA hinzugefuegten: d.h. wenn noch nicht verfuegt: die eigenen, wenn readonly: nichts
+        // - Admin: Auch nach verfuegen, aber nur die vom JA hinzugefuegten: wenn noch nicht verfuegt oder readonly: die eigenen
+        // - Alle anderen Rollen: nichts
+        let readonly: boolean = this.isGesuchReadonly();
+        let roleLoggedIn: TSRole = this.authServiceRS.getPrincipalRole();
+        let documentUploadedByJA: boolean = true; // by default true in case there is no uploadUser
+        if (dokument.userUploaded) {
+            let roleDocumentUpload: TSRole = dokument.userUploaded.role;
+            documentUploadedByJA = (roleDocumentUpload === TSRole.SACHBEARBEITER_JA || roleDocumentUpload === TSRole.ADMIN || roleDocumentUpload === TSRole.SUPER_ADMIN);
+        }
+        if (roleLoggedIn === TSRole.GESUCHSTELLER) {
+            return !readonly;
+        } else if (roleLoggedIn === TSRole.SACHBEARBEITER_JA) {
+            return !readonly &&  documentUploadedByJA;
+        } else if (roleLoggedIn === TSRole.ADMIN || roleLoggedIn === TSRole.SUPER_ADMIN) {
+            return documentUploadedByJA;
+        }
+        return false;
+    }
+
     remove(dokumentGrund: TSDokumentGrund, dokument: TSDokument) {
         this.$log.debug('component -> remove dokument ' + dokument.filename);
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: '',
-            title: 'FILE_LOESCHEN'
+            title: 'FILE_LOESCHEN',
+            parentController: undefined,
+            elementID: undefined
         })
             .then(() => {   //User confirmed removal
                 this.onRemove({dokumentGrund: dokumentGrund, dokument: dokument});
@@ -139,10 +167,15 @@ export class DVDokumenteListController {
         this.$log.debug('download dokument ' + dokument.filename);
         let win: Window = this.downloadRS.prepareDownloadWindow();
 
-        this.downloadRS.getAccessTokenDokument(dokument.id).then((downloadFile: TSDownloadFile) => {
-            this.$log.debug('accessToken: ' + downloadFile.accessToken);
-            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment, win);
-        });
+        this.downloadRS.getAccessTokenDokument(dokument.id)
+            .then((downloadFile: TSDownloadFile) => {
+                this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment, win);
+            })
+            .catch((ex) => {
+                win.close();
+                this.$log.error('An error occurred downloading the document, closing download window.');
+            });
     }
 
     getWidth(): String {
@@ -164,7 +197,9 @@ export class DVDokumenteListController {
     public isDokumenteUploadDisabled(): boolean {
         // Dokument-Upload ist eigentlich in jedem Status möglich, aber nicht für alle Rollen. Also nicht
         // gleichbedeutend mit readonly auf dem Gesuch
-        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getReadOnlyRoles());
+        // Jedoch darf der Gesuchsteller nach der Verfuegung nichts mehr hochladen
+        let gsAndVerfuegt: boolean = isAnyStatusOfVerfuegtButSchulamt(this.gesuchModelManager.getGesuch().status) && this.authServiceRS.isRole(TSRole.GESUCHSTELLER);
+        return gsAndVerfuegt || this.authServiceRS.isOneOfRoles(TSRoleUtil.getReadOnlyRoles());
     }
 
     /**

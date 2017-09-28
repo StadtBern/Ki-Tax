@@ -1,13 +1,14 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.ApplicationProperty;
-import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 
 
 /**
@@ -36,8 +37,6 @@ public interface ApplicationPropertyService {
 	/**
 	 * Versucht den uebergebenen String in einene  key umzuwandeln und gibt dann das ensprechende property zurueck.
 	 * Wenn der String keinem key enspricht exception
-	 * @param keyParam
-	 * @return
 	 */
 	Optional<ApplicationProperty> readApplicationProperty(String keyParam);
 
@@ -50,7 +49,6 @@ public interface ApplicationPropertyService {
 
 	/**
 	 * removs an Application Property From the Databse
-	 * @param testKey
 	 */
 	void removeApplicationProperty(@Nonnull ApplicationPropertyKey testKey);
 

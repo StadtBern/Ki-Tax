@@ -9,16 +9,19 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import TSKindContainer from '../../../models/TSKindContainer';
-import {TSBetreuungsangebotTypUtil} from '../../../utils/TSBetreuungsangebotTypUtil';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRole} from '../../../models/enums/TSRole';
+import * as moment from 'moment';
+import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 import ILogService = angular.ILogService;
 import IScope = angular.IScope;
+import ITimeoutService = angular.ITimeoutService;
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+
 let template: string = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 require('./erwerbspensumListView.less');
-
 
 export class ErwerbspensumListViewComponentConfig implements IComponentOptions {
     transclude: boolean;
@@ -26,7 +29,6 @@ export class ErwerbspensumListViewComponentConfig implements IComponentOptions {
     template: string;
     controller: any;
     controllerAs: string;
-
 
     constructor() {
         this.transclude = false;
@@ -37,28 +39,32 @@ export class ErwerbspensumListViewComponentConfig implements IComponentOptions {
     }
 }
 
-
-export class ErwerbspensumListViewController extends AbstractGesuchViewController<any> {
+export class ErwerbspensumListViewController extends AbstractGesuchViewController<any> implements IDVFocusableController {
 
     erwerbspensenGS1: Array<TSErwerbspensumContainer> = undefined;
     erwerbspensenGS2: Array<TSErwerbspensumContainer>;
+    erwerbspensumRequired: boolean;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$log', 'DvDialog',
-        'ErrorService', 'WizardStepManager', '$scope'];
+        'ErrorService', 'WizardStepManager', '$scope', 'AuthServiceRS', '$timeout'];
+
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ERWERBSPENSUM);
-        this.initErwerbspensumStepStatus();
+                wizardStepManager: WizardStepManager, $scope: IScope, private authServiceRS: AuthServiceRS, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ERWERBSPENSUM, $timeout);
+        this.initViewModel();
     }
 
-    private initErwerbspensumStepStatus() {
-        if (this.isSaveDisabled()) {
-            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
-        } else {
-            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
-        }
+    private initViewModel() {
+        this.gesuchModelManager.isErwerbspensumRequired(this.getGesuchId()).then((response: boolean) => {
+            this.erwerbspensumRequired = response;
+            if (this.isSaveDisabled()) {
+                this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
+            } else {
+                this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+            }
+        });
     }
 
     getErwerbspensenListGS1(): Array<TSErwerbspensumContainer> {
@@ -90,16 +96,20 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
 
     }
 
-
     createErwerbspensum(gesuchstellerNumber: number): void {
         this.openErwerbspensumView(gesuchstellerNumber, undefined);
     }
 
-    removePensum(pensum: any, gesuchstellerNumber: number): void {
+    removePensum(pensum: TSErwerbspensumContainer, gesuchstellerNumber: number, element_id: string, index: any): void {
+        // Spezielle Meldung, wenn es ein GS ist, der in einer Mutation loescht
+        let gsInMutation: boolean = (this.authServiceRS.getPrincipalRole() === TSRole.GESUCHSTELLER && pensum.vorgaengerId !== undefined);
+        let pensumLaufendOderVergangen: boolean = pensum.erwerbspensumJA.gueltigkeit.gueltigAb.isBefore(moment(moment.now()));
         this.errorService.clearAll();
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
-            deleteText: '',
-            title: 'ERWERBSPENSUM_LOESCHEN'
+            deleteText: (gsInMutation && pensumLaufendOderVergangen) ? 'ERWERBSPENSUM_LOESCHEN_GS_MUTATION' : '',
+            title: 'ERWERBSPENSUM_LOESCHEN',
+            parentController: this,
+            elementID: element_id + index
         })
             .then(() => {   //User confirmed removal
                 this.gesuchModelManager.setGesuchstellerNumber(gesuchstellerNumber);
@@ -123,36 +133,24 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     }
 
     /**
-     * Erwerbspensum muss nur erfasst werden, falls mind. 1 Kita oder 1 Tageseltern Kleinkind Angebot erfasst wurde
-     * und mind. eines dieser Kinder keine Fachstelle involviert hat
+     * Gibt true zurueck wenn Erwerbspensen nicht notwendig sind oder wenn sie notwendig sind aber mindestens eines pro Gesuchsteller
+     * eingegeben wurde.
      * @returns {boolean}
      */
-    public isErwerbspensumRequired(): boolean {
-        let kinderWithBetreuungList: Array<TSKindContainer> = this.gesuchModelManager.getKinderWithBetreuungList();
-        for (let kind of kinderWithBetreuungList) {
-            for (let betreuung of kind.betreuungen) {
-                if (betreuung.institutionStammdaten
-                    && TSBetreuungsangebotTypUtil.isRequireErwerbspensum(betreuung.institutionStammdaten.betreuungsangebotTyp)
-                    && !kind.kindJA.pensumFachstelle) {
-                    return true;
-                }
+    public isSaveDisabled(): boolean {
+        let erwerbspensenNumber: number = 0;
+        if (this.erwerbspensumRequired) {
+            if (this.getErwerbspensenListGS1() && this.getErwerbspensenListGS1().length <= 0) {
+                return true;
+            }
+            if (this.gesuchModelManager.isGesuchsteller2Required() && this.getErwerbspensenListGS2() && this.getErwerbspensenListGS2().length <= 0) {
+                return true;
             }
         }
         return false;
     }
 
-    /**
-     * Gibt true zurueck wenn Erwerbspensen nicht notwendig sind oder wenn sie notwendig sind aber mindestens eins bereits eingetragen wurde
-     * @returns {boolean}
-     */
-    public isSaveDisabled(): boolean {
-        let erwerbspensenNumber: number = 0;
-        if (this.getErwerbspensenListGS1() && this.getErwerbspensenListGS1().length > 0) {
-            erwerbspensenNumber += this.getErwerbspensenListGS1().length;
-        }
-        if (this.getErwerbspensenListGS2() && this.getErwerbspensenListGS2().length > 0) {
-            erwerbspensenNumber += this.getErwerbspensenListGS2().length;
-        }
-        return this.isErwerbspensumRequired() && erwerbspensenNumber <= 0;
+    public setFocusBack(elementID: string): void {
+        angular.element('#' + elementID).first().focus();
     }
 }

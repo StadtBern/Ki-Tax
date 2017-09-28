@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <base href="">
     <title>Ki-Tax</title>
@@ -11,9 +11,11 @@
     <link rel="shortcut icon" type="image/x-icon" href="src/assets/images/favicon.ico"/>
 </head>
 <body class="ebegu" md-no-ink ng-class="{loaded:true}" style="opacity: 0;" dv-barcode-listener>
+<dv-skiplinks dv-show-element  dv-show-allowed-roles="['GESUCHSTELLER']">
+</dv-skiplinks>
 
 <div id="Intro" class="logo-bern">
-    <dv-countdown  dv-show-element  dv-show-allowed-roles="['GESUCHSTELLER']"></dv-countdown>
+    <h1 class="access-for-all-title" data-translate="AFA_INDEXBAR"></h1>
     <dv-home-icon></dv-home-icon>
     <dv-quicksearchbox dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'JURIST', 'REVISOR']"></dv-quicksearchbox>
     <dv-downloadmenu dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'JURIST', 'REVISOR', 'STEUERAMT']"></dv-downloadmenu>
@@ -73,6 +75,7 @@
 
 
 <footer>
+    <dv-version ng-show="false"></dv-version>
 </footer>
 <iframe name="download-helper" style="position:fixed;display:none;top:-1px;left:-1px;"></iframe>
 </body>

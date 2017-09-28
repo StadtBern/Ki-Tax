@@ -1,17 +1,8 @@
 package ch.dvbern.ebegu.services.authentication;
 
-import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.enums.UserRoleName;
-import ch.dvbern.ebegu.services.Authorizer;
-import ch.dvbern.ebegu.services.BooleanAuthorizer;
-import ch.dvbern.ebegu.services.FallService;
-import ch.dvbern.ebegu.services.InstitutionService;
-import ch.dvbern.lib.cdipersistence.Persistence;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.lang.Validate;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,11 +13,47 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.function.Supplier;
 
-import static ch.dvbern.ebegu.enums.UserRole.*;
+import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.HasMandant;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.WizardStep;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.UserRoleName;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.services.Authorizer;
+import ch.dvbern.ebegu.services.BooleanAuthorizer;
+import ch.dvbern.ebegu.services.FallService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.lib.cdipersistence.Persistence;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static ch.dvbern.ebegu.enums.UserRole.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRole.GESUCHSTELLER;
+import static ch.dvbern.ebegu.enums.UserRole.JURIST;
+import static ch.dvbern.ebegu.enums.UserRole.REVISOR;
+import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_TRAEGERSCHAFT;
+import static ch.dvbern.ebegu.enums.UserRole.SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRole.STEUERAMT;
+import static ch.dvbern.ebegu.enums.UserRole.SUPER_ADMIN;
 
 /**
  * Authorizer Implementation
@@ -35,6 +62,8 @@ import static ch.dvbern.ebegu.enums.UserRole.*;
 @SuppressFBWarnings("NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE")
 public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizerImpl.class);
+
 	private static final UserRole[] JA_OR_ADM = {ADMIN, SACHBEARBEITER_JA};
 	private static final UserRole[] OTHER_AMT_ROLES = {REVISOR, JURIST, STEUERAMT};
 
@@ -42,7 +71,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	private PrincipalBean principalBean;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private FallService fallService;
@@ -479,17 +508,22 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 	//this method is named slightly wrong because it only checks write authorization for Admins SachbearbeiterJA and GS
 	private boolean isWriteAuthorized(Supplier<Gesuch> gesuchSupplier, String principalName) {
-
 		if (principalBean.isCallerInRole(UserRoleName.SUPER_ADMIN)) {
 			return true;
 		}
 		Gesuch gesuch = gesuchSupplier.get();
+		UserRole userRole = principalBean.discoverMostPrivilegedRole();
+		if (!AntragStatus.writeAllowedForRole(userRole).contains(gesuch.getStatus())) {
+			String msg = "Cannot update Gesuch " + gesuch.getId() + " in Status " + gesuch.getStatus() + " in UserRole " + userRole;
+			LOGGER.error(msg);
+			throw new EbeguRuntimeException("isWriteAuthorized", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, gesuch.getId(), msg);
+		}
 		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM)) {
 			return gesuch.getStatus().isReadableByJugendamtSteueramt() || AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus());
 		}
 
 		if (principalBean.isCallerInRole(SCHULAMT) && gesuch.hasOnlyBetreuungenOfSchulamt()) {
-			return AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus()); //Schulamt darf Freigabequittung scannen
+			return AntragStatus.writeAllowedForRole(userRole).contains(gesuch.getStatus()); //Schulamt darf Freigabequittung scannen und Dokumente-Button setzen
 		}
 
 		if (isGSOwner(gesuch::getFall, principalName)) {

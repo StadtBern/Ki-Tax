@@ -1,4 +1,4 @@
-import {IComponentOptions, ILogService} from 'angular';
+import {IComponentOptions, IFormController, ILogService} from 'angular';
 import UserRS from '../../../core/service/userRS.rest';
 import TSUser from '../../../models/TSUser';
 import EbeguUtil from '../../../utils/EbeguUtil';
@@ -10,22 +10,30 @@ import TSAntragDTO from '../../../models/TSAntragDTO';
 import {IGesuchStateParams} from '../../gesuch.route';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
+import {isAnyStatusOfVerfuegt, isAtLeastFreigegebenOrFreigabequittung, isStatusVerfuegenVerfuegt} from '../../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import * as moment from 'moment';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
-import Moment = moment.Moment;
-import ITranslateService = angular.translate.ITranslateService;
-import IScope = angular.IScope;
 import {TSRole} from '../../../models/enums/TSRole';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 import FallRS from '../../service/fallRS.rest';
 import TSFall from '../../../models/TSFall';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+
+import {ShowTooltipController} from '../../dialog/ShowTooltipController';
+import IPromise = angular.IPromise;
+import Moment = moment.Moment;
+import IScope = angular.IScope;
+import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
+
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
+let showKontaktTemplate = require('../../../gesuch/dialog/showKontaktTemplate.html');
+let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 require('./gesuchToolbar.less');
 
 export class GesuchToolbarComponentConfig implements IComponentOptions {
@@ -58,7 +66,7 @@ export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOpti
     controllerAs = 'vmgs';
 }
 
-export class GesuchToolbarController {
+export class GesuchToolbarController implements IDVFocusableController {
 
     userList: Array<TSUser>;
     antragList: Array<TSAntragDTO>;
@@ -70,16 +78,16 @@ export class GesuchToolbarController {
     forceLoadingFromFall: boolean;
     fall: TSFall;
 
-    gesuchsperiodeList: {[key: string]: Array<TSAntragDTO>} = {};
-    gesuchNavigationList: {[key: string]: Array<string>} = {};   //mapped z.B. '2006 / 2007' auf ein array mit den Namen der Antraege
-    antragTypList: {[key: string]: TSAntragDTO} = {};
+    gesuchsperiodeList: { [key: string]: Array<TSAntragDTO> } = {};
+    gesuchNavigationList: { [key: string]: Array<string> } = {};   //mapped z.B. '2006 / 2007' auf ein array mit den Namen der Antraege
+    antragTypList: { [key: string]: TSAntragDTO } = {};
     mutierenPossibleForCurrentAntrag: boolean = false;
     erneuernPossibleForCurrentAntrag: boolean = false;
     neuesteGesuchsperiode: TSGesuchsperiode;
 
     static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
         '$state', '$stateParams', '$scope', 'GesuchModelManager', 'AuthServiceRS',
-        '$mdSidenav', '$log', 'GesuchsperiodeRS', 'FallRS'];
+        '$mdSidenav', '$log', 'GesuchsperiodeRS', 'FallRS', 'DvDialog', 'unsavedWarningSharedService'];
 
     constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
                 private CONSTANTS: any, private gesuchRS: GesuchRS,
@@ -89,7 +97,9 @@ export class GesuchToolbarController {
                 private $mdSidenav: ng.material.ISidenavService,
                 private $log: ILogService,
                 private gesuchsperiodeRS: GesuchsperiodeRS,
-                private fallRS: FallRS) {
+                private fallRS: FallRS,
+                private dvDialog: DvDialog,
+                private unsavedWarningSharedService: any) {
 
     }
 
@@ -296,7 +306,7 @@ export class GesuchToolbarController {
         }
     }
 
-    getKeys(map: {[key: string]: Array<TSAntragDTO>}): Array<String> {
+    getKeys(map: { [key: string]: Array<TSAntragDTO> }): Array<String> {
         let keys: Array<String> = [];
         for (let key in map) {
             if (map.hasOwnProperty(key)) {
@@ -420,11 +430,11 @@ export class GesuchToolbarController {
                 this.$state.go('gesuch.familiensituation', {gesuchId: gesuchId});
             } else {
                 this.$state.go('gesuch.fallcreation', {
-                    createNew: false, gesuchId: gesuchId});
+                    createNew: false, gesuchId: gesuchId
+                });
             }
         }
     }
-
 
     public setAntragTypDatum(antragTypDatumKey: string) {
         let selectedAntragTypGesuch = this.antragTypList[antragTypDatumKey];
@@ -432,19 +442,19 @@ export class GesuchToolbarController {
     }
 
     public showButtonMutieren(): boolean {
-       if (this.hideActionButtons) {
-           return false;
-       }
-       if (this.getGesuch()) {
-           if (this.getGesuch().isNew()) {
-               return false;
-           }
-           // Wenn die Gesuchsperiode geschlossen ist, kann sowieso keine Mutation mehr gemacht werden
-           if (this.getGesuch().gesuchsperiode && this.getGesuch().gesuchsperiode.status === TSGesuchsperiodeStatus.GESCHLOSSEN) {
-               return false;
-           }
-       }
-       return this.mutierenPossibleForCurrentAntrag;
+        if (this.hideActionButtons) {
+            return false;
+        }
+        if (this.getGesuch()) {
+            if (this.getGesuch().isNew()) {
+                return false;
+            }
+            // Wenn die Gesuchsperiode geschlossen ist, kann sowieso keine Mutation mehr gemacht werden
+            if (this.getGesuch().gesuchsperiode && this.getGesuch().gesuchsperiode.status === TSGesuchsperiodeStatus.GESCHLOSSEN) {
+                return false;
+            }
+        }
+        return this.mutierenPossibleForCurrentAntrag;
     }
 
     private antragMutierenPossible(): void {
@@ -567,6 +577,63 @@ export class GesuchToolbarController {
         });
     }
 
+    public showGesuchLoeschen(): boolean {
+        if (!this.getGesuch() ||  this.getGesuch().isNew()) {
+            return false;
+        }
+        if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
+            // GS darf nur vor der Freigabe loeschen
+            if (this.hideActionButtons || this.isDashboardScreen || isAtLeastFreigegebenOrFreigabequittung(this.getGesuch().status)) {
+                return false;
+            }
+        } else {
+            // JA: Darf nicht verfuegen oder verfuegt sein und muss Papier sein
+            if (isStatusVerfuegenVerfuegt(this.getGesuch().status) || this.getGesuch().eingangsart === TSEingangsart.ONLINE) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public gesuchLoeschen(): IPromise<void> {
+        return this.dvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'CONFIRM_GESUCH_LOESCHEN',
+            deleteText: 'BESCHREIBUNG_GESUCH_LOESCHEN',
+            parentController: this,
+            elementID: 'gesuchLoeschenButton'
+        }).then(() => {
+            this.setAllFormsPristine();
+            if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
+                this.gesuchRS.removeGesuchstellerAntrag(this.getGesuch().id).then(result => {
+                    this.gesuchModelManager.setGesuch(new TSGesuch());
+                    this.resetNavigationParameters();
+                    this.$state.go('gesuchstellerDashboard');
+                });
+            } else {
+                this.gesuchRS.removePapiergesuch(this.getGesuch().id).then(result => {
+                    if (this.antragList.length > 1) {
+                        let navObj: any = {
+                            createNew: false,
+                            gesuchId: this.antragList[0].antragId
+                        };
+                        this.$state.go('gesuch.fallcreation', navObj);
+                    } else {
+                        this.$state.go('pendenzen');
+                    }
+                });
+            }
+        });
+    }
+
+    private setAllFormsPristine(): void {
+        let forms: [IFormController] = this.unsavedWarningSharedService.allForms();
+        for (let index = 0; index < forms.length; index++) {
+            let form: IFormController = forms[index];
+            form.$setPristine();
+            form.$setUntouched();
+        }
+    }
+
     public openAlleVerfuegungen(): void {
         this.$state.go('alleVerfuegungen', {
             fallId: this.fallid
@@ -585,5 +652,24 @@ export class GesuchToolbarController {
 
     public hasGesuch(): boolean {
         return this.antragList && this.antragList.length > 0;
+    }
+
+    public showKontakt(): void {
+        this.dvDialog.showDialog(showKontaktTemplate, ShowTooltipController, {
+            title: '',
+            text: '<span>Jugendamt</span><br>'
+            + '<span>Effingerstrasse 21</span><br>'
+            + '<span>3008 Bern</span><br>'
+            + '<a href="tel:0313215115"><span>031 321 51 15</span></a><br>'
+            + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>',
+            parentController: this
+        });
+    }
+
+    /**
+     * Sets the focus back to the Kontakt icon.
+     */
+    public setFocusBack(elementID: string): void {
+        angular.element('#kontaktButton').first().focus();
     }
 }

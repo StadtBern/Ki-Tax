@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxWizardStep;
-import ch.dvbern.ebegu.api.resource.wizard.WizardStepResource;
+import ch.dvbern.ebegu.api.resource.WizardStepResource;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
@@ -37,7 +37,7 @@ public class WizardStepResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private InstitutionService institutionService;
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 
 	@Test

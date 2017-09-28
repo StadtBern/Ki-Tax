@@ -14,6 +14,8 @@ import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -29,12 +31,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+
 /**
  * Resource fuer ApplicationProperties
  */
 @Path("application-properties")
 @Stateless
-@Api
+@Api(description = "Resource zum Lesen der Applikationsproperties")
+@PermitAll
 public class ApplicationPropertyResource {
 
 	@Inject
@@ -57,9 +62,9 @@ public class ApplicationPropertyResource {
 		@Nonnull @PathParam("key") String keyParam,
 		@Context HttpServletResponse response) {
 
-		Optional<ApplicationProperty> propertyFromDB = this.applicationPropertyService.readApplicationProperty(keyParam);
-		propertyFromDB.orElseThrow(() -> new EbeguEntityNotFoundException("getByKey", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, keyParam));
-		return converter.applicationPropertyToJAX(propertyFromDB.get());
+		ApplicationProperty propertyFromDB = this.applicationPropertyService.readApplicationProperty(keyParam)
+			.orElseThrow(() -> new EbeguEntityNotFoundException("getByKey", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, keyParam));
+		return converter.applicationPropertyToJAX(propertyFromDB);
 	}
 
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
@@ -73,6 +78,7 @@ public class ApplicationPropertyResource {
 	}
 
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+	@ApiOperation(value = "Is Dummy-Login enabled?", response = Boolean.class)
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
@@ -93,6 +99,7 @@ public class ApplicationPropertyResource {
 		return converter.applicationPropertyToJAX(prop);
 	}
 
+	@ApiOperation(value = "Returns all application properties", responseContainer = "List", response = JaxApplicationProperties.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
@@ -104,10 +111,8 @@ public class ApplicationPropertyResource {
 			.collect(Collectors.toList());
 	}
 
-
 	@ApiOperation(value = "Create a new ApplicationProperty with the given key and value",
-		response = JaxApplicationProperties.class,
-		consumes = MediaType.TEXT_PLAIN)
+		response = JaxApplicationProperties.class, consumes = MediaType.TEXT_PLAIN)
 	@Nullable
 	@POST
 	@Path("/{key}")
@@ -126,13 +131,10 @@ public class ApplicationPropertyResource {
 			.build();
 
 		return Response.created(uri).entity(converter.applicationPropertyToJAX(modifiedProperty)).build();
-
-
 	}
 
 	@ApiOperation(value = "Aktualisiert ein bestehendes ApplicationProperty",
-			response = JaxApplicationProperties.class,
-			consumes = MediaType.TEXT_PLAIN)
+		response = JaxApplicationProperties.class, consumes = MediaType.TEXT_PLAIN)
 	@Nullable
 	@PUT
 	@Path("/{key}")
@@ -149,6 +151,8 @@ public class ApplicationPropertyResource {
 	}
 
 
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+	@ApiOperation(value = "Removes an application property")
 	@Nullable
 	@DELETE
 	@Path("/{key}")
@@ -166,5 +170,18 @@ public class ApplicationPropertyResource {
 	@Path("/public/zahlungentestmode")
 	public Response isZahlungenTestMode(@Context HttpServletResponse response) {
 		return Response.ok(ebeguConfiguration.getIsZahlungenTestMode()).build();
+	}
+
+	@RolesAllowed({SUPER_ADMIN})
+	@ApiOperation(value = "Gibt den Wert des Properties zurück", response = Boolean.class)
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	@Path("/property/{key}")
+	public Response getProperty(@Nonnull @PathParam("key") String keyParam, @Context HttpServletResponse response) {
+		if (keyParam.startsWith("ebegu")) {
+			return Response.ok(System.getProperty(keyParam)).build();
+		}
+		return Response.noContent().build();
 	}
 }

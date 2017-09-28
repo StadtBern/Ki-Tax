@@ -1,4 +1,5 @@
-<input type="text"
+<input aria-describedby="{{vm.inputId + '-error'}}"
+       type="text"
        id="{{vm.inputId}}"
        ng-model="vm.valueinput"
        class="form-control dvDatepicker"
@@ -7,4 +8,4 @@
        ng-focus="vm.handleFocus($event)"
        ng-required="vm.valueRequired"
        ng-trim="false"
-       ng-disabled="vm.ngDisabled"/>
+       ng-disabled="vm.ngDisabled" name="{{vm.inputName}}"/>

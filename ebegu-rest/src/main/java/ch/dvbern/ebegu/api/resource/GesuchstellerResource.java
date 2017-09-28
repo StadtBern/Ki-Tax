@@ -39,7 +39,7 @@ import java.util.Optional;
  */
 @Path("gesuchsteller")
 @Stateless
-@Api
+@Api(description = "Resource für Gesuchsteller")
 public class GesuchstellerResource {
 
 	@Inject
@@ -55,10 +55,11 @@ public class GesuchstellerResource {
 	private JaxBConverter converter;
 
 
-	@ApiOperation(value = "Updates a Gesuchsteller or creates it if it doesn't exist in the database. The transfer object also has a relation to adressen " +
-		"(wohnadresse, umzugadresse, korrespondenzadresse) these are stored in the database as well. Note that wohnadresse and" +
-		"umzugadresse are both stored as consecutive wohnadressen in the database. Umzugs flag wird gebraucht, um WizardSteps" +
-		"richtig zu setzen.")
+	@ApiOperation(value = "Updates a Gesuchsteller or creates it if it doesn't exist in the database. The transfer " +
+		"object also has a relation to adressen (wohnadresse, umzugadresse, korrespondenzadresse) these are stored in " +
+		"the database as well. Note that wohnadresse and umzugadresse are both stored as consecutive wohnadressen " +
+		"in the database. Umzugs flag wird gebraucht, um WizardSteps richtig zu setzen.",
+		response = JaxGesuchstellerContainer.class)
 	@Nullable
 	@PUT
 	@Path("/{gesuchId}/gsNumber/{gsNumber}/{umzug}")
@@ -72,23 +73,26 @@ public class GesuchstellerResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchContJAXPId.getId());
-		if (gesuch.isPresent()) {
-			GesuchstellerContainer gesuchstellerToMerge = new GesuchstellerContainer();
-			if (gesuchstellerJAXP.getId() != null) {
-				Optional<GesuchstellerContainer> optional = gesuchstellerService.findGesuchsteller(gesuchstellerJAXP.getId());
-				gesuchstellerToMerge = optional.orElse(new GesuchstellerContainer());
-			}
+		Gesuch gesuch = gesuchService.findGesuch(gesuchContJAXPId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("createGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchContJAXPId.getId()));
 
-			GesuchstellerContainer convertedGesuchsteller = converter.gesuchstellerContainerToEntity(gesuchstellerJAXP, gesuchstellerToMerge);
-			GesuchstellerContainer persistedGesuchsteller = this.gesuchstellerService.saveGesuchsteller(convertedGesuchsteller, gesuch.get(), gsNumber, umzug);
+		// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+		//TODO (team): Sobald das Speichern der Email/Telefon NACH dem Verfuegen in einem separaten Service ist, wieder einkommentieren
+//		resourceHelper.assertGesuchStatusForBenutzerRole(gesuch);
 
-			return converter.gesuchstellerContainerToJAX(persistedGesuchsteller);
+		GesuchstellerContainer gesuchstellerToMerge = new GesuchstellerContainer();
+		if (gesuchstellerJAXP.getId() != null) {
+			Optional<GesuchstellerContainer> optional = gesuchstellerService.findGesuchsteller(gesuchstellerJAXP.getId());
+			gesuchstellerToMerge = optional.orElse(new GesuchstellerContainer());
 		}
-		throw new EbeguEntityNotFoundException("createGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchContJAXPId.getId());
 
+		GesuchstellerContainer convertedGesuchsteller = converter.gesuchstellerContainerToEntity(gesuchstellerJAXP, gesuchstellerToMerge);
+		GesuchstellerContainer persistedGesuchsteller = this.gesuchstellerService.saveGesuchsteller(convertedGesuchsteller, gesuch, gsNumber, umzug);
+
+		return converter.gesuchstellerContainerToJAX(persistedGesuchsteller);
 	}
 
+	@ApiOperation(value = "Sucht den Gesuchsteller mit der uebergebenen Id in der Datenbank.",
+		response = JaxGesuchstellerContainer.class)
 	@Nullable
 	@GET
 	@Path("/id/{gesuchstellerId}")
@@ -109,6 +113,8 @@ public class GesuchstellerResource {
 		return converter.gesuchstellerContainerToJAX(gesuchstellerToReturn);
 	}
 
+	@ApiOperation(value = "Sucht eine Person im EWK nach Name, Vorname, Geburtsdatum und Geschlecht.",
+		response = EWKResultat.class)
 	@Nullable
 	@GET
 	@Path("/ewk/search/attributes")
@@ -127,6 +133,7 @@ public class GesuchstellerResource {
         return personenSucheService.suchePerson(nachname, geburtsdatumDate, Geschlecht.valueOf(geschlecht));
 	}
 
+	@ApiOperation(value = "Sucht eine Person im EWK nach EWK-Id.", response = EWKResultat.class)
 	@Nullable
 	@GET
 	@Path("/ewk/search/id/{personId}")
@@ -136,6 +143,8 @@ public class GesuchstellerResource {
 		return personenSucheService.suchePerson(personId);
 	}
 
+	@ApiOperation(value = "Verknuepft einen Gesuchsteller mit einer Person aus dem EWK. Die EWK-Id wird auf dem " +
+		"Gesuchsteller gesetzt.", response = Gesuchsteller.class)
 	@Nullable
 	@PUT
 	@Path("/ewk/{gesuchstellerId}/{ewkPersonId}")

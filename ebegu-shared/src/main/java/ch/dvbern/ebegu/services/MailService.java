@@ -70,4 +70,14 @@ public interface MailService {
 	 */
 	Future<Integer> sendInfoFreischaltungGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull List<Gesuch> gesucheToSendMail);
 
+	/**
+	 * Sendet unter gewissen Bedingungen pro Betreuung eine Email mit der Information, dass ein Betreuungsplatz geloescht wurde.
+	 */
+	void sendInfoBetreuungGeloescht(@Nonnull List<Betreuung> betreuungen);
+
+
+	/**
+	 * Sendet eine Email mit der Information, dass eine Betreuung verfuegt wurde.
+	 */
+	void sendInfoBetreuungVerfuegt(@Nonnull Betreuung betreuung);
 }

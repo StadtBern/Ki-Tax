@@ -1,4 +1,4 @@
-import {IComponentOptions, IPromise, ILogService, IScope} from 'angular';
+import {IComponentOptions, ILogService, IPromise, IScope} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -13,7 +13,7 @@ import {
     TSAntragStatus,
     isAtLeastFreigegeben,
     isAnyStatusOfVerfuegt,
-    isAnyStatusOfVerfuegtButSchulamt
+    isAnyStatusOfVerfuegtButSchulamt, isAnyStatusOfMahnung
 } from '../../../models/enums/TSAntragStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
@@ -30,6 +30,8 @@ import {TSRole} from '../../../models/enums/TSRole';
 import GesuchRS from '../../service/gesuchRS.rest';
 import {BemerkungenDialogController} from '../../dialog/BemerkungenDialogController';
 import AuthenticationUtil from '../../../utils/AuthenticationUtil';
+import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -54,18 +56,18 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     private mahnung: TSMahnung;
     private tempAntragStatus: TSAntragStatus;
 
-
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope', 'GesuchRS', '$window'];
+        'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope', 'GesuchRS', '$timeout'];
+
     /* @ngInject */
 
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
                 private downloadRS: DownloadRS, private mahnungRS: MahnungRS, private $log: ILogService,
                 private authServiceRs: AuthServiceRS, $scope: IScope, private gesuchRS: GesuchRS,
-                private $window: ng.IWindowService) {
+                $timeout: ITimeoutService) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN, $timeout);
         this.initViewModel();
     }
 
@@ -102,7 +104,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
         }
-        //todo wenn man aus der verfuegung zurueck kommt muss man hier nicht neu berechnen
         this.refreshKinderListe();
     }
 
@@ -213,7 +214,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public setGesuchStatusGeprueft(): IPromise<TSAntragStatus> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_GEPRUEFT',
-            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
+            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN',
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {
             return this.setGesuchStatus(TSAntragStatus.GEPRUEFT);
         });
@@ -222,7 +225,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public closeWithoutAngebot(): IPromise<TSGesuch> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_KEIN_ANGEBOT',
-            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
+            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN',
+            parentController: undefined,
+            elementID: undefined
 
         }).then(() => {
             return this.gesuchRS.closeWithoutAngebot(this.gesuchModelManager.getGesuch().id).then((response) => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
@@ -236,14 +241,19 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public setGesuchStatusVerfuegen(): IPromise<TSGesuch> {
+        let deleteTextValue: string = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN';
+        if (this.gesuchModelManager.areThereOnlySchulamtAngebote()) {
+            deleteTextValue = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN_SCHULAMT';
+        }
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
-            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
+            deleteText: deleteTextValue,
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {
 
             return this.gesuchRS.verfuegenStarten(
-                    this.gesuchModelManager.getGesuch().id, this.gesuchModelManager.getGesuch().hasFSDokument).
-                    then((response) => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+                this.gesuchModelManager.getGesuch().id, this.gesuchModelManager.getGesuch().hasFSDokument).then((response) => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
                 if (response.status === TSAntragStatus.NUR_SCHULAMT) {
                     // If AntragStatus==NUR_SCHULAMT the Sachbearbeiter_JA has no rights to work with or even to see this gesuch any more
                     // For this reason we have to navigate directly out of the gesuch once it has been saved. We navigate to the
@@ -292,7 +302,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public stvPruefungAbschliessen(): void {
         this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'STV_PRUEFUNG_ABSCHLIESSEN_CONFIRMATION',
-            deleteText: ''
+            deleteText: '',
+            parentController: undefined,
+            elementID: undefined
         }).then((bemerkung: string) => {
             this.gesuchRS.stvPruefungAbschliessen(this.getGesuch().id).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);
@@ -326,18 +338,11 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public showMahnlaufBeenden(): boolean {
-        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN))
-            && !this.isGesuchReadonly();
+        return isAnyStatusOfMahnung(this.getGesuch().status) && !this.isGesuchReadonly();
     }
 
     public showDokumenteNichtKomplett(): boolean {
-        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN))
+        return isAnyStatusOfMahnung(this.getGesuch().status) && this.getGesuch().dokumenteHochgeladen
             && !this.isGesuchReadonly();
     }
 
@@ -380,22 +385,17 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public mahnlaufBeenden(): void {
         // Gesuchstatus zuruecksetzen UND die Mahnungen auf erledigt setzen
-        this.setGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA).then(any => {
-            this.mahnungRS.mahnlaufBeenden(this.getGesuch()).then(any => {
-                this.mahnungRS.findMahnungen(this.getGesuch().id).then(reloadedMahnungen => {
-                    this.mahnungList = reloadedMahnungen;
-                });
+        this.mahnungRS.mahnlaufBeenden(this.getGesuch()).then((gesuch: TSGesuch) => {
+            this.mahnungRS.findMahnungen(this.getGesuch().id).then(reloadedMahnungen => {
+                this.mahnungList = reloadedMahnungen;
+                this.gesuchModelManager.getGesuch().status = TSAntragStatus.IN_BEARBEITUNG_JA;
             });
         });
     }
 
     public dokumenteNichtKomplett(): void {
-        // Nur Gesuchstatus zuruecksetzen, und zwar zurueck auf MAHNUNG (die jeweils relevante)
-        if (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN)) {
-            this.setGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG);
-        } else if (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN)) {
-            this.setGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG);
-        }
+        this.gesuchModelManager.getGesuch().dokumenteHochgeladen = false;
+        this.gesuchModelManager.updateGesuch();
     }
 
     public zweiteMahnungNichtEingetreten(): void {
@@ -436,10 +436,14 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public openFinanzielleSituationPDF(): void {
         let win: Window = this.downloadRS.prepareDownloadWindow();
-        this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false)
+        this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+            })
+            .catch((ex) => {
+                win.close();
+                this.$log.error('An error occurred downloading the document, closing download window.');
             });
     }
 
@@ -449,6 +453,10 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+            })
+            .catch((ex) => {
+                win.close();
+                this.$log.error('An error occurred downloading the document, closing download window.');
             });
     }
 
@@ -461,6 +469,10 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+            })
+            .catch((ex) => {
+                win.close();
+                this.$log.error('An error occurred downloading the document, closing download window.');
             });
     }
 
@@ -478,7 +490,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public setGesuchStatusBeschwerdeHaengig(): IPromise<TSGesuch> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'BESCHWERDE_HAENGIG',
-            deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_HAENGIG'
+            deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_HAENGIG',
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {
             return this.gesuchRS.setBeschwerdeHaengig(this.getGesuch().id).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);
@@ -490,7 +504,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public setGesuchStatusBeschwerdeAbschliessen(): IPromise<TSGesuch> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'BESCHWERDE_ABSCHLIESSEN',
-            deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_ABSCHLIESSEN'
+            deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_ABSCHLIESSEN',
+            parentController: undefined,
+            elementID: undefined
         }).then(() => {
             return this.gesuchRS.removeBeschwerdeHaengig(this.getGesuch().id).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);
@@ -506,6 +522,12 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public isSuperAdmin(): boolean {
-        return  this.authServiceRs.isRole(TSRole.SUPER_ADMIN);
+        return this.authServiceRs.isRole(TSRole.SUPER_ADMIN);
+    }
+
+    $postLink() {
+        this.$timeout(() => {
+            EbeguUtil.selectFirst();
+        }, 500);
     }
 }

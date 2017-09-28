@@ -1,11 +1,37 @@
 package ch.dvbern.ebegu.entities;
 
+import java.time.LocalDate;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import ch.dvbern.ebegu.dto.suchfilter.lucene.BGNummerBridge;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.validators.CheckAbwesenheitDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
@@ -18,18 +44,6 @@ import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.ClassBridge;
 import org.hibernate.search.annotations.Indexed;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Entity fuer Betreuungen.
@@ -252,13 +266,24 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		this.gueltig = gueltig;
 	}
 
-	public boolean isSame(Betreuung otherBetreuung, boolean inklAbwesenheiten, boolean inklStatus) {
-		if (this == otherBetreuung) {
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//by default just the fields that belong to the Betreuung itself
+		return this.isSame(other, false, false);
+	}
+
+	public boolean isSame(AbstractEntity other, boolean inklAbwesenheiten, boolean inklStatus) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		if (otherBetreuung == null || getClass() != otherBetreuung.getClass()) {
+		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
+		if (!(other instanceof Betreuung)) {
+			return false;
+		}
+		final Betreuung otherBetreuung = (Betreuung) other;
 
 		boolean pensenSame = this.getBetreuungspensumContainers().stream().allMatch(
 			(pensCont) -> otherBetreuung.getBetreuungspensumContainers().stream().anyMatch(otherPensenCont -> otherPensenCont.isSame(pensCont)));
@@ -273,7 +298,9 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 			statusSame = Objects.equals(this.getBetreuungsstatus(), otherBetreuung.getBetreuungsstatus());
 		}
 		boolean stammdatenSame = this.getInstitutionStammdaten().isSame(otherBetreuung.getInstitutionStammdaten());
-		return pensenSame && abwesenheitenSame && statusSame && stammdatenSame;
+		boolean erwBeduerfnisseSame = Objects.equals(getErweiterteBeduerfnisse(), otherBetreuung
+			.getErweiterteBeduerfnisse());
+		return pensenSame && abwesenheitenSame && statusSame && stammdatenSame && erwBeduerfnisseSame;
 	}
 
 	@Transient
@@ -299,12 +326,18 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		return BetreuungsangebotTyp.TAGESELTERN_KLEINKIND.equals(getBetreuungsangebotTyp());
 	}
 
+	@Nullable
 	@Transient
 	public BetreuungsangebotTyp getBetreuungsangebotTyp() {
 		if (getInstitutionStammdaten() != null) {
 			return getInstitutionStammdaten().getBetreuungsangebotTyp();
 		}
 		return null;
+	}
+
+	@Transient
+	public String getBetreuungsangebotTypTranslated() {
+		return ServerMessageUtil.translateEnumValue(getBetreuungsangebotTyp());
 	}
 
 	/**
@@ -314,9 +347,9 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@SuppressFBWarnings("NM_CONFUSING")
 	public String getBGNummer() {
 		if (getKind().getGesuch() != null) {
-			String kind = "" + getKind().getKindNummer();
-			String betreuung = "" + getBetreuungNummer();
-			return getKind().getGesuch().getJahrAndFallnummer() + "." + kind + "." + betreuung;
+			String kind = String.valueOf(getKind().getKindNummer());
+			String betreuung = String.valueOf(getBetreuungNummer());
+			return getKind().getGesuch().getJahrAndFallnummer() + '.' + kind + '.' + betreuung;
 		}
 		return "";
 	}
@@ -356,7 +389,13 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		mutation.setInstitutionStammdaten(this.getInstitutionStammdaten());
 		// Bereits verfuegte Betreuungen werden als BESTAETIGT kopiert, alle anderen behalten ihren Status
 		if (this.getBetreuungsstatus().isGeschlossen()) {
-			mutation.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
+			// Falls sämtliche Betreuungspensum-Container dieser Betreuung ein effektives Pensum von 0 haben, handelt es sich um die
+			// Verfügung eines stornierten Platzes. Wir übernehmen diesen als "STORNIERT"
+			if (hasAnyNonZeroPensum()) {
+				mutation.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
+			} else {
+				mutation.setBetreuungsstatus(Betreuungsstatus.STORNIERT);
+			}
 		} else {
 			mutation.setBetreuungsstatus(this.getBetreuungsstatus());
 		}
@@ -379,6 +418,14 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		return mutation;
 	}
 
+	private boolean hasAnyNonZeroPensum() {
+		for (BetreuungspensumContainer betreuungspensumContainer : betreuungspensumContainers) {
+			if (betreuungspensumContainer.getBetreuungspensumJA().getPensum() > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@Nonnull
 	@Override
@@ -401,5 +448,10 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@Override
 	public String getOwningGesuchId() {
 		return extractGesuch().getId();
+	}
+
+	@Override
+	public String getOwningFallId() {
+		return extractGesuch().getFall().getId();
 	}
 }

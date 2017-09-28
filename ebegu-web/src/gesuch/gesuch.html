@@ -36,8 +36,14 @@
             </button>
         </div>
         <div class="mobile-sidenav-scroll">
+            <h1 class="access-for-all-title" data-translate="AFA_SIDENAV"></h1>
             <div class="sidenav gesuch-status" ng-cloak>
+                <h2 class="access-for-all-title" data-translate="AFA_GESUCHSTATUS"></h2>
                 <span class="status" ng-bind="vm.getGesuchStatusTranslation()"></span>
+                <i class="uploaded-document fa fa-file-o" dv-show-element
+                   dv-show-allowed-roles="vm.TSRoleUtil.getJugendamtAndSchulamtRole()"
+                   dv-show-expression="vm.isDocumentUploaded()"
+                   title="{{'DOKUMENTE_HOCHGELADEN'|translate}}" aria-label="{{'DOKUMENTE_HOCHGELADEN'|translate}}"></i>
                 <br>
                 <span class="zuletzt" data-translate="ZULETZT_BEARBEITER"
                       data-translate-value-username="{{vm.getUserFullname()}}"></span>
@@ -49,6 +55,7 @@
                       data-translate="GESPERRT_WEGEN_BESCHWERDE"></span>
             </div>
             <ul class="sidenav gesuchMenu">
+                <h2 class="access-for-all-title" data-translate="AFA_SIDENAVMENU"></h2>
 
                 <li ng-if="vm.isStepVisible('GESUCH_ERSTELLEN')"
                     ui-sref-active="active" class="row"
@@ -237,7 +244,8 @@
          layout-align="stretch center">
         <div ui-view="kommentarViewPort" flex="100"></div>
     </div>
-    <md-sidenav class="md-sidenav-right" md-component-id="ewk" id="ewk"
+    <md-sidenav dv-show-element
+                dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesForKommentarSpalte()" class="md-sidenav-right" md-component-id="ewk" id="ewk"
                 md-disable-backdrop md-whiteframe="4" md-is-open="vm.openEwkSidenav">
         <button ng-click="vm.closeSidenav('ewk')" class="dv-btn-operation" style="width:2rem; margin-left:auto;">
             <i class="fa fa-times"></i>
@@ -252,7 +260,7 @@
             </div>
             <div ng-repeat=" n in [1,2]" ng-if="vm.showAbfrageForGesuchsteller(n)">
 
-                <h3 ng-bind="vm.getGesuchstellerTitle(vm.getGesuchsteller(n))"></h3>
+                <h3 ng-bind="vm.getGesuchstellerTitle(n)"></h3>
                 <button type="button" class="dv-btn-operation"
                         ng-click="vm.searchGesuchsteller(n)">
                     <i class="fa fa-search"></i>
@@ -284,9 +292,17 @@
                                 <span class="ewk-label" data-translate="EWK_PERSON_ID"></span><span
                                 ng-bind="person.personID"></span>
                             </div>
-                            <div ng-repeat="code in person.einwohnercodes">
+                            <div ng-repeat-start="code in person.einwohnercodes">
                                 <span class="ewk-label" data-translate="EWK_EINWOHNERCODE"></span><span
                                 ng-bind="code.codeTxt"></span>
+                            </div>
+                            <div>
+                                <span class="ewk-label" data-translate="EWK_EINWOHNERCODE_VON"></span><span
+                                ng-bind="code.gueltigVon | amDateFormat: 'DD.MM.YYYY'"></span>
+                            </div>
+                            <div  ng-repeat-end>
+                                <span class="ewk-label" data-translate="EWK_EINWOHNERCODE_BIS"></span><span
+                                ng-bind="code.gueltigBis | amDateFormat: 'DD.MM.YYYY'"></span>
                             </div>
                             <div>
                                 <span class="ewk-label" data-translate="EWK_NACHNAME"></span><span
@@ -311,6 +327,14 @@
                             <div>
                                 <span class="ewk-label" data-translate="EWK_NATIONALITAET"></span><span
                                 ng-bind="person.nationalitaet"></span>
+                            </div>
+                            <div ng-if="person.bewilligungsartTxt">
+                                <span class="ewk-label" data-translate="EWK_BEWILLIGUNGSART"></span><span
+                                ng-bind="person.bewilligungsartTxt"></span>
+                            </div>
+                            <div ng-if="person.bewilligungBis">
+                                <span class="ewk-label" data-translate="EWK_BEWILLIGUNGSART_BIS"></span><span
+                                ng-bind="person.bewilligungBis | amDateFormat: 'DD.MM.YYYY'"></span>
                             </div>
                             <div>
                                 <span class="ewk-label" data-translate="EWK_ZIVILSTAND"></span><span

@@ -1,4 +1,5 @@
 <div class="einkommensverschlechterungSteuern gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
     <div class="row">
         <div class="col-md-12">
 
@@ -9,10 +10,10 @@
 
                     <div class="row viewTitle">
                         <div class="col-md-12">
-                            <h1>
+                            <h2>
                     <span data-translate="EKVI_ZUSAETZLICHE_FRAGEN"
                           translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(1)}}}"></span>
-                            </h1>
+                            </h2>
                             <hr class="header"/>
                         </div>
                     </div>
@@ -20,8 +21,9 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group">
-                                <h1 class="required" aria-hidden="true" id="gemeinsameSteuererklaerung_BjP1" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
-                                    translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1), namegs2: vm.extractFullNameGS2()}"></h1>
+                                <span class="ebeguH1 required" id="gemeinsameSteuererklaerung_BjP1"
+                                    data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
+                                    translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1), namegs2: vm.extractFullNameGS2()}"></span>
                                 <dv-radio-container name="gemeinsameSteuererklaerung_BjP1"
                                                     ng-model="vm.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1"
                                                     ng-required="true" class="radio input-element"
@@ -29,9 +31,9 @@
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
-                                                    aria-described-by="gemeinsameSteuererklaerung_BjP1">
+                                                    aria-described-by="gemeinsameSteuererklaerung_BjP1-error">
                                 </dv-radio-container>
-                                <dv-error-messages for="vm.form.gemeinsameSteuererklaerung_BjP1.$error"
+                                <dv-error-messages input-id="gemeinsameSteuererklaerung_BjP1" for="vm.form.gemeinsameSteuererklaerung_BjP1.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
@@ -41,8 +43,9 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question" ng-if="vm.showSteuerveranlagung_BjP1()">
                             <div class="form-group">
-                                <h1 class="required" aria-hidden="true" id="steuerveranlagung_BjP1" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
-                                    translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1)}"></h1>
+                                <span class="ebeguH1 required" id="steuerveranlagung_BjP1"
+                                    data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
+                                    translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1)}"></span>
                                 <dv-radio-container name="steuerveranlagung_BjP1"
                                                     ng-model="vm.getEkv_GS1_Bjp1().steuerveranlagungErhalten"
                                                     ng-required="true" class="radio input-element"
@@ -50,9 +53,9 @@
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
-                                                    aria-described-by="steuerveranlagung_BjP1">
+                                                    aria-described-by="steuerveranlagung_BjP1-error">
                                 </dv-radio-container>
-                                <dv-error-messages for="vm.form.steuerveranlagung_BjP1.$error"
+                                <dv-error-messages input-id="steuerveranlagung_BjP1" for="vm.form.steuerveranlagung_BjP1.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
@@ -63,8 +66,9 @@
                         <div class="col-xs-12 dv-input-container-question"
                              ng-if="vm.showSteuerveranlagung_BjP1() && vm.showSteuererklaerung_BjP1()">
                             <div class="form-group">
-                                <h1 class="required" aria-hidden="true" id="steuererklaerung_BjP1" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
-                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(1)}}}"></h1>
+                                <span class="ebeguH1 required" id="steuererklaerung_BjP1"
+                                   data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
+                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(1)}}}"></span>
                                 <dv-radio-container name="steuererklaerung_BjP1"
                                                     ng-model="vm.getEkv_GS1_Bjp1().steuererklaerungAusgefuellt"
                                                     ng-required="true" class="radio input-element"
@@ -72,10 +76,10 @@
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
-                                                    aria-described-by="steuererklaerung_BjP1"
+                                                    aria-described-by="steuererklaerung_BjP1-error"
                                                     aria-label="{{ 'FINANZIELLE_SITUATION_STEUERERKLAERUNG' |translate}}">
                                 </dv-radio-container>
-                                <dv-error-messages for="vm.form.steuererklaerung_BjP1.$error"
+                                <dv-error-messages input-id="steuererklaerung_BjP1" for="vm.form.steuererklaerung_BjP1.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>

@@ -10,11 +10,39 @@
 
 package ch.dvbern.ebegu.api.resource.authentication;
 
-import ch.dvbern.ebegu.api.client.OpenIdmRestService;
-import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElement;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+import com.sun.identity.plugin.session.SessionException;
+import com.sun.identity.saml.common.SAMLUtils;
+import com.sun.identity.saml2.assertion.NameID;
+import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.common.SAML2Exception;
+import com.sun.identity.saml2.profile.SPACSUtils;
+
 import ch.dvbern.ebegu.api.util.EBEGUSamlConstants;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
+import ch.dvbern.ebegu.authentication.JaxAuthAccessElement;
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.config.EbeguConfigurationImpl;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
@@ -24,34 +52,17 @@ import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.services.AuthService;
+import ch.dvbern.ebegu.services.BenutzerService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.MandantService;
+import ch.dvbern.ebegu.services.TraegerschaftService;
+import ch.dvbern.ebegu.util.AuthConstants;
 import ch.dvbern.ebegu.util.Constants;
-import com.google.gson.Gson;
-import com.sun.identity.plugin.session.SessionException;
-import com.sun.identity.saml.common.SAMLUtils;
-import com.sun.identity.saml2.assertion.NameID;
-import com.sun.identity.saml2.common.SAML2Constants;
-import com.sun.identity.saml2.common.SAML2Exception;
-import com.sun.identity.saml2.profile.SPACSUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import ch.dvbern.ebegu.util.OpenIDMUtil;
 
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.Charset;
-import java.time.LocalDateTime;
-import java.util.*;
-
-import static ch.dvbern.ebegu.api.resource.authentication.AuthResource.COOKIE_PATH;
 import static ch.dvbern.ebegu.enums.UserRole.GESUCHSTELLER;
+import static ch.dvbern.ebegu.util.AuthConstants.COOKIE_PATH;
 
 
 /**
@@ -71,8 +82,6 @@ public class FedletSamlServlet extends HttpServlet {
 	@Inject
 	private InstitutionService institutionService;
 
-	@Inject
-	private JaxBConverter converter;
 
 	@Inject
 	private EbeguConfiguration configuration;
@@ -85,10 +94,8 @@ public class FedletSamlServlet extends HttpServlet {
 	@Inject
 	private MandantService mandantService;
 
-	@Inject
-	private OpenIdmRestService openIdmRestService;
 
-	private static String superUserEmail;
+	private static final String superUserEmail;
 
 	static {
 		superUserEmail =  System.getProperty(EbeguConfigurationImpl.EBEGU_SUPERUSER_MAIL, "eberhard.gugler@dvbern.ch");
@@ -202,7 +209,6 @@ public class FedletSamlServlet extends HttpServlet {
 		benutzer.setNachname(surname);
 		benutzer.setEmail(mail);
 
-		//todo team convert adress und speichers auf Benutzer
 		LOG.warn("The following attributes are received from IAM but not yet stored " + unusedAttr);
 		convertAndSetRoleAndInstitution(role, benutzer);
 
@@ -218,7 +224,7 @@ public class FedletSamlServlet extends HttpServlet {
 	 */
 	private void setCookiesForClient(HttpServletResponse response, AuthAccessElement userAuth) {
 		// Cookie to store auth_token, HTTP-Only Cookie --> Protection from XSS
-		Cookie authCookie = new Cookie(AuthDataUtil.COOKIE_AUTH_TOKEN, userAuth.getAuthToken());
+		Cookie authCookie = new Cookie(AuthConstants.COOKIE_AUTH_TOKEN, userAuth.getAuthToken());
 		authCookie.setComment("authentication");
 		authCookie.setPath(COOKIE_PATH);
 		authCookie.setMaxAge(Constants.COOKIE_TIMEOUT_SECONDS);
@@ -228,7 +234,7 @@ public class FedletSamlServlet extends HttpServlet {
 		response.addCookie(authCookie);
 
 		// Readable Cookie for XSRF Protection (the Cookie can only be read from our Domain)
-		Cookie xsrfCookie = new Cookie(AuthDataUtil.COOKIE_XSRF_TOKEN, userAuth.getXsrfToken());
+		Cookie xsrfCookie = new Cookie(AuthConstants.COOKIE_XSRF_TOKEN, userAuth.getXsrfToken());
 		xsrfCookie.setComment("xsfr prevention");
 		xsrfCookie.setPath(COOKIE_PATH);
 		xsrfCookie.setMaxAge(Constants.COOKIE_TIMEOUT_SECONDS);
@@ -238,8 +244,8 @@ public class FedletSamlServlet extends HttpServlet {
 
 
 		// Readable Cookie storing user data
-		JaxAuthAccessElement element = converter.authAccessElementToJax(userAuth);
-		Cookie principalCookie = new Cookie(AuthDataUtil.COOKIE_PRINCIPAL, encodeAuthAccessElement(element));
+		JaxAuthAccessElement element =  new JaxAuthAccessElement(userAuth);
+		Cookie principalCookie = new Cookie(AuthConstants.COOKIE_PRINCIPAL, encodeAuthAccessElement(element));
 		principalCookie.setComment("principal");
 		principalCookie.setPath(COOKIE_PATH);
 		principalCookie.setMaxAge(Constants.COOKIE_TIMEOUT_SECONDS);
@@ -283,14 +289,14 @@ public class FedletSamlServlet extends HttpServlet {
 
 		if (UserRole.SACHBEARBEITER_INSTITUTION == userRole && strings.length == 2) {
 			//read and store institution to user
-			String institutionID = openIdmRestService.convertToEBEGUID(strings[1]);
+			String institutionID = OpenIDMUtil.convertToEBEGUID(strings[1]);
 			Institution institution = institutionService.findInstitution(institutionID).orElseThrow(() -> new EbeguEntityNotFoundException("convertAndSetRoleAndInstitution", "Institution not found", institutionID));
 			localUser.setInstitution(institution);
 
 		}
 		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == userRole && strings.length == 2) {
 			//read and store traegerschaft to user
-			String traegerschaftID = openIdmRestService.convertToEBEGUID(strings[1]);
+			String traegerschaftID = OpenIDMUtil.convertToEBEGUID(strings[1]);
 			Traegerschaft foundTraegerschaft = traegerschaftService
 				.findTraegerschaft(traegerschaftID)
 				.orElseThrow((() -> new EbeguEntityNotFoundException("convertAndSetRoleAndInstitution", "Traegerschaft not found: {}", traegerschaftID)));

@@ -8,7 +8,7 @@ import AbstractGesuchViewController from '../abstractGesuchView';
 import {TSPensumFachstelle} from '../../../models/TSPensumFachstelle';
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSKindContainer from '../../../models/TSKindContainer';
-import {TSKinderabzug, getTSKinderabzugValues} from '../../../models/enums/TSKinderabzug';
+import {getTSKinderabzugValues, TSKinderabzug} from '../../../models/enums/TSKinderabzug';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSRole} from '../../../models/enums/TSRole';
@@ -18,9 +18,8 @@ import * as moment from 'moment';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ITranslateService = angular.translate.ITranslateService;
+import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
-import Moment = moment.Moment;
-
 
 let template = require('./kindView.html');
 require('./kindView.less');
@@ -41,12 +40,13 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
     allowedRoles: Array<TSRole>;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
-        'ErrorService', 'WizardStepManager', '$q', '$translate'];
+        'ErrorService', 'WizardStepManager', '$q', '$translate', '$timeout'];
+
     /* @ngInject */
     constructor($stateParams: IKindStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, $scope: IScope, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.KINDER);
+                wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.KINDER, $timeout);
         if ($stateParams.kindNumber) {
             let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber));
             if (kindIndex >= 0) {
@@ -178,7 +178,8 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
                 name: fachstelle.fachstelle.name,
                 pensum: fachstelle.pensum,
                 von: vonText,
-                bis: bisText});
+                bis: bisText
+            });
         } else {
             return this.$translate.instant('LABEL_KEINE_ANGABE');
         }
@@ -188,6 +189,13 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         let tsKindContainer = new TSKindContainer(undefined, new TSKind());
         tsKindContainer.kindNummer = kindNumber;
         return tsKindContainer;
+    }
+
+    /**
+     * Returns true if the Kind has a Betreuung
+     */
+    public hasKindBetreuungen(): boolean {
+        return this.model.betreuungen && this.model.betreuungen.length > 0;
     }
 }
 

@@ -5,8 +5,8 @@ import ch.dvbern.ebegu.api.dtos.JaxFinanzModel;
 import ch.dvbern.ebegu.api.dtos.JaxFinanzielleSituationContainer;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.resource.util.ResourceHelper;
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
@@ -42,7 +42,7 @@ import java.util.Optional;
  */
 @Path("finanzielleSituation")
 @Stateless
-@Api
+@Api(description = "Resource für die finanzielle Situation")
 public class FinanzielleSituationResource {
 
 	@Inject
@@ -60,9 +60,12 @@ public class FinanzielleSituationResource {
 	@Resource
 	private EJBContext context;    //fuer rollback
 
+	@Inject
+	private ResourceHelper resourceHelper;
 
-	@ApiOperation(value = "Create a new FinanzielleSituation in the database. The transfer object also has a relation to FinanzielleSituation, " +
-		"it is stored in the database as well.")
+
+	@ApiOperation(value = "Create a new JaxFinanzielleSituationContainer in the database. The transfer object also has a " +
+		"relation to FinanzielleSituation, it is stored in the database as well.", response = JaxFinanzielleSituationContainer.class)
 	@Nullable
 	@PUT
 	@Path("/{gesuchstellerId}/{gesuchId}")
@@ -75,26 +78,27 @@ public class FinanzielleSituationResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
-		if (gesuch.isPresent()) {
-			Optional<GesuchstellerContainer> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
-			if (gesuchsteller.isPresent()) {
-				FinanzielleSituationContainer convertedFinSitCont = converter.finanzielleSituationContainerToStorableEntity(finanzielleSituationJAXP);
-				convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
-				FinanzielleSituationContainer persistedFinanzielleSituation = this.finanzielleSituationService.saveFinanzielleSituation(convertedFinSitCont, gesuch.get().getId());
+		Gesuch gesuch = gesuchService.findGesuch(gesuchJAXPId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("saveFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId()));
 
-				URI uri = uriInfo.getBaseUriBuilder()
-					.path(FinanzielleSituationResource.class)
-					.path("/" + persistedFinanzielleSituation.getId())
-					.build();
+		// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+		resourceHelper.assertGesuchStatusForBenutzerRole(gesuch);
 
-				JaxFinanzielleSituationContainer jaxFinanzielleSituation = converter.finanzielleSituationContainerToJAX(persistedFinanzielleSituation);
-				return Response.created(uri).entity(jaxFinanzielleSituation).build();
-			}
-		}
-		throw new EbeguEntityNotFoundException("saveFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId());
+		GesuchstellerContainer gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("saveFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId()));
+		FinanzielleSituationContainer convertedFinSitCont = converter.finanzielleSituationContainerToStorableEntity(finanzielleSituationJAXP);
+		convertedFinSitCont.setGesuchsteller(gesuchsteller);
+		FinanzielleSituationContainer persistedFinanzielleSituation = this.finanzielleSituationService.saveFinanzielleSituation(convertedFinSitCont, gesuch.getId());
+
+		URI uri = uriInfo.getBaseUriBuilder()
+			.path(FinanzielleSituationResource.class)
+			.path('/' + persistedFinanzielleSituation.getId())
+			.build();
+
+		JaxFinanzielleSituationContainer jaxFinanzielleSituation = converter.finanzielleSituationContainerToJAX(persistedFinanzielleSituation);
+		return Response.created(uri).entity(jaxFinanzielleSituation).build();
 	}
 
+	@ApiOperation(value = "Berechnet die FinanzielleSituation fuer das Gesuch mit der uebergebenen Id. Die Berechnung " +
+		"nicht gespeichert.", response = FinanzielleSituationResultateDTO.class)
 	@Nullable
 	@POST
 	@Path("/calculate")
@@ -115,6 +119,9 @@ public class FinanzielleSituationResource {
 	/**
 	 * Finanzielle Situation wird hier im gegensatz zur /calculate mehtode nur als DTO mitgegeben statt als ganzes gesuch
 	 */
+	@ApiOperation(value = "Berechnet die FinanzielleSituation fuer das Gesuch mit der uebergebenen Id. Die Berechnung " +
+		"nicht gespeichert. Die FinanzielleSituation wird hier im Gegensatz zur /calculate mehtode nur als DTO " +
+		"mitgegeben statt als ganzes Gesuch", response = FinanzielleSituationResultateDTO.class)
 	@Nullable
 	@POST
 	@Path("/calculateTemp")
@@ -130,11 +137,13 @@ public class FinanzielleSituationResource {
 		gesuch.extractFamiliensituation().setGemeinsameSteuererklaerung(jaxFinSitModel.isGemeinsameSteuererklaerung());
 		if (jaxFinSitModel.getFinanzielleSituationContainerGS1() != null) {
 			gesuch.setGesuchsteller1(new GesuchstellerContainer());
+			//noinspection ConstantConditions
 			gesuch.getGesuchsteller1().setFinanzielleSituationContainer(
 				converter.finanzielleSituationContainerToEntity(jaxFinSitModel.getFinanzielleSituationContainerGS1(), new FinanzielleSituationContainer()));
 		}
 		if (jaxFinSitModel.getFinanzielleSituationContainerGS2() != null) {
 			gesuch.setGesuchsteller2(new GesuchstellerContainer());
+			//noinspection ConstantConditions
 			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(
 				converter.finanzielleSituationContainerToEntity(jaxFinSitModel.getFinanzielleSituationContainerGS2(), new FinanzielleSituationContainer()));
 		}
@@ -145,6 +154,8 @@ public class FinanzielleSituationResource {
 		return Response.ok(finanzielleSituationResultateDTO).build();
 	}
 
+	@ApiOperation(value = "Sucht die FinanzielleSituation mit der uebergebenen Id in der Datenbank",
+		response = JaxFinanzielleSituationContainer.class)
 	@Nullable
 	@GET
 	@Path("/{finanzielleSituationId}")

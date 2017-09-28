@@ -1,9 +1,11 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer_;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -11,6 +13,7 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -20,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.*;
 
@@ -32,7 +36,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.*;
 public class ErwerbspensumServiceBean extends AbstractBaseService implements ErwerbspensumService {
 
 	@Inject
-	private Persistence<ErwerbspensumContainer> persistence;
+	private Persistence persistence;
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 	@Inject
@@ -47,7 +51,7 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 	public ErwerbspensumContainer saveErwerbspensum(@Valid @Nonnull ErwerbspensumContainer erwerbspensumContainer, Gesuch gesuch) {
 		Objects.requireNonNull(erwerbspensumContainer);
 		final ErwerbspensumContainer mergedErwerbspensum = persistence.merge(erwerbspensumContainer);
-		wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.ERWERBSPENSUM);
+		wizardStepService.updateSteps(gesuch.getId(), null, mergedErwerbspensum.getErwerbspensumJA(), WizardStepName.ERWERBSPENSUM);
 		return mergedErwerbspensum;
 	}
 
@@ -106,5 +110,24 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 			)
 		);
 		wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.ERWERBSPENSUM);
+	}
+
+	@Override
+	@PermitAll
+	public boolean isErwerbspensumRequired(@Nonnull Gesuch gesuch) {
+		// Erwerbspensum ist zwingend, wenn mindestens 1 Kind eine Kleinkind-Betreuung ohne Fachstelle hat
+		Set<KindContainer> kindContainers = gesuch.getKindContainers();
+		for (KindContainer kindContainer : kindContainers) {
+			if (kindContainer.getKindJA().getPensumFachstelle() != null) {
+				return false;
+			}
+			Set<Betreuung> betreuungen = kindContainer.getBetreuungen();
+			for (Betreuung betreuung : betreuungen) {
+				if (!betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }

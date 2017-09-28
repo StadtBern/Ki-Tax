@@ -1,11 +1,13 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * Container-Entity für die GesuchstellerAdressen
@@ -17,6 +19,7 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 
 	private static final long serialVersionUID = -3084333639027795652L;
 
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuchstelleradresse_container_gesuchstellerContainer_id"))
 	private GesuchstellerContainer gesuchstellerContainer;
@@ -152,5 +155,21 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 			mutation.setGesuchstellerAdresseJA(this.getGesuchstellerAdresseJA().copyForErneuerung(new GesuchstellerAdresse()));
 		}
 		return copyForMutationOrErneuerung(mutation, gesuchstellerContainer);
+	}
+
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!(other instanceof GesuchstellerAdresseContainer)) {
+			return false;
+		}
+		final GesuchstellerAdresseContainer otherAdresseContainer = (GesuchstellerAdresseContainer) other;
+		return EbeguUtil.isSameObject(getGesuchstellerAdresseJA(), otherAdresseContainer.getGesuchstellerAdresseJA());
 	}
 }

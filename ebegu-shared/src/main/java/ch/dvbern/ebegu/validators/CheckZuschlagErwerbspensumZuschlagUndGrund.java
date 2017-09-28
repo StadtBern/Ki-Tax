@@ -1,12 +1,13 @@
 package ch.dvbern.ebegu.validators;
 
-import ch.dvbern.ebegu.entities.Erwerbspensum;
-
-import javax.validation.Constraint;
-import javax.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import javax.validation.Constraint;
+import javax.validation.Payload;
+
+import ch.dvbern.ebegu.entities.Erwerbspensum;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.TYPE;

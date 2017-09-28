@@ -31,7 +31,6 @@ export class StatistikViewController {
     private _gesuchsperioden: Array<TSGesuchsperiode>;
     TSRole: any;
     TSRoleUtil: any;
-    private DATETIME_PARAM_FORMAT: string = 'YYYY-MM-DD HH:mm:ss'; //TODO (team) wieso hier DateTime???
     private DATE_PARAM_FORMAT: string = 'YYYY-MM-DD';
     // Statistiken sind nur moeglich ab Beginn der fruehesten Periode bis Ende der letzten Periode
     private maxDate: Moment;
@@ -64,24 +63,30 @@ export class StatistikViewController {
             switch (tmpType) {
                 case TSStatistikParameterType.GESUCH_STICHTAG: {
                     let win: Window = this.downloadRS.prepareDownloadWindow();
-                    this.reportRS.getGesuchStichtagReportExcel(this._statistikParameter.stichtag.format(this.DATETIME_PARAM_FORMAT),
+                    this.reportRS.getGesuchStichtagReportExcel(this._statistikParameter.stichtag.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
                         .then((downloadFile: TSDownloadFile) => {
-
                             this.$log.debug('accessToken: ' + downloadFile.accessToken);
                             this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        })
+                        .catch((ex) => {
+                            win.close();
+                            this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
                 }
                 case TSStatistikParameterType.GESUCH_ZEITRAUM: {
                     let win: Window = this.downloadRS.prepareDownloadWindow();
-                    this.reportRS.getGesuchZeitraumReportExcel(this._statistikParameter.von.format(this.DATETIME_PARAM_FORMAT),
-                        this._statistikParameter.bis.format(this.DATETIME_PARAM_FORMAT),
+                    this.reportRS.getGesuchZeitraumReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
                         .then((downloadFile: TSDownloadFile) => {
-
                             this.$log.debug('accessToken: ' + downloadFile.accessToken);
                             this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        })
+                        .catch((ex) => {
+                            win.close();
+                            this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
                 }
@@ -92,9 +97,12 @@ export class StatistikViewController {
                         this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
                         .then((downloadFile: TSDownloadFile) => {
-
                             this.$log.debug('accessToken: ' + downloadFile.accessToken);
                             this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        })
+                        .catch((ex) => {
+                            win.close();
+                            this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
                 }
@@ -104,6 +112,10 @@ export class StatistikViewController {
                         .then((downloadFile: TSDownloadFile) => {
                             this.$log.debug('accessToken: ' + downloadFile.accessToken);
                             this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        })
+                        .catch((ex) => {
+                            win.close();
+                            this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
                 }
@@ -112,9 +124,12 @@ export class StatistikViewController {
                     this.reportRS.getKantonReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
                         .then((downloadFile: TSDownloadFile) => {
-
                             this.$log.debug('accessToken: ' + downloadFile.accessToken);
                             this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        })
+                        .catch((ex) => {
+                            win.close();
+                            this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
                 }
@@ -125,6 +140,10 @@ export class StatistikViewController {
                         .then((downloadFile: TSDownloadFile) => {
                             this.$log.debug('accessToken: ' + downloadFile.accessToken);
                             this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        })
+                        .catch((ex) => {
+                            win.close();
+                            this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
                 }
@@ -135,9 +154,12 @@ export class StatistikViewController {
                         this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
                         .then((downloadFile: TSDownloadFile) => {
-
                             this.$log.debug('accessToken: ' + downloadFile.accessToken);
                             this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        })
+                        .catch((ex) => {
+                            win.close();
+                            this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
                 }
@@ -147,9 +169,12 @@ export class StatistikViewController {
                         this.reportRS.getZahlungPeriodeReportExcel(
                             this._statistikParameter.gesuchsperiode)
                             .then((downloadFile: TSDownloadFile) => {
-
                                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                            })
+                            .catch((ex) => {
+                                win.close();
+                                this.$log.error('An error occurred downloading the document, closing download window.');
                             });
                     } else {
                         this.$log.warn('gesuchsperiode muss gewählt sein');

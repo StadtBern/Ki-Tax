@@ -1,15 +1,18 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.lib.excelmerger.ExcelMergeException;
-import ch.dvbern.lib.excelmerger.ExcelMerger;
-import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
-import ch.dvbern.lib.excelmerger.MergeField;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-
-import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.oss.lib.excelmerger.ExcelMergeException;
+import ch.dvbern.oss.lib.excelmerger.ExcelMerger;
+import ch.dvbern.oss.lib.excelmerger.ExcelMergerDTO;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeField;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import static ch.dvbern.ebegu.util.MonitoringUtil.monitor;
 
@@ -41,8 +44,9 @@ public abstract class AbstractReportServiceBean extends AbstractBaseService {
 		return bytes;
 	}
 
-	protected void mergeData(@Nonnull Sheet sheet, @Nonnull ExcelMergerDTO excelMergerDTO, @Nonnull MergeField[] mergeFields) throws ExcelMergeException {
-		monitor(ReportServiceBean.class, String.format("mergeData (sheet=%s)", sheet.getSheetName()),
+	protected void mergeData(@Nonnull Sheet sheet, @Nonnull ExcelMergerDTO excelMergerDTO, @Nonnull  MergeFieldProvider[] mergeFieldProviders) throws ExcelMergeException {
+		List<MergeField<?>> mergeFields = MergeFieldProvider.toMergeFields(mergeFieldProviders);
+		monitor(AbstractReportServiceBean.class, String.format("mergeData (sheet=%s)", sheet.getSheetName()),
 			() -> ExcelMerger.mergeData(sheet, mergeFields, excelMergerDTO));
 	}
 }

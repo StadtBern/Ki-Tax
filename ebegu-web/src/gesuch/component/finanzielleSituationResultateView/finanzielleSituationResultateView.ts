@@ -9,9 +9,10 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSFinanzModel from '../../../models/TSFinanzModel';
-import IQService = angular.IQService;
-import IScope = angular.IScope;
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import IScope = angular.IScope;
+import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./finanzielleSituationResultateView.html');
 require('./finanzielleSituationResultateView.less');
 
@@ -29,13 +30,14 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
 
     private initialModel: TSFinanzModel;
 
-    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'WizardStepManager', '$q', '$scope'];
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService',
+        'WizardStepManager', '$scope', '$timeout'];
+
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FINANZIELLE_SITUATION);
+                berechnungsManager: BerechnungsManager, private errorService: ErrorService,
+                wizardStepManager: WizardStepManager, $scope: IScope, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FINANZIELLE_SITUATION, $timeout);
 
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
         this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
@@ -55,7 +57,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 // Update wizardStepStatus also if the form is empty and not dirty
-                return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+                return this.updateWizardStepStatus();
             }
             this.errorService.clearAll();
             if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
@@ -63,23 +65,37 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
                 if (this.gesuchModelManager.getGesuch().gesuchsteller2) {
                     return this.gesuchModelManager.saveFinanzielleSituation().then(() => {
                         this.gesuchModelManager.setGesuchstellerNumber(2);
-                        return this.gesuchModelManager.saveFinanzielleSituation().then(() => {
-                            return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
-                        });
+                        return this.saveFinanzielleSituation();
                     });
                 } else {
-                    return this.gesuchModelManager.saveFinanzielleSituation().then(() => {
-                        return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
-                    });
+                    return this.saveFinanzielleSituation();
                 }
             }
         }
         return undefined;
     }
 
+    private saveFinanzielleSituation(): IPromise<void> {
+        return this.gesuchModelManager.saveFinanzielleSituation().then(() => {
+            return this.updateWizardStepStatus();
+        });
+    }
+
+    /**
+     * updates the Status of the Step depending on whether the Gesuch is a Mutation or not
+     */
+    private updateWizardStepStatus(): IPromise<void> {
+        if (this.gesuchModelManager.getGesuch().isMutation()) {
+            return this.wizardStepManager.updateCurrentWizardStepStatusMutiert();
+        } else {
+            return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+        }
+    }
+
     calculate() {
         this.berechnungsManager.calculateFinanzielleSituationTemp(this.model);
     }
+
     //init weg
 
     public getFinanzielleSituationGS1(): TSFinanzielleSituationContainer {

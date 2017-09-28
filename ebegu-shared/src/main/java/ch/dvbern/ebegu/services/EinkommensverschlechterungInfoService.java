@@ -1,11 +1,12 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
-import ch.dvbern.ebegu.entities.Gesuch;
-
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
 
 /**
  * Service zum Verwalten von EinkommensverschlechterungInfoContainer
@@ -19,17 +20,12 @@ public interface EinkommensverschlechterungInfoService {
 	 * @return die gespeicherte EinkommensverschlechterungInfoContainer
 	 */
 	@Nonnull
-	Optional<EinkommensverschlechterungInfoContainer> createEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo);
+	Optional<EinkommensverschlechterungInfoContainer> createEinkommensverschlechterungInfo(
+		@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo);
 
 	/**
 	 * Aktualisiert idn EinkommensverschlechterungInfoContainer in der DB
-	 *
-	 * @param einkommensverschlechterungInfo die EinkommensverschlechterungInfoContainer als DTO
-	 * @return Die aktualisierte EinkommensverschlechterungInfoContainer
 	 */
-	@Nonnull
-	EinkommensverschlechterungInfoContainer updateEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo);
-
 	@Nonnull
 	EinkommensverschlechterungInfoContainer updateEinkommensVerschlechterungInfoAndGesuch(Gesuch gesuch, EinkommensverschlechterungInfoContainer oldEVData,
 																				 EinkommensverschlechterungInfoContainer convertedEkvi);
@@ -43,7 +39,6 @@ public interface EinkommensverschlechterungInfoService {
 
 	/**
 	 * Gibt alle existierenden EinkommensverschlechterungInfoen zurueck.
-	 *
 	 * @return Liste aller EinkommensverschlechterungInfoen aus der DB
 	 */
 	@Nonnull
@@ -51,7 +46,6 @@ public interface EinkommensverschlechterungInfoService {
 
 	/**
 	 * entfernt eine EinkommensverschlechterungInfoContainer aus der Database
-	 *
 	 * @param einkommensverschlechterungInfo die EinkommensverschlechterungInfoContainer als DTO
 	 */
 	void removeEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo);

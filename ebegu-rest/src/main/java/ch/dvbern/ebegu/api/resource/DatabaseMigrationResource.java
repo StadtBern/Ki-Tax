@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.services.DatabaseMigrationService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -15,12 +16,13 @@ import java.util.Objects;
  */
 @Path("dbmigration")
 @Stateless
-@Api
+@Api(description = "Resource zum Ausfuehren von manuellen DB-Migrationen")
 public class DatabaseMigrationResource {
 
 	@Inject
 	private DatabaseMigrationService databaseMigrationService;
 
+	@ApiOperation(value = "Führt das Skript mit der übergebenen Nummer durch", response = Void.class)
 	@GET
 	@Path("/{scriptNr}")
 	@Consumes(MediaType.WILDCARD)

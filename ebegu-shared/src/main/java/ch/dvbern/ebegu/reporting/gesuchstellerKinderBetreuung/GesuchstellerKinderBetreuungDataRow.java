@@ -1,11 +1,11 @@
 package ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -24,6 +24,7 @@ public class GesuchstellerKinderBetreuungDataRow {
 	private String institution;
 	private BetreuungsangebotTyp betreuungsTyp;
 	private String periode;
+	private String gesuchStatus;
 
 	private LocalDate eingangsdatum;
 	private LocalDate verfuegungsdatum;
@@ -76,13 +77,14 @@ public class GesuchstellerKinderBetreuungDataRow {
 	private String kindName;
 	private String kindVorname;
 	private LocalDate kindGeburtsdatum;
-	private Boolean kindFachstelle;
+	private String kindFachstelle;
 	private Boolean kindErwBeduerfnisse;
 	private Boolean kindDeutsch;
 	private Boolean kindEingeschult;
 
 	private LocalDate zeitabschnittVon;
 	private LocalDate zeitabschnittBis;
+	private String betreuungsStatus;
 	private BigDecimal betreuungsPensum;
 	private BigDecimal anspruchsPensum;
 	private BigDecimal bgPensum;
@@ -125,6 +127,14 @@ public class GesuchstellerKinderBetreuungDataRow {
 
 	public void setPeriode(String periode) {
 		this.periode = periode;
+	}
+
+	public String getGesuchStatus() {
+		return gesuchStatus;
+	}
+
+	public void setGesuchStatus(String gesuchStatus) {
+		this.gesuchStatus = gesuchStatus;
 	}
 
 	public LocalDate getEingangsdatum() {
@@ -495,11 +505,11 @@ public class GesuchstellerKinderBetreuungDataRow {
 		this.kindGeburtsdatum = kindGeburtsdatum;
 	}
 
-	public Boolean getKindFachstelle() {
+	public String getKindFachstelle() {
 		return kindFachstelle;
 	}
 
-	public void setKindFachstelle(Boolean kindFachstelle) {
+	public void setKindFachstelle(String kindFachstelle) {
 		this.kindFachstelle = kindFachstelle;
 	}
 
@@ -541,6 +551,14 @@ public class GesuchstellerKinderBetreuungDataRow {
 
 	public void setZeitabschnittBis(LocalDate zeitabschnittBis) {
 		this.zeitabschnittBis = zeitabschnittBis;
+	}
+
+	public String getBetreuungsStatus() {
+		return betreuungsStatus;
+	}
+
+	public void setBetreuungsStatus(String betreuungsStatus) {
+		this.betreuungsStatus = betreuungsStatus;
 	}
 
 	public BigDecimal getBetreuungsPensum() {

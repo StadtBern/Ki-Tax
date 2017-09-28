@@ -5,13 +5,14 @@ import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import WizardStepManager from '../service/wizardStepManager';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
-import IPromise = angular.IPromise;
-import IRootScopeService = angular.IRootScopeService;
 import TSExceptionReport from '../../models/TSExceptionReport';
-import IFormController = angular.IFormController;
-import IScope = angular.IScope;
 import {TSMessageEvent} from '../../models/enums/TSErrorEvent';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
+import EbeguUtil from '../../utils/EbeguUtil';
+import IPromise = angular.IPromise;
+import IFormController = angular.IFormController;
+import IScope = angular.IScope;
+import ITimeoutService = angular.ITimeoutService;
 
 export default class AbstractGesuchViewController<T> {
 
@@ -23,15 +24,18 @@ export default class AbstractGesuchViewController<T> {
     TSRoleUtil: any;
     private _model: T;
     form: IFormController;
+    $timeout: ITimeoutService;
 
     constructor($gesuchModelManager: GesuchModelManager, $berechnungsManager: BerechnungsManager,
-                wizardStepManager: WizardStepManager, $scope: IScope, stepName: TSWizardStepName) {
+                wizardStepManager: WizardStepManager, $scope: IScope, stepName: TSWizardStepName,
+                $timeout: ITimeoutService) {
         this.gesuchModelManager = $gesuchModelManager;
         this.berechnungsManager = $berechnungsManager;
         this.wizardStepManager = wizardStepManager;
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
         this.$scope = $scope;
+        this.$timeout = $timeout;
         this.wizardStepManager.setCurrentStep(stepName);
     }
 
@@ -59,18 +63,7 @@ export default class AbstractGesuchViewController<T> {
      */
     public isGesuchValid(): boolean {
         if (!this.form.$valid) {
-            let firstInvalid = angular.element('form .ng-invalid').first();
-            if (firstInvalid) {
-                if (firstInvalid.get(0).tagName === 'DIV') { // sollten wir in einem div sein, suchen wir den ersten subelement, das fehlt
-                    firstInvalid = firstInvalid.find('.ng-invalid').first();
-                }
-                if (firstInvalid.get(0).tagName !== 'INPUT') { // Fuer alle Elemente die kein INPUT sind, muessen wir den tabindex setzen, damit focus() funktioniert
-                    firstInvalid.attr('tabindex', -1).focus();
-                } else {
-                    firstInvalid.focus();
-                }
-
-            }
+           EbeguUtil.selectFirstInvalid();
         }
         return this.form.$valid;
     }
@@ -132,5 +125,11 @@ export default class AbstractGesuchViewController<T> {
             return this.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName();
         }
         return '';
+    }
+
+    $postLink() {
+        this.$timeout(() => {
+            EbeguUtil.selectFirst();
+        }, 200);
     }
 }

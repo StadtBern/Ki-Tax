@@ -9,10 +9,10 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
 import {IStateService} from 'angular-ui-router';
-import * as moment from 'moment';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import TSUser from '../../../models/TSUser';
-import Moment = moment.Moment;
+import TSAbstractAntragDTO from '../../../models/TSAbstractAntragDTO';
+import TSFallAntragDTO from '../../../models/TSFallAntragDTO';
 let template = require('./dv-pendenzen-list.html');
 require('./dv-pendenzen-list.less');
 
@@ -55,6 +55,8 @@ export class DVPendenzenListController {
     selectedAntragStatus: string;
     selectedInstitution: TSInstitution;
     selectedGesuchsperiode: string;
+    selectedDokumenteHochgeladen: string;
+
     institutionenList: Array<TSInstitution>;
     gesuchsperiodenList: Array<string>;
     onUserChanged: (user: any) => void;
@@ -139,9 +141,28 @@ export class DVPendenzenListController {
         return result;
     }
 
-    public editPendenzJA(pendenz: TSAntragDTO, event: any): void {
+    public editPendenzJA(pendenz: TSAbstractAntragDTO, event: any): void {
         if (pendenz) {
             let isCtrlKeyPressed: boolean = (event && event.ctrlKey);
+            if (pendenz instanceof TSAntragDTO) {
+                this.navigateToGesuch(pendenz, isCtrlKeyPressed);
+            } else if (pendenz instanceof TSFallAntragDTO) {
+                this.navigateToMitteilungen(isCtrlKeyPressed, pendenz);
+            }
+        }
+    }
+
+    private navigateToMitteilungen(isCtrlKeyPressed: boolean, pendenz: TSFallAntragDTO) {
+        if (isCtrlKeyPressed) {
+            let url = this.$state.href('mitteilungen', {fallId: pendenz.fallID});
+            window.open(url, '_blank');
+        } else {
+            this.$state.go('mitteilungen', {fallId: pendenz.fallID});
+        }
+    }
+
+    private navigateToGesuch(pendenz: TSAntragDTO, isCtrlKeyPressed: boolean) {
+        if (pendenz.antragId) {
             let navObj: any = {
                 createNew: false,
                 gesuchId: pendenz.antragId
@@ -153,6 +174,14 @@ export class DVPendenzenListController {
                 this.$state.go('gesuch.fallcreation', navObj);
             }
         }
+    }
+
+    private showOnlineGesuchIcon(row: TSAbstractAntragDTO): boolean {
+        return row instanceof TSAntragDTO && row.hasBesitzer();
+    }
+
+    private showPapierGesuchIcon(row: TSAbstractAntragDTO): boolean {
+        return row instanceof TSAntragDTO && !row.hasBesitzer();
     }
 }
 

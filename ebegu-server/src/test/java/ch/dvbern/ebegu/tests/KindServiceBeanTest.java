@@ -1,7 +1,14 @@
 package ch.dvbern.ebegu.tests;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.KindService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -13,11 +20,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Tests fuer die Klasse KindService
@@ -31,7 +33,7 @@ public class KindServiceBeanTest extends AbstractEbeguLoginTest {
 	private KindService kindService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private FallService fallService;
@@ -70,6 +72,9 @@ public class KindServiceBeanTest extends AbstractEbeguLoginTest {
 		kindService.removeKind(kind.get().getId());
 		Optional<KindContainer> kindAfterRemove = kindService.findKind(persitedKind.getId());
 		Assert.assertFalse(kindAfterRemove.isPresent());
+
+		gesuch = persistence.find(Gesuch.class, gesuch.getId());
+		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, gesuch.getGesuchBetreuungenStatus());
 	}
 
 	@Test

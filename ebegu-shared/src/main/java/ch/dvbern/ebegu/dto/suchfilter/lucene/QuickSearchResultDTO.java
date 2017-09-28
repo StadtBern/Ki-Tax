@@ -1,12 +1,18 @@
 package ch.dvbern.ebegu.dto.suchfilter.lucene;
 
-import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import com.google.common.collect.ArrayListMultimap;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import javax.validation.constraints.NotNull;
+
+import com.google.common.collect.ArrayListMultimap;
+
+import ch.dvbern.ebegu.dto.JaxAbstractAntragDTO;
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
+import ch.dvbern.ebegu.dto.JaxFallAntragDTO;
+import ch.dvbern.ebegu.entities.Fall;
 
 /**
  * DTO to pass around a result that was found in the Lucene index
@@ -51,6 +57,42 @@ public class QuickSearchResultDTO implements Serializable {
 		numberOfResults += subResult.getNumberOfResults();
 	}
 
+	/**
+	 * It adds the given fall to the existing resultlist, but only if the fallID is not already present in an existing result
+	 */
+	public void addSubResultFall(SearchResultEntryDTO resultFall, @NotNull Fall fall) {
+		if (!fallAlreadyInResultEntities(fall.getId())) {
+			addResult(createFakeAntragDTO(resultFall, fall));
+		}
+	}
+
+	/**
+	 * Since for some results we do not really have a visible Antrag yet we create a fake one that compriese essentially
+	 * the fall id and besitzer name
+	 */
+	private SearchResultEntryDTO createFakeAntragDTO(@NotNull SearchResultEntryDTO searchResultEntryDTO, @NotNull Fall fall) {
+		if (searchResultEntryDTO.getAntragDTO() == null) {
+			final JaxFallAntragDTO antragDTO = new JaxFallAntragDTO();
+			antragDTO.setFallID(fall.getId());
+			antragDTO.setFallNummer(fall.getFallNummer());
+			if (fall.getBesitzer() != null) {
+				antragDTO.setFamilienName(fall.getBesitzer().getFullName());
+			}
+			searchResultEntryDTO.setAntragDTO(antragDTO);
+		}
+		return searchResultEntryDTO;
+	}
+
+	/**
+	 * Adds a result to the list
+	 */
+	public void addResult(SearchResultEntryDTO result) {
+		if (result != null) {
+			this.resultEntities.add(result);
+			this.numberOfResults++;
+		}
+	}
+
 
 	/**
 	 * this helper method removes all but one resultEntry for a given Gesuch. It does this by identifying the
@@ -64,9 +106,9 @@ public class QuickSearchResultDTO implements Serializable {
 		ArrayListMultimap<String, SearchResultEntryDTO> antragIdToEntryMultimap = ArrayListMultimap.create();
 		quickSearch.getResultEntities()
 			.forEach(searchResultEntryDTO -> {
-				JaxAntragDTO antragDTO = searchResultEntryDTO.getAntragDTO();
-				if (antragDTO != null) {
-					antragIdToEntryMultimap.put(antragDTO.getAntragId(), searchResultEntryDTO);
+				JaxAbstractAntragDTO antragDTO = searchResultEntryDTO.getAntragDTO();
+				if (antragDTO instanceof JaxAntragDTO) {
+					antragIdToEntryMultimap.put(((JaxAntragDTO)antragDTO).getAntragId(), searchResultEntryDTO);
 				}
 			});
 
@@ -79,5 +121,15 @@ public class QuickSearchResultDTO implements Serializable {
 		int numOfOmittedAntraege = quickSearch.getResultEntities().size() - mergedEntries.size();
 		return new QuickSearchResultDTO(mergedEntries, quickSearch.numberOfResults - numOfOmittedAntraege);
 
+	}
+
+	/**
+	 * Checks whether the given fall has already been found and added to the list
+	 */
+	private boolean fallAlreadyInResultEntities(@NotNull String fallID) {
+		return resultEntities.stream()
+			.filter(searchResultEntryDTO -> fallID.equalsIgnoreCase(searchResultEntryDTO.getFallID()))
+			.findAny()
+			.isPresent();
 	}
 }

@@ -50,7 +50,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	private VerfuegungService verfuegungService;
 
 	@Inject
-	private Persistence<?> persistence;
+	private Persistence persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
@@ -300,7 +300,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 
 
 	private Gesuch createGesuch(boolean verfuegen) {
-		return testfaelleService.createAndSaveTestfaelle(TestfaelleService.BeckerNora, verfuegen, verfuegen);
+		return testfaelleService.createAndSaveTestfaelle(TestfaelleService.BECKER_NORA, verfuegen, verfuegen);
 	}
 
 	private Gesuch createMutation(Gesuch erstgesuch, boolean verfuegen) {

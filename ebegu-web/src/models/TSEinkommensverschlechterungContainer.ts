@@ -52,4 +52,8 @@ export default class TSEinkommensverschlechterungContainer extends TSAbstractEnt
     set ekvJABasisJahrPlus2(value: TSEinkommensverschlechterung) {
         this._ekvJABasisJahrPlus2 = value;
     }
+
+    public isEmpty(): boolean {
+        return !this._ekvJABasisJahrPlus1 && !this._ekvJABasisJahrPlus2;
+    }
 }

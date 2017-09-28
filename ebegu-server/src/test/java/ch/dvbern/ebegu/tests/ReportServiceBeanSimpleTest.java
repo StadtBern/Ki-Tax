@@ -12,6 +12,8 @@ public class ReportServiceBeanSimpleTest {
 		Assert.assertEquals("IN_BEARBEITUNG_JA", AntragStatus.IN_BEARBEITUNG_JA.name());
 		Assert.assertEquals("FREIGABEQUITTUNG", AntragStatus.FREIGABEQUITTUNG.name());
 		Assert.assertEquals("BESCHWERDE_HAENGIG", AntragStatus.BESCHWERDE_HAENGIG.name());
+		Assert.assertEquals("PRUEFUNG_STV", AntragStatus.PRUEFUNG_STV.name());
+		Assert.assertEquals("GEPRUEFT_STV", AntragStatus.GEPRUEFT_STV.name());
 		Assert.assertEquals("TAGESSCHULE", BetreuungsangebotTyp.TAGESSCHULE.name());
 	}
 
@@ -19,6 +21,7 @@ public class ReportServiceBeanSimpleTest {
 	public void testGesuchZeitraumQueryAssumptions() {
 		Assert.assertEquals("ONLINE", Eingangsart.ONLINE.name());
 		Assert.assertEquals("PAPIER", Eingangsart.PAPIER.name());
+
 		Assert.assertEquals("ERSTGESUCH", AntragTyp.ERSTGESUCH.name());
 		Assert.assertEquals("ERNEUERUNGSGESUCH", AntragTyp.ERNEUERUNGSGESUCH.name());
 		Assert.assertEquals("MUTATION", AntragTyp.MUTATION.name());
@@ -36,9 +39,17 @@ public class ReportServiceBeanSimpleTest {
 		Assert.assertEquals("KINDER", WizardStepName.KINDER.name());
 		Assert.assertEquals("UMZUG", WizardStepName.UMZUG.name());
 		Assert.assertEquals("VERFUEGEN", WizardStepName.VERFUEGEN.name());
+
 		Assert.assertEquals("MUTIERT", WizardStepStatus.MUTIERT.name());
 
-		Assert.assertEquals("BESCHWERDE_HAENGIG", AntragStatus.BESCHWERDE_HAENGIG.name());
 		Assert.assertEquals("TAGESSCHULE", BetreuungsangebotTyp.TAGESSCHULE.name());
+
+		Assert.assertEquals("VERFUEGT", AntragStatus.VERFUEGT.name());
+		Assert.assertEquals("NUR_SCHULAMT", AntragStatus.NUR_SCHULAMT.name());
+		Assert.assertEquals("BESCHWERDE_HAENGIG", AntragStatus.BESCHWERDE_HAENGIG.name());
+		Assert.assertEquals("PRUEFUNG_STV", AntragStatus.PRUEFUNG_STV.name());
+		Assert.assertEquals("IN_BEARBEITUNG_STV", AntragStatus.IN_BEARBEITUNG_STV.name());
+		Assert.assertEquals("GEPRUEFT_STV", AntragStatus.GEPRUEFT_STV.name());
+		Assert.assertEquals("KEIN_ANGEBOT", AntragStatus.KEIN_ANGEBOT.name());
 	}
 }

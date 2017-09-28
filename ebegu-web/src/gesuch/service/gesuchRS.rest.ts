@@ -10,6 +10,7 @@ import DateUtil from '../../utils/DateUtil';
 import * as moment from 'moment';
 import {TSMitteilungEvent} from '../../models/enums/TSMitteilungEvent';
 import IRootScopeService = angular.IRootScopeService;
+import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
 
 export default class GesuchRS implements IEntityRS {
     serviceURL: string;
@@ -196,6 +197,20 @@ export default class GesuchRS implements IEntityRS {
             });
     }
 
+    public removePapiergesuch(gesuchId: string): IPromise<boolean> {
+        return this.http.delete(this.serviceURL + '/removePapiergesuch/' + encodeURIComponent(gesuchId))
+            .then((response: any) => {
+                return response.data;
+            });
+    }
+
+    public removeGesuchstellerAntrag(gesuchId: string): IPromise<boolean> {
+        return this.http.delete(this.serviceURL + '/removeGesuchstellerAntrag/' + encodeURIComponent(gesuchId))
+            .then((response: any) => {
+                return response.data;
+            });
+    }
+
     public closeWithoutAngebot(antragId: string): IPromise<TSGesuch> {
         return this.http.post(this.serviceURL + '/closeWithoutAngebot/' + encodeURIComponent(antragId), null).then((response) => {
             return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
@@ -206,5 +221,12 @@ export default class GesuchRS implements IEntityRS {
         return this.http.post(this.serviceURL + '/verfuegenStarten/' + encodeURIComponent(antragId) + '/' + hasFSDocument, null).then((response) => {
             return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
         });
+    }
+
+    public getGesuchBetreuungenStatus(gesuchId: string): IPromise<TSGesuchBetreuungenStatus> {
+        return this.http.get(this.serviceURL + '/gesuchBetreuungenStatus/' + encodeURIComponent(gesuchId))
+            .then((response: any) => {
+                return response.data;
+            });
     }
 }

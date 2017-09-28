@@ -1,10 +1,7 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
-import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.api.dtos.JaxMitteilung;
-import ch.dvbern.ebegu.api.dtos.JaxMitteilungen;
+import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -13,6 +10,7 @@ import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.MitteilungService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -34,11 +32,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * resource fuer Mitteilung
+ * Resource fuer Mitteilung
  */
 @Path("mitteilungen")
 @Stateless
-@Api(description = "Resource zum verwalten von Mitteilungen")
+@Api(description = "Resource zum Verwalten von Mitteilungen (In-System Nachrichten)")
 public class MitteilungResource {
 
 	public static final String FALL_ID_INVALID = "FallID invalid: ";
@@ -55,7 +53,7 @@ public class MitteilungResource {
 	@Inject
 	private JaxBConverter converter;
 
-
+	@ApiOperation(value = "Speichert eine Mitteilung", response = JaxMitteilung.class)
 	@Nullable
 	@PUT
 	@Path("/send")
@@ -71,6 +69,7 @@ public class MitteilungResource {
 		return converter.mitteilungToJAX(persistedMitteilung, new JaxMitteilung());
 	}
 
+	@ApiOperation(value = "Speichert eine BetreuungsMitteilung", response = JaxBetreuungsmitteilung.class)
 	@Nullable
 	@PUT
 	@Path("/sendbetreuungsmitteilung")
@@ -86,6 +85,9 @@ public class MitteilungResource {
 		return converter.betreuungsmitteilungToJAX(persistedMitteilung);
 	}
 
+	@ApiOperation(value = "Uebernimmt eine Betreuungsmitteilung in eine Mutation. Falls aktuell keine Mutation offen " +
+		"ist, wird eine neue erstellt. Falls eine Mutation im Status VERFUEGEN vorhanden ist, oder die Mutation im " +
+		"Status BESCHWERDE ist, wird ein Fehler zurueckgegeben", response = JaxId.class)
 	@Nullable
 	@PUT
 	@Path("/applybetreuungsmitteilung/{betreuungsmitteilungId}")
@@ -105,6 +107,7 @@ public class MitteilungResource {
 		return converter.toJaxId(mutierteGesuch);
 	}
 
+	@ApiOperation(value = "Speichert eine Mitteilung als Entwurf", response = JaxMitteilung.class)
 	@Nullable
 	@PUT
 	@Path("/entwurf")
@@ -120,6 +123,7 @@ public class MitteilungResource {
 		return converter.mitteilungToJAX(persistedMitteilung, new JaxMitteilung());
 	}
 
+	@ApiOperation(value = "Markiert eine Mitteilung als gelesen", response = JaxMitteilung.class)
 	@Nullable
 	@PUT
 	@Path("/setgelesen/{mitteilungId}")
@@ -135,6 +139,7 @@ public class MitteilungResource {
 		return converter.mitteilungToJAX(mitteilung, new JaxMitteilung());
 	}
 
+	@ApiOperation(value = "Markiert eine Mitteilung als erledigt", response = JaxMitteilung.class)
 	@Nullable
 	@PUT
 	@Path("/seterledigt/{mitteilungId}")
@@ -150,6 +155,7 @@ public class MitteilungResource {
 		return converter.mitteilungToJAX(mitteilung, new JaxMitteilung());
 	}
 
+	@ApiOperation(value = "Gibt die Mitteilung mit der uebergebenen Id zurueck", response = JaxMitteilung.class)
 	@Nullable
 	@GET
 	@Path("/seterledigt/{mitteilungId}")
@@ -167,18 +173,20 @@ public class MitteilungResource {
 		return optional.map(mitteilung -> converter.mitteilungToJAX(mitteilung, new JaxMitteilung())).orElse(null);
 	}
 
+	@ApiOperation(value = "Gibt die neueste Betreuungsmitteilung fuer die uebergebene Betreuung zurueck",
+		response = JaxMitteilung.class)
 	@Nullable
 	@GET
 	@Path("/newestBetreuunsmitteilung/{betreuungId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxMitteilung findNewestBetreuunsmitteilung(
-		@Nonnull @NotNull @PathParam("betreuungId") JaxId JaxBetreuungId,
+		@Nonnull @NotNull @PathParam("betreuungId") JaxId jaxBetreuungId,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Validate.notNull(JaxBetreuungId.getId());
-		String betreuungId = converter.toEntityId(JaxBetreuungId);
+		Validate.notNull(jaxBetreuungId.getId());
+		String betreuungId = converter.toEntityId(jaxBetreuungId);
 		Optional<Betreuung> optional = betreuungService.findBetreuung(betreuungId);
 
 		if (!optional.isPresent()) {
@@ -189,6 +197,8 @@ public class MitteilungResource {
 		return optBetMitteilung.map(mitteilung -> converter.betreuungsmitteilungToJAX(mitteilung)).orElse(null);
 	}
 
+	@ApiOperation(value = "Gibt einen Wrapper mit der Liste aller Mitteilungen zurueck, welche fuer den eingeloggten " +
+		"Benutzer fuer den uebergebenen Fall vorhanden sind", response = JaxMitteilungen.class)
 	@Nullable
 	@GET
 	@Path("/forrole/fall/{fallId}")
@@ -217,6 +227,8 @@ public class MitteilungResource {
 		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
 	}
 
+	@ApiOperation(value = "Gibt einen Wrapper mit der Liste aller Mitteilungen zurueck, welche fuer den eingeloggten " +
+		"Benutzer fuer die uebergebene Betreuung vorhanden sind", response = JaxMitteilungen.class)
 	@Nullable
 	@GET
 	@Path("/forrole/betreuung/{betreuungId}")
@@ -238,6 +250,8 @@ public class MitteilungResource {
 		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolleForBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
 	}
 
+	@ApiOperation(value = "Gibt einen Wrapper mit der Liste aller Mitteilungen zurueck, welche fuer den eingeloggten " +
+		"Benutzer in dessen Posteingang dargestellt werden sollen.", response = JaxMitteilungen.class)
 	@Nullable
 	@GET
 	@Path("/posteingang")
@@ -252,6 +266,8 @@ public class MitteilungResource {
 			converter.mitteilungToJAX(mitteilung, new JaxMitteilung())).collect(Collectors.toList()));
 	}
 
+	@ApiOperation(value = "Ermittelt die Anzahl neuer Mitteilungen im Posteingang des eingeloggten Benutzers",
+		response = Integer.class)
 	@Nullable
 	@GET
 	@Path("/amountnewforuser/notokenrefresh")
@@ -264,6 +280,8 @@ public class MitteilungResource {
 		return mitteilungService.getAmountNewMitteilungenForCurrentBenutzer().intValue();
 	}
 
+	@ApiOperation(value = "Gibt fuer den uebergebenen Fall den vom eingeloggten Benutzer erstellten Entwurf zurueck, " +
+		"falls einer vorhanden ist, sonst null", response = JaxMitteilung.class)
 	@Nullable
 	@GET
 	@Path("/entwurf/fall/{fallId}")
@@ -287,6 +305,8 @@ public class MitteilungResource {
 		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
 	}
 
+	@ApiOperation(value = "Gibt fuer die uebergebene Betreuung den vom eingeloggten Benutzer erstellten Entwurf zurueck, " +
+		"falls einer vorhanden ist, sonst null", response = JaxMitteilung.class)
 	@Nullable
 	@GET
 	@Path("/entwurf/betreuung/{betreuungId}")
@@ -310,6 +330,8 @@ public class MitteilungResource {
 		throw new EbeguEntityNotFoundException("getEntwurfForCurrentRolleForBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungId invalid: " + betreuungId.getId());
 	}
 
+	@ApiOperation(value = "Loescht die Mitteilung mit der uebergebenen Id aus der Datenbank", response = Void.class)
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@Nullable
 	@DELETE
 	@Path("/{mitteilungId}")
@@ -327,6 +349,8 @@ public class MitteilungResource {
 		throw new EbeguEntityNotFoundException("removeMitteilung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "MitteilungID invalid: " + mitteilungJAXPId.getId());
 	}
 
+	@ApiOperation(value = "Setzt alle Mitteilungen des Falls mit der uebergebenen Id auf gelesen",
+		response = JaxMitteilungen.class)
 	@Nullable
 	@PUT
 	@Path("/setallgelesen/{fallId}")
@@ -360,10 +384,11 @@ public class MitteilungResource {
 			mitteilung = optMitteilung.orElse(new Mitteilung());
 		}
 
-		Mitteilung convertedMitteilung = converter.mitteilungToEntity(mitteilungJAXP, mitteilung);
-		return convertedMitteilung;
+		return converter.mitteilungToEntity(mitteilungJAXP, mitteilung);
 	}
 
+	@ApiOperation(value = "Ermittelt die Anzahl neuer Mitteilungen aller Benutzer in der Rolle des eingeloggten Benutzers",
+		response = Integer.class)
 	@Nullable
 	@GET
 	@Path("/amountnew/{fallId}")

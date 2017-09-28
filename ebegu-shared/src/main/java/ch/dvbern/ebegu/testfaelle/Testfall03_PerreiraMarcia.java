@@ -67,6 +67,9 @@ public class Testfall03_PerreiraMarcia extends AbstractTestfall {
 		finanzielleSituationGS1.getFinanzielleSituationJA().setSchulden(MathUtil.DEFAULT.from(58402));
 		finanzielleSituationGS2.setGesuchsteller(gesuchsteller2);
 		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationGS2);
+
+		createEmptyEKVInfoContainer(gesuch);
+
 		return gesuch;
 	}
 

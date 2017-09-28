@@ -11,17 +11,17 @@ package ch.dvbern.ebegu.vorlagen.verfuegung;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import java.util.List;
+
 import ch.dvbern.ebegu.vorlagen.EBEGUMergeSource;
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
 
-import java.util.List;
-
 public class VerfuegungPrintMergeSource implements EBEGUMergeSource {
 
-	private VerfuegungPrint verfuegung;
+	private final VerfuegungPrint verfuegung;
 	private boolean isPDFLongerThanExpected = false;
 
 	/**

@@ -33,4 +33,11 @@ public interface Searchable {
 	@Nullable
 	String getOwningGesuchId();
 
+	/**
+	 * @return Liefert die Unique_ID des Falls zu dem dieses Entity gehoert. Kann null sein wenn es keine direkte
+	 * verknuepfung gibt. In diesem Fall muss die fallID per query emittelt werden :(
+	 */
+	@Nullable
+	String getOwningFallId();
+
 }

@@ -11,6 +11,9 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 23.08.2016
 */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
@@ -20,8 +23,6 @@ import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Implementiert den {@link BerechnungsgrundlagenInformationPrint}. Diese Klasse enthält die Daten fuer die
@@ -29,16 +30,14 @@ import java.util.List;
  */
 public class BerechnungsgrundlagenInformationPrintImpl extends BriefPrintImpl implements BerechnungsgrundlagenInformationPrint {
 
-	private FinanzielleSituationPrint finanz;
+	private final FinanzielleSituationPrint finanz;
 	private EinkommensverschlechterungPrint ev1;
 	private EinkommensverschlechterungPrint ev2;
-	private Gesuch gesuch;
-	private Verfuegung famGroessenVerfuegung;
+	private final Gesuch gesuch;
+	private final Verfuegung famGroessenVerfuegung;
 
 	/**
 	 * Konstruktor
-	 *
-	 * @param gesuch
 	 */
 	public BerechnungsgrundlagenInformationPrintImpl(Gesuch gesuch, Verfuegung famGroessenVerfuegung) {
 

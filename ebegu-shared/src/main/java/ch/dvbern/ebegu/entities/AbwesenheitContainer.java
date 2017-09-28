@@ -1,12 +1,20 @@
 package ch.dvbern.ebegu.entities;
 
-import org.apache.commons.lang.builder.CompareToBuilder;
-import org.hibernate.envers.Audited;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import ch.dvbern.ebegu.util.EbeguUtil;
+import org.apache.commons.lang.builder.CompareToBuilder;
+import org.hibernate.envers.Audited;
 
 /**
  * Entity fuer AbwesenheitContainer
@@ -61,17 +69,29 @@ public class AbwesenheitContainer extends AbstractEntity implements Comparable<A
 		this.abwesenheitJA = abwesenheitJA;
 	}
 
-	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
-	public boolean isSame(AbwesenheitContainer otherAbwesenheitContainer) {
-		if (this == otherAbwesenheitContainer) {
+	/**
+	 * This method isSame is a bit different because it doesn't compare the Betreuung of this AbwesenheitContainer
+	 * directly. Reason is that it doesn't matter if the Betreuung has changed or not, the only important thing is
+	 * that the Abwesenheit "this" and "other" belong to the same Betreuung. To that porpouse we compare the
+	 * Betreuungen just by the BetreuungNummer.
+	 */
+	@SuppressWarnings("OverlyComplexMethod")
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		if (otherAbwesenheitContainer == null || getClass() != otherAbwesenheitContainer.getClass()) {
+		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-
-		return getAbwesenheitGS().isSame(otherAbwesenheitContainer.getAbwesenheitGS()) &&
-			getAbwesenheitJA().isSame(otherAbwesenheitContainer.getAbwesenheitJA());
+		if (!(other instanceof AbwesenheitContainer)) {
+			return false;
+		}
+		final AbwesenheitContainer otherAbwesenheitContainer = (AbwesenheitContainer) other;
+		return EbeguUtil.isSameObject(getAbwesenheitGS(), otherAbwesenheitContainer.getAbwesenheitGS()) &&
+			EbeguUtil.isSameObject(getAbwesenheitJA(), otherAbwesenheitContainer.getAbwesenheitJA()) &&
+			Objects.equals(this.getBetreuung().getBetreuungNummer(), otherAbwesenheitContainer.getBetreuung().getBetreuungNummer());
 	}
 
 	@Override

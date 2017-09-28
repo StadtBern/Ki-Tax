@@ -1,5 +1,26 @@
 package ch.dvbern.ebegu.entities;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import ch.dvbern.ebegu.dto.VerfuegungsBemerkung;
 import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
@@ -13,18 +34,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 import static java.math.BigDecimal.ZERO;
 
@@ -685,6 +694,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			.append(" EP-Zuschlag GS2: ").append(zuschlagErwerbspensumGS2).append("\t")
 			.append(" BetrPensum: ").append(betreuungspensum).append("\t")
 			.append(" Anspruch: ").append(anspruchberechtigtesPensum).append("\t")
+			.append(" Restanspruch: ").append(anspruchspensumRest).append("\t")
 			.append(" BG-Pensum: ").append(getBgPensum()).append("\t")
 			.append(" Vollkosten: ").append(vollkosten).append("\t")
 			.append(" Elternbeitrag: ").append(elternbeitrag).append("\t")
@@ -706,38 +716,49 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		return sb.toString();
 	}
 
-	@SuppressWarnings({"OverlyComplexBooleanExpression", "AccessingNonPublicFieldOfAnotherObject"})
-	public boolean isSame(VerfuegungZeitabschnitt that) {
-		if (this == that) {
+	@SuppressWarnings({ "OverlyComplexBooleanExpression", "AccessingNonPublicFieldOfAnotherObject",
+		"OverlyComplexMethod" })
+	@Override
+	public boolean isSame(AbstractEntity other) {
+		//noinspection ObjectEquality
+		if (this == other) {
 			return true;
 		}
-		return isSameErwerbspensum(this.erwerbspensumGS1, that.erwerbspensumGS1) &&
-			isSameErwerbspensum(this.erwerbspensumGS2, that.erwerbspensumGS2) &&
-			Objects.equals(zuschlagErwerbspensumGS1, that.zuschlagErwerbspensumGS1) &&
-			Objects.equals(zuschlagErwerbspensumGS2, that.zuschlagErwerbspensumGS2) &&
-			betreuungspensum == that.betreuungspensum &&
-			fachstellenpensum == that.fachstellenpensum &&
-			anspruchspensumRest == that.anspruchspensumRest &&
-			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
-			hasSecondGesuchstellerForFinanzielleSituation == that.hasSecondGesuchstellerForFinanzielleSituation &&
-			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
-			Objects.equals(famGroesse, that.famGroesse) &&
-			Objects.equals(massgebendesEinkommenVorAbzugFamgr, that.massgebendesEinkommenVorAbzugFamgr) &&
-			(isWohnsitzNichtInGemeindeGS1() && isWohnsitzNichtInGemeindeGS2()) == (that.isWohnsitzNichtInGemeindeGS1() && that.isWohnsitzNichtInGemeindeGS2()) &&
-			zuSpaetEingereicht == that.zuSpaetEingereicht &&
-			bezahltVollkosten == that.bezahltVollkosten &&
-			longAbwesenheit == that.longAbwesenheit &&
-			kindMinestalterUnterschritten == that.kindMinestalterUnterschritten &&
-			Objects.equals(this.einkommensjahr, that.einkommensjahr) &&
-			this.ekv1Alleine == that.ekv1Alleine &&
-			this.ekv1ZuZweit == that.ekv1ZuZweit &&
-			this.ekv2Alleine == that.ekv2Alleine &&
-			this.ekv2ZuZweit == that.ekv2ZuZweit &&
-			this.ekv1NotExisting == that.ekv1NotExisting &&
-			Objects.equals(this.zahlungsstatus, that.zahlungsstatus);
+		if (other == null || !getClass().equals(other.getClass())) {
+			return false;
+		}
+		if (!(other instanceof VerfuegungZeitabschnitt)) {
+			return false;
+		}
+		final VerfuegungZeitabschnitt otherVerfuegungZeitabschnitt = (VerfuegungZeitabschnitt) other;
+		return isSameErwerbspensum(this.erwerbspensumGS1, otherVerfuegungZeitabschnitt.erwerbspensumGS1) &&
+			isSameErwerbspensum(this.erwerbspensumGS2, otherVerfuegungZeitabschnitt.erwerbspensumGS2) &&
+			Objects.equals(zuschlagErwerbspensumGS1, otherVerfuegungZeitabschnitt.zuschlagErwerbspensumGS1) &&
+			Objects.equals(zuschlagErwerbspensumGS2, otherVerfuegungZeitabschnitt.zuschlagErwerbspensumGS2) &&
+			betreuungspensum == otherVerfuegungZeitabschnitt.betreuungspensum &&
+			fachstellenpensum == otherVerfuegungZeitabschnitt.fachstellenpensum &&
+			anspruchspensumRest == otherVerfuegungZeitabschnitt.anspruchspensumRest &&
+			anspruchberechtigtesPensum == otherVerfuegungZeitabschnitt.anspruchberechtigtesPensum &&
+			hasSecondGesuchstellerForFinanzielleSituation == otherVerfuegungZeitabschnitt.hasSecondGesuchstellerForFinanzielleSituation &&
+			Objects.equals(abzugFamGroesse, otherVerfuegungZeitabschnitt.abzugFamGroesse) &&
+			Objects.equals(famGroesse, otherVerfuegungZeitabschnitt.famGroesse) &&
+			Objects.equals(massgebendesEinkommenVorAbzugFamgr, otherVerfuegungZeitabschnitt.massgebendesEinkommenVorAbzugFamgr) &&
+			(isWohnsitzNichtInGemeindeGS1() && isWohnsitzNichtInGemeindeGS2()) == (otherVerfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS1() && otherVerfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS2()) &&
+			zuSpaetEingereicht == otherVerfuegungZeitabschnitt.zuSpaetEingereicht &&
+			bezahltVollkosten == otherVerfuegungZeitabschnitt.bezahltVollkosten &&
+			longAbwesenheit == otherVerfuegungZeitabschnitt.longAbwesenheit &&
+			kindMinestalterUnterschritten == otherVerfuegungZeitabschnitt.kindMinestalterUnterschritten &&
+			Objects.equals(this.einkommensjahr, otherVerfuegungZeitabschnitt.einkommensjahr) &&
+			this.ekv1Alleine == otherVerfuegungZeitabschnitt.ekv1Alleine &&
+			this.ekv1ZuZweit == otherVerfuegungZeitabschnitt.ekv1ZuZweit &&
+			this.ekv2Alleine == otherVerfuegungZeitabschnitt.ekv2Alleine &&
+			this.ekv2ZuZweit == otherVerfuegungZeitabschnitt.ekv2ZuZweit &&
+			this.ekv1NotExisting == otherVerfuegungZeitabschnitt.ekv1NotExisting &&
+			Objects.equals(this.zahlungsstatus, otherVerfuegungZeitabschnitt.zahlungsstatus);
 	}
 
 	public boolean isSameSichtbareDaten(VerfuegungZeitabschnitt that) {
+		//noinspection ObjectEquality,SimplifiableIfStatement
 		if (this == that) {
 			return true;
 		}

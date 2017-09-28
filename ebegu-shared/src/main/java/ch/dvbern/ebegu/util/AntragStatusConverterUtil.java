@@ -1,20 +1,19 @@
 package ch.dvbern.ebegu.util;
 
-import ch.dvbern.ebegu.entities.Betreuung;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.UserRole;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Diese Klasse enthaelt Methoden, um den AntragStatus von DB in DTO umzuwandeln.
  */
+@SuppressWarnings("OverlyComplexMethod")
 public class AntragStatusConverterUtil {
 
 	private AntragStatusConverterUtil() {
@@ -37,22 +36,16 @@ public class AntragStatusConverterUtil {
 				return AntragStatusDTO.FREIGABEQUITTUNG;
 			case NUR_SCHULAMT:
 				return AntragStatusDTO.NUR_SCHULAMT;
-			case NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN:
-				return AntragStatusDTO.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN;
 			case FREIGEGEBEN:
 				return AntragStatusDTO.FREIGEGEBEN;
 			case IN_BEARBEITUNG_JA:
 				return AntragStatusDTO.IN_BEARBEITUNG_JA;
 			case ERSTE_MAHNUNG:
 				return AntragStatusDTO.ERSTE_MAHNUNG;
-			case ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN:
-				return AntragStatusDTO.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN;
 			case ERSTE_MAHNUNG_ABGELAUFEN:
 				return AntragStatusDTO.ERSTE_MAHNUNG_ABGELAUFEN;
 			case ZWEITE_MAHNUNG:
 				return AntragStatusDTO.ZWEITE_MAHNUNG;
-			case ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN:
-				return AntragStatusDTO.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN;
 			case ZWEITE_MAHNUNG_ABGELAUFEN:
 				return AntragStatusDTO.ZWEITE_MAHNUNG_ABGELAUFEN;
 			case GEPRUEFT:
@@ -83,18 +76,14 @@ public class AntragStatusConverterUtil {
 	 */
 	@Nonnull
 	private static AntragStatusDTO convertGeprueftStatusToDTO(Gesuch antrag) {
-		final List<Betreuung> allBetreuungenFromGesuch = antrag.extractAllBetreuungen();
-		AntragStatusDTO newAntragStatus = AntragStatusDTO.GEPRUEFT; // by default alle plaetze sind bestaetigt
-		for (final Betreuung betreuung : allBetreuungenFromGesuch) {
-			if (Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())) {
+		switch (antrag.getGesuchBetreuungenStatus()) {
+			case WARTEN:
 				return AntragStatusDTO.PLATZBESTAETIGUNG_WARTEN;
-			}
-			else if (Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus())) {
-				newAntragStatus = AntragStatusDTO.PLATZBESTAETIGUNG_ABGEWIESEN;
-				break;
-			}
+			case ABGEWIESEN:
+				return AntragStatusDTO.PLATZBESTAETIGUNG_ABGEWIESEN;
+			default:
+				return AntragStatusDTO.GEPRUEFT;
 		}
-		return newAntragStatus;
 	}
 
 	/**
@@ -110,22 +99,16 @@ public class AntragStatusConverterUtil {
 				return AntragStatus.FREIGABEQUITTUNG;
 			case NUR_SCHULAMT:
 				return AntragStatus.NUR_SCHULAMT;
-			case NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN:
-				return AntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN;
 			case FREIGEGEBEN:
 				return AntragStatus.FREIGEGEBEN;
 			case IN_BEARBEITUNG_JA:
 				return AntragStatus.IN_BEARBEITUNG_JA;
 			case ERSTE_MAHNUNG:
 				return AntragStatus.ERSTE_MAHNUNG;
-			case ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN:
-				return AntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN;
 			case ERSTE_MAHNUNG_ABGELAUFEN:
 				return AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN;
 			case ZWEITE_MAHNUNG:
 				return AntragStatus.ZWEITE_MAHNUNG;
-			case ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN:
-				return AntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN;
 			case ZWEITE_MAHNUNG_ABGELAUFEN:
 				return AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN;
 			case PLATZBESTAETIGUNG_ABGEWIESEN:

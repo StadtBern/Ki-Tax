@@ -159,6 +159,12 @@ export default class WizardStepManager {
         return this.$q.when();
     }
 
+    public updateCurrentWizardStepStatusMutiert(): IPromise<void> {
+        return this.wizardStepRS.setWizardStepMutiert(this.getCurrentStep().id).then((response: TSWizardStep) => {
+            return this.findStepsFromGesuch(response.gesuchId);
+        });
+    }
+
     private needNewStatusSave(oldStepStatus: TSWizardStepStatus, newStepStatus: TSWizardStepStatus) {
         if (oldStepStatus === newStepStatus) {
             return false;
@@ -226,7 +232,7 @@ export default class WizardStepManager {
      */
     public isNextStepEnabled(gesuch: TSGesuch): boolean {
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSteueramtOnlyRoles()) && this.currentStepName === TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG) {
-            // todo team dies if ist ein Hack. Das Problem ist, dass der Step EKV der letzte fuer das Steueramt ist, und da er substeps hat,
+            // Dies ist ein Hack. Das Problem ist, dass der Step EKV der letzte fuer das Steueramt ist, und da er substeps hat,
             // ist es sehr schwierig zu wissen, wann man darf und wann nicht. Wir sollten die ganze Funktionalitaet von Steps verbessern
             return true;
         }

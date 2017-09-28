@@ -10,12 +10,12 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import * as moment from 'moment';
-import Moment = moment.Moment;
-import ITranslateService = angular.translate.ITranslateService;
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
+import ITranslateService = angular.translate.ITranslateService;
+import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./fallCreationView.html');
 require('./fallCreationView.less');
 
@@ -37,13 +37,14 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     private nichtAbgeschlosseneGesuchsperiodenList: Array<TSGesuchsperiode>;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', '$stateParams',
-        'WizardStepManager', '$translate', '$q', '$scope', 'AuthServiceRS', 'GesuchsperiodeRS'];
+        'WizardStepManager', '$translate', '$q', '$scope', 'AuthServiceRS', 'GesuchsperiodeRS', '$timeout'];
+
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager,
                 private $translate: ITranslateService, private $q: IQService, $scope: IScope, private authServiceRS: AuthServiceRS,
-                private gesuchsperiodeRS: GesuchsperiodeRS) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.GESUCH_ERSTELLEN);
+                private gesuchsperiodeRS: GesuchsperiodeRS, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.GESUCH_ERSTELLEN, $timeout);
         this.TSRoleUtil = TSRoleUtil;
     }
 
@@ -69,8 +70,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
                 this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;
             }
         }
-
-        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: TSGesuchsperiode[]) => {
+        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneNichtVerwendeteGesuchsperioden(this.$stateParams.fallId).then((response: TSGesuchsperiode[]) => {
             this.nichtAbgeschlosseneGesuchsperiodenList = angular.copy(response);
         });
     }
@@ -141,7 +141,10 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     }
 
     public getNextButtonText(): string {
-        if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
+        if (this.gesuchModelManager.getGesuch().isNew()) {
+            return this.$translate.instant('ERSTELLEN');
+        }
+        if (this.gesuchModelManager.isGesuchReadonly() || this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
             return this.$translate.instant('WEITER_ONLY_UPPER');
         }
         return this.$translate.instant('WEITER_UPPER');
@@ -151,5 +154,9 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
         return this.getGesuchModel() && this.getGesuchModel().gesuchsperiode
             && this.getGesuchModel().gesuchsperiode.status === TSGesuchsperiodeStatus.INAKTIV
             && this.getGesuchModel().isNew();
+    }
+
+    public canChangeGesuchsperiode(): boolean {
+        return this.gesuchModelManager.isGesuch() && this.isGesuchsperiodeActive() && this.gesuchModelManager.getGesuch().isNew();
     }
 }
