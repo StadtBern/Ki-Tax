@@ -89,7 +89,7 @@ public class Mitteilung extends AbstractEntity {
 		return betreuung;
 	}
 
-	public void setBetreuung(Betreuung betreuung) {
+	public void setBetreuung(@Nullable Betreuung betreuung) {
 		this.betreuung = betreuung;
 	}
 

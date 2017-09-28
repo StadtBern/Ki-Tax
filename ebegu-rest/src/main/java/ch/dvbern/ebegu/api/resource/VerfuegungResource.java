@@ -1,8 +1,22 @@
 package ch.dvbern.ebegu.api.resource;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
+import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxGesuch;
+import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
+import ch.dvbern.ebegu.api.util.RestUtil;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.services.*;
+import ch.dvbern.lib.cdipersistence.Persistence;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -13,43 +27,14 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
-import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxGesuch;
-import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
-import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
-import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.BenutzerService;
-import ch.dvbern.ebegu.services.BetreuungService;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.InstitutionService;
-import ch.dvbern.ebegu.services.VerfuegungService;
-import ch.dvbern.lib.cdipersistence.Persistence;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * REST Resource fuer Verfügungen

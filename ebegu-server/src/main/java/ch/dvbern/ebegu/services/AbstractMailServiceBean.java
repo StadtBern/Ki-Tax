@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.errors.MailException;
+import ch.dvbern.lib.cdipersistence.Persistence;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.mail.Email;
@@ -29,6 +30,9 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractMailServiceBean.class.getSimpleName());
 	private static final int CONNECTION_TIMEOUT = 15000;
+
+	@Inject
+	private Persistence persistence;
 
 	@Inject
 	private EbeguConfiguration configuration;
@@ -95,9 +99,14 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 		}
 	}
 
+	/**
+	 * Emails should only be sent when all actions were performed withou any error.
+	 * For this reason this method flushes the EntityManager before sending emails.
+	 */
 	protected void sendMessageWithTemplate(@Nonnull final String messageBody, @Nonnull final String mailadress) throws MailException {
 		Validate.notNull(mailadress);
 		Validate.notNull(messageBody);
+		persistence.getEntityManager().flush();
 		if (configuration.isSendingOfMailsDisabled()) {
 			pretendToSendMessage(messageBody, mailadress);
 		} else {

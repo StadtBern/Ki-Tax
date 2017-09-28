@@ -41,11 +41,16 @@ import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -54,6 +59,7 @@ import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.MailService;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.DateUtil;
 import ch.dvbern.ebegu.util.MonitoringUtil;
@@ -677,6 +683,7 @@ public class GesuchResource {
 			throw new EbeguEntityNotFoundException("removeOnlineMutation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Gesuchsperiode_ID invalid " + gesuchsperiodeId.getId());
 		}
 		gesuchService.removeOnlineMutation(fall.get(), gesuchsperiode.get());
+
 		return Response.ok().build();
 	}
 
@@ -702,6 +709,7 @@ public class GesuchResource {
 			throw new EbeguEntityNotFoundException("removeOnlineFolgegesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchsperiodeId invalid: " + gesuchsperiodeJAXPId.getId());
 		}
 		gesuchService.removeOnlineFolgegesuch(fall.get(), gesuchsperiode.get());
+
 		return Response.ok().build();
 	}
 
@@ -716,7 +724,9 @@ public class GesuchResource {
 
 		Gesuch gesuch = gesuchService.findGesuch(gesuchJaxId.getId(), true).orElseThrow(()
 			-> new EbeguEntityNotFoundException("removePapiergesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJaxId.getId()));
+
 		gesuchService.removePapiergesuch(gesuch);
+
 		return Response.ok().build();
 	}
 

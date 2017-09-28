@@ -1106,6 +1106,8 @@
     "ADDITIONAL_INFORMATION": "Weitere Informationen",
     "TABLE_EDIT": "Eintrag öffnen/bearbeiten",
     "CONFIRM_GESUCH_LOESCHEN": "Möchten Sie wirklich diesen Antrag löschen?",
-    "BESCHREIBUNG_GESUCH_LOESCHEN": "Wenn Sie mit dem Löschen fortfahren, werden alle Daten endgültig gelöscht"
+    "BESCHREIBUNG_GESUCH_LOESCHEN": "Wenn Sie mit dem Löschen fortfahren, werden alle Daten endgültig gelöscht",
+    "SCHLIESSEN":"Schliessen",
+    "KINDER_DELETE": "Eintrag löschen"
 
 }
