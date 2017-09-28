@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
+import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 import java.math.BigDecimal;
 
@@ -19,6 +20,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -27,6 +29,9 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
+
 import javax.validation.constraints.Size;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
@@ -89,6 +94,12 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_stammdaten_adressekontoinhaber_id"), nullable = true)
 	private Adresse adresseKontoinhaber;
+
+	@Nullable
+	@Valid
+	@SortNatural
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "instStammdaten")
+	private Set<Modul> module = new TreeSet<>();
 
 
 	public InstitutionStammdaten() {
@@ -182,5 +193,14 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 			MathUtil.isSame(getOeffnungsstunden(), otherInstStammdaten.getOeffnungsstunden()) &&
 			MathUtil.isSame(getOeffnungstage(), otherInstStammdaten.getOeffnungstage()) &&
 			EbeguUtil.isSameObject(getAdresse(), otherInstStammdaten.getAdresse());
+	}
+
+	@Nullable
+	public Set<Modul> getModule() {
+		return module;
+	}
+
+	public void setModule(@Nullable Set<Modul> module) {
+		this.module = module;
 	}
 }
