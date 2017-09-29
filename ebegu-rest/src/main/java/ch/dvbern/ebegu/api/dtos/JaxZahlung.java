@@ -1,12 +1,13 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.enums.ZahlungStatus;
+import java.math.BigDecimal;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
+
+import ch.dvbern.ebegu.enums.ZahlungStatus;
 
 /**
  * DTO fuer Zahlungen

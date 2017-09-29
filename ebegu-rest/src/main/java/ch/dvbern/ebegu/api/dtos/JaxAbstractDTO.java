@@ -1,7 +1,9 @@
 package ch.dvbern.ebegu.api.dtos;
 
 
-import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -9,9 +11,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Objects;
+
+import ch.dvbern.lib.date.converters.LocalDateTimeXMLConverter;
 
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)

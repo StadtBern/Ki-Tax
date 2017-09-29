@@ -1,10 +1,10 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
-
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 
 /**
  * DTO fuer Gesuchsperiode

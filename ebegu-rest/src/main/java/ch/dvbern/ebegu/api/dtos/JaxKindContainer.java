@@ -1,5 +1,8 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -7,8 +10,6 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * DTO fuer Kind Container

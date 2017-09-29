@@ -1,8 +1,7 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
-import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
-import ch.dvbern.ebegu.enums.MahnungTyp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -10,8 +9,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+
+import ch.dvbern.ebegu.enums.MahnungTyp;
+import ch.dvbern.lib.date.converters.LocalDateTimeXMLConverter;
+import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 
 /**
  * DTO fuer Mahnungen

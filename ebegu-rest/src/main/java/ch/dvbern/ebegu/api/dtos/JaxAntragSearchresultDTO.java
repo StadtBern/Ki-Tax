@@ -1,13 +1,14 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
+import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
-import java.util.List;
+
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 
 /**
  * Bei der Table mit Pagination muss die Totalanzahl Resultate vom Server mit zuruckgegeben werden im Resultat

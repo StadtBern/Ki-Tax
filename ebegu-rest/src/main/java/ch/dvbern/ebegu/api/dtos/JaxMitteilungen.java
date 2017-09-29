@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import javax.annotation.Nonnull;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Jax wrapper um Mitteilungen-Liste zurueckgeben zu koennen. Ohne den Wrapper verliert man die Information

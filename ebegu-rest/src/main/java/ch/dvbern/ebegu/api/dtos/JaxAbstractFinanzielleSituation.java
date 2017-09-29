@@ -1,9 +1,10 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import java.math.BigDecimal;
+
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import java.math.BigDecimal;
 
 /**
  * DTO fuer Finanzielle Situation

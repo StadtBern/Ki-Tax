@@ -121,6 +121,10 @@ module.exports = webpackMerge(commonConfig,  {
             '/ebegu': {
                 target: 'http://localhost:8080',
                 secure: false
+            },
+            '/connector': {
+                target: 'http://localhost:8080',
+                secure: false
             }
         }
     },

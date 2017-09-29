@@ -24,16 +24,16 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.dvbern.ebegu.api.util.OpenIDMUtil;
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;
-import ch.dvbern.ebegu.util.OpenIDMUtil;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
- * Implementierung des REST Services zum synchronisieren mit OpenIdm, erzeugt einen Proxy fuer <link>IOpenIdmRESTProxService</link>
+ * Implementierung des REST Services zum synchronisieren mit OpenIdm, erzeugt einen Proxy fuer {@link IOpenIdmRESTProxService}
  */
 @Stateless
 @RolesAllowed(value = {ADMIN, SUPER_ADMIN})

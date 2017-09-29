@@ -3,8 +3,6 @@ package ch.dvbern.ebegu.rest.test;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
 import ch.dvbern.ebegu.api.resource.GesuchsperiodeResource;
 import ch.dvbern.ebegu.api.resource.authentication.AuthResource;
-import ch.dvbern.ebegu.api.resource.authentication.FedletSamlServlet;
-import ch.dvbern.ebegu.api.resource.authentication.FedletURLInitializer;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.tets.util.LoginmoduleAndCacheSetupTask;
@@ -75,8 +73,6 @@ public abstract class AbstractEbeguRestTest {
 
 			// entfernt unnoetige Klassen, die vielleicht Dependency-Konflikten ergeben wuerden, login erfolgt im test nicht ueber openam
 			.deleteClass(AuthResource.class)
-			.deleteClass(FedletSamlServlet.class)
-			.deleteClass(FedletURLInitializer.class)
 
 			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
 			.addAsWebInfResource("META-INF/test-beans.xml", "beans.xml")

@@ -1,14 +1,14 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.converters.LandConverter;
-import ch.dvbern.ebegu.entities.AdresseTyp;
-import ch.dvbern.ebegu.enums.Land;
-
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import ch.dvbern.ebegu.converters.LandConverter;
+import ch.dvbern.ebegu.entities.AdresseTyp;
+import ch.dvbern.ebegu.enums.Land;
 
 /**
  * Created by imanol on 17.03.16.

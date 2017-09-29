@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.util.Constants;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -8,8 +9,8 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
+
+import ch.dvbern.ebegu.util.Constants;
 
 /**
  * DTO fuer Verfuegungen

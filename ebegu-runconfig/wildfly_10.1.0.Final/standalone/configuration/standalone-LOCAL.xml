@@ -58,7 +58,20 @@
 		<property name="ebegu.personensuche.wsdl" value="http://dbs0019.bgov.ch:50000/dir/wsdl?p=ic/b3563da22d373b9ab15f89d67216848a"/>
 		<property name="ebegu.personensuche.username" value="E_BEGU_p"/>
 		<property name="ebegu.personensuche.password" value="x/$xj^8|s5vw9q"/>
-    </system-properties>
+		<!-- Login Provider -->
+		<property name="ebegu.login.provider.api.url" value="http://localhost:8080/connector/api/v1"/>
+		<property name="ebegu.login.api.allow.remote" value="false"/>
+		<property name="ebegu.login.api.internal.user" value="connector_user"/>
+		<property name="ebegu.login.api.internal.password" value="c0nn3c4r_us3r"/>
+		<!-- IAM Connector -->
+		<property name="ebegu.login.connector.rest.api.url" value="http://localhost:8080/ebegu/api/v1"/>
+		<property name="ebegu.login.connector.rest.api.user" value="connector_user"/>
+		<property name="ebegu.login.connector.rest.api.password" value="c0nn3c4r_us3r"/>
+		<property name="ebegu.login.connector.development.mode" value="true"/>
+		<property name="ebegu.fedlet.config.path" value="fedletConfig/http_app_ebegu_ch_connector"/>
+
+
+	</system-properties>
 
 
     <management>
