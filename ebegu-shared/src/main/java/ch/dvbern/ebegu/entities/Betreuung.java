@@ -211,6 +211,15 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		this.verfuegung = verfuegung;
 	}
 
+	@Nullable
+	public Belegung getBelegung() {
+		return belegung;
+	}
+
+	public void setBelegung(@Nullable Belegung belegung) {
+		this.belegung = belegung;
+	}
+
 	public Boolean getVertrag() {
 		return vertrag;
 	}
