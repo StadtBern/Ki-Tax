@@ -30,7 +30,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _datumGewarntNichtFreigegeben: moment.Moment;
     private _datumGewarntFehlendeQuittung: moment.Moment;
     private _gesuchBetreuungenStatus: TSGesuchBetreuungenStatus;
-    private _dokumenteHochgeladen: boolean;
+    private _dokumenteHochgeladen: boolean = false;
 
     private _timestampVerfuegt: moment.Moment;
     private _gueltig: boolean;

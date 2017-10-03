@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -32,6 +33,7 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 	@Column(nullable = true)
 	private LocalDate datumAktiviert;
 
+	@Nullable
 	@Column(nullable = true)
 	private LocalDate datumFreischaltungTagesschule;
 
@@ -64,11 +66,12 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 		this.datumAktiviert = datumAktiviert;
 	}
 
+	@Nullable
 	public LocalDate getDatumFreischaltungTagesschule() {
 		return datumFreischaltungTagesschule;
 	}
 
-	public void setDatumFreischaltungTagesschule(LocalDate datumFreischaltungTagesschule) {
+	public void setDatumFreischaltungTagesschule(@Nullable LocalDate datumFreischaltungTagesschule) {
 		this.datumFreischaltungTagesschule = datumFreischaltungTagesschule;
 	}
 

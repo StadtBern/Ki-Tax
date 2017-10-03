@@ -109,6 +109,7 @@ public enum EbeguVorlageKey {
 				case STEUERAMT:
 					return VORLAGE_BENUTZERHANDBUCH_STV;
 				case SCHULAMT:
+				case ADMINISTRATOR_SCHULAMT:
 					return VORLAGE_BENUTZERHANDBUCH_SCHULAMT;
 				default:
 					return null;

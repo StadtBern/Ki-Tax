@@ -13,6 +13,7 @@ public interface UserRoleName {
 	String REVISOR = "REVISOR";
 	String STEUERAMT = "STEUERAMT";
 	String SCHULAMT = "SCHULAMT";
+	String ADMINISTRATOR_SCHULAMT = "ADMINISTRATOR_SCHULAMT";
 
 
 }

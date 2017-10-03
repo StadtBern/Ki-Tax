@@ -17,15 +17,15 @@
 <div id="Intro" class="logo-bern">
     <h1 class="access-for-all-title" data-translate="AFA_INDEXBAR"></h1>
     <dv-home-icon></dv-home-icon>
-    <dv-quicksearchbox dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'JURIST', 'REVISOR']"></dv-quicksearchbox>
-    <dv-downloadmenu dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'JURIST', 'REVISOR', 'STEUERAMT']"></dv-downloadmenu>
-    <dv-pulldown-user-menu  dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'STEUERAMT', 'JURIST', 'REVISOR']"></dv-pulldown-user-menu>
+    <dv-quicksearchbox dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'JURIST', 'REVISOR']"></dv-quicksearchbox>
+    <dv-downloadmenu dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'JURIST', 'REVISOR', 'STEUERAMT']"></dv-downloadmenu>
+    <dv-pulldown-user-menu  dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'STEUERAMT', 'JURIST', 'REVISOR']"></dv-pulldown-user-menu>
     <dv-pulldown-user-menu hide-sm hide-xs  dv-show-element  dv-show-allowed-roles="['GESUCHSTELLER']"></dv-pulldown-user-menu>
     <dv-mobile-navigation-toggle hide-gt-sm dv-show-element  dv-show-allowed-roles="['GESUCHSTELLER']"></dv-mobile-navigation-toggle>
 </div>
 
 <nav class="navbar navbar-default" dv-show-element
-     dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'STEUERAMT', 'REVISOR', 'JURIST']">
+     dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'STEUERAMT', 'REVISOR', 'JURIST']">
     <div flex layout="row" layout-align="center center">
 
         <div id="navbar" class="navbar-header">
@@ -43,7 +43,7 @@
                     <a ui-sref="pendenzenSteueramt" data-translate="MENU_PENDENZEN_STEUERAMT"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
-                    dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'SCHULAMT', 'REVISOR', 'JURIST']">
+                    dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'REVISOR', 'JURIST']">
                     <a ui-sref="faelle" data-translate="MENU_ALL_FAELLE"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
@@ -56,7 +56,7 @@
                     <a ui-sref="zahlungsauftrag" data-translate="MENU_ZAHLUNG"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
-                    dv-show-allowed-roles="[ 'ADMIN', 'SUPER_ADMIN',  'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'SCHULAMT', 'REVISOR']">
+                    dv-show-allowed-roles="[ 'ADMIN', 'SUPER_ADMIN',  'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'REVISOR']">
                     <a ui-sref="statistik" data-translate="MENU_STATISTIK"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element

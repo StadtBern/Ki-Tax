@@ -8,6 +8,7 @@ export enum TSRole {
     JURIST= <any> 'JURIST',
     REVISOR= <any> 'REVISOR',
     STEUERAMT= <any> 'STEUERAMT',
+    ADMINISTRATOR_SCHULAMT= <any> 'ADMINISTRATOR_SCHULAMT',
     SCHULAMT= <any> 'SCHULAMT'
 }
 
@@ -22,6 +23,7 @@ export function getTSRoleValues(): Array<TSRole> {
         TSRole.JURIST,
         TSRole.REVISOR,
         TSRole.STEUERAMT,
+        TSRole.ADMINISTRATOR_SCHULAMT,
         TSRole.SCHULAMT,
     ];
 }
