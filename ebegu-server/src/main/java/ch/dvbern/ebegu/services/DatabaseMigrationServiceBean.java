@@ -40,6 +40,7 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.ejb3.annotation.TransactionTimeout;
 import org.slf4j.Logger;
@@ -90,7 +91,7 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 
 	@Override
 	@Asynchronous
-	@TransactionTimeout(value = 360, unit = TimeUnit.MINUTES)
+	@TransactionTimeout(value = Constants.MAX_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Future<Boolean> processScript(@Nonnull String scriptId) {
 		switch (scriptId) {

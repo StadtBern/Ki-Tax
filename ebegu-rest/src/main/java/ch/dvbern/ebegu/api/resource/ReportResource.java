@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.reporting.ReportService;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.DateUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergeException;
@@ -14,9 +15,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
+import org.jboss.ejb3.annotation.TransactionTimeout;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -28,6 +32,7 @@ import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.util.concurrent.TimeUnit;
 
 /**
  * REST Resource fuer Reports
@@ -52,6 +57,8 @@ public class ReportResource {
 	@Nonnull
 	@GET
 	@Path("/excel/gesuchStichtag")
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getGesuchStichtagReportExcel(
@@ -76,6 +83,8 @@ public class ReportResource {
 	@Nonnull
 	@GET
 	@Path("/excel/gesuchZeitraum")
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getGesuchZeitraumReportExcel(
@@ -110,6 +119,8 @@ public class ReportResource {
 	@Nonnull
 	@GET
 	@Path("/excel/kanton")
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getKantonReportExcel(
@@ -138,6 +149,8 @@ public class ReportResource {
 	@Nonnull
 	@GET
 	@Path("/excel/mitarbeiterinnen")
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getMitarbeiterinnenReportExcel(
@@ -166,6 +179,8 @@ public class ReportResource {
 	@Nonnull
 	@GET
 	@Path("/excel/zahlungsauftrag")
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getZahlungsauftragReportExcel(
@@ -188,6 +203,8 @@ public class ReportResource {
 	@Nonnull
 	@GET
 	@Path("/excel/zahlung")
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getZahlungReportExcel(
@@ -210,6 +227,8 @@ public class ReportResource {
 	@Nonnull
 	@GET
 	@Path("/excel/zahlungperiode")
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getZahlungPeridoReportExcel(
@@ -232,6 +251,8 @@ public class ReportResource {
 	@Nonnull
 	@GET
 	@Path("/excel/gesuchstellerkinderbetreuung")
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getGesuchstellerKinderBetreuungReportExcel(
@@ -265,6 +286,8 @@ public class ReportResource {
 	@Nonnull
 	@GET
 	@Path("/excel/kinder")
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getKinderReportExcel(
@@ -298,6 +321,8 @@ public class ReportResource {
 	@Nonnull
 	@GET
 	@Path("/excel/gesuchsteller")
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getGesuchstellerReportExcel(
