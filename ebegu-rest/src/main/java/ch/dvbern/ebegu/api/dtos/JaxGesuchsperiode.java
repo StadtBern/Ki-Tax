@@ -35,11 +35,12 @@ public class JaxGesuchsperiode extends JaxAbstractDateRangedDTO {
 		this.status = status;
 	}
 
+	@Nullable
 	public LocalDate getDatumFreischaltungTagesschule() {
 		return datumFreischaltungTagesschule;
 	}
 
-	public void setDatumFreischaltungTagesschule(LocalDate datumFreischaltungTagesschule) {
+	public void setDatumFreischaltungTagesschule(@Nullable LocalDate datumFreischaltungTagesschule) {
 		this.datumFreischaltungTagesschule = datumFreischaltungTagesschule;
 	}
 }
