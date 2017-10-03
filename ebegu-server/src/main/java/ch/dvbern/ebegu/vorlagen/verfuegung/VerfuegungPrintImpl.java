@@ -167,8 +167,6 @@ public class VerfuegungPrintImpl extends BriefPrintImpl implements VerfuegungPri
 	/**
 	 * Wenn die Betreuung VERFUEGT ist -> manuelle Bemerkungen Wenn die Betreuung noch nicht VERFUEGT ist -> generated
 	 * Bemerkungen
-	 *
-	 * @return
 	 */
 	@Override
 	public List<AufzaehlungPrint> getManuelleBemerkungen() {
@@ -184,7 +182,6 @@ public class VerfuegungPrintImpl extends BriefPrintImpl implements VerfuegungPri
 	/**
 	 * Zerlegt die Bemerkungen (Delimiter \n) und bereitet die in einer Liste.
 	 *
-	 * @param bemerkungen
 	 * @return List mit Bemerkungen
 	 */
 	private List<AufzaehlungPrint> splitBemerkungen(String bemerkungen) {
@@ -218,7 +215,6 @@ public class VerfuegungPrintImpl extends BriefPrintImpl implements VerfuegungPri
 
 		return !isPensumGrosser0();
 	}
-
 
 	@Override
 	public boolean isVorgaengerVerfuegt() {

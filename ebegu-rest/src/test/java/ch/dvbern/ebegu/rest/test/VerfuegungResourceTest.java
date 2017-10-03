@@ -68,7 +68,7 @@ public class VerfuegungResourceTest extends AbstractEbeguRestLoginTest {
 		verfuegungJax.setGeneratedBemerkungen("genBemerkung");
 		verfuegungJax.setManuelleBemerkungen("manBemerkung");
 
-		final JaxVerfuegung persistedVerfuegung = verfuegungResource.schliessenNichtEintreten(new JaxId(storedBetr.getId()),  verfuegungJax);
+		final JaxVerfuegung persistedVerfuegung = verfuegungResource.schliessenNichtEintreten(new JaxId(storedBetr.getId()), verfuegungJax);
 
 		Assert.assertNotNull(persistedVerfuegung);
 		persistedVerfuegung.getZeitabschnitte().forEach(jaxVerfZeitabsch -> Assert.assertEquals(0, jaxVerfZeitabsch.getAnspruchberechtigtesPensum()));
@@ -76,7 +76,6 @@ public class VerfuegungResourceTest extends AbstractEbeguRestLoginTest {
 		Assert.assertEquals(Betreuungsstatus.NICHT_EINGETRETEN, storedBetreuung.getBetreuungsstatus());
 		Assert.assertEquals(verfuegungJax.getGeneratedBemerkungen(), persistedVerfuegung.getGeneratedBemerkungen());
 		Assert.assertEquals(verfuegungJax.getManuelleBemerkungen(), persistedVerfuegung.getManuelleBemerkungen());
-
 
 	}
 

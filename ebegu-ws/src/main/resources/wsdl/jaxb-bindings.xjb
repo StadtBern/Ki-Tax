@@ -7,12 +7,12 @@
 		jaxb:extensionBindingPrefixes="xjc annox"
 		version="2.1">
 
-    <jaxb:globalBindings>
-        <xjc:serializable uid="7702" />
-        <xjc:javaType adapter="ch.dvbern.lib.date.converters.LocalDateXMLConverter"
-                      name="java.time.LocalDate" xmlType="xs:date" />
-        <xjc:javaType adapter="ch.dvbern.lib.date.converters.LocalDateTimeXMLConverter"
-                      name="java.time.LocalDateTime" xmlType="xs:dateTime" />
-    </jaxb:globalBindings>
+	<jaxb:globalBindings>
+		<xjc:serializable uid="7702"/>
+		<xjc:javaType adapter="ch.dvbern.lib.date.converters.LocalDateXMLConverter"
+					  name="java.time.LocalDate" xmlType="xs:date"/>
+		<xjc:javaType adapter="ch.dvbern.lib.date.converters.LocalDateTimeXMLConverter"
+					  name="java.time.LocalDateTime" xmlType="xs:dateTime"/>
+	</jaxb:globalBindings>
 
 </jaxb:bindings>

@@ -25,7 +25,6 @@ import org.junit.Test;
  */
 public class DoppelkitaTest extends AbstractBGRechnerTest {
 
-
 	/**
 	 * Testet Regel 1: Bei gleichzeitigem Beginn gewinnt die Kita mit dem höheren Pensum
 	 */

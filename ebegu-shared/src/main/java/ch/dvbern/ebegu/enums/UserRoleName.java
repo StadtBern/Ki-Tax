@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.enums;
 
-
 public interface UserRoleName {
 
 	String SUPER_ADMIN = "SUPER_ADMIN";
@@ -13,6 +12,5 @@ public interface UserRoleName {
 	String REVISOR = "REVISOR";
 	String STEUERAMT = "STEUERAMT";
 	String SCHULAMT = "SCHULAMT";
-
 
 }

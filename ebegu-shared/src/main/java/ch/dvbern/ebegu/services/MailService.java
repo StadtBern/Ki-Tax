@@ -76,7 +76,6 @@ public interface MailService {
 	 */
 	void sendInfoBetreuungGeloescht(@Nonnull List<Betreuung> betreuungen);
 
-
 	/**
 	 * Sendet eine Email mit der Information, dass eine Betreuung verfuegt wurde.
 	 */

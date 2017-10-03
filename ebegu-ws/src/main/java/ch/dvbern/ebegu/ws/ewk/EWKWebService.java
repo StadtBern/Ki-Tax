@@ -113,7 +113,7 @@ public class EWKWebService implements IEWKWebService {
 	/**
 	 * Analysiert das Response-Objekt. Falls ein Fehlercode vorhanden ist, wird eine Exception geworfen.
 	 */
-	private void handleResponseStatus(@Nonnull  PersonenSucheResp response) throws PersonenSucheServiceBusinessException, PersonenSucheServiceException {
+	private void handleResponseStatus(@Nonnull PersonenSucheResp response) throws PersonenSucheServiceBusinessException, PersonenSucheServiceException {
 		ReturnMessage returnMessage = response.getReturnMessage();
 		if (returnMessage == null) {
 			logger.error("Das Statusobjekt aus der Response vom SARI Service war null, dies ist unerwartet und darf nicht vorkommen");
@@ -131,6 +131,7 @@ public class EWKWebService implements IEWKWebService {
 
 	/**
 	 * initialisiert den Service Port wenn noetig oder gibt ihn zurueck.
+	 *
 	 * @throws PersonenSucheServiceException, if the service cannot be initialised
 	 */
 	private PersonenSucheOB getService() throws PersonenSucheServiceException {
@@ -195,7 +196,7 @@ public class EWKWebService implements IEWKWebService {
 				Map<String, List<String>> headers = new HashMap<>();
 				String usernameAndPassword = username + ':' + password;
 				String authorizationHeaderName = "Authorization";
-				String authorizationHeaderValue = "Basic " + DatatypeConverter.printBase64Binary( usernameAndPassword.getBytes(UTF8));
+				String authorizationHeaderValue = "Basic " + DatatypeConverter.printBase64Binary(usernameAndPassword.getBytes(UTF8));
 				headers.put(authorizationHeaderName, Collections.singletonList(authorizationHeaderValue));
 				bp.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, headers);
 				logger.info("PersonenSucheService Authorization Header set");

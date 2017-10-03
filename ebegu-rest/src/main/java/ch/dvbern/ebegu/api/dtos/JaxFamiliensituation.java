@@ -18,7 +18,7 @@ import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
  */
 @XmlRootElement(name = "familiensituation")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxFamiliensituation extends JaxAbstractDTO{
+public class JaxFamiliensituation extends JaxAbstractDTO {
 
 	private static final long serialVersionUID = -1297019741664130597L;
 
@@ -37,7 +37,6 @@ public class JaxFamiliensituation extends JaxAbstractDTO{
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate aenderungPer = null;
-
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;

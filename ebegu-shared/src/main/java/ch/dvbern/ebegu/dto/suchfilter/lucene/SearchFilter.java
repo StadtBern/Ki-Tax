@@ -56,7 +56,6 @@ public class SearchFilter implements Serializable {
 		return maxResults;
 	}
 
-
 	@Nonnull
 	public SearchEntityType getSearchEntityType() {
 		return searchEntityType;

@@ -21,7 +21,7 @@ public class PBKDF2PasswordHashTest {
 		for (int i = 0; i < 10; i++) {
 			String hash = createHash("p\r\nassw0Rd!");
 			Assert.assertNotNull(hash);
-//			LOG.info("generated hash: "+ hash);
+			//			LOG.info("generated hash: "+ hash);
 		}
 
 		// Test password validation
@@ -46,6 +46,6 @@ public class PBKDF2PasswordHashTest {
 	public void testCreate() throws InvalidKeySpecException, NoSuchAlgorithmException {
 		String hash = createHash("password10");
 		Assert.assertNotNull(hash);
-//		System.out.println(hash);
+		//		System.out.println(hash);
 	}
 }

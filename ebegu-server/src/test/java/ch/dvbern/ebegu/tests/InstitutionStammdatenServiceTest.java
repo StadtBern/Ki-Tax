@@ -35,8 +35,6 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
-
 	@Test
 	public void createPersonInstitutionStammdatenTest() {
 		Assert.assertNotNull(institutionStammdatenService);
@@ -56,7 +54,7 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguLoginTest {
 
 		Optional<InstitutionStammdaten> institutionStammdatenOptional = institutionStammdatenService.findInstitutionStammdaten(insertedInstitutionStammdaten.getId());
 		Assert.assertTrue(institutionStammdatenOptional.isPresent());
-		InstitutionStammdaten persistedInstStammdaten= institutionStammdatenOptional.get();
+		InstitutionStammdaten persistedInstStammdaten = institutionStammdatenOptional.get();
 		Assert.assertEquals(insertedInstitutionStammdaten.getIban(), persistedInstStammdaten.getIban());
 
 		persistedInstStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
@@ -72,7 +70,7 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguLoginTest {
 		Collection<InstitutionStammdaten> allInstitutionStammdatenByDate = institutionStammdatenService.getAllInstitutionStammdatenByDate(LocalDate.now());
 		Assert.assertEquals(0, allInstitutionStammdatenByDate.size());
 
-		insertedInstitutionStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010,1,1), Constants.END_OF_TIME));
+		insertedInstitutionStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010, 1, 1), Constants.END_OF_TIME));
 		institutionStammdatenService.saveInstitutionStammdaten(insertedInstitutionStammdaten);
 		Collection<InstitutionStammdaten> allInstitutionStammdatenByDate2 = institutionStammdatenService.getAllInstitutionStammdatenByDate(LocalDate.now());
 		Assert.assertEquals(1, allInstitutionStammdatenByDate2.size());
@@ -87,7 +85,6 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(1, allInstitutionStammdatenByInstitution.size());
 
 	}
-
 
 	// HELP METHODS
 

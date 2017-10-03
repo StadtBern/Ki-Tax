@@ -60,7 +60,6 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	private String authToken = null;
 
-
 	/**
 	 * Wiederholung von Benutzer.username damit wir nicht joinen muessen
 	 */
@@ -149,7 +148,6 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 		this.role = role;
 	}
 
-
 	@Nullable
 	public String getSessionIndex() {
 		return sessionIndex;
@@ -195,7 +193,7 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 			.toString();
 	}
 
-	@SuppressWarnings({"OverlyComplexBooleanExpression", "OverlyComplexMethod"})
+	@SuppressWarnings({ "OverlyComplexBooleanExpression", "OverlyComplexMethod" })
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality

@@ -13,7 +13,6 @@ public class StreamsUtil {
 	private StreamsUtil() {
 	}
 
-
 	public static <T> BinaryOperator<T> toOnlyElement() {
 		return toOnlyElementThrowing(() -> new EbeguRuntimeException("toOnlyElement", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, ""));
 	}

@@ -22,7 +22,6 @@ import io.swagger.annotations.ApiOperation;
 @Api(description = "Resource zum Reindizieren des Lucene-Suchindexes")
 public class ReindexResource {
 
-
 	@Inject
 	private SearchIndexService searchIndexService;
 

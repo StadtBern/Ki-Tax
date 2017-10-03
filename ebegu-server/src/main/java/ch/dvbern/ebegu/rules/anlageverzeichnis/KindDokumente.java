@@ -48,14 +48,14 @@ public class KindDokumente extends AbstractDokumente<Kind, Object> {
 	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Kind kind) {
 		if (kind != null) {
 			switch (dokumentTyp) {
-				case FACHSTELLENBEST_SOZ:
-					return kind.getPensumFachstelle() != null && kind.getPensumFachstelle().getFachstelle() != null
-						&& !kind.getPensumFachstelle().getFachstelle().isBehinderungsbestaetigung();
-				case FACHSTELLENBEST_BEH:
-					return kind.getPensumFachstelle() != null && kind.getPensumFachstelle().getFachstelle() != null
-						&& kind.getPensumFachstelle().getFachstelle().isBehinderungsbestaetigung();
-				default:
-					return false;
+			case FACHSTELLENBEST_SOZ:
+				return kind.getPensumFachstelle() != null && kind.getPensumFachstelle().getFachstelle() != null
+					&& !kind.getPensumFachstelle().getFachstelle().isBehinderungsbestaetigung();
+			case FACHSTELLENBEST_BEH:
+				return kind.getPensumFachstelle() != null && kind.getPensumFachstelle().getFachstelle() != null
+					&& kind.getPensumFachstelle().getFachstelle().isBehinderungsbestaetigung();
+			default:
+				return false;
 			}
 		}
 		return false;

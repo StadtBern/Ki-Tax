@@ -27,11 +27,10 @@ import org.junit.Test;
 // dass die businessmethoden innerhalb eines services damit gestestet werden
 public class NeedleTest {
 
+	@Rule
+	public NeedleRule needleRule = new NeedleRule();
 
-    @Rule
-    public NeedleRule needleRule = new NeedleRule();
-
-    @ObjectUnderTest
+	@ObjectUnderTest
 	private JaxBConverter converter;
 
 	@InjectIntoMany
@@ -46,21 +45,21 @@ public class NeedleTest {
 	@ObjectUnderTest
 	private final AdresseService leistungsrechnungService = new AdresseServiceBean();
 
-    @Test
-    public void testConverter() throws Exception {
+	@Test
+	public void testConverter() throws Exception {
 		JaxAdresseContainer adr = TestJaxDataUtil.createTestJaxAdr(null);
-				adr.getAdresseJA().setGueltigAb(null);
-				adr.getAdresseJA().setGueltigBis(null);
-				GesuchstellerAdresseContainer adrEntity = converter.adresseContainerToEntity(adr, new GesuchstellerAdresseContainer());
-				Assert.assertEquals(Constants.START_OF_TIME, adrEntity.extractGueltigkeit().getGueltigAb());
-				Assert.assertEquals(Constants.END_OF_TIME,adrEntity.extractGueltigkeit().getGueltigBis());
-    }
+		adr.getAdresseJA().setGueltigAb(null);
+		adr.getAdresseJA().setGueltigBis(null);
+		GesuchstellerAdresseContainer adrEntity = converter.adresseContainerToEntity(adr, new GesuchstellerAdresseContainer());
+		Assert.assertEquals(Constants.START_OF_TIME, adrEntity.extractGueltigkeit().getGueltigAb());
+		Assert.assertEquals(Constants.END_OF_TIME, adrEntity.extractGueltigkeit().getGueltigBis());
+	}
 
 	/**
 	 * Testet das Umzugadresse konvertiert wird
 	 */
 	@Test
-	public void convertJaxGesuchstellerWithUmzgTest(){
+	public void convertJaxGesuchstellerWithUmzgTest() {
 		JaxGesuchstellerContainer gesuchstellerWith3Adr = TestJaxDataUtil.createTestJaxGesuchstellerWithUmzug();
 		GesuchstellerContainer gesuchsteller = converter.gesuchstellerContainerToEntity(gesuchstellerWith3Adr, new GesuchstellerContainer());
 		Assert.assertEquals(gesuchstellerWith3Adr.getGesuchstellerJA().getGeburtsdatum(), gesuchsteller.getGesuchstellerJA().getGeburtsdatum());

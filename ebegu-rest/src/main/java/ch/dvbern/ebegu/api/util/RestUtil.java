@@ -81,8 +81,8 @@ public final class RestUtil {
 			contentType = "application/octet-stream";
 		}
 		final byte[] bytes = Files.readAllBytes(filePath);
-        String filename = fileMetadata.getFilename();
-        //Prepare Headerfield Content-Disposition:
+		String filename = fileMetadata.getFilename();
+		//Prepare Headerfield Content-Disposition:
 		//we want percantage-encoding instead of url-encoding (spaces are %20 in percentage encoding but + in url-encoding)
 		String isoEncodedFilename = URLEncoder.encode(filename, "ISO-8859-1").replace("+", "%20"); //percantage encoding mit utf-8 und %20 fuer space statt +
 		// because of a bug in chrome, we replace all commas in filename
@@ -96,13 +96,12 @@ public final class RestUtil {
 			.header(HttpHeaders.CONTENT_LENGTH, bytes.length)
 			.type(MediaType.valueOf(contentType)).build();
 
-
 	}
 
 	/**
 	 * Entfernt von der uebergebenen Collection von KindContainer die Kinder, die keine Betreuung mit einer der uebergebenen Institutionen hat.
 	 *
-	 * @param kindContainers    Alle KindContainers
+	 * @param kindContainers Alle KindContainers
 	 * @param userInstitutionen Institutionen mit denen, die Kinder eine Beziehung haben muessen.
 	 */
 	public static void purgeKinderAndBetreuungenOfInstitutionen(Collection<JaxKindContainer> kindContainers, Collection<Institution> userInstitutionen) {

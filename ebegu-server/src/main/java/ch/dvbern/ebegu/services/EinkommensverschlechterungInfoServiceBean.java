@@ -34,7 +34,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(EinkommensverschlechterungInfoService.class)
-@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseService implements EinkommensverschlechterungInfoService {
 
 	@Inject
@@ -48,10 +48,9 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 	@Inject
 	private EinkommensverschlechterungService einkommensverschlechterungService;
 
-
 	@Override
 	@Nonnull
-	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public Optional<EinkommensverschlechterungInfoContainer> createEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo) {
 		Objects.requireNonNull(einkommensverschlechterungInfo);
 		final Gesuch gesuch = einkommensverschlechterungInfo.getGesuch();
@@ -62,9 +61,9 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public EinkommensverschlechterungInfoContainer updateEinkommensVerschlechterungInfoAndGesuch(Gesuch gesuch, EinkommensverschlechterungInfoContainer oldEVData,
-																								 EinkommensverschlechterungInfoContainer convertedEkvi) {
+		EinkommensverschlechterungInfoContainer convertedEkvi) {
 		convertedEkvi.setGesuch(gesuch);
 		gesuch.setEinkommensverschlechterungInfoContainer(convertedEkvi);
 
@@ -97,13 +96,13 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ADMIN, SUPER_ADMIN})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public Collection<EinkommensverschlechterungInfoContainer> getAllEinkommensverschlechterungInfo() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(EinkommensverschlechterungInfoContainer.class));
 	}
 
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public void removeEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo) {
 		Validate.notNull(einkommensverschlechterungInfo);
 		einkommensverschlechterungInfo.getGesuch().setEinkommensverschlechterungInfoContainer(null);

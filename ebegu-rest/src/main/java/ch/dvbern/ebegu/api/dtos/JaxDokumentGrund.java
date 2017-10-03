@@ -19,7 +19,6 @@ import ch.dvbern.ebegu.enums.DokumentTyp;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxDokumentGrund extends JaxAbstractDTO {
 
-
 	private static final long serialVersionUID = -1451729857998697429L;
 
 	@Enumerated(value = EnumType.STRING)

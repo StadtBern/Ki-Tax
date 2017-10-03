@@ -1,15 +1,14 @@
- /*
- * Copyright (c) 2013 DV Bern AG, Switzerland
- *
- * Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
- * geschuetzt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulaessig. Dies gilt
- * insbesondere fuer Vervielfaeltigungen, die Einspeicherung und Verarbeitung in
- * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
- * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
- */
+/*
+* Copyright (c) 2013 DV Bern AG, Switzerland
+*
+* Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
+* geschuetzt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulaessig. Dies gilt
+* insbesondere fuer Vervielfaeltigungen, die Einspeicherung und Verarbeitung in
+* elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
+* Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
+*/
 
 package ch.dvbern.ebegu.config;
-
 
 /**
  * Konfiguration von Kurstool
@@ -29,7 +28,6 @@ public interface EbeguConfiguration {
 	 */
 	String getFedletConfigPath();
 
-
 	/**
 	 * Gibt an ob die Client Applikation https verwendet. Wenn true werden cookies nur bei https clients gesetzt
 	 */
@@ -39,7 +37,6 @@ public interface EbeguConfiguration {
 	 * Gibt die URL der IDM Rest Schnittstelle zureuck
 	 */
 	String getOpenIdmURL();
-
 
 	/**
 	 * Gibt die URL der IDM Rest Schnittstelle zureuck
@@ -55,7 +52,6 @@ public interface EbeguConfiguration {
 	 * Gibt das Passwort fuer die IDM Rest Schnittstelle zurueck
 	 */
 	String getOpenIdmPassword();
-
 
 	/**
 	 * Gibt zurueck ob die synchronisierung mit der IDM Rest Schnittstelle fuer Inst und Traegerschaft aktiviert ist
@@ -74,38 +70,44 @@ public interface EbeguConfiguration {
 
 	/**
 	 * Gibt einen Host zurück welcher zum Verschicken eines Mails verwendet wird.
+	 *
 	 * @return einen Hostnamen, oder <code>null</code>
 	 */
 	String getSMTPHost();
 
 	/**
 	 * Gibt den Port zurück welcher zum Verschicken eines Mails verwendet wird.
+	 *
 	 * @return einen Port, 25 wenn nichts konfiguriert.
 	 */
 	int getSMTPPort();
 
 	/**
 	 * Gibt die Absender-Adresse fuer mails zurück.
+	 *
 	 * @return die Absender-Adresse oder <code>null</code>
 	 */
 	String getSenderAddress();
 
 	/**
 	 * Gibt den Hostname des Servers zurück.
+	 *
 	 * @return den Hostname oder <code>null</code>
 	 */
 	String getHostname();
 
 	/**
 	 * Gibt zurueck ob es moeglich sein soll mit den dummy useren einzulaggen
-	 * @see "dummy-users.properties" and AuthResource#login
+	 *
 	 * @return true oder false
+	 * @see "dummy-users.properties" and AuthResource#login
 	 */
 	boolean isDummyLoginEnabled();
 
 	/**
 	 * Wir definieren einen Benutzernamen dem wir IMMER die Rolle UserRole#SUPER_ADMIN zuweisen wenn er sich ueber IAM einloggt.
 	 * Der Zweck dieses Users ist, dass wir ihn verwenden koennen um Supportrequests zu reproduzieren etc
+	 *
 	 * @return Name des SuperUsers
 	 */
 	String getEmailOfSuperUser();
@@ -149,20 +151,16 @@ public interface EbeguConfiguration {
 	String getLoginProviderAPIUrl();
 
 	/**
-	 *
 	 * @return true if LoginConnector may access REST interface remotly, otherwise only local access is allowed
 	 */
 	boolean isRemoteLoginConnectorAllowed();
 
-
 	/**
-	 *
 	 * @return den Benutzernamen des internen API users
 	 */
 	String getInternalAPIUser();
 
 	/**
-	 *
 	 * @return das Benutzerpasswort fuer den internen API USER
 	 */
 	String getInternalAPIPassword();

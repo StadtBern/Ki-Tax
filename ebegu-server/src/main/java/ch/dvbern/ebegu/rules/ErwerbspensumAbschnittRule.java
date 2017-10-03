@@ -31,7 +31,7 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 	@Nonnull
 	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
 		List<VerfuegungZeitabschnitt> erwerbspensumAbschnitte = new ArrayList<>();
-		Gesuch gesuch =  betreuung.extractGesuch();
+		Gesuch gesuch = betreuung.extractGesuch();
 		if (gesuch.getGesuchsteller1() != null) {
 			erwerbspensumAbschnitte.addAll(getErwerbspensumAbschnittForGesuchsteller(gesuch, gesuch.getGesuchsteller1(), false));
 		}
@@ -43,6 +43,7 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 
 	/**
 	 * geht durch die Erwerpspensen des Gesuchstellers und gibt Abschnitte zurueck
+	 *
 	 * @param gesuchsteller Der Gesuchsteller dessen Erwerbspensumcontainers zu Abschnitte konvertiert werden
 	 * @param gs2 handelt es sich um gesuchsteller1 -> false oder gesuchsteller2 -> true
 	 */
@@ -74,10 +75,9 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 				// 1GS to 2GS
 				if (gueltigkeit.getGueltigBis().isAfter(gesuch.extractFamiliensituation().getAenderungPer())
 					&& gueltigkeit.getGueltigAb().isBefore(gesuch.extractFamiliensituation().getAenderungPer())) {
-						gueltigkeit.setGueltigAb(gesuch.extractFamiliensituation().getAenderungPer());
+					gueltigkeit.setGueltigAb(gesuch.extractFamiliensituation().getAenderungPer());
 				}
-			}
-			else if (gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller() && !gesuch.extractFamiliensituation().hasSecondGesuchsteller()
+			} else if (gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller() && !gesuch.extractFamiliensituation().hasSecondGesuchsteller()
 				&& gueltigkeit.getGueltigAb().isBefore(gesuch.extractFamiliensituation().getAenderungPer())
 				&& gueltigkeit.getGueltigBis().isAfter(gesuch.extractFamiliensituation().getAenderungPer())) {
 				// 2GS to 1GS

@@ -60,13 +60,11 @@ public interface BerechnungsgrundlagenInformationPrint {
 	EinkommensverschlechterungPrint getEv2();
 
 	/**
-	 *
 	 * @return die Berechnungsblaetter
 	 */
 	List<BerechnungsblattPrint> getBerechnungsblatt();
 
 	/**
-	 *
 	 * @return true falls Berechnungsblatt ausgedruchkt werden muss
 	 */
 	boolean isPrintBerechnungsBlaetter();

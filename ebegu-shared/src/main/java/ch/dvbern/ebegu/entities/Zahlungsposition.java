@@ -98,10 +98,10 @@ public class Zahlungsposition extends AbstractEntity implements Comparable<Zahlu
 	@Override
 	public int compareTo(@Nonnull Zahlungsposition o) {
 		CompareToBuilder builder = new CompareToBuilder();
-		builder.append(this.getKind().getNachname() ,o.getKind().getNachname());
-		builder.append(this.getKind().getVorname() ,o.getKind().getVorname());
-		builder.append(this.getKind().getGeburtsdatum() ,o.getKind().getGeburtsdatum());
-		builder.append(this.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb() ,o.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb());
+		builder.append(this.getKind().getNachname(), o.getKind().getNachname());
+		builder.append(this.getKind().getVorname(), o.getKind().getVorname());
+		builder.append(this.getKind().getGeburtsdatum(), o.getKind().getGeburtsdatum());
+		builder.append(this.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb(), o.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb());
 		builder.append(this.getBetrag(), o.getBetrag());
 		return builder.toComparison();
 	}

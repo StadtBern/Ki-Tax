@@ -23,7 +23,6 @@ public class KindExportDTO {
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate geburtsdatum;
 
-
 	public KindExportDTO() {
 	}
 

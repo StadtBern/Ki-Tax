@@ -17,7 +17,6 @@ import ch.dvbern.ebegu.types.DateRange;
  */
 public abstract class AbstractCalcRule extends AbstractEbeguRule {
 
-
 	public AbstractCalcRule(@Nonnull RuleKey ruleKey, @Nonnull RuleType ruleType, @Nonnull DateRange validityPeriod) {
 		super(ruleKey, ruleType, validityPeriod);
 	}

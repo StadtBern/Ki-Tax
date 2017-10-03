@@ -16,7 +16,6 @@ import ch.dvbern.ebegu.entities.Zahlungsauftrag;
  */
 public interface ZahlungService {
 
-
 	/**
 	 * Ermittelt alle im aktuellen Monat gueltigen Verfuegungen, sowie aller seit dem letzten Auftrag eingeganegenen
 	 * Mutationen.

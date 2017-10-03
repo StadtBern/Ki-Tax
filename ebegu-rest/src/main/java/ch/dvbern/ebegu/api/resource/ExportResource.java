@@ -60,11 +60,10 @@ public class ExportResource {
 		return this.exportServiceBean.exportAllVerfuegungenOfAntrag(antragID);
 	}
 
-
 	@ApiOperation(value = "Exports a json Schema of the ExportDTOs")
 	@Path("/meta/jsonschema")
 	@GET
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getJsonSchemaString() throws JsonMappingException {
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -79,7 +78,7 @@ public class ExportResource {
 	@ApiOperation(value = "Exports an xsd of the ExportDTOs", response = String.class)
 	@Path("/meta/xsd")
 	@GET
-	@Produces({MediaType.APPLICATION_XML})
+	@Produces({ MediaType.APPLICATION_XML })
 	public String getXmlSchemaString() throws JAXBException, IOException {
 		JAXBContext jaxbContext = JAXBContext.newInstance(VerfuegungenExportDTO.class);
 		EbeguSchemaOutputResolver sor = new EbeguSchemaOutputResolver();

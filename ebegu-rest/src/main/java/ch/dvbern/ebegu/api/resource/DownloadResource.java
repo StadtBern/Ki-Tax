@@ -72,7 +72,6 @@ public class DownloadResource {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DownloadResource.class.getSimpleName());
 
-
 	@Inject
 	private DownloadFileService downloadFileService;
 
@@ -105,7 +104,6 @@ public class DownloadResource {
 
 	@Inject
 	private EbeguVorlageService ebeguVorlageService;
-
 
 	@ApiOperation(value = "L&auml;dt das Dokument herunter, auf welches das &uuml;bergebene accessToken verweist")
 	@GET
@@ -198,8 +196,8 @@ public class DownloadResource {
 	 * Alle anderen Vorlagen, die andere Daten brauchen, muessen ihre eigene Methode haben. So wie bei VERFUEGUNG
 	 *
 	 * @param jaxGesuchId gesuch ID
-	 * @param request     request
-	 * @param uriInfo     uri
+	 * @param request request
+	 * @param uriInfo uri
 	 * @return ein Response mit dem GeneratedDokument
 	 */
 	@ApiOperation(value = "Erstellt ein Token f&uuml;r den Download der Finanziellen Situation des Gesuchs mit der " +
@@ -234,8 +232,8 @@ public class DownloadResource {
 	 * Alle anderen Vorlagen, die andere Daten brauchen, muessen ihre eigene Methode haben. So wie bei VERFUEGUNG
 	 *
 	 * @param jaxGesuchId gesuch ID
-	 * @param request     request
-	 * @param uriInfo     uri
+	 * @param request request
+	 * @param uriInfo uri
 	 * @return ein Response mit dem GeneratedDokument
 	 */
 	@ApiOperation(value = "Erstellt ein Token f&uuml;r den Download des Begleitschreibens f&uuml;r das Gesuchs mit der " +

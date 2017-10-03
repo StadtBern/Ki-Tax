@@ -19,7 +19,6 @@ import ch.dvbern.oss.lib.excelmerger.mergefields.SimpleMergeField;
 import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.INTEGER_CONVERTER;
 import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.STRING_CONVERTER;
 
-
 public enum MergeFieldGesuchZeitraum implements MergeFieldProvider {
 
 	repeatGesuchZeitraumRow(new RepeatRowMergeField("repeatGesuchZeitraumRow")),
@@ -52,7 +51,6 @@ public enum MergeFieldGesuchZeitraum implements MergeFieldProvider {
 	anzahlVerfuegungenKeinPensum(new SimpleMergeField<>("anzahlVerfuegungenKeinPensum", INTEGER_CONVERTER)),
 	anzahlVerfuegungenZuschlagZumPensum(new SimpleMergeField<>("anzahlVerfuegungenZuschlagZumPensum", INTEGER_CONVERTER)),
 	anzahlVerfuegungenNichtEintreten(new SimpleMergeField<>("anzahlVerfuegungenNichtEintreten", INTEGER_CONVERTER));
-
 
 	@Nonnull
 	private final MergeField<?> mergeField;

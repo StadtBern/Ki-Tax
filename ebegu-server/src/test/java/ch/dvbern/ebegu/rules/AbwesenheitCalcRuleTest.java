@@ -23,7 +23,6 @@ public class AbwesenheitCalcRuleTest {
 	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
 	private final DateRange PERIODE = new DateRange(START_PERIODE, ENDE_PERIODE);
 
-
 	@Test
 	public void testSchulamtBetreuungWithAbwesenheit() {
 		final AbwesenheitCalcRule rule = new AbwesenheitCalcRule(PERIODE);
@@ -64,7 +63,6 @@ public class AbwesenheitCalcRuleTest {
 		Assert.assertFalse(zeitAbschnitt.isBezahltVollkosten());
 		Assert.assertEquals("", zeitAbschnitt.getBemerkungen());
 	}
-
 
 	// HELP METHODS
 

@@ -17,7 +17,6 @@ public class KitaRechnerTest extends AbstractBGRechnerTest {
 	private final BGRechnerParameterDTO parameterDTO = getParameter();
 	private final KitaRechner kitaRechner = new KitaRechner();
 
-
 	@Test
 	public void testEinTagHohesEinkommenKitaLangeOffenAnspruch15() {
 		Verfuegung verfuegung = prepareVerfuegungKita(LocalDate.of(2014, Month.AUGUST, 1),
@@ -70,7 +69,7 @@ public class KitaRechnerTest extends AbstractBGRechnerTest {
 		Assert.assertEquals(new BigDecimal("2184.60"), calculate.getVerguenstigung());
 	}
 
-	@Test (expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testZeitraumUeberMonatsende() {
 		Verfuegung verfuegung = prepareVerfuegungKita(LocalDate.of(2014, Month.AUGUST, 1),
 			new BigDecimal("244"), new BigDecimal("11.5"),

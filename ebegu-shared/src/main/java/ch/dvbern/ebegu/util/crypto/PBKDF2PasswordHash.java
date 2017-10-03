@@ -114,10 +114,10 @@ public class PBKDF2PasswordHash {
 	/**
 	 * Computes the PBKDF2 hash of a password.
 	 *
-	 * @param password   the password to hash.
-	 * @param salt       the salt
+	 * @param password the password to hash.
+	 * @param salt the salt
 	 * @param iterations the iteration count (slowness factor)
-	 * @param bytes      the length of the hash to compute in bytes
+	 * @param bytes the length of the hash to compute in bytes
 	 * @return the PBDKF2 hash of the password
 	 */
 	private static byte[] pbkdf2(char[] password, byte[] salt, int iterations, int bytes)
@@ -157,7 +157,5 @@ public class PBKDF2PasswordHash {
 			return hex;
 		}
 	}
-
-
 
 }

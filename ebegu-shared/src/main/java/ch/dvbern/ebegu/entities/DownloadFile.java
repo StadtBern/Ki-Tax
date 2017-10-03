@@ -34,7 +34,7 @@ public class DownloadFile extends FileMetadata {
 
 	}
 
-	public DownloadFile(UploadFileInfo uploadFileInfo,  @Nonnull String ip) {
+	public DownloadFile(UploadFileInfo uploadFileInfo, @Nonnull String ip) {
 		super(uploadFileInfo);
 		this.accessToken = UUID.randomUUID().toString();
 		this.ip = ip;

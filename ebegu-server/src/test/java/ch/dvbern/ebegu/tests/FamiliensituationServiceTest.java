@@ -41,8 +41,6 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
-
 	@Test
 	public void testCreateFamiliensituation() {
 		Assert.assertNotNull(familiensituationService);
@@ -82,13 +80,12 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		gesuch.setTyp(AntragTyp.MUTATION);
 
-
 		final EinkommensverschlechterungInfoContainer evInfo = TestDataUtil.createDefaultEinkommensverschlechterungsInfoContainer(gesuch);
 		final Optional<EinkommensverschlechterungInfoContainer> einkommensverschlechterungInfo = evInfoService.createEinkommensverschlechterungInfo(evInfo);
 		gesuch.setEinkommensverschlechterungInfoContainer(einkommensverschlechterungInfo.get());
 
 		Optional<FamiliensituationContainer> familiensituation = createFamiliensituationContainer();
-		final FamiliensituationContainer newFamiliensituation = familiensituation.get().copyForMutation(new FamiliensituationContainer(),false);
+		final FamiliensituationContainer newFamiliensituation = familiensituation.get().copyForMutation(new FamiliensituationContainer(), false);
 		newFamiliensituation.extractFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
 		newFamiliensituation.extractFamiliensituation().setGemeinsameSteuererklaerung(null);
 
@@ -99,7 +96,6 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertFalse(gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP1());
 		Assert.assertFalse(gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP2());
 	}
-
 
 	// HELP METHODS
 

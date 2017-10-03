@@ -82,7 +82,6 @@ public class Fall extends AbstractEntity implements HasMandant, Searchable {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_fall_mandant_id"))
 	private Mandant mandant;
 
-
 	public long getFallNummer() {
 		return fallNummer;
 	}
@@ -143,7 +142,7 @@ public class Fall extends AbstractEntity implements HasMandant, Searchable {
 	}
 
 	@Transient
-	public String getPaddedFallnummer(){
+	public String getPaddedFallnummer() {
 		return StringUtils.leftPad(String.valueOf(this.getFallNummer()), Constants.FALLNUMMER_LENGTH, '0');
 	}
 

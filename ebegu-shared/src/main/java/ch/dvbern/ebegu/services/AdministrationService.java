@@ -26,7 +26,6 @@ public interface AdministrationService {
 	int COL_OEFFNUNGSSTUNDEN = 14;
 	int COL_OEFFNUNGSTAGE = 15;
 
-
 	/**
 	 * Erstellt ein SQL-Skript mit Inserts/Updates.
 	 * Input ist ein Excel, welches mit den aktuell vorhandenen Daten verglichen wird

@@ -48,7 +48,6 @@ public class WizardStepResource {
 	@Inject
 	private JaxBConverter converter;
 
-
 	@ApiOperation(value = "Gibt alle Wizardsteps des Gesuchs mit der uebergebenen id zurueck",
 		responseContainer = "Collection", response = JaxWizardStep.class)
 	@GET
@@ -68,9 +67,6 @@ public class WizardStepResource {
 	/**
 	 * Creates all required WizardSteps for the given Gesuch and returns them as a List. Status for all Steps will be UNBESUCHT except for
 	 * GESUCH_ERSTELLEN, which gets OK, because this step is already done when the gesuch is created.
-	 * @param gesuchJAXPId
-	 * @return
-	 * @throws EbeguException
 	 */
 	@ApiOperation(value = "Creates all required WizardSteps for the given Gesuch and returns them as a List. Status " +
 		"for all Steps will be UNBESUCHT except for GESUCH_ERSTELLEN, which gets OK, because this step is already " +
@@ -82,7 +78,7 @@ public class WizardStepResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxWizardStep> createWizardStepList(
-		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) throws EbeguException {
 		Validate.notNull(gesuchJAXPId.getId());
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());

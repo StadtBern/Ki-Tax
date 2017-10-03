@@ -37,7 +37,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 @Audited
 @Entity
 @Table(
-	uniqueConstraints = @UniqueConstraint(columnNames = {"kindNummer", "gesuch_id"}, name = "UK_kindcontainer_gesuch_kind_nummer")
+	uniqueConstraints = @UniqueConstraint(columnNames = { "kindNummer", "gesuch_id" }, name = "UK_kindcontainer_gesuch_kind_nummer")
 )
 @Indexed
 @Analyzer(impl = EBEGUGermanAnalyzer.class)
@@ -51,12 +51,12 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	private Gesuch gesuch;
 
 	@Valid
-	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_kind_container_kindgs_id"), nullable = true)
 	private Kind kindGS;
 
 	@Valid
-	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_kind_container_kindja_id"), nullable = true)
 	@IndexedEmbedded
 	private Kind kindJA;
@@ -85,10 +85,8 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	@Nullable
 	private Boolean kindMutiert;
 
-
 	public KindContainer() {
 	}
-
 
 	public Gesuch getGesuch() {
 		return gesuch;
@@ -195,7 +193,7 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	@Nonnull
 	@Override
 	public String getSearchResultSummary() {
-		if(getKindJA()!=null){
+		if (getKindJA() != null) {
 			return getKindJA().getFullName();
 		}
 		return "-";

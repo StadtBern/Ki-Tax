@@ -136,7 +136,6 @@ public class PredicateObjectDTO implements Serializable {
 		this.verantwortlicher = verantwortlicher;
 	}
 
-
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this)
@@ -169,6 +168,5 @@ public class PredicateObjectDTO implements Serializable {
 	public String getKindNameForLike() {
 		return StringUtils.isEmpty(kinder) ? null : '%' + kinder + '%';
 	}
-
 
 }

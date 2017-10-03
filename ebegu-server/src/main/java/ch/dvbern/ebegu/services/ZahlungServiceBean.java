@@ -73,7 +73,6 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
 import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
-
 /**
  * Service fuer Zahlungen. Die Zahlungen werden folgendermassen generiert:
  * Wenn ein neuer Zahlungsauftrag erstellt wird, muss nur ein Faelligkeitsdatum mitgegeben werden. Dieses wird *nur* fuer
@@ -92,8 +91,8 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(ZahlungService.class)
-@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
-@SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals", "SpringAutowiredFieldsWarningInspection", "InstanceMethodNamingConvention"})
+@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
+@SuppressWarnings(value = { "PMD.AvoidDuplicateLiterals", "SpringAutowiredFieldsWarningInspection", "InstanceMethodNamingConvention" })
 public class ZahlungServiceBean extends AbstractBaseService implements ZahlungService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZahlungServiceBean.class.getSimpleName());
@@ -118,14 +117,14 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public Zahlungsauftrag zahlungsauftragErstellen(@Nonnull LocalDate datumFaelligkeit, @Nonnull String beschreibung) {
 		return zahlungsauftragErstellen(datumFaelligkeit, beschreibung, LocalDateTime.now());
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public Zahlungsauftrag zahlungsauftragErstellen(@Nonnull LocalDate datumFaelligkeit, @Nonnull String beschreibung, @Nonnull LocalDateTime datumGeneriert) {
 		// Es darf immer nur ein Zahlungsauftrag im Status ENTWURF sein
 		Optional<Zahlungsauftrag> lastZahlungsauftrag = findLastZahlungsauftrag();
@@ -381,8 +380,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		zahlungsposition.setStatus(status);
 		if (!zeitabschnitt.getZahlungsstatus().isIgnoriertIgnorierend()) {
 			zeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET);
-		}
-		else if (zeitabschnitt.getZahlungsstatus().isIgnorierend()) {
+		} else if (zeitabschnitt.getZahlungsstatus().isIgnorierend()) {
 			zeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT);
 		}
 		zahlung.getZahlungspositionen().add(zahlungsposition);
@@ -392,7 +390,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	 * Erstellt eine Zahlungsposition fuer eine Korrekturzahlung mit der Korrektur des *alten Wertes* (negiert)
 	 */
 	private void createZahlungspositionKorrekturAlterWert(@Nonnull VerfuegungZeitabschnitt vorgaengerZeitabschnitt, @Nonnull Zahlung zahlung, boolean vollkostenChanged,
-														  boolean ignoriert) {
+		boolean ignoriert) {
 		Zahlungsposition korrekturPosition = new Zahlungsposition();
 		korrekturPosition.setVerfuegungZeitabschnitt(vorgaengerZeitabschnitt);
 		korrekturPosition.setBetrag(vorgaengerZeitabschnitt.getVerguenstigung().negate());
@@ -475,7 +473,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {SUPER_ADMIN, ADMIN})
+	@RolesAllowed(value = { SUPER_ADMIN, ADMIN })
 	public Zahlungsauftrag zahlungsauftragAusloesen(@Nonnull String auftragId) {
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Zahlungsauftrag zahlungsauftrag = persistence.find(Zahlungsauftrag.class, auftragId);
@@ -498,7 +496,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
+	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
 	public Optional<Zahlungsauftrag> findZahlungsauftrag(@Nonnull String auftragId) {
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Zahlungsauftrag zahlungsauftrag = persistence.find(Zahlungsauftrag.class, auftragId);
@@ -507,7 +505,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
+	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
 	public Optional<Zahlung> findZahlung(@Nonnull String zahlungId) {
 		Objects.requireNonNull(zahlungId, "zahlungId muss gesetzt sein");
 		Zahlung zahlung = persistence.find(Zahlung.class, zahlungId);
@@ -515,7 +513,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	}
 
 	@Override
-	@RolesAllowed(value = {SUPER_ADMIN})
+	@RolesAllowed(value = { SUPER_ADMIN })
 	public void deleteZahlungsauftrag(@Nonnull String auftragId) {
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Optional<Zahlungsauftrag> auftragOptional = findZahlungsauftrag(auftragId);
@@ -545,15 +543,14 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
+	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
 	public Collection<Zahlungsauftrag> getAllZahlungsauftraege() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(Zahlungsauftrag.class));
 	}
 
-
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {SUPER_ADMIN, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed(value = { SUPER_ADMIN, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT })
 	public Zahlung zahlungBestaetigen(@Nonnull String zahlungId) {
 		Objects.requireNonNull(zahlungId, "zahlungId muss gesetzt sein");
 		Zahlung zahlung = persistence.find(Zahlung.class, zahlungId);
@@ -578,7 +575,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	}
 
 	@Override
-	@RolesAllowed(value = {SUPER_ADMIN})
+	@RolesAllowed(value = { SUPER_ADMIN })
 	public void deleteZahlungspositionenOfGesuch(@Nonnull Gesuch gesuch) {
 		Objects.requireNonNull(gesuch, "gesuch muss gesetzt sein");
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -625,7 +622,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		final Collection<Pain001Dokument> pain001Dokument = criteriaQueryHelper.getEntitiesByAttribute(Pain001Dokument.class, zahlungsauftrag, Pain001Dokument_.zahlungsauftrag);
 		pain001Dokument.forEach(pain -> {
 			fileSaverService.removeAllFromSubfolder(pain.getZahlungsauftrag().getId());
-            persistence.remove(Pain001Dokument.class, pain.getId());
+			persistence.remove(Pain001Dokument.class, pain.getId());
 		});
 	}
 

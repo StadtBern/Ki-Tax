@@ -57,7 +57,6 @@ public class EbeguParameterResource {
 	@Inject
 	private JaxBConverter converter;
 
-
 	@ApiOperation(value = "Create a new or update an existing Ki-Tax parameter with the given key and value",
 		response = JaxEbeguParameter.class,
 		consumes = MediaType.APPLICATION_JSON)
@@ -65,7 +64,7 @@ public class EbeguParameterResource {
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response saveEbeguParameter (
+	public Response saveEbeguParameter(
 		@Nonnull @NotNull @Valid JaxEbeguParameter jaxEbeguParameter,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -121,7 +120,7 @@ public class EbeguParameterResource {
 	@Path("/gesuchsperiode/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<JaxEbeguParameter> getEbeguParameterByGesuchsperiode (
+	public List<JaxEbeguParameter> getEbeguParameterByGesuchsperiode(
 		@Nonnull @NotNull @PathParam("id") JaxId id) {
 
 		Validate.notNull(id.getId());
@@ -141,7 +140,7 @@ public class EbeguParameterResource {
 	@Path("/year/{year}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<JaxEbeguParameter> getEbeguParameterByJahr (
+	public List<JaxEbeguParameter> getEbeguParameterByJahr(
 		@Nonnull @NotNull @PathParam("year") Integer jahr) {
 
 		return ebeguParameterService.getEbeguParametersByJahr(jahr).stream()
@@ -169,13 +168,13 @@ public class EbeguParameterResource {
 	@Path("/name/{name}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxEbeguParameter getEbeguParameterByKeyAndDate (
+	public JaxEbeguParameter getEbeguParameterByKeyAndDate(
 		@Nonnull @PathParam("name") String name,
 		@Nullable @QueryParam("date") String stringDate) {
 
 		LocalDate date = DateUtil.parseStringToDateOrReturnNow(stringDate);
 		EbeguParameterKey ebeguParameterKey = EbeguParameterKey.valueOf(name);
-		Optional<EbeguParameter> optional  = ebeguParameterService.getEbeguParameterByKeyAndDate(ebeguParameterKey, date);
+		Optional<EbeguParameter> optional = ebeguParameterService.getEbeguParameterByKeyAndDate(ebeguParameterKey, date);
 		return optional.map(ebeguParameter -> converter.ebeguParameterToJAX(ebeguParameter)).orElse(null);
 	}
 }

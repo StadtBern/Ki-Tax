@@ -14,6 +14,7 @@ public interface FachstelleService {
 
 	/**
 	 * Aktualisiert die Fachstelle in der DB
+	 *
 	 * @param fachstelle die Fachstelle als DTO
 	 * @return Die aktualisierte Fachstelle
 	 */
@@ -21,7 +22,6 @@ public interface FachstelleService {
 	Fachstelle saveFachstelle(@Nonnull Fachstelle fachstelle);
 
 	/**
-	 *
 	 * @param fachstelleId PK (id) der Fachstelle
 	 * @return Fachstelle mit dem gegebenen key oder null falls nicht vorhanden
 	 */
@@ -30,6 +30,7 @@ public interface FachstelleService {
 
 	/**
 	 * Gibt alle existierenden Fachstellen zurueck.
+	 *
 	 * @return Liste aller Fachstellen aus der DB
 	 */
 	@Nonnull
@@ -37,6 +38,7 @@ public interface FachstelleService {
 
 	/**
 	 * entfernt die Fachstelle aus der Database
+	 *
 	 * @param fachstelleId die Fachstelle als DTO
 	 */
 	void removeFachstelle(@Nonnull String fachstelleId);

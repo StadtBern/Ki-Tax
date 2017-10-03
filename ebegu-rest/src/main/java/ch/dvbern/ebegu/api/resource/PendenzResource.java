@@ -47,7 +47,6 @@ public class PendenzResource {
 	@Inject
 	private PrincipalBean principalBean;
 
-
 	/**
 	 * Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck.
 	 * Sollte keine Pendenze gefunden werden oder ein Fehler passieren, wird eine leere Liste zurueckgegeben.
@@ -115,8 +114,7 @@ public class PendenzResource {
 
 			if (betreuung.getVorgaengerId() == null) {
 				pendenz.setTyp("PLATZBESTAETIGUNG");
-			}
-			else{
+			} else {
 				//Wenn die Betreung eine VorgängerID hat ist sie mutiert
 				pendenz.setTyp("PLATZBESTAETIGUNG_MUTATION");
 			}
@@ -140,7 +138,6 @@ public class PendenzResource {
 		List<Gesuch> antraege = gesuchService.getAntraegeByCurrentBenutzer();
 		return convertToAntragDTOList(antraege);
 	}
-
 
 	@Nonnull
 	private List<JaxAntragDTO> convertToAntragDTOList(List<Gesuch> antraege) {

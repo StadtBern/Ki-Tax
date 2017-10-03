@@ -32,7 +32,6 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 	@Column(nullable = true)
 	private LocalDate datumAktiviert;
 
-
 	public GesuchsperiodeStatus getStatus() {
 		return status;
 	}
@@ -61,7 +60,7 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 		this.datumAktiviert = datumAktiviert;
 	}
 
-	@SuppressWarnings({"OverlyComplexBooleanExpression"})
+	@SuppressWarnings({ "OverlyComplexBooleanExpression" })
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality

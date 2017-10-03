@@ -20,16 +20,16 @@ import ch.dvbern.ebegu.entities.WizardStep;
  */
 public interface Authorizer {
 
-	void checkReadAuthorization(@Nullable  Gesuch gesuch);
+	void checkReadAuthorization(@Nullable Gesuch gesuch);
 
-	void checkReadAuthorizationGesuche(@Nullable  Collection<Gesuch> gesuche);
+	void checkReadAuthorizationGesuche(@Nullable Collection<Gesuch> gesuche);
 
 	void checkReadAuthorizationGesuchId(String gesuchId);
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer das gesuch schreiben darf
 	 */
-	void checkWriteAuthorization(@Nullable  Gesuch gesuch);
+	void checkWriteAuthorization(@Nullable Gesuch gesuch);
 
 	/**
 	 * prueft ob der aktuelle user berechtigt ist ein gesuch zu erstellen
@@ -46,35 +46,30 @@ public interface Authorizer {
 	 */
 	void checkWriteAuthorization(@Nullable Fall fall);
 
-
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer den fall lesen darf
 	 */
 	void checkReadAuthorizationFall(@Nullable Fall fall);
 
-
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer fuer ALLE uebergebnen faelle berechtigt ist
-	 * @param faelle
 	 */
-	void checkReadAuthorizationFaelle(@Nullable  Collection<Fall> faelle);
+	void checkReadAuthorizationFaelle(@Nullable Collection<Fall> faelle);
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer die betreuung lesen darf
 	 */
-	void checkReadAuthorization(@Nullable  Betreuung betr);
-
+	void checkReadAuthorization(@Nullable Betreuung betr);
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer die betreuung schreibend bearbeiten darf
 	 */
-	void checkWriteAuthorization(@Nullable  Betreuung betreuungToRemove);
+	void checkWriteAuthorization(@Nullable Betreuung betreuungToRemove);
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer ALLE betreuung in der Liste lesen darf
 	 */
 	void checkReadAuthorizationForAllBetreuungen(@Nullable Collection<Betreuung> betreuungen);
-
 
 	/**
 	 * prueft ob der  eingeloggte benutzer EINE der  betreuung in der Liste lesen darf
@@ -84,24 +79,23 @@ public interface Authorizer {
 	/**
 	 * prueft ob der aktuell eingeloggte Benutzer die Verfuegung lesen darf
 	 */
-	void checkReadAuthorization(@Nullable  Verfuegung verfuegung);
+	void checkReadAuthorization(@Nullable Verfuegung verfuegung);
 
 	/**
 	 * prueft ob der aktuell eingeloggte Benutzer die ALLE verfuegungen in der liste lesen darf
 	 */
-	void checkReadAuthorizationVerfuegungen(@Nullable  Collection<Verfuegung> verfuegungen);
+	void checkReadAuthorizationVerfuegungen(@Nullable Collection<Verfuegung> verfuegungen);
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer die verfuegung schreibend bearbeiten darf
 	 */
-	void checkWriteAuthorization(@Nullable  Verfuegung verfuegung);
+	void checkWriteAuthorization(@Nullable Verfuegung verfuegung);
 
 	void checkReadAuthorization(@Nullable FinanzielleSituationContainer finanzielleSituation);
 
-
 	void checkReadAuthorization(@Nonnull Collection<FinanzielleSituationContainer> finanzielleSituationen);
 
-	void checkWriteAuthorization(@Nullable  FinanzielleSituationContainer finanzielleSituation);
+	void checkWriteAuthorization(@Nullable FinanzielleSituationContainer finanzielleSituation);
 
 	void checkCreateAuthorizationFinSit(@Nonnull FinanzielleSituationContainer finanzielleSituation);
 

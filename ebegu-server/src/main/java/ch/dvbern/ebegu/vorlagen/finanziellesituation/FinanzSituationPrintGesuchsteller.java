@@ -26,7 +26,7 @@ public class FinanzSituationPrintGesuchsteller {
 	private final EinkommensverschlechterungInfo einkommensverschlechterungInfo;
 
 	public FinanzSituationPrintGesuchsteller(FinanzielleSituation finanzielleSituation, Einkommensverschlechterung einkommensverschlechterung1,
-											 Einkommensverschlechterung einkommensverschlechterung2, EinkommensverschlechterungInfo einkommensverschlechterungInfo) {
+		Einkommensverschlechterung einkommensverschlechterung2, EinkommensverschlechterungInfo einkommensverschlechterungInfo) {
 		this.finanzielleSituation = finanzielleSituation;
 		this.einkommensverschlechterung1 = einkommensverschlechterung1;
 		this.einkommensverschlechterung2 = einkommensverschlechterung2;

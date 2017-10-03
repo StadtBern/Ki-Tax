@@ -63,7 +63,6 @@ public class AuthResource {
 	@Inject
 	private JaxBConverter converter;
 
-
 	@Inject
 	private UsernameRoleChecker usernameRoleChecker;
 
@@ -72,7 +71,6 @@ public class AuthResource {
 
 	@Inject
 	private LoginProviderInfoRestService loginProviderInfoRestService;
-
 
 	@Path("/singleSignOn")
 	@Consumes(MediaType.WILDCARD)
@@ -173,6 +171,7 @@ public class AuthResource {
 
 	/**
 	 * convert to dto that can be passed to login-connector
+	 *
 	 * @param access AuthAccessElement to convert
 	 * @return DTO used to create cookie in login-connector
 	 */
@@ -184,7 +183,6 @@ public class AuthResource {
 			String.valueOf(access.getEmail()),
 			String.valueOf(access.getRole()));
 	}
-
 
 	private boolean isCookieSecure() {
 		return request.isSecure();

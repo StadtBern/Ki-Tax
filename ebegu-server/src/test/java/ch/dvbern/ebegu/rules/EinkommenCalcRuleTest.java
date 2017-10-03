@@ -42,7 +42,7 @@ public class EinkommenCalcRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(0,(new BigDecimal("180000.00")).compareTo(result.get(0).getMassgebendesEinkommen()));
+		Assert.assertEquals(0, (new BigDecimal("180000.00")).compareTo(result.get(0).getMassgebendesEinkommen()));
 		Assert.assertEquals(0, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertFalse(result.get(0).isBezahltVollkosten());
 		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
@@ -73,8 +73,8 @@ public class EinkommenCalcRuleTest {
 	}
 
 	/**
-	 *  Erstellt einen Testfall mit 2 EKV.
-	 *  Am Ende schaut es dass die Bemerkungen richtig geschrieben wurden
+	 * Erstellt einen Testfall mit 2 EKV.
+	 * Am Ende schaut es dass die Bemerkungen richtig geschrieben wurden
 	 */
 	@Test
 	public void testAcceptedEKV() {

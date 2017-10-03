@@ -40,7 +40,6 @@ public class WizardStepResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
 	@Test
 	public void testCreateWizardStepList() throws EbeguException {
 		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));

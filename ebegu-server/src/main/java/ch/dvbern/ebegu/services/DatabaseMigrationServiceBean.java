@@ -45,7 +45,6 @@ import org.jboss.ejb3.annotation.TransactionTimeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Service zum Ausfuehren von manuellen DB-Migrationen
  */
@@ -58,7 +57,6 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseMigrationServiceBean.class.getSimpleName());
 	public static final String SEPARATOR = " / ";
-
 
 	@Inject
 	private GesuchService gesuchService;
@@ -86,7 +84,6 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 
 	@Inject
 	private Persistence persistence;
-
 
 	@Override
 	@Asynchronous

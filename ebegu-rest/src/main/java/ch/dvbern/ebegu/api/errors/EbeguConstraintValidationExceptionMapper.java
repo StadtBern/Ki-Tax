@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 public class EbeguConstraintValidationExceptionMapper extends AbstractEbeguExceptionMapper<EJBTransactionRolledbackException> {
 
 	private final Logger LOG = LoggerFactory.getLogger(EbeguConstraintValidationExceptionMapper.class.getSimpleName());
+
 	@Override
 	protected Response buildViolationReportResponse(EJBTransactionRolledbackException exception, Status status) {
 		return null;

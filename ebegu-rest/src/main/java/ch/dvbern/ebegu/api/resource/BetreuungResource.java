@@ -65,7 +65,6 @@ public class BetreuungResource {
 	@Inject
 	private GesuchService gesuchService;
 
-
 	//TODO (hefr) Dieser Service wird immer nur fuer Betreuungen verwendet, nie fuer Abwesenheiten
 	@ApiOperation(value = "Speichert eine Betreuung in der Datenbank", response = JaxBetreuung.class)
 	@Nonnull
@@ -76,7 +75,7 @@ public class BetreuungResource {
 	public JaxBetreuung saveBetreuung(
 		@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
 		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
-		@Nonnull @NotNull @PathParam ("abwesenheit") Boolean abwesenheit,
+		@Nonnull @NotNull @PathParam("abwesenheit") Boolean abwesenheit,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
@@ -101,7 +100,7 @@ public class BetreuungResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxBetreuung> saveBetreuungen(
 		@Nonnull @NotNull @Valid List<JaxBetreuung> betreuungenJAXP,
-		@Nonnull @NotNull @PathParam ("abwesenheit") Boolean abwesenheit,
+		@Nonnull @NotNull @PathParam("abwesenheit") Boolean abwesenheit,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 

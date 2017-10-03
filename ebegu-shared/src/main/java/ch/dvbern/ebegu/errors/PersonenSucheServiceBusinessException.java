@@ -10,7 +10,6 @@
 
 package ch.dvbern.ebegu.errors;
 
-
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 
 /**

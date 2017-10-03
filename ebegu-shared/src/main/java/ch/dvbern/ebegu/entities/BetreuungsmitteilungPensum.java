@@ -23,7 +23,6 @@ public class BetreuungsmitteilungPensum extends AbstractPensumEntity implements 
 	@NotNull
 	private Betreuungsmitteilung betreuungsmitteilung;
 
-
 	public Betreuungsmitteilung getBetreuungsmitteilung() {
 		return betreuungsmitteilung;
 	}

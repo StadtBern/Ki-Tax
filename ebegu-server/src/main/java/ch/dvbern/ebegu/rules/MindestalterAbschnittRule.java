@@ -16,12 +16,11 @@ import ch.dvbern.ebegu.types.DateRange;
 /**
  * Regel für Mindestalter des Kindes:
  * - Erst ab dem 3. Monat besteht ein Anspruch. Ein Kita-Platz kann aber schon vor dem dritten Monat
- * 		beansprucht werden. In diesem Fall wird die Zeit vor dem 3. Monat zum Privattarif berechnet.
+ * beansprucht werden. In diesem Fall wird die Zeit vor dem 3. Monat zum Privattarif berechnet.
  *
- * 	Verweis 16.12.1 Mindestalter
+ * Verweis 16.12.1 Mindestalter
  */
 public class MindestalterAbschnittRule extends AbstractAbschnittRule {
-
 
 	public MindestalterAbschnittRule(@Nonnull DateRange validityPeriod) {
 		super(RuleKey.MINDESTALTER, RuleType.GRUNDREGEL_DATA, validityPeriod);

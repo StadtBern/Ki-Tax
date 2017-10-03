@@ -11,7 +11,7 @@
 
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
-			<property name="hibernate.cache.use_second_level_cache" value="true" />
+			<property name="hibernate.cache.use_second_level_cache" value="true"/>
 			<property name="hibernate.physical_naming_strategy" value="ch.dvbern.ebegu.persistence.EbeguPhysicalNamingStrategyImpl"/>
 
 			<!-- SQL Logging bitte via Logger konfigurieren -->
@@ -21,12 +21,12 @@
 			<property name="hibernate.search.lucene_version" value="LUCENE_CURRENT"/> <!-- Default-Value, verhindert aber eine Warning im Logfile -->
 			<!--fuer lokale tests ist es praktischer den indem im FS zu haben-->
 			<property name="hibernate.search.default.directory_provider"
-			          value="filesystem"/>
+					  value="filesystem"/>
 			<!--nur ein prozess benutzt unseren index (?)-->
 			<property name="hibernate.search.default.exclusive_index_use" value="true"/>
 
 			<!--<property name="hibernate.search.default.indexBase"-->
-			          <!--value="/home/homa/java/JBoss/wildfly-10.1.0.Final-ebegu/standalone/data/lucene"/>-->
+			<!--value="/home/homa/java/JBoss/wildfly-10.1.0.Final-ebegu/standalone/data/lucene"/>-->
 
 			<!--<property name="hibernate.search.default.directory_provider" value="infinispan"/>-->
 			<!--<property name="hibernate.search.infinispan.configuration_resourcename" value="ebegu-hibernatesearch-infinispan.xml"/>-->

@@ -15,7 +15,7 @@ import org.hibernate.envers.Audited;
  */
 @Audited
 @Entity
-@EntityListeners({WriteProtectedDokumentListener.class})
+@EntityListeners({ WriteProtectedDokumentListener.class })
 public class Pain001Dokument extends WriteProtectedDokument {
 
 	private static final long serialVersionUID = -3981085201151840861L;

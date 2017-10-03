@@ -48,14 +48,12 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 
 	@Column(nullable = false)
 	@NotNull
-	@FieldBridge(impl=EbeguLocalDateBridge.class)   //wir indizieren dates als string
-	@Field(analyze= Analyze.NO) //datumsfelder nicht tokenizen etc
+	@FieldBridge(impl = EbeguLocalDateBridge.class)   //wir indizieren dates als string
+	@Field(analyze = Analyze.NO) //datumsfelder nicht tokenizen etc
 	private LocalDate geburtsdatum;
-
 
 	public AbstractPersonEntity() {
 	}
-
 
 	public String getVorname() {
 		return vorname;
@@ -127,7 +125,7 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 			return false;
 		}
 		final AbstractPersonEntity otherPerson = (AbstractPersonEntity) other;
-		return	getGeschlecht() == otherPerson.getGeschlecht() &&
+		return getGeschlecht() == otherPerson.getGeschlecht() &&
 			Objects.equals(getVorname(), otherPerson.getVorname()) &&
 			Objects.equals(getNachname(), otherPerson.getNachname()) &&
 			Objects.equals(getGeburtsdatum(), otherPerson.getGeburtsdatum());

@@ -37,7 +37,6 @@ public class GeneratedDokumentServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
 	@Test
 	public void findGeneratedDokumentTest() {
 		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));

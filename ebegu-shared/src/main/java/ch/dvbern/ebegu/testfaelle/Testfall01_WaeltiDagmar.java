@@ -25,7 +25,7 @@ import ch.dvbern.ebegu.util.MathUtil;
 public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 
 	public Testfall01_WaeltiDagmar(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
-								   boolean betreuungenBestaetigt) {
+		boolean betreuungenBestaetigt) {
 		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
 	}
 

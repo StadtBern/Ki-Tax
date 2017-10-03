@@ -54,7 +54,7 @@ public class DokumenteUtil {
 		Set<DokumentGrund> persisted = new HashSet<>();
 		for (DokumentGrund persistedDokumentGrund : persistedDokumentGrunds) {
 			if (compareDokumentGrunds(persistedDokumentGrund, dokumentGrundNeeded, gesuch) == 0) {
-                persisted.add(persistedDokumentGrund);
+				persisted.add(persistedDokumentGrund);
 			}
 		}
 		return persisted;
@@ -81,8 +81,7 @@ public class DokumenteUtil {
 				if (persistedDok.getFullName() != null && fullNameNeededDok != null) {
 					builder.append(persistedDok.getFullName(), fullNameNeededDok);
 				}
-			}
-			else {
+			} else {
 				// in this case the persistedDok was created after the implementation of personType
 				// and can therefore be compared normally. In this case fullName doesn't matter
 				builder.append(persistedDok.getPersonType(), neededDok.getPersonType());
@@ -95,16 +94,14 @@ public class DokumenteUtil {
 	}
 
 	private static String fullNameNeededDok(Gesuch gesuch, DokumentGrundPersonType personType, Integer personNumber, String fullName) {
-		if (personType!= null) {
+		if (personType != null) {
 			if (personType.equals(DokumentGrundPersonType.GESUCHSTELLER)) {
 				if (personNumber == 1 && gesuch.getGesuchsteller1() != null) {
 					return gesuch.getGesuchsteller1().extractFullName();
-				}
-				else if (personNumber == 2 && gesuch.getGesuchsteller2() != null) {
+				} else if (personNumber == 2 && gesuch.getGesuchsteller2() != null) {
 					return gesuch.getGesuchsteller2().extractFullName();
 				}
-			}
-			else if (personType.equals(DokumentGrundPersonType.KIND)) {
+			} else if (personType.equals(DokumentGrundPersonType.KIND)) {
 				final KindContainer kindContainer = gesuch.extractKindFromKindNumber(personNumber);
 				if (kindContainer != null) {
 					return kindContainer.getKindJA().getFullName();
@@ -116,30 +113,27 @@ public class DokumenteUtil {
 
 	/**
 	 * Fuer den gegebenen GeneratedDokumentTyp gibt die Methode den entsprechenden Dateinamen zurueck.
-	 *
-	 * @param typ
-	 * @return
 	 */
 	@Nonnull
 	public static String getFileNameForGeneratedDokumentTyp(final GeneratedDokumentTyp typ, final String identificationNumber) {
 		//Liste in server-messages.properties erganzen.
 		switch (typ) {
-			case BEGLEITSCHREIBEN:
-				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.BEGLEITSCHREIBEN, identificationNumber);
-			case FINANZIELLE_SITUATION:
-				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.FINANZIELLE_SITUATION, identificationNumber);
-			case VERFUEGUNG:
-				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.VERFUEGUNG, identificationNumber);
-			case MAHNUNG:
-				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.MAHNUNG, identificationNumber);
-			case NICHTEINTRETEN:
-				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.NICHTEINTRETEN, identificationNumber);
-			case FREIGABEQUITTUNG:
-				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.FREIGABEQUITTUNG, identificationNumber);
-			case PAIN001:
-				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.PAIN001, identificationNumber);
-			default:
-				return "file.pdf";
+		case BEGLEITSCHREIBEN:
+			return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.BEGLEITSCHREIBEN, identificationNumber);
+		case FINANZIELLE_SITUATION:
+			return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.FINANZIELLE_SITUATION, identificationNumber);
+		case VERFUEGUNG:
+			return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.VERFUEGUNG, identificationNumber);
+		case MAHNUNG:
+			return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.MAHNUNG, identificationNumber);
+		case NICHTEINTRETEN:
+			return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.NICHTEINTRETEN, identificationNumber);
+		case FREIGABEQUITTUNG:
+			return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.FREIGABEQUITTUNG, identificationNumber);
+		case PAIN001:
+			return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.PAIN001, identificationNumber);
+		default:
+			return "file.pdf";
 		}
 	}
 }

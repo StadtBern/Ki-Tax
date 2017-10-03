@@ -28,7 +28,6 @@ public class GesuchCopyForMutationTest {
 		Testfall01_WaeltiDagmar testfall01_waeltiDagmar =
 			new Testfall01_WaeltiDagmar(gesuchsperiode, instStammdaten);
 
-
 		testfall01_waeltiDagmar.createGesuch(LocalDate.now());
 		Gesuch gesuch = testfall01_waeltiDagmar.getGesuch();
 		Gesuch mutation = gesuch.copyForMutation(new Gesuch(), Eingangsart.PAPIER);

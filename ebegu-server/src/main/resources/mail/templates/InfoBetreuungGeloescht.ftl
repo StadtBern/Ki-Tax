@@ -16,60 +16,60 @@ Content-Type: text/html;charset=utf-8
 <html>
 <head>
 ${templateConfiguration.mailCss}
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Ki-Tax - Betreuung gelöscht</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Ki-Tax - Betreuung gelöscht</title>
 
 </head>
 
 <body>
 
 <div>
-    <p>
-        Guten Tag
-    </p>
-    <p>
+	<p>
+		Guten Tag
+	</p>
+	<p>
 		Der folgende Betreuungseintrag wurde entfernt:
-    </p>
-    <table>
-        <tbody>
-        <tr>
-            <td width="300">Fall:</td>
-            <td width="300">${fall.getPaddedFallnummer()} ${gesuchsteller.nachname}</td>
-        </tr>
-        <tr>
-            <td>Kind:</td>
-            <td>${kind.fullName}, ${birthday}</td>
-        </tr>
-        <tr>
-            <td>Betreuungsangebot:</td>
-            <td>${betreuung.betreuungsangebotTypTranslated}</td>
-        </tr>
-        <tr>
-            <td>Institution:</td>
-            <td>${institution.name}</td>
-        </tr>
-        <tr>
-            <td>Periode:</td>
-            <td>${betreuung.extractGesuchsperiode().getGesuchsperiodeString()}</td>
-        </tr>
-        <tr>
-            <td>Status der entfernten Betreuung:</td>
-            <td>${betreuung.getBetreuungsstatus().toString()}</td>
-        </tr>
-        </tbody>
-    </table>
-    <br/>
-    <p>
+	</p>
+	<table>
+		<tbody>
+		<tr>
+			<td width="300">Fall:</td>
+			<td width="300">${fall.getPaddedFallnummer()} ${gesuchsteller.nachname}</td>
+		</tr>
+		<tr>
+			<td>Kind:</td>
+			<td>${kind.fullName}, ${birthday}</td>
+		</tr>
+		<tr>
+			<td>Betreuungsangebot:</td>
+			<td>${betreuung.betreuungsangebotTypTranslated}</td>
+		</tr>
+		<tr>
+			<td>Institution:</td>
+			<td>${institution.name}</td>
+		</tr>
+		<tr>
+			<td>Periode:</td>
+			<td>${betreuung.extractGesuchsperiode().getGesuchsperiodeString()}</td>
+		</tr>
+		<tr>
+			<td>Status der entfernten Betreuung:</td>
+			<td>${betreuung.getBetreuungsstatus().toString()}</td>
+		</tr>
+		</tbody>
+	</table>
+	<br/>
+	<p>
 		Der Betreuungseintrag war am ${datumErstellung} erstellt worden.
-    </p>
-    <p>
-        Freundliche Grüsse <br/>
-        Jugendamt der Stadt Bern
-    </p>
-    <p>
-        Dies ist eine automatisch versendete E-Mail. Bitte antworten Sie nicht auf diese Nachricht.
-    </p>
+	</p>
+	<p>
+		Freundliche Grüsse <br/>
+		Jugendamt der Stadt Bern
+	</p>
+	<p>
+		Dies ist eine automatisch versendete E-Mail. Bitte antworten Sie nicht auf diese Nachricht.
+	</p>
 </div>
 
 </body>

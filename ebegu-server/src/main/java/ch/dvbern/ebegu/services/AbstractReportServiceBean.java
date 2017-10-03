@@ -29,10 +29,9 @@ import static ch.dvbern.ebegu.util.MonitoringUtil.monitor;
  */
 public abstract class AbstractReportServiceBean extends AbstractBaseService {
 
-
-	protected byte[] createWorkbook(@Nonnull Workbook workbook){
+	protected byte[] createWorkbook(@Nonnull Workbook workbook) {
 		byte[] bytes;
-		try{
+		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			workbook.write(baos);
 			baos.flush();
@@ -44,7 +43,7 @@ public abstract class AbstractReportServiceBean extends AbstractBaseService {
 		return bytes;
 	}
 
-	protected void mergeData(@Nonnull Sheet sheet, @Nonnull ExcelMergerDTO excelMergerDTO, @Nonnull  MergeFieldProvider[] mergeFieldProviders) throws ExcelMergeException {
+	protected void mergeData(@Nonnull Sheet sheet, @Nonnull ExcelMergerDTO excelMergerDTO, @Nonnull MergeFieldProvider[] mergeFieldProviders) throws ExcelMergeException {
 		List<MergeField<?>> mergeFields = MergeFieldProvider.toMergeFields(mergeFieldProviders);
 		monitor(AbstractReportServiceBean.class, String.format("mergeData (sheet=%s)", sheet.getSheetName()),
 			() -> ExcelMerger.mergeData(sheet, mergeFields, excelMergerDTO));

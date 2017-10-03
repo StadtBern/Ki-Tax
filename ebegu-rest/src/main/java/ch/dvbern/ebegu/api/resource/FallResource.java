@@ -42,7 +42,6 @@ public class FallResource {
 	@Inject
 	private JaxBConverter converter;
 
-
 	@ApiOperation(value = "Creates a new Fall in the database. The transfer object also has a relation to Gesuch " +
 		"which is stored in the database as well.", response = JaxFall.class)
 	@Nullable
@@ -54,7 +53,7 @@ public class FallResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Fall  fall = new Fall();
+		Fall fall = new Fall();
 		if (fallJAXP.getId() != null) {
 			Optional<Fall> optional = fallService.findFall(fallJAXP.getId());
 			fall = optional.orElse(new Fall());

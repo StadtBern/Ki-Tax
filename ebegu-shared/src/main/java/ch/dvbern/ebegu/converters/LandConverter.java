@@ -21,15 +21,13 @@ import org.apache.commons.lang3.StringUtils;
 
 @Converter(autoApply = true)
 @XmlJavaTypeAdapter(value = LandConverter.class, type = Land.class)
-public class LandConverter extends XmlAdapter<String, Land>{
+public class LandConverter extends XmlAdapter<String, Land> {
 
 	@Nullable
 	@Override
 	public Land unmarshal(String v) {
 		return StringUtils.isEmpty(v) ? null : Land.fromString(v);
 	}
-
-
 
 	@Nullable
 	@Override

@@ -28,19 +28,17 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class BetreuungConverterTest extends AbstractEbeguRestLoginTest {
 
-
 	@Inject
 	private Persistence persistence;
 
 	@Inject
 	private JaxBConverter converter;
 
-
 	/**
 	 * transformiert einen gespeichertes Betreuungen nach jax und wieder zurueck. wir erwarten das Daten gleich bleiben
 	 */
 	@Test
-	public void convertPersistedTestEntityToJax(){
+	public void convertPersistedTestEntityToJax() {
 		Betreuung betreuung = insertNewEntity();
 		JaxBetreuung jaxBetr = this.converter.betreuungToJAX(betreuung);
 		Betreuung betrToEntity = this.converter.betreuungToEntity(jaxBetr, new Betreuung());
@@ -49,21 +47,17 @@ public class BetreuungConverterTest extends AbstractEbeguRestLoginTest {
 	}
 
 	@Test
-	public void convertFachstelleTest(){
+	public void convertFachstelleTest() {
 		Betreuung betreuung = insertNewEntity();
 		KindContainer kind = betreuung.getKind();
 		Assert.assertEquals(Constants.END_OF_TIME, kind.getKindJA().getPensumFachstelle().getGueltigkeit().getGueltigBis());
 
 		JaxPensumFachstelle jaxPenFachstelle = converter.pensumFachstelleToJax(kind.getKindJA().getPensumFachstelle());
-		Assert.assertNull("Gueltig bis wird nicht transformiert",jaxPenFachstelle.getGueltigBis());
+		Assert.assertNull("Gueltig bis wird nicht transformiert", jaxPenFachstelle.getGueltigBis());
 
 		PensumFachstelle reconvertedPensum = converter.pensumFachstelleToEntity(jaxPenFachstelle, new PensumFachstelle());
 		Assert.assertEquals(Constants.END_OF_TIME, reconvertedPensum.getGueltigkeit().getGueltigBis());
 	}
-
-
-
-
 
 	private Betreuung insertNewEntity() {
 		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
@@ -72,7 +66,6 @@ public class BetreuungConverterTest extends AbstractEbeguRestLoginTest {
 
 		PensumFachstelle pensumFachstelle = TestDataUtil.createDefaultPensumFachstelle();
 		pensumFachstelle.setFachstelle(fachstelle);
-
 
 		PensumFachstelle pensumFachstelle2 = TestDataUtil.createDefaultPensumFachstelle();
 		pensumFachstelle2.setPensum(5);
@@ -83,7 +76,6 @@ public class BetreuungConverterTest extends AbstractEbeguRestLoginTest {
 		persistence.persist(instStammdaten.getInstitution().getTraegerschaft());
 		persistence.persist(instStammdaten.getInstitution());
 		persistence.persist(instStammdaten);
-
 
 		kind.getKindGS().setPensumFachstelle(pensumFachstelle);
 		kind.getKindJA().setPensumFachstelle(pensumFachstelle2);

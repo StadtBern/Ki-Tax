@@ -31,7 +31,7 @@ public class KantonExcelConverter implements ExcelConverter {
 	}
 
 	@Nonnull
-	public ExcelMergerDTO toExcelMergerDTO(@Nonnull List<KantonDataRow> data, @Nonnull Locale lang,  @Nonnull LocalDate datumVon,  @Nonnull LocalDate datumBis) {
+	public ExcelMergerDTO toExcelMergerDTO(@Nonnull List<KantonDataRow> data, @Nonnull Locale lang, @Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis) {
 		checkNotNull(data);
 
 		ExcelMergerDTO sheet = new ExcelMergerDTO();

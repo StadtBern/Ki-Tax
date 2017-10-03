@@ -68,7 +68,7 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 	}
 
 	private void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, GesuchstellerContainer gesuchsteller,
-											  boolean gemeinsam, int gesuchstellerNumber, int basisJahr) {
+		boolean gemeinsam, int gesuchstellerNumber, int basisJahr) {
 
 		if (gesuchsteller == null || gesuchsteller.getFinanzielleSituationContainer() == null) {
 			return;
@@ -102,12 +102,12 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 		if (abstractFinanzielleSituation instanceof FinanzielleSituation) {
 			FinanzielleSituation finanzielleSituation = (FinanzielleSituation) abstractFinanzielleSituation;
 			switch (minus) {
-				case 0:
-					return !finanzielleSituation.getSteuerveranlagungErhalten() && (finanzielleSituation.getGeschaeftsgewinnBasisjahr() != null);
-				case 1:
-					return !finanzielleSituation.getSteuerveranlagungErhalten() && (finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1() != null);
-				case 2:
-					return !finanzielleSituation.getSteuerveranlagungErhalten() && (finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2() != null);
+			case 0:
+				return !finanzielleSituation.getSteuerveranlagungErhalten() && (finanzielleSituation.getGeschaeftsgewinnBasisjahr() != null);
+			case 1:
+				return !finanzielleSituation.getSteuerveranlagungErhalten() && (finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1() != null);
+			case 2:
+				return !finanzielleSituation.getSteuerveranlagungErhalten() && (finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2() != null);
 			}
 		}
 		return false;

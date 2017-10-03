@@ -15,8 +15,7 @@ import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
  */
 @XmlRootElement(name = "pendenz")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxAntragSearchresultDTO implements Serializable{
-
+public class JaxAntragSearchresultDTO implements Serializable {
 
 	private static final long serialVersionUID = 3939072050781289382L;
 	private List<JaxAntragDTO> antragDTOs;

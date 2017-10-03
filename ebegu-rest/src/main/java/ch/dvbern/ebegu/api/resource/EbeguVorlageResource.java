@@ -71,7 +71,6 @@ public class EbeguVorlageResource {
 	private static final String GESUCHSPERIODE_HEADER = "x-gesuchsperiode";
 	private static final String PROGESUCHSPERIODE_HEADER = "x-progesuchsperiode";
 
-
 	private static final Logger LOG = LoggerFactory.getLogger(EbeguVorlageResource.class);
 
 	@SuppressWarnings("CdiInjectionPointsInspection")
@@ -86,7 +85,6 @@ public class EbeguVorlageResource {
 
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
-
 
 	@ApiOperation(value = "Gibt alle Vorlagen fuer die Gesuchsperiode mit der uebergebenen Id zurueck",
 		responseContainer = "List", response = JaxEbeguVorlage.class)
@@ -215,7 +213,6 @@ public class EbeguVorlageResource {
 		jaxEbeguVorlage.getVorlage().setFilename(fileInfo.getFilename());
 		jaxEbeguVorlage.getVorlage().setFilepfad(fileInfo.getPath());
 		jaxEbeguVorlage.getVorlage().setFilesize(fileInfo.getSizeString());
-
 
 		final Optional<EbeguVorlage> ebeguVorlageOptional = ebeguVorlageService.getEbeguVorlageByDatesAndKey(jaxEbeguVorlage.getGueltigAb(),
 			jaxEbeguVorlage.getGueltigBis(), jaxEbeguVorlage.getName());

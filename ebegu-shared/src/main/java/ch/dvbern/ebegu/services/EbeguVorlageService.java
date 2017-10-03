@@ -21,6 +21,7 @@ public interface EbeguVorlageService {
 
 	/**
 	 * Speichert den EbeguVorlage neu in der DB falls der Key noch nicht existiert. Sonst wird das existierende EbeguVorlage aktualisiert
+	 *
 	 * @param ebeguVorlage Das EbeguVorlage als DTO
 	 */
 	@Nonnull
@@ -46,6 +47,7 @@ public interface EbeguVorlageService {
 
 	/**
 	 * Aktualisiert die EbeguVorlage in der DB
+	 *
 	 * @param ebeguVorlage Die EbeguVorlage als DTO
 	 */
 	@Nullable
@@ -64,6 +66,7 @@ public interface EbeguVorlageService {
 
 	/**
 	 * Gibt alle Vorlagen zurueck, welche am Stichtag gueltig sind.
+	 *
 	 * @param proGesuchsperiode true, wenn nur Gesuchsperioden-abhaengige Vorlagen gesucht werden sollen
 	 */
 	@Nonnull
@@ -71,6 +74,7 @@ public interface EbeguVorlageService {
 
 	/**
 	 * Kopiert alle Vorlagen einer Gesuchsperiode zur naechsten (uebergebenen) Gesuchsperiode
+	 *
 	 * @param gesuchsperiodeToCopyTo Die neue Gesuchsperiode
 	 */
 	void copyEbeguVorlageListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiodeToCopyTo);

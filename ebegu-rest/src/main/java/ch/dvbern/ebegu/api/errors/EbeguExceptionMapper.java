@@ -14,13 +14,11 @@ import ch.dvbern.ebegu.errors.EbeguException;
 @Provider
 public class EbeguExceptionMapper extends AbstractEbeguExceptionMapper<EbeguException> {
 
-
 	@Override
 	public Response toResponse(EbeguException exception) {
 		// wollen wir das hier so handhaben?
 		return buildViolationReportResponse(exception, Status.BAD_REQUEST);
 	}
-
 
 	@Override
 	protected Response buildViolationReportResponse(EbeguException exception, Response.Status status) {

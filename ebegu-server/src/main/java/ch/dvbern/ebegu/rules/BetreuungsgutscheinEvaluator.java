@@ -26,7 +26,6 @@ import ch.dvbern.ebegu.util.VerfuegungUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * This is the Evaluator that runs all the rules and calculations for a given Antrag to determine the Betreuungsgutschein
  */
@@ -50,7 +49,6 @@ public class BetreuungsgutscheinEvaluator {
 		this.isDebug = enableDebugOutput;
 	}
 
-
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
 
 	/**
@@ -67,7 +65,6 @@ public class BetreuungsgutscheinEvaluator {
 		// Fuer die Familiensituation ist die Betreuung nicht relevant. Wir brauchen aber eine, da die Signatur der Rules
 		// mit Betreuungen funktioniert. Wir nehmen einfach die erste von irgendeinem Kind, das heisst ohne betreuung koennen wir nicht berechnen
 		Betreuung firstBetreuungOfGesuch = getFirstBetreuungOfGesuch(gesuch);
-
 
 		// Die Initialen Zeitabschnitte erstellen (1 pro Gesuchsperiode)
 		List<VerfuegungZeitabschnitt> zeitabschnitte = createInitialenRestanspruch(gesuch.getGesuchsperiode());
@@ -91,7 +88,7 @@ public class BetreuungsgutscheinEvaluator {
 		return verfuegung;
 	}
 
-	@SuppressWarnings({"OverlyComplexMethod", "OverlyNestedMethod", "PMD.NcssMethodCount"})
+	@SuppressWarnings({ "OverlyComplexMethod", "OverlyNestedMethod", "PMD.NcssMethodCount" })
 	public void evaluate(Gesuch gesuch, BGRechnerParameterDTO bgRechnerParameterDTO) {
 
 		// Wenn diese Methode aufgerufen wird, muss die Berechnung der Finanzdaten bereits erfolgt sein:
@@ -199,7 +196,7 @@ public class BetreuungsgutscheinEvaluator {
 		List<VerfuegungZeitabschnitt> restanspruchZeitabschnitte;
 		Verfuegung verfuegungForRestanspruch = betreuung.getVerfuegungOrVorgaengerVerfuegung();
 		if (verfuegungForRestanspruch == null) {
-			String message = "Ungueltiger Zustand, geschlossene  Betreuung ohne Verfuegung oder Vorgaengerverfuegung (" + betreuung.getId()+")";
+			String message = "Ungueltiger Zustand, geschlossene  Betreuung ohne Verfuegung oder Vorgaengerverfuegung (" + betreuung.getId() + ")";
 			throw new EbeguRuntimeException("getRestanspruchForVerfuegteBetreung", message, message);
 		}
 		restanspruchZeitabschnitte = restanspruchInitializer.createVerfuegungsZeitabschnitte(

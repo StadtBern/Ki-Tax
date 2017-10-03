@@ -31,8 +31,6 @@ public class DokumentGrundServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
-
 	@Test
 	public void createDokumentGrund() {
 		Assert.assertNotNull(dokumentGrundService);

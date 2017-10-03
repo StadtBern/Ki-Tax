@@ -16,8 +16,6 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 @Provider
 public class EbeguRuntimeExceptionMapper extends AbstractEbeguExceptionMapper<EbeguRuntimeException> {
 
-
-
 	@Override
 	public Response toResponse(EbeguRuntimeException exception) {
 		logException(exception);
@@ -37,14 +35,11 @@ public class EbeguRuntimeExceptionMapper extends AbstractEbeguExceptionMapper<Eb
 
 	}
 
-
 	@Override
 	protected Response buildViolationReportResponse(EbeguRuntimeException exception, Response.Status status) {
 
 		return EbeguExceptionReport.buildResponse(status, exception, getLocaleFromHeader(), configuration.getIsDevmode());
 
 	}
-
-
 
 }

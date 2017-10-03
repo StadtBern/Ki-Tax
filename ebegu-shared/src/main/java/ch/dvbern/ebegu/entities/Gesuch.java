@@ -56,8 +56,8 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 @Entity
 @Indexed
 @Analyzer(impl = EBEGUGermanAnalyzer.class)
-@EntityListeners({GesuchStatusListener.class})
-public class Gesuch extends AbstractEntity implements Searchable{
+@EntityListeners({ GesuchStatusListener.class })
+public class Gesuch extends AbstractEntity implements Searchable {
 
 	private static final long serialVersionUID = -8403487439884700618L;
 
@@ -195,10 +195,8 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	@Column(nullable = false)
 	private boolean gueltig = false;
 
-
 	public Gesuch() {
 	}
-
 
 	@Nullable
 	public GesuchstellerContainer getGesuchsteller1() {
@@ -575,7 +573,6 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	}
 
 	/**
-	 *
 	 * @return false wenn es ein kind gibt dass eine nicht schulamt betreuung hat, wenn es kein kind oder betr gibt wird false zurueckgegeben
 	 */
 	@Transient
@@ -634,7 +631,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		mutation.setFall(this.getFall());
 		mutation.setGesuchsperiode(this.getGesuchsperiode());
 		mutation.setEingangsdatum(null);
-		mutation.setStatus(eingangsart == Eingangsart.PAPIER ?  AntragStatus.IN_BEARBEITUNG_JA : AntragStatus.IN_BEARBEITUNG_GS);
+		mutation.setStatus(eingangsart == Eingangsart.PAPIER ? AntragStatus.IN_BEARBEITUNG_JA : AntragStatus.IN_BEARBEITUNG_GS);
 		mutation.setTyp(AntragTyp.MUTATION);
 		mutation.setLaufnummer(this.getLaufnummer() + 1);
 
@@ -680,7 +677,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		folgegesuch.setFall(this.getFall());
 		folgegesuch.setGesuchsperiode(gesuchsperiode);
 		folgegesuch.setEingangsdatum(null);
-		folgegesuch.setStatus(eingangsart == Eingangsart.PAPIER ?  AntragStatus.IN_BEARBEITUNG_JA : AntragStatus.IN_BEARBEITUNG_GS);
+		folgegesuch.setStatus(eingangsart == Eingangsart.PAPIER ? AntragStatus.IN_BEARBEITUNG_JA : AntragStatus.IN_BEARBEITUNG_GS);
 		folgegesuch.setTyp(AntragTyp.ERNEUERUNGSGESUCH);
 		folgegesuch.setLaufnummer(0); // Wir fangen für die neue Periode wieder mit 0 an
 
@@ -741,21 +738,21 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	@Nonnull
 	public Optional<Betreuung> extractBetreuungsFromBetreuungNummer(@NotNull Integer kindNummer, @NotNull Integer betreuungNummer) {
 		final List<Betreuung> allBetreuungen = extractAllBetreuungen();
-		for (final Betreuung betreuung: allBetreuungen) {
+		for (final Betreuung betreuung : allBetreuungen) {
 			if (betreuung.getId() != null
-					&& betreuung.getBetreuungNummer().equals(betreuungNummer)
-					&& betreuung.getKind().getKindNummer().equals(kindNummer)) {
+				&& betreuung.getBetreuungNummer().equals(betreuungNummer)
+				&& betreuung.getKind().getKindNummer().equals(kindNummer)) {
 				return Optional.of(betreuung);
 			}
 		}
 		return Optional.empty();
 	}
 
-	public String getEingangsdatumFormated(){
+	public String getEingangsdatumFormated() {
 		return Constants.DATE_FORMATTER.format(eingangsdatum);
 	}
 
-	public String getFreigabedatumFormated(){
+	public String getFreigabedatumFormated() {
 		if (freigabeDatum != null) {
 			return Constants.DATE_FORMATTER.format(freigabeDatum);
 		}

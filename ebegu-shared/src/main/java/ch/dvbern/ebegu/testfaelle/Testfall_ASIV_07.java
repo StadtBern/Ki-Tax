@@ -25,7 +25,7 @@ import ch.dvbern.ebegu.util.MathUtil;
 public class Testfall_ASIV_07 extends AbstractASIVTestfall {
 
 	public Testfall_ASIV_07(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
-							boolean betreuungenBestaetigt) {
+		boolean betreuungenBestaetigt) {
 		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
 	}
 

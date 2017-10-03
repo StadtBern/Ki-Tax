@@ -10,7 +10,6 @@ public interface HasMandant {
 
 	/**
 	 * gibt den zugeordneten Mandant zurueck
-	 * @return
 	 */
 	@Nullable
 	Mandant getMandant();

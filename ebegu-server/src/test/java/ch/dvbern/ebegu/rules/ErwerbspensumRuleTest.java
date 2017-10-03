@@ -217,13 +217,11 @@ public class ErwerbspensumRuleTest {
 		Assert.assertEquals(TestDataUtil.ENDE_PERIODE, result.get(2).getGueltigkeit().getGueltigBis());
 	}
 
-
 	/**
 	 * das Pensum muss wie folgt abgerundet werden:
 	 * X0 - X4 = X0
 	 * X5 - X9 = Y0, wo Y=X+1
-	 * @throws Exception
-     */
+	 */
 	@Test
 	public void testRoundToTens() throws Exception {
 		Betreuung betreuung = createGesuch(false);

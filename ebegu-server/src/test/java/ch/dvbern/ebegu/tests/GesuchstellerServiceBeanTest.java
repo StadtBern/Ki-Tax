@@ -36,7 +36,6 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
 	@Test
 	public void createGesuchsteller() {
 		Assert.assertNotNull(gesuchstellerService);
@@ -131,7 +130,6 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertFalse(savedGesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().getSteuerveranlagungErhalten());
 	}
 
-
 	// Helper Methods
 
 	private GesuchstellerContainer insertNewEntity() {
@@ -140,6 +138,5 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguLoginTest {
 		persistence.persist(gesuchsteller);
 		return gesuchsteller;
 	}
-
 
 }

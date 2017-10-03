@@ -18,7 +18,6 @@ import javax.ws.rs.core.Response;
  */
 public interface IOpenIdmRESTProxClient {
 
-
 	@GET
 	@Path("/openidm/managed/institution")
 	@Consumes(MediaType.APPLICATION_JSON)

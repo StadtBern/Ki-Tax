@@ -38,8 +38,6 @@ public class KindServiceBeanTest extends AbstractEbeguLoginTest {
 	@Inject
 	private FallService fallService;
 
-
-
 	@Test
 	public void createAndUpdatekindTest() {
 		Assert.assertNotNull(kindService);
@@ -54,7 +52,7 @@ public class KindServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertNotEquals("Neuer Name", savedKind.getKindGS().getNachname());
 		savedKind.getKindGS().setNachname("Neuer Name");
 		kindService.saveKind(savedKind);
-		Optional<KindContainer> updatedKind= kindService.findKind(persitedKind.getId());
+		Optional<KindContainer> updatedKind = kindService.findKind(persitedKind.getId());
 		Assert.assertTrue(updatedKind.isPresent());
 		Assert.assertEquals("Neuer Name", updatedKind.get().getKindGS().getNachname());
 		Assert.assertEquals(new Integer(1), updatedKind.get().getNextNumberBetreuung());
@@ -94,7 +92,6 @@ public class KindServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertTrue(allKinderFromGesuch.contains(persitedKind2));
 
 	}
-
 
 	// HELP METHODS
 

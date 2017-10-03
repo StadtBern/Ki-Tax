@@ -24,10 +24,9 @@ import org.hibernate.envers.Audited;
  */
 @Entity
 @Audited
-public class Verfuegung extends AbstractEntity{
+public class Verfuegung extends AbstractEntity {
 
 	private static final long serialVersionUID = -6682874795746487562L;
-
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -40,7 +39,7 @@ public class Verfuegung extends AbstractEntity{
 	private String manuelleBemerkungen;
 
 	@NotNull
-	@OneToOne (optional = false, mappedBy = "verfuegung")
+	@OneToOne(optional = false, mappedBy = "verfuegung")
 	private Betreuung betreuung;
 
 	@Nonnull
@@ -68,7 +67,6 @@ public class Verfuegung extends AbstractEntity{
 	@NotNull
 	@Column(nullable = false)
 	private boolean kategorieNichtEintreten = false;
-
 
 	@Nullable
 	public String getGeneratedBemerkungen() {

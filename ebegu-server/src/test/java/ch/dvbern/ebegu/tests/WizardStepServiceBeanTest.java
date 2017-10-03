@@ -52,7 +52,6 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 
-
 	@Inject
 	private WizardStepService wizardStepService;
 	@Inject
@@ -71,7 +70,6 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	private WizardStep dokStep;
 	private WizardStep freigabeStep;
 	private WizardStep verfStep;
-
 
 	@Before
 	public void setUp() {
@@ -583,7 +581,6 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
 		Assert.assertNull(wizardStepFromGesuch);
 	}
-
 
 	// HELP METHODS
 

@@ -52,7 +52,6 @@ public class AntragStatusHistoryResource {
 	@Inject
 	private AntragStatusHistoryService antragStatusHistoryService;
 
-
 	@ApiOperation(value = "Ermittelt den letzten Statusübergang des Antrags mit der übergebenen Id.", response = JaxAntragStatusHistory.class)
 	@Nullable
 	@GET
@@ -99,7 +98,7 @@ public class AntragStatusHistoryResource {
 			throw new EbeguEntityNotFoundException("findAllAntragStatusHistoryByGesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxFallId.getId());
 		}
 
-        final Collection<AntragStatusHistory> statusHistory = antragStatusHistoryService.findAllAntragStatusHistoryByGPFall(gesuchsperiode.get(), fall.get());
+		final Collection<AntragStatusHistory> statusHistory = antragStatusHistoryService.findAllAntragStatusHistoryByGPFall(gesuchsperiode.get(), fall.get());
 		return converter.antragStatusHistoryCollectionToJAX(statusHistory);
 	}
 }

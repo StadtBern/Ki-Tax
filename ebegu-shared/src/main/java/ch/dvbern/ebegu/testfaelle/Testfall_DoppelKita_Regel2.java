@@ -29,7 +29,7 @@ import ch.dvbern.ebegu.util.MathUtil;
 public class Testfall_DoppelKita_Regel2 extends AbstractTestfall {
 
 	public Testfall_DoppelKita_Regel2(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
-									  boolean betreuungenBestaetigt) {
+		boolean betreuungenBestaetigt) {
 		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
 	}
 

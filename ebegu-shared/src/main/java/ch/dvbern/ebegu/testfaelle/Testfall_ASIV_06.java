@@ -25,7 +25,7 @@ import ch.dvbern.ebegu.util.MathUtil;
 public class Testfall_ASIV_06 extends AbstractASIVTestfall {
 
 	public Testfall_ASIV_06(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
-							boolean betreuungenBestaetigt) {
+		boolean betreuungenBestaetigt) {
 		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
 	}
 
@@ -82,7 +82,7 @@ public class Testfall_ASIV_06 extends AbstractASIVTestfall {
 		finanzielleSituationContainerGS2.getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(50000));
 		finanzielleSituationContainerGS2.setGesuchsteller(gesuchsteller2);
 		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationContainerGS2);
-        // Einkommensverschlechterug
+		// Einkommensverschlechterug
 		EinkommensverschlechterungContainer ekvContainerGS2 = createEinkommensverschlechterungContainer(true, false);
 		ekvContainerGS2.getEkvJABasisJahrPlus1().setNettolohnJan(MathUtil.DEFAULT.from(50000));
 		gesuchsteller2.setEinkommensverschlechterungContainer(ekvContainerGS2);

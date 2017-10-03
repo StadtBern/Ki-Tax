@@ -5,9 +5,8 @@
                            http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
 	   version="1.1" bean-discovery-mode="annotated">
 
-
 	<alternatives>
-		 <!--Fuer Tests koennten wir wenn gewuenscht die alternativen services benutzten, aktuell nicht der Fall-->
-		 <class>ch.dvbern.ebegu.config.EbeguConfigurationDummyImpl</class>
+		<!--Fuer Tests koennten wir wenn gewuenscht die alternativen services benutzten, aktuell nicht der Fall-->
+		<class>ch.dvbern.ebegu.config.EbeguConfigurationDummyImpl</class>
 	</alternatives>
 </beans>

@@ -67,19 +67,17 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
-
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN })
 	public Gesuchsperiode saveGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
 		Objects.requireNonNull(gesuchsperiode);
 		return persistence.merge(gesuchsperiode);
 	}
 
-
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN })
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	public Gesuchsperiode saveGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull GesuchsperiodeStatus statusBisher) {
 		if (gesuchsperiode.isNew() && !GesuchsperiodeStatus.ENTWURF.equals(gesuchsperiode.getStatus())) {
@@ -140,31 +138,31 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	@RolesAllowed({SUPER_ADMIN})
+	@RolesAllowed({ SUPER_ADMIN })
 	public void removeGesuchsperiode(@Nonnull String gesuchsPeriodeId) {
 		Optional<Gesuchsperiode> gesuchsperiodeOptional = findGesuchsperiode(gesuchsPeriodeId);
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeOptional.orElseThrow(() -> new EbeguEntityNotFoundException("deleteGesuchsperiodeAndGesuche", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsPeriodeId));
-        LOGGER.info("Handling Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString());
-        if (gesuchsperiode.getStatus().equals(GesuchsperiodeStatus.GESCHLOSSEN)) {
-            Collection<Gesuch> gesucheOfPeriode = criteriaQueryHelper.getEntitiesByAttribute(Gesuch.class, gesuchsperiode, Gesuch_.gesuchsperiode);
-            for (Gesuch gesuch : gesucheOfPeriode) {
-                Fall fall = gesuch.getFall();
-                // Gesuch, WizardSteps, Mahnungen, Dokumente, AntragstatusHistory, Zahlungspositionen
-                LOGGER.info("Deleting Gesuch of Fall " + gesuch.getFall().getFallNummer());
-                gesuchService.removeGesuch(gesuch.getId());
-                // Feststellen, ob es das letzte Gesuch dieses Falles war
-                List<String> allGesuchIDsForFall = gesuchService.getAllGesuchIDsForFall(fall.getId());
-                if (allGesuchIDsForFall.isEmpty()) {
-                    LOGGER.info("This was the last Gesuch of Fall, deleting Fall " + fall.getFallNummer());
-                    fallService.removeFall(fall);
-                }
-            }
-            // Gesuchsperiode
-            LOGGER.info("Deleting Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString());
-            persistence.remove(gesuchsperiode);
-        } else {
+		LOGGER.info("Handling Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString());
+		if (gesuchsperiode.getStatus().equals(GesuchsperiodeStatus.GESCHLOSSEN)) {
+			Collection<Gesuch> gesucheOfPeriode = criteriaQueryHelper.getEntitiesByAttribute(Gesuch.class, gesuchsperiode, Gesuch_.gesuchsperiode);
+			for (Gesuch gesuch : gesucheOfPeriode) {
+				Fall fall = gesuch.getFall();
+				// Gesuch, WizardSteps, Mahnungen, Dokumente, AntragstatusHistory, Zahlungspositionen
+				LOGGER.info("Deleting Gesuch of Fall " + gesuch.getFall().getFallNummer());
+				gesuchService.removeGesuch(gesuch.getId());
+				// Feststellen, ob es das letzte Gesuch dieses Falles war
+				List<String> allGesuchIDsForFall = gesuchService.getAllGesuchIDsForFall(fall.getId());
+				if (allGesuchIDsForFall.isEmpty()) {
+					LOGGER.info("This was the last Gesuch of Fall, deleting Fall " + fall.getFallNummer());
+					fallService.removeFall(fall);
+				}
+			}
+			// Gesuchsperiode
+			LOGGER.info("Deleting Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString());
+			persistence.remove(gesuchsperiode);
+		} else {
 			throw new EbeguRuntimeException("removeGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_CANNOT_BE_REMOVED);
-        }
+		}
 	}
 
 	@Override

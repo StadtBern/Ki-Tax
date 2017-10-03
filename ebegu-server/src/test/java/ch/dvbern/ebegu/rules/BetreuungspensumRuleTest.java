@@ -18,12 +18,11 @@ import static ch.dvbern.ebegu.rules.EbeguRuleTestsHelper.calculateWithRemainingR
  */
 public class BetreuungspensumRuleTest {
 
-
 	private final RestanspruchInitializer restanspruchInitializer = new RestanspruchInitializer();
 
 	@Test
 	public void testKitaNormalfall() {
-		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE,  BetreuungsangebotTyp.KITA, 60);
+		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, BetreuungsangebotTyp.KITA, 60);
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 60, 0));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
 
@@ -94,7 +93,6 @@ public class BetreuungspensumRuleTest {
 		betreuung2.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 80, 0));
 		List<VerfuegungZeitabschnitt> resultBetr2 = calculateWithRemainingRestanspruch(betreuung2, 20);
 
-
 		Assert.assertNotNull(resultBetr2);
 		Assert.assertEquals(1, resultBetr2.size());
 		Assert.assertEquals(Integer.valueOf(80), resultBetr2.get(0).getErwerbspensumGS1());
@@ -153,7 +151,6 @@ public class BetreuungspensumRuleTest {
 		result = restanspruchInitializer.createVerfuegungsZeitabschnitte(betreuung3, result);
 		Assert.assertEquals(0, result.get(0).getAnspruchspensumRest()); // Nach dem initialisieren fuer das nachste Betreuungspensum ist der noch verbleibende restanspruch 0
 	}
-
 
 	@Test
 	public void testTageselternKleinkinderOhneErwerbspensum() {

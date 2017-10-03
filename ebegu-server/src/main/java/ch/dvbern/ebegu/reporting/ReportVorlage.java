@@ -48,7 +48,7 @@ public enum ReportVorlage {
 	private final String dataSheetName;
 
 	ReportVorlage(@Nonnull String templatePath, @Nonnull String defaultExportFilename,
-				   @Nonnull String dataSheetName, @Nonnull Class<? extends MergeFieldProvider> mergeFields) {
+		@Nonnull String dataSheetName, @Nonnull Class<? extends MergeFieldProvider> mergeFields) {
 		this.templatePath = templatePath;
 		this.defaultExportFilename = defaultExportFilename;
 		this.mergeFields = mergeFields;
@@ -72,6 +72,6 @@ public enum ReportVorlage {
 
 	@Nonnull
 	public String getDataSheetName() {
-			return dataSheetName;
-		}
+		return dataSheetName;
+	}
 }

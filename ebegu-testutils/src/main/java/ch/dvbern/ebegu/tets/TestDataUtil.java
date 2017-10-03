@@ -133,7 +133,7 @@ public final class TestDataUtil {
 	public static final LocalDate STICHTAG_EKV_1 = LocalDate.of(PERIODE_JAHR_1, Month.SEPTEMBER, 1);
 	public static final LocalDate STICHTAG_EKV_1_GUELTIG = STICHTAG_EKV_1.plusMonths(1);
 	public static final LocalDate STICHTAG_EKV_2 = LocalDate.of(PERIODE_JAHR_2, Month.APRIL, 1);
-	public static final LocalDate STICHTAG_EKV_2_GUELTIG =STICHTAG_EKV_2.plusMonths(1);
+	public static final LocalDate STICHTAG_EKV_2_GUELTIG = STICHTAG_EKV_2.plusMonths(1);
 
 	private TestDataUtil() {
 	}
@@ -203,7 +203,6 @@ public final class TestDataUtil {
 		final Einkommensverschlechterung ekvJABasisJahrPlus2 = createDefaultEinkommensverschlechterung();
 		ekvJABasisJahrPlus2.setNettolohnJan(BigDecimal.valueOf(4));
 		einkommensverschlechterungContainer.setEkvJABasisJahrPlus2(ekvJABasisJahrPlus2);
-
 
 		return einkommensverschlechterungContainer;
 	}
@@ -631,7 +630,8 @@ public final class TestDataUtil {
 		if (basisJahrPlus1) {
 			gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(new Einkommensverschlechterung());
 			gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().setNettolohnAug(einkommen);
-			gesuch.extractEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(true);;
+			gesuch.extractEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(true);
+			;
 			gesuch.extractEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus1(STICHTAG_EKV_1);
 			gesuch.extractEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		} else {
@@ -671,15 +671,15 @@ public final class TestDataUtil {
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1718(), institutionStammdatenList);
 
-		if(status!= null) {
+		if (status != null) {
 			return persistAllEntities(persistence, eingangsdatum, testfall, status);
-		}else {
+		} else {
 			return persistAllEntities(persistence, eingangsdatum, testfall);
 		}
 	}
 
 	public static Gesuch createAndPersistWaeltiDagmarGesuch(InstitutionService instService, Persistence persistence, @Nullable LocalDate eingangsdatum) {
-		return createAndPersistWaeltiDagmarGesuch(instService,  persistence,  eingangsdatum, null);
+		return createAndPersistWaeltiDagmarGesuch(instService, persistence, eingangsdatum, null);
 	}
 
 	private static void ensureFachstelleAndInstitutionsExist(Persistence persistence, Gesuch gesuch) {
@@ -699,7 +699,6 @@ public final class TestDataUtil {
 			}
 		}
 	}
-
 
 	public static Gesuch createAndPersistFeutzYvonneGesuch(InstitutionService instService, Persistence persistence, LocalDate eingangsdatum, AntragStatus status) {
 		instService.getAllInstitutionen();
@@ -728,17 +727,16 @@ public final class TestDataUtil {
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		Testfall06_BeckerNora testfall = new Testfall06_BeckerNora(TestDataUtil.createGesuchsperiode1718(), institutionStammdatenList);
 
-		if(status!= null) {
+		if (status != null) {
 			return persistAllEntities(persistence, eingangsdatum, testfall, status);
-		}else {
+		} else {
 			return persistAllEntities(persistence, eingangsdatum, testfall);
 		}
 	}
 
 	public static Gesuch createAndPersistBeckerNoraGesuch(InstitutionService instService, Persistence persistence, @Nullable LocalDate eingangsdatum) {
-		return createAndPersistBeckerNoraGesuch(instService,  persistence,  eingangsdatum, null);
+		return createAndPersistBeckerNoraGesuch(instService, persistence, eingangsdatum, null);
 	}
-
 
 	public static Institution createAndPersistDefaultInstitution(Persistence persistence) {
 		Institution inst = createDefaultInstitution();
@@ -795,7 +793,6 @@ public final class TestDataUtil {
 		kind.setGesuch(gesuch);
 		kindContainers.add(kind);
 		gesuch.setKindContainers(kindContainers);
-
 
 		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
 		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
@@ -919,7 +916,6 @@ public final class TestDataUtil {
 		return benutzer;
 	}
 
-
 	public static AntragTableFilterDTO createAntragTableFilterDTO() {
 		AntragTableFilterDTO filterDTO = new AntragTableFilterDTO();
 		filterDTO.setSort(new AntragSortDTO());
@@ -929,7 +925,6 @@ public final class TestDataUtil {
 		filterDTO.getPagination().setNumber(10);
 		return filterDTO;
 	}
-
 
 	public static void createDefaultAdressenForGS(final Gesuch gesuch, final boolean gs2) {
 		List<GesuchstellerAdresseContainer> adressen1 = new ArrayList<>();
@@ -958,8 +953,8 @@ public final class TestDataUtil {
 		mahnung.setMahnungTyp(typ);
 		mahnung.setTimestampAbgeschlossen(null);
 		List<String> bemerkungen = new ArrayList<>();
-		for (int i = 0; i < numberOfDocuments; i++){
-			bemerkungen.add("Test Dokument " + (i+1));
+		for (int i = 0; i < numberOfDocuments; i++) {
+			bemerkungen.add("Test Dokument " + (i + 1));
 		}
 		mahnung.setBemerkungen(bemerkungen.stream().collect(Collectors.joining("\n")));
 		mahnung.setDatumFristablauf(firstAblauf);

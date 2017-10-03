@@ -58,7 +58,6 @@ import static ch.dvbern.ebegu.enums.UserRole.SUPER_ADMIN;
 @Api(description = "Resource zum Verwalten von Zahlungen")
 public class ZahlungResource {
 
-
 	@Inject
 	private ZahlungService zahlungService;
 
@@ -73,7 +72,6 @@ public class ZahlungResource {
 
 	@Inject
 	private PrincipalBean principalBean;
-
 
 	@ApiOperation(value = "Gibt alle Zahlungsauftraege zurueck.",
 		responseContainer = "List", response = JaxZahlungsauftrag.class)

@@ -105,7 +105,7 @@ public abstract class AbstractEbeguTest {
 			// .addPackages(true, "ch/dvbern/ebegu/enums")
 			.addClasses(AbstractEbeguLoginTest.class, Persistence.class, ISessionContextService.class, AbstractEntity.class)
 			.addPackages(true, "ch/dvbern/ebegu/services/authentication")
-//			.addClass(Authorizer.class)
+			//			.addClass(Authorizer.class)
 			.addAsLibraries(runtimeDeps).addAsLibraries(testDeps)
 			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
 			.addAsResource("reporting/GesuchStichtag.xlsx", "reporting/GesuchStichtag.xlsx")
@@ -198,9 +198,9 @@ public abstract class AbstractEbeguTest {
 	 * Helper für init. Speichert Benutzer in DB
 	 */
 	protected void createBenutzer(Mandant mandant) {
-		try{
+		try {
 			JBossLoginContextFactory.createLoginContext("superadmin", "superadmin").login();
-		} catch (LoginException ex){
+		} catch (LoginException ex) {
 			LOG.error("could not login as admin user for test");
 		}
 		Benutzer i = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);

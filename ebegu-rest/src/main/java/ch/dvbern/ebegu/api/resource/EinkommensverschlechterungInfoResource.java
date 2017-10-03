@@ -54,7 +54,6 @@ public class EinkommensverschlechterungInfoResource {
 	@Inject
 	private ResourceHelper resourceHelper;
 
-
 	@ApiOperation(value = "Create a new EinkommensverschlechterungInfoContainer in the database.",
 		response = JaxEinkommensverschlechterungInfoContainer.class)
 	@Nullable

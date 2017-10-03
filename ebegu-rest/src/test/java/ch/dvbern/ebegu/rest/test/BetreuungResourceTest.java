@@ -77,7 +77,6 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
 	@Test
 	public void createBetreuung() throws EbeguException {
 		KindContainer returnedKind = persistKindAndDependingObjects(RESTEASY_URI_INFO);
@@ -118,8 +117,6 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 
 	/**
 	 * Testet, dass das entfernen eines Betreuungspensums auf dem Client dieses aus der Liste auf dem Server loescht.
-	 *
-	 * @throws EbeguException
 	 */
 	@Test
 	public void updateShouldRemoveBetreuungspensumContainerTest() throws EbeguException {
@@ -148,7 +145,6 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 		checkNextNumberBetreuung(converter.toJaxId(initialBetr.getKind()), Integer.valueOf(2));
 
 	}
-
 
 	// HELP
 

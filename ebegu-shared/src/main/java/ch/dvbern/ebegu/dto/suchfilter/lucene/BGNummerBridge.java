@@ -15,7 +15,6 @@ import org.hibernate.search.bridge.TwoWayFieldBridge;
  */
 public class BGNummerBridge implements TwoWayFieldBridge {
 
-
 	@Override
 	public void set(
 		String name, Object value, Document document, LuceneOptions luceneOptions) {

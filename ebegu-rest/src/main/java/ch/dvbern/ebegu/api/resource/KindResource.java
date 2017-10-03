@@ -66,7 +66,6 @@ public class KindResource {
 	@Inject
 	private ResourceHelper resourceHelper;
 
-
 	@ApiOperation(value = "Speichert ein Kind in der Datenbank", response = JaxKindContainer.class)
 	@Nullable
 	@PUT
@@ -74,7 +73,7 @@ public class KindResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxKindContainer saveKind(
-		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchId,
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchId,
 		@Nonnull @NotNull @Valid JaxKindContainer kindContainerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -103,7 +102,7 @@ public class KindResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxKindContainer findKind(
-		@Nonnull @NotNull @PathParam ("kindContainerId") JaxId kindJAXPId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("kindContainerId") JaxId kindJAXPId) throws EbeguException {
 
 		Validate.notNull(kindJAXPId.getId());
 		String kindID = converter.toEntityId(kindJAXPId);
@@ -155,7 +154,7 @@ public class KindResource {
 	@Path("/dubletten/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Set<KindDubletteDTO> getKindDubletten(@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJaxId) throws
+	public Set<KindDubletteDTO> getKindDubletten(@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJaxId) throws
 		EbeguException {
 		Validate.notNull(gesuchJaxId.getId());
 		String gesuchId = converter.toEntityId(gesuchJaxId);

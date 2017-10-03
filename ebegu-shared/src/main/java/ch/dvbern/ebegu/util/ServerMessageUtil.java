@@ -17,7 +17,6 @@ public final class ServerMessageUtil {
 
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(Constants.SERVER_MESSAGE_BUNDLE_NAME, Constants.DEFAULT_LOCALE);
 
-
 	private ServerMessageUtil() {
 	}
 
@@ -33,9 +32,6 @@ public final class ServerMessageUtil {
 	/**
 	 * Da wir aller wahrscheinlichkeit eine Exceptionmessage uebersetzten wollen macht es nicht gross Sinn heir falls ein
 	 * Key fehlt MissingResourceException werfen zu lassen.
-	 * @param bundle
-	 * @param key
-	 * @return
 	 */
 	private static String readStringFromBundleOrReturnKey(ResourceBundle bundle, String key) {
 		try {
@@ -45,7 +41,6 @@ public final class ServerMessageUtil {
 		}
 	}
 
-
 	public static String getMessage(String key, Object... args) {
 		return MessageFormat.format(getMessage(key), args);
 	}
@@ -53,7 +48,6 @@ public final class ServerMessageUtil {
 	public static String getMessage(String key, Locale locale, Object... args) {
 		return MessageFormat.format(getMessage(key, locale), args);
 	}
-
 
 	/**
 	 * Uebersetzt einen Enum-Wert
@@ -85,7 +79,7 @@ public final class ServerMessageUtil {
 		if (e == null) {
 			return StringUtils.EMPTY;
 		}
-		return getMessage(getKey(e),locale, args);
+		return getMessage(getKey(e), locale, args);
 	}
 
 	/**

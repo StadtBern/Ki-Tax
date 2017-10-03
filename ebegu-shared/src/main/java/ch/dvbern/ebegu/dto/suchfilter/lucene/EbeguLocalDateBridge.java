@@ -13,8 +13,7 @@ import org.hibernate.search.bridge.TwoWayFieldBridge;
  * Note that it is not a {@link TwoWayFieldBridge} so queries on fields that use this bridge have to
  * be marked as to not use the FieldBridge
  */
-public class EbeguLocalDateBridge implements FieldBridge{
-
+public class EbeguLocalDateBridge implements FieldBridge {
 
 	private static final DateTimeFormatter DF_FULL = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 	private static final DateTimeFormatter DF_SHORT1 = DateTimeFormatter.ofPattern("d.M.yyyy");

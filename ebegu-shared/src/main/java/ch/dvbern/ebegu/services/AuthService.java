@@ -28,7 +28,6 @@ public interface AuthService {
 	 */
 	boolean logout(@Nonnull final String authToken);
 
-
 	@Nonnull
 	AuthAccessElement createLoginFromIAM(AuthorisierterBenutzer authorisierterBenutzer);
 

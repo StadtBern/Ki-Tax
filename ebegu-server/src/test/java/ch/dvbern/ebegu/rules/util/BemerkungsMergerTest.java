@@ -26,7 +26,6 @@ public class BemerkungsMergerTest {
 	private static final DateRange APR = new DateRange(LocalDate.of(2016, 4, 1), LocalDate.of(2016, 4, 1).with(TemporalAdjusters.lastDayOfMonth()));
 	private static final DateRange MAI = new DateRange(LocalDate.of(2016, 5, 1), LocalDate.of(2016, 5, 1).with(TemporalAdjusters.lastDayOfMonth()));
 
-
 	@Test
 	public void evaluateRangesByBemerkungKeyTest() throws Exception {
 		VerfuegungZeitabschnitt jan = new VerfuegungZeitabschnitt(JAN);
@@ -94,6 +93,5 @@ public class BemerkungsMergerTest {
 			//noop
 		}
 	}
-
 
 }

@@ -64,7 +64,6 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 	@Inject
 	private GesuchService gesuchService;
 
-
 	@Test
 	public void saveVerfuegung() {
 		Assert.assertNotNull(verfuegungService); //init funktioniert
@@ -151,7 +150,6 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertTrue(allVerfuegungen.stream().allMatch(currentVerfuegung -> currentVerfuegung.equals(verfuegung) || currentVerfuegung.equals(verfuegung2)));
 	}
 
-
 	@Test
 	public void removeVerfuegung() {
 		Verfuegung verfuegung = insertVerfuegung();
@@ -159,7 +157,6 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	//Helpers
-
 
 	private Betreuung insertBetreuung() {
 		Betreuung betreuung = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25))

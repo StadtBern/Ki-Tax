@@ -37,11 +37,9 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
-
 @Stateless
 @Local(ExportService.class)
 public class ExportServiceBean implements ExportService {
-
 
 	@Inject
 	private GesuchService gesuchService;
@@ -55,10 +53,9 @@ public class ExportServiceBean implements ExportService {
 	@Inject
 	private FileSaverService fileSaverService;
 
-
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT })
 	public VerfuegungenExportDTO exportAllVerfuegungenOfAntrag(@Nonnull String antragId) {
 		Objects.requireNonNull(antragId, "gesuchId muss gesetzt sein");
 		Gesuch gesuch = gesuchService.findGesuch(antragId)
@@ -76,14 +73,14 @@ public class ExportServiceBean implements ExportService {
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT })
 	public VerfuegungenExportDTO exportVerfuegungOfBetreuung(String betreuungID) {
 		Betreuung betreuung = readBetreuung(betreuungID);
 		return convertBetreuungToExport(betreuung);
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, JURIST, REVISOR})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, JURIST, REVISOR })
 	public UploadFileInfo exportVerfuegungOfBetreuungAsFile(String betreuungID) {
 		Betreuung betreuung = readBetreuung(betreuungID);
 		VerfuegungenExportDTO verfuegungenExportDTO = convertBetreuungToExport(betreuung);
@@ -92,7 +89,6 @@ public class ExportServiceBean implements ExportService {
 		String filename = "export_" + betreuung.getBGNummer() + ".json";
 		return this.fileSaverService.save(bytes, filename, betreuung.extractGesuch().getId(), getContentTypeForExport());
 	}
-
 
 	private Betreuung readBetreuung(String betreuungID) {
 		Objects.requireNonNull(betreuungID, "betreuungID muss gesetzt sein");

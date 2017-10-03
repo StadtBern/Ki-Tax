@@ -37,7 +37,6 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class KindResourceTest extends AbstractEbeguRestLoginTest {
 
-
 	@Inject
 	private KindResource kindResource;
 	@Inject
@@ -57,7 +56,6 @@ public class KindResourceTest extends AbstractEbeguRestLoginTest {
 	private JaxBConverter converter;
 	@Inject
 	private Persistence persistence;
-
 
 	@Test
 	public void createKindTest() throws EbeguException {

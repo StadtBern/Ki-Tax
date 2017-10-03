@@ -20,7 +20,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 
-
 @Provider
 @Priority(Priorities.HEADER_DECORATOR)
 public class CacheDisabler implements ContainerResponseFilter {

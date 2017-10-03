@@ -81,7 +81,7 @@ public class AbstractBGRechnerTest {
 	}
 
 	public static void assertZeitabschnitt(VerfuegungZeitabschnitt abschnitt, int betreuungspensum, int anspruchsberechtigtesPensum, int bgPensum, double vollkosten,
-			double verguenstigung, double elternbeitrag) {
+		double verguenstigung, double elternbeitrag) {
 
 		Assert.assertEquals("Beantragtes Pensum " + betreuungspensum + " entspricht nicht " + abschnitt, betreuungspensum, abschnitt.getBetreuungspensum());
 		Assert.assertEquals(anspruchsberechtigtesPensum, abschnitt.getAnspruchberechtigtesPensum());
@@ -92,8 +92,8 @@ public class AbstractBGRechnerTest {
 	}
 
 	public static void assertZeitabschnittFinanzdaten(VerfuegungZeitabschnitt abschnitt, double massgebendesEinkVorFamAbz,
-													  int einkommensjahr, double abzugFam, double massgebendesEinkommen,
-													  double famGroesse) {
+		int einkommensjahr, double abzugFam, double massgebendesEinkommen,
+		double famGroesse) {
 
 		Assert.assertTrue(Objects.equals(einkommensjahr, abschnitt.getEinkommensjahr()));
 		Assert.assertEquals(MATH.from(famGroesse), MATH.from(abschnitt.getFamGroesse()));
@@ -137,7 +137,7 @@ public class AbstractBGRechnerTest {
 	 * Erstellt eine Verfügung mit einem einzelnen Zeitabschnitt und den für Kita notwendigen Parametern zusammen
 	 */
 	protected Verfuegung prepareVerfuegungKita(LocalDate geburtsdatumKind, BigDecimal anzahlTageKita, BigDecimal anzahlStundenProTagKita, LocalDate von, LocalDate bis,
-			int anspruch, BigDecimal massgebendesEinkommen) {
+		int anspruch, BigDecimal massgebendesEinkommen) {
 
 		Betreuung betreuung = new Betreuung();
 		InstitutionStammdaten institutionStammdaten = new InstitutionStammdaten();
@@ -369,7 +369,6 @@ public class AbstractBGRechnerTest {
 			}
 		}
 	}
-
 
 	/**
 	 * hilfsmethode um den {@link ch.dvbern.ebegu.testfaelle.Testfall_ASIV_01} auf korrekte berechnung zu pruefen

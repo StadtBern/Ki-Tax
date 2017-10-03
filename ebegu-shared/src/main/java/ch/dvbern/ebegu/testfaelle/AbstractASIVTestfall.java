@@ -17,7 +17,7 @@ import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 public abstract class AbstractASIVTestfall extends AbstractTestfall {
 
 	public AbstractASIVTestfall(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
-								boolean betreuungenBestaetigt) {
+		boolean betreuungenBestaetigt) {
 		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
 	}
 

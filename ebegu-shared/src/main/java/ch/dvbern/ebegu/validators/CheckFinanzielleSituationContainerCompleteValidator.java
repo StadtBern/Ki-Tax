@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *  Dieser Validator die Komplettheit und Gültigkeit eines FinanzielleSituationContainer
+ * Dieser Validator die Komplettheit und Gültigkeit eines FinanzielleSituationContainer
  */
 public class CheckFinanzielleSituationContainerCompleteValidator implements
 	ConstraintValidator<CheckFinanzielleSituationContainerComplete, FinanzielleSituationContainer> {

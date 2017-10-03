@@ -25,7 +25,6 @@ public class EbeguException extends Exception {
 	private ErrorCodeEnum errorCodeEnum;
 	private String customMessage;
 
-
 	protected EbeguException(@Nullable String methodeName, @Nullable String message, @Nonnull Serializable... args) {
 		super(message);
 		methodName = methodeName;
@@ -38,13 +37,12 @@ public class EbeguException extends Exception {
 		this.args = Collections.unmodifiableList(Arrays.asList(args));
 	}
 
-	public EbeguException(@Nullable String methodName, @Nullable String message, @Nullable ErrorCodeEnum errorCodeEnum, @Nullable Throwable cause, @Nonnull  Serializable... args) {
+	public EbeguException(@Nullable String methodName, @Nullable String message, @Nullable ErrorCodeEnum errorCodeEnum, @Nullable Throwable cause, @Nonnull Serializable... args) {
 		super(message, cause);
 		this.errorCodeEnum = errorCodeEnum;
 		this.methodName = methodName;
 		this.args = Collections.unmodifiableList(Arrays.asList(args));
 	}
-
 
 	public EbeguException(@Nullable String methodName, @Nullable String message, @Nullable ErrorCodeEnum errorCodeEnum, @Nullable Serializable... args) {
 		super(message);
@@ -57,18 +55,16 @@ public class EbeguException extends Exception {
 		super();
 		this.errorCodeEnum = errorCodeEnum;
 		this.methodName = methodName;
-		this.args =Collections.unmodifiableList(Arrays.asList(args));
+		this.args = Collections.unmodifiableList(Arrays.asList(args));
 	}
 
 	public List<Serializable> getArgs() {
 		return args;
 	}
 
-
 	public String getMethodName() {
 		return methodName;
 	}
-
 
 	public ErrorCodeEnum getErrorCodeEnum() {
 		return errorCodeEnum;

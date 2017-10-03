@@ -7,7 +7,6 @@ package ch.dvbern.ebegu.api.util;
  */
 public interface EBEGUSamlConstants {
 
-
 	String TELEPHONE_NUMBER = "telephoneNumber";
 	String MAIL = "mail";
 	String GIVEN_NAME = "givenName";

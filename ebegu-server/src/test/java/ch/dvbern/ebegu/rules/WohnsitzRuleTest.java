@@ -195,8 +195,6 @@ public class WohnsitzRuleTest {
 		Assert.assertEquals(100, abschnittInBern3.getBgPensum());
 	}
 
-
-
 	private Betreuung createTestdata(boolean zweigesuchsteller) {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(zweigesuchsteller);
 		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
@@ -216,7 +214,7 @@ public class WohnsitzRuleTest {
 	}
 
 	private GesuchstellerAdresseContainer createGesuchstellerAdresse(LocalDate von, LocalDate bis, boolean nichtInGemeinde,
-																	 GesuchstellerContainer gesuchsteller) {
+		GesuchstellerContainer gesuchsteller) {
 		GesuchstellerAdresseContainer adresse = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuchsteller);
 		adresse.getGesuchstellerAdresseJA().setNichtInGemeinde(nichtInGemeinde);
 		adresse.extractGueltigkeit().setGueltigAb(von);

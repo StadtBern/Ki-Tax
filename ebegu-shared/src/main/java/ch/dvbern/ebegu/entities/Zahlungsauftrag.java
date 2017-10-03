@@ -30,11 +30,9 @@ import org.hibernate.envers.Audited;
  */
 @Audited
 @Entity
-public class Zahlungsauftrag extends AbstractDateRangedEntity implements Comparable<Zahlungsauftrag>{
-
+public class Zahlungsauftrag extends AbstractDateRangedEntity implements Comparable<Zahlungsauftrag> {
 
 	private static final long serialVersionUID = 5758088668232796741L;
-
 
 	@NotNull
 	@Column(nullable = false)
@@ -61,7 +59,6 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity implements Compara
 
 	@Nonnull
 	private BigDecimal betragTotalAuftrag;
-
 
 	public LocalDate getDatumFaellig() {
 		return datumFaellig;

@@ -34,9 +34,6 @@ public class EinkommensverschlechterungInfoServiceTest extends AbstractEbeguLogi
 	@Inject
 	private Persistence persistence;
 
-
-
-
 	@Test
 	public void createEinkommensverschlechterungInfoTest() {
 		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
@@ -124,6 +121,5 @@ public class EinkommensverschlechterungInfoServiceTest extends AbstractEbeguLogi
 		Assert.assertEquals(0, einkommensverschlechterungInfoService.getAllEinkommensverschlechterungInfo().size());
 
 	}
-
 
 }

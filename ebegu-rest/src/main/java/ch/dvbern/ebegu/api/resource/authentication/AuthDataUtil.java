@@ -33,33 +33,30 @@ public final class AuthDataUtil {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AuthDataUtil.class);
 
-
 	private AuthDataUtil() {
 	}
 
-	public static  Optional<JaxAuthAccessElementCookieData>  getAuthAccessElement(HttpServletRequest request) {
+	public static Optional<JaxAuthAccessElementCookieData> getAuthAccessElement(HttpServletRequest request) {
 		Cookie loginInfoCookie = extractCookie(request.getCookies(), AuthConstants.COOKIE_PRINCIPAL);
 		if (loginInfoCookie == null) {
-					return Optional.empty();
-				}
+			return Optional.empty();
+		}
 		String encodedPrincipalJson = StringUtils.trimToNull(loginInfoCookie.getValue());
-			if (StringUtils.isEmpty(encodedPrincipalJson)) {
-				return Optional.empty();
-			}
+		if (StringUtils.isEmpty(encodedPrincipalJson)) {
+			return Optional.empty();
+		}
 		try {
-				Gson gson = new Gson();
-				return Optional.of(gson.fromJson(
-					new String(
-						Base64.getDecoder().decode(encodedPrincipalJson), Charset.forName("UTF-8")
-					),
-					JaxAuthAccessElementCookieData.class));
-			} catch (JsonSyntaxException | IllegalArgumentException e) {
-				LOG.warn("Failed to get the AuthAccessElement from the principal Cookie", e);
-				return Optional.empty();
-			}
+			Gson gson = new Gson();
+			return Optional.of(gson.fromJson(
+				new String(
+					Base64.getDecoder().decode(encodedPrincipalJson), Charset.forName("UTF-8")
+				),
+				JaxAuthAccessElementCookieData.class));
+		} catch (JsonSyntaxException | IllegalArgumentException e) {
+			LOG.warn("Failed to get the AuthAccessElement from the principal Cookie", e);
+			return Optional.empty();
+		}
 	}
-
-
 
 	@Nullable
 	public static Cookie extractCookie(Cookie[] cookies, String searchedName) {
@@ -73,7 +70,7 @@ public final class AuthDataUtil {
 		return null;
 	}
 
-	public static String getBasePath(HttpServletRequest request){
+	public static String getBasePath(HttpServletRequest request) {
 		String url = request.getRequestURL().toString();
 		return url.substring(0, url.length() - request.getRequestURI().length()) + request.getContextPath() + "/";
 	}
@@ -83,13 +80,13 @@ public final class AuthDataUtil {
 	 * @return Optional containing the authToken if present
 	 */
 	@Nonnull
-	public static  Optional<String> getAuthTokenFomCookie(HttpServletRequest request) {
-		Cookie authTokenCookie =  extractCookie(request.getCookies(), AuthConstants.COOKIE_AUTH_TOKEN);
-			String authToken = authTokenCookie != null ? authTokenCookie.getValue() : null;
-			if (StringUtils.isEmpty(authToken)) {
-				return Optional.empty();
-			}
-			return Optional.of(authToken);
+	public static Optional<String> getAuthTokenFomCookie(HttpServletRequest request) {
+		Cookie authTokenCookie = extractCookie(request.getCookies(), AuthConstants.COOKIE_AUTH_TOKEN);
+		String authToken = authTokenCookie != null ? authTokenCookie.getValue() : null;
+		if (StringUtils.isEmpty(authToken)) {
+			return Optional.empty();
+		}
+		return Optional.of(authToken);
 	}
 
 	/**

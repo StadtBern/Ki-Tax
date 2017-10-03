@@ -49,15 +49,14 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 	@Inject
 	private WizardStepService wizardStepService;
 
-
 	@Override
 	@Nonnull
-	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public EinkommensverschlechterungContainer saveEinkommensverschlechterungContainer(
 		@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer, String gesuchId) {
 		Objects.requireNonNull(einkommensverschlechterungContainer);
 		final EinkommensverschlechterungContainer persistedEKV = persistence.merge(einkommensverschlechterungContainer);
-		if(gesuchId != null) {
+		if (gesuchId != null) {
 			wizardStepService.updateSteps(gesuchId, null, einkommensverschlechterungContainer, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 		}
 		return persistedEKV;
@@ -80,7 +79,7 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 	}
 
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public void removeEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer) {
 		Validate.notNull(einkommensverschlechterungContainer);
 		einkommensverschlechterungContainer.getGesuchsteller().setEinkommensverschlechterungContainer(null);
@@ -93,7 +92,7 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 	}
 
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public void removeEinkommensverschlechterung(@Nonnull Einkommensverschlechterung einkommensverschlechterung) {
 		Validate.notNull(einkommensverschlechterung);
 		persistence.remove(Einkommensverschlechterung.class, einkommensverschlechterung.getId());
@@ -107,7 +106,7 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 	}
 
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public boolean removeAllEKVOfGesuch(@Nonnull Gesuch gesuch, int yearPlus) {
 		if (yearPlus != 1 && yearPlus != 2) {
 			return false;
@@ -123,8 +122,7 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 			if (yearPlus == 1 && gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() != null) {
 				removeEinkommensverschlechterung(gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1());
 				gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(null);
-			}
-			 else if (yearPlus == 2 && gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() != null) {
+			} else if (yearPlus == 2 && gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() != null) {
 				removeEinkommensverschlechterung(gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2());
 				gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(null);
 			}

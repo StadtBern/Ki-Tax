@@ -24,7 +24,6 @@ import org.junit.Test;
 
 public class CheckBetreuungspensumDatesOverlappingValidatorTest {
 
-
 	private ValidatorFactory customFactory;
 
 	@Before
@@ -39,7 +38,7 @@ public class CheckBetreuungspensumDatesOverlappingValidatorTest {
 	@Test
 	public void testCheckBetreuungspensumDatesOverlapping() {
 		Betreuung betreuung = createBetreuungWithOverlappedDates(true); //overlapping
-		ValidationTestHelper.assertViolated(CheckBetreuungspensumDatesOverlapping.class, betreuung, customFactory ,"" );
+		ValidationTestHelper.assertViolated(CheckBetreuungspensumDatesOverlapping.class, betreuung, customFactory, "");
 	}
 
 	@Test

@@ -42,7 +42,6 @@ import org.junit.runner.RunWith;
 
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_FIXBETRAG_STADT_PRO_TAG_KITA;
 
-
 /**
  * Testet den EbeguParameterService.
  */
@@ -58,8 +57,6 @@ public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 	private Persistence persistence;
 
 	private final EbeguParameterKey PARAM_KEY = EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA;
-
-
 
 	@Test
 	public void createEbeguParameterTest() {

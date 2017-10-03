@@ -15,7 +15,7 @@ import org.hibernate.envers.Audited;
  */
 @Audited
 @Entity
-@EntityListeners({WriteProtectedDokumentListener.class})
+@EntityListeners({ WriteProtectedDokumentListener.class })
 public class GeneratedDokument extends WriteProtectedDokument {
 
 	private static final long serialVersionUID = -895840426576485097L;
@@ -35,8 +35,6 @@ public class GeneratedDokument extends WriteProtectedDokument {
 	public void setGesuch(Gesuch gesuch) {
 		this.gesuch = gesuch;
 	}
-
-
 
 	@Override
 	public String toString() {

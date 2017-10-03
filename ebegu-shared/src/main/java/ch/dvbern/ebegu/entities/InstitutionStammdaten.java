@@ -43,8 +43,8 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 		@UniqueConstraint(columnNames = "adresse_kontoinhaber_id", name = "UK_institution_stammdaten_adressekontoinhaber_id")
 	},
 	indexes = {
-		@Index(name =  "IX_institution_stammdaten_gueltig_ab", columnList = "gueltigAb"),
-		@Index(name =  "IX_institution_stammdaten_gueltig_bis", columnList = "gueltigBis")
+		@Index(name = "IX_institution_stammdaten_gueltig_ab", columnList = "gueltigAb"),
+		@Index(name = "IX_institution_stammdaten_gueltig_bis", columnList = "gueltigBis")
 	}
 )
 //@Cacheable
@@ -90,7 +90,6 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_stammdaten_adressekontoinhaber_id"), nullable = true)
 	private Adresse adresseKontoinhaber;
-
 
 	public InstitutionStammdaten() {
 	}
@@ -161,6 +160,7 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	public void setAdresseKontoinhaber(Adresse adresseKontoinhaber) {
 		this.adresseKontoinhaber = adresseKontoinhaber;
 	}
+
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality

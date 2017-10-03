@@ -34,9 +34,6 @@ public class HistorizationServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
-
-
 	@Test
 	public void getAllEntitiesByRevisionTest() {
 		Assert.assertNotNull(historizationService);
@@ -55,7 +52,6 @@ public class HistorizationServiceTest extends AbstractEbeguLoginTest {
 		checkRevisionsValues(revisions.get(1), ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, "entry2", 2, RevisionType.MOD);
 
 	}
-
 
 	// Help Methods
 
@@ -80,6 +76,5 @@ public class HistorizationServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(name, ((ApplicationProperty) entities.get(0)).getName());
 		Assert.assertEquals(value, ((ApplicationProperty) entities.get(0)).getValue());
 	}
-
 
 }

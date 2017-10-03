@@ -59,7 +59,6 @@ public class ApplicationPropertyResource {
 	@Inject
 	private EbeguConfiguration ebeguConfiguration;
 
-
 	@ApiOperation(value = "Find a property by its unique name (called key)", response = JaxApplicationProperties.class)
 	@Nullable
 	@GET
@@ -158,7 +157,6 @@ public class ApplicationPropertyResource {
 		return converter.applicationPropertyToJAX(modifiedProperty);
 	}
 
-
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@ApiOperation(value = "Removes an application property")
 	@Nullable
@@ -180,7 +178,7 @@ public class ApplicationPropertyResource {
 		return Response.ok(ebeguConfiguration.getIsZahlungenTestMode()).build();
 	}
 
-	@RolesAllowed({SUPER_ADMIN})
+	@RolesAllowed({ SUPER_ADMIN })
 	@ApiOperation(value = "Gibt den Wert des Properties zurück", response = Boolean.class)
 	@GET
 	@Consumes(MediaType.WILDCARD)

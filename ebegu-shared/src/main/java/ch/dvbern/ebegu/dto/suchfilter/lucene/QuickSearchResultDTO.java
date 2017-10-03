@@ -29,7 +29,6 @@ public class QuickSearchResultDTO implements Serializable {
 	public QuickSearchResultDTO() {
 	}
 
-
 	public QuickSearchResultDTO(List<SearchResultEntryDTO> resultEntities, int numberOfResults) {
 		this.resultEntities = resultEntities;
 		this.numberOfResults = numberOfResults;
@@ -49,7 +48,6 @@ public class QuickSearchResultDTO implements Serializable {
 
 	/**
 	 * merges this result object with the passed object by adding the number of results and adding all entries in the entry list
-	 * @param subResult
 	 */
 	public void addSubResult(QuickSearchResultDTO subResult) {
 		resultEntities.addAll(subResult.getResultEntities());
@@ -92,13 +90,11 @@ public class QuickSearchResultDTO implements Serializable {
 		}
 	}
 
-
 	/**
 	 * this helper method removes all but one resultEntry for a given Gesuch. It does this by identifying the
 	 * Gesuche based on their ids and just taking the first.
 	 * Also the numberOfResults will be reduced by the number of omitted Gesuche.
 	 *
-	 * @param quickSearch
 	 * @return Returns a NEW {@link QuickSearchResultDTO}
 	 */
 	public static QuickSearchResultDTO reduceToSingleEntyPerAntrag(QuickSearchResultDTO quickSearch) {
@@ -107,7 +103,7 @@ public class QuickSearchResultDTO implements Serializable {
 			.forEach(searchResultEntryDTO -> {
 				JaxAbstractAntragDTO antragDTO = searchResultEntryDTO.getAntragDTO();
 				if (antragDTO instanceof JaxAntragDTO) {
-					antragIdToEntryMultimap.put(((JaxAntragDTO)antragDTO).getAntragId(), searchResultEntryDTO);
+					antragIdToEntryMultimap.put(((JaxAntragDTO) antragDTO).getAntragId(), searchResultEntryDTO);
 				}
 			});
 

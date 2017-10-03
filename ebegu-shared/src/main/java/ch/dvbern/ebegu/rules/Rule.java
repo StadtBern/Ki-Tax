@@ -26,20 +26,17 @@ public interface Rule {
 	LocalDate validTo();
 
 	/**
-	 * @param stichtag
 	 * @return true wenn die Regel am Strichtag gueltig sit
 	 */
 	boolean isValid(@Nonnull LocalDate stichtag);
 
 	/**
-	 *
 	 * @return den {@link RuleType} Enumwert dieser Regel
 	 */
 	@Nonnull
 	RuleType getRuleType();
 
 	/**
-	 *
 	 * @return einzigartiger Key fuer diese Regel
 	 */
 	@Nonnull
@@ -47,6 +44,7 @@ public interface Rule {
 
 	/**
 	 * Diese Methode fuehrt die eigentliche Berechnung durch die von der Regel abgebildet wird
+	 *
 	 * @param betreuung Die Betreuung fuer die Berechnet wird
 	 * @param zeitabschnitte Die Zeitabschnitte die bereits ermittelt wurden
 	 * @return gemergete Liste von bestehenden und neu berechneten Zeitabschnitten
@@ -57,6 +55,6 @@ public interface Rule {
 	/**
 	 * Gibt zurueck, ob die Regel fuer die Berechnung der Familiensituation (Fam-Groesse, Einkommen, Abzug fuer Fam-Groesse)
 	 * relevant ist
-     */
+	 */
 	boolean isRelevantForFamiliensituation();
 }

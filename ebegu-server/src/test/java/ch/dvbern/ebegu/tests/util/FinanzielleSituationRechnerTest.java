@@ -40,8 +40,6 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguLoginTest {
 	@Inject
 	private FinanzielleSituationRechner finSitRechner;
 
-
-
 	@Test
 	public void testPositiverDurschnittlicherGewinn() throws Exception {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
@@ -70,7 +68,6 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguLoginTest {
 
 		Assert.assertEquals(BigDecimal.ZERO, finSitResultateDTO2.getGeschaeftsgewinnDurchschnittGesuchsteller1());
 	}
-
 
 	@Test
 	public void testKeineEinkommensverschlechterung() throws Exception {

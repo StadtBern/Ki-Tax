@@ -31,7 +31,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-
 /**
  * Dies ist ein Beispiel einer Arquillian Test Klasse. Es wird vor jedem Test die Datenbank mit dem leeren Dataset
  * initialisiert.
@@ -46,9 +45,6 @@ public class ApplicationPropertyServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private Persistence persistence;
-
-
-
 
 	@Test
 	public void saveOrUpdateApplicationPropertyTest() {
@@ -66,10 +62,11 @@ public class ApplicationPropertyServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(0, applicationPropertyService.getAllApplicationProperties().size());
 
 	}
+
 	@Test
 	public void updateApplicationPropertyTest() {
 		insertNewEntity();
-		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED,"changed");
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, "changed");
 		Assert.assertEquals("changed", applicationPropertyService.readApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED).get().getValue());
 
 	}

@@ -29,7 +29,6 @@ public class EWKEinwohnercode implements Serializable {
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate gueltigBis;
 
-
 	public EWKEinwohnercode() {
 	}
 

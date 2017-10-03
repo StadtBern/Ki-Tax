@@ -105,7 +105,6 @@ public enum MergeFieldGesuchstellerKinderBetreuung implements MergeFieldProvider
 	elternbeitrag(new SimpleMergeField<>("elternbeitrag", BIGDECIMAL_CONVERTER)),
 	verguenstigt(new SimpleMergeField<>("verguenstigt", BIGDECIMAL_CONVERTER));
 
-
 	@Nonnull
 	private final MergeField<?> mergeField;
 

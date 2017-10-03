@@ -44,13 +44,12 @@ public class GesuchZeitraumDataRow {
 	private Integer anzahlSteueramtAusgeloest;
 	private Integer anzahlSteueramtGeprueft;
 
-
 	public GesuchZeitraumDataRow(String bgNummer, Integer gesuchLaufNr, String institution, String betreuungsTyp,
 		String periode, Integer anzahlGesuchOnline, Integer anzahlGesuchPapier, Integer anzahlMutationOnline,
 		Integer anzahlMutationPapier, Integer anzahlMutationAbwesenheit, Integer anzahlMutationBetreuung,
 		Integer anzahlMutationEV, Integer anzahlMutationEwerbspensum, Integer anzahlMutationFamilienSitutation,
-		Integer anzahlMutationFinanzielleSituation, Integer  anzahlMutationGesuchsteller, Integer anzahlMutationKinder,
-		Integer anzahlMutationUmzug, Integer  anzahlMahnungen, Integer anzahlSteueramtAusgeloest,
+		Integer anzahlMutationFinanzielleSituation, Integer anzahlMutationGesuchsteller, Integer anzahlMutationKinder,
+		Integer anzahlMutationUmzug, Integer anzahlMahnungen, Integer anzahlSteueramtAusgeloest,
 		Integer anzahlSteueramtGeprueft, Integer anzahlBeschwerde, Integer anzahlVerfuegungen,
 		Integer anzahlVerfuegungenNormal, Integer anzahlVerfuegungenMaxEinkommen, Integer anzahlVerfuegungenKeinPensum,
 		Integer anzahlVerfuegungenZuschlagZumPensum, Integer anzahlVerfuegungenNichtEintreten) {

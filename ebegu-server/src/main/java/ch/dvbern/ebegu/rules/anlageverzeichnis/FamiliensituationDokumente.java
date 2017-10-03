@@ -36,11 +36,11 @@ public class FamiliensituationDokumente extends AbstractDokumente<Familiensituat
 			return false;
 		}
 		switch (dokumentTyp) {
-			case NACHWEIS_TRENNUNG:
-				//überprüfen, ob ein Wechsel von zwei Gesuchsteller auf einen stattgefunden hat.
-				return familiensituationErstgesuch.hasSecondGesuchsteller() && !familiensituationMutation.hasSecondGesuchsteller();
-			default:
-				return false;
+		case NACHWEIS_TRENNUNG:
+			//überprüfen, ob ein Wechsel von zwei Gesuchsteller auf einen stattgefunden hat.
+			return familiensituationErstgesuch.hasSecondGesuchsteller() && !familiensituationMutation.hasSecondGesuchsteller();
+		default:
+			return false;
 		}
 	}
 }

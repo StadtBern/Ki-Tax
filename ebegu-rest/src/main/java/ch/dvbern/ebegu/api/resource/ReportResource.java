@@ -63,7 +63,7 @@ public class ReportResource {
 		@QueryParam("dateTimeStichtag") @Nonnull String dateTimeStichtag,
 		@QueryParam("gesuchPeriodeID") @Nullable @Valid JaxId gesuchPeriodIdParam,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
-	    throws ExcelMergeException, MergeDocException, URISyntaxException, IOException {
+		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException {
 
 		String ip = downloadResource.getIP(request);
 

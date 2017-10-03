@@ -23,7 +23,6 @@ public class EWKResultat implements Serializable {
 
 	private List<EWKPerson> personen = new ArrayList<>();
 
-
 	public EWKResultat() {
 	}
 

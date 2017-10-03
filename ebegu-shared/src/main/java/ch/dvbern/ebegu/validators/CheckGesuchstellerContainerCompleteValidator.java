@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *  Dieser Validator die Komplettheit und Gültigkeit eines GesuchstellerContainers
+ * Dieser Validator die Komplettheit und Gültigkeit eines GesuchstellerContainers
  */
 public class CheckGesuchstellerContainerCompleteValidator implements
 	ConstraintValidator<CheckGesuchstellerContainerComplete, GesuchstellerContainer> {

@@ -27,15 +27,15 @@ public class EbeguEntityNotFoundException extends EbeguRuntimeException {
 		super(methodName, message, errorCodeEnum, cause, args);
 	}
 
-	public EbeguEntityNotFoundException(@Nullable String methodName,  @Nonnull  String message,  @Nullable ErrorCodeEnum errorCodeEnum,  @Nonnull Serializable... args) {
+	public EbeguEntityNotFoundException(@Nullable String methodName, @Nonnull String message, @Nullable ErrorCodeEnum errorCodeEnum, @Nonnull Serializable... args) {
 		super(methodName, message, errorCodeEnum, args);
 	}
 
-	public EbeguEntityNotFoundException(@Nullable String methodName,  @Nullable ErrorCodeEnum errorCodeEnum, @Nonnull  Serializable... args) {
-		super(methodName,  errorCodeEnum, args);
+	public EbeguEntityNotFoundException(@Nullable String methodName, @Nullable ErrorCodeEnum errorCodeEnum, @Nonnull Serializable... args) {
+		super(methodName, errorCodeEnum, args);
 	}
 
-	public EbeguEntityNotFoundException(@Nullable String methodName,  @Nullable  ErrorCodeEnum errorCodeEnum, @Nullable Throwable cause, @Nonnull  Serializable... args) {
+	public EbeguEntityNotFoundException(@Nullable String methodName, @Nullable ErrorCodeEnum errorCodeEnum, @Nullable Throwable cause, @Nonnull Serializable... args) {
 		super(methodName, errorCodeEnum, cause, args);
 	}
 }

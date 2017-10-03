@@ -231,7 +231,6 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 		return FinanzielleSituationRechner.calcVermoegen5Prozent(this.getFinanzSituationGS1(), this.getFinanzSituationGS2());
 	}
 
-
 	@Override
 	public final BigDecimal getTotalAbzuege() {
 

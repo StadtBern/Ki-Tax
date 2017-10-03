@@ -41,7 +41,7 @@ import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_INSTITUTION;
 /**
  * Service provided by KI-TAX to allow an external login module to create users and logins
  */
-@SuppressWarnings({"EjbInterceptorInspection", "EjbClassBasicInspection"})
+@SuppressWarnings({ "EjbInterceptorInspection", "EjbClassBasicInspection" })
 @Stateless
 public class LoginConnectorResource implements ILoginConnectorResource {
 
@@ -65,8 +65,6 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 	@Context
 	private UriInfo uriInfo;
 
-
-
 	@Inject
 	public LoginConnectorResource(
 		VersionInfoBean versionInfoBean,
@@ -89,7 +87,6 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 		this.mandantResource = mandantResource;
 		this.mandantService = mandantService;
 	}
-
 
 	@Override
 	public String getHeartBeat() {
@@ -178,7 +175,6 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 
 	}
 
-
 	@Nonnull
 	@Override
 	public String getMandant() {
@@ -187,7 +183,7 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 		if (first.getId() == null) {
 			LOG.error("error while loading mandant");
 			throw new EbeguEntityNotFoundException("getFirst", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
-		} else{
+		} else {
 			return first.getId();
 		}
 	}

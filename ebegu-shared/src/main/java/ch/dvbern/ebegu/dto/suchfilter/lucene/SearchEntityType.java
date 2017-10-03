@@ -34,12 +34,11 @@ import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.KIND_V
  */
 public enum SearchEntityType {
 	// Reihenfolge bitte entsprechend in der Wichtigkeit im GUI
-	GESUCHSTELLER_CONTAINER(GesuchstellerContainer.class, new IndexedEBEGUFieldName[]{GS_NACHNAME, GS_VORNAME, GS_GEBDATUM}),
-	KIND_CONTAINER(KindContainer.class, new IndexedEBEGUFieldName[]{KIND_NACHNAME, KIND_VORNAME, KIND_GEBDATUM}),
-	GESUCH(Gesuch.class, new IndexedEBEGUFieldName[]{ GESUCH_FALL_NUMMER }),
-	FALL(Fall.class, new IndexedEBEGUFieldName[]{ FALL_NUMMER, FALL_BESITZER_NAME, FALL_BESITZER_VORNAME}),
-	BETREUUNG(Betreuung.class, new IndexedEBEGUFieldName[]{BETREUUNG_BGNR});
-
+	GESUCHSTELLER_CONTAINER(GesuchstellerContainer.class, new IndexedEBEGUFieldName[] { GS_NACHNAME, GS_VORNAME, GS_GEBDATUM }),
+	KIND_CONTAINER(KindContainer.class, new IndexedEBEGUFieldName[] { KIND_NACHNAME, KIND_VORNAME, KIND_GEBDATUM }),
+	GESUCH(Gesuch.class, new IndexedEBEGUFieldName[] { GESUCH_FALL_NUMMER }),
+	FALL(Fall.class, new IndexedEBEGUFieldName[] { FALL_NUMMER, FALL_BESITZER_NAME, FALL_BESITZER_VORNAME }),
+	BETREUUNG(Betreuung.class, new IndexedEBEGUFieldName[] { BETREUUNG_BGNR });
 
 	@Nonnull
 	private final Class<? extends Searchable> entityClass;
@@ -48,7 +47,6 @@ public enum SearchEntityType {
 
 	@Nonnull
 	private final List<String> fieldNames;
-
 
 	@Nonnull
 	private final IndexedEBEGUFieldName[] indexedFields;
@@ -83,7 +81,6 @@ public enum SearchEntityType {
 	public IndexedEBEGUFieldName[] getIndexedFields() {
 		return indexedFields.clone();
 	}
-
 
 	/**
 	 * @param clazz Die Entity-Klasse.

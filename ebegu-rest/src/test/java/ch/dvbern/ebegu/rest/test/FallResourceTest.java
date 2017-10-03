@@ -36,7 +36,6 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class FallResourceTest extends AbstractEbeguRestLoginTest {
 
-
 	@Inject
 	private FallResource fallResource;
 	@Inject
@@ -49,7 +48,6 @@ public class FallResourceTest extends AbstractEbeguRestLoginTest {
 	private Persistence persistence;
 	@Inject
 	private JaxBConverter converter;
-
 
 	@Test
 	public void testFindGesuchForInstitution() throws EbeguException {

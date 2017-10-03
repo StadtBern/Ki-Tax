@@ -24,7 +24,6 @@ import ch.dvbern.ebegu.util.MathUtil;
  */
 public class Testfall03_PerreiraMarcia extends AbstractTestfall {
 
-
 	public Testfall03_PerreiraMarcia(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList, boolean betreuungenBestaetigt) {
 		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
 	}

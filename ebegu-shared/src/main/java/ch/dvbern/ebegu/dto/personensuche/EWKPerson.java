@@ -14,7 +14,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 
-
 /**
  * DTO für Personen aus dem EWK
  */
@@ -62,7 +61,7 @@ public class EWKPerson implements Serializable {
 
 	private List<EWKAdresse> adressen = new ArrayList<>();
 
-    private List<EWKBeziehung> beziehungen = new ArrayList<>();
+	private List<EWKBeziehung> beziehungen = new ArrayList<>();
 
 	public EWKPerson() {
 	}

@@ -76,7 +76,6 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	@Inject
 	private GeneratedDokumentService generatedDokumentService;
 
-
 	@Override
 	@Nonnull
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
@@ -210,7 +209,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	@Override
 	@Nonnull
 	@PermitAll
-	public  Optional<Mahnung> findAktiveErstMahnung(Gesuch gesuch) {
+	public Optional<Mahnung> findAktiveErstMahnung(Gesuch gesuch) {
 		authorizer.checkReadAuthorization(gesuch);
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mahnung> query = cb.createQuery(Mahnung.class);
@@ -226,7 +225,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN })
 	public void removeAllMahnungenFromGesuch(Gesuch gesuch) {
 		Collection<Mahnung> mahnungenFromGesuch = findMahnungenForGesuch(gesuch);
 		for (Mahnung mahnung : mahnungenFromGesuch) {
@@ -234,7 +233,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		}
 	}
 
-	private  void assertNoOpenMahnungOfType(@Nonnull Gesuch gesuch, @Nonnull MahnungTyp mahnungTyp) {
+	private void assertNoOpenMahnungOfType(@Nonnull Gesuch gesuch, @Nonnull MahnungTyp mahnungTyp) {
 		authorizer.checkReadAuthorization(gesuch);
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mahnung> query = cb.createQuery(Mahnung.class);

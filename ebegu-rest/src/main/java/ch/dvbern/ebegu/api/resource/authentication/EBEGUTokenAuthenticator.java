@@ -38,7 +38,6 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 	@Resource(lookup = "java:jboss/infinispan/container/ebeguCache")
 	private CacheContainer cacheContainer;
 
-
 	private AuthorisierterBenutzer user;
 
 	@Inject
@@ -158,6 +157,5 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 		}
 		return emptyList();
 	}
-
 
 }

@@ -46,11 +46,10 @@ import org.junit.runner.RunWith;
 /**
  * Tests fuer den Zahlungsservice
  */
-@SuppressWarnings({"LocalVariableNamingConvention", "InstanceMethodNamingConvention", "InstanceVariableNamingConvention"})
+@SuppressWarnings({ "LocalVariableNamingConvention", "InstanceMethodNamingConvention", "InstanceVariableNamingConvention" })
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
-
 
 	@Inject
 	private ZahlungService zahlungService;
@@ -84,7 +83,6 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	private static final LocalDate DATUM_AUGUST = LocalDate.of(2016, Month.AUGUST, 20);
 	private static final LocalDate DATUM_SEPTEMBER = LocalDate.of(2016, Month.SEPTEMBER, 20);
 	private static final LocalDate DATUM_OKTOBER = LocalDate.of(2016, Month.OCTOBER, 20);
-
 
 	@Before
 	public void init() {
@@ -282,7 +280,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 
 		Assert.assertNotNull(zahlungsauftrag);
 		// Anzahl Zahlungen: Anzahl Monate seit Periodenbeginn, inkl. dem aktuellen
-		long countMonate = ChronoUnit.MONTHS.between(gesuchsperiode.getGueltigkeit().getGueltigAb(), DATUM_GENERIERT)+1;
+		long countMonate = ChronoUnit.MONTHS.between(gesuchsperiode.getGueltigkeit().getGueltigAb(), DATUM_GENERIERT) + 1;
 		createGesuch(true);
 
 		assertZahlungsauftrag(zahlungsauftrag, 1);
@@ -315,7 +313,6 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		persistence.merge(lastStatusChange);
 		return persistence.merge(gesuch);
 	}
-
 
 	private Gesuch createGesuch(boolean verfuegen) {
 		return testfaelleService.createAndSaveTestfaelle(TestfaelleService.BECKER_NORA, verfuegen, verfuegen);

@@ -120,7 +120,6 @@ public class PrintUtilTest {
 		Assert.assertEquals("korrespondezStrasse", gesuchstellerAdresse.get().extractStrasse());
 	}
 
-
 	@Nonnull
 	private GesuchstellerAdresseContainer createKorrespondenzadresse(GesuchstellerContainer gesuchsteller) {
 		final GesuchstellerAdresseContainer korrespondenzadresse = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuchsteller);

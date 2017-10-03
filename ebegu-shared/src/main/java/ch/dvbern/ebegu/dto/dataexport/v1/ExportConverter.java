@@ -25,7 +25,6 @@ import org.apache.commons.lang.Validate;
  */
 public class ExportConverter {
 
-
 	public VerfuegungenExportDTO createVerfuegungenExportDTO(List<Verfuegung> verfuegungenToConvert) {
 		List<VerfuegungExportDTO> verfuegungExportDTOS = verfuegungenToConvert
 			.stream()
@@ -66,11 +65,9 @@ public class ExportConverter {
 		return verfuegungDTO;
 	}
 
-
 	private KindExportDTO createKindExportDTOFromKind(KindContainer kindCont) {
 		Kind kindJA = kindCont.getKindJA();
 		return new KindExportDTO(kindJA.getVorname(), kindJA.getNachname(), kindJA.getGeburtsdatum());
-
 
 	}
 
@@ -93,7 +90,6 @@ public class ExportConverter {
 		String traegerschaft = institution.getTraegerschaft() != null ? institution.getTraegerschaft().getName() : null;
 		AdresseExportDTO adresse = createAdresseExportDTOFromAdresse(institutionStammdaten.getAdresse());
 		return new InstitutionExportDTO(instID, name, traegerschaft, adresse);
-
 
 	}
 

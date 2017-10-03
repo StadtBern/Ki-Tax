@@ -33,7 +33,7 @@ import ch.dvbern.ebegu.util.MathUtil;
 public class Testfall08_UmzugAusInAusBern extends AbstractTestfall {
 
 	public Testfall08_UmzugAusInAusBern(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
-										boolean betreuungenBestaetigt) {
+		boolean betreuungenBestaetigt) {
 		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
 	}
 

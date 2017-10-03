@@ -58,7 +58,6 @@ public class MahnungResource {
 	@Inject
 	private ResourceHelper resourceHelper;
 
-
 	@ApiOperation(value = "Speichert eine Mahnung in der Datenbank", response = JaxMahnung.class)
 	@Nullable
 	@POST
@@ -82,7 +81,6 @@ public class MahnungResource {
 
 		Mahnung mahnung = converter.mahnungToEntity(mahnungJAXP, new Mahnung());
 		Mahnung persistedMahnung = mahnungService.createMahnung(mahnung);
-
 
 		return converter.mahnungToJAX(persistedMahnung);
 	}

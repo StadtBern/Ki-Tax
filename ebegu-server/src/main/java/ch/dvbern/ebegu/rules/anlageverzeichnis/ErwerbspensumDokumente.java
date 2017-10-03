@@ -103,51 +103,50 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum, Loc
 	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Erwerbspensum erwerbspensum, LocalDate periodenstart) {
 		if (erwerbspensum != null) {
 			switch (dokumentTyp) {
-				case NACHWEIS_ERWERBSPENSUM:
-					// Wird nur bei Neueintritt im Job verlangt. Neueintritt = DatumVon >= Periodenstart. Bei Mutationen
-					// wird das Erwerbspensum immer beendet und ein neues erfasst. Daher gilt diese Regel immer
-					return !erwerbspensum.getGueltigkeit().getGueltigAb().isBefore(periodenstart) &&
-						erwerbspensum.getTaetigkeit() == Taetigkeit.ANGESTELLT;
-				default:
-					return isDokumentNeeded(dokumentTyp, erwerbspensum);
+			case NACHWEIS_ERWERBSPENSUM:
+				// Wird nur bei Neueintritt im Job verlangt. Neueintritt = DatumVon >= Periodenstart. Bei Mutationen
+				// wird das Erwerbspensum immer beendet und ein neues erfasst. Daher gilt diese Regel immer
+				return !erwerbspensum.getGueltigkeit().getGueltigAb().isBefore(periodenstart) &&
+					erwerbspensum.getTaetigkeit() == Taetigkeit.ANGESTELLT;
+			default:
+				return isDokumentNeeded(dokumentTyp, erwerbspensum);
 			}
 		}
 		return false;
 	}
 
-
 	@Override
 	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Erwerbspensum erwerbspensum) {
 		if (erwerbspensum != null) {
 			switch (dokumentTyp) {
-				case NACHWEIS_ERWERBSPENSUM:
-					// braucht Periodenstart-Datum als Parameter
-					return false;
-				case NACHWEIS_SELBSTAENDIGKEIT:
-					return erwerbspensum.getTaetigkeit() == Taetigkeit.SELBSTAENDIG;
-				case NACHWEIS_AUSBILDUNG:
-					return erwerbspensum.getTaetigkeit() == Taetigkeit.AUSBILDUNG;
-				case NACHWEIS_RAV:
-					return erwerbspensum.getTaetigkeit() == Taetigkeit.RAV;
-				case BESTAETIGUNG_ARZT:
-					return erwerbspensum.getTaetigkeit() == Taetigkeit.GESUNDHEITLICHE_EINSCHRAENKUNGEN;
-				case NACHWEIS_UNREG_ARBEITSZ:
-					return erwerbspensum.getZuschlagZuErwerbspensum()
-						&& erwerbspensum.getZuschlagsgrund() == Zuschlagsgrund.UNREGELMAESSIGE_ARBEITSZEITEN;
-				case NACHWEIS_LANG_ARBEITSWEG:
-					return erwerbspensum.getZuschlagZuErwerbspensum()
-						&& erwerbspensum.getZuschlagsgrund() == Zuschlagsgrund.LANGER_ARBWEITSWEG;
-				case NACHWEIS_SONSTIGEN_ZUSCHLAG:
-					return erwerbspensum.getZuschlagZuErwerbspensum()
-						&& erwerbspensum.getZuschlagsgrund() == Zuschlagsgrund.ANDERE;
-				case NACHWEIS_GLEICHE_ARBEITSTAGE_BEI_TEILZEIT:
-					return erwerbspensum.getZuschlagZuErwerbspensum()
-						&& erwerbspensum.getZuschlagsgrund() == Zuschlagsgrund.UEBERLAPPENDE_ARBEITSZEITEN;
-				case NACHWEIS_FIXE_ARBEITSZEITEN:
-					return erwerbspensum.getZuschlagZuErwerbspensum()
-						&& erwerbspensum.getZuschlagsgrund() == Zuschlagsgrund.FIXE_ARBEITSZEITEN;
-				default:
-					return false;
+			case NACHWEIS_ERWERBSPENSUM:
+				// braucht Periodenstart-Datum als Parameter
+				return false;
+			case NACHWEIS_SELBSTAENDIGKEIT:
+				return erwerbspensum.getTaetigkeit() == Taetigkeit.SELBSTAENDIG;
+			case NACHWEIS_AUSBILDUNG:
+				return erwerbspensum.getTaetigkeit() == Taetigkeit.AUSBILDUNG;
+			case NACHWEIS_RAV:
+				return erwerbspensum.getTaetigkeit() == Taetigkeit.RAV;
+			case BESTAETIGUNG_ARZT:
+				return erwerbspensum.getTaetigkeit() == Taetigkeit.GESUNDHEITLICHE_EINSCHRAENKUNGEN;
+			case NACHWEIS_UNREG_ARBEITSZ:
+				return erwerbspensum.getZuschlagZuErwerbspensum()
+					&& erwerbspensum.getZuschlagsgrund() == Zuschlagsgrund.UNREGELMAESSIGE_ARBEITSZEITEN;
+			case NACHWEIS_LANG_ARBEITSWEG:
+				return erwerbspensum.getZuschlagZuErwerbspensum()
+					&& erwerbspensum.getZuschlagsgrund() == Zuschlagsgrund.LANGER_ARBWEITSWEG;
+			case NACHWEIS_SONSTIGEN_ZUSCHLAG:
+				return erwerbspensum.getZuschlagZuErwerbspensum()
+					&& erwerbspensum.getZuschlagsgrund() == Zuschlagsgrund.ANDERE;
+			case NACHWEIS_GLEICHE_ARBEITSTAGE_BEI_TEILZEIT:
+				return erwerbspensum.getZuschlagZuErwerbspensum()
+					&& erwerbspensum.getZuschlagsgrund() == Zuschlagsgrund.UEBERLAPPENDE_ARBEITSZEITEN;
+			case NACHWEIS_FIXE_ARBEITSZEITEN:
+				return erwerbspensum.getZuschlagZuErwerbspensum()
+					&& erwerbspensum.getZuschlagsgrund() == Zuschlagsgrund.FIXE_ARBEITSZEITEN;
+			default:
+				return false;
 			}
 		}
 		return false;

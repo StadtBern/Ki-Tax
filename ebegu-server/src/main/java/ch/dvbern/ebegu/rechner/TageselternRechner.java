@@ -13,7 +13,6 @@ import ch.dvbern.ebegu.util.MathUtil;
  */
 public class TageselternRechner extends AbstractBGRechner {
 
-
 	@Override
 	public VerfuegungZeitabschnitt calculate(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Verfuegung verfuegung, BGRechnerParameterDTO parameterDTO) {
 
@@ -32,7 +31,7 @@ public class TageselternRechner extends AbstractBGRechner {
 		BigDecimal betreuungsstundenProMonat = MathUtil.EXACT.multiply(anzahlTageProMonat, parameterDTO.getAnzahlStundenProTagMaximal(), bgPensum);
 		BigDecimal betreuungsstundenIntervall = MathUtil.EXACT.multiply(betreuungsstundenProMonat, anteilMonat);
 
-        // Kosten Betreuungsstunde
+		// Kosten Betreuungsstunde
 		BigDecimal kostenProBetreuungsstunde = calculateKostenBetreuungsstunde(parameterDTO.getKostenProStundeMaximalTageseltern(), massgebendesEinkommen, bgPensum, parameterDTO);
 
 		// Vollkosten und Elternbeitrag

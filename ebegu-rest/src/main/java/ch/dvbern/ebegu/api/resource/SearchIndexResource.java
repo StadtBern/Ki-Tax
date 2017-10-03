@@ -53,7 +53,6 @@ import org.apache.commons.lang3.Validate;
 @Api(description = "Resource für Suchanfragen")
 public class SearchIndexResource {
 
-
 	@Inject
 	private SearchIndexService searchIndexService;
 

@@ -161,7 +161,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Inject
 	private BetreuungService betreuungService;
 
-
 	@Nonnull
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
@@ -317,7 +316,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		zahlungService.deleteZahlungspositionenOfGesuch(gesToRemove);
 		mitteilungService.removeAllBetreuungMitteilungenForGesuch(gesToRemove);
 
-
 		//Finally remove the Gesuch when all other objects are really removed
 		persistence.remove(gesToRemove);
 	}
@@ -399,20 +397,20 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		@SuppressWarnings("rawtypes") // Je nach Abfrage ist es String oder Long
-		CriteriaQuery query;
+			CriteriaQuery query;
 		switch (mode) {
-			case SEARCH:
-				query = cb.createQuery(String.class);
-				break;
-			case COUNT:
-				query = cb.createQuery(Long.class);
-				break;
-			default:
-				throw new IllegalStateException("Undefined Mode for searchAntraege Query: " + mode);
+		case SEARCH:
+			query = cb.createQuery(String.class);
+			break;
+		case COUNT:
+			query = cb.createQuery(Long.class);
+			break;
+		default:
+			throw new IllegalStateException("Undefined Mode for searchAntraege Query: " + mode);
 		}
 		// Construct from-clause
 		@SuppressWarnings("unchecked") // Je nach Abfrage ist das Query String oder Long
-		Root<Gesuch> root = query.from(Gesuch.class);
+			Root<Gesuch> root = query.from(Gesuch.class);
 		// Join all the relevant relations (except gesuchsteller join, which is only done when needed)
 		Join<Gesuch, Fall> fall = root.join(Gesuch_.fall, JoinType.INNER);
 		Join<Fall, Benutzer> verantwortlicher = fall.join(Fall_.verantwortlicher, JoinType.LEFT);
@@ -433,39 +431,39 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		// Special role based predicates
 		switch (role) {
-			case SUPER_ADMIN:
-			case ADMIN:
-			case REVISOR:
-			case JURIST:
-				break;
-			case STEUERAMT:
-				break;
-			case SACHBEARBEITER_JA:
-				// Jugendamt-Mitarbeiter duerfen auch Faelle sehen, die noch gar keine Kinder/Betreuungen haben.
-				// Wenn aber solche erfasst sind, dann duerfen sie nur diejenigen sehen, die nicht nur Schulamt haben
-				// zudem muss auch der status ensprechend sein
-				Predicate predicateKeineKinder = kindContainers.isNull();
-				Predicate predicateKeineBetreuungen = betreuungen.isNull();
-				Predicate predicateKeineInstitutionsstammdaten = institutionstammdaten.isNull();
-				Predicate predicateKeineInstitution = institution.isNull();
-				Predicate predicateAngebotstyp = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
-				Predicate predicateRichtigerAngebotstypOderNichtAusgefuellt = cb.or(predicateKeineKinder, predicateKeineBetreuungen, predicateKeineInstitutionsstammdaten, predicateKeineInstitution, predicateAngebotstyp);
-				predicates.add(predicateRichtigerAngebotstypOderNichtAusgefuellt);
-				break;
-			case SACHBEARBEITER_TRAEGERSCHAFT:
-				predicates.add(cb.equal(institution.get(Institution_.traegerschaft), user.getTraegerschaft()));
-				break;
-			case SACHBEARBEITER_INSTITUTION:
-				// es geht hier nicht um die institution des zugewiesenen benutzers sondern um die institution des eingeloggten benutzers
-				predicates.add(cb.equal(institution, user.getInstitution()));
-				break;
-			case SCHULAMT:
-				predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
-				break;
-			default:
-				LOG.warn("antragSearch can not be performed by users in role " + role);
-				predicates.add(cb.isFalse(cb.literal(Boolean.TRUE))); // impossible predicate
-				break;
+		case SUPER_ADMIN:
+		case ADMIN:
+		case REVISOR:
+		case JURIST:
+			break;
+		case STEUERAMT:
+			break;
+		case SACHBEARBEITER_JA:
+			// Jugendamt-Mitarbeiter duerfen auch Faelle sehen, die noch gar keine Kinder/Betreuungen haben.
+			// Wenn aber solche erfasst sind, dann duerfen sie nur diejenigen sehen, die nicht nur Schulamt haben
+			// zudem muss auch der status ensprechend sein
+			Predicate predicateKeineKinder = kindContainers.isNull();
+			Predicate predicateKeineBetreuungen = betreuungen.isNull();
+			Predicate predicateKeineInstitutionsstammdaten = institutionstammdaten.isNull();
+			Predicate predicateKeineInstitution = institution.isNull();
+			Predicate predicateAngebotstyp = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
+			Predicate predicateRichtigerAngebotstypOderNichtAusgefuellt = cb.or(predicateKeineKinder, predicateKeineBetreuungen, predicateKeineInstitutionsstammdaten, predicateKeineInstitution, predicateAngebotstyp);
+			predicates.add(predicateRichtigerAngebotstypOderNichtAusgefuellt);
+			break;
+		case SACHBEARBEITER_TRAEGERSCHAFT:
+			predicates.add(cb.equal(institution.get(Institution_.traegerschaft), user.getTraegerschaft()));
+			break;
+		case SACHBEARBEITER_INSTITUTION:
+			// es geht hier nicht um die institution des zugewiesenen benutzers sondern um die institution des eingeloggten benutzers
+			predicates.add(cb.equal(institution, user.getInstitution()));
+			break;
+		case SCHULAMT:
+			predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
+			break;
+		default:
+			LOG.warn("antragSearch can not be performed by users in role " + role);
+			predicates.add(cb.isFalse(cb.literal(Boolean.TRUE))); // impossible predicate
+			break;
 		}
 
 		// Predicates derived from PredicateDTO
@@ -558,39 +556,39 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 		// Construct the select- and where-clause
 		switch (mode) {
-			case SEARCH:
-				//noinspection unchecked // Je nach Abfrage ist das Query String oder Long
-				query.select(root.get(Gesuch_.id))
-					.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-				constructOrderByClause(antragTableFilterDto, cb, query, root, kinder, gesuchsperiode, institutionstammdaten, institution);
-				break;
-			case COUNT:
-				//noinspection unchecked // Je nach Abfrage ist das Query String oder Long
-				query.select(cb.countDistinct(root.get(Gesuch_.id)))
-					.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-				break;
+		case SEARCH:
+			//noinspection unchecked // Je nach Abfrage ist das Query String oder Long
+			query.select(root.get(Gesuch_.id))
+				.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+			constructOrderByClause(antragTableFilterDto, cb, query, root, kinder, gesuchsperiode, institutionstammdaten, institution);
+			break;
+		case COUNT:
+			//noinspection unchecked // Je nach Abfrage ist das Query String oder Long
+			query.select(cb.countDistinct(root.get(Gesuch_.id)))
+				.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+			break;
 		}
 
 		// Prepare and execute the query and build the result
 		Pair<Long, List<Gesuch>> result = null;
 		switch (mode) {
-			case SEARCH:
-				List<String> gesuchIds = persistence.getCriteriaResults(query); //select all ids in order, may contain duplicates
-				List<Gesuch> pagedResult;
-				if (antragTableFilterDto.getPagination() != null) {
-					int firstIndex = antragTableFilterDto.getPagination().getStart();
-					Integer maxresults = antragTableFilterDto.getPagination().getNumber();
-					List<String> orderedIdsToLoad = this.determineDistinctGesuchIdsToLoad(gesuchIds, firstIndex, maxresults);
-					pagedResult = findGesuche(orderedIdsToLoad);
-				} else {
-					pagedResult = findGesuche(gesuchIds);
-				}
-				result = new ImmutablePair<>(null, pagedResult);
-				break;
-			case COUNT:
-				Long count = (Long) persistence.getCriteriaSingleResult(query);
-				result = new ImmutablePair<>(count, null);
-				break;
+		case SEARCH:
+			List<String> gesuchIds = persistence.getCriteriaResults(query); //select all ids in order, may contain duplicates
+			List<Gesuch> pagedResult;
+			if (antragTableFilterDto.getPagination() != null) {
+				int firstIndex = antragTableFilterDto.getPagination().getStart();
+				Integer maxresults = antragTableFilterDto.getPagination().getNumber();
+				List<String> orderedIdsToLoad = this.determineDistinctGesuchIdsToLoad(gesuchIds, firstIndex, maxresults);
+				pagedResult = findGesuche(orderedIdsToLoad);
+			} else {
+				pagedResult = findGesuche(gesuchIds);
+			}
+			result = new ImmutablePair<>(null, pagedResult);
+			break;
+		case COUNT:
+			Long count = (Long) persistence.getCriteriaSingleResult(query);
+			result = new ImmutablePair<>(count, null);
+			break;
 		}
 		return result;
 	}
@@ -602,83 +600,81 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private void createPredicateGesuchBetreuungenStatus(CriteriaBuilder cb, Root<Gesuch> root, List<Predicate> predicates, String status) {
 		if (AntragStatusDTO.PLATZBESTAETIGUNG_WARTEN.toString().equalsIgnoreCase(status)) {
 			predicates.add(cb.equal(root.get(Gesuch_.gesuchBetreuungenStatus), GesuchBetreuungenStatus.WARTEN));
-		}
-		else if (AntragStatusDTO.PLATZBESTAETIGUNG_ABGEWIESEN.toString().equalsIgnoreCase(status)) {
+		} else if (AntragStatusDTO.PLATZBESTAETIGUNG_ABGEWIESEN.toString().equalsIgnoreCase(status)) {
 			predicates.add(cb.equal(root.get(Gesuch_.gesuchBetreuungenStatus), GesuchBetreuungenStatus.ABGEWIESEN));
-		}
-		else if (AntragStatusDTO.GEPRUEFT.toString().equalsIgnoreCase(status)) {
+		} else if (AntragStatusDTO.GEPRUEFT.toString().equalsIgnoreCase(status)) {
 			predicates.add(cb.equal(root.get(Gesuch_.gesuchBetreuungenStatus), GesuchBetreuungenStatus.ALLE_BESTAETIGT));
 		}
 	}
 
 	@SuppressWarnings("PMD.NcssMethodCount")
 	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query,
-										Root<Gesuch> root, Join<KindContainer, Kind> kinder,
-										Join<Gesuch, Gesuchsperiode> gesuchsperiode,
-										Join<Betreuung, InstitutionStammdaten> institutionstammdaten,
-										Join<InstitutionStammdaten, Institution> institution) {
+		Root<Gesuch> root, Join<KindContainer, Kind> kinder,
+		Join<Gesuch, Gesuchsperiode> gesuchsperiode,
+		Join<Betreuung, InstitutionStammdaten> institutionstammdaten,
+		Join<InstitutionStammdaten, Institution> institution) {
 		Expression<?> expression;
 		if (antragTableFilterDto.getSort() != null && antragTableFilterDto.getSort().getPredicate() != null) {
 			switch (antragTableFilterDto.getSort().getPredicate()) {
-				case "fallNummer":
-					expression = root.get(Gesuch_.fall).get(Fall_.fallNummer);
-					break;
-				case "familienName":
-					expression = root.get(Gesuch_.gesuchsteller1).get(GesuchstellerContainer_.gesuchstellerJA).get(Gesuchsteller_.nachname);
-					break;
-				case "antragTyp":
-					expression = root.get(Gesuch_.typ);
-					break;
-				case "gesuchsperiode":
-					expression = gesuchsperiode.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb);
-					break;
-				case "aenderungsdatum":
-					expression = root.get(Gesuch_.timestampMutiert);
-					break;
-				case "eingangsdatum":
-					expression = root.get(Gesuch_.eingangsdatum);
-					break;
-				case "eingangsdatumSTV":
-					expression = root.get(Gesuch_.eingangsdatumSTV);
-					break;
-				case "status":
-					expression = root.get(Gesuch_.status);
-					break;
-				case "angebote":
-					// Die Angebote sind eigentlich eine Liste innerhalb der Liste (also des Tabelleneintrages).
-					// Kinder ohne Angebot sollen egal wie sortiert ist am Schluss kommen!
-					if (antragTableFilterDto.getSort().getReverse()) {
-						expression = cb.selectCase().when(institutionstammdaten.isNull(), "ZZZZ")
-							.otherwise(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp));
-					} else {
-						expression = cb.selectCase().when(institutionstammdaten.isNull(), "0000")
-							.otherwise(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp));
-					}
-					break;
-				case "institutionen":
-					// Die Institutionen sind eigentlich eine Liste innerhalb der Liste (also des Tabelleneintrages).
-					// Kinder ohne Angebot sollen egal wie sortiert ist am Schluss kommen!
-					if (antragTableFilterDto.getSort().getReverse()) {
-						expression = cb.selectCase().when(institution.isNull(), "ZZZZ")
-							.otherwise(institution.get(Institution_.name));
-					} else {
-						expression = cb.selectCase().when(institution.isNull(), "0000")
-							.otherwise(institution.get(Institution_.name));
-					}
-					break;
-				case "verantwortlicher":
-					expression = root.get(Gesuch_.fall).get(Fall_.verantwortlicher).get(Benutzer_.nachname);
-					break;
-				case "kinder":
-					expression = kinder.get(Kind_.vorname);
-					break;
-				case "dokumenteHochgeladen":
-					expression = root.get(Gesuch_.dokumenteHochgeladen);
-					break;
-				default:
-					LOG.warn("Using default sort by FallNummer because there is no specific clause for predicate " + antragTableFilterDto.getSort().getPredicate());
-					expression = root.get(Gesuch_.fall).get(Fall_.fallNummer);
-					break;
+			case "fallNummer":
+				expression = root.get(Gesuch_.fall).get(Fall_.fallNummer);
+				break;
+			case "familienName":
+				expression = root.get(Gesuch_.gesuchsteller1).get(GesuchstellerContainer_.gesuchstellerJA).get(Gesuchsteller_.nachname);
+				break;
+			case "antragTyp":
+				expression = root.get(Gesuch_.typ);
+				break;
+			case "gesuchsperiode":
+				expression = gesuchsperiode.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb);
+				break;
+			case "aenderungsdatum":
+				expression = root.get(Gesuch_.timestampMutiert);
+				break;
+			case "eingangsdatum":
+				expression = root.get(Gesuch_.eingangsdatum);
+				break;
+			case "eingangsdatumSTV":
+				expression = root.get(Gesuch_.eingangsdatumSTV);
+				break;
+			case "status":
+				expression = root.get(Gesuch_.status);
+				break;
+			case "angebote":
+				// Die Angebote sind eigentlich eine Liste innerhalb der Liste (also des Tabelleneintrages).
+				// Kinder ohne Angebot sollen egal wie sortiert ist am Schluss kommen!
+				if (antragTableFilterDto.getSort().getReverse()) {
+					expression = cb.selectCase().when(institutionstammdaten.isNull(), "ZZZZ")
+						.otherwise(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp));
+				} else {
+					expression = cb.selectCase().when(institutionstammdaten.isNull(), "0000")
+						.otherwise(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp));
+				}
+				break;
+			case "institutionen":
+				// Die Institutionen sind eigentlich eine Liste innerhalb der Liste (also des Tabelleneintrages).
+				// Kinder ohne Angebot sollen egal wie sortiert ist am Schluss kommen!
+				if (antragTableFilterDto.getSort().getReverse()) {
+					expression = cb.selectCase().when(institution.isNull(), "ZZZZ")
+						.otherwise(institution.get(Institution_.name));
+				} else {
+					expression = cb.selectCase().when(institution.isNull(), "0000")
+						.otherwise(institution.get(Institution_.name));
+				}
+				break;
+			case "verantwortlicher":
+				expression = root.get(Gesuch_.fall).get(Fall_.verantwortlicher).get(Benutzer_.nachname);
+				break;
+			case "kinder":
+				expression = kinder.get(Kind_.vorname);
+				break;
+			case "dokumenteHochgeladen":
+				expression = root.get(Gesuch_.dokumenteHochgeladen);
+				break;
+			default:
+				LOG.warn("Using default sort by FallNummer because there is no specific clause for predicate " + antragTableFilterDto.getSort().getPredicate());
+				expression = root.get(Gesuch_.fall).get(Fall_.fallNummer);
+				break;
 			}
 			query.orderBy(antragTableFilterDto.getSort().getReverse() ? cb.asc(expression) : cb.desc(expression));
 		} else {
@@ -715,7 +711,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 			final CriteriaQuery<JaxAntragDTO> query = cb.createQuery(JaxAntragDTO.class);
 			Root<Gesuch> root = query.from(Gesuch.class);
-
 
 			Join<InstitutionStammdaten, Institution> institutionJoin = null;
 			Join<Betreuung, InstitutionStammdaten> institutionstammdatenJoin = null;
@@ -1007,7 +1002,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	@RolesAllowed(SUPER_ADMIN)
 	public Optional<Gesuch> testfallMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
-										   @Nonnull LocalDate eingangsdatum) {
+		@Nonnull LocalDate eingangsdatum) {
 		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
 		final Optional<Fall> fall = fallService.findFallByNumber(fallNummer);
 		final Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId);
@@ -1445,7 +1440,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN })
 	public boolean canGesuchsperiodeBeClosed(@Nonnull Gesuchsperiode gesuchsperiode) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
@@ -1542,7 +1537,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			throw new EbeguRuntimeException("removeAntrag", ErrorCodeEnum.ERROR_DELETION_NOT_ALLOWED_FOR_JA);
 		}
 		if (gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen()) {
-			throw new EbeguRuntimeException("removeAntrag", ErrorCodeEnum.ERROR_DELETION_ANTRAG_NOT_ALLOWED,  gesuch.getStatus());
+			throw new EbeguRuntimeException("removeAntrag", ErrorCodeEnum.ERROR_DELETION_ANTRAG_NOT_ALLOWED, gesuch.getStatus());
 		}
 		List<Betreuung> betreuungen = new ArrayList<>();
 		betreuungen.addAll(gesuch.extractAllBetreuungen());
@@ -1565,7 +1560,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			throw new EbeguRuntimeException("removeGesuchstellerAntrag", ErrorCodeEnum.ERROR_DELETION_NOT_ALLOWED_FOR_GS);
 		}
 		if (gesuch.getStatus() != AntragStatus.IN_BEARBEITUNG_GS) {
-			throw new EbeguRuntimeException("removeGesuchstellerAntrag", ErrorCodeEnum.ERROR_DELETION_ANTRAG_NOT_ALLOWED,  gesuch.getStatus());
+			throw new EbeguRuntimeException("removeGesuchstellerAntrag", ErrorCodeEnum.ERROR_DELETION_ANTRAG_NOT_ALLOWED, gesuch.getStatus());
 		}
 		List<Betreuung> betreuungen = new ArrayList<>();
 		betreuungen.addAll(gesuch.extractAllBetreuungen());
@@ -1575,7 +1570,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public Gesuch closeWithoutAngebot(@Nonnull Gesuch gesuch) {
 		if (gesuch.getStatus() != AntragStatus.GEPRUEFT) {
 			throw new EbeguRuntimeException("closeWithoutAngebot", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_ALLOWED);
@@ -1598,7 +1593,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public Gesuch verfuegenStarten(@Nonnull Gesuch gesuch) {
 		if (gesuch.getStatus() != AntragStatus.GEPRUEFT) {
 			throw new EbeguRuntimeException("verfuegenStarten", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_ALLOWED);
@@ -1648,7 +1643,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public void postGesuchVerfuegen(@Nonnull Gesuch gesuch) {
 		Optional<Gesuch> neustesVerfuegtesGesuchFuerGesuch = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(), false);
 		if (AntragStatus.FIRST_STATUS_OF_VERFUEGT.contains(gesuch.getStatus()) && gesuch.getTimestampVerfuegt() == null) {
@@ -1664,7 +1659,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Asynchronous
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public void sendMailsToAllGesuchstellerOfLastGesuchsperiode(@Nonnull Gesuchsperiode lastGesuchsperiode, @Nonnull Gesuchsperiode nextGesuchsperiode) {
 		List<Gesuch> antraegeOfLastYear = new ArrayList<>();
 		Collection<Fall> allFaelle = fallService.getAllFalle(true);
@@ -1682,8 +1677,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			if (Betreuungsstatus.ABGEWIESEN == betreuung.getBetreuungsstatus()) {
 				gesuch.setGesuchBetreuungenStatus(GesuchBetreuungenStatus.ABGEWIESEN);
 				break;
-			}
-			else if (Betreuungsstatus.WARTEN == betreuung.getBetreuungsstatus()) {
+			} else if (Betreuungsstatus.WARTEN == betreuung.getBetreuungsstatus()) {
 				gesuch.setGesuchBetreuungenStatus(GesuchBetreuungenStatus.WARTEN);
 			}
 		}

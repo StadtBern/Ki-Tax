@@ -64,10 +64,8 @@ public class Kind extends AbstractPersonEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_kind_pensum_fachstelle_id"), nullable = true)
 	private PensumFachstelle pensumFachstelle;
 
-
 	public Kind() {
 	}
-
 
 	@Nullable
 	public Integer getWohnhaftImGleichenHaushalt() {
@@ -142,7 +140,7 @@ public class Kind extends AbstractPersonEntity {
 		return copyForMutationOrErneuerung(folgegesuchKind);
 	}
 
-    @Nonnull
+	@Nonnull
 	private Kind copyForMutationOrErneuerung(@Nonnull Kind mutation) {
 		mutation.setWohnhaftImGleichenHaushalt(this.getWohnhaftImGleichenHaushalt());
 		mutation.setKinderabzug(this.getKinderabzug());

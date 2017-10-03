@@ -31,11 +31,9 @@ public interface Constants {
 
 	int LOGIN_TIMEOUT_SECONDS = 60 * 60; //aktuell 1h
 
-
 	int ABWESENHEIT_DAYS_LIMIT = 30;
 
 	Locale DEFAULT_LOCALE = new Locale("de", "CH");
-
 
 	String DATA = "Data";
 	String REGEX_EMAIL = "[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}";

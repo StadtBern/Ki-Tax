@@ -43,19 +43,17 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 	private Integer jahr;
 
 	@Valid
-	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_finanzielleSituationContainer_finanzielleSituationGS_id"), nullable = true)
 	private FinanzielleSituation finanzielleSituationGS;
 
 	@Valid
-	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_finanzielleSituationContainer_finanzielleSituationJA_id"), nullable = true)
 	private FinanzielleSituation finanzielleSituationJA;
 
-
 	public FinanzielleSituationContainer() {
 	}
-
 
 	public GesuchstellerContainer getGesuchsteller() {
 		return gesuchstellerContainer;

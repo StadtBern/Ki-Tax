@@ -52,7 +52,7 @@ public class FinanzielleSituationEinkommensverschlechterungPrintMergeSource impl
 	public List<MergeSource> whileStatement(MergeContext mergeContext, String key) throws DocTemplateException {
 
 		String[] array = key.split("[.]+");
-	    String subkey = array[0];
+		String subkey = array[0];
 		if (subkey.equalsIgnoreCase("berechnung")) {
 			return new BeanMergeSource(berechnung, "berechnung.").whileStatement(mergeContext, key);
 		}

@@ -49,19 +49,17 @@ public class GesuchStatusListener {
 
 			for (AntragEvents permittedTrigger : permittedTriggers) {
 				stateMachine.fire(getTrigger(permittedTrigger), gesuch);
-				if(stateMachine.getState().equals(postStatus)){
+				if (stateMachine.getState().equals(postStatus)) {
 					gesuch.setStatus(postStatus);
 					return;
 				}
-				stateMachine  = StateMachineFactory.getStateMachine(gesuch, getConfig());
+				stateMachine = StateMachineFactory.getStateMachine(gesuch, getConfig());
 			}
 
 			LOG.error("State Machine received unhandled transition from {} for current state {}", preStatus, postStatus);
 			throw new EbeguRuntimeException("handleFSMEvent", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, postStatus);
 		}
 	}
-
-
 
 	private StateMachineConfig<AntragStatus, AntragEvents> getConfig() {
 		if (config == null) {

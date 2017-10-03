@@ -29,7 +29,6 @@ import org.hibernate.envers.Audited;
 )
 public class EinkommensverschlechterungContainer extends AbstractEntity {
 
-
 	private static final long serialVersionUID = -2685774428336265818L;
 
 	@NotNull
@@ -57,10 +56,8 @@ public class EinkommensverschlechterungContainer extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_einkommensverschlechterungcontainer_ekvJABasisJahrPlus2_id"), nullable = true)
 	private Einkommensverschlechterung ekvJABasisJahrPlus2;
 
-
 	public EinkommensverschlechterungContainer() {
 	}
-
 
 	public Einkommensverschlechterung getEkvJABasisJahrPlus2() {
 		return ekvJABasisJahrPlus2;

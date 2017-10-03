@@ -57,7 +57,6 @@ public abstract class AbstractFinanzielleSituation extends AbstractEntity {
 	public AbstractFinanzielleSituation() {
 	}
 
-
 	public abstract BigDecimal getNettolohn();
 
 	public Boolean getSteuerveranlagungErhalten() {

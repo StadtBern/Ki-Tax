@@ -26,10 +26,8 @@ public class GesuchstellerAdresse extends Adresse {
 	@Column(nullable = false)
 	private boolean nichtInGemeinde = false;
 
-
 	public GesuchstellerAdresse() {
 	}
-
 
 	public AdresseTyp getAdresseTyp() {
 		return adresseTyp;
@@ -47,8 +45,7 @@ public class GesuchstellerAdresse extends Adresse {
 		this.nichtInGemeinde = nichtInGemeinde;
 	}
 
-
-	@SuppressWarnings({"OverlyComplexBooleanExpression"})
+	@SuppressWarnings({ "OverlyComplexBooleanExpression" })
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality

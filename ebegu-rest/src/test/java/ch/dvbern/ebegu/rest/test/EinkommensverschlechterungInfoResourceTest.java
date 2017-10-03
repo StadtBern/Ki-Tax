@@ -33,7 +33,6 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRestLoginTest {
 
-
 	@Inject
 	private EinkommensverschlechterungInfoResource einkommensverschlechterungInfoResource;
 
@@ -51,7 +50,6 @@ public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRes
 
 	@Inject
 	private Persistence persistence;
-
 
 	@Test
 	public void createEinkommensverschlechterungInfoTest() throws EbeguException {
@@ -80,12 +78,10 @@ public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRes
 		JaxGesuch testJaxGesuch = TestJaxDataUtil.createTestJaxGesuch();
 		testJaxGesuch.getFall().setVerantwortlicher(converter.benutzerToAuthLoginElement(verantwortlicher));
 
-
 		JaxFall returnedFall = fallResource.saveFall(testJaxGesuch.getFall(), uri, null);
 		testJaxGesuch.setGesuchsperiode(saveGesuchsperiodeInStatusAktiv(testJaxGesuch.getGesuchsperiode()));
 		testJaxGesuch.setFall(returnedFall);
 		return (JaxGesuch) gesuchResource.create(testJaxGesuch, uri, null).getEntity();
 	}
-
 
 }

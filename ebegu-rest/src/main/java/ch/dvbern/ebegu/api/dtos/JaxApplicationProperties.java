@@ -19,7 +19,6 @@ public class JaxApplicationProperties extends JaxAbstractDTO {
 	@NotNull
 	private String name = null;
 
-
 	public String getValue() {
 		return value;
 	}

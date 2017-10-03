@@ -36,7 +36,6 @@ import org.junit.Test;
  */
 public class FamilienabzugAbschnittRuleTest {
 
-
 	private final BigDecimal pauschalabzugProPersonFamiliengroesse3 = BigDecimal.valueOf(3800);
 	private final BigDecimal pauschalabzugProPersonFamiliengroesse4 = BigDecimal.valueOf(5960);
 	private final BigDecimal pauschalabzugProPersonFamiliengroesse5 = BigDecimal.valueOf(7040);
@@ -48,7 +47,6 @@ public class FamilienabzugAbschnittRuleTest {
 	private final FamilienabzugAbschnittRule famabAbschnittRule =
 		new FamilienabzugAbschnittRule(Constants.DEFAULT_GUELTIGKEIT, pauschalabzugProPersonFamiliengroesse3,
 			pauschalabzugProPersonFamiliengroesse4, pauschalabzugProPersonFamiliengroesse5, pauschalabzugProPersonFamiliengroesse6);
-
 
 	@Test
 	public void test2PKeinAbzug() throws Exception {
@@ -275,7 +273,7 @@ public class FamilienabzugAbschnittRuleTest {
 		//das Kind war schon geboren
 		Gesuch gesuch = createGesuchWithKind(Kinderabzug.GANZER_ABZUG, Kinderabzug.HALBER_ABZUG, LocalDate.of(2006, 5, 25));
 
-		final Entry<Double, Integer> famGroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch,LocalDate.now());
+		final Entry<Double, Integer> famGroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now());
 		double familiengroesse = famGroesse.getKey();
 		double familienMitglieder = famGroesse.getValue();
 		Assert.assertEquals(3.5, familiengroesse, DELTA);
@@ -287,7 +285,7 @@ public class FamilienabzugAbschnittRuleTest {
 		//das Kind war schon geboren
 		Gesuch gesuch = createGesuchWithKind(Kinderabzug.HALBER_ABZUG, Kinderabzug.KEIN_ABZUG, LocalDate.of(2006, 5, 25));
 
-		final Entry<Double, Integer> famGroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch,LocalDate.now());
+		final Entry<Double, Integer> famGroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now());
 		double familiengroesse = famGroesse.getKey();
 		double familienMitglieder = famGroesse.getValue();
 		Assert.assertEquals(2.5, familiengroesse, DELTA);
@@ -396,7 +394,6 @@ public class FamilienabzugAbschnittRuleTest {
 		famSitErstgesuch.setFamilienstatus(EnumFamilienstatus.KONKUBINAT);
 		gesuch.getFamiliensituationContainer().setFamiliensituationErstgesuch(famSitErstgesuch);
 
-
 		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.minusMonths(1)).getKey(), DELTA);
 		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.withDayOfMonth(31)).getKey(), DELTA);
 		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.plusMonths(1).withDayOfMonth(1)).getKey(), DELTA);
@@ -434,7 +431,6 @@ public class FamilienabzugAbschnittRuleTest {
 		Assert.assertEquals(BigDecimal.valueOf(11400), zeitabschnitt1.getAbzugFamGroesse());
 		Assert.assertEquals(BigDecimal.valueOf(3.0), zeitabschnitt1.getFamGroesse());
 	}
-
 
 	@Nonnull
 	private Gesuch createGesuchWithOneGS() {

@@ -48,7 +48,8 @@ public class RestUtilTest {
 		RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kinder, institutionen);
 
 		Assert.assertNotNull(kinder);
-		Assert.assertEquals(1, kinder.size());Assert.assertNotNull(kind.getBetreuungen());
+		Assert.assertEquals(1, kinder.size());
+		Assert.assertNotNull(kind.getBetreuungen());
 		final JaxKindContainer kindContainer = kinder.iterator().next();
 		Assert.assertEquals(1, kindContainer.getBetreuungen().size());
 		Assert.assertEquals(institutionID1,
@@ -113,7 +114,6 @@ public class RestUtilTest {
 		Assert.assertNotEquals(Betreuungsstatus.SCHULAMT,
 			betreuung.getBetreuungsstatus());
 	}
-
 
 	// HELP METHODS
 

@@ -38,7 +38,6 @@ public class ApplicationProperty extends AbstractEntity {
 	@Column(nullable = false, length = DB_TEXTAREA_LENGTH)
 	private String value;
 
-
 	public ApplicationProperty() {
 	}
 

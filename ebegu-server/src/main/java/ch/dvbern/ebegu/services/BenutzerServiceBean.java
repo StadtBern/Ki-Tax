@@ -47,7 +47,6 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	@Inject
 	private PrincipalBean principalBean;
 
-
 	@Nonnull
 	@Override
 	@PermitAll
@@ -88,7 +87,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 	@Nonnull
 	@Override
-	@RolesAllowed({UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
+	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
 	public Collection<Benutzer> getGesuchsteller() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Benutzer> query = cb.createQuery(Benutzer.class);
@@ -101,9 +100,8 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		return persistence.getCriteriaResults(query);
 	}
 
-
 	@Override
-	@RolesAllowed({UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
+	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
 	public void removeBenutzer(@Nonnull String username) {
 		Objects.requireNonNull(username);
 		Optional<Benutzer> benutzerToRemove = findBenutzer(username);
@@ -134,7 +132,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	public Benutzer updateOrStoreUserFromIAM(Benutzer benutzer) {
 		Optional<Benutzer> foundUser = this.findBenutzer(benutzer.getUsername());
 		if (foundUser.isPresent()) {
-            // Unsere Metadaten werden in das IAM Objekt kopiert und dieses wird gespeichert
+			// Unsere Metadaten werden in das IAM Objekt kopiert und dieses wird gespeichert
 			benutzer.setId(foundUser.get().getId());
 			benutzer.setVersion(foundUser.get().getVersion()); //we circumveil the optimistic locking and just save the new version
 			benutzer.setTimestampErstellt(foundUser.get().getTimestampErstellt());

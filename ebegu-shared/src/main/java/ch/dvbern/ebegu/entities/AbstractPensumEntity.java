@@ -29,7 +29,6 @@ public class AbstractPensumEntity extends AbstractDateRangedEntity {
 	public AbstractPensumEntity() {
 	}
 
-
 	@Nonnull
 	public Integer getPensum() {
 		return pensum;

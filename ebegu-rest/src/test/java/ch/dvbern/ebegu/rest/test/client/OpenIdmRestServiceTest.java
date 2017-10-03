@@ -30,7 +30,6 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class OpenIdmRestServiceTest extends AbstractEbeguRestLoginTest {
 
-
 	private static final String INSTID1 = "b4dc7d30-b63e-4176-a166-00deadbeef01";
 	private static final String INSTID2 = "b4dc7d30-b63e-4176-a166-00deadbeef02";
 	private static final String TRAEGERSCHAFTID1 = "b4dc7d30-b63e-4176-a166-00deadbeef01";

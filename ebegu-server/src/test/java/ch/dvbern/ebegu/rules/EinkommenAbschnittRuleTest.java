@@ -12,8 +12,6 @@ import ch.dvbern.ebegu.util.Constants;
 import org.junit.Assert;
 import org.junit.Test;
 
-
-
 /**
  * Tests fuer EinkommenAbschnittRule
  */
@@ -26,7 +24,6 @@ public class EinkommenAbschnittRuleTest {
 	private static final BigDecimal MAX_EINKOMMEN = new BigDecimal("159000");
 	private final EinkommenAbschnittRule einkommenAbschnittRule = new EinkommenAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
 	private final EinkommenCalcRule einkommenCalcRule = new EinkommenCalcRule(Constants.DEFAULT_GUELTIGKEIT, MAX_EINKOMMEN);
-
 
 	@Test
 	public void testKeineEinkommensverschlechterung() throws Exception {
@@ -105,9 +102,9 @@ public class EinkommenAbschnittRuleTest {
 		zeitabschnitte = einkommenCalcRule.calculate(betreuung, zeitabschnitte);
 		Assert.assertNotNull(zeitabschnitte);
 		Assert.assertEquals(3, zeitabschnitte.size());
-		Assert.assertEquals(0,EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(0).getMassgebendesEinkommen()));
-		Assert.assertEquals(0,EINKOMMEN_EKV_ANGENOMMEN.compareTo(zeitabschnitte.get(1).getMassgebendesEinkommen()));
-		Assert.assertEquals(0,EINKOMMEN_EKV_ANGENOMMEN.compareTo(zeitabschnitte.get(2).getMassgebendesEinkommen()));
+		Assert.assertEquals(0, EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(0).getMassgebendesEinkommen()));
+		Assert.assertEquals(0, EINKOMMEN_EKV_ANGENOMMEN.compareTo(zeitabschnitte.get(1).getMassgebendesEinkommen()));
+		Assert.assertEquals(0, EINKOMMEN_EKV_ANGENOMMEN.compareTo(zeitabschnitte.get(2).getMassgebendesEinkommen()));
 	}
 
 	@Test
@@ -123,8 +120,8 @@ public class EinkommenAbschnittRuleTest {
 		zeitabschnitte = einkommenCalcRule.calculate(betreuung, zeitabschnitte);
 		Assert.assertNotNull(zeitabschnitte);
 		Assert.assertEquals(3, zeitabschnitte.size());
-		Assert.assertEquals(0,EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(0).getMassgebendesEinkommen()));
-		Assert.assertEquals(0,EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(1).getMassgebendesEinkommen())); // Abgelehnt
-		Assert.assertEquals(0,EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(2).getMassgebendesEinkommen())); // Abgelehnt
+		Assert.assertEquals(0, EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(0).getMassgebendesEinkommen()));
+		Assert.assertEquals(0, EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(1).getMassgebendesEinkommen())); // Abgelehnt
+		Assert.assertEquals(0, EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(2).getMassgebendesEinkommen())); // Abgelehnt
 	}
 }

@@ -15,8 +15,6 @@ public class DateUtil {
 	/**
 	 * Parset den gegebenen String als LocalDate mit dem Format "yyyy-MM-dd"
 	 * Sollte der gegebene String null oder leer sein, wird now() zurueckgegeben
-	 * @param stringDate
-	 * @return
 	 */
 	public static LocalDate parseStringToDateOrReturnNow(@Nullable String stringDate) {
 		LocalDate date = LocalDate.now();
@@ -29,8 +27,6 @@ public class DateUtil {
 	/**
 	 * Parset den gegebenen String als LocalDateTime mit dem Format "yyyy-MM-dd HH:mm:ss"
 	 * Sollte der gegebene String null oder leer sein, wird now() zurueckgegeben
-	 * @param stringDateTime
-	 * @return
 	 */
 	public static LocalDateTime parseStringToDateTimeOrReturnNow(@Nonnull String stringDateTime) {
 		LocalDateTime date = LocalDateTime.now();

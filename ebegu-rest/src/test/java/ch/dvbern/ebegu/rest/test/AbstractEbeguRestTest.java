@@ -39,10 +39,8 @@ import org.jboss.shrinkwrap.resolver.api.maven.strategy.RejectDependenciesStrate
 @ServerSetup(LoginmoduleAndCacheSetupTask.class)
 public abstract class AbstractEbeguRestTest {
 
-
 	@Inject
 	private GesuchsperiodeResource gesuchsperiodeResource;
-
 
 	@Deployment
 	@OverProtocol("Servlet 3.0")
@@ -58,7 +56,6 @@ public abstract class AbstractEbeguRestTest {
 			.using(new RejectDependenciesStrategy(false, "ch.dvbern.ebegu:ebegu-dbschema")) //wir wollen flyway nicht im test
 			.asFile();
 		File[] testDeps = pom.importTestDependencies().resolve().withoutTransitivity().asFile();
-
 
 		// wir fuegen die packages einzeln hinzu weil sonst klassen die im shared sind und das gleiche package haben doppelt eingefuegt werden
 		WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "rest-test.war")
@@ -79,9 +76,9 @@ public abstract class AbstractEbeguRestTest {
 			.addAsWebInfResource("META-INF/test-beans.xml", "beans.xml")
 			.addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
 			//deploy our test loginmodule
-			.addAsResource("testogin-users.properties","users.properties")
+			.addAsResource("testogin-users.properties", "users.properties")
 			.addAsResource("testlogin-roles.properties", "roles.properties")
-			.addAsWebInfResource("META-INF/test-jboss-web.xml",  "jboss-web.xml")
+			.addAsWebInfResource("META-INF/test-jboss-web.xml", "jboss-web.xml")
 			// Deploy our test datasource
 			.addAsWebInfResource("test-ds.xml");
 

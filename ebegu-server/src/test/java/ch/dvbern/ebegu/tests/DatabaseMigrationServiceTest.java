@@ -44,7 +44,6 @@ public class DatabaseMigrationServiceTest extends AbstractEbeguLoginTest {
 	private Gesuch gesuch;
 	private LocalDateTime timestampMutiert;
 
-
 	@Test
 	public void testScript1204EKVInfoExists_NoEkvToAdd() throws ExecutionException, InterruptedException {
 		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
@@ -135,7 +134,6 @@ public class DatabaseMigrationServiceTest extends AbstractEbeguLoginTest {
 		//assert previous ekvInfo is null
 		Assert.assertNull(gesuch.getEinkommensverschlechterungInfoContainer());
 
-
 		final Future<Boolean> future = dbMigrationService.processScript("1204");
 		future.get();
 
@@ -169,8 +167,6 @@ public class DatabaseMigrationServiceTest extends AbstractEbeguLoginTest {
 		// it must still be null
 		Assert.assertNull(gesuch.getEinkommensverschlechterungInfoContainer());
 	}
-
-
 
 	private void checkEKVContainerForGesuchsteller(GesuchstellerContainer gesuchsteller, boolean checkFields) {
 		Assert.assertNotNull(gesuchsteller);

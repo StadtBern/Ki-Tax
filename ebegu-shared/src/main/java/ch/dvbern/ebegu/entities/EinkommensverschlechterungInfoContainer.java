@@ -76,7 +76,7 @@ public class EinkommensverschlechterungInfoContainer extends AbstractEntity {
 		return einkommensverschlechterungInfoJA;
 	}
 
-	public void setEinkommensverschlechterungInfoJA(@Nonnull  EinkommensverschlechterungInfo einkommensverschlechterungInfoJA) {
+	public void setEinkommensverschlechterungInfoJA(@Nonnull EinkommensverschlechterungInfo einkommensverschlechterungInfoJA) {
 		this.einkommensverschlechterungInfoJA = einkommensverschlechterungInfoJA;
 	}
 

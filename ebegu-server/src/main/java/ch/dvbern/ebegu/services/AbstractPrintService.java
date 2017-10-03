@@ -37,7 +37,6 @@ public abstract class AbstractPrintService extends AbstractBaseService {
 	/**
 	 * Sucht nach der richtigen Vorlage in den Parameters. Wenn der Parameter existiert, wird die Vorlage geladen.
 	 * Sollte der Parameter nicht existieren, wird das drfault-template geladen
-	 * @return
 	 */
 	@Nonnull
 	protected InputStream getVorlageStream(@Nonnull LocalDate dateAb, @Nonnull LocalDate dateBis, @Nonnull EbeguVorlageKey vorlageKey) {
@@ -58,7 +57,7 @@ public abstract class AbstractPrintService extends AbstractBaseService {
 	@Nullable
 	private EntityManager createEntityManager() {
 		if (entityManagerFactory != null) {
-			return  entityManagerFactory.createEntityManager(); // creates a new EntityManager
+			return entityManagerFactory.createEntityManager(); // creates a new EntityManager
 		}
 		return null;
 	}

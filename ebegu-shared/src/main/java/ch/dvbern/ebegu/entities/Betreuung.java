@@ -56,8 +56,8 @@ import org.hibernate.search.annotations.Indexed;
 @CheckAbwesenheitDatesOverlapping
 @Table(
 	uniqueConstraints = {
-		@UniqueConstraint(columnNames = {"betreuungNummer", "kind_id"}, name = "UK_betreuung_kind_betreuung_nummer"),
-		@UniqueConstraint(columnNames = {"verfuegung_id"}, name = "UK_betreuung_verfuegung_id")    //hibernate ignoriert den namen leider
+		@UniqueConstraint(columnNames = { "betreuungNummer", "kind_id" }, name = "UK_betreuung_kind_betreuung_nummer"),
+		@UniqueConstraint(columnNames = { "verfuegung_id" }, name = "UK_betreuung_verfuegung_id")    //hibernate ignoriert den namen leider
 	}
 )
 @Indexed()
@@ -136,10 +136,8 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@Column(nullable = false)
 	private boolean gueltig = false;
 
-
 	public Betreuung() {
 	}
-
 
 	public KindContainer getKind() {
 		return kind;
@@ -373,7 +371,6 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 			return getVorgaengerVerfuegung();
 		}
 	}
-
 
 	public Verfuegung getVorgaengerVerfuegung() {
 		return vorgaengerVerfuegung;

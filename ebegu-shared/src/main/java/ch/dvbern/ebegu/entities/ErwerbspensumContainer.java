@@ -21,7 +21,6 @@ import org.hibernate.envers.Audited;
 @Entity
 public class ErwerbspensumContainer extends AbstractEntity {
 
-
 	private static final long serialVersionUID = -3084333639027795652L;
 
 	@NotNull
@@ -39,10 +38,8 @@ public class ErwerbspensumContainer extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_erwerbspensum_container_erwerbspensumja_id"))
 	private Erwerbspensum erwerbspensumJA;
 
-
 	public ErwerbspensumContainer() {
 	}
-
 
 	public GesuchstellerContainer getGesuchsteller() {
 		return gesuchstellerContainer;

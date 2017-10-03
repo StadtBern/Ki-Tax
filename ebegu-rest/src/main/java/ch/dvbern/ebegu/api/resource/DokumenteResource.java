@@ -67,7 +67,6 @@ public class DokumenteResource {
 	@Inject
 	private FileSaverService fileSaverService;
 
-
 	@ApiOperation(value = "Gibt alle Dokumente zurück, welche zum übergebenen Gesuch vorhanden sind.",
 		response = JaxDokumente.class)
 	@Nullable
@@ -111,7 +110,6 @@ public class DokumenteResource {
 		}
 		throw new EbeguEntityNotFoundException("getDokumente", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}
-
 
 	@ApiOperation(value = "Aktualisiert ein Dokument in der Datenbank", response = JaxDokumentGrund.class)
 	@Nullable

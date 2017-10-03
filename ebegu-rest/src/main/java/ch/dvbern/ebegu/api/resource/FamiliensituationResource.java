@@ -51,7 +51,6 @@ public class FamiliensituationResource {
 	@Inject
 	private ResourceHelper resourceHelper;
 
-
 	@ApiOperation(value = "Speichert eine Familiensituation in der Datenbank", response = JaxFamiliensituationContainer.class)
 	@Nullable
 	@PUT

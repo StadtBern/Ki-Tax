@@ -21,7 +21,6 @@ import ch.dvbern.ebegu.util.MathUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 /**
  * Tests fuer Verfügungsmuster
  */
@@ -29,7 +28,6 @@ public class MutationsMergerTest {
 
 	private final MutationsMerger mutationsMerger = new MutationsMerger();
 	private final MonatsRule monatsRule = new MonatsRule(Constants.DEFAULT_GUELTIGKEIT);
-
 
 	@Test
 	public void test_Reduktion_Rechtzeitig_aenderungUndEingangsdatumGleich() {
@@ -55,7 +53,6 @@ public class MutationsMergerTest {
 
 		// mergen
 		List<VerfuegungZeitabschnitt> zeitabschnitte = mutationsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert);
-
 
 		//ueberprüfen
 		Assert.assertNotNull(zeitabschnitte);
@@ -159,7 +156,6 @@ public class MutationsMergerTest {
 		// mergen
 		List<VerfuegungZeitabschnitt> zeitabschnitte = mutationsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert);
 
-
 		//ueberprüfen
 		Assert.assertNotNull(zeitabschnitte);
 		Assert.assertEquals(12, zeitabschnitte.size());
@@ -195,7 +191,6 @@ public class MutationsMergerTest {
 
 		// mergen
 		List<VerfuegungZeitabschnitt> zeitabschnitte = mutationsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert);
-
 
 		//ueberprüfen
 		Assert.assertNotNull(zeitabschnitte);
@@ -338,7 +333,6 @@ public class MutationsMergerTest {
 
 		return zeitabschnitteSplitted;
 	}
-
 
 	private void checkAllBefore(List<VerfuegungZeitabschnitt> zeitabschnitte, LocalDate endsBeforeOrAt, int anspruchberechtigtesPensum) {
 

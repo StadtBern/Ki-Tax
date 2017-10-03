@@ -61,7 +61,6 @@ public class GesuchstellerResource {
 	@Inject
 	private JaxBConverter converter;
 
-
 	@ApiOperation(value = "Updates a Gesuchsteller or creates it if it doesn't exist in the database. The transfer " +
 		"object also has a relation to adressen (wohnadresse, umzugadresse, korrespondenzadresse) these are stored in " +
 		"the database as well. Note that wohnadresse and umzugadresse are both stored as consecutive wohnadressen " +
@@ -73,9 +72,9 @@ public class GesuchstellerResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxGesuchstellerContainer saveGesuchsteller(
-		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchContJAXPId,
-		@Nonnull @NotNull @PathParam ("gsNumber") Integer gsNumber,
-		@Nonnull @NotNull @PathParam ("umzug") Boolean umzug,
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchContJAXPId,
+		@Nonnull @NotNull @PathParam("gsNumber") Integer gsNumber,
+		@Nonnull @NotNull @PathParam("umzug") Boolean umzug,
 		@Nonnull @NotNull @Valid JaxGesuchstellerContainer gesuchstellerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -84,7 +83,7 @@ public class GesuchstellerResource {
 
 		// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
 		//TODO (team): Sobald das Speichern der Email/Telefon NACH dem Verfuegen in einem separaten Service ist, wieder einkommentieren
-//		resourceHelper.assertGesuchStatusForBenutzerRole(gesuch);
+		//		resourceHelper.assertGesuchStatusForBenutzerRole(gesuch);
 
 		GesuchstellerContainer gesuchstellerToMerge = new GesuchstellerContainer();
 		if (gesuchstellerJAXP.getId() != null) {
@@ -127,17 +126,17 @@ public class GesuchstellerResource {
 	@Path("/ewk/search/attributes")
 	@Produces(MediaType.APPLICATION_JSON)
 	public EWKResultat suchePersonByAttributes(
-            @QueryParam("nachname") String nachname,
-            @QueryParam("vorname") String vorname,
-            @QueryParam("geburtsdatum") String geburtsdatum,
-            @QueryParam("geschlecht") String geschlecht,
-            @Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguException {
-        Validate.notNull(nachname, "name must be set");
-        Validate.notNull(vorname, "vorname must be set");
-        Validate.notNull(geburtsdatum, "geburtsdatum must be set");
-        Validate.notNull(geschlecht, "geschlecht must be set");
-        LocalDate geburtsdatumDate = DateUtil.parseStringToDateOrReturnNow(geburtsdatum);
-        return personenSucheService.suchePerson(nachname, geburtsdatumDate, Geschlecht.valueOf(geschlecht));
+		@QueryParam("nachname") String nachname,
+		@QueryParam("vorname") String vorname,
+		@QueryParam("geburtsdatum") String geburtsdatum,
+		@QueryParam("geschlecht") String geschlecht,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguException {
+		Validate.notNull(nachname, "name must be set");
+		Validate.notNull(vorname, "vorname must be set");
+		Validate.notNull(geburtsdatum, "geburtsdatum must be set");
+		Validate.notNull(geschlecht, "geschlecht must be set");
+		LocalDate geburtsdatumDate = DateUtil.parseStringToDateOrReturnNow(geburtsdatum);
+		return personenSucheService.suchePerson(nachname, geburtsdatumDate, Geschlecht.valueOf(geschlecht));
 	}
 
 	@ApiOperation(value = "Sucht eine Person im EWK nach EWK-Id.", response = EWKResultat.class)
@@ -146,7 +145,7 @@ public class GesuchstellerResource {
 	@Path("/ewk/search/id/{personId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public EWKResultat suchePersonByPersonId(
-		    @Nonnull @NotNull @PathParam("personId") String personId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("personId") String personId) throws EbeguException {
 		return personenSucheService.suchePerson(personId);
 	}
 

@@ -40,30 +40,29 @@ public class EbeguExceptionReport {
 	private String objectId; // das ID vom betroffenen Objekt, wenn es eins gibt
 	private List<Serializable> argumentList = new ArrayList<>();
 
-//	public EbeguExceptionReport(EbeguException exception) {
-//		if (exception != null) {
-//			this.exceptionName = exception.getClass().getSimpleName();
-//			this.translatedMessage = exception.getMessage();
-//			this.customMessage = exception.getCustomMessage();
-//			this.methodName = exception.getMethodName();
-//			this.argumentList.addAll(exception.getArgs());
-//		}
-//	}
-//
-//	public EbeguExceptionReport(EbeguRuntimeException exception) {
-//		if (exception != null) {
-//			this.exceptionName = exception.getClass().getSimpleName();
-//			this.translatedMessage = exception.getMessage();
-//			this.customMessage = exception.getCustomMessage();
-//			this.methodName = exception.getMethodName();
-//			this.argumentList.addAll(exception.getArgs());
-//		}
-//	}
-
+	//	public EbeguExceptionReport(EbeguException exception) {
+	//		if (exception != null) {
+	//			this.exceptionName = exception.getClass().getSimpleName();
+	//			this.translatedMessage = exception.getMessage();
+	//			this.customMessage = exception.getCustomMessage();
+	//			this.methodName = exception.getMethodName();
+	//			this.argumentList.addAll(exception.getArgs());
+	//		}
+	//	}
+	//
+	//	public EbeguExceptionReport(EbeguRuntimeException exception) {
+	//		if (exception != null) {
+	//			this.exceptionName = exception.getClass().getSimpleName();
+	//			this.translatedMessage = exception.getMessage();
+	//			this.customMessage = exception.getCustomMessage();
+	//			this.methodName = exception.getMethodName();
+	//			this.argumentList.addAll(exception.getArgs());
+	//		}
+	//	}
 
 	public EbeguExceptionReport(@Nullable String exceptionName, @Nullable ErrorCodeEnum errorCodeEnum, @Nullable String methodName,
-								@Nullable String translatedMessage, @Nullable String customMessage, @Nullable String objectId,
-								@Nullable List<Serializable> argumentList) {
+		@Nullable String translatedMessage, @Nullable String customMessage, @Nullable String objectId,
+		@Nullable List<Serializable> argumentList) {
 		this.exceptionName = exceptionName;
 		this.errorCodeEnum = errorCodeEnum;
 		this.methodName = methodName;
@@ -100,7 +99,6 @@ public class EbeguExceptionReport {
 	public List<Serializable> getArgumentList() {
 		return argumentList;
 	}
-
 
 	public String getCustomMessage() {
 		return customMessage;
@@ -144,8 +142,8 @@ public class EbeguExceptionReport {
 		EbeguExceptionReport exceptionReport = new EbeguExceptionReport(ex.getClass().getSimpleName(), ex.getErrorCodeEnum(), ex.getMethodName(), translatedEnumMessage,
 			ex.getCustomMessage(), null, ex.getArgs());
 		if (addDebugInfo) {
-					addDevelopmentDebugInformation(exceptionReport, ex);
-				}
+			addDevelopmentDebugInformation(exceptionReport, ex);
+		}
 		return builder.entity(exceptionReport).build();
 
 	}
@@ -169,7 +167,7 @@ public class EbeguExceptionReport {
 	}
 
 	private static void addDevelopmentDebugInformation(EbeguExceptionReport exceptionReport, Exception e) {
-			exceptionReport.setStackTrace(ExceptionUtils.getStackTrace(e));
+		exceptionReport.setStackTrace(ExceptionUtils.getStackTrace(e));
 	}
 
 	@Nonnull
@@ -179,6 +177,5 @@ public class EbeguExceptionReport {
 		builder.type(MediaType.APPLICATION_JSON_TYPE);
 		return builder;
 	}
-
 
 }

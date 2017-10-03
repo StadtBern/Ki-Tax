@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 @Path("/info")
 public interface ILoginProviderInfoResource {
 
-
 	/**
 	 * @return an Answerstring to test if the api is up and running, requires no password
 	 */
@@ -23,6 +22,7 @@ public interface ILoginProviderInfoResource {
 
 	/**
 	 * Service to read the single-sign-on url that ki-tax should send clients without login to
+	 *
 	 * @return uri as string
 	 */
 	@GET

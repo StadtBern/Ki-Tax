@@ -40,9 +40,7 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate ewkAbfrageDatum;
 
-
 	private boolean diplomatenstatus;
-
 
 	public String getMail() {
 		return mail;

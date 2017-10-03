@@ -73,7 +73,6 @@ public class EinkommensverschlechterungResource {
 	@Inject
 	private ResourceHelper resourceHelper;
 
-
 	@ApiOperation(value = "Create a new EinkommensverschlechterungContainer in the database. The transfer object also " +
 		"has a relation to EinkommensverschlechterungContainer, it is stored in the database as well.",
 		response = JaxEinkommensverschlechterungContainer.class)
@@ -83,7 +82,7 @@ public class EinkommensverschlechterungResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveEinkommensverschlechterungContainer(
-		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerId,
 		@Nonnull @NotNull @Valid JaxEinkommensverschlechterungContainer ekvContainerJAXP,
 		@Context UriInfo uriInfo,
@@ -91,8 +90,8 @@ public class EinkommensverschlechterungResource {
 
 		Gesuch gesuch = gesuchService.findGesuch(gesuchJAXPId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("saveEinkommensverschlechterungContainer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId()));
 		// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
-		resourceHelper.assertGesuchStatusForBenutzerRole (gesuch);
-		GesuchstellerContainer gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("saveEinkommensverschlechterungContainer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId()) );
+		resourceHelper.assertGesuchStatusForBenutzerRole(gesuch);
+		GesuchstellerContainer gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("saveEinkommensverschlechterungContainer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId()));
 		EinkommensverschlechterungContainer convertedEKVCont = converter.einkommensverschlechterungContainerToStorableEntity(ekvContainerJAXP);
 		convertedEKVCont.setGesuchsteller(gesuchsteller);
 		EinkommensverschlechterungContainer persistedEkvContainer =
@@ -157,7 +156,7 @@ public class EinkommensverschlechterungResource {
 	@Path("/calculate/{basisJahrPlus}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response calculateEinkommensverschlechterung (
+	public Response calculateEinkommensverschlechterung(
 		@Nonnull @NotNull @PathParam("basisJahrPlus") String basisJahrPlus,
 		@Nonnull @NotNull @Valid JaxGesuch gesuchJAXP,
 		@Context UriInfo uriInfo,
@@ -185,7 +184,7 @@ public class EinkommensverschlechterungResource {
 	@Path("/calculateTemp/{basisJahrPlus}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response calculateEinkommensverschlechterungTemp (
+	public Response calculateEinkommensverschlechterungTemp(
 		@Nonnull @NotNull @PathParam("basisJahrPlus") String basisJahrPlus,
 		@Nonnull @NotNull @Valid JaxFinanzModel jaxFinSitModel,
 		@Context UriInfo uriInfo,
@@ -210,7 +209,7 @@ public class EinkommensverschlechterungResource {
 				converter.finanzielleSituationContainerToEntity(jaxFinSitModel.getFinanzielleSituationContainerGS2(), new FinanzielleSituationContainer()));
 		}
 		if (jaxFinSitModel.getEinkommensverschlechterungContainerGS1() != null) {
-			if(gesuch.getGesuchsteller1() ==null) {
+			if (gesuch.getGesuchsteller1() == null) {
 				gesuch.setGesuchsteller1(new GesuchstellerContainer());
 				gesuch.getGesuchsteller1().setGesuchstellerJA(new Gesuchsteller());
 			}
@@ -218,7 +217,7 @@ public class EinkommensverschlechterungResource {
 				converter.einkommensverschlechterungContainerToEntity(jaxFinSitModel.getEinkommensverschlechterungContainerGS1(), new EinkommensverschlechterungContainer()));
 		}
 		if (jaxFinSitModel.getEinkommensverschlechterungContainerGS2() != null) {
-			if(gesuch.getGesuchsteller2() ==null) {
+			if (gesuch.getGesuchsteller2() == null) {
 				gesuch.setGesuchsteller2(new GesuchstellerContainer());
 				gesuch.getGesuchsteller2().setGesuchstellerJA(new Gesuchsteller());
 			}

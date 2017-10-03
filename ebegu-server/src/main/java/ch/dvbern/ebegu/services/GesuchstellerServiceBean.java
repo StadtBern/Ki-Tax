@@ -56,7 +56,6 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
-
 	@Nonnull
 	@Override
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
@@ -110,8 +109,7 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 		final GesuchstellerContainer mergedGesuchsteller = persistence.merge(gesuchsteller);
 		if (gsNumber == 1) {
 			gesuch.setGesuchsteller1(mergedGesuchsteller);
-		}
-		else if (gsNumber == 2) {
+		} else if (gsNumber == 2) {
 			gesuch.setGesuchsteller2(mergedGesuchsteller);
 		}
 		updateWizStepsForGesuchstellerView(gesuch, gsNumber, umzug, mergedGesuchsteller.getGesuchstellerJA());
@@ -129,7 +127,7 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 			}
 		} else {
 			WizardStep existingWizStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.GESUCHSTELLER);
-			WizardStepStatus gesuchStepStatus = existingWizStep != null ?  existingWizStep.getWizardStepStatus() : null;
+			WizardStepStatus gesuchStepStatus = existingWizStep != null ? existingWizStep.getWizardStepStatus() : null;
 			if (WizardStepStatus.NOK == gesuchStepStatus || WizardStepStatus.IN_BEARBEITUNG == gesuchStepStatus) {
 				if (isSavingLastNecessaryGesuchsteller(gesuch, gsNumber)) {
 					wizardStepService.updateSteps(gesuch.getId(), null, gesuchsteller, WizardStepName.GESUCHSTELLER);

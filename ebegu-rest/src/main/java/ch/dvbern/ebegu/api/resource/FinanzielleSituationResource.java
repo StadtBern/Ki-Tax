@@ -70,7 +70,6 @@ public class FinanzielleSituationResource {
 	@Inject
 	private ResourceHelper resourceHelper;
 
-
 	@ApiOperation(value = "Create a new JaxFinanzielleSituationContainer in the database. The transfer object also has a " +
 		"relation to FinanzielleSituation, it is stored in the database as well.", response = JaxFinanzielleSituationContainer.class)
 	@Nullable

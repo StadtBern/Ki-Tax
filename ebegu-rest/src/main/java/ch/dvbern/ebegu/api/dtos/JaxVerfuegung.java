@@ -42,7 +42,6 @@ public class JaxVerfuegung extends JaxAbstractDTO {
 
 	private boolean kategorieNichtEintreten = false;
 
-
 	@Nullable
 	public String getGeneratedBemerkungen() {
 		return generatedBemerkungen;

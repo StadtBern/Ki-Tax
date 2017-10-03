@@ -27,7 +27,7 @@ import io.swagger.annotations.ApiOperation;
 public class BenutzerResource {
 
 	@Inject
-	private BenutzerService  benutzerService;
+	private BenutzerService benutzerService;
 
 	@Inject
 	private JaxBConverter converter;

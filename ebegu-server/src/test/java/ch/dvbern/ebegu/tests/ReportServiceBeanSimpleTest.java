@@ -9,7 +9,6 @@ import ch.dvbern.ebegu.enums.WizardStepStatus;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class ReportServiceBeanSimpleTest {
 
 	@Test

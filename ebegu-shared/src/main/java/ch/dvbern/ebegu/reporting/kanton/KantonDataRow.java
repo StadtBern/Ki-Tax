@@ -11,7 +11,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class KantonDataRow {
 
 	private String bgNummer;
-	private String 	gesuchId;
+	private String gesuchId;
 	private String name;
 	private String vorname;
 	private LocalDate geburtsdatum;
@@ -23,7 +23,6 @@ public class KantonDataRow {
 	private String institution;
 	private String betreuungsTyp;
 	private BigDecimal oeffnungstage;
-
 
 	public String getBgNummer() {
 		return bgNummer;

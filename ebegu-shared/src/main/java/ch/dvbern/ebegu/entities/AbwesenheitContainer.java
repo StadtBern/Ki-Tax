@@ -40,10 +40,8 @@ public class AbwesenheitContainer extends AbstractEntity implements Comparable<A
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_abwesenheit_container_abwesenheit_ja"))
 	private Abwesenheit abwesenheitJA;
 
-
 	public AbwesenheitContainer() {
 	}
-
 
 	public Betreuung getBetreuung() {
 		return betreuung;

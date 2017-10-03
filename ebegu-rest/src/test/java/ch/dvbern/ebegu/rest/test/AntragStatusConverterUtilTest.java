@@ -16,7 +16,6 @@ import org.junit.Test;
  */
 public class AntragStatusConverterUtilTest {
 
-
 	@Test
 	public void convertStatusToDTOGEPRUEFTTest() {
 		Gesuch gesuch = TestDataUtil.createTestgesuchDagmar(); // by default
@@ -54,7 +53,6 @@ public class AntragStatusConverterUtilTest {
 		Assert.assertEquals(AntragStatus.GEPRUEFT, AntragStatusConverterUtil.convertStatusToEntity(AntragStatusDTO.PLATZBESTAETIGUNG_ABGEWIESEN));
 		Assert.assertEquals(AntragStatus.GEPRUEFT, AntragStatusConverterUtil.convertStatusToEntity(AntragStatusDTO.GEPRUEFT));
 	}
-
 
 	// HELP METHODS
 

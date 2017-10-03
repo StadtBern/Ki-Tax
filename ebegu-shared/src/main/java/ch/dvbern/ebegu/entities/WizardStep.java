@@ -27,7 +27,7 @@ import org.hibernate.envers.Audited;
 @Entity
 @Audited
 @Table(
-	uniqueConstraints = @UniqueConstraint(columnNames = {"wizardStepName", "gesuch_id"}, name = "UK_wizardstep_gesuch_stepname")
+	uniqueConstraints = @UniqueConstraint(columnNames = { "wizardStepName", "gesuch_id" }, name = "UK_wizardstep_gesuch_stepname")
 )
 public class WizardStep extends AbstractEntity {
 
@@ -56,7 +56,6 @@ public class WizardStep extends AbstractEntity {
 	@NotNull
 	@Column(nullable = false)
 	private Boolean verfuegbar = false;
-
 
 	public Gesuch getGesuch() {
 		return gesuch;

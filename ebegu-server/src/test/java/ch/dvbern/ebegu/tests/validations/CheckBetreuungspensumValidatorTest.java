@@ -20,7 +20,6 @@ import org.junit.Test;
 import static ch.dvbern.ebegu.tests.util.ValidationTestHelper.assertNotViolated;
 import static ch.dvbern.ebegu.tests.util.ValidationTestHelper.assertViolated;
 
-
 /**
  * Tests der den Validator fuer die Werte in Betreuungspensum checkt
  */
@@ -140,7 +139,6 @@ public class CheckBetreuungspensumValidatorTest {
 		assertViolated(CheckBetreuungspensum.class, betreuung, customFactory, "betreuungspensumContainers[" + i + "].betreuungspensumGS.pensum");
 		assertNotViolated(CheckBetreuungspensum.class, betreuung, customFactory, "betreuungspensumContainers[" + i + "].betreuungspensumJA.pensum");
 	}
-
 
 	// HELP METHODS
 

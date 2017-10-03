@@ -6,11 +6,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-
 /**
  * Jax Element for OpenIdm Result element
  */
-@SuppressWarnings({"InstanceVariableNamingConvention", "InstanceMethodNamingConvention"})
+@SuppressWarnings({ "InstanceVariableNamingConvention", "InstanceMethodNamingConvention" })
 @XmlRootElement(name = "institutionOpenIdm")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxOpenIdmResult implements Serializable {

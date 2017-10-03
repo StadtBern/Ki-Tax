@@ -13,11 +13,10 @@ package ch.dvbern.ebegu.errors;
 import javax.ejb.ApplicationException;
 
 /**
- *   Exception that gets thrown if the transmission of an email fails
+ * Exception that gets thrown if the transmission of an email fails
  */
 @ApplicationException(rollback = false)
 public class MailException extends Exception {
-
 
 	private static final long serialVersionUID = 663284993138581412L;
 

@@ -21,7 +21,6 @@ public class VorlageServiceBean extends AbstractBaseService implements VorlageSe
 	@Inject
 	private Persistence persistence;
 
-
 	@Override
 	@Nonnull
 	public Optional<Vorlage> findVorlage(@Nonnull String key) {

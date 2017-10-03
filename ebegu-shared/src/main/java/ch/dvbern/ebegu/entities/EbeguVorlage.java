@@ -27,7 +27,6 @@ import org.hibernate.envers.Audited;
 @Entity
 public class EbeguVorlage extends AbstractDateRangedEntity implements Comparable<EbeguVorlage> {
 
-
 	private static final long serialVersionUID = 8704632842261673111L;
 
 	@NotNull
@@ -88,7 +87,6 @@ public class EbeguVorlage extends AbstractDateRangedEntity implements Comparable
 	}
 
 	/**
-	 * @param gueltigkeit
 	 * @return a copy of the current Param with the gueltigkeit set to the passed DateRange
 	 */
 	public EbeguVorlage copy(DateRange gueltigkeit) {

@@ -69,8 +69,6 @@ public interface BetreuungService {
 
 	/**
 	 * entfernt eine Betreuuung aus der Databse. Um diese Methode aufzurufen muss man sich vorher vergewissern, dass die Betreuuung existiert
-	 *
-	 * @param betreuung
 	 */
 	void removeBetreuung(@Nonnull Betreuung betreuung);
 
@@ -95,7 +93,7 @@ public interface BetreuungService {
 	/**
 	 * Schliesst die Betreuung (Status GESCHLOSSEN_OHNE_VERFUEGUNG) ohne eine neue Verfuegung zu erstellen
 	 * (bei gleichbleibenden Daten)
-     */
+	 */
 	@Nonnull
 	Betreuung schliessenOhneVerfuegen(@Nonnull Betreuung betreuung);
 

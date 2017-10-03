@@ -35,7 +35,6 @@ public abstract class AbstractEbeguRule implements Rule {
 	@Valid
 	private final DateRange validityPeriod;
 
-
 	public AbstractEbeguRule(@Nonnull RuleKey ruleKey, @Nonnull RuleType ruleType, @Nonnull DateRange validityPeriod) {
 		this.ruleKey = ruleKey;
 		this.ruleType = ruleType;
@@ -96,7 +95,6 @@ public abstract class AbstractEbeguRule implements Rule {
 
 		List<VerfuegungZeitabschnitt> abschnitteCreatedInRule = createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
 		Collections.sort(abschnitteCreatedInRule);
-
 
 		// In dieser Funktion muss sichergestellt werden, dass in der neuen Liste keine Ueberschneidungen mehr bestehen
 		// Jetzt muessen diese mit den bestehenden Zeitabschnitten aus früheren Rules gemergt werden

@@ -83,7 +83,7 @@ public class FinanzielleSituationRechner {
 	 * FinanzielleSituationResultateDTO benoetigten Daten.
 	 */
 	private void setEinkommensverschlechterungParameters(@Nonnull Gesuch gesuch, int basisJahrPlus,
-														 final FinanzielleSituationResultateDTO einkVerResultDTO, boolean hasSecondGesuchsteller) {
+		final FinanzielleSituationResultateDTO einkVerResultDTO, boolean hasSecondGesuchsteller) {
 		Einkommensverschlechterung einkommensverschlechterungGS1_Bjp1 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller1(), 1);
 		Einkommensverschlechterung einkommensverschlechterungGS1_Bjp2 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller1(), 2);
 		final FinanzielleSituation finanzielleSituationGS1 = getFinanzielleSituationGS(gesuch.getGesuchsteller1());
@@ -100,7 +100,7 @@ public class FinanzielleSituationRechner {
 			final FinanzielleSituation finanzielleSituationGS2 = getFinanzielleSituationGS(gesuch.getGesuchsteller2());
 			einkVerResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller2(
 				calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS2, einkommensverschlechterungGS2_Bjp1,
-				einkommensverschlechterungGS2_Bjp2, gesuch.extractEinkommensverschlechterungInfo(), basisJahrPlus));
+					einkommensverschlechterungGS2_Bjp2, gesuch.extractEinkommensverschlechterungInfo(), basisJahrPlus));
 		}
 
 		if (basisJahrPlus == 2) {
@@ -117,7 +117,6 @@ public class FinanzielleSituationRechner {
 				einkVerResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller2());
 		}
 	}
-
 
 	/**
 	 * Berechnet das FinazDaten DTO fuer die Finanzielle Situation
@@ -170,7 +169,6 @@ public class FinanzielleSituationRechner {
 				massgebendesEinkommenVorjahr_zuZweit = massgebendesEinkommenBasisjahr_zuZweit;
 			}
 
-
 			if (ekvInfo.getEkvFuerBasisJahrPlus2() != null && ekvInfo.getEkvFuerBasisJahrPlus2()) {
 				if (ekvInfo.getEkvBasisJahrPlus2Annulliert()) {
 					finanzDatenDTO_alleine.setEkv2Annulliert(Boolean.TRUE);
@@ -195,8 +193,8 @@ public class FinanzielleSituationRechner {
 	}
 
 	private void handleEKV1(FinanzDatenDTO finanzDatenDTO, LocalDate stichtagEKV1, BigDecimal massgebendesEinkommenEKV1, BigDecimal massgebendesEinkommenBasisjahr,
-							BigDecimal minimumEKV) {
-        // In der EKV 1 vergleichen wir immer mit dem Basisjahr
+		BigDecimal minimumEKV) {
+		// In der EKV 1 vergleichen wir immer mit dem Basisjahr
 		finanzDatenDTO.setDatumVonBasisjahrPlus1(stichtagEKV1);
 		boolean accepted = acceptEKV(massgebendesEinkommenBasisjahr, massgebendesEinkommenEKV1, minimumEKV);
 		finanzDatenDTO.setEkv1Accepted(accepted);
@@ -208,7 +206,7 @@ public class FinanzielleSituationRechner {
 	}
 
 	private void handleEKV2(FinanzDatenDTO finanzDatenDTO, LocalDate stichtagEKV2, BigDecimal massgebendesEinkommenEKV2, BigDecimal massgebendesEinkommenVorjahr,
-							BigDecimal massgebendesEinkommenBasisjahr, BigDecimal minimumEKV) {
+		BigDecimal massgebendesEinkommenBasisjahr, BigDecimal minimumEKV) {
 		// In der EKV 2 vergleichen wir immer mit dem EKV 1, egal ob diese akzeptiert war
 		finanzDatenDTO.setDatumVonBasisjahrPlus2(stichtagEKV2);
 		boolean ekv2AlleineAccepted = acceptEKV2(massgebendesEinkommenVorjahr, massgebendesEinkommenBasisjahr, massgebendesEinkommenEKV2, minimumEKV);
@@ -233,7 +231,7 @@ public class FinanzielleSituationRechner {
 	 * @return Die Einkommensverschlechterung II kommt zum Zuge, falls diese grösser als die Einkommensverschlechterung I ist und auch grösser 20%
 	 */
 	private boolean acceptEKV2(BigDecimal massgebendesEinkommenVorjahr, BigDecimal massgebendesEinkommenBasisjahr, BigDecimal massgebendesEinkommenJahr,
-							   BigDecimal minimumEKV) {
+		BigDecimal minimumEKV) {
 		// EKV gewährt. Es braucht VIER_NACHKOMMASTELLE weil wir mit 1-Prozentuell arbeiten und in 100-Prozentuell gilt ZWEI_NACHKOMMASTELLE
 		return massgebendesEinkommenBasisjahr.compareTo(BigDecimal.ZERO) > 0 &&
 			massgebendesEinkommenVorjahr.compareTo(massgebendesEinkommenJahr) > 0 &&
@@ -241,10 +239,10 @@ public class FinanzielleSituationRechner {
 	}
 
 	private void calculateZusammen(final FinanzielleSituationResultateDTO finSitResultDTO,
-								   AbstractFinanzielleSituation finanzielleSituationGS1,
-								   BigDecimal nettoJahresLohn1, BigDecimal geschaeftsgewinnDurchschnitt1,
-								   AbstractFinanzielleSituation finanzielleSituationGS2,
-								   BigDecimal nettoJahresLohn2, BigDecimal geschaeftsgewinnDurchschnitt2) {
+		AbstractFinanzielleSituation finanzielleSituationGS1,
+		BigDecimal nettoJahresLohn1, BigDecimal geschaeftsgewinnDurchschnitt1,
+		AbstractFinanzielleSituation finanzielleSituationGS2,
+		BigDecimal nettoJahresLohn2, BigDecimal geschaeftsgewinnDurchschnitt2) {
 
 		finSitResultDTO.setEinkommenBeiderGesuchsteller(calcEinkommen(finanzielleSituationGS1, nettoJahresLohn1,
 			geschaeftsgewinnDurchschnitt1, finanzielleSituationGS2, nettoJahresLohn2, geschaeftsgewinnDurchschnitt2));
@@ -276,10 +274,10 @@ public class FinanzielleSituationRechner {
 	 */
 	@Nullable
 	public static BigDecimal calcGeschaeftsgewinnDurchschnitt(@Nullable FinanzielleSituation finanzielleSituation,
-															  @Nullable Einkommensverschlechterung einkVersBjp1,
-															  @Nullable Einkommensverschlechterung einkVersBjp2,
-															  @Nullable EinkommensverschlechterungInfo ekvi,
-															  int basisJahrPlus) {
+		@Nullable Einkommensverschlechterung einkVersBjp1,
+		@Nullable Einkommensverschlechterung einkVersBjp2,
+		@Nullable EinkommensverschlechterungInfo ekvi,
+		int basisJahrPlus) {
 		if (basisJahrPlus == 1) {
 			if (finanzielleSituation != null && einkVersBjp1 != null) {
 				return calcGeschaeftsgewinnDurchschnitt(einkVersBjp1.getGeschaeftsgewinnBasisjahr(),
@@ -305,8 +303,8 @@ public class FinanzielleSituationRechner {
 	 */
 	@Nullable
 	private static BigDecimal calcGeschaeftsgewinnDurchschnitt(@Nullable final BigDecimal geschaeftsgewinnBasisjahr,
-															   @Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus1,
-															   @Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus2) {
+		@Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus1,
+		@Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus2) {
 
 		BigDecimal total = BigDecimal.ZERO;
 		BigDecimal anzahlJahre = BigDecimal.ZERO;
@@ -330,7 +328,6 @@ public class FinanzielleSituationRechner {
 
 		return null;
 	}
-
 
 	/**
 	 * Berechnet 5 prozent des Nettovermoegens von GS1 und GS2. Der Gesamtwert kann dabei nicht kleiner als 0 sein auch
@@ -371,7 +368,7 @@ public class FinanzielleSituationRechner {
 	}
 
 	private BigDecimal calcEinkommen(AbstractFinanzielleSituation abstractFinanzielleSituation1, BigDecimal nettoJahresLohn1, BigDecimal geschaeftsgewinnDurchschnitt1,
-									 AbstractFinanzielleSituation abstractFinanzielleSituation2, BigDecimal nettoJahresLohn2, BigDecimal geschaeftsgewinnDurchschnitt2) {
+		AbstractFinanzielleSituation abstractFinanzielleSituation2, BigDecimal nettoJahresLohn2, BigDecimal geschaeftsgewinnDurchschnitt2) {
 		BigDecimal total = BigDecimal.ZERO;
 		total = calcEinkommenProGS(abstractFinanzielleSituation1, nettoJahresLohn1, geschaeftsgewinnDurchschnitt1, total);
 		total = calcEinkommenProGS(abstractFinanzielleSituation2, nettoJahresLohn2, geschaeftsgewinnDurchschnitt2, total);
@@ -379,7 +376,7 @@ public class FinanzielleSituationRechner {
 	}
 
 	private BigDecimal calcEinkommenProGS(AbstractFinanzielleSituation abstractFinanzielleSituation, BigDecimal nettoJahresLohn,
-										  BigDecimal geschaeftsgewinnDurchschnitt, BigDecimal total) {
+		BigDecimal geschaeftsgewinnDurchschnitt, BigDecimal total) {
 		if (abstractFinanzielleSituation != null) {
 			total = add(total, nettoJahresLohn);
 			total = add(total, abstractFinanzielleSituation.getFamilienzulage());

@@ -14,7 +14,6 @@ import ch.dvbern.ebegu.types.DateRange;
  */
 public abstract class AbstractAbschnittRule extends AbstractEbeguRule {
 
-
 	public AbstractAbschnittRule(@Nonnull RuleKey ruleKey, @Nonnull RuleType ruleType, @Nonnull DateRange validityPeriod) {
 		super(ruleKey, ruleType, validityPeriod);
 	}

@@ -24,15 +24,15 @@ ${templateConfiguration.mailCss}
 		Sehr geehrte Familie
 	</p>
 	<p>
-        Ihr Betreuungsangebot für ${betreuung.kind.kindJA.fullName} / ${betreuung.institutionStammdaten.institution.name} wurde abgelehnt.
+		Ihr Betreuungsangebot für ${betreuung.kind.kindJA.fullName} / ${betreuung.institutionStammdaten.institution.name} wurde abgelehnt.
 		Die Betreuungsangebote können
 		<a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/betreuungen/${betreuung.extractGesuch().id}">hier</a>
 		bearbeitet werden.
 	</p>
-    <p>
-        Freundliche Grüsse <br/>
-        Jugendamt der Stadt Bern
-    </p>
+	<p>
+		Freundliche Grüsse <br/>
+		Jugendamt der Stadt Bern
+	</p>
 	<p>
 		Dies ist eine automatisch versendete E-Mail. Bitte antworten Sie nicht auf diese Nachricht.
 	</p>

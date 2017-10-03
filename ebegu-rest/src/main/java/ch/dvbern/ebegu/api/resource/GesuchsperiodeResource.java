@@ -108,7 +108,7 @@ public class GesuchsperiodeResource {
 	}
 
 	@ApiOperation(value = "Gibt alle in der Datenbank vorhandenen Gesuchsperioden zurueck.",
-				 responseContainer = "List", response = JaxGesuchsperiode.class)
+		responseContainer = "List", response = JaxGesuchsperiode.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)

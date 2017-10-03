@@ -39,7 +39,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(ErwerbspensumService.class)
-@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,  GESUCHSTELLER})
+@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 public class ErwerbspensumServiceBean extends AbstractBaseService implements ErwerbspensumService {
 
 	@Inject
@@ -64,24 +64,23 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST,  GESUCHSTELLER, SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, GESUCHSTELLER, SCHULAMT })
 	public Optional<ErwerbspensumContainer> findErwerbspensum(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		ErwerbspensumContainer ewpCnt =  persistence.find(ErwerbspensumContainer.class, key);
+		ErwerbspensumContainer ewpCnt = persistence.find(ErwerbspensumContainer.class, key);
 		authorizer.checkReadAuthorization(ewpCnt);
 		return Optional.ofNullable(ewpCnt);
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST,  GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, GESUCHSTELLER })
 	public Collection<ErwerbspensumContainer> findErwerbspensenForGesuchsteller(@Nonnull GesuchstellerContainer gesuchsteller) {
 		return criteriaQueryHelper.getEntitiesByAttribute(ErwerbspensumContainer.class, gesuchsteller, ErwerbspensumContainer_.gesuchstellerContainer);
 	}
 
-
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST,  GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, GESUCHSTELLER })
 	public Collection<ErwerbspensumContainer> findErwerbspensenFromGesuch(@Nonnull String gesuchId) {
 		Collection<ErwerbspensumContainer> result = new ArrayList<>();
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);
@@ -99,7 +98,7 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,  REVISOR, JURIST, })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, })
 	public Collection<ErwerbspensumContainer> getAllErwerbspensenenContainer() {
 		Collection<ErwerbspensumContainer> ewpContainers = criteriaQueryHelper.getAll(ErwerbspensumContainer.class);
 		ewpContainers.forEach(ewpContainer -> authorizer.checkReadAuthorization(ewpContainer));
@@ -107,7 +106,7 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST,  GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, GESUCHSTELLER })
 	public void removeErwerbspensum(@Nonnull String erwerbspensumContainerID, Gesuch gesuch) {
 		Objects.requireNonNull(erwerbspensumContainerID);
 		Optional<ErwerbspensumContainer> ewpCont = this.findErwerbspensum(erwerbspensumContainerID);

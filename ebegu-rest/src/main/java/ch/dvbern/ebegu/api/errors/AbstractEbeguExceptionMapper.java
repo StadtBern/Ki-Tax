@@ -20,7 +20,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by imanol on 02.03.16.
  * Basis Exception Mapper
- * @see  <a href="https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly/" >https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly</a>
+ *
+ * @see <a href="https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly/" >https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly</a>
  */
 public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implements ExceptionMapper<E> {
 
@@ -49,6 +50,7 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 
 	/**
 	 * unwrapped alle causes und fuegt sie zum Stringbuffer hinzu
+	 *
 	 * @param sb buffer to append to
 	 * @param t throwable
 	 */
@@ -65,7 +67,6 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 	}
 
 	/**
-	 *
 	 * @param accept Liste mit Accepted media types
 	 * @return Gibt den ersten von uns unterstuetzten MediaType zurueck
 	 */
@@ -86,9 +87,8 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 	}
 
 	protected void logException(Exception exception) {
-		LOG.warn("Exception occured: " ,exception);
+		LOG.warn("Exception occured: ", exception);
 	}
-
 
 	protected Locale getLocaleFromHeader() {
 		if (!headers.getAcceptableLanguages().isEmpty()) {

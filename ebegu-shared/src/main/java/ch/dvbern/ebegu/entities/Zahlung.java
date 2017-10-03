@@ -30,7 +30,7 @@ import org.hibernate.envers.Audited;
  */
 @Audited
 @Entity
-public class Zahlung extends AbstractEntity implements Comparable<Zahlung>{
+public class Zahlung extends AbstractEntity implements Comparable<Zahlung> {
 
 	private static final long serialVersionUID = 8975199813240034719L;
 
@@ -38,7 +38,6 @@ public class Zahlung extends AbstractEntity implements Comparable<Zahlung>{
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Zahlung_zahlungsauftrag_id"), nullable = false)
 	private Zahlungsauftrag zahlungsauftrag;
-
 
 	@NotNull
 	@ManyToOne(optional = false)
@@ -57,7 +56,6 @@ public class Zahlung extends AbstractEntity implements Comparable<Zahlung>{
 
 	@Nonnull
 	private BigDecimal betragTotalZahlung;
-
 
 	public Zahlungsauftrag getZahlungsauftrag() {
 		return zahlungsauftrag;

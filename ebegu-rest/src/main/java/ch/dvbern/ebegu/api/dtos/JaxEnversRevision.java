@@ -30,7 +30,6 @@ public class JaxEnversRevision extends JaxAbstractDTO {
 	private JaxAbstractDTO entity;
 	private RevisionType accessType;
 
-
 	public JaxAbstractDTO getEntity() {
 		return entity;
 	}

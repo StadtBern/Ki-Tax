@@ -29,10 +29,8 @@ public class Dokument extends FileMetadata {
 	@Column(nullable = false)
 	private LocalDateTime timestampUpload;
 
-
 	public Dokument() {
 	}
-
 
 	public Dokument(DokumentGrund dokumentGrund) {
 		this.dokumentGrund = dokumentGrund;

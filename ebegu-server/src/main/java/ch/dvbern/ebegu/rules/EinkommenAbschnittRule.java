@@ -20,7 +20,6 @@ import ch.dvbern.ebegu.types.DateRange;
  */
 public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 
-
 	public EinkommenAbschnittRule(DateRange validityPeriod) {
 		super(RuleKey.EINKOMMEN, RuleType.GRUNDREGEL_DATA, validityPeriod);
 	}

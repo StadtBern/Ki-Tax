@@ -81,7 +81,6 @@ public class Mitteilung extends AbstractEntity {
 	@Column(nullable = true)
 	private LocalDateTime sentDatum;
 
-
 	@NotNull
 	public Fall getFall() {
 		return fall;
@@ -171,7 +170,7 @@ public class Mitteilung extends AbstractEntity {
 		return MitteilungStatus.ENTWURF.equals(this.mitteilungStatus);
 	}
 
-	@SuppressWarnings({"OverlyComplexBooleanExpression", "OverlyComplexMethod"})
+	@SuppressWarnings({ "OverlyComplexBooleanExpression", "OverlyComplexMethod" })
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality

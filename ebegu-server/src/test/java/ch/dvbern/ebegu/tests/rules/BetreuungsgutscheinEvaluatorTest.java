@@ -38,24 +38,23 @@ import static ch.dvbern.ebegu.tets.TestDataUtil.createDefaultInstitutionStammdat
  * Gesuchsperiode            |----------------------------------------------------------|
  *
  * Erwerbspensum GS1  |------------------ 50 -----------------|
- *                                               |---------------------- 30 ------------|
+ * |---------------------- 30 ------------|
  * Erwerbspensum GS2         |-------------------- 90 + 10 ----------------------------|
  *
  * Wegzug                                                                       |---------------- - -
  *
  * Kind1                     |--------------- Kita 60, ---------------------------------|
- *                           |------------ Fachstelle 80 --------------|
+ * |------------ Fachstelle 80 --------------|
  *
  * Kind2                     |-------------- Kita1 20 ----------------------------------|
- *                           |-------------- Kita2 40 ----------------------------------|
+ * |-------------- Kita2 40 ----------------------------------|
  *
  * Kind3                     |-------------- Schulamt 100 ------------------------------|
  *
  * Kind4                     |---------------- Kita 30 ---------------------------------|
- *                                 |---- - - Kind 3 Monate alt - - -
+ * |---- - - Kind 3 Monate alt - - -
  */
 public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
-
 
 	private final DateRange erwerbspensumGS1_1 = new DateRange(LocalDate.of(2010, Month.FEBRUARY, 2), LocalDate.of(2017, Month.MARCH, 20));
 	private final DateRange erwerbspensumGS1_2 = new DateRange(LocalDate.of(2017, Month.JANUARY, 1), LocalDate.of(2017, Month.JULY, 31));
@@ -64,9 +63,8 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 
 	private final DateRange gesuchsperiode = new DateRange(LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31));
 
-
 	@Test
-	public void doTestEvaluation(){
+	public void doTestEvaluation() {
 		Gesuch testgesuch = createGesuch();
 		testgesuch.setEingangsdatum(LocalDate.of(2016, 7, 1));
 		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1718());
@@ -79,7 +77,7 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 	}
 
 	@Test
-	public void doTestEvaluationGeneratedBemerkungen(){
+	public void doTestEvaluationGeneratedBemerkungen() {
 		Gesuch testgesuch = createGesuch();
 		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1718());
 		testgesuch.getFinanzDatenDTO().setMassgebendesEinkBjVorAbzFamGr(new BigDecimal("500000")); //zu hoch -> Comment wird erzeugt
@@ -108,7 +106,6 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 		Assert.assertEquals(0, new BigDecimal("11280").compareTo(verfuegung.getZeitabschnitte().get(0).getAbzugFamGroesse()));
 		Assert.assertEquals(0, new BigDecimal("8720").compareTo(verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommen()));
 	}
-
 
 	private Gesuch createGesuch() {
 		Gesuch gesuch = new Gesuch();
@@ -145,7 +142,6 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		return gesuch;
 	}
-
 
 	private Betreuung createBetreuungWithPensum(Gesuch gesuch, BetreuungsangebotTyp angebot, DateRange gueltigkeit, int pensum) {
 		Betreuung betreuung = new Betreuung();

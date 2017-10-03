@@ -30,8 +30,6 @@ public class PensumFachstelleServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
-
 	@Test
 	public void createPersonInstitutionStammdatenTest() {
 		Assert.assertNotNull(pensumFachstelleService);
@@ -53,7 +51,7 @@ public class PensumFachstelleServiceTest extends AbstractEbeguLoginTest {
 
 		Optional<PensumFachstelle> returnedPensumFachstelle = pensumFachstelleService.findPensumFachstelle(insertedPensumFachstelle.getId());
 		Assert.assertTrue(returnedPensumFachstelle.isPresent());
-		PensumFachstelle persistedPensFachstelle= returnedPensumFachstelle.get();
+		PensumFachstelle persistedPensFachstelle = returnedPensumFachstelle.get();
 		Assert.assertEquals(insertedPensumFachstelle.getPensum(), persistedPensFachstelle.getPensum());
 
 		insertedPensumFachstelle.setPensum(10);

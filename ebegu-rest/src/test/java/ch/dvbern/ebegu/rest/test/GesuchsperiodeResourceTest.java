@@ -26,7 +26,6 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class GesuchsperiodeResourceTest extends AbstractEbeguRestLoginTest {
 
-
 	@Inject
 	private GesuchsperiodeResource gesuchsperiodeResource;
 
@@ -45,7 +44,7 @@ public class GesuchsperiodeResourceTest extends AbstractEbeguRestLoginTest {
 		findExistingObjectAndCompare(jaxGesuchsperiode);
 	}
 
-	@Test (expected = EbeguRuntimeException.class)
+	@Test(expected = EbeguRuntimeException.class)
 	public void createGesuchsperiodeAsAktivTest() {
 		JaxGesuchsperiode testJaxGesuchsperiode = TestJaxDataUtil.createTestJaxGesuchsperiode();
 		// Gesuchsperiode muss zuerst als ENTWURF gespeichert werden
@@ -93,7 +92,6 @@ public class GesuchsperiodeResourceTest extends AbstractEbeguRestLoginTest {
 		Assert.assertNotNull(listActiveAndInaktiv);
 		Assert.assertEquals(2, listActiveAndInaktiv.size());
 	}
-
 
 	// HELP METHODS
 

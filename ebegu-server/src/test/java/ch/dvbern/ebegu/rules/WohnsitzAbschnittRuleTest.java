@@ -25,7 +25,6 @@ public class WohnsitzAbschnittRuleTest {
 
 	final WohnsitzAbschnittRule wohnsitzRule = new WohnsitzAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
 
-
 	@Test
 	public void testCreateZeitAbschnitte() {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
@@ -80,7 +79,6 @@ public class WohnsitzAbschnittRuleTest {
 		Assert.assertTrue(verfuegungsZeitabschnitte.get(3).isWohnsitzNichtInGemeindeGS1());
 		Assert.assertFalse(verfuegungsZeitabschnitte.get(3).isWohnsitzNichtInGemeindeGS2());
 
-
 		final List<VerfuegungZeitabschnitt> mergedZerfuegungZeitabschnitte = wohnsitzRule.mergeZeitabschnitte(verfuegungsZeitabschnitte);
 
 		Assert.assertEquals(3, mergedZerfuegungZeitabschnitte.size());
@@ -100,7 +98,6 @@ public class WohnsitzAbschnittRuleTest {
 		Assert.assertTrue(mergedZerfuegungZeitabschnitte.get(2).isWohnsitzNichtInGemeindeGS1());
 		Assert.assertFalse(mergedZerfuegungZeitabschnitte.get(2).isWohnsitzNichtInGemeindeGS2());
 	}
-
 
 	@Test
 	public void testCreateZeitAbschnitteFamSituationMutationFrom1GSTo2GS() {
@@ -137,7 +134,6 @@ public class WohnsitzAbschnittRuleTest {
 		Assert.assertTrue(verfuegungsZeitabschnitte.get(2).isWohnsitzNichtInGemeindeGS1());
 		Assert.assertFalse(verfuegungsZeitabschnitte.get(2).isWohnsitzNichtInGemeindeGS2());
 
-
 		final List<VerfuegungZeitabschnitt> mergedZerfuegungZeitabschnitte = wohnsitzRule.mergeZeitabschnitte(verfuegungsZeitabschnitte);
 
 		Assert.assertEquals(3, mergedZerfuegungZeitabschnitte.size());
@@ -157,7 +153,6 @@ public class WohnsitzAbschnittRuleTest {
 		Assert.assertTrue(mergedZerfuegungZeitabschnitte.get(2).isWohnsitzNichtInGemeindeGS1());
 		Assert.assertFalse(mergedZerfuegungZeitabschnitte.get(2).isWohnsitzNichtInGemeindeGS2());
 	}
-
 
 	@Test
 	public void testCreateZeitAbschnitteFamSituationMutationFrom2GSTo1GS() {
@@ -199,7 +194,6 @@ public class WohnsitzAbschnittRuleTest {
 		Assert.assertEquals(LocalDate.of(TestDataUtil.PERIODE_JAHR_2, Month.MARCH, 26), verfuegungsZeitabschnitte.get(3).getGueltigkeit().getGueltigBis());
 		Assert.assertTrue(verfuegungsZeitabschnitte.get(3).isWohnsitzNichtInGemeindeGS1());
 		Assert.assertFalse(verfuegungsZeitabschnitte.get(3).isWohnsitzNichtInGemeindeGS2());
-
 
 		final List<VerfuegungZeitabschnitt> mergedZerfuegungZeitabschnitte = wohnsitzRule.mergeZeitabschnitte(verfuegungsZeitabschnitte);
 

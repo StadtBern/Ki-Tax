@@ -25,12 +25,11 @@ import ch.dvbern.ebegu.util.MathUtil;
  * Dieser TestFall stellt einen Umzug aus Bern vor dem Start der Gesuchsperiode dar
  * - Wohnadresse in Bern
  * - Umzugsadresse ab 15.06.2016 aus Bern <- vor Gesuchsperiode
- *
  */
 public class Testfall10_UmzugVorGesuchsperiode extends AbstractTestfall {
 
 	public Testfall10_UmzugVorGesuchsperiode(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
-										boolean betreuungenBestaetigt) {
+		boolean betreuungenBestaetigt) {
 		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
 	}
 

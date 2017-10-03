@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxFinanzielleSituationContainer extends JaxAbstractDTO {
 
-
 	private static final long serialVersionUID = -4812537186224986782L;
 
 	@NotNull
@@ -24,7 +23,6 @@ public class JaxFinanzielleSituationContainer extends JaxAbstractDTO {
 
 	@Valid
 	private JaxFinanzielleSituation finanzielleSituationJA;
-
 
 	public Integer getJahr() {
 		return jahr;

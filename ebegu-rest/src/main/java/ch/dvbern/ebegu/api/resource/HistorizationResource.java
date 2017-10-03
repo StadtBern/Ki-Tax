@@ -30,7 +30,6 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionType;
 
-
 /**
  * Resource fuer Historization
  */
@@ -44,7 +43,6 @@ public class HistorizationResource {
 
 	@Inject
 	private HistorizationService historizationService;
-
 
 	@ApiOperation(value = "Sucht alle Entities, die zur uebergebenen Envers-Revision gehoeren",
 		responseContainer = "List", response = JaxAbstractDTO.class)

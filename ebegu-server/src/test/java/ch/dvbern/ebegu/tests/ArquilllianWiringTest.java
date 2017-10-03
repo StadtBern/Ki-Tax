@@ -34,8 +34,8 @@ public class ArquilllianWiringTest extends AbstractEbeguLoginTest {
 	@Inject
 	BenutzerService benutzerService;
 
-    @Test
-    public void doesInjectionWorkTest() {
+	@Test
+	public void doesInjectionWorkTest() {
 		Assert.assertNotNull(benutzerService);
 	}
 }

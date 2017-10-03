@@ -16,7 +16,6 @@ import ch.dvbern.ebegu.types.DateRange;
  */
 public class MonatsRule extends AbstractEbeguRule {
 
-
 	public MonatsRule(@Nonnull DateRange validityPeriod) {
 		super(RuleKey.NO_RULE, RuleType.NO_RULE, validityPeriod);
 	}

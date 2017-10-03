@@ -36,5 +36,4 @@ public class ListResource {
 		return Response.ok(laender).build();
 	}
 
-
 }

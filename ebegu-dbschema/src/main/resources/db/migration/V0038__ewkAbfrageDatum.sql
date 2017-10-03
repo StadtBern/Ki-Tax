@@ -1,2 +1,4 @@
-ALTER TABLE gesuchsteller add ewk_abfrage_datum DATE;
-ALTER TABLE gesuchsteller_aud add ewk_abfrage_datum DATE;
+ALTER TABLE gesuchsteller
+	ADD ewk_abfrage_datum DATE;
+ALTER TABLE gesuchsteller_aud
+	ADD ewk_abfrage_datum DATE;

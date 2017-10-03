@@ -59,8 +59,8 @@ public class PrintUtil {
 	@Nonnull
 	private static BinaryOperator<GesuchstellerAdresseContainer> throwExceptionIfMoreThanOneAdresse(@Nonnull GesuchstellerContainer gesuchsteller) {
 		return (element, otherElement) -> {
-            throw new EbeguRuntimeException("getGesuchstellerAdresse_Korrespondenzadresse", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, gesuchsteller.getId());
-        };
+			throw new EbeguRuntimeException("getGesuchstellerAdresse_Korrespondenzadresse", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, gesuchsteller.getId());
+		};
 	}
 
 	/**
@@ -189,9 +189,9 @@ public class PrintUtil {
 		return null;
 	}
 
-	public static String getNameAdresseFormatiert(Gesuch gesuch, GesuchstellerContainer gesuchsteller){
+	public static String getNameAdresseFormatiert(Gesuch gesuch, GesuchstellerContainer gesuchsteller) {
 
-		if (gesuch != null && gesuchsteller != null){
+		if (gesuch != null && gesuchsteller != null) {
 			String newlineMSWord = "\n";
 			String adresse = StringUtils.EMPTY;
 
@@ -214,7 +214,7 @@ public class PrintUtil {
 			adresse += newlineMSWord + getGesuchstellerPLZStadt(gesuch);
 
 			return adresse;
-		} else{
+		} else {
 			return StringUtils.EMPTY;
 		}
 

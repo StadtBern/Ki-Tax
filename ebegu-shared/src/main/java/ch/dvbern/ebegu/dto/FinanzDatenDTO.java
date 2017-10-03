@@ -11,7 +11,6 @@ import java.time.LocalDate;
  */
 public class FinanzDatenDTO {
 
-
 	private BigDecimal massgebendesEinkBjVorAbzFamGr = BigDecimal.ZERO;
 	private BigDecimal massgebendesEinkBjP1VorAbzFamGr = BigDecimal.ZERO;
 	private BigDecimal massgebendesEinkBjP2VorAbzFamGr = BigDecimal.ZERO;
@@ -28,8 +27,6 @@ public class FinanzDatenDTO {
 	// vom GS im online Gesuch erfasst wurde, obwohl er sie nicht hätte erfassen sollen
 	private boolean ekv1Annulliert = false;
 	private boolean ekv2Annulliert = false;
-
-
 
 	public LocalDate getDatumVonBasisjahr() {
 		return datumVonBasisjahr;

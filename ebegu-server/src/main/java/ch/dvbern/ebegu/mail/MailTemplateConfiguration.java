@@ -46,7 +46,6 @@ public class MailTemplateConfiguration {
 	@Inject
 	private EbeguConfiguration ebeguConfiguration;
 
-
 	public MailTemplateConfiguration() {
 		final Configuration ourFreeMarkerConfig = new Configuration();
 		ourFreeMarkerConfig.setClassForTemplateLoading(MailTemplateConfiguration.class, "/mail/templates");
@@ -66,17 +65,17 @@ public class MailTemplateConfiguration {
 		@Nonnull Institution institution, @Nonnull String empfaengerMail, @Nonnull LocalDate datumErstellung, @Nonnull LocalDate birthdayKind) {
 
 		return processTemplateBetreuungGeloescht("InfoBetreuungGeloescht.ftl", betreuung, fall, kind, gesuchsteller1, institution,
-				toArgumentPair(EMPFAENGER_MAIL, empfaengerMail),
-				toArgumentPair("datumErstellung", Constants.DATE_FORMATTER.format(datumErstellung)),
-				toArgumentPair("birthday", Constants.DATE_FORMATTER.format(birthdayKind)));
+			toArgumentPair(EMPFAENGER_MAIL, empfaengerMail),
+			toArgumentPair("datumErstellung", Constants.DATE_FORMATTER.format(datumErstellung)),
+			toArgumentPair("birthday", Constants.DATE_FORMATTER.format(birthdayKind)));
 	}
 
 	public String getInfoBetreuungVerfuegt(@Nonnull Betreuung betreuung, @Nonnull Fall fall, @Nonnull Gesuchsteller gesuchsteller1, @Nonnull Kind kind,
 		@Nonnull Institution institution, @Nonnull String empfaengerMail, @Nonnull LocalDate birthdayKind) {
 
 		return processTemplateBetreuungVerfuegt("InfoBetreuungVerfuegt.ftl", betreuung, fall, kind, gesuchsteller1, institution,
-				toArgumentPair(EMPFAENGER_MAIL, empfaengerMail),
-				toArgumentPair("birthday", Constants.DATE_FORMATTER.format(birthdayKind)));
+			toArgumentPair(EMPFAENGER_MAIL, empfaengerMail),
+			toArgumentPair("birthday", Constants.DATE_FORMATTER.format(birthdayKind)));
 	}
 
 	public String getInfoMitteilungErhalten(@Nonnull Mitteilung mitteilung, @Nonnull String empfaengerMail) {

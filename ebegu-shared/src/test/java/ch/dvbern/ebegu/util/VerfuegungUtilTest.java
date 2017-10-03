@@ -19,9 +19,9 @@ import org.junit.Test;
 public class VerfuegungUtilTest {
 
 	/**
-	 *  J   F   M   A   M   J   J
-	 *  |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *      |---|                   -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |---|                   -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitInterval1Abschnitt() {
@@ -34,9 +34,9 @@ public class VerfuegungUtilTest {
 	}
 
 	/**
-	 *  J   F   M   A   M   J   J
-	 *  |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *      |-------|               -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |-------|               -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitInterval2Abschnitte() {
@@ -49,9 +49,9 @@ public class VerfuegungUtilTest {
 	}
 
 	/**
-	 *  J   F   M   A   M   J   J
-	 *  |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *       |-|                    -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |-|                    -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitIntervalSubabschnitt() {
@@ -64,9 +64,9 @@ public class VerfuegungUtilTest {
 	}
 
 	/**
-	 *  J   F   M   A   M   J   J
-	 *  |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *      |-----|                 -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |-----|                 -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitIntervalOnAndHalfabschnitt() {
@@ -79,9 +79,9 @@ public class VerfuegungUtilTest {
 	}
 
 	/**
-	 *  J   F   M   A   M   J   J
-	 *  |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *        |---|                 -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |---|                 -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitIntervalTwoHalfsabschnitt() {
@@ -94,9 +94,9 @@ public class VerfuegungUtilTest {
 	}
 
 	/**
-	 *  J   F   M   A   M   J   J
-	 *  |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *         |----|               -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |----|               -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitIntervalTwoHalfsabschnitt2() {
@@ -109,9 +109,9 @@ public class VerfuegungUtilTest {
 	}
 
 	/**
-	 *  J   F   M   A   M   J   J
-	 *  |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *        |-----------|         -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |-----------|         -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitIntervalSeveralabschnitte() {
@@ -124,9 +124,9 @@ public class VerfuegungUtilTest {
 	}
 
 	/**
-	 *          J   F   M   A   M   J   J
-	 *          |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *  |---|                               -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |---|                               -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitIntervalOutOfRange() {

@@ -29,7 +29,7 @@ public class MigrateSchema {
 			final DataSource dataSource = (DataSource) InitialContext.doLookup(DATASOURCE_NAME);
 			final Flyway flyway = new Flyway();
 			flyway.setDataSource(dataSource);
-//			flyway.setLocations("/dbscripts", "/ch/dvbern/fzl/kurstool/dbschema"); wir verwenden default
+			//			flyway.setLocations("/dbscripts", "/ch/dvbern/fzl/kurstool/dbschema"); wir verwenden default
 			flyway.setEncoding("UTF-8");
 			flyway.migrate();
 		} catch (NamingException e) {

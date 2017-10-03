@@ -26,7 +26,6 @@ public class InstitutionExportDTO {
 		this.adresse = adresse;
 	}
 
-
 	public InstitutionExportDTO() {
 	}
 

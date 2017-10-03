@@ -12,7 +12,6 @@ import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 
-
 /**
  * Service zum Verwalten von zeitabhängigen E-BEGU-Parametern.
  */

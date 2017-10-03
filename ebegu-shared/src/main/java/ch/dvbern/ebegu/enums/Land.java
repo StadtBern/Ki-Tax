@@ -222,14 +222,12 @@ public enum Land {
 	STAATENLOS("998"), //
 	UNBEKANNT("999");
 
-
 	private final String bsvCode;
 	private final boolean valid;
 	private final int sortierung;
 
 	private static final int SORTIERUNG_GELOESCHT = 0;
 	private static final int SORTIERUNG_DEFAULT = 100;
-
 
 	private Land(final String bsvCode, final boolean valid, final int sortierung) {
 		this.bsvCode = bsvCode;
@@ -251,8 +249,6 @@ public enum Land {
 
 	/**
 	 * code defined by bsv (eg. "100"=CH) - never null
-	 *
-	 * @return
 	 */
 	public String getBsvCode() {
 		return bsvCode;
@@ -260,13 +256,10 @@ public enum Land {
 
 	/**
 	 * Is this {@link Land} still valid? Unused and replaced codes will be marked as invalid.
-	 *
-	 * @return
 	 */
 	public boolean isValid() {
 		return valid;
 	}
-
 
 	public boolean isSchweiz() {
 		return this.equals(Land.CH);

@@ -21,7 +21,6 @@ public class VerfuegungenExportDTO {
 
 	private List<VerfuegungExportDTO> verfuegungen;
 
-
 	public List<VerfuegungExportDTO> getVerfuegungen() {
 		return verfuegungen;
 	}

@@ -86,7 +86,6 @@ public class VerfuegungResource {
 
 	private static final Logger LOG = LoggerFactory.getLogger(VerfuegungResource.class.getSimpleName());
 
-
 	@ApiOperation(value = "Calculates the Verfuegung of the Gesuch with the given id, does nothing if the Gesuch " +
 		"does not exists. Note: Nothing is stored in the Database",
 		responseContainer = "Set", response = JaxKindContainer.class)
@@ -147,9 +146,9 @@ public class VerfuegungResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxVerfuegung saveVerfuegung(
-		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchId,
-		@Nonnull @NotNull @PathParam ("betreuungId") JaxId betreuungId,
-		@Nonnull @NotNull @PathParam ("ignorieren") Boolean ignorieren,
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchId,
+		@Nonnull @NotNull @PathParam("betreuungId") JaxId betreuungId,
+		@Nonnull @NotNull @PathParam("ignorieren") Boolean ignorieren,
 		@Nonnull @NotNull @Valid JaxVerfuegung verfuegungJAXP) throws EbeguException {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
@@ -179,7 +178,7 @@ public class VerfuegungResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response verfuegungSchliessenOhneVerfuegen(
-		@Nonnull @NotNull @PathParam ("betreuungId") JaxId betreuungId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("betreuungId") JaxId betreuungId) throws EbeguException {
 
 		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungId.getId());
 		if (betreuung.isPresent()) {
@@ -196,7 +195,7 @@ public class VerfuegungResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxVerfuegung schliessenNichtEintreten(
-		@Nonnull @NotNull @PathParam ("betreuungId") JaxId betreuungId,
+		@Nonnull @NotNull @PathParam("betreuungId") JaxId betreuungId,
 		@Nonnull @NotNull @Valid JaxVerfuegung verfuegungJAXP) throws EbeguException {
 
 		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungId.getId());
@@ -216,7 +215,7 @@ public class VerfuegungResource {
 	/**
 	 * Hack, welcher das Gesuch detached, damit es auf keinen Fall gespeichert wird. Vorher muessen die Lazy geloadeten
 	 * BetreuungspensumContainers geladen werden, da danach keine Session mehr zur Verfuegung steht!
-     */
+	 */
 	private void loadRelationsAndDetach(Gesuch gesuch) {
 		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
 			betreuung.getBetreuungspensumContainers().size();

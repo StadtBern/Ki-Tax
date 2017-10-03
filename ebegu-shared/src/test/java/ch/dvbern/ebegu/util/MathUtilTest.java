@@ -17,7 +17,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class MathUtilTest {
 
-
 	private static final RoundingMode DFLT_ROUNDING = RoundingMode.HALF_UP;
 	private static final int DFLT_PRECISION = 19;
 	private static final int DFLT_SCALE = 2;

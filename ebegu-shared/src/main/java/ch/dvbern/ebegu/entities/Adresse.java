@@ -26,7 +26,6 @@ import org.hibernate.envers.Audited;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Adresse extends AbstractDateRangedEntity {
 
-
 	private static final long serialVersionUID = 4637260017314382780L;
 
 	@Size(max = Constants.DB_DEFAULT_MAX_LENGTH)
@@ -71,10 +70,8 @@ public class Adresse extends AbstractDateRangedEntity {
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String organisation;
 
-
 	public Adresse() {
 	}
-
 
 	@Nonnull
 	public String getStrasse() {

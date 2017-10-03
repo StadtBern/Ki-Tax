@@ -77,7 +77,6 @@ public class WohnhaftImGleichenHaushaltRuleTest {
 		Assert.assertEquals(30, result.get(0).getAnspruchberechtigtesPensum());
 	}
 
-
 	private Betreuung prepareData(final int pensum, final Integer prozentImGleichemHaushalt, int fachstelle) {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 		final Gesuch gesuch = betreuung.extractGesuch();

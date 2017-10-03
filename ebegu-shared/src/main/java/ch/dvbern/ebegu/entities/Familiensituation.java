@@ -42,7 +42,6 @@ public class Familiensituation extends AbstractEntity {
 	@Column(nullable = true)
 	private LocalDate aenderungPer;
 
-
 	public Familiensituation() {
 	}
 
@@ -93,13 +92,13 @@ public class Familiensituation extends AbstractEntity {
 	public boolean hasSecondGesuchsteller() {
 		if (this.familienstatus != null) {
 			switch (this.familienstatus) {
-				case ALLEINERZIEHEND:
-				case WENIGER_FUENF_JAHRE:
-					return EnumGesuchstellerKardinalitaet.ZU_ZWEIT == this.getGesuchstellerKardinalitaet();
-				case VERHEIRATET:
-				case KONKUBINAT:
-				case LAENGER_FUENF_JAHRE:
-					return true;
+			case ALLEINERZIEHEND:
+			case WENIGER_FUENF_JAHRE:
+				return EnumGesuchstellerKardinalitaet.ZU_ZWEIT == this.getGesuchstellerKardinalitaet();
+			case VERHEIRATET:
+			case KONKUBINAT:
+			case LAENGER_FUENF_JAHRE:
+				return true;
 			}
 		}
 		return false;

@@ -30,7 +30,7 @@ import ch.dvbern.ebegu.util.MathUtil;
 public class Testfall09_Abwesenheit extends AbstractTestfall {
 
 	public Testfall09_Abwesenheit(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
-										boolean betreuungenBestaetigt) {
+		boolean betreuungenBestaetigt) {
 		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
 	}
 

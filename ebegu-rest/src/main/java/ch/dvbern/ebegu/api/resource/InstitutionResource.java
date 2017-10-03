@@ -123,7 +123,7 @@ public class InstitutionResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxInstitution findInstitution(
-		@Nonnull @NotNull @PathParam("institutionId") JaxId institutionJAXPId){
+		@Nonnull @NotNull @PathParam("institutionId") JaxId institutionJAXPId) {
 
 		Validate.notNull(institutionJAXPId.getId());
 		String institutionID = converter.toEntityId(institutionJAXPId);
@@ -169,7 +169,6 @@ public class InstitutionResource {
 			.map(institution -> converter.institutionToJAX(institution))
 			.collect(Collectors.toList());
 	}
-
 
 	@ApiOperation(value = "Find and return a list of all Institutionen",
 		responseContainer = "List", response = JaxInstitution.class)

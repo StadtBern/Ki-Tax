@@ -23,17 +23,16 @@ public abstract class AbstractBGRechner {
 	protected static final BigDecimal ZWANZIG = MathUtil.EXACT.from(20L);
 	protected static final BigDecimal ZWEIHUNDERTVIERZIG = MathUtil.EXACT.from(240L);
 
-
 	/**
 	 * Diese Methode muss von den Subklassen ueberschrieben werden und fuehrt die Berechnung fuer  die uebergebenen Verfuegungsabschnitte durch.
-     */
-	public abstract VerfuegungZeitabschnitt  calculate(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Verfuegung verfuegung, BGRechnerParameterDTO parameterDTO);
+	 */
+	public abstract VerfuegungZeitabschnitt calculate(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Verfuegung verfuegung, BGRechnerParameterDTO parameterDTO);
 
 	/**
 	 * Checkt die für alle Angebote benoetigten Argumente auf Null.
 	 * Stellt sicher, dass der Zeitraum innerhalb eines Monates liegt
 	 * Wenn nicht wird eine Exception geworfen
-     */
+	 */
 	protected void checkArguments(LocalDate von, LocalDate bis, BigDecimal anspruch, BigDecimal massgebendesEinkommen) {
 		// Inputdaten validieren
 		Objects.requireNonNull(von, "von darf nicht null sein");
@@ -49,7 +48,7 @@ public abstract class AbstractBGRechner {
 	/**
 	 * Berechnet den Anteil des Zeitabschnittes am gesamten Monat als dezimalzahl von 0 bis 1
 	 * Dabei werden nur Werktage (d.h. sa do werden ignoriert) beruecksichtigt
-     */
+	 */
 	protected BigDecimal calculateAnteilMonat(LocalDate von, LocalDate bis) {
 		LocalDate monatsanfang = von.with(TemporalAdjusters.firstDayOfMonth());
 		LocalDate monatsende = bis.with(TemporalAdjusters.lastDayOfMonth());
@@ -60,7 +59,7 @@ public abstract class AbstractBGRechner {
 
 	/**
 	 * Berechnet die Kosten einer Betreuungsstunde (Tagi und Tageseltern)
-     */
+	 */
 	protected BigDecimal calculateKostenBetreuungsstunde(BigDecimal kostenProStundeMaximal, BigDecimal massgebendesEinkommen, BigDecimal anspruch, BGRechnerParameterDTO parameterDTO) {
 		// Massgebendes Einkommen: Minimum und Maximum berücksichtigen
 		BigDecimal massgebendesEinkommenBerechnet = (massgebendesEinkommen.max(parameterDTO.getMassgebendesEinkommenMinimal())).min(parameterDTO.getMassgebendesEinkommenMaximal());
@@ -76,9 +75,9 @@ public abstract class AbstractBGRechner {
 	 * Berechnet die Anzahl Wochentage zwischen (und inklusive) Start und End
 	 */
 	private long workDaysBetween(LocalDate start, LocalDate end) {
-		return Stream.iterate(start, d->d.plusDays(1))
+		return Stream.iterate(start, d -> d.plusDays(1))
 			.limit(start.until(end.plusDays(1), ChronoUnit.DAYS))
-			.filter(d->!(DayOfWeek.SATURDAY.equals(d.getDayOfWeek()) || DayOfWeek.SUNDAY.equals(d.getDayOfWeek())))
+			.filter(d -> !(DayOfWeek.SATURDAY.equals(d.getDayOfWeek()) || DayOfWeek.SUNDAY.equals(d.getDayOfWeek())))
 			.count();
 	}
 }

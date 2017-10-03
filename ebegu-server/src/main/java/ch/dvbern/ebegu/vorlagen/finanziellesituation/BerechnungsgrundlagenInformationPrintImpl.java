@@ -85,7 +85,6 @@ public class BerechnungsgrundlagenInformationPrintImpl extends BriefPrintImpl im
 		}
 	}
 
-
 	@Nullable
 	@Override
 	public String getGesuchsteller1Name() {
@@ -147,7 +146,6 @@ public class BerechnungsgrundlagenInformationPrintImpl extends BriefPrintImpl im
 				result.add(new BerechnungsblattPrintImpl(zeitabschnitt));
 			}
 		}
-
 
 		return result;
 

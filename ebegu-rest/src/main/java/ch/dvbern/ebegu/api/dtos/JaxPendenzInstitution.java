@@ -59,7 +59,6 @@ public class JaxPendenzInstitution {
 	@NotNull
 	private JaxInstitution institution;
 
-
 	public String getBetreuungsNummer() {
 		return betreuungsNummer;
 	}

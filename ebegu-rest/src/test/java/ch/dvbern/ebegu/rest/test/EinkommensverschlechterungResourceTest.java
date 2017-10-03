@@ -29,7 +29,6 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class EinkommensverschlechterungResourceTest extends AbstractEbeguRestLoginTest {
 
-
 	@Inject
 	private GesuchstellerResource gesuchstellerResource;
 

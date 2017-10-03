@@ -11,7 +11,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 
-
 /**
  * DTO für Adressen aus dem EWK
  */
@@ -23,22 +22,22 @@ public class EWKBeziehung implements Serializable {
 
 	protected String beziehungstyp;
 
-    protected String beziehungstypTxt;
+	protected String beziehungstypTxt;
 
-    protected String personID;
+	protected String personID;
 
-    protected String nachname;
+	protected String nachname;
 
-    protected String ledigname;
+	protected String ledigname;
 
-    protected String vorname;
+	protected String vorname;
 
-    protected String rufname;
+	protected String rufname;
 
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
-    protected LocalDate geburtsdatum;
+	protected LocalDate geburtsdatum;
 
-    protected EWKAdresse adresse;
+	protected EWKAdresse adresse;
 
 	public EWKBeziehung() {
 	}

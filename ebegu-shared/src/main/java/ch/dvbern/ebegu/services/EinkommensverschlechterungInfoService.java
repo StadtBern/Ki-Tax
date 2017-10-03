@@ -28,7 +28,7 @@ public interface EinkommensverschlechterungInfoService {
 	 */
 	@Nonnull
 	EinkommensverschlechterungInfoContainer updateEinkommensVerschlechterungInfoAndGesuch(Gesuch gesuch, EinkommensverschlechterungInfoContainer oldEVData,
-																				 EinkommensverschlechterungInfoContainer convertedEkvi);
+		EinkommensverschlechterungInfoContainer convertedEkvi);
 
 	/**
 	 * @param key PK (id) der EinkommensverschlechterungInfoContainer
@@ -39,6 +39,7 @@ public interface EinkommensverschlechterungInfoService {
 
 	/**
 	 * Gibt alle existierenden EinkommensverschlechterungInfoen zurueck.
+	 *
 	 * @return Liste aller EinkommensverschlechterungInfoen aus der DB
 	 */
 	@Nonnull
@@ -46,6 +47,7 @@ public interface EinkommensverschlechterungInfoService {
 
 	/**
 	 * entfernt eine EinkommensverschlechterungInfoContainer aus der Database
+	 *
 	 * @param einkommensverschlechterungInfo die EinkommensverschlechterungInfoContainer als DTO
 	 */
 	void removeEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo);

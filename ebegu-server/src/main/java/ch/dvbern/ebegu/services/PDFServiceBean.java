@@ -123,15 +123,15 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 		EbeguVorlageKey vorlageKey;
 
 		switch (mahnung.getMahnungTyp()) {
-			case ERSTE_MAHNUNG:
-				vorlageKey = EbeguVorlageKey.VORLAGE_MAHNUNG_1;
-				break;
-			case ZWEITE_MAHNUNG:
-				vorlageKey = EbeguVorlageKey.VORLAGE_MAHNUNG_2;
-				break;
-			default:
-				throw new MergeDocException("generateMahnung()",
-					"Unexpected Mahnung Type", null, OBJECTARRAY);
+		case ERSTE_MAHNUNG:
+			vorlageKey = EbeguVorlageKey.VORLAGE_MAHNUNG_1;
+			break;
+		case ZWEITE_MAHNUNG:
+			vorlageKey = EbeguVorlageKey.VORLAGE_MAHNUNG_2;
+			break;
+		default:
+			throw new MergeDocException("generateMahnung()",
+				"Unexpected Mahnung Type", null, OBJECTARRAY);
 		}
 
 		try {
@@ -233,7 +233,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 	@Override
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
 	public byte[] generateVerfuegungForBetreuung(Betreuung betreuung,
-		@Nullable LocalDate	letzteVerfuegungDatum, boolean writeProtected) throws MergeDocException {
+		@Nullable LocalDate letzteVerfuegungDatum, boolean writeProtected) throws MergeDocException {
 
 		final DateRange gueltigkeit = betreuung.extractGesuchsperiode().getGueltigkeit();
 		EbeguVorlageKey vorlageFromBetreuungsangebottyp = getVorlageFromBetreuungsangebottyp(betreuung);
@@ -262,15 +262,15 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			}
 		}
 		switch (betreuung.getBetreuungsangebotTyp()) {
-			case TAGESELTERN_KLEINKIND:
-				return EbeguVorlageKey.VORLAGE_VERFUEGUNG_TAGESELTERN_KLEINKINDER;
-			case TAGESELTERN_SCHULKIND:
-				return EbeguVorlageKey.VORLAGE_BRIEF_TAGESELTERN_SCHULKINDER;
-			case TAGI:
-				return EbeguVorlageKey.VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER;
-			case KITA:
-			default:
-				return EbeguVorlageKey.VORLAGE_VERFUEGUNG_KITA;
+		case TAGESELTERN_KLEINKIND:
+			return EbeguVorlageKey.VORLAGE_VERFUEGUNG_TAGESELTERN_KLEINKINDER;
+		case TAGESELTERN_SCHULKIND:
+			return EbeguVorlageKey.VORLAGE_BRIEF_TAGESELTERN_SCHULKINDER;
+		case TAGI:
+			return EbeguVorlageKey.VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER;
+		case KITA:
+		default:
+			return EbeguVorlageKey.VORLAGE_VERFUEGUNG_KITA;
 		}
 	}
 

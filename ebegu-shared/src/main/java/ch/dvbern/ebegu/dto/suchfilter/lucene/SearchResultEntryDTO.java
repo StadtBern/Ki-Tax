@@ -33,7 +33,6 @@ public class SearchResultEntryDTO implements Serializable {
 	@Nullable
 	private JaxAbstractAntragDTO antragDTO; //dto mit detailinfos
 
-
 	public SearchResultEntryDTO(
 		@Nonnull SearchEntityType entity,
 		@Nonnull String resultId,

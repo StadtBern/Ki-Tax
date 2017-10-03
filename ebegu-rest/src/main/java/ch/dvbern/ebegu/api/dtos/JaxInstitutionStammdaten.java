@@ -30,7 +30,6 @@ public class JaxInstitutionStammdaten extends JaxAbstractDateRangedDTO {
 	@NotNull
 	private JaxInstitution institution;
 
-
 	@NotNull
 	private JaxAdresse adresse;
 
@@ -38,7 +37,6 @@ public class JaxInstitutionStammdaten extends JaxAbstractDateRangedDTO {
 	private String kontoinhaber;
 	@Nullable
 	private JaxAdresse adresseKontoinhaber;
-
 
 	@Nullable
 	public String getIban() {

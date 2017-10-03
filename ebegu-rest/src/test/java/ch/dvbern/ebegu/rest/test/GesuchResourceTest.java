@@ -58,7 +58,6 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private JaxBConverter converter;
 
-
 	private static final Logger LOG = LoggerFactory.getLogger(GesuchResourceTest.class);
 
 	/**
@@ -97,7 +96,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		changeStatusToWarten(gesuch.getKindContainers().iterator().next());
 
-		persistUser(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, "satraeg",  null,
+		persistUser(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, "satraeg", null,
 			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getTraegerschaft(),
 			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getMandant());
 
@@ -126,7 +125,6 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	public void testFindGesuchForOtherRole() throws EbeguException {
 		persistUser(UserRole.GESUCHSTELLER, "gesuchst", null, null, null);
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, null);
-
 
 		final JaxGesuch gesuchForInstitution = gesuchResource.findGesuchForInstitution(converter.toJaxId(gesuch));
 
@@ -264,11 +262,9 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 		Assert.assertEquals(AntragStatusDTO.PRUEFUNG_STV, jaxGesuch.getStatus());
 	}
 
-
-
 	// HELP METHODS
 
-	private Benutzer persistUser(final UserRole role, final String username,  final Institution institution, final Traegerschaft traegerschaft, final Mandant mandant) {
+	private Benutzer persistUser(final UserRole role, final String username, final Institution institution, final Traegerschaft traegerschaft, final Mandant mandant) {
 		Mandant mandantToStore = mandant;
 		if (mandantToStore == null) {
 			mandantToStore = TestDataUtil.createDefaultMandant();

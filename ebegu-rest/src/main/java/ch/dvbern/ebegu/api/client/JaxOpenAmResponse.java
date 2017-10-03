@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxOpenAmResponse implements Serializable {
 
-
 	private static final long serialVersionUID = 3556645949176582367L;
 
 	private String tokenId;

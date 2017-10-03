@@ -18,15 +18,13 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public class LocalhostChecker {
 
-
 	private final Logger LOG = LoggerFactory.getLogger(LocalhostChecker.class.getSimpleName());
 
 	private Set<String> localAddresses = new HashSet<>();
 
-
-	@SuppressWarnings({"OverlyBroadCatchBlock", "PMD.UnusedPrivateMethod"})
+	@SuppressWarnings({ "OverlyBroadCatchBlock", "PMD.UnusedPrivateMethod" })
 	@PostConstruct
-	private void init(){
+	private void init() {
 		try {
 			localAddresses.add(InetAddress.getLocalHost().getHostAddress());
 			for (InetAddress inetAddress : InetAddress.getAllByName("localhost")) {

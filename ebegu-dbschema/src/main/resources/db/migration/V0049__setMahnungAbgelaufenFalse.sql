@@ -1,1 +1,3 @@
-update mahnung set abgelaufen=false where abgelaufen is null;
+UPDATE mahnung
+SET abgelaufen = FALSE
+WHERE abgelaufen IS NULL;

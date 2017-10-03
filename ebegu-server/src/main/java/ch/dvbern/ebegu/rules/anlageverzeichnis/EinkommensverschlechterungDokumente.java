@@ -75,7 +75,7 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 	}
 
 	private void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, GesuchstellerContainer gesuchsteller,
-											  boolean gemeinsam, int gesuchstellerNumber, int basisJahrPlusNumber, int basisJahr) {
+		boolean gemeinsam, int gesuchstellerNumber, int basisJahrPlusNumber, int basisJahr) {
 
 		if (gesuchsteller == null || gesuchsteller.getEinkommensverschlechterungContainer() == null) {
 			return;
@@ -129,10 +129,10 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 		if (abstractFinanzielleSituation instanceof Einkommensverschlechterung) {
 			Einkommensverschlechterung einkommensverschlechterung = (Einkommensverschlechterung) abstractFinanzielleSituation;
 			switch (minus) {
-				case 0:
-					return !einkommensverschlechterung.getSteuerveranlagungErhalten() && (einkommensverschlechterung.getGeschaeftsgewinnBasisjahr() != null);
-				case 1:
-					return !einkommensverschlechterung.getSteuerveranlagungErhalten() && (einkommensverschlechterung.getGeschaeftsgewinnBasisjahrMinus1() != null);
+			case 0:
+				return !einkommensverschlechterung.getSteuerveranlagungErhalten() && (einkommensverschlechterung.getGeschaeftsgewinnBasisjahr() != null);
+			case 1:
+				return !einkommensverschlechterung.getSteuerveranlagungErhalten() && (einkommensverschlechterung.getGeschaeftsgewinnBasisjahrMinus1() != null);
 			}
 		}
 		return false;

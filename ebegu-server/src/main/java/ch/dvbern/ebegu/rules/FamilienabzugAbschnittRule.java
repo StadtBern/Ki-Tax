@@ -43,17 +43,16 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 	private final BigDecimal pauschalabzugProPersonFamiliengroesse6;
 
 	public FamilienabzugAbschnittRule(DateRange validityPeriod,
-									  BigDecimal pauschalabzugProPersonFamiliengroesse3,
-									  BigDecimal pauschalabzugProPersonFamiliengroesse4,
-									  BigDecimal pauschalabzugProPersonFamiliengroesse5,
-									  BigDecimal pauschalabzugProPersonFamiliengroesse6) {
+		BigDecimal pauschalabzugProPersonFamiliengroesse3,
+		BigDecimal pauschalabzugProPersonFamiliengroesse4,
+		BigDecimal pauschalabzugProPersonFamiliengroesse5,
+		BigDecimal pauschalabzugProPersonFamiliengroesse6) {
 		super(RuleKey.FAMILIENSITUATION, RuleType.GRUNDREGEL_DATA, validityPeriod);
 		this.pauschalabzugProPersonFamiliengroesse3 = pauschalabzugProPersonFamiliengroesse3;
 		this.pauschalabzugProPersonFamiliengroesse4 = pauschalabzugProPersonFamiliengroesse4;
 		this.pauschalabzugProPersonFamiliengroesse5 = pauschalabzugProPersonFamiliengroesse5;
 		this.pauschalabzugProPersonFamiliengroesse6 = pauschalabzugProPersonFamiliengroesse6;
 	}
-
 
 	@Override
 	@Nonnull
@@ -69,7 +68,7 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 			final LocalDate geburtsdatum = kindContainer.getKindJA().getGeburtsdatum();
 			if (gesuch.getGesuchsperiode().getGueltigkeit().contains(geburtsdatum)) {
 				final LocalDate beginMonatNachGeb = geburtsdatum.plusMonths(1).withDayOfMonth(1);
-				famGrMap.put(beginMonatNachGeb,calculateFamiliengroesse(gesuch, beginMonatNachGeb));
+				famGrMap.put(beginMonatNachGeb, calculateFamiliengroesse(gesuch, beginMonatNachGeb));
 			}
 		}
 
@@ -101,7 +100,7 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 		//initial gilt die Familiengroesse die am letzten Tag vor dem Start der neuen Gesuchsperiode vorhanden war
 		Double famGrBeruecksichtigungAbzug = 0.0;
 		Integer famGrAnzahlPersonen = 0;
-		if(gesuch.getGesuchsperiode() != null){
+		if (gesuch.getGesuchsperiode() != null) {
 			Map.Entry<Double, Integer> famGr = calculateFamiliengroesse(gesuch, gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
 			famGrBeruecksichtigungAbzug = famGr.getKey();
 			famGrAnzahlPersonen = famGr.getValue();
@@ -126,7 +125,6 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 			calculateAbzugAufgrundFamiliengroesse(famGrBeruecksichtigungAbzug, famGrAnzahlPersonen);
 	}
 
-
 	/**
 	 * Die Familiengroesse wird folgendermassen kalkuliert:
 	 * Familiengrösse = Gesuchsteller1 + Gesuchsteller2 (falls vorhanden) + Faktor Steuerabzug pro Kind (0, 0.5, oder 1)
@@ -140,7 +138,7 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 	 * <p>
 	 *
 	 * @param gesuch das Gesuch aus welchem die Daten geholt werden
-	 * @param date   das Datum fuer das die familiengroesse kalkuliert werden muss
+	 * @param date das Datum fuer das die familiengroesse kalkuliert werden muss
 	 * @return die familiengroesse:
 	 * key: Familienabzug unter Berücksichtigung des halben oder ganzen Familienabzug als Double
 	 * value: Familienabzug unter der Anzahl Personen in der Familie als Integer
@@ -173,8 +171,7 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 					if (kindContainer.getKindJA().getKinderabzug() == Kinderabzug.HALBER_ABZUG) {
 						famGrBeruecksichtigungAbzug += 0.5;
 						famGrAnzahlPersonen++;
-					}
-					else if (kindContainer.getKindJA().getKinderabzug() == Kinderabzug.GANZER_ABZUG) {
+					} else if (kindContainer.getKindJA().getKinderabzug() == Kinderabzug.GANZER_ABZUG) {
 						famGrBeruecksichtigungAbzug++;
 						famGrAnzahlPersonen++;
 					}
@@ -202,8 +199,7 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 	/**
 	 * Berechnete Familiengrösse (halber Abzug berücksichtigen) multipliziert mit dem ermittelten Personen-Haushalt-Pauschalabzug
 	 * (Anzahl Personen in Familie)
-	 * @param famGrBeruecksichtigungAbzug
-	 * @param famGrAnzahlPersonen
+	 *
 	 * @return abzug aufgrund Familiengrösse
 	 */
 	BigDecimal calculateAbzugAufgrundFamiliengroesse(double famGrBeruecksichtigungAbzug, int famGrAnzahlPersonen) {

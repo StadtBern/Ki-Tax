@@ -57,7 +57,6 @@ public class MahnungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 		return angebot.toString();
 	}
 
-
 	@Override
 	public String getAngebotFull() {
 

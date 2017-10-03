@@ -22,7 +22,6 @@ public class DailyBatchSchedulerTest extends AbstractEbeguLoginTest {
 	@Inject
 	private DailyBatch dailyBatch;
 
-
 	@Test
 	public void testInjection() {
 		Assert.assertNotNull(dailyBatch);

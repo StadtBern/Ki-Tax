@@ -34,7 +34,6 @@ public class JaxAntragStatusHistory extends JaxAbstractDTO {
 	@NotNull
 	private AntragStatusDTO status;
 
-
 	public String getGesuchId() {
 		return gesuchId;
 	}

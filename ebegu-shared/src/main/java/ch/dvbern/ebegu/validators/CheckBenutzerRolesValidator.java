@@ -18,8 +18,8 @@ public class CheckBenutzerRolesValidator implements ConstraintValidator<CheckBen
 
 	/**
 	 * Folgende Regeln muessen erfuellt werden:
-	 *  - Wenn Rolle=SACHBEARBEITER_INSTITUTION der Benutzer muss mit einer Institution verknuepft werden
-	 *  - Wenn Rolle=SACHBEARBEITER_TRAEGERSCHAFT der Benutzer muss mit einer Traegerschaft verknuepft werden
+	 * - Wenn Rolle=SACHBEARBEITER_INSTITUTION der Benutzer muss mit einer Institution verknuepft werden
+	 * - Wenn Rolle=SACHBEARBEITER_TRAEGERSCHAFT der Benutzer muss mit einer Traegerschaft verknuepft werden
 	 *
 	 * @param instance Benutzer
 	 * @param context context

@@ -59,7 +59,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(FallService.class)
-@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, SCHULAMT})
+@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, SCHULAMT })
 public class FallServiceBean extends AbstractBaseService implements FallService {
 
 	@Inject
@@ -86,10 +86,9 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	@Inject
 	private SuperAdminService superAdminService;
 
-
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,  GESUCHSTELLER })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public Fall saveFall(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall);
 		// Den "Besitzer" auf dem Fall ablegen
@@ -105,7 +104,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	@Override
 	public Optional<Fall> findFall(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		Fall a =  persistence.find(Fall.class, key);
+		Fall a = persistence.find(Fall.class, key);
 		if (a != null) {
 			authorizer.checkReadAuthorizationFall(a);
 		}
@@ -178,9 +177,8 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		return Optional.empty();
 	}
 
-
 	@Override
-	public Optional<String> getCurrentEmailAddress(String fallID){
+	public Optional<String> getCurrentEmailAddress(String fallID) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 
 		final CriteriaQuery<String> query = cb.createQuery(String.class);
@@ -201,10 +199,10 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		List<String> criteriaResults = typedQuery.getResultList();
 
 		String emailToReturn = null;
-		if(!criteriaResults.isEmpty()){
+		if (!criteriaResults.isEmpty()) {
 			if (criteriaResults.size() != 1) {
 				throw new EbeguRuntimeException("getEmailAddressForFall", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, criteriaResults.size());
-			} else{
+			} else {
 				String gesuchstellerEmail = criteriaResults.get(0);
 				emailToReturn = gesuchstellerEmail;
 			}

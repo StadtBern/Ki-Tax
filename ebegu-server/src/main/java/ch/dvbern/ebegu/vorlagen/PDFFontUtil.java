@@ -16,7 +16,7 @@ import com.lowagie.text.FontFactory;
 public class PDFFontUtil {
 
     /*
-    public static final String FONT_FACE_ARIAL = "arial";
+	public static final String FONT_FACE_ARIAL = "arial";
     public static final String TTF_ARIAL_RESOURCE = "/font/arial.ttf";
 
     private static final String FONT_FACE_CALIBRI = "calibri";
@@ -33,8 +33,8 @@ public class PDFFontUtil {
     private static final String TTF_CALIBRIZ_RESOURCE = "/font/calibri.ttf";
     */
 
-    public static void embedStandardFonts() {
-        FontFactory.defaultEmbedding = true;
+	public static void embedStandardFonts() {
+		FontFactory.defaultEmbedding = true;
 
         /*
         // Auskommentiert, Seitenummer Problem, DABU 07.06.2015
@@ -47,5 +47,5 @@ public class PDFFontUtil {
         FontFactory.register(TTF_CALIBRILI_RESOURCE, FONT_FACE_CALIBRILI);
         FontFactory.register(TTF_CALIBRIZ_RESOURCE, FONT_FACE_CALIBRIZ);
         */
-    }
+	}
 }

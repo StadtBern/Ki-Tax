@@ -12,7 +12,6 @@ import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.services.EbeguVorlageServiceBean;
 import ch.dvbern.ebegu.types.DateRange;
 
-
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
  * <p>
@@ -33,41 +32,41 @@ public class EbeguVorlageServiceMock extends EbeguVorlageServiceBean {
 		Vorlage vorlage = new Vorlage();
 
 		switch (ebeguVorlageKey) {
-			case VORLAGE_MAHNUNG_1:
-				vorlage.setFilepfad("vorlagen/1_Mahnung.docx");
-				break;
-			case VORLAGE_MAHNUNG_2:
-				vorlage.setFilepfad("vorlagen/2_Mahnung.docx");
-				break;
-			case VORLAGE_NICHT_EINTRETENSVERFUEGUNG:
-				vorlage.setFilepfad("vorlagen/Nichteintretensverfuegung.docx");
-				break;
-			case VORLAGE_INFOSCHREIBEN_MAXIMALTARIF:
-				vorlage.setFilepfad("vorlagen/Infoschreiben_Maxtarif.docx");
-				break;
-			case VORLAGE_FREIGABEQUITTUNG:
-				vorlage.setFilepfad("vorlagen/Freigabequittung.docx");
-				break;
-			case VORLAGE_BEGLEITSCHREIBEN:
-				vorlage.setFilepfad("vorlagen/Begleitschreiben.docx");
-				break;
-			case VORLAGE_FINANZIELLE_SITUATION:
-				vorlage.setFilepfad("vorlagen/Berechnungsgrundlagen.docx");
-				break;
-			case VORLAGE_BRIEF_TAGESELTERN_SCHULKINDER:
-				vorlage.setFilepfad("vorlagen/Verfuegungsmuster_tageseltern_schulkinder.docx");
-				break;
-			case VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER:
-				vorlage.setFilepfad("vorlagen/Verfuegungsmuster_tagesstaette_schulkinder.docx");
-				break;
-			case VORLAGE_VERFUEGUNG_KITA:
-				vorlage.setFilepfad("vorlagen/Verfuegungsmuster_kita.docx");
-				break;
-			case VORLAGE_VERFUEGUNG_TAGESELTERN_KLEINKINDER:
-				vorlage.setFilepfad("vorlagen/Verfuegungsmuster_tageseltern_kleinkinder.docx");
-				break;
-			default:
-				break;
+		case VORLAGE_MAHNUNG_1:
+			vorlage.setFilepfad("vorlagen/1_Mahnung.docx");
+			break;
+		case VORLAGE_MAHNUNG_2:
+			vorlage.setFilepfad("vorlagen/2_Mahnung.docx");
+			break;
+		case VORLAGE_NICHT_EINTRETENSVERFUEGUNG:
+			vorlage.setFilepfad("vorlagen/Nichteintretensverfuegung.docx");
+			break;
+		case VORLAGE_INFOSCHREIBEN_MAXIMALTARIF:
+			vorlage.setFilepfad("vorlagen/Infoschreiben_Maxtarif.docx");
+			break;
+		case VORLAGE_FREIGABEQUITTUNG:
+			vorlage.setFilepfad("vorlagen/Freigabequittung.docx");
+			break;
+		case VORLAGE_BEGLEITSCHREIBEN:
+			vorlage.setFilepfad("vorlagen/Begleitschreiben.docx");
+			break;
+		case VORLAGE_FINANZIELLE_SITUATION:
+			vorlage.setFilepfad("vorlagen/Berechnungsgrundlagen.docx");
+			break;
+		case VORLAGE_BRIEF_TAGESELTERN_SCHULKINDER:
+			vorlage.setFilepfad("vorlagen/Verfuegungsmuster_tageseltern_schulkinder.docx");
+			break;
+		case VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER:
+			vorlage.setFilepfad("vorlagen/Verfuegungsmuster_tagesstaette_schulkinder.docx");
+			break;
+		case VORLAGE_VERFUEGUNG_KITA:
+			vorlage.setFilepfad("vorlagen/Verfuegungsmuster_kita.docx");
+			break;
+		case VORLAGE_VERFUEGUNG_TAGESELTERN_KLEINKINDER:
+			vorlage.setFilepfad("vorlagen/Verfuegungsmuster_tageseltern_kleinkinder.docx");
+			break;
+		default:
+			break;
 		}
 
 		ebeguVorlage.setVorlage(vorlage);

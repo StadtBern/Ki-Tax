@@ -19,7 +19,6 @@ public enum IndexedEBEGUFieldName {
 	FALL_BESITZER_VORNAME("besitzer.vorname"),
 	FALL_NUMMER("fallNummer");
 
-
 	private final String indexedFieldName;
 
 	/**
@@ -42,12 +41,8 @@ public enum IndexedEBEGUFieldName {
 		return indexedFieldName;
 	}
 
-
 	public boolean isIgnoreFieldBridgeInQuery() {
 		return ignoreFieldBridgeInQuery;
 	}
-
-
-
 
 }

@@ -31,8 +31,6 @@ public class DownloadFileServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private DownloadFileService downloadFileService;
 
-
-
 	@Test
 	public void createAndFindTempDokument() {
 

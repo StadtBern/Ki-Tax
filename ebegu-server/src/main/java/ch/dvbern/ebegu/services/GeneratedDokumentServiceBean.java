@@ -76,7 +76,6 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 @PermitAll
 public class GeneratedDokumentServiceBean extends AbstractBaseService implements GeneratedDokumentService {
 
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeneratedDokumentServiceBean.class.getSimpleName());
 
 	@Inject
@@ -124,7 +123,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	private static final String DEF_DEBTOR_NAME = "Direktion fuer Bildung, Soziales und Sport der Stadt Bern";
 	private static final String DEF_DEBTOR_BIC = "POFICHBEXXX";
 	private static final String DEF_DEBTOR_IBAN = "CH3309000000300008233";
-
 
 	@Override
 	@Nonnull
@@ -212,10 +210,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		return returnDocument;
 	}
 
-
 	@Override
 	public WriteProtectedDokument getFinSitDokumentAccessTokenGeneratedDokument(final Gesuch gesuch,
-																				Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
+		Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch.getJahrAndFallnummer());
 
@@ -248,7 +245,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		return persistedDokument;
 	}
 
-
 	@Override
 	public WriteProtectedDokument getBegleitschreibenDokument(final Gesuch gesuch) throws MimeTypeParseException, MergeDocException {
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getJahrAndFallnummer());
@@ -266,10 +262,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		return document;
 	}
 
-
 	@Override
 	public WriteProtectedDokument getFreigabequittungAccessTokenGeneratedDokument(final Gesuch gesuch,
-																				  Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException {
+		Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException {
 
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch.getJahrAndFallnummer());
 
@@ -394,7 +389,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Override
 	public WriteProtectedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(@Nonnull final Gesuch gesuch,
-																					@Nonnull Betreuung betreuung, @Nonnull String manuelleBemerkungen, @Nonnull Boolean forceCreation) throws
+		@Nonnull Betreuung betreuung, @Nonnull String manuelleBemerkungen, @Nonnull Boolean forceCreation) throws
 		MimeTypeParseException, MergeDocException, IOException {
 
 		String bgNummer = betreuung.getBGNummer();
@@ -435,7 +430,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				LocalDate letztesVerfDatum = optVorherigeVerfuegungDate.orElse(null);
 				boolean writeProtectPDF = Betreuungsstatus.VERFUEGT == betreuung.getBetreuungsstatus();
 				final byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(matchedBetreuung, letztesVerfDatum, writeProtectPDF);
-
 
 				final String fileNameForDocTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
 					matchedBetreuung.getBGNummer());
@@ -526,7 +520,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	@Override
 	public WriteProtectedDokument getPain001DokumentAccessTokenGeneratedDokument(Zahlungsauftrag zahlungsauftrag, Boolean forceCreation) throws MimeTypeParseException {
 
-
 		WriteProtectedDokument persistedDokument = null;
 
 		GeneratedDokumentTyp dokumentTyp = GeneratedDokumentTyp.PAIN001;
@@ -595,12 +588,11 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				pain001DTO.getAuszahlungen().add(auszahlungDTO);
 			});
 
-
 		return pain001DTO;
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN })
 	public void removeAllGeneratedDokumenteFromGesuch(@Nonnull Gesuch gesuch) {
 		LOGGER.info("Searching GeneratedDokuments of Gesuch: {} / {}", gesuch.getFall().getFallNummer(), gesuch.getGesuchsperiode().getGesuchsperiodeString());
 		Collection<GeneratedDokument> genDokFromGesuch = findGeneratedDokumentsFromGesuch(gesuch);

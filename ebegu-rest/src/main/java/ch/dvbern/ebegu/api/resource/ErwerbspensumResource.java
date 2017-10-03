@@ -63,7 +63,6 @@ public class ErwerbspensumResource {
 	@Inject
 	private ResourceHelper resourceHelper;
 
-
 	@ApiOperation(value = "Create a new ErwerbspensumContainer in the database. The object also has a relations to " +
 		"Erwerbspensum data Objects, those will be created as well", response = JaxErwerbspensumContainer.class)
 	@Nonnull
@@ -72,7 +71,7 @@ public class ErwerbspensumResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveErwerbspensum(
-		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerId,
 		@Nonnull @NotNull @Valid JaxErwerbspensumContainer jaxErwerbspensumContainer,
 		@Context UriInfo uriInfo,
@@ -140,7 +139,6 @@ public class ErwerbspensumResource {
 			.map(erwerbspensumContainer -> converter.erwerbspensumContainerToJAX(erwerbspensumContainer))
 			.collect(Collectors.toList());
 	}
-
 
 	@ApiOperation(value = "Remove the ErwerbspensumContainer with the specified ID from the database.",
 		response = Void.class)

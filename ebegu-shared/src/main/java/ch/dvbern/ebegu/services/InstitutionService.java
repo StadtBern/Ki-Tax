@@ -14,6 +14,7 @@ public interface InstitutionService {
 
 	/**
 	 * Aktualisiert die Institution in der DB
+	 *
 	 * @param institution Die Institution als DTO
 	 */
 	@Nonnull
@@ -21,6 +22,7 @@ public interface InstitutionService {
 
 	/**
 	 * Speichert die Institution neu in der DB
+	 *
 	 * @param institution Die Institution als DTO
 	 */
 	@Nonnull
@@ -35,45 +37,41 @@ public interface InstitutionService {
 
 	/**
 	 * marks an Institution as inactive on the Database.
-	 * @param InstitutionId
 	 */
 	Institution setInstitutionInactive(@Nonnull String InstitutionId);
 
 	/**
 	 * Delete Institution on the Database.
-	 * @param InstitutionId
 	 */
 	void deleteInstitution(@Nonnull String InstitutionId);
 
 	/**
 	 * @param traegerschaftId Der ID der Traegerschaft, fuer welche die Institutionen gesucht werden muessen
 	 * @return Liste mit allen Institutionen der gegebenen Traegerschaft
-     */
+	 */
 	@Nonnull
 	Collection<Institution> getAllInstitutionenFromTraegerschaft(String traegerschaftId);
 
 	/**
-	 * @return  gibt alle aktiven Institution einer Traegerschaft zurueck
+	 * @return gibt alle aktiven Institution einer Traegerschaft zurueck
 	 */
 	@Nonnull
 	Collection<Institution> getAllActiveInstitutionenFromTraegerschaft(String traegerschaftId);
 
 	/**
-	 *
 	 * @return Alle Institutionen in der DB
-     */
+	 */
 	@Nonnull
 	Collection<Institution> getAllInstitutionen();
 
 	/**
-	 *
 	 * @return Gibt alle aktive Institutionen zurück
 	 */
 	Collection<Institution> getAllActiveInstitutionen();
 
 	/**
 	 * Gibt alle aktiven Institutionen zurueck, fuer welche der aktuell eingeloggte Benutzer berechtigt ist.
-     */
+	 */
 	Collection<Institution> getAllowedInstitutionenForCurrentBenutzer();
 
 }

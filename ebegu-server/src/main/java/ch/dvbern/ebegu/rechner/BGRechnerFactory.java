@@ -8,13 +8,12 @@ import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
  */
 public class BGRechnerFactory {
 
-
 	public static AbstractBGRechner getRechner(Betreuung betreuung) {
 		BetreuungsangebotTyp betreuungsangebotTyp = betreuung.getBetreuungsangebotTyp();
 		if (BetreuungsangebotTyp.KITA.equals(betreuungsangebotTyp)) {
 			return new KitaRechner();
 		}
-		if (BetreuungsangebotTyp.TAGI.equals(betreuungsangebotTyp)){
+		if (BetreuungsangebotTyp.TAGI.equals(betreuungsangebotTyp)) {
 			return new TagiRechner();
 		}
 		if (betreuungsangebotTyp.isTageseltern()) {

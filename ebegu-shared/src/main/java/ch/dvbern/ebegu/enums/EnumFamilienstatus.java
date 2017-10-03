@@ -11,5 +11,4 @@ public enum EnumFamilienstatus {
 	LAENGER_FUENF_JAHRE,
 	WENIGER_FUENF_JAHRE,
 
-
 }

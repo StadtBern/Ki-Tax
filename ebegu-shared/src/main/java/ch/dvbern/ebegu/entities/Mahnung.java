@@ -58,7 +58,6 @@ public class Mahnung extends AbstractEntity {
 	@Column(nullable = false)
 	private Boolean abgelaufen = false;
 
-
 	public Gesuch getGesuch() {
 		return gesuch;
 	}

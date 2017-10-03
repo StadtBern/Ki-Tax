@@ -36,7 +36,7 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 	@Override
 	public void applyAutoSize(@Nonnull Sheet sheet) {
 		sheet.autoSizeColumn(0); // institution
-//		sheet.autoSizeColumn(1); // name
+		//		sheet.autoSizeColumn(1); // name
 		sheet.autoSizeColumn(2); // vorname
 		sheet.autoSizeColumn(3); // gebDatum
 		sheet.autoSizeColumn(4); // verfuegung
@@ -48,7 +48,7 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 
 	@Nonnull
 	public ExcelMergerDTO toExcelMergerDTO(@Nonnull List<Zahlung> data, @Nonnull Locale lang, UserRole userRole, Collection<Institution> allowedInst,
-										   String beschrieb, LocalDateTime datumGeneriert, LocalDate datumFaellig) {
+		String beschrieb, LocalDateTime datumGeneriert, LocalDate datumFaellig) {
 		checkNotNull(data);
 
 		ExcelMergerDTO sheet = new ExcelMergerDTO();

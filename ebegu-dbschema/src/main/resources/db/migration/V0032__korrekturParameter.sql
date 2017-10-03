@@ -1,1 +1,3 @@
-update ebegu_parameter set value = 10 where name = 'PARAM_PENSUM_TAGESELTERN_MIN';
+UPDATE ebegu_parameter
+SET value = 10
+WHERE name = 'PARAM_PENSUM_TAGESELTERN_MIN';

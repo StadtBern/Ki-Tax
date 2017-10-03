@@ -33,7 +33,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @PermitAll
 public class DownloadFileServiceBean implements DownloadFileService {
 
-
 	private static final Logger LOG = LoggerFactory.getLogger(DownloadFileServiceBean.class);
 
 	@Inject
@@ -41,7 +40,6 @@ public class DownloadFileServiceBean implements DownloadFileService {
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
-
 
 	@Override
 	public DownloadFile create(@Nonnull FileMetadata fileMetadata, String ip) {

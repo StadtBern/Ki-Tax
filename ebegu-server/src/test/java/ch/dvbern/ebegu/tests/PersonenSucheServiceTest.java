@@ -60,7 +60,7 @@ public class PersonenSucheServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(0, ewkResultat.getAnzahlResultate());
 	}
 
-	@Test (expected = EJBException.class)
+	@Test(expected = EJBException.class)
 	public void suchePersonByGesuchstellerNochNichtGespeichert() throws Exception {
 		Gesuchsteller defaultGesuchsteller = TestDataUtil.createDefaultGesuchsteller();
 		personenSucheService.suchePerson(defaultGesuchsteller);

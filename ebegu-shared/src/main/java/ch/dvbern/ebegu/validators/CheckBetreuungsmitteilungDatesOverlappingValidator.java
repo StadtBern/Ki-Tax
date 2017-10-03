@@ -24,7 +24,6 @@ public class CheckBetreuungsmitteilungDatesOverlappingValidator implements Const
 
 	/**
 	 * prueft ob es eine ueberschneidung zwischen den Zeitrauemen gibt
-	 * @param betMitteilungPensum
 	 */
 	private boolean checkOverlapping(Set<BetreuungsmitteilungPensum> betMitteilungPensum) {
 		return betMitteilungPensum.stream()

@@ -35,7 +35,6 @@ public class Fachstelle extends AbstractEntity {
 	@Column(nullable = false)
 	private boolean behinderungsbestaetigung;
 
-
 	public Fachstelle() {
 	}
 

@@ -57,7 +57,6 @@ public class MitteilungResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private BetreuungService betreuungService;
 
-
 	@Test
 	public void testGetMitteilungenForCurrentRolleForFallNoFall() throws EbeguException {
 		try {

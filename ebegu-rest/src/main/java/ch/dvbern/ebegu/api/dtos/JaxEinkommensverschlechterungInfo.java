@@ -59,7 +59,6 @@ public class JaxEinkommensverschlechterungInfo extends JaxAbstractDTO {
 	@NotNull
 	private Boolean ekvBasisJahrPlus2Annulliert;
 
-
 	public Boolean getEinkommensverschlechterung() {
 		return einkommensverschlechterung;
 	}

@@ -29,12 +29,11 @@ public class EbeguPhysicalNamingStrategyImpl extends PhysicalNamingStrategyStand
 		return new Identifier(addUnderscores(name.getText()), name.isQuoted());
 	}
 
-
 	protected static String addUnderscores(String name) {
 		final StringBuilder buf = new StringBuilder(name.replace('.', '_'));
 		for (int i = 1; i < buf.length() - 1; i++) {
 			if (Character.isLowerCase(buf.charAt(i - 1)) && Character.isUpperCase(buf.charAt(i))
-					&& Character.isLowerCase(buf.charAt(i + 1))) {
+				&& Character.isLowerCase(buf.charAt(i + 1))) {
 				buf.insert(i++, '_');
 			}
 		}

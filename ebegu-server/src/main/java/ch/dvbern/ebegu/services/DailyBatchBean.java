@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 @Local(DailyBatch.class)
 public class DailyBatchBean implements DailyBatch {
 
-
 	private static final long serialVersionUID = -4627435482413298843L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(DailyBatchBean.class);
 
@@ -48,17 +47,15 @@ public class DailyBatchBean implements DailyBatch {
 	@Inject
 	private GesuchService gesuchService;
 
-
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
-
 
 	@Override
 	@Asynchronous
 	public void runBatchCleanDownloadFiles() {
 		try {
 			LOGGER.info("Starting Job Cleanup Download-Files...");
-		    downloadFileService.cleanUp();
+			downloadFileService.cleanUp();
 			LOGGER.info("... Job Cleanup Download-Files finished");
 		} catch (RuntimeException e) {
 			LOGGER.error("Batch-Job Cleanup Download-Files konnte nicht durchgefuehrt werden!", e);

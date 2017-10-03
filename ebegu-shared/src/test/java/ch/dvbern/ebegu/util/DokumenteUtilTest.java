@@ -24,7 +24,6 @@ import org.junit.Test;
 
 public class DokumenteUtilTest {
 
-
 	@Test
 	public void testAllPersistedInNeeded() {
 		Set<DokumentGrund> dokumentGrundsNeeded = new HashSet<>();
@@ -47,7 +46,6 @@ public class DokumenteUtilTest {
 
 		Assert.assertEquals(3, getByDokumentType(mergedFamsit, DokumentTyp.JAHRESLOHNAUSWEISE).size());
 		Assert.assertEquals(1, getByDokumentType(mergedFamsit, DokumentTyp.STEUERERKLAERUNG).size());
-
 
 		Set<DokumentGrund> mergedERWERBSPENSUM = getByGrundTyp(mergeNeededAndPersisted, DokumentGrundTyp.ERWERBSPENSUM);
 		Assert.assertNotNull(mergedERWERBSPENSUM);
@@ -137,7 +135,6 @@ public class DokumenteUtilTest {
 		Assert.assertNotEquals(0, result);
 	}
 
-
 	@Nonnull
 	private Gesuch mockGesuch() {
 		Gesuch gesuch = new Gesuch();
@@ -172,7 +169,6 @@ public class DokumenteUtilTest {
 		}
 		return dokumentGrundsNeededMerged;
 	}
-
 
 	private void createGrundNeeded(Set<DokumentGrund> dokumentGrundsNeeded, DokumentGrundTyp dokumentGrundTyp, DokumentTyp dokumentTyp) {
 

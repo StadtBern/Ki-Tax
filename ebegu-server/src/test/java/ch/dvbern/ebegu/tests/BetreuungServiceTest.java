@@ -75,7 +75,7 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertTrue(updatedBetreuung.isPresent());
 
 		Assert.assertEquals(GesuchBetreuungenStatus.ABGEWIESEN, updatedBetreuung.get().extractGesuch()
-				.getGesuchBetreuungenStatus());
+			.getGesuchBetreuungenStatus());
 		Assert.assertEquals(new Integer(1), updatedBetreuung.get().getBetreuungNummer());
 		Assert.assertEquals(new Integer(2), kindService.findKind(betreuung.getKind().getId()).get().getNextNumberBetreuung());
 	}
@@ -106,11 +106,11 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		prepareDependentObjects();
 		Gesuch dagmarGesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.now());
 		Mitteilung mitteilung = TestDataUtil.createMitteilung(dagmarGesuch.getFall(), empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
-				sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
 		Betreuung betreuungUnderTest = dagmarGesuch.extractAllBetreuungen().get(0);
 		mitteilung.setBetreuung(betreuungUnderTest);
 		final Mitteilung persistedMitteilung = mitteilungService.sendMitteilung(mitteilung);
-		Assert.assertEquals(betreuungUnderTest , persistedMitteilung.getBetreuung());
+		Assert.assertEquals(betreuungUnderTest, persistedMitteilung.getBetreuung());
 
 		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungUnderTest.getId());
 		Assert.assertTrue(betreuung.isPresent());
@@ -140,7 +140,7 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 
 		//create a first mitteilung
 		final Betreuungsmitteilung betmitteilung = TestDataUtil.createBetreuungmitteilung(gesuch.getFall(), empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
-				sender, MitteilungTeilnehmerTyp.INSTITUTION);
+			sender, MitteilungTeilnehmerTyp.INSTITUTION);
 		betmitteilung.setBetreuung(betreuungUnderTest);
 		final Betreuungsmitteilung persistedFirstMitteilung = mitteilungService.sendBetreuungsmitteilung(betmitteilung);
 

@@ -85,7 +85,6 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@Column(nullable = false)
 	private boolean gueltig = false;
 
-
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
 		return institutionStammdaten;
 	}

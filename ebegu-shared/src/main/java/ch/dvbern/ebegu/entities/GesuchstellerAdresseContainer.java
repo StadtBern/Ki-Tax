@@ -22,7 +22,6 @@ import org.hibernate.envers.Audited;
 @Entity
 public class GesuchstellerAdresseContainer extends AbstractEntity {
 
-
 	private static final long serialVersionUID = -3084333639027795652L;
 
 	@NotNull
@@ -39,7 +38,6 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuchstelleradresse_container_gesuchstellerja_id"))
 	private GesuchstellerAdresse gesuchstellerAdresseJA;
-
 
 	public GesuchstellerAdresseContainer() {
 	}

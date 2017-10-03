@@ -23,16 +23,15 @@ import static ch.dvbern.ebegu.tets.util.JBossLoginContextFactory.createLoginCont
  */
 public abstract class AbstractEbeguRestLoginTest extends AbstractEbeguRestTest {
 
-
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractEbeguRestLoginTest.class);
-	private  LoginContext loginContext;
+	private LoginContext loginContext;
 
 	@Inject
 	private Persistence persistence;
 	private Benutzer dummyAdmin;
 
 	@Before
-	public  void performLogin() {
+	public void performLogin() {
 		dummyAdmin = TestDataUtil.createDummySuperAdmin(persistence);
 		try {
 			loginContext = JBossLoginContextFactory.createLoginContext("superadmin", "superadmin");
@@ -43,7 +42,7 @@ public abstract class AbstractEbeguRestLoginTest extends AbstractEbeguRestTest {
 	}
 
 	@After
-	public  void performLogout() {
+	public void performLogout() {
 		try {
 			if (loginContext != null) {
 				loginContext.logout();

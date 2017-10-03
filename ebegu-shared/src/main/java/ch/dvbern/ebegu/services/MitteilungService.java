@@ -18,7 +18,6 @@ import ch.dvbern.ebegu.entities.Mitteilung;
  */
 public interface MitteilungService {
 
-
 	@Nonnull
 	Mitteilung sendMitteilung(@Nonnull Mitteilung mitteilung);
 

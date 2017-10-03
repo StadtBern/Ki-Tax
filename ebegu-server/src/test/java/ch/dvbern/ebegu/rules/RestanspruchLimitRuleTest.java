@@ -19,7 +19,6 @@ import static ch.dvbern.ebegu.rules.EbeguRuleTestsHelper.calculateWithRemainingR
  */
 public class RestanspruchLimitRuleTest {
 
-
 	@Test
 	public void testRestanspruchInitForKita() {
 
@@ -53,7 +52,6 @@ public class RestanspruchLimitRuleTest {
 		Assert.assertEquals(20, nextInitialabschnitt.getAnspruchspensumRest());
 
 	}
-
 
 	@Test
 	public void testRestanspruchNoChangeForTagi() {

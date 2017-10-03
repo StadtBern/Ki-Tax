@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Excel Converter fuer die Statistik von MitarbeiterInnen
  */
 @Dependent
-public class MitarbeiterinnenExcelConverter  implements ExcelConverter {
+public class MitarbeiterinnenExcelConverter implements ExcelConverter {
 
 	@Override
 	public void applyAutoSize(@Nonnull Sheet sheet) {

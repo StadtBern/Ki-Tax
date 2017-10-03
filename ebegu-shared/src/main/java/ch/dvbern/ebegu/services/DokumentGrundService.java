@@ -44,6 +44,5 @@ public interface DokumentGrundService {
 	@Nullable
 	DokumentGrund updateDokumentGrund(@Nonnull DokumentGrund dokumentGrund);
 
-
 	void removeAllDokumentGrundeFromGesuch(Gesuch gesuch);
 }

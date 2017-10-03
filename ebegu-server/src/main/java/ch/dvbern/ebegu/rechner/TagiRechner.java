@@ -13,7 +13,6 @@ import ch.dvbern.ebegu.util.MathUtil;
  */
 public class TagiRechner extends AbstractBGRechner {
 
-
 	@Override
 	public VerfuegungZeitabschnitt calculate(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Verfuegung verfuegung, BGRechnerParameterDTO parameterDTO) {
 
@@ -43,7 +42,6 @@ public class TagiRechner extends AbstractBGRechner {
 		} else {
 			elternbeitrag = MathUtil.EXACT.multiply(kostenProBetreuungsstunde, betreuungsstundenIntervall);
 		}
-
 
 		// Runden und auf Zeitabschnitt zurückschreiben
 		verfuegungZeitabschnitt.setVollkosten(MathUtil.roundToFrankenRappen(vollkosten));

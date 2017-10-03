@@ -38,7 +38,6 @@ public class JaxKindContainer extends JaxAbstractDTO {
 	@Nullable
 	private Boolean kindMutiert;
 
-
 	public JaxKind getKindGS() {
 		return kindGS;
 	}

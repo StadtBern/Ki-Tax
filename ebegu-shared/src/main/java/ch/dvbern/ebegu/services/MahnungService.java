@@ -39,7 +39,7 @@ public interface MahnungService {
 
 	/**
 	 * Generiert den Vorschlag für die Bemerkungen aus den fehlenden Dokumenten.
-     */
+	 */
 	@Nonnull
 	String getInitialeBemerkungen(@Nonnull Gesuch gesuch);
 

@@ -18,7 +18,6 @@ public class Abwesenheit extends AbstractDateRangedEntity implements Comparable<
 
 	private static final long serialVersionUID = -6776981643150835840L;
 
-
 	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "abwesenheitJA")
 	private AbwesenheitContainer abwesenheitContainer;

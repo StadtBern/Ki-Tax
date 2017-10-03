@@ -32,7 +32,6 @@ public class FachstelleAbschnittRule extends AbstractAbschnittRule {
 		return betreuungspensumAbschnitte;
 	}
 
-
 	@Nonnull
 	private VerfuegungZeitabschnitt toVerfuegungZeitabschnitt(@Nonnull PensumFachstelle pensumFachstelle) {
 		VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(pensumFachstelle.getGueltigkeit());

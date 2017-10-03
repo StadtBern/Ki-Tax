@@ -28,13 +28,11 @@ public class FinanzielleSituation extends AbstractFinanzielleSituation {
 	@Column(nullable = true)
 	private BigDecimal geschaeftsgewinnBasisjahrMinus1;
 
-
 	public FinanzielleSituation() {
 	}
 
-
 	@Transient
-	public BigDecimal calcGeschaeftsgewinnDurchschnitt(){
+	public BigDecimal calcGeschaeftsgewinnDurchschnitt() {
 		return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(this);
 	}
 

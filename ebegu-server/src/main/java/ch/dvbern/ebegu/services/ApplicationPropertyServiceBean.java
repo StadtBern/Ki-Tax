@@ -56,11 +56,10 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 	private CriteriaQueryHelper criteriaQueryHelper;
 	private static final String NAME_MISSING_MSG = "name muss gesetzt sein";
 
-
 	@Nonnull
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN})
-	public ApplicationProperty  saveOrUpdateApplicationProperty(@Nonnull final ApplicationPropertyKey key, @Nonnull final String value) {
+	@RolesAllowed({ ADMIN, SUPER_ADMIN })
+	public ApplicationProperty saveOrUpdateApplicationProperty(@Nonnull final ApplicationPropertyKey key, @Nonnull final String value) {
 		Validate.notNull(key);
 		Validate.notNull(value);
 		Optional<ApplicationProperty> property = readApplicationProperty(key);
@@ -93,14 +92,13 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN, REVISOR})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, REVISOR })
 	public List<ApplicationProperty> getAllApplicationProperties() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(ApplicationProperty.class));
 	}
 
-
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public void removeApplicationProperty(@Nonnull ApplicationPropertyKey key) {
 		Validate.notNull(key);
 		Optional<ApplicationProperty> propertyToRemove = readApplicationProperty(key);

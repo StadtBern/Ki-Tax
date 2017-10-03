@@ -43,7 +43,6 @@ public class SequenceServiceBean implements SequenceService {
 	@Inject
 	private Persistence persistence;
 
-
 	@Nonnull
 	@Override
 	// Damit die Nummer bei wiederholtem aufruf in derselben (parent-) Transaktion nicht immer dieselbe ist,

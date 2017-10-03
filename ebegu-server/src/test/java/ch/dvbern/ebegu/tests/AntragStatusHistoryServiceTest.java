@@ -38,7 +38,6 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 
-
 	@Inject
 	private AntragStatusHistoryService statusHistoryService;
 	@Inject
@@ -48,7 +47,6 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 
 	private Gesuch gesuch;
 	private Benutzer benutzerSuperAdmin;
-
 
 	@Before
 	public void setUp() {
@@ -107,7 +105,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void  testFindAllAntragStatusHistoryByGPFall_NoFall() {
+	public void testFindAllAntragStatusHistoryByGPFall_NoFall() {
 		Fall fall = TestDataUtil.createDefaultFall();
 		Gesuchsperiode gesuchsperiode = TestDataUtil.createGesuchsperiode1718();
 
@@ -118,7 +116,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void  testFindAllAntragStatusHistoryByGPFall_NoChanges() {
+	public void testFindAllAntragStatusHistoryByGPFall_NoChanges() {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 
 		final Collection<AntragStatusHistory> allStatus = statusHistoryService.findAllAntragStatusHistoryByGPFall(gesuch.getGesuchsperiode(), gesuch.getFall());
@@ -128,7 +126,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void  testFindAllAntragStatusHistoryByGPFall() {
+	public void testFindAllAntragStatusHistoryByGPFall() {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.VERFUEGEN);
 		gesuch.setStatus(AntragStatus.VERFUEGT);
 		gesuchService.updateGesuch(gesuch, true, null);
@@ -141,7 +139,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void  testFindAllAntragStatusHistoryByGPFall_Mutation() {
+	public void testFindAllAntragStatusHistoryByGPFall_Mutation() {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.VERFUEGEN);
 		gesuch.setStatus(AntragStatus.VERFUEGT);
 		gesuch.setGueltig(true);
@@ -177,7 +175,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 		try {
 			statusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuch);
 			Assert.fail("It should throw an exception because the gesuch is not in status BESCHWERDE_HAENGIG");
-		} catch(EbeguRuntimeException e) {
+		} catch (EbeguRuntimeException e) {
 			// nop
 		}
 	}
@@ -191,7 +189,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 		try {
 			statusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuch);
 			Assert.fail("It should throw an exception because the gesuch has only one status change");
-		} catch(EbeguRuntimeException e) {
+		} catch (EbeguRuntimeException e) {
 			// nop
 		}
 	}

@@ -65,7 +65,7 @@ public class TagiRechnerTest extends AbstractBGRechnerTest {
 		Assert.assertEquals(new BigDecimal("1562.40"), calculate.getVerguenstigung());
 	}
 
-	@Test (expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testZeitraumUeberMonatsende() {
 		Verfuegung verfuegung = prepareVerfuegungTagiUndTageseltern(
 			LocalDate.of(2016, Month.JANUARY, 10), LocalDate.of(2016, Month.FEBRUARY, 5),

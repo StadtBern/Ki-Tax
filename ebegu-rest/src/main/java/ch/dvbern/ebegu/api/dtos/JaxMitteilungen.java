@@ -19,7 +19,8 @@ public class JaxMitteilungen implements Serializable {
 	@NotNull
 	private Collection<JaxMitteilung> mitteilungen = new ArrayList<>();
 
-	public JaxMitteilungen() {}
+	public JaxMitteilungen() {
+	}
 
 	public JaxMitteilungen(Collection<JaxMitteilung> mitteilungen) {
 		this.mitteilungen = mitteilungen;

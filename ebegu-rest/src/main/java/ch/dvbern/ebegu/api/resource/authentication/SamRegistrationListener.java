@@ -18,7 +18,6 @@ public class SamRegistrationListener extends BaseServletContextListener {
 	@Inject
 	private EbeguConfiguration configuration;
 
-
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		final CookieTokenAuthModule authModule;
@@ -28,7 +27,7 @@ public class SamRegistrationListener extends BaseServletContextListener {
 		if (intUsr == null && intPW == null) {
 			authModule = new CookieTokenAuthModule();
 			LOG.debug("No user or password for internal api configured, the api will be inactive");
-		} else{
+		} else {
 			authModule = new CookieTokenAuthModule(intUsr, intPW);
 		}
 

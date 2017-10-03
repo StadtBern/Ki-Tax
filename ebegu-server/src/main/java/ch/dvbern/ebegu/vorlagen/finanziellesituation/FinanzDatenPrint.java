@@ -79,6 +79,7 @@ public interface FinanzDatenPrint {
 
 	/**
 	 * Zwischentotal zusammengesetzt aus Nettolohn, erhaltenen Familienzulagen, Ersatzeinkommen, Unterhaltsbeitreagen, Geschaeftsgewinn
+	 *
 	 * @return Zwischentotal Einkünfte beider Gesuchsteller 1
 	 */
 	BigDecimal getZwischentotalEinkuenfteG1();
@@ -132,7 +133,6 @@ public interface FinanzDatenPrint {
 	 * @return 5% Nettovermögen
 	 */
 	BigDecimal getNettovermoegen();
-
 
 	/**
 	 * @return Total Abzüge

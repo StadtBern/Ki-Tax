@@ -175,6 +175,7 @@ public class GesuchResource {
 	 * Da beim Einscannen Gesuche eingelesen werden die noch im Status Freigabequittung sind brauchen
 	 * wir hier eine separate Methode um das Lesen der noetigen Informationen dieser Gesuche zuzulassen
 	 * Wenn kein Gesuch gefunden wird wird null zurueckgegeben.
+	 *
 	 * @param gesuchJAXPId gesuchID des Gesuchs im Status Freigabequittung oder hoeher
 	 * @return DTO mit den relevanten Informationen zum Gesuch
 	 */
@@ -207,7 +208,6 @@ public class GesuchResource {
 	 *
 	 * @param gesuchJAXPId ID des Gesuchs
 	 * @return filtriertes Gesuch mit nur den relevanten Daten
-	 * @throws EbeguException
 	 */
 	@ApiOperation(value = "Gibt den Antrag mit der uebergebenen Id zurueck. Methode fuer Benutzer mit Rolle " +
 		"SACHBEARBEITER_INSTITUTION oder SACHBEARBEITER_TRAEGERSCHAFT. Das ganze Gesuch wird gefiltert so dass nur " +
@@ -374,7 +374,7 @@ public class GesuchResource {
 	 * @return Set mit Antraegen, jeweils nur der neuste zu einem bestimmten Fall
 	 */
 	@Nonnull
-	@SuppressWarnings(value = {"unused"})
+	@SuppressWarnings(value = { "unused" })
 	@SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD")
 	private Set<Gesuch> reduceToNewestAntrag(List<Gesuch> foundAntraege) {
 		ArrayListMultimap<Fall, Gesuch> fallToAntragMultimap = ArrayListMultimap.create();

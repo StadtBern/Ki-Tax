@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.api.client;
 
-
 import javax.annotation.security.RunAs;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -28,7 +27,6 @@ public class OpenIdmSynchronizer {
 
 	@Inject
 	private InstitutionResource institutionResource;
-
 
 	@Timeout
 	public void startSync() {

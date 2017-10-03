@@ -5,8 +5,8 @@ package ch.dvbern.ebegu.enums;
  * Der Status von einem Antrag ist in der DB anders als auf dem Client. Grund dafür ist, dass es bei manchen DB-AntragStatus verschiedene "substatus"
  * gibt. Auf dem Client wird der "substatus" anstatt der status angezeigt.
  * Beispiel:
- * 		Der Status PLATZBESTAETIGUNG_WARTEN wird nur auf dem Client angezeigt, wenn noch mindestens eine Platzanfrage
- * 		ausstehend ist. Auf dem Server bleibt es aber im Status IN_BEARBEITUNG.
+ * Der Status PLATZBESTAETIGUNG_WARTEN wird nur auf dem Client angezeigt, wenn noch mindestens eine Platzanfrage
+ * ausstehend ist. Auf dem Server bleibt es aber im Status IN_BEARBEITUNG.
  */
 public enum AntragStatusDTO {
 	IN_BEARBEITUNG_GS,

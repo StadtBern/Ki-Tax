@@ -77,7 +77,6 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	@Inject
 	private GesuchService gesuchService;
 
-
 	/**
 	 * Wenn true werden die Testergebnisse neu in die Testfiles geschrieben. Muss für testen immer false sein!
 	 */
@@ -191,12 +190,8 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 		ueberpruefeVerfuegungszeitabschnitte(mutieren, "MutationScheidung");
 	}
 
-
 	/**
 	 * Ueberprüfen der Verfügungszeitabschnitte
-	 *
-	 * @param gesuch
-	 * @param addText
 	 */
 	private void ueberpruefeVerfuegungszeitabschnitte(Gesuch gesuch, String addText) {
 		Assert.assertNotNull(gesuch);

@@ -75,7 +75,6 @@ public class UploadResource {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UploadResource.class);
 
-
 	@ApiOperation(value = "Speichert ein Dokument in der Datenbank", response = JaxDokumentGrund.class)
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -157,7 +156,6 @@ public class UploadResource {
 
 		return Response.created(uri).entity(jaxDokumentGrundToReturn).build();
 	}
-
 
 	@Nullable
 	private String[] getFilenamesFromHeader(@Context HttpServletRequest request) {

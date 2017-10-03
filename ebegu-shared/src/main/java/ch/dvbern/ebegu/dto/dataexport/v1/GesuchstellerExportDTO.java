@@ -15,7 +15,6 @@ public class GesuchstellerExportDTO {
 	private String nachname;
 	private String email;
 
-
 	public GesuchstellerExportDTO() {
 	}
 

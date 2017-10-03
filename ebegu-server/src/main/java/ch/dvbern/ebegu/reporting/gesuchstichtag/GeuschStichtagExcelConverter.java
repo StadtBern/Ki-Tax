@@ -39,16 +39,16 @@ public class GeuschStichtagExcelConverter implements ExcelConverter {
 		ExcelMergerDTO sheet = new ExcelMergerDTO();
 
 		data.forEach(dataRow -> {
-				ExcelMergerDTO excelRowGroup = sheet.createGroup(MergeFieldGesuchStichtag.repeatGesuchStichtagRow);
-				excelRowGroup.addValue(MergeFieldGesuchStichtag.bgNummer, dataRow.getBgNummer());
-				excelRowGroup.addValue(MergeFieldGesuchStichtag.gesuchLaufNr, dataRow.getGesuchLaufNr());
-				excelRowGroup.addValue(MergeFieldGesuchStichtag.institution, dataRow.getInstitution());
-				excelRowGroup.addValue(MergeFieldGesuchStichtag.betreuungsTyp, dataRow.getBetreuungsTyp());
-				excelRowGroup.addValue(MergeFieldGesuchStichtag.periode, dataRow.getPeriode());
-				excelRowGroup.addValue(MergeFieldGesuchStichtag.nichtFreigegeben, dataRow.getNichtFreigegeben());
-				excelRowGroup.addValue(MergeFieldGesuchStichtag.mahnungen, dataRow.getMahnungen());
-				excelRowGroup.addValue(MergeFieldGesuchStichtag.beschwerde, dataRow.getBeschwerde());
-			});
+			ExcelMergerDTO excelRowGroup = sheet.createGroup(MergeFieldGesuchStichtag.repeatGesuchStichtagRow);
+			excelRowGroup.addValue(MergeFieldGesuchStichtag.bgNummer, dataRow.getBgNummer());
+			excelRowGroup.addValue(MergeFieldGesuchStichtag.gesuchLaufNr, dataRow.getGesuchLaufNr());
+			excelRowGroup.addValue(MergeFieldGesuchStichtag.institution, dataRow.getInstitution());
+			excelRowGroup.addValue(MergeFieldGesuchStichtag.betreuungsTyp, dataRow.getBetreuungsTyp());
+			excelRowGroup.addValue(MergeFieldGesuchStichtag.periode, dataRow.getPeriode());
+			excelRowGroup.addValue(MergeFieldGesuchStichtag.nichtFreigegeben, dataRow.getNichtFreigegeben());
+			excelRowGroup.addValue(MergeFieldGesuchStichtag.mahnungen, dataRow.getMahnungen());
+			excelRowGroup.addValue(MergeFieldGesuchStichtag.beschwerde, dataRow.getBeschwerde());
+		});
 
 		return sheet;
 	}

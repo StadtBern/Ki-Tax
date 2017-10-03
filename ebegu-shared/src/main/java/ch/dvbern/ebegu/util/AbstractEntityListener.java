@@ -66,8 +66,7 @@ public class AbstractEntityListener {
 				kind.setKindNummer(fall.getNextNumberKind());
 				fall.setNextNumberKind(fall.getNextNumberKind() + 1);
 			}
-		}
-		else if (entity instanceof Betreuung && !entity.hasVorgaenger()) {
+		} else if (entity instanceof Betreuung && !entity.hasVorgaenger()) {
 			// Neue Betreuungs-Nummer: nur setzen, wenn es nicht eine "kopierte" Betreuung ist
 			Betreuung betreuung = (Betreuung) entity;
 			Optional<KindContainer> optKind = getKindService().findKind(betreuung.getKind().getId());
@@ -76,8 +75,7 @@ public class AbstractEntityListener {
 				betreuung.setBetreuungNummer(kindContainer.getNextNumberBetreuung());
 				kindContainer.setNextNumberBetreuung(kindContainer.getNextNumberBetreuung() + 1);
 			}
-		}
-		else if (entity instanceof Fall) {
+		} else if (entity instanceof Fall) {
 			Fall fall = (Fall) entity;
 			Mandant mandant = getPrincipalBean().getMandant();
 			Long nextFallNr = getSequenceService().createNumberTransactional(SequenceType.FALL_NUMMER, mandant);
@@ -88,8 +86,7 @@ public class AbstractEntityListener {
 				fall.setBesitzer(benutzer.orElseThrow(() -> new EbeguRuntimeException("findBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, getPrincipalName())));
 
 			}
-		}
-		else if (entity instanceof Verfuegung) {
+		} else if (entity instanceof Verfuegung) {
 			// Verfuegung darf erst erstellt werden, wenn die Betreuung verfuegt ist
 			Verfuegung verfuegung = (Verfuegung) entity;
 			if (!verfuegung.getBetreuung().getBetreuungsstatus().isGeschlossen()) {

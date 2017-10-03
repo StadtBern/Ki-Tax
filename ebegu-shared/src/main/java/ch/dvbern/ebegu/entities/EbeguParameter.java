@@ -22,7 +22,6 @@ import org.hibernate.envers.Audited;
 @Entity
 public class EbeguParameter extends AbstractDateRangedEntity {
 
-
 	private static final long serialVersionUID = 8704632842261673111L;
 
 	@NotNull
@@ -40,7 +39,6 @@ public class EbeguParameter extends AbstractDateRangedEntity {
 	public EbeguParameter(EbeguParameterKey name, String value) {
 		this(name, value, Constants.DEFAULT_GUELTIGKEIT);
 	}
-
 
 	public EbeguParameter(EbeguParameterKey name, String value, DateRange gueltigkeit) {
 		this.name = name;
@@ -67,7 +65,6 @@ public class EbeguParameter extends AbstractDateRangedEntity {
 	}
 
 	/**
-	 * @param gueltigkeit
 	 * @return a copy of the current Param with the gueltigkeit set to the passed DateRange
 	 */
 	public EbeguParameter copy(DateRange gueltigkeit) {

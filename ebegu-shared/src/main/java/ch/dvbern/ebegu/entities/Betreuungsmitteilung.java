@@ -27,7 +27,6 @@ public class Betreuungsmitteilung extends Mitteilung {
 
 	private boolean applied;
 
-
 	public Set<BetreuungsmitteilungPensum> getBetreuungspensen() {
 		return betreuungspensen;
 	}

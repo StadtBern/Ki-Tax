@@ -105,7 +105,6 @@ public class JaxGesuch extends JaxAbstractDTO {
 	@NotNull
 	private GesuchBetreuungenStatus gesuchBetreuungenStatus = GesuchBetreuungenStatus.ALLE_BESTAETIGT;
 
-
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
 	}

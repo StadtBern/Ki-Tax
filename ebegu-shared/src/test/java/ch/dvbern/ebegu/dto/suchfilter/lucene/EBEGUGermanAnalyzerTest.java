@@ -18,13 +18,13 @@ public class EBEGUGermanAnalyzerTest {
 	private Analyzer analyzer;
 
 	@Before
-	public void setUp(){
+	public void setUp() {
 		this.analyzer = new EBEGUGermanAnalyzer();
 
 	}
 
 	@After
-	public void after(){
+	public void after() {
 		this.analyzer.close();
 	}
 

@@ -48,7 +48,6 @@ public class FachstelleResource {
 	@Inject
 	private JaxBConverter converter;
 
-
 	@ApiOperation(value = "Saves a Fachstelle in the database", response = JaxFachstelle.class)
 	@Nullable
 	@PUT
@@ -59,7 +58,7 @@ public class FachstelleResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Fachstelle  fachstelle = new Fachstelle();
+		Fachstelle fachstelle = new Fachstelle();
 		if (fachstelleJAXP.getId() != null) {
 			Optional<Fachstelle> optional = fachstelleService.findFachstelle(fachstelleJAXP.getId());
 			fachstelle = optional.orElse(new Fachstelle());
@@ -92,9 +91,9 @@ public class FachstelleResource {
 		@Context HttpServletRequest request,
 		@Context HttpServletResponse response) throws EbeguException {
 
-			Validate.notNull(fachstelleJAXPID.getId());
-			fachstelleService.removeFachstelle(converter.toEntityId(fachstelleJAXPID));
-			return Response.ok().build();
+		Validate.notNull(fachstelleJAXPID.getId());
+		fachstelleService.removeFachstelle(converter.toEntityId(fachstelleJAXPID));
+		return Response.ok().build();
 	}
 
 	@ApiOperation(value = "Returns the Fachstelle with the given Id", response = JaxFachstelle.class)
