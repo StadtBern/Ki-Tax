@@ -69,7 +69,7 @@ describe('betreuungView', function () {
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
             $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS,
             wizardStepManager, $stateParams, $injector.get('MitteilungRS'), $injector.get('DvDialog'), $injector.get('$log'),
-            $timeout);
+            $timeout, undefined);
         betreuungView.$onInit();
         $rootScope.$apply();
         betreuungView.model = betreuung;
@@ -87,7 +87,8 @@ describe('betreuungView', function () {
         describe('Object creation', () => {
             it('create an empty list of Betreuungspensen for a role different than Institution', () => {
                 let myBetreuungView: BetreuungViewController = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, null,
-                    $rootScope, null, null, authServiceRS, wizardStepManager, $stateParams, undefined, undefined, undefined, $timeout);
+                    $rootScope, null, null, authServiceRS, wizardStepManager, $stateParams, undefined, undefined, undefined,
+                    $timeout, undefined);
                 myBetreuungView.model = betreuung;
                 expect(myBetreuungView.getBetreuungspensen()).toBeDefined();
                 expect(myBetreuungView.getBetreuungspensen().length).toEqual(0);
