@@ -12,10 +12,7 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.BetreuungService;
-import ch.dvbern.ebegu.services.FallService;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.KindService;
+import ch.dvbern.ebegu.services.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -57,7 +54,6 @@ public class BetreuungResource {
 	private ResourceHelper resourceHelper;
 	@Inject
 	private GesuchService gesuchService;
-
 
 
 	//TODO (hefr) Dieser Service wird immer nur fuer Betreuungen verwendet, nie fuer Abwesenheiten

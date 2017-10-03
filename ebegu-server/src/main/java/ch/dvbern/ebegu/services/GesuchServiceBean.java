@@ -1,93 +1,12 @@
 package ch.dvbern.ebegu.services;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.activation.MimeTypeParseException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Asynchronous;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Fetch;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.SetJoin;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.constraints.NotNull;
-
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
-import ch.dvbern.ebegu.entities.AbstractEntity_;
-import ch.dvbern.ebegu.entities.AntragStatusHistory;
-import ch.dvbern.ebegu.entities.AntragStatusHistory_;
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Benutzer_;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuung_;
-import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Fall_;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuch_;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.Gesuchsperiode_;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.GesuchstellerContainer;
-import ch.dvbern.ebegu.entities.GesuchstellerContainer_;
-import ch.dvbern.ebegu.entities.Gesuchsteller_;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
-import ch.dvbern.ebegu.entities.Institution_;
-import ch.dvbern.ebegu.entities.Kind;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.entities.KindContainer_;
-import ch.dvbern.ebegu.entities.Kind_;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.AntragStatusDTO;
-import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.enums.Eingangsart;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
-import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
-import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.enums.WizardStepName;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.errors.MailException;
-import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.errors.*;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
@@ -102,11 +21,27 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
-import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
-import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
-import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+import javax.activation.MimeTypeParseException;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.*;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static ch.dvbern.ebegu.enums.UserRoleName.*;
 
 /**
  * Service fuer Gesuch
@@ -220,7 +155,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
 	public Optional<Gesuch> findGesuchForFreigabe(@Nonnull String gesuchId) {
 		Objects.requireNonNull(gesuchId, "gesuchId muss gesetzt sein");
 		Gesuch gesuch = persistence.find(Gesuch.class, gesuchId);
@@ -460,6 +395,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				predicates.add(cb.equal(institution, user.getInstitution()));
 				break;
 			case SCHULAMT:
+			case ADMINISTRATOR_SCHULAMT:
 				predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
 				break;
 			default:
@@ -698,7 +634,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	 * Die Antraege werden aber je nach Benutzerrolle gefiltert.
 	 * - SACHBEARBEITER_TRAEGERSCHAFT oder SACHBEARBEITER_INSTITUTION - werden nur diejenige Antraege zurueckgegeben,
 	 * die mindestens ein Angebot fuer die InstituionEn des Benutzers haben
-	 * - SCHULAMT - werden nur diejenige Antraege zurueckgegeben, die mindestens ein Angebot von Typ Schulamt haben
+	 * - SCHULAMT/ADMINISTRATOR_SCHULAMT - werden nur diejenige Antraege zurueckgegeben, die mindestens ein Angebot von Typ Schulamt haben
 	 * - SACHBEARBEITER_JA oder ADMIN - werden nur diejenige Antraege zurueckgegeben, die ein Angebot von einem anderen
 	 * Typ als Schulamt haben oder ueberhaupt kein Angebot
 	 */
@@ -723,6 +659,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			if (benutzer.getRole() == UserRole.SACHBEARBEITER_TRAEGERSCHAFT
 				|| benutzer.getRole() == UserRole.SACHBEARBEITER_INSTITUTION
 				|| benutzer.getRole() == UserRole.SCHULAMT
+				|| benutzer.getRole() == UserRole.ADMINISTRATOR_SCHULAMT
 				|| benutzer.getRole() == UserRole.ADMIN
 				|| benutzer.getRole() == UserRole.SACHBEARBEITER_JA) {
 				// Join all the relevant relations only when the User belongs to Admin, JA, Schulamt, Institution or Traegerschaft
@@ -768,7 +705,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					final Predicate noAngebote = cb.isNull(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp));
 					predicatesToUse.add(cb.or(noSchulamt, noAngebote));
 				}
-				if (benutzer.getRole() == UserRole.SCHULAMT) {
+				if (benutzer.getRole().isRolleSchulamt()) {
 					predicatesToUse.add(cb.equal(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
 				}
 			}
@@ -843,7 +780,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
 	public Gesuch antragFreigabequittungErstellen(@Nonnull Gesuch gesuch, AntragStatus statusToChangeTo) {
 		authorizer.checkWriteAuthorization(gesuch);
 
@@ -866,7 +803,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
 	public Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username) {
 		Optional<Gesuch> gesuchOptional = Optional.ofNullable(persistence.find(Gesuch.class, gesuchId)); //direkt ueber persistence da wir eigentlich noch nicht leseberechtigt sind)
 		if (gesuchOptional.isPresent()) {
@@ -917,7 +854,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 			if (username != null) {
 				Optional<Benutzer> currentUser = benutzerService.findBenutzer(username);
-				if (currentUser.isPresent() && currentUser.get().getRole() != UserRole.SCHULAMT) {
+				if (currentUser.isPresent() && !currentUser.get().getRole().isRolleSchulamt()) {
 					gesuch.getFall().setVerantwortlicher(currentUser.get());
 				}
 			}
@@ -1383,6 +1320,26 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@RolesAllowed(SUPER_ADMIN)
 	public int deleteGesucheOhneFreigabeOderQuittung() {
 
+		List<Gesuch> criteriaResults = getGesuchesOhneFreigabeOderQuittung();
+		int anzahl = criteriaResults.size();
+		List<Betreuung> betreuungen = new ArrayList<>();
+		for (Gesuch gesuch : criteriaResults) {
+			try {
+				mailService.sendInfoGesuchGeloescht(gesuch);
+				betreuungen.addAll(gesuch.extractAllBetreuungen());
+				removeGesuch(gesuch.getId());
+			} catch (MailException e) {
+				LOG.error("Mail InfoGesuchGeloescht konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+				anzahl--;
+			}
+		}
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
+		return anzahl;
+	}
+
+	@Override
+	@RolesAllowed(SUPER_ADMIN)
+	public List<Gesuch> getGesuchesOhneFreigabeOderQuittung() {
 		Integer anzahlTageBisLoeschungNachWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE);
 		Integer anzahlTageBisLoeschungNachWarnungQuittung = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG);
 		if (anzahlTageBisLoeschungNachWarnungFreigabe == null || anzahlTageBisLoeschungNachWarnungQuittung == null) {
@@ -1421,18 +1378,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		query.select(root);
 		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
 
-		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
-		int anzahl = criteriaResults.size();
-		for (Gesuch gesuch : criteriaResults) {
-			try {
-				mailService.sendInfoGesuchGeloescht(gesuch);
-				removeGesuch(gesuch.getId());
-			} catch (MailException e) {
-				LOG.error("Mail InfoGesuchGeloescht konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
-				anzahl--;
-			}
-		}
-		return anzahl;
+		return persistence.getCriteriaResults(query);
 	}
 
 	@Override
@@ -1458,17 +1404,27 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public void removeOnlineMutation(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		logDeletingOfGesuchstellerAntrag(fall, gesuchsperiode);
+		final Gesuch onlineMutation = findOnlineMutation(fall, gesuchsperiode);
+		moveBetreuungmitteilungenToPreviousAntrag(onlineMutation);
+		List<Betreuung> betreuungen = new ArrayList<>();
+		betreuungen.addAll(onlineMutation.extractAllBetreuungen());
+		superAdminService.removeGesuch(onlineMutation.getId());
+
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
+	}
+
+	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN })
+	public Gesuch findOnlineMutation(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		List<Gesuch> criteriaResults = findExistingOpenMutationen(fall, gesuchsperiode);
 		if (criteriaResults.size() > 1) {
 			// It should be impossible that there are more than one open Mutation
-			throw new EbeguRuntimeException("removeOnlineMutation", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
+			throw new EbeguRuntimeException("findOnlineMutation", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
 		}
 		if (criteriaResults.size() <= 0) {
-			throw new EbeguEntityNotFoundException("removeOnlineMutation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
+			throw new EbeguEntityNotFoundException("findOnlineMutation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
 		}
-		final Gesuch onlineMutation = criteriaResults.get(0);
-		moveBetreuungmitteilungenToPreviousAntrag(onlineMutation);
-		superAdminService.removeGesuch(onlineMutation.getId());
+		return criteriaResults.get(0);
 	}
 
 	/**
@@ -1496,12 +1452,22 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public void removeOnlineFolgegesuch(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		logDeletingOfGesuchstellerAntrag(fall, gesuchsperiode);
+		Gesuch gesuch = findOnlineFolgegesuch(fall, gesuchsperiode);
+		List<Betreuung> betreuungen = new ArrayList<>();
+		betreuungen.addAll(gesuch.extractAllBetreuungen());
+		superAdminService.removeGesuch(gesuch.getId());
+
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
+	}
+
+	@Override
+	public Gesuch findOnlineFolgegesuch(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		List<Gesuch> criteriaResults = findExistingFolgegesuch(fall, gesuchsperiode);
 		if (criteriaResults.size() > 1) {
 			// It should be impossible that there are more than one open Folgegesuch for one period
-			throw new EbeguRuntimeException("removeOnlineFolgegesuch", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
+			throw new EbeguRuntimeException("findOnlineFolgegesuch", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
 		}
-		superAdminService.removeGesuch(criteriaResults.get(0).getId());
+		return criteriaResults.get(0);
 	}
 
 	@Override
@@ -1515,12 +1481,16 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		if (gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen()) {
 			throw new EbeguRuntimeException("removeAntrag", ErrorCodeEnum.ERROR_DELETION_ANTRAG_NOT_ALLOWED,  gesuch.getStatus());
 		}
+		List<Betreuung> betreuungen = new ArrayList<>();
+		betreuungen.addAll(gesuch.extractAllBetreuungen());
 		// Bei Erstgesuch wird auch der Fall mitgelöscht
 		if (gesuch.getTyp() == AntragTyp.ERSTGESUCH) {
 			superAdminService.removeFall(gesuch.getFall());
 		} else {
 			superAdminService.removeGesuch(gesuch.getId());
 		}
+
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
 	}
 
 	@Override
@@ -1534,7 +1504,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		if (gesuch.getStatus() != AntragStatus.IN_BEARBEITUNG_GS) {
 			throw new EbeguRuntimeException("removeGesuchstellerAntrag", ErrorCodeEnum.ERROR_DELETION_ANTRAG_NOT_ALLOWED,  gesuch.getStatus());
 		}
+		List<Betreuung> betreuungen = new ArrayList<>();
+		betreuungen.addAll(gesuch.extractAllBetreuungen());
 		superAdminService.removeGesuch(gesuch.getId());
+
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
 	}
 
 	@Override
