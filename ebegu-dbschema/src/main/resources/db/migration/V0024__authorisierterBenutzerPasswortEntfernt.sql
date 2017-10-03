@@ -1,2 +1,1 @@
-ALTER TABLE authorisierter_benutzer
-	DROP password;
+ALTER TABLE authorisierter_benutzer DROP password;

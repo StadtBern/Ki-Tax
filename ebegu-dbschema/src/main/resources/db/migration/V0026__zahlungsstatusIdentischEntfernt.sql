@@ -1,6 +1,2 @@
-UPDATE verfuegung_zeitabschnitt
-SET zahlungsstatus = 'NEU'
-WHERE zahlungsstatus = 'IDENTISCH';
-UPDATE verfuegung_zeitabschnitt_aud
-SET zahlungsstatus = 'NEU'
-WHERE zahlungsstatus = 'IDENTISCH';
+update verfuegung_zeitabschnitt set zahlungsstatus = 'NEU' where zahlungsstatus = 'IDENTISCH';
+update verfuegung_zeitabschnitt_aud set zahlungsstatus = 'NEU' where zahlungsstatus = 'IDENTISCH';

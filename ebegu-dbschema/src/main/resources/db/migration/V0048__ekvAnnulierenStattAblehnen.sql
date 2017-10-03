@@ -1,9 +1,5 @@
-ALTER TABLE einkommensverschlechterung_info
-	CHANGE ekv_basis_jahr_plus1abgelehnt ekv_basis_jahr_plus1annulliert BIT NOT NULL;
-ALTER TABLE einkommensverschlechterung_info
-	CHANGE ekv_basis_jahr_plus2abgelehnt ekv_basis_jahr_plus2annulliert BIT NOT NULL;
+ALTER TABLE einkommensverschlechterung_info change ekv_basis_jahr_plus1abgelehnt ekv_basis_jahr_plus1annulliert BIT NOT NULL;
+ALTER TABLE einkommensverschlechterung_info change ekv_basis_jahr_plus2abgelehnt ekv_basis_jahr_plus2annulliert BIT NOT NULL;
 
-ALTER TABLE einkommensverschlechterung_info_aud
-	CHANGE ekv_basis_jahr_plus1abgelehnt ekv_basis_jahr_plus1annulliert BIT;
-ALTER TABLE einkommensverschlechterung_info_aud
-	CHANGE ekv_basis_jahr_plus2abgelehnt ekv_basis_jahr_plus2annulliert BIT;
+ALTER TABLE einkommensverschlechterung_info_aud change ekv_basis_jahr_plus1abgelehnt ekv_basis_jahr_plus1annulliert BIT;
+ALTER TABLE einkommensverschlechterung_info_aud  change ekv_basis_jahr_plus2abgelehnt ekv_basis_jahr_plus2annulliert BIT;

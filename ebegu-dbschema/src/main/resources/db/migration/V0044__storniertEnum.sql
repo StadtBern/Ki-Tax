@@ -1,3 +1,1 @@
-UPDATE betreuung
-SET betreuungsstatus = 'STORNIERT'
-WHERE betreuungsstatus = 'GEKUENDIGT_VOR_EINTRITT';
+UPDATE betreuung SET betreuungsstatus = 'STORNIERT' where betreuungsstatus = 'GEKUENDIGT_VOR_EINTRITT';

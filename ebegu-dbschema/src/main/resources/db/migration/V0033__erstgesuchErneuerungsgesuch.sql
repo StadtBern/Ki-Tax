@@ -1,6 +1,2 @@
-UPDATE gesuch
-SET typ = 'ERSTGESUCH'
-WHERE typ = 'GESUCH';
-UPDATE gesuch_aud
-SET typ = 'ERSTGESUCH'
-WHERE typ = 'GESUCH';
+update gesuch set typ = 'ERSTGESUCH' where typ = 'GESUCH';
+update gesuch_aud set typ = 'ERSTGESUCH' where typ = 'GESUCH';
