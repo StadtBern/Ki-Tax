@@ -1,14 +1,14 @@
 package ch.dvbern.ebegu.dto.suchfilter.lucene;
 
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
 /**
  * Helper that runs a lucene analyzer on a string

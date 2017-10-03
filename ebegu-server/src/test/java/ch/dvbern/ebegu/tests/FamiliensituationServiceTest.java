@@ -1,6 +1,14 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
+import ch.dvbern.ebegu.entities.FamiliensituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
@@ -15,11 +23,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Arquillian Tests fuer die Klasse FamiliensituationService

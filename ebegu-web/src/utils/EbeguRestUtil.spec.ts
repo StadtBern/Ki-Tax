@@ -36,10 +36,8 @@ import TestDataUtil from './TestDataUtil';
 import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
 import * as moment from 'moment';
 import {TSVerfuegungZeitabschnittZahlungsstatus} from '../models/enums/TSVerfuegungZeitabschnittZahlungsstatus';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
-import Moment = moment.Moment;
 import {TSGesuchsperiodeStatus} from '../models/enums/TSGesuchsperiodeStatus';
+import Moment = moment.Moment;
 
 describe('EbeguRestUtil', function () {
 

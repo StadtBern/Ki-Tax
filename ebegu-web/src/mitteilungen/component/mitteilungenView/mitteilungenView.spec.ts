@@ -12,8 +12,8 @@ import TSMitteilung from '../../../models/TSMitteilung';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import {DVMitteilungListController} from '../../../core/component/dv-mitteilung-list/dv-mitteilung-list';
 import BetreuungRS from '../../../core/service/betreuungRS.rest';
-import IQService = angular.IQService;
 import {IScope} from 'angular';
+import IQService = angular.IQService;
 import ITimeoutService = angular.ITimeoutService;
 
 describe('mitteilungenView', function () {

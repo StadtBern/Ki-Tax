@@ -1,9 +1,8 @@
 package ch.dvbern.ebegu.enums;
 
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.Validate;
-
-import javax.annotation.Nullable;
 
 /**
  * Enum fuer die Laender (ISO 3166-1 Alpha 2 Code)

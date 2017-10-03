@@ -1,9 +1,16 @@
 package ch.dvbern.ebegu.rest.test;
 
+import java.time.LocalDate;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.AdresseTyp;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.Constants;
@@ -17,9 +24,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.time.LocalDate;
 
 /**
  * Tests fuer die Klasse AdresseService

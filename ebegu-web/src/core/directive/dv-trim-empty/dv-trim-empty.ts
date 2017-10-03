@@ -1,12 +1,4 @@
-import {
-    IDirective,
-    IDirectiveFactory,
-    IDirectiveLinkFn,
-    IScope,
-    IAugmentedJQuery,
-    IAttributes,
-    INgModelController
-} from 'angular';
+import {IAttributes, IAugmentedJQuery, IDirective, IDirectiveFactory, IDirectiveLinkFn, INgModelController, IScope} from 'angular';
 
 /**
  * this directive can be added to an element that has an ngModel to trim the empty string to null

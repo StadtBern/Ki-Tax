@@ -1,13 +1,14 @@
 package ch.dvbern.ebegu.util;
 
-import org.apache.commons.lang3.StringUtils;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Util welche einfach erlaubt eine Message aus dem server Seitigen Message Bundle zu lesen

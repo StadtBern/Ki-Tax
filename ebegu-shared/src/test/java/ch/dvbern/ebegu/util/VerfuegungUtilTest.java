@@ -1,16 +1,17 @@
 package ch.dvbern.ebegu.util;
 
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-import ch.dvbern.ebegu.types.DateRange;
-import org.junit.Assert;
-import org.junit.Test;
-
-import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.types.DateRange;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Tests fuer VerfuegungUtil

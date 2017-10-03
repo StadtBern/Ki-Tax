@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.reporting.kanton;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * DTO fuer die Kantonsstatistik

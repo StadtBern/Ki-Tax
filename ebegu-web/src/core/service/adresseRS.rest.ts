@@ -1,4 +1,4 @@
-import {IHttpService, IHttpPromise} from 'angular';
+import {IHttpPromise, IHttpService} from 'angular';
 import TSAdresseContainer from '../../models/TSAdresseContainer';
 
 export default class AdresseRS {

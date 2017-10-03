@@ -1,10 +1,10 @@
 package ch.dvbern.ebegu.util;
 
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-
 import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
+
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 
 /**
  *

@@ -9,11 +9,12 @@
  */
 package ch.dvbern.ebegu.authentication;
 
-import ch.dvbern.ebegu.enums.UserRole;
-
-import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Objects;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.enums.UserRole;
 
 /**
  * Wrapper fuer einen Login Request

@@ -1,5 +1,10 @@
 package ch.dvbern.ebegu.tests;
 
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.EinkommensverschlechterungInfoService;
@@ -12,10 +17,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Tests fuer die Klasse FinanzielleSituationService

@@ -1,12 +1,14 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
-import ch.dvbern.ebegu.util.Constants;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.envers.Audited;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 /**
  * Entitaet zum Speichern von GeneratedDokument in der Datenbank.

@@ -1,4 +1,4 @@
-import {IHttpService, ILogService, IPromise, IIntervalService} from 'angular';
+import {IHttpService, IIntervalService, ILogService, IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSDownloadFile from '../../models/TSDownloadFile';
 import {TSGeneratedDokumentTyp} from '../../models/enums/TSGeneratedDokumentTyp';

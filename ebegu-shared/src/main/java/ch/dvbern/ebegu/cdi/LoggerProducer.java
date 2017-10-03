@@ -1,10 +1,10 @@
 package ch.dvbern.ebegu.cdi;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Producer fuer den Logger. Gibt einen Logger fuer den Klassennamen des injection points zurueck

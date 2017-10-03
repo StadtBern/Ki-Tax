@@ -1,10 +1,10 @@
 package ch.dvbern.ebegu.persistence;
 
+import java.util.Locale;
+
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
-
-import java.util.Locale;
 
 /**
  * Created by imanol on 04.03.16.

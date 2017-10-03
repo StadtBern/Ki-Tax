@@ -1,14 +1,15 @@
 package ch.dvbern.ebegu.validators;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuungspensum;
-import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuungspensum;
+import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 
 /**
  * Validator fuer Datum in Betreuungspensen. Die Zeitraeume duerfen sich nicht ueberschneiden

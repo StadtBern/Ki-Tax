@@ -1,15 +1,20 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.types.DateRange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.types.DateRange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Regel für Wohnsitz in Bern (Zuzug und Wegzug):

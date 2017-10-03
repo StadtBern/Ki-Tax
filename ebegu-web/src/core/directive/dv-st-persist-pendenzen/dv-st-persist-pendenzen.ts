@@ -1,4 +1,4 @@
-import {IDirective, IDirectiveFactory, IDirectiveLinkFn, IScope, IAugmentedJQuery, IAttributes} from 'angular';
+import {IAttributes, IAugmentedJQuery, IDirective, IDirectiveFactory, IDirectiveLinkFn, IScope} from 'angular';
 import TSUser from '../../../models/TSUser';
 import UserRS from '../../service/userRS.rest';
 import {InstitutionRS} from '../../service/institutionRS.rest';

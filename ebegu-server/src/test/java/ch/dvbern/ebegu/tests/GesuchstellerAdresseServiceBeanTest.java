@@ -1,6 +1,14 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.AdresseTyp;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.services.GesuchstellerAdresseService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -11,9 +19,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.util.Optional;
 
 /**
  * Tests fuer die Klasse AdresseService

@@ -1,13 +1,13 @@
 package ch.dvbern.ebegu.api.errors;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.ext.Provider;
+
 import ch.dvbern.ebegu.api.validation.EbeguExceptionReport;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.ext.Provider;
 
 /**
  * Created by imanol on 02.03.16.

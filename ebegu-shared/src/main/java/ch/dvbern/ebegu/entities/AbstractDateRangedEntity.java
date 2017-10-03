@@ -1,15 +1,16 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.Gueltigkeit;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.envers.Audited;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
 import javax.validation.Valid;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Gueltigkeit;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.envers.Audited;
 
 /**
  * Abstrakte Entitaet. Muss von Entitaeten erweitert werden, die eine Periode (DateRange) mit datumVon und datumBis haben.

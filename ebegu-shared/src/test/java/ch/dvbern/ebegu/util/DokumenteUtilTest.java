@@ -1,17 +1,22 @@
 package ch.dvbern.ebegu.util;
 
-import ch.dvbern.ebegu.entities.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Dokument;
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import org.junit.Assert;
 import org.junit.Test;
-
-import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Testet BetreuungResource

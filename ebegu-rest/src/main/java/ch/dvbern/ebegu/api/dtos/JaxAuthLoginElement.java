@@ -14,7 +14,6 @@ import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import ch.dvbern.ebegu.enums.UserRole;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 

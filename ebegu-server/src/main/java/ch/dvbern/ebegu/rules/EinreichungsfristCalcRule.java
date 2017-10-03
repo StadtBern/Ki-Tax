@@ -1,10 +1,10 @@
 package ch.dvbern.ebegu.rules;
 
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
-
-import javax.annotation.Nonnull;
 
 import static ch.dvbern.ebegu.enums.MsgKey.EINREICHUNGSFRIST_MSG;
 import static ch.dvbern.ebegu.enums.MsgKey.EINREICHUNGSFRIST_VOLLKOSTEN_MSG;

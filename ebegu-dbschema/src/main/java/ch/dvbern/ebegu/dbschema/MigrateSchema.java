@@ -1,7 +1,5 @@
 package ch.dvbern.ebegu.dbschema;
 
-import org.flywaydb.core.Flyway;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -10,6 +8,8 @@ import javax.ejb.TransactionManagementType;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+
+import org.flywaydb.core.Flyway;
 
 /**
  * Dieses Bean sorgt dafuer, dass beim Startup des Java EE Servers migrate ausgefuehrt wird.

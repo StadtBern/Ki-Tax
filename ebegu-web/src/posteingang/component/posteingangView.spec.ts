@@ -1,19 +1,14 @@
 import GesuchRS from '../../gesuch/service/gesuchRS.rest';
-import {IScope, IQService, IFilterService, IHttpBackendService} from 'angular';
+import {IFilterService, IHttpBackendService, IQService, IScope} from 'angular';
 import GesuchModelManager from '../../gesuch/service/gesuchModelManager';
 import BerechnungsManager from '../../gesuch/service/berechnungsManager';
 import {IStateService} from 'angular-ui-router';
 import {EbeguWebPosteingang} from '../posteingang.module';
-import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import TestDataUtil from '../../utils/TestDataUtil';
 import {PosteingangViewController} from './posteingangView';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
 import TSMitteilung from '../../models/TSMitteilung';
-import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
-import TSGesuch from '../../models/TSGesuch';
-import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSFall from '../../models/TSFall';
 import {TSMitteilungTeilnehmerTyp} from '../../models/enums/TSMitteilungTeilnehmerTyp';
 import TSUser from '../../models/TSUser';
@@ -21,7 +16,6 @@ import {TSRole} from '../../models/enums/TSRole';
 import {TSMitteilungStatus} from '../../models/enums/TSMitteilungStatus';
 import MitteilungRS from '../../core/service/mitteilungRS.rest';
 import EbeguUtil from '../../utils/EbeguUtil';
-
 
 describe('posteingangView', function () {
 

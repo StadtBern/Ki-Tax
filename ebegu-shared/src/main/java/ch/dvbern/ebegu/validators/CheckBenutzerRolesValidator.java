@@ -1,10 +1,10 @@
 package ch.dvbern.ebegu.validators;
 
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.enums.UserRole;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.enums.UserRole;
 
 /**
  * Dieser Validator prueft dass die angelegte Benutzer, mit den richtigen Parameter erstellt werden.

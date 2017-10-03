@@ -1,7 +1,6 @@
 import TSAbstractPersonEntity from './TSAbstractPersonEntity';
 import {TSGeschlecht} from './enums/TSGeschlecht';
 import * as moment from 'moment';
-import Moment = moment.Moment;
 
 export default class TSGesuchsteller extends TSAbstractPersonEntity {
 

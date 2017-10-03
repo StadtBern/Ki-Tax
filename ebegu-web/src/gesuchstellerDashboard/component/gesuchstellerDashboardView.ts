@@ -8,14 +8,15 @@ import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 import TSFall from '../../models/TSFall';
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
 import FallRS from '../../gesuch/service/fallRS.rest';
-import {TSAntragStatus, IN_BEARBEITUNG_BASE_NAME, isAnyStatusOfVerfuegt} from '../../models/enums/TSAntragStatus';
+import {IN_BEARBEITUNG_BASE_NAME, isAnyStatusOfVerfuegt, TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import EbeguUtil from '../../utils/EbeguUtil';
+import MitteilungRS from '../../core/service/mitteilungRS.rest';
+import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import ITranslateService = angular.translate.ITranslateService;
-import MitteilungRS from '../../core/service/mitteilungRS.rest';
-import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
+
 let template = require('./gesuchstellerDashboardView.html');
 require('./gesuchstellerDashboardView.less');
 

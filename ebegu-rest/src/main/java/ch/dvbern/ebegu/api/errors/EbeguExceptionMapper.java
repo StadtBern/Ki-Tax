@@ -1,11 +1,11 @@
 package ch.dvbern.ebegu.api.errors;
 
-import ch.dvbern.ebegu.api.validation.EbeguExceptionReport;
-import ch.dvbern.ebegu.errors.EbeguException;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
+
+import ch.dvbern.ebegu.api.validation.EbeguExceptionReport;
+import ch.dvbern.ebegu.errors.EbeguException;
 
 /**
  * Created by imanol on 01.03.16.

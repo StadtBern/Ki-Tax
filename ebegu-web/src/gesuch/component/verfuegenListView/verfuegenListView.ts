@@ -10,10 +10,11 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {
-    TSAntragStatus,
-    isAtLeastFreigegeben,
+    isAnyStatusOfMahnung,
     isAnyStatusOfVerfuegt,
-    isAnyStatusOfVerfuegtButSchulamt, isAnyStatusOfMahnung
+    isAnyStatusOfVerfuegtButSchulamt,
+    isAtLeastFreigegeben,
+    TSAntragStatus
 } from '../../../models/enums/TSAntragStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';

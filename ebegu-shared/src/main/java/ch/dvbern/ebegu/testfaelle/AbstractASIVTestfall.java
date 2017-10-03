@@ -1,11 +1,15 @@
 package ch.dvbern.ebegu.testfaelle;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.EnumFamilienstatus;
-import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
-
 import java.time.LocalDate;
 import java.util.Collection;
+
+import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.FamiliensituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.enums.EnumFamilienstatus;
+import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 
 /**
  * Superklasse für ASIV-Testfaelle

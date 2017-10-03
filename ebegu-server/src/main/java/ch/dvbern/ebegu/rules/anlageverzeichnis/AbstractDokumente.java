@@ -1,12 +1,12 @@
 package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
+import java.util.Set;
+
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
-
-import java.util.Set;
 
 
 /**

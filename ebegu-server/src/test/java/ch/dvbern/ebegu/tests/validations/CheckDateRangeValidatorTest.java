@@ -1,12 +1,12 @@
 package ch.dvbern.ebegu.tests.validations;
 
+import java.time.LocalDate;
+
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.validators.CheckDateRangeValidator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.time.LocalDate;
 
 /**
  * Tests fuer CheckDateRangeValidator

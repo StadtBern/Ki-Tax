@@ -1,13 +1,18 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-import org.hibernate.envers.Audited;
+import java.util.Objects;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import java.util.Objects;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import org.hibernate.envers.Audited;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 import static ch.dvbern.ebegu.util.Constants.DB_TEXTAREA_LENGTH;

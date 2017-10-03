@@ -1,12 +1,13 @@
 package ch.dvbern.ebegu.tests;
 
+import java.util.Collection;
+import java.util.Collections;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.DokumentGrundServiceBean;
-
-import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland

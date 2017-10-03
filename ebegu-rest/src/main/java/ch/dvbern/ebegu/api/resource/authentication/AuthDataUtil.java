@@ -9,6 +9,15 @@
  */
 package ch.dvbern.ebegu.api.resource.authentication;
 
+import java.nio.charset.Charset;
+import java.util.Base64;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
 import ch.dvbern.ebegu.api.AuthConstants;
 import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElementCookieData;
 import com.google.gson.Gson;
@@ -16,14 +25,6 @@ import com.google.gson.JsonSyntaxException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.Charset;
-import java.util.Base64;
-import java.util.Optional;
 
 /**
  * Util welches aus Requests die cookies extrahiert und aus den Cookies zum Beispiel den Principal

@@ -1,5 +1,13 @@
 package ch.dvbern.ebegu.reporting;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
@@ -7,13 +15,6 @@ import ch.dvbern.ebegu.reporting.kanton.KantonDataRow;
 import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenDataRow;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergeException;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.util.List;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland

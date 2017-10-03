@@ -1,12 +1,13 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-
-import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 
 /**
  * Service zum Verwalten von InstitutionStammdaten

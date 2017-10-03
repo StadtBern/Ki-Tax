@@ -9,14 +9,15 @@
  */
 package ch.dvbern.ebegu.api;
 
-import io.swagger.jaxrs.config.BeanConfig;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.annotation.MultipartConfig;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+
+import io.swagger.jaxrs.config.BeanConfig;
 
 /**
  * Entry-Point of all REST-Services. Used by JAX-RS to List all available Service implementations

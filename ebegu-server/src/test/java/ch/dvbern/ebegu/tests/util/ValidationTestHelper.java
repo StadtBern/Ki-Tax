@@ -1,14 +1,15 @@
 package ch.dvbern.ebegu.tests.util;
 
+import java.lang.annotation.Annotation;
+import java.text.MessageFormat;
+import java.util.Set;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.lang.annotation.Annotation;
-import java.text.MessageFormat;
-import java.util.Set;
 
 
 /**

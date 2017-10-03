@@ -1,5 +1,12 @@
 package ch.dvbern.ebegu.rest.test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.UriInfo;
+
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResponse;
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
 import ch.dvbern.ebegu.api.client.OpenIdmRestService;
@@ -13,15 +20,8 @@ import de.akquinet.jbosscc.needle.mock.EasyMockProvider;
 import junit.framework.AssertionFailedError;
 import org.easymock.EasyMock;
 import org.jboss.resteasy.spi.ResteasyUriInfo;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.inject.Inject;
-import javax.ws.rs.core.UriInfo;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import static ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil.creatOpenIdmInst;
 import static ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil.creatOpenIdmTraegerschaft;

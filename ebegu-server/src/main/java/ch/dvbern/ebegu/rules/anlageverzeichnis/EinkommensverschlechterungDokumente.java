@@ -1,12 +1,18 @@
 package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
-import ch.dvbern.ebegu.entities.*;
+import java.math.BigDecimal;
+import java.util.Set;
+
+import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
-
-import java.math.BigDecimal;
-import java.util.Set;
 
 /**
  * Dokumente für Einkommensverschlechterung:

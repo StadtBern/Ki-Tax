@@ -1,10 +1,10 @@
 package ch.dvbern.ebegu.vorlagen.freigabequittung;
 
-import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
-import ch.dvbern.lib.doctemplate.docx.DocxImage;
-
 import java.io.IOException;
 import java.util.List;
+
+import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
+import ch.dvbern.lib.doctemplate.docx.DocxImage;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland

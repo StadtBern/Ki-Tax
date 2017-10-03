@@ -1,5 +1,10 @@
 package ch.dvbern.ebegu.rest.test;
 
+import java.io.File;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
 import ch.dvbern.ebegu.api.resource.GesuchsperiodeResource;
 import ch.dvbern.ebegu.api.resource.authentication.AuthResource;
@@ -22,10 +27,6 @@ import org.jboss.shrinkwrap.impl.base.exporter.zip.ZipExporterImpl;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.jboss.shrinkwrap.resolver.api.maven.strategy.RejectDependenciesStrategy;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import java.io.File;
 
 /**
  * Diese Klasse implementiert die Methode "Deployment" fuer die Arquillian Tests und muss

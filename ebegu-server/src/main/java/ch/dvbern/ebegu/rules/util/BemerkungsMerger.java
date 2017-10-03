@@ -1,5 +1,19 @@
 package ch.dvbern.ebegu.rules.util;
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.StringJoiner;
+import java.util.TreeSet;
+
+import javax.annotation.Nullable;
+
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Gueltigkeit;
@@ -8,10 +22,6 @@ import com.google.common.collect.SortedSetMultimap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
-import java.time.LocalDate;
-import java.util.*;
 
 /**
  * This class is supposed to find the longest timeperiods for which bemerkungen in {@link VerfuegungZeitabschnitt}en exists.

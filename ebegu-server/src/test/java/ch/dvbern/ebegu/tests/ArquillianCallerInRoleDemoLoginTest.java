@@ -21,6 +21,16 @@
  */
 package ch.dvbern.ebegu.tests;
 
+import java.security.Principal;
+import java.security.PrivilegedAction;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.security.auth.Subject;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+
 import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
 import ch.dvbern.lib.cdipersistence.ISessionContextService;
@@ -28,15 +38,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import javax.security.auth.Subject;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
-import java.security.Principal;
-import java.security.PrivilegedAction;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

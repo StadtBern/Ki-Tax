@@ -1,6 +1,18 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -8,10 +20,6 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.MathUtil;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.*;
 
 
 /**

@@ -1,6 +1,7 @@
 import TSAbstractEntity from './TSAbstractEntity';
 import * as moment from 'moment';
 import TSEWKAdresse from './TSEWKAdresse';
+
 /**
  * DTO für eine Beziehung aus dem EWK
  */

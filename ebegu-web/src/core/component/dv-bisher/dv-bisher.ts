@@ -2,13 +2,11 @@ import {IComponentOptions} from 'angular';
 import DateUtil from '../../../utils/DateUtil';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import * as moment from 'moment';
-import Moment = moment.Moment;
+import {isAtLeastFreigegeben} from '../../../models/enums/TSAntragStatus';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import ITranslateService = angular.translate.ITranslateService;
 import ILogService = angular.ILogService;
-import {
-    isAtLeastFreigegeben
-} from '../../../models/enums/TSAntragStatus';
-import {TSEingangsart} from '../../../models/enums/TSEingangsart';
+
 let template = require('./dv-bisher.html');
 require('./dv-bisher.less');
 

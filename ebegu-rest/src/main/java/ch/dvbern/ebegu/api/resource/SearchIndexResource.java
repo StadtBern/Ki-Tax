@@ -23,8 +23,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.Validate;
-
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
@@ -46,9 +44,9 @@ import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.SearchIndexService;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.MonitoringUtil;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.Validate;
 
 @Path("search")
 @Stateless

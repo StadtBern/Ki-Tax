@@ -1,13 +1,8 @@
 package ch.dvbern.ebegu.dbschema;
 
-import ch.dvbern.ebegu.config.EbeguConfigurationImpl;
-import org.apache.commons.lang.StringUtils;
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.database.QueryDataSet;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.xml.FlatDtdDataSet;
-import org.dbunit.dataset.xml.FlatXmlDataSet;
+import java.io.FileOutputStream;
+import java.sql.Connection;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -18,9 +13,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.sql.DataSource;
-import java.io.FileOutputStream;
-import java.sql.Connection;
-import java.util.List;
+
+import ch.dvbern.ebegu.config.EbeguConfigurationImpl;
+import org.apache.commons.lang.StringUtils;
+import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.QueryDataSet;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.xml.FlatDtdDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSet;
 
 /**
  * Generiert ein XML-File als Dataset für DBUnit-Tests.

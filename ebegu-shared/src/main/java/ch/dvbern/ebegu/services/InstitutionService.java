@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Institution;
-
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Institution;
 
 /**
  * Service zum Verwalten von Institutionen

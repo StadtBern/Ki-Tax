@@ -1,16 +1,32 @@
 package ch.dvbern.ebegu.dto.suchfilter.lucene;
 
-import ch.dvbern.ebegu.entities.*;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.KindContainer;
+
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.BETREUUNG_BGNR;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.FALL_BESITZER_NAME;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.FALL_BESITZER_VORNAME;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.FALL_NUMMER;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.GESUCH_FALL_NUMMER;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.GS_GEBDATUM;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.GS_NACHNAME;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.GS_VORNAME;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.KIND_GEBDATUM;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.KIND_NACHNAME;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.KIND_VORNAME;
 
 /**
  * Enum of Entities that can be searched in the index via the SearchService. Also determines the searchable fields

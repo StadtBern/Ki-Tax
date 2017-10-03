@@ -8,13 +8,14 @@ import WizardStepManager from './service/wizardStepManager';
 import MahnungRS from './service/mahnungRS.rest';
 import {TSEingangsart} from '../models/enums/TSEingangsart';
 import KindRS from '../core/service/kindRS.rest';
-import IPromise = angular.IPromise;
-import IQService = angular.IQService;
-import ILogService = angular.ILogService;
 import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../utils/TSRoleUtil';
 import TSMahnung from '../models/TSMahnung';
 import TSKindDublette from '../models/TSKindDublette';
+import IPromise = angular.IPromise;
+import IQService = angular.IQService;
+import ILogService = angular.ILogService;
+
 let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];

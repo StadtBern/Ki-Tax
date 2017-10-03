@@ -1,8 +1,5 @@
 import '../../../../bootstrap.ts';
 import 'angular-mocks';
-import IScope = angular.IScope;
-import ICompileService = angular.ICompileService;
-import IRootScopeService = angular.IRootScopeService;
 import {DvErrorMessagesPanelComponent} from './dvb-error-messages-panel';
 import TSExceptionReport from '../../../../models/TSExceptionReport';
 import {TSErrorAction} from '../../../../models/enums/TSErrorAction';

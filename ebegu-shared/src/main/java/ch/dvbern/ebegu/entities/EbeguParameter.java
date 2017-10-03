@@ -1,10 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
-
-import ch.dvbern.ebegu.enums.EbeguParameterKey;
-import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.Constants;
-import org.hibernate.envers.Audited;
+import java.math.BigDecimal;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
@@ -12,8 +9,11 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.enums.EbeguParameterKey;
+import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
+import org.hibernate.envers.Audited;
 
 /**
  * Entitaet zum Speichern von zeitabhängigen Parametern in Ki-Tax

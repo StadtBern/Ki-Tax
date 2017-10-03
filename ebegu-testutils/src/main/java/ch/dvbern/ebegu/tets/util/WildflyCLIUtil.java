@@ -1,13 +1,13 @@
 package ch.dvbern.ebegu.tets.util;
 
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.dmr.ModelNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * @author Dominik Pospisil <dpospisi@redhat.com>

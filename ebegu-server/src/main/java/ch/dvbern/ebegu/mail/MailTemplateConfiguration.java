@@ -1,16 +1,5 @@
 package ch.dvbern.ebegu.mail;
 
-import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.util.Constants;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-
-import javax.annotation.Nonnull;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.time.LocalDate;
@@ -18,6 +7,25 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.Mitteilung;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.Constants;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 /**
  * Configuration For Freemarker Templates

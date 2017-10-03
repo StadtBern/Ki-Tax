@@ -1,22 +1,24 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Gesuch;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Collection;
+import java.util.concurrent.Future;
+
+import javax.annotation.security.PermitAll;
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.security.PermitAll;
-import javax.ejb.*;
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Future;
 
 /**
  * Service fuer Batch-Jobs.

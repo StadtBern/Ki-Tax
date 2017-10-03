@@ -1,13 +1,19 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.types.DateRange;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Erwerbspensum;
+import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.types.DateRange;
 
 /**
  * Berechnet die hoehe des ErwerbspensumRule eines bestimmten Erwerbspensums

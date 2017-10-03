@@ -8,7 +8,6 @@ import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {isAnyStatusOfVerfuegt} from '../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
-import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import IQService = angular.IQService;

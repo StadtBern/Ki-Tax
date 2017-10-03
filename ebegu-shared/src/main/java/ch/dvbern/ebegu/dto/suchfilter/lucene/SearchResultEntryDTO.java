@@ -8,7 +8,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import ch.dvbern.ebegu.dto.JaxAbstractAntragDTO;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**

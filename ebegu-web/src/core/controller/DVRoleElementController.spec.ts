@@ -1,11 +1,11 @@
 import '../../bootstrap.ts';
 import 'angular-mocks';
-import IInjectorService = angular.auto.IInjectorService;
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {DVRoleElementController} from './DVRoleElementController';
 import {EbeguAuthentication} from '../../authentication/authentication.module';
 import {EbeguWebCore} from '../core.module';
 import {TSRole} from '../../models/enums/TSRole';
+import IInjectorService = angular.auto.IInjectorService;
 
 describe('DVElementController', function () {
 

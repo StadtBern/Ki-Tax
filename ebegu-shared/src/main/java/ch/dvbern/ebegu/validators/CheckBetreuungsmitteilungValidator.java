@@ -1,5 +1,16 @@
 package ch.dvbern.ebegu.validators;
 
+import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.util.ResourceBundle;
+
+import javax.enterprise.inject.spi.CDI;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
 import ch.dvbern.ebegu.entities.BetreuungsmitteilungPensum;
@@ -8,16 +19,6 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.util.BetreuungUtil;
-
-import javax.enterprise.inject.spi.CDI;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import java.text.MessageFormat;
-import java.time.LocalDate;
-import java.util.ResourceBundle;
 
 /**
  * Validator for Betreuungspensen, checks that the entered betreuungspensum is bigger than the minimum

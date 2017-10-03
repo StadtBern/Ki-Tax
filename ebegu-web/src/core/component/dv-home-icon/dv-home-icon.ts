@@ -1,6 +1,7 @@
 import {IComponentOptions} from 'angular';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {IStateService} from 'angular-ui-router';
+
 let template = require('./dv-home-icon.html');
 
 export class DvHomeIconComponentConfig implements IComponentOptions {

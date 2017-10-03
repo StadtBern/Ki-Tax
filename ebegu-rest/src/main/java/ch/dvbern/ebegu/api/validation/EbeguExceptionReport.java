@@ -1,12 +1,9 @@
 package ch.dvbern.ebegu.api.validation;
 
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.util.ServerMessageUtil;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.jboss.resteasy.api.validation.Validation;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -15,10 +12,14 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.jboss.resteasy.api.validation.Validation;
 
 /**
  * Created by imanol on 02.03.16.

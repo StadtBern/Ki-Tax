@@ -1,10 +1,10 @@
 package ch.dvbern.ebegu.validators;
 
-import ch.dvbern.ebegu.types.DateRange;
-
 import javax.annotation.Nonnull;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import ch.dvbern.ebegu.types.DateRange;
 
 public class CheckDateRangeValidator implements ConstraintValidator<CheckDateRange, DateRange> {
 

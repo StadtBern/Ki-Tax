@@ -1,4 +1,5 @@
 import {IComponentOptions} from 'angular';
+
 require('./dv-mobile-navigation-toggle.less');
 let template = require('./dv-mobile-navigation-toggle.html');
 

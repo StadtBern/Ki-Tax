@@ -1,5 +1,11 @@
 package ch.dvbern.ebegu.rest.test;
 
+import java.time.LocalDate;
+import java.time.Month;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
 import ch.dvbern.ebegu.api.resource.VerfuegungResource;
@@ -17,11 +23,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
-import java.time.LocalDate;
-import java.time.Month;
 
 /**
  * Testet VerfuegungResource

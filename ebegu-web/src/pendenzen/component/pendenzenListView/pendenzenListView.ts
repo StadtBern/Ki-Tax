@@ -2,10 +2,9 @@ import {IComponentOptions} from 'angular';
 import TSAntragDTO from '../../../models/TSAntragDTO';
 import PendenzRS from '../../service/PendenzRS.rest';
 import * as moment from 'moment';
-import ITimeoutService = angular.ITimeoutService;
-import Moment = moment.Moment;
 import TSUser from '../../../models/TSUser';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+
 let template = require('./pendenzenListView.html');
 require('./pendenzenListView.less');
 

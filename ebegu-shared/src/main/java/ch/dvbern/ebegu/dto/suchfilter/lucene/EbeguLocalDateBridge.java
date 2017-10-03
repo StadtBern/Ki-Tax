@@ -1,12 +1,12 @@
 package ch.dvbern.ebegu.dto.suchfilter.lucene;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import org.apache.lucene.document.Document;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.hibernate.search.bridge.TwoWayFieldBridge;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 /**
  * This FieldBridge ats LocalDate values as strings to the Index.

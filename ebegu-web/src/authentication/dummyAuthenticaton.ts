@@ -8,7 +8,6 @@ import TSInstitution from '../models/TSInstitution';
 import {TSTraegerschaft} from '../models/TSTraegerschaft';
 import AuthenticationUtil from '../utils/AuthenticationUtil';
 import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest';
-import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
 let template = require('./dummyAuthentication.html');
 require('./dummyAuthentication.less');

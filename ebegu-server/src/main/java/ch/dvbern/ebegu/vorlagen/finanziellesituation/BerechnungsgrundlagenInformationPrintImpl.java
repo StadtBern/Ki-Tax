@@ -14,6 +14,8 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
@@ -21,8 +23,6 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
-
-import javax.annotation.Nullable;
 
 /**
  * Implementiert den {@link BerechnungsgrundlagenInformationPrint}. Diese Klasse enthält die Daten fuer die

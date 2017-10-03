@@ -1,11 +1,12 @@
 package ch.dvbern.ebegu.dto.suchfilter.smarttable;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Aggregat Klasse zum deserialisieren/serialisieren des gesamten SmartTable-Filterobjekts

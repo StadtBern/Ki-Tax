@@ -1,20 +1,38 @@
 package ch.dvbern.ebegu.rechner;
 
-import ch.dvbern.ebegu.entities.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.EbeguParameter;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinConfigurator;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.rules.Rule;
-import ch.dvbern.ebegu.testfaelle.*;
+import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_05;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_06;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_07;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_08;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_09;
+import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_10;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.MathUtil;
 import org.junit.Assert;
 import org.junit.Before;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.*;
 
 /**
  * Superklasse für BG-Rechner-Tests

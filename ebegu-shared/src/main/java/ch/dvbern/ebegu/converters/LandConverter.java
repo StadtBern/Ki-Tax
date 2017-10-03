@@ -11,13 +11,13 @@
  */
 package ch.dvbern.ebegu.converters;
 
-import ch.dvbern.ebegu.enums.Land;
-import org.apache.commons.lang3.StringUtils;
-
 import javax.annotation.Nullable;
 import javax.persistence.Converter;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import ch.dvbern.ebegu.enums.Land;
+import org.apache.commons.lang3.StringUtils;
 
 @Converter(autoApply = true)
 @XmlJavaTypeAdapter(value = LandConverter.class, type = Land.class)

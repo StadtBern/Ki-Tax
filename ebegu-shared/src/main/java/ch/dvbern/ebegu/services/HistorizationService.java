@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.AbstractEntity;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
+
+import ch.dvbern.ebegu.entities.AbstractEntity;
 
 /**
  * Service zum Verwalten von Historization elementen

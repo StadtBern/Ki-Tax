@@ -1,11 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.util.EbeguUtil;
-import ch.dvbern.ebegu.util.MathUtil;
-import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
-import org.hibernate.envers.Audited;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,8 +22,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
 import javax.validation.constraints.Size;
+
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.ebegu.util.MathUtil;
+import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
+import org.hibernate.envers.Audited;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 

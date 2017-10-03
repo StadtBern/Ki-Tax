@@ -1,14 +1,15 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.validators.CheckBetreuungsmitteilung;
-import ch.dvbern.ebegu.validators.CheckBetreuungsmitteilungDatesOverlapping;
-import org.hibernate.envers.Audited;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import java.util.Set;
-import java.util.TreeSet;
+
+import ch.dvbern.ebegu.validators.CheckBetreuungsmitteilung;
+import ch.dvbern.ebegu.validators.CheckBetreuungsmitteilungDatesOverlapping;
+import org.hibernate.envers.Audited;
 
 /**
  * Entitaet zum Speichern von Betreuungsmitteilung in der Datenbank.

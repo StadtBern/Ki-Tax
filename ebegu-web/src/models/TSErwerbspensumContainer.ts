@@ -1,5 +1,6 @@
 import TSAbstractEntity from './TSAbstractEntity';
 import TSErwerbspensum from './TSErwerbspensum';
+
 export default class TSErwerbspensumContainer extends TSAbstractEntity {
 
 

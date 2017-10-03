@@ -9,10 +9,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import ch.dvbern.lib.date.converters.LocalDateTimeXMLConverter;
 import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * This is a DTO that is used to export the relevant Information about a {@link ch.dvbern.ebegu.entities.Verfuegung}.

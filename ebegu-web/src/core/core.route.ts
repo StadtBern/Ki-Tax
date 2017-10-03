@@ -10,12 +10,12 @@ import ErrorService from './errors/service/ErrorService';
 import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest';
 import TSApplicationProperty from '../models/TSApplicationProperty';
 import GesuchModelManager from '../gesuch/service/gesuchModelManager';
+import GesuchsperiodeRS from './service/gesuchsperiodeRS.rest';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
 import ILocationService = angular.ILocationService;
 import ILogService = angular.ILogService;
 import IInjectorService = angular.auto.IInjectorService;
-import GesuchsperiodeRS from './service/gesuchsperiodeRS.rest';
 
 appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'MandantRS', '$injector', '$rootScope', 'hotkeys',
     '$timeout', 'AuthServiceRS', '$state', '$location', '$window', '$log' , 'ErrorService', 'GesuchModelManager', 'GesuchsperiodeRS'];

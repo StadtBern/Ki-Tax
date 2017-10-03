@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.util;
 
+import java.time.LocalDate;
+
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.time.LocalDate;
 
 /**
  * Tests fuer DateUtil

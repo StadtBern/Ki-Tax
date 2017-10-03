@@ -1,10 +1,7 @@
 package ch.dvbern.ebegu.api.errors;
 
-import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.util.Constants;
-import org.jboss.resteasy.api.validation.Validation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -13,8 +10,12 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-import java.util.List;
-import java.util.Locale;
+
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.util.Constants;
+import org.jboss.resteasy.api.validation.Validation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by imanol on 02.03.16.

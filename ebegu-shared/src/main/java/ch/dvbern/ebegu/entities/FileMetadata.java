@@ -1,8 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.util.UploadFileInfo;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.envers.Audited;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Inheritance;
@@ -11,7 +9,9 @@ import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import java.util.Objects;
+import ch.dvbern.ebegu.util.UploadFileInfo;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.envers.Audited;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 

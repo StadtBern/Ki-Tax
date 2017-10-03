@@ -1,11 +1,11 @@
 package ch.dvbern.ebegu.vorlagen;
 
+import java.time.LocalDate;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
 import org.apache.commons.lang.StringUtils;
-
-import java.time.LocalDate;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland

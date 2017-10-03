@@ -14,10 +14,10 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import * as moment from 'moment';
 import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
-import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 
 let template: string = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');

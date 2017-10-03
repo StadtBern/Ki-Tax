@@ -1,18 +1,24 @@
 package ch.dvbern.ebegu.entities;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.validators.CheckMitteilungCompleteness;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 import static ch.dvbern.ebegu.util.Constants.DB_TEXTAREA_LENGTH;

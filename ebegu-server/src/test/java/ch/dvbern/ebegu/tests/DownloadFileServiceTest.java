@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.tests;
 
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.Dokument;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.DownloadFile;
@@ -14,8 +16,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
 
 /**
  * Tests fuer die Klasse DokumentGrundService

@@ -1,10 +1,10 @@
 package ch.dvbern.ebegu.util;
 
-
-import ch.dvbern.ebegu.types.DateRange;
+import java.util.Comparator;
 
 import javax.annotation.Nonnull;
-import java.util.Comparator;
+
+import ch.dvbern.ebegu.types.DateRange;
 
 public interface Gueltigkeit {
 

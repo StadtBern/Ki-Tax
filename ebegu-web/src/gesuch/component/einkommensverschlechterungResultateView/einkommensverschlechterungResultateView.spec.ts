@@ -8,11 +8,11 @@ import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanziell
 import WizardStepManager from '../../service/wizardStepManager';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
-import IStateService = angular.ui.IStateService;
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
-import IScope = angular.IScope;
 import {ITimeoutService} from 'angular';
+import IStateService = angular.ui.IStateService;
+import IScope = angular.IScope;
 
 describe('einkommensverschlechterungResultateView', function () {
 

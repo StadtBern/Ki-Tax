@@ -1,8 +1,8 @@
 package ch.dvbern.ebegu.vorlagen.verfuegung;
 
-import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
-
 import java.util.List;
+
+import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
 
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland

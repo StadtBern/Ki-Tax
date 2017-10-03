@@ -9,16 +9,27 @@
  */
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.UserRole;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.enums.UserRole;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 

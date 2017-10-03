@@ -19,13 +19,6 @@ import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.hibernate.envers.DefaultRevisionEntity;
-import org.hibernate.envers.RevisionType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ch.dvbern.ebegu.api.dtos.JaxAbstractDTO;
 import ch.dvbern.ebegu.api.dtos.JaxAbstractDateRangedDTO;
 import ch.dvbern.ebegu.api.dtos.JaxAbstractFinanzielleSituation;
@@ -173,8 +166,14 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import ch.dvbern.lib.date.DateConvertUtils;
-import org.apache.commons.lang3.NotImplementedException;
 import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.hibernate.envers.DefaultRevisionEntity;
+import org.hibernate.envers.RevisionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

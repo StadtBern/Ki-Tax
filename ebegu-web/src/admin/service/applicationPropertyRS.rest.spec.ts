@@ -5,7 +5,6 @@ import {ApplicationPropertyRS} from './applicationPropertyRS.rest';
 import TSApplicationProperty from '../../models/TSApplicationProperty';
 import {EbeguWebAdmin} from '../admin.module';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 
 import IPromise = angular.IPromise;

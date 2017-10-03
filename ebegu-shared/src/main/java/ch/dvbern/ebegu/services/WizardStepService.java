@@ -1,16 +1,16 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.WizardStep;
-import ch.dvbern.ebegu.enums.WizardStepName;
+import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
-import java.util.List;
-import java.util.Optional;
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.WizardStep;
+import ch.dvbern.ebegu.enums.WizardStepName;
 
 /**
  * Service zum Verwalten von WizardStep

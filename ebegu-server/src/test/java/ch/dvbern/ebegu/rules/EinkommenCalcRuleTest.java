@@ -1,15 +1,23 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
+import ch.dvbern.ebegu.entities.FinanzielleSituation;
+import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.MathUtil;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
 
 /**
  * Testet die MaximalesEinkommen-Regel

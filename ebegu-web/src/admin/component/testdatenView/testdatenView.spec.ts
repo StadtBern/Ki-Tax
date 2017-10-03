@@ -1,8 +1,6 @@
 import '../../../bootstrap.ts';
 import 'angular-mocks';
 import {EbeguWebAdmin} from '../../admin.module';
-import IInjectorService = angular.auto.IInjectorService;
-import IRootScopeService = angular.IRootScopeService;
 import IScope = angular.IScope;
 
 describe('testdatenView', function () {

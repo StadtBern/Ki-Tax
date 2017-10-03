@@ -1,5 +1,14 @@
 package ch.dvbern.ebegu.tests.vorlagen;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
@@ -9,14 +18,6 @@ import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
 import org.junit.Assert;
 import org.junit.Test;
-
-import javax.annotation.Nonnull;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Test fuer PrintUtil

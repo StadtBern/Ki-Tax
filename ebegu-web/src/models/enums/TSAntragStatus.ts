@@ -1,4 +1,5 @@
 import {TSRole} from './TSRole';
+
 export enum TSAntragStatus {
     IN_BEARBEITUNG_GS = <any> 'IN_BEARBEITUNG_GS',
     FREIGABEQUITTUNG = <any> 'FREIGABEQUITTUNG',

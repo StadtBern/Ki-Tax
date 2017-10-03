@@ -1,17 +1,18 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
-import ch.dvbern.ebegu.types.DateRange;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.envers.Audited;
+import java.time.LocalDate;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
+import ch.dvbern.ebegu.types.DateRange;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.envers.Audited;
 
 /**
  * Entity fuer Gesuchsperiode.

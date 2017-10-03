@@ -1,11 +1,12 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-
-import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 
 /**
  * Interface für alle Berechnungs-Regeln in Ki-Tax.

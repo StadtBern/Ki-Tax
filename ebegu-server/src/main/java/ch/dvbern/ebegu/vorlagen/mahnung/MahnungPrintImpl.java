@@ -1,5 +1,11 @@
 package ch.dvbern.ebegu.vorlagen.mahnung;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.enums.MahnungTyp;
@@ -7,12 +13,6 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland

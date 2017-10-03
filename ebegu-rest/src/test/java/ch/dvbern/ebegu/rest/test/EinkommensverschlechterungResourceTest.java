@@ -1,5 +1,8 @@
 package ch.dvbern.ebegu.rest.test;
 
+import javax.inject.Inject;
+import javax.ws.rs.core.UriInfo;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
@@ -18,9 +21,6 @@ import org.jboss.resteasy.spi.ResteasyUriInfo;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import javax.ws.rs.core.UriInfo;
 
 /**
  * Testet GesuchstellerResource

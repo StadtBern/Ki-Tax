@@ -1,6 +1,6 @@
 import {EbeguWebCore} from '../../core/core.module';
 import GesuchModelManager from './gesuchModelManager';
-import {IHttpBackendService, IScope, IQService} from 'angular';
+import {IHttpBackendService, IQService, IScope} from 'angular';
 import BetreuungRS from '../../core/service/betreuungRS.rest';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import FallRS from './fallRS.rest';
@@ -25,8 +25,8 @@ import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
-import IPromise = angular.IPromise;
 import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
+import IPromise = angular.IPromise;
 
 describe('gesuchModelManager', function () {
 

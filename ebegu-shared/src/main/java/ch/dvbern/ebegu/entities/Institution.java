@@ -2,13 +2,17 @@ package ch.dvbern.ebegu.entities;
 
 import java.util.Objects;
 
-import ch.dvbern.ebegu.util.Constants;
-import org.hibernate.envers.Audited;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import ch.dvbern.ebegu.util.Constants;
+import org.hibernate.envers.Audited;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 

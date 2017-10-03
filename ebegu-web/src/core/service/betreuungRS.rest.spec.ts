@@ -4,12 +4,10 @@ import {EbeguWebCore} from '../core.module';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpBackendService, IQService} from 'angular';
 import TSBetreuung from '../../models/TSBetreuung';
-import IInjectorService = angular.auto.IInjectorService;
 import BetreuungRS from './betreuungRS.rest';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import TestDataUtil from '../../utils/TestDataUtil';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
-
 
 describe('betreuungRS', function () {
 

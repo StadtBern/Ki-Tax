@@ -1,5 +1,5 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpService, IHttpPromise, IPromise, ILogService} from 'angular';
+import {IHttpPromise, IHttpService, ILogService, IPromise} from 'angular';
 import {TSFachstelle} from '../../models/TSFachstelle';
 
 export class FachstelleRS {

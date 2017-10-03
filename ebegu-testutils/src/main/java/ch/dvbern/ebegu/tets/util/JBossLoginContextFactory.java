@@ -21,15 +21,20 @@
  */
 package ch.dvbern.ebegu.tets.util;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.security.auth.Subject;
-import javax.security.auth.callback.*;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Provides a {@link LoginContext} for use by unit tests. It is driven by users.properties and roles.properties files as

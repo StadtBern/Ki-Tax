@@ -1,5 +1,9 @@
 package ch.dvbern.ebegu.rest.test;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
 import ch.dvbern.ebegu.api.resource.GesuchsperiodeResource;
@@ -13,9 +17,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.util.List;
 
 /**
  * Testet die Gesuchsperiode Resource

@@ -1,13 +1,13 @@
 package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
+import java.math.BigDecimal;
+import java.util.Set;
+
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
-
-import java.math.BigDecimal;
-import java.util.Set;
 
 /**
  * Gemeinsame Basisklasse zum berechnen der benötigten Dokumente für die Finanzielle Situation und die Einkommensverschlechterung

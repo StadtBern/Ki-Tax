@@ -1,7 +1,5 @@
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
-import {IState} from 'angular-ui-router';
-import {IStateParamsService} from 'angular-ui-router';
-
+import {IState, IStateParamsService} from 'angular-ui-router';
 
 alleVerfuegungenRun.$inject = ['RouterHelper'];
 /* @ngInject */

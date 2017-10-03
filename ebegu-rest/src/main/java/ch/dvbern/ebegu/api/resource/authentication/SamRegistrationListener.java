@@ -4,12 +4,11 @@ import javax.inject.Inject;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.annotation.WebListener;
 
+import ch.dvbern.ebegu.config.EbeguConfiguration;
 import org.omnifaces.security.jaspic.core.Jaspic;
 import org.omnifaces.security.jaspic.listeners.BaseServletContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.dvbern.ebegu.config.EbeguConfiguration;
 
 @WebListener
 public class SamRegistrationListener extends BaseServletContextListener {

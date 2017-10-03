@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.tets.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Root XML Klasse zum speichern aller Verfuegungszeitabschnitte in XML file

@@ -1,14 +1,15 @@
 package ch.dvbern.ebegu.util;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
+import javax.persistence.EntityManager;
+
 import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.EntityManager;
-import java.time.LocalDate;
-import java.util.Optional;
 
 /**
  * Allgemeine Utils fuer Betreuung

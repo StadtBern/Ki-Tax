@@ -19,7 +19,6 @@ import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
-
 import IFormController = angular.IFormController;
 import IQService = angular.IQService;
 import IWindowService = angular.IWindowService;

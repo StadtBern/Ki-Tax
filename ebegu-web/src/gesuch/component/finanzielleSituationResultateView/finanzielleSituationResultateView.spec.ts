@@ -3,8 +3,6 @@ import 'angular-mocks';
 import {EbeguWebGesuch} from '../../gesuch.module';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
 import TSFamiliensituation from '../../../models/TSFamiliensituation';
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import TSFamiliensituationContainer from '../../../models/TSFamiliensituationContainer';

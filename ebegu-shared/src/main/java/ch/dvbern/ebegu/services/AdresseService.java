@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Adresse;
-
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Adresse;
 
 /**
  * Service zum Verwalten von Personen Adressen

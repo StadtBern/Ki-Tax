@@ -5,10 +5,6 @@ import {EbeguWebGesuch} from '../../gesuch.module';
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
 import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
-import IQService = angular.IQService;
-import IScope = angular.IScope;
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 

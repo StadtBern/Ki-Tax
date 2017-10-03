@@ -1,7 +1,6 @@
 import TSAbstractEntity from './TSAbstractEntity';
 import * as moment from 'moment';
 
-
 export default class TSStatistikParameter extends TSAbstractEntity {
     private _gesuchsperiode: string;
     private _stichtag: moment.Moment;

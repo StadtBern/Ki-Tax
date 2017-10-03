@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Fachstelle;
-
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Fachstelle;
 
 /**
  * Service zum Verwalten von Fachstellen

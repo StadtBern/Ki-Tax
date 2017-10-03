@@ -1,9 +1,10 @@
 package ch.dvbern.ebegu.api.client;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
 
 /**
  * Jax Element for Response of OpenAm, gives result and page counts

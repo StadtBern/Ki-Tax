@@ -1,5 +1,5 @@
 import {IEntityRS} from '../../core/service/iEntityRS.rest';
-import {IHttpPromise, IHttpService, IPromise, ILogService, IHttpResponse} from 'angular';
+import {IHttpPromise, IHttpResponse, IHttpService, ILogService, IPromise} from 'angular';
 import TSGesuch from '../../models/TSGesuch';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSMahnung from '../../models/TSMahnung';

@@ -2,6 +2,7 @@ import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import {DownloadRS} from '../../service/downloadRS.rest';
+
 require('./dv-downloadmenu.less');
 let template = require('./dv-downloadmenu.html');
 

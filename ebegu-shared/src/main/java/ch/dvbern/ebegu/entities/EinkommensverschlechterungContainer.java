@@ -1,13 +1,18 @@
 package ch.dvbern.ebegu.entities;
 
+import javax.annotation.Nonnull;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 /**
  * Container-Entity für dieEinkommensverschlechterung: Diese muss für jeden

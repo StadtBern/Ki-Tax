@@ -1,8 +1,6 @@
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
-import {IState} from 'angular-ui-router';
-import {IStateParamsService} from 'angular-ui-router';
+import {IState, IStateParamsService} from 'angular-ui-router';
 import TSZahlungsauftrag from '../models/TSZahlungsauftrag';
-
 
 zahlungRun.$inject = ['RouterHelper'];
 /* @ngInject */

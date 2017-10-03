@@ -9,15 +9,19 @@
  */
 package ch.dvbern.ebegu.util;
 
-
-import ch.dvbern.ebegu.types.DateRange;
-
-import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.types.DateRange;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

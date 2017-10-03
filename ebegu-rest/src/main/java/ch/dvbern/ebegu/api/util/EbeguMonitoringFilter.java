@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.api.util;
 
-import net.bull.javamelody.MonitoringFilter;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
-import java.util.regex.Pattern;
+
+import net.bull.javamelody.MonitoringFilter;
 
 /**
  * Created by imanol on 02.03.16.

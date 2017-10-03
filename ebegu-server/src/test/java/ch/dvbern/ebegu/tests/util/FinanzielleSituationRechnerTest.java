@@ -1,5 +1,11 @@
 package ch.dvbern.ebegu.tests.util;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Month;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -14,11 +20,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.Month;
 
 /**
  * Tests fuer FinanzielleSituationRechner

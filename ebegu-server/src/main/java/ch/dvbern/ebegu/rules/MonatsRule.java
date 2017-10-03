@@ -1,14 +1,15 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-import ch.dvbern.ebegu.types.DateRange;
-
-import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.types.DateRange;
 
 /**
  * Sonderregel die nach der eigentlich Berechnung angewendet wird und welche die Zeitabschnitte auf Monate begrenzt

@@ -1,6 +1,5 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpService, IHttpPromise} from 'angular';
-
+import {IHttpPromise, IHttpService} from 'angular';
 
 export class ReindexRS {
     serviceURL: string;

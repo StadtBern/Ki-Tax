@@ -1,7 +1,6 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSApplicationProperty from '../../models/TSApplicationProperty';
-import {IHttpService, IPromise, IHttpPromise} from 'angular';
-
+import {IHttpPromise, IHttpService, IPromise} from 'angular';
 
 export class ApplicationPropertyRS {
     serviceURL: string;

@@ -1,12 +1,12 @@
 package ch.dvbern.ebegu.util.crypto;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 import static ch.dvbern.ebegu.util.crypto.PBKDF2PasswordHash.createHash;
 import static ch.dvbern.ebegu.util.crypto.PBKDF2PasswordHash.validatePassword;

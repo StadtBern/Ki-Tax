@@ -1,12 +1,12 @@
 import {IPromise, IQService} from 'angular';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
-import {TSWizardStepName, getTSWizardStepNameValues} from '../../models/enums/TSWizardStepName';
+import {getTSWizardStepNameValues, TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import TSWizardStep from '../../models/TSWizardStep';
 import WizardStepRS from './WizardStepRS.rest';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
-import {TSAntragStatus, isAtLeastFreigegeben, isAnyStatusOfVerfuegt} from '../../models/enums/TSAntragStatus';
+import {isAnyStatusOfVerfuegt, isAtLeastFreigegeben, TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSGesuch from '../../models/TSGesuch';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import {TSAuthEvent} from '../../models/enums/TSAuthEvent';

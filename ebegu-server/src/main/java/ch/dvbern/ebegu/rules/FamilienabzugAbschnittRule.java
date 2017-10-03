@@ -1,5 +1,17 @@
 package ch.dvbern.ebegu.rules;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
@@ -10,14 +22,6 @@ import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.MathUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.*;
 
 /**
  * Umsetzung der ASIV Revision

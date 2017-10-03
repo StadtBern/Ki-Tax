@@ -7,12 +7,11 @@ import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
 
-import com.google.common.collect.ArrayListMultimap;
-
 import ch.dvbern.ebegu.dto.JaxAbstractAntragDTO;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.JaxFallAntragDTO;
 import ch.dvbern.ebegu.entities.Fall;
+import com.google.common.collect.ArrayListMultimap;
 
 /**
  * DTO to pass around a result that was found in the Lucene index

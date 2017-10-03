@@ -1,5 +1,9 @@
 package ch.dvbern.ebegu.tests;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
@@ -10,10 +14,6 @@ import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Test copy for mutation

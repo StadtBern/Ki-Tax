@@ -7,7 +7,6 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpBackendService, IQService} from 'angular';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
 import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
-import IInjectorService = angular.auto.IInjectorService;
 
 
 describe('GesuchstellerRS', function () {

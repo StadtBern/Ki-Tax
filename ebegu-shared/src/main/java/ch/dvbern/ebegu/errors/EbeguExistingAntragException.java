@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.errors;
 
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.Serializable;
+
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 
 /**
  * Exception die geworfen wird, wenn es bereits ein offener Antrag existiert, der

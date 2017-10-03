@@ -2,15 +2,15 @@ package ch.dvbern.ebegu.entities;
 
 import java.util.Objects;
 
-import ch.dvbern.ebegu.util.Constants;
-import org.hibernate.envers.Audited;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import ch.dvbern.ebegu.util.Constants;
+import org.hibernate.envers.Audited;
 
 /**
  * Entitaet zum Speichern von Fachstellen in der Datenbank.

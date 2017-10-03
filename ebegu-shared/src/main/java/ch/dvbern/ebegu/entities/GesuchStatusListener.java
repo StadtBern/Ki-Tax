@@ -1,5 +1,10 @@
 package ch.dvbern.ebegu.entities;
 
+import java.util.List;
+
+import javax.persistence.PostLoad;
+import javax.persistence.PreUpdate;
+
 import ch.dvbern.ebegu.enums.AntragEvents;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -10,10 +15,6 @@ import com.github.oxo42.stateless4j.StateMachine;
 import com.github.oxo42.stateless4j.StateMachineConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.PostLoad;
-import javax.persistence.PreUpdate;
-import java.util.List;
 
 import static ch.dvbern.ebegu.statemachine.GesuchEventWithParam.getTrigger;
 

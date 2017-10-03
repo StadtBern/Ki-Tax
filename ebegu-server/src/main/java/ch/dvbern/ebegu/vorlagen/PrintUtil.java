@@ -1,5 +1,13 @@
 package ch.dvbern.ebegu.vorlagen;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.BinaryOperator;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
@@ -10,13 +18,6 @@ import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import com.google.common.base.Strings;
 import org.apache.commons.lang.StringUtils;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.BinaryOperator;
 
 /**
  *

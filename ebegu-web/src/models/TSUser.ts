@@ -1,4 +1,4 @@
-import {TSRole, rolePrefix} from './enums/TSRole';
+import {rolePrefix, TSRole} from './enums/TSRole';
 import {TSMandant} from './TSMandant';
 import {TSTraegerschaft} from './TSTraegerschaft';
 import TSInstitution from './TSInstitution';

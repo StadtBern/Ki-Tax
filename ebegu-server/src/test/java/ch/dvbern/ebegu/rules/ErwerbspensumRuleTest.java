@@ -1,5 +1,10 @@
 package ch.dvbern.ebegu.rules;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.HashSet;
+import java.util.List;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -11,11 +16,6 @@ import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * Tests für ErwerbspensumRule

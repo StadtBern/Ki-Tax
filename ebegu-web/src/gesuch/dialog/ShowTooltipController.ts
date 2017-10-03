@@ -1,7 +1,7 @@
 import {IPromise} from 'angular';
+import {IDVFocusableController} from '../../core/component/IDVFocusableController';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
-import {IDVFocusableController} from '../../core/component/IDVFocusableController';
 
 export class ShowTooltipController {
 

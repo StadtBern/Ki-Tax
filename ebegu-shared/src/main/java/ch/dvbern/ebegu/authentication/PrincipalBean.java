@@ -1,11 +1,9 @@
 package ch.dvbern.ebegu.authentication;
 
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Mandant;
-import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.services.BenutzerService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,10 +12,13 @@ import javax.ejb.SessionContext;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.TransactionSynchronizationRegistry;
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.services.BenutzerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

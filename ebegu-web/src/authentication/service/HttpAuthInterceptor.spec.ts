@@ -1,4 +1,4 @@
-import {IWindowService, IRootScopeService} from 'angular';
+import {IRootScopeService, IWindowService} from 'angular';
 import HttpAuthInterceptor from './HttpAuthInterceptor';
 import {EbeguAuthentication} from '../authentication.module';
 import {EbeguWebCore} from '../../core/core.module';

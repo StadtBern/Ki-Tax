@@ -1,16 +1,21 @@
 package ch.dvbern.ebegu.entities;
 
+import java.time.LocalDate;
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.util.Objects;
 
 /**
  * Entitaet zum Speichern von Familiensituation in der Datenbank.

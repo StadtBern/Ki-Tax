@@ -1,7 +1,22 @@
 package ch.dvbern.ebegu.util;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.enterprise.context.ContextNotActiveException;
+import javax.enterprise.inject.spi.CDI;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+
 import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.SequenceType;
 import ch.dvbern.ebegu.enums.UserRole;
@@ -13,14 +28,6 @@ import ch.dvbern.ebegu.services.SequenceService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.enterprise.context.ContextNotActiveException;
-import javax.enterprise.inject.spi.CDI;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 public class AbstractEntityListener {
 

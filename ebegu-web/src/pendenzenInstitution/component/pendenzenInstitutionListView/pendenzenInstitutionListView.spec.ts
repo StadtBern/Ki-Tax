@@ -1,7 +1,7 @@
 import {EbeguWebPendenzenInstitution} from '../../pendenzenInstitution.module';
 import PendenzInstitutionRS from '../../service/PendenzInstitutionRS.rest';
 import {PendenzenInstitutionListViewController} from './pendenzenInstitutionListView';
-import {IScope, IQService, IHttpBackendService} from 'angular';
+import {IHttpBackendService, IQService, IScope} from 'angular';
 import TSPendenzInstitution from '../../../models/TSPendenzInstitution';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';

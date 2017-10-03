@@ -1,6 +1,5 @@
-import {IDirective, IDirectiveFactory, IAugmentedJQuery, IAttributes, IScope} from 'angular';
+import {IAttributes, IAugmentedJQuery, IDirective, IDirectiveFactory, IScope} from 'angular';
 import {DVRoleElementController} from '../../controller/DVRoleElementController';
-
 
 /**
  * Attribute Directive um Elementen zu enable/disable.

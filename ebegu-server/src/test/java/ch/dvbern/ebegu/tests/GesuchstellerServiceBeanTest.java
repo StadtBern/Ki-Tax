@@ -1,6 +1,15 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.services.GesuchstellerService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -12,11 +21,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Tests fuer die Klasse GesuchstellerService

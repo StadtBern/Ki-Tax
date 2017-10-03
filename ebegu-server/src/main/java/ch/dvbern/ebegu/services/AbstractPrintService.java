@@ -1,9 +1,10 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.EbeguVorlage;
-import ch.dvbern.ebegu.enums.EbeguVorlageKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -11,11 +12,11 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.util.Optional;
+
+import ch.dvbern.ebegu.entities.EbeguVorlage;
+import ch.dvbern.ebegu.enums.EbeguVorlageKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract Service class, die von allen PrintServices erweitert werden muss. Sie enthaelt Methoden, um die Vorlagen zu laden

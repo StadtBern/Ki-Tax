@@ -3,11 +3,10 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituationContainer';
 import TSGesuch from '../../models/TSGesuch';
 import TSFinanzielleSituationResultateDTO from '../../models/dto/TSFinanzielleSituationResultateDTO';
-import IPromise = angular.IPromise;
-import ILogService = angular.ILogService;
 import WizardStepManager from './wizardStepManager';
 import TSFinanzModel from '../../models/TSFinanzModel';
-
+import IPromise = angular.IPromise;
+import ILogService = angular.ILogService;
 
 export default class FinanzielleSituationRS {
     serviceURL: string;

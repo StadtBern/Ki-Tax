@@ -1,13 +1,19 @@
 package ch.dvbern.ebegu.rules.util;
 
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
-import java.util.*;
 
 /**
  * Test Class for Bemerkungsmerger

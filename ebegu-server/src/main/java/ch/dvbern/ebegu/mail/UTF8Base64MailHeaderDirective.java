@@ -1,14 +1,18 @@
 package ch.dvbern.ebegu.mail;
 
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import freemarker.core.Environment;
-import freemarker.template.*;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.StringUtils;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
+
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import freemarker.core.Environment;
+import freemarker.template.TemplateDirectiveBody;
+import freemarker.template.TemplateDirectiveModel;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateModel;
+import freemarker.template.TemplateModelException;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.StringUtils;
 
 /**
  * Freemarker-Direktive welche Text nach Base64 konvertiert und "=?UTF-8?B?" voran und "?=" nachstellt.

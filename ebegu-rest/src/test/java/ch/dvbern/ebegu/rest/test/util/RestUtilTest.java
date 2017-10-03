@@ -1,5 +1,13 @@
 package ch.dvbern.ebegu.rest.test.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxInstitution;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
@@ -9,9 +17,6 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.junit.Assert;
 import org.junit.Test;
-
-import javax.annotation.Nonnull;
-import java.util.*;
 
 /**
  * Test fuer RestUtil

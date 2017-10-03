@@ -11,7 +11,6 @@ import TSGesuch from '../models/TSGesuch';
 import {TSRoleUtil} from '../utils/TSRoleUtil';
 import {TSRole} from '../models/enums/TSRole';
 import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
-import ITranslateService = angular.translate.ITranslateService;
 import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
 import TSEWKPerson from '../models/TSEWKPerson';
 import GesuchstellerRS from '../core/service/gesuchstellerRS.rest';
@@ -22,6 +21,7 @@ import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import EwkRS from '../core/service/ewkRS.rest';
 import TSGesuchsteller from '../models/TSGesuchsteller';
 import {TSGesuchBetreuungenStatus} from '../models/enums/TSGesuchBetreuungenStatus';
+import ITranslateService = angular.translate.ITranslateService;
 
 export class GesuchRouteController {
 

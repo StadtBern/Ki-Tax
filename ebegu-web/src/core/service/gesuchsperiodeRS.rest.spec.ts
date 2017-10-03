@@ -9,7 +9,6 @@ import TestDataUtil from '../../utils/TestDataUtil';
 import * as moment from 'moment';
 import {TSGesuchsperiodeStatus} from '../../models/enums/TSGesuchsperiodeStatus';
 
-
 describe('gesuchsperiodeRS', function () {
 
     let gesuchsperiodeRS: GesuchsperiodeRS;

@@ -11,20 +11,6 @@ package ch.dvbern.ebegu.vorlagen;
 * Ersteller: zeab am: 10.08.2016
 */
 
-import ch.dvbern.ebegu.errors.MergeDocException;
-import ch.dvbern.lib.doctemplate.common.DocTemplateException;
-import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
-import com.google.common.io.ByteStreams;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Image;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.*;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.poi.xwpf.converter.pdf.PdfConverter;
-import org.apache.poi.xwpf.converter.pdf.PdfOptions;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-
-import javax.annotation.Nonnull;
 import java.awt.color.ICC_Profile;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,6 +19,31 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.Objects;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.lib.doctemplate.common.DocTemplateException;
+import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
+import com.google.common.io.ByteStreams;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PRStream;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfDocument;
+import com.lowagie.text.pdf.PdfGState;
+import com.lowagie.text.pdf.PdfLayer;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfObject;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStamper;
+import com.lowagie.text.pdf.PdfWriter;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.poi.xwpf.converter.pdf.PdfConverter;
+import org.apache.poi.xwpf.converter.pdf.PdfOptions;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 /**
  * Helper Klasse um einen DocX zu einem PDF zu konvertieren

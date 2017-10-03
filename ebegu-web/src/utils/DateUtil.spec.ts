@@ -1,6 +1,5 @@
 import DateUtil from './DateUtil';
 import * as moment from 'moment';
-import Moment = moment.Moment;
 
 describe('dateUtil', function () {
 

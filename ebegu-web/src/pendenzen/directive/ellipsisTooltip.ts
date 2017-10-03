@@ -1,4 +1,4 @@
-import {IDirective, IDirectiveFactory, IDirectiveLinkFn, IScope, IAugmentedJQuery} from 'angular';
+import {IAugmentedJQuery, IDirective, IDirectiveFactory, IDirectiveLinkFn, IScope} from 'angular';
 
 export default class EllipsisTooltip implements IDirective {
 

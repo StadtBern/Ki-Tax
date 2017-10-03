@@ -4,6 +4,7 @@ import {TSGeschlecht} from './enums/TSGeschlecht';
 import TSEWKEinwohnercode from './TSEWKEinwohnercode';
 import TSEWKAdresse from './TSEWKAdresse';
 import TSEWKBeziehung from './TSEWKBeziehung';
+
 /**
  * DTO für eine Person aus dem EWK
  */

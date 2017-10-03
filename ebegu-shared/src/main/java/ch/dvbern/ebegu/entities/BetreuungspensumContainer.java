@@ -1,14 +1,20 @@
 package ch.dvbern.ebegu.entities;
 
+import javax.annotation.Nonnull;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import ch.dvbern.ebegu.util.EbeguUtil;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 
 /**

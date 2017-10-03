@@ -1,14 +1,24 @@
 package ch.dvbern.ebegu.dto.dataexport.v1;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.types.DateRange;
-import org.apache.commons.lang.Validate;
-
-import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Adresse;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.types.DateRange;
+import org.apache.commons.lang.Validate;
 
 /**
  * Converter to change to create the ExportDTO of a given Verfuegung

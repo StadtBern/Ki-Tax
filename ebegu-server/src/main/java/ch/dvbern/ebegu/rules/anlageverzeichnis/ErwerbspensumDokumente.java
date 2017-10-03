@@ -1,10 +1,18 @@
 package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
-
 import java.time.LocalDate;
 import java.util.Set;
+
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.Erwerbspensum;
+import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
+import ch.dvbern.ebegu.enums.DokumentTyp;
+import ch.dvbern.ebegu.enums.Taetigkeit;
+import ch.dvbern.ebegu.enums.Zuschlagsgrund;
 
 /**
  * Dokumente für Erwerbspensum:

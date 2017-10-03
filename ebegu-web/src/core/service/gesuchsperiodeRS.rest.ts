@@ -1,4 +1,4 @@
-import {IHttpService, ILogService, IPromise, IHttpPromise, IQService} from 'angular';
+import {IHttpPromise, IHttpService, ILogService, IPromise, IQService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 

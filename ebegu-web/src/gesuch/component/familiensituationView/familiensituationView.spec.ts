@@ -1,8 +1,6 @@
 import '../../../bootstrap.ts';
 import 'angular-mocks';
 import {EbeguWebGesuch} from '../../gesuch.module';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
 
 describe('familiensituationView', function () {
 

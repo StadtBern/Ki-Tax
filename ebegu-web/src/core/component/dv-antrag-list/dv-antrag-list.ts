@@ -1,10 +1,8 @@
-import {IComponentOptions, IFilterService, IPromise, ILogService} from 'angular';
+import {IComponentOptions, IFilterService, ILogService, IPromise} from 'angular';
 import TSAbstractAntragEntity from '../../../models/TSAbstractAntragEntity';
-import {TSAntragTyp, getNormalizedTSAntragTypValues} from '../../../models/enums/TSAntragTyp';
-import {
-    TSAntragStatus, getTSAntragStatusValuesByRole
-} from '../../../models/enums/TSAntragStatus';
-import {TSBetreuungsangebotTyp, getTSBetreuungsangebotTypValues} from '../../../models/enums/TSBetreuungsangebotTyp';
+import {getNormalizedTSAntragTypValues, TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import {getTSAntragStatusValuesByRole, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import TSInstitution from '../../../models/TSInstitution';
 import TSAntragDTO from '../../../models/TSAntragDTO';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
@@ -13,11 +11,10 @@ import TSAntragSearchresultDTO from '../../../models/TSAntragSearchresultDTO';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
 import * as moment from 'moment';
-import Moment = moment.Moment;
-import IDocumentService = angular.IDocumentService;
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import TSUser from '../../../models/TSUser';
+
 let template = require('./dv-antrag-list.html');
 require('./dv-antrag-list.less');
 

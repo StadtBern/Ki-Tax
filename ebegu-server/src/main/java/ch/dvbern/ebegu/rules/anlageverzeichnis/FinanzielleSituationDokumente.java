@@ -1,12 +1,17 @@
 package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
-import ch.dvbern.ebegu.entities.*;
+import java.math.BigDecimal;
+import java.util.Set;
+
+import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.FinanzielleSituation;
+import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
-
-import java.math.BigDecimal;
-import java.util.Set;
 
 /**
  * Dokumente für FinanzielleSituation:

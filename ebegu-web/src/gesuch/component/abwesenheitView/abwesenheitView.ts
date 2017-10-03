@@ -12,11 +12,11 @@ import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotT
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import EbeguUtil from '../../../utils/EbeguUtil';
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
-import EbeguUtil from '../../../utils/EbeguUtil';
 
 let template = require('./abwesenheitView.html');
 require('./abwesenheitView.less');

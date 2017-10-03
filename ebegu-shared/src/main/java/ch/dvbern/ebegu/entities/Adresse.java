@@ -1,17 +1,22 @@
 package ch.dvbern.ebegu.entities;
 
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import ch.dvbern.ebegu.enums.Land;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.Objects;
 
 /**
  * Entitaet zum Speichern von Adressen  in der Datenbank.

@@ -1,5 +1,6 @@
 import TSAbstractEntity from './TSAbstractEntity';
 import TSEWKPerson from './TSEWKPerson';
+
 /**
  * DTO für Resultate aus dem EWK
  */

@@ -1,5 +1,5 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpService, IPromise, ILogService} from 'angular';
+import {IHttpService, ILogService, IPromise} from 'angular';
 import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
 import TSEWKResultat from '../../models/TSEWKResultat';
 import TSGesuchsteller from '../../models/TSGesuchsteller';

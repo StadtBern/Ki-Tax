@@ -1,11 +1,12 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.util.UploadFileInfo;
+import java.util.UUID;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import java.util.UUID;
+
+import ch.dvbern.ebegu.util.UploadFileInfo;
 
 /**
  * Entitaet zum Speichern von DownloadFile in der Datenbank.

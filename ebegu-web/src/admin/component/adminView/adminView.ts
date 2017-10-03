@@ -5,7 +5,6 @@ import {IComponentOptions} from 'angular';
 import {ReindexRS} from '../../service/reindexRS.rest';
 import AbstractAdminViewController from '../../abstractAdminView';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import IScope = angular.IScope;
 require('./adminView.less');
 let template = require('./adminView.html');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');

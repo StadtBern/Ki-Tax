@@ -1,4 +1,5 @@
-import {TSRole, getTSRoleValues} from '../models/enums/TSRole';
+import {getTSRoleValues, TSRole} from '../models/enums/TSRole';
+
 /**
  * Hier findet man unterschiedliche Hilfsmethoden, um die Rollen von TSRole zu holen
  */

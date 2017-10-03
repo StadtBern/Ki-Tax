@@ -1,5 +1,5 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpService, IPromise, ILogService} from 'angular';
+import {IHttpService, ILogService, IPromise} from 'angular';
 import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
 import DateUtil from '../../utils/DateUtil';
 import TSZahlung from '../../models/TSZahlung';

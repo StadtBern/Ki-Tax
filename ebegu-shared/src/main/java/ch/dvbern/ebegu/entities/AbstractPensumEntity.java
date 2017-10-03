@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
-import org.hibernate.envers.Audited;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
@@ -8,7 +8,8 @@ import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
+
+import org.hibernate.envers.Audited;
 
 /**
  * Abstrakte Entitaet. Muss von Entitaeten erweitert werden, die ein Pensum (Prozent) und ein DateRange beeinhalten.

@@ -12,7 +12,6 @@ import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
 import PendenzInstitutionRS from '../../service/PendenzInstitutionRS.rest';
 import {InstitutionStammdatenRS} from '../../../core/service/institutionStammdatenRS.rest';
 import TSBetreuungsnummerParts from '../../../models/dto/TSBetreuungsnummerParts';
-import ITimeoutService = angular.ITimeoutService;
 let template = require('./pendenzenInstitutionListView.html');
 require('./pendenzenInstitutionListView.less');
 

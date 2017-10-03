@@ -1,17 +1,27 @@
 package ch.dvbern.ebegu.testfaelle;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.Geschlecht;
-import ch.dvbern.ebegu.enums.Kinderabzug;
-import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.MathUtil;
-
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import ch.dvbern.ebegu.entities.Abwesenheit;
+import ch.dvbern.ebegu.entities.AbwesenheitContainer;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Geschlecht;
+import ch.dvbern.ebegu.enums.Kinderabzug;
+import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.MathUtil;
 
 /**
  * Dieser TestFall ist eine Kopie von Waelti Dagmar (im Status vom 10.11.2016) aber mit einer Abwesenheit fuer das Kind Julio

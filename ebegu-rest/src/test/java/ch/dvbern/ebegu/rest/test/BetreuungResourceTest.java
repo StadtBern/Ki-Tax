@@ -1,9 +1,32 @@
 package ch.dvbern.ebegu.rest.test;
 
+import java.time.LocalDate;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.UriInfo;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.*;
-import ch.dvbern.ebegu.api.resource.*;
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
+import ch.dvbern.ebegu.api.dtos.JaxBetreuungspensumContainer;
+import ch.dvbern.ebegu.api.dtos.JaxFall;
+import ch.dvbern.ebegu.api.dtos.JaxGesuch;
+import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.dtos.JaxPensumFachstelle;
+import ch.dvbern.ebegu.api.resource.BetreuungResource;
+import ch.dvbern.ebegu.api.resource.FachstelleResource;
+import ch.dvbern.ebegu.api.resource.FallResource;
+import ch.dvbern.ebegu.api.resource.GesuchResource;
+import ch.dvbern.ebegu.api.resource.GesuchsperiodeResource;
+import ch.dvbern.ebegu.api.resource.KindResource;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.PensumFachstelle;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import ch.dvbern.ebegu.services.BenutzerService;
@@ -19,11 +42,6 @@ import org.jboss.resteasy.spi.ResteasyUriInfo;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import javax.ws.rs.core.UriInfo;
-import java.time.LocalDate;
-import java.util.Set;
 
 /**
  * Testet BetreuungResource

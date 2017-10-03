@@ -1,10 +1,7 @@
 package ch.dvbern.ebegu.api.resource;
 
-import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
-import ch.dvbern.ebegu.services.BenutzerService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Stateless;
@@ -14,8 +11,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
+import ch.dvbern.ebegu.services.BenutzerService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * REST Resource fuer Benutzer  (Auf client userRS.rest.ts also eigentlich die UserResources)

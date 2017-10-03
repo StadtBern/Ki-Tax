@@ -1,5 +1,21 @@
 package ch.dvbern.ebegu.api.resource;
 
+import java.io.IOException;
+
+import javax.annotation.Nonnull;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.resource.util.EbeguSchemaOutputResolver;
@@ -14,17 +30,6 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
-
-import javax.annotation.Nonnull;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import java.io.IOException;
 
 /**
  * Resource for Exporting data

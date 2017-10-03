@@ -1,16 +1,17 @@
 package ch.dvbern.ebegu.util;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import org.apache.commons.lang3.builder.CompareToBuilder;
-
-import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Allgemeine Utils fuer Dokumente

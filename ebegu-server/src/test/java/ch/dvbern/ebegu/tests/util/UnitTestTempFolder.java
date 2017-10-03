@@ -1,11 +1,11 @@
 package ch.dvbern.ebegu.tests.util;
 
-import org.junit.rules.TemporaryFolder;
-
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland

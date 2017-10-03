@@ -1,11 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.dto.suchfilter.lucene.EbeguLocalDateBridge;
-import ch.dvbern.ebegu.enums.Geschlecht;
-import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
+import java.time.LocalDate;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
@@ -14,8 +10,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EbeguLocalDateBridge;
+import ch.dvbern.ebegu.enums.Geschlecht;
+import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 

@@ -1,5 +1,5 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpService, IPromise, ILogService} from 'angular';
+import {IHttpService, ILogService, IPromise} from 'angular';
 import TSPendenzInstitution from '../../models/TSPendenzInstitution';
 
 export default class PendenzInstitutionRS {
