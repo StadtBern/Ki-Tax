@@ -59,29 +59,29 @@ xa-data-source add \
 	] \
 )
 
-#Add Properties
-/system-property=ebegu.client.using.https:add(value=false)
-/system-property=ebegu.openidm.enabled:add(value=false)
-/system-property=ebegu.development.mode:add(value=true)
-/system-property=ebegu.zahlungen.test.mode:add(value=true)
-/system-property=ebegu.dummy.login.enabled:add(value=true)
-/system-property=ebegu.mail.smtp.from:add(value=ebegu@dvbern.ch)
-/system-property=ebegu.mail.smtp.host:add(value=mailint.dvbern.ch)
-/system-property=ebegu.mail.smtp.port:add(value=25)
-/system-property=ebegu.mail.disabled:add(value=false)
-/system-property=ebegu.hostname:add(value=ebegu.dvbern.ch/web/#)
-/system-property=ebegu.personensuche.disabled:add(value=true)
+#Add Properties: Die Properties muessen direkt im standalone.xml konfiguriert werden. Beispiele:
+#/system-property=ebegu.client.using.https:add(value=false)
+#/system-property=ebegu.openidm.enabled:add(value=false)
+#/system-property=ebegu.development.mode:add(value=false)
+#/system-property=ebegu.zahlungen.test.mode:add(value=false)
+#/system-property=ebegu.dummy.login.enabled:add(value=false)
+#/system-property=ebegu.mail.smtp.from:add(value=ebegu@dvbern.ch)
+#/system-property=ebegu.mail.smtp.host:add(value=meinmailserver.dvbern.ch)
+#/system-property=ebegu.mail.smtp.port:add(value=25)
+#/system-property=ebegu.mail.disabled:add(value=false)
+#/system-property=ebegu.hostname:add(value=ebegu.dvbern.ch/web/#)
+#/system-property=ebegu.personensuche.disabled:add(value=true)
 ## Login Provider
-/system-property=ebegu.login.provider.api.url:add(value=http://localhost:8080/connector/api/v1)
-/system-property=ebegu.login.api.allow.remote:add(value=false)
-/system-property=ebegu.login.api.internal.user:add(value=connector_user)
-/system-property=ebegu.login.api.internal.password:add(value=c0nn3c4r_us3r)
+#/system-property=ebegu.login.provider.api.url:add(value=http://localhost:8080/connector/api/v1)
+#/system-property=ebegu.login.api.allow.remote:add(value=false)
+#/system-property=ebegu.login.api.internal.user:add(value=myUsername)
+#/system-property=ebegu.login.api.internal.password:add(value=myPassword)
 ## IAM Connector
-/system-property=ebegu.login.connector.rest.api.url:add(value=http://localhost:8080/ebegu/api/v1)
-/system-property=ebegu.login.connector.rest.api.user:add(value=connector_user)
-/system-property=ebegu.login.connector.rest.api.password:add(value=c0nn3c4r_us3r)
-/system-property=ebegu.login.connector.development.mode:add(value=true)
-/system-property=ebegu.fedlet.config.path:add(value=fedletConfig/https_test_ebegu_dvbern_ch_connector)
+#/system-property=ebegu.login.connector.rest.api.url:add(value=http://localhost:8080/ebegu/api/v1)
+#/system-property=ebegu.login.connector.rest.api.user:add(value=myUsername)
+#/system-property=ebegu.login.connector.rest.api.password:add(value=myPassword)
+#/system-property=ebegu.login.connector.development.mode:add(value=false)
+#/system-property=ebegu.fedlet.config.path:add(value=fedletConfig/https_test_ebegu_dvbern_ch_connector)
 
 #Helperskripts
 
