@@ -28,7 +28,6 @@ export default class TSUser {
         this._institution = institution;
     }
 
-
     get nachname(): string {
         return this._nachname;
     }

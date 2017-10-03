@@ -29,7 +29,6 @@ export default class TSEWKPerson extends TSAbstractEntity {
     private _adressen: Array<TSEWKAdresse>;
     private _beziehungen: Array<TSEWKBeziehung>;
 
-
     constructor(personID?: string, einwohnercodes?: Array<TSEWKEinwohnercode>, nachname?: string, ledigname?: string,
                 vorname?: string, rufname?: string, geburtsdatum?: moment.Moment, zuzugsdatum?: moment.Moment,
                 nationalitaet?: string, zivilstand?: string, zivilstandTxt?: string, zivilstandsdatum?: moment.Moment,

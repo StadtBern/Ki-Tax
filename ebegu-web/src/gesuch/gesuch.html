@@ -255,7 +255,7 @@
         <md-content class="ewk-content">
             <!-- Falls nicht mindestens der Gesuchsteller 1 erfasst ist, eine Info anzigen, wie man die
             EWK Suche starten kann -->
-            <div ng-if="!vm.showAbfrageForGesuchsteller(1)"  class="well well-status-warten">
+            <div ng-if="!vm.showAbfrageForGesuchsteller(1)" class="well well-status-warten">
                 <h3 data-translate="EWK_ABFRAGE_FEHLENDE_ANGABEN"></h3>
             </div>
             <div ng-repeat=" n in [1,2]" ng-if="vm.showAbfrageForGesuchsteller(n)">
@@ -276,7 +276,7 @@
                     class="well well-status-abgewiesen"
                     data-translate="EWK_TOO_MANY"
                     data-translate-value-n="{{vm.getEWKResultat(n).maxResultate}}"
-                    data-translate-value-i="{{vm.getEWKResultat(n).anzahlResultate}}" ></h3>
+                    data-translate-value-i="{{vm.getEWKResultat(n).anzahlResultate}}"></h3>
                 <!-- Resultat-Liste -->
                 <dv-accordion class="ewk" allow-multiple-sections="false">
                     <dv-accordion-tab
@@ -300,7 +300,7 @@
                                 <span class="ewk-label" data-translate="EWK_EINWOHNERCODE_VON"></span><span
                                 ng-bind="code.gueltigVon | amDateFormat: 'DD.MM.YYYY'"></span>
                             </div>
-                            <div  ng-repeat-end>
+                            <div ng-repeat-end>
                                 <span class="ewk-label" data-translate="EWK_EINWOHNERCODE_BIS"></span><span
                                 ng-bind="code.gueltigBis | amDateFormat: 'DD.MM.YYYY'"></span>
                             </div>
@@ -427,7 +427,7 @@
                                         </div>
                                         <dv-accordion class="ewksubsub" allow-multiple-sections="true">
                                             <dv-accordion-tab ng-if="beziehung.adresse"
-                                                tabid="{{beziehung.adresse}}">
+                                                              tabid="{{beziehung.adresse}}">
                                                 <tab-title>
                                                     {{beziehung.adresse.adresstypTxt}}
                                                 </tab-title>
@@ -482,11 +482,11 @@
                                     </tab-body>
                                 </dv-accordion-tab>
                             </dv-accordion>
-                            <div class="ewk-button"  layout="row" layout-align="center center">
+                            <div class="ewk-button" layout="row" layout-align="center center">
                                 <button ng-if="!vm.checkEWKPerson(person,n)"
                                         ng-click="vm.selectPerson(person,n)">
 
-                                                <span data-translate="EWK_LINK"></span>
+                                    <span data-translate="EWK_LINK"></span>
                                 </button>
                             </div>
                         </tab-body>

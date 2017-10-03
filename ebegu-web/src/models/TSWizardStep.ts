@@ -20,7 +20,6 @@ export default class TSWizardStep extends TSAbstractEntity {
         this._verfuegbar = verfuegbar;
     }
 
-
     get gesuchId(): string {
         return this._gesuchId;
     }

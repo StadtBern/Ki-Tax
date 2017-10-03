@@ -8,7 +8,6 @@ import * as moment from 'moment';
 
 export default class TSAbstractAntragEntity extends TSAbstractEntity {
 
-
     private _fall: TSFall;
     private _gesuchsperiode: TSGesuchsperiode;
     private _eingangsdatum: moment.Moment;
@@ -16,7 +15,6 @@ export default class TSAbstractAntragEntity extends TSAbstractEntity {
     private _status: TSAntragStatus;
     private _typ: TSAntragTyp;
     private _eingangsart: TSEingangsart;
-
 
     public get fall(): TSFall {
         return this._fall;

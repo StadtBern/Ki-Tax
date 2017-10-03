@@ -45,7 +45,6 @@ export default class DateUtil {
         return moment(aMoment).format(format);
     }
 
-
     /**
      * @param {Moment} aMoment time instance
      * @returns {?string} a Date (YYYY-MM-DD) representation of the given moment. NULL when aMoment is invalid

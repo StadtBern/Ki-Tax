@@ -19,7 +19,6 @@ export default class TSInstitution extends TSAbstractEntity {
         this._mail = mail;
     }
 
-
     public get name(): string {
         return this._name;
     }

@@ -14,15 +14,18 @@
     max-width: 100%;
     background: @contrast-lightest;
     top: (@navbar-height*2) + 4rem;
-    padding:2rem;
+    padding: 2rem;
 }
-.ewk-content{
-    padding:0;
-    overflow:unset;
+
+.ewk-content {
+    padding: 0;
+    overflow: unset;
 }
+
 .ewk-button {
-    padding:2rem;
+    padding: 2rem;
 }
+
 dv-accordion.ewk > ng-transclude > dv-accordion-tab {
     &.is-chosen {
         & > .dv-accordion-tab-title {
@@ -44,7 +47,6 @@ dv-accordion.ewk > ng-transclude > dv-accordion-tab {
         color: @contrast-darkest;
         background: @contrast-lightest;
         border-top: 1px solid @contrast-darkest;
-
 
         &.tab-open, &:hover {
             background: @contrast-light;
@@ -407,7 +409,7 @@ dv-accordion.ewksubsub {
         display: block;
         position: relative !important;
         margin: 0;
-        overflow:hidden;
+        overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
     }

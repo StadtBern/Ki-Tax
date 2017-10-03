@@ -16,6 +16,7 @@ import Moment = moment.Moment;
 export default class EbeguUtil {
 
     static $inject = ['$filter', 'CONSTANTS', '$translate'];
+
     /* @ngInject */
     constructor(private $filter: IFilterService, private CONSTANTS: any, private $translate: ITranslateService) {
     }
@@ -78,10 +79,9 @@ export default class EbeguUtil {
         return listResult;
     }
 
-    public  addZerosToNumber(number: number, length: number): string {
+    public addZerosToNumber(number: number, length: number): string {
         return EbeguUtil.addZerosToNumber(number, length);
     }
-
 
     /**
      * Die Methode fuegt 0s (links) hinzu bis die gegebene Nummer, die gegebene Laenge hat und dann gibt die nummer als string zurueck
@@ -99,7 +99,6 @@ export default class EbeguUtil {
         }
         return undefined;
     }
-
 
     public static getIndexOfElementwithID(entityToSearch: TSAbstractEntity, listToSearchIn: Array<any>): number {
         let idToSearch = entityToSearch.id;

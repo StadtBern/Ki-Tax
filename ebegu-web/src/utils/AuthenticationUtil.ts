@@ -5,7 +5,6 @@ import {TSRole} from '../models/enums/TSRole';
 
 export default class AuthenticationUtil {
 
-
     /**
      *  Navigiert basierend auf der Rolle zu einer anderen Startseite
      */

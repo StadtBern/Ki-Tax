@@ -19,7 +19,6 @@ export default class TSPendenzInstitution {
     private _betreuungsangebotTyp: TSBetreuungsangebotTyp;
     private _institution: TSInstitution;
 
-
     constructor(betreuungsNummer?: string, betreuungsId?: string, gesuchId?: string, kindId?: string, name?: string, vorname?: string,
                 geburtsdatum?: moment.Moment, typ?: string, gesuchsperiode?: TSGesuchsperiode, eingangsdatum?: moment.Moment,
                 eingangsdatumSTV?: moment.Moment, betreuungsangebotTyp?: TSBetreuungsangebotTyp, institution?: TSInstitution) {

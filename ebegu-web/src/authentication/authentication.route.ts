@@ -6,8 +6,8 @@ import IQService = angular.IQService;
 import ILogService = angular.ILogService;
 import IPromise = angular.IPromise;
 
-
 authenticationRun.$inject = ['RouterHelper'];
+
 /* @ngInject */
 export function authenticationRun(routerHelper: RouterHelper) {
     routerHelper.configureStates(getStates(), '/start');
@@ -55,16 +55,16 @@ export class EbeguStartState implements IState {
     url = '/start';
 }
 
-
-
 export class IAuthenticationStateParams implements IStateParamsService {
     relayPath: string;
     type: string;
 }
 
-readDummyLoginEnabled.$inject = ['ApplicationPropertyRS',  '$state', '$q', '$log'];
+readDummyLoginEnabled.$inject = ['ApplicationPropertyRS', '$state', '$q', '$log'];
+
 /* @ngInject */
-export function readDummyLoginEnabled(applicationPropertyRS: ApplicationPropertyRS,  $state: IStateService, $q: IQService, $log: ILogService): IPromise<boolean> {
+export function readDummyLoginEnabled(applicationPropertyRS: ApplicationPropertyRS, $state: IStateService, $q: IQService,
+                                      $log: ILogService): IPromise<boolean> {
     return applicationPropertyRS.isDummyMode()
         .then((response: boolean) => {
             if (response === false) {
@@ -78,7 +78,6 @@ export function readDummyLoginEnabled(applicationPropertyRS: ApplicationProperty
             $state.go('login');
             return deferred.promise;
         });
-
 
 }
 

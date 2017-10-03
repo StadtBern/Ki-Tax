@@ -24,7 +24,6 @@ import Moment = moment.Moment;
 
 export default class TestDataUtil {
 
-
     public static setAbstractFieldsUndefined(abstractEntity: TSAbstractEntity) {
         abstractEntity.id = undefined;
         abstractEntity.timestampErstellt = undefined;
@@ -65,7 +64,6 @@ export default class TestDataUtil {
         first.gueltigkeit.gueltigAb = second.gueltigkeit.gueltigAb;
         first.gueltigkeit.gueltigBis = second.gueltigkeit.gueltigBis;
     }
-
 
     static mockDefaultGesuchModelManagerHttpCalls($httpBackend: IHttpBackendService) {
 
@@ -138,8 +136,10 @@ export default class TestDataUtil {
     public static createDummyForm(): any {
         let form: any = {};
         form.$valid = true;
-        form.$setPristine = () => {};
-        form.$setUntouched = () => {};
+        form.$setPristine = () => {
+        };
+        form.$setUntouched = () => {
+        };
         return form;
     }
 

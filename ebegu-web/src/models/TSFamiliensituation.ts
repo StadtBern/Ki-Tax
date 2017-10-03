@@ -10,7 +10,6 @@ export default class TSFamiliensituation extends TSAbstractEntity {
     private _gemeinsameSteuererklaerung: boolean;
     private _aenderungPer: moment.Moment;
 
-
     constructor(familienstatus?: TSFamilienstatus, gesuchstellerKardinalitaet?: TSGesuchstellerKardinalitaet,
                 gemeinsameSteuererklaerung?: boolean, aenderungPer?: moment.Moment) {
         super();

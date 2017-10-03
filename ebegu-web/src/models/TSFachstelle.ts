@@ -13,7 +13,6 @@ export class TSFachstelle extends TSAbstractEntity {
         this._behinderungsbestaetigung = behinderungsbestaetigung;
     }
 
-
     get name(): string {
         return this._name;
     }

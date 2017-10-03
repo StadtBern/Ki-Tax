@@ -9,6 +9,7 @@ import {TSTraegerschaft} from '../models/TSTraegerschaft';
 import AuthenticationUtil from '../utils/AuthenticationUtil';
 import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest';
 import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./dummyAuthentication.html');
 require('./dummyAuthentication.less');
 
@@ -30,10 +31,10 @@ export class DummyAuthenticationListViewController {
     private traegerschaftSGF: TSTraegerschaft;
     private devMode: boolean;
 
-    static $inject: string[] = ['$state', 'AuthServiceRS', '$timeout' , 'ApplicationPropertyRS'];
+    static $inject: string[] = ['$state', 'AuthServiceRS', '$timeout', 'ApplicationPropertyRS'];
 
     constructor(private $state: IStateService, private authServiceRS: AuthServiceRS,
-              private $timeout: ITimeoutService, private applicationPropertyRS: ApplicationPropertyRS) {
+                private $timeout: ITimeoutService, private applicationPropertyRS: ApplicationPropertyRS) {
         this.usersList = [];
         this.mandant = this.getMandant();
         this.traegerschaftStadtBern = this.getTraegerschaftStadtBern();
@@ -65,7 +66,6 @@ export class DummyAuthenticationListViewController {
         this.usersList.push(new TSUser('Reto', 'Revisor', 'rere', 'password9', 'reto.revisor@myemail.ch', this.mandant, TSRole.REVISOR));
         this.superadmin = new TSUser('E-BEGU', 'Superuser', 'ebegu', 'password10', 'hallo@dvbern.ch', this.mandant, TSRole.SUPER_ADMIN);
     }
-
 
     /**
      * Der Mandant wird direkt gegeben. Diese Daten und die Daten der DB muessen uebereinstimmen

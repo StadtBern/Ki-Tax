@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -14,7 +16,6 @@
     <packaging>pom</packaging>
 
     <name>eBEGU - Multimodule Project</name>
-
 
     <properties>
         <!-- Wird ggf. im Profil "development-mode' ueberschrieben -->
@@ -258,9 +259,9 @@
             </dependency>
 
             <dependency>
-              <groupId>javax.security.jacc</groupId>
-              <artifactId>javax.security.jacc-api</artifactId>
-              <version>1.5</version>
+                <groupId>javax.security.jacc</groupId>
+                <artifactId>javax.security.jacc-api</artifactId>
+                <version>1.5</version>
                 <scope>provided</scope>
             </dependency>
             <!--Arquillian bom dependecies-->
@@ -273,9 +274,9 @@
             </dependency>
             <!--JASPI -->
             <dependency>
-              <groupId>org.jboss.javaee</groupId>
-              <artifactId>jboss-jaspi-api</artifactId>
-              <version>1.0.0.GA</version>
+                <groupId>org.jboss.javaee</groupId>
+                <artifactId>jboss-jaspi-api</artifactId>
+                <version>1.0.0.GA</version>
                 <scope>provided</scope>
             </dependency>
             <!--SWAGGER-API-->
@@ -337,14 +338,14 @@
                 <version>2.0.1</version>
             </dependency>
             <dependency>
-                 <groupId>commons-logging</groupId>
-                 <artifactId>commons-logging</artifactId>
-                 <version>1.2</version>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.2</version>
             </dependency>
             <dependency>
-              <groupId>javax.servlet</groupId>
-              <artifactId>javax.servlet-api</artifactId>
-              <version>3.1.0</version>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.1.0</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -377,9 +378,9 @@
 
             <!-- Hibernate-Search dependencies-->
             <dependency>
-               <groupId>org.hibernate</groupId>
-               <artifactId>hibernate-search-orm</artifactId>
-               <version>${hibernate-search.version}</version>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-search-orm</artifactId>
+                <version>${hibernate-search.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>dom4j</groupId>
@@ -392,9 +393,9 @@
                 </exclusions>
             </dependency>
             <!--<dependency>-->
-                           <!--<groupId>org.hibernate</groupId>-->
-                           <!--<artifactId>hibernate-search-engine</artifactId>-->
-                <!--<version>${hibernate-search.version}</version>-->
+            <!--<groupId>org.hibernate</groupId>-->
+            <!--<artifactId>hibernate-search-engine</artifactId>-->
+            <!--<version>${hibernate-search.version}</version>-->
             <!--</dependency>-->
             <!-- Infinispan integration: -->
             <dependency>
@@ -402,10 +403,10 @@
                 <artifactId>infinispan-directory-provider</artifactId>
                 <version>8.1.0.Final</version>
                 <!--<exclusions>-->
-                    <!--<exclusion>-->
-                        <!--<artifactId>hibernate-search-engine</artifactId>-->
-                        <!--<groupId>org.hibernate</groupId>-->
-                    <!--</exclusion>-->
+                <!--<exclusion>-->
+                <!--<artifactId>hibernate-search-engine</artifactId>-->
+                <!--<groupId>org.hibernate</groupId>-->
+                <!--</exclusion>-->
                 <!--</exclusions>-->
             </dependency>
             <!--um dependency konflikte zu vermeiden fixen wir die versionen von 2 mal angezogenen libs im dep management-->
@@ -542,7 +543,6 @@
 
     </dependencyManagement>
 
-
     <dependencies>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
@@ -569,8 +569,8 @@
             <artifactId>date-helper</artifactId>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>ch.dvbern.lib</groupId>-->
-            <!--<artifactId>dvbern-lib-date</artifactId>-->
+        <!--<groupId>ch.dvbern.lib</groupId>-->
+        <!--<artifactId>dvbern-lib-date</artifactId>-->
         <!--</dependency>-->
         <!-- Scope: test -->
         <dependency>
@@ -627,7 +627,6 @@
         </dependency>
 
     </dependencies>
-
 
     <profiles>
 
@@ -731,7 +730,7 @@
                         <featureBranchPrefix>feature/</featureBranchPrefix>
                         <releaseBranchPrefix>release/</releaseBranchPrefix>
                         <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-                        <versionTagPrefix />
+                        <versionTagPrefix/>
                     </flowInitContext>
                     <allowUntracked>true</allowUntracked>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -928,8 +927,8 @@
                                 <fail>true</fail>
                                 <failFast>true</failFast>
                                 <rules>
-                                    <dependencyConvergence />
-                                    <reactorModuleConvergence />
+                                    <dependencyConvergence/>
+                                    <reactorModuleConvergence/>
                                     <requireJavaVersion>
                                         <!-- Bei aelteren Versionen aendern die Unit-Test-Ergebnisse bei Berechnungen mit BigDecimal -->
                                         <version>[1.8.0-40,)</version>
@@ -951,7 +950,6 @@
             </plugins>
         </pluginManagement>
     </build>
-
 
     <modules>
         <module>ebegu-dbschema</module>

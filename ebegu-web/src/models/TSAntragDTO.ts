@@ -29,7 +29,8 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
     private _dokumenteHochgeladen: boolean;
 
     constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
-                eingangsdatum?: moment.Moment, eingangsdatumSTV?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
+                eingangsdatum?: moment.Moment, eingangsdatumSTV?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>,
+                institutionen?: Array<string>,
                 verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
                 verfuegt?: boolean, laufnummer?: number, besitzerUsername?: string, eingangsart?: TSEingangsart, beschwerdeHaengig?: boolean,
                 kinder?: Array<string>, gesuchBetreuungenStatus?: TSGesuchBetreuungenStatus, dokumenteHochgeladen?: boolean) {
@@ -55,7 +56,6 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
         this._gesuchBetreuungenStatus = gesuchBetreuungenStatus;
         this._dokumenteHochgeladen = dokumenteHochgeladen;
     }
-
 
     get antragId(): string {
         return this._antragId;
@@ -197,7 +197,6 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
         this._beschwerdeHaengig = value;
     }
 
-
     get kinder(): Array<string> {
         return this._kinder;
     }
@@ -213,7 +212,6 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
     set dokumenteHochgeladen(value: boolean) {
         this._dokumenteHochgeladen = value;
     }
-
 
     public canBeFreigegeben(): boolean {
         return this.status === TSAntragStatus.FREIGABEQUITTUNG;

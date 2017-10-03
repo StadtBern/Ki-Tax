@@ -3,7 +3,7 @@ var __karmaWebpackManifest__ = [];
 
 // require all modules ending in "_test" from the
 // current directory and all subdirectories
-var testsContext =  require.context('../src', true, /\.spec\.ts/);
+var testsContext = require.context('../src', true, /\.spec\.ts/);
 console.log('specbundle output', testsContext.keys());
 
 function inManifest(path) {

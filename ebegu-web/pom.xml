@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
@@ -43,7 +45,6 @@
                 <configuration>
                     <installDirectory>target</installDirectory>
                 </configuration>
-
 
                 <executions>
 
@@ -91,9 +92,9 @@
                         </goals>
                         <phase>test</phase>
                         <configuration>
-                           <arguments>run test</arguments>
+                            <arguments>run test</arguments>
                             <skip>${skipTests}</skip>
-                       </configuration>
+                        </configuration>
                     </execution>
 
                 </executions>
@@ -128,21 +129,21 @@
                     <deployAtEnd>true</deployAtEnd>
                 </configuration>
                 <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>bundle tar.gz artifact</id>-->
-                        <!--<phase>deploy</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>deploy-file</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<repositoryId>${nexus.repo.id}</repositoryId>-->
-                            <!--<url>${nexus.url}</url>-->
-                            <!--<groupId>${project.groupId}</groupId>-->
-                            <!--<artifactId>${project.artifactId}</artifactId>-->
-                            <!--<version>${project.version}</version>-->
-                            <!--<file>${project.build.directory}/${project.artifactId}-${project.version}-client.zip</file>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
+                <!--<execution>-->
+                <!--<id>bundle tar.gz artifact</id>-->
+                <!--<phase>deploy</phase>-->
+                <!--<goals>-->
+                <!--<goal>deploy-file</goal>-->
+                <!--</goals>-->
+                <!--<configuration>-->
+                <!--<repositoryId>${nexus.repo.id}</repositoryId>-->
+                <!--<url>${nexus.url}</url>-->
+                <!--<groupId>${project.groupId}</groupId>-->
+                <!--<artifactId>${project.artifactId}</artifactId>-->
+                <!--<version>${project.version}</version>-->
+                <!--<file>${project.build.directory}/${project.artifactId}-${project.version}-client.zip</file>-->
+                <!--</configuration>-->
+                <!--</execution>-->
 
                 <!--</executions>-->
             </plugin>

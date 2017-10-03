@@ -5,12 +5,10 @@ export default class TSAntragSearchresultDTO {
     private _antragDTOs: Array<TSAntragDTO>;
     private _totalResultSize: number;
 
-
     constructor(antragDTOs?: Array<TSAntragDTO>, totalResultSize?: number) {
         this._antragDTOs = antragDTOs;
         this._totalResultSize = totalResultSize;
     }
-
 
     get antragDTOs(): Array<TSAntragDTO> {
         return this._antragDTOs;

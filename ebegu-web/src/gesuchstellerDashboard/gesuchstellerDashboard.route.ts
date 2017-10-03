@@ -2,6 +2,7 @@ import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import {IState} from 'angular-ui-router';
 
 gesuchstellerDashboardRun.$inject = ['RouterHelper'];
+
 /* @ngInject */
 export function gesuchstellerDashboardRun(routerHelper: RouterHelper) {
     routerHelper.configureStates(getStates(), '/start');

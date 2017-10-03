@@ -6,7 +6,6 @@ export default class TSAbstractEntity {
     private _timestampMutiert: moment.Moment;
     private _vorgaengerId: string;
 
-
     public set id(id: string) {
         this._id = id;
     }

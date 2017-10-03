@@ -9,7 +9,6 @@ export class TSMandant extends TSAbstractEntity {
         this._name = name;
     }
 
-
     public get name(): string {
         return this._name;
     }

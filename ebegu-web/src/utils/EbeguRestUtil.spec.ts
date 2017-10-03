@@ -139,7 +139,8 @@ describe('EbeguRestUtil', function () {
                 expect(transformedPers).toBeDefined();
                 expect(myGesuchsteller.gesuchstellerJA.nachname).toEqual(transformedPers.gesuchstellerJA.nachname);
 
-                expect(transformedPers.gesuchstellerJA.telefon).toBeUndefined(); // der leere String wurde in undefined umgewandelt deswegen muessen wir hier undefined zurueckbekommen
+                expect(transformedPers.gesuchstellerJA.telefon).toBeUndefined(); // der leere String wurde in undefined umgewandelt deswegen muessen wir hier
+																				 // undefined zurueckbekommen
                 transformedPers.gesuchstellerJA.telefon = ''; // um das Objekt zu validieren, muessen wird das Telefon wieder auf '' setzen
 
                 expect(myGesuchsteller).toEqual(transformedPers);

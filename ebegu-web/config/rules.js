@@ -1,8 +1,6 @@
 var helpers = require('./helpers');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
-
-
 //um das css in ein eigenes file zu exportieren sollten wir wohl sowas machen:
 // https://gist.github.com/squadwuschel/47b6248d500c1cf6de23127a695183b0 aktuell ist das aber irgendwie kaputt
 // also https://github.com/webpack-contrib/extract-text-webpack-plugin/issues/263
@@ -43,14 +41,14 @@ module.exports = [
         }
     },
     {
-            test: /\.ts$/,
-            loaders: [
-              {
+        test: /\.ts$/,
+        loaders: [
+            {
                 loader: 'awesome-typescript-loader',
-                options: { configFileName: helpers.root('src', 'tsconfig.json') }
-              }
-            ]
-          },
+                options: {configFileName: helpers.root('src', 'tsconfig.json')}
+            }
+        ]
+    },
 
     // Html loader advanced options
     //
@@ -84,10 +82,10 @@ module.exports = [
         test: /\.less$/,
         exclude: helpers.root('src'),
         loader: ExtractTextPlugin.extract({
-          fallback: "style-loader",
-          loader: "css-loader?sourceMap!less-loader?sourceMap"
+            fallback: "style-loader",
+            loader: "css-loader?sourceMap!less-loader?sourceMap"
         })
-      },
+    },
     //include the styles inline for the appdirectory
     {
         test: /\.less$/,
@@ -105,10 +103,10 @@ module.exports = [
         test: /\.scss$/,
         exclude: helpers.root('src'),
         loader: ExtractTextPlugin.extract({
-          fallback: "style-loader",
-          loader: "css-loader?sourceMap!sass-loader?sourceMap"
+            fallback: "style-loader",
+            loader: "css-loader?sourceMap!sass-loader?sourceMap"
         })
-      },
+    },
     {
         test: /\.scss$/,
         include: helpers.root('src'),

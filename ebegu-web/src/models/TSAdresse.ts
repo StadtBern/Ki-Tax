@@ -50,7 +50,6 @@ export default class TSAdresse extends TSAbstractDateRangedEntity {
         );
     }
 
-
     public copy(toCopy: TSAdresse): void {
         this._strasse = toCopy.strasse;
         this._hausnummer = toCopy.hausnummer;

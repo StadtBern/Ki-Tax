@@ -20,7 +20,6 @@ export default class TSEinkommensverschlechterungInfo extends TSAbstractEntity {
     private _ekvBasisJahrPlus1Annulliert: boolean = false;
     private _ekvBasisJahrPlus2Annulliert: boolean = false;
 
-
     get einkommensverschlechterung(): boolean {
         return this._einkommensverschlechterung;
     }

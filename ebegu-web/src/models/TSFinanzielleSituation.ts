@@ -6,7 +6,6 @@ export default class TSFinanzielleSituation extends TSAbstractFinanzielleSituati
     private _geschaeftsgewinnBasisjahrMinus2: number;
     private _geschaeftsgewinnBasisjahrMinus1: number;
 
-
     constructor(steuerveranlagungErhalten?: boolean, steuererklaerungAusgefuellt?: boolean, nettolohn?: number,
                 familienzulage?: number, ersatzeinkommen?: number, erhalteneAlimente?: number, bruttovermoegen?: number,
                 schulden?: number, geschaeftsgewinnBasisjahrMinus2?: number,
@@ -18,7 +17,6 @@ export default class TSFinanzielleSituation extends TSAbstractFinanzielleSituati
         this._geschaeftsgewinnBasisjahrMinus2 = geschaeftsgewinnBasisjahrMinus2;
         this._geschaeftsgewinnBasisjahrMinus1 = geschaeftsgewinnBasisjahrMinus1;
     }
-
 
     get nettolohn(): number {
         return this._nettolohn;

@@ -19,7 +19,6 @@ export default class TSMitteilung extends TSAbstractEntity {
     private _mitteilungStatus: TSMitteilungStatus;
     private _sentDatum: moment.Moment;
 
-
     constructor(fall?: TSFall, betreuung?: TSBetreuung, senderTyp?: TSMitteilungTeilnehmerTyp, empfaengerTyp?: TSMitteilungTeilnehmerTyp, sender?: TSUser,
                 empfaenger?: TSUser, subject?: string, message?: string, mitteilungStatus?: TSMitteilungStatus,
                 sentDatum?: moment.Moment) {

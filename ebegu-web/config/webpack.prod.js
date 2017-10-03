@@ -7,7 +7,6 @@ var helpers = require('./helpers'); // Helper: root(), and rootDir() are defined
 var webpackMerge = require('webpack-merge'); //Used to merge webpack configs
 var commonConfig = require('./webpack.common.js'); //The settings that are common to prod and dev
 
-
 /**
  * Webpack Plugins
  */
@@ -33,7 +32,6 @@ const METADATA = webpackMerge(commonConfig.metadata, {
 });
 
 module.exports = webpackMerge(commonConfig, {
-
 
     // Developer tool to enhance debugging
     //
@@ -77,9 +75,9 @@ module.exports = webpackMerge(commonConfig, {
     plugins: [
 
         new LoaderOptionsPlugin({
-           debug: false,
+            debug: false,
             minimize: true
-         }),
+        }),
 
         new ExtractTextPlugin('[name].[hash].css'),
 
@@ -88,8 +86,6 @@ module.exports = webpackMerge(commonConfig, {
         //
         // See: https://www.npmjs.com/package/webpack-md5-hash
         new WebpackMd5Hash(),
-
-
 
         // Plugin: DefinePlugin
         // Description: Define free variables.
@@ -197,7 +193,6 @@ module.exports = webpackMerge(commonConfig, {
             comments: false //prod
         }),
 
-
         // Plugin: CompressionPlugin
         // Description: Prepares compressed versions of assets to serve
         // them with Content-Encoding
@@ -213,10 +208,6 @@ module.exports = webpackMerge(commonConfig, {
         ])
 
     ],
-
-
-
-
 
     node: {
         global: true,

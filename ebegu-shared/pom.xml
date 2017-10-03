@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
@@ -94,8 +96,8 @@
         </dependency>
 
         <dependency>
-          <groupId>javax.security.jacc</groupId>
-          <artifactId>javax.security.jacc-api</artifactId>
+            <groupId>javax.security.jacc</groupId>
+            <artifactId>javax.security.jacc-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.spec.javax.annotation</groupId>
@@ -116,17 +118,17 @@
         </dependency>
 
         <dependency>
-           <groupId>org.hibernate</groupId>
-           <artifactId>hibernate-search-orm</artifactId>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search-orm</artifactId>
             <!--<scope>provided</scope> eigentlich ware das in jboss vorhanden, gibt aber ein problem bei einzeltests in ide-->
         </dependency>
         <!--<dependency>-->
-           <!--<groupId>org.infinispan</groupId>-->
-           <!--<artifactId>infinispan-directory-provider</artifactId>-->
+        <!--<groupId>org.infinispan</groupId>-->
+        <!--<artifactId>infinispan-directory-provider</artifactId>-->
         <!--</dependency>-->
 
         <dependency>
-           <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-search-engine</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -183,6 +185,5 @@
             </build>
         </profile>
     </profiles>
-
 
 </project>

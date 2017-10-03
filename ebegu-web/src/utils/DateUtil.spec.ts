@@ -3,8 +3,7 @@ import * as moment from 'moment';
 
 describe('dateUtil', function () {
 
-   // beforeEach(angular.mock.module(EbeguWebCore));
-
+    // beforeEach(angular.mock.module(EbeguWebCore));
 
     describe('localDateToMoment()', function () {
         it('should return null for invalid input', function () {

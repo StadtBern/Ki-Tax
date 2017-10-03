@@ -2,6 +2,7 @@ import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import {IState} from 'angular-ui-router';
 
 statistikRun.$inject = ['RouterHelper'];
+
 /* @ngInject */
 export function statistikRun(routerHelper: RouterHelper) {
     routerHelper.configureStates(getStates(), '/start');

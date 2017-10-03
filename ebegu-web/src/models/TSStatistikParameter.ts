@@ -7,7 +7,7 @@ export default class TSStatistikParameter extends TSAbstractEntity {
     private _von: moment.Moment;
     private _bis: moment.Moment;
 
-    constructor( gesuchsperiode?: string, stichtag?: moment.Moment,
+    constructor(gesuchsperiode?: string, stichtag?: moment.Moment,
                 von?: moment.Moment, bis?: moment.Moment) {
         super();
         this._gesuchsperiode = gesuchsperiode;

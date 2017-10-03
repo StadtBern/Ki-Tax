@@ -24,7 +24,6 @@ export default class TSKindContainer extends TSAbstractEntity {
         this._kindMutiert = kindMutiert;
     }
 
-
     get kindGS(): TSKind {
         return this._kindGS;
     }

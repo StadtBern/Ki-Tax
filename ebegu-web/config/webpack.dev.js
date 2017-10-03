@@ -25,8 +25,7 @@ const METADATA = {
     HMR: HMR
 };
 
-module.exports = webpackMerge(commonConfig,  {
-
+module.exports = webpackMerge(commonConfig, {
 
     // Developer tool to enhance debugging
     //
@@ -34,8 +33,7 @@ module.exports = webpackMerge(commonConfig,  {
     // See: https://github.com/webpack/docs/wiki/build-performance#sourcemaps
     devtool: 'cheap-module-eval-source-map',
 
-
-    output:{
+    output: {
         // The output directory as absolute path (required).
         //
         // See: http://webpack.github.io/docs/configuration.html#output-path
@@ -63,13 +61,11 @@ module.exports = webpackMerge(commonConfig,  {
 
     plugins: [
         new LoaderOptionsPlugin({
-           debug: true
-         }),
+            debug: true
+        }),
         new ExtractTextPlugin({
-          filename: '[name].css'
-         }),
-
-
+            filename: '[name].css'
+        }),
 
         // Plugin: DefinePlugin
         // Description: Define free variables.

@@ -11,7 +11,6 @@ export default class TSGesuchsperiode extends TSAbstractDateRangedEntity {
         this._status = status;
     }
 
-
     get status(): TSGesuchsperiodeStatus {
         return this._status;
     }

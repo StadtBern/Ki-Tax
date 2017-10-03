@@ -9,7 +9,7 @@ export class EnumEx {
         );
     }
 
-    static getValues(e: any): number[]  {
+    static getValues(e: any): number[] {
         return Object.keys(e)
             .map(v => parseInt(v, 10))
             .filter(v => !isNaN(v));

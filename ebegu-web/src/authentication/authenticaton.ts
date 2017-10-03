@@ -6,6 +6,7 @@ import IWindowService = angular.IWindowService;
 import IHttpParamSerializer = angular.IHttpParamSerializer;
 import ITimeoutService = angular.ITimeoutService;
 import ILocationService = angular.ILocationService;
+
 let template = require('./authentication.html');
 require('./authentication.less');
 
@@ -18,7 +19,6 @@ export class AuthenticationComponentConfig implements IComponentOptions {
 
 export class AuthenticationListViewController {
 
-
     static $inject: string[] = ['$state', '$stateParams', '$window', '$httpParamSerializer', '$timeout', 'AuthServiceRS'
         , '$location'];
 
@@ -29,7 +29,6 @@ export class AuthenticationListViewController {
     private logoutHref: string;
     private redirecting: boolean;
     private countdown: number = 0;
-
 
     constructor(private $state: IStateService, private $stateParams: IAuthenticationStateParams,
                 private $window: IWindowService, private $httpParamSerializer: IHttpParamSerializer,
@@ -89,7 +88,6 @@ export class AuthenticationListViewController {
         return this.authService.getPrincipal() ? true : false;
     }
 
-
     public redirect = () => {
         let urlToGoTo = this.redirectionHref;
         console.log('redirecting to login', urlToGoTo);
@@ -108,7 +106,6 @@ export class AuthenticationListViewController {
                 this.singlelogout();
             });
         }
-
 
     }
 

@@ -7,7 +7,6 @@ export default class TSFamiliensituationContainer extends TSAbstractEntity {
     private _familiensituationGS: TSFamiliensituation;
     private _familiensituationErstgesuch: TSFamiliensituation;
 
-
     constructor(familiensituationJA?: TSFamiliensituation, familiensituationGS?: TSFamiliensituation,
                 familiensituationErstgesuch?: TSFamiliensituation) {
         super();

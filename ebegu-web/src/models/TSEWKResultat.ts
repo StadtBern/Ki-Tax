@@ -10,7 +10,6 @@ export default class TSEWKResultat extends TSAbstractEntity {
     private _anzahlResultate: number;
     private _personen: Array<TSEWKPerson>;
 
-
     constructor(maxResultate?: number, anzahlResultate?: number, personen?: Array<TSEWKPerson>) {
         super();
         this._maxResultate = maxResultate;

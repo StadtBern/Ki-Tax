@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
@@ -90,7 +92,6 @@
             <scope>provided</scope>
         </dependency>
 
-
         <!--tests der validators-->
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -142,8 +143,8 @@
             <version>2.3.18</version>
         </dependency>
         <dependency>
-           <groupId>org.hibernate</groupId>
-           <artifactId>hibernate-search-orm</artifactId>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search-orm</artifactId>
         </dependency>
         <dependency>
             <groupId>ch.dvbern.ebegu</groupId>
@@ -207,6 +208,5 @@
             </build>
         </profile>
     </profiles>
-
 
 </project>
