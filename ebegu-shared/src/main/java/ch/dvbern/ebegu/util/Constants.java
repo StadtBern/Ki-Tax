@@ -31,8 +31,10 @@ public interface Constants {
 
 	int LOGIN_TIMEOUT_SECONDS = 60 * 60; //aktuell 1h
 
-
 	int ABWESENHEIT_DAYS_LIMIT = 30;
+
+	int MAX_TIMEOUT_MINUTES = 360; // minutes
+	int STATISTIK_TIMEOUT_MINUTES = 20; // minutes
 
 	Locale DEFAULT_LOCALE = new Locale("de", "CH");
 
