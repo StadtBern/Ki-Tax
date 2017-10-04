@@ -1,4 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <dataset>
 	<abwesenheit id="29387c52-b09e-4ea7-b837-2d24097c0462" timestamp_erstellt="2017-03-10 11:04:15.0" timestamp_mutiert="2017-03-10 11:04:15.0" user_erstellt="ebegu" user_mutiert="ebegu" version="0" gueltig_ab="2016-01-01" gueltig_bis="2016-01-31"/>
 	<abwesenheit_container id="3e3a2131-5afb-47f6-908d-cf575812b6c3" timestamp_erstellt="2017-03-10 11:04:15.0" timestamp_mutiert="2017-03-10 11:04:15.0" user_erstellt="ebegu" user_mutiert="ebegu" version="0" abwesenheitja_id="29387c52-b09e-4ea7-b837-2d24097c0462" betreuung_id="d05ad8b4-128e-4067-a15b-9400034de99f"/>

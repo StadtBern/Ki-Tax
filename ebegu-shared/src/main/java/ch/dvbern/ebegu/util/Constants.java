@@ -33,6 +33,9 @@ public interface Constants {
 
 	int ABWESENHEIT_DAYS_LIMIT = 30;
 
+	int MAX_TIMEOUT_MINUTES = 360; // minutes
+	int STATISTIK_TIMEOUT_MINUTES = 20; // minutes
+
 	Locale DEFAULT_LOCALE = new Locale("de", "CH");
 
 	String DATA = "Data";
