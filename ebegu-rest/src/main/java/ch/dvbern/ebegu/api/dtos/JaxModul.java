@@ -1,17 +1,15 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalTime;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
+import ch.dvbern.ebegu.converters.LocalTimeXMLConverter;
 import ch.dvbern.ebegu.enums.ModulName;
 
 /**
@@ -30,11 +28,11 @@ public class JaxModul extends JaxAbstractDTO {
 	private ModulName modulname;
 
 	@NotNull
-	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
+	@XmlJavaTypeAdapter(LocalTimeXMLConverter.class)
 	private LocalTime zeitVon = null;
 
 	@NotNull
-	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
+	@XmlJavaTypeAdapter(LocalTimeXMLConverter.class)
 	private LocalTime zeitBis = null;
 
 

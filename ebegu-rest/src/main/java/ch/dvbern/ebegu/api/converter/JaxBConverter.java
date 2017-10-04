@@ -187,6 +187,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @SuppressWarnings({"PMD.NcssTypeCount", "unused"})
 public class JaxBConverter {
 
+	public static final String DROPPED_DUPLICATE_CONTAINER = "dropped duplicate container ";
+
 	@Inject
 	private GesuchstellerService gesuchstellerService;
 	@Inject
@@ -1150,7 +1152,7 @@ public class JaxBConverter {
 				final Modul modulToAdd = modulToEntity(jaxModul, modulToMergeWith);
 				final boolean added = transformedModule.add(modulToAdd);
 				if (!added) {
-					LOGGER.warn("dropped duplicate container " + modulToAdd);
+					LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + modulToAdd);
 				}
 			}
 			//change the existing collection to reflect changes
@@ -1693,7 +1695,7 @@ public class JaxBConverter {
 			final BetreuungspensumContainer contToAdd = betreuungspensumContainerToEntity(jaxBetPensContainer, containerToMergeWith);
 			final boolean added = transformedBetPenContainers.add(contToAdd);
 			if (!added) {
-				LOGGER.warn("dropped duplicate container " + contToAdd);
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + contToAdd);
 			}
 		}
 
@@ -1718,7 +1720,7 @@ public class JaxBConverter {
 			contToAdd.setId(oldID);
 			final boolean added = transformedAbwesenheitContainers.add(contToAdd);
 			if (!added) {
-				LOGGER.warn("dropped duplicate container " + contToAdd);
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + contToAdd);
 			}
 		}
 
@@ -2230,7 +2232,7 @@ public class JaxBConverter {
 			final Dokument dokToAdd = dokumentToEntity(jaxDokument, dokumenteToMergeWith, dokumentGrund);
 			final boolean added = transformedDokumente.add(dokToAdd);
 			if (!added) {
-				LOGGER.warn("dropped duplicate container " + dokToAdd);
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + dokToAdd);
 			}
 		}
 
