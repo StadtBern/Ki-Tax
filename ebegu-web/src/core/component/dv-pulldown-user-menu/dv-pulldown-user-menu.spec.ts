@@ -15,7 +15,7 @@
 
 import {EbeguWebCore} from '../../core.module';
 import {IStateService} from 'angular-ui-router';
-import {IScope, IQService} from 'angular';
+import {IQService, IScope} from 'angular';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {DvPulldownUserMenuController} from './dv-pulldown-user-menu';
 

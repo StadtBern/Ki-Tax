@@ -15,6 +15,21 @@
 
 package ch.dvbern.ebegu.api.resource;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxPendenzInstitution;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
@@ -26,16 +41,6 @@ import ch.dvbern.ebegu.services.GesuchService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
-
-import javax.annotation.Nonnull;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * REST Resource fuer Pendenzen
@@ -56,7 +61,6 @@ public class PendenzResource {
 
 	@Inject
 	private PrincipalBean principalBean;
-
 
 	/**
 	 * Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck.
@@ -125,8 +129,7 @@ public class PendenzResource {
 
 			if (betreuung.getVorgaengerId() == null) {
 				pendenz.setTyp("PLATZBESTAETIGUNG");
-			}
-			else{
+			} else {
 				//Wenn die Betreung eine VorgängerID hat ist sie mutiert
 				pendenz.setTyp("PLATZBESTAETIGUNG_MUTATION");
 			}
@@ -150,7 +153,6 @@ public class PendenzResource {
 		List<Gesuch> antraege = gesuchService.getAntraegeByCurrentBenutzer();
 		return convertToAntragDTOList(antraege);
 	}
-
 
 	@Nonnull
 	private List<JaxAntragDTO> convertToAntragDTOList(List<Gesuch> antraege) {

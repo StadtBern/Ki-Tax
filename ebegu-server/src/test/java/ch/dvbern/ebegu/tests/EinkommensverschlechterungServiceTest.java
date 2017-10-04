@@ -50,7 +50,6 @@ public class EinkommensverschlechterungServiceTest extends AbstractEbeguLoginTes
 	@Inject
 	private Persistence persistence;
 
-
 	@Test
 	public void createEinkommensverschlechterungContainerTest() {
 		Assert.assertNotNull(einkommensverschlechterungService);

@@ -22,7 +22,6 @@ import MitteilungRS from './mitteilungRS.rest';
 import TSFall from '../../models/TSFall';
 import TSBetreuung from '../../models/TSBetreuung';
 import TSBetreuungsmitteilung from '../../models/TSBetreuungsmitteilung';
-import IInjectorService = angular.auto.IInjectorService;
 import IPromise = angular.IPromise;
 import IRootScopeService = angular.IRootScopeService;
 

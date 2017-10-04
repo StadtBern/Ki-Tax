@@ -15,10 +15,11 @@
 
 package ch.dvbern.ebegu.util;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.util.Arrays;
 
 import javax.activation.MimeType;
-import java.util.Arrays;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings("EI_EXPOSE_REP")
 public class UploadFileInfo {

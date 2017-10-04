@@ -40,19 +40,17 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class ErwerbspensumConverterTest extends AbstractEbeguRestLoginTest {
 
-
 	@Inject
 	private Persistence persistence;
 
 	@Inject
 	private JaxBConverter converter;
 
-
 	/**
 	 * transformiert einen gespeichertes Erwerbspensum nach jax und wieder zurueck. wir erwarten das Daten gleich bleiben
 	 */
 	@Test
-	public void convertPersistedTestEntityToJax(){
+	public void convertPersistedTestEntityToJax() {
 		ErwerbspensumContainer erwerbspensumContainer = insertNewEntity();
 		JaxErwerbspensumContainer jaxErwerbspensum = this.converter.erwerbspensumContainerToJAX(erwerbspensumContainer);
 		ErwerbspensumContainer ewbContEntity = this.converter.erwerbspensumContainerToEntity(jaxErwerbspensum, new ErwerbspensumContainer());
@@ -64,7 +62,7 @@ public class ErwerbspensumConverterTest extends AbstractEbeguRestLoginTest {
 	 * Testet konviertiert einen gesuchsteller mit Erwerbspensen
 	 */
 	@Test
-	public void convertJaxGesuchstellerErwerbspensen(){
+	public void convertJaxGesuchstellerErwerbspensen() {
 		JaxGesuchstellerContainer gesuchstellerWithErwerbspensen = TestJaxDataUtil.createTestJaxGesuchstellerWithErwerbsbensum();
 		GesuchstellerContainer gesuchsteller = converter.gesuchstellerContainerToEntity(gesuchstellerWithErwerbspensen, new GesuchstellerContainer());
 		Assert.assertEquals(gesuchstellerWithErwerbspensen.getGesuchstellerJA().getGeburtsdatum(), gesuchsteller.getGesuchstellerJA().getGeburtsdatum());
@@ -76,9 +74,8 @@ public class ErwerbspensumConverterTest extends AbstractEbeguRestLoginTest {
 		Assert.assertEquals(2, gesuchsteller.getErwerbspensenContainers().size());
 		gesuchsteller = persistence.persist(gesuchsteller);
 		JaxGesuchstellerContainer reconvertedJaxGesuchsteller = converter.gesuchstellerContainerToJAX(gesuchsteller);
-		Assert.assertEquals(2,reconvertedJaxGesuchsteller.getErwerbspensenContainers().size());
+		Assert.assertEquals(2, reconvertedJaxGesuchsteller.getErwerbspensenContainers().size());
 	}
-
 
 	private ErwerbspensumContainer insertNewEntity() {
 		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();

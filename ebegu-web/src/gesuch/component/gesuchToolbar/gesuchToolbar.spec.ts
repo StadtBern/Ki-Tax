@@ -29,8 +29,8 @@ import TSFall from '../../../models/TSFall';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
-import IScope = angular.IScope;
 import FallRS from '../../service/fallRS.rest';
+import IScope = angular.IScope;
 
 describe('gesuchToolbar', function () {
 

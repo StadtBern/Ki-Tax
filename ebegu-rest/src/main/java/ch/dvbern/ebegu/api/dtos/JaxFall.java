@@ -38,7 +38,6 @@ public class JaxFall extends JaxAbstractDTO {
 
 	private JaxAuthLoginElement besitzer; //
 
-
 	public long getFallNummer() {
 		return fallNummer;
 	}

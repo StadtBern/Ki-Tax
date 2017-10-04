@@ -16,7 +16,6 @@
 import TSAbstractEntity from './TSAbstractEntity';
 import {TSGeschlecht} from './enums/TSGeschlecht';
 import * as moment from 'moment';
-import Moment = moment.Moment;
 
 export default class TSAbstractPersonEntity extends TSAbstractEntity {
 
@@ -66,6 +65,6 @@ export default class TSAbstractPersonEntity extends TSAbstractEntity {
     }
 
     public getFullName(): string {
-        return (this.vorname ? this.vorname :  '')  + ' ' + (this.nachname ?  this.nachname : '');
+        return (this.vorname ? this.vorname : '') + ' ' + (this.nachname ? this.nachname : '');
     }
 }

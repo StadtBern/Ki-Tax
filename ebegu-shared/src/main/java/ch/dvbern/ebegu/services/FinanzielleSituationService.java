@@ -31,8 +31,8 @@ public interface FinanzielleSituationService {
 
 	/**
 	 * Speichert die FinanzielleSituation neu in der DB falls der Key noch nicht existiert.
+	 *
 	 * @param finanzielleSituation Die FinanzielleSituation als DTO
-	 * @param gesuchId
 	 */
 	@Nonnull
 	FinanzielleSituationContainer saveFinanzielleSituation(@Nonnull FinanzielleSituationContainer finanzielleSituation, String gesuchId);
@@ -52,13 +52,13 @@ public interface FinanzielleSituationService {
 
 	/**
 	 * Berechnet die Finanzielle Situation beider Gesuchsteller
-     */
+	 */
 	@Nonnull
 	FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch);
 
 	/**
 	 * Berechnet die Finanzdaten für die Verfügung, d.h. inklusive allfälliger Einkommensverschlechterungen
 	 * Das Resultat wird direkt dem Gesuch angehängt
-     */
+	 */
 	void calculateFinanzDaten(@Nonnull Gesuch gesuch);
 }

@@ -19,7 +19,6 @@ import TSExceptionReport from '../../../models/TSExceptionReport';
 import {TSErrorLevel} from '../../../models/enums/TSErrorLevel';
 import {TSErrorType} from '../../../models/enums/TSErrorType';
 
-
 export default class ErrorService {
 
     errors: Array<TSExceptionReport> = [];

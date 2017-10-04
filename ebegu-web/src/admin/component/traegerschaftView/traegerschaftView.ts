@@ -24,9 +24,9 @@ import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogControl
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import AbstractAdminViewController from '../../abstractAdminView';
-import IPromise = angular.IPromise;
-import IFormController = angular.IFormController;
 import EbeguUtil from '../../../utils/EbeguUtil';
+import IFormController = angular.IFormController;
+
 let template = require('./traegerschaftView.html');
 let style = require('./traegerschaftView.less');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');

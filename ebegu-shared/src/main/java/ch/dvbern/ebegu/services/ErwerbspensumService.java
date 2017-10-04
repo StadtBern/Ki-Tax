@@ -32,8 +32,8 @@ public interface ErwerbspensumService {
 
 	/**
 	 * Speichert die Erwerbspensen neu in der DB falls der Key noch nicht existiert.
+	 *
 	 * @param erwerbspensumContainer Das Erwerbspensum das gespeichert werden soll
-	 * @param gesuch
 	 */
 	@Nonnull
 	ErwerbspensumContainer saveErwerbspensum(@Valid @Nonnull ErwerbspensumContainer erwerbspensumContainer, Gesuch gesuch);
@@ -47,13 +47,11 @@ public interface ErwerbspensumService {
 
 	/**
 	 * Sucht die Erwerbspensen des übergebenen Gesuchstellers.
-     */
+	 */
 	Collection<ErwerbspensumContainer> findErwerbspensenForGesuchsteller(@Nonnull GesuchstellerContainer gesuchsteller);
 
 	/**
 	 * Sucht alle Erwerbspensen fuer das eingegebene Gesuch
-	 * @param gesuchId
-	 * @return
 	 */
 	Collection<ErwerbspensumContainer> findErwerbspensenFromGesuch(@Nonnull String gesuchId);
 
@@ -65,8 +63,8 @@ public interface ErwerbspensumService {
 
 	/**
 	 * entfernt eine Erwerbspensum aus der Databse
+	 *
 	 * @param erwerbspensumContainerID der Entfernt werden soll
-	 * @param gesuch
 	 */
 	void removeErwerbspensum(@Nonnull String erwerbspensumContainerID, Gesuch gesuch);
 

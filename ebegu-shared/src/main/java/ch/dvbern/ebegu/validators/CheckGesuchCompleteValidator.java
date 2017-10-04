@@ -23,9 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *  Dieser Validator die Komplettheit und Gültigkeit eines Gesuchs
+ * Dieser Validator die Komplettheit und Gültigkeit eines Gesuchs
  */
-@SuppressWarnings({"ConstantConditions", "PMD.CollapsibleIfStatements"})
+@SuppressWarnings({ "ConstantConditions", "PMD.CollapsibleIfStatements" })
 public class CheckGesuchCompleteValidator implements ConstraintValidator<CheckGesuchComplete, Gesuch> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CheckGesuchCompleteValidator.class.getSimpleName());
@@ -51,7 +51,7 @@ public class CheckGesuchCompleteValidator implements ConstraintValidator<CheckGe
 		}
 		// Gesuchsteller 2
 		if (gesuch.getFamiliensituationContainer().getFamiliensituationJA().hasSecondGesuchsteller()) {
-			if (gesuch.getGesuchsteller2() == null ) {
+			if (gesuch.getGesuchsteller2() == null) {
 				LOG.error("FamiliensituationContainer is empty for Gesuch {}", gesuch.getId());
 				valid = false;
 			}

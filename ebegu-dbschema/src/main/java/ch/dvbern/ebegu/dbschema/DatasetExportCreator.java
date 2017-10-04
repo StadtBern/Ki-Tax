@@ -53,12 +53,10 @@ public class DatasetExportCreator {
 
 	private static final String DATASOURCE_NAME = "jdbc/ebegu";
 
-	private static final String[] EXCEPTIONS = new String[]{"_aud", "revinfo", "schema_version"};
+	private static final String[] EXCEPTIONS = new String[] { "_aud", "revinfo", "schema_version" };
 
 	@PersistenceContext(unitName = "ebeguPersistenceUnit")
 	EntityManager em;
-
-
 
 	@SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
 	@PostConstruct

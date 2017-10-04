@@ -15,12 +15,12 @@
 
 package ch.dvbern.ebegu.vorlagen;
 
+import java.time.LocalDate;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
 import org.apache.commons.lang.StringUtils;
-
-import java.time.LocalDate;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -93,10 +93,10 @@ public class BriefPrintImpl implements BriefPrint {
 	public String getGesuchstellerNames() {
 		String gesuchstellerNames = "";
 
-		if(gesuch.getGesuchsteller1() != null) {
+		if (gesuch.getGesuchsteller1() != null) {
 			gesuchstellerNames = gesuch.getGesuchsteller1().extractFullName();
 		}
-		if(gesuch.getGesuchsteller2() != null) {
+		if (gesuch.getGesuchsteller2() != null) {
 			gesuchstellerNames += ", " + gesuch.getGesuchsteller2().extractFullName();
 		}
 

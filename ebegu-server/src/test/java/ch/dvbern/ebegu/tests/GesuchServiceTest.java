@@ -16,12 +16,71 @@
 
 package ch.dvbern.ebegu.tests;
 
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.security.PrivilegedAction;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.ejb.EJBAccessException;
+import javax.inject.Inject;
+import javax.persistence.OneToOne;
+import javax.security.auth.Subject;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.AntragStatusHistory;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.GeneratedDokument;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.entities.WizardStep;
+import ch.dvbern.ebegu.entities.Zahlungsposition;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
+import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.services.AntragStatusHistoryService;
+import ch.dvbern.ebegu.services.ApplicationPropertyService;
+import ch.dvbern.ebegu.services.DokumentGrundService;
+import ch.dvbern.ebegu.services.FallService;
+import ch.dvbern.ebegu.services.GeneratedDokumentService;
+import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.GesuchsperiodeService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.MitteilungService;
+import ch.dvbern.ebegu.services.TestfaelleService;
+import ch.dvbern.ebegu.services.WizardStepService;
+import ch.dvbern.ebegu.services.ZahlungService;
 import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
@@ -39,21 +98,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.ejb.EJBAccessException;
-import javax.inject.Inject;
-import javax.persistence.OneToOne;
-import javax.security.auth.Subject;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.security.PrivilegedAction;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.*;
 
 import static ch.dvbern.ebegu.tets.TestDataUtil.createAndPersistFeutzYvonneGesuch;
 
@@ -108,7 +152,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	public static final int ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG = 15;
 	public static final int ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE = 60;
 	public static final int ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG = 90;
-
 
 	@Test
 	public void createGesuch() {
@@ -242,7 +285,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 	}
 
-
 	@Test
 	public void testSearchByFamilienname() {
 		persistNewEntity(AntragStatus.ERSTE_MAHNUNG);
@@ -261,7 +303,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		List<Gesuch> foundGesuche = resultpair.getRight();
 		Assert.assertNotNull(foundGesuche.get(0).getGesuchsteller1());
 		Assert.assertEquals(gesuch.getGesuchsteller1().getGesuchstellerJA().getNachname(), foundGesuche.get(0).getGesuchsteller1().getGesuchstellerJA().getNachname());
-
 
 	}
 
@@ -300,7 +341,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		Gesuchsperiode periode = TestDataUtil.createCustomGesuchsperiode(TestDataUtil.PERIODE_JAHR_1, TestDataUtil.PERIODE_JAHR_2);
 
-		Gesuchsperiode nextPeriode = TestDataUtil.createCustomGesuchsperiode(TestDataUtil.PERIODE_JAHR_1+1, TestDataUtil.PERIODE_JAHR_2+1);
+		Gesuchsperiode nextPeriode = TestDataUtil.createCustomGesuchsperiode(TestDataUtil.PERIODE_JAHR_1 + 1, TestDataUtil.PERIODE_JAHR_2 + 1);
 		nextPeriode = persistence.merge(nextPeriode);
 		gesuch.setGesuchsperiode(nextPeriode);
 		gesuch = persistence.merge(gesuch);
@@ -308,13 +349,13 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuchService.findGesuch(gesuch.getId());
 
 		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
-		Assert.assertEquals(TestDataUtil.PERIODE_JAHR_1+"/"+TestDataUtil.PERIODE_JAHR_2, periode.getGesuchsperiodeString());
+		Assert.assertEquals(TestDataUtil.PERIODE_JAHR_1 + "/" + TestDataUtil.PERIODE_JAHR_2, periode.getGesuchsperiodeString());
 		filterDTO.getSearch().getPredicateObject().setGesuchsperiodeString(periode.getGesuchsperiodeString());
 
 		Pair<Long, List<Gesuch>> firstResult = gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(2), firstResult.getLeft());
 
-		Assert.assertEquals((TestDataUtil.PERIODE_JAHR_1+1)+"/"+(TestDataUtil.PERIODE_JAHR_2+1), nextPeriode.getGesuchsperiodeString());
+		Assert.assertEquals((TestDataUtil.PERIODE_JAHR_1 + 1) + "/" + (TestDataUtil.PERIODE_JAHR_2 + 1), nextPeriode.getGesuchsperiodeString());
 		filterDTO.getSearch().getPredicateObject().setGesuchsperiodeString(nextPeriode.getGesuchsperiodeString());
 
 		Pair<Long, List<Gesuch>> result = gesuchService.searchAntraege(filterDTO);
@@ -322,7 +363,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(gesuch.getId(), result.getRight().get(0).getId());
 
 		//search nach kurzem string
-		filterDTO.getSearch().getPredicateObject().setGesuchsperiodeString((TestDataUtil.PERIODE_JAHR_1+1)+"/"+(TestDataUtil.PERIODE_JAHR_2-2000+1));
+		filterDTO.getSearch().getPredicateObject().setGesuchsperiodeString((TestDataUtil.PERIODE_JAHR_1 + 1) + "/" + (TestDataUtil.PERIODE_JAHR_2 - 2000 + 1));
 		Pair<Long, List<Gesuch>> thirdResult = gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(1), thirdResult.getLeft());
 		Assert.assertEquals(gesuch.getId(), thirdResult.getRight().get(0).getId());
@@ -357,7 +398,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(new Long(1), firstResult.getLeft()); //Admin sieht Gesuch im Status IN_BEARBEITUNG_GS nicht, soll anscheinend so sein
 
 		//Die Gesuche sollten im Status IN_BEARBEITUNG_GS sein und zu keinem oder einem Traegerschafts Sachbearbeiter gehoeren, trotzdem sollten wir sie finden
-//		Benutzer user = TestDataUtil.createDummySuperAdmin(persistence);
+		//		Benutzer user = TestDataUtil.createDummySuperAdmin(persistence);
 		//kita Weissenstein
 		Institution institutionToSet = gesuch.extractAllBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution();
 		loginAsSachbearbeiterInst("sainst", institutionToSet);
@@ -520,7 +561,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 			gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
 			Assert.fail("No Besitzer is present. must fail for Role Gesuchsteller");
 		} catch (EJBAccessException e) {
-		//noop
+			//noop
 		}
 
 		gesuch.getFall().setBesitzer(gesuchsteller);
@@ -530,7 +571,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		try {
 			gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
 			Assert.fail("Gesuch is already freigegeben. Wrong state should be detected");
-		} catch (EbeguRuntimeException e){
+		} catch (EbeguRuntimeException e) {
 			Assert.assertEquals("Das Gesuch wurde bereits freigegeben", e.getCustomMessage());
 		}
 	}
@@ -571,7 +612,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		try {
 			gesuchService.findGesuch(gesuch.getId());
 			Assert.fail("It should crash because STV has no rights to see VERFUEGT");
-		} catch(EJBAccessException e) {
+		} catch (EJBAccessException e) {
 			// nop
 		}
 	}
@@ -697,9 +738,9 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final Fall fall = fallService.saveFall(TestDataUtil.createDefaultFall());
 
 		final Gesuchsperiode gesuchsperiode1516 = TestDataUtil.createCustomGesuchsperiode(2015, 2016);
-		final Gesuchsperiode periodeToUpdate = 	gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode1516);
+		final Gesuchsperiode periodeToUpdate = gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode1516);
 
-		final Gesuchsperiode otherPeriod = 	gesuchsperiodeService.saveGesuchsperiode(TestDataUtil.createCustomGesuchsperiode(2014, 2015));
+		final Gesuchsperiode otherPeriod = gesuchsperiodeService.saveGesuchsperiode(TestDataUtil.createCustomGesuchsperiode(2014, 2015));
 
 		Gesuch gesuch1516_1 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.VERFUEGT);
 		persistence.persist(gesuch1516_1);
@@ -720,13 +761,11 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 			if (foundGesuch.get().getGesuchsperiode().isSame(periodeToUpdate)) {
 				if (foundGesuch.get().equals(gesuch1516_1)) {
 					Assert.assertEquals(AntragStatus.BESCHWERDE_HAENGIG, foundGesuch.get().getStatus());
-				}
-				else {
+				} else {
 					Assert.assertEquals(AntragStatus.VERFUEGT, foundGesuch.get().getStatus()); // vergleicht mit IN_BEARBEITUNG_JA weil es so gesetzt wurde
 				}
 				Assert.assertTrue(foundGesuch.get().isGesperrtWegenBeschwerde());
-			}
-			else {
+			} else {
 				Assert.assertEquals(AntragStatus.VERFUEGT, foundGesuch.get().getStatus()); // vergleicht mit IN_BEARBEITUNG_JA weil es so gesetzt wurde
 				Assert.assertFalse(foundGesuch.get().isGesperrtWegenBeschwerde());
 			}
@@ -738,9 +777,9 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final Fall fall = fallService.saveFall(TestDataUtil.createDefaultFall());
 
 		final Gesuchsperiode gesuchsperiode1516 = TestDataUtil.createCustomGesuchsperiode(2015, 2016);
-		final Gesuchsperiode periodeToUpdate = 	gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode1516);
+		final Gesuchsperiode periodeToUpdate = gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode1516);
 
-		final Gesuchsperiode otherPeriod = 	gesuchsperiodeService.saveGesuchsperiode(TestDataUtil.createCustomGesuchsperiode(2014, 2015));
+		final Gesuchsperiode otherPeriod = gesuchsperiodeService.saveGesuchsperiode(TestDataUtil.createCustomGesuchsperiode(2014, 2015));
 
 		Gesuch gesuch1516_1 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.VERFUEGT);
 		persistence.persist(gesuch1516_1);
@@ -765,18 +804,15 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 			if (foundGesuch.get().getGesuchsperiode().isSame(periodeToUpdate)) {
 				if (foundGesuch.get().equals(gesuch1516_1)) {
 					Assert.assertEquals(AntragStatus.VERFUEGT, foundGesuch.get().getStatus());
-				}
-				else {
+				} else {
 					Assert.assertEquals(AntragStatus.VERFUEGT, foundGesuch.get().getStatus());
 				}
-			}
-			else {
+			} else {
 				Assert.assertEquals(AntragStatus.VERFUEGT, foundGesuch.get().getStatus());
 			}
 			Assert.assertFalse(foundGesuch.get().isGesperrtWegenBeschwerde());
 		});
 	}
-
 
 	@Test
 	public void testWarnungFehlendeQuittung() throws Exception {
@@ -917,14 +953,13 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(GesuchBetreuungenStatus.ABGEWIESEN, gesuch.getGesuchBetreuungenStatus());
 	}
 
-
 	// HELP METHOD
 
 	private void insertApplicationProperties() {
-		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_WARNUNG_FREIGABE, ""+ANZAHL_TAGE_BIS_WARNUNG_FREIGABE);
-		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG, ""+ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG);
-		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE, ""+ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE);
-		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG, ""+ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG);
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_WARNUNG_FREIGABE, "" + ANZAHL_TAGE_BIS_WARNUNG_FREIGABE);
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG, "" + ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG);
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE, "" + ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE);
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG, "" + ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG);
 	}
 
 	private Gesuch createGesuchInBearbeitungGS(LocalDateTime timestampErstellt) {
@@ -1012,7 +1047,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		}
 	}
 
-
 	private Gesuch persistNewEntity(AntragStatus status) {
 		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
 		gesuch.setEingangsart(Eingangsart.PAPIER);
@@ -1059,7 +1093,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		return gesuch;
 	}
 
-
 	/**
 	 * da nur der admin getAllGesuche aufrufen darf logen wir uns kurz als admin ein und dann weider aus ...
 	 */
@@ -1082,7 +1115,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 				}
 
 			});
-
 
 		} catch (LoginException e) {
 			LOG.error("Could not login as admin to read Gesuche");

@@ -15,12 +15,13 @@
 
 package ch.dvbern.ebegu.util;
 
-import org.junit.Test;
-
-import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+
+import javax.annotation.Nullable;
+
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -30,7 +31,6 @@ import static org.junit.Assert.assertTrue;
  * Tests für MathUtil
  */
 public class MathUtilTest {
-
 
 	private static final RoundingMode DFLT_ROUNDING = RoundingMode.HALF_UP;
 	private static final int DFLT_PRECISION = 19;

@@ -47,8 +47,6 @@ public class InstitutionServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
-
 	@Test
 	public void createInstitution() {
 		Assert.assertNotNull(institutionService);
@@ -62,7 +60,7 @@ public class InstitutionServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void deleteInstitution(){
+	public void deleteInstitution() {
 		Assert.assertNotNull(institutionService);
 		Institution institution = insertInstitution();
 
@@ -76,7 +74,7 @@ public class InstitutionServiceTest extends AbstractEbeguLoginTest {
 	// This test gives a really strange Error java.lang.NoSuchMethodError: ch.dvbern.ebegu.entities.Institution.setActive(Ljava/lang/Boolean;)V
 	// but the method in the entity is definitely there!
 	@Test
-	public void inactiveInstitution(){
+	public void inactiveInstitution() {
 		Assert.assertNotNull(institutionService);
 		Institution institution = insertInstitution();
 
@@ -87,9 +85,8 @@ public class InstitutionServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertFalse(inavtiveInst.getActive());
 	}
 
-
 	@Test
-	public void getAllInstitutionenTest(){
+	public void getAllInstitutionenTest() {
 		Assert.assertNotNull(institutionService);
 		Institution institution = insertInstitution();
 
@@ -97,7 +94,6 @@ public class InstitutionServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertFalse(allInstitutionen.isEmpty());
 
 	}
-
 
 	// HELP METHODS
 

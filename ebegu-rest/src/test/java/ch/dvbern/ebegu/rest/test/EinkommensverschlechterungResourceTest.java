@@ -15,6 +15,9 @@
 
 package ch.dvbern.ebegu.rest.test;
 
+import javax.inject.Inject;
+import javax.ws.rs.core.UriInfo;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
@@ -34,16 +37,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.UriInfo;
-
 /**
  * Testet GesuchstellerResource
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.DISABLED)
 public class EinkommensverschlechterungResourceTest extends AbstractEbeguRestLoginTest {
-
 
 	@Inject
 	private GesuchstellerResource gesuchstellerResource;

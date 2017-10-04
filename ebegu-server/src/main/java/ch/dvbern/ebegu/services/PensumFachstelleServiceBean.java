@@ -58,7 +58,7 @@ public class PensumFachstelleServiceBean extends AbstractBaseService implements 
 	@PermitAll
 	public Optional<PensumFachstelle> findPensumFachstelle(@Nonnull String pensumFachstelleId) {
 		Objects.requireNonNull(pensumFachstelleId, "id muss gesetzt sein");
-		PensumFachstelle a =  persistence.find(PensumFachstelle.class, pensumFachstelleId);
+		PensumFachstelle a = persistence.find(PensumFachstelle.class, pensumFachstelleId);
 		return Optional.ofNullable(a);
 	}
 

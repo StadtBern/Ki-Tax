@@ -13,9 +13,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IDirective, IDirectiveFactory, IAugmentedJQuery, IScope, IAttributes} from 'angular';
+import {IAttributes, IAugmentedJQuery, IDirective, IDirectiveFactory, IScope} from 'angular';
 import {DVRoleElementController} from '../../controller/DVRoleElementController';
-
 
 /**
  * Attribute Directive um Elementen aus- und einblenden. Erweitert ng-show

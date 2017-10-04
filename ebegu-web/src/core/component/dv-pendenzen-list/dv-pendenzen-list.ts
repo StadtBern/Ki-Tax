@@ -28,6 +28,7 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import TSUser from '../../../models/TSUser';
 import TSAbstractAntragDTO from '../../../models/TSAbstractAntragDTO';
 import TSFallAntragDTO from '../../../models/TSFallAntragDTO';
+
 let template = require('./dv-pendenzen-list.html');
 require('./dv-pendenzen-list.less');
 

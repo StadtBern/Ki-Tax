@@ -15,10 +15,6 @@
 
 package ch.dvbern.ebegu.api.errors;
 
-import org.jboss.resteasy.api.validation.ResteasyViolationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.validation.ConstraintDeclarationException;
 import javax.validation.ConstraintDefinitionException;
 import javax.validation.GroupDefinitionException;
@@ -27,6 +23,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
+
+import org.jboss.resteasy.api.validation.ResteasyViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by imanol on 01.03.16.

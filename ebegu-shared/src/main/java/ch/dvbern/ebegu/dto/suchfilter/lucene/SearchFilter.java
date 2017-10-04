@@ -15,15 +15,16 @@
 
 package ch.dvbern.ebegu.dto.suchfilter.lucene;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
 
 /**
  * Filter class for searches in the lucene index. Determines which Index should be searched and which fields.
@@ -69,7 +70,6 @@ public class SearchFilter implements Serializable {
 	public Integer getMaxResults() {
 		return maxResults;
 	}
-
 
 	@Nonnull
 	public SearchEntityType getSearchEntityType() {

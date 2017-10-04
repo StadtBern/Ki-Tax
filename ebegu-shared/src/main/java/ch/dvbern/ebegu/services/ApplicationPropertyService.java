@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 
-
 /**
  * Service zum Verwalten von Application Properties
  */
@@ -34,6 +33,7 @@ public interface ApplicationPropertyService {
 	/**
 	 * Speichert das property neu in der DB falls der Key noch nicht existeirt. Ansonsten wird ein neues Property mit diesem
 	 * Key erstellt
+	 *
 	 * @param key name des Property
 	 * @param value Wert des Property
 	 * @return ApplicationProperty mit key und value
@@ -42,7 +42,6 @@ public interface ApplicationPropertyService {
 	ApplicationProperty saveOrUpdateApplicationProperty(@Nonnull ApplicationPropertyKey key, @Nonnull String value);
 
 	/**
-
 	 * @param key name des Property
 	 * @return Property mit demg egebenen key oder null falls nicht vorhanden
 	 */
@@ -56,7 +55,6 @@ public interface ApplicationPropertyService {
 	Optional<ApplicationProperty> readApplicationProperty(String keyParam);
 
 	/**
-	 *
 	 * @return Liste aller ApplicationProperties aus der DB
 	 */
 	@Nonnull

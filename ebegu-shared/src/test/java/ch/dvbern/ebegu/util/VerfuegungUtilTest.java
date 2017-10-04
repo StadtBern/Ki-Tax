@@ -15,17 +15,18 @@
 
 package ch.dvbern.ebegu.util;
 
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-import ch.dvbern.ebegu.types.DateRange;
-import org.junit.Assert;
-import org.junit.Test;
-
-import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.types.DateRange;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Tests fuer VerfuegungUtil
@@ -33,9 +34,9 @@ import java.util.List;
 public class VerfuegungUtilTest {
 
 	/**
-	 *  J   F   M   A   M   J   J
-	 *  |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *      |---|                   -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |---|                   -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitInterval1Abschnitt() {
@@ -48,9 +49,9 @@ public class VerfuegungUtilTest {
 	}
 
 	/**
-	 *  J   F   M   A   M   J   J
-	 *  |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *      |-------|               -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |-------|               -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitInterval2Abschnitte() {
@@ -63,9 +64,9 @@ public class VerfuegungUtilTest {
 	}
 
 	/**
-	 *  J   F   M   A   M   J   J
-	 *  |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *       |-|                    -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |-|                    -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitIntervalSubabschnitt() {
@@ -78,9 +79,9 @@ public class VerfuegungUtilTest {
 	}
 
 	/**
-	 *  J   F   M   A   M   J   J
-	 *  |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *      |-----|                 -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |-----|                 -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitIntervalOnAndHalfabschnitt() {
@@ -93,9 +94,9 @@ public class VerfuegungUtilTest {
 	}
 
 	/**
-	 *  J   F   M   A   M   J   J
-	 *  |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *        |---|                 -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |---|                 -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitIntervalTwoHalfsabschnitt() {
@@ -108,9 +109,9 @@ public class VerfuegungUtilTest {
 	}
 
 	/**
-	 *  J   F   M   A   M   J   J
-	 *  |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *         |----|               -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |----|               -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitIntervalTwoHalfsabschnitt2() {
@@ -123,9 +124,9 @@ public class VerfuegungUtilTest {
 	}
 
 	/**
-	 *  J   F   M   A   M   J   J
-	 *  |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *        |-----------|         -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |-----------|         -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitIntervalSeveralabschnitte() {
@@ -138,9 +139,9 @@ public class VerfuegungUtilTest {
 	}
 
 	/**
-	 *          J   F   M   A   M   J   J
-	 *          |---|---|---|---|---|---|   -> Zeitabschnitte
-	 *  |---|                               -> interval
+	 * J   F   M   A   M   J   J
+	 * |---|---|---|---|---|---|   -> Zeitabschnitte
+	 * |---|                               -> interval
 	 */
 	@Test
 	public void testGetVerguenstigungZeitIntervalOutOfRange() {

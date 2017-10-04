@@ -15,17 +15,24 @@
 
 package ch.dvbern.ebegu.entities;
 
+import java.math.BigDecimal;
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+
 import ch.dvbern.ebegu.enums.ZahlungspositionStatus;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.MathUtil;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.Objects;
 
 /**
  * Entitaet zum Speichern von Zahlungspositionen in der Datenbank.
@@ -106,10 +113,10 @@ public class Zahlungsposition extends AbstractEntity implements Comparable<Zahlu
 	@Override
 	public int compareTo(@Nonnull Zahlungsposition o) {
 		CompareToBuilder builder = new CompareToBuilder();
-		builder.append(this.getKind().getNachname() ,o.getKind().getNachname());
-		builder.append(this.getKind().getVorname() ,o.getKind().getVorname());
-		builder.append(this.getKind().getGeburtsdatum() ,o.getKind().getGeburtsdatum());
-		builder.append(this.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb() ,o.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb());
+		builder.append(this.getKind().getNachname(), o.getKind().getNachname());
+		builder.append(this.getKind().getVorname(), o.getKind().getVorname());
+		builder.append(this.getKind().getGeburtsdatum(), o.getKind().getGeburtsdatum());
+		builder.append(this.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb(), o.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb());
 		builder.append(this.getBetrag(), o.getBetrag());
 		return builder.toComparison();
 	}

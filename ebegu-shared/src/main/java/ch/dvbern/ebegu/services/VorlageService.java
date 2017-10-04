@@ -15,10 +15,11 @@
 
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Vorlage;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
-import java.util.Optional;
+
+import ch.dvbern.ebegu.entities.Vorlage;
 
 /**
  * Service zum Verwalten von Vorlagen

@@ -23,21 +23,22 @@ import WizardStepManager from './service/wizardStepManager';
 import MahnungRS from './service/mahnungRS.rest';
 import {TSEingangsart} from '../models/enums/TSEingangsart';
 import KindRS from '../core/service/kindRS.rest';
-import IPromise = angular.IPromise;
-import IQService = angular.IQService;
-import ILogService = angular.ILogService;
 import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../utils/TSRoleUtil';
 import TSMahnung from '../models/TSMahnung';
 import TSKindDublette from '../models/TSKindDublette';
+import IPromise = angular.IPromise;
+import IQService = angular.IQService;
+import ILogService = angular.ILogService;
+
 let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];
+
 /* @ngInject */
 export function gesuchRun(routerHelper: RouterHelper) {
     routerHelper.configureStates(getStates(), '/start');
 }
-
 
 //array mit allen States
 function getStates(): IState[] {
@@ -71,7 +72,6 @@ function getStates(): IState[] {
     ];
 }
 
-
 //STATES
 
 export class EbeguGesuchState implements IState {
@@ -87,7 +87,7 @@ export class EbeguNewFallState implements IState {
     name = 'gesuch.fallcreation';
     url = '/fall/:createNew/:eingangsart/:gesuchsperiodeId/:gesuchId/:fallId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<fall-creation-view>'
         },
@@ -105,7 +105,7 @@ export class EbeguMutationState implements IState {
     name = 'gesuch.mutation';
     url = '/mutation/:createMutation/:eingangsart/:gesuchsperiodeId/:gesuchId/:fallId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<fall-creation-view>'
         },
@@ -123,7 +123,7 @@ export class EbeguErneuerungsgesuchState implements IState {
     name = 'gesuch.erneuerung';
     url = '/erneuerung/:createErneuerung/:eingangsart/:gesuchsperiodeId/:gesuchId/:fallId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<fall-creation-view>'
         },
@@ -141,7 +141,7 @@ export class EbeguFamiliensituationState implements IState {
     name = 'gesuch.familiensituation';
     url = '/familiensituation/:gesuchId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<familiensituation-view>'
         },
@@ -159,7 +159,7 @@ export class EbeguStammdatenState implements IState {
     name = 'gesuch.stammdaten';
     url = '/stammdaten/:gesuchId/:gesuchstellerNumber';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<stammdaten-view>'
         },
@@ -177,7 +177,7 @@ export class EbeguUmzugState implements IState {
     name = 'gesuch.umzug';
     url = '/umzug/:gesuchId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<umzug-view>'
         },
@@ -195,7 +195,7 @@ export class EbeguKinderListState implements IState {
     name = 'gesuch.kinder';
     url = '/kinder/:gesuchId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<kinder-list-view kinder-dubletten="$resolve.kinderDubletten">'
         },
@@ -214,7 +214,7 @@ export class EbeguKindState implements IState {
     name = 'gesuch.kind';
     url = '/kinder/kind/:gesuchId/:kindNumber';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<kind-view>'
         },
@@ -232,7 +232,7 @@ export class EbeguBetreuungListState implements IState {
     name = 'gesuch.betreuungen';
     url = '/betreuungen/:gesuchId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<betreuung-list-view>'
         },
@@ -250,7 +250,7 @@ export class EbeguBetreuungState implements IState {
     name = 'gesuch.betreuung';
     url = '/betreuungen/betreuung/:gesuchId/:kindNumber/:betreuungNumber';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<betreuung-view>'
         },
@@ -268,7 +268,7 @@ export class EbeguAbwesenheitState implements IState {
     name = 'gesuch.abwesenheit';
     url = '/abwesenheit/:gesuchId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<abwesenheit-view>'
         },
@@ -286,7 +286,7 @@ export class EbeguErwerbspensenListState implements IState {
     name = 'gesuch.erwerbsPensen';
     url = '/erwerbspensen/:gesuchId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<erwerbspensum-list-view>'
         },
@@ -304,7 +304,7 @@ export class EbeguErwerbspensumState implements IState {
     name = 'gesuch.erwerbsPensum';
     url = '/erwerbspensen/erwerbspensum/:gesuchId/:gesuchstellerNumber/:erwerbspensumNum';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<erwerbspensum-view>'
         },
@@ -322,7 +322,7 @@ export class EbeguFinanzielleSituationState implements IState {
     name = 'gesuch.finanzielleSituation';
     url = '/finanzielleSituation/:gesuchId/:gesuchstellerNumber';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<finanzielle-situation-view>'
         },
@@ -340,7 +340,7 @@ export class EbeguFinanzielleSituationStartState implements IState {
     name = 'gesuch.finanzielleSituationStart';
     url = '/finanzielleSituationStart/:gesuchId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<finanzielle-situation-start-view>'
         },
@@ -358,7 +358,7 @@ export class EbeguFinanzielleSituationResultateState implements IState {
     name = 'gesuch.finanzielleSituationResultate';
     url = '/finanzielleSituationResultate/:gesuchId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<finanzielle-situation-resultate-view>'
         },
@@ -376,7 +376,7 @@ export class EbeguVerfuegenListState implements IState {
     name = 'gesuch.verfuegen';
     url = '/verfuegen/:gesuchId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<verfuegen-list-view mahnung-list="$resolve.mahnungList">'
         },
@@ -395,7 +395,7 @@ export class EbeguVerfuegenState implements IState {
     name = 'gesuch.verfuegenView';
     url = '/verfuegenView/:gesuchId/:betreuungNumber/:kindNumber';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<verfuegen-view>'
         },
@@ -413,7 +413,7 @@ export class EbeguEinkommensverschlechterungInfoState implements IState {
     name = 'gesuch.einkommensverschlechterungInfo';
     url = '/einkommensverschlechterungInfo/:gesuchId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<einkommensverschlechterung-info-view>'
         },
@@ -431,7 +431,7 @@ export class EbeguEinkommensverschlechterungSteuernState implements IState {
     name = 'gesuch.einkommensverschlechterungSteuern';
     url = '/einkommensverschlechterungSteuern/:gesuchId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<einkommensverschlechterung-steuern-view>'
         },
@@ -449,7 +449,7 @@ export class EbeguEinkommensverschlechterungState implements IState {
     name = 'gesuch.einkommensverschlechterung';
     url = '/einkommensverschlechterung/:gesuchId/:gesuchstellerNumber/:basisjahrPlus';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<einkommensverschlechterung-view>'
         },
@@ -467,7 +467,7 @@ export class EbeguEinkommensverschlechterungResultateState implements IState {
     name = 'gesuch.einkommensverschlechterungResultate';
     url = '/einkommensverschlechterungResultate/:gesuchId/:basisjahrPlus';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<einkommensverschlechterung-resultate-view>'
         },
@@ -485,7 +485,7 @@ export class EbeguDokumenteState implements IState {
     name = 'gesuch.dokumente';
     url = '/dokumente/:gesuchId/:gesuchstellerNumber';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<dokumente-view>'
         },
@@ -503,7 +503,7 @@ export class EbeguFreigabeState implements IState {
     name = 'gesuch.freigabe';
     url = '/freigabe/:gesuchId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<freigabe-view>'
         },
@@ -521,7 +521,7 @@ export class EbeguBetreuungMitteilungState implements IState {
     name = 'gesuch.mitteilung';
     url = '/mitteilung/:fallId/:gesuchId/:betreuungId/:mitteilungId';
 
-    views: {[name: string]: IState} = {
+    views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<betreuung-mitteilung-view>'
         },
@@ -554,7 +554,6 @@ export class IBetreuungStateParams implements IStateParamsService {
     kindNumber: string;
 }
 
-
 export class INewFallStateParams implements IStateParamsService {
     createNew: string;
     createMutation: string;
@@ -578,9 +577,9 @@ export class IEinkommensverschlechterungResultateStateParams implements IStatePa
     basisjahrPlus: string;
 }
 
-
 // FIXME dieses $inject wird ignoriert, d.h, der Parameter der Funktion muss exact dem Namen des Services entsprechen (Grossbuchstaben am Anfang). Warum?
 getMahnungen.$inject = ['MahnungRS', '$stateParams', '$q', '$log'];
+
 /* @ngInject */
 export function getMahnungen(MahnungRS: MahnungRS, $stateParams: IGesuchStateParams, $q: IQService, $log: ILogService) {
     // return [];
@@ -596,11 +595,12 @@ export function getMahnungen(MahnungRS: MahnungRS, $stateParams: IGesuchStatePar
     return deferred.promise;
 }
 
-
 getGesuchModelManager.$inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', '$stateParams', '$q', '$log'];
+
 /* @ngInject */
 export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                                      wizardStepManager: WizardStepManager, $stateParams: IGesuchStateParams, $q: IQService, $log: ILogService): IPromise<TSGesuch> {
+                                      wizardStepManager: WizardStepManager, $stateParams: IGesuchStateParams, $q: IQService,
+                                      $log: ILogService): IPromise<TSGesuch> {
     if ($stateParams) {
         let gesuchIdParam = $stateParams.gesuchId;
         if (gesuchIdParam) {
@@ -626,6 +626,7 @@ export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, be
 }
 
 reloadGesuchModelManager.$inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', '$stateParams', '$q', '$log'];
+
 /* @ngInject */
 export function reloadGesuchModelManager(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                                          wizardStepManager: WizardStepManager, $stateParams: INewFallStateParams, $q: any,
@@ -652,6 +653,7 @@ export function reloadGesuchModelManager(gesuchModelManager: GesuchModelManager,
 
 getKinderDubletten.$inject = ['$stateParams', '$q', '$log', 'KindRS', 'AuthServiceRS'];
 /* @ngInject */
+
 // Die Kinderdubletten werden nur für JA-Mitarbeiter (inkl. Revisor und Jurist) angezeigt
 export function getKinderDubletten($stateParams: IGesuchStateParams, $q: IQService, $log: ILogService, KindRS: KindRS, authService: AuthServiceRS) {
     let isAdmin: boolean = authService.isOneOfRoles(TSRoleUtil.getJugendamtRole());
@@ -665,6 +667,7 @@ export function getKinderDubletten($stateParams: IGesuchStateParams, $q: IQServi
 }
 
 createEmptyMutation.$inject = ['GesuchModelManager', '$stateParams', '$q'];
+
 export function createEmptyMutation(gesuchModelManager: GesuchModelManager, $stateParams: INewFallStateParams, $q: any): IPromise<TSGesuch> {
     if ($stateParams) {
         let gesuchId = $stateParams.gesuchId;
@@ -679,6 +682,7 @@ export function createEmptyMutation(gesuchModelManager: GesuchModelManager, $sta
 }
 
 createEmptyErneuerungsgesuch.$inject = ['GesuchModelManager', '$stateParams', '$q'];
+
 export function createEmptyErneuerungsgesuch(gesuchModelManager: GesuchModelManager, $stateParams: INewFallStateParams, $q: any): IPromise<TSGesuch> {
     if ($stateParams) {
         let gesuchId = $stateParams.gesuchId;

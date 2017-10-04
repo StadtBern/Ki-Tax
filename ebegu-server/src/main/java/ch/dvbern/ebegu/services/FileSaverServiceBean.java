@@ -53,12 +53,10 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 @Local(FileSaverService.class)
 public class FileSaverServiceBean implements FileSaverService {
 
-
 	private static final Logger LOG = LoggerFactory.getLogger(FileSaverServiceBean.class.getSimpleName());
 
 	@Inject
 	private EbeguConfiguration ebeguConfiguration;
-
 
 	@Override
 	@PermitAll

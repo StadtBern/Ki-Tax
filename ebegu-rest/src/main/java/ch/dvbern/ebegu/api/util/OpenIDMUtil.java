@@ -29,7 +29,7 @@ public final class OpenIDMUtil {
 	}
 
 	@Nonnull
-	public static  String convertToEBEGUID(@Nullable String openIdmUid) {
+	public static String convertToEBEGUID(@Nullable String openIdmUid) {
 		if (openIdmUid != null && openIdmUid.length() > 2) {
 			return openIdmUid.substring(2);
 		} else {
@@ -39,8 +39,8 @@ public final class OpenIDMUtil {
 
 	@Nonnull
 	public static String convertToOpenIdmInstitutionsUID(@Nonnull String institutionId) {
-			return AuthConstants.OPENIDM_INST_PREFIX +  institutionId;
-		}
+		return AuthConstants.OPENIDM_INST_PREFIX + institutionId;
+	}
 
 	@Nonnull
 	public static String convertToOpenIdmTraegerschaftUID(@Nonnull String traegerschaftId) {

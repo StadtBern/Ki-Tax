@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 public class EbeguConfigurationImpl extends SystemConfiguration implements EbeguConfiguration, Serializable {
 	private final Logger LOG = LoggerFactory.getLogger(EbeguConfigurationImpl.class.getSimpleName());
 
-
 	private static final long serialVersionUID = 463057263479503486L;
 	private static final String EBEGU_DEVELOPMENT_MODE = "ebegu.development.mode";
 	private static final String EBEGU_DOCUMENT_FILE_PATH = "ebegu.document.file.path";
@@ -192,7 +191,6 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 		if (StringUtils.isEmpty(user)) {
 			LOG.error("Internal API User  must be set in the properties (key: {}) to use the LoginConnector API ",
 				EBEGU_LOGIN_API_INTERNAL_USER);
-
 
 		}
 		return user;

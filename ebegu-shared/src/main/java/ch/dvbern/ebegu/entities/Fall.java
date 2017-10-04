@@ -31,6 +31,9 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
+import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyzer;
@@ -39,10 +42,6 @@ import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.bridge.builtin.LongBridge;
-
-import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
-import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
-import ch.dvbern.ebegu.util.Constants;
 
 /**
  * Entitaet zum Speichern von Fall in der Datenbank.
@@ -97,7 +96,6 @@ public class Fall extends AbstractEntity implements HasMandant, Searchable {
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_fall_mandant_id"))
 	private Mandant mandant;
-
 
 	public long getFallNummer() {
 		return fallNummer;
@@ -159,7 +157,7 @@ public class Fall extends AbstractEntity implements HasMandant, Searchable {
 	}
 
 	@Transient
-	public String getPaddedFallnummer(){
+	public String getPaddedFallnummer() {
 		return StringUtils.leftPad(String.valueOf(this.getFallNummer()), Constants.FALLNUMMER_LENGTH, '0');
 	}
 

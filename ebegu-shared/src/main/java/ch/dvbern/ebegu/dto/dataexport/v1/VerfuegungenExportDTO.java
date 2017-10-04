@@ -15,11 +15,12 @@
 
 package ch.dvbern.ebegu.dto.dataexport.v1;
 
+import java.util.List;
+import java.util.Objects;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * This is a DTO that is used to export the relevant Information about a {@link ch.dvbern.ebegu.entities.Verfuegung}.
@@ -34,7 +35,6 @@ public class VerfuegungenExportDTO {
 	private static final String SCHEMA_VERSION = "1.0"; //converter for Version 1
 
 	private List<VerfuegungExportDTO> verfuegungen;
-
 
 	public List<VerfuegungExportDTO> getVerfuegungen() {
 		return verfuegungen;

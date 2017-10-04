@@ -16,8 +16,6 @@
 import '../../bootstrap.ts';
 import 'angular-mocks';
 import ListResourceRS from './listResourceRS.rest';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
 
 describe('ListResourceRS', function () {
 

@@ -47,15 +47,15 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 	/**
 	 * Konstruktor
 	 *
-	 * @param fsGesuchsteller1               das {@link FinanzSituationPrintGesuchsteller}
-	 * @param fsGesuchsteller2               das {@link FinanzSituationPrintGesuchsteller}
+	 * @param fsGesuchsteller1 das {@link FinanzSituationPrintGesuchsteller}
+	 * @param fsGesuchsteller2 das {@link FinanzSituationPrintGesuchsteller}
 	 * @param einkommensverschlechterungJahr das Jahr des Einkommenverschleschterung
-	 * @param ereigniseintritt               Ereingis datum
-	 * @param grund                          Grund
-	 * @param basisJahrPlus					 Anzahl Jahre nach dem Basisjahr
+	 * @param ereigniseintritt Ereingis datum
+	 * @param grund Grund
+	 * @param basisJahrPlus Anzahl Jahre nach dem Basisjahr
 	 */
 	public EinkommensverschlechterungPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1, FinanzSituationPrintGesuchsteller fsGesuchsteller2,
-											   String einkommensverschlechterungJahr, String ereigniseintritt, String grund, int basisJahrPlus) {
+		String einkommensverschlechterungJahr, String ereigniseintritt, String grund, int basisJahrPlus) {
 
 		super(fsGesuchsteller1, fsGesuchsteller2);
 
@@ -138,6 +138,5 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 	protected AbstractFinanzielleSituation getFinanzSituationGS2() {
 		return ekvGS2;
 	}
-
 
 }

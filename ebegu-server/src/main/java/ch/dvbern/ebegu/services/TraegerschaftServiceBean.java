@@ -51,10 +51,9 @@ public class TraegerschaftServiceBean extends AbstractBaseService implements Tra
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
-
 	@Nonnull
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public Traegerschaft saveTraegerschaft(@Nonnull Traegerschaft traegerschaft) {
 		Objects.requireNonNull(traegerschaft);
 		return persistence.merge(traegerschaft);
@@ -84,7 +83,7 @@ public class TraegerschaftServiceBean extends AbstractBaseService implements Tra
 	}
 
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public void removeTraegerschaft(@Nonnull String traegerschaftId) {
 		Validate.notNull(traegerschaftId);
 		Optional<Traegerschaft> traegerschaftToRemove = findTraegerschaft(traegerschaftId);
@@ -93,7 +92,7 @@ public class TraegerschaftServiceBean extends AbstractBaseService implements Tra
 	}
 
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public void setInactive(@Nonnull String traegerschaftId) {
 		Validate.notNull(traegerschaftId);
 		Optional<Traegerschaft> traegerschaftOptional = findTraegerschaft(traegerschaftId);

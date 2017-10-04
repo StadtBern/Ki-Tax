@@ -43,8 +43,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Helper fuer die Statusueberpruefung in Resourcen
  */
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "ImplicitArrayToString", "DMI_INVOKING_TOSTRING_ON_ARRAY"})
-@SuppressFBWarnings({ "ImplicitArrayToString", "DMI_INVOKING_TOSTRING_ON_ARRAY"})
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "ImplicitArrayToString", "DMI_INVOKING_TOSTRING_ON_ARRAY" })
+@SuppressFBWarnings({ "ImplicitArrayToString", "DMI_INVOKING_TOSTRING_ON_ARRAY" })
 @Stateless
 public class ResourceHelper {
 
@@ -60,7 +60,6 @@ public class ResourceHelper {
 
 	@Inject
 	private PrincipalBean principalBean;
-
 
 	@SuppressWarnings("ConstantConditions")
 	public void assertGesuchStatusForFreigabe(@Nonnull String gesuchId) {

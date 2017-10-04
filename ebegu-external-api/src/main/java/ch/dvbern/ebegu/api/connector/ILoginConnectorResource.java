@@ -30,7 +30,6 @@ import ch.dvbern.ebegu.api.dtos.JaxExternalBenutzer;
 @Path("/connector")
 public interface ILoginConnectorResource {
 
-
 	/**
 	 * this service should be callable without authentication and can serve as a smoke test to see
 	 * if the deploymentw as ok

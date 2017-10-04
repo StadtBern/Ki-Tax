@@ -51,10 +51,8 @@ import TestDataUtil from './TestDataUtil';
 import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
 import * as moment from 'moment';
 import {TSVerfuegungZeitabschnittZahlungsstatus} from '../models/enums/TSVerfuegungZeitabschnittZahlungsstatus';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
-import Moment = moment.Moment;
 import {TSGesuchsperiodeStatus} from '../models/enums/TSGesuchsperiodeStatus';
+import Moment = moment.Moment;
 
 describe('EbeguRestUtil', function () {
 
@@ -156,7 +154,8 @@ describe('EbeguRestUtil', function () {
                 expect(transformedPers).toBeDefined();
                 expect(myGesuchsteller.gesuchstellerJA.nachname).toEqual(transformedPers.gesuchstellerJA.nachname);
 
-                expect(transformedPers.gesuchstellerJA.telefon).toBeUndefined(); // der leere String wurde in undefined umgewandelt deswegen muessen wir hier undefined zurueckbekommen
+                expect(transformedPers.gesuchstellerJA.telefon).toBeUndefined(); // der leere String wurde in undefined umgewandelt deswegen muessen wir hier
+                                                                                 // undefined zurueckbekommen
                 transformedPers.gesuchstellerJA.telefon = ''; // um das Objekt zu validieren, muessen wird das Telefon wieder auf '' setzen
 
                 expect(myGesuchsteller).toEqual(transformedPers);

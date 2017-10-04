@@ -15,6 +15,10 @@
 
 package ch.dvbern.ebegu.rest.test;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
 import ch.dvbern.ebegu.api.resource.GesuchsperiodeResource;
@@ -29,9 +33,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.util.List;
-
 /**
  * Testet die Gesuchsperiode Resource
  */
@@ -39,7 +40,6 @@ import java.util.List;
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
 public class GesuchsperiodeResourceTest extends AbstractEbeguRestLoginTest {
-
 
 	@Inject
 	private GesuchsperiodeResource gesuchsperiodeResource;
@@ -59,7 +59,7 @@ public class GesuchsperiodeResourceTest extends AbstractEbeguRestLoginTest {
 		findExistingObjectAndCompare(jaxGesuchsperiode);
 	}
 
-	@Test (expected = EbeguRuntimeException.class)
+	@Test(expected = EbeguRuntimeException.class)
 	public void createGesuchsperiodeAsAktivTest() {
 		JaxGesuchsperiode testJaxGesuchsperiode = TestJaxDataUtil.createTestJaxGesuchsperiode();
 		// Gesuchsperiode muss zuerst als ENTWURF gespeichert werden
@@ -107,7 +107,6 @@ public class GesuchsperiodeResourceTest extends AbstractEbeguRestLoginTest {
 		Assert.assertNotNull(listActiveAndInaktiv);
 		Assert.assertEquals(2, listActiveAndInaktiv.size());
 	}
-
 
 	// HELP METHODS
 

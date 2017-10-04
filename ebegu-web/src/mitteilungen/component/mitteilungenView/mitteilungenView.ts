@@ -14,14 +14,14 @@
  */
 
 import IComponentOptions = angular.IComponentOptions;
-import {IMitteilungenStateParams} from '../../mitteilungen.route';
-import TSFall from '../../../models/TSFall';
 import IFormController = angular.IFormController;
 import IStateService = angular.ui.IStateService;
+import ITimeoutService = angular.ITimeoutService;
+import {IMitteilungenStateParams} from '../../mitteilungen.route';
+import TSFall from '../../../models/TSFall';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
-import ITimeoutService = angular.ITimeoutService;
 
 let template = require('./mitteilungenView.html');
 require('./mitteilungenView.less');

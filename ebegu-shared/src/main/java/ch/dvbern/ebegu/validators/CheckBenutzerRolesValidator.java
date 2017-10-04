@@ -15,11 +15,11 @@
 
 package ch.dvbern.ebegu.validators;
 
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.enums.UserRole;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.enums.UserRole;
 
 /**
  * Dieser Validator prueft dass die angelegte Benutzer, mit den richtigen Parameter erstellt werden.
@@ -33,8 +33,8 @@ public class CheckBenutzerRolesValidator implements ConstraintValidator<CheckBen
 
 	/**
 	 * Folgende Regeln muessen erfuellt werden:
-	 *  - Wenn Rolle=SACHBEARBEITER_INSTITUTION der Benutzer muss mit einer Institution verknuepft werden
-	 *  - Wenn Rolle=SACHBEARBEITER_TRAEGERSCHAFT der Benutzer muss mit einer Traegerschaft verknuepft werden
+	 * - Wenn Rolle=SACHBEARBEITER_INSTITUTION der Benutzer muss mit einer Institution verknuepft werden
+	 * - Wenn Rolle=SACHBEARBEITER_TRAEGERSCHAFT der Benutzer muss mit einer Traegerschaft verknuepft werden
 	 *
 	 * @param instance Benutzer
 	 * @param context context

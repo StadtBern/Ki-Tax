@@ -104,7 +104,6 @@ public class AsivTest extends AbstractEbeguLoginTest {
 	private Gesuchsperiode gesuchsperiode;
 	private List<InstitutionStammdaten> institutionStammdatenList;
 
-
 	@Before
 	public void init() {
 		gesuchsperiode = createGesuchsperiode(true);

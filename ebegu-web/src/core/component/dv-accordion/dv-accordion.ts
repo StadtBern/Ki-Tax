@@ -14,6 +14,7 @@
  */
 
 import {IComponentOptions} from 'angular';
+
 let template = require('./dv-accordion.html');
 require('./dv-accordion.less');
 

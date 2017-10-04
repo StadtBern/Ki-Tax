@@ -10,11 +10,12 @@
 
 package ch.dvbern.ebegu.util;
 
-import ch.dvbern.ebegu.util.function.Procedure;
-import net.bull.javamelody.MonitoringProxy;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
-import java.util.function.Supplier;
+
+import ch.dvbern.ebegu.util.function.Procedure;
+import net.bull.javamelody.MonitoringProxy;
 
 import static java.util.Objects.requireNonNull;
 

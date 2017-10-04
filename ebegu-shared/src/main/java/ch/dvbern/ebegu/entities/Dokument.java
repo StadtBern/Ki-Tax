@@ -15,11 +15,16 @@
 
 package ch.dvbern.ebegu.entities;
 
-import org.hibernate.envers.Audited;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.envers.Audited;
 
 /**
  * Entitaet zum Speichern von Dokumente in der Datenbank.
@@ -39,10 +44,8 @@ public class Dokument extends FileMetadata {
 	@Column(nullable = false)
 	private LocalDateTime timestampUpload;
 
-
 	public Dokument() {
 	}
-
 
 	public Dokument(DokumentGrund dokumentGrund) {
 		this.dokumentGrund = dokumentGrund;

@@ -45,7 +45,6 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class ErwerbspensumResourceTest extends AbstractEbeguRestLoginTest {
 
-
 	@Inject
 	private GesuchstellerResource gesuchstellerResource;
 	@Inject
@@ -57,7 +56,6 @@ public class ErwerbspensumResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private EbeguParameterService ebeguParameterService;
 	private JaxId gesuchJAXPId;
-
 
 	@Before
 	public void setUp() {

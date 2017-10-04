@@ -15,15 +15,24 @@
 
 package ch.dvbern.ebegu.testfaelle;
 
-import ch.dvbern.ebegu.entities.*;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Collection;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.enums.Kinderabzug;
 import ch.dvbern.ebegu.util.MathUtil;
-
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.Collection;
 
 /**
  * Wechsel von 1 auf 2. Mit vorheriger EKV, nach Heirat nicht mehr stattgegeben
@@ -31,7 +40,7 @@ import java.util.Collection;
 public class Testfall_ASIV_06 extends AbstractASIVTestfall {
 
 	public Testfall_ASIV_06(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
-							boolean betreuungenBestaetigt) {
+		boolean betreuungenBestaetigt) {
 		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
 	}
 
@@ -88,7 +97,7 @@ public class Testfall_ASIV_06 extends AbstractASIVTestfall {
 		finanzielleSituationContainerGS2.getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(50000));
 		finanzielleSituationContainerGS2.setGesuchsteller(gesuchsteller2);
 		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationContainerGS2);
-        // Einkommensverschlechterug
+		// Einkommensverschlechterug
 		EinkommensverschlechterungContainer ekvContainerGS2 = createEinkommensverschlechterungContainer(true, false);
 		ekvContainerGS2.getEkvJABasisJahrPlus1().setNettolohnJan(MathUtil.DEFAULT.from(50000));
 		gesuchsteller2.setEinkommensverschlechterungContainer(ekvContainerGS2);

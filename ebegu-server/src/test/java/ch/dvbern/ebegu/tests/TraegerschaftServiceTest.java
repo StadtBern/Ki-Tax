@@ -46,8 +46,6 @@ public class TraegerschaftServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
-
 	@Test
 	public void createTraegerschaft() {
 		Assert.assertNotNull(traegerschaftService);

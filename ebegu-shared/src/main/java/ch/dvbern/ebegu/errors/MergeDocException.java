@@ -26,12 +26,13 @@ package ch.dvbern.ebegu.errors;
 * Ersteller: zeab am: 16.08.2016
 */
 
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ejb.ApplicationException;
-import java.io.Serializable;
+
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 
 @ApplicationException(rollback = true)
 public class MergeDocException extends EbeguException {

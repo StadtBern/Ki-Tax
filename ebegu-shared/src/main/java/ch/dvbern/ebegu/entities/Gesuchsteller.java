@@ -15,7 +15,6 @@
 
 package ch.dvbern.ebegu.entities;
 
-
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -67,10 +66,8 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	@NotNull
 	private boolean diplomatenstatus;
 
-
 	public Gesuchsteller() {
 	}
-
 
 	public String getMail() {
 		return mail;

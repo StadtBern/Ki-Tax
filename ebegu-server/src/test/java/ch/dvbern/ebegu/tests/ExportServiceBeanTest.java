@@ -83,7 +83,6 @@ public class ExportServiceBeanTest extends AbstractEbeguLoginTest {
 
 	private Gesuchsperiode gesuchsperiode;
 
-
 	@Before
 	public void init() {
 		final Gesuchsperiode gesuchsperiode = createGesuchsperiode(true);
@@ -91,7 +90,6 @@ public class ExportServiceBeanTest extends AbstractEbeguLoginTest {
 		createBenutzer(mandant);
 		TestDataUtil.prepareParameters(gesuchsperiode.getGueltigkeit(), persistence);
 	}
-
 
 	/**
 	 * Helper für init. Speichert Gesuchsperiode in DB
@@ -102,7 +100,6 @@ public class ExportServiceBeanTest extends AbstractEbeguLoginTest {
 		gesuchsperiode = gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
 		return gesuchsperiode;
 	}
-
 
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@Test
@@ -152,7 +149,7 @@ public class ExportServiceBeanTest extends AbstractEbeguLoginTest {
 
 		for (VerfuegungZeitabschnitt verfZeitabschn : verfuegung.getZeitabschnitte()) {
 			ZeitabschnittExportDTO matchingZeitAbschn = matchingVerfuegungExport.getZeitabschnitte().stream().filter(zeitabschnExpo -> zeitabschnExpo.getVon().equals(verfZeitabschn.getGueltigkeit().getGueltigAb())).reduce(StreamsUtil.toOnlyElement()).get();
-			Assert.assertEquals(matchingZeitAbschn.getBis(),(verfZeitabschn.getGueltigkeit().getGueltigBis()));
+			Assert.assertEquals(matchingZeitAbschn.getBis(), (verfZeitabschn.getGueltigkeit().getGueltigBis()));
 			Assert.assertEquals(0, verfZeitabschn.getVerguenstigung().compareTo(matchingZeitAbschn.getVerguenstigung()));
 			Assert.assertEquals(verfZeitabschn.getAnspruchberechtigtesPensum(), matchingZeitAbschn.getAnspruchPct());
 		}

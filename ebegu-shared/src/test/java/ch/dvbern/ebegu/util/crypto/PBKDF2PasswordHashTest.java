@@ -15,13 +15,13 @@
 
 package ch.dvbern.ebegu.util.crypto;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 import static ch.dvbern.ebegu.util.crypto.PBKDF2PasswordHash.createHash;
 import static ch.dvbern.ebegu.util.crypto.PBKDF2PasswordHash.validatePassword;
@@ -36,7 +36,7 @@ public class PBKDF2PasswordHashTest {
 		for (int i = 0; i < 10; i++) {
 			String hash = createHash("p\r\nassw0Rd!");
 			Assert.assertNotNull(hash);
-//			LOG.info("generated hash: "+ hash);
+			//			LOG.info("generated hash: "+ hash);
 		}
 
 		// Test password validation
@@ -61,6 +61,6 @@ public class PBKDF2PasswordHashTest {
 	public void testCreate() throws InvalidKeySpecException, NoSuchAlgorithmException {
 		String hash = createHash("password10");
 		Assert.assertNotNull(hash);
-//		System.out.println(hash);
+		//		System.out.println(hash);
 	}
 }

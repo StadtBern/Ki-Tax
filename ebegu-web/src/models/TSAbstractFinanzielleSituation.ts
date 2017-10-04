@@ -27,7 +27,6 @@ export default class TSAbstractFinanzielleSituation extends TSAbstractEntity {
     private _geschaeftsgewinnBasisjahr: number;
     private _geleisteteAlimente: number;
 
-
     constructor(steuerveranlagungErhalten?: boolean, steuererklaerungAusgefuellt?: boolean,
                 familienzulage?: number, ersatzeinkommen?: number, erhalteneAlimente?: number, bruttovermoegen?: number,
                 schulden?: number, geschaeftsgewinnBasisjahr?: number, geleisteteAlimente?: number) {

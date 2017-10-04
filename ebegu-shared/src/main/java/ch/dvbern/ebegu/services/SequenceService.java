@@ -10,11 +10,11 @@
 
 package ch.dvbern.ebegu.services;
 
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Sequence;
 import ch.dvbern.ebegu.enums.SequenceType;
-
-import javax.annotation.Nonnull;
 
 public interface SequenceService {
 

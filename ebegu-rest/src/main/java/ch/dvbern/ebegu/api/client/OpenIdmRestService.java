@@ -18,16 +18,15 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
+import ch.dvbern.ebegu.api.util.OpenIDMUtil;
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.Traegerschaft;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.dvbern.ebegu.api.util.OpenIDMUtil;
-import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.Traegerschaft;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
@@ -36,7 +35,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  * Implementierung des REST Services zum synchronisieren mit OpenIdm, erzeugt einen Proxy fuer {@link IOpenIdmRESTProxService}
  */
 @Stateless
-@RolesAllowed(value = {ADMIN, SUPER_ADMIN})
+@RolesAllowed(value = { ADMIN, SUPER_ADMIN })
 public class OpenIdmRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OpenIdmRestService.class.getSimpleName());
@@ -52,14 +51,12 @@ public class OpenIdmRestService {
 	private IOpenIdmRESTProxClient openIdmRESTProxClient;
 	private IOpenAmRESTProxClient openAmRESTProxClient;
 
-
 	public Optional<JaxOpenIdmResponse> getAll() {
 		return getAll(false);
 	}
 
 	public Optional<JaxOpenIdmResponse> getAll(boolean force) {
 		if (configuration.getOpenIdmEnabled() || force) {
-
 
 			Response response;
 			if (!configuration.getLoginWithToken()) {
@@ -135,7 +132,6 @@ public class OpenIdmRestService {
 		return create(force, institution.getName(), INSTITUTION, OpenIDMUtil.convertToOpenIdmInstitutionsUID(institution.getId()), institution.getMail());
 	}
 
-
 	public Optional<JaxOpenIdmResult> createTraegerschaft(Traegerschaft traegerschaft) {
 		return createTraegerschaft(traegerschaft, false);
 	}
@@ -143,7 +139,6 @@ public class OpenIdmRestService {
 	public Optional<JaxOpenIdmResult> createTraegerschaft(Traegerschaft traegerschaft, boolean force) {
 		return create(force, traegerschaft.getName(), TRAEGERSCHAFT, OpenIDMUtil.convertToOpenIdmTraegerschaftUID(traegerschaft.getId()), traegerschaft.getMail());
 	}
-
 
 	private String login() {
 

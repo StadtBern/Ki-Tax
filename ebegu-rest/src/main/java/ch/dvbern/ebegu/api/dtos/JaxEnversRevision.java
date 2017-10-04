@@ -23,9 +23,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.hibernate.envers.RevisionType;
-
 import ch.dvbern.lib.date.converters.LocalDateTimeXMLConverter;
+import org.hibernate.envers.RevisionType;
 
 /**
  * DTO fuer Application Propertie
@@ -45,7 +44,6 @@ public class JaxEnversRevision extends JaxAbstractDTO {
 
 	private JaxAbstractDTO entity;
 	private RevisionType accessType;
-
 
 	public JaxAbstractDTO getEntity() {
 		return entity;

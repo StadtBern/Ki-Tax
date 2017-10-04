@@ -15,11 +15,12 @@
 
 package ch.dvbern.ebegu.errors;
 
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.Serializable;
+
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 
 /**
  * Exception die geworfen wird, wenn es bereits ein offener Antrag existiert, der
@@ -31,15 +32,14 @@ public class EbeguExistingAntragException extends EbeguRuntimeException {
 
 	private final String gesuchId;
 
-
 	public EbeguExistingAntragException(@Nullable String methodName, @Nonnull ErrorCodeEnum code,
-										@Nonnull String gesuchID, @Nonnull Serializable... args) {
+		@Nonnull String gesuchID, @Nonnull Serializable... args) {
 		super(methodName, code, args);
 		this.gesuchId = gesuchID;
 	}
 
 	public EbeguExistingAntragException(@Nullable String methodName, @Nonnull ErrorCodeEnum code,
-										@Nullable Throwable cause, @Nonnull String gesuchID, @Nonnull Serializable... args) {
+		@Nullable Throwable cause, @Nonnull String gesuchID, @Nonnull Serializable... args) {
 		super(methodName, code, cause, args);
 		this.gesuchId = gesuchID;
 	}

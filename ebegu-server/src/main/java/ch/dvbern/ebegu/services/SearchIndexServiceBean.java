@@ -64,11 +64,10 @@ import static ch.dvbern.ebegu.enums.UserRoleName.STEUERAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 @Stateless
-@RolesAllowed({SUPER_ADMIN, ADMIN})
+@RolesAllowed({ SUPER_ADMIN, ADMIN })
 public class SearchIndexServiceBean implements SearchIndexService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SearchIndexServiceBean.class);
-
 
 	@Nonnull
 	private static final List<SearchFilter> SEARCH_FILTER_FOR_ALL_ENTITIES =
@@ -89,7 +88,6 @@ public class SearchIndexServiceBean implements SearchIndexService {
 	@Inject
 	private Persistence persistence;
 
-
 	@Override
 	public void rebuildSearchIndex() {
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(persistence.getEntityManager());
@@ -103,7 +101,7 @@ public class SearchIndexServiceBean implements SearchIndexService {
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, SCHULAMT })
 	public QuickSearchResultDTO search(@Nonnull String searchText, @Nonnull List<SearchFilter> filters) {
 		Validate.notNull(searchText, "searchText must be set");
 		Validate.notNull(filters, "filters must be set");
@@ -154,15 +152,13 @@ public class SearchIndexServiceBean implements SearchIndexService {
 		return result;
 	}
 
-
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, SCHULAMT })
 	public QuickSearchResultDTO quicksearch(String searchStringParam, boolean limitResult) {
 
 		List<SearchFilter> filterToUse = limitResult ? SEARCH_FILTER_FOR_ALL_ENTITIES_WITH_LIMIT : SEARCH_FILTER_FOR_ALL_ENTITIES;
 		return this.search(searchStringParam, filterToUse);
 	}
-
 
 	//hibernate-search dsl is not well suited for programmatic queries which is why this code is kind of unwieldy.
 	@Nonnull

@@ -15,16 +15,16 @@
 
 package ch.dvbern.ebegu.tests.validations;
 
+import javax.validation.Configuration;
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
+
 import ch.dvbern.ebegu.entities.Erwerbspensum;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumZuschlagUndGrund;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.validation.Configuration;
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
 
 import static ch.dvbern.ebegu.tests.util.ValidationTestHelper.assertNotViolated;
 import static ch.dvbern.ebegu.tests.util.ValidationTestHelper.assertViolated;

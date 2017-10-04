@@ -20,8 +20,6 @@ import ErwerbspensumRS from './erwerbspensumRS.rest';
 import TSErwerbspensumContainer from '../../models/TSErwerbspensumContainer';
 import TSErwerbspensum from '../../models/TSErwerbspensum';
 import TestDataUtil from '../../utils/TestDataUtil';
-import IInjectorService = angular.auto.IInjectorService;
-import moment = require('moment');
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
 
 describe('ErwerbspensumRS', function () {

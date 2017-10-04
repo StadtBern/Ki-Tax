@@ -51,8 +51,6 @@ public class JaxWizardStep extends JaxAbstractDTO {
 	@NotNull
 	private boolean verfuegbar;
 
-
-
 	public String getGesuchId() {
 		return gesuchId;
 	}

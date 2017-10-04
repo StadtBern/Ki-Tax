@@ -54,7 +54,6 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     // (Wichtig für laden des Gesuchs bei Navigation)
     private _emptyCopy: boolean = false;
 
-
     public get gesuchsteller1(): TSGesuchstellerContainer {
         return this._gesuchsteller1;
     }

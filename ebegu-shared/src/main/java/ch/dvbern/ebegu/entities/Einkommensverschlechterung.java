@@ -80,7 +80,6 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 	public Einkommensverschlechterung() {
 	}
 
-
 	public BigDecimal getNettolohnJan() {
 		return nettolohnJan;
 	}

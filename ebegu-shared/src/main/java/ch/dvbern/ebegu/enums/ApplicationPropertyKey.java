@@ -15,7 +15,6 @@ package ch.dvbern.ebegu.enums;
  */
 public enum ApplicationPropertyKey {
 
-
 	/**
 	 * Wenn true gibt der Evaluator seine Debugmeldungen in das log aus.
 	 */
@@ -53,7 +52,7 @@ public enum ApplicationPropertyKey {
 	DEBTOR_IBAN_GEBUEHREN,
 
 	/**
-	 *  Anzahl Tage nach Erstellungsdatum bis der GS gewarnt wird, wenn er nicht freigibt
+	 * Anzahl Tage nach Erstellungsdatum bis der GS gewarnt wird, wenn er nicht freigibt
 	 */
 	ANZAHL_TAGE_BIS_WARNUNG_FREIGABE,
 

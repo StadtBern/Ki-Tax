@@ -50,8 +50,6 @@ public class FinanzielleSituationServiceBeanTest extends AbstractEbeguLoginTest 
 	@Inject
 	private Persistence persistence;
 
-
-
 	@Test
 	public void createFinanzielleSituation() {
 		Assert.assertNotNull(finanzielleSituationService);

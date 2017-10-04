@@ -14,7 +14,7 @@
  */
 
 import {IEntityRS} from '../../core/service/iEntityRS.rest';
-import {IHttpService, IPromise, ILogService} from 'angular';
+import {IHttpService, ILogService, IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSUser from '../../models/TSUser';
 

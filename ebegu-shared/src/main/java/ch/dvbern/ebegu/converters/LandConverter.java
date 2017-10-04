@@ -11,25 +11,23 @@
  */
 package ch.dvbern.ebegu.converters;
 
-import ch.dvbern.ebegu.enums.Land;
-import org.apache.commons.lang3.StringUtils;
-
 import javax.annotation.Nullable;
 import javax.persistence.Converter;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import ch.dvbern.ebegu.enums.Land;
+import org.apache.commons.lang3.StringUtils;
+
 @Converter(autoApply = true)
 @XmlJavaTypeAdapter(value = LandConverter.class, type = Land.class)
-public class LandConverter extends XmlAdapter<String, Land>{
+public class LandConverter extends XmlAdapter<String, Land> {
 
 	@Nullable
 	@Override
 	public Land unmarshal(String v) {
 		return StringUtils.isEmpty(v) ? null : Land.fromString(v);
 	}
-
-
 
 	@Nullable
 	@Override

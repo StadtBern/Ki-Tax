@@ -15,10 +15,17 @@
 
 package ch.dvbern.ebegu.rest.test;
 
+import java.time.LocalDate;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.AdresseTyp;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.Constants;
@@ -33,9 +40,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.time.LocalDate;
-
 /**
  * Tests fuer die Klasse AdresseService
  */
@@ -43,19 +47,17 @@ import java.time.LocalDate;
 @Transactional(TransactionMode.DISABLED)
 public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestLoginTest {
 
-
 	@Inject
 	private Persistence persistence;
 
 	@Inject
 	private JaxBConverter converter;
 
-
 	/**
 	 * transformiert einen gespeicherten gesuchsteller nach jax und wieder zurueck. wir erwarten das daten gelich beliben
 	 */
 	@Test
-	public void convertPersistedTestEntityToJax(){
+	public void convertPersistedTestEntityToJax() {
 		GesuchstellerContainer gesuchsteller = insertNewEntity();
 		JaxGesuchstellerContainer jaxGesuchsteller = this.converter.gesuchstellerContainerToJAX(gesuchsteller);
 		GesuchstellerContainer transformedEntity = this.converter.gesuchstellerContainerToEntity(jaxGesuchsteller, new GesuchstellerContainer());
@@ -67,7 +69,7 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestLogin
 		Assert.assertEquals(gesuchsteller.getGesuchstellerJA().getTelefon(), transformedEntity.getGesuchstellerJA().getTelefon());
 		Assert.assertEquals(gesuchsteller.getGesuchstellerJA().getTelefonAusland(), transformedEntity.getGesuchstellerJA().getTelefonAusland());
 		Assert.assertEquals(gesuchsteller.getAdressen().size(), transformedEntity.getAdressen().size());
-		boolean allAdrAreSame  = gesuchsteller.getAdressen().stream().allMatch(
+		boolean allAdrAreSame = gesuchsteller.getAdressen().stream().allMatch(
 			adresse -> transformedEntity.getAdressen().stream().anyMatch(
 				gsAdresseCont -> gsAdresseCont.getGesuchstellerAdresseJA().isSame(adresse.getGesuchstellerAdresseJA())));
 		Assert.assertTrue(allAdrAreSame);
@@ -78,7 +80,7 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestLogin
 	 * Testet das Umzugadresse konvertiert wird
 	 */
 	@Test
-	public void convertJaxGesuchstellerWithUmzgTest(){
+	public void convertJaxGesuchstellerWithUmzgTest() {
 		JaxGesuchstellerContainer gesuchstellerWith3Adr = TestJaxDataUtil.createTestJaxGesuchstellerWithUmzug();
 		GesuchstellerContainer gesuchsteller = converter.gesuchstellerContainerToEntity(gesuchstellerWith3Adr, new GesuchstellerContainer());
 		Assert.assertEquals(gesuchstellerWith3Adr.getGesuchstellerJA().getGeburtsdatum(), gesuchsteller.getGesuchstellerJA().getGeburtsdatum());
@@ -110,9 +112,8 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestLogin
 		adr.getAdresseJA().setGueltigBis(null);
 		GesuchstellerAdresseContainer adrEntity = converter.gesuchstellerAdresseContainerToEntity(adr, new GesuchstellerAdresseContainer());
 		Assert.assertEquals(Constants.START_OF_TIME, adrEntity.extractGueltigkeit().getGueltigAb());
-		Assert.assertEquals(Constants.END_OF_TIME,adrEntity.extractGueltigkeit().getGueltigBis());
+		Assert.assertEquals(Constants.END_OF_TIME, adrEntity.extractGueltigkeit().getGueltigBis());
 	}
-
 
 	private GesuchstellerContainer insertNewEntity() {
 		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();

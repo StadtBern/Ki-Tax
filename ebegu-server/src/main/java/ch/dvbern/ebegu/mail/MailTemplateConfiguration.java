@@ -15,17 +15,6 @@
 
 package ch.dvbern.ebegu.mail;
 
-import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.util.Constants;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-
-import javax.annotation.Nonnull;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.time.LocalDate;
@@ -33,6 +22,25 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.Mitteilung;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.Constants;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 /**
  * Configuration For Freemarker Templates
@@ -53,7 +61,6 @@ public class MailTemplateConfiguration {
 	@Inject
 	private EbeguConfiguration ebeguConfiguration;
 
-
 	public MailTemplateConfiguration() {
 		final Configuration ourFreeMarkerConfig = new Configuration();
 		ourFreeMarkerConfig.setClassForTemplateLoading(MailTemplateConfiguration.class, "/mail/templates");
@@ -73,17 +80,17 @@ public class MailTemplateConfiguration {
 		@Nonnull Institution institution, @Nonnull String empfaengerMail, @Nonnull LocalDate datumErstellung, @Nonnull LocalDate birthdayKind) {
 
 		return processTemplateBetreuungGeloescht("InfoBetreuungGeloescht.ftl", betreuung, fall, kind, gesuchsteller1, institution,
-				toArgumentPair(EMPFAENGER_MAIL, empfaengerMail),
-				toArgumentPair("datumErstellung", Constants.DATE_FORMATTER.format(datumErstellung)),
-				toArgumentPair("birthday", Constants.DATE_FORMATTER.format(birthdayKind)));
+			toArgumentPair(EMPFAENGER_MAIL, empfaengerMail),
+			toArgumentPair("datumErstellung", Constants.DATE_FORMATTER.format(datumErstellung)),
+			toArgumentPair("birthday", Constants.DATE_FORMATTER.format(birthdayKind)));
 	}
 
 	public String getInfoBetreuungVerfuegt(@Nonnull Betreuung betreuung, @Nonnull Fall fall, @Nonnull Gesuchsteller gesuchsteller1, @Nonnull Kind kind,
 		@Nonnull Institution institution, @Nonnull String empfaengerMail, @Nonnull LocalDate birthdayKind) {
 
 		return processTemplateBetreuungVerfuegt("InfoBetreuungVerfuegt.ftl", betreuung, fall, kind, gesuchsteller1, institution,
-				toArgumentPair(EMPFAENGER_MAIL, empfaengerMail),
-				toArgumentPair("birthday", Constants.DATE_FORMATTER.format(birthdayKind)));
+			toArgumentPair(EMPFAENGER_MAIL, empfaengerMail),
+			toArgumentPair("birthday", Constants.DATE_FORMATTER.format(birthdayKind)));
 	}
 
 	public String getInfoMitteilungErhalten(@Nonnull Mitteilung mitteilung, @Nonnull String empfaengerMail) {

@@ -15,20 +15,22 @@
 
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
-import ch.dvbern.ebegu.util.Constants;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.envers.Audited;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 /**
  * Entitaet zum Speichern von GeneratedDokument in der Datenbank.
  */
 @Audited
 @Entity
-@EntityListeners({WriteProtectedDokumentListener.class})
+@EntityListeners({ WriteProtectedDokumentListener.class })
 public class GeneratedDokument extends WriteProtectedDokument {
 
 	private static final long serialVersionUID = -895840426576485097L;
@@ -48,8 +50,6 @@ public class GeneratedDokument extends WriteProtectedDokument {
 	public void setGesuch(Gesuch gesuch) {
 		this.gesuch = gesuch;
 	}
-
-
 
 	@Override
 	public String toString() {

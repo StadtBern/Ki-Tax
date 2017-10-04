@@ -21,7 +21,7 @@ package ch.dvbern.ebegu.enums;
 public enum ZahlungauftragStatus {
 
 	ENTWURF,
-    AUSGELOEST,
+	AUSGELOEST,
 	BESTAETIGT;
 
 	public boolean isEntwurf() {

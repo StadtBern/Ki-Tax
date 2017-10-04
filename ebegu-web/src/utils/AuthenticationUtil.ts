@@ -17,8 +17,8 @@ import TSUser from '../models/TSUser';
 import {IStateService} from 'angular-ui-router';
 import {TSRoleUtil} from './TSRoleUtil';
 import {TSRole} from '../models/enums/TSRole';
-export default class AuthenticationUtil {
 
+export default class AuthenticationUtil {
 
     /**
      *  Navigiert basierend auf der Rolle zu einer anderen Startseite

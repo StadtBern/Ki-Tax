@@ -37,7 +37,6 @@ export default class TSDokumentGrund extends TSAbstractEntity {
 
     private _needed: boolean;
 
-
     constructor(dokumentGrundTyp?: TSDokumentGrundTyp) {
         super();
         this._dokumentGrundTyp = dokumentGrundTyp;

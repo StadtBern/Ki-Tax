@@ -80,7 +80,6 @@ public class SchulungServiceBeanTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
 	@Test
 	public void resetSchulungsdaten() throws Exception {
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeService.saveGesuchsperiode(TestDataUtil.createCurrentGesuchsperiode());
@@ -94,7 +93,7 @@ public class SchulungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(6, institutionStammdatenService.getAllInstitutionStammdaten().size());
 		Assert.assertEquals(4, institutionService.getAllInstitutionen().size());
 		Assert.assertEquals(1, traegerschaftService.getAllTraegerschaften().size());
-		Assert.assertEquals(anzahlUserSchonVorhanden+anzahlGesuchsteller+anzahlInstitutionsBenutzer, benutzerService.getAllBenutzer().size());
+		Assert.assertEquals(anzahlUserSchonVorhanden + anzahlGesuchsteller + anzahlInstitutionsBenutzer, benutzerService.getAllBenutzer().size());
 
 		schulungService.deleteSchulungsdaten();
 		assertEmpty();

@@ -15,14 +15,20 @@
 
 package ch.dvbern.ebegu.entities;
 
+import javax.annotation.Nonnull;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 /**
  * Container-Entity für die GesuchstellerAdressen
@@ -30,7 +36,6 @@ import javax.validation.constraints.NotNull;
 @Audited
 @Entity
 public class GesuchstellerAdresseContainer extends AbstractEntity {
-
 
 	private static final long serialVersionUID = -3084333639027795652L;
 
@@ -48,7 +53,6 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuchstelleradresse_container_gesuchstellerja_id"))
 	private GesuchstellerAdresse gesuchstellerAdresseJA;
-
 
 	public GesuchstellerAdresseContainer() {
 	}

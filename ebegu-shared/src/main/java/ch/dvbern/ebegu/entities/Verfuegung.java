@@ -15,28 +15,33 @@
 
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.util.Constants;
-import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import ch.dvbern.ebegu.util.Constants;
+import org.hibernate.envers.Audited;
 
 /**
  * Verfuegung fuer eine einzelne Betreuung
  */
 @Entity
 @Audited
-public class Verfuegung extends AbstractEntity{
+public class Verfuegung extends AbstractEntity {
 
 	private static final long serialVersionUID = -6682874795746487562L;
-
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -49,7 +54,7 @@ public class Verfuegung extends AbstractEntity{
 	private String manuelleBemerkungen;
 
 	@NotNull
-	@OneToOne (optional = false, mappedBy = "verfuegung")
+	@OneToOne(optional = false, mappedBy = "verfuegung")
 	private Betreuung betreuung;
 
 	@Nonnull
@@ -77,7 +82,6 @@ public class Verfuegung extends AbstractEntity{
 	@NotNull
 	@Column(nullable = false)
 	private boolean kategorieNichtEintreten = false;
-
 
 	@Nullable
 	public String getGeneratedBemerkungen() {

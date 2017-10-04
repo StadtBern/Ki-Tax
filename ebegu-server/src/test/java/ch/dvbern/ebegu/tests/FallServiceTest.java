@@ -55,7 +55,6 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private InstitutionService institutionService;
 
-
 	@Test
 	public void createFallTest() {
 		Assert.assertNotNull(fallService);
@@ -144,19 +143,18 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals("gesuchst2", fall2.get().getBesitzer().getUsername());
 	}
 
-
 	@Test
 	public void testGetEmailAddressForFallFromFall() {
 		loginAsGesuchsteller("gesuchst");
 		final Optional<Fall> fallOpt = fallService.createFallForCurrentGesuchstellerAsBesitzer();
 		Assert.assertTrue(fallOpt.isPresent());
 		Fall fall = fallOpt.get();
-		Assert.assertEquals("e@e",fall.getBesitzer().getEmail());
+		Assert.assertEquals("e@e", fall.getBesitzer().getEmail());
 		Assert.assertEquals("gesuchst", fall.getBesitzer().getUsername());
 		Optional<String> emailAddressForFall = fallService.getCurrentEmailAddress(fall.getId());
 		Assert.assertTrue(emailAddressForFall.isPresent());
 		String email = emailAddressForFall.get();
-		Assert.assertEquals( "e@e",email);
+		Assert.assertEquals("e@e", email);
 	}
 
 	@Test
@@ -171,7 +169,7 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 		Optional<String> emailAddressForFall = fallService.getCurrentEmailAddress(gesuch.getFall().getId());
 		Assert.assertTrue(emailAddressForFall.isPresent());
 		String email = emailAddressForFall.get();
-		Assert.assertEquals( "test@email.com",email);
+		Assert.assertEquals("test@email.com", email);
 
 	}
 

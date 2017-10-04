@@ -22,16 +22,14 @@ import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Form;
 
+import com.google.common.base.Joiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
 
 /**
  * Klasse um Resteasy client requests zu loggen
  */
 public class ClientRequestLogger implements ClientRequestFilter {
-
 
 	private static final Logger LOG = LoggerFactory.getLogger(ClientRequestLogger.class.getSimpleName());
 
@@ -46,9 +44,9 @@ public class ClientRequestLogger implements ClientRequestFilter {
 		//bisschen hacky mit dem form aber wir haben atm nur einen service mit form format
 		if (requestContext.getEntity() instanceof Form) {
 			LOG.info(mapJoiner.join(((Form) requestContext.getEntity()).asMap()));
-		} else if (requestContext.getEntity() != null){
+		} else if (requestContext.getEntity() != null) {
 			LOG.info(requestContext.getEntity().toString());
-		}else {
+		} else {
 			LOG.info("no body");
 		}
 	}

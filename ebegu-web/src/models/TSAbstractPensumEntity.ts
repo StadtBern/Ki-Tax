@@ -25,7 +25,6 @@ export class TSAbstractPensumEntity extends TSAbstractDateRangedEntity {
         this._pensum = pensum;
     }
 
-
     get pensum(): number {
         return this._pensum;
     }

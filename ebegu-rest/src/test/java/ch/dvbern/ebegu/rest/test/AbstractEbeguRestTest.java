@@ -15,6 +15,11 @@
 
 package ch.dvbern.ebegu.rest.test;
 
+import java.io.File;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
 import ch.dvbern.ebegu.api.resource.GesuchsperiodeResource;
 import ch.dvbern.ebegu.api.resource.authentication.AuthResource;
@@ -38,10 +43,6 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.jboss.shrinkwrap.resolver.api.maven.strategy.RejectDependenciesStrategy;
 
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import java.io.File;
-
 /**
  * Diese Klasse implementiert die Methode "Deployment" fuer die Arquillian Tests und muss
  * von allen Testklassen in REST modul erweitert werden. Es verhaelt sich leicht anders als die Basisklasse in
@@ -53,10 +54,8 @@ import java.io.File;
 @ServerSetup(LoginmoduleAndCacheSetupTask.class)
 public abstract class AbstractEbeguRestTest {
 
-
 	@Inject
 	private GesuchsperiodeResource gesuchsperiodeResource;
-
 
 	@Deployment
 	@OverProtocol("Servlet 3.0")
@@ -72,7 +71,6 @@ public abstract class AbstractEbeguRestTest {
 			.using(new RejectDependenciesStrategy(false, "ch.dvbern.ebegu:ebegu-dbschema")) //wir wollen flyway nicht im test
 			.asFile();
 		File[] testDeps = pom.importTestDependencies().resolve().withoutTransitivity().asFile();
-
 
 		// wir fuegen die packages einzeln hinzu weil sonst klassen die im shared sind und das gleiche package haben doppelt eingefuegt werden
 		WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "rest-test.war")
@@ -93,9 +91,9 @@ public abstract class AbstractEbeguRestTest {
 			.addAsWebInfResource("META-INF/test-beans.xml", "beans.xml")
 			.addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
 			//deploy our test loginmodule
-			.addAsResource("testogin-users.properties","users.properties")
+			.addAsResource("testogin-users.properties", "users.properties")
 			.addAsResource("testlogin-roles.properties", "roles.properties")
-			.addAsWebInfResource("META-INF/test-jboss-web.xml",  "jboss-web.xml")
+			.addAsWebInfResource("META-INF/test-jboss-web.xml", "jboss-web.xml")
 			// Deploy our test datasource
 			.addAsWebInfResource("test-ds.xml");
 

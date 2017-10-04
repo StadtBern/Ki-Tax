@@ -15,7 +15,7 @@
 
 package ch.dvbern.ebegu.dbschema;
 
-import ch.dvbern.ebegu.enums.UserRoleName;
+import java.util.function.BiConsumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Resource;
@@ -28,7 +28,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.inject.spi.CDI;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.function.BiConsumer;
+
+import ch.dvbern.ebegu.enums.UserRoleName;
 
 /**
  * Unterstuetz die Java basierte Migration von Datenbestaenden.

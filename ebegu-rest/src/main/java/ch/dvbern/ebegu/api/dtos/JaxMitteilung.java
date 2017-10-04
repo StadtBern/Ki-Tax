@@ -72,7 +72,6 @@ public class JaxMitteilung extends JaxAbstractDTO {
 	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
 	private LocalDateTime sentDatum;
 
-
 	@Nullable
 	public JaxFall getFall() {
 		return fall;

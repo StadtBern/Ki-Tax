@@ -15,16 +15,24 @@
 
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
+import ch.dvbern.ebegu.entities.FinanzielleSituation;
+import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.MathUtil;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
 
 /**
  * Testet die MaximalesEinkommen-Regel
@@ -49,7 +57,7 @@ public class EinkommenCalcRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(0,(new BigDecimal("180000.00")).compareTo(result.get(0).getMassgebendesEinkommen()));
+		Assert.assertEquals(0, (new BigDecimal("180000.00")).compareTo(result.get(0).getMassgebendesEinkommen()));
 		Assert.assertEquals(0, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertFalse(result.get(0).isBezahltVollkosten());
 		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
@@ -80,8 +88,8 @@ public class EinkommenCalcRuleTest {
 	}
 
 	/**
-	 *  Erstellt einen Testfall mit 2 EKV.
-	 *  Am Ende schaut es dass die Bemerkungen richtig geschrieben wurden
+	 * Erstellt einen Testfall mit 2 EKV.
+	 * Am Ende schaut es dass die Bemerkungen richtig geschrieben wurden
 	 */
 	@Test
 	public void testAcceptedEKV() {

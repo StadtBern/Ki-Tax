@@ -15,9 +15,9 @@
 
 package ch.dvbern.ebegu.entities;
 
-import org.hibernate.envers.Audited;
-
 import javax.persistence.Entity;
+
+import org.hibernate.envers.Audited;
 
 /**
  * Entitaet zum Speichern von Dokumente in der Datenbank.

@@ -40,10 +40,10 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 
 import {ShowTooltipController} from '../../dialog/ShowTooltipController';
+import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 import IPromise = angular.IPromise;
 import Moment = moment.Moment;
 import IScope = angular.IScope;
-import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');

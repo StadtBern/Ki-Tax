@@ -25,10 +25,10 @@ import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import TSInstitution from '../../../models/TSInstitution';
 import TSKind from '../../../models/TSKind';
 import TSKindContainer from '../../../models/TSKindContainer';
+import {ITimeoutService} from 'angular';
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
 import IScope = angular.IScope;
-import {ITimeoutService} from 'angular';
 
 describe('abwesenheitView', function () {
 

@@ -15,6 +15,14 @@
 
 package ch.dvbern.ebegu.tests.validations;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.validation.Configuration;
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -24,16 +32,8 @@ import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.annotation.Nonnull;
-import javax.validation.Configuration;
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
-import java.util.HashSet;
-import java.util.Set;
-
 import static ch.dvbern.ebegu.tests.util.ValidationTestHelper.assertNotViolated;
 import static ch.dvbern.ebegu.tests.util.ValidationTestHelper.assertViolated;
-
 
 /**
  * Tests der den Validator fuer die Werte in Betreuungspensum checkt
@@ -154,7 +154,6 @@ public class CheckBetreuungspensumValidatorTest {
 		assertViolated(CheckBetreuungspensum.class, betreuung, customFactory, "betreuungspensumContainers[" + i + "].betreuungspensumGS.pensum");
 		assertNotViolated(CheckBetreuungspensum.class, betreuung, customFactory, "betreuungspensumContainers[" + i + "].betreuungspensumJA.pensum");
 	}
-
 
 	// HELP METHODS
 

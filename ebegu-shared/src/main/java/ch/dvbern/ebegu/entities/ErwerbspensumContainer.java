@@ -15,13 +15,18 @@
 
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.util.EbeguUtil;
-import org.hibernate.envers.Audited;
-
 import javax.annotation.Nonnull;
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import ch.dvbern.ebegu.util.EbeguUtil;
+import org.hibernate.envers.Audited;
 
 /**
  * Container-Entity für das Erwerbspensum: Diese muss für die  Benutzertypen (GS, JA) einzeln geführt werden,
@@ -30,7 +35,6 @@ import javax.validation.constraints.NotNull;
 @Audited
 @Entity
 public class ErwerbspensumContainer extends AbstractEntity {
-
 
 	private static final long serialVersionUID = -3084333639027795652L;
 
@@ -49,10 +53,8 @@ public class ErwerbspensumContainer extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_erwerbspensum_container_erwerbspensumja_id"))
 	private Erwerbspensum erwerbspensumJA;
 
-
 	public ErwerbspensumContainer() {
 	}
-
 
 	public GesuchstellerContainer getGesuchsteller() {
 		return gesuchstellerContainer;

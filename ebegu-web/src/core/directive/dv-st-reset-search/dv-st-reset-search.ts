@@ -15,10 +15,10 @@
 
 import IDirective = angular.IDirective;
 import IDirectiveLinkFn = angular.IDirectiveLinkFn;
-import {DVsTPersistService} from '../../service/dVsTPersistService';
 import IScope = angular.IScope;
-import {IAugmentedJQuery, IDirectiveFactory} from 'angular';
 import IAttributes = angular.IAttributes;
+import {DVsTPersistService} from '../../service/dVsTPersistService';
+import {IAugmentedJQuery, IDirectiveFactory} from 'angular';
 
 export default class DVSTResetSearch implements IDirective {
     static $inject: string[] = ['UserRS', 'InstitutionRS', 'DVsTPersistService'];

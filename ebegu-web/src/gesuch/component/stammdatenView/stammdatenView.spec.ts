@@ -20,12 +20,12 @@ import {StammdatenViewController} from './stammdatenView';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
-import IScope = angular.IScope;
-import IQService = angular.IQService;
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import EwkRS from '../../../core/service/ewkRS.rest';
 import {ITimeoutService} from 'angular';
+import IScope = angular.IScope;
+import IQService = angular.IQService;
 
 describe('stammdatenView', function () {
 

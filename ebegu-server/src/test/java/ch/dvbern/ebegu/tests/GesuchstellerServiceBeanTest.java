@@ -15,7 +15,16 @@
 
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.services.GesuchstellerService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -27,11 +36,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Tests fuer die Klasse GesuchstellerService
@@ -46,7 +50,6 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private Persistence persistence;
-
 
 	@Test
 	public void createGesuchsteller() {
@@ -142,7 +145,6 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertFalse(savedGesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().getSteuerveranlagungErhalten());
 	}
 
-
 	// Helper Methods
 
 	private GesuchstellerContainer insertNewEntity() {
@@ -151,6 +153,5 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguLoginTest {
 		persistence.persist(gesuchsteller);
 		return gesuchsteller;
 	}
-
 
 }

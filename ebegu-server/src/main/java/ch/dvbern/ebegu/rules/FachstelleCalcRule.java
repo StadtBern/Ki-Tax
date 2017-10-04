@@ -15,13 +15,13 @@
 
 package ch.dvbern.ebegu.rules;
 
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.MathUtil;
-
-import javax.annotation.Nonnull;
 
 /**
  * Regel für die Betreuungspensen. Sie beachtet:

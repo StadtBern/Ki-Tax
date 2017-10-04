@@ -24,12 +24,11 @@ import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {ReportRS} from '../../../core/service/reportRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
-import IFormController = angular.IFormController;
-import IPromise = angular.IPromise;
-import ILogService = angular.ILogService;
 import * as moment from 'moment';
-import Moment = moment.Moment;
 import DateUtil from '../../../utils/DateUtil';
+import IFormController = angular.IFormController;
+import ILogService = angular.ILogService;
+import Moment = moment.Moment;
 
 let template = require('./statistikView.html');
 require('./statistikView.less');

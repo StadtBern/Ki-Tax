@@ -15,7 +15,8 @@
 
 package ch.dvbern.ebegu.api.resource.util;
 
-import ch.dvbern.ebegu.enums.Land;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
@@ -25,8 +26,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
+
+import ch.dvbern.ebegu.enums.Land;
 
 @Path("lists")
 @Stateless
@@ -49,6 +50,5 @@ public class ListResource {
 
 		return Response.ok(laender).build();
 	}
-
 
 }

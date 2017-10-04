@@ -15,13 +15,16 @@
 
 package ch.dvbern.ebegu.validators;
 
-import ch.dvbern.ebegu.entities.*;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+import ch.dvbern.ebegu.entities.Abwesenheit;
+import ch.dvbern.ebegu.entities.AbwesenheitContainer;
+import ch.dvbern.ebegu.entities.Betreuung;
 
 /**
  * Validator fuer Datum in Abwesenheiten. Die Zeitraeume duerfen sich nicht ueberschneiden

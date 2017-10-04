@@ -20,7 +20,7 @@ import {EbeguWebCore} from '../../core/core.module';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import WizardStepRS from './WizardStepRS.rest';
 import TSWizardStep from '../../models/TSWizardStep';
-import {IScope, IQService} from 'angular';
+import {IQService, IScope} from 'angular';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import TSGesuch from '../../models/TSGesuch';

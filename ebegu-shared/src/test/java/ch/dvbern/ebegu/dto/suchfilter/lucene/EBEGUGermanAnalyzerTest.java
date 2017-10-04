@@ -15,15 +15,15 @@
 
 package ch.dvbern.ebegu.dto.suchfilter.lucene;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * We decided to create our own normalizer. This test gives a fes examples to showcase its behaviour
@@ -33,13 +33,13 @@ public class EBEGUGermanAnalyzerTest {
 	private Analyzer analyzer;
 
 	@Before
-	public void setUp(){
+	public void setUp() {
 		this.analyzer = new EBEGUGermanAnalyzer();
 
 	}
 
 	@After
-	public void after(){
+	public void after() {
 		this.analyzer.close();
 	}
 

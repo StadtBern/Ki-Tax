@@ -66,7 +66,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(AntragStatusHistoryService.class)
-@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR,  SCHULAMT,  STEUERAMT, GESUCHSTELLER})
+@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SCHULAMT, STEUERAMT, GESUCHSTELLER })
 public class AntragStatusHistoryServiceBean extends AbstractBaseService implements AntragStatusHistoryService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AntragStatusHistoryServiceBean.class.getSimpleName());
@@ -82,7 +82,6 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
-
 
 	@Nonnull
 	@Override
@@ -132,7 +131,7 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN })
 	public void removeAllAntragStatusHistoryFromGesuch(@Nonnull Gesuch gesuch) {
 		Collection<AntragStatusHistory> antragStatusHistoryFromGesuch = findAllAntragStatusHistoryByGesuch(gesuch);
 		for (AntragStatusHistory antragStatusHistory : antragStatusHistoryFromGesuch) {

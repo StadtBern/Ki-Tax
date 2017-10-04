@@ -15,27 +15,27 @@
 
 package ch.dvbern.ebegu.rules;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungspensum;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 
-import javax.annotation.Nonnull;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 /**
  * Regel für Mindestalter des Kindes:
  * - Erst ab dem 3. Monat besteht ein Anspruch. Ein Kita-Platz kann aber schon vor dem dritten Monat
- * 		beansprucht werden. In diesem Fall wird die Zeit vor dem 3. Monat zum Privattarif berechnet.
+ * beansprucht werden. In diesem Fall wird die Zeit vor dem 3. Monat zum Privattarif berechnet.
  *
- * 	Verweis 16.12.1 Mindestalter
+ * Verweis 16.12.1 Mindestalter
  */
 public class MindestalterAbschnittRule extends AbstractAbschnittRule {
-
 
 	public MindestalterAbschnittRule(@Nonnull DateRange validityPeriod) {
 		super(RuleKey.MINDESTALTER, RuleType.GRUNDREGEL_DATA, validityPeriod);

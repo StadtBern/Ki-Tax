@@ -15,11 +15,9 @@
 
 package ch.dvbern.ebegu.validators;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuungspensum;
-import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
-import ch.dvbern.ebegu.services.EbeguParameterService;
-import ch.dvbern.ebegu.util.BetreuungUtil;
+import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.util.ResourceBundle;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -27,9 +25,12 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.text.MessageFormat;
-import java.time.LocalDate;
-import java.util.ResourceBundle;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuungspensum;
+import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.services.EbeguParameterService;
+import ch.dvbern.ebegu.util.BetreuungUtil;
 
 /**
  * Validator for Betreuungspensen, checks that the entered betreuungspensum is bigger than the minimum
@@ -47,15 +48,15 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 	@PersistenceUnit(unitName = "ebeguPersistenceUnit")
 	private EntityManagerFactory entityManagerFactory;
 
-
 	public CheckBetreuungspensumValidator() {
 	}
 
 	/**
 	 * Constructor fuer tests damit service reingegeben werden kann
+	 *
 	 * @param service service zum testen
 	 */
-	public CheckBetreuungspensumValidator(EbeguParameterService service, EntityManagerFactory entityManagerFactory){
+	public CheckBetreuungspensumValidator(EbeguParameterService service, EntityManagerFactory entityManagerFactory) {
 		this.ebeguParameterService = service;
 		this.entityManagerFactory = entityManagerFactory;
 	}
@@ -70,7 +71,7 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 
 		final EntityManager em = createEntityManager();
 		int index = 0;
-		for (BetreuungspensumContainer betPenContainer: betreuung.getBetreuungspensumContainers()) {
+		for (BetreuungspensumContainer betPenContainer : betreuung.getBetreuungspensumContainers()) {
 			LocalDate betreuungAb = betPenContainer.getBetreuungspensumJA().getGueltigkeit().getGueltigAb();
 			LocalDate gesuchsperiodeStart = betPenContainer.extractGesuchsperiode().getGueltigkeit().getGueltigAb();
 			//Wir laden  die Parameter von Start-Gesuchsperiode falls Betreuung schon laenger als Gesuchsperiode besteht
@@ -92,7 +93,7 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 
 	private EntityManager createEntityManager() {
 		if (entityManagerFactory != null) {
-			return  entityManagerFactory.createEntityManager(); // creates a new EntityManager
+			return entityManagerFactory.createEntityManager(); // creates a new EntityManager
 		}
 		return null;
 	}
@@ -107,6 +108,7 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 	 * With the given the pensumMin it checks if the introduced pensum is in the permitted range. Case not a ConstraintValidator will be created
 	 * with a message and a path indicating which object threw the error. False will be returned in the explained case. In case the value for pensum
 	 * is right, nothing will be done and true will be returned.
+	 *
 	 * @param betreuungspensum the betreuungspensum to check
 	 * @param pensumMin the minimum permitted value for pensum
 	 * @param index the index of the Betreuungspensum inside the betreuungspensum container
@@ -116,7 +118,7 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 	 */
 	private boolean validateBetreuungspensum(Betreuungspensum betreuungspensum, int pensumMin, int index, String containerPostfix, ConstraintValidatorContext context) {
 		// Es waere moeglich, die Messages mit der Klasse HibernateConstraintValidatorContext zu erzeugen. Das waere aber Hibernate-abhaengig. wuerde es Sinn machen??
-		if(betreuungspensum != null && !betreuungspensum.getNichtEingetreten() && betreuungspensum.getPensum() < pensumMin) {
+		if (betreuungspensum != null && !betreuungspensum.getNichtEingetreten() && betreuungspensum.getPensum() < pensumMin) {
 			ResourceBundle rb = ResourceBundle.getBundle("ValidationMessages");
 			String message = rb.getString("invalid_betreuungspensum");
 			message = MessageFormat.format(message, betreuungspensum.getPensum(), pensumMin);

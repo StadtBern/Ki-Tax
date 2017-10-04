@@ -26,7 +26,6 @@ import TSGesuch from '../models/TSGesuch';
 import {TSRoleUtil} from '../utils/TSRoleUtil';
 import {TSRole} from '../models/enums/TSRole';
 import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
-import ITranslateService = angular.translate.ITranslateService;
 import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
 import TSEWKPerson from '../models/TSEWKPerson';
 import GesuchstellerRS from '../core/service/gesuchstellerRS.rest';
@@ -37,6 +36,7 @@ import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import EwkRS from '../core/service/ewkRS.rest';
 import TSGesuchsteller from '../models/TSGesuchsteller';
 import {TSGesuchBetreuungenStatus} from '../models/enums/TSGesuchBetreuungenStatus';
+import ITranslateService = angular.translate.ITranslateService;
 
 export class GesuchRouteController {
 
@@ -46,6 +46,7 @@ export class GesuchRouteController {
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
         'AntragStatusHistoryRS', '$translate', 'AuthServiceRS', '$mdSidenav', 'CONSTANTS', 'GesuchstellerRS', 'EwkRS', '$log', '$rootScope'];
+
     /* @ngInject */
     constructor(private gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
@@ -62,7 +63,6 @@ export class GesuchRouteController {
     showFinanzsituationStart(): boolean {
         return this.gesuchModelManager.isGesuchsteller2Required();
     }
-
 
     public getDateFromGesuch(): string {
         if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
@@ -87,7 +87,7 @@ export class GesuchRouteController {
                 return 'fa-circle green';
             } else if (status === TSWizardStepStatus.OK) {
                 if (this.getGesuch().isMutation()) {
-                    if (step.wizardStepName === TSWizardStepName.VERFUEGEN ) { // Verfuegung auch bei Mutation mit Hacken (falls verfuegt)
+                    if (step.wizardStepName === TSWizardStepName.VERFUEGEN) { // Verfuegung auch bei Mutation mit Hacken (falls verfuegt)
                         return 'fa-check green';
                     }
                     return '';
@@ -250,9 +250,9 @@ export class GesuchRouteController {
     public getGesuchsteller(n: number): TSGesuchstellerContainer {
         switch (n) {
             case 1:
-            if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller1) {
-                return this.gesuchModelManager.getGesuch().gesuchsteller1;
-            }
+                if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller1) {
+                    return this.gesuchModelManager.getGesuch().gesuchsteller1;
+                }
                 return undefined;
             case 2:
                 if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller2) {
@@ -303,7 +303,7 @@ export class GesuchRouteController {
                 case 1:
                     this.gesuchModelManager.ewkResultatGS1 = response;
                     if (this.gesuchModelManager.ewkResultatGS1.anzahlResultate === 1) {
-                       this.selectPerson(this.gesuchModelManager.ewkResultatGS1.personen[0], n);
+                        this.selectPerson(this.gesuchModelManager.ewkResultatGS1.personen[0], n);
                     }
                     break;
                 case 2:
@@ -344,7 +344,7 @@ export class GesuchRouteController {
     }
 
     public isSuperAdmin(): boolean {
-        return  this.authServiceRS.isRole(TSRole.SUPER_ADMIN);
+        return this.authServiceRS.isRole(TSRole.SUPER_ADMIN);
     }
 
     public isDocumentUploaded(): boolean {

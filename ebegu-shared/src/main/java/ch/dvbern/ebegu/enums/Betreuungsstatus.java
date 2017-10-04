@@ -15,7 +15,6 @@
 
 package ch.dvbern.ebegu.enums;
 
-
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -25,7 +24,7 @@ import java.util.Set;
 public enum Betreuungsstatus {
 
 	@Deprecated //wir glauben das gibts gar nicht mehr
-	AUSSTEHEND,
+		AUSSTEHEND,
 	WARTEN,
 	SCHULAMT,
 	ABGEWIESEN,
@@ -43,7 +42,6 @@ public enum Betreuungsstatus {
 
 	private static final Set<Betreuungsstatus> forSachbearbeiterTraegerschaftRole = forSachbearbeiterInstitutionRole;
 
-
 	public boolean isGeschlossen() {
 		return VERFUEGT.equals(this) || GESCHLOSSEN_OHNE_VERFUEGUNG.equals(this) || NICHT_EINGETRETEN.equals(this);
 	}
@@ -52,35 +50,35 @@ public enum Betreuungsstatus {
 		return VERFUEGT.equals(this) || STORNIERT.equals(this) || SCHULAMT.equals(this);
 	}
 
-	public boolean isSendToInstitution(){
-		return ABGEWIESEN.equals(this) || BESTAETIGT.equals(this)|| WARTEN.equals(this);
+	public boolean isSendToInstitution() {
+		return ABGEWIESEN.equals(this) || BESTAETIGT.equals(this) || WARTEN.equals(this);
 	}
 
 	@SuppressWarnings("Duplicates")
 	public static Set<Betreuungsstatus> allowedRoles(UserRole userRole) {
 		switch (userRole) {
-			case SUPER_ADMIN:
-				return all;
-			case ADMIN:
-				return all;
-			case GESUCHSTELLER:
-				return all;
-			case JURIST:
-				return all;
-			case REVISOR:
-				return all;
-			case SACHBEARBEITER_INSTITUTION:
-				return forSachbearbeiterInstitutionRole;
-			case SACHBEARBEITER_JA:
-				return all;
-			case SACHBEARBEITER_TRAEGERSCHAFT:
-				return forSachbearbeiterTraegerschaftRole;
-			case SCHULAMT:
-				return all;
-			case STEUERAMT:
-				return all;
-			default:
-				return none;
+		case SUPER_ADMIN:
+			return all;
+		case ADMIN:
+			return all;
+		case GESUCHSTELLER:
+			return all;
+		case JURIST:
+			return all;
+		case REVISOR:
+			return all;
+		case SACHBEARBEITER_INSTITUTION:
+			return forSachbearbeiterInstitutionRole;
+		case SACHBEARBEITER_JA:
+			return all;
+		case SACHBEARBEITER_TRAEGERSCHAFT:
+			return forSachbearbeiterTraegerschaftRole;
+		case SCHULAMT:
+			return all;
+		case STEUERAMT:
+			return all;
+		default:
+			return none;
 		}
 	}
 }

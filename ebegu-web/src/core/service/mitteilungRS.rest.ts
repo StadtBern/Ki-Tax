@@ -14,7 +14,7 @@
  */
 
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpService, IPromise, ILogService} from 'angular';
+import {IHttpService, ILogService, IPromise} from 'angular';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
 import TSMitteilung from '../../models/TSMitteilung';
 import TSBetreuung from '../../models/TSBetreuung';
@@ -24,9 +24,9 @@ import TSFall from '../../models/TSFall';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import TSBetreuungsmitteilung from '../../models/TSBetreuungsmitteilung';
 import TSBetreuungspensum from '../../models/TSBetreuungspensum';
-import ITranslateService = angular.translate.ITranslateService;
 import DateUtil from '../../utils/DateUtil';
 import TSBetreuungspensumContainer from '../../models/TSBetreuungspensumContainer';
+import ITranslateService = angular.translate.ITranslateService;
 
 export default class MitteilungRS {
     serviceURL: string;

@@ -15,6 +15,7 @@
 
 import TSAbstractEntity from './TSAbstractEntity';
 import TSEWKPerson from './TSEWKPerson';
+
 /**
  * DTO für Resultate aus dem EWK
  */
@@ -23,7 +24,6 @@ export default class TSEWKResultat extends TSAbstractEntity {
     private _maxResultate: number;
     private _anzahlResultate: number;
     private _personen: Array<TSEWKPerson>;
-
 
     constructor(maxResultate?: number, anzahlResultate?: number, personen?: Array<TSEWKPerson>) {
         super();

@@ -23,11 +23,12 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import TSGesuch from '../../../models/TSGesuch';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
-import IQService = angular.IQService;
-import IScope = angular.IScope;
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import TSFall from '../../../models/TSFall';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import IQService = angular.IQService;
+import IScope = angular.IScope;
+
 describe('dvNavigation', function () {
 
     let navController: NavigatorController;

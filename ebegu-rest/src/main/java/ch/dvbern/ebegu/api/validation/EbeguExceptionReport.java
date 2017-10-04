@@ -15,13 +15,10 @@
 
 package ch.dvbern.ebegu.api.validation;
 
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.util.ServerMessageUtil;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.jboss.resteasy.api.validation.Validation;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,10 +27,14 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.jboss.resteasy.api.validation.Validation;
 
 /**
  * Created by imanol on 02.03.16.
@@ -54,30 +55,29 @@ public class EbeguExceptionReport {
 	private String objectId; // das ID vom betroffenen Objekt, wenn es eins gibt
 	private List<Serializable> argumentList = new ArrayList<>();
 
-//	public EbeguExceptionReport(EbeguException exception) {
-//		if (exception != null) {
-//			this.exceptionName = exception.getClass().getSimpleName();
-//			this.translatedMessage = exception.getMessage();
-//			this.customMessage = exception.getCustomMessage();
-//			this.methodName = exception.getMethodName();
-//			this.argumentList.addAll(exception.getArgs());
-//		}
-//	}
-//
-//	public EbeguExceptionReport(EbeguRuntimeException exception) {
-//		if (exception != null) {
-//			this.exceptionName = exception.getClass().getSimpleName();
-//			this.translatedMessage = exception.getMessage();
-//			this.customMessage = exception.getCustomMessage();
-//			this.methodName = exception.getMethodName();
-//			this.argumentList.addAll(exception.getArgs());
-//		}
-//	}
-
+	//	public EbeguExceptionReport(EbeguException exception) {
+	//		if (exception != null) {
+	//			this.exceptionName = exception.getClass().getSimpleName();
+	//			this.translatedMessage = exception.getMessage();
+	//			this.customMessage = exception.getCustomMessage();
+	//			this.methodName = exception.getMethodName();
+	//			this.argumentList.addAll(exception.getArgs());
+	//		}
+	//	}
+	//
+	//	public EbeguExceptionReport(EbeguRuntimeException exception) {
+	//		if (exception != null) {
+	//			this.exceptionName = exception.getClass().getSimpleName();
+	//			this.translatedMessage = exception.getMessage();
+	//			this.customMessage = exception.getCustomMessage();
+	//			this.methodName = exception.getMethodName();
+	//			this.argumentList.addAll(exception.getArgs());
+	//		}
+	//	}
 
 	public EbeguExceptionReport(@Nullable String exceptionName, @Nullable ErrorCodeEnum errorCodeEnum, @Nullable String methodName,
-								@Nullable String translatedMessage, @Nullable String customMessage, @Nullable String objectId,
-								@Nullable List<Serializable> argumentList) {
+		@Nullable String translatedMessage, @Nullable String customMessage, @Nullable String objectId,
+		@Nullable List<Serializable> argumentList) {
 		this.exceptionName = exceptionName;
 		this.errorCodeEnum = errorCodeEnum;
 		this.methodName = methodName;
@@ -114,7 +114,6 @@ public class EbeguExceptionReport {
 	public List<Serializable> getArgumentList() {
 		return argumentList;
 	}
-
 
 	public String getCustomMessage() {
 		return customMessage;
@@ -158,8 +157,8 @@ public class EbeguExceptionReport {
 		EbeguExceptionReport exceptionReport = new EbeguExceptionReport(ex.getClass().getSimpleName(), ex.getErrorCodeEnum(), ex.getMethodName(), translatedEnumMessage,
 			ex.getCustomMessage(), null, ex.getArgs());
 		if (addDebugInfo) {
-					addDevelopmentDebugInformation(exceptionReport, ex);
-				}
+			addDevelopmentDebugInformation(exceptionReport, ex);
+		}
 		return builder.entity(exceptionReport).build();
 
 	}
@@ -183,7 +182,7 @@ public class EbeguExceptionReport {
 	}
 
 	private static void addDevelopmentDebugInformation(EbeguExceptionReport exceptionReport, Exception e) {
-			exceptionReport.setStackTrace(ExceptionUtils.getStackTrace(e));
+		exceptionReport.setStackTrace(ExceptionUtils.getStackTrace(e));
 	}
 
 	@Nonnull
@@ -193,6 +192,5 @@ public class EbeguExceptionReport {
 		builder.type(MediaType.APPLICATION_JSON_TYPE);
 		return builder;
 	}
-
 
 }

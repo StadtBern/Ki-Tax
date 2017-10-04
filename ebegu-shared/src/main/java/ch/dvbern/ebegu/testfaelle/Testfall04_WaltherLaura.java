@@ -15,15 +15,23 @@
 
 package ch.dvbern.ebegu.testfaelle;
 
-import ch.dvbern.ebegu.entities.*;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Collection;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.enums.Kinderabzug;
 import ch.dvbern.ebegu.util.MathUtil;
-
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.Collection;
 
 /**
  * http://localhost:8080/ebegu/api/v1/testfaelle/testfall/4

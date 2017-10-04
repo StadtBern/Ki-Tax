@@ -85,7 +85,6 @@ public class JaxZahlungsauftrag extends JaxAbstractDateRangedDTO {
 		this.status = status;
 	}
 
-
 	public String getBeschrieb() {
 		return beschrieb;
 	}

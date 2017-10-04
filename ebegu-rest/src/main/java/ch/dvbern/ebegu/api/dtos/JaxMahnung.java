@@ -58,7 +58,6 @@ public class JaxMahnung extends JaxAbstractDTO {
 	@NotNull
 	private Boolean abgelaufen = false;
 
-
 	@Nullable
 	public JaxGesuch getGesuch() {
 		return gesuch;

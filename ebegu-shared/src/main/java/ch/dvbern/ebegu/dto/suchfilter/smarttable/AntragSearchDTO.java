@@ -28,14 +28,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AntragSearchDTO implements Serializable{
+public class AntragSearchDTO implements Serializable {
 
 	private static final long serialVersionUID = 4561877549058241575L;
 	private PredicateObjectDTO predicateObject;
 
-    public AntragSearchDTO() {
-        this.predicateObject = new PredicateObjectDTO();
-    }
+	public AntragSearchDTO() {
+		this.predicateObject = new PredicateObjectDTO();
+	}
 
 	public PredicateObjectDTO getPredicateObject() {
 		return predicateObject;

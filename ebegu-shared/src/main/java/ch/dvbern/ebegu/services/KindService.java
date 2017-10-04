@@ -31,6 +31,7 @@ public interface KindService {
 
 	/**
 	 * Speichert das Kind neu in der DB falls der Key noch nicht existiert. Sonst wird das existierende Kind aktualisiert
+	 *
 	 * @param kind Das Kind als DTO
 	 */
 	@Nonnull
@@ -45,21 +46,19 @@ public interface KindService {
 
 	/**
 	 * Gibt alle KindContainer des Gesuchs zurueck
-	 * @param gesuchId
-	 * @return
 	 */
 	@Nonnull
 	List<KindContainer> findAllKinderFromGesuch(@Nonnull String gesuchId);
 
 	/**
 	 * entfernt ein Kind aus der Databse
+	 *
 	 * @param kindId Id des Kindes zu entfernen
 	 */
 	void removeKind(@Nonnull String kindId);
 
 	/**
 	 * entfernt ein Kind aus der Databse. Um diese Methode aufzurufen muss man sich vorher vergewissern, dass das Kind existiert
-	 * @param kind
 	 */
 	void removeKind(@Nonnull KindContainer kind);
 

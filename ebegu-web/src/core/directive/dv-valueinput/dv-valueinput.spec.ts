@@ -15,7 +15,6 @@
 
 import {EbeguWebCore} from '../../core.module';
 import {ValueinputController} from './dv-valueinput';
-import INgModelController = angular.INgModelController;
 
 describe('dvValueinput', function () {
 

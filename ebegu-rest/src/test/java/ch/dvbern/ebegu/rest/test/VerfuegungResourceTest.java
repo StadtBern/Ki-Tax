@@ -15,6 +15,12 @@
 
 package ch.dvbern.ebegu.rest.test;
 
+import java.time.LocalDate;
+import java.time.Month;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
 import ch.dvbern.ebegu.api.resource.VerfuegungResource;
@@ -32,11 +38,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
-import java.time.LocalDate;
-import java.time.Month;
 
 /**
  * Testet VerfuegungResource
@@ -82,7 +83,7 @@ public class VerfuegungResourceTest extends AbstractEbeguRestLoginTest {
 		verfuegungJax.setGeneratedBemerkungen("genBemerkung");
 		verfuegungJax.setManuelleBemerkungen("manBemerkung");
 
-		final JaxVerfuegung persistedVerfuegung = verfuegungResource.schliessenNichtEintreten(new JaxId(storedBetr.getId()),  verfuegungJax);
+		final JaxVerfuegung persistedVerfuegung = verfuegungResource.schliessenNichtEintreten(new JaxId(storedBetr.getId()), verfuegungJax);
 
 		Assert.assertNotNull(persistedVerfuegung);
 		persistedVerfuegung.getZeitabschnitte().forEach(jaxVerfZeitabsch -> Assert.assertEquals(0, jaxVerfZeitabsch.getAnspruchberechtigtesPensum()));
@@ -90,7 +91,6 @@ public class VerfuegungResourceTest extends AbstractEbeguRestLoginTest {
 		Assert.assertEquals(Betreuungsstatus.NICHT_EINGETRETEN, storedBetreuung.getBetreuungsstatus());
 		Assert.assertEquals(verfuegungJax.getGeneratedBemerkungen(), persistedVerfuegung.getGeneratedBemerkungen());
 		Assert.assertEquals(verfuegungJax.getManuelleBemerkungen(), persistedVerfuegung.getManuelleBemerkungen());
-
 
 	}
 

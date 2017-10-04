@@ -15,6 +15,8 @@
 
 package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
+import java.util.Set;
+
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Kind;
@@ -22,8 +24,6 @@ import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
-
-import java.util.Set;
 
 /**
  * Dokumente für Kinder:
@@ -63,14 +63,14 @@ public class KindDokumente extends AbstractDokumente<Kind, Object> {
 	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Kind kind) {
 		if (kind != null) {
 			switch (dokumentTyp) {
-				case FACHSTELLENBEST_SOZ:
-					return kind.getPensumFachstelle() != null && kind.getPensumFachstelle().getFachstelle() != null
-						&& !kind.getPensumFachstelle().getFachstelle().isBehinderungsbestaetigung();
-				case FACHSTELLENBEST_BEH:
-					return kind.getPensumFachstelle() != null && kind.getPensumFachstelle().getFachstelle() != null
-						&& kind.getPensumFachstelle().getFachstelle().isBehinderungsbestaetigung();
-				default:
-					return false;
+			case FACHSTELLENBEST_SOZ:
+				return kind.getPensumFachstelle() != null && kind.getPensumFachstelle().getFachstelle() != null
+					&& !kind.getPensumFachstelle().getFachstelle().isBehinderungsbestaetigung();
+			case FACHSTELLENBEST_BEH:
+				return kind.getPensumFachstelle() != null && kind.getPensumFachstelle().getFachstelle() != null
+					&& kind.getPensumFachstelle().getFachstelle().isBehinderungsbestaetigung();
+			default:
+				return false;
 			}
 		}
 		return false;

@@ -42,7 +42,6 @@ public class JaxEbeguParameter extends JaxAbstractDateRangedDTO {
 
 	private boolean proGesuchsperiode;
 
-
 	public String getValue() {
 		return value;
 	}

@@ -15,7 +15,7 @@
 
 import ICacheFactoryService = angular.ICacheFactoryService;
 import ICacheObject = angular.ICacheObject;
-import {TSCacheTyp, getTSCacheTypValues} from '../../models/enums/TSCacheTyp';
+import {getTSCacheTypValues, TSCacheTyp} from '../../models/enums/TSCacheTyp';
 
 /**
  * Class to store cache Global

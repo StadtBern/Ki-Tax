@@ -14,7 +14,9 @@
   ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
@@ -66,7 +68,7 @@
                         <wsdlFile>Stadt_Bern_E-BEGU_Personensuche_v1.2.wsdl</wsdlFile>
                     </wsdlFiles>
                     <verbose>true</verbose>
-                    <sei />
+                    <sei/>
                     <bindingFiles>
                         <bindingFile>${basedir}/src/main/resources/wsdl/jaxb-bindings.xjb</bindingFile>
                     </bindingFiles>

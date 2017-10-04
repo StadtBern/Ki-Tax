@@ -47,8 +47,6 @@ public class FachstelleServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
-
 	@Test
 	public void createFachstelle() {
 		Assert.assertNotNull(fachstelleService);

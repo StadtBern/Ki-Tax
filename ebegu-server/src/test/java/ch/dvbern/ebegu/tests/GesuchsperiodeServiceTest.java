@@ -47,7 +47,6 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
 	@Test
 	public void createGesuchsperiodeTest() {
 		Assert.assertNotNull(gesuchsperiodeService);
@@ -98,7 +97,6 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(1, allActiveGesuchsperioden.size());
 		Assert.assertEquals(insertedGesuchsperiode, allActiveGesuchsperioden.iterator().next());
 	}
-
 
 	// HELP METHODS
 

@@ -64,7 +64,6 @@ public class TraegerschaftResourceTest {
 	@Inject
 	private EasyMockProvider mockProvider;
 
-
 	@Test
 	public void synchronizeTraegerschaftEmptyTest() {
 
@@ -76,7 +75,6 @@ public class TraegerschaftResourceTest {
 
 		EasyMock.expect(openIdmRestService.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
 		EasyMock.expect(openIdmRestService.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
-
 
 		mockProvider.replayAll();
 
@@ -136,7 +134,6 @@ public class TraegerschaftResourceTest {
 		final JaxOpenIdmResult jaxOpenIdmResul4 = creatOpenIdmInst("I-4"); // Institution
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul4);
 
-
 		List<Traegerschaft> traegerschafts = new ArrayList<>();
 		final Traegerschaft traegerschaft1 = creatInst("1");
 		traegerschafts.add(traegerschaft1);
@@ -163,7 +160,6 @@ public class TraegerschaftResourceTest {
 		mockProvider.verifyAll();
 	}
 
-
 	@Test
 	public void synchronizeTraegerschaft_AllExist_Test() {
 
@@ -172,7 +168,6 @@ public class TraegerschaftResourceTest {
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResult);
 		final JaxOpenIdmResult jaxOpenIdmResul2 = creatOpenIdmTraegerschaft("T-2");
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul2);
-
 
 		List<Traegerschaft> traegerschafts = new ArrayList<>();
 		final Traegerschaft traegerschaft1 = creatInst("1");
@@ -207,7 +202,6 @@ public class TraegerschaftResourceTest {
 		final JaxOpenIdmResult jaxOpenIdmResul4 = creatOpenIdmTraegerschaft("T-4"); // Traegerschaft
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul4);
 
-
 		List<Traegerschaft> traegerschafts = new ArrayList<>();
 		final Traegerschaft traegerschaft1 = creatInst("1");
 		traegerschafts.add(traegerschaft1);
@@ -229,7 +223,6 @@ public class TraegerschaftResourceTest {
 
 		mockProvider.verifyAll();
 	}
-
 
 	private Traegerschaft creatInst(String name) {
 		Traegerschaft traegerschaft = new Traegerschaft();

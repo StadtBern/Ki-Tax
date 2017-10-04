@@ -21,14 +21,12 @@ import {TSZahlungsauftragsstatus} from './enums/TSZahlungsauftragstatus';
 
 export default class TSZahlungsauftrag extends TSAbstractDateRangedEntity {
 
-
     private _datumGeneriert: moment.Moment;
     private _datumFaellig: moment.Moment;
     private _status: TSZahlungsauftragsstatus;
     private _beschrieb: string;
     private _betragTotalAuftrag: number;
     private _zahlungen: Array<TSZahlung>;
-
 
     constructor(gueltigkeit?: TSDateRange, datumGeneriert?: moment.Moment, datumFaellig?: moment.Moment,
                 status?: TSZahlungsauftragsstatus, beschrieb?: string, betragTotalAuftrag?: number, zahlungen?: Array<TSZahlung>) {

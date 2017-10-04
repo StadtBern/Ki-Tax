@@ -35,7 +35,6 @@ public class JaxErwerbspensumContainer extends JaxAbstractDTO {
 	@Valid
 	private JaxErwerbspensum erwerbspensumJA;
 
-
 	public JaxErwerbspensum getErwerbspensumJA() {
 		return erwerbspensumJA;
 	}

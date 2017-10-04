@@ -15,6 +15,11 @@
 
 package ch.dvbern.ebegu.rules;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.HashSet;
+import java.util.List;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -26,11 +31,6 @@ import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * Tests für ErwerbspensumRule
@@ -232,13 +232,11 @@ public class ErwerbspensumRuleTest {
 		Assert.assertEquals(TestDataUtil.ENDE_PERIODE, result.get(2).getGueltigkeit().getGueltigBis());
 	}
 
-
 	/**
 	 * das Pensum muss wie folgt abgerundet werden:
 	 * X0 - X4 = X0
 	 * X5 - X9 = Y0, wo Y=X+1
-	 * @throws Exception
-     */
+	 */
 	@Test
 	public void testRoundToTens() throws Exception {
 		Betreuung betreuung = createGesuch(false);

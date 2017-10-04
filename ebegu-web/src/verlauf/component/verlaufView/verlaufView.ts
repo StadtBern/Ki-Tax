@@ -14,6 +14,8 @@
  */
 
 import IComponentOptions = angular.IComponentOptions;
+import IFormController = angular.IFormController;
+import IStateService = angular.ui.IStateService;
 import TSFall from '../../../models/TSFall';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
@@ -23,10 +25,6 @@ import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
 import AntragStatusHistoryRS from '../../../core/service/antragStatusHistoryRS.rest';
 import TSAntragStatusHistory from '../../../models/TSAntragStatusHistory';
 import EbeguUtil from '../../../utils/EbeguUtil';
-import IPromise = angular.IPromise;
-import IQService = angular.IQService;
-import IFormController = angular.IFormController;
-import IStateService = angular.ui.IStateService;
 
 let template = require('./verlaufView.html');
 require('./verlaufView.less');

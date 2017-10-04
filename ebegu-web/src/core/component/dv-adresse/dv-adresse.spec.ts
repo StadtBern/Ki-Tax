@@ -16,8 +16,6 @@
 import '../../../bootstrap.ts';
 import 'angular-mocks';
 import {EbeguWebCore} from '../../core.module';
-import IInjectorService = angular.auto.IInjectorService;
-import IRootScopeService = angular.IRootScopeService;
 import IScope = angular.IScope;
 
 describe('dvAdresse', function () {

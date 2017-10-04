@@ -32,7 +32,6 @@ import ch.dvbern.ebegu.enums.Land;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxAdresse extends JaxAbstractDateRangedDTO {
 
-
 	private static final long serialVersionUID = -1093677998323618626L;
 
 	@NotNull

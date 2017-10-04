@@ -15,14 +15,19 @@
 
 package ch.dvbern.ebegu.entities;
 
+import javax.annotation.Nonnull;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 /**
  * Container-Entity für dieEinkommensverschlechterung: Diese muss für jeden
@@ -38,7 +43,6 @@ import javax.validation.constraints.NotNull;
 	uniqueConstraints = @UniqueConstraint(columnNames = "gesuchsteller_container_id", name = "UK_einkommensverschlechterungcontainer_gesuchsteller")
 )
 public class EinkommensverschlechterungContainer extends AbstractEntity {
-
 
 	private static final long serialVersionUID = -2685774428336265818L;
 
@@ -67,10 +71,8 @@ public class EinkommensverschlechterungContainer extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_einkommensverschlechterungcontainer_ekvJABasisJahrPlus2_id"), nullable = true)
 	private Einkommensverschlechterung ekvJABasisJahrPlus2;
 
-
 	public EinkommensverschlechterungContainer() {
 	}
-
 
 	public Einkommensverschlechterung getEkvJABasisJahrPlus2() {
 		return ekvJABasisJahrPlus2;

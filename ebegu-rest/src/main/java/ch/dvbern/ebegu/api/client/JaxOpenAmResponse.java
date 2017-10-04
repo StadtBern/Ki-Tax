@@ -15,10 +15,11 @@
 
 package ch.dvbern.ebegu.api.client;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
 
 /**
  * Jax Element for Response of OpenAm, gives result and page counts
@@ -26,7 +27,6 @@ import java.io.Serializable;
 @XmlRootElement(name = "openAmResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxOpenAmResponse implements Serializable {
-
 
 	private static final long serialVersionUID = 3556645949176582367L;
 

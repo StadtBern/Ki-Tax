@@ -10,7 +10,6 @@
 
 package ch.dvbern.ebegu.errors;
 
-
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 
 /**
@@ -19,7 +18,6 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 public class PersonenSucheServiceException extends EbeguException {
 
 	private static final long serialVersionUID = 5438097529958118878L;
-
 
 	public PersonenSucheServiceException(final String methodname, final String message) {
 		super(methodname, message, ErrorCodeEnum.ERROR_PERSONENSUCHE_TECHNICAL);

@@ -24,11 +24,10 @@ var parser = new xml2js.Parser();
 
 var contents = fs.readFileSync(__dirname + '/../pom.xml').toString();
 
-var re = new RegExp("<artifactId>ebegu</artifactId>[\\s\\S]*?<version>(.*?)</version>[\\s\\S]*?<packaging>pom</packaging>","im");
+var re = new RegExp("<artifactId>ebegu</artifactId>[\\s\\S]*?<version>(.*?)</version>[\\s\\S]*?<packaging>pom</packaging>", "im");
 var myMatchArray = re.exec(contents);
-parsedversion = ( myMatchArray !== null) ?  myMatchArray[1] : 'unknown';
+parsedversion = ( myMatchArray !== null) ? myMatchArray[1] : 'unknown';
 console.log("Parsed Version from pom is " + parsedversion);
-
 
 var currentTime = new Date();
 /**
@@ -53,8 +52,6 @@ const METADATA = {
  * See: http://webpack.github.io/docs/configuration.html#cli
  */
 module.exports = {
-
-
 
     // Static metadata for index.html
     //
@@ -83,7 +80,7 @@ module.exports = {
     //
     // See: http://webpack.github.io/docs/configuration.html#resolve
     resolve: {
-        modules:[helpers.root('src'), 'node_modules'],
+        modules: [helpers.root('src'), 'node_modules'],
 
         // An array of extensions that should be used to resolve modules.
         //
@@ -124,8 +121,6 @@ module.exports = {
         //
         // See: https://github.com/s-panferov/awesome-typescript-loader#forkchecker-boolean-defaultfalse
         // new ForkCheckerPlugin(),
-
-
 
         // Plugin: CommonsChunkPlugin
         // Description: Shares common code between the pages.

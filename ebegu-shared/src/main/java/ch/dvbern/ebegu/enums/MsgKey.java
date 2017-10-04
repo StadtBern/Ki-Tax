@@ -17,13 +17,11 @@ package ch.dvbern.ebegu.enums;
 
 import ch.dvbern.ebegu.rules.RuleKey;
 
-
 /**
  * Dieses Enum dient der Verwaltung von Server Seitigen Uebersetzbaren Messages. Die hier definierten keys sollten im
  * server-messages.properties file uebersetzt werden. Die Optionale Verklinkung mit anderen Enums ist rein informativ
  */
 public enum MsgKey {
-
 
 	ERWERBSPENSUM_GS1_MSG(RuleKey.ERWERBSPENSUM),
 	ERWERBSPENSUM_GS2_MSG(RuleKey.ERWERBSPENSUM),
@@ -54,7 +52,6 @@ public enum MsgKey {
 	STORNIERT_MSG(RuleKey.STORNIERT),
 	FAMILIENSITUATION_HEIRAT_MSG(RuleKey.ZIVILSTANDSAENDERUNG),
 	FAMILIENSITUATION_TRENNUNG_MSG(RuleKey.ZIVILSTANDSAENDERUNG);
-
 
 	private RuleKey referencedRuleKey;
 

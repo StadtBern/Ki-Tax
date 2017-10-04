@@ -37,7 +37,6 @@ public class CheckBenutzerRolesValidatorTest {
 		validator = new CheckBenutzerRolesValidator();
 	}
 
-
 	@Test
 	public void testCheckBenutzerRoleInstitutionWithoutInstitution() {
 		Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_INSTITUTION, "anonymous", null, null, null);

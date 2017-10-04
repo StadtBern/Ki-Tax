@@ -34,7 +34,7 @@ public class GesuchstellerKinderBetreuungExcelConverter implements ExcelConverte
 	}
 
 	public ExcelMergerDTO toExcelMergerDTO(@Nonnull List<GesuchstellerKinderBetreuungDataRow> data, @Nonnull Locale lang,
-										   @Nonnull LocalDate stichtag) {
+		@Nonnull LocalDate stichtag) {
 		checkNotNull(data);
 
 		ExcelMergerDTO sheet = new ExcelMergerDTO();
@@ -46,7 +46,7 @@ public class GesuchstellerKinderBetreuungExcelConverter implements ExcelConverte
 
 	@Nonnull
 	public ExcelMergerDTO toExcelMergerDTO(@Nonnull List<GesuchstellerKinderBetreuungDataRow> data, @Nonnull Locale lang,
-										   @Nonnull LocalDate auswertungVon, @Nonnull LocalDate auswertungBis, @Nullable Gesuchsperiode auswertungPeriode) {
+		@Nonnull LocalDate auswertungVon, @Nonnull LocalDate auswertungBis, @Nullable Gesuchsperiode auswertungPeriode) {
 		checkNotNull(data);
 
 		ExcelMergerDTO sheet = new ExcelMergerDTO();

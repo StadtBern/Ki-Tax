@@ -21,7 +21,6 @@
 import 'angular';
 import 'angular-mocks';
 import 'angular-translate';
-import IProvideService = angular.auto.IProvideService;
 
 /*
 beforeEach(angular.mock.module('ebeguWeb.core', function ($provide: IProvideService, $translateProvider: ITranslateProvider) {

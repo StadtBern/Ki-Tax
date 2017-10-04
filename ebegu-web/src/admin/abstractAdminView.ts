@@ -13,10 +13,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import IPromise = angular.IPromise;
-import IRootScopeService = angular.IRootScopeService;
-import IFormController = angular.IFormController;
-import IScope = angular.IScope;
 import {TSRole} from '../models/enums/TSRole';
 import {TSRoleUtil} from '../utils/TSRoleUtil';
 import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';

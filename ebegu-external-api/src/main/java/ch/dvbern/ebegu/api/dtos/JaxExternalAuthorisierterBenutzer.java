@@ -26,16 +26,14 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import ch.dvbern.lib.date.converters.LocalDateTimeXMLConverter;
 
-
 /**
  * This transfer Object is used to pass the relevant Info about a successfull login
  * from an external login system to E-BEGU
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxExternalAuthorisierterBenutzer implements Serializable{
+public class JaxExternalAuthorisierterBenutzer implements Serializable {
 
 	private static final long serialVersionUID = -5370653568368950813L;
-
 
 	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
 	private LocalDateTime lastLogin = LocalDateTime.now();
@@ -47,7 +45,6 @@ public class JaxExternalAuthorisierterBenutzer implements Serializable{
 	 */
 	@NotNull
 	private String authToken = null;
-
 
 	/**
 	 * Wiederholung von Benutzer.username damit wir nicht joinen muessen

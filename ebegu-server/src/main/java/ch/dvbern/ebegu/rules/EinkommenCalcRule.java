@@ -33,9 +33,7 @@ import ch.dvbern.ebegu.types.DateRange;
  */
 public class EinkommenCalcRule extends AbstractCalcRule {
 
-
 	private final BigDecimal maximalesEinkommen;
-
 
 	public EinkommenCalcRule(DateRange validityPeriod, BigDecimal maximalesEinkommen) {
 		super(RuleKey.EINKOMMEN, RuleType.REDUKTIONSREGEL, validityPeriod);
@@ -102,7 +100,7 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 				verfuegungZeitabschnitt.setEinkommensjahr(basisjahrPlus2);
 				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ACCEPT_MSG,
 					String.valueOf(basisjahrPlus2));
-			} else  {
+			} else {
 				if (verfuegungZeitabschnitt.isEkv1NotExisting() || finanzDatenDTO.isEkv1Annulliert()) {
 					verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjVorAbzFamGr());
 					verfuegungZeitabschnitt.setEinkommensjahr(basisjahr);

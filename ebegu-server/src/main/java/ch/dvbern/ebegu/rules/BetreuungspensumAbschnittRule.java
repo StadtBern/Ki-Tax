@@ -49,7 +49,6 @@ public class BetreuungspensumAbschnittRule extends AbstractAbschnittRule {
 		return betreuungspensumAbschnitte;
 	}
 
-
 	/**
 	 * @param betreuungspensum zu konvertiertendes Betreuungspensum
 	 * @return VerfuegungZeitabschnitt mit gleicher gueltigkeit und uebernommenem betreuungspensum

@@ -19,7 +19,6 @@ import ch.dvbern.oss.lib.excelmerger.mergefields.SimpleMergeField;
 import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.INTEGER_CONVERTER;
 import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.STRING_CONVERTER;
 
-
 public enum MergeFieldGesuchStichtag implements MergeFieldProvider {
 
 	repeatGesuchStichtagRow(new RepeatRowMergeField("repeatGesuchStichtagRow")),
@@ -32,7 +31,6 @@ public enum MergeFieldGesuchStichtag implements MergeFieldProvider {
 	nichtFreigegeben(new SimpleMergeField<>("nichtFreigegeben", INTEGER_CONVERTER)),
 	mahnungen(new SimpleMergeField<>("mahnungen", INTEGER_CONVERTER)),
 	beschwerde(new SimpleMergeField<>("beschwerde", INTEGER_CONVERTER));
-
 
 	@Nonnull
 	private final MergeField<?> mergeField;

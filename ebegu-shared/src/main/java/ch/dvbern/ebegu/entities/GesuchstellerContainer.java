@@ -56,7 +56,6 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 
 	private static final long serialVersionUID = -8403117439764700618L;
 
-
 	@Valid
 	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
@@ -91,9 +90,8 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuchstellerContainer")
 	private List<GesuchstellerAdresseContainer> adressen = new ArrayList<>();
 
-
-
-	public GesuchstellerContainer() {}
+	public GesuchstellerContainer() {
+	}
 
 	public boolean addAdresse(@Nonnull final GesuchstellerAdresseContainer gesuchstellerAdresseContainer) {
 		gesuchstellerAdresseContainer.setGesuchstellerContainer(this);

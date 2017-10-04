@@ -45,9 +45,6 @@ public class MandantServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
-
-
 	@Test
 	public void findMandantTest() {
 		Mandant mandant = TestDataUtil.createDefaultMandant();

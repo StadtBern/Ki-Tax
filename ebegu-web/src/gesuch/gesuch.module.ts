@@ -30,10 +30,7 @@ import {FinanzielleSituationStartViewComponentConfig} from './component/finanzie
 import {FinanzielleSituationResultateViewComponentConfig} from './component/finanzielleSituationResultateView/finanzielleSituationResultateView';
 import {FallCreationViewComponentConfig} from './component/fallCreationView/fallCreationView';
 import {VerfuegenListViewComponentConfig} from './component/verfuegenListView/verfuegenListView';
-import {
-    GesuchToolbarComponentConfig,
-    GesuchToolbarGesuchstellerComponentConfig
-} from './component/gesuchToolbar/gesuchToolbar';
+import {GesuchToolbarComponentConfig, GesuchToolbarGesuchstellerComponentConfig} from './component/gesuchToolbar/gesuchToolbar';
 import {EinkommensverschlechterungInfoViewComponentConfig} from './component/einkommensverschlechterungInfoView/einkommensverschlechterungInfoView';
 import {EinkommensverschlechterungSteuernViewComponentConfig} from './component/einkommensverschlechterungSteuernView/einkommensverschlechterungSteuernView';
 import {EinkommensverschlechterungViewComponentConfig} from './component/einkommensverschlechterungView/einkommensverschlechterungView';

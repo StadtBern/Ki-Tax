@@ -15,12 +15,13 @@
 
 package ch.dvbern.ebegu.services;
 
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.authentication.AuthLoginElement;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
-
-import javax.annotation.Nonnull;
-import java.util.Optional;
 
 /**
  * Service fuer die Authentifizierung eines Benutzers
@@ -41,7 +42,6 @@ public interface AuthService {
 	 * @return TRUE falls das Logout erfolgreich war, sonst FALSE
 	 */
 	boolean logout(@Nonnull final String authToken);
-
 
 	@Nonnull
 	AuthAccessElement createLoginFromIAM(AuthorisierterBenutzer authorisierterBenutzer);

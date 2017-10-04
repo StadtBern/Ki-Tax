@@ -21,6 +21,6 @@ package ch.dvbern.ebegu.enums;
 public enum ZahlungStatus {
 
 	ENTWURF,
-    AUSGELOEST,
+	AUSGELOEST,
 	BESTAETIGT,
 }

@@ -26,7 +26,7 @@
 			<property name="javaVmArguments">-Djboss.socket.binding.port-offset=10000 -Xms512m -Xmx1024m -XX:MaxPermSize=512m</property>
 			<!-- Port offset allows running the tests while a WildFly server is already running, note that the offset is
 						 added to the default management port 9990 as well, this needs to be specified -->
-    		<property name="managementPort">19990</property>
+			<property name="managementPort">19990</property>
 			<!--um die konfiguration des cache containers fuer test verfuegbar zu haben-->
 			<!--<property name="serverConfig">standalone-test.xml</property>-->
 		</configuration>

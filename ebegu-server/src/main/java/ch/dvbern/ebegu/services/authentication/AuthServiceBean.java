@@ -67,7 +67,6 @@ public class AuthServiceBean implements AuthService {
 	@Resource(lookup = "java:jboss/infinispan/container/ebeguCache")
 	private CacheContainer cacheContainer;
 
-
 	@Nonnull
 	@Override
 	public Optional<AuthAccessElement> login(@Nonnull AuthLoginElement loginElement) {
@@ -119,7 +118,6 @@ public class AuthServiceBean implements AuthService {
 			return false;
 		}
 	}
-
 
 	@Override
 	@Nonnull

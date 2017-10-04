@@ -13,7 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IScope, IQService, IFilterService, IHttpBackendService} from 'angular';
+import {IFilterService, IHttpBackendService, IQService, IScope} from 'angular';
 import TSAntragDTO from '../../../models/TSAntragDTO';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';

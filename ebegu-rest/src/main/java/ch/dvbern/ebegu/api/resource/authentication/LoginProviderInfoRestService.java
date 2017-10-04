@@ -44,7 +44,6 @@ public class LoginProviderInfoRestService {
 	private final Logger LOG = LoggerFactory.getLogger(LoginProviderInfoRestService.class.getSimpleName());
 	public static final int CONNECTION_TIMEOUT = 10;
 
-
 	@Inject
 	private EbeguConfiguration configuration;
 
@@ -57,7 +56,6 @@ public class LoginProviderInfoRestService {
 		return getLoginProviderInfoProxClient().getSingleLogoutURL(relayPath, nameID, sessionID);
 	}
 
-
 	public String getSSOLoginInitURL(@Nullable String relayPath) {
 		if (!this.isConnectorEndpointSpecified()) {
 			LOG.debug("No external Login connector specified, redirecting to locallogin");
@@ -66,10 +64,9 @@ public class LoginProviderInfoRestService {
 		return getLoginProviderInfoProxClient().getSSOLoginInitURL(relayPath);
 	}
 
-	public String pingLoginProvider(){
+	public String pingLoginProvider() {
 		return this.getLoginProviderInfoProxClient().getHeartBeat();
 	}
-
 
 	private ILoginProviderInfoResource getLoginProviderInfoProxClient() {
 		if (loginProviderInfoRESTService == null) {
@@ -84,7 +81,7 @@ public class LoginProviderInfoRestService {
 			ResteasyClient client = buildClient();
 			ResteasyWebTarget target = client.target(baseURL);
 			this.loginProviderInfoRESTService = target.proxy(ILoginProviderInfoResource.class);
-			LOG.debug("Creating REST Proxy for Login Provider" );
+			LOG.debug("Creating REST Proxy for Login Provider");
 			final String responseMsg = loginProviderInfoRESTService.getHeartBeat();
 			LOG.debug("version {}", responseMsg);
 

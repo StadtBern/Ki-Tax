@@ -33,7 +33,6 @@ import ch.dvbern.ebegu.types.DateRange;
  */
 public class VerfuegungUtil {
 
-
 	/**
 	 * Fuer die gegebene DateRange wird berechnet, wie viel Verguenstigung es insgesamt berechnet wurde.
 	 * Diese wird dann als BigDecimal zurueckgegeben
@@ -70,8 +69,7 @@ public class VerfuegungUtil {
 				if (oldSameZeitabschnitt.isPresent()) {
 					newZeitabschnitt.setSameVerfuegungsdaten(newZeitabschnitt.isSamePersistedValues(oldSameZeitabschnitt.get()));
 					newZeitabschnitt.setSameVerguenstigung(Objects.equals(newZeitabschnitt.getVerguenstigung(), oldSameZeitabschnitt.get().getVerguenstigung()));
-				}
-				else { // no Zeitabschnitt with the same Gueltigkeit has been found, so it must be different
+				} else { // no Zeitabschnitt with the same Gueltigkeit has been found, so it must be different
 					newZeitabschnitt.setSameVerfuegungsdaten(false);
 					newZeitabschnitt.setSameVerguenstigung(false);
 				}
@@ -107,14 +105,11 @@ public class VerfuegungUtil {
 				// wir gehen davon aus, dass Zahlung immer fuer einen ganzen Monat gemacht werden, deswegen reicht es wenn ein Zeitabschnitt VERRECHNET bzw. IGNORIERT ist
 				if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET)) {
 					return VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET;
-				}
-				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT)) {
+				} else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT)) {
 					return VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT;
-				}
-				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND)) {
+				} else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND)) {
 					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND;
-				}
-				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT)) {
+				} else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT)) {
 					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT;
 				}
 			}

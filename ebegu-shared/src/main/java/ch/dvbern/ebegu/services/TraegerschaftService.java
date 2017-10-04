@@ -29,6 +29,7 @@ public interface TraegerschaftService {
 
 	/**
 	 * Speichert die Traegerschaft neu in der DB falls der Key noch nicht existiert.
+	 *
 	 * @param traegerschaft Die Traegerschaft als DTO
 	 */
 	@Nonnull

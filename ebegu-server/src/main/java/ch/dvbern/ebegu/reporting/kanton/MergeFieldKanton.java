@@ -9,7 +9,6 @@
  */
 package ch.dvbern.ebegu.reporting.kanton;
 
-
 import javax.annotation.Nonnull;
 
 import ch.dvbern.oss.lib.excelmerger.mergefields.MergeField;
@@ -21,7 +20,6 @@ import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.BIGDEC
 import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.DATE_CONVERTER;
 import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.PERCENT_CONVERTER;
 import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.STRING_CONVERTER;
-
 
 public enum MergeFieldKanton implements MergeFieldProvider {
 
@@ -43,7 +41,6 @@ public enum MergeFieldKanton implements MergeFieldProvider {
 	institution(new SimpleMergeField<>("institution", STRING_CONVERTER)),
 	betreuungsTyp(new SimpleMergeField<>("betreuungsTyp", STRING_CONVERTER)),
 	oeffnungstage(new SimpleMergeField<>("oeffnungstage", BIGDECIMAL_CONVERTER));
-
 
 	@Nonnull
 	private final MergeField<?> mergeField;

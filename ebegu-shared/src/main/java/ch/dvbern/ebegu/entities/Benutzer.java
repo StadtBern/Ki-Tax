@@ -15,6 +15,23 @@
 
 package ch.dvbern.ebegu.entities;
 
+import java.util.Objects;
+
+import javax.annotation.Nullable;
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.validators.CheckBenutzerRoles;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -23,20 +40,13 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Field;
 
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import java.util.Objects;
-
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 @Entity
 @Table(
-	uniqueConstraints = {@UniqueConstraint(columnNames = "username", name = "UK_username")},
-	indexes = {@Index(columnList = "username", name = "IX_benutzer_username")
-})
+	uniqueConstraints = { @UniqueConstraint(columnNames = "username", name = "UK_username") },
+	indexes = { @Index(columnList = "username", name = "IX_benutzer_username")
+	})
 @Audited
 @CheckBenutzerRoles
 @Cacheable
@@ -86,8 +96,6 @@ public class Benutzer extends AbstractEntity {
 	@ManyToOne(optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_benutzer_traegerschaft_id"))
 	private Traegerschaft traegerschaft;
-
-
 
 	public String getUsername() {
 		return username;
@@ -156,8 +164,8 @@ public class Benutzer extends AbstractEntity {
 	}
 
 	public String getFullName() {
-		return (this.vorname != null ? this.vorname :  "")  + " "
-			+ (this.nachname != null ?  this.nachname : "");
+		return (this.vorname != null ? this.vorname : "") + " "
+			+ (this.nachname != null ? this.nachname : "");
 	}
 
 	@Override

@@ -42,7 +42,6 @@ public final class FinanzSituationPrintGesuchstellerHelper {
 	/**
 	 * Erstellt das FinanzSituationGesuchsteller fuer Gesuchsteller 1
 	 *
-	 * @param gesuch
 	 * @return FinanzSituationGesuchsteller
 	 */
 	public static FinanzSituationPrintGesuchsteller getFinanzSituationGesuchsteller1(Gesuch gesuch) {
@@ -51,9 +50,9 @@ public final class FinanzSituationPrintGesuchstellerHelper {
 		Validate.notNull(gesuchsteller1);
 		Validate.notNull(gesuchsteller1.getFinanzielleSituationContainer());
 		FinanzSituationPrintGesuchsteller finanzSituationPrintGesuchsteller = new FinanzSituationPrintGesuchsteller(gesuchsteller1.getFinanzielleSituationContainer().getFinanzielleSituationJA(), //
-				gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() : null, //
-				gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() : null, //
-				gesuch.extractEinkommensverschlechterungInfo());
+			gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() : null, //
+			gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() : null, //
+			gesuch.extractEinkommensverschlechterungInfo());
 
 		return finanzSituationPrintGesuchsteller;
 	}
@@ -61,7 +60,6 @@ public final class FinanzSituationPrintGesuchstellerHelper {
 	/**
 	 * Erstellt das FinanzSituationGesuchsteller fuer Gesuchsteller 2
 	 *
-	 * @param gesuch
 	 * @return FinanzSituationGesuchsteller
 	 */
 	public static FinanzSituationPrintGesuchsteller getFinanzSituationGesuchsteller2(Gesuch gesuch) {
@@ -70,10 +68,10 @@ public final class FinanzSituationPrintGesuchstellerHelper {
 		if (gesuchsteller2 != null) {
 			Validate.notNull(gesuchsteller2.getFinanzielleSituationContainer());
 			FinanzSituationPrintGesuchsteller finanzSituationPrintGesuchsteller2 = new FinanzSituationPrintGesuchsteller(
-					gesuchsteller2.getFinanzielleSituationContainer().getFinanzielleSituationJA(), //
-					gesuchsteller2.getEinkommensverschlechterungContainer() != null ? gesuchsteller2.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() : null, //
-					gesuchsteller2.getEinkommensverschlechterungContainer() != null ? gesuchsteller2.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() : null, //
-					gesuch.extractEinkommensverschlechterungInfo());
+				gesuchsteller2.getFinanzielleSituationContainer().getFinanzielleSituationJA(), //
+				gesuchsteller2.getEinkommensverschlechterungContainer() != null ? gesuchsteller2.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() : null, //
+				gesuchsteller2.getEinkommensverschlechterungContainer() != null ? gesuchsteller2.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() : null, //
+				gesuch.extractEinkommensverschlechterungInfo());
 			return finanzSituationPrintGesuchsteller2;
 		}
 		return null;

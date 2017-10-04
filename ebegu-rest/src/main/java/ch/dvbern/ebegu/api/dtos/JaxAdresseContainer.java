@@ -36,7 +36,6 @@ public class JaxAdresseContainer extends JaxAbstractDTO {
 	@Valid
 	private JaxAdresse adresseGS;
 
-
 	public JaxAdresse getAdresseJA() {
 		return adresseJA;
 	}

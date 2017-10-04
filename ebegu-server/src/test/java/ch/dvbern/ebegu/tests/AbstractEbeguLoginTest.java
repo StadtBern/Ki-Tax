@@ -43,9 +43,8 @@ import static ch.dvbern.ebegu.tets.util.JBossLoginContextFactory.createLoginCont
  */
 public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 
-
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractEbeguLoginTest.class);
-	private  LoginContext loginContext;
+	private LoginContext loginContext;
 
 	@Inject
 	private Persistence persistence;
@@ -55,7 +54,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 	private BenutzerService benutzerService;
 
 	@Before
-	public  void performLogin() {
+	public void performLogin() {
 		dummyAdmin = TestDataUtil.createDummySuperAdmin(persistence);
 		try {
 			loginAsSuperadmin();
@@ -70,7 +69,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 	}
 
 	@After
-	public  void performLogout() {
+	public void performLogout() {
 		try {
 			if (loginContext != null) {
 				loginContext.logout();

@@ -15,14 +15,20 @@
 
 package ch.dvbern.ebegu.rules.util;
 
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
-import java.util.*;
 
 /**
  * Test Class for Bemerkungsmerger
@@ -34,7 +40,6 @@ public class BemerkungsMergerTest {
 	private static final DateRange MAR = new DateRange(LocalDate.of(2016, 3, 1), LocalDate.of(2016, 3, 1).with(TemporalAdjusters.lastDayOfMonth()));
 	private static final DateRange APR = new DateRange(LocalDate.of(2016, 4, 1), LocalDate.of(2016, 4, 1).with(TemporalAdjusters.lastDayOfMonth()));
 	private static final DateRange MAI = new DateRange(LocalDate.of(2016, 5, 1), LocalDate.of(2016, 5, 1).with(TemporalAdjusters.lastDayOfMonth()));
-
 
 	@Test
 	public void evaluateRangesByBemerkungKeyTest() throws Exception {
@@ -103,6 +108,5 @@ public class BemerkungsMergerTest {
 			//noop
 		}
 	}
-
 
 }

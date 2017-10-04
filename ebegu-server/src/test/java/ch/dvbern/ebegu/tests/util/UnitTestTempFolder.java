@@ -15,12 +15,12 @@
 
 package ch.dvbern.ebegu.tests.util;
 
-import org.junit.rules.TemporaryFolder;
-
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -43,10 +43,7 @@ public class UnitTestTempFolder extends TemporaryFolder {
 	 * <p>
 	 * Test Dateien werden geöffnet wenn System Property 'testDateienOeffnen' = true ist.
 	 *
-	 * @param data
-	 * @param fileName
 	 * @return das Temp file oder <code>null</code>
-	 * @throws IOException
 	 */
 	public File writeToTempDir(final byte[] data, final String fileName) throws IOException {
 
@@ -56,10 +53,11 @@ public class UnitTestTempFolder extends TemporaryFolder {
 		FileOutputStream fos = null;
 		try {
 			// create temp file in junit temp folder
-			if (persistPfad == null)
+			if (persistPfad == null) {
 				tempFile = newFile(fileName);
-			else
+			} else {
 				tempFile = new File(persistPfad, fileName);
+			}
 
 			System.out.println("Writing tempfile to: " + tempFile);
 			fos = new FileOutputStream(tempFile);
@@ -67,8 +65,9 @@ public class UnitTestTempFolder extends TemporaryFolder {
 			fos.close();
 
 			// File external oeffnen
-			if (Boolean.getBoolean("testDateienOeffnen"))
+			if (Boolean.getBoolean("testDateienOeffnen")) {
 				openPDF(tempFile);
+			}
 		} finally {
 			if (fos != null) {
 				fos.close();

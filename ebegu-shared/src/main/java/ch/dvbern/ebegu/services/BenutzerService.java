@@ -29,6 +29,7 @@ public interface BenutzerService {
 
 	/**
 	 * Aktualisiert den Benutzer in der DB or erstellt ihn wenn er noch nicht existiert
+	 *
 	 * @param benutzer die Benutzer als DTO
 	 * @return Die aktualisierte Benutzer
 	 */
@@ -44,6 +45,7 @@ public interface BenutzerService {
 
 	/**
 	 * Gibt alle existierenden Benutzer zurueck.
+	 *
 	 * @return Liste aller Benutzern aus der DB
 	 */
 	@Nonnull
@@ -51,6 +53,7 @@ public interface BenutzerService {
 
 	/**
 	 * Gibt alle existierenden Benutzer mit Rolle Sachbearbeiter_JA oder Admin zurueck.
+	 *
 	 * @return Liste aller Benutzern mit entsprechender Rolle aus der DB
 	 */
 	@Nonnull
@@ -64,13 +67,14 @@ public interface BenutzerService {
 
 	/**
 	 * entfernt die Benutzer aus der Database
+	 *
 	 * @param username die Benutzer als DTO
 	 */
 	void removeBenutzer(@Nonnull String username);
 
 	/**
 	 * Gibt den aktuell eingeloggten Benutzer zurueck
-     */
+	 */
 	@Nonnull
 	Optional<Benutzer> getCurrentBenutzer();
 

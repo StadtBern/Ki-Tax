@@ -15,7 +15,18 @@
 
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.io.File;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.security.auth.login.LoginException;
+
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
@@ -46,11 +57,6 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.security.auth.login.LoginException;
-import java.io.File;
 
 /**
  * Diese Klasse implementiert die Methode "Deployment" fuer die Arquillian Tests und muss von allen Testklassen
@@ -114,7 +120,7 @@ public abstract class AbstractEbeguTest {
 			// .addPackages(true, "ch/dvbern/ebegu/enums")
 			.addClasses(AbstractEbeguLoginTest.class, Persistence.class, ISessionContextService.class, AbstractEntity.class)
 			.addPackages(true, "ch/dvbern/ebegu/services/authentication")
-//			.addClass(Authorizer.class)
+			//			.addClass(Authorizer.class)
 			.addAsLibraries(runtimeDeps).addAsLibraries(testDeps)
 			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
 			.addAsResource("reporting/GesuchStichtag.xlsx", "reporting/GesuchStichtag.xlsx")
@@ -207,9 +213,9 @@ public abstract class AbstractEbeguTest {
 	 * Helper für init. Speichert Benutzer in DB
 	 */
 	protected void createBenutzer(Mandant mandant) {
-		try{
+		try {
 			JBossLoginContextFactory.createLoginContext("superadmin", "superadmin").login();
-		} catch (LoginException ex){
+		} catch (LoginException ex) {
 			LOG.error("could not login as admin user for test");
 		}
 		Benutzer i = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);

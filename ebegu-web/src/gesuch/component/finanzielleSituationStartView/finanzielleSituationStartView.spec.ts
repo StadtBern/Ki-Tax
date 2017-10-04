@@ -20,8 +20,6 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import TSFamiliensituation from '../../../models/TSFamiliensituation';
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import TSFamiliensituationContainer from '../../../models/TSFamiliensituationContainer';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 

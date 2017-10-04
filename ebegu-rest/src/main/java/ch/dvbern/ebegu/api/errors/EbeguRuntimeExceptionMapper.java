@@ -15,14 +15,14 @@
 
 package ch.dvbern.ebegu.api.errors;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.ext.Provider;
+
 import ch.dvbern.ebegu.api.validation.EbeguExceptionReport;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.ext.Provider;
 
 /**
  * Created by imanol on 02.03.16.
@@ -30,8 +30,6 @@ import javax.ws.rs.ext.Provider;
  */
 @Provider
 public class EbeguRuntimeExceptionMapper extends AbstractEbeguExceptionMapper<EbeguRuntimeException> {
-
-
 
 	@Override
 	public Response toResponse(EbeguRuntimeException exception) {
@@ -52,14 +50,11 @@ public class EbeguRuntimeExceptionMapper extends AbstractEbeguExceptionMapper<Eb
 
 	}
 
-
 	@Override
 	protected Response buildViolationReportResponse(EbeguRuntimeException exception, Response.Status status) {
 
 		return EbeguExceptionReport.buildResponse(status, exception, getLocaleFromHeader(), configuration.getIsDevmode());
 
 	}
-
-
 
 }

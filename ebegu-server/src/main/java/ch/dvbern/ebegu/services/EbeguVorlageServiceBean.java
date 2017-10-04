@@ -87,7 +87,7 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public EbeguVorlage saveEbeguVorlage(@Nonnull EbeguVorlage ebeguVorlage) {
 		Objects.requireNonNull(ebeguVorlage);
 		return persistence.merge(ebeguVorlage);
@@ -108,7 +108,6 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 		final CriteriaQuery<EbeguVorlage> query = cb.createQuery(EbeguVorlage.class);
 		Root<EbeguVorlage> root = query.from(EbeguVorlage.class);
 		query.select(root);
-
 
 		ParameterExpression<EbeguVorlageKey> keyParam = cb.parameter(EbeguVorlageKey.class, "key");
 		Predicate keyPredicate = cb.equal(root.get(EbeguVorlage_.name), keyParam);
@@ -192,7 +191,7 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	}
 
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public void removeVorlage(@Nonnull String id) {
 		Validate.notNull(id);
 		Optional<EbeguVorlage> ebeguVorlage = findById(id);
@@ -237,7 +236,7 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	}
 
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public void copyEbeguVorlageListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiodeToCopyTo) {
 		// Die Vorlagen des letzten Jahres suchen (datumAb -1 Tag)
 		Collection<EbeguVorlage> ebeguVorlageByDate = getALLEbeguVorlageByDate(

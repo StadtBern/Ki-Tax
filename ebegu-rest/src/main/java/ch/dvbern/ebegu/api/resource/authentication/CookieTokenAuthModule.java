@@ -24,6 +24,12 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ch.dvbern.ebegu.api.AuthConstants;
+import ch.dvbern.ebegu.api.EbeguApplicationV1;
+import ch.dvbern.ebegu.api.util.RestUtil;
+import ch.dvbern.ebegu.enums.UserRoleName;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.util.BasicAuthHelper;
 import org.omnifaces.security.jaspic.core.AuthParameters;
@@ -33,13 +39,6 @@ import org.omnifaces.security.jaspic.user.TokenAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
-import ch.dvbern.ebegu.api.AuthConstants;
-import ch.dvbern.ebegu.api.EbeguApplicationV1;
-import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.enums.UserRoleName;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.util.Constants;
 
 import static javax.security.auth.message.AuthStatus.SEND_FAILURE;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
@@ -67,7 +66,6 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 	private final String internalApiUser;
 	private final String internalApiPassword;
 
-
 	@SuppressWarnings("PMD.UnusedFormalParameter")
 	public CookieTokenAuthModule(String loginModuleStackName) {
 		//this is unused, just checked if this could be used to declare this module through standalone.xml instead of
@@ -94,12 +92,12 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 	public AuthStatus validateHttpRequest(HttpServletRequest request, HttpServletResponse response, HttpMsgContext httpMsgContext) throws AuthException {
 		prepareLogvars(httpMsgContext);
 		//maybe we should do a logout first?
-//		try {
-//			request.logout();
-//		} catch (ServletException e) {
-//			LOG.error("Unexpected exception during Logout", e);
-//			return setResponseUnauthorised(request, httpMsgContext);
-//		}
+		//		try {
+		//			request.logout();
+		//		} catch (ServletException e) {
+		//			LOG.error("Unexpected exception during Logout", e);
+		//			return setResponseUnauthorised(request, httpMsgContext);
+		//		}
 
 		//Exceptional paths that do not require a login (they must also be added to web.xml security filter exceptions)
 		String apiBasePath = request.getContextPath() + EbeguApplicationV1.API_ROOT_PATH;
@@ -156,7 +154,7 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 					if (tokenAuthenticator.authenticate(authToken)) {
 						LOG.debug("successfully logged in user: " + tokenAuthenticator.getUserName());
 						MDC.put(LOG_MDC_AUTHUSERID, authToken);
-//						httpMsgContext.registerWithContainer(tokenAuthenticator.getUserName(), tokenAuthenticator.getApplicationRoles()); //weis nicht was der untschied zwischen dem und dem andern ist
+						//						httpMsgContext.registerWithContainer(tokenAuthenticator.getUserName(), tokenAuthenticator.getApplicationRoles()); //weis nicht was der untschied zwischen dem und dem andern ist
 						return httpMsgContext.notifyContainerAboutLogin(tokenAuthenticator.getUserName(), tokenAuthenticator.getApplicationRoles());
 					} else {
 						// Token Verification Failed
@@ -169,7 +167,6 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 
 				}
 			}
-
 
 		} catch (NoSuchElementException e) {
 			LOG.info("Login with Token failed", e);
@@ -203,7 +200,7 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 					List<String> roles = new ArrayList<>();
 					roles.add(UserRoleName.SUPER_ADMIN);
 					return httpMsgContext.notifyContainerAboutLogin("LoginConnector", roles);
-				} else{
+				} else {
 					LOG.error("Call to connector api with invalid BasicAuth header credentials");
 					return setResponseUnauthorised(httpMsgContext);
 				}
@@ -243,7 +240,6 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 		}
 		return true;
 	}
-
 
 	private AuthStatus setResponseUnauthorised(HttpMsgContext httpMsgContext) {
 		try {

@@ -15,11 +15,12 @@
 
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 
 /**
  * Abschlussmerger, welcher nach allen Regeln die vorhandenen Abschnitte überprüft und solche mit gleichen *sichtbaren*

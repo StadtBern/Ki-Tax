@@ -15,6 +15,8 @@
 
 package ch.dvbern.ebegu.rules;
 
+import java.util.List;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
@@ -24,8 +26,6 @@ import org.apache.commons.lang3.Validate;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.List;
-
 import static ch.dvbern.ebegu.rules.EbeguRuleTestsHelper.calculate;
 import static ch.dvbern.ebegu.rules.EbeguRuleTestsHelper.calculateWithRemainingRestanspruch;
 
@@ -33,7 +33,6 @@ import static ch.dvbern.ebegu.rules.EbeguRuleTestsHelper.calculateWithRemainingR
  * Tests für {@link RestanspruchLimitCalcRule}
  */
 public class RestanspruchLimitRuleTest {
-
 
 	@Test
 	public void testRestanspruchInitForKita() {
@@ -68,7 +67,6 @@ public class RestanspruchLimitRuleTest {
 		Assert.assertEquals(20, nextInitialabschnitt.getAnspruchspensumRest());
 
 	}
-
 
 	@Test
 	public void testRestanspruchNoChangeForTagi() {

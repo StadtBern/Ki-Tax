@@ -15,10 +15,10 @@
 
 package ch.dvbern.ebegu.validators;
 
-import ch.dvbern.ebegu.entities.Mitteilung;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import ch.dvbern.ebegu.entities.Mitteilung;
 
 /**
  * Validator fuer Mitteilungen

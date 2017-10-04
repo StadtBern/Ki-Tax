@@ -50,7 +50,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(PersonenSucheService.class)
-@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 public class PersonenSucheServiceBean extends AbstractBaseService implements PersonenSucheService {
 
 	@Inject
@@ -66,15 +66,16 @@ public class PersonenSucheServiceBean extends AbstractBaseService implements Per
 	@Inject
 	private Persistence persistence;
 
-
-	@SuppressWarnings(value = {"PMD.UnusedPrivateMethod", "IfStatementWithIdenticalBranches"})
-	@SuppressFBWarnings(value = {"SIC_INNER_SHOULD_BE_STATIC_ANON"})
+	@SuppressWarnings(value = { "PMD.UnusedPrivateMethod", "IfStatementWithIdenticalBranches" })
+	@SuppressFBWarnings(value = { "SIC_INNER_SHOULD_BE_STATIC_ANON" })
 	@PostConstruct
 	private void resolveService() {
 		if (config.isPersonenSucheDisabled()) {
-			ewkService = serviceInstance.select(new AnnotationLiteral<Dummy>() {}).get();
+			ewkService = serviceInstance.select(new AnnotationLiteral<Dummy>() {
+			}).get();
 		} else {
-			ewkService = serviceInstance.select(new AnnotationLiteral<Default>() {}).get();
+			ewkService = serviceInstance.select(new AnnotationLiteral<Default>() {
+			}).get();
 		}
 	}
 

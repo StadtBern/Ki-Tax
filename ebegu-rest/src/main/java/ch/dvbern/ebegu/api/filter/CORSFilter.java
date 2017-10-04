@@ -15,7 +15,6 @@
 
 package ch.dvbern.ebegu.api.filter;
 
-
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -38,7 +37,7 @@ public class CORSFilter implements ContainerResponseFilter {
 
 	@Override
 	public void filter(final ContainerRequestContext requestContext,
-					   final ContainerResponseContext cres) throws IOException {
+		final ContainerResponseContext cres) throws IOException {
 		if (configuration.getIsDevmode()) {
 			cres.getHeaders().add("Access-Control-Allow-Origin", "*");
 			cres.getHeaders().add("Access-Control-Allow-Headers", "origin, content-type, accept, X-Requested-With,authorization");

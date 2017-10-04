@@ -15,6 +15,10 @@
 
 package ch.dvbern.ebegu.rules;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.List;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
@@ -22,10 +26,6 @@ import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.List;
 
 import static ch.dvbern.ebegu.rules.EbeguRuleTestsHelper.calculate;
 
@@ -69,7 +69,7 @@ public class MindestalterRuleTest {
 	}
 
 	private Betreuung createTestData(LocalDate geburtsdatum, LocalDate betreuungVon, LocalDate betreuungBis) {
-		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(betreuungVon, betreuungBis,  BetreuungsangebotTyp.KITA, 100);
+		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(betreuungVon, betreuungBis, BetreuungsangebotTyp.KITA, 100);
 		betreuung.getKind().getKindJA().setGeburtsdatum(geburtsdatum);
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 100, 0));
 		return betreuung;

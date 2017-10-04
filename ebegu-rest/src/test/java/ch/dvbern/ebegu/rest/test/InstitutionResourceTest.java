@@ -15,6 +15,13 @@
 
 package ch.dvbern.ebegu.rest.test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.UriInfo;
+
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResponse;
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
 import ch.dvbern.ebegu.api.client.OpenIdmRestService;
@@ -28,15 +35,8 @@ import de.akquinet.jbosscc.needle.mock.EasyMockProvider;
 import junit.framework.AssertionFailedError;
 import org.easymock.EasyMock;
 import org.jboss.resteasy.spi.ResteasyUriInfo;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.inject.Inject;
-import javax.ws.rs.core.UriInfo;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import static ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil.creatOpenIdmInst;
 import static ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil.creatOpenIdmTraegerschaft;
@@ -75,7 +75,6 @@ public class InstitutionResourceTest {
 
 		EasyMock.expect(openIdmRestService.deleteInstitution(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
 		EasyMock.expect(openIdmRestService.createInstitution(EasyMock.anyObject(Institution.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
-
 
 		mockProvider.replayAll();
 
@@ -134,7 +133,6 @@ public class InstitutionResourceTest {
 		final JaxOpenIdmResult jaxOpenIdmResul4 = creatOpenIdmTraegerschaft("T-4"); // Traegerschaft
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul4);
 
-
 		List<Institution> institutions = new ArrayList<>();
 		final Institution institution1 = creatInst("1");
 		institutions.add(institution1);
@@ -170,7 +168,6 @@ public class InstitutionResourceTest {
 		final JaxOpenIdmResult jaxOpenIdmResul2 = creatOpenIdmInst("I-2");
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul2);
 
-
 		List<Institution> institutions = new ArrayList<>();
 		final Institution institution1 = creatInst("1");
 		institutions.add(institution1);
@@ -203,7 +200,6 @@ public class InstitutionResourceTest {
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul3);
 		final JaxOpenIdmResult jaxOpenIdmResul4 = creatOpenIdmInst("T-4"); // Traegerschaft
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul4);
-
 
 		List<Institution> institutions = new ArrayList<>();
 		final Institution institution1 = creatInst("1");

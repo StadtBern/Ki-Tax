@@ -18,11 +18,10 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSEinkommensverschlechterungContainer from '../../models/TSEinkommensverschlechterungContainer';
 import TSGesuch from '../../models/TSGesuch';
 import TSFinanzielleSituationResultateDTO from '../../models/dto/TSFinanzielleSituationResultateDTO';
-import IPromise = angular.IPromise;
-import ILogService = angular.ILogService;
 import WizardStepManager from './wizardStepManager';
 import TSFinanzModel from '../../models/TSFinanzModel';
-
+import IPromise = angular.IPromise;
+import ILogService = angular.ILogService;
 
 export default class EinkommensverschlechterungContainerRS {
     serviceURL: string;

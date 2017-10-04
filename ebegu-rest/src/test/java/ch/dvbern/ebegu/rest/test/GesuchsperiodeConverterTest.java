@@ -39,19 +39,17 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class GesuchsperiodeConverterTest extends AbstractEbeguRestLoginTest {
 
-
 	@Inject
 	private Persistence persistence;
 
 	@Inject
 	private JaxBConverter converter;
 
-
 	/**
 	 * transformiert eine gespeicherte Gesuchsperiode nach jax und wieder zurueck. wir erwarten dass Daten gleich bleiben
 	 */
 	@Test
-	public void convertPersistedTestEntityToJax(){
+	public void convertPersistedTestEntityToJax() {
 		LocalDate date = LocalDate.now();
 		Gesuchsperiode gesuchsperiode = createNewEntity(date, date);
 		JaxGesuchsperiode jaxGesuchsperiode = this.converter.gesuchsperiodeToJAX(gesuchsperiode);

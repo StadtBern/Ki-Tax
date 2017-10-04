@@ -31,7 +31,6 @@ export default class TSFall extends TSAbstractEntity {
         this._besitzer = besitzer;
     }
 
-
     get fallNummer(): number {
         return this._fallNummer;
     }

@@ -54,7 +54,6 @@ public class PendenzResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private JaxBConverter converter;
 
-
 	@Test
 	public void getAllPendenzenJATest() {
 		Gesuch gesuch1 = TestDataUtil.createDefaultGesuch();
@@ -84,7 +83,6 @@ public class PendenzResourceTest extends AbstractEbeguRestLoginTest {
 		Assert.assertEquals(gesuch1.getGesuchsperiode().getGueltigkeit().getGueltigAb(), pendenzenList.get(0).getGesuchsperiodeGueltigAb());
 		Assert.assertEquals(gesuch1.getGesuchsperiode().getGueltigkeit().getGueltigBis(), pendenzenList.get(0).getGesuchsperiodeGueltigBis());
 	}
-
 
 	// HELP METHOD
 

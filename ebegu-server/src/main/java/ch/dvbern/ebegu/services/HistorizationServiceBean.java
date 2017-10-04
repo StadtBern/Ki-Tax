@@ -37,7 +37,7 @@ import org.hibernate.envers.query.AuditQuery;
  */
 @Stateless
 @Local(HistorizationService.class)
-@RolesAllowed({UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
+@RolesAllowed({ UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA })
 public class HistorizationServiceBean extends AbstractBaseService implements HistorizationService {
 
 	@Inject

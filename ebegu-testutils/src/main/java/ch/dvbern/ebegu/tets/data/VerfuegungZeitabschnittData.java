@@ -15,11 +15,10 @@
 
 package ch.dvbern.ebegu.tets.data;
 
-
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
+
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 
 import static java.math.BigDecimal.ZERO;
 

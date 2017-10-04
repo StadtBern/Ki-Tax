@@ -15,18 +15,19 @@
 
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
-import ch.dvbern.ebegu.types.DateRange;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.envers.Audited;
+import java.time.LocalDate;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
+import ch.dvbern.ebegu.types.DateRange;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.envers.Audited;
 
 /**
  * Entity fuer Gesuchsperiode.
@@ -45,7 +46,6 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 	// Wir merken uns, wann die Periode aktiv geschalten wurde, damit z.B. die Mails nicht 2 mal verschickt werden
 	@Column(nullable = true)
 	private LocalDate datumAktiviert;
-
 
 	public GesuchsperiodeStatus getStatus() {
 		return status;
@@ -75,7 +75,7 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 		this.datumAktiviert = datumAktiviert;
 	}
 
-	@SuppressWarnings({"OverlyComplexBooleanExpression"})
+	@SuppressWarnings({ "OverlyComplexBooleanExpression" })
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality

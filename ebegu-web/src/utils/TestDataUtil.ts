@@ -34,11 +34,10 @@ import TSGesuchsteller from '../models/TSGesuchsteller';
 import TSAdresse from '../models/TSAdresse';
 import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../models/TSAdresseContainer';
-import Moment = moment.Moment;
 import {TSGesuchsperiodeStatus} from '../models/enums/TSGesuchsperiodeStatus';
+import Moment = moment.Moment;
 
 export default class TestDataUtil {
-
 
     public static setAbstractFieldsUndefined(abstractEntity: TSAbstractEntity) {
         abstractEntity.id = undefined;
@@ -80,7 +79,6 @@ export default class TestDataUtil {
         first.gueltigkeit.gueltigAb = second.gueltigkeit.gueltigAb;
         first.gueltigkeit.gueltigBis = second.gueltigkeit.gueltigBis;
     }
-
 
     static mockDefaultGesuchModelManagerHttpCalls($httpBackend: IHttpBackendService) {
 
@@ -153,8 +151,10 @@ export default class TestDataUtil {
     public static createDummyForm(): any {
         let form: any = {};
         form.$valid = true;
-        form.$setPristine = () => {};
-        form.$setUntouched = () => {};
+        form.$setPristine = () => {
+        };
+        form.$setUntouched = () => {
+        };
         return form;
     }
 

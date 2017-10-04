@@ -188,9 +188,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	private VerfuegungsZeitabschnittZahlungsstatus zahlungsstatus = VerfuegungsZeitabschnittZahlungsstatus.NEU;
 
 	@NotNull
-	@OneToMany (mappedBy = "verfuegungZeitabschnitt")
+	@OneToMany(mappedBy = "verfuegungZeitabschnitt")
 	private List<Zahlungsposition> zahlungsposition = new ArrayList<>();
-
 
 	public VerfuegungZeitabschnitt() {
 	}
@@ -354,7 +353,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		return MathUtil.GANZZAHL.subtract(massgebendesEinkommenVorAbzugFamgr,
 			this.abzugFamGroesse == null ? BigDecimal.ZERO : this.abzugFamGroesse);
 	}
-
 
 	public BigDecimal getMassgebendesEinkommenVorAbzFamgr() {
 		return massgebendesEinkommenVorAbzugFamgr;
@@ -582,9 +580,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		}
 
 		this.setZuschlagErwerbspensumGS1((this.getZuschlagErwerbspensumGS1() != null ? this.getZuschlagErwerbspensumGS1() : 0)
-			+ (other.getZuschlagErwerbspensumGS1() != null ? other.getZuschlagErwerbspensumGS1() : 0) );
+			+ (other.getZuschlagErwerbspensumGS1() != null ? other.getZuschlagErwerbspensumGS1() : 0));
 		this.setZuschlagErwerbspensumGS2((this.getZuschlagErwerbspensumGS2() != null ? this.getZuschlagErwerbspensumGS2() : 0)
-			+ (other.getZuschlagErwerbspensumGS2() != null ? other.getZuschlagErwerbspensumGS2() : 0) );
+			+ (other.getZuschlagErwerbspensumGS2() != null ? other.getZuschlagErwerbspensumGS2() : 0));
 
 		this.setMassgebendesEinkommenVorAbzugFamgr(MathUtil.DEFAULT.add(this.getMassgebendesEinkommenVorAbzFamgr(), other.getMassgebendesEinkommenVorAbzFamgr()));
 
@@ -662,7 +660,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	/**
 	 * Fügt otherBemerkungen zur Liste hinzu, falls sie noch nicht vorhanden sind
-	 * @param otherBemerkungen
 	 */
 	public void mergeBemerkungen(String otherBemerkungen) {
 		String[] otherBemerkungenList = StringUtils.split(otherBemerkungen, "\n");
@@ -795,7 +792,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	/**
 	 * Aller persistierten Daten ohne Kommentar
 	 */
-	@SuppressWarnings({"OverlyComplexBooleanExpression", "AccessingNonPublicFieldOfAnotherObject", "QuestionableName"})
+	@SuppressWarnings({ "OverlyComplexBooleanExpression", "AccessingNonPublicFieldOfAnotherObject", "QuestionableName" })
 	public boolean isSamePersistedValues(VerfuegungZeitabschnitt that) {
 		// zuSpaetEingereicht und zahlungsstatus sind hier nicht aufgefuehrt, weil;
 		// Es sollen die Resultate der Verfuegung verglichen werden und nicht der Weg, wie wir zu diesem Resultat gelangt sind

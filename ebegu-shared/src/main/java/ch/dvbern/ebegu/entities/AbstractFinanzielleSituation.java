@@ -15,16 +15,17 @@
 
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.util.MathUtil;
-import org.hibernate.envers.Audited;
+import java.math.BigDecimal;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.util.MathUtil;
+import org.hibernate.envers.Audited;
 
 /**
  * Gemeinsame Basisklasse für FinanzielleSituation und Einkommensverschlechterung
@@ -70,7 +71,6 @@ public abstract class AbstractFinanzielleSituation extends AbstractEntity {
 
 	public AbstractFinanzielleSituation() {
 	}
-
 
 	public abstract BigDecimal getNettolohn();
 

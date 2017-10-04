@@ -27,11 +27,11 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import TSAdresseContainer from '../../../models/TSAdresseContainer';
+import {ITimeoutService} from 'angular';
 import IHttpBackendService = angular.IHttpBackendService;
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
 import IScope = angular.IScope;
-import {ITimeoutService} from 'angular';
 
 describe('umzugView', function () {
 

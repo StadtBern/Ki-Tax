@@ -49,7 +49,6 @@ public class ZahlungAuftragPeriodeExcelConverter implements ExcelConverter {
 				excelRowGroup.addValue(MergeFieldZahlungAuftragPeriode.betragCHF, zahlung.getBetragTotalZahlung());
 			});
 
-
 		return sheet;
 	}
 }

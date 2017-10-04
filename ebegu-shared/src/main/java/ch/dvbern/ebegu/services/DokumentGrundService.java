@@ -15,14 +15,15 @@
 
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.DokumentGrund;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.enums.DokumentGrundTyp;
+import java.util.Collection;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Optional;
+
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 
 /**
  * Service zum Verwalten von Kindern
@@ -57,7 +58,6 @@ public interface DokumentGrundService {
 	 */
 	@Nullable
 	DokumentGrund updateDokumentGrund(@Nonnull DokumentGrund dokumentGrund);
-
 
 	void removeAllDokumentGrundeFromGesuch(Gesuch gesuch);
 }

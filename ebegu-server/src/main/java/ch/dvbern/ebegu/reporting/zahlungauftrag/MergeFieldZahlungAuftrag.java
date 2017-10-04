@@ -22,7 +22,6 @@ import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.DATETI
 import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.DATE_CONVERTER;
 import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.STRING_CONVERTER;
 
-
 public enum MergeFieldZahlungAuftrag implements MergeFieldProvider {
 
 	repeatZahlungAuftragRow(new RepeatRowMergeField("repeatZahlungAuftragRow")),
@@ -42,7 +41,6 @@ public enum MergeFieldZahlungAuftrag implements MergeFieldProvider {
 	betragCHF(new SimpleMergeField<>("betragCHF", BIGDECIMAL_CONVERTER)),
 	isKorrektur(new SimpleMergeField<>("isKorrektur", BOOLEAN_X_CONVERTER)),
 	isIgnoriert(new SimpleMergeField<>("isIgnoriert", BOOLEAN_X_CONVERTER));
-
 
 	@Nonnull
 	private final MergeField<?> mergeField;

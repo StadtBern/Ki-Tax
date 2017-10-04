@@ -15,19 +15,9 @@
 
 package ch.dvbern.ebegu.rest.test.client;
 
-
 import java.util.Optional;
 
 import javax.inject.Inject;
-
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.persistence.UsingDataSet;
-import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
-import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResponse;
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
@@ -36,6 +26,14 @@ import ch.dvbern.ebegu.api.util.OpenIDMUtil;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.rest.test.AbstractEbeguRestLoginTest;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.persistence.UsingDataSet;
+import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
+import org.jboss.arquillian.transaction.api.annotation.Transactional;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * Testet die Verbindung zum OpenIdm Server.
@@ -46,7 +44,6 @@ import ch.dvbern.ebegu.rest.test.AbstractEbeguRestLoginTest;
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class OpenIdmRestServiceTest extends AbstractEbeguRestLoginTest {
-
 
 	private static final String INSTID1 = "b4dc7d30-b63e-4176-a166-00deadbeef01";
 	private static final String INSTID2 = "b4dc7d30-b63e-4176-a166-00deadbeef02";

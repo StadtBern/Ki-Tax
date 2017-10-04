@@ -23,8 +23,8 @@ import TSInstitution from '../models/TSInstitution';
 import {TSTraegerschaft} from '../models/TSTraegerschaft';
 import AuthenticationUtil from '../utils/AuthenticationUtil';
 import {TestFaelleRS} from '../admin/service/testFaelleRS.rest';
-import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./schulung.html');
 require('./schulung.less');
 

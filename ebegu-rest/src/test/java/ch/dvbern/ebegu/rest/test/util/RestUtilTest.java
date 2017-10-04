@@ -15,6 +15,14 @@
 
 package ch.dvbern.ebegu.rest.test.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxInstitution;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
@@ -24,9 +32,6 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.junit.Assert;
 import org.junit.Test;
-
-import javax.annotation.Nonnull;
-import java.util.*;
 
 /**
  * Test fuer RestUtil
@@ -58,7 +63,8 @@ public class RestUtilTest {
 		RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kinder, institutionen);
 
 		Assert.assertNotNull(kinder);
-		Assert.assertEquals(1, kinder.size());Assert.assertNotNull(kind.getBetreuungen());
+		Assert.assertEquals(1, kinder.size());
+		Assert.assertNotNull(kind.getBetreuungen());
 		final JaxKindContainer kindContainer = kinder.iterator().next();
 		Assert.assertEquals(1, kindContainer.getBetreuungen().size());
 		Assert.assertEquals(institutionID1,
@@ -123,7 +129,6 @@ public class RestUtilTest {
 		Assert.assertNotEquals(Betreuungsstatus.SCHULAMT,
 			betreuung.getBetreuungsstatus());
 	}
-
 
 	// HELP METHODS
 

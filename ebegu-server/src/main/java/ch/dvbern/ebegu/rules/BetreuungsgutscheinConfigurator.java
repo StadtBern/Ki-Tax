@@ -67,7 +67,6 @@ public class BetreuungsgutscheinConfigurator {
 			PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM);
 	}
 
-
 	private void useBernerRules(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
 
 		abschnitteErstellenRegeln(ebeguParameter);
@@ -82,7 +81,6 @@ public class BetreuungsgutscheinConfigurator {
 		// - Erwerbspensum: Erstellt die grundlegenden Zeitschnitze (keine Korrekturen, nur einfügen)
 		ErwerbspensumAbschnittRule erwerbspensumAbschnittRule = new ErwerbspensumAbschnittRule(defaultGueltigkeit);
 		rules.add(erwerbspensumAbschnittRule);
-
 
 		//Familenabzug: Berechnet den Familienabzug aufgrund der Familiengroesse
 		EbeguParameter param_pauschalabzug_pro_person_familiengroesse_3 = ebeguParameter.get(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3);
@@ -160,7 +158,6 @@ public class BetreuungsgutscheinConfigurator {
 		rules.add(wohnhaftImGleichenHaushaltRule);
 
 	}
-
 
 	private void reduktionsRegeln(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
 		// REDUKTIONSREGELN: Setzen Anpsruch auf 0

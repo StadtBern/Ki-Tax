@@ -27,10 +27,9 @@ import com.github.oxo42.stateless4j.StateMachineConfig;
  * <p>
  * Hier werden zudem saemtliche onEntry Actions getriggered und an die Services weiterdelegiert.
  */
-@SuppressWarnings({"ClassNamePrefixedWithPackageName", "PMD.UnusedFormalParameter", "VisibilityModifier"})
+@SuppressWarnings({ "ClassNamePrefixedWithPackageName", "PMD.UnusedFormalParameter", "VisibilityModifier" })
 @Dependent
 public class StateMachineConfigProducer {
-
 
 	private final StateMachineConfig<AntragStatus, AntragEvents> gesuchFSMConfig = new StateMachineConfig<>();
 
@@ -109,7 +108,6 @@ public class StateMachineConfigProducer {
 		return gesuchFSMConfig;
 
 	}
-
 
 }
 

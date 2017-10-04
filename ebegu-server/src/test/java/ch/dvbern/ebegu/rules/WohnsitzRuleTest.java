@@ -15,7 +15,20 @@
 
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.*;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.TemporalAdjusters;
+import java.util.LinkedHashSet;
+import java.util.List;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuungspensum;
+import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
@@ -23,12 +36,6 @@ import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.temporal.TemporalAdjusters;
-import java.util.LinkedHashSet;
-import java.util.List;
 
 /**
  * Tests für WohnsitzRule
@@ -203,8 +210,6 @@ public class WohnsitzRuleTest {
 		Assert.assertEquals(100, abschnittInBern3.getBgPensum());
 	}
 
-
-
 	private Betreuung createTestdata(boolean zweigesuchsteller) {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(zweigesuchsteller);
 		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
@@ -224,7 +229,7 @@ public class WohnsitzRuleTest {
 	}
 
 	private GesuchstellerAdresseContainer createGesuchstellerAdresse(LocalDate von, LocalDate bis, boolean nichtInGemeinde,
-																	 GesuchstellerContainer gesuchsteller) {
+		GesuchstellerContainer gesuchsteller) {
 		GesuchstellerAdresseContainer adresse = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuchsteller);
 		adresse.getGesuchstellerAdresseJA().setNichtInGemeinde(nichtInGemeinde);
 		adresse.extractGueltigkeit().setGueltigAb(von);

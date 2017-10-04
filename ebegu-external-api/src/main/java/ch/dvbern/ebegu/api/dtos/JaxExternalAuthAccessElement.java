@@ -64,8 +64,6 @@ public class JaxExternalAuthAccessElement implements Serializable {
 		this.role = Objects.requireNonNull(role);
 	}
 
-
-
 	@Nonnull
 	public String getAuthId() {
 		return authId;
@@ -80,7 +78,6 @@ public class JaxExternalAuthAccessElement implements Serializable {
 	public String getXsrfToken() {
 		return xsrfToken;
 	}
-
 
 	@Nonnull
 	public String getNachname() {

@@ -16,11 +16,11 @@
 import TSAbstractEntity from './TSAbstractEntity';
 import * as moment from 'moment';
 import TSEWKAdresse from './TSEWKAdresse';
+
 /**
  * DTO für eine Beziehung aus dem EWK
  */
 export default class TSEWKBeziehung extends TSAbstractEntity {
-
 
     private _beziehungstyp: string;
     private _beziehungstypTxt: string;
@@ -31,7 +31,6 @@ export default class TSEWKBeziehung extends TSAbstractEntity {
     private _rufname: string;
     private _geburtsdatum: moment.Moment;
     private _adresse: TSEWKAdresse;
-
 
     constructor(beziehungstyp?: string, beziehungstypTxt?: string, personID?: string, nachname?: string, ledigname?: string,
                 vorname?: string, rufname?: string, geburtsdatum?: moment.Moment, adresse?: TSEWKAdresse) {
@@ -46,7 +45,6 @@ export default class TSEWKBeziehung extends TSAbstractEntity {
         this._geburtsdatum = geburtsdatum;
         this._adresse = adresse;
     }
-
 
     get beziehungstyp(): string {
         return this._beziehungstyp;

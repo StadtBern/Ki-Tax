@@ -13,7 +13,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import TSAdresse from './TSAdresse';
 import {TSBetroffene} from './enums/TSBetroffene';
 import TSAdresseContainer from './TSAdresseContainer';
 

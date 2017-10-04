@@ -16,14 +16,13 @@
 import TSAbstractEntity from './TSAbstractEntity';
 import * as moment from 'moment';
 
-
 export default class TSStatistikParameter extends TSAbstractEntity {
     private _gesuchsperiode: string;
     private _stichtag: moment.Moment;
     private _von: moment.Moment;
     private _bis: moment.Moment;
 
-    constructor( gesuchsperiode?: string, stichtag?: moment.Moment,
+    constructor(gesuchsperiode?: string, stichtag?: moment.Moment,
                 von?: moment.Moment, bis?: moment.Moment) {
         super();
         this._gesuchsperiode = gesuchsperiode;

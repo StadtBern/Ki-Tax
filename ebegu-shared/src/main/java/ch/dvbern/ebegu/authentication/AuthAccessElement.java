@@ -9,13 +9,14 @@
  */
 package ch.dvbern.ebegu.authentication;
 
+import java.io.Serializable;
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.annotation.Nonnull;
-import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Response Element fuer einen erfolgreichen Login Request
@@ -41,13 +42,13 @@ public class AuthAccessElement implements Serializable {
 
 	@JsonCreator
 	public AuthAccessElement(
-		@JsonProperty ("authId") @Nonnull String authId,
-		@JsonProperty ("authToken") @Nonnull String authToken,
-		@JsonProperty ("xsrfToken") @Nonnull String xsrfToken,
-		@JsonProperty ("nachname") @Nonnull String nachname,
-		@JsonProperty ("vorname") @Nonnull String vorname,
-		@JsonProperty ("email") @Nonnull String email,
-		@JsonProperty ("role") @Nonnull UserRole role) {
+		@JsonProperty("authId") @Nonnull String authId,
+		@JsonProperty("authToken") @Nonnull String authToken,
+		@JsonProperty("xsrfToken") @Nonnull String xsrfToken,
+		@JsonProperty("nachname") @Nonnull String nachname,
+		@JsonProperty("vorname") @Nonnull String vorname,
+		@JsonProperty("email") @Nonnull String email,
+		@JsonProperty("role") @Nonnull UserRole role) {
 		this.authId = Objects.requireNonNull(authId); // currently equals username
 		this.authToken = Objects.requireNonNull(authToken);
 		this.xsrfToken = Objects.requireNonNull(xsrfToken);
@@ -71,7 +72,6 @@ public class AuthAccessElement implements Serializable {
 	public String getXsrfToken() {
 		return xsrfToken;
 	}
-
 
 	@Nonnull
 	public String getNachname() {

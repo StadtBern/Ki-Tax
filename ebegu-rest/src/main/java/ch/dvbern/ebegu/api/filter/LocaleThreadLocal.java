@@ -18,26 +18,24 @@ package ch.dvbern.ebegu.api.filter;
 import java.util.Locale;
 
 /**
- ** A {@link ThreadLocal}um zu speichern was fuer eine Sprache wir verwenden fuer den aktuellen Request
+ * * A {@link ThreadLocal}um zu speichern was fuer eine Sprache wir verwenden fuer den aktuellen Request
  */
 public final class LocaleThreadLocal {
 
+	public static final ThreadLocal<Locale> THREAD_LOCAL = new ThreadLocal<>();
 
-    public static final ThreadLocal<Locale> THREAD_LOCAL = new ThreadLocal<>();
-
-	private LocaleThreadLocal() {}
+	private LocaleThreadLocal() {
+	}
 
 	public static Locale get() {
 		return (THREAD_LOCAL.get() == null) ? Locale.getDefault() : THREAD_LOCAL.get();
-    }
+	}
 
+	public static void set(Locale locale) {
+		THREAD_LOCAL.set(locale);
+	}
 
-    public static void set(Locale locale) {
-        THREAD_LOCAL.set(locale);
-    }
-
-
-    public static void unset() {
-        THREAD_LOCAL.remove();
-    }
+	public static void unset() {
+		THREAD_LOCAL.remove();
+	}
 }

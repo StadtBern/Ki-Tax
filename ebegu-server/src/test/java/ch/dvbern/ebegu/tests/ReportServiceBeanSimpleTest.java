@@ -15,10 +15,14 @@
 
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.enums.WizardStepStatus;
 import org.junit.Assert;
 import org.junit.Test;
-
 
 public class ReportServiceBeanSimpleTest {
 

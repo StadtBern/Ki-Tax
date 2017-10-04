@@ -30,7 +30,6 @@ export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity 
     private _kontoinhaber: string;
     private _adresseKontoinhaber: TSAdresse;
 
-
     constructor(iban?: string, oeffnungstage?: number, oeffnungsstunden?: number, betreuungsangebotTyp?: TSBetreuungsangebotTyp,
                 institution?: TSInstitution, adresse?: TSAdresse, gueltigkeit?: TSDateRange, kontoinhaber?: string, adresseKontoinhaber?: TSAdresse) {
         super(gueltigkeit);
@@ -43,7 +42,6 @@ export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity 
         this._kontoinhaber = kontoinhaber;
         this._adresseKontoinhaber = adresseKontoinhaber;
     }
-
 
     public get iban(): string {
         return this._iban;

@@ -15,11 +15,10 @@
 
 import {IHttpService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import IPromise = angular.IPromise;
-import ILogService = angular.ILogService;
 import WizardStepManager from './wizardStepManager';
 import TSEinkommensverschlechterungInfoContainer from '../../models/TSEinkommensverschlechterungInfoContainer';
-
+import IPromise = angular.IPromise;
+import ILogService = angular.ILogService;
 
 export default class EinkommensverschlechterungInfoRS {
     serviceURL: string;

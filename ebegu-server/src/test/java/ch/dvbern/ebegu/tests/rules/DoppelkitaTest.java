@@ -15,7 +15,16 @@
 
 package ch.dvbern.ebegu.tests.rules;
 
-import ch.dvbern.ebegu.entities.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.testfaelle.Testfall_DoppelKita_Regel1;
@@ -25,16 +34,11 @@ import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Test der die vom JA gemeldeten Testfaelle für Doppelkitas ueberprueft.
  * Siehe https://support.dvbern.ch/browse/EBEGU-561
  */
 public class DoppelkitaTest extends AbstractBGRechnerTest {
-
 
 	/**
 	 * Testet Regel 1: Bei gleichzeitigem Beginn gewinnt die Kita mit dem höheren Pensum

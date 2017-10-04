@@ -136,7 +136,6 @@ public class TestJaxDataUtil {
 		return container;
 	}
 
-
 	public static JaxErwerbspensum createTestJaxErwerbspensum() {
 		JaxErwerbspensum jaxErwerbspensum = new JaxErwerbspensum();
 		jaxErwerbspensum.setTaetigkeit(Taetigkeit.ANGESTELLT);
@@ -309,7 +308,6 @@ public class TestJaxDataUtil {
 		return jaxEinkommensverschlechterungInfo;
 	}
 
-
 	public static JaxEinkommensverschlechterungContainer createTestJaxEinkommensverschlechterungContianer() {
 		JaxEinkommensverschlechterungContainer einkommensverschlechterungContainer = new JaxEinkommensverschlechterungContainer();
 
@@ -326,7 +324,6 @@ public class TestJaxDataUtil {
 		final JaxEinkommensverschlechterung ekvJABasisJahrPlus2 = createDefaultJaxEinkommensverschlechterungs();
 		ekvJABasisJahrPlus2.setNettolohnJan(BigDecimal.valueOf(4));
 		einkommensverschlechterungContainer.setEkvJABasisJahrPlus2(ekvJABasisJahrPlus2);
-
 
 		return einkommensverschlechterungContainer;
 	}
@@ -354,7 +351,7 @@ public class TestJaxDataUtil {
 		institution.setMandant(createTestMandant());
 		institution.setName("Inst1");
 		institution.setTraegerschaft(createJaxTestTraegerschaft());
-		return  institution;
+		return institution;
 	}
 
 	public static JaxTraegerschaft createJaxTestTraegerschaft() {

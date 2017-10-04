@@ -108,7 +108,6 @@ public class GesuchstellerKinderBetreuungDataRow {
 	private BigDecimal elternbeitrag;
 	private BigDecimal verguenstigt;
 
-
 	public GesuchstellerKinderBetreuungDataRow() {
 	}
 

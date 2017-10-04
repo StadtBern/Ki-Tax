@@ -15,11 +15,11 @@
 
 import TSAbstractEntity from './TSAbstractEntity';
 import * as moment from 'moment';
+
 /**
  * DTO für eine Adresse aus dem EWK
  */
 export default class TSEWKAdresse extends TSAbstractEntity {
-
 
     private _adresstyp: string;
     private _adresstypTxt: string;
@@ -34,7 +34,6 @@ export default class TSEWKAdresse extends TSAbstractEntity {
     private _ort: string;
     private _kanton: string;
     private _land: string;
-
 
     constructor(adresstyp?: string, adresstypTxt?: string, gueltigVon?: moment.Moment, gueltigBis?: moment.Moment,
                 coName?: string, postfach?: string, bfSGemeinde?: string, strasse?: string, hausnummer?: string,
@@ -54,7 +53,6 @@ export default class TSEWKAdresse extends TSAbstractEntity {
         this._kanton = kanton;
         this._land = land;
     }
-
 
     get adresstyp(): string {
         return this._adresstyp;

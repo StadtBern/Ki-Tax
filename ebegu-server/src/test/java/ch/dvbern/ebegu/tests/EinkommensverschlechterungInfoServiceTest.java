@@ -15,6 +15,11 @@
 
 package ch.dvbern.ebegu.tests;
 
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.EinkommensverschlechterungInfoService;
@@ -27,10 +32,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Tests fuer die Klasse FinanzielleSituationService
@@ -47,9 +48,6 @@ public class EinkommensverschlechterungInfoServiceTest extends AbstractEbeguLogi
 
 	@Inject
 	private Persistence persistence;
-
-
-
 
 	@Test
 	public void createEinkommensverschlechterungInfoTest() {
@@ -138,6 +136,5 @@ public class EinkommensverschlechterungInfoServiceTest extends AbstractEbeguLogi
 		Assert.assertEquals(0, einkommensverschlechterungInfoService.getAllEinkommensverschlechterungInfo().size());
 
 	}
-
 
 }

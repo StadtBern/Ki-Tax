@@ -15,15 +15,16 @@
 
 package ch.dvbern.ebegu.util;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
+import javax.persistence.EntityManager;
+
 import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.EntityManager;
-import java.time.LocalDate;
-import java.util.Optional;
 
 /**
  * Allgemeine Utils fuer Betreuung
@@ -39,18 +40,15 @@ public class BetreuungUtil {
 	 * recorded type, the min value will be 0 and any positive value will be then accepted
 	 */
 	public static int getMinValueFromBetreuungsangebotTyp(LocalDate stichtag, BetreuungsangebotTyp betreuungsangebotTyp,
-														  EbeguParameterService ebeguParameterService, final EntityManager em) {
+		EbeguParameterService ebeguParameterService, final EntityManager em) {
 		EbeguParameterKey key = null;
 		if (betreuungsangebotTyp == BetreuungsangebotTyp.KITA) {
 			key = EbeguParameterKey.PARAM_PENSUM_KITA_MIN;
-		}
-		else if (betreuungsangebotTyp == BetreuungsangebotTyp.TAGI) {
+		} else if (betreuungsangebotTyp == BetreuungsangebotTyp.TAGI) {
 			key = EbeguParameterKey.PARAM_PENSUM_TAGI_MIN;
-		}
-		else if (betreuungsangebotTyp == BetreuungsangebotTyp.TAGESSCHULE) {
+		} else if (betreuungsangebotTyp == BetreuungsangebotTyp.TAGESSCHULE) {
 			key = EbeguParameterKey.PARAM_PENSUM_TAGESSCHULE_MIN;
-		}
-		else if (betreuungsangebotTyp == BetreuungsangebotTyp.TAGESELTERN_KLEINKIND ||
+		} else if (betreuungsangebotTyp == BetreuungsangebotTyp.TAGESELTERN_KLEINKIND ||
 			betreuungsangebotTyp == BetreuungsangebotTyp.TAGESELTERN_SCHULKIND) {
 			key = EbeguParameterKey.PARAM_PENSUM_TAGESELTERN_MIN;
 		}
@@ -58,7 +56,7 @@ public class BetreuungUtil {
 			Optional<EbeguParameter> parameter = ebeguParameterService.getEbeguParameterByKeyAndDate(key, stichtag, em);
 			if (parameter.isPresent()) {
 				return parameter.get().getValueAsInteger();
-			} else{
+			} else {
 				LoggerFactory.getLogger(BetreuungUtil.class).warn("No Value available for Validation of key " + key);
 			}
 		}

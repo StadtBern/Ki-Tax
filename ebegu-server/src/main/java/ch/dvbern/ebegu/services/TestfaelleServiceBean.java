@@ -100,7 +100,6 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 	private static final Logger LOG = LoggerFactory.getLogger(TestfaelleServiceBean.class);
 
-
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 	@Inject
@@ -137,17 +136,17 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	@Override
 	@Nonnull
 	public StringBuilder createAndSaveTestfaelle(@Nonnull String fallid,
-												 boolean betreuungenBestaetigt,
-												 boolean verfuegen, @Nullable String gesuchsPeriodeId) {
+		boolean betreuungenBestaetigt,
+		boolean verfuegen, @Nullable String gesuchsPeriodeId) {
 		return this.createAndSaveTestfaelle(fallid, 1, betreuungenBestaetigt, verfuegen, null, gesuchsPeriodeId);
 	}
 
 	@Nonnull
-	@SuppressWarnings(value = {"PMD.NcssMethodCount", "PMD.AvoidDuplicateLiterals"})
+	@SuppressWarnings(value = { "PMD.NcssMethodCount", "PMD.AvoidDuplicateLiterals" })
 	public StringBuilder createAndSaveTestfaelle(@Nonnull String fallid,
-												 @Nullable Integer iterationCount,
-												 boolean betreuungenBestaetigt,
-												 boolean verfuegen, Benutzer besitzer, @Nullable String gesuchsPeriodeId) {
+		@Nullable Integer iterationCount,
+		boolean betreuungenBestaetigt,
+		boolean verfuegen, Benutzer besitzer, @Nullable String gesuchsPeriodeId) {
 
 		iterationCount = (iterationCount == null || iterationCount == 0) ? 1 : iterationCount;
 
@@ -253,8 +252,8 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	@Override
 	@Nonnull
 	public StringBuilder createAndSaveAsOnlineGesuch(@Nonnull String fallid,
-													 boolean betreuungenBestaetigt,
-													 boolean verfuegen, @Nonnull String username, @Nullable String gesuchsPeriodeId) {
+		boolean betreuungenBestaetigt,
+		boolean verfuegen, @Nonnull String username, @Nullable String gesuchsPeriodeId) {
 		removeGesucheOfGS(username);
 		Benutzer benutzer = benutzerService.findBenutzer(username).orElse(benutzerService.getCurrentBenutzer().orElse(null));
 		return this.createAndSaveTestfaelle(fallid, 1, betreuungenBestaetigt, verfuegen, benutzer, gesuchsPeriodeId);
@@ -263,8 +262,8 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	@Override
 	@Nullable
 	public Gesuch createAndSaveTestfaelle(@Nonnull String fallid,
-										  boolean betreuungenBestaetigt,
-										  boolean verfuegen) {
+		boolean betreuungenBestaetigt,
+		boolean verfuegen) {
 
 		Gesuchsperiode gesuchsperiode = getNeuesteGesuchsperiode();
 		List<InstitutionStammdaten> institutionStammdatenList = getInstitutionsstammdatenForTestfaelle();
@@ -342,7 +341,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	@Override
 	@Nonnull
 	public Gesuch mutierenHeirat(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
-			@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen) {
+		@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen) {
 
 		Validate.notNull(eingangsdatum);
 		Validate.notNull(gesuchsperiodeId);
@@ -373,7 +372,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	@Override
 	@Nullable
 	public Gesuch mutierenScheidung(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
-			@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen) {
+		@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen) {
 
 		Validate.notNull(eingangsdatum);
 		Validate.notNull(gesuchsperiodeId);
@@ -436,12 +435,12 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	 * Aus diesem Grund, bleibt das Gesuch mit Status IN_BEARBEITUNG_JA
 	 *
 	 * @param fromTestfall testfall
-	 * @param besitzer     wenn der besitzer gesetzt ist wird der fall diesem besitzer zugeordnet
+	 * @param besitzer wenn der besitzer gesetzt ist wird der fall diesem besitzer zugeordnet
 	 */
 	@Override
 	@Nonnull
 	public Gesuch createAndSaveGesuch(@Nonnull AbstractTestfall fromTestfall, boolean verfuegen,
-			@Nullable Benutzer besitzer) {
+		@Nullable Benutzer besitzer) {
 		final List<Gesuch> gesuche = gesuchService.findGesuchByGSName(fromTestfall.getNachname(), fromTestfall.getVorname());
 		if (!gesuche.isEmpty()) {
 			fromTestfall.setFall(gesuche.iterator().next().getFall());
@@ -486,7 +485,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 	@Nonnull
 	public Gesuch createAndSaveAsivGesuch(@Nonnull AbstractASIVTestfall fromTestfall, boolean verfuegen,
-			@Nullable Benutzer besitzer) {
+		@Nullable Benutzer besitzer) {
 		final Gesuch erstgesuch = createAndSaveGesuch(fromTestfall, true, besitzer);
 		// Mutation
 		Gesuch gesuch = gesuchService.antragMutieren(erstgesuch.getId(),
@@ -566,7 +565,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 	private void saveEinkommensverschlechterung(@Nonnull Gesuch gesuch,
-			@Nonnull List<WizardStep> wizardStepsFromGesuch) {
+		@Nonnull List<WizardStep> wizardStepsFromGesuch) {
 		if (gesuch.getEinkommensverschlechterungInfoContainer() != null) {
 			setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.IN_BEARBEITUNG);
 			einkommensverschlechterungInfoService.createEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfoContainer());
@@ -643,7 +642,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 	private void setWizardStepInStatus(@Nonnull List<WizardStep> wizardSteps, @Nonnull WizardStepName stepName,
-			@Nonnull WizardStepStatus status) {
+		@Nonnull WizardStepStatus status) {
 		final WizardStep wizardStep = getWizardStepByName(wizardSteps, stepName);
 		if (wizardStep != null) {
 			wizardStep.setWizardStepStatus(status);
@@ -660,7 +659,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 	@Nullable
-	private WizardStep getWizardStepByName(@Nonnull List<WizardStep> wizardSteps,@Nonnull  WizardStepName stepName) {
+	private WizardStep getWizardStepByName(@Nonnull List<WizardStep> wizardSteps, @Nonnull WizardStepName stepName) {
 		for (WizardStep wizardStep : wizardSteps) {
 			if (stepName == wizardStep.getWizardStepName()) {
 				return wizardStep;

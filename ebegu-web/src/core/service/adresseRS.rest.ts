@@ -13,7 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IHttpService, IHttpPromise} from 'angular';
+import {IHttpPromise, IHttpService} from 'angular';
 import TSAdresseContainer from '../../models/TSAdresseContainer';
 
 export default class AdresseRS {

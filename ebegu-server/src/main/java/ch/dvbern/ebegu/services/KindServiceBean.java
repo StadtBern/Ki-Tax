@@ -75,10 +75,9 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	@Inject
 	private GesuchService gesuchService;
 
-
 	@Nonnull
 	@Override
-	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed(value = { ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT })
 	public KindContainer saveKind(@Nonnull KindContainer kind) {
 		Objects.requireNonNull(kind);
 		if (!kind.isNew()) {
@@ -95,7 +94,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	@PermitAll
 	public Optional<KindContainer> findKind(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		KindContainer a =  persistence.find(KindContainer.class, key);
+		KindContainer a = persistence.find(KindContainer.class, key);
 		return Optional.ofNullable(a);
 	}
 
@@ -114,7 +113,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	}
 
 	@Override
-	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed(value = { ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public void removeKind(@Nonnull String kindId) {
 		Objects.requireNonNull(kindId);
 		Optional<KindContainer> kindToRemoveOpt = findKind(kindId);
@@ -123,7 +122,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	}
 
 	@Override
-	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed(value = { ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public void removeKind(@Nonnull KindContainer kind) {
 		final Gesuch gesuch = kind.getGesuch();
 		final String gesuchId = gesuch.getId();
@@ -138,14 +137,13 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, REVISOR})
+	@RolesAllowed(value = { ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, REVISOR })
 	public List<KindContainer> getAllKinderWithMissingStatistics() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<KindContainer> query = cb.createQuery(KindContainer.class);
 
 		Root<KindContainer> root = query.from(KindContainer.class);
 		Join<KindContainer, Gesuch> joinGesuch = root.join(KindContainer_.gesuch, JoinType.LEFT);
-
 
 		Predicate predicateMutation = cb.equal(joinGesuch.get(Gesuch_.typ), AntragTyp.MUTATION);
 		Predicate predicateFlag = cb.isNull(root.get(KindContainer_.kindMutiert));
@@ -158,7 +156,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR})
+	@RolesAllowed(value = { ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR })
 	public Set<KindDubletteDTO> getKindDubletten(@Nonnull String gesuchId) {
 		Set<KindDubletteDTO> dublettenOfAllKinder = new HashSet<>();
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);
@@ -170,8 +168,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 				// dann ist dies das neueste Gesuch dieses Falls
 				dublettenOfAllKinder.addAll(kindDubletten);
 			}
-		}
-		else {
+		} else {
 			throw new EbeguEntityNotFoundException("getKindDubletten", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId);
 		}
 		return dublettenOfAllKinder;
@@ -183,29 +180,29 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<KindDubletteDTO> query = cb.createQuery(KindDubletteDTO.class);
 
-        Root<KindContainer> root = query.from(KindContainer.class);
-        Join<KindContainer, Kind> joinKind = root.join(KindContainer_.kindJA, JoinType.LEFT);
-        Join<KindContainer, Gesuch> joinGesuch = root.join(KindContainer_.gesuch, JoinType.LEFT);
+		Root<KindContainer> root = query.from(KindContainer.class);
+		Join<KindContainer, Kind> joinKind = root.join(KindContainer_.kindJA, JoinType.LEFT);
+		Join<KindContainer, Gesuch> joinGesuch = root.join(KindContainer_.gesuch, JoinType.LEFT);
 
-        query.multiselect(
-            joinGesuch.get(Gesuch_.id),
-            joinGesuch.get(Gesuch_.fall).get(Fall_.fallNummer),
-            cb.literal(kindContainer.getKindNummer()),
-            root.get(KindContainer_.kindNummer),
+		query.multiselect(
+			joinGesuch.get(Gesuch_.id),
+			joinGesuch.get(Gesuch_.fall).get(Fall_.fallNummer),
+			cb.literal(kindContainer.getKindNummer()),
+			root.get(KindContainer_.kindNummer),
 			joinGesuch.get(Gesuch_.timestampErstellt)
-        ).distinct(true);
+		).distinct(true);
 
-        // Identische Merkmale
-        Predicate predicateName = cb.equal(joinKind.get(Kind_.nachname), kindContainer.getKindJA().getNachname());
-        Predicate predicateVorname = cb.equal(joinKind.get(Kind_.vorname), kindContainer.getKindJA().getVorname());
-        Predicate predicateGeburtsdatum = cb.equal(joinKind.get(Kind_.geburtsdatum), kindContainer.getKindJA().getGeburtsdatum());
-        // Aber nicht vom selben Fall
-        Predicate predicateOtherFall = cb.notEqual(joinGesuch.get(Gesuch_.fall), kindContainer.getGesuch().getFall());
-        // Nur das zuletzt gueltige Gesuch
-        Predicate predicateStatus = joinGesuch.get(Gesuch_.status).in(AntragStatus.FOR_KIND_DUBLETTEN);
+		// Identische Merkmale
+		Predicate predicateName = cb.equal(joinKind.get(Kind_.nachname), kindContainer.getKindJA().getNachname());
+		Predicate predicateVorname = cb.equal(joinKind.get(Kind_.vorname), kindContainer.getKindJA().getVorname());
+		Predicate predicateGeburtsdatum = cb.equal(joinKind.get(Kind_.geburtsdatum), kindContainer.getKindJA().getGeburtsdatum());
+		// Aber nicht vom selben Fall
+		Predicate predicateOtherFall = cb.notEqual(joinGesuch.get(Gesuch_.fall), kindContainer.getGesuch().getFall());
+		// Nur das zuletzt gueltige Gesuch
+		Predicate predicateStatus = joinGesuch.get(Gesuch_.status).in(AntragStatus.FOR_KIND_DUBLETTEN);
 		query.orderBy(cb.desc(joinGesuch.get(Gesuch_.timestampErstellt)));
-        query.where(predicateName, predicateVorname, predicateGeburtsdatum, predicateOtherFall, predicateStatus);
+		query.where(predicateName, predicateVorname, predicateGeburtsdatum, predicateOtherFall, predicateStatus);
 
-        return persistence.getCriteriaResults(query);
+		return persistence.getCriteriaResults(query);
 	}
 }

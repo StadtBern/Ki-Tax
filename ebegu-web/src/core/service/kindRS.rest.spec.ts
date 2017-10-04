@@ -14,7 +14,6 @@
  */
 
 import KindRS from './kindRS.rest';
-import IInjectorService = angular.auto.IInjectorService;
 import {IHttpBackendService, IQService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {EbeguWebCore} from '../core.module';

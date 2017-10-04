@@ -15,12 +15,8 @@
 
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.dto.suchfilter.lucene.EbeguLocalDateBridge;
-import ch.dvbern.ebegu.enums.Geschlecht;
-import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
+import java.time.LocalDate;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
@@ -29,8 +25,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EbeguLocalDateBridge;
+import ch.dvbern.ebegu.enums.Geschlecht;
+import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -62,14 +63,12 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 
 	@Column(nullable = false)
 	@NotNull
-	@FieldBridge(impl=EbeguLocalDateBridge.class)   //wir indizieren dates als string
-	@Field(analyze= Analyze.NO) //datumsfelder nicht tokenizen etc
+	@FieldBridge(impl = EbeguLocalDateBridge.class)   //wir indizieren dates als string
+	@Field(analyze = Analyze.NO) //datumsfelder nicht tokenizen etc
 	private LocalDate geburtsdatum;
-
 
 	public AbstractPersonEntity() {
 	}
-
 
 	public String getVorname() {
 		return vorname;
@@ -141,7 +140,7 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 			return false;
 		}
 		final AbstractPersonEntity otherPerson = (AbstractPersonEntity) other;
-		return	getGeschlecht() == otherPerson.getGeschlecht() &&
+		return getGeschlecht() == otherPerson.getGeschlecht() &&
 			Objects.equals(getVorname(), otherPerson.getVorname()) &&
 			Objects.equals(getNachname(), otherPerson.getNachname()) &&
 			Objects.equals(getGeburtsdatum(), otherPerson.getGeburtsdatum());

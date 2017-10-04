@@ -52,37 +52,37 @@ public interface TestfaelleService {
 	String ASIV9 = "ASIV9";
 	String ASIV10 = "ASIV10";
 
-
 	String heirat = "1";
 
 	@Nonnull
 	StringBuilder createAndSaveTestfaelle(@Nonnull String fallid,
-										  boolean betreuungenBestaetigt,
-										  boolean verfuegen, @Nullable String gesuchsPeriodeId);
+		boolean betreuungenBestaetigt,
+		boolean verfuegen, @Nullable String gesuchsPeriodeId);
 
 	@Nonnull
 	StringBuilder createAndSaveAsOnlineGesuch(@Nonnull String fallid,
-											  boolean betreuungenBestaetigt,
-											  boolean verfuegen,
-											  @Nonnull String username, @Nullable String gesuchsPeriodeId);
+		boolean betreuungenBestaetigt,
+		boolean verfuegen,
+		@Nonnull String username, @Nullable String gesuchsPeriodeId);
 
 	@Nullable
 	Gesuch createAndSaveTestfaelle(@Nonnull String fallid,
-								   boolean betreuungenBestaetigt,
-								   boolean verfuegen);
+		boolean betreuungenBestaetigt,
+		boolean verfuegen);
 
 	@Nullable
 	Gesuch mutierenHeirat(@Nonnull Long fallNummer,
-						  @Nonnull String gesuchsperiodeId,
-						  @Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen);
+		@Nonnull String gesuchsperiodeId,
+		@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen);
 
 	@Nullable
 	Gesuch mutierenScheidung(@Nonnull Long fallNummer,
-							 @Nonnull String gesuchsperiodeId,
-							 @Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen);
+		@Nonnull String gesuchsperiodeId,
+		@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen);
 
 	/**
 	 * loescht alle Gesuche des Gesuchstellers mit dem gegebenen Namen
+	 *
 	 * @param username Username des Besitzers der Gesuche die entferntw erden sollen
 	 */
 	void removeGesucheOfGS(@Nonnull String username);

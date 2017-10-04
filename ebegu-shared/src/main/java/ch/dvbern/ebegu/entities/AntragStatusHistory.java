@@ -36,7 +36,7 @@ import org.hibernate.envers.Audited;
  */
 @Audited
 @Entity
-public class AntragStatusHistory extends AbstractEntity implements Comparable<AntragStatusHistory>{
+public class AntragStatusHistory extends AbstractEntity implements Comparable<AntragStatusHistory> {
 
 	private static final long serialVersionUID = -9032257320864372570L;
 
@@ -61,7 +61,6 @@ public class AntragStatusHistory extends AbstractEntity implements Comparable<An
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private AntragStatus status;
-
 
 	public Gesuch getGesuch() {
 		return gesuch;

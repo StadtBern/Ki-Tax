@@ -38,7 +38,6 @@ export default class TSExceptionReport {
 
     private _action: TSErrorAction = undefined;
 
-
     /**
      *
      * @param type Type of the Error
@@ -53,7 +52,6 @@ export default class TSExceptionReport {
         this._argumentList = args || [];
         this._action = undefined;
     }
-
 
     isConstantValue(constant: any, value: any) {
         let keys = Object.keys(constant);
@@ -77,7 +75,6 @@ export default class TSExceptionReport {
     isInternal() {
         return this.type === TSErrorType.INTERNAL;
     };
-
 
     get type(): TSErrorType {
         return this._type;
@@ -167,7 +164,6 @@ export default class TSExceptionReport {
         this._argumentList = value;
     }
 
-
     get path(): string {
         return this._path;
     }
@@ -201,7 +197,7 @@ export default class TSExceptionReport {
      * @returns {TSExceptionReport}
      */
     public static createFromExceptionReport(data: any) {
-        let msgToDisp =  data.translatedMessage || data.customMessage || 'ERROR_UNEXPECTED_EBEGU_RUNTIME';
+        let msgToDisp = data.translatedMessage || data.customMessage || 'ERROR_UNEXPECTED_EBEGU_RUNTIME';
         let exceptionReport: TSExceptionReport = new TSExceptionReport(TSErrorType.BADREQUEST, TSErrorLevel.SEVERE, msgToDisp, data.argumentList);
         exceptionReport.errorCodeEnum = data.errorCodeEnum;
         exceptionReport.exceptionName = data.exceptionName;

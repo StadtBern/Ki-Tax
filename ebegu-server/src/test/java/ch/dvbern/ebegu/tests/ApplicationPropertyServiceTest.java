@@ -17,6 +17,8 @@
  */
 package ch.dvbern.ebegu.tests;
 
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.services.ApplicationPropertyService;
@@ -28,9 +30,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-
 
 /**
  * Dies ist ein Beispiel einer Arquillian Test Klasse. Es wird vor jedem Test die Datenbank mit dem leeren Dataset
@@ -46,9 +45,6 @@ public class ApplicationPropertyServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private Persistence persistence;
-
-
-
 
 	@Test
 	public void saveOrUpdateApplicationPropertyTest() {
@@ -66,10 +62,11 @@ public class ApplicationPropertyServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(0, applicationPropertyService.getAllApplicationProperties().size());
 
 	}
+
 	@Test
 	public void updateApplicationPropertyTest() {
 		insertNewEntity();
-		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED,"changed");
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, "changed");
 		Assert.assertEquals("changed", applicationPropertyService.readApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED).get().getValue());
 
 	}

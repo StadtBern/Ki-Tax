@@ -51,7 +51,7 @@ public class FachstelleServiceBean extends AbstractBaseService implements Fachst
 
 	@Nonnull
 	@Override
-	@RolesAllowed(value ={ADMIN, SUPER_ADMIN})
+	@RolesAllowed(value = { ADMIN, SUPER_ADMIN })
 	public Fachstelle saveFachstelle(@Nonnull Fachstelle fachstelle) {
 		Objects.requireNonNull(fachstelle);
 		return persistence.merge(fachstelle);
@@ -61,7 +61,7 @@ public class FachstelleServiceBean extends AbstractBaseService implements Fachst
 	@Override
 	public Optional<Fachstelle> findFachstelle(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		Fachstelle a =  persistence.find(Fachstelle.class, key);
+		Fachstelle a = persistence.find(Fachstelle.class, key);
 		return Optional.ofNullable(a);
 	}
 
@@ -72,7 +72,7 @@ public class FachstelleServiceBean extends AbstractBaseService implements Fachst
 	}
 
 	@Override
-	@RolesAllowed(value ={ADMIN, SUPER_ADMIN})
+	@RolesAllowed(value = { ADMIN, SUPER_ADMIN })
 	public void removeFachstelle(@Nonnull String fachstelleId) {
 		Objects.requireNonNull(fachstelleId);
 		Optional<Fachstelle> fachstelleToRemove = findFachstelle(fachstelleId);

@@ -15,6 +15,12 @@
 
 package ch.dvbern.ebegu.rest.test;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxWizardStep;
 import ch.dvbern.ebegu.api.resource.WizardStepResource;
@@ -33,11 +39,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.List;
-
 /**
  * Tests fuer WizardStepResource
  */
@@ -53,7 +54,6 @@ public class WizardStepResourceTest extends AbstractEbeguRestLoginTest {
 	private InstitutionService institutionService;
 	@Inject
 	private Persistence persistence;
-
 
 	@Test
 	public void testCreateWizardStepList() throws EbeguException {

@@ -15,15 +15,16 @@
 
 package ch.dvbern.ebegu.services;
 
+import java.util.List;
+import java.util.concurrent.Future;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.errors.MailException;
-
-import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.concurrent.Future;
 
 /**
  * Service zum Versenden von E-Mails
@@ -89,7 +90,6 @@ public interface MailService {
 	 * Sendet unter gewissen Bedingungen pro Betreuung eine Email mit der Information, dass ein Betreuungsplatz geloescht wurde.
 	 */
 	void sendInfoBetreuungGeloescht(@Nonnull List<Betreuung> betreuungen);
-
 
 	/**
 	 * Sendet eine Email mit der Information, dass eine Betreuung verfuegt wurde.

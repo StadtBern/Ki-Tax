@@ -70,7 +70,6 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
-
 	@Nonnull
 	@Override
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
@@ -114,6 +113,7 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 
 	/**
 	 * Erstellt ein query gegen die Adresse mit den gegebenen parametern
+	 *
 	 * @param gesuchstellerID gesuchsteller fuer die Adressen gesucht werden
 	 * @param typ typ der Adresse der gesucht wird
 	 * @param maximalDatumVon datum ab dem gesucht wird (incl)

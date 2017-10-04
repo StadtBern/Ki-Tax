@@ -76,6 +76,7 @@ public interface EinkommensverschlechterungService {
 	/**
 	 * Removes all Einkommensverschlechterungen of the given year for the given Gesuch. The year is 1 or 2 and will
 	 * be the difference between the BasisJahr and the one to remove.
+	 *
 	 * @param gesuch the Gesuch
 	 * @param yearPlus 1 or 2. any other value won't do anything and will return false
 	 */

@@ -15,7 +15,15 @@
 
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
+import ch.dvbern.ebegu.entities.FamiliensituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
@@ -30,11 +38,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Arquillian Tests fuer die Klasse FamiliensituationService
@@ -52,8 +55,6 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private Persistence persistence;
-
-
 
 	@Test
 	public void testCreateFamiliensituation() {
@@ -94,13 +95,12 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		gesuch.setTyp(AntragTyp.MUTATION);
 
-
 		final EinkommensverschlechterungInfoContainer evInfo = TestDataUtil.createDefaultEinkommensverschlechterungsInfoContainer(gesuch);
 		final Optional<EinkommensverschlechterungInfoContainer> einkommensverschlechterungInfo = evInfoService.createEinkommensverschlechterungInfo(evInfo);
 		gesuch.setEinkommensverschlechterungInfoContainer(einkommensverschlechterungInfo.get());
 
 		Optional<FamiliensituationContainer> familiensituation = createFamiliensituationContainer();
-		final FamiliensituationContainer newFamiliensituation = familiensituation.get().copyForMutation(new FamiliensituationContainer(),false);
+		final FamiliensituationContainer newFamiliensituation = familiensituation.get().copyForMutation(new FamiliensituationContainer(), false);
 		newFamiliensituation.extractFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
 		newFamiliensituation.extractFamiliensituation().setGemeinsameSteuererklaerung(null);
 
@@ -111,7 +111,6 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertFalse(gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP1());
 		Assert.assertFalse(gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP2());
 	}
-
 
 	// HELP METHODS
 

@@ -29,7 +29,6 @@ public enum MergeFieldZahlungAuftragPeriode implements MergeFieldProvider {
 	bezahltAm(new SimpleMergeField<>("bezahltAm", DATE_CONVERTER)),
 	betragCHF(new SimpleMergeField<>("betragCHF", BIGDECIMAL_CONVERTER));
 
-
 	@Nonnull
 	private final MergeField<?> mergeField;
 

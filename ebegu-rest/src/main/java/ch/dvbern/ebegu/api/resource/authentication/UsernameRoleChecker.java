@@ -45,7 +45,6 @@ public class UsernameRoleChecker {
 	private static final String ROLES_MISSING_MESSAGE = "Could not initialaze UsernameRoleChecker because roles could not be loaded: ";
 	private static final String USER_MISSING_MESSAGE = "Could not initialaze UsernameRoleChecker because users property file  could not be loaded: ";
 
-
 	/**
 	 * The name of the default properties resource containing user/passwords
 	 */
@@ -63,15 +62,13 @@ public class UsernameRoleChecker {
 	 */
 	private Properties roles;
 
-
-	@SuppressWarnings(value = {"PMD.UnusedPrivateMethod", "PreserveStackTrace"})
+	@SuppressWarnings(value = { "PMD.UnusedPrivateMethod", "PreserveStackTrace" })
 	@PostConstruct()
 	public void init() {
 		// Load the properties file that contains the list of users and passwords
 		loadUsers();
 		loadRoles();
 	}
-
 
 	/**
 	 * Loads the roles Properties from the defaultRolesRsrcName and rolesRsrcName

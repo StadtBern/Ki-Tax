@@ -15,7 +15,19 @@
 
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -24,11 +36,6 @@ import ch.dvbern.ebegu.util.MathUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.*;
-
-
 /**
  * Tests fuer Verfügungsmuster
  */
@@ -36,7 +43,6 @@ public class MutationsMergerTest {
 
 	private final MutationsMerger mutationsMerger = new MutationsMerger();
 	private final MonatsRule monatsRule = new MonatsRule(Constants.DEFAULT_GUELTIGKEIT);
-
 
 	@Test
 	public void test_Reduktion_Rechtzeitig_aenderungUndEingangsdatumGleich() {
@@ -62,7 +68,6 @@ public class MutationsMergerTest {
 
 		// mergen
 		List<VerfuegungZeitabschnitt> zeitabschnitte = mutationsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert);
-
 
 		//ueberprüfen
 		Assert.assertNotNull(zeitabschnitte);
@@ -166,7 +171,6 @@ public class MutationsMergerTest {
 		// mergen
 		List<VerfuegungZeitabschnitt> zeitabschnitte = mutationsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert);
 
-
 		//ueberprüfen
 		Assert.assertNotNull(zeitabschnitte);
 		Assert.assertEquals(12, zeitabschnitte.size());
@@ -202,7 +206,6 @@ public class MutationsMergerTest {
 
 		// mergen
 		List<VerfuegungZeitabschnitt> zeitabschnitte = mutationsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert);
-
 
 		//ueberprüfen
 		Assert.assertNotNull(zeitabschnitte);
@@ -345,7 +348,6 @@ public class MutationsMergerTest {
 
 		return zeitabschnitteSplitted;
 	}
-
 
 	private void checkAllBefore(List<VerfuegungZeitabschnitt> zeitabschnitte, LocalDate endsBeforeOrAt, int anspruchberechtigtesPensum) {
 

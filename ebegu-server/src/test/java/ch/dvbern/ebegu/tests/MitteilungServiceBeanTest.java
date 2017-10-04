@@ -87,7 +87,6 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 	private Benutzer empfaengerINST;
 	private Benutzer sender;
 
-
 	@Test
 	public void testCreateMitteilung() {
 		prepareDependentObjects();
@@ -259,8 +258,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		try {
 			mitteilungService.applyBetreuungsmitteilung(mitteilung);
 			Assert.fail("Keine Betreuungsmittielung darf aus einem Erstgesuch erstellt werden. Es sollte eine Exception werfen");
-		}
-		catch (EbeguRuntimeException e) {
+		} catch (EbeguRuntimeException e) {
 			//nop
 		}
 	}
@@ -345,7 +343,6 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(newestSentDatum, optMitteilung.get().getSentDatum());
 		Assert.assertNotEquals(oldSentDatum, optMitteilung.get().getSentDatum());
 	}
-
 
 	// HELP METHODS
 

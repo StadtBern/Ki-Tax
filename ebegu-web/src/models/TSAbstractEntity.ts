@@ -14,12 +14,12 @@
  */
 
 import * as moment from 'moment';
+
 export default class TSAbstractEntity {
     private _id: string;
     private _timestampErstellt: moment.Moment;
     private _timestampMutiert: moment.Moment;
     private _vorgaengerId: string;
-
 
     public set id(id: string) {
         this._id = id;

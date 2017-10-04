@@ -49,7 +49,6 @@ public class JaxAbstractFinanzielleSituation extends JaxAbstractDTO {
 
 	private BigDecimal geleisteteAlimente;
 
-
 	public Boolean getSteuerveranlagungErhalten() {
 		return steuerveranlagungErhalten;
 	}

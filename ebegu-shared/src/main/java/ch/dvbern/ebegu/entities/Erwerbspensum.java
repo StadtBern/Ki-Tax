@@ -67,10 +67,8 @@ public class Erwerbspensum extends AbstractPensumEntity {
 	@Nullable
 	private String bezeichnung;
 
-
 	public Erwerbspensum() {
 	}
-
 
 	public Taetigkeit getTaetigkeit() {
 		return taetigkeit;
@@ -104,7 +102,7 @@ public class Erwerbspensum extends AbstractPensumEntity {
 		this.zuschlagsgrund = zuschlagsgrund;
 	}
 
-	@SuppressWarnings({"OverlyComplexBooleanExpression"})
+	@SuppressWarnings({ "OverlyComplexBooleanExpression" })
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality

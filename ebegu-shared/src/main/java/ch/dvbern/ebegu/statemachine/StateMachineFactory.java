@@ -11,6 +11,14 @@
 
 package ch.dvbern.ebegu.statemachine;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.AntragEvents;
 import ch.dvbern.ebegu.enums.AntragStatus;
@@ -21,13 +29,6 @@ import com.github.oxo42.stateless4j.StateMachineConfig;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Factory for StateMachine

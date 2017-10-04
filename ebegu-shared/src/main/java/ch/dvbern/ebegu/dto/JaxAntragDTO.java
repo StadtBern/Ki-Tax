@@ -46,7 +46,7 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 
 	//probably unused
 	public JaxAntragDTO(String antragId, LocalDate gesuchsperiodeGueltigAb, LocalDate gesuchsperiodeGueltigBis,
-						@Nullable LocalDate eingangsdatum, @Nullable LocalDate eingangsdatumSTV, AntragTyp antragTyp,
+		@Nullable LocalDate eingangsdatum, @Nullable LocalDate eingangsdatumSTV, AntragTyp antragTyp,
 		int laufnummer, Eingangsart eingangsart) {
 		this();
 		this.antragId = antragId;
@@ -139,8 +139,6 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 	private GesuchBetreuungenStatus gesuchBetreuungenStatus;
 
 	private boolean dokumenteHochgeladen;
-
-
 
 	public String getAntragId() {
 		return antragId;

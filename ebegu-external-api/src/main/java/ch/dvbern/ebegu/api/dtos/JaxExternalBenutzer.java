@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 public class JaxExternalBenutzer implements Serializable {
 	private static final long serialVersionUID = -2418503680503363364L;
 
-
 	private String username;
 	private String vorname;
 	private String nachname;
@@ -48,7 +47,6 @@ public class JaxExternalBenutzer implements Serializable {
 	private String state;
 	private String countryCode;
 	private String country;
-
 
 	public String getUsername() {
 		return username;
@@ -114,8 +112,7 @@ public class JaxExternalBenutzer implements Serializable {
 		this.role = role;
 	}
 
-//unused attributes
-
+	//unused attributes
 
 	public String getCommonName() {
 		return commonName;

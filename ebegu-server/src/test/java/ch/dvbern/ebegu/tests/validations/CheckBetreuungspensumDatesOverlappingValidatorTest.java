@@ -15,6 +15,15 @@
 
 package ch.dvbern.ebegu.tests.validations;
 
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.validation.Configuration;
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -24,20 +33,11 @@ import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.annotation.Nonnull;
-import javax.validation.Configuration;
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
-import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Test fuer {@link ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlappingValidator}
  */
 
 public class CheckBetreuungspensumDatesOverlappingValidatorTest {
-
 
 	private ValidatorFactory customFactory;
 
@@ -53,7 +53,7 @@ public class CheckBetreuungspensumDatesOverlappingValidatorTest {
 	@Test
 	public void testCheckBetreuungspensumDatesOverlapping() {
 		Betreuung betreuung = createBetreuungWithOverlappedDates(true); //overlapping
-		ValidationTestHelper.assertViolated(CheckBetreuungspensumDatesOverlapping.class, betreuung, customFactory ,"" );
+		ValidationTestHelper.assertViolated(CheckBetreuungspensumDatesOverlapping.class, betreuung, customFactory, "");
 	}
 
 	@Test

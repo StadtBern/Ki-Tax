@@ -15,6 +15,14 @@
 
 package ch.dvbern.ebegu.vorlagen;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.BinaryOperator;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
@@ -25,13 +33,6 @@ import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import com.google.common.base.Strings;
 import org.apache.commons.lang.StringUtils;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.BinaryOperator;
 
 /**
  *
@@ -73,8 +74,8 @@ public class PrintUtil {
 	@Nonnull
 	private static BinaryOperator<GesuchstellerAdresseContainer> throwExceptionIfMoreThanOneAdresse(@Nonnull GesuchstellerContainer gesuchsteller) {
 		return (element, otherElement) -> {
-            throw new EbeguRuntimeException("getGesuchstellerAdresse_Korrespondenzadresse", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, gesuchsteller.getId());
-        };
+			throw new EbeguRuntimeException("getGesuchstellerAdresse_Korrespondenzadresse", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, gesuchsteller.getId());
+		};
 	}
 
 	/**
@@ -203,9 +204,9 @@ public class PrintUtil {
 		return null;
 	}
 
-	public static String getNameAdresseFormatiert(Gesuch gesuch, GesuchstellerContainer gesuchsteller){
+	public static String getNameAdresseFormatiert(Gesuch gesuch, GesuchstellerContainer gesuchsteller) {
 
-		if (gesuch != null && gesuchsteller != null){
+		if (gesuch != null && gesuchsteller != null) {
 			String newlineMSWord = "\n";
 			String adresse = StringUtils.EMPTY;
 
@@ -228,7 +229,7 @@ public class PrintUtil {
 			adresse += newlineMSWord + getGesuchstellerPLZStadt(gesuch);
 
 			return adresse;
-		} else{
+		} else {
 			return StringUtils.EMPTY;
 		}
 

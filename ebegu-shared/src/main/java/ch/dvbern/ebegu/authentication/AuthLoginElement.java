@@ -9,11 +9,12 @@
  */
 package ch.dvbern.ebegu.authentication;
 
-import ch.dvbern.ebegu.enums.UserRole;
-
-import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Objects;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.enums.UserRole;
 
 /**
  * Wrapper fuer einen Login Request
@@ -36,7 +37,7 @@ public class AuthLoginElement implements Serializable {
 	private UserRole role;
 
 	public AuthLoginElement(@Nonnull String username, @Nonnull String plainTextpassword, @Nonnull String nachname,
-							@Nonnull String vorname, @Nonnull String email, @Nonnull UserRole role) {
+		@Nonnull String vorname, @Nonnull String email, @Nonnull UserRole role) {
 		this.username = Objects.requireNonNull(username);
 		this.plainTextPassword = Objects.requireNonNull(plainTextpassword);
 		this.nachname = Objects.requireNonNull(nachname);

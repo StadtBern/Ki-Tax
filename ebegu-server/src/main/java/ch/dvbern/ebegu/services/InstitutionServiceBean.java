@@ -46,6 +46,7 @@ import org.apache.commons.lang3.Validate;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+
 /**
  * Service fuer Institution
  */
@@ -65,7 +66,7 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 
 	@Nonnull
 	@Override
-	@RolesAllowed(value ={ADMIN, SUPER_ADMIN})
+	@RolesAllowed(value = { ADMIN, SUPER_ADMIN })
 	public Institution updateInstitution(@Nonnull Institution institution) {
 		Objects.requireNonNull(institution);
 		return persistence.merge(institution);
@@ -73,7 +74,7 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 
 	@Nonnull
 	@Override
-	@RolesAllowed(value ={ADMIN, SUPER_ADMIN})
+	@RolesAllowed(value = { ADMIN, SUPER_ADMIN })
 	public Institution createInstitution(@Nonnull Institution institution) {
 		Objects.requireNonNull(institution);
 		return persistence.persist(institution);
@@ -84,12 +85,12 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 	@PermitAll
 	public Optional<Institution> findInstitution(@Nonnull final String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
-		Institution a =  persistence.find(Institution.class, id);
+		Institution a = persistence.find(Institution.class, id);
 		return Optional.ofNullable(a);
 	}
 
 	@Override
-	@RolesAllowed(value ={ADMIN, SUPER_ADMIN})
+	@RolesAllowed(value = { ADMIN, SUPER_ADMIN })
 	public Institution setInstitutionInactive(@Nonnull String institutionId) {
 		Validate.notNull(institutionId);
 		Optional<Institution> institutionToRemove = findInstitution(institutionId);
@@ -100,7 +101,7 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 	}
 
 	@Override
-	@RolesAllowed(value ={ADMIN, SUPER_ADMIN})
+	@RolesAllowed(value = { ADMIN, SUPER_ADMIN })
 	public void deleteInstitution(@Nonnull String institutionId) {
 		Validate.notNull(institutionId);
 		Optional<Institution> institutionToRemove = findInstitution(institutionId);
@@ -159,15 +160,13 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 			Benutzer benutzer = benutzerOptional.get();
 			if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(benutzer.getRole()) && benutzer.getTraegerschaft() != null) {
 				return getAllInstitutionenFromTraegerschaft(benutzer.getTraegerschaft().getId());
-			}
-			else if (UserRole.SACHBEARBEITER_INSTITUTION.equals(benutzer.getRole()) && benutzer.getInstitution() != null) {
+			} else if (UserRole.SACHBEARBEITER_INSTITUTION.equals(benutzer.getRole()) && benutzer.getInstitution() != null) {
 				List<Institution> institutionList = new ArrayList<>();
 				if (benutzer.getInstitution() != null) {
 					institutionList.add(benutzer.getInstitution());
 				}
 				return institutionList;
-			}
-			else {
+			} else {
 				return getAllInstitutionen();
 			}
 		}

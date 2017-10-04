@@ -122,7 +122,7 @@ public final class EWKConverter {
 		ewkBeziehung.setVorname(beziehung.getVorname());
 		ewkBeziehung.setRufname(beziehung.getRufname());
 		ewkBeziehung.setGeburtsdatum(beziehung.getGeburtsdatum());
-		if(beziehung.getAdresse() != null) {
+		if (beziehung.getAdresse() != null) {
 			ewkBeziehung.setAdresse(convertFromEWK(beziehung.getAdresse()));
 		}
 		return ewkBeziehung;

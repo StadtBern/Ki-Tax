@@ -15,6 +15,20 @@
 
 package ch.dvbern.ebegu.rules.util;
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.StringJoiner;
+import java.util.TreeSet;
+
+import javax.annotation.Nullable;
+
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Gueltigkeit;
@@ -23,10 +37,6 @@ import com.google.common.collect.SortedSetMultimap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
-import java.time.LocalDate;
-import java.util.*;
 
 /**
  * This class is supposed to find the longest timeperiods for which bemerkungen in {@link VerfuegungZeitabschnitt}en exists.
@@ -61,7 +71,7 @@ public class BemerkungsMerger {
 
 		for (Map.Entry<String, Collection<DateRange>> stringCollectionEntry : rangesByBemerkungKey.entrySet()) {
 			stringCollectionEntry.getValue().stream()
-				.forEachOrdered(dateRange -> joiner.add("[" + dateRange.toRangeString() +"] " +  stringCollectionEntry.getKey()));
+				.forEachOrdered(dateRange -> joiner.add("[" + dateRange.toRangeString() + "] " + stringCollectionEntry.getKey()));
 		}
 
 		return joiner.toString();
@@ -77,15 +87,13 @@ public class BemerkungsMerger {
 
 		SortedSetMultimap<String, Gueltigkeit> multimap = createMultimap(zeitabschnitte);
 		Map<String, Collection<DateRange>> continousRangesPerKey = new HashMap<>();
-			multimap.keySet().forEach(bemKey -> {
-				Collection<DateRange> contRanges = mergeAdjacentRanges(multimap.get(bemKey));
-				continousRangesPerKey.put(bemKey, contRanges);
-			});
+		multimap.keySet().forEach(bemKey -> {
+			Collection<DateRange> contRanges = mergeAdjacentRanges(multimap.get(bemKey));
+			continousRangesPerKey.put(bemKey, contRanges);
+		});
 
 		return continousRangesPerKey;
 	}
-
-
 
 	private static Collection<DateRange> mergeAdjacentRanges(@Nullable SortedSet<Gueltigkeit> gueltigkeiten) {
 		if (gueltigkeiten == null) {
@@ -109,7 +117,7 @@ public class BemerkungsMerger {
 						//if there is a gap add the new period
 					} else if (lastEndingDate.plusDays(1).isBefore(gueltigkeit.getGueltigkeit().getGueltigAb())) {
 						rangesWithoutGaps.add(new DateRange(gueltigkeit.getGueltigkeit()));
-					//this should not happen since the evaluator is supposed to eliminate gaps
+						//this should not happen since the evaluator is supposed to eliminate gaps
 					} else if (lastEndingDate.equals(gueltigkeit.getGueltigkeit().getGueltigAb()) || lastEndingDate.isAfter(gueltigkeit.getGueltigkeit().getGueltigAb())) {
 						LOG.error("The passed list of gueltigkeiten must be ordered and may not have any overlapping" +
 							" gueltigkeiten around date {}. The offending gueltigkeiten are {} and {}", lastEndingDate, rangesWithoutGaps.getLast(), gueltigkeit);
@@ -120,7 +128,6 @@ public class BemerkungsMerger {
 			});
 		return rangesWithoutGaps;
 	}
-
 
 	private static SortedSetMultimap<String, Gueltigkeit> createMultimap(List<VerfuegungZeitabschnitt> zeitabschnitte) {
 		SortedSetMultimap<String, Gueltigkeit> multimap = Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(Gueltigkeit.GUELTIG_AB_COMPARATOR));

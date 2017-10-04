@@ -15,6 +15,7 @@
 
 import {IComponentOptions} from 'angular';
 import TSSearchResultEntry from '../../../../models/dto/TSSearchResultEntry';
+
 let template = require('./dv-search-result-icon.html');
 
 export class DvSearchResultIconComponentConfig implements IComponentOptions {

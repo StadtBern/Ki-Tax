@@ -15,17 +15,16 @@
 
 import TSAbstractEntity from './TSAbstractEntity';
 import * as moment from 'moment';
+
 /**
  * DTO für einen Einwohnercode aus dem EWK
  */
 export default class TSEWKEinwohnercode extends TSAbstractEntity {
 
-
     private _code: string;
     private _codeTxt: string;
     private _gueltigVon: moment.Moment;
     private _gueltigBis: moment.Moment;
-
 
     constructor(code?: string, codeTxt?: string, gueltigVon?: moment.Moment, gueltigBis?: moment.Moment) {
         super();

@@ -59,7 +59,6 @@ public class JaxGesuchstellerContainer extends JaxAbstractDTO {
 
 	private Collection<JaxErwerbspensumContainer> erwerbspensenContainers = new LinkedHashSet<>();
 
-
 	public JaxGesuchsteller getGesuchstellerGS() {
 		return gesuchstellerGS;
 	}

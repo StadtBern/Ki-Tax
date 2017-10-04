@@ -89,7 +89,6 @@
 		<role-name>SCHULAMT</role-name>
 	</security-role>
 
-
 	<filter>
 		<filter-name>javamelody</filter-name>
 		<!-- Der Filter stellt aktuelle Monitoring-Infos unter /monitoring zur Verfuegung -->

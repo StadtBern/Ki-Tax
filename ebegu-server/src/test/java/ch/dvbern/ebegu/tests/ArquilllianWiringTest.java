@@ -17,13 +17,13 @@
  */
 package ch.dvbern.ebegu.tests;
 
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.services.BenutzerService;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
 
 /**
  * @author <a href="http://community.jboss.org/people/dan.j.allen">Dan Allen</a>
@@ -34,8 +34,8 @@ public class ArquilllianWiringTest extends AbstractEbeguLoginTest {
 	@Inject
 	BenutzerService benutzerService;
 
-    @Test
-    public void doesInjectionWorkTest() {
+	@Test
+	public void doesInjectionWorkTest() {
 		Assert.assertNotNull(benutzerService);
 	}
 }

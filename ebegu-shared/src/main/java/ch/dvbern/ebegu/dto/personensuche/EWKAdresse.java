@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 
-
 /**
  * DTO für Adressen aus dem EWK
  */
@@ -38,32 +37,31 @@ public class EWKAdresse implements Serializable {
 
 	protected String adresstyp;
 
-    protected String adresstypTxt;
+	protected String adresstypTxt;
 
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
-    protected LocalDate gueltigVon;
+	protected LocalDate gueltigVon;
 
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
-    protected LocalDate gueltigBis;
+	protected LocalDate gueltigBis;
 
-    protected String coName;
+	protected String coName;
 
-    protected String postfach;
+	protected String postfach;
 
-    protected String bfSGemeinde;
+	protected String bfSGemeinde;
 
-    protected String strasse;
+	protected String strasse;
 
-    protected String hausnummer;
+	protected String hausnummer;
 
-    protected String postleitzahl;
+	protected String postleitzahl;
 
-    protected String ort;
+	protected String ort;
 
-    protected String kanton;
+	protected String kanton;
 
-    protected String land;
-
+	protected String land;
 
 	public EWKAdresse() {
 	}

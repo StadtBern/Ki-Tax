@@ -15,10 +15,10 @@
 
 package ch.dvbern.ebegu.util;
 
-import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
-
 import java.io.Serializable;
 import java.util.Comparator;
+
+import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 
 /**
  * Comparator, der die Betreuungspensen nach Datum-Von sortiert.

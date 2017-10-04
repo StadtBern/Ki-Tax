@@ -32,7 +32,6 @@ public class JaxGesuchsperiode extends JaxAbstractDateRangedDTO {
 	@NotNull
 	private GesuchsperiodeStatus status;
 
-
 	public GesuchsperiodeStatus getStatus() {
 		return status;
 	}

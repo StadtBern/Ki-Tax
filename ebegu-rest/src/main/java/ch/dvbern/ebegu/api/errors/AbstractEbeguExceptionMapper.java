@@ -15,11 +15,8 @@
 
 package ch.dvbern.ebegu.api.errors;
 
-import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.util.Constants;
-import org.jboss.resteasy.api.validation.Validation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -28,13 +25,18 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-import java.util.List;
-import java.util.Locale;
+
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.util.Constants;
+import org.jboss.resteasy.api.validation.Validation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by imanol on 02.03.16.
  * Basis Exception Mapper
- * @see  <a href="https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly/" >https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly</a>
+ *
+ * @see <a href="https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly/" >https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly</a>
  */
 public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implements ExceptionMapper<E> {
 
@@ -63,6 +65,7 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 
 	/**
 	 * unwrapped alle causes und fuegt sie zum Stringbuffer hinzu
+	 *
 	 * @param sb buffer to append to
 	 * @param t throwable
 	 */
@@ -79,7 +82,6 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 	}
 
 	/**
-	 *
 	 * @param accept Liste mit Accepted media types
 	 * @return Gibt den ersten von uns unterstuetzten MediaType zurueck
 	 */
@@ -100,9 +102,8 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 	}
 
 	protected void logException(Exception exception) {
-		LOG.warn("Exception occured: " ,exception);
+		LOG.warn("Exception occured: ", exception);
 	}
-
 
 	protected Locale getLocaleFromHeader() {
 		if (!headers.getAcceptableLanguages().isEmpty()) {

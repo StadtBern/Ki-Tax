@@ -47,9 +47,7 @@ import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_PENSUM_TAGI_MIN;
 @Local(EbeguParameterService.class)
 public class EbeguDummyParameterServiceBean extends AbstractBaseService implements EbeguParameterService {
 
-
 	private final Map<EbeguParameterKey, EbeguParameter> dummyObjects;
-
 
 	public EbeguDummyParameterServiceBean() {
 		this.dummyObjects = new EnumMap<>(EbeguParameterKey.class);

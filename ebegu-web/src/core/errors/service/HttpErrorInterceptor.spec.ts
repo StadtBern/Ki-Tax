@@ -17,10 +17,10 @@ import '../../../bootstrap.ts';
 import 'angular-mocks';
 import HttpErrorInterceptor from './HttpErrorInterceptor';
 import TSExceptionReport from '../../../models/TSExceptionReport';
+import TestDataUtil from '../../../utils/TestDataUtil';
 import IRootScopeService = angular.IRootScopeService;
 import IQService = angular.IQService;
 import IDeferred = angular.IDeferred;
-import TestDataUtil from '../../../utils/TestDataUtil';
 
 describe('httpErrorInterceptor', function () {
 

@@ -26,19 +26,17 @@ import javax.annotation.Resource;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
+import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
+import ch.dvbern.ebegu.services.AuthService;
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.MonitoringUtil;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.NotImplementedException;
 import org.infinispan.Cache;
 import org.infinispan.manager.CacheContainer;
 import org.omnifaces.security.jaspic.user.TokenAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
-import ch.dvbern.ebegu.services.AuthService;
-import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.util.MonitoringUtil;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import static java.util.Collections.emptyList;
 
@@ -54,7 +52,6 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 
 	@Resource(lookup = "java:jboss/infinispan/container/ebeguCache")
 	private CacheContainer cacheContainer;
-
 
 	private AuthorisierterBenutzer user;
 
@@ -175,6 +172,5 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 		}
 		return emptyList();
 	}
-
 
 }

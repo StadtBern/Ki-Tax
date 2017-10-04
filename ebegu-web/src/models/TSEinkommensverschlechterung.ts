@@ -60,7 +60,6 @@ export default class TSEinkommensverschlechterung extends TSAbstractFinanzielleS
         this._geschaeftsgewinnBasisjahrMinus1 = geschaeftsgewinnBasisjahrMinus1;
     }
 
-
     get nettolohnJan(): number {
         return this._nettolohnJan;
     }

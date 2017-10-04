@@ -21,7 +21,7 @@ package ch.dvbern.ebegu.enums;
 public enum EbeguParameterKey {
 
 	// Fixbeitrag der Stadt pro Tag, nur für Kitas relevant (Achtung: Kann auf den 1.1. aendern! Im Gegensatz zu den anderen Parametern)
-	PARAM_FIXBETRAG_STADT_PRO_TAG_KITA (Boolean.FALSE),
+	PARAM_FIXBETRAG_STADT_PRO_TAG_KITA(Boolean.FALSE),
 
 	// Anzahl Tage Kita Max
 	PARAM_ANZAL_TAGE_MAX_KITA,

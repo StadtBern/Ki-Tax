@@ -36,7 +36,6 @@ public class DokumentServiceBean extends AbstractBaseService implements Dokument
 	@Inject
 	private Persistence persistence;
 
-
 	@Override
 	@Nonnull
 	public Optional<Dokument> findDokument(@Nonnull String key) {

@@ -42,8 +42,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.lang3.Validate;
-
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResponse;
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
 import ch.dvbern.ebegu.api.client.OpenIdmRestService;
@@ -56,9 +54,9 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.InstitutionService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.Validate;
 
 /**
  * REST Resource fuer Institution
@@ -140,7 +138,7 @@ public class InstitutionResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxInstitution findInstitution(
-		@Nonnull @NotNull @PathParam("institutionId") JaxId institutionJAXPId){
+		@Nonnull @NotNull @PathParam("institutionId") JaxId institutionJAXPId) {
 
 		Validate.notNull(institutionJAXPId.getId());
 		String institutionID = converter.toEntityId(institutionJAXPId);
@@ -186,7 +184,6 @@ public class InstitutionResource {
 			.map(institution -> converter.institutionToJAX(institution))
 			.collect(Collectors.toList());
 	}
-
 
 	@ApiOperation(value = "Find and return a list of all Institutionen",
 		responseContainer = "List", response = JaxInstitution.class)

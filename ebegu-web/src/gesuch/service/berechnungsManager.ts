@@ -22,9 +22,8 @@ import EinkommensverschlechterungContainerRS from './einkommensverschlechterungC
 import TSDokumenteDTO from '../../models/dto/TSDokumenteDTO';
 import DokumenteRS from './dokumenteRS.rest';
 import TSFinanzModel from '../../models/TSFinanzModel';
-import IRootScopeService = angular.IRootScopeService;
 import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
-
+import IRootScopeService = angular.IRootScopeService;
 
 export default class BerechnungsManager {
     finanzielleSituationResultate: TSFinanzielleSituationResultateDTO;

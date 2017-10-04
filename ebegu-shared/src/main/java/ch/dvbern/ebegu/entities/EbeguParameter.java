@@ -15,11 +15,8 @@
 
 package ch.dvbern.ebegu.entities;
 
-
-import ch.dvbern.ebegu.enums.EbeguParameterKey;
-import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.Constants;
-import org.hibernate.envers.Audited;
+import java.math.BigDecimal;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
@@ -27,8 +24,11 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.enums.EbeguParameterKey;
+import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
+import org.hibernate.envers.Audited;
 
 /**
  * Entitaet zum Speichern von zeitabhängigen Parametern in Ki-Tax
@@ -36,7 +36,6 @@ import java.util.Objects;
 @Audited
 @Entity
 public class EbeguParameter extends AbstractDateRangedEntity {
-
 
 	private static final long serialVersionUID = 8704632842261673111L;
 
@@ -55,7 +54,6 @@ public class EbeguParameter extends AbstractDateRangedEntity {
 	public EbeguParameter(EbeguParameterKey name, String value) {
 		this(name, value, Constants.DEFAULT_GUELTIGKEIT);
 	}
-
 
 	public EbeguParameter(EbeguParameterKey name, String value, DateRange gueltigkeit) {
 		this.name = name;
@@ -82,7 +80,6 @@ public class EbeguParameter extends AbstractDateRangedEntity {
 	}
 
 	/**
-	 * @param gueltigkeit
 	 * @return a copy of the current Param with the gueltigkeit set to the passed DateRange
 	 */
 	public EbeguParameter copy(DateRange gueltigkeit) {

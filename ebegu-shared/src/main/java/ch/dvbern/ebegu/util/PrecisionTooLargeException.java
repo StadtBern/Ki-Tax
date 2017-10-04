@@ -10,8 +10,9 @@
 
 package ch.dvbern.ebegu.util;
 
-import javax.annotation.Nonnull;
 import java.math.BigDecimal;
+
+import javax.annotation.Nonnull;
 
 public class PrecisionTooLargeException extends RuntimeException {
 	private static final long serialVersionUID = 8715107775399719120L;

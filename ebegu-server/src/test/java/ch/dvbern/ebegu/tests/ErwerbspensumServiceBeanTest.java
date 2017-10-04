@@ -50,8 +50,6 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class ErwerbspensumServiceBeanTest extends AbstractEbeguLoginTest {
 
-
-
 	@Inject
 	private ErwerbspensumService erwerbspensumService;
 	@Inject
@@ -61,7 +59,6 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguLoginTest {
 	private Persistence persistence;
 
 	private Gesuch gesuch;
-
 
 	@Test
 	public void createFinanzielleSituation() {
@@ -186,6 +183,5 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguLoginTest {
 		gesuchsteller = persistence.persist(gesuchsteller);
 		return gesuchsteller.getErwerbspensenContainers().iterator().next();
 	}
-
 
 }

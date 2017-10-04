@@ -15,7 +15,6 @@
 
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.util.EbeguUtil;
 import java.time.LocalDate;
 
 import javax.annotation.Nonnull;
@@ -27,6 +26,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.validation.Valid;
 
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
 import ch.dvbern.ebegu.validators.CheckFamiliensituationContainerComplete;
 import org.hibernate.envers.Audited;

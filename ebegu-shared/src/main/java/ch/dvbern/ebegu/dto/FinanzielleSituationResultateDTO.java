@@ -15,9 +15,9 @@
 
 package ch.dvbern.ebegu.dto;
 
-import ch.dvbern.ebegu.util.MathUtil;
-
 import java.math.BigDecimal;
+
+import ch.dvbern.ebegu.util.MathUtil;
 
 /**
  * DTO für die Resultate der Berechnungen der Finanziellen Situation

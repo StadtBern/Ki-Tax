@@ -15,10 +15,7 @@
 
 package ch.dvbern.ebegu.api.resource;
 
-import ch.dvbern.ebegu.services.SearchIndexService;
-import ch.dvbern.ebegu.util.Constants;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.time.LocalDateTime;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -29,13 +26,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.time.LocalDateTime;
+
+import ch.dvbern.ebegu.services.SearchIndexService;
+import ch.dvbern.ebegu.util.Constants;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Path("admin/reindex")
 @Stateless
 @Api(description = "Resource zum Reindizieren des Lucene-Suchindexes")
 public class ReindexResource {
-
 
 	@Inject
 	private SearchIndexService searchIndexService;

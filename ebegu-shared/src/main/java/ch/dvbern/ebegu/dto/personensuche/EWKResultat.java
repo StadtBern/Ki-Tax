@@ -15,12 +15,13 @@
 
 package ch.dvbern.ebegu.dto.personensuche;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * DTO für Resultate aus dem EWK
@@ -36,7 +37,6 @@ public class EWKResultat implements Serializable {
 	private int anzahlResultate;
 
 	private List<EWKPerson> personen = new ArrayList<>();
-
 
 	public EWKResultat() {
 	}

@@ -28,9 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxEinkommensverschlechterungContainer extends JaxAbstractDTO {
 
-
 	private static final long serialVersionUID = -5547010246540824296L;
-
 
 	@Valid
 	@Nullable

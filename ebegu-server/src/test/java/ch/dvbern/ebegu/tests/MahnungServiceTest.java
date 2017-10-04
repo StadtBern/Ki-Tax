@@ -52,7 +52,6 @@ public class MahnungServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
 	@Test
 	public void createErsteMahnung() {
 		Assert.assertNotNull(mahnungService);
@@ -76,7 +75,7 @@ public class MahnungServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertNotNull(zweiteMahnung);
 	}
 
-	@Test (expected = EbeguRuntimeException.class)
+	@Test(expected = EbeguRuntimeException.class)
 	public void createZweiteMahnungOhneErsteMahnung() {
 		Assert.assertNotNull(mahnungService);
 		TestDataUtil.createAndPersistBenutzer(persistence);

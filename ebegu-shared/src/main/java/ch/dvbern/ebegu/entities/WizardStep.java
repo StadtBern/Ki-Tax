@@ -17,15 +17,23 @@ package ch.dvbern.ebegu.entities;
 
 import java.util.Objects;
 
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * Diese Entitaet speichert den Status von jedem Schritt im Wizzard (left menu). Ausserdem eine Bemerkung fuer jeden
@@ -34,7 +42,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Audited
 @Table(
-	uniqueConstraints = @UniqueConstraint(columnNames = {"wizardStepName", "gesuch_id"}, name = "UK_wizardstep_gesuch_stepname")
+	uniqueConstraints = @UniqueConstraint(columnNames = { "wizardStepName", "gesuch_id" }, name = "UK_wizardstep_gesuch_stepname")
 )
 public class WizardStep extends AbstractEntity {
 
@@ -63,7 +71,6 @@ public class WizardStep extends AbstractEntity {
 	@NotNull
 	@Column(nullable = false)
 	private Boolean verfuegbar = false;
-
 
 	public Gesuch getGesuch() {
 		return gesuch;

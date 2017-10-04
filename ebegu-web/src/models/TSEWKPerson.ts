@@ -19,6 +19,7 @@ import {TSGeschlecht} from './enums/TSGeschlecht';
 import TSEWKEinwohnercode from './TSEWKEinwohnercode';
 import TSEWKAdresse from './TSEWKAdresse';
 import TSEWKBeziehung from './TSEWKBeziehung';
+
 /**
  * DTO für eine Person aus dem EWK
  */
@@ -42,7 +43,6 @@ export default class TSEWKPerson extends TSAbstractEntity {
     private _bewilligungBis: moment.Moment;
     private _adressen: Array<TSEWKAdresse>;
     private _beziehungen: Array<TSEWKBeziehung>;
-
 
     constructor(personID?: string, einwohnercodes?: Array<TSEWKEinwohnercode>, nachname?: string, ledigname?: string,
                 vorname?: string, rufname?: string, geburtsdatum?: moment.Moment, zuzugsdatum?: moment.Moment,

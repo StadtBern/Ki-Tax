@@ -41,7 +41,6 @@ import org.hibernate.envers.Audited;
 @Entity
 public class EinkommensverschlechterungInfo extends AbstractEntity {
 
-
 	private static final long serialVersionUID = 3952202946246235539L;
 
 	@NotNull
@@ -90,7 +89,6 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 	@Column(nullable = false)
 	private Boolean ekvBasisJahrPlus2Annulliert = false;
 
-
 	public EinkommensverschlechterungInfo() {
 	}
 
@@ -108,11 +106,9 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 		}
 	}
 
-
 	public Boolean getEinkommensverschlechterung() {
 		return einkommensverschlechterung;
 	}
-
 
 	public void setEinkommensverschlechterung(final Boolean einkommensverschlechterung) {
 		this.einkommensverschlechterung = einkommensverschlechterung;

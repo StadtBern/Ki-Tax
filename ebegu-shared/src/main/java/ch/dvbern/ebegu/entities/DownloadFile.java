@@ -15,12 +15,13 @@
 
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.util.UploadFileInfo;
+import java.util.UUID;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import java.util.UUID;
+
+import ch.dvbern.ebegu.util.UploadFileInfo;
 
 /**
  * Entitaet zum Speichern von DownloadFile in der Datenbank.
@@ -48,7 +49,7 @@ public class DownloadFile extends FileMetadata {
 
 	}
 
-	public DownloadFile(UploadFileInfo uploadFileInfo,  @Nonnull String ip) {
+	public DownloadFile(UploadFileInfo uploadFileInfo, @Nonnull String ip) {
 		super(uploadFileInfo);
 		this.accessToken = UUID.randomUUID().toString();
 		this.ip = ip;

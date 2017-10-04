@@ -51,13 +51,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Hilfsklasse welche CriteriaQueries erstellt.
  */
-@SuppressWarnings({"unchecked"})
+@SuppressWarnings({ "unchecked" })
 @Dependent
 public class CriteriaQueryHelper {
 
 	@Inject
 	private Persistence persistence;
-
 
 	@SuppressWarnings("unchecked")
 	public <T> Collection<T> getAll(final Class<T> clazz) {
@@ -80,8 +79,8 @@ public class CriteriaQueryHelper {
 	@SuppressWarnings("unchecked")
 	@Nonnull
 	public <A, E extends AbstractEntity> Optional<E> getEntityByUniqueAttribute(@Nonnull final Class<E> entityClazz,
-																				@Nullable final A attributeValue,
-																				@Nonnull final SingularAttribute<E, A> attribute) {
+		@Nullable final A attributeValue,
+		@Nonnull final SingularAttribute<E, A> attribute) {
 		final Collection<E> results = getEntitiesByAttribute(entityClazz, attributeValue, attribute);
 		E result = ensureSingleResult(results, attributeValue);
 		/*String attrValue = Objects.toString(attributeValue, "");
@@ -145,8 +144,8 @@ public class CriteriaQueryHelper {
 	 * von datumVon und DatumBis liegt.
 	 *
 	 * @param clazz Entity class
-	 * @param date  Datum fuer die Suche
-	 * @param <T>   Entity Class
+	 * @param date Datum fuer die Suche
+	 * @param <T> Entity Class
 	 * @return Liste mit Datensaetzen
 	 */
 	public <T extends AbstractDateRangedEntity> Collection<T> getAllInInterval(Class<T> clazz, LocalDate date) {

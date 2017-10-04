@@ -15,12 +15,28 @@
 
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.security.auth.login.LoginException;
+
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Mitteilung;
+import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.services.BetreuungService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.KindService;
+import ch.dvbern.ebegu.services.MitteilungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
@@ -30,12 +46,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import javax.security.auth.login.LoginException;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Tests fuer die Klasse betreuungService
@@ -80,7 +90,7 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertTrue(updatedBetreuung.isPresent());
 
 		Assert.assertEquals(GesuchBetreuungenStatus.ABGEWIESEN, updatedBetreuung.get().extractGesuch()
-				.getGesuchBetreuungenStatus());
+			.getGesuchBetreuungenStatus());
 		Assert.assertEquals(new Integer(1), updatedBetreuung.get().getBetreuungNummer());
 		Assert.assertEquals(new Integer(2), kindService.findKind(betreuung.getKind().getId()).get().getNextNumberBetreuung());
 	}
@@ -111,11 +121,11 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		prepareDependentObjects();
 		Gesuch dagmarGesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.now());
 		Mitteilung mitteilung = TestDataUtil.createMitteilung(dagmarGesuch.getFall(), empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
-				sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
 		Betreuung betreuungUnderTest = dagmarGesuch.extractAllBetreuungen().get(0);
 		mitteilung.setBetreuung(betreuungUnderTest);
 		final Mitteilung persistedMitteilung = mitteilungService.sendMitteilung(mitteilung);
-		Assert.assertEquals(betreuungUnderTest , persistedMitteilung.getBetreuung());
+		Assert.assertEquals(betreuungUnderTest, persistedMitteilung.getBetreuung());
 
 		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungUnderTest.getId());
 		Assert.assertTrue(betreuung.isPresent());
@@ -145,7 +155,7 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 
 		//create a first mitteilung
 		final Betreuungsmitteilung betmitteilung = TestDataUtil.createBetreuungmitteilung(gesuch.getFall(), empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
-				sender, MitteilungTeilnehmerTyp.INSTITUTION);
+			sender, MitteilungTeilnehmerTyp.INSTITUTION);
 		betmitteilung.setBetreuung(betreuungUnderTest);
 		final Betreuungsmitteilung persistedFirstMitteilung = mitteilungService.sendBetreuungsmitteilung(betmitteilung);
 

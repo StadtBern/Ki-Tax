@@ -13,11 +13,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IPromise, IHttpService, ILogService} from 'angular';
+import {IHttpService, ILogService, IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import WizardStepManager from './wizardStepManager';
 import TSFamiliensituationContainer from '../../models/TSFamiliensituationContainer';
-
 
 export default class FamiliensituationRS {
     serviceURL: string;

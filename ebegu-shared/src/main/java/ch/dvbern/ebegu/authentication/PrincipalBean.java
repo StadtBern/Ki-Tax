@@ -45,27 +45,25 @@ public class PrincipalBean {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalBean.class);
 
-
 	@Inject
 	private Principal principal;
 
 	@Resource
- 	private SessionContext sessionContext;
+	private SessionContext sessionContext;
 
 	@Inject
 	private BenutzerService benutzerService;
 	@Resource
 	private TransactionSynchronizationRegistry txReg;
 
-
 	private Benutzer benutzer = null;
 	private Mandant mandant = null;
 
-//	@PostConstruct
-//	private  void init(){
-//		loadNormalUser();
-//
-//	}
+	//	@PostConstruct
+	//	private  void init(){
+	//		loadNormalUser();
+	//
+	//	}
 
 	private void loadNormalUser() {
 		String name = principal.getName();
@@ -91,18 +89,16 @@ public class PrincipalBean {
 		return mandant;
 	}
 
-
 	public Set<String> discoverRoles() {
 		Set<String> roleNames = new HashSet<>();
 		Arrays.stream(UserRole.values()).map(Enum::name).forEach(roleName -> {
-			if (sessionContext.isCallerInRole(roleName)){
+			if (sessionContext.isCallerInRole(roleName)) {
 				roleNames.add(roleName);
 			}
 		});
 
 		return roleNames;
 	}
-
 
 	/**
 	 * @return exactly one role, should be the most privileged role

@@ -15,16 +15,21 @@
 
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.types.DateRange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.types.DateRange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Regel für Wohnsitz in Bern (Zuzug und Wegzug):
@@ -37,7 +42,6 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 
 	private final Logger LOG = LoggerFactory.getLogger(WohnsitzAbschnittRule.class.getSimpleName());
 
-
 	public WohnsitzAbschnittRule(@Nonnull DateRange validityPeriod) {
 		super(RuleKey.WOHNSITZ, RuleType.GRUNDREGEL_DATA, validityPeriod);
 	}
@@ -46,7 +50,7 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 	@Override
 	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
 		List<VerfuegungZeitabschnitt> analysedAbschnitte = new ArrayList<>();
-		Gesuch gesuch =  betreuung.extractGesuch();
+		Gesuch gesuch = betreuung.extractGesuch();
 		if (gesuch.getGesuchsteller1() != null) {
 			List<VerfuegungZeitabschnitt> adressenAbschnitte = new ArrayList<>();
 			adressenAbschnitte.addAll(getAdresseAbschnittForGesuchsteller(gesuch, gesuch.getGesuchsteller1(), true));
@@ -100,9 +104,8 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 	}
 
 	private boolean isWohnsitzNichtInGemeinde(VerfuegungZeitabschnitt zeitabschnitt) {
-		return (zeitabschnitt.isWohnsitzNichtInGemeindeGS1() && zeitabschnitt.isWohnsitzNichtInGemeindeGS2() );
+		return (zeitabschnitt.isWohnsitzNichtInGemeindeGS1() && zeitabschnitt.isWohnsitzNichtInGemeindeGS2());
 	}
-
 
 	/**
 	 * geht durch die Adressen des Gesuchstellers und gibt Abschnitte zurueck
@@ -112,7 +115,7 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 		List<VerfuegungZeitabschnitt> adressenZeitabschnitte = new ArrayList<>();
 		List<GesuchstellerAdresseContainer> gesuchstellerAdressen = gesuchsteller.getAdressen();
 		gesuchstellerAdressen.stream()
-			.filter(gesuchstellerAdresse-> !gesuchstellerAdresse.extractIsKorrespondenzAdresse())
+			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.extractIsKorrespondenzAdresse())
 			.forEach(gesuchstellerAdresse -> {
 				if (gs1) {
 					VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(gesuchstellerAdresse.extractGueltigkeit());
@@ -139,8 +142,7 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 							}
 							createZeitabschnittForGS2(adressenZeitabschnitte, gesuchstellerAdresse.extractIsNichtInGemeinde(), gueltigkeit);
 						}
-					}
-					else {
+					} else {
 						createZeitabschnittForGS2(adressenZeitabschnitte, gesuchstellerAdresse.extractIsNichtInGemeinde(), gueltigkeit);
 					}
 				}
@@ -149,7 +151,7 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 	}
 
 	private void createZeitabschnittForGS2(List<VerfuegungZeitabschnitt> adressenZeitabschnitte, boolean nichtInGemeinde,
-										   DateRange gueltigkeit) {
+		DateRange gueltigkeit) {
 		VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(gueltigkeit);
 		zeitabschnitt.setWohnsitzNichtInGemeindeGS2(nichtInGemeinde);
 		adressenZeitabschnitte.add(zeitabschnitt);

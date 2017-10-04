@@ -60,8 +60,8 @@ import org.hibernate.envers.Audited;
 				@ColumnResult(name = "periode", type = String.class),
 				@ColumnResult(name = "nichtFreigegeben", type = Integer.class),
 				@ColumnResult(name = "mahnungen", type = Integer.class),
-				@ColumnResult(name = "beschwerde", type = Integer.class)}
-		)}
+				@ColumnResult(name = "beschwerde", type = Integer.class) }
+		) }
 	),
 	@SqlResultSetMapping(name = "GesuchZeitraumDataRowMapping", classes = {
 		@ConstructorResult(targetClass = GesuchZeitraumDataRow.class,
@@ -93,8 +93,8 @@ import org.hibernate.envers.Audited;
 				@ColumnResult(name = "anzahlVerfuegungenMaxEinkommen", type = Integer.class),
 				@ColumnResult(name = "anzahlVerfuegungenKeinPensum", type = Integer.class),
 				@ColumnResult(name = "anzahlVerfuegungenZuschlagZumPensum", type = Integer.class),
-				@ColumnResult(name = "anzahlVerfuegungenNichtEintreten", type = Integer.class)}
-		)}
+				@ColumnResult(name = "anzahlVerfuegungenNichtEintreten", type = Integer.class) }
+		) }
 	)
 })
 public abstract class AbstractEntity implements Serializable {

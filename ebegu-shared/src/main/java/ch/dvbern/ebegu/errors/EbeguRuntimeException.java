@@ -40,7 +40,6 @@ public class EbeguRuntimeException extends RuntimeException {
 	private ErrorCodeEnum errorCodeEnum = null;
 	private String customMessage;
 
-
 	public EbeguRuntimeException(@Nullable String methodeName, @Nonnull String message, @Nonnull Serializable... messageArgs) {
 		super(message);
 		methodName = methodeName;
@@ -91,7 +90,6 @@ public class EbeguRuntimeException extends RuntimeException {
 		this.args = Collections.unmodifiableList(Arrays.asList(args));
 
 	}
-
 
 	public String getMethodName() {
 		return methodName;

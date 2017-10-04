@@ -35,7 +35,6 @@ import ch.dvbern.ebegu.util.Constants;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 
-
 	private static final long serialVersionUID = 5116358042804364490L;
 
 	@Max(100)

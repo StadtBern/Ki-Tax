@@ -14,9 +14,7 @@ import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import ch.dvbern.ebegu.enums.UserRole;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 
 /**
  * Wrapper DTO fuer einen Login Request
@@ -43,7 +41,6 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 	private JaxTraegerschaft traegerschaft;
 	@Nullable
 	private JaxInstitution institution;
-
 
 	@SuppressFBWarnings(value = "NM_CONFUSING", justification = "Other method is external interface, cant change that")
 	@Nonnull

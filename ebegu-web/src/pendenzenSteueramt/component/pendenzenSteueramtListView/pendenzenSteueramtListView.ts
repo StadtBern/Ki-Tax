@@ -14,14 +14,15 @@
  */
 
 import IComponentOptions = angular.IComponentOptions;
+import IPromise = angular.IPromise;
+import ILogService = angular.ILogService;
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import TSAntragDTO from '../../../models/TSAntragDTO';
 import TSAntragSearchresultDTO from '../../../models/TSAntragSearchresultDTO';
 import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
-import IPromise = angular.IPromise;
-import ILogService = angular.ILogService;
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+
 let template = require('./pendenzenSteueramtListView.html');
 
 export class PendenzenSteueramtListViewComponentConfig implements IComponentOptions {

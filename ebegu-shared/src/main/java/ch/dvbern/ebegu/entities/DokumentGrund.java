@@ -90,7 +90,6 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 	@Transient
 	private boolean needed = true;
 
-
 	public DokumentGrund() {
 	}
 
@@ -99,7 +98,7 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 	}
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, @Nullable String tag,
-						 DokumentGrundPersonType personType, Integer personNumber) {
+		DokumentGrundPersonType personType, Integer personNumber) {
 		this.dokumentGrundTyp = dokumentGrundTyp;
 		this.tag = tag;
 		this.personType = personType;
@@ -113,7 +112,7 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 	}
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String tag,
-						 DokumentGrundPersonType personType, Integer personNumber, DokumentTyp dokumentTyp) {
+		DokumentGrundPersonType personType, Integer personNumber, DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp, tag, personType, personNumber);
 		this.dokumente = new HashSet<>();
 		this.dokumentTyp = dokumentTyp;

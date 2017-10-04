@@ -73,7 +73,9 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 		if (dokumentGrunds != null) {
 			for (DokumentGrund dokumentGrund : dokumentGrunds) {
 				bemerkungenBuilder = PrintUtil.parseDokumentGrundDataToString(dokumentGrund);
-				if (bemerkungenBuilder.length() > 0){aufzaehlungPrint.add(new AufzaehlungPrintImpl(bemerkungenBuilder.toString()));}
+				if (bemerkungenBuilder.length() > 0) {
+					aufzaehlungPrint.add(new AufzaehlungPrintImpl(bemerkungenBuilder.toString()));
+				}
 			}
 		}
 
@@ -90,7 +92,7 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 		BitmapCanvasProvider canvas = new BitmapCanvasProvider(
 			bytesOut, "image/x-png", 175, BufferedImage.TYPE_BYTE_BINARY, false, 0);
 
-		dataMatrixBean.generateBarcode(canvas, "§FREIGABE|OPEN|" + gesuch.getId() +"§");
+		dataMatrixBean.generateBarcode(canvas, "§FREIGABE|OPEN|" + gesuch.getId() + "§");
 
 		canvas.finish();
 

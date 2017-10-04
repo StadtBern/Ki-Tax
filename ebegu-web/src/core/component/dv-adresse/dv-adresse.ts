@@ -20,9 +20,10 @@ import {IComponentOptions, IFormController} from 'angular';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import TSAdresseContainer from '../../../models/TSAdresseContainer';
-import ITranslateService = angular.translate.ITranslateService;
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {isAtLeastFreigegeben} from '../../../models/enums/TSAntragStatus';
+import ITranslateService = angular.translate.ITranslateService;
+
 require('./dv-adresse.less');
 
 export class AdresseComponentConfig implements IComponentOptions {

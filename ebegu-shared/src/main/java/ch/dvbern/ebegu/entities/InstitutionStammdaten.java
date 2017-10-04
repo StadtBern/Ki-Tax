@@ -15,12 +15,8 @@
 
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.util.EbeguUtil;
-import ch.dvbern.ebegu.util.MathUtil;
-import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
-import org.hibernate.envers.Audited;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,8 +37,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
 import javax.validation.constraints.Size;
+
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.ebegu.util.MathUtil;
+import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
+import org.hibernate.envers.Audited;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -57,8 +58,8 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 		@UniqueConstraint(columnNames = "adresse_kontoinhaber_id", name = "UK_institution_stammdaten_adressekontoinhaber_id")
 	},
 	indexes = {
-		@Index(name =  "IX_institution_stammdaten_gueltig_ab", columnList = "gueltigAb"),
-		@Index(name =  "IX_institution_stammdaten_gueltig_bis", columnList = "gueltigBis")
+		@Index(name = "IX_institution_stammdaten_gueltig_ab", columnList = "gueltigAb"),
+		@Index(name = "IX_institution_stammdaten_gueltig_bis", columnList = "gueltigBis")
 	}
 )
 //@Cacheable
@@ -104,7 +105,6 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_stammdaten_adressekontoinhaber_id"), nullable = true)
 	private Adresse adresseKontoinhaber;
-
 
 	public InstitutionStammdaten() {
 	}
@@ -175,6 +175,7 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	public void setAdresseKontoinhaber(Adresse adresseKontoinhaber) {
 		this.adresseKontoinhaber = adresseKontoinhaber;
 	}
+
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality

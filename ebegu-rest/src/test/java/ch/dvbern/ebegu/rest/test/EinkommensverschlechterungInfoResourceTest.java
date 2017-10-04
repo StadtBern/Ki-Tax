@@ -15,6 +15,9 @@
 
 package ch.dvbern.ebegu.rest.test;
 
+import javax.inject.Inject;
+import javax.ws.rs.core.UriInfo;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungInfoContainer;
 import ch.dvbern.ebegu.api.dtos.JaxFall;
@@ -37,9 +40,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.UriInfo;
-
 /**
  * Testet die Gesuchsperiode Resource
  */
@@ -47,7 +47,6 @@ import javax.ws.rs.core.UriInfo;
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
 public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRestLoginTest {
-
 
 	@Inject
 	private EinkommensverschlechterungInfoResource einkommensverschlechterungInfoResource;
@@ -66,7 +65,6 @@ public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRes
 
 	@Inject
 	private Persistence persistence;
-
 
 	@Test
 	public void createEinkommensverschlechterungInfoTest() throws EbeguException {
@@ -95,12 +93,10 @@ public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRes
 		JaxGesuch testJaxGesuch = TestJaxDataUtil.createTestJaxGesuch();
 		testJaxGesuch.getFall().setVerantwortlicher(converter.benutzerToAuthLoginElement(verantwortlicher));
 
-
 		JaxFall returnedFall = fallResource.saveFall(testJaxGesuch.getFall(), uri, null);
 		testJaxGesuch.setGesuchsperiode(saveGesuchsperiodeInStatusAktiv(testJaxGesuch.getGesuchsperiode()));
 		testJaxGesuch.setFall(returnedFall);
 		return (JaxGesuch) gesuchResource.create(testJaxGesuch, uri, null).getEntity();
 	}
-
 
 }

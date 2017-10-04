@@ -21,6 +21,16 @@
  */
 package ch.dvbern.ebegu.tests;
 
+import java.security.Principal;
+import java.security.PrivilegedAction;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.security.auth.Subject;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+
 import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
 import ch.dvbern.lib.cdipersistence.ISessionContextService;
@@ -28,15 +38,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import javax.security.auth.Subject;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
-import java.security.Principal;
-import java.security.PrivilegedAction;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -47,14 +48,13 @@ import static org.junit.Assert.assertTrue;
 @RunWith(Arquillian.class)
 public class ArquillianCallerInRoleDemoLoginTest extends AbstractEbeguLoginTest {
 
-    @Inject
-    private ISessionContextService sessionContextService;
+	@Inject
+	private ISessionContextService sessionContextService;
 
-
-    @Test
-    public void testLoginPrincipal() throws LoginException {
-        LoginContext loginContext = JBossLoginContextFactory.createLoginContext("saja", "saja");
-        loginContext.login();
+	@Test
+	public void testLoginPrincipal() throws LoginException {
+		LoginContext loginContext = JBossLoginContextFactory.createLoginContext("saja", "saja");
+		loginContext.login();
 		Principal callerPrincipal = sessionContextService.getCallerPrincipal();
 		Assert.assertNotNull(callerPrincipal);
 		Assert.assertNotNull(callerPrincipal.getName(), "saja");
@@ -65,16 +65,16 @@ public class ArquillianCallerInRoleDemoLoginTest extends AbstractEbeguLoginTest 
 		Assert.assertNotNull(anonPrincipal.getName(), "anonymous");
 	}
 
-    @Test
-    public void testDiscoverRoles() throws LoginException {
-        LoginContext loginContext = JBossLoginContextFactory.createLoginContext("admin", "admin");
-        loginContext.login();
-        try {
-            Set<String> foundRoles = Subject.doAs(loginContext.getSubject(), new PrivilegedAction<Set<String>>() {
+	@Test
+	public void testDiscoverRoles() throws LoginException {
+		LoginContext loginContext = JBossLoginContextFactory.createLoginContext("admin", "admin");
+		loginContext.login();
+		try {
+			Set<String> foundRoles = Subject.doAs(loginContext.getSubject(), new PrivilegedAction<Set<String>>() {
 
-                @Override
-                public Set<String> run() {
-                    if(sessionContextService.isCallerInRole("ADMIN")){
+				@Override
+				public Set<String> run() {
+					if (sessionContextService.isCallerInRole("ADMIN")) {
 						Set<String> res = new HashSet<>();
 						res.add("ADMIN");
 						return res;
@@ -82,12 +82,12 @@ public class ArquillianCallerInRoleDemoLoginTest extends AbstractEbeguLoginTest 
 					return new HashSet<>();
 				}
 
-            });
-            assertEquals(1, foundRoles.size());
-            assertTrue(foundRoles.contains("ADMIN"));
+			});
+			assertEquals(1, foundRoles.size());
+			assertTrue(foundRoles.contains("ADMIN"));
 
-        } finally {
-            loginContext.logout();
-        }
-    }
+		} finally {
+			loginContext.logout();
+		}
+	}
 }

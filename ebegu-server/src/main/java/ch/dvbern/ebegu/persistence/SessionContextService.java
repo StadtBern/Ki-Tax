@@ -15,13 +15,14 @@
 
 package ch.dvbern.ebegu.persistence;
 
-import ch.dvbern.lib.cdipersistence.ISessionContextService;
+import java.security.Principal;
 
 import javax.annotation.Resource;
 import javax.annotation.security.PermitAll;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import java.security.Principal;
+
+import ch.dvbern.lib.cdipersistence.ISessionContextService;
 
 /**
  * Implementation des SessionContext als Stateless Session Bean.

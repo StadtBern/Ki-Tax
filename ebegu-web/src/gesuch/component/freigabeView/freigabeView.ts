@@ -30,9 +30,9 @@ import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyR
 import {FreigabeDialogController} from '../../dialog/FreigabeDialogController';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import EbeguUtil from '../../../utils/EbeguUtil';
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
-import EbeguUtil from '../../../utils/EbeguUtil';
 
 let template = require('./freigabeView.html');
 require('./freigabeView.less');

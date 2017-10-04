@@ -15,13 +15,14 @@
 
 package ch.dvbern.ebegu.rules;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Wir teilen die Regeln noch auf so dass eine einzelne Regel grundsaetzlich entweder nur neue Abschnitte macht oder
@@ -30,7 +31,6 @@ import java.util.List;
  * fuer den nicht benoetigten Schritt
  */
 public abstract class AbstractCalcRule extends AbstractEbeguRule {
-
 
 	public AbstractCalcRule(@Nonnull RuleKey ruleKey, @Nonnull RuleType ruleType, @Nonnull DateRange validityPeriod) {
 		super(ruleKey, ruleType, validityPeriod);

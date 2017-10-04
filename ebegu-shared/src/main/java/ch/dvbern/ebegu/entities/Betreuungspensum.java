@@ -15,14 +15,15 @@
 
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.types.DateRange;
-import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.hibernate.envers.Audited;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.types.DateRange;
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.hibernate.envers.Audited;
 
 /**
  * Entity fuer Betreuungspensen.
@@ -38,7 +39,6 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 	@NotNull
 	@Column(nullable = false)
 	private Boolean nichtEingetreten = false;
-
 
 	public Betreuungspensum() {
 	}

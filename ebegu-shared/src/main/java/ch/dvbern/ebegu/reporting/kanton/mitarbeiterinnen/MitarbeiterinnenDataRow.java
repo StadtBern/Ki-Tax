@@ -27,7 +27,6 @@ public class MitarbeiterinnenDataRow {
 	private BigDecimal verantwortlicheGesuche;
 	private BigDecimal verfuegungenAusgestellt;
 
-
 	public String getName() {
 		return name;
 	}

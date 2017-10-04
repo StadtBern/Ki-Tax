@@ -15,6 +15,11 @@
 
 package ch.dvbern.ebegu.rules;
 
+import java.time.LocalDate;
+import java.time.Month;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
@@ -22,10 +27,6 @@ import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import org.junit.Assert;
 import org.junit.Test;
-
-import javax.annotation.Nonnull;
-import java.time.LocalDate;
-import java.time.Month;
 
 /**
  * Tests fuer AbwesenheitCalcRule
@@ -36,7 +37,6 @@ public class AbwesenheitCalcRuleTest {
 	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
 	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
 	private final DateRange PERIODE = new DateRange(START_PERIODE, ENDE_PERIODE);
-
 
 	@Test
 	public void testSchulamtBetreuungWithAbwesenheit() {
@@ -78,7 +78,6 @@ public class AbwesenheitCalcRuleTest {
 		Assert.assertFalse(zeitAbschnitt.isBezahltVollkosten());
 		Assert.assertEquals("", zeitAbschnitt.getBemerkungen());
 	}
-
 
 	// HELP METHODS
 

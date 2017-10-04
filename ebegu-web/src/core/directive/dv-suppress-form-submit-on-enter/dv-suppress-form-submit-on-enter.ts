@@ -13,15 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {
-    IDirective,
-    IDirectiveFactory,
-    IDirectiveLinkFn,
-    IScope,
-    IAugmentedJQuery,
-    IAttributes,
-    ILogService
-} from 'angular';
+import {IAttributes, IAugmentedJQuery, IDirective, IDirectiveFactory, IDirectiveLinkFn, ILogService, IScope} from 'angular';
 
 /**
  * This directive is a hack to suppress the enter handler that is defined by angular-material on the md-radio-group.

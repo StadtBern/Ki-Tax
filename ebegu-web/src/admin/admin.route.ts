@@ -45,7 +45,7 @@ function getStates(): IState[] {
         {
             name: 'institution',
             template: '<dv-institution-view flex="auto" class="overflow-scroll" institutionen="$resolve.institutionen" ' +
-                                           'traegerschaften="$resolve.traegerschaften" mandant="$resolve.mandant"></dv-institution-view>',
+            'traegerschaften="$resolve.traegerschaften" mandant="$resolve.mandant"></dv-institution-view>',
             url: '/institution',
             resolve: {
                 institutionen: getInstitutionen,
@@ -71,6 +71,7 @@ function getStates(): IState[] {
 
 // FIXME dieses $inject wird ignoriert, d.h, der Parameter der Funktion muss exact dem Namen des Services entsprechen (Grossbuchstaben am Anfang). Warum?
 getApplicationProperties.$inject = ['ApplicationPropertyRS'];
+
 /* @ngInject */
 function getApplicationProperties(ApplicationPropertyRS: ApplicationPropertyRS) {
     return ApplicationPropertyRS.getAllApplicationProperties();
@@ -78,6 +79,7 @@ function getApplicationProperties(ApplicationPropertyRS: ApplicationPropertyRS) 
 
 // FIXME dieses $inject wird ignoriert, d.h, der Parameter der Funktion muss exact dem Namen des Services entsprechen (Grossbuchstaben am Anfang). Warum?
 getInstitutionen.$inject = ['InstitutionRS'];
+
 /* @ngInject */
 function getInstitutionen(InstitutionRS: InstitutionRS) {
     return InstitutionRS.getAllActiveInstitutionen();
@@ -85,6 +87,7 @@ function getInstitutionen(InstitutionRS: InstitutionRS) {
 
 // FIXME dieses $inject wird ignoriert, d.h, der Parameter der Funktion muss exact dem Namen des Services entsprechen (Grossbuchstaben am Anfang). Warum?
 getTraegerschaften.$inject = ['TraegerschaftRS'];
+
 /* @ngInject */
 function getTraegerschaften(TraegerschaftRS: TraegerschaftRS) {
     return TraegerschaftRS.getAllActiveTraegerschaften();
@@ -92,6 +95,7 @@ function getTraegerschaften(TraegerschaftRS: TraegerschaftRS) {
 
 // FIXME dieses $inject wird ignoriert, d.h, der Parameter der Funktion muss exact dem Namen des Services entsprechen (Grossbuchstaben am Anfang). Warum?
 getMandant.$inject = ['MandantRS'];
+
 /* @ngInject */
 function getMandant(MandantRS: MandantRS) {
     return MandantRS.getFirst();

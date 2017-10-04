@@ -15,6 +15,8 @@
 
 package ch.dvbern.ebegu.rules;
 
+import java.util.List;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.PensumFachstelle;
@@ -23,8 +25,6 @@ import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.List;
 
 /**
  * Tests fuer die Regel WohnhaftImGleichenHaushaltRule
@@ -91,7 +91,6 @@ public class WohnhaftImGleichenHaushaltRuleTest {
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(30, result.get(0).getAnspruchberechtigtesPensum());
 	}
-
 
 	private Betreuung prepareData(final int pensum, final Integer prozentImGleichemHaushalt, int fachstelle) {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);

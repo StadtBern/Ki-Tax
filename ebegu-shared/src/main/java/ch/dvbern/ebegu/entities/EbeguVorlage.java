@@ -15,6 +15,19 @@
 
 package ch.dvbern.ebegu.entities;
 
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.types.DateRange;
@@ -22,19 +35,12 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.Objects;
-
 /**
  * Entitaet zum Speichern von zeitabhängigen Vorlagen in Ki-Tax
  */
 @Audited
 @Entity
 public class EbeguVorlage extends AbstractDateRangedEntity implements Comparable<EbeguVorlage> {
-
 
 	private static final long serialVersionUID = 8704632842261673111L;
 
@@ -96,7 +102,6 @@ public class EbeguVorlage extends AbstractDateRangedEntity implements Comparable
 	}
 
 	/**
-	 * @param gueltigkeit
 	 * @return a copy of the current Param with the gueltigkeit set to the passed DateRange
 	 */
 	public EbeguVorlage copy(DateRange gueltigkeit) {

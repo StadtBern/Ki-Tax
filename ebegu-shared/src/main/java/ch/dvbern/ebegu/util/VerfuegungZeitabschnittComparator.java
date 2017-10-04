@@ -15,10 +15,10 @@
 
 package ch.dvbern.ebegu.util;
 
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-
 import java.io.Serializable;
 import java.util.Comparator;
+
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 
 /**
  * Comparator, der die VerfuegungsZeitabschnitte nach Datum-Von sortiert.

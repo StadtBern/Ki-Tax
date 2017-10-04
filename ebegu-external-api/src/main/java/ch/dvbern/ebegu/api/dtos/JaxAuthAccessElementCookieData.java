@@ -55,7 +55,6 @@ public class JaxAuthAccessElementCookieData implements Serializable {
 			access.getRole());
 	}
 
-
 	@Nonnull
 	public String getAuthId() {
 		return authId;

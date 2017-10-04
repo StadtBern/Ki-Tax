@@ -66,7 +66,6 @@ public class MutationsMerger {
 		}
 		final Verfuegung verfuegungOnGesuchForMutation = betreuung.getVorgaengerVerfuegung();
 
-
 		final LocalDate mutationsEingansdatum = betreuung.extractGesuch().getEingangsdatum();
 
 		List<VerfuegungZeitabschnitt> monatsSchritte = new ArrayList<>();
@@ -100,7 +99,6 @@ public class MutationsMerger {
 			if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()
 				&& !isMeldungRechzeitig(zeitabschnitt, mutationsEingansdatum)
 				&& verfuegungOnGesuchForMutation != null) {
-
 
 				VerfuegungZeitabschnitt zeitabschnittInVorgaenger = findZeitabschnittInVorgaenger(zeitabschnittStart, verfuegungOnGesuchForMutation);
 				// Wenn der Benutzer vorher keine Verfuenstigung bekam weil er zu spaet eingereicht hat DANN bezahlt er auch in Mutation vollkosten

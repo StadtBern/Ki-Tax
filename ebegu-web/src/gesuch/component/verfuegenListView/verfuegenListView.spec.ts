@@ -21,7 +21,7 @@ import {VerfuegenListViewController} from './verfuegenListView';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSKindContainer from '../../../models/TSKindContainer';
 import BerechnungsManager from '../../service/berechnungsManager';
-import {IQService, IScope, IHttpBackendService} from 'angular';
+import {IHttpBackendService, IQService, IScope} from 'angular';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 

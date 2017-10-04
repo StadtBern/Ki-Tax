@@ -66,7 +66,7 @@ public class ExportDTOMarshallingTest {
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
 		// Write to System.out
-//		marshaller.marshal(exportDTO, System.out);
+		//		marshaller.marshal(exportDTO, System.out);
 
 		File createdFile = folder.newFile("myTestExportDto.xml");
 		marshaller.marshal(exportDTO, createdFile);
@@ -82,7 +82,6 @@ public class ExportDTOMarshallingTest {
 		Assert.assertEquals(exportDTO, readBeackVerfuegung);
 	}
 
-
 	@Test
 	public void testUnmarshallingPredefined() throws JAXBException, IOException {
 
@@ -90,7 +89,6 @@ public class ExportDTOMarshallingTest {
 		Marshaller marshaller = context.createMarshaller();
 
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
 
 		InputStream fileToRead = this.getClass().getResourceAsStream("exportVerfuegungenTest.xml");
 		// get variables from our xml file, created before
@@ -108,11 +106,9 @@ public class ExportDTOMarshallingTest {
 		Assert.assertEquals(exportDTO, readBeackVerfuegung);
 	}
 
-
 	@Nonnull
 	private VerfuegungenExportDTO createTestdata() {
 		VerfuegungenExportDTO exportDTO = new VerfuegungenExportDTO();
-
 
 		VerfuegungExportDTO verfuegungExportDTO = new VerfuegungExportDTO();
 		List<VerfuegungExportDTO> listToExport = new ArrayList<>();

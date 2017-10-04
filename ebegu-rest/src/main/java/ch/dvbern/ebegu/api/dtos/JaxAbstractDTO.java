@@ -15,7 +15,6 @@
 
 package ch.dvbern.ebegu.api.dtos;
 
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -48,7 +47,6 @@ public abstract class JaxAbstractDTO implements Serializable, Comparable<JaxAbst
 
 	@Nullable
 	private String vorgaengerId;
-
 
 	protected JaxAbstractDTO() {
 		// nop

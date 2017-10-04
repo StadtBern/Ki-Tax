@@ -44,7 +44,6 @@ export default class TSBetreuung extends TSAbstractEntity {
     private _abwesenheitMutiert: boolean;
     private _gueltig: boolean;
 
-
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
                 betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, abwesenheitContainers?: Array<TSAbwesenheitContainer>,
                 betreuungNummer?: number, verfuegung?: TSVerfuegung, vertrag?: boolean, erweiterteBeduerfnisse?: boolean,

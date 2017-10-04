@@ -15,6 +15,11 @@
 
 package ch.dvbern.ebegu.rules;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
@@ -24,16 +29,10 @@ import ch.dvbern.ebegu.util.Constants;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Tests für die Hilfsmethoden auf AbstractEbeguRule
  */
 public class AbstractEbeguRuleTest {
-
 
 	private final DateRange defaultGueltigkeit = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
 	private final ErwerbspensumAbschnittRule erwerbspensumRule = new ErwerbspensumAbschnittRule(defaultGueltigkeit);
@@ -63,7 +62,6 @@ public class AbstractEbeguRuleTest {
 		alles.addAll(erwerbspensen);
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.mergeZeitabschnitte(alles);
 		// 01.01.1900 - DATUM1-1, DATUM1 - DATUM2-1, DATUM2 - DATUM3, DATUM3+1 - DATUM 4,  DATUM4+1 - 31.12.9999
-
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(5, result.size());

@@ -36,7 +36,6 @@ public class JaxFinanzielleSituation extends JaxAbstractFinanzielleSituation {
 
 	private BigDecimal geschaeftsgewinnBasisjahrMinus1;
 
-
 	public BigDecimal getNettolohn() {
 		return nettolohn;
 	}

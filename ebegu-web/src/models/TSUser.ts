@@ -13,7 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {TSRole, rolePrefix} from './enums/TSRole';
+import {rolePrefix, TSRole} from './enums/TSRole';
 import {TSMandant} from './TSMandant';
 import {TSTraegerschaft} from './TSTraegerschaft';
 import TSInstitution from './TSInstitution';
@@ -42,7 +42,6 @@ export default class TSUser {
         this._traegerschaft = traegerschaft;
         this._institution = institution;
     }
-
 
     get nachname(): string {
         return this._nachname;

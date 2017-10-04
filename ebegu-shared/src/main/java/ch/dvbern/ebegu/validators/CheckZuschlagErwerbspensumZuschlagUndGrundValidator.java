@@ -15,10 +15,10 @@
 
 package ch.dvbern.ebegu.validators;
 
-import ch.dvbern.ebegu.entities.Erwerbspensum;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import ch.dvbern.ebegu.entities.Erwerbspensum;
 
 public class CheckZuschlagErwerbspensumZuschlagUndGrundValidator implements ConstraintValidator<CheckZuschlagErwerbspensumZuschlagUndGrund, Erwerbspensum> {
 

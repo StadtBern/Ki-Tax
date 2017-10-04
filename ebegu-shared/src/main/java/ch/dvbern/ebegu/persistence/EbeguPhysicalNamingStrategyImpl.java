@@ -15,11 +15,11 @@
 
 package ch.dvbern.ebegu.persistence;
 
+import java.util.Locale;
+
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
-
-import java.util.Locale;
 
 /**
  * Created by imanol on 04.03.16.
@@ -44,12 +44,11 @@ public class EbeguPhysicalNamingStrategyImpl extends PhysicalNamingStrategyStand
 		return new Identifier(addUnderscores(name.getText()), name.isQuoted());
 	}
 
-
 	protected static String addUnderscores(String name) {
 		final StringBuilder buf = new StringBuilder(name.replace('.', '_'));
 		for (int i = 1; i < buf.length() - 1; i++) {
 			if (Character.isLowerCase(buf.charAt(i - 1)) && Character.isUpperCase(buf.charAt(i))
-					&& Character.isLowerCase(buf.charAt(i + 1))) {
+				&& Character.isLowerCase(buf.charAt(i + 1))) {
 				buf.insert(i++, '_');
 			}
 		}

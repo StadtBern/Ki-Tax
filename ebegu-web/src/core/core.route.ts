@@ -25,15 +25,15 @@ import ErrorService from './errors/service/ErrorService';
 import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest';
 import TSApplicationProperty from '../models/TSApplicationProperty';
 import GesuchModelManager from '../gesuch/service/gesuchModelManager';
+import GesuchsperiodeRS from './service/gesuchsperiodeRS.rest';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
 import ILocationService = angular.ILocationService;
 import ILogService = angular.ILogService;
 import IInjectorService = angular.auto.IInjectorService;
-import GesuchsperiodeRS from './service/gesuchsperiodeRS.rest';
 
 appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'MandantRS', '$injector', '$rootScope', 'hotkeys',
-    '$timeout', 'AuthServiceRS', '$state', '$location', '$window', '$log' , 'ErrorService', 'GesuchModelManager', 'GesuchsperiodeRS'];
+    '$timeout', 'AuthServiceRS', '$state', '$location', '$window', '$log', 'ErrorService', 'GesuchModelManager', 'GesuchsperiodeRS'];
 
 /* @ngInject */
 export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS,
@@ -44,7 +44,7 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
     // navigationLogger.toggle();
 
     // Fehler beim Navigieren ueber ui-route ins Log schreiben
-    $rootScope.$on('$stateChangeError',  (event, toState, toParams, fromState, fromParams, error) => {
+    $rootScope.$on('$stateChangeError', (event, toState, toParams, fromState, fromParams, error) => {
         $log.error('Fehler beim Navigieren');
         $log.error('$stateChangeError --- event, toState, toParams, fromState, fromParams, error');
         $log.error(event, toState, toParams, fromState, fromParams, error);
@@ -61,14 +61,13 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
                 event.preventDefault();
             }
         });
-    $rootScope.$on('$stateChangeSuccess',  (event, toState, toParams, fromState, fromParams) => {
+    $rootScope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
         errorService.clearAll();
     });
 
     routerHelper.configureStates(getStates(), '/start');
     angularMomentConfig.format = 'DD.MM.YYYY';
     // dieser call macht mit tests probleme, daher wird er fuer test auskommentiert
-
 
     // not used anymore?
     $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
@@ -83,7 +82,6 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
         gesuchModelManager.updateFachstellenList();
         gesuchModelManager.updateActiveInstitutionenList();
     });
-
 
     $rootScope.$on(TSAuthEvent[TSAuthEvent.NOT_AUTHENTICATED], () => {
         //user is not yet authenticated, show loginpage
@@ -103,7 +101,6 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
         }
 
     });
-
 
     // Attempt to restore a user session upon startup
     if (authServiceRS.initWithCookie()) {

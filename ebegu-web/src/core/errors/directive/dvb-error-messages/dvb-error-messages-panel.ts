@@ -14,16 +14,17 @@
  */
 
 import IComponentOptions = angular.IComponentOptions;
+import IScope = angular.IScope;
 import {TSMessageEvent} from '../../../../models/enums/TSErrorEvent';
 import ErrorService from '../../service/ErrorService';
 import TSExceptionReport from '../../../../models/TSExceptionReport';
 import {TSErrorLevel} from '../../../../models/enums/TSErrorLevel';
-import IScope = angular.IScope;
 import {TSRoleUtil} from '../../../../utils/TSRoleUtil';
 import {TSErrorAction} from '../../../../models/enums/TSErrorAction';
 import {DvDialog} from '../../../directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../../gesuch/dialog/RemoveDialogController';
 import GesuchRS from '../../../../gesuch/service/gesuchRS.rest';
+
 let templ = require('./dvb-error-messages-panel.html');
 let style = require('./dvb-error-messages-panel.less');
 let removeDialogTemplate = require('../../../../gesuch/dialog/removeDialogTemplate.html');

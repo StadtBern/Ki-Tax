@@ -14,7 +14,7 @@
  */
 
 import GesuchRS from '../../gesuch/service/gesuchRS.rest';
-import {IScope, IQService, IFilterService, IHttpBackendService} from 'angular';
+import {IFilterService, IHttpBackendService, IQService, IScope} from 'angular';
 import GesuchModelManager from '../../gesuch/service/gesuchModelManager';
 import BerechnungsManager from '../../gesuch/service/berechnungsManager';
 import {IStateService} from 'angular-ui-router';
@@ -29,7 +29,6 @@ import TSGesuch from '../../models/TSGesuch';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
-
 
 describe('faelleListView', function () {
 

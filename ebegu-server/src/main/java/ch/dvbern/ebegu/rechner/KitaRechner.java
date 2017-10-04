@@ -31,7 +31,6 @@ import ch.dvbern.ebegu.util.MathUtil;
  */
 public class KitaRechner extends AbstractBGRechner {
 
-
 	@Override
 	public VerfuegungZeitabschnitt calculate(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Verfuegung verfuegung, BGRechnerParameterDTO parameterDTO) {
 		// Benoetigte Daten
@@ -57,7 +56,6 @@ public class KitaRechner extends AbstractBGRechner {
 		final BigDecimal beitragStadtProTagJahr = getBeitragStadtProTagJahr(parameterDTO, verfuegung.getBetreuung().extractGesuch().getGesuchsperiode(), von);
 		BigDecimal abgeltungProTag = MathUtil.EXACT.add(parameterDTO.getBeitragKantonProTag(), beitragStadtProTagJahr);
 		// Massgebendes Einkommen: Minimum und Maximum berücksichtigen
-
 
 		BigDecimal massgebendesEinkommenBerechnet = (massgebendesEinkommen.max(parameterDTO.getMassgebendesEinkommenMinimal())).min(parameterDTO.getMassgebendesEinkommenMaximal());
 		// Öffnungstage und Öffnungsstunden; Maximum berücksichtigen
@@ -88,7 +86,6 @@ public class KitaRechner extends AbstractBGRechner {
 		} else {
 			elternbeitragIntervall = MathUtil.EXACT.multiply(elternbeitrag, anteilMonat);
 		}
-
 
 		verfuegungZeitabschnitt.setVollkosten(MathUtil.roundToFrankenRappen(vollkostenIntervall));
 		verfuegungZeitabschnitt.setElternbeitrag(MathUtil.roundToFrankenRappen(elternbeitragIntervall));

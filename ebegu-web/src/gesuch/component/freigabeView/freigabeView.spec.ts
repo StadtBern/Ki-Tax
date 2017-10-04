@@ -27,13 +27,13 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
 import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
 import {EbeguWebAdmin} from '../../../admin/admin.module';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {ITimeoutService} from 'angular';
 import IScope = angular.IScope;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import IHttpBackendService = angular.IHttpBackendService;
 import IFormController = angular.IFormController;
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {ITimeoutService} from 'angular';
 
 describe('freigabeView', function () {
 

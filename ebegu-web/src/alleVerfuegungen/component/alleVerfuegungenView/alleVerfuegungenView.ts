@@ -14,6 +14,9 @@
  */
 
 import IComponentOptions = angular.IComponentOptions;
+import IStateService = angular.ui.IStateService;
+import ITimeoutService = angular.ITimeoutService;
+import ILogService = angular.ILogService;
 import TSFall from '../../../models/TSFall';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
@@ -26,9 +29,6 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
-import IStateService = angular.ui.IStateService;
-import ITimeoutService = angular.ITimeoutService;
-import ILogService = angular.ILogService;
 import EbeguUtil from '../../../utils/EbeguUtil';
 
 let template = require('./alleVerfuegungenView.html');

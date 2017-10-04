@@ -80,8 +80,6 @@ public abstract class AbstractTestfall {
 	public static final String ID_INSTITUTION_BRUENNEN = "1b6f476f-e0f5-4380-9ef6-836d688853a3";
 	public static final String ID_INSTITUTION_STAMMDATEN_BRUENNEN_KITA = "9a0eb656-b6b7-4613-8f55-4e0e4720455e";
 
-
-
 	protected final Gesuchsperiode gesuchsperiode;
 	protected final Collection<InstitutionStammdaten> institutionStammdatenList;
 

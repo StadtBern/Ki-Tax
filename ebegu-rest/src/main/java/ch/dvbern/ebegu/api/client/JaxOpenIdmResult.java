@@ -15,16 +15,16 @@
 
 package ch.dvbern.ebegu.api.client;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
-
 
 /**
  * Jax Element for OpenIdm Result element
  */
-@SuppressWarnings({"InstanceVariableNamingConvention", "InstanceMethodNamingConvention"})
+@SuppressWarnings({ "InstanceVariableNamingConvention", "InstanceMethodNamingConvention" })
 @XmlRootElement(name = "institutionOpenIdm")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxOpenIdmResult implements Serializable {

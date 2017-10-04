@@ -38,10 +38,8 @@ public class PensumFachstelle extends AbstractPensumEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_pensum_fachstelle_fachstelle_id"))
 	private Fachstelle fachstelle;
 
-
 	public PensumFachstelle() {
 	}
-
 
 	public Fachstelle getFachstelle() {
 		return fachstelle;

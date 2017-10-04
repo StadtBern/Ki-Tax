@@ -45,8 +45,6 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class GesuchstellerResourceTest extends AbstractEbeguRestLoginTest {
 
-
-
 	@Inject
 	private GesuchstellerResource gesuchstellerResource;
 	@Inject
@@ -67,7 +65,6 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestLoginTest {
 		JaxGesuchstellerContainer testJaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
 		JaxGesuchstellerContainer jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, false, testJaxGesuchsteller, null, null);
 		Assert.assertNotNull(jaxGesuchsteller);
-
 
 	}
 
@@ -137,15 +134,12 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestLoginTest {
 
 	}
 
-
-
 	@Test
 	public void updateGesuchstellerTest2() throws EbeguException {
 		JaxGesuchstellerContainer testJaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
 		JaxGesuchstellerContainer jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, false, testJaxGesuchsteller, null, null);
 		JaxAdresseContainer korrespondenzAdr = TestJaxDataUtil.createTestJaxAdr("umzugadr");
 		korrespondenzAdr.getAdresseJA().setOrganisation("Test");
-
 
 		jaxGesuchsteller.setAlternativeAdresse(korrespondenzAdr);
 		jaxGesuchsteller.getAlternativeAdresse().getAdresseJA().setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
@@ -156,6 +150,5 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestLoginTest {
 			korrespondenzAdr.getAdresseJA().getOrganisation());
 
 	}
-
 
 }
