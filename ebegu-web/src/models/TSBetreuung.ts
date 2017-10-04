@@ -213,8 +213,16 @@ export default class TSBetreuung extends TSAbstractEntity {
     }
 
     public isAngebotKITA(): boolean {
+       return this.isAngebot(TSBetreuungsangebotTyp.KITA);
+    }
+
+    public isAngebotTagesschule(): boolean {
+       return this.isAngebot(TSBetreuungsangebotTyp.TAGESSCHULE);
+    }
+
+    private isAngebot(typ: TSBetreuungsangebotTyp) {
         if (this.institutionStammdaten && this.institutionStammdaten.betreuungsangebotTyp) {
-            return this.institutionStammdaten.betreuungsangebotTyp === TSBetreuungsangebotTyp.KITA;
+            return this.institutionStammdaten.betreuungsangebotTyp === typ;
         }
         return false;
     }
