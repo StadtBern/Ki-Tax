@@ -37,7 +37,7 @@ public class PDFFontUtil {
 		FontFactory.defaultEmbedding = true;
 
         /*
-        // Auskommentiert, Seitenummer Problem, DABU 07.06.2015
+		// Auskommentiert, Seitenummer Problem, DABU 07.06.2015
         // Dazu PDFBox im Kom. Modul < 2.0 kann nicht Dokumente mit embedded Fonts korrekt drucken ("Fett Problem")
         FontFactory.register(TTF_ARIAL_RESOURCE, FONT_FACE_ARIAL);
         FontFactory.register(TTF_CALIBRI_RESOURCE, FONT_FACE_CALIBRI);
