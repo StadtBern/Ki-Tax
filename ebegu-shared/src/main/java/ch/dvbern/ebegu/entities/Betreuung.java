@@ -109,6 +109,11 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_verfuegung_id"), nullable = true)
 	private Verfuegung verfuegung;
 
+	@Nullable
+	@OneToOne(optional = true, cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_belegung_id"), nullable = true)
+	private Belegung belegung;
+
 	@NotNull
 	@Column(nullable = false)
 	private Boolean vertrag = false;
@@ -204,6 +209,15 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 
 	public void setVerfuegung(Verfuegung verfuegung) {
 		this.verfuegung = verfuegung;
+	}
+
+	@Nullable
+	public Belegung getBelegung() {
+		return belegung;
+	}
+
+	public void setBelegung(@Nullable Belegung belegung) {
+		this.belegung = belegung;
 	}
 
 	public Boolean getVertrag() {

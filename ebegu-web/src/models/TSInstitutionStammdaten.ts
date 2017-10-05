@@ -3,6 +3,7 @@ import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import {TSDateRange} from './types/TSDateRange';
 import {TSAbstractDateRangedEntity} from './TSAbstractDateRangedEntity';
 import TSAdresse from './TSAdresse';
+import TSModul from './TSModul';
 
 export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity {
 
@@ -14,10 +15,12 @@ export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity 
     private _adresse: TSAdresse;
     private _kontoinhaber: string;
     private _adresseKontoinhaber: TSAdresse;
+    private _module: Array<TSModul>;
 
 
     constructor(iban?: string, oeffnungstage?: number, oeffnungsstunden?: number, betreuungsangebotTyp?: TSBetreuungsangebotTyp,
-                institution?: TSInstitution, adresse?: TSAdresse, gueltigkeit?: TSDateRange, kontoinhaber?: string, adresseKontoinhaber?: TSAdresse) {
+                institution?: TSInstitution, adresse?: TSAdresse, gueltigkeit?: TSDateRange, kontoinhaber?: string,
+                adresseKontoinhaber?: TSAdresse, module?: Array<TSModul>) {
         super(gueltigkeit);
         this._iban = iban;
         this._oeffnungstage = oeffnungstage;
@@ -27,6 +30,7 @@ export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity 
         this._adresse = adresse;
         this._kontoinhaber = kontoinhaber;
         this._adresseKontoinhaber = adresseKontoinhaber;
+        this._module = module;
     }
 
 
@@ -92,5 +96,13 @@ export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity 
 
     public set adresseKontoinhaber(value: TSAdresse) {
         this._adresseKontoinhaber = value;
+    }
+
+    public get module(): Array<TSModul> {
+        return this._module;
+    }
+
+    public set module(value: Array<TSModul>) {
+        this._module = value;
     }
 }

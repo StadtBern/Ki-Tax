@@ -105,8 +105,10 @@ public class DownloadResourceTest extends AbstractEbeguRestLoginTest {
 		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.FINANZIELLE_SITUATION);
 	}
 
+	@Transactional(TransactionMode.DEFAULT)
 	@Test
 	public void getMahnungDokumentAccessTokenGeneratedDokumentTest() throws MergeDocException, IOException, DocTemplateException, MimeTypeParseException {
+		loginAsSachbearbeiterJA();
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		TestDataUtil.prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit(), persistence);
 

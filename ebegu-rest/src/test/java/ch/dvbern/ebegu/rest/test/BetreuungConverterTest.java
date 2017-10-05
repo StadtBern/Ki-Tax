@@ -1,25 +1,32 @@
 package ch.dvbern.ebegu.rest.test;
 
+import javax.inject.Inject;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxPensumFachstelle;
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Fachstelle;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.PensumFachstelle;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-
 /**
  * Tests der die Konvertierung von Betreuungen prueft
  */
 @RunWith(Arquillian.class)
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class BetreuungConverterTest extends AbstractEbeguRestLoginTest {
 
@@ -34,8 +41,10 @@ public class BetreuungConverterTest extends AbstractEbeguRestLoginTest {
 	/**
 	 * transformiert einen gespeichertes Betreuungen nach jax und wieder zurueck. wir erwarten das Daten gleich bleiben
 	 */
+	@Transactional(TransactionMode.DEFAULT)
 	@Test
 	public void convertPersistedTestEntityToJax(){
+		loginAsSachbearbeiterJA();
 		Betreuung betreuung = insertNewEntity();
 		JaxBetreuung jaxBetr = this.converter.betreuungToJAX(betreuung);
 		Betreuung betrToEntity = this.converter.betreuungToEntity(jaxBetr, new Betreuung());
@@ -50,7 +59,8 @@ public class BetreuungConverterTest extends AbstractEbeguRestLoginTest {
 		Assert.assertEquals(Constants.END_OF_TIME, kind.getKindJA().getPensumFachstelle().getGueltigkeit().getGueltigBis());
 
 		JaxPensumFachstelle jaxPenFachstelle = converter.pensumFachstelleToJax(kind.getKindJA().getPensumFachstelle());
-		Assert.assertNull("Gueltig bis wird nicht transformiert",jaxPenFachstelle.getGueltigBis());
+		Assert.assertNotNull("Es darf nicht null sein", jaxPenFachstelle);
+		Assert.assertNull("Gueltig bis wird nicht transformiert", jaxPenFachstelle.getGueltigBis());
 
 		PensumFachstelle reconvertedPensum = converter.pensumFachstelleToEntity(jaxPenFachstelle, new PensumFachstelle());
 		Assert.assertEquals(Constants.END_OF_TIME, reconvertedPensum.getGueltigkeit().getGueltigBis());
@@ -78,7 +88,6 @@ public class BetreuungConverterTest extends AbstractEbeguRestLoginTest {
 		persistence.persist(instStammdaten.getInstitution().getTraegerschaft());
 		persistence.persist(instStammdaten.getInstitution());
 		persistence.persist(instStammdaten);
-
 
 		kind.getKindGS().setPensumFachstelle(pensumFachstelle);
 		kind.getKindJA().setPensumFachstelle(pensumFachstelle2);

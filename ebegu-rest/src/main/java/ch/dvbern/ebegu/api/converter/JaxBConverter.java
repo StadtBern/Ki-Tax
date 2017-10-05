@@ -18,13 +18,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.hibernate.envers.DefaultRevisionEntity;
-import org.hibernate.envers.RevisionType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.api.dtos.JaxAbstractDTO;
 import ch.dvbern.ebegu.api.dtos.JaxAbstractDateRangedDTO;
@@ -38,6 +32,7 @@ import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
 import ch.dvbern.ebegu.api.dtos.JaxAntragStatusHistory;
 import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
+import ch.dvbern.ebegu.api.dtos.JaxBelegung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilungPensum;
@@ -75,6 +70,7 @@ import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
 import ch.dvbern.ebegu.api.dtos.JaxMahnung;
 import ch.dvbern.ebegu.api.dtos.JaxMandant;
 import ch.dvbern.ebegu.api.dtos.JaxMitteilung;
+import ch.dvbern.ebegu.api.dtos.JaxModul;
 import ch.dvbern.ebegu.api.dtos.JaxPensumFachstelle;
 import ch.dvbern.ebegu.api.dtos.JaxTraegerschaft;
 import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
@@ -84,8 +80,6 @@ import ch.dvbern.ebegu.api.dtos.JaxWizardStep;
 import ch.dvbern.ebegu.api.dtos.JaxZahlung;
 import ch.dvbern.ebegu.api.dtos.JaxZahlungsauftrag;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.authentication.AuthAccessElement;
-import ch.dvbern.ebegu.authentication.JaxAuthAccessElement;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.AbstractDateRangedEntity;
 import ch.dvbern.ebegu.entities.AbstractEntity;
@@ -97,6 +91,7 @@ import ch.dvbern.ebegu.entities.AbwesenheitContainer;
 import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.AntragStatusHistory;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.ebegu.entities.Belegung;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -134,6 +129,7 @@ import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Mitteilung;
+import ch.dvbern.ebegu.entities.Modul;
 import ch.dvbern.ebegu.entities.PensumFachstelle;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.entities.Verfuegung;
@@ -175,8 +171,14 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import ch.dvbern.lib.date.DateConvertUtils;
-import org.apache.commons.lang3.NotImplementedException;
 import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.hibernate.envers.DefaultRevisionEntity;
+import org.hibernate.envers.RevisionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -184,6 +186,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Dependent
 @SuppressWarnings({"PMD.NcssTypeCount", "unused"})
 public class JaxBConverter {
+
+	public static final String DROPPED_DUPLICATE_CONTAINER = "dropped duplicate container ";
 
 	@Inject
 	private GesuchstellerService gesuchstellerService;
@@ -1089,6 +1093,7 @@ public class JaxBConverter {
 			jaxInstStammdaten.setIban(persistedInstStammdaten.getIban().getIban());
 		}
 		jaxInstStammdaten.setBetreuungsangebotTyp(persistedInstStammdaten.getBetreuungsangebotTyp());
+		jaxInstStammdaten.setModule(moduleListToJax(persistedInstStammdaten.getModule()));
 		jaxInstStammdaten.setInstitution(institutionToJAX(persistedInstStammdaten.getInstitution()));
 		jaxInstStammdaten.setAdresse(adresseToJAX(persistedInstStammdaten.getAdresse()));
 		jaxInstStammdaten.setKontoinhaber(persistedInstStammdaten.getKontoinhaber());
@@ -1112,6 +1117,7 @@ public class JaxBConverter {
 			institutionStammdaten.setIban(new IBAN(institutionStammdatenJAXP.getIban()));
 		}
 		institutionStammdaten.setBetreuungsangebotTyp(institutionStammdatenJAXP.getBetreuungsangebotTyp());
+		moduleListToEntity(institutionStammdatenJAXP.getModule(), institutionStammdaten.getModule());
 
 		institutionStammdaten.setKontoinhaber(institutionStammdatenJAXP.getKontoinhaber());
 		if (institutionStammdatenJAXP.getAdresseKontoinhaber() != null) {
@@ -1133,6 +1139,41 @@ public class JaxBConverter {
 
 		return institutionStammdaten;
 
+	}
+
+	private void moduleListToEntity(@Nullable Set<JaxModul> jaxModule, @Nullable Set<Modul> existingModule) {
+		if (existingModule != null && jaxModule != null) {
+			final Set<Modul> transformedModule = new TreeSet<>();
+			for (final JaxModul jaxModul : jaxModule) {
+				final Modul modulToMergeWith = existingModule.stream().filter(existingModul -> existingModul.getId()
+					.equalsIgnoreCase(jaxModul.getId()))
+					.reduce(StreamsUtil.toOnlyElement())
+					.orElse(new Modul());
+				final Modul modulToAdd = modulToEntity(jaxModul, modulToMergeWith);
+				final boolean added = transformedModule.add(modulToAdd);
+				if (!added) {
+					LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + modulToAdd);
+				}
+			}
+			//change the existing collection to reflect changes
+			// Already tested: All existing Betreuungspensen of the list remain as they were, that means their data are updated
+
+			// and the objects are not created again. ID and InsertTimeStamp are the same as before
+			existingModule.clear();
+			existingModule.addAll(transformedModule);
+		}
+	}
+
+	@Nullable
+	private Modul modulToEntity(@Nullable JaxModul jaxModul, @NotNull Modul modul) {
+		if (jaxModul != null) {
+			convertAbstractFieldsToEntity(jaxModul, modul);
+			modul.setModulname(jaxModul.getModulname());
+			modul.setWochentag(jaxModul.getWochentag());
+			modul.setZeitVon(jaxModul.getZeitVon());
+			modul.setZeitBis(jaxModul.getZeitBis());
+		}
+		return null;
 	}
 
 	@Nonnull
@@ -1552,6 +1593,7 @@ public class JaxBConverter {
 		return erwerbspensum;
 	}
 
+	@Nullable
 	private JaxErwerbspensum erbwerbspensumToJax(@Nullable final Erwerbspensum pensum) {
 		if (pensum != null) {
 			JaxErwerbspensum jaxErwerbspensum = new JaxErwerbspensum();
@@ -1596,11 +1638,20 @@ public class JaxBConverter {
 		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
 		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
 		betreuung.setGueltig(betreuungJAXP.isGueltig());
+		betreuung.setBelegung(belegungToEntity(betreuungJAXP.getBelegung(), new Belegung()));
 
 		//ACHTUNG: Verfuegung wird hier nicht synchronisiert aus sicherheitsgruenden
 		return betreuung;
 	}
 
+	@Nullable
+	private Belegung belegungToEntity(@Nullable JaxBelegung belegungJAXP, @NotNull Belegung belegung) {
+		if (belegungJAXP != null) {
+			convertAbstractFieldsToEntity(belegungJAXP, belegung);
+			moduleListToEntity(belegungJAXP.getModule(), belegung.getModule());
+		}
+		return null;
+	}
 
 	public Betreuung betreuungToStoreableEntity(@Nonnull final JaxBetreuung betreuungJAXP) {
 		Validate.notNull(betreuungJAXP);
@@ -1644,7 +1695,7 @@ public class JaxBConverter {
 			final BetreuungspensumContainer contToAdd = betreuungspensumContainerToEntity(jaxBetPensContainer, containerToMergeWith);
 			final boolean added = transformedBetPenContainers.add(contToAdd);
 			if (!added) {
-				LOGGER.warn("dropped duplicate container " + contToAdd);
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + contToAdd);
 			}
 		}
 
@@ -1669,7 +1720,7 @@ public class JaxBConverter {
 			contToAdd.setId(oldID);
 			final boolean added = transformedAbwesenheitContainers.add(contToAdd);
 			if (!added) {
-				LOGGER.warn("dropped duplicate container " + contToAdd);
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + contToAdd);
 			}
 		}
 
@@ -1801,7 +1852,39 @@ public class JaxBConverter {
 		jaxBetreuung.setBetreuungMutiert(betreuungFromServer.getBetreuungMutiert());
 		jaxBetreuung.setAbwesenheitMutiert(betreuungFromServer.getAbwesenheitMutiert());
 		jaxBetreuung.setGueltig(betreuungFromServer.isGueltig());
+		jaxBetreuung.setBelegung(belegungToJax(betreuungFromServer.getBelegung()));
 		return jaxBetreuung;
+	}
+
+	@Nullable
+	private JaxBelegung belegungToJax(@Nullable Belegung belegungFromServer) {
+		if (belegungFromServer != null) {
+			final JaxBelegung jaxBelegung = new JaxBelegung();
+			convertAbstractFieldsToJAX(belegungFromServer, jaxBelegung);
+			jaxBelegung.setModule(moduleListToJax(belegungFromServer.getModule()));
+		}
+		return null;
+	}
+
+	private Set<JaxModul> moduleListToJax(@Nullable final Set<Modul> module) {
+		final Set<JaxModul> jaxModul = new TreeSet<>();
+		if (module != null) {
+			jaxModul.addAll(module.stream().map(this::modulToJAX).collect(Collectors.toList()));
+		}
+		return jaxModul;
+	}
+
+	@Nullable
+	private JaxModul modulToJAX(@Nullable Modul modul) {
+		if (modul != null) {
+			final JaxModul jaxModul = new JaxModul();
+			convertAbstractFieldsToJAX(modul, jaxModul);
+			jaxModul.setModulname(modul.getModulname());
+			jaxModul.setWochentag(modul.getWochentag());
+			jaxModul.setZeitBis(modul.getZeitBis());
+			jaxModul.setZeitVon(modul.getZeitVon());
+		}
+		return null;
 	}
 
 	/**
@@ -1810,6 +1893,7 @@ public class JaxBConverter {
 	 * @param verfuegung
 	 * @return dto with the values of the verfuegung
 	 */
+	@Nullable
 	public JaxVerfuegung verfuegungToJax(Verfuegung verfuegung) {
 		if (verfuegung != null) {
 			final JaxVerfuegung jaxVerfuegung = new JaxVerfuegung();
@@ -1880,6 +1964,7 @@ public class JaxBConverter {
 	}
 
 
+	@Nullable
 	private JaxVerfuegungZeitabschnitt verfuegungZeitabschnittToJax(VerfuegungZeitabschnitt zeitabschnitt) {
 		if (zeitabschnitt != null) {
 			final JaxVerfuegungZeitabschnitt jaxZeitabschn = new JaxVerfuegungZeitabschnitt();
@@ -1966,6 +2051,7 @@ public class JaxBConverter {
 		return jaxContainers;
 	}
 
+	@Nullable
 	private JaxAbwesenheit abwesenheitToJax(final Abwesenheit abwesenheit) {
 		if (abwesenheit != null) {
 			final JaxAbwesenheit jaxAbwesenheit = new JaxAbwesenheit();
@@ -1975,6 +2061,7 @@ public class JaxBConverter {
 		return null;
 	}
 
+	@Nullable
 	private JaxAbwesenheitContainer abwesenheitContainerToJax(final AbwesenheitContainer abwesenheitContainer) {
 		if (abwesenheitContainer != null) {
 			final JaxAbwesenheitContainer jaxAbwesenheitContainer = new JaxAbwesenheitContainer();
@@ -1990,6 +2077,7 @@ public class JaxBConverter {
 		return null;
 	}
 
+	@Nullable
 	private JaxBetreuungspensumContainer betreuungsPensumContainerToJax(final BetreuungspensumContainer betreuungspensumContainer) {
 		if (betreuungspensumContainer != null) {
 			final JaxBetreuungspensumContainer jaxBetreuungspensumContainer = new JaxBetreuungspensumContainer();
@@ -2144,7 +2232,7 @@ public class JaxBConverter {
 			final Dokument dokToAdd = dokumentToEntity(jaxDokument, dokumenteToMergeWith, dokumentGrund);
 			final boolean added = transformedDokumente.add(dokToAdd);
 			if (!added) {
-				LOGGER.warn("dropped duplicate container " + dokToAdd);
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + dokToAdd);
 			}
 		}
 
