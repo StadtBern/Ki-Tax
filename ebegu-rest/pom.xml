@@ -136,12 +136,6 @@
             <artifactId>activation</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!--gestrichen-->
-        <!--<dependency>-->
-        <!--<groupId>org.forgerock.http</groupId>-->
-        <!--<artifactId>chf-http-core</artifactId>-->
-        <!--<version>21.0.0</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>

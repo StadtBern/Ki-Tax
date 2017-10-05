@@ -23,6 +23,8 @@
         <artifactId>parent</artifactId>
         <groupId>ch.dvbern.maven</groupId>
         <version>6.0.0-rc3</version>
+        <!--<groupId>ch.dvbern.oss.maven</groupId>-->
+        <!--<version>1.0.3</version>-->
     </parent>
 
     <groupId>ch.dvbern.ebegu</groupId>
@@ -183,17 +185,6 @@
                 <artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
                 <version>1.0.6</version>
             </dependency>
-            <!--<dependency>-->
-            <!--<groupId>commons-codec</groupId>-->
-            <!--<artifactId>commons-codec</artifactId>-->
-            <!--<version>1.9</version>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
-            <!--&lt;!&ndash; Versionskonflikt &ndash;&gt;-->
-            <!--<groupId>org.jboss.logging</groupId>-->
-            <!--<artifactId>jboss-logging</artifactId>-->
-            <!--<version>3.1.4.GA</version>-->
-            <!--</dependency>-->
 
             <!-- Submodule-dependencies should be on the project version -->
             <dependency>
@@ -407,22 +398,10 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!--<dependency>-->
-            <!--<groupId>org.hibernate</groupId>-->
-            <!--<artifactId>hibernate-search-engine</artifactId>-->
-            <!--<version>${hibernate-search.version}</version>-->
-            <!--</dependency>-->
-            <!-- Infinispan integration: -->
             <dependency>
                 <groupId>org.infinispan</groupId>
                 <artifactId>infinispan-directory-provider</artifactId>
                 <version>8.1.0.Final</version>
-                <!--<exclusions>-->
-                <!--<exclusion>-->
-                <!--<artifactId>hibernate-search-engine</artifactId>-->
-                <!--<groupId>org.hibernate</groupId>-->
-                <!--</exclusion>-->
-                <!--</exclusions>-->
             </dependency>
             <!--um dependency konflikte zu vermeiden fixen wir die versionen von 2 mal angezogenen libs im dep management-->
             <dependency>
@@ -561,6 +540,13 @@
                 <version>2.2.0.Final</version>
                 <scope>provided</scope>
             </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <scope>test</scope>
+                <version>4.12</version>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>
@@ -590,11 +576,6 @@
             <groupId>ch.dvbern.oss.datehelper</groupId>
             <artifactId>date-helper</artifactId>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>ch.dvbern.lib</groupId>-->
-        <!--<artifactId>dvbern-lib-date</artifactId>-->
-        <!--</dependency>-->
-        <!-- Scope: test -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
