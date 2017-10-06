@@ -53,7 +53,9 @@
 
         <maven-checkstyle-plugin.version>2.15</maven-checkstyle-plugin.version>
         <maven-checkstyle.version>6.1.1</maven-checkstyle.version>
-        <ebegu-code-conventions.version>1.0.1</ebegu-code-conventions.version>
+        <ebegu-code-conventions.version>1.0.2</ebegu-code-conventions.version>
+        <maven-pmd-plugin.version>3.6</maven-pmd-plugin.version>
+        <findbugs-maven-plugin.version>3.0.3</findbugs-maven-plugin.version>
 
     </properties>
 
