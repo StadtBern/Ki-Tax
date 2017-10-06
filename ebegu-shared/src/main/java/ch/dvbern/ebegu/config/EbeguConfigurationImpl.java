@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 @Dependent
 public class EbeguConfigurationImpl extends SystemConfiguration implements EbeguConfiguration, Serializable {
-	private final Logger LOG = LoggerFactory.getLogger(EbeguConfigurationImpl.class.getSimpleName());
+	private static final Logger LOG = LoggerFactory.getLogger(EbeguConfigurationImpl.class.getSimpleName());
 
 	private static final long serialVersionUID = 463057263479503486L;
 	private static final String EBEGU_DEVELOPMENT_MODE = "ebegu.development.mode";

@@ -31,7 +31,10 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 /**
  * Allgemeine Utils fuer Dokumente
  */
-public class DokumenteUtil {
+public final class DokumenteUtil {
+
+	private DokumenteUtil() {
+	}
 
 	/**
 	 * Zusammenfügen der benötigten Dokument-Gruende (Dokumente die gem. den Angeben des GS gebraucht werden  und der

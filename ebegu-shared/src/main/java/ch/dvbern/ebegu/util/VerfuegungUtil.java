@@ -31,7 +31,10 @@ import ch.dvbern.ebegu.types.DateRange;
 /**
  * Allgemeine Utils fuer Verfuegung
  */
-public class VerfuegungUtil {
+public final class VerfuegungUtil {
+
+	private VerfuegungUtil() {
+	}
 
 	/**
 	 * Fuer die gegebene DateRange wird berechnet, wie viel Verguenstigung es insgesamt berechnet wurde.

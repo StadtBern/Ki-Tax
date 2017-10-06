@@ -37,7 +37,7 @@ public class JaxAbstractAntragDTO implements Serializable {
 	@NotNull
 	private String familienName;
 
-	protected String clazz;
+	private String clazz;
 
 	public JaxAbstractAntragDTO(String clazz) {
 		this.clazz = clazz;

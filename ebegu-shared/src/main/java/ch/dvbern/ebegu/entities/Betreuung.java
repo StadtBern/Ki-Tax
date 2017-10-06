@@ -360,9 +360,9 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@SuppressFBWarnings("NM_CONFUSING")
 	public String getBGNummer() {
 		if (getKind().getGesuch() != null) {
-			String kind = String.valueOf(getKind().getKindNummer());
+			String kindNumberAsString = String.valueOf(getKind().getKindNummer());
 			String betreuung = String.valueOf(getBetreuungNummer());
-			return getKind().getGesuch().getJahrAndFallnummer() + '.' + kind + '.' + betreuung;
+			return getKind().getGesuch().getJahrAndFallnummer() + '.' + kindNumberAsString + '.' + betreuung;
 		}
 		return "";
 	}

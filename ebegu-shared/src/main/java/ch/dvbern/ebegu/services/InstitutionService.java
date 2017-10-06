@@ -53,12 +53,12 @@ public interface InstitutionService {
 	/**
 	 * marks an Institution as inactive on the Database.
 	 */
-	Institution setInstitutionInactive(@Nonnull String InstitutionId);
+	Institution setInstitutionInactive(@Nonnull String institutionId);
 
 	/**
 	 * Delete Institution on the Database.
 	 */
-	void deleteInstitution(@Nonnull String InstitutionId);
+	void deleteInstitution(@Nonnull String institutionId);
 
 	/**
 	 * @param traegerschaftId Der ID der Traegerschaft, fuer welche die Institutionen gesucht werden muessen

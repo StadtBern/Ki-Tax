@@ -29,7 +29,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Allgemeine Utils fuer Betreuung
  */
-public class BetreuungUtil {
+public final class BetreuungUtil {
+
+	private BetreuungUtil() {
+	}
 
 	/**
 	 * Returns the corresponding minimum value for the given betreuungsangebotTyp.

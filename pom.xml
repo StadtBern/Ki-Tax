@@ -21,10 +21,8 @@
 
     <parent>
         <artifactId>parent</artifactId>
-        <groupId>ch.dvbern.maven</groupId>
-        <version>6.0.0-rc3</version>
-        <!--<groupId>ch.dvbern.oss.maven</groupId>-->
-        <!--<version>1.0.3</version>-->
+        <groupId>ch.dvbern.oss.maven</groupId>
+        <version>1.0.3</version>
     </parent>
 
     <groupId>ch.dvbern.ebegu</groupId>
@@ -52,6 +50,10 @@
         <version.slf4j>1.7.10</version.slf4j>
         <version.wildfly-arquillian-containers>2.0.2.Final</version.wildfly-arquillian-containers>
         <version.wildfly.container>10.0.0.Final</version.wildfly.container>
+
+        <maven-checkstyle-plugin.version>2.15</maven-checkstyle-plugin.version>
+        <maven-checkstyle.version>6.1.1</maven-checkstyle.version>
+        <ebegu-code-conventions.version>1.0.1</ebegu-code-conventions.version>
 
     </properties>
 
@@ -760,91 +762,75 @@
                     <deployAtEnd>true</deployAtEnd>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>checkstyle-check</id>
-                        <phase>validate</phase>
-                        <configuration>
-                            <skip>${skip-code-validation}</skip>
-                            <configLocation>checkstyle/rules/checkstyle/checkstyle-rules.xml</configLocation>
-                            <suppressionsLocation>checkstyle/rules/checkstyle/checkstyle-suppressions.xml
-                            </suppressionsLocation>
-                            <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
-                            <encoding>UTF-8</encoding>
-                            <consoleOutput>true</consoleOutput>
-                            <failsOnError>true</failsOnError>
-                            <failOnViolation>true</failOnViolation>
-                            <excludes>**/target/**/*</excludes>
-                            <!--<linkXRef>false</linkXRef>-->
-                        </configuration>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <configuration>
-                    <skip>${skip-code-validation}</skip>
-                    <failOnViolation>true</failOnViolation>
-                    <rulesets>
-                        <ruleset>http://sonar-neu/api/qualityprofiles/export?language=java&amp;name=DV%20Bern%20E-BEGU%20(veraltet)&amp;exporterKey=pmd</ruleset>
-                    </rulesets>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>pmd</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <configuration>
-                    <skip>${skip-code-validation}</skip>
-                    <!--
-                        Enables analysis which takes more memory but finds more bugs.
-                        If you run out of memory, changes the value of the effort element
-                        to 'Low'.
-                    -->
-                    <effort>Max</effort>
-                    <!-- Reports all bugs (other values are medium and max) -->
-                    <threshold>Low</threshold>
-                    <!-- Produces XML report -->
-                    <xmlOutput>true</xmlOutput>
-                    <!-- Configures the directory in which the XML report is created -->
-                    <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>
-                    <failOnError>true</failOnError>
-                    <includeFilterFile>checkstyle/rules/findbugs/findbugs-includes.xml</includeFilterFile>
-                    <excludeFilterFile>checkstyle/rules/findbugs/findbugs-excludes.xml</excludeFilterFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>findbugs</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-
             </plugin>
         </plugins>
 
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven-checkstyle-plugin.version}</version>
+                    <configuration>
+                        <configLocation>rules/ebegu/checkstyle/checkstyle-rules.xml</configLocation>
+                        <suppressionsLocation>rules/ebegu/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+                        <violationSeverity>error</violationSeverity>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>ch.dvbern.oss.maven</groupId>
+                            <artifactId>ebegu-code-conventions</artifactId>
+                            <version>${ebegu-code-conventions.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${maven-pmd-plugin.version}</version>
+                    <configuration>
+                        <rulesets>
+                            <ruleset>rules/ebegu/pmd/pmd-rules.xml</ruleset>
+                        </rulesets>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>ch.dvbern.oss.maven</groupId>
+                            <artifactId>ebegu-code-conventions</artifactId>
+                            <version>${ebegu-code-conventions.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>${findbugs-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>ch.dvbern.oss.maven</groupId>
+                            <artifactId>ebegu-code-conventions</artifactId>
+                            <version>${ebegu-code-conventions.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <includeFilterFile>rules/ebegu/findbugs/findbugs-includes.xml</includeFilterFile>
+                        <excludeFilterFile>rules/ebegu/findbugs/findbugs-excludes.xml</excludeFilterFile>
+                    </configuration>
+                </plugin>
+
                 <!-- You need the maven dependency plugin to download locally a zip with the server,
                 unless you provide your own, it will download under the /target directory -->
                 <plugin>
@@ -885,31 +871,6 @@
                     <version>2.10.2</version>
                 </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>2.15</version>
-                    <configuration>
-                        <skip>${skip-code-validation}</skip>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-pmd-plugin</artifactId>
-                    <version>3.6</version>
-                    <configuration>
-                        <skip>${skip-code-validation}</skip>
-
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>findbugs-maven-plugin</artifactId>
-                    <version>3.0.3</version>
-                    <configuration>
-                        <skip>${skip-code-validation}</skip>
-                    </configuration>
-                </plugin>
                 <plugin>
                     <groupId>de.juplo</groupId>
                     <artifactId>hibernate-maven-plugin</artifactId>

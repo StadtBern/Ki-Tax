@@ -99,36 +99,36 @@ public class FinanzielleSituationRechner {
 	 */
 	private void setEinkommensverschlechterungParameters(@Nonnull Gesuch gesuch, int basisJahrPlus,
 		final FinanzielleSituationResultateDTO einkVerResultDTO, boolean hasSecondGesuchsteller) {
-		Einkommensverschlechterung einkommensverschlechterungGS1_Bjp1 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller1(), 1);
-		Einkommensverschlechterung einkommensverschlechterungGS1_Bjp2 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller1(), 2);
+		Einkommensverschlechterung einkommensverschlechterungGS1Bjp1 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller1(), 1);
+		Einkommensverschlechterung einkommensverschlechterungGS1Bjp2 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller1(), 2);
 		final FinanzielleSituation finanzielleSituationGS1 = getFinanzielleSituationGS(gesuch.getGesuchsteller1());
 		einkVerResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller1(
-			calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS1, einkommensverschlechterungGS1_Bjp1, einkommensverschlechterungGS1_Bjp2,
+			calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS1, einkommensverschlechterungGS1Bjp1, einkommensverschlechterungGS1Bjp2,
 				gesuch.extractEinkommensverschlechterungInfo(), basisJahrPlus));
 
 		// Die Daten fuer GS 2 werden nur beruecksichtigt, wenn es (aktuell) zwei Gesuchsteller hat
-		Einkommensverschlechterung einkommensverschlechterungGS2_Bjp1 = null;
-		Einkommensverschlechterung einkommensverschlechterungGS2_Bjp2 = null;
+		Einkommensverschlechterung einkommensverschlechterungGS2Bjp1 = null;
+		Einkommensverschlechterung einkommensverschlechterungGS2Bjp2 = null;
 		if (hasSecondGesuchsteller) {
-			einkommensverschlechterungGS2_Bjp1 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller2(), 1);
-			einkommensverschlechterungGS2_Bjp2 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller2(), 2);
+			einkommensverschlechterungGS2Bjp1 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller2(), 1);
+			einkommensverschlechterungGS2Bjp2 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller2(), 2);
 			final FinanzielleSituation finanzielleSituationGS2 = getFinanzielleSituationGS(gesuch.getGesuchsteller2());
 			einkVerResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller2(
-				calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS2, einkommensverschlechterungGS2_Bjp1,
-					einkommensverschlechterungGS2_Bjp2, gesuch.extractEinkommensverschlechterungInfo(), basisJahrPlus));
+				calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS2, einkommensverschlechterungGS2Bjp1,
+					einkommensverschlechterungGS2Bjp2, gesuch.extractEinkommensverschlechterungInfo(), basisJahrPlus));
 		}
 
 		if (basisJahrPlus == 2) {
-			calculateZusammen(einkVerResultDTO, einkommensverschlechterungGS1_Bjp2,
-				calculateNettoJahresLohn(einkommensverschlechterungGS1_Bjp2),
+			calculateZusammen(einkVerResultDTO, einkommensverschlechterungGS1Bjp2,
+				calculateNettoJahresLohn(einkommensverschlechterungGS1Bjp2),
 				einkVerResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller1(),
-				einkommensverschlechterungGS2_Bjp2, calculateNettoJahresLohn(einkommensverschlechterungGS2_Bjp2),
+				einkommensverschlechterungGS2Bjp2, calculateNettoJahresLohn(einkommensverschlechterungGS2Bjp2),
 				einkVerResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller2());
 		} else {
-			calculateZusammen(einkVerResultDTO, einkommensverschlechterungGS1_Bjp1,
-				calculateNettoJahresLohn(einkommensverschlechterungGS1_Bjp1),
+			calculateZusammen(einkVerResultDTO, einkommensverschlechterungGS1Bjp1,
+				calculateNettoJahresLohn(einkommensverschlechterungGS1Bjp1),
 				einkVerResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller1(),
-				einkommensverschlechterungGS2_Bjp1, calculateNettoJahresLohn(einkommensverschlechterungGS2_Bjp1),
+				einkommensverschlechterungGS2Bjp1, calculateNettoJahresLohn(einkommensverschlechterungGS2Bjp1),
 				einkVerResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller2());
 		}
 	}
@@ -139,72 +139,72 @@ public class FinanzielleSituationRechner {
 	 * @param gesuch das Gesuch dessen finazDatenDTO gesetzt werden soll
 	 */
 	public void calculateFinanzDaten(@Nonnull Gesuch gesuch, BigDecimal minimumEKV) {
-		FinanzDatenDTO finanzDatenDTO_alleine = new FinanzDatenDTO();
-		FinanzDatenDTO finanzDatenDTO_zuZweit = new FinanzDatenDTO();
+		FinanzDatenDTO finanzDatenDTOAlleine = new FinanzDatenDTO();
+		FinanzDatenDTO finanzDatenDTOZuZweit = new FinanzDatenDTO();
 
 		// Finanzielle Situation berechnen
-		FinanzielleSituationResultateDTO finanzielleSituationResultateDTO_alleine = calculateResultateFinanzielleSituation(gesuch, false);
-		FinanzielleSituationResultateDTO finanzielleSituationResultateDTO_zuZweit = calculateResultateFinanzielleSituation(gesuch, true);
+		FinanzielleSituationResultateDTO finanzielleSituationResultateDTOAlleine = calculateResultateFinanzielleSituation(gesuch, false);
+		FinanzielleSituationResultateDTO finanzielleSituationResultateDTOZuZweit = calculateResultateFinanzielleSituation(gesuch, true);
 
-		finanzDatenDTO_alleine.setMassgebendesEinkBjVorAbzFamGr(finanzielleSituationResultateDTO_alleine.getMassgebendesEinkVorAbzFamGr());
-		finanzDatenDTO_alleine.setDatumVonBasisjahr(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
-		finanzDatenDTO_zuZweit.setMassgebendesEinkBjVorAbzFamGr(finanzielleSituationResultateDTO_zuZweit.getMassgebendesEinkVorAbzFamGr());
-		finanzDatenDTO_zuZweit.setDatumVonBasisjahr(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
+		finanzDatenDTOAlleine.setMassgebendesEinkBjVorAbzFamGr(finanzielleSituationResultateDTOAlleine.getMassgebendesEinkVorAbzFamGr());
+		finanzDatenDTOAlleine.setDatumVonBasisjahr(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
+		finanzDatenDTOZuZweit.setMassgebendesEinkBjVorAbzFamGr(finanzielleSituationResultateDTOZuZweit.getMassgebendesEinkVorAbzFamGr());
+		finanzDatenDTOZuZweit.setDatumVonBasisjahr(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
 
 		//Berechnung wird nur ausgefuehrt wenn Daten vorhanden, wenn es keine gibt machen wir nichts
 		EinkommensverschlechterungInfo ekvInfo = gesuch.extractEinkommensverschlechterungInfo();
 		if (ekvInfo != null && ekvInfo.getEinkommensverschlechterung()) {
-			FinanzielleSituationResultateDTO resultateEKV1_alleine = calculateResultateEinkommensverschlechterung(gesuch, 1, false);
-			FinanzielleSituationResultateDTO resultateEKV1_zuZweit = calculateResultateEinkommensverschlechterung(gesuch, 1, true);
-			BigDecimal massgebendesEinkommenBasisjahr_alleine = finanzielleSituationResultateDTO_alleine.getMassgebendesEinkVorAbzFamGr();
-			BigDecimal massgebendesEinkommenBasisjahr_zuZweit = finanzielleSituationResultateDTO_zuZweit.getMassgebendesEinkVorAbzFamGr();
+			FinanzielleSituationResultateDTO resultateEKV1Alleine = calculateResultateEinkommensverschlechterung(gesuch, 1, false);
+			FinanzielleSituationResultateDTO resultateEKV1ZuZweit = calculateResultateEinkommensverschlechterung(gesuch, 1, true);
+			BigDecimal massgebendesEinkommenBasisjahrAlleine = finanzielleSituationResultateDTOAlleine.getMassgebendesEinkVorAbzFamGr();
+			BigDecimal massgebendesEinkommenBasisjahrZuZweit = finanzielleSituationResultateDTOZuZweit.getMassgebendesEinkVorAbzFamGr();
 
 			if (ekvInfo.getEkvFuerBasisJahrPlus1() != null && ekvInfo.getEkvFuerBasisJahrPlus1()) {
 				if (ekvInfo.getEkvBasisJahrPlus1Annulliert()) {
-					finanzDatenDTO_alleine.setEkv1Annulliert(Boolean.TRUE);
-					finanzDatenDTO_zuZweit.setEkv1Annulliert(Boolean.TRUE);
+					finanzDatenDTOAlleine.setEkv1Annulliert(Boolean.TRUE);
+					finanzDatenDTOZuZweit.setEkv1Annulliert(Boolean.TRUE);
 				}
 				// In der EKV 1 vergleichen wir immer mit dem Basisjahr
-				handleEKV1(finanzDatenDTO_alleine, ekvInfo.getStichtagGueltigFuerBasisJahrPlus1(), resultateEKV1_alleine.getMassgebendesEinkVorAbzFamGr(),
-					massgebendesEinkommenBasisjahr_alleine, minimumEKV);
-				handleEKV1(finanzDatenDTO_zuZweit, ekvInfo.getStichtagGueltigFuerBasisJahrPlus1(), resultateEKV1_zuZweit.getMassgebendesEinkVorAbzFamGr(),
-					massgebendesEinkommenBasisjahr_zuZweit, minimumEKV);
+				handleEKV1(finanzDatenDTOAlleine, ekvInfo.getStichtagGueltigFuerBasisJahrPlus1(), resultateEKV1Alleine.getMassgebendesEinkVorAbzFamGr(),
+					massgebendesEinkommenBasisjahrAlleine, minimumEKV);
+				handleEKV1(finanzDatenDTOZuZweit, ekvInfo.getStichtagGueltigFuerBasisJahrPlus1(), resultateEKV1ZuZweit.getMassgebendesEinkVorAbzFamGr(),
+					massgebendesEinkommenBasisjahrZuZweit, minimumEKV);
 			}
 
-			BigDecimal massgebendesEinkommenVorjahr_alleine;
-			if (finanzDatenDTO_alleine.isEkv1AcceptedAndNotAnnuliert()) {
-				massgebendesEinkommenVorjahr_alleine = resultateEKV1_alleine.getMassgebendesEinkVorAbzFamGr();
+			BigDecimal massgebendesEinkommenVorjahrAlleine;
+			if (finanzDatenDTOAlleine.isEkv1AcceptedAndNotAnnuliert()) {
+				massgebendesEinkommenVorjahrAlleine = resultateEKV1Alleine.getMassgebendesEinkVorAbzFamGr();
 			} else {
-				massgebendesEinkommenVorjahr_alleine = massgebendesEinkommenBasisjahr_alleine;
+				massgebendesEinkommenVorjahrAlleine = massgebendesEinkommenBasisjahrAlleine;
 			}
-			BigDecimal massgebendesEinkommenVorjahr_zuZweit;
-			if (finanzDatenDTO_zuZweit.isEkv1AcceptedAndNotAnnuliert()) {
-				massgebendesEinkommenVorjahr_zuZweit = resultateEKV1_zuZweit.getMassgebendesEinkVorAbzFamGr();
+			BigDecimal massgebendesEinkommenVorjahrZuZweit;
+			if (finanzDatenDTOZuZweit.isEkv1AcceptedAndNotAnnuliert()) {
+				massgebendesEinkommenVorjahrZuZweit = resultateEKV1ZuZweit.getMassgebendesEinkVorAbzFamGr();
 			} else {
-				massgebendesEinkommenVorjahr_zuZweit = massgebendesEinkommenBasisjahr_zuZweit;
+				massgebendesEinkommenVorjahrZuZweit = massgebendesEinkommenBasisjahrZuZweit;
 			}
 
 			if (ekvInfo.getEkvFuerBasisJahrPlus2() != null && ekvInfo.getEkvFuerBasisJahrPlus2()) {
 				if (ekvInfo.getEkvBasisJahrPlus2Annulliert()) {
-					finanzDatenDTO_alleine.setEkv2Annulliert(Boolean.TRUE);
-					finanzDatenDTO_zuZweit.setEkv2Annulliert(Boolean.TRUE);
+					finanzDatenDTOAlleine.setEkv2Annulliert(Boolean.TRUE);
+					finanzDatenDTOZuZweit.setEkv2Annulliert(Boolean.TRUE);
 				}
-				FinanzielleSituationResultateDTO resultateEKV2_alleine = calculateResultateEinkommensverschlechterung(gesuch, 2, false);
-				FinanzielleSituationResultateDTO resultateEKV2_zuZweit = calculateResultateEinkommensverschlechterung(gesuch, 2, true);
+				FinanzielleSituationResultateDTO resultateEKV2Alleine = calculateResultateEinkommensverschlechterung(gesuch, 2, false);
+				FinanzielleSituationResultateDTO resultateEKV2ZuZweit = calculateResultateEinkommensverschlechterung(gesuch, 2, true);
 				// In der EKV 2 vergleichen wir immer mit dem EKV 1, egal ob diese akzeptiert war
-				handleEKV2(finanzDatenDTO_alleine, ekvInfo.getStichtagGueltigFuerBasisJahrPlus2(),
-					resultateEKV2_alleine.getMassgebendesEinkVorAbzFamGr(), massgebendesEinkommenVorjahr_alleine,
-					massgebendesEinkommenBasisjahr_alleine, minimumEKV);
-				handleEKV2(finanzDatenDTO_zuZweit, ekvInfo.getStichtagGueltigFuerBasisJahrPlus2(),
-					resultateEKV2_zuZweit.getMassgebendesEinkVorAbzFamGr(), massgebendesEinkommenVorjahr_zuZweit,
-					massgebendesEinkommenBasisjahr_zuZweit, minimumEKV);
+				handleEKV2(finanzDatenDTOAlleine, ekvInfo.getStichtagGueltigFuerBasisJahrPlus2(),
+					resultateEKV2Alleine.getMassgebendesEinkVorAbzFamGr(), massgebendesEinkommenVorjahrAlleine,
+					massgebendesEinkommenBasisjahrAlleine, minimumEKV);
+				handleEKV2(finanzDatenDTOZuZweit, ekvInfo.getStichtagGueltigFuerBasisJahrPlus2(),
+					resultateEKV2ZuZweit.getMassgebendesEinkVorAbzFamGr(), massgebendesEinkommenVorjahrZuZweit,
+					massgebendesEinkommenBasisjahrZuZweit, minimumEKV);
 			} else {
-				finanzDatenDTO_alleine.setMassgebendesEinkBjP2VorAbzFamGr(massgebendesEinkommenVorjahr_alleine);
-				finanzDatenDTO_zuZweit.setMassgebendesEinkBjP2VorAbzFamGr(massgebendesEinkommenVorjahr_zuZweit);
+				finanzDatenDTOAlleine.setMassgebendesEinkBjP2VorAbzFamGr(massgebendesEinkommenVorjahrAlleine);
+				finanzDatenDTOZuZweit.setMassgebendesEinkBjP2VorAbzFamGr(massgebendesEinkommenVorjahrZuZweit);
 			}
 		}
-		gesuch.setFinanzDatenDTO_alleine(finanzDatenDTO_alleine);
-		gesuch.setFinanzDatenDTO_zuZweit(finanzDatenDTO_zuZweit);
+		gesuch.setFinanzDatenDTO_alleine(finanzDatenDTOAlleine);
+		gesuch.setFinanzDatenDTO_zuZweit(finanzDatenDTOZuZweit);
 	}
 
 	private void handleEKV1(FinanzDatenDTO finanzDatenDTO, LocalDate stichtagEKV1, BigDecimal massgebendesEinkommenEKV1, BigDecimal massgebendesEinkommenBasisjahr,

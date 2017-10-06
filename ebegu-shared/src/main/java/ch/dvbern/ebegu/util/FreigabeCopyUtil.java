@@ -48,7 +48,10 @@ import ch.dvbern.ebegu.types.DateRange;
  * Utils fuer das Kopieren der Daten von den JA-Containern in die GS-Container bei der Freigabe des Gesuchs.
  */
 @SuppressWarnings("PMD.CollapsibleIfStatements")
-public class FreigabeCopyUtil {
+public final class FreigabeCopyUtil {
+
+	private FreigabeCopyUtil() {
+	}
 
 	/**
 	 * kopiert das Gesuch fuer die Freigabe

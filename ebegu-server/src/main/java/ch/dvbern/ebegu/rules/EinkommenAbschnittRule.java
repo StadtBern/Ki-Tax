@@ -46,10 +46,10 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 		// Nur ausführen wenn Finanzdaten gesetzt
 		// Der {@link FinanzielleSituationRechner} wurde verwendet um das jeweils geltende  Einkommen auszurechnen. Das heisst im DTO ist schon
 		// jeweils das zu verwendende Einkommen gesetzt
-		FinanzDatenDTO finanzDatenDTO_alleine = betreuung.extractGesuch().getFinanzDatenDTO_alleine();
-		FinanzDatenDTO finanzDatenDTO_zuZweit = betreuung.extractGesuch().getFinanzDatenDTO_zuZweit();
+		FinanzDatenDTO finanzDatenDTOAlleine = betreuung.extractGesuch().getFinanzDatenDTO_alleine();
+		FinanzDatenDTO finanzDatenDTOZuZweit = betreuung.extractGesuch().getFinanzDatenDTO_zuZweit();
 
-		if (finanzDatenDTO_alleine != null && finanzDatenDTO_zuZweit != null) {
+		if (finanzDatenDTOAlleine != null && finanzDatenDTOZuZweit != null) {
 			VerfuegungZeitabschnitt lastAbschnitt;
 
 			// Abschnitt Finanzielle Situation (Massgebendes Einkommen fuer die Gesuchsperiode)
@@ -59,16 +59,16 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 			boolean hasEKV1 = false;
 
 			// Einkommensverschlechterung 1: In mind. 1 Kombination eingegeben
-			if (finanzDatenDTO_alleine.getDatumVonBasisjahrPlus1() != null || finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus1() != null) {
-				LocalDate startEKV1 = finanzDatenDTO_alleine.getDatumVonBasisjahrPlus1() != null ? finanzDatenDTO_alleine.getDatumVonBasisjahrPlus1() : finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus1();
+			if (finanzDatenDTOAlleine.getDatumVonBasisjahrPlus1() != null || finanzDatenDTOZuZweit.getDatumVonBasisjahrPlus1() != null) {
+				LocalDate startEKV1 = finanzDatenDTOAlleine.getDatumVonBasisjahrPlus1() != null ? finanzDatenDTOAlleine.getDatumVonBasisjahrPlus1() : finanzDatenDTOZuZweit.getDatumVonBasisjahrPlus1();
 				DateRange rangeEKV1 = new DateRange(startEKV1, betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
 				VerfuegungZeitabschnitt abschnittEinkommensverschlechterung1 = new VerfuegungZeitabschnitt(rangeEKV1);
 
-				if (finanzDatenDTO_alleine.getDatumVonBasisjahrPlus1() != null) {
+				if (finanzDatenDTOAlleine.getDatumVonBasisjahrPlus1() != null) {
 					// EKV1 fuer alleine erfasst
 					abschnittEinkommensverschlechterung1.setEkv1Alleine(true);
 				}
-				if (finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus1() != null) {
+				if (finanzDatenDTOZuZweit.getDatumVonBasisjahrPlus1() != null) {
 					// EKV1 fuer zu Zweit erfasst
 					abschnittEinkommensverschlechterung1.setEkv1ZuZweit(true);
 				}
@@ -80,17 +80,17 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 			}
 
 			// Einkommensverschlechterung 2: In mind. 1 Kombination akzeptiert
-			if (finanzDatenDTO_alleine.getDatumVonBasisjahrPlus2() != null || finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus2() != null) {
-				LocalDate startEKV2 = finanzDatenDTO_alleine.getDatumVonBasisjahrPlus2() != null ? finanzDatenDTO_alleine.getDatumVonBasisjahrPlus2() : finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus2();
+			if (finanzDatenDTOAlleine.getDatumVonBasisjahrPlus2() != null || finanzDatenDTOZuZweit.getDatumVonBasisjahrPlus2() != null) {
+				LocalDate startEKV2 = finanzDatenDTOAlleine.getDatumVonBasisjahrPlus2() != null ? finanzDatenDTOAlleine.getDatumVonBasisjahrPlus2() : finanzDatenDTOZuZweit.getDatumVonBasisjahrPlus2();
 				DateRange rangeEKV2 = new DateRange(startEKV2, betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
 				VerfuegungZeitabschnitt abschnittEinkommensverschlechterung2 = new VerfuegungZeitabschnitt(rangeEKV2);
 				abschnittEinkommensverschlechterung2.setEkv1NotExisting(!hasEKV1);
 
-				if (finanzDatenDTO_alleine.getDatumVonBasisjahrPlus2() != null) {
+				if (finanzDatenDTOAlleine.getDatumVonBasisjahrPlus2() != null) {
 					// EKV2 fuer alleine erfasst
 					abschnittEinkommensverschlechterung2.setEkv2Alleine(true);
 				}
-				if (finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus2() != null) {
+				if (finanzDatenDTOZuZweit.getDatumVonBasisjahrPlus2() != null) {
 					// EKV2 fuer zu Zweit erfasst
 					abschnittEinkommensverschlechterung2.setEkv2ZuZweit(true);
 				}

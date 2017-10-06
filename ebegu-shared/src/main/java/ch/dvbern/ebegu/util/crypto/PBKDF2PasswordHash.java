@@ -33,7 +33,8 @@ import javax.crypto.spec.PBEKeySpec;
  * call the validatePassword function using the plain text password input and the stored hash
  */
 @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
-public class PBKDF2PasswordHash {
+public final class PBKDF2PasswordHash {
+
 	public static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA512";
 
 	// The following constants may be changed without breaking existing hashes.
@@ -44,6 +45,9 @@ public class PBKDF2PasswordHash {
 	public static final int ITERATION_INDEX = 0;
 	public static final int SALT_INDEX = 1;
 	public static final int PBKDF2_INDEX = 2;
+
+	private PBKDF2PasswordHash() {
+	}
 
 	/**
 	 * Returns a salted PBKDF2 hash of the password.

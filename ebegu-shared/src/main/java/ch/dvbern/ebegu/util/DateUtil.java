@@ -25,7 +25,10 @@ import javax.annotation.Nullable;
 /**
  * Utils fuer Date Elemente
  */
-public class DateUtil {
+public final class DateUtil {
+
+	private DateUtil() {
+	}
 
 	/**
 	 * Parset den gegebenen String als LocalDate mit dem Format "yyyy-MM-dd"
