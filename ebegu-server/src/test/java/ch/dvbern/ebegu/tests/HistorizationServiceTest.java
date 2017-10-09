@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.tests;
 
 import java.util.List;
@@ -34,9 +49,6 @@ public class HistorizationServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
-
-
 	@Test
 	public void getAllEntitiesByRevisionTest() {
 		Assert.assertNotNull(historizationService);
@@ -55,7 +67,6 @@ public class HistorizationServiceTest extends AbstractEbeguLoginTest {
 		checkRevisionsValues(revisions.get(1), ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, "entry2", 2, RevisionType.MOD);
 
 	}
-
 
 	// Help Methods
 
@@ -80,6 +91,5 @@ public class HistorizationServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(name, ((ApplicationProperty) entities.get(0)).getName());
 		Assert.assertEquals(value, ((ApplicationProperty) entities.get(0)).getValue());
 	}
-
 
 }

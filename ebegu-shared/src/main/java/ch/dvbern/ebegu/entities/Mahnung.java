@@ -1,15 +1,37 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.entities;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import ch.dvbern.ebegu.enums.MahnungTyp;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Objects;
 
 /**
  * Entitaet fuer Mahnungen
@@ -50,7 +72,6 @@ public class Mahnung extends AbstractEntity {
 	@NotNull
 	@Column(nullable = false)
 	private Boolean abgelaufen = false;
-
 
 	public Gesuch getGesuch() {
 		return gesuch;

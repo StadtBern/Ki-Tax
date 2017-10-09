@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import TSStatistikParameter from '../../../models/TSStatistikParameter';
@@ -9,12 +24,11 @@ import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {ReportRS} from '../../../core/service/reportRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
-import IFormController = angular.IFormController;
-import IPromise = angular.IPromise;
-import ILogService = angular.ILogService;
 import * as moment from 'moment';
-import Moment = moment.Moment;
 import DateUtil from '../../../utils/DateUtil';
+import IFormController = angular.IFormController;
+import ILogService = angular.ILogService;
+import Moment = moment.Moment;
 
 let template = require('./statistikView.html');
 require('./statistikView.less');

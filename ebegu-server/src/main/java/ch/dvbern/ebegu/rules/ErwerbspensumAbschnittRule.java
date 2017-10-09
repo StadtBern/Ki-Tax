@@ -1,13 +1,34 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.types.DateRange;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Erwerbspensum;
+import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.types.DateRange;
 
 /**
  * Berechnet die hoehe des ErwerbspensumRule eines bestimmten Erwerbspensums
@@ -25,7 +46,7 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 	@Nonnull
 	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
 		List<VerfuegungZeitabschnitt> erwerbspensumAbschnitte = new ArrayList<>();
-		Gesuch gesuch =  betreuung.extractGesuch();
+		Gesuch gesuch = betreuung.extractGesuch();
 		if (gesuch.getGesuchsteller1() != null) {
 			erwerbspensumAbschnitte.addAll(getErwerbspensumAbschnittForGesuchsteller(gesuch, gesuch.getGesuchsteller1(), false));
 		}
@@ -37,6 +58,7 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 
 	/**
 	 * geht durch die Erwerpspensen des Gesuchstellers und gibt Abschnitte zurueck
+	 *
 	 * @param gesuchsteller Der Gesuchsteller dessen Erwerbspensumcontainers zu Abschnitte konvertiert werden
 	 * @param gs2 handelt es sich um gesuchsteller1 -> false oder gesuchsteller2 -> true
 	 */
@@ -68,10 +90,9 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 				// 1GS to 2GS
 				if (gueltigkeit.getGueltigBis().isAfter(gesuch.extractFamiliensituation().getAenderungPer())
 					&& gueltigkeit.getGueltigAb().isBefore(gesuch.extractFamiliensituation().getAenderungPer())) {
-						gueltigkeit.setGueltigAb(gesuch.extractFamiliensituation().getAenderungPer());
+					gueltigkeit.setGueltigAb(gesuch.extractFamiliensituation().getAenderungPer());
 				}
-			}
-			else if (gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller() && !gesuch.extractFamiliensituation().hasSecondGesuchsteller()
+			} else if (gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller() && !gesuch.extractFamiliensituation().hasSecondGesuchsteller()
 				&& gueltigkeit.getGueltigAb().isBefore(gesuch.extractFamiliensituation().getAenderungPer())
 				&& gueltigkeit.getGueltigBis().isAfter(gesuch.extractFamiliensituation().getAenderungPer())) {
 				// 2GS to 1GS

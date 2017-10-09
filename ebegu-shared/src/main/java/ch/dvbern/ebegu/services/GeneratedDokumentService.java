@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.io.IOException;
@@ -40,21 +55,21 @@ public interface GeneratedDokumentService {
 	WriteProtectedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, AbstractEntity entity, String fileName, boolean writeProtected) throws MimeTypeParseException;
 
 	WriteProtectedDokument getFinSitDokumentAccessTokenGeneratedDokument(Gesuch gesuch,
-																	Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
+		Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
 
 	WriteProtectedDokument getBegleitschreibenDokument(Gesuch gesuch) throws MimeTypeParseException, MergeDocException;
 
 	WriteProtectedDokument getFreigabequittungAccessTokenGeneratedDokument(Gesuch gesuch,
-																	  Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException;
+		Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException;
 
 	WriteProtectedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(Gesuch gesuch, Betreuung betreuung, String manuelleBemerkungen,
-																		Boolean forceCreation) throws MimeTypeParseException, MergeDocException, IOException;
+		Boolean forceCreation) throws MimeTypeParseException, MergeDocException, IOException;
 
 	WriteProtectedDokument getMahnungDokumentAccessTokenGeneratedDokument(Mahnung mahnung,
-																	 Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException;
+		Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException;
 
 	WriteProtectedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(Betreuung betreuung,
-																			Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException;
+		Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException;
 
 	WriteProtectedDokument getPain001DokumentAccessTokenGeneratedDokument(Zahlungsauftrag zahlungsauftrag, Boolean forceCreation) throws MimeTypeParseException;
 

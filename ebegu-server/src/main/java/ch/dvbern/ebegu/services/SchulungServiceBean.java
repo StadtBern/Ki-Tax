@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.math.BigDecimal;
@@ -76,7 +91,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 	"NonBooleanMethodNameMayNotStartWithQuestion", "SpringAutowiredFieldsWarningInspection" })
 @Stateless
 @Local(SchulungService.class)
-@RolesAllowed({SUPER_ADMIN, ADMIN})
+@RolesAllowed({ SUPER_ADMIN, ADMIN })
 public class SchulungServiceBean extends AbstractBaseService implements SchulungService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SchulungServiceBean.class);
@@ -104,22 +119,21 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 
 	private static final String GESUCHSTELLER_VORNAME = "Sandra";
 	private static final String[] GESUCHSTELLER_LIST = { "Huber",
-														 "Müller",
-														 "Gerber",
-														 "Antonelli",
-														 "Schüpbach",
-														 "Kovac",
-														 "Ackermann",
-														 "Keller",
-														 "Wyttenbach",
-														 "Rindlisbacher",
-														 "Dubois",
-														 "Menet",
-														 "Burri",
-														 "Schmid",
-														 "Rodriguez",
-														 "Nussbaum"};
-
+		"Müller",
+		"Gerber",
+		"Antonelli",
+		"Schüpbach",
+		"Kovac",
+		"Ackermann",
+		"Keller",
+		"Wyttenbach",
+		"Rindlisbacher",
+		"Dubois",
+		"Menet",
+		"Burri",
+		"Schmid",
+		"Rodriguez",
+		"Nussbaum" };
 
 	@Inject
 	private GesuchService gesuchService;
@@ -156,7 +170,6 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 
 	@Inject
 	private Persistence persistence;
-
 
 	@Override
 	public void resetSchulungsdaten() {
@@ -348,8 +361,8 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		List<InstitutionStammdaten> institutionenForTestfall = testfaelleService.getInstitutionsstammdatenForTestfaelle();
 
 		createFall(Testfall01_WaeltiDagmar.class, gesuchsperiode, institutionenForTestfall, "01", null, null, institutionenForSchulung, true);
-		createFall(Testfall02_FeutzYvonne.class, gesuchsperiode, institutionenForTestfall, "02",null, null, institutionenForSchulung);
-		createFall(Testfall03_PerreiraMarcia.class, gesuchsperiode, institutionenForTestfall, "03",null, null, institutionenForSchulung);
+		createFall(Testfall02_FeutzYvonne.class, gesuchsperiode, institutionenForTestfall, "02", null, null, institutionenForSchulung);
+		createFall(Testfall03_PerreiraMarcia.class, gesuchsperiode, institutionenForTestfall, "03", null, null, institutionenForSchulung);
 		createFall(Testfall04_WaltherLaura.class, gesuchsperiode, institutionenForTestfall, "04", null, null, institutionenForSchulung);
 		createFall(Testfall05_LuethiMeret.class, gesuchsperiode, institutionenForTestfall, "05", null, null, institutionenForSchulung);
 		createFall(Testfall06_BeckerNora.class, gesuchsperiode, institutionenForTestfall, "06", null, null, institutionenForSchulung);
@@ -384,7 +397,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		@Nonnull List<InstitutionStammdaten> institutionenForSchulung, boolean noRandom) {
 
 		@SuppressWarnings("DuplicateBooleanBranch")  // Damit VERFUEGT nicht zu haeufig...
-		boolean verfuegen = RANDOM.nextBoolean() && RANDOM.nextBoolean();
+			boolean verfuegen = RANDOM.nextBoolean() && RANDOM.nextBoolean();
 		if (noRandom) {
 			verfuegen = true;
 		}
@@ -457,7 +470,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 					betreuung.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
 				} else {
 					// Etwas haeufiger WARTEN als BESTAETIGT/ABGELEHNT
-					Betreuungsstatus[] statussis = {Betreuungsstatus.WARTEN, Betreuungsstatus.WARTEN,Betreuungsstatus.WARTEN,Betreuungsstatus.BESTAETIGT, Betreuungsstatus.ABGEWIESEN};
+					Betreuungsstatus[] statussis = { Betreuungsstatus.WARTEN, Betreuungsstatus.WARTEN, Betreuungsstatus.WARTEN, Betreuungsstatus.BESTAETIGT, Betreuungsstatus.ABGEWIESEN };
 					Betreuungsstatus status = Collections.unmodifiableList(Arrays.asList(statussis)).get(RANDOM.nextInt(statussis.length));
 					betreuung.setBetreuungsstatus(status);
 					if (Betreuungsstatus.ABGEWIESEN == status) {

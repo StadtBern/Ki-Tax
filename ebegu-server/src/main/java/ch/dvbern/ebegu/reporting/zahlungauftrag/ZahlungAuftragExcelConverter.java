@@ -1,11 +1,16 @@
 /*
- * Copyright © 2016 DV Bern AG, Switzerland
- *
- * Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
- * geschützt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulässig. Dies gilt
- * insbesondere für Vervielfältigungen, die Einspeicherung und Verarbeitung in
- * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
- * Ansicht übergeben, ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package ch.dvbern.ebegu.reporting.zahlungauftrag;
 
@@ -36,7 +41,7 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 	@Override
 	public void applyAutoSize(@Nonnull Sheet sheet) {
 		sheet.autoSizeColumn(0); // institution
-//		sheet.autoSizeColumn(1); // name
+		//		sheet.autoSizeColumn(1); // name
 		sheet.autoSizeColumn(2); // vorname
 		sheet.autoSizeColumn(3); // gebDatum
 		sheet.autoSizeColumn(4); // verfuegung
@@ -48,7 +53,7 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 
 	@Nonnull
 	public ExcelMergerDTO toExcelMergerDTO(@Nonnull List<Zahlung> data, @Nonnull Locale lang, UserRole userRole, Collection<Institution> allowedInst,
-										   String beschrieb, LocalDateTime datumGeneriert, LocalDate datumFaellig) {
+		String beschrieb, LocalDateTime datumGeneriert, LocalDate datumFaellig) {
 		checkNotNull(data);
 
 		ExcelMergerDTO sheet = new ExcelMergerDTO();

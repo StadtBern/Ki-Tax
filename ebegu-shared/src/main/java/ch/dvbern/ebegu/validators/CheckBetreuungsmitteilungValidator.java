@@ -1,4 +1,30 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.validators;
+
+import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.util.ResourceBundle;
+
+import javax.enterprise.inject.spi.CDI;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -8,16 +34,6 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.util.BetreuungUtil;
-
-import javax.enterprise.inject.spi.CDI;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import java.text.MessageFormat;
-import java.time.LocalDate;
-import java.util.ResourceBundle;
 
 /**
  * Validator for Betreuungspensen, checks that the entered betreuungspensum is bigger than the minimum
@@ -33,17 +49,13 @@ public class CheckBetreuungsmitteilungValidator implements ConstraintValidator<C
 	@PersistenceUnit(unitName = "ebeguPersistenceUnit")
 	private EntityManagerFactory entityManagerFactory;
 
-
 	public CheckBetreuungsmitteilungValidator() {
 	}
-
 
 	@Override
 	public void initialize(CheckBetreuungsmitteilung constraintAnnotation) {
 		// nop
 	}
-
-
 
 	private EbeguParameterService getEbeguParameterService() {
 		if (ebeguParameterService == null) {
@@ -56,8 +68,8 @@ public class CheckBetreuungsmitteilungValidator implements ConstraintValidator<C
 
 	private EntityManager createEntityManager() {
 		if (entityManagerFactory != null) {
-			return  entityManagerFactory.createEntityManager(); // creates a new EntityManager
-		} else{
+			return entityManagerFactory.createEntityManager(); // creates a new EntityManager
+		} else {
 			throw new EbeguRuntimeException("createEntitymanager", "could not create entitymanger for betreuung validation ", "Validierung konnte nicht durchgefuehrt werden");
 		}
 	}
@@ -81,7 +93,7 @@ public class CheckBetreuungsmitteilungValidator implements ConstraintValidator<C
 		}
 		LocalDate gesuchsperiodeStart = betreuung.getKind().getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb();
 		int index = 0;
-		for (BetreuungsmitteilungPensum betPen: mitteilung.getBetreuungspensen()) {
+		for (BetreuungsmitteilungPensum betPen : mitteilung.getBetreuungspensen()) {
 			LocalDate betreuungAb = betPen.getGueltigkeit().getGueltigAb();
 			//Wir laden  die Parameter von Start-Gesuchsperiode falls Betreuung schon laenger als Gesuchsperiode besteht
 			LocalDate stichtagParameter = betreuungAb.isAfter(gesuchsperiodeStart) ? betreuungAb : gesuchsperiodeStart;
@@ -102,6 +114,7 @@ public class CheckBetreuungsmitteilungValidator implements ConstraintValidator<C
 	 * With the given the pensumMin it checks if the introduced pensum is in the permitted range. Case not a ConstraintValidator will be created
 	 * with a message and a path indicating which object threw the error. False will be returned in the explained case. In case the value for pensum
 	 * is right, nothing will be done and true will be returned.
+	 *
 	 * @param betreuungspensum the betreuungspensum to check
 	 * @param pensumMin the minimum permitted value for pensum
 	 * @param index the index of the Betreuungspensum inside the betreuungspensum container

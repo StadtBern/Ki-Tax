@@ -1,17 +1,42 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.Kinderabzug;
-import ch.dvbern.ebegu.util.EbeguUtil;
-import org.hibernate.envers.Audited;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.enums.Kinderabzug;
+import ch.dvbern.ebegu.util.EbeguUtil;
+import org.hibernate.envers.Audited;
 
 /**
  * Entity fuer Kinder.
@@ -54,10 +79,8 @@ public class Kind extends AbstractPersonEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_kind_pensum_fachstelle_id"), nullable = true)
 	private PensumFachstelle pensumFachstelle;
 
-
 	public Kind() {
 	}
-
 
 	@Nullable
 	public Integer getWohnhaftImGleichenHaushalt() {
@@ -132,7 +155,7 @@ public class Kind extends AbstractPersonEntity {
 		return copyForMutationOrErneuerung(folgegesuchKind);
 	}
 
-    @Nonnull
+	@Nonnull
 	private Kind copyForMutationOrErneuerung(@Nonnull Kind mutation) {
 		mutation.setWohnhaftImGleichenHaushalt(this.getWohnhaftImGleichenHaushalt());
 		mutation.setKinderabzug(this.getKinderabzug());

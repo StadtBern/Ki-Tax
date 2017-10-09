@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.util.Collection;
@@ -17,8 +32,8 @@ public interface ErwerbspensumService {
 
 	/**
 	 * Speichert die Erwerbspensen neu in der DB falls der Key noch nicht existiert.
+	 *
 	 * @param erwerbspensumContainer Das Erwerbspensum das gespeichert werden soll
-	 * @param gesuch
 	 */
 	@Nonnull
 	ErwerbspensumContainer saveErwerbspensum(@Valid @Nonnull ErwerbspensumContainer erwerbspensumContainer, Gesuch gesuch);
@@ -32,13 +47,11 @@ public interface ErwerbspensumService {
 
 	/**
 	 * Sucht die Erwerbspensen des übergebenen Gesuchstellers.
-     */
+	 */
 	Collection<ErwerbspensumContainer> findErwerbspensenForGesuchsteller(@Nonnull GesuchstellerContainer gesuchsteller);
 
 	/**
 	 * Sucht alle Erwerbspensen fuer das eingegebene Gesuch
-	 * @param gesuchId
-	 * @return
 	 */
 	Collection<ErwerbspensumContainer> findErwerbspensenFromGesuch(@Nonnull String gesuchId);
 
@@ -50,8 +63,8 @@ public interface ErwerbspensumService {
 
 	/**
 	 * entfernt eine Erwerbspensum aus der Databse
+	 *
 	 * @param erwerbspensumContainerID der Entfernt werden soll
-	 * @param gesuch
 	 */
 	void removeErwerbspensum(@Nonnull String erwerbspensumContainerID, Gesuch gesuch);
 

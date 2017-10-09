@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.rechner;
 
 import java.math.BigDecimal;
@@ -15,7 +30,6 @@ import ch.dvbern.ebegu.util.MathUtil;
  * einer Betreuung für das Angebot KITA.
  */
 public class KitaRechner extends AbstractBGRechner {
-
 
 	@Override
 	public VerfuegungZeitabschnitt calculate(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Verfuegung verfuegung, BGRechnerParameterDTO parameterDTO) {
@@ -42,7 +56,6 @@ public class KitaRechner extends AbstractBGRechner {
 		final BigDecimal beitragStadtProTagJahr = getBeitragStadtProTagJahr(parameterDTO, verfuegung.getBetreuung().extractGesuch().getGesuchsperiode(), von);
 		BigDecimal abgeltungProTag = MathUtil.EXACT.add(parameterDTO.getBeitragKantonProTag(), beitragStadtProTagJahr);
 		// Massgebendes Einkommen: Minimum und Maximum berücksichtigen
-
 
 		BigDecimal massgebendesEinkommenBerechnet = (massgebendesEinkommen.max(parameterDTO.getMassgebendesEinkommenMinimal())).min(parameterDTO.getMassgebendesEinkommenMaximal());
 		// Öffnungstage und Öffnungsstunden; Maximum berücksichtigen
@@ -73,7 +86,6 @@ public class KitaRechner extends AbstractBGRechner {
 		} else {
 			elternbeitragIntervall = MathUtil.EXACT.multiply(elternbeitrag, anteilMonat);
 		}
-
 
 		verfuegungZeitabschnitt.setVollkosten(MathUtil.roundToFrankenRappen(vollkostenIntervall));
 		verfuegungZeitabschnitt.setElternbeitrag(MathUtil.roundToFrankenRappen(elternbeitragIntervall));

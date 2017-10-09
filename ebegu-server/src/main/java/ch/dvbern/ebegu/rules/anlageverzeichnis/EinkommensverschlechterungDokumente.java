@@ -1,12 +1,33 @@
-package ch.dvbern.ebegu.rules.anlageverzeichnis;
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
-import ch.dvbern.ebegu.enums.DokumentGrundTyp;
-import ch.dvbern.ebegu.enums.DokumentTyp;
+package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
 import java.math.BigDecimal;
 import java.util.Set;
+
+import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
+import ch.dvbern.ebegu.enums.DokumentTyp;
 
 /**
  * Dokumente für Einkommensverschlechterung:
@@ -69,7 +90,7 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 	}
 
 	private void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, GesuchstellerContainer gesuchsteller,
-											  boolean gemeinsam, int gesuchstellerNumber, int basisJahrPlusNumber, int basisJahr) {
+		boolean gemeinsam, int gesuchstellerNumber, int basisJahrPlusNumber, int basisJahr) {
 
 		if (gesuchsteller == null || gesuchsteller.getEinkommensverschlechterungContainer() == null) {
 			return;
@@ -123,10 +144,10 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 		if (abstractFinanzielleSituation instanceof Einkommensverschlechterung) {
 			Einkommensverschlechterung einkommensverschlechterung = (Einkommensverschlechterung) abstractFinanzielleSituation;
 			switch (minus) {
-				case 0:
-					return !einkommensverschlechterung.getSteuerveranlagungErhalten() && (einkommensverschlechterung.getGeschaeftsgewinnBasisjahr() != null);
-				case 1:
-					return !einkommensverschlechterung.getSteuerveranlagungErhalten() && (einkommensverschlechterung.getGeschaeftsgewinnBasisjahrMinus1() != null);
+			case 0:
+				return !einkommensverschlechterung.getSteuerveranlagungErhalten() && (einkommensverschlechterung.getGeschaeftsgewinnBasisjahr() != null);
+			case 1:
+				return !einkommensverschlechterung.getSteuerveranlagungErhalten() && (einkommensverschlechterung.getGeschaeftsgewinnBasisjahrMinus1() != null);
 			}
 		}
 		return false;

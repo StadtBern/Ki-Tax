@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 var webpack = require('webpack');
 var helpers = require('./helpers');
 var webpackMerge = require('webpack-merge'); //Used to merge webpack configs
@@ -25,8 +40,7 @@ const METADATA = {
     HMR: HMR
 };
 
-module.exports = webpackMerge(commonConfig,  {
-
+module.exports = webpackMerge(commonConfig, {
 
     // Developer tool to enhance debugging
     //
@@ -34,8 +48,7 @@ module.exports = webpackMerge(commonConfig,  {
     // See: https://github.com/webpack/docs/wiki/build-performance#sourcemaps
     devtool: 'cheap-module-eval-source-map',
 
-
-    output:{
+    output: {
         // The output directory as absolute path (required).
         //
         // See: http://webpack.github.io/docs/configuration.html#output-path
@@ -63,13 +76,11 @@ module.exports = webpackMerge(commonConfig,  {
 
     plugins: [
         new LoaderOptionsPlugin({
-           debug: true
-         }),
+            debug: true
+        }),
         new ExtractTextPlugin({
-          filename: '[name].css'
-         }),
-
-
+            filename: '[name].css'
+        }),
 
         // Plugin: DefinePlugin
         // Description: Define free variables.
@@ -119,6 +130,10 @@ module.exports = webpackMerge(commonConfig,  {
         },
         proxy: {
             '/ebegu': {
+                target: 'http://localhost:8080',
+                secure: false
+            },
+            '/connector': {
                 target: 'http://localhost:8080',
                 secure: false
             }

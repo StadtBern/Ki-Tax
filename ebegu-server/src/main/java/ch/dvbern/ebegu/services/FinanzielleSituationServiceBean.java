@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.math.BigDecimal;
@@ -40,7 +55,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(FinanzielleSituationService.class)
-@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR,  GESUCHSTELLER, STEUERAMT})
+@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT })
 public class FinanzielleSituationServiceBean extends AbstractBaseService implements FinanzielleSituationService {
 
 	@Inject
@@ -61,15 +76,14 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	@Inject
 	private EbeguParameterService ebeguParameterService;
 
-
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public FinanzielleSituationContainer saveFinanzielleSituation(@Nonnull FinanzielleSituationContainer finanzielleSituation, String gesuchId) {
 		Objects.requireNonNull(finanzielleSituation);
 		authorizer.checkCreateAuthorizationFinSit(finanzielleSituation);
 		FinanzielleSituationContainer finanzielleSituationPersisted = persistence.merge(finanzielleSituation);
-		if(gesuchId != null) {
+		if (gesuchId != null) {
 			wizardStepService.updateSteps(gesuchId, null, finanzielleSituationPersisted.getFinanzielleSituationJA(), WizardStepName
 				.FINANZIELLE_SITUATION);
 		}
@@ -78,7 +92,7 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR,  GESUCHSTELLER, STEUERAMT, ADMINISTRATOR_SCHULAMT, SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public Optional<FinanzielleSituationContainer> findFinanzielleSituation(@Nonnull String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
 		FinanzielleSituationContainer finanzielleSituation = persistence.find(FinanzielleSituationContainer.class, id);
@@ -88,7 +102,7 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR,  GESUCHSTELLER, STEUERAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT })
 	public Collection<FinanzielleSituationContainer> getAllFinanzielleSituationen() {
 		Collection<FinanzielleSituationContainer> finanzielleSituationen = criteriaQueryHelper.getAll(FinanzielleSituationContainer.class);
 		authorizer.checkReadAuthorization(finanzielleSituationen);
@@ -97,13 +111,13 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, ADMINISTRATOR_SCHULAMT, SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch) {
 		return finSitRechner.calculateResultateFinanzielleSituation(gesuch, true);
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, ADMINISTRATOR_SCHULAMT, SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public void calculateFinanzDaten(@Nonnull Gesuch gesuch) {
 		final BigDecimal minimumEKV = calculateGrenzwertEKV(gesuch);
 		finSitRechner.calculateFinanzDaten(gesuch, minimumEKV);

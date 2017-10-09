@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import {TSAntragTyp} from './enums/TSAntragTyp';
 import {TSAntragStatus} from './enums/TSAntragStatus';
@@ -29,7 +44,8 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
     private _dokumenteHochgeladen: boolean;
 
     constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
-                eingangsdatum?: moment.Moment, eingangsdatumSTV?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
+                eingangsdatum?: moment.Moment, eingangsdatumSTV?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>,
+                institutionen?: Array<string>,
                 verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
                 verfuegt?: boolean, laufnummer?: number, besitzerUsername?: string, eingangsart?: TSEingangsart, beschwerdeHaengig?: boolean,
                 kinder?: Array<string>, gesuchBetreuungenStatus?: TSGesuchBetreuungenStatus, dokumenteHochgeladen?: boolean) {
@@ -55,7 +71,6 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
         this._gesuchBetreuungenStatus = gesuchBetreuungenStatus;
         this._dokumenteHochgeladen = dokumenteHochgeladen;
     }
-
 
     get antragId(): string {
         return this._antragId;
@@ -197,7 +212,6 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
         this._beschwerdeHaengig = value;
     }
 
-
     get kinder(): Array<string> {
         return this._kinder;
     }
@@ -213,7 +227,6 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
     set dokumenteHochgeladen(value: boolean) {
         this._dokumenteHochgeladen = value;
     }
-
 
     public canBeFreigegeben(): boolean {
         return this.status === TSAntragStatus.FREIGABEQUITTUNG;

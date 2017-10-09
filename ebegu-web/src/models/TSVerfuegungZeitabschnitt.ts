@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import {TSAbstractDateRangedEntity} from './TSAbstractDateRangedEntity';
 import {TSDateRange} from './types/TSDateRange';
 import {TSVerfuegungZeitabschnittZahlungsstatus} from './enums/TSVerfuegungZeitabschnittZahlungsstatus';
@@ -27,11 +42,11 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
     private _sameVerfuegungsdaten: boolean;
     private _sameVerguenstigung: boolean;
 
-
     constructor(erwerbspensumGS1?: number, erwerbspensumGS2?: number, betreuungspensum?: number, fachstellenpensum?: number,
                 anspruchspensumRest?: number, anspruchberechtigtesPensum?: number, bgPensum?: number, betreuungsstunden?: number, vollkosten?: number,
                 elternbeitrag?: number, abzugFamGroesse?: number, massgebendesEinkommen?: number, bemerkungen?: string,
-                zahlungsstatus?: TSVerfuegungZeitabschnittZahlungsstatus, gueltigkeit?: TSDateRange, famGroesse?: number, einkommensjahr?: number, kategorieMaxEinkommen?: boolean,
+                zahlungsstatus?: TSVerfuegungZeitabschnittZahlungsstatus, gueltigkeit?: TSDateRange, famGroesse?: number, einkommensjahr?: number,
+                kategorieMaxEinkommen?: boolean,
                 kategorieKeinPensum?: boolean, kategorieZuschlagZumErwerbspensum?: boolean, sameVerfuegungsdaten?: boolean,
                 sameVerguenstigung?: boolean) {
         super(gueltigkeit);

@@ -1,4 +1,42 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.api.resource;
+
+import java.util.Collection;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
@@ -22,22 +60,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
-
 /**
  * REST Resource fuer Kinder
  */
@@ -59,7 +81,6 @@ public class KindResource {
 	@Inject
 	private ResourceHelper resourceHelper;
 
-
 	@ApiOperation(value = "Speichert ein Kind in der Datenbank", response = JaxKindContainer.class)
 	@Nullable
 	@PUT
@@ -67,7 +88,7 @@ public class KindResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxKindContainer saveKind(
-		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchId,
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchId,
 		@Nonnull @NotNull @Valid JaxKindContainer kindContainerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -96,7 +117,7 @@ public class KindResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxKindContainer findKind(
-		@Nonnull @NotNull @PathParam ("kindContainerId") JaxId kindJAXPId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("kindContainerId") JaxId kindJAXPId) throws EbeguException {
 
 		Validate.notNull(kindJAXPId.getId());
 		String kindID = converter.toEntityId(kindJAXPId);
@@ -148,7 +169,7 @@ public class KindResource {
 	@Path("/dubletten/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Set<KindDubletteDTO> getKindDubletten(@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJaxId) throws
+	public Set<KindDubletteDTO> getKindDubletten(@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJaxId) throws
 		EbeguException {
 		Validate.notNull(gesuchJaxId.getId());
 		String gesuchId = converter.toEntityId(gesuchJaxId);

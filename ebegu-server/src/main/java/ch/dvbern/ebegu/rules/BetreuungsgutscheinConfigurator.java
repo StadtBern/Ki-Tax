@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.rules;
 
 import java.util.EnumSet;
@@ -52,7 +67,6 @@ public class BetreuungsgutscheinConfigurator {
 			PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM);
 	}
 
-
 	private void useBernerRules(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
 
 		abschnitteErstellenRegeln(ebeguParameter);
@@ -67,7 +81,6 @@ public class BetreuungsgutscheinConfigurator {
 		// - Erwerbspensum: Erstellt die grundlegenden Zeitschnitze (keine Korrekturen, nur einfügen)
 		ErwerbspensumAbschnittRule erwerbspensumAbschnittRule = new ErwerbspensumAbschnittRule(defaultGueltigkeit);
 		rules.add(erwerbspensumAbschnittRule);
-
 
 		//Familenabzug: Berechnet den Familienabzug aufgrund der Familiengroesse
 		EbeguParameter param_pauschalabzug_pro_person_familiengroesse_3 = ebeguParameter.get(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3);
@@ -145,7 +158,6 @@ public class BetreuungsgutscheinConfigurator {
 		rules.add(wohnhaftImGleichenHaushaltRule);
 
 	}
-
 
 	private void reduktionsRegeln(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
 		// REDUKTIONSREGELN: Setzen Anpsruch auf 0

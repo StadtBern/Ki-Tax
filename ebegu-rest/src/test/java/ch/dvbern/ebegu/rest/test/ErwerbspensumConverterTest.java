@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.rest.test;
 
 import javax.inject.Inject;
@@ -25,19 +40,17 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.DISABLED)
 public class ErwerbspensumConverterTest extends AbstractEbeguRestLoginTest {
 
-
 	@Inject
 	private Persistence persistence;
 
 	@Inject
 	private JaxBConverter converter;
 
-
 	/**
 	 * transformiert einen gespeichertes Erwerbspensum nach jax und wieder zurueck. wir erwarten das Daten gleich bleiben
 	 */
 	@Test
-	public void convertPersistedTestEntityToJax(){
+	public void convertPersistedTestEntityToJax() {
 		ErwerbspensumContainer erwerbspensumContainer = insertNewEntity();
 		JaxErwerbspensumContainer jaxErwerbspensum = this.converter.erwerbspensumContainerToJAX(erwerbspensumContainer);
 		ErwerbspensumContainer ewbContEntity = this.converter.erwerbspensumContainerToEntity(jaxErwerbspensum, new ErwerbspensumContainer());
@@ -49,7 +62,7 @@ public class ErwerbspensumConverterTest extends AbstractEbeguRestLoginTest {
 	 * Testet konviertiert einen gesuchsteller mit Erwerbspensen
 	 */
 	@Test
-	public void convertJaxGesuchstellerErwerbspensen(){
+	public void convertJaxGesuchstellerErwerbspensen() {
 		JaxGesuchstellerContainer gesuchstellerWithErwerbspensen = TestJaxDataUtil.createTestJaxGesuchstellerWithErwerbsbensum();
 		GesuchstellerContainer gesuchsteller = converter.gesuchstellerContainerToEntity(gesuchstellerWithErwerbspensen, new GesuchstellerContainer());
 		Assert.assertEquals(gesuchstellerWithErwerbspensen.getGesuchstellerJA().getGeburtsdatum(), gesuchsteller.getGesuchstellerJA().getGeburtsdatum());
@@ -61,9 +74,8 @@ public class ErwerbspensumConverterTest extends AbstractEbeguRestLoginTest {
 		Assert.assertEquals(2, gesuchsteller.getErwerbspensenContainers().size());
 		gesuchsteller = persistence.persist(gesuchsteller);
 		JaxGesuchstellerContainer reconvertedJaxGesuchsteller = converter.gesuchstellerContainerToJAX(gesuchsteller);
-		Assert.assertEquals(2,reconvertedJaxGesuchsteller.getErwerbspensenContainers().size());
+		Assert.assertEquals(2, reconvertedJaxGesuchsteller.getErwerbspensenContainers().size());
 	}
-
 
 	private ErwerbspensumContainer insertNewEntity() {
 		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();

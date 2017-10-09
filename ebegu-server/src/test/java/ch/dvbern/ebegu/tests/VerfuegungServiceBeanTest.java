@@ -1,9 +1,43 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.AntragStatusHistory;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.services.BetreuungService;
+import ch.dvbern.ebegu.services.EbeguParameterService;
+import ch.dvbern.ebegu.services.FinanzielleSituationService;
+import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.VerfuegungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
@@ -13,15 +47,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import static ch.dvbern.ebegu.rechner.AbstractBGRechnerTest.checkTestfall01WaeltiDagmar;
 
@@ -53,7 +78,6 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private GesuchService gesuchService;
-
 
 	@Test
 	public void saveVerfuegung() {
@@ -141,7 +165,6 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertTrue(allVerfuegungen.stream().allMatch(currentVerfuegung -> currentVerfuegung.equals(verfuegung) || currentVerfuegung.equals(verfuegung2)));
 	}
 
-
 	@Test
 	public void removeVerfuegung() {
 		Verfuegung verfuegung = insertVerfuegung();
@@ -149,7 +172,6 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	//Helpers
-
 
 	private Betreuung insertBetreuung() {
 		Betreuung betreuung = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25))

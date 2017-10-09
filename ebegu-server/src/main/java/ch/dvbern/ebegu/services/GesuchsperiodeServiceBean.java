@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.time.LocalDate;
@@ -67,19 +82,17 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
-
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN })
 	public Gesuchsperiode saveGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
 		Objects.requireNonNull(gesuchsperiode);
 		return persistence.merge(gesuchsperiode);
 	}
 
-
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN })
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	public Gesuchsperiode saveGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull GesuchsperiodeStatus statusBisher) {
 		if (gesuchsperiode.isNew() && !GesuchsperiodeStatus.ENTWURF.equals(gesuchsperiode.getStatus())) {
@@ -145,31 +158,31 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	@RolesAllowed({SUPER_ADMIN})
+	@RolesAllowed({ SUPER_ADMIN })
 	public void removeGesuchsperiode(@Nonnull String gesuchsPeriodeId) {
 		Optional<Gesuchsperiode> gesuchsperiodeOptional = findGesuchsperiode(gesuchsPeriodeId);
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeOptional.orElseThrow(() -> new EbeguEntityNotFoundException("deleteGesuchsperiodeAndGesuche", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsPeriodeId));
-        LOGGER.info("Handling Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString());
-        if (gesuchsperiode.getStatus().equals(GesuchsperiodeStatus.GESCHLOSSEN)) {
-            Collection<Gesuch> gesucheOfPeriode = criteriaQueryHelper.getEntitiesByAttribute(Gesuch.class, gesuchsperiode, Gesuch_.gesuchsperiode);
-            for (Gesuch gesuch : gesucheOfPeriode) {
-                Fall fall = gesuch.getFall();
-                // Gesuch, WizardSteps, Mahnungen, Dokumente, AntragstatusHistory, Zahlungspositionen
-                LOGGER.info("Deleting Gesuch of Fall " + gesuch.getFall().getFallNummer());
-                gesuchService.removeGesuch(gesuch.getId());
-                // Feststellen, ob es das letzte Gesuch dieses Falles war
-                List<String> allGesuchIDsForFall = gesuchService.getAllGesuchIDsForFall(fall.getId());
-                if (allGesuchIDsForFall.isEmpty()) {
-                    LOGGER.info("This was the last Gesuch of Fall, deleting Fall " + fall.getFallNummer());
-                    fallService.removeFall(fall);
-                }
-            }
-            // Gesuchsperiode
-            LOGGER.info("Deleting Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString());
-            persistence.remove(gesuchsperiode);
-        } else {
+		LOGGER.info("Handling Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString());
+		if (gesuchsperiode.getStatus().equals(GesuchsperiodeStatus.GESCHLOSSEN)) {
+			Collection<Gesuch> gesucheOfPeriode = criteriaQueryHelper.getEntitiesByAttribute(Gesuch.class, gesuchsperiode, Gesuch_.gesuchsperiode);
+			for (Gesuch gesuch : gesucheOfPeriode) {
+				Fall fall = gesuch.getFall();
+				// Gesuch, WizardSteps, Mahnungen, Dokumente, AntragstatusHistory, Zahlungspositionen
+				LOGGER.info("Deleting Gesuch of Fall " + gesuch.getFall().getFallNummer());
+				gesuchService.removeGesuch(gesuch.getId());
+				// Feststellen, ob es das letzte Gesuch dieses Falles war
+				List<String> allGesuchIDsForFall = gesuchService.getAllGesuchIDsForFall(fall.getId());
+				if (allGesuchIDsForFall.isEmpty()) {
+					LOGGER.info("This was the last Gesuch of Fall, deleting Fall " + fall.getFallNummer());
+					fallService.removeFall(fall);
+				}
+			}
+			// Gesuchsperiode
+			LOGGER.info("Deleting Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString());
+			persistence.remove(gesuchsperiode);
+		} else {
 			throw new EbeguRuntimeException("removeGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_CANNOT_BE_REMOVED);
-        }
+		}
 	}
 
 	@Override

@@ -1,8 +1,0 @@
-<!--suppress ALL -->
-
-<FindBugsFilter>
-	<Match>
-		<Class name="~.*\._.*"/>
-		<!--<Class name="~.*?EJS.*"/>-->
-	</Match>
-</FindBugsFilter>

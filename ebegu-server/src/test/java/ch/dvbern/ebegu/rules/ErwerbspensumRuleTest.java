@@ -1,4 +1,24 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.rules;
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.HashSet;
+import java.util.List;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Familiensituation;
@@ -11,11 +31,6 @@ import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * Tests für ErwerbspensumRule
@@ -217,13 +232,11 @@ public class ErwerbspensumRuleTest {
 		Assert.assertEquals(TestDataUtil.ENDE_PERIODE, result.get(2).getGueltigkeit().getGueltigBis());
 	}
 
-
 	/**
 	 * das Pensum muss wie folgt abgerundet werden:
 	 * X0 - X4 = X0
 	 * X5 - X9 = Y0, wo Y=X+1
-	 * @throws Exception
-     */
+	 */
 	@Test
 	public void testRoundToTens() throws Exception {
 		Betreuung betreuung = createGesuch(false);
