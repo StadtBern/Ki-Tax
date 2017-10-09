@@ -11,12 +11,10 @@
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU Affero General Public License for more details.
   ~ You should have received a copy of the GNU Affero General Public License
-  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  ~ along with this program. If not, see <http://www.gnu.org/licenses />.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -27,7 +25,7 @@
 
     <groupId>ch.dvbern.ebegu</groupId>
     <artifactId>ebegu</artifactId>
-    <version>2.2.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>eBEGU - Multimodule Project</name>
@@ -739,7 +737,7 @@
                         <featureBranchPrefix>feature/</featureBranchPrefix>
                         <releaseBranchPrefix>release/</releaseBranchPrefix>
                         <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-                        <versionTagPrefix/>
+                        <versionTagPrefix />
                     </flowInitContext>
                     <allowUntracked>true</allowUntracked>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -895,8 +893,8 @@
                                 <fail>true</fail>
                                 <failFast>true</failFast>
                                 <rules>
-                                    <dependencyConvergence/>
-                                    <reactorModuleConvergence/>
+                                    <dependencyConvergence />
+                                    <reactorModuleConvergence />
                                     <requireJavaVersion>
                                         <!-- Bei aelteren Versionen aendern die Unit-Test-Ergebnisse bei Berechnungen mit BigDecimal -->
                                         <version>[1.8.0-40,)</version>
