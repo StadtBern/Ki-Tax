@@ -44,7 +44,6 @@ import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStat
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ILogService = angular.ILogService;
-import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./betreuungView.html');

@@ -178,7 +178,7 @@ public enum AntragStatus {
             case SACHBEARBEITER_TRAEGERSCHAFT: return forSachbearbeiterTraegerschaftRole;
             case SCHULAMT: return forSchulamtRole;
             case ADMINISTRATOR_SCHULAMT: return forSchulamtRole;
-            caseSTEUERAMT: return forSteueramt;
+            case STEUERAMT: return forSteueramt;
             default: return none;
         }
     }

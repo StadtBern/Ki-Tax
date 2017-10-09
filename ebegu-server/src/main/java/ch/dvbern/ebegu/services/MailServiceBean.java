@@ -27,9 +27,6 @@ import javax.ejb.Asynchronous;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.concurrent.Future;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Fall;
@@ -55,6 +52,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
 import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 
 /**
  * Service fuer Senden von E-Mails
