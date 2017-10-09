@@ -1,27 +1,39 @@
 /*
- * Copyright 2014 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package ch.dvbern.ebegu.api.resource.authentication;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.annotation.Nullable;
 import javax.security.auth.message.AuthException;
 import javax.security.auth.message.AuthStatus;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ch.dvbern.ebegu.api.AuthConstants;
+import ch.dvbern.ebegu.api.EbeguApplicationV1;
+import ch.dvbern.ebegu.api.util.RestUtil;
+import ch.dvbern.ebegu.enums.UserRoleName;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.resteasy.util.BasicAuthHelper;
 import org.omnifaces.security.jaspic.core.AuthParameters;
 import org.omnifaces.security.jaspic.core.HttpMsgContext;
 import org.omnifaces.security.jaspic.core.HttpServerAuthModule;
@@ -29,11 +41,6 @@ import org.omnifaces.security.jaspic.user.TokenAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
-import ch.dvbern.ebegu.api.EbeguApplicationV1;
-import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.util.AuthConstants;
-import ch.dvbern.ebegu.util.Constants;
 
 import static javax.security.auth.message.AuthStatus.SEND_FAILURE;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
@@ -58,33 +65,48 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 	private static final Logger LOG = LoggerFactory.getLogger(CookieTokenAuthModule.class);
 	private static final String LOG_MDC_EBEGUUSER = "ebeguuser";
 	private static final String LOG_MDC_AUTHUSERID = "ebeguauthuserid";
-
+	private final String internalApiUser;
+	private final String internalApiPassword;
 
 	@SuppressWarnings("PMD.UnusedFormalParameter")
 	public CookieTokenAuthModule(String loginModuleStackName) {
 		//this is unused, just checked if this could be used to declare this module through standalone.xml instead of
 		//SamRegistrationListener
+		this();
+	}
+
+	public CookieTokenAuthModule(@Nullable String internalUser, @Nullable String internalPassword) {
+		//this is unused, just checked if this could be used to declare this module through standalone.xml instead of
+		//SamRegistrationListener
+		this.internalApiUser = internalUser;
+		this.internalApiPassword = internalPassword;
+		if (internalPassword == null || internalUser == null) {
+			throw new EbeguRuntimeException("CookieTokenAuthModule initialization", "Internal API User must be set");
+		}
 	}
 
 	public CookieTokenAuthModule() {
+		internalApiUser = null;
+		internalApiPassword = null;
 	}
 
 	@Override
 	public AuthStatus validateHttpRequest(HttpServletRequest request, HttpServletResponse response, HttpMsgContext httpMsgContext) throws AuthException {
 		prepareLogvars(httpMsgContext);
 		//maybe we should do a logout first?
-//		try {
-//			request.logout();
-//		} catch (ServletException e) {
-//			LOG.error("Unexpected exception during Logout", e);
-//			return setResponseUnauthorised(request, httpMsgContext);
-//		}
+		//		try {
+		//			request.logout();
+		//		} catch (ServletException e) {
+		//			LOG.error("Unexpected exception during Logout", e);
+		//			return setResponseUnauthorised(request, httpMsgContext);
+		//		}
 
-		//Exceptional paths that do not require a login
+		//Exceptional paths that do not require a login (they must also be added to web.xml security filter exceptions)
 		String apiBasePath = request.getContextPath() + EbeguApplicationV1.API_ROOT_PATH;
 		String path = request.getRequestURI();
 		AuthDataUtil.getBasePath(request);
 		if (path.startsWith(apiBasePath + "/auth/login")
+			|| path.startsWith(apiBasePath + "/connector/heartbeat")
 			|| path.startsWith(apiBasePath + "/auth/singleSignOn")
 			|| path.startsWith(apiBasePath + "/auth/singleLogout")
 			|| path.startsWith(apiBasePath + "/swagger.json")
@@ -100,6 +122,11 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 			// Beim Login Request gibt es noch nichts abzufangen
 			return httpMsgContext.doNothing();
 		}
+
+		if (path.startsWith(apiBasePath + "/connector")) {
+			return checkAuthorizationForInternalApiAccess(request, httpMsgContext);
+		}
+
 		//pages that do not fall under de security-context that was defined in webx.xml
 		if (!httpMsgContext.isProtected()) {
 			return httpMsgContext.doNothing();
@@ -129,7 +156,7 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 					if (tokenAuthenticator.authenticate(authToken)) {
 						LOG.debug("successfully logged in user: " + tokenAuthenticator.getUserName());
 						MDC.put(LOG_MDC_AUTHUSERID, authToken);
-//						httpMsgContext.registerWithContainer(tokenAuthenticator.getUserName(), tokenAuthenticator.getApplicationRoles()); //weis nicht was der untschied zwischen dem und dem andern ist
+						//						httpMsgContext.registerWithContainer(tokenAuthenticator.getUserName(), tokenAuthenticator.getApplicationRoles()); //weis nicht was der untschied zwischen dem und dem andern ist
 						return httpMsgContext.notifyContainerAboutLogin(tokenAuthenticator.getUserName(), tokenAuthenticator.getApplicationRoles());
 					} else {
 						// Token Verification Failed
@@ -143,7 +170,6 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 				}
 			}
 
-
 		} catch (NoSuchElementException e) {
 			LOG.info("Login with Token failed", e);
 			return setResponseUnauthorised(httpMsgContext);
@@ -155,6 +181,36 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 		}
 
 		return httpMsgContext.doNothing();
+	}
+
+	private AuthStatus checkAuthorizationForInternalApiAccess(HttpServletRequest request, HttpMsgContext httpMsgContext) {
+		if (!isInternalApiActive()) {
+			LOG.error("Call to connector API even though the properties for username and password were not defined"
+				+ "in ebegu. Please check that the system properties for username/password for the internal api are"
+				+ " set");
+			return setResponseUnauthorised(httpMsgContext);
+		} else {
+
+			String header = request.getHeader("Authorization");
+			final String[] strings = BasicAuthHelper.parseHeader(header);
+			if (strings != null && strings.length == 2) {
+				final String username = strings[0];
+				final String password = strings[1];
+				boolean validLogin = username.equals(this.internalApiUser) && password.equals(this.internalApiPassword);
+				if (validLogin) {
+					//note: no actual container login is performed currently
+					List<String> roles = new ArrayList<>();
+					roles.add(UserRoleName.SUPER_ADMIN);
+					return httpMsgContext.notifyContainerAboutLogin("LoginConnector", roles);
+				} else {
+					LOG.error("Call to connector api with invalid BasicAuth header credentials");
+					return setResponseUnauthorised(httpMsgContext);
+				}
+			} else {
+				LOG.error("Call to connector api without BasicAuth header credentials");
+				return setResponseUnauthorised(httpMsgContext);
+			}
+		}
 	}
 
 	private void prepareLogvars(HttpMsgContext msgContext) {
@@ -174,7 +230,6 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 	private boolean verifyXSFRHeader(HttpServletRequest request) {
 		String xsrfTokenHeader = request.getHeader(AuthConstants.PARAM_XSRF_TOKEN);
 
-
 		Cookie xsrfTokenCookie = AuthDataUtil.extractCookie(request.getCookies(), AuthConstants.COOKIE_XSRF_TOKEN);
 		boolean isValidFileDownload = StringUtils.isEmpty(xsrfTokenHeader)
 			&& xsrfTokenCookie != null
@@ -188,7 +243,6 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 		return true;
 	}
 
-
 	private AuthStatus setResponseUnauthorised(HttpMsgContext httpMsgContext) {
 		try {
 			httpMsgContext.getResponse().sendError(SC_UNAUTHORIZED);
@@ -197,5 +251,9 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 			throw new IllegalStateException(e);
 		}
 		return SEND_FAILURE;
+	}
+
+	private boolean isInternalApiActive() {
+		return internalApiPassword != null && internalApiUser != null;
 	}
 }

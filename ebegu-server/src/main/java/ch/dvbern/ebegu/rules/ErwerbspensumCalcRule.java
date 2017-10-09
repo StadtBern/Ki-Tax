@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.rules;
 
 import java.util.Objects;
@@ -21,7 +36,6 @@ import ch.dvbern.ebegu.util.MathUtil;
 public class ErwerbspensumCalcRule extends AbstractCalcRule {
 
 	private final int maxZuschlagValue;
-
 
 	public ErwerbspensumCalcRule(DateRange validityPeriod, int maxZuschlagValue) {
 		super(RuleKey.ERWERBSPENSUM, RuleType.GRUNDREGEL_CALC, validityPeriod);
@@ -56,11 +70,11 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 
 	private Integer calculateZuschlagGS1(int erwerbspensum, VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		Integer zuschlag = verfuegungZeitabschnitt.getZuschlagErwerbspensumGS1() != null ? verfuegungZeitabschnitt.getZuschlagErwerbspensumGS1() : 0;
-		if((erwerbspensum + zuschlag) > 100){
+		if ((erwerbspensum + zuschlag) > 100) {
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_ZUSCHLAG_GS1_MSG);
-			zuschlag =  100 - erwerbspensum ;    //zuschlag ist maximal die differenz zu 100%
+			zuschlag = 100 - erwerbspensum;    //zuschlag ist maximal die differenz zu 100%
 		}
-		if (zuschlag  > maxZuschlagValue) {
+		if (zuschlag > maxZuschlagValue) {
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_MAX_ZUSCHLAG, maxZuschlagValue);
 			zuschlag = maxZuschlagValue;
 		}
@@ -70,6 +84,7 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 	/**
 	 * pfueft dass Erwerbspensum + Zuschlag fuer den GS2  100% nicht uebschreitet. Zudem darf der Zuschlag
 	 * von Gesuchsteller2 plus der Zuschlag von Gesuchsteler1 den maximale zugelassenen Wert nicht ueberschreiten.
+	 *
 	 * @param erwerbspensum2 erwerbspensum von GS2
 	 * @param zuschlagGS1 bereits verbrauchter zuschlag von GS1 (ist immer kleiner gleich 'maxvalue')
 	 * @param verfuegungZeitabschnitt verfuegungsabschnitt aus dem der zuschlag vom GS2 extrahiert wird
@@ -98,13 +113,12 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 	 */
 	private int checkAndRoundAnspruch(@Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt, int anspruch) {
 		if (anspruch <= 0) {
-            anspruch = 0;
-            verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_ANSPRUCH);
-            verfuegungZeitabschnitt.setKategorieKeinPensum(true);
-        }
-        else if (anspruch > 100) { // das Ergebniss darf nie mehr als 100 sein
-            anspruch = 100;
-        }
+			anspruch = 0;
+			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_ANSPRUCH);
+			verfuegungZeitabschnitt.setKategorieKeinPensum(true);
+		} else if (anspruch > 100) { // das Ergebniss darf nie mehr als 100 sein
+			anspruch = 100;
+		}
 		// Der Anspruch wird immer auf 10-er Schritten gerundet.
 		return MathUtil.roundIntToTens(anspruch);
 	}
@@ -112,13 +126,13 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 	@Nonnull
 	private Integer calculateErwerbspensumGS1(@Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		Integer erwerbspensum = verfuegungZeitabschnitt.getErwerbspensumGS1() != null ? verfuegungZeitabschnitt.getErwerbspensumGS1() : 0;
-		return calculateErwerbspensum(verfuegungZeitabschnitt, erwerbspensum,  MsgKey.ERWERBSPENSUM_GS1_MSG);
+		return calculateErwerbspensum(verfuegungZeitabschnitt, erwerbspensum, MsgKey.ERWERBSPENSUM_GS1_MSG);
 	}
 
 	@Nonnull
 	private Integer calculateErwerbspensumGS2(@Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		Integer erwerbspensum = verfuegungZeitabschnitt.getErwerbspensumGS2() != null ? verfuegungZeitabschnitt.getErwerbspensumGS2() : 0;
-		return calculateErwerbspensum(verfuegungZeitabschnitt, erwerbspensum,  MsgKey.ERWERBSPENSUM_GS2_MSG);
+		return calculateErwerbspensum(verfuegungZeitabschnitt, erwerbspensum, MsgKey.ERWERBSPENSUM_GS2_MSG);
 	}
 
 	@Nonnull
@@ -135,10 +149,9 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 	private boolean hasSecondGSForZeit(@Nonnull Betreuung betreuung, @Nonnull DateRange gueltigkeit) {
 		final Gesuch gesuch = betreuung.extractGesuch();
 		if (gesuch.extractFamiliensituation().getAenderungPer() != null && gesuch.extractFamiliensituationErstgesuch() != null
-		    && gueltigkeit.getGueltigBis().isBefore(gesuch.extractFamiliensituation().getAenderungPer())) {
+			&& gueltigkeit.getGueltigBis().isBefore(gesuch.extractFamiliensituation().getAenderungPer())) {
 			return gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller();
-		}
-		else {
+		} else {
 			return gesuch.extractFamiliensituation().hasSecondGesuchsteller();
 		}
 	}

@@ -1,9 +1,25 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import TSAbstractEntity from './TSAbstractEntity';
 import * as moment from 'moment';
 import {TSGeschlecht} from './enums/TSGeschlecht';
 import TSEWKEinwohnercode from './TSEWKEinwohnercode';
 import TSEWKAdresse from './TSEWKAdresse';
 import TSEWKBeziehung from './TSEWKBeziehung';
+
 /**
  * DTO für eine Person aus dem EWK
  */
@@ -27,7 +43,6 @@ export default class TSEWKPerson extends TSAbstractEntity {
     private _bewilligungBis: moment.Moment;
     private _adressen: Array<TSEWKAdresse>;
     private _beziehungen: Array<TSEWKBeziehung>;
-
 
     constructor(personID?: string, einwohnercodes?: Array<TSEWKEinwohnercode>, nachname?: string, ledigname?: string,
                 vorname?: string, rufname?: string, geburtsdatum?: moment.Moment, zuzugsdatum?: moment.Moment,

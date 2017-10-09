@@ -11,30 +11,30 @@ Content-Type: text/html;charset=utf-8
 <html>
 <head>
 ${templateConfiguration.mailCss}
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Ki-Tax - Ihr Gesuch wurde bearbeitet</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Ki-Tax - Ihr Gesuch wurde bearbeitet</title>
 
 </head>
 
 <body>
 
 <div>
-    <p>
-        Sehr geehrte Familie
-    </p>
-    <p>
-        Die Prüfung und Berechnung Ihres Ki-Tax-Gesuchs wurde bearbeitet. Sie können die Ergebnisse
-        <a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/verfuegen/${gesuch.id}">hier</a>
-        einsehen.
-    </p>
-    <p>
-        Freundliche Grüsse <br/>
-        Jugendamt der Stadt Bern
-    </p>
-    <p>
-        Dies ist eine automatisch versendete E-Mail. Bitte antworten Sie nicht auf diese Nachricht.
-    </p>
+	<p>
+		Sehr geehrte Familie
+	</p>
+	<p>
+		Die Prüfung und Berechnung Ihres Ki-Tax-Gesuchs wurde bearbeitet. Sie können die Ergebnisse
+		<a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/verfuegen/${gesuch.id}">hier</a>
+		einsehen.
+	</p>
+	<p>
+		Freundliche Grüsse <br/>
+		Jugendamt der Stadt Bern
+	</p>
+	<p>
+		Dies ist eine automatisch versendete E-Mail. Bitte antworten Sie nicht auf diese Nachricht.
+	</p>
 </div>
 
 </body>

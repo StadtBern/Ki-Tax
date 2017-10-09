@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.time.LocalDate;
@@ -52,10 +67,9 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	@Inject
 	private InstitutionService institutionService;
 
-
 	@Nonnull
 	@Override
-	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
+	@RolesAllowed(value = { UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
 	public InstitutionStammdaten saveInstitutionStammdaten(@Nonnull InstitutionStammdaten institutionStammdaten) {
 		Objects.requireNonNull(institutionStammdaten);
 		return persistence.merge(institutionStammdaten);
@@ -66,7 +80,7 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	@PermitAll
 	public Optional<InstitutionStammdaten> findInstitutionStammdaten(@Nonnull final String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
-		InstitutionStammdaten a =  persistence.find(InstitutionStammdaten.class, id);
+		InstitutionStammdaten a = persistence.find(InstitutionStammdaten.class, id);
 		return Optional.ofNullable(a);
 	}
 
@@ -78,7 +92,7 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	}
 
 	@Override
-	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
+	@RolesAllowed(value = { UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
 	public void removeInstitutionStammdaten(@Nonnull String institutionStammdatenId) {
 		Validate.notNull(institutionStammdatenId);
 		Optional<InstitutionStammdaten> institutionStammdatenToRemove = findInstitutionStammdaten(institutionStammdatenId);
@@ -103,8 +117,8 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 
 		ParameterExpression<LocalDate> dateParam = cb.parameter(LocalDate.class, "date");
 		Predicate intervalPredicate = cb.between(dateParam,
-				root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigAb),
-				root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigBis));
+			root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigAb),
+			root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigBis));
 
 		query.where(intervalPredicate, isActivePredicate);
 		return persistence.getEntityManager().createQuery(query).setParameter(dateParam, date).getResultList();
@@ -151,7 +165,7 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 
 		CriteriaQuery<InstitutionStammdaten> query = cb.createQuery(InstitutionStammdaten.class);
 		Root<InstitutionStammdaten> root = query.from(InstitutionStammdaten.class);
-		Predicate gesuchstellerPred = cb.equal(root.get(InstitutionStammdaten_.institution).get(Institution_.id),institutionIdParam);
+		Predicate gesuchstellerPred = cb.equal(root.get(InstitutionStammdaten_.institution).get(Institution_.id), institutionIdParam);
 		query.where(gesuchstellerPred);
 		TypedQuery<InstitutionStammdaten> typedQuery = persistence.getEntityManager().createQuery(query);
 		typedQuery.setParameter("institutionId", institutionId);

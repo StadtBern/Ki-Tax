@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.time.LocalDate;
@@ -37,37 +52,37 @@ public interface TestfaelleService {
 	String ASIV9 = "ASIV9";
 	String ASIV10 = "ASIV10";
 
-
 	String heirat = "1";
 
 	@Nonnull
 	StringBuilder createAndSaveTestfaelle(@Nonnull String fallid,
-										  boolean betreuungenBestaetigt,
-										  boolean verfuegen, @Nullable String gesuchsPeriodeId);
+		boolean betreuungenBestaetigt,
+		boolean verfuegen, @Nullable String gesuchsPeriodeId);
 
 	@Nonnull
 	StringBuilder createAndSaveAsOnlineGesuch(@Nonnull String fallid,
-											  boolean betreuungenBestaetigt,
-											  boolean verfuegen,
-											  @Nonnull String username, @Nullable String gesuchsPeriodeId);
+		boolean betreuungenBestaetigt,
+		boolean verfuegen,
+		@Nonnull String username, @Nullable String gesuchsPeriodeId);
 
 	@Nullable
 	Gesuch createAndSaveTestfaelle(@Nonnull String fallid,
-								   boolean betreuungenBestaetigt,
-								   boolean verfuegen);
+		boolean betreuungenBestaetigt,
+		boolean verfuegen);
 
 	@Nullable
 	Gesuch mutierenHeirat(@Nonnull Long fallNummer,
-						  @Nonnull String gesuchsperiodeId,
-						  @Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen);
+		@Nonnull String gesuchsperiodeId,
+		@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen);
 
 	@Nullable
 	Gesuch mutierenScheidung(@Nonnull Long fallNummer,
-							 @Nonnull String gesuchsperiodeId,
-							 @Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen);
+		@Nonnull String gesuchsperiodeId,
+		@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen);
 
 	/**
 	 * loescht alle Gesuche des Gesuchstellers mit dem gegebenen Namen
+	 *
 	 * @param username Username des Besitzers der Gesuche die entferntw erden sollen
 	 */
 	void removeGesucheOfGS(@Nonnull String username);

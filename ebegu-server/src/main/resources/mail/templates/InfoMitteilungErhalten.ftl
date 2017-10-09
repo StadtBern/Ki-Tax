@@ -23,17 +23,17 @@ ${templateConfiguration.mailCss}
 		Sehr geehrte Familie
 	</p>
 	<p>
-        Das Jugendamt hat Ihnen eine
+		Das Jugendamt hat Ihnen eine
 		<a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/mitteilungen/${mitteilung.fall.id}">Nachricht</a>
-        geschrieben.
+		geschrieben.
 	</p>
-    <p>
-        Freundliche Grüsse <br/>
-        Jugendamt der Stadt Bern
-    </p>
-    <p>
-        Dies ist eine automatisch versendete E-Mail. Bitte antworten Sie nicht auf diese Nachricht.
-    </p>
+	<p>
+		Freundliche Grüsse <br/>
+		Jugendamt der Stadt Bern
+	</p>
+	<p>
+		Dies ist eine automatisch versendete E-Mail. Bitte antworten Sie nicht auf diese Nachricht.
+	</p>
 </div>
 
 </body>

@@ -1,20 +1,44 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.dto.dataexport.v1;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.types.DateRange;
-import org.apache.commons.lang.Validate;
-
-import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Adresse;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.types.DateRange;
+import org.apache.commons.lang.Validate;
+
 /**
  * Converter to change to create the ExportDTO of a given Verfuegung
  */
 public class ExportConverter {
-
 
 	public VerfuegungenExportDTO createVerfuegungenExportDTO(List<Verfuegung> verfuegungenToConvert) {
 		List<VerfuegungExportDTO> verfuegungExportDTOS = verfuegungenToConvert
@@ -56,11 +80,9 @@ public class ExportConverter {
 		return verfuegungDTO;
 	}
 
-
 	private KindExportDTO createKindExportDTOFromKind(KindContainer kindCont) {
 		Kind kindJA = kindCont.getKindJA();
 		return new KindExportDTO(kindJA.getVorname(), kindJA.getNachname(), kindJA.getGeburtsdatum());
-
 
 	}
 
@@ -83,7 +105,6 @@ public class ExportConverter {
 		String traegerschaft = institution.getTraegerschaft() != null ? institution.getTraegerschaft().getName() : null;
 		AdresseExportDTO adresse = createAdresseExportDTOFromAdresse(institutionStammdaten.getAdresse());
 		return new InstitutionExportDTO(instID, name, traegerschaft, adresse);
-
 
 	}
 

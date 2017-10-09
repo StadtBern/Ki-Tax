@@ -1,26 +1,35 @@
 /*
- * Copyright (c) 2013 DV Bern AG, Switzerland
- *
- * Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
- * geschuetzt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulaessig. Dies gilt
- * insbesondere fuer Vervielfaeltigungen, die Einspeicherung und Verarbeitung in
- * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
- * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package ch.dvbern.ebegu.config;
 
-import org.apache.commons.configuration.SystemConfiguration;
+import java.io.Serializable;
 
 import javax.enterprise.context.Dependent;
-import java.io.Serializable;
+
+import org.apache.commons.configuration.SystemConfiguration;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Konfiguration von Kurstool. Liest system Properties aus
  */
 @Dependent
 public class EbeguConfigurationImpl extends SystemConfiguration implements EbeguConfiguration, Serializable {
-
+	private static final Logger LOG = LoggerFactory.getLogger(EbeguConfigurationImpl.class.getSimpleName());
 
 	private static final long serialVersionUID = 463057263479503486L;
 	private static final String EBEGU_DEVELOPMENT_MODE = "ebegu.development.mode";
@@ -47,6 +56,10 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_PERSONENSUCHE_WSDL = "ebegu.personensuche.wsdl";
 	private static final String EBEGU_PERSONENSUCHE_USERNAME = "ebegu.personensuche.username";
 	private static final String EBEGU_PERSONENSUCHE_PASSWORD = "ebegu.personensuche.password";
+	public static final String EBEGU_LOGIN_PROVIDER_API_URL = "ebegu.login.provider.api.url";
+	private static final String EBEGU_LOGIN_API_ALLOW_REMOTE = "ebegu.login.api.allow.remote";
+	private static final String EBEGU_LOGIN_API_INTERNAL_USER = "ebegu.login.api.internal.user";
+	private static final String EBEGU_LOGIN_API_INTERNAL_PASSWORD = "ebegu.login.api.internal.password";
 
 	public EbeguConfigurationImpl() {
 
@@ -165,5 +178,36 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	@Override
 	public String getPersonenSuchePassword() {
 		return getString(EBEGU_PERSONENSUCHE_PASSWORD);
+	}
+
+	@Override
+	public String getLoginProviderAPIUrl() {
+		return getString(EBEGU_LOGIN_PROVIDER_API_URL);
+	}
+
+	@Override
+	public boolean isRemoteLoginConnectorAllowed() {
+		return getBoolean(EBEGU_LOGIN_API_ALLOW_REMOTE, false);
+	}
+
+	@Override
+	public String getInternalAPIUser() {
+		String user = getString(EBEGU_LOGIN_API_INTERNAL_USER);
+		if (StringUtils.isEmpty(user)) {
+			LOG.error("Internal API User  must be set in the properties (key: {}) to use the LoginConnector API ",
+				EBEGU_LOGIN_API_INTERNAL_USER);
+
+		}
+		return user;
+	}
+
+	@Override
+	public String getInternalAPIPassword() {
+		String internalUserPW = getString(EBEGU_LOGIN_API_INTERNAL_PASSWORD);
+		if (StringUtils.isEmpty(internalUserPW)) {
+			LOG.error("Internal API password must be set in the properties (key: {}) to use the LoginConnector API ",
+				EBEGU_LOGIN_API_INTERNAL_PASSWORD);
+		}
+		return internalUserPW;
 	}
 }

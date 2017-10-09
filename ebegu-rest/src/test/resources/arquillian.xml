@@ -1,3 +1,18 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <arquillian xmlns="http://jboss.org/schema/arquillian"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
@@ -11,7 +26,7 @@
 			<property name="javaVmArguments">-Djboss.socket.binding.port-offset=10000 -Xms512m -Xmx1024m -XX:MaxPermSize=512m</property>
 			<!-- Port offset allows running the tests while a WildFly server is already running, note that the offset is
 						 added to the default management port 9990 as well, this needs to be specified -->
-    		<property name="managementPort">19990</property>
+			<property name="managementPort">19990</property>
 			<!--um die konfiguration des cache containers fuer test verfuegbar zu haben-->
 			<!--<property name="serverConfig">standalone-test.xml</property>-->
 		</configuration>

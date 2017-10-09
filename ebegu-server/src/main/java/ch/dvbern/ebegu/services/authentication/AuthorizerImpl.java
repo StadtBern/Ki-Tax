@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services.authentication;
 
 import java.util.Collection;
@@ -64,8 +79,8 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizerImpl.class);
 
-	private static final UserRole[] JA_OR_ADM = {ADMIN, SACHBEARBEITER_JA};
-	private static final UserRole[] OTHER_AMT_ROLES = {REVISOR, JURIST, STEUERAMT};
+	private static final UserRole[] JA_OR_ADM = { ADMIN, SACHBEARBEITER_JA };
+	private static final UserRole[] OTHER_AMT_ROLES = { REVISOR, JURIST, STEUERAMT };
 
 	@Inject
 	private PrincipalBean principalBean;
@@ -102,7 +117,6 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			gesuche.forEach(this::checkReadAuthorization);
 		}
 	}
-
 
 	@Override
 	public void checkCreateAuthorizationGesuch() {
@@ -158,8 +172,8 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 		validateMandantMatches(fall);
 		//berechtigte Rollen pruefen
-		UserRole[] allowedRoles = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,
-			SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT, JURIST, REVISOR};
+		UserRole[] allowedRoles = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,
+			SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT, JURIST, REVISOR };
 		if (principalBean.isCallerInAnyOfRole(allowedRoles)) {
 			return true;
 		}
@@ -195,7 +209,6 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		}
 	}
 
-
 	@Override
 	public void checkWriteAuthorization(Gesuch gesuch) throws EJBAccessException {
 		if (gesuch == null) {
@@ -212,7 +225,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 		//Wir pruefen steueramt separat (steueramt darf nur das Gesuch speichern wenn es im Status PRUEFUNG_STV oder IN_BEARBEITUNG_STV ist)
 		boolean allowedSteueramt = false;
-		if (!allowedJAORGS && ! allowedSchulamt && principalBean.isCallerInRole(STEUERAMT)
+		if (!allowedJAORGS && !allowedSchulamt && principalBean.isCallerInRole(STEUERAMT)
 			&& (AntragStatus.PRUEFUNG_STV.equals(gesuch.getStatus()) || AntragStatus.IN_BEARBEITUNG_STV.equals(gesuch.getStatus())
 			|| AntragStatus.GEPRUEFT_STV.equals(gesuch.getStatus()))) {
 			allowedSteueramt = true;
@@ -315,7 +328,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	public void checkReadAuthorization(@Nullable ErwerbspensumContainer ewpCnt) {
 		if (ewpCnt != null) {
 			//Wenn wir hier 100% korrekt sein wollen muessten wir auch noch das Gesuch laden und den status pruefen.
-			UserRole[] allowedRoles = {SACHBEARBEITER_JA, SUPER_ADMIN, ADMIN, REVISOR, JURIST, SCHULAMT};
+			UserRole[] allowedRoles = { SACHBEARBEITER_JA, SUPER_ADMIN, ADMIN, REVISOR, JURIST, SCHULAMT };
 			boolean allowed = isInRoleOrGSOwner(allowedRoles, () -> extractGesuch(ewpCnt), principalBean.getPrincipal().getName());
 			if (!allowed) {
 				throwViolation(ewpCnt);
@@ -387,7 +400,6 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		}
 		return false;
 	}
-
 
 	private boolean isGSOwner(Supplier<Fall> fallSupplier, String principalName) {
 		if (principalBean.isCallerInRole(GESUCHSTELLER.name())) {
@@ -504,7 +516,6 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		}
 		return false;
 	}
-
 
 	//this method is named slightly wrong because it only checks write authorization for Admins SachbearbeiterJA and GS
 	private boolean isWriteAuthorized(Supplier<Gesuch> gesuchSupplier, String principalName) {

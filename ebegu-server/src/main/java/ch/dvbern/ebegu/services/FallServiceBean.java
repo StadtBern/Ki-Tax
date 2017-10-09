@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.util.ArrayList;
@@ -59,7 +74,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(FallService.class)
-@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, SCHULAMT})
+@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, SCHULAMT })
 public class FallServiceBean extends AbstractBaseService implements FallService {
 
 	@Inject
@@ -86,10 +101,9 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	@Inject
 	private SuperAdminService superAdminService;
 
-
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,  GESUCHSTELLER })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public Fall saveFall(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall);
 		// Den "Besitzer" auf dem Fall ablegen
@@ -105,7 +119,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	@Override
 	public Optional<Fall> findFall(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		Fall a =  persistence.find(Fall.class, key);
+		Fall a = persistence.find(Fall.class, key);
 		if (a != null) {
 			authorizer.checkReadAuthorizationFall(a);
 		}
@@ -178,9 +192,8 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		return Optional.empty();
 	}
 
-
 	@Override
-	public Optional<String> getCurrentEmailAddress(String fallID){
+	public Optional<String> getCurrentEmailAddress(String fallID) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 
 		final CriteriaQuery<String> query = cb.createQuery(String.class);
@@ -201,10 +214,10 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		List<String> criteriaResults = typedQuery.getResultList();
 
 		String emailToReturn = null;
-		if(!criteriaResults.isEmpty()){
+		if (!criteriaResults.isEmpty()) {
 			if (criteriaResults.size() != 1) {
 				throw new EbeguRuntimeException("getEmailAddressForFall", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, criteriaResults.size());
-			} else{
+			} else {
 				String gesuchstellerEmail = criteriaResults.get(0);
 				emailToReturn = gesuchstellerEmail;
 			}

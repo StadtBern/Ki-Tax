@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.api.converter;
 
 import java.math.BigDecimal;
@@ -18,13 +33,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.hibernate.envers.DefaultRevisionEntity;
-import org.hibernate.envers.RevisionType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ch.dvbern.ebegu.api.dtos.JaxAbstractDTO;
 import ch.dvbern.ebegu.api.dtos.JaxAbstractDateRangedDTO;
@@ -84,8 +92,6 @@ import ch.dvbern.ebegu.api.dtos.JaxWizardStep;
 import ch.dvbern.ebegu.api.dtos.JaxZahlung;
 import ch.dvbern.ebegu.api.dtos.JaxZahlungsauftrag;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.authentication.AuthAccessElement;
-import ch.dvbern.ebegu.authentication.JaxAuthAccessElement;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.AbstractDateRangedEntity;
 import ch.dvbern.ebegu.entities.AbstractEntity;
@@ -175,14 +181,19 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import ch.dvbern.lib.date.DateConvertUtils;
-import org.apache.commons.lang3.NotImplementedException;
 import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.hibernate.envers.DefaultRevisionEntity;
+import org.hibernate.envers.RevisionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-
 @Dependent
-@SuppressWarnings({"PMD.NcssTypeCount", "unused"})
+@SuppressWarnings({ "PMD.NcssTypeCount", "unused" })
 public class JaxBConverter {
 
 	@Inject
@@ -226,9 +237,7 @@ public class JaxBConverter {
 	@Inject
 	private VerfuegungService verfuegungService;
 
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(JaxBConverter.class);
-
 
 	@Nonnull
 	public String toResourceId(@Nonnull final AbstractEntity entity) {
@@ -274,7 +283,7 @@ public class JaxBConverter {
 	 * Converts all person related fields from Jax to Entity
 	 *
 	 * @param personEntityJAXP das objekt als Jax
-	 * @param personEntity     das object als Entity
+	 * @param personEntity das object als Entity
 	 */
 	private void convertAbstractPersonFieldsToEntity(final JaxAbstractPersonDTO personEntityJAXP, final AbstractPersonEntity personEntity) {
 		convertAbstractFieldsToEntity(personEntityJAXP, personEntity);
@@ -287,7 +296,7 @@ public class JaxBConverter {
 	/**
 	 * Converts all person related fields from Entity to Jax
 	 *
-	 * @param personEntity     das object als Entity
+	 * @param personEntity das object als Entity
 	 * @param personEntityJAXP das objekt als Jax
 	 */
 	private void convertAbstractPersonFieldsToJAX(final AbstractPersonEntity personEntity, final JaxAbstractPersonDTO personEntityJAXP) {
@@ -303,7 +312,7 @@ public class JaxBConverter {
 	 * If gueltigAb is null then current date is set instead
 	 * If gueltigBis is null then end_of_time is set instead
 	 *
-	 * @param dateRangedJAXP   AbstractDateRanged jax where to take the date from
+	 * @param dateRangedJAXP AbstractDateRanged jax where to take the date from
 	 * @param dateRangedEntity AbstractDateRanged entity where to store the date into
 	 */
 	private void convertAbstractDateRangedFieldsToEntity(final JaxAbstractDateRangedDTO dateRangedJAXP, final AbstractDateRangedEntity dateRangedEntity) {
@@ -337,7 +346,6 @@ public class JaxBConverter {
 		convertAbstractDateRangedFieldsToJAX(pensum, jaxPensum);
 		jaxPensum.setPensum(pensum.getPensum());
 	}
-
 
 	@Nonnull
 	public JaxApplicationProperties applicationPropertyToJAX(@Nonnull final ApplicationProperty applicationProperty) {
@@ -433,7 +441,7 @@ public class JaxBConverter {
 
 	@Nonnull
 	public JaxEnversRevision enversRevisionToJAX(@Nonnull final DefaultRevisionEntity revisionEntity,
-												 @Nonnull final AbstractEntity abstractEntity, final RevisionType accessType) {
+		@Nonnull final AbstractEntity abstractEntity, final RevisionType accessType) {
 
 		final JaxEnversRevision jaxEnversRevision = new JaxEnversRevision();
 		if (abstractEntity instanceof ApplicationProperty) {
@@ -462,7 +470,7 @@ public class JaxBConverter {
 	}
 
 	private void sortAndAddAdressenToGesuchstellerContainer(@Nonnull JaxGesuchstellerContainer gesuchstellerContJAXP,
-															@Nonnull GesuchstellerContainer gesuchstellerCont) {
+		@Nonnull GesuchstellerContainer gesuchstellerCont) {
 		// Zuerst wird geguckt, welche Entities nicht im JAX sind und werden dann geloescht
 		for (Iterator<GesuchstellerAdresseContainer> iterator = gesuchstellerCont.getAdressen().iterator(); iterator.hasNext(); ) {
 			GesuchstellerAdresseContainer next = iterator.next();
@@ -615,7 +623,7 @@ public class JaxBConverter {
 	}
 
 	public FamiliensituationContainer familiensituationContainerToEntity(@Nonnull final JaxFamiliensituationContainer containerJAX,
-																		 @Nonnull final FamiliensituationContainer container) {
+		@Nonnull final FamiliensituationContainer container) {
 		Validate.notNull(container);
 		Validate.notNull(containerJAX);
 		convertAbstractFieldsToEntity(containerJAX, container);
@@ -647,7 +655,7 @@ public class JaxBConverter {
 	}
 
 	public EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainerToEntity(@Nonnull final JaxEinkommensverschlechterungInfoContainer containerJAX,
-																								   @Nonnull final EinkommensverschlechterungInfoContainer container) {
+		@Nonnull final EinkommensverschlechterungInfoContainer container) {
 		Validate.notNull(container);
 		Validate.notNull(containerJAX);
 		convertAbstractFieldsToEntity(containerJAX, container);
@@ -931,7 +939,6 @@ public class JaxBConverter {
 		return gesuchstellerCont;
 	}
 
-
 	public JaxGesuch gesuchToJAX(@Nonnull final Gesuch persistedGesuch) {
 		final JaxGesuch jaxGesuch = new JaxGesuch();
 		convertAbstractFieldsToJAX(persistedGesuch, jaxGesuch);
@@ -1029,7 +1036,6 @@ public class JaxBConverter {
 		return jaxFachstelle;
 	}
 
-
 	public JaxInstitution institutionToJAX(final Institution persistedInstitution) {
 		final JaxInstitution jaxInstitution = new JaxInstitution();
 		convertAbstractFieldsToJAX(persistedInstitution, jaxInstitution);
@@ -1073,8 +1079,7 @@ public class JaxBConverter {
 			} else {
 				throw new EbeguEntityNotFoundException("institutionToEntity -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
 			}
-		}
-		else {
+		} else {
 			institution.setTraegerschaft(null);
 		}
 		return institution;
@@ -1103,7 +1108,6 @@ public class JaxBConverter {
 		Validate.notNull(institutionStammdatenJAXP.getInstitution());
 		Validate.notNull(institutionStammdaten);
 		Validate.notNull(institutionStammdaten.getAdresse());
-
 
 		convertAbstractDateRangedFieldsToEntity(institutionStammdatenJAXP, institutionStammdaten);
 		institutionStammdaten.setOeffnungstage(institutionStammdatenJAXP.getOeffnungstage());
@@ -1148,7 +1152,6 @@ public class JaxBConverter {
 		final FinanzielleSituationContainer mergedContainer = finanzielleSituationContainerToEntity(containerJAX, containerToMergeWith);
 		return mergedContainer;
 	}
-
 
 	public EinkommensverschlechterungContainer einkommensverschlechterungContainerToStorableEntity(@Nonnull final JaxEinkommensverschlechterungContainer containerJAX) {
 		Validate.notNull(containerJAX);
@@ -1214,7 +1217,6 @@ public class JaxBConverter {
 		}
 		return pensumFachstelleToEntity(pensumFsToSave, pensumToMergeWith);
 	}
-
 
 	public JaxKindContainer kindContainerToJAX(final KindContainer persistedKind) {
 		final JaxKindContainer jaxKindContainer = new JaxKindContainer();
@@ -1318,7 +1320,7 @@ public class JaxBConverter {
 
 	@Nonnull
 	public FinanzielleSituationContainer finanzielleSituationContainerToEntity(@Nonnull final JaxFinanzielleSituationContainer containerJAX,
-																			   @Nonnull final FinanzielleSituationContainer container) {
+		@Nonnull final FinanzielleSituationContainer container) {
 		Validate.notNull(container);
 		Validate.notNull(containerJAX);
 		convertAbstractFieldsToEntity(containerJAX, container);
@@ -1348,7 +1350,7 @@ public class JaxBConverter {
 	}
 
 	public EinkommensverschlechterungContainer einkommensverschlechterungContainerToEntity(@Nonnull final JaxEinkommensverschlechterungContainer containerJAX,
-																						   @Nonnull final EinkommensverschlechterungContainer container) {
+		@Nonnull final EinkommensverschlechterungContainer container) {
 		Validate.notNull(container);
 		Validate.notNull(containerJAX);
 		convertAbstractFieldsToEntity(containerJAX, container);
@@ -1432,7 +1434,6 @@ public class JaxBConverter {
 		return finanzielleSituation;
 	}
 
-
 	private JaxFinanzielleSituation finanzielleSituationToJAX(@Nullable final FinanzielleSituation persistedFinanzielleSituation) {
 
 		if (persistedFinanzielleSituation != null) {
@@ -1471,7 +1472,6 @@ public class JaxBConverter {
 		return einkommensverschlechterung;
 	}
 
-
 	private JaxEinkommensverschlechterung einkommensverschlechterungToJAX(@Nullable final Einkommensverschlechterung persistedEinkommensverschlechterung) {
 
 		if (persistedEinkommensverschlechterung != null) {
@@ -1498,7 +1498,6 @@ public class JaxBConverter {
 		}
 		return null;
 	}
-
 
 	public ErwerbspensumContainer erwerbspensumContainerToStoreableEntity(@Nonnull final JaxErwerbspensumContainer jaxEwpCont) {
 		Validate.notNull(jaxEwpCont);
@@ -1601,7 +1600,6 @@ public class JaxBConverter {
 		return betreuung;
 	}
 
-
 	public Betreuung betreuungToStoreableEntity(@Nonnull final JaxBetreuung betreuungJAXP) {
 		Validate.notNull(betreuungJAXP);
 		Betreuung betreuungToMergeWith = new Betreuung();
@@ -1629,11 +1627,11 @@ public class JaxBConverter {
 	 * (jax) container to the list. If the container doesn't exist it creates a new one and adds it to the list. Thus all containers that existed as entity
 	 * but not in the list of jax, won't be added to the list and are then removed (cascade and orphanremoval)
 	 *
-	 * @param jaxBetPenContainers      Betreuungspensen DTOs from Client
+	 * @param jaxBetPenContainers Betreuungspensen DTOs from Client
 	 * @param existingBetreuungspensen List of currently stored BetreungspensumContainers
 	 */
 	private void betreuungsPensumContainersToEntity(final List<JaxBetreuungspensumContainer> jaxBetPenContainers,
-													final Collection<BetreuungspensumContainer> existingBetreuungspensen) {
+		final Collection<BetreuungspensumContainer> existingBetreuungspensen) {
 		final Set<BetreuungspensumContainer> transformedBetPenContainers = new TreeSet<>();
 		for (final JaxBetreuungspensumContainer jaxBetPensContainer : jaxBetPenContainers) {
 			final BetreuungspensumContainer containerToMergeWith = existingBetreuungspensen
@@ -1656,7 +1654,7 @@ public class JaxBConverter {
 	}
 
 	private void abwesenheitContainersToEntity(final List<JaxAbwesenheitContainer> jaxAbwesenheitContainers,
-											   final Collection<AbwesenheitContainer> existingAbwesenheiten) {
+		final Collection<AbwesenheitContainer> existingAbwesenheiten) {
 		final Set<AbwesenheitContainer> transformedAbwesenheitContainers = new TreeSet<>();
 		for (final JaxAbwesenheitContainer jaxAbwesenheitContainer : jaxAbwesenheitContainers) {
 			final AbwesenheitContainer containerToMergeWith = existingAbwesenheiten
@@ -1759,10 +1757,10 @@ public class JaxBConverter {
 		convertAbstractPensumFieldsToJAX(betreuungspensum, jaxBetreuungspensum);
 		return jaxBetreuungspensum;
 	}
+
 	/**
 	 * converts the given betreuungList into a JaxBetreuungList
 	 *
-	 * @param betreuungList
 	 * @return List with Betreuung DTOs
 	 */
 	public Collection<JaxBetreuung> betreuungListToJax(Collection<Betreuung> betreuungList) {
@@ -1772,7 +1770,6 @@ public class JaxBConverter {
 		});
 		return returnList;
 	}
-
 
 	public JaxBetreuung betreuungToJAX(final Betreuung betreuungFromServer) {
 		final JaxBetreuung jaxBetreuung = new JaxBetreuung();
@@ -1807,7 +1804,6 @@ public class JaxBConverter {
 	/**
 	 * converts the given verfuegung into a JaxVerfuegung
 	 *
-	 * @param verfuegung
 	 * @return dto with the values of the verfuegung
 	 */
 	public JaxVerfuegung verfuegungToJax(Verfuegung verfuegung) {
@@ -1836,7 +1832,6 @@ public class JaxBConverter {
 	/**
 	 * converts the given verfuegung into a JaxVerfuegung
 	 *
-	 * @param verfuegung
 	 * @return dto with the values of the verfuegung
 	 */
 	public Verfuegung verfuegungToEntity(final JaxVerfuegung jaxVerfuegung, final Verfuegung verfuegung) {
@@ -1858,7 +1853,7 @@ public class JaxBConverter {
 	}
 
 	private void verfuegungZeitabschnitteToEntity(List<VerfuegungZeitabschnitt> existingZeitabschnitte,
-												  List<JaxVerfuegungZeitabschnitt> zeitabschnitteFromClient) {
+		List<JaxVerfuegungZeitabschnitt> zeitabschnitteFromClient) {
 		final Set<VerfuegungZeitabschnitt> convertedZeitabschnitte = new TreeSet<>();
 		for (final JaxVerfuegungZeitabschnitt jaxZeitabschnitt : zeitabschnitteFromClient) {
 			final VerfuegungZeitabschnitt containerToMergeWith = existingZeitabschnitte
@@ -1878,7 +1873,6 @@ public class JaxBConverter {
 		existingZeitabschnitte.addAll(convertedZeitabschnitte);
 
 	}
-
 
 	private JaxVerfuegungZeitabschnitt verfuegungZeitabschnittToJax(VerfuegungZeitabschnitt zeitabschnitt) {
 		if (zeitabschnitt != null) {
@@ -1912,7 +1906,7 @@ public class JaxBConverter {
 	}
 
 	private VerfuegungZeitabschnitt verfuegungZeitabschnittToEntity(final JaxVerfuegungZeitabschnitt jaxVerfuegungZeitabschnitt,
-																	final VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+		final VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		Validate.notNull(jaxVerfuegungZeitabschnitt);
 		Validate.notNull(verfuegungZeitabschnitt);
 		convertAbstractDateRangedFieldsToEntity(jaxVerfuegungZeitabschnitt, verfuegungZeitabschnitt);
@@ -1942,9 +1936,6 @@ public class JaxBConverter {
 
 	/**
 	 * calls betreuungsPensumContainerToJax for each betreuungspensumContainer found in given the list
-	 *
-	 * @param betreuungspensumContainers
-	 * @return
 	 */
 	private List<JaxBetreuungspensumContainer> betreuungsPensumContainersToJax(final Set<BetreuungspensumContainer> betreuungspensumContainers) {
 		final List<JaxBetreuungspensumContainer> jaxContainers = new ArrayList<>();
@@ -2012,7 +2003,6 @@ public class JaxBConverter {
 		return jaxBetreuungspensum;
 	}
 
-
 	public JaxGesuchsperiode gesuchsperiodeToJAX(final Gesuchsperiode persistedGesuchsperiode) {
 		final JaxGesuchsperiode jaxGesuchsperiode = new JaxGesuchsperiode();
 		convertAbstractDateRangedFieldsToJAX(persistedGesuchsperiode, jaxGesuchsperiode);
@@ -2025,7 +2015,6 @@ public class JaxBConverter {
 		gesuchsperiode.setStatus(jaxGesuchsperiode.getStatus());
 		return gesuchsperiode;
 	}
-
 
 	public Benutzer authLoginElementToBenutzer(JaxAuthLoginElement loginElement, Benutzer benutzer) {
 		benutzer.setUsername(loginElement.getUsername());
@@ -2127,11 +2116,11 @@ public class JaxBConverter {
 	 * (jax) dokument to the list. If the dokument doesn't exist it creates a new one and adds it to the list. Thus all dokumente that existed as entity
 	 * but not in the list of jax, won't be added to the list and then removed (cascade and orphanremoval)
 	 *
-	 * @param jaxDokuments      Dokumente DTOs from Client
+	 * @param jaxDokuments Dokumente DTOs from Client
 	 * @param existingDokumente List of currently stored Dokumente
 	 */
 	private void dokumenteToEntity(final Set<JaxDokument> jaxDokuments,
-								   final Collection<Dokument> existingDokumente, final DokumentGrund dokumentGrund) {
+		final Collection<Dokument> existingDokumente, final DokumentGrund dokumentGrund) {
 		final Set<Dokument> transformedDokumente = new HashSet<>();
 		for (final JaxDokument jaxDokument : jaxDokuments) {
 			final Dokument dokumenteToMergeWith = existingDokumente
@@ -2164,7 +2153,6 @@ public class JaxBConverter {
 		convertFileToEnity(jaxDokument, dokument);
 		return dokument;
 	}
-
 
 	public JaxDownloadFile downloadFileToJAX(DownloadFile downloadFile) {
 		JaxDownloadFile jaxDownloadFile = new JaxDownloadFile();
@@ -2218,7 +2206,6 @@ public class JaxBConverter {
 		return jaxFile;
 	}
 
-
 	public EbeguVorlage ebeguVorlageToEntity(@Nonnull final JaxEbeguVorlage ebeguVorlageJAXP, @Nonnull final EbeguVorlage ebeguVorlage) {
 		Validate.notNull(ebeguVorlage);
 		Validate.notNull(ebeguVorlageJAXP);
@@ -2253,7 +2240,6 @@ public class JaxBConverter {
 		return fileMetadata;
 	}
 
-
 	public JaxAntragStatusHistory antragStatusHistoryToJAX(AntragStatusHistory antragStatusHistory) {
 		final JaxAntragStatusHistory jaxAntragStatusHistory = convertAbstractFieldsToJAX(antragStatusHistory, new JaxAntragStatusHistory());
 		jaxAntragStatusHistory.setGesuchId(antragStatusHistory.getGesuch().getId());
@@ -2264,6 +2250,7 @@ public class JaxBConverter {
 		return jaxAntragStatusHistory;
 
 	}
+
 	public Collection<JaxAntragStatusHistory> antragStatusHistoryCollectionToJAX(Collection<AntragStatusHistory> antragStatusHistoryCollection) {
 		final Collection<JaxAntragStatusHistory> jaxContainers = new ArrayList<>();
 		if (antragStatusHistoryCollection != null) {
@@ -2276,23 +2263,24 @@ public class JaxBConverter {
 
 	public void disguiseStatus(Gesuch gesuch, JaxAntragDTO antrag, UserRole userRole) {
 		switch (userRole) {
-			case GESUCHSTELLER:
-			case SACHBEARBEITER_INSTITUTION:
-			case SACHBEARBEITER_TRAEGERSCHAFT:
-				switch (gesuch.getStatus()) {
-					case PRUEFUNG_STV:
-					case GEPRUEFT_STV:
-					case IN_BEARBEITUNG_STV:
-						antrag.setStatus(AntragStatusDTO.VERFUEGT);
-						break;
-					default:
-						break;
-				}
+		case GESUCHSTELLER:
+		case SACHBEARBEITER_INSTITUTION:
+		case SACHBEARBEITER_TRAEGERSCHAFT:
+			switch (gesuch.getStatus()) {
+			case PRUEFUNG_STV:
+			case GEPRUEFT_STV:
+			case IN_BEARBEITUNG_STV:
+				antrag.setStatus(AntragStatusDTO.VERFUEGT);
 				break;
 			default:
 				break;
+			}
+			break;
+		default:
+			break;
 		}
 	}
+
 	/**
 	 * transformiert ein gesuch in ein JaxAntragDTO unter beruecksichtigung der rollen und erlaubten institutionen
 	 * - Fuer die Rolle Steueramt werden saemtlichen Daten von den Kindern nicht geladen

@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.io.ByteArrayOutputStream;
@@ -16,23 +31,11 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import static ch.dvbern.ebegu.util.MonitoringUtil.monitor;
 
-/**
- * Copyright (c) 2016 DV Bern AG, Switzerland
- * <p>
- * Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
- * geschuetzt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulaessig. Dies gilt
- * insbesondere fuer Vervielfaeltigungen, die Einspeicherung und Verarbeitung in
- * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
- * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
- * <p>
- * Created by medu on 05/02/2017.
- */
 public abstract class AbstractReportServiceBean extends AbstractBaseService {
 
-
-	protected byte[] createWorkbook(@Nonnull Workbook workbook){
+	protected byte[] createWorkbook(@Nonnull Workbook workbook) {
 		byte[] bytes;
-		try{
+		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			workbook.write(baos);
 			baos.flush();
@@ -44,7 +47,7 @@ public abstract class AbstractReportServiceBean extends AbstractBaseService {
 		return bytes;
 	}
 
-	protected void mergeData(@Nonnull Sheet sheet, @Nonnull ExcelMergerDTO excelMergerDTO, @Nonnull  MergeFieldProvider[] mergeFieldProviders) throws ExcelMergeException {
+	protected void mergeData(@Nonnull Sheet sheet, @Nonnull ExcelMergerDTO excelMergerDTO, @Nonnull MergeFieldProvider[] mergeFieldProviders) throws ExcelMergeException {
 		List<MergeField<?>> mergeFields = MergeFieldProvider.toMergeFields(mergeFieldProviders);
 		monitor(AbstractReportServiceBean.class, String.format("mergeData (sheet=%s)", sheet.getSheetName()),
 			() -> ExcelMerger.mergeData(sheet, mergeFields, excelMergerDTO));

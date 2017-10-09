@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import {TSDateRange} from '../models/types/TSDateRange';
 import {EbeguWebCore} from '../core/core.module';
@@ -15,8 +30,8 @@ describe('EbeguUtil', function () {
 
     // Das wird nur fuer tests gebraucht in denen etwas uebersetzt wird. Leider muss man dieses erstellen
     // bevor man den Injector erstellt hat. Deshalb muss es fuer alle Tests definiert werden
-    beforeEach(angular.mock.module(function($provide: any) {
-        let mockTranslateFilter = function(value: any) {
+    beforeEach(angular.mock.module(function ($provide: any) {
+        let mockTranslateFilter = function (value: any) {
             if (value === 'FIRST') {
                 return 'Erster';
             }
@@ -58,53 +73,53 @@ describe('EbeguUtil', function () {
         });
     });
     describe('calculateBetreuungsId', () => {
-        it ('it returns empty string for undefined objects', () => {
+        it('it returns empty string for undefined objects', () => {
             expect(ebeguUtil.calculateBetreuungsId(undefined, undefined, 0, 0)).toBe('');
         });
-        it ('it returns empty string for undefined kindContainer', () => {
+        it('it returns empty string for undefined kindContainer', () => {
             let fall: TSFall = new TSFall();
             expect(ebeguUtil.calculateBetreuungsId(undefined, fall, 0, 0)).toBe('');
         });
-        it ('it returns empty string for undefined betreuung', () => {
+        it('it returns empty string for undefined betreuung', () => {
             let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode();
             expect(ebeguUtil.calculateBetreuungsId(gesuchsperiode, undefined, 0, 0)).toBe('');
         });
-        it ('it returns the right ID: YY(gesuchsperiodeBegin).fallNummer.Kind.Betreuung', () => {
+        it('it returns the right ID: YY(gesuchsperiodeBegin).fallNummer.Kind.Betreuung', () => {
             let fall: TSFall = new TSFall(254);
             let gesuchsperiode = TestDataUtil.createGesuchsperiode20162017();
             expect(ebeguUtil.calculateBetreuungsId(gesuchsperiode, fall, 1, 1)).toBe('16.000254.1.1');
         });
     });
     describe('getFirstDayGesuchsperiodeAsString', () => {
-        it ('it returns empty string for undefined Gesuchsperiode', () => {
+        it('it returns empty string for undefined Gesuchsperiode', () => {
             expect(ebeguUtil.getFirstDayGesuchsperiodeAsString(undefined)).toBe('');
         });
-        it ('it returns empty string for undefined daterange in the Gesuchsperiode', () => {
+        it('it returns empty string for undefined daterange in the Gesuchsperiode', () => {
             let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.AKTIV, undefined);
             expect(ebeguUtil.getFirstDayGesuchsperiodeAsString(undefined)).toBe('');
         });
-        it ('it returns empty string for undefined gueltigAb', () => {
+        it('it returns empty string for undefined gueltigAb', () => {
             let daterange: TSDateRange = new TSDateRange(undefined, moment('31.07.2017', 'DD.MM.YYYY'));
             let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.AKTIV, daterange);
             expect(ebeguUtil.getFirstDayGesuchsperiodeAsString(gesuchsperiode)).toBe('');
         });
-        it ('it returns 01.08.2016', () => {
+        it('it returns 01.08.2016', () => {
             let daterange: TSDateRange = new TSDateRange(moment('01.08.2016', 'DD.MM.YYYY'), moment('31.07.2017', 'DD.MM.YYYY'));
             let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.AKTIV, daterange);
             expect(ebeguUtil.getFirstDayGesuchsperiodeAsString(gesuchsperiode)).toBe('01.08.2016');
         });
     });
     describe('generateRandomName', () => {
-        it ('it returns a string with 5 characters', () => {
+        it('it returns a string with 5 characters', () => {
             expect(EbeguUtil.generateRandomName(5).length).toBe(5);
         });
-        it ('it returns a string with 0 characters', () => {
+        it('it returns a string with 0 characters', () => {
             expect(EbeguUtil.generateRandomName(0).length).toBe(0);
         });
-        it ('it returns a string with 52 characters', () => {
+        it('it returns a string with 52 characters', () => {
             expect(EbeguUtil.generateRandomName(52).length).toBe(52);
         });
-        it ('it returns a string with 0 characters', () => {
+        it('it returns a string with 0 characters', () => {
             expect(EbeguUtil.generateRandomName(-1).length).toBe(0);
         });
     });

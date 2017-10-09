@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.util.Collection;
@@ -28,7 +43,7 @@ public interface FallService {
 	 * @return Fall mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
- 	Optional<Fall> findFall(@Nonnull String key);
+	Optional<Fall> findFall(@Nonnull String key);
 
 	/**
 	 * Gibt den Fall mit der angegebenen Fall-Nummer zurueck
@@ -44,17 +59,15 @@ public interface FallService {
 
 	/**
 	 * Gibt den Fall zurueck der zum eingeloggten Benutzer gehoert oder ein leeres optional wenn keiner vorhanden
-	 * @param benutzer
-	 * @return
 	 */
 	@Nonnull
 	Optional<Fall> findFallByBesitzer(Benutzer benutzer);
 
 	/**
 	 * Gibt alle existierenden Faelle zurueck.
-	 * @param doAuthCheck: Definiert, ob die Berechtigungen (Lesen/Schreiben) für alle Faelle geprüft werden muessen.
-	 *                   Falls spaeter sowieso nur IDs (der Gesuche) verwendet werden, kann der Check weggelassen werden.
 	 *
+	 * @param doAuthCheck: Definiert, ob die Berechtigungen (Lesen/Schreiben) für alle Faelle geprüft werden muessen.
+	 * Falls spaeter sowieso nur IDs (der Gesuche) verwendet werden, kann der Check weggelassen werden.
 	 * @return Liste aller Faelle aus der DB
 	 */
 	@Nonnull
@@ -73,7 +86,6 @@ public interface FallService {
 	 * - In allen anderen Fällen ein Optional.empty() wird zurueckgegeben
 	 */
 	Optional<Fall> createFallForCurrentGesuchstellerAsBesitzer();
-
 
 	/**
 	 * Gibt die GS1-Emailadresse des neusten Gesuchs fuer diesen Fall zurueck, wenn noch kein Gesuch vorhanden ist, wird

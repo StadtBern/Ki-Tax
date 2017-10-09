@@ -1,7 +1,20 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 var helpers = require('./helpers');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-
-
 
 //um das css in ein eigenes file zu exportieren sollten wir wohl sowas machen:
 // https://gist.github.com/squadwuschel/47b6248d500c1cf6de23127a695183b0 aktuell ist das aber irgendwie kaputt
@@ -43,14 +56,14 @@ module.exports = [
         }
     },
     {
-            test: /\.ts$/,
-            loaders: [
-              {
+        test: /\.ts$/,
+        loaders: [
+            {
                 loader: 'awesome-typescript-loader',
-                options: { configFileName: helpers.root('src', 'tsconfig.json') }
-              }
-            ]
-          },
+                options: {configFileName: helpers.root('src', 'tsconfig.json')}
+            }
+        ]
+    },
 
     // Html loader advanced options
     //
@@ -84,10 +97,10 @@ module.exports = [
         test: /\.less$/,
         exclude: helpers.root('src'),
         loader: ExtractTextPlugin.extract({
-          fallback: "style-loader",
-          loader: "css-loader?sourceMap!less-loader?sourceMap"
+            fallback: "style-loader",
+            loader: "css-loader?sourceMap!less-loader?sourceMap"
         })
-      },
+    },
     //include the styles inline for the appdirectory
     {
         test: /\.less$/,
@@ -105,10 +118,10 @@ module.exports = [
         test: /\.scss$/,
         exclude: helpers.root('src'),
         loader: ExtractTextPlugin.extract({
-          fallback: "style-loader",
-          loader: "css-loader?sourceMap!sass-loader?sourceMap"
+            fallback: "style-loader",
+            loader: "css-loader?sourceMap!sass-loader?sourceMap"
         })
-      },
+    },
     {
         test: /\.scss$/,
         include: helpers.root('src'),

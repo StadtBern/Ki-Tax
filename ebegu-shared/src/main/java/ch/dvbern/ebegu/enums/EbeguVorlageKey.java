@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.enums;
 
 /**
@@ -49,11 +64,9 @@ public enum EbeguVorlageKey {
 	VORLAGE_BENUTZERHANDBUCH_STV("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Steuerverwaltung.pdf"),
 	VORLAGE_BENUTZERHANDBUCH_TRAEGERSCHAFT("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Trägerschaft.pdf");
 
-
 	private boolean proGesuchsperiode;
 
 	private String defaultVorlagePath;
-
 
 	EbeguVorlageKey() {
 		this.proGesuchsperiode = true;
@@ -93,25 +106,25 @@ public enum EbeguVorlageKey {
 	public static EbeguVorlageKey getBenutzerHandbuchKeyForRole(UserRole userRole) {
 		if (userRole != null) {
 			switch (userRole) {
-				case ADMIN:
-				case SUPER_ADMIN:
-					return VORLAGE_BENUTZERHANDBUCH_ADMIN;
-				case SACHBEARBEITER_JA:
-					return VORLAGE_BENUTZERHANDBUCH_JUGENDAMT;
-				case SACHBEARBEITER_TRAEGERSCHAFT:
-					return VORLAGE_BENUTZERHANDBUCH_TRAEGERSCHAFT;
-				case SACHBEARBEITER_INSTITUTION:
-					return VORLAGE_BENUTZERHANDBUCH_INSTITUTION;
-				case JURIST:
-					return VORLAGE_BENUTZERHANDBUCH_JURIST;
-				case REVISOR:
-					return VORLAGE_BENUTZERHANDBUCH_REVISOR;
-				case STEUERAMT:
-					return VORLAGE_BENUTZERHANDBUCH_STV;
-				case SCHULAMT:
-					return VORLAGE_BENUTZERHANDBUCH_SCHULAMT;
-				default:
-					return null;
+			case ADMIN:
+			case SUPER_ADMIN:
+				return VORLAGE_BENUTZERHANDBUCH_ADMIN;
+			case SACHBEARBEITER_JA:
+				return VORLAGE_BENUTZERHANDBUCH_JUGENDAMT;
+			case SACHBEARBEITER_TRAEGERSCHAFT:
+				return VORLAGE_BENUTZERHANDBUCH_TRAEGERSCHAFT;
+			case SACHBEARBEITER_INSTITUTION:
+				return VORLAGE_BENUTZERHANDBUCH_INSTITUTION;
+			case JURIST:
+				return VORLAGE_BENUTZERHANDBUCH_JURIST;
+			case REVISOR:
+				return VORLAGE_BENUTZERHANDBUCH_REVISOR;
+			case STEUERAMT:
+				return VORLAGE_BENUTZERHANDBUCH_STV;
+			case SCHULAMT:
+				return VORLAGE_BENUTZERHANDBUCH_SCHULAMT;
+			default:
+				return null;
 			}
 		}
 		return null;
@@ -129,6 +142,6 @@ public enum EbeguVorlageKey {
 			VORLAGE_BRIEF_TAGESELTERN_SCHULKINDER,
 			VORLAGE_FREIGABEQUITTUNG,
 			VORLAGE_FINANZIELLE_SITUATION,
-			VORLAGE_BEGLEITSCHREIBEN};
+			VORLAGE_BEGLEITSCHREIBEN };
 	}
 }

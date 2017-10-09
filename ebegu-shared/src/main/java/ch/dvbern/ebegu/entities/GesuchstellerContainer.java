@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.entities;
 
 import java.time.LocalDate;
@@ -41,7 +56,6 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 
 	private static final long serialVersionUID = -8403117439764700618L;
 
-
 	@Valid
 	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
@@ -76,9 +90,8 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuchstellerContainer")
 	private List<GesuchstellerAdresseContainer> adressen = new ArrayList<>();
 
-
-
-	public GesuchstellerContainer() {}
+	public GesuchstellerContainer() {
+	}
 
 	public boolean addAdresse(@Nonnull final GesuchstellerAdresseContainer gesuchstellerAdresseContainer) {
 		gesuchstellerAdresseContainer.setGesuchstellerContainer(this);

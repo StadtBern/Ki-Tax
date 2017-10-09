@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.util.ArrayList;
@@ -45,10 +60,10 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 	private WizardStepService wizardStepService;
 
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public FamiliensituationContainer saveFamiliensituation(Gesuch gesuch,
-															FamiliensituationContainer familiensituationContainer,
-															Familiensituation loadedFamiliensituation) {
+		FamiliensituationContainer familiensituationContainer,
+		Familiensituation loadedFamiliensituation) {
 		Objects.requireNonNull(familiensituationContainer);
 		Objects.requireNonNull(gesuch);
 
@@ -69,8 +84,8 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 				if (gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP2() == null) {
 					gesuch.extractEinkommensverschlechterungInfo().setGemeinsameSteuererklaerung_BjP2(false);
 				}
-					//noinspection ConstantConditions (ist mit extractEinkommensverschlechterungInfo().isPresent() sichergestellt)einkommensverschlechterungInfoService.updateEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfoContainer());
-				}
+				//noinspection ConstantConditions (ist mit extractEinkommensverschlechterungInfo().isPresent() sichergestellt)einkommensverschlechterungInfoService.updateEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfoContainer());
+			}
 		} else {
 			Familiensituation familiensituationErstgesuch = familiensituationContainer
 				.getFamiliensituationErstgesuch();
@@ -99,10 +114,10 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 		//Alle Daten des GS2 loeschen wenn man von 2GS auf 1GS wechselt und GS2 bereits erstellt wurde
 		if (gesuch.getGesuchsteller2() != null && isNeededToRemoveGesuchsteller2(gesuch,
 			mergedFamiliensituationContainer.extractFamiliensituation(), oldFamiliensituation)) {
-				gesuchstellerService.removeGesuchsteller(gesuch.getGesuchsteller2());
-				gesuch.setGesuchsteller2(null);
-				newFamiliensituation.setGemeinsameSteuererklaerung(false);
-			}
+			gesuchstellerService.removeGesuchsteller(gesuch.getGesuchsteller2());
+			gesuch.setGesuchsteller2(null);
+			newFamiliensituation.setGemeinsameSteuererklaerung(false);
+		}
 
 		wizardStepService.updateSteps(gesuch.getId(), oldFamiliensituation, newFamiliensituation, WizardStepName
 			.FAMILIENSITUATION);
@@ -126,7 +141,7 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 	}
 
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public void removeFamiliensituation(@Nonnull FamiliensituationContainer familiensituation) {
 		Validate.notNull(familiensituation);
 		Optional<FamiliensituationContainer> familiensituationToRemove = findFamiliensituation(familiensituation.getId());
@@ -141,7 +156,7 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 	 * der 2GS nie geloescht
 	 */
 	private boolean isNeededToRemoveGesuchsteller2(Gesuch gesuch, Familiensituation newFamiliensituation,
-												   Familiensituation familiensituationErstgesuch) {
+		Familiensituation familiensituationErstgesuch) {
 		return (!gesuch.isMutation() && gesuch.getGesuchsteller2() != null && !newFamiliensituation.hasSecondGesuchsteller())
 			|| (gesuch.isMutation() && isChanged1To2Reverted(gesuch, newFamiliensituation, familiensituationErstgesuch));
 	}

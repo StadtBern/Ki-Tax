@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.util;
 
 import java.math.BigDecimal;
@@ -16,8 +31,10 @@ import ch.dvbern.ebegu.types.DateRange;
 /**
  * Allgemeine Utils fuer Verfuegung
  */
-public class VerfuegungUtil {
+public final class VerfuegungUtil {
 
+	private VerfuegungUtil() {
+	}
 
 	/**
 	 * Fuer die gegebene DateRange wird berechnet, wie viel Verguenstigung es insgesamt berechnet wurde.
@@ -55,8 +72,7 @@ public class VerfuegungUtil {
 				if (oldSameZeitabschnitt.isPresent()) {
 					newZeitabschnitt.setSameVerfuegungsdaten(newZeitabschnitt.isSamePersistedValues(oldSameZeitabschnitt.get()));
 					newZeitabschnitt.setSameVerguenstigung(Objects.equals(newZeitabschnitt.getVerguenstigung(), oldSameZeitabschnitt.get().getVerguenstigung()));
-				}
-				else { // no Zeitabschnitt with the same Gueltigkeit has been found, so it must be different
+				} else { // no Zeitabschnitt with the same Gueltigkeit has been found, so it must be different
 					newZeitabschnitt.setSameVerfuegungsdaten(false);
 					newZeitabschnitt.setSameVerguenstigung(false);
 				}
@@ -92,14 +108,11 @@ public class VerfuegungUtil {
 				// wir gehen davon aus, dass Zahlung immer fuer einen ganzen Monat gemacht werden, deswegen reicht es wenn ein Zeitabschnitt VERRECHNET bzw. IGNORIERT ist
 				if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET)) {
 					return VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET;
-				}
-				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT)) {
+				} else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT)) {
 					return VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT;
-				}
-				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND)) {
+				} else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND)) {
 					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND;
-				}
-				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT)) {
+				} else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT)) {
 					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT;
 				}
 			}
