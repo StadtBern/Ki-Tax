@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.util.ArrayList;
@@ -56,7 +71,6 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
-
 	@Nonnull
 	@Override
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
@@ -110,8 +124,7 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 		final GesuchstellerContainer mergedGesuchsteller = persistence.merge(gesuchsteller);
 		if (gsNumber == 1) {
 			gesuch.setGesuchsteller1(mergedGesuchsteller);
-		}
-		else if (gsNumber == 2) {
+		} else if (gsNumber == 2) {
 			gesuch.setGesuchsteller2(mergedGesuchsteller);
 		}
 		updateWizStepsForGesuchstellerView(gesuch, gsNumber, umzug, mergedGesuchsteller.getGesuchstellerJA());
@@ -129,7 +142,7 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 			}
 		} else {
 			WizardStep existingWizStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.GESUCHSTELLER);
-			WizardStepStatus gesuchStepStatus = existingWizStep != null ?  existingWizStep.getWizardStepStatus() : null;
+			WizardStepStatus gesuchStepStatus = existingWizStep != null ? existingWizStep.getWizardStepStatus() : null;
 			if (WizardStepStatus.NOK == gesuchStepStatus || WizardStepStatus.IN_BEARBEITUNG == gesuchStepStatus) {
 				if (isSavingLastNecessaryGesuchsteller(gesuch, gsNumber)) {
 					wizardStepService.updateSteps(gesuch.getId(), null, gesuchsteller, WizardStepName.GESUCHSTELLER);

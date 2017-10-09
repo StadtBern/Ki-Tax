@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import TSApplicationProperty from '../models/TSApplicationProperty';
 import TSAbstractEntity from '../models/TSAbstractEntity';
 import TSAdresse from '../models/TSAdresse';
@@ -72,6 +87,8 @@ import TSEWKEinwohnercode from '../models/TSEWKEinwohnercode';
 import TSEWKAdresse from '../models/TSEWKAdresse';
 import TSEWKBeziehung from '../models/TSEWKBeziehung';
 import TSFallAntragDTO from '../models/TSFallAntragDTO';
+import TSModul from '../models/TSModul';
+import TSBelegung from '../models/TSBelegung';
 
 export default class EbeguRestUtil {
     static $inject = ['EbeguUtil'];
@@ -462,7 +479,7 @@ export default class EbeguRestUtil {
     }
 
     public einkommensverschlechterungInfoContainerToRestObject(restEinkommensverschlechterungInfoContainer: any,
-        einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer): TSEinkommensverschlechterungInfoContainer {
+                                                               einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer): TSEinkommensverschlechterungInfoContainer {
         if (einkommensverschlechterungInfoContainer) {
             this.abstractEntityToRestObject(restEinkommensverschlechterungInfoContainer, einkommensverschlechterungInfoContainer);
             if (einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoGS) {
@@ -479,7 +496,7 @@ export default class EbeguRestUtil {
     }
 
     public einkommensverschlechterungInfoToRestObject(restEinkommensverschlechterungInfo: any,
-        einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo): TSEinkommensverschlechterungInfo {
+                                                      einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo): TSEinkommensverschlechterungInfo {
         if (einkommensverschlechterungInfo) {
             this.abstractEntityToRestObject(restEinkommensverschlechterungInfo, einkommensverschlechterungInfo);
             restEinkommensverschlechterungInfo.einkommensverschlechterung = einkommensverschlechterungInfo.einkommensverschlechterung;
@@ -526,7 +543,7 @@ export default class EbeguRestUtil {
     }
 
     public familiensituationContainerToRestObject(restFamiliensituationContainer: any,
-        familiensituationContainer: TSFamiliensituationContainer): TSFamiliensituationContainer {
+                                                  familiensituationContainer: TSFamiliensituationContainer): TSFamiliensituationContainer {
         if (familiensituationContainer) {
             this.abstractEntityToRestObject(restFamiliensituationContainer, familiensituationContainer);
 
@@ -548,7 +565,8 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public parseEinkommensverschlechterungInfo(einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo, einkommensverschlechterungInfoFromServer: any): TSEinkommensverschlechterungInfo {
+    public parseEinkommensverschlechterungInfo(einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo,
+                                               einkommensverschlechterungInfoFromServer: any): TSEinkommensverschlechterungInfo {
         if (einkommensverschlechterungInfoFromServer) {
             this.parseAbstractEntity(einkommensverschlechterungInfo, einkommensverschlechterungInfoFromServer);
             einkommensverschlechterungInfo.einkommensverschlechterung = einkommensverschlechterungInfoFromServer.einkommensverschlechterung;
@@ -568,7 +586,7 @@ export default class EbeguRestUtil {
     }
 
     public parseEinkommensverschlechterungInfoContainer(containerTS: TSEinkommensverschlechterungInfoContainer,
-        containerFromServer: any): TSEinkommensverschlechterungInfoContainer {
+                                                        containerFromServer: any): TSEinkommensverschlechterungInfoContainer {
         if (containerFromServer) {
             this.parseAbstractEntity(containerTS, containerFromServer);
 
@@ -784,6 +802,7 @@ export default class EbeguRestUtil {
             restInstitutionStammdaten.adresse = this.adresseToRestObject({}, institutionStammdaten.adresse);
             restInstitutionStammdaten.kontoinhaber = institutionStammdaten.kontoinhaber;
             restInstitutionStammdaten.adresseKontoinhaber = this.adresseToRestObject({}, institutionStammdaten.adresseKontoinhaber);
+            restInstitutionStammdaten.module = this.moduleArrayToRestObject(institutionStammdaten.module);
             return restInstitutionStammdaten;
         }
         return undefined;
@@ -800,6 +819,7 @@ export default class EbeguRestUtil {
             institutionStammdatenTS.adresse = this.parseAdresse(new TSAdresse(), institutionStammdatenFromServer.adresse);
             institutionStammdatenTS.kontoinhaber = institutionStammdatenFromServer.kontoinhaber;
             institutionStammdatenTS.adresseKontoinhaber = this.parseAdresse(new TSAdresse(), institutionStammdatenFromServer.adresseKontoinhaber);
+            institutionStammdatenTS.module = this.parseModuleArray(institutionStammdatenFromServer.module);
             return institutionStammdatenTS;
         }
         return undefined;
@@ -817,7 +837,8 @@ export default class EbeguRestUtil {
         return institutionStammdaten;
     }
 
-    public finanzielleSituationContainerToRestObject(restFinanzielleSituationContainer: any, finanzielleSituationContainer: TSFinanzielleSituationContainer): TSFinanzielleSituationContainer {
+    public finanzielleSituationContainerToRestObject(restFinanzielleSituationContainer: any,
+                                                     finanzielleSituationContainer: TSFinanzielleSituationContainer): TSFinanzielleSituationContainer {
         this.abstractEntityToRestObject(restFinanzielleSituationContainer, finanzielleSituationContainer);
         restFinanzielleSituationContainer.jahr = finanzielleSituationContainer.jahr;
         if (finanzielleSituationContainer.finanzielleSituationGS) {
@@ -848,7 +869,8 @@ export default class EbeguRestUtil {
         return restFinanzielleSituation;
     }
 
-    private abstractfinanzielleSituationToRestObject(restAbstractFinanzielleSituation: any, abstractFinanzielleSituation: TSAbstractFinanzielleSituation): TSAbstractFinanzielleSituation {
+    private abstractfinanzielleSituationToRestObject(restAbstractFinanzielleSituation: any,
+                                                     abstractFinanzielleSituation: TSAbstractFinanzielleSituation): TSAbstractFinanzielleSituation {
         this.abstractEntityToRestObject(restAbstractFinanzielleSituation, abstractFinanzielleSituation);
         restAbstractFinanzielleSituation.steuerveranlagungErhalten = abstractFinanzielleSituation.steuerveranlagungErhalten;
         restAbstractFinanzielleSituation.steuererklaerungAusgefuellt = abstractFinanzielleSituation.steuererklaerungAusgefuellt || false;
@@ -862,7 +884,8 @@ export default class EbeguRestUtil {
         return restAbstractFinanzielleSituation;
     }
 
-    public parseAbstractFinanzielleSituation(abstractFinanzielleSituationTS: TSAbstractFinanzielleSituation, abstractFinanzielleSituationFromServer: any): TSAbstractFinanzielleSituation {
+    public parseAbstractFinanzielleSituation(abstractFinanzielleSituationTS: TSAbstractFinanzielleSituation,
+                                             abstractFinanzielleSituationFromServer: any): TSAbstractFinanzielleSituation {
         if (abstractFinanzielleSituationFromServer) {
             this.parseAbstractEntity(abstractFinanzielleSituationTS, abstractFinanzielleSituationFromServer);
             abstractFinanzielleSituationTS.steuerveranlagungErhalten = abstractFinanzielleSituationFromServer.steuerveranlagungErhalten;
@@ -890,7 +913,8 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public finanzielleSituationResultateToRestObject(restFinanzielleSituationResultate: any, finanzielleSituationResultateDTO: TSFinanzielleSituationResultateDTO): TSFinanzielleSituationResultateDTO {
+    public finanzielleSituationResultateToRestObject(restFinanzielleSituationResultate: any,
+                                                     finanzielleSituationResultateDTO: TSFinanzielleSituationResultateDTO): TSFinanzielleSituationResultateDTO {
         restFinanzielleSituationResultate.geschaeftsgewinnDurchschnittGesuchsteller1 = finanzielleSituationResultateDTO.geschaeftsgewinnDurchschnittGesuchsteller1;
         restFinanzielleSituationResultate.geschaeftsgewinnDurchschnittGesuchsteller2 = finanzielleSituationResultateDTO.geschaeftsgewinnDurchschnittGesuchsteller2;
         restFinanzielleSituationResultate.einkommenBeiderGesuchsteller = finanzielleSituationResultateDTO.einkommenBeiderGesuchsteller;
@@ -901,7 +925,8 @@ export default class EbeguRestUtil {
         return restFinanzielleSituationResultate;
     }
 
-    public parseFinanzielleSituationResultate(finanzielleSituationResultateDTO: TSFinanzielleSituationResultateDTO, finanzielleSituationResultateFromServer: any): TSFinanzielleSituationResultateDTO {
+    public parseFinanzielleSituationResultate(finanzielleSituationResultateDTO: TSFinanzielleSituationResultateDTO,
+                                              finanzielleSituationResultateFromServer: any): TSFinanzielleSituationResultateDTO {
         if (finanzielleSituationResultateFromServer) {
             finanzielleSituationResultateDTO.geschaeftsgewinnDurchschnittGesuchsteller1 = finanzielleSituationResultateFromServer.geschaeftsgewinnDurchschnittGesuchsteller1;
             finanzielleSituationResultateDTO.geschaeftsgewinnDurchschnittGesuchsteller2 = finanzielleSituationResultateFromServer.geschaeftsgewinnDurchschnittGesuchsteller2;
@@ -916,7 +941,7 @@ export default class EbeguRestUtil {
     }
 
     public einkommensverschlechterungContainerToRestObject(restEinkommensverschlechterungContainer: any,
-        einkommensverschlechterungContainer: TSEinkommensverschlechterungContainer): TSEinkommensverschlechterungContainer {
+                                                           einkommensverschlechterungContainer: TSEinkommensverschlechterungContainer): TSEinkommensverschlechterungContainer {
         this.abstractEntityToRestObject(restEinkommensverschlechterungContainer, einkommensverschlechterungContainer);
 
         if (einkommensverschlechterungContainer.ekvGSBasisJahrPlus1) {
@@ -939,7 +964,8 @@ export default class EbeguRestUtil {
         return restEinkommensverschlechterungContainer;
     }
 
-    public einkommensverschlechterungToRestObject(restEinkommensverschlechterung: any, einkommensverschlechterung: TSEinkommensverschlechterung): TSEinkommensverschlechterung {
+    public einkommensverschlechterungToRestObject(restEinkommensverschlechterung: any,
+                                                  einkommensverschlechterung: TSEinkommensverschlechterung): TSEinkommensverschlechterung {
         this.abstractfinanzielleSituationToRestObject(restEinkommensverschlechterung, einkommensverschlechterung);
         restEinkommensverschlechterung.nettolohnJan = einkommensverschlechterung.nettolohnJan;
         restEinkommensverschlechterung.nettolohnFeb = einkommensverschlechterung.nettolohnFeb;
@@ -958,7 +984,8 @@ export default class EbeguRestUtil {
         return restEinkommensverschlechterung;
     }
 
-    public parseEinkommensverschlechterungContainer(containerTS: TSEinkommensverschlechterungContainer, containerFromServer: any): TSEinkommensverschlechterungContainer {
+    public parseEinkommensverschlechterungContainer(containerTS: TSEinkommensverschlechterungContainer,
+                                                    containerFromServer: any): TSEinkommensverschlechterungContainer {
         if (containerFromServer) {
             this.parseAbstractEntity(containerTS, containerFromServer);
 
@@ -972,7 +999,8 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public parseEinkommensverschlechterung(einkommensverschlechterungTS: TSEinkommensverschlechterung, einkommensverschlechterungFromServer: any): TSEinkommensverschlechterung {
+    public parseEinkommensverschlechterung(einkommensverschlechterungTS: TSEinkommensverschlechterung,
+                                           einkommensverschlechterungFromServer: any): TSEinkommensverschlechterung {
         if (einkommensverschlechterungFromServer) {
             this.parseAbstractFinanzielleSituation(einkommensverschlechterungTS, einkommensverschlechterungFromServer);
             einkommensverschlechterungTS.nettolohnJan = einkommensverschlechterungFromServer.nettolohnJan;
@@ -1150,6 +1178,7 @@ export default class EbeguRestUtil {
         restBetreuung.betreuungMutiert = betreuung.betreuungMutiert;
         restBetreuung.abwesenheitMutiert = betreuung.abwesenheitMutiert;
         restBetreuung.gueltig = betreuung.gueltig;
+        restBetreuung.module = this.belegungToRestObject({}, betreuung.belegung);
         return restBetreuung;
     }
 
@@ -1226,6 +1255,7 @@ export default class EbeguRestUtil {
             betreuungTS.betreuungMutiert = betreuungFromServer.betreuungMutiert;
             betreuungTS.abwesenheitMutiert = betreuungFromServer.abwesenheitMutiert;
             betreuungTS.gueltig = betreuungFromServer.gueltig;
+            betreuungTS.belegung = this.parseBelegung(new TSBelegung(), betreuungFromServer.belegung);
             return betreuungTS;
         }
         return undefined;
@@ -2253,6 +2283,66 @@ export default class EbeguRestUtil {
             tsEWKBeziehung.geburtsdatum = DateUtil.localDateToMoment(ewkBeziehungFromServer.geburtsdatum);
             tsEWKBeziehung.adresse = this.parseEWKAdresse(new TSEWKAdresse(), ewkBeziehungFromServer.adresse);
             return tsEWKBeziehung;
+        }
+        return undefined;
+    }
+
+    private parseModuleArray(data: Array<any>): TSModul[] {
+        let module: TSModul[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                module[i] = this.parseModul(new TSModul(), data[i]);
+            }
+        } else {
+            module[0] = this.parseModul(new TSModul(), data);
+        }
+        return module;
+    }
+
+    private parseModul(modulTS: TSModul, modulFromServer: any): TSModul {
+        if (modulFromServer) {
+            this.parseAbstractEntity(modulTS, modulFromServer);
+            modulTS.modulname = modulFromServer.modulname;
+            modulTS.wochentag = modulFromServer.wochentag;
+            modulTS.zeitVon = DateUtil.localDateToMoment(modulFromServer.zeitVon);
+            modulTS.zeitBis = DateUtil.localDateToMoment(modulFromServer.zeitBis);
+        }
+        return undefined;
+    }
+
+    private moduleArrayToRestObject(module: Array<TSModul>): any[] {
+        let list: any[] = [];
+        if (module) {
+            for (let i = 0; i < module.length; i++) {
+                list[i] = this.modulToRestObject({}, module[i]);
+            }
+        }
+        return list;
+    }
+
+    private modulToRestObject(restModul: any, modulTS: TSModul): any {
+        if (modulTS) {
+            this.abstractEntityToRestObject(restModul, modulTS);
+            restModul.modulname = modulTS.modulname;
+            restModul.wochentag = modulTS.wochentag;
+            restModul.zeitVon = DateUtil.momentToLocalDate(modulTS.zeitVon);
+            restModul.zeitBis = DateUtil.momentToLocalDate(modulTS.zeitBis);
+        }
+        return undefined;
+    }
+
+    private parseBelegung(belegungTS: TSBelegung, belegungFromServer: any): TSBelegung {
+        if (belegungFromServer) {
+            this.parseAbstractEntity(belegungTS, belegungFromServer);
+            belegungTS.module = this.parseModuleArray(belegungFromServer.module);
+        }
+        return undefined;
+    }
+
+    private belegungToRestObject(restBelegung: any, belegungTS: TSBelegung): any {
+        if (belegungTS) {
+            this.abstractEntityToRestObject(restBelegung, belegungTS);
+            restBelegung.module = this.moduleArrayToRestObject(belegungTS.module);
         }
         return undefined;
     }

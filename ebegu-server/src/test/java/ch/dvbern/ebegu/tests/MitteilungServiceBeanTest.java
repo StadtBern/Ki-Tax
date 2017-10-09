@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.tests;
 
 import java.time.LocalDate;
@@ -71,7 +86,6 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 	private Benutzer empfaengerJA;
 	private Benutzer empfaengerINST;
 	private Benutzer sender;
-
 
 	@Test
 	public void testCreateMitteilung() {
@@ -244,8 +258,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		try {
 			mitteilungService.applyBetreuungsmitteilung(mitteilung);
 			Assert.fail("Keine Betreuungsmittielung darf aus einem Erstgesuch erstellt werden. Es sollte eine Exception werfen");
-		}
-		catch (EbeguRuntimeException e) {
+		} catch (EbeguRuntimeException e) {
 			//nop
 		}
 	}
@@ -330,7 +343,6 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(newestSentDatum, optMitteilung.get().getSentDatum());
 		Assert.assertNotEquals(oldSentDatum, optMitteilung.get().getSentDatum());
 	}
-
 
 	// HELP METHODS
 

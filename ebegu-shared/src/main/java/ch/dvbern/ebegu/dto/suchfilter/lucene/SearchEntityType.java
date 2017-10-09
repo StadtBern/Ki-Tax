@@ -1,16 +1,47 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.dto.suchfilter.lucene;
 
-import ch.dvbern.ebegu.entities.*;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.KindContainer;
+
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.BETREUUNG_BGNR;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.FALL_BESITZER_NAME;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.FALL_BESITZER_VORNAME;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.FALL_NUMMER;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.GESUCH_FALL_NUMMER;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.GS_GEBDATUM;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.GS_NACHNAME;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.GS_VORNAME;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.KIND_GEBDATUM;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.KIND_NACHNAME;
+import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.KIND_VORNAME;
 
 /**
  * Enum of Entities that can be searched in the index via the SearchService. Also determines the searchable fields
@@ -18,12 +49,11 @@ import static ch.dvbern.ebegu.dto.suchfilter.lucene.IndexedEBEGUFieldName.*;
  */
 public enum SearchEntityType {
 	// Reihenfolge bitte entsprechend in der Wichtigkeit im GUI
-	GESUCHSTELLER_CONTAINER(GesuchstellerContainer.class, new IndexedEBEGUFieldName[]{GS_NACHNAME, GS_VORNAME, GS_GEBDATUM}),
-	KIND_CONTAINER(KindContainer.class, new IndexedEBEGUFieldName[]{KIND_NACHNAME, KIND_VORNAME, KIND_GEBDATUM}),
-	GESUCH(Gesuch.class, new IndexedEBEGUFieldName[]{ GESUCH_FALL_NUMMER }),
-	FALL(Fall.class, new IndexedEBEGUFieldName[]{ FALL_NUMMER, FALL_BESITZER_NAME, FALL_BESITZER_VORNAME}),
-	BETREUUNG(Betreuung.class, new IndexedEBEGUFieldName[]{BETREUUNG_BGNR});
-
+	GESUCHSTELLER_CONTAINER(GesuchstellerContainer.class, new IndexedEBEGUFieldName[] { GS_NACHNAME, GS_VORNAME, GS_GEBDATUM }),
+	KIND_CONTAINER(KindContainer.class, new IndexedEBEGUFieldName[] { KIND_NACHNAME, KIND_VORNAME, KIND_GEBDATUM }),
+	GESUCH(Gesuch.class, new IndexedEBEGUFieldName[] { GESUCH_FALL_NUMMER }),
+	FALL(Fall.class, new IndexedEBEGUFieldName[] { FALL_NUMMER, FALL_BESITZER_NAME, FALL_BESITZER_VORNAME }),
+	BETREUUNG(Betreuung.class, new IndexedEBEGUFieldName[] { BETREUUNG_BGNR });
 
 	@Nonnull
 	private final Class<? extends Searchable> entityClass;
@@ -32,7 +62,6 @@ public enum SearchEntityType {
 
 	@Nonnull
 	private final List<String> fieldNames;
-
 
 	@Nonnull
 	private final IndexedEBEGUFieldName[] indexedFields;
@@ -67,7 +96,6 @@ public enum SearchEntityType {
 	public IndexedEBEGUFieldName[] getIndexedFields() {
 		return indexedFields.clone();
 	}
-
 
 	/**
 	 * @param clazz Die Entity-Klasse.

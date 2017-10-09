@@ -1,11 +1,16 @@
 /*
- * Copyright (c) 2016 DV Bern AG, Switzerland
- *
- * Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
- * geschuetzt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulaessig. Dies gilt
- * insbesondere fuer Vervielfaeltigungen, die Einspeicherung und Verarbeitung in
- * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
- * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package ch.dvbern.ebegu.api.client;
@@ -18,25 +23,24 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
+import ch.dvbern.ebegu.api.util.OpenIDMUtil;
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.Traegerschaft;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.Traegerschaft;
-import ch.dvbern.ebegu.util.OpenIDMUtil;
-
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
- * Implementierung des REST Services zum synchronisieren mit OpenIdm, erzeugt einen Proxy fuer <link>IOpenIdmRESTProxService</link>
+ * Implementierung des REST Services zum synchronisieren mit OpenIdm, erzeugt einen Proxy fuer {@link IOpenIdmRESTProxService}
  */
 @Stateless
-@RolesAllowed(value = {ADMIN, SUPER_ADMIN})
+@RolesAllowed(value = { ADMIN, SUPER_ADMIN })
 public class OpenIdmRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OpenIdmRestService.class.getSimpleName());
@@ -52,14 +56,12 @@ public class OpenIdmRestService {
 	private IOpenIdmRESTProxClient openIdmRESTProxClient;
 	private IOpenAmRESTProxClient openAmRESTProxClient;
 
-
 	public Optional<JaxOpenIdmResponse> getAll() {
 		return getAll(false);
 	}
 
 	public Optional<JaxOpenIdmResponse> getAll(boolean force) {
 		if (configuration.getOpenIdmEnabled() || force) {
-
 
 			Response response;
 			if (!configuration.getLoginWithToken()) {
@@ -135,7 +137,6 @@ public class OpenIdmRestService {
 		return create(force, institution.getName(), INSTITUTION, OpenIDMUtil.convertToOpenIdmInstitutionsUID(institution.getId()), institution.getMail());
 	}
 
-
 	public Optional<JaxOpenIdmResult> createTraegerschaft(Traegerschaft traegerschaft) {
 		return createTraegerschaft(traegerschaft, false);
 	}
@@ -143,7 +144,6 @@ public class OpenIdmRestService {
 	public Optional<JaxOpenIdmResult> createTraegerschaft(Traegerschaft traegerschaft, boolean force) {
 		return create(force, traegerschaft.getName(), TRAEGERSCHAFT, OpenIDMUtil.convertToOpenIdmTraegerschaftUID(traegerschaft.getId()), traegerschaft.getMail());
 	}
-
 
 	private String login() {
 

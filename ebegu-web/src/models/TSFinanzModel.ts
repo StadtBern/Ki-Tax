@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import TSFinanzielleSituationContainer from './TSFinanzielleSituationContainer';
 import TSGesuch from './TSGesuch';
 import TSFinanzielleSituation from './TSFinanzielleSituation';
@@ -18,7 +33,6 @@ export default class TSFinanzModel {
     private basisjahrPlus: number;
     private gesuchsteller2Required: boolean;
     private gesuchstellerNumber: number;
-
 
     constructor(basisjahr: number, gesuchsteller2Required: boolean, gesuchstellerNumber: number, basisjahrPlus?: number) {
         this.basisjahr = basisjahr;
@@ -167,7 +181,6 @@ export default class TSFinanzModel {
         }
     }
 
-
     public getEkvToWorkWith_GS(): TSEinkommensverschlechterung {
         if (this.gesuchstellerNumber === 2) {
             return this.getEkvOfBsj_GS(this.einkommensverschlechterungContainerGS2);
@@ -184,7 +197,6 @@ export default class TSFinanzModel {
         }
     }
 
-
     public getGesuchstellerNumber(): number {
         return this.gesuchstellerNumber;
     }
@@ -192,7 +204,6 @@ export default class TSFinanzModel {
     public isGesuchsteller2Required(): boolean {
         return this.gesuchsteller2Required;
     }
-
 
     get einkommensverschlechterungContainerGS1(): TSEinkommensverschlechterungContainer {
         return this._einkommensverschlechterungContainerGS1;
@@ -209,7 +220,6 @@ export default class TSFinanzModel {
     set einkommensverschlechterungContainerGS2(value: TSEinkommensverschlechterungContainer) {
         this._einkommensverschlechterungContainerGS2 = value;
     }
-
 
     get einkommensverschlechterungInfoContainer(): TSEinkommensverschlechterungInfoContainer {
         return this._einkommensverschlechterungInfoContainer;
@@ -275,7 +285,6 @@ export default class TSFinanzModel {
             return this.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.gemeinsameSteuererklaerung_BjP1;
         }
     }
-
 
     getBasisJahrPlus() {
         return this.basisjahrPlus;

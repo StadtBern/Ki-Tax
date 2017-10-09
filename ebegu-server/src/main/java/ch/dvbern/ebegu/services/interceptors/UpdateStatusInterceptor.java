@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services.interceptors;
 
 import javax.inject.Inject;
@@ -23,15 +38,15 @@ import static ch.dvbern.ebegu.enums.UserRole.SUPER_ADMIN;
 /**
  * UpdateStatusInterceptor:
  * - Fuer JA muessen wir den Status des Gesuchs von Freigegeben auf {@link AntragStatus.IN_BEARBEITUNG_JA}
- *   setzen wenn das Jugendamt etwas an einem {@link AntragStatus#FREIGEGEBEN} Gesuch aendert.
+ * setzen wenn das Jugendamt etwas an einem {@link AntragStatus#FREIGEGEBEN} Gesuch aendert.
  * - Fuer STV wenn die STV ein Gesuch oeffnet muss dieses Gesuch vom Status PRUEFUNG_STV auf Status
- *   IN_BEARBEITUNG_STV wechseln
+ * IN_BEARBEITUNG_STV wechseln
  */
 public class UpdateStatusInterceptor {
 
 	private final Logger LOG = LoggerFactory.getLogger(UpdateStatusInterceptor.class.getSimpleName());
 
-	private static final UserRole[] JA_OR_ADM = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA};
+	private static final UserRole[] JA_OR_ADM = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA };
 
 	@Inject
 	private PrincipalBean principalBean;
@@ -59,8 +74,7 @@ public class UpdateStatusInterceptor {
 					if (principalBean.isCallerInAnyOfRole(JA_OR_ADM) && Eingangsart.ONLINE.equals(gesuch.getEingangsart())
 						&& AntragStatus.FREIGEGEBEN.equals(gesuch.getStatus())) {
 						changeGesuchStatus(gesuch, AntragStatus.IN_BEARBEITUNG_JA);
-					}
-					else if (principalBean.isCallerInRole(STEUERAMT) && AntragStatus.PRUEFUNG_STV.equals(gesuch.getStatus())) {
+					} else if (principalBean.isCallerInRole(STEUERAMT) && AntragStatus.PRUEFUNG_STV.equals(gesuch.getStatus())) {
 						changeGesuchStatus(gesuch, AntragStatus.IN_BEARBEITUNG_STV);
 					}
 				}
@@ -74,8 +88,8 @@ public class UpdateStatusInterceptor {
 		gesuchService.updateGesuch(gesuch, true, null);
 
 		if (configuration.getIsDevmode() || LOG.isDebugEnabled()) {
-            LOG.info("Antrag wurde in den Status " + newStatus + " gesetzt. ID " + gesuch.getId());
-        }
+			LOG.info("Antrag wurde in den Status " + newStatus + " gesetzt. ID " + gesuch.getId());
+		}
 	}
 
 }

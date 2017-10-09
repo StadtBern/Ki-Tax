@@ -1,11 +1,22 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.dto.suchfilter.lucene.EbeguLocalDateBridge;
-import ch.dvbern.ebegu.enums.Geschlecht;
-import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
+import java.time.LocalDate;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
@@ -14,8 +25,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.util.Objects;
+
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EbeguLocalDateBridge;
+import ch.dvbern.ebegu.enums.Geschlecht;
+import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -47,14 +63,12 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 
 	@Column(nullable = false)
 	@NotNull
-	@FieldBridge(impl=EbeguLocalDateBridge.class)   //wir indizieren dates als string
-	@Field(analyze= Analyze.NO) //datumsfelder nicht tokenizen etc
+	@FieldBridge(impl = EbeguLocalDateBridge.class)   //wir indizieren dates als string
+	@Field(analyze = Analyze.NO) //datumsfelder nicht tokenizen etc
 	private LocalDate geburtsdatum;
-
 
 	public AbstractPersonEntity() {
 	}
-
 
 	public String getVorname() {
 		return vorname;
@@ -126,7 +140,7 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 			return false;
 		}
 		final AbstractPersonEntity otherPerson = (AbstractPersonEntity) other;
-		return	getGeschlecht() == otherPerson.getGeschlecht() &&
+		return getGeschlecht() == otherPerson.getGeschlecht() &&
 			Objects.equals(getVorname(), otherPerson.getVorname()) &&
 			Objects.equals(getNachname(), otherPerson.getNachname()) &&
 			Objects.equals(getGeburtsdatum(), otherPerson.getGeburtsdatum());

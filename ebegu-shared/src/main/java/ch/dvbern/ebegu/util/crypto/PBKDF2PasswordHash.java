@@ -1,11 +1,27 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.util.crypto;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 
 /**
  * PBKDF2 salted password hashing.
@@ -17,7 +33,8 @@ import java.security.spec.InvalidKeySpecException;
  * call the validatePassword function using the plain text password input and the stored hash
  */
 @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
-public class PBKDF2PasswordHash {
+public final class PBKDF2PasswordHash {
+
 	public static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA512";
 
 	// The following constants may be changed without breaking existing hashes.
@@ -28,6 +45,9 @@ public class PBKDF2PasswordHash {
 	public static final int ITERATION_INDEX = 0;
 	public static final int SALT_INDEX = 1;
 	public static final int PBKDF2_INDEX = 2;
+
+	private PBKDF2PasswordHash() {
+	}
 
 	/**
 	 * Returns a salted PBKDF2 hash of the password.
@@ -113,10 +133,10 @@ public class PBKDF2PasswordHash {
 	/**
 	 * Computes the PBKDF2 hash of a password.
 	 *
-	 * @param password   the password to hash.
-	 * @param salt       the salt
+	 * @param password the password to hash.
+	 * @param salt the salt
 	 * @param iterations the iteration count (slowness factor)
-	 * @param bytes      the length of the hash to compute in bytes
+	 * @param bytes the length of the hash to compute in bytes
 	 * @return the PBDKF2 hash of the password
 	 */
 	private static byte[] pbkdf2(char[] password, byte[] salt, int iterations, int bytes)
@@ -156,7 +176,5 @@ public class PBKDF2PasswordHash {
 			return hex;
 		}
 	}
-
-
 
 }

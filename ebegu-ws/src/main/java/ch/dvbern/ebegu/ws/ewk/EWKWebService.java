@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.ws.ewk;
 
 import java.io.IOException;
@@ -18,21 +33,19 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.handler.MessageContext;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import ch.bern.e_gov.cra.ReturnMessage;
+import ch.bern.e_gov.e_begu.egov_002.PersonenSucheOB;
+import ch.bern.e_gov.e_begu.egov_002.PersonenSucheReq;
+import ch.bern.e_gov.e_begu.egov_002.PersonenSucheResp;
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceBusinessException;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceException;
-
-import ch.bern.e_gov.cra.ReturnMessage;
-import ch.bern.e_gov.e_begu.egov_002.PersonenSucheOB;
-import ch.bern.e_gov.e_begu.egov_002.PersonenSucheReq;
-import ch.bern.e_gov.e_begu.egov_002.PersonenSucheResp;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Diese Klasse ruft den PersonenSuche Webservice des EWK auf
@@ -115,7 +128,7 @@ public class EWKWebService implements IEWKWebService {
 	/**
 	 * Analysiert das Response-Objekt. Falls ein Fehlercode vorhanden ist, wird eine Exception geworfen.
 	 */
-	private void handleResponseStatus(@Nonnull  PersonenSucheResp response) throws PersonenSucheServiceBusinessException, PersonenSucheServiceException {
+	private void handleResponseStatus(@Nonnull PersonenSucheResp response) throws PersonenSucheServiceBusinessException, PersonenSucheServiceException {
 		ReturnMessage returnMessage = response.getReturnMessage();
 		if (returnMessage == null) {
 			logger.error("Das Statusobjekt aus der Response vom SARI Service war null, dies ist unerwartet und darf nicht vorkommen");
@@ -133,6 +146,7 @@ public class EWKWebService implements IEWKWebService {
 
 	/**
 	 * initialisiert den Service Port wenn noetig oder gibt ihn zurueck.
+	 *
 	 * @throws PersonenSucheServiceException, if the service cannot be initialised
 	 */
 	private PersonenSucheOB getService() throws PersonenSucheServiceException {
@@ -197,7 +211,7 @@ public class EWKWebService implements IEWKWebService {
 				Map<String, List<String>> headers = new HashMap<>();
 				String usernameAndPassword = username + ':' + password;
 				String authorizationHeaderName = "Authorization";
-				String authorizationHeaderValue = "Basic " + DatatypeConverter.printBase64Binary( usernameAndPassword.getBytes(UTF8));
+				String authorizationHeaderValue = "Basic " + DatatypeConverter.printBase64Binary(usernameAndPassword.getBytes(UTF8));
 				headers.put(authorizationHeaderName, Collections.singletonList(authorizationHeaderValue));
 				bp.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, headers);
 				logger.info("PersonenSucheService Authorization Header set");

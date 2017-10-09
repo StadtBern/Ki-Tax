@@ -1,16 +1,36 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.entities;
+
+import java.time.LocalDate;
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.util.Objects;
 
 /**
  * Entitaet zum Speichern von Familiensituation in der Datenbank.
@@ -36,7 +56,6 @@ public class Familiensituation extends AbstractEntity {
 
 	@Column(nullable = true)
 	private LocalDate aenderungPer;
-
 
 	public Familiensituation() {
 	}
@@ -88,13 +107,13 @@ public class Familiensituation extends AbstractEntity {
 	public boolean hasSecondGesuchsteller() {
 		if (this.familienstatus != null) {
 			switch (this.familienstatus) {
-				case ALLEINERZIEHEND:
-				case WENIGER_FUENF_JAHRE:
-					return EnumGesuchstellerKardinalitaet.ZU_ZWEIT == this.getGesuchstellerKardinalitaet();
-				case VERHEIRATET:
-				case KONKUBINAT:
-				case LAENGER_FUENF_JAHRE:
-					return true;
+			case ALLEINERZIEHEND:
+			case WENIGER_FUENF_JAHRE:
+				return EnumGesuchstellerKardinalitaet.ZU_ZWEIT == this.getGesuchstellerKardinalitaet();
+			case VERHEIRATET:
+			case KONKUBINAT:
+			case LAENGER_FUENF_JAHRE:
+				return true;
 			}
 		}
 		return false;

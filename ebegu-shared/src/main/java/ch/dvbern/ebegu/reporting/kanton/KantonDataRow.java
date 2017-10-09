@@ -1,9 +1,24 @@
-package ch.dvbern.ebegu.reporting.kanton;
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+package ch.dvbern.ebegu.reporting.kanton;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * DTO fuer die Kantonsstatistik
@@ -11,7 +26,7 @@ import java.time.LocalDate;
 public class KantonDataRow {
 
 	private String bgNummer;
-	private String 	gesuchId;
+	private String gesuchId;
 	private String name;
 	private String vorname;
 	private LocalDate geburtsdatum;
@@ -23,7 +38,6 @@ public class KantonDataRow {
 	private String institution;
 	private String betreuungsTyp;
 	private BigDecimal oeffnungstage;
-
 
 	public String getBgNummer() {
 		return bgNummer;

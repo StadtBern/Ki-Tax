@@ -1,20 +1,26 @@
 /*
- * Copyright (c) 2015 DV Bern AG, Switzerland
- *
- * Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
- * geschuetzt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulaessig. Dies gilt
- * insbesondere fuer Vervielfaeltigungen, die Einspeicherung und Verarbeitung in
- * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
- * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package ch.dvbern.ebegu.util;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public enum MathUtil {
 
@@ -22,15 +28,14 @@ public enum MathUtil {
 	EINE_NACHKOMMASTELLE(19, 1, RoundingMode.HALF_UP),
 	ZWEI_NACHKOMMASTELLE(19, 2, RoundingMode.HALF_UP),
 	VIER_NACHKOMMASTELLE(19, 4, RoundingMode.HALF_DOWN),
-	DEFAULT(19, 2, RoundingMode.HALF_UP),	// Am Schluss muss immer mit diesem gerechnet werden, da sonst nicht in DB gespeichert werden kann!
-	EXACT(30, 10, RoundingMode.HALF_UP);	// Für Zwischenresultate
+	DEFAULT(19, 2, RoundingMode.HALF_UP),    // Am Schluss muss immer mit diesem gerechnet werden, da sonst nicht in DB gespeichert werden kann!
+	EXACT(30, 10, RoundingMode.HALF_UP);    // Für Zwischenresultate
 
 	private final int precision;
 	private final int scale;
 
 	public static final BigDecimal HUNDRED = BigDecimal.valueOf(100, 0);
 	public static final BigDecimal ROUNDING_INCREMENT = new BigDecimal("0.05");
-
 
 	@Nonnull
 	private final RoundingMode roundingMode;
@@ -132,15 +137,16 @@ public enum MathUtil {
 
 	/**
 	 * adds augement parameters to value, null values are treated as zero
+	 *
 	 * @throws PrecisionTooLargeException if the resulting value exceeds the defined precision
 	 */
 	@Nullable
 	public BigDecimal add(@Nullable BigDecimal value, @Nullable BigDecimal... augment) {
-		if ( augment.length == 0) {
+		if (augment.length == 0) {
 			return null;
 		}
 
-		BigDecimal result = value!=null? value:BigDecimal.ZERO;
+		BigDecimal result = value != null ? value : BigDecimal.ZERO;
 		for (BigDecimal valueToAdd : augment) {
 			if (valueToAdd != null) {
 				result = result
@@ -233,7 +239,7 @@ public enum MathUtil {
 
 	/**
 	 * Rundet einen BigDecimal auf 2 Nachkommastellen und auf 5 Rappen.
-     */
+	 */
 	public static BigDecimal roundToFrankenRappen(BigDecimal amount) {
 		// Ab welcher Nachkommastelle soll gerundet werden???
 		// Wir runden zuerst die vierte auf die dritte...
@@ -245,6 +251,7 @@ public enum MathUtil {
 
 	/**
 	 * Vergleicht zwei optionale BigDecimal.
+	 *
 	 * @return TRUE, wenn beide Werte NULL sind, oder wenn beide BigDecimal (via compareTo) identisch sind. Sonst FALSE
 	 */
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -254,6 +261,7 @@ public enum MathUtil {
 
 	/**
 	 * Vergleicht zwei BigDecimal.
+	 *
 	 * @return TRUE, wenn beide Werte NULL sind, oder wenn beide BigDecimal (via compareTo) identisch sind. Sonst FALSE
 	 */
 	public static boolean isSame(BigDecimal a, BigDecimal b) {
@@ -265,13 +273,10 @@ public enum MathUtil {
 	 * Beispiel
 	 * 20 bis 24 = 20
 	 * 25 bis 29 = 30
-	 * @param pensumFachstelle
-	 * @return
-     */
+	 */
 	public static int roundIntToTens(int pensumFachstelle) {
 		return (int) (Math.round((double) pensumFachstelle / 10) * 10);
 	}
-
 
 	/**
 	 * rundet auf die naechste Ganzzahl groesser gleich 0

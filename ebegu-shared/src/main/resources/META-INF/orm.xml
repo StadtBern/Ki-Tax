@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <entity-mappings xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
 				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 				 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd"
@@ -89,8 +104,8 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
       )
 			]]></query>
 		</named-native-query>
-	<named-native-query name="GesuchZeitraumNativeSQLQuery" result-set-mapping="GesuchZeitraumDataRowMapping">
-		<query><![CDATA[
+		<named-native-query name="GesuchZeitraumNativeSQLQuery" result-set-mapping="GesuchZeitraumDataRowMapping">
+			<query><![CDATA[
 			SELECT
   CONCAT_WS('.'
   , RIGHT(YEAR(gesuchsperiode.gueltig_ab), 2)
@@ -271,7 +286,7 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
         OR IFNULL(Verfuegungen.kategorie_nicht_eintreten, 0) = 1
       )
 		]]></query>
-	</named-native-query>
+		</named-native-query>
 	</entity>
 	<entity class="ch.dvbern.ebegu.entities.Fall"/>
 	<entity class="ch.dvbern.ebegu.entities.FinanzielleSituationContainer"/>
@@ -313,5 +328,7 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
 	<entity class="ch.dvbern.ebegu.entities.Pain001Dokument"/>
 	<entity class="ch.dvbern.ebegu.entities.Betreuungsmitteilung"/>
 	<entity class="ch.dvbern.ebegu.entities.BetreuungsmitteilungPensum"/>
+	<entity class="ch.dvbern.ebegu.entities.Belegung"/>
+	<entity class="ch.dvbern.ebegu.entities.Modul"/>
 
 </entity-mappings>

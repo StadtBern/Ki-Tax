@@ -1,4 +1,27 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.vorlagen;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.BinaryOperator;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -10,13 +33,6 @@ import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import com.google.common.base.Strings;
 import org.apache.commons.lang.StringUtils;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.BinaryOperator;
 
 /**
  *
@@ -58,8 +74,8 @@ public class PrintUtil {
 	@Nonnull
 	private static BinaryOperator<GesuchstellerAdresseContainer> throwExceptionIfMoreThanOneAdresse(@Nonnull GesuchstellerContainer gesuchsteller) {
 		return (element, otherElement) -> {
-            throw new EbeguRuntimeException("getGesuchstellerAdresse_Korrespondenzadresse", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, gesuchsteller.getId());
-        };
+			throw new EbeguRuntimeException("getGesuchstellerAdresse_Korrespondenzadresse", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, gesuchsteller.getId());
+		};
 	}
 
 	/**
@@ -188,9 +204,9 @@ public class PrintUtil {
 		return null;
 	}
 
-	public static String getNameAdresseFormatiert(Gesuch gesuch, GesuchstellerContainer gesuchsteller){
+	public static String getNameAdresseFormatiert(Gesuch gesuch, GesuchstellerContainer gesuchsteller) {
 
-		if (gesuch != null && gesuchsteller != null){
+		if (gesuch != null && gesuchsteller != null) {
 			String newlineMSWord = "\n";
 			String adresse = StringUtils.EMPTY;
 
@@ -213,7 +229,7 @@ public class PrintUtil {
 			adresse += newlineMSWord + getGesuchstellerPLZStadt(gesuch);
 
 			return adresse;
-		} else{
+		} else {
 			return StringUtils.EMPTY;
 		}
 

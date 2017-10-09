@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 /**
  * @author: @AngularClass
@@ -6,7 +21,6 @@
 var helpers = require('./helpers'); // Helper: root(), and rootDir() are defined at the bottom
 var webpackMerge = require('webpack-merge'); //Used to merge webpack configs
 var commonConfig = require('./webpack.common.js'); //The settings that are common to prod and dev
-
 
 /**
  * Webpack Plugins
@@ -33,7 +47,6 @@ const METADATA = webpackMerge(commonConfig.metadata, {
 });
 
 module.exports = webpackMerge(commonConfig, {
-
 
     // Developer tool to enhance debugging
     //
@@ -77,9 +90,9 @@ module.exports = webpackMerge(commonConfig, {
     plugins: [
 
         new LoaderOptionsPlugin({
-           debug: false,
+            debug: false,
             minimize: true
-         }),
+        }),
 
         new ExtractTextPlugin('[name].[hash].css'),
 
@@ -88,8 +101,6 @@ module.exports = webpackMerge(commonConfig, {
         //
         // See: https://www.npmjs.com/package/webpack-md5-hash
         new WebpackMd5Hash(),
-
-
 
         // Plugin: DefinePlugin
         // Description: Define free variables.
@@ -197,7 +208,6 @@ module.exports = webpackMerge(commonConfig, {
             comments: false //prod
         }),
 
-
         // Plugin: CompressionPlugin
         // Description: Prepares compressed versions of assets to serve
         // them with Content-Encoding
@@ -213,10 +223,6 @@ module.exports = webpackMerge(commonConfig, {
         ])
 
     ],
-
-
-
-
 
     node: {
         global: true,

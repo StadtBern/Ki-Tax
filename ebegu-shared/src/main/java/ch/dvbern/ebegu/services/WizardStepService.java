@@ -1,16 +1,31 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.WizardStep;
-import ch.dvbern.ebegu.enums.WizardStepName;
+import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
-import java.util.List;
-import java.util.Optional;
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.WizardStep;
+import ch.dvbern.ebegu.enums.WizardStepName;
 
 /**
  * Service zum Verwalten von WizardStep
@@ -19,6 +34,7 @@ public interface WizardStepService {
 
 	/**
 	 * Speichert den WizardStep neu in der DB falls der Key noch nicht existiert. Sonst wird der existierende WizardStep aktualisiert
+	 *
 	 * @param wizardStep Der WizardStep als DTO
 	 */
 	@Nonnull
@@ -33,6 +49,7 @@ public interface WizardStepService {
 
 	/**
 	 * Gibt alle WizardSteps vom gegebenen Gesuch zurueck.
+	 *
 	 * @param gesuchId ID des Gesuchs
 	 * @return Emptylist wenn nichts gefunden. Sonst die WizardSteps
 	 */
@@ -45,6 +62,7 @@ public interface WizardStepService {
 
 	/**
 	 * Fuer das uebergebene Gesuch und das alte und neue Objekt, werden alle Steps berechnet und ihren Status dementsprechend gesetzt
+	 *
 	 * @param gesuchId Id des Gesuchs
 	 * @param oldEntity Objekt mit den Daten vor der Aktualisierung. kann auch null sein, wenn die Daten nicht relevant sind
 	 * @param newEntity Objekt mit den Daten nach der Aktualisierung. kann auch null sein, wenn die Daten nicht relevant sind
@@ -56,8 +74,8 @@ public interface WizardStepService {
 	/**
 	 * Erstellt eine Liste mit allen notwendigen WizardSteps fuer das gegebene Gesuch. Fuer Mutationen bekommen alle Steps
 	 * den Status OK und werden verfuegbar.
+	 *
 	 * @param gesuch das Gesuch
-	 * @return
 	 */
 	@Nonnull
 	List<WizardStep> createWizardStepList(Gesuch gesuch);
@@ -70,7 +88,6 @@ public interface WizardStepService {
 
 	/**
 	 * Damit ein Gesuch removed werden kann meussen allse sseine WizardSteps entfernt werden
-	 * @param gesToRemove
 	 */
 	void removeSteps(Gesuch gesToRemove);
 

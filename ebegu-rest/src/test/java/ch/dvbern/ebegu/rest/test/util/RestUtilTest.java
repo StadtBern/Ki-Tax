@@ -1,4 +1,27 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.rest.test.util;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxInstitution;
@@ -9,9 +32,6 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.junit.Assert;
 import org.junit.Test;
-
-import javax.annotation.Nonnull;
-import java.util.*;
 
 /**
  * Test fuer RestUtil
@@ -43,7 +63,8 @@ public class RestUtilTest {
 		RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kinder, institutionen);
 
 		Assert.assertNotNull(kinder);
-		Assert.assertEquals(1, kinder.size());Assert.assertNotNull(kind.getBetreuungen());
+		Assert.assertEquals(1, kinder.size());
+		Assert.assertNotNull(kind.getBetreuungen());
 		final JaxKindContainer kindContainer = kinder.iterator().next();
 		Assert.assertEquals(1, kindContainer.getBetreuungen().size());
 		Assert.assertEquals(institutionID1,
@@ -108,7 +129,6 @@ public class RestUtilTest {
 		Assert.assertNotEquals(Betreuungsstatus.SCHULAMT,
 			betreuung.getBetreuungsstatus());
 	}
-
 
 	// HELP METHODS
 

@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.persistence;
 
 import java.time.LocalDate;
@@ -36,13 +51,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Hilfsklasse welche CriteriaQueries erstellt.
  */
-@SuppressWarnings({"unchecked"})
+@SuppressWarnings({ "unchecked" })
 @Dependent
 public class CriteriaQueryHelper {
 
 	@Inject
 	private Persistence persistence;
-
 
 	@SuppressWarnings("unchecked")
 	public <T> Collection<T> getAll(final Class<T> clazz) {
@@ -65,8 +79,8 @@ public class CriteriaQueryHelper {
 	@SuppressWarnings("unchecked")
 	@Nonnull
 	public <A, E extends AbstractEntity> Optional<E> getEntityByUniqueAttribute(@Nonnull final Class<E> entityClazz,
-																				@Nullable final A attributeValue,
-																				@Nonnull final SingularAttribute<E, A> attribute) {
+		@Nullable final A attributeValue,
+		@Nonnull final SingularAttribute<E, A> attribute) {
 		final Collection<E> results = getEntitiesByAttribute(entityClazz, attributeValue, attribute);
 		E result = ensureSingleResult(results, attributeValue);
 		/*String attrValue = Objects.toString(attributeValue, "");
@@ -130,8 +144,8 @@ public class CriteriaQueryHelper {
 	 * von datumVon und DatumBis liegt.
 	 *
 	 * @param clazz Entity class
-	 * @param date  Datum fuer die Suche
-	 * @param <T>   Entity Class
+	 * @param date Datum fuer die Suche
+	 * @param <T> Entity Class
 	 * @return Liste mit Datensaetzen
 	 */
 	public <T extends AbstractDateRangedEntity> Collection<T> getAllInInterval(Class<T> clazz, LocalDate date) {

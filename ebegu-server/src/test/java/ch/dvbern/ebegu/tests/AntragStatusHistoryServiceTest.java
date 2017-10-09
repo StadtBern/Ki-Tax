@@ -1,6 +1,34 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.AntragStatusHistory;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.AntragStatusHistoryService;
@@ -17,14 +45,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Optional;
-
 /**
  * Arquillian Tests fuer die Klasse AntragStatusHistoryService
  */
@@ -32,7 +52,6 @@ import java.util.Optional;
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
-
 
 	@Inject
 	private AntragStatusHistoryService statusHistoryService;
@@ -43,7 +62,6 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 
 	private Gesuch gesuch;
 	private Benutzer benutzerSuperAdmin;
-
 
 	@Before
 	public void setUp() {
@@ -102,7 +120,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void  testFindAllAntragStatusHistoryByGPFall_NoFall() {
+	public void testFindAllAntragStatusHistoryByGPFall_NoFall() {
 		Fall fall = TestDataUtil.createDefaultFall();
 		Gesuchsperiode gesuchsperiode = TestDataUtil.createGesuchsperiode1718();
 
@@ -113,7 +131,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void  testFindAllAntragStatusHistoryByGPFall_NoChanges() {
+	public void testFindAllAntragStatusHistoryByGPFall_NoChanges() {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 
 		final Collection<AntragStatusHistory> allStatus = statusHistoryService.findAllAntragStatusHistoryByGPFall(gesuch.getGesuchsperiode(), gesuch.getFall());
@@ -123,7 +141,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void  testFindAllAntragStatusHistoryByGPFall() {
+	public void testFindAllAntragStatusHistoryByGPFall() {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.VERFUEGEN);
 		gesuch.setStatus(AntragStatus.VERFUEGT);
 		gesuchService.updateGesuch(gesuch, true, null);
@@ -136,7 +154,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void  testFindAllAntragStatusHistoryByGPFall_Mutation() {
+	public void testFindAllAntragStatusHistoryByGPFall_Mutation() {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.VERFUEGEN);
 		gesuch.setStatus(AntragStatus.VERFUEGT);
 		gesuch.setGueltig(true);
@@ -172,7 +190,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 		try {
 			statusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuch);
 			Assert.fail("It should throw an exception because the gesuch is not in status BESCHWERDE_HAENGIG");
-		} catch(EbeguRuntimeException e) {
+		} catch (EbeguRuntimeException e) {
 			// nop
 		}
 	}
@@ -186,7 +204,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 		try {
 			statusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuch);
 			Assert.fail("It should throw an exception because the gesuch has only one status change");
-		} catch(EbeguRuntimeException e) {
+		} catch (EbeguRuntimeException e) {
 			// nop
 		}
 	}

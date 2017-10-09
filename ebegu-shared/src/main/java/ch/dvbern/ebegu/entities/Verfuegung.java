@@ -1,27 +1,47 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.util.Constants;
-import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import ch.dvbern.ebegu.util.Constants;
+import org.hibernate.envers.Audited;
 
 /**
  * Verfuegung fuer eine einzelne Betreuung
  */
 @Entity
 @Audited
-public class Verfuegung extends AbstractEntity{
+public class Verfuegung extends AbstractEntity {
 
 	private static final long serialVersionUID = -6682874795746487562L;
-
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -34,7 +54,7 @@ public class Verfuegung extends AbstractEntity{
 	private String manuelleBemerkungen;
 
 	@NotNull
-	@OneToOne (optional = false, mappedBy = "verfuegung")
+	@OneToOne(optional = false, mappedBy = "verfuegung")
 	private Betreuung betreuung;
 
 	@Nonnull
@@ -62,7 +82,6 @@ public class Verfuegung extends AbstractEntity{
 	@NotNull
 	@Column(nullable = false)
 	private boolean kategorieNichtEintreten = false;
-
 
 	@Nullable
 	public String getGeneratedBemerkungen() {

@@ -1,7 +1,37 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.util;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.enterprise.context.ContextNotActiveException;
+import javax.enterprise.inject.spi.CDI;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+
 import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.SequenceType;
 import ch.dvbern.ebegu.enums.UserRole;
@@ -13,14 +43,6 @@ import ch.dvbern.ebegu.services.SequenceService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.enterprise.context.ContextNotActiveException;
-import javax.enterprise.inject.spi.CDI;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 public class AbstractEntityListener {
 
@@ -59,8 +81,7 @@ public class AbstractEntityListener {
 				kind.setKindNummer(fall.getNextNumberKind());
 				fall.setNextNumberKind(fall.getNextNumberKind() + 1);
 			}
-		}
-		else if (entity instanceof Betreuung && !entity.hasVorgaenger()) {
+		} else if (entity instanceof Betreuung && !entity.hasVorgaenger()) {
 			// Neue Betreuungs-Nummer: nur setzen, wenn es nicht eine "kopierte" Betreuung ist
 			Betreuung betreuung = (Betreuung) entity;
 			Optional<KindContainer> optKind = getKindService().findKind(betreuung.getKind().getId());
@@ -69,8 +90,7 @@ public class AbstractEntityListener {
 				betreuung.setBetreuungNummer(kindContainer.getNextNumberBetreuung());
 				kindContainer.setNextNumberBetreuung(kindContainer.getNextNumberBetreuung() + 1);
 			}
-		}
-		else if (entity instanceof Fall) {
+		} else if (entity instanceof Fall) {
 			Fall fall = (Fall) entity;
 			Mandant mandant = getPrincipalBean().getMandant();
 			Long nextFallNr = getSequenceService().createNumberTransactional(SequenceType.FALL_NUMMER, mandant);
@@ -81,8 +101,7 @@ public class AbstractEntityListener {
 				fall.setBesitzer(benutzer.orElseThrow(() -> new EbeguRuntimeException("findBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, getPrincipalName())));
 
 			}
-		}
-		else if (entity instanceof Verfuegung) {
+		} else if (entity instanceof Verfuegung) {
 			// Verfuegung darf erst erstellt werden, wenn die Betreuung verfuegt ist
 			Verfuegung verfuegung = (Verfuegung) entity;
 			if (!verfuegung.getBetreuung().getBetreuungsstatus().isGeschlossen()) {

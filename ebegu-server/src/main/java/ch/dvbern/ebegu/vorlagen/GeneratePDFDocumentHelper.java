@@ -1,30 +1,20 @@
-package ch.dvbern.ebegu.vorlagen;
 /*
-* Copyright (c) 2016 DV Bern AG, Switzerland
-*
-* Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
-* geschuetzt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulaessig. Dies gilt
-* insbesondere fuer Vervielfaeltigungen, die Einspeicherung und Verarbeitung in
-* elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
-* Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
-*
-* Ersteller: zeab am: 10.08.2016
-*/
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-import ch.dvbern.ebegu.errors.MergeDocException;
-import ch.dvbern.lib.doctemplate.common.DocTemplateException;
-import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
-import com.google.common.io.ByteStreams;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Image;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.*;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.poi.xwpf.converter.pdf.PdfConverter;
-import org.apache.poi.xwpf.converter.pdf.PdfOptions;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
+package ch.dvbern.ebegu.vorlagen;
 
-import javax.annotation.Nonnull;
 import java.awt.color.ICC_Profile;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,6 +23,31 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.Objects;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.lib.doctemplate.common.DocTemplateException;
+import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
+import com.google.common.io.ByteStreams;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PRStream;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfDocument;
+import com.lowagie.text.pdf.PdfGState;
+import com.lowagie.text.pdf.PdfLayer;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfObject;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStamper;
+import com.lowagie.text.pdf.PdfWriter;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.poi.xwpf.converter.pdf.PdfConverter;
+import org.apache.poi.xwpf.converter.pdf.PdfOptions;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 /**
  * Helper Klasse um einen DocX zu einem PDF zu konvertieren
@@ -48,7 +63,6 @@ public class GeneratePDFDocumentHelper {
 	 * Konvertiert ein docx zu einem PDF
 	 *
 	 * @return das PDF Dokument als Byte
-	 * @throws MergeDocException
 	 */
 	@Nonnull
 	private byte[] generatePDFDocument(@Nonnull byte[] generateFrom) throws MergeDocException {
@@ -64,7 +78,7 @@ public class GeneratePDFDocumentHelper {
 
 			return manipulatePdf(out.toByteArray());
 		} catch (IOException | InvocationTargetException | DocumentException | IllegalAccessException | NoSuchMethodException e) {
-			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[]{});
+			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[] {});
 		}
 	}
 
@@ -72,7 +86,6 @@ public class GeneratePDFDocumentHelper {
 	 * Konvertiert ein docx zu einem PDF
 	 *
 	 * @return das PDF Dokument als Byte
-	 * @throws MergeDocException
 	 */
 	@Nonnull
 	public byte[] generatePDFDocument(@Nonnull byte[] docxTemplate, @Nonnull EBEGUMergeSource mergeSource, boolean writeProtected) throws MergeDocException {
@@ -83,7 +96,7 @@ public class GeneratePDFDocumentHelper {
 			DOCXMergeEngine docxme = new DOCXMergeEngine(mergeSource.getClass().getName());
 
 			byte[] mergedDocx = docxme.getDocument(new ByteArrayInputStream(docxTemplate), mergeSource);
-//			save(mergedDocx);
+			//			save(mergedDocx);
 			byte[] mergedPdf = generatePDFDocument(mergedDocx);
 			PdfReader reader = new PdfReader(mergedPdf);
 			int numOfPDFPages = reader.getNumberOfPages();
@@ -108,7 +121,7 @@ public class GeneratePDFDocumentHelper {
 
 			return mergedPdf;
 		} catch (IOException | DocTemplateException | DocumentException e) {
-			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[]{});
+			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[] {});
 		}
 	}
 
@@ -116,24 +129,24 @@ public class GeneratePDFDocumentHelper {
 	 * Speichert das Zwischenresultat der PDF Generierung (Word mit ersetzten Tags)
 	 * im Temp-Folder. Zum Debuggen.
 	 */
-	@SuppressWarnings(value = {"PMD.UnusedPrivateMethod", "UPM_UNCALLED_PRIVATE_METHOD", "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"})
-//	private boolean save(byte[] content) {
-//		UUID uuid = UUID.randomUUID();
-//		String tempDir = System.getProperty("java.io.tmpdir");
-//		final String absoluteFilePath = tempDir + "/" + uuid + ".docx";
-//		Path file = Paths.get(absoluteFilePath);
-//		try {
-//			if (!Files.exists(file.getParent())) {
-//				Files.createDirectories(file.getParent());
-//				LOGGER.info("Save Word-file in FileSystem: " + absoluteFilePath);
-//			}
-//			Files.write(file, content);
-//		} catch (IOException e) {
-//			LOGGER.info("Can't save file in FileSystem: ");
-//			return false;
-//		}
-//		return true;
-//	}
+	@SuppressWarnings(value = { "PMD.UnusedPrivateMethod", "UPM_UNCALLED_PRIVATE_METHOD", "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" })
+	//	private boolean save(byte[] content) {
+	//		UUID uuid = UUID.randomUUID();
+	//		String tempDir = System.getProperty("java.io.tmpdir");
+	//		final String absoluteFilePath = tempDir + "/" + uuid + ".docx";
+	//		Path file = Paths.get(absoluteFilePath);
+	//		try {
+	//			if (!Files.exists(file.getParent())) {
+	//				Files.createDirectories(file.getParent());
+	//				LOGGER.info("Save Word-file in FileSystem: " + absoluteFilePath);
+	//			}
+	//			Files.write(file, content);
+	//		} catch (IOException e) {
+	//			LOGGER.info("Can't save file in FileSystem: ");
+	//			return false;
+	//		}
+	//		return true;
+	//	}
 
 	private void setXDocReportPDFWriterOptions(@Nonnull PdfWriter pdfWriter) {
 		pdfWriter.setPdfVersion(PdfWriter.PDF_VERSION_1_4);
@@ -143,12 +156,6 @@ public class GeneratePDFDocumentHelper {
 
 	/**
 	 * PDF has to be manipulated in order to set the right page number.
-	 *
-	 * @throws IOException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws DocumentException
 	 */
 	@Nonnull
 	private byte[] manipulatePdf(@Nonnull byte[] doc) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, DocumentException {

@@ -1,4 +1,26 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.rest.test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.UriInfo;
 
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResponse;
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
@@ -13,15 +35,8 @@ import de.akquinet.jbosscc.needle.mock.EasyMockProvider;
 import junit.framework.AssertionFailedError;
 import org.easymock.EasyMock;
 import org.jboss.resteasy.spi.ResteasyUriInfo;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.inject.Inject;
-import javax.ws.rs.core.UriInfo;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import static ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil.creatOpenIdmInst;
 import static ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil.creatOpenIdmTraegerschaft;
@@ -60,7 +75,6 @@ public class InstitutionResourceTest {
 
 		EasyMock.expect(openIdmRestService.deleteInstitution(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
 		EasyMock.expect(openIdmRestService.createInstitution(EasyMock.anyObject(Institution.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
-
 
 		mockProvider.replayAll();
 
@@ -119,7 +133,6 @@ public class InstitutionResourceTest {
 		final JaxOpenIdmResult jaxOpenIdmResul4 = creatOpenIdmTraegerschaft("T-4"); // Traegerschaft
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul4);
 
-
 		List<Institution> institutions = new ArrayList<>();
 		final Institution institution1 = creatInst("1");
 		institutions.add(institution1);
@@ -155,7 +168,6 @@ public class InstitutionResourceTest {
 		final JaxOpenIdmResult jaxOpenIdmResul2 = creatOpenIdmInst("I-2");
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul2);
 
-
 		List<Institution> institutions = new ArrayList<>();
 		final Institution institution1 = creatInst("1");
 		institutions.add(institution1);
@@ -188,7 +200,6 @@ public class InstitutionResourceTest {
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul3);
 		final JaxOpenIdmResult jaxOpenIdmResul4 = creatOpenIdmInst("T-4"); // Traegerschaft
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul4);
-
 
 		List<Institution> institutions = new ArrayList<>();
 		final Institution institution1 = creatInst("1");

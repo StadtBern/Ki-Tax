@@ -1,8 +1,24 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import TSInstitution from './TSInstitution';
 import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import {TSDateRange} from './types/TSDateRange';
 import {TSAbstractDateRangedEntity} from './TSAbstractDateRangedEntity';
 import TSAdresse from './TSAdresse';
+import TSModul from './TSModul';
 
 export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity {
 
@@ -14,10 +30,11 @@ export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity 
     private _adresse: TSAdresse;
     private _kontoinhaber: string;
     private _adresseKontoinhaber: TSAdresse;
-
+    private _module: Array<TSModul>;
 
     constructor(iban?: string, oeffnungstage?: number, oeffnungsstunden?: number, betreuungsangebotTyp?: TSBetreuungsangebotTyp,
-                institution?: TSInstitution, adresse?: TSAdresse, gueltigkeit?: TSDateRange, kontoinhaber?: string, adresseKontoinhaber?: TSAdresse) {
+                institution?: TSInstitution, adresse?: TSAdresse, gueltigkeit?: TSDateRange, kontoinhaber?: string,
+                adresseKontoinhaber?: TSAdresse, module?: Array<TSModul>) {
         super(gueltigkeit);
         this._iban = iban;
         this._oeffnungstage = oeffnungstage;
@@ -27,8 +44,8 @@ export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity 
         this._adresse = adresse;
         this._kontoinhaber = kontoinhaber;
         this._adresseKontoinhaber = adresseKontoinhaber;
+        this._module = module;
     }
-
 
     public get iban(): string {
         return this._iban;
@@ -92,5 +109,13 @@ export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity 
 
     public set adresseKontoinhaber(value: TSAdresse) {
         this._adresseKontoinhaber = value;
+    }
+
+    public get module(): Array<TSModul> {
+        return this._module;
+    }
+
+    public set module(value: Array<TSModul>) {
+        this._module = value;
     }
 }

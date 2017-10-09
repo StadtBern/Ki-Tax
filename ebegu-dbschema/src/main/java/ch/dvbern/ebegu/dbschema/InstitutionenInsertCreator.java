@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.dbschema;
 
 import java.io.File;
@@ -33,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * wir zwei Institutionen daraus. Im Excel muss dazu die Spalte Institutions-Id leer bleiben, bzw. dort wo für mehrere
  * Angebote die gleiche InstitutionsId drinn steht, werden die Angebote als InstitutiosStammdaten importiert.
  */
-@SuppressWarnings({"CallToPrintStackTrace", "IOResourceOpenedButNotSafelyClosed", "UseOfSystemOutOrSystemErr", "TooBroadScope", "PMD.AvoidDuplicateLiterals", "StringBufferReplaceableByString"})
+@SuppressWarnings({ "CallToPrintStackTrace", "IOResourceOpenedButNotSafelyClosed", "UseOfSystemOutOrSystemErr", "TooBroadScope", "PMD.AvoidDuplicateLiterals", "StringBufferReplaceableByString" })
 public class InstitutionenInsertCreator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(InstitutionenInsertCreator.class);
@@ -50,7 +65,6 @@ public class InstitutionenInsertCreator {
 	private static final String INPUT_FILE = "/institutionen/institutionen-24.02.2017.xlsx";
 	private static final int ANZAHL_ZEILEN = 87;
 	private static final String OUTPUT_FILE = "insertInstitutionen.sql";
-
 
 	public static void main(String[] args) {
 		InstitutionenInsertCreator creator = new InstitutionenInsertCreator();
@@ -193,21 +207,21 @@ public class InstitutionenInsertCreator {
 		sb.append("INSERT INTO adresse ");
 		sb.append("(id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, gemeinde, gueltig_ab, gueltig_bis, hausnummer, land, ort, plz, strasse, zusatzzeile) ");
 		sb.append("VALUES (");
-		sb.append("'").append(id).append("', ");	// id
-		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_erstellt
-		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_mutiert
-		sb.append("'flyway', "); 					// user_erstellt
-		sb.append("'flyway', "); 					// user_mutiert
-		sb.append("0, ");							// version,
-		sb.append("null, ");						// gemeinde,
-		sb.append("'1000-01-01', "); 				// gueltig_ab,
-		sb.append("'9999-12-31', "); 				// gueltig_bis,
+		sb.append("'").append(id).append("', ");    // id
+		sb.append("'2016-01-01 00:00:00', ");        // timestamp_erstellt
+		sb.append("'2016-01-01 00:00:00', ");        // timestamp_mutiert
+		sb.append("'flyway', ");                    // user_erstellt
+		sb.append("'flyway', ");                    // user_mutiert
+		sb.append("0, ");                            // version,
+		sb.append("null, ");                        // gemeinde,
+		sb.append("'1000-01-01', ");                // gueltig_ab,
+		sb.append("'9999-12-31', ");                // gueltig_bis,
 		sb.append(toStringOrNull(hausnummer)).append(", "); // hausnummer
-		sb.append("'CH', ");						// land,
+		sb.append("'CH', ");                        // land,
 		sb.append(toStringOrNull(ort)).append(", "); // ort
 		sb.append(toStringOrNull(plz)).append(", "); // plz
 		sb.append(toStringOrNull(strasse)).append(", "); // strasse
-		sb.append(toStringOrNull(zusatzzeile)); 	// zusatzzeile
+		sb.append(toStringOrNull(zusatzzeile));    // zusatzzeile
 		sb.append(");");
 		insertAdressen.add(sb.toString());
 
@@ -232,14 +246,14 @@ public class InstitutionenInsertCreator {
 		sb.append("INSERT INTO traegerschaft ");
 		sb.append("(id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name, active, mail) ");
 		sb.append("VALUES (");
-		sb.append("'").append(id).append("', ");	// id
-		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_erstellt
-		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_mutiert
-		sb.append("'flyway', "); 					// user_erstellt
-		sb.append("'flyway', "); 					// user_mutiert
-		sb.append("0, ");							// version,
+		sb.append("'").append(id).append("', ");    // id
+		sb.append("'2016-01-01 00:00:00', ");        // timestamp_erstellt
+		sb.append("'2016-01-01 00:00:00', ");        // timestamp_mutiert
+		sb.append("'flyway', ");                    // user_erstellt
+		sb.append("'flyway', ");                    // user_mutiert
+		sb.append("0, ");                            // version,
 		sb.append(toStringOrNull(traegerschaftsname)).append(", "); // name
-		sb.append("true, ");				 				// active
+		sb.append("true, ");                                // active
 		sb.append(toStringOrNull(traegerschaftEmail));  // mail
 		sb.append(");");
 		insertTraegerschaften.add(sb.toString());
@@ -265,12 +279,12 @@ public class InstitutionenInsertCreator {
 		sb.append("INSERT INTO institution ");
 		sb.append("(id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name, mandant_id, traegerschaft_id, active, mail) ");
 		sb.append("VALUES (");
-		sb.append("'").append(id).append("', ");	// id
-		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_erstellt
-		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_mutiert
-		sb.append("'flyway', "); 					// user_erstellt
-		sb.append("'flyway', "); 					// user_mutiert
-		sb.append("0, ");					        // version,
+		sb.append("'").append(id).append("', ");    // id
+		sb.append("'2016-01-01 00:00:00', ");        // timestamp_erstellt
+		sb.append("'2016-01-01 00:00:00', ");        // timestamp_mutiert
+		sb.append("'flyway', ");                    // user_erstellt
+		sb.append("'flyway', ");                    // user_mutiert
+		sb.append("0, ");                            // version,
 		sb.append(toStringOrNull(institutionsname)).append(", "); // name
 		sb.append("'").append(AdministrationService.MANDANT_ID_BERN).append("', ");    // mandant_id,
 		sb.append(toStringOrNull(traegerschaftId)).append(", "); // name
@@ -302,14 +316,14 @@ public class InstitutionenInsertCreator {
 		sb.append("INSERT INTO institution_stammdaten ");
 		sb.append("(id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, gueltig_ab, gueltig_bis, betreuungsangebot_typ, iban, oeffnungsstunden, oeffnungstage, institution_id, adresse_id) ");
 		sb.append("VALUES (");
-		sb.append("'").append(id).append("', ");	// id
-		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_erstellt
-		sb.append("'2016-01-01 00:00:00', "); 		// timestamp_mutiert
-		sb.append("'flyway', "); 					// user_erstellt
-		sb.append("'flyway', "); 					// user_mutiert
-		sb.append("0, ");					// version,
-		sb.append("'1000-01-01', "); 				// gueltig_ab,
-		sb.append("'9999-12-31', "); 				// gueltig_bis,
+		sb.append("'").append(id).append("', ");    // id
+		sb.append("'2016-01-01 00:00:00', ");        // timestamp_erstellt
+		sb.append("'2016-01-01 00:00:00', ");        // timestamp_mutiert
+		sb.append("'flyway', ");                    // user_erstellt
+		sb.append("'flyway', ");                    // user_mutiert
+		sb.append("0, ");                    // version,
+		sb.append("'1000-01-01', ");                // gueltig_ab,
+		sb.append("'9999-12-31', ");                // gueltig_bis,
 		sb.append("'").append(typ.name()).append("', "); // betreuungsangebot_typ,
 		sb.append(toStringOrNull(iban)).append(", "); // iban
 		sb.append(toBigDecimalOrNull(stunden)).append(", "); // oeffnungsstunden,
@@ -357,7 +371,7 @@ public class InstitutionenInsertCreator {
 		return printWriter;
 	}
 
-	private void println(String s)  {
+	private void println(String s) {
 		getPrintWriter().println(s);
 	}
 }

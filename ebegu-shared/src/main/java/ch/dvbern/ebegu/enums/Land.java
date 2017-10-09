@@ -1,9 +1,23 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.enums;
 
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.Validate;
-
-import javax.annotation.Nullable;
 
 /**
  * Enum fuer die Laender (ISO 3166-1 Alpha 2 Code)
@@ -223,14 +237,12 @@ public enum Land {
 	STAATENLOS("998"), //
 	UNBEKANNT("999");
 
-
 	private final String bsvCode;
 	private final boolean valid;
 	private final int sortierung;
 
 	private static final int SORTIERUNG_GELOESCHT = 0;
 	private static final int SORTIERUNG_DEFAULT = 100;
-
 
 	private Land(final String bsvCode, final boolean valid, final int sortierung) {
 		this.bsvCode = bsvCode;
@@ -252,8 +264,6 @@ public enum Land {
 
 	/**
 	 * code defined by bsv (eg. "100"=CH) - never null
-	 *
-	 * @return
 	 */
 	public String getBsvCode() {
 		return bsvCode;
@@ -261,13 +271,10 @@ public enum Land {
 
 	/**
 	 * Is this {@link Land} still valid? Unused and replaced codes will be marked as invalid.
-	 *
-	 * @return
 	 */
 	public boolean isValid() {
 		return valid;
 	}
-
 
 	public boolean isSchweiz() {
 		return this.equals(Land.CH);
