@@ -55,7 +55,7 @@
         <maven-pmd-plugin.version>3.6</maven-pmd-plugin.version>
         <findbugs-maven-plugin.version>3.0.3</findbugs-maven-plugin.version>
 
-        <ebegu-iam-connector-war.version>1.0.0-SNAPSHOT</ebegu-iam-connector-war.version>
+        <ebegu-iam-connector-war.version>1.0.0</ebegu-iam-connector-war.version>
 
     </properties>
 
@@ -907,9 +907,6 @@
                                         <failWhenParentIsSnapshot>true</failWhenParentIsSnapshot>
                                         <onlyWhenRelease>true</onlyWhenRelease>
                                         <searchTransitive>true</searchTransitive>
-                                        <excludes>
-                                            <exclude>ch.dvbern.ebegu:ebegu-iam-connector</exclude>
-                                        </excludes>
                                     </requireReleaseDeps>
                                 </rules>
                             </configuration>
