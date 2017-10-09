@@ -49,6 +49,9 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@NotNull
 	private Betreuungsstatus betreuungsstatus;
 
+	@Nullable
+	private JaxBelegung belegung;
+
 	@NotNull
 	private List<JaxBetreuungspensumContainer> betreuungspensumContainers = new ArrayList<>();
 
@@ -231,7 +234,7 @@ public class JaxBetreuung extends JaxAbstractDTO {
 		return betreuungMutiert;
 	}
 
-	public void setBetreuungMutiert(Boolean betreuungMutiert) {
+	public void setBetreuungMutiert(@Nullable Boolean betreuungMutiert) {
 		this.betreuungMutiert = betreuungMutiert;
 	}
 
@@ -239,7 +242,7 @@ public class JaxBetreuung extends JaxAbstractDTO {
 		return abwesenheitMutiert;
 	}
 
-	public void setAbwesenheitMutiert(Boolean abwesenheitMutiert) {
+	public void setAbwesenheitMutiert(@Nullable Boolean abwesenheitMutiert) {
 		this.abwesenheitMutiert = abwesenheitMutiert;
 	}
 
@@ -249,6 +252,15 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setGueltig(boolean gueltig) {
 		this.gueltig = gueltig;
+	}
+
+	@Nullable
+	public JaxBelegung getBelegung() {
+		return belegung;
+	}
+
+	public void setBelegung(@Nullable JaxBelegung belegung) {
+		this.belegung = belegung;
 	}
 
 	@Override

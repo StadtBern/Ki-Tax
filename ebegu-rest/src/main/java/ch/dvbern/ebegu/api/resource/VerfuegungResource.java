@@ -134,7 +134,7 @@ public class VerfuegungResource {
 				UserRole currentUserRole = currentBenutzer.get().getRole();
 				// Es wird gecheckt ob der Benutzer zu einer Institution/Traegerschaft gehoert. Wenn ja, werden die Kinder gefilter
 				// damit nur die relevanten Kinder geschickt werden
-				if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(currentUserRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(currentUserRole)) {
+				if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == currentUserRole || UserRole.SACHBEARBEITER_INSTITUTION == currentUserRole) {
 					Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
 					RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
 				}

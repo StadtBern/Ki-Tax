@@ -336,7 +336,7 @@ describe('EbeguRestUtil', function () {
             it('should transform TSInstitutionStammdaten to REST object and back', () => {
                 let myInstitution = createInstitution();
                 let myInstitutionStammdaten = new TSInstitutionStammdaten('iban', 250, 12, TSBetreuungsangebotTyp.KITA, myInstitution, undefined,
-                    new TSDateRange(DateUtil.today(), DateUtil.today()));
+                    new TSDateRange(DateUtil.today(), DateUtil.today()), '', undefined, []);
                 TestDataUtil.setAbstractFieldsUndefined(myInstitutionStammdaten);
 
                 let restInstitutionStammdaten = ebeguRestUtil.institutionStammdatenToRestObject({}, myInstitutionStammdaten);

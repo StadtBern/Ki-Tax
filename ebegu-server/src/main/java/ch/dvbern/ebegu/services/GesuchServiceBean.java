@@ -234,7 +234,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
 	public Optional<Gesuch> findGesuchForFreigabe(@Nonnull String gesuchId) {
 		Objects.requireNonNull(gesuchId, "gesuchId muss gesetzt sein");
 		Gesuch gesuch = persistence.find(Gesuch.class, gesuchId);
@@ -412,7 +412,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		@SuppressWarnings("rawtypes") // Je nach Abfrage ist es String oder Long
-			CriteriaQuery query;
+		CriteriaQuery query;
 		switch (mode) {
 		case SEARCH:
 			query = cb.createQuery(String.class);
@@ -425,7 +425,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 		// Construct from-clause
 		@SuppressWarnings("unchecked") // Je nach Abfrage ist das Query String oder Long
-			Root<Gesuch> root = query.from(Gesuch.class);
+		Root<Gesuch> root = query.from(Gesuch.class);
 		// Join all the relevant relations (except gesuchsteller join, which is only done when needed)
 		Join<Gesuch, Fall> fall = root.join(Gesuch_.fall, JoinType.INNER);
 		Join<Fall, Benutzer> verantwortlicher = fall.join(Fall_.verantwortlicher, JoinType.LEFT);
@@ -446,39 +446,40 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		// Special role based predicates
 		switch (role) {
-		case SUPER_ADMIN:
-		case ADMIN:
-		case REVISOR:
-		case JURIST:
-			break;
-		case STEUERAMT:
-			break;
-		case SACHBEARBEITER_JA:
-			// Jugendamt-Mitarbeiter duerfen auch Faelle sehen, die noch gar keine Kinder/Betreuungen haben.
-			// Wenn aber solche erfasst sind, dann duerfen sie nur diejenigen sehen, die nicht nur Schulamt haben
-			// zudem muss auch der status ensprechend sein
-			Predicate predicateKeineKinder = kindContainers.isNull();
-			Predicate predicateKeineBetreuungen = betreuungen.isNull();
-			Predicate predicateKeineInstitutionsstammdaten = institutionstammdaten.isNull();
-			Predicate predicateKeineInstitution = institution.isNull();
-			Predicate predicateAngebotstyp = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
-			Predicate predicateRichtigerAngebotstypOderNichtAusgefuellt = cb.or(predicateKeineKinder, predicateKeineBetreuungen, predicateKeineInstitutionsstammdaten, predicateKeineInstitution, predicateAngebotstyp);
-			predicates.add(predicateRichtigerAngebotstypOderNichtAusgefuellt);
-			break;
-		case SACHBEARBEITER_TRAEGERSCHAFT:
-			predicates.add(cb.equal(institution.get(Institution_.traegerschaft), user.getTraegerschaft()));
-			break;
-		case SACHBEARBEITER_INSTITUTION:
-			// es geht hier nicht um die institution des zugewiesenen benutzers sondern um die institution des eingeloggten benutzers
-			predicates.add(cb.equal(institution, user.getInstitution()));
-			break;
-		case SCHULAMT:
-			predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
-			break;
-		default:
-			LOG.warn("antragSearch can not be performed by users in role " + role);
-			predicates.add(cb.isFalse(cb.literal(Boolean.TRUE))); // impossible predicate
-			break;
+			case SUPER_ADMIN:
+			case ADMIN:
+			case REVISOR:
+			case JURIST:
+				break;
+			case STEUERAMT:
+				break;
+			case SACHBEARBEITER_JA:
+				// Jugendamt-Mitarbeiter duerfen auch Faelle sehen, die noch gar keine Kinder/Betreuungen haben.
+				// Wenn aber solche erfasst sind, dann duerfen sie nur diejenigen sehen, die nicht nur Schulamt haben
+				// zudem muss auch der status ensprechend sein
+				Predicate predicateKeineKinder = kindContainers.isNull();
+				Predicate predicateKeineBetreuungen = betreuungen.isNull();
+				Predicate predicateKeineInstitutionsstammdaten = institutionstammdaten.isNull();
+				Predicate predicateKeineInstitution = institution.isNull();
+				Predicate predicateAngebotstyp = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
+				Predicate predicateRichtigerAngebotstypOderNichtAusgefuellt = cb.or(predicateKeineKinder, predicateKeineBetreuungen, predicateKeineInstitutionsstammdaten, predicateKeineInstitution, predicateAngebotstyp);
+				predicates.add(predicateRichtigerAngebotstypOderNichtAusgefuellt);
+				break;
+			case SACHBEARBEITER_TRAEGERSCHAFT:
+				predicates.add(cb.equal(institution.get(Institution_.traegerschaft), user.getTraegerschaft()));
+				break;
+			case SACHBEARBEITER_INSTITUTION:
+				// es geht hier nicht um die institution des zugewiesenen benutzers sondern um die institution des eingeloggten benutzers
+				predicates.add(cb.equal(institution, user.getInstitution()));
+				break;
+			case SCHULAMT:
+			case ADMINISTRATOR_SCHULAMT:
+				predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
+				break;
+			default:
+				LOG.warn("antragSearch can not be performed by users in role " + role);
+				predicates.add(cb.isFalse(cb.literal(Boolean.TRUE))); // impossible predicate
+				break;
 		}
 
 		// Predicates derived from PredicateDTO
@@ -709,7 +710,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	 * Die Antraege werden aber je nach Benutzerrolle gefiltert.
 	 * - SACHBEARBEITER_TRAEGERSCHAFT oder SACHBEARBEITER_INSTITUTION - werden nur diejenige Antraege zurueckgegeben,
 	 * die mindestens ein Angebot fuer die InstituionEn des Benutzers haben
-	 * - SCHULAMT - werden nur diejenige Antraege zurueckgegeben, die mindestens ein Angebot von Typ Schulamt haben
+	 * - SCHULAMT/ADMINISTRATOR_SCHULAMT - werden nur diejenige Antraege zurueckgegeben, die mindestens ein Angebot von Typ Schulamt haben
 	 * - SACHBEARBEITER_JA oder ADMIN - werden nur diejenige Antraege zurueckgegeben, die ein Angebot von einem anderen
 	 * Typ als Schulamt haben oder ueberhaupt kein Angebot
 	 */
@@ -733,6 +734,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			if (benutzer.getRole() == UserRole.SACHBEARBEITER_TRAEGERSCHAFT
 				|| benutzer.getRole() == UserRole.SACHBEARBEITER_INSTITUTION
 				|| benutzer.getRole() == UserRole.SCHULAMT
+				|| benutzer.getRole() == UserRole.ADMINISTRATOR_SCHULAMT
 				|| benutzer.getRole() == UserRole.ADMIN
 				|| benutzer.getRole() == UserRole.SACHBEARBEITER_JA) {
 				// Join all the relevant relations only when the User belongs to Admin, JA, Schulamt, Institution or Traegerschaft
@@ -778,7 +780,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					final Predicate noAngebote = cb.isNull(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp));
 					predicatesToUse.add(cb.or(noSchulamt, noAngebote));
 				}
-				if (benutzer.getRole() == UserRole.SCHULAMT) {
+				if (benutzer.getRole().isRolleSchulamt()) {
 					predicatesToUse.add(cb.equal(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
 				}
 			}
@@ -853,7 +855,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
 	public Gesuch antragFreigabequittungErstellen(@Nonnull Gesuch gesuch, AntragStatus statusToChangeTo) {
 		authorizer.checkWriteAuthorization(gesuch);
 
@@ -876,7 +878,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
 	public Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username) {
 		Optional<Gesuch> gesuchOptional = Optional.ofNullable(persistence.find(Gesuch.class, gesuchId)); //direkt ueber persistence da wir eigentlich noch nicht leseberechtigt sind)
 		if (gesuchOptional.isPresent()) {
@@ -927,7 +929,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 			if (username != null) {
 				Optional<Benutzer> currentUser = benutzerService.findBenutzer(username);
-				if (currentUser.isPresent() && currentUser.get().getRole() != UserRole.SCHULAMT) {
+				if (currentUser.isPresent() && !currentUser.get().getRole().isRolleSchulamt()) {
 					gesuch.getFall().setVerantwortlicher(currentUser.get());
 				}
 			}

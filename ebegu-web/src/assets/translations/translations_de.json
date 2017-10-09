@@ -630,6 +630,7 @@
     "GESUCHSPERIODE_GUELTIG_AB": "Beginn",
     "GESUCHSPERIODE_GUELTIG_BIS": "Ende",
     "GESUCHSPERIODE_STATUS": "Status",
+    "GESUCHSPERIODE_STATUS_TAGESSCHULEANMELDUNG": "Tagesschule",
     "GESUCHSPERIODE_INAKTIV_HINT": "Achtung, diese Gesuchsperiode ist inaktiv!",
     "GESUCHSPERIODE_DIALOG_TITLE": "Sind Sie sicher, dass Sie die Gesuchsperiode speichern wollen?",
     "GESUCHSPERIODE_DIALOG_TEXT_ENTWURF": "Im Status ENTWURF können Sie jederzeit alle Parameter ändern und Vorlagen korrigieren. Weder das Jugendamt noch der Gesuchsteller können Anträge zu dieser Gesuchsperiode erfassen",
@@ -698,6 +699,7 @@
     "TSRole_REVISOR": "Revisor Jugendamt",
     "TSRole_STEUERAMT": "Sachbearbeiter Steueramt",
     "TSRole_SCHULAMT": "Sachbearbeiter Schulamt",
+    "TSRole_ADMINISTRATOR_SCHULAMT": "Administrator Schulamt",
     "PARAM_GRENZWERT_EINKOMMENSVERSCHLECHTERUNG": "Minimale Einkommenveschlechterung (%)",
     "PARAM_BABY_FAKTOR": "Baby Faktor",
     "PARAM_BABY_ALTER_IN_MONATEN": "Maximales Alter für Baby Faktor",
@@ -1107,6 +1109,15 @@
     "CONFIRM_GESUCH_LOESCHEN": "Möchten Sie wirklich diesen Antrag löschen?",
     "BESCHREIBUNG_GESUCH_LOESCHEN": "Wenn Sie mit dem Löschen fortfahren, werden alle Daten endgültig gelöscht",
     "SCHLIESSEN":"Schliessen",
-    "KINDER_DELETE": "Eintrag löschen"
+    "KINDER_DELETE": "Eintrag löschen",
+    "FREISCHALTUNG_TAGESSCHULE": "Freischaltung Tagesschule",
+    "FREISCHALTUNG_TAGESSCHULE_BUTTON": "Anmeldungen für Tagesschule freischalten",
+    "FREISCHALTUNG_TAGESSCHULE_KONFIGURIERT": "Anmeldungen für Tagesschule konfiguriert",
+    "FREISCHALTUNG_TAGESSCHULE_NOT_YET": "Anmeldungen für Tagesschule noch nicht konfiguriert",
+    "FREISCHALTUNG_TAGESSCHULE_NONE": "Keine Anmeldungen für Tagesschule möglich",
+    "FREISCHALTUNG_TAGESSCHULE_DIALOG_TITLE": "Wollen Sie die Anmeldung für Tagesschulen wirklich freischalten?",
+    "FREISCHALTUNG_TAGESSCHULE_DIALOG_TEXT": "Ab diesem Zeitpunkt können Gesuchsteller sich für Tagesschulen anmelden.",
+    "FREISCHALTUNG_TAGESSCHULE_INFO": "Die Anmeldung ist im Moment noch nicht möglich. Die Funktionalität wird erst mit dem Versand der Stundenpläne aufgeschaltet.",
+    "FREISCHALTUNG_TAGESSCHULE_AB_INFO": "Die Anmeldung ist im Moment noch nicht möglich. Die Funktionalität wird erst mit dem Versand der Stundenpläne am {{termin}} aufgeschaltet."
 
 }

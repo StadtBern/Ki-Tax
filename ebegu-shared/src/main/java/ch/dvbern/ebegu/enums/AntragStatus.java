@@ -167,50 +167,40 @@ public enum AntragStatus {
 	 */
 	@SuppressWarnings("Duplicates")
 	public static Set<AntragStatus> allowedforRole(UserRole userRole) {
-		switch (userRole) {
-		case SUPER_ADMIN:
-			return all;
-		case ADMIN:
-			return forAdminRole;
-		case GESUCHSTELLER:
-			return none;
-		case JURIST:
-			return forJuristRole;
-		case REVISOR:
-			return forRevisorRole;
-		case SACHBEARBEITER_INSTITUTION:
-			return forSachbearbeiterInstitutionRole;
-		case SACHBEARBEITER_JA:
-			return forSachbearbeiterJugendamtRole;
-		case SACHBEARBEITER_TRAEGERSCHAFT:
-			return forSachbearbeiterTraegerschaftRole;
-		case SCHULAMT:
-			return forSchulamtRole;
-		case STEUERAMT:
-			return forSteueramt;
-		default:
-			return none;
-		}
-	}
+        switch (userRole) {
+			case SUPER_ADMIN: return  all;
+			case ADMIN: return forAdminRole;
+            case GESUCHSTELLER: return none;
+            case JURIST: return forJuristRole;
+            case REVISOR: return forRevisorRole;
+            case SACHBEARBEITER_INSTITUTION: return forSachbearbeiterInstitutionRole;
+            case SACHBEARBEITER_JA: return forSachbearbeiterJugendamtRole;
+            case SACHBEARBEITER_TRAEGERSCHAFT: return forSachbearbeiterTraegerschaftRole;
+            case SCHULAMT: return forSchulamtRole;
+            case ADMINISTRATOR_SCHULAMT: return forSchulamtRole;
+            caseSTEUERAMT: return forSteueramt;
+            default: return none;
+        }
+    }
 
 	public static Set<AntragStatus> writeAllowedForRole(UserRole userRole) {
 		switch (userRole) {
-		case SUPER_ADMIN:
-			return all;
-		case ADMIN:
-		case SACHBEARBEITER_JA:
-			return FOR_ADMIN_ROLE_WRITE;
-		case GESUCHSTELLER:
-			return FOR_GESUCHSTELLER_ROLE_WRITE;
-		case SACHBEARBEITER_INSTITUTION:
-		case SACHBEARBEITER_TRAEGERSCHAFT:
-			return FOR_INSTITUTION_ROLE_WRITE;
-		case STEUERAMT:
-			return FOR_STEUERAMT_ROLE_WRITE;
-		case SCHULAMT:
-			return FOR_SCHULAMT_ROLE_WRITE;
-		default:
-			return none;
+			case SUPER_ADMIN:
+				return  all;
+			case ADMIN:
+			case SACHBEARBEITER_JA:
+				return FOR_ADMIN_ROLE_WRITE;
+			case GESUCHSTELLER:
+				return FOR_GESUCHSTELLER_ROLE_WRITE;
+			case SACHBEARBEITER_INSTITUTION:
+			case SACHBEARBEITER_TRAEGERSCHAFT:
+				return FOR_INSTITUTION_ROLE_WRITE;
+			case STEUERAMT:
+				return FOR_STEUERAMT_ROLE_WRITE;
+			case SCHULAMT:
+				case ADMINISTRATOR_SCHULAMT:return FOR_SCHULAMT_ROLE_WRITE;
+			default:
+				return none;
 		}
 	}
 

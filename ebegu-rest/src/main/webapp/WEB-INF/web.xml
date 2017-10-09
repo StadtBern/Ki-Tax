@@ -86,6 +86,9 @@
 		<role-name>STEUERAMT</role-name>
 	</security-role>
 	<security-role>
+		<role-name>ADMINISTRATOR_SCHULAMT</role-name>
+	</security-role>
+	<security-role>
 		<role-name>SCHULAMT</role-name>
 	</security-role>
 

@@ -50,6 +50,7 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
 import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
 import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
@@ -137,7 +138,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = { ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, REVISOR })
+	@RolesAllowed(value = { ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, REVISOR })
 	public List<KindContainer> getAllKinderWithMissingStatistics() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<KindContainer> query = cb.createQuery(KindContainer.class);

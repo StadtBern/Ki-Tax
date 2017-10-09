@@ -126,6 +126,11 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 				}
 			}
 		}
+		// Wenn die Gesuchsperiode neu ist, muss das Datum Freischaltung Tagesschule gesetzt werden: Defaultmässig
+		// erster Tag der Gesuchsperiode. Kann nach Aktivierung der Periode auf ein beliebiges Datum gesetzt werden
+		if (gesuchsperiode.isNew()) {
+			gesuchsperiode.setDatumFreischaltungTagesschule(gesuchsperiode.getGueltigkeit().getGueltigAb());
+		}
 		return saveGesuchsperiode(gesuchsperiode);
 	}
 

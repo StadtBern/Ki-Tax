@@ -1070,9 +1070,9 @@ public final class TestDataUtil {
 		persistence.persist(betreuung.getKind());
 
 		betreuung.setBetreuungsstatus(Betreuungsstatus.WARTEN);
-		betreuungService.saveBetreuung(betreuung, false);
+		final Betreuung savedBetreuung = betreuungService.saveBetreuung(betreuung, false);
 
-		return betreuung;
+		return savedBetreuung;
 
 	}
 }

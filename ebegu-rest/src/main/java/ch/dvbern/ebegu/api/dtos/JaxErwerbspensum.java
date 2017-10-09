@@ -15,6 +15,7 @@
 
 package ch.dvbern.ebegu.api.dtos;
 
+import javax.annotation.Nullable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Min;
@@ -46,6 +47,7 @@ public class JaxErwerbspensum extends JaxAbstractPensumDTO {
 	@Min(0)
 	private Integer zuschlagsprozent;
 
+	@Nullable
 	private String bezeichnung;
 
 	public Taetigkeit getTaetigkeit() {
@@ -80,11 +82,12 @@ public class JaxErwerbspensum extends JaxAbstractPensumDTO {
 		this.zuschlagsprozent = zuschlagsprozent;
 	}
 
+	@Nullable
 	public String getBezeichnung() {
 		return bezeichnung;
 	}
 
-	public void setBezeichnung(String bezeichnung) {
+	public void setBezeichnung(@Nullable String bezeichnung) {
 		this.bezeichnung = bezeichnung;
 	}
 }

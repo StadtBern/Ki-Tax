@@ -87,6 +87,8 @@ import TSEWKEinwohnercode from '../models/TSEWKEinwohnercode';
 import TSEWKAdresse from '../models/TSEWKAdresse';
 import TSEWKBeziehung from '../models/TSEWKBeziehung';
 import TSFallAntragDTO from '../models/TSFallAntragDTO';
+import TSModul from '../models/TSModul';
+import TSBelegung from '../models/TSBelegung';
 
 export default class EbeguRestUtil {
     static $inject = ['EbeguUtil'];
@@ -800,6 +802,7 @@ export default class EbeguRestUtil {
             restInstitutionStammdaten.adresse = this.adresseToRestObject({}, institutionStammdaten.adresse);
             restInstitutionStammdaten.kontoinhaber = institutionStammdaten.kontoinhaber;
             restInstitutionStammdaten.adresseKontoinhaber = this.adresseToRestObject({}, institutionStammdaten.adresseKontoinhaber);
+            restInstitutionStammdaten.module = this.moduleArrayToRestObject(institutionStammdaten.module);
             return restInstitutionStammdaten;
         }
         return undefined;
@@ -816,6 +819,7 @@ export default class EbeguRestUtil {
             institutionStammdatenTS.adresse = this.parseAdresse(new TSAdresse(), institutionStammdatenFromServer.adresse);
             institutionStammdatenTS.kontoinhaber = institutionStammdatenFromServer.kontoinhaber;
             institutionStammdatenTS.adresseKontoinhaber = this.parseAdresse(new TSAdresse(), institutionStammdatenFromServer.adresseKontoinhaber);
+            institutionStammdatenTS.module = this.parseModuleArray(institutionStammdatenFromServer.module);
             return institutionStammdatenTS;
         }
         return undefined;
@@ -1174,6 +1178,7 @@ export default class EbeguRestUtil {
         restBetreuung.betreuungMutiert = betreuung.betreuungMutiert;
         restBetreuung.abwesenheitMutiert = betreuung.abwesenheitMutiert;
         restBetreuung.gueltig = betreuung.gueltig;
+        restBetreuung.module = this.belegungToRestObject({}, betreuung.belegung);
         return restBetreuung;
     }
 
@@ -1250,6 +1255,7 @@ export default class EbeguRestUtil {
             betreuungTS.betreuungMutiert = betreuungFromServer.betreuungMutiert;
             betreuungTS.abwesenheitMutiert = betreuungFromServer.abwesenheitMutiert;
             betreuungTS.gueltig = betreuungFromServer.gueltig;
+            betreuungTS.belegung = this.parseBelegung(new TSBelegung(), betreuungFromServer.belegung);
             return betreuungTS;
         }
         return undefined;
@@ -1350,6 +1356,7 @@ export default class EbeguRestUtil {
         if (gesuchsperiode) {
             this.abstractDateRangeEntityToRestObject(restGesuchsperiode, gesuchsperiode);
             restGesuchsperiode.status = gesuchsperiode.status;
+            restGesuchsperiode.datumFreischaltungTagesschule = DateUtil.momentToLocalDate(gesuchsperiode.datumFreischaltungTagesschule);
             return restGesuchsperiode;
         }
         return undefined;
@@ -1359,6 +1366,7 @@ export default class EbeguRestUtil {
         if (gesuchsperiodeFromServer) {
             this.parseDateRangeEntity(gesuchsperiodeTS, gesuchsperiodeFromServer);
             gesuchsperiodeTS.status = gesuchsperiodeFromServer.status;
+            gesuchsperiodeTS.datumFreischaltungTagesschule = DateUtil.localDateToMoment(gesuchsperiodeFromServer.datumFreischaltungTagesschule);
             return gesuchsperiodeTS;
         }
         return undefined;
@@ -2275,6 +2283,66 @@ export default class EbeguRestUtil {
             tsEWKBeziehung.geburtsdatum = DateUtil.localDateToMoment(ewkBeziehungFromServer.geburtsdatum);
             tsEWKBeziehung.adresse = this.parseEWKAdresse(new TSEWKAdresse(), ewkBeziehungFromServer.adresse);
             return tsEWKBeziehung;
+        }
+        return undefined;
+    }
+
+    private parseModuleArray(data: Array<any>): TSModul[] {
+        let module: TSModul[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                module[i] = this.parseModul(new TSModul(), data[i]);
+            }
+        } else {
+            module[0] = this.parseModul(new TSModul(), data);
+        }
+        return module;
+    }
+
+    private parseModul(modulTS: TSModul, modulFromServer: any): TSModul {
+        if (modulFromServer) {
+            this.parseAbstractEntity(modulTS, modulFromServer);
+            modulTS.modulname = modulFromServer.modulname;
+            modulTS.wochentag = modulFromServer.wochentag;
+            modulTS.zeitVon = DateUtil.localDateToMoment(modulFromServer.zeitVon);
+            modulTS.zeitBis = DateUtil.localDateToMoment(modulFromServer.zeitBis);
+        }
+        return undefined;
+    }
+
+    private moduleArrayToRestObject(module: Array<TSModul>): any[] {
+        let list: any[] = [];
+        if (module) {
+            for (let i = 0; i < module.length; i++) {
+                list[i] = this.modulToRestObject({}, module[i]);
+            }
+        }
+        return list;
+    }
+
+    private modulToRestObject(restModul: any, modulTS: TSModul): any {
+        if (modulTS) {
+            this.abstractEntityToRestObject(restModul, modulTS);
+            restModul.modulname = modulTS.modulname;
+            restModul.wochentag = modulTS.wochentag;
+            restModul.zeitVon = DateUtil.momentToLocalDate(modulTS.zeitVon);
+            restModul.zeitBis = DateUtil.momentToLocalDate(modulTS.zeitBis);
+        }
+        return undefined;
+    }
+
+    private parseBelegung(belegungTS: TSBelegung, belegungFromServer: any): TSBelegung {
+        if (belegungFromServer) {
+            this.parseAbstractEntity(belegungTS, belegungFromServer);
+            belegungTS.module = this.parseModuleArray(belegungFromServer.module);
+        }
+        return undefined;
+    }
+
+    private belegungToRestObject(restBelegung: any, belegungTS: TSBelegung): any {
+        if (belegungTS) {
+            this.abstractEntityToRestObject(restBelegung, belegungTS);
+            restBelegung.module = this.moduleArrayToRestObject(belegungTS.module);
         }
         return undefined;
     }
