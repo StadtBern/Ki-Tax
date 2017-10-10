@@ -1,14 +1,31 @@
-package ch.dvbern.ebegu.types;
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-import org.junit.Assert;
-import org.junit.Test;
+package ch.dvbern.ebegu.types;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import org.junit.Assert;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DateRangeTest {
 
@@ -82,7 +99,6 @@ public class DateRangeTest {
 		assertFalse(year2015.getOverlap(new DateRange(LocalDate.of(2014, 1, 1), LocalDate.of(2014, 12, 31))).isPresent());
 	}
 
-
 	@Test
 	public void testGetDays_shouldCountDaysFromGueltigAbToGueltigBis() {
 		LocalDate date = LocalDate.of(2014, 1, 1);
@@ -103,11 +119,11 @@ public class DateRangeTest {
 	@Test
 	public void testEndsDayBefore_localdate() {
 		DateRange a = year2015;
-		LocalDate adjacent        = year2015.getGueltigAb().plusYears(1);
-		LocalDate before          = adjacent.minusDays(1);
-		LocalDate same            = year2015.getGueltigAb();
-		LocalDate copy            = year2015.getGueltigAb().plusDays(0); // copy
-		LocalDate after           = adjacent.plusDays(1);
+		LocalDate adjacent = year2015.getGueltigAb().plusYears(1);
+		LocalDate before = adjacent.minusDays(1);
+		LocalDate same = year2015.getGueltigAb();
+		LocalDate copy = year2015.getGueltigAb().plusDays(0); // copy
+		LocalDate after = adjacent.plusDays(1);
 
 		assertTrue(a.endsDayBefore(adjacent));
 		assertFalse(a.endsDayBefore(before));
@@ -119,11 +135,11 @@ public class DateRangeTest {
 	@Test
 	public void testEndsDayBefore_daterange() {
 		DateRange a = year2015;
-		DateRange adjacent        = new DateRange(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31));
-		DateRange before          = new DateRange(LocalDate.of(2012, 1, 1), LocalDate.of(2012, 12, 31));
+		DateRange adjacent = new DateRange(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31));
+		DateRange before = new DateRange(LocalDate.of(2012, 1, 1), LocalDate.of(2012, 12, 31));
 		DateRange intersectBefore = new DateRange(LocalDate.of(2012, 1, 1), LocalDate.of(2015, 10, 10));
-		DateRange intersectAfter  = new DateRange(LocalDate.of(2015, 3, 3), LocalDate.of(2016, 12, 31));
-		DateRange after           = new DateRange(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 12, 31));
+		DateRange intersectAfter = new DateRange(LocalDate.of(2015, 3, 3), LocalDate.of(2016, 12, 31));
+		DateRange after = new DateRange(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 12, 31));
 
 		assertTrue(a.endsDayBefore(adjacent));
 		assertFalse(a.endsDayBefore(a)); // same ref
@@ -189,7 +205,6 @@ public class DateRangeTest {
 		DateRange multiYear = range.withFullMonths();
 		assertEquals(new DateRange(LocalDate.of(2014, 5, 1), LocalDate.of(2015, 5, 31)), multiYear);
 	}
-
 
 	@Test
 	public void testWithFullYears() {

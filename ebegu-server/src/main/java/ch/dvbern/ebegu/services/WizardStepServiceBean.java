@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.util.ArrayList;
@@ -219,7 +234,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * Wenn die Seite schon besucht ist dann soll der Status auf ok/mutiert oder notOK (bei wechsel ekv von nein auf ja) gesetzt werden
 	 */
 	private void updateAllStatusForEinkommensverschlechterungInfo(List<WizardStep> wizardSteps, EinkommensverschlechterungInfoContainer oldEntity,
-																  EinkommensverschlechterungInfoContainer newEntity) {
+		EinkommensverschlechterungInfoContainer newEntity) {
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepStatus.UNBESUCHT != wizardStep.getWizardStepStatus()
 				&& WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()) {
@@ -412,41 +427,33 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		if (WizardStepName.FAMILIENSITUATION == wizardStepName
 			&& gesuch.getFamiliensituationContainer() != null) {
 			relatedObjects.add(gesuch.getFamiliensituationContainer().getFamiliensituationJA());
-		}
-		else if (WizardStepName.GESUCHSTELLER == wizardStepName) {
+		} else if (WizardStepName.GESUCHSTELLER == wizardStepName) {
 			addRelatedObjectsForGesuchsteller(relatedObjects, gesuch.getGesuchsteller1());
 			addRelatedObjectsForGesuchsteller(relatedObjects, gesuch.getGesuchsteller2());
-		}
-		else if (WizardStepName.UMZUG == wizardStepName) {
+		} else if (WizardStepName.UMZUG == wizardStepName) {
 			addRelatedObjectsForUmzug(gesuch.getGesuchsteller1(), relatedObjects);
 			addRelatedObjectsForUmzug(gesuch.getGesuchsteller2(), relatedObjects);
-		}
-		else if (WizardStepName.KINDER == wizardStepName) {
+		} else if (WizardStepName.KINDER == wizardStepName) {
 			relatedObjects.addAll(gesuch.getKindContainers());
-		}
-		else if (WizardStepName.BETREUUNG == wizardStepName) {
+		} else if (WizardStepName.BETREUUNG == wizardStepName) {
 			relatedObjects.addAll(gesuch.extractAllBetreuungen());
-		}
-		else if (WizardStepName.ABWESENHEIT == wizardStepName) {
+		} else if (WizardStepName.ABWESENHEIT == wizardStepName) {
 			relatedObjects.addAll(gesuch.extractAllAbwesenheiten());
-		}
-		else if (WizardStepName.ERWERBSPENSUM == wizardStepName) {
+		} else if (WizardStepName.ERWERBSPENSUM == wizardStepName) {
 			if (gesuch.getGesuchsteller1() != null) {
 				relatedObjects.addAll(gesuch.getGesuchsteller1().getErwerbspensenContainers());
 			}
 			if (gesuch.getGesuchsteller2() != null) {
 				relatedObjects.addAll(gesuch.getGesuchsteller2().getErwerbspensenContainers());
 			}
-		}
-		else if (WizardStepName.FINANZIELLE_SITUATION == wizardStepName) {
+		} else if (WizardStepName.FINANZIELLE_SITUATION == wizardStepName) {
 			if (gesuch.getGesuchsteller1() != null) {
 				relatedObjects.add(gesuch.getGesuchsteller1().getFinanzielleSituationContainer());
 			}
 			if (gesuch.getGesuchsteller2() != null) {
 				relatedObjects.add(gesuch.getGesuchsteller2().getFinanzielleSituationContainer());
 			}
-		}
-		else if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStepName) {
+		} else if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStepName) {
 			if (gesuch != null) {
 				final EinkommensverschlechterungInfoContainer ekvInfo = gesuch.getEinkommensverschlechterungInfoContainer();
 				if (ekvInfo != null) {
@@ -463,8 +470,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					}
 				}
 			}
-		}
-		else if (WizardStepName.DOKUMENTE == wizardStepName) {
+		} else if (WizardStepName.DOKUMENTE == wizardStepName) {
 			relatedObjects.addAll(dokumentGrundService.findAllDokumentGrundByGesuch(gesuch));
 		}
 		return relatedObjects;
@@ -587,8 +593,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					if (WizardStepName.GESUCHSTELLER == wizardStep.getWizardStepName()) {
 						if (wizardStep.getGesuch().isMutation()) {
 							setWizardStepOkOrMutiert(wizardStep);
-						}
-						else if (wizardStep.getWizardStepStatus() == WizardStepStatus.NOK) {
+						} else if (wizardStep.getWizardStepStatus() == WizardStepStatus.NOK) {
 							wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 						}
 
@@ -607,8 +612,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 								wizardStep.setVerfuegbar(true);
 								wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
 							}
-						}
-						else {
+						} else {
 							setVerfuegbarAndOK(wizardStep);
 						}
 					}
@@ -621,8 +625,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		if (wizardStep.getGesuch().isMutation()) {
 			wizardStep.setVerfuegbar(true);
 			setWizardStepOkOrMutiert(wizardStep);
-		}
-		else if (wizardStep.getWizardStepStatus() == WizardStepStatus.NOK) {
+		} else if (wizardStep.getWizardStepStatus() == WizardStepStatus.NOK) {
 			wizardStep.setVerfuegbar(true);
 			wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 		}
@@ -658,7 +661,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * Erwerbspensum muss nur erfasst werden, falls mind. 1 Kita oder 1 Tageseltern Kleinkind Angebot erfasst wurde
 	 * und mind. eines dieser Kinder keine Fachstelle involviert hat
 	 */
-	@SuppressWarnings({"LocalVariableNamingConvention", "NonBooleanMethodNameMayNotStartWithQuestion"})
+	@SuppressWarnings({ "LocalVariableNamingConvention", "NonBooleanMethodNameMayNotStartWithQuestion" })
 	private void checkStepStatusForErwerbspensum(WizardStep wizardStep, boolean changesBecauseOtherStates) {
 		Gesuch gesuch = wizardStep.getGesuch();
 		boolean erwerbspensumRequired = erwerbspensumService.isErwerbspensumRequired(wizardStep.getGesuch());
@@ -694,7 +697,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	}
 
 	private WizardStep createWizardStepObject(Gesuch gesuch, WizardStepName wizardStepName, WizardStepStatus stepStatus,
-											  Boolean verfuegbar) {
+		Boolean verfuegbar) {
 		final WizardStep wizardStep = new WizardStep();
 		wizardStep.setGesuch(gesuch);
 		wizardStep.setVerfuegbar(verfuegbar != null ? verfuegbar : false);

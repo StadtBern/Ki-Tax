@@ -1,4 +1,23 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.rest.test;
+
+import java.util.List;
+
+import javax.inject.Inject;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
@@ -14,9 +33,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.util.List;
-
 /**
  * Testet die Gesuchsperiode Resource
  */
@@ -24,7 +40,6 @@ import java.util.List;
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
 public class GesuchsperiodeResourceTest extends AbstractEbeguRestLoginTest {
-
 
 	@Inject
 	private GesuchsperiodeResource gesuchsperiodeResource;
@@ -44,7 +59,7 @@ public class GesuchsperiodeResourceTest extends AbstractEbeguRestLoginTest {
 		findExistingObjectAndCompare(jaxGesuchsperiode);
 	}
 
-	@Test (expected = EbeguRuntimeException.class)
+	@Test(expected = EbeguRuntimeException.class)
 	public void createGesuchsperiodeAsAktivTest() {
 		JaxGesuchsperiode testJaxGesuchsperiode = TestJaxDataUtil.createTestJaxGesuchsperiode();
 		// Gesuchsperiode muss zuerst als ENTWURF gespeichert werden
@@ -92,7 +107,6 @@ public class GesuchsperiodeResourceTest extends AbstractEbeguRestLoginTest {
 		Assert.assertNotNull(listActiveAndInaktiv);
 		Assert.assertEquals(2, listActiveAndInaktiv.size());
 	}
-
 
 	// HELP METHODS
 

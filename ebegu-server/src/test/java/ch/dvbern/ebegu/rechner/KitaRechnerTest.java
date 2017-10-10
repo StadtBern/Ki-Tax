@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.rechner;
 
 import java.math.BigDecimal;
@@ -16,7 +31,6 @@ public class KitaRechnerTest extends AbstractBGRechnerTest {
 
 	private final BGRechnerParameterDTO parameterDTO = getParameter();
 	private final KitaRechner kitaRechner = new KitaRechner();
-
 
 	@Test
 	public void testEinTagHohesEinkommenKitaLangeOffenAnspruch15() {
@@ -70,7 +84,7 @@ public class KitaRechnerTest extends AbstractBGRechnerTest {
 		Assert.assertEquals(new BigDecimal("2184.60"), calculate.getVerguenstigung());
 	}
 
-	@Test (expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testZeitraumUeberMonatsende() {
 		Verfuegung verfuegung = prepareVerfuegungKita(LocalDate.of(2014, Month.AUGUST, 1),
 			new BigDecimal("244"), new BigDecimal("11.5"),

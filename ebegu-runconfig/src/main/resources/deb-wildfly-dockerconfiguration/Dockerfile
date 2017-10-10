@@ -25,6 +25,7 @@ COPY customization/standalone-docker.conf ${JBOSS_HOME}/bin/standalone.conf
 
 #Applikation hinzufuegen
 ADD ebegu-rest.war /opt/jboss/wildfly/standalone/deployments/
+ADD ebegu-iam-connector-war.war /opt/jboss/wildfly/standalone/deployments/
 
 #Healthcheck
 HEALTHCHECK CMD curl -f http://$(hostname -i || echo '127.0.0.1'):8080/ebegu/api/v1/swagger.json || exit 1

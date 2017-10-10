@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.tests;
 
 import java.math.BigDecimal;
@@ -38,8 +53,7 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-
-@SuppressWarnings({"InstanceMethodNamingConvention", "MethodParameterNamingConvention", "InstanceVariableNamingConvention"})
+@SuppressWarnings({ "InstanceMethodNamingConvention", "MethodParameterNamingConvention", "InstanceVariableNamingConvention" })
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/reportTestData.xml")
 @Transactional(TransactionMode.DISABLED)
@@ -128,44 +142,44 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 		// Betreuung 1: Verfuegt mit Nicht-Eintreten
 		assertGesuchZeitraumDataRow(rowsSorted.get(0), "17.000101.1.1", 0, 0, 0, 0, 0, 0, 0, 1, 0, 1);
 		// Betreuung 2: Verfuegt normal
-		assertGesuchZeitraumDataRow(rowsSorted.get(1), "17.000101.1.2", 0, 0, 0,0, 0, 0, 0, 1, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(1), "17.000101.1.2", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0);
 
 		// Fall 102: Normal verfuegt, 2 Kinder
-		assertGesuchZeitraumDataRow(rowsSorted.get(2), "17.000102.1.1", 0, 0, 0,0, 0, 0, 0, 1, 1, 0);
-		assertGesuchZeitraumDataRow(rowsSorted.get(3), "17.000102.2.1", 0, 0, 0,0, 0, 0, 0, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(2), "17.000102.1.1", 0, 0, 0, 0, 0, 0, 0, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(3), "17.000102.2.1", 0, 0, 0, 0, 0, 0, 0, 1, 1, 0);
 
 		// Fall 103: Mahnung
-		assertGesuchZeitraumDataRow(rowsSorted.get(4), "17.000103.1.1", 0, 0, 0,1, 0, 0, 0, 0, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(4), "17.000103.1.1", 0, 0, 0, 1, 0, 0, 0, 0, 0, 0);
 
 		// Fall 104: Verfuegt, mit Beschwerde
-		assertGesuchZeitraumDataRow(rowsSorted.get(5), "17.000104.1.1", 0, 0, 0,0, 1, 0, 0, 1, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(5), "17.000104.1.1", 0, 0, 0, 0, 1, 0, 0, 1, 0, 0);
 
 		// Fall 105:
 		// Erstgesuch
-		assertGesuchZeitraumDataRow(rowsSorted.get(6), "17.000105.1.1", 0, 0, 0,0, 0, 0, 0, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(6), "17.000105.1.1", 0, 0, 0, 0, 0, 0, 0, 1, 1, 0);
 		// Mutation
 		// Kind 1: Schon im Erstgesuch vorhanden, in Mutation unverändert
-		assertGesuchZeitraumDataRow(rowsSorted.get(7), "17.000105.1.1", 0, 0, 0,0, 0, 0, 0, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(7), "17.000105.1.1", 0, 0, 0, 0, 0, 0, 0, 1, 1, 0);
 		// Kind 2: Neu auf Mutation inkl. Betreuung
-		assertGesuchZeitraumDataRow(rowsSorted.get(8), "17.000105.2.1", 0, 1, 1,0, 0, 0, 0, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(8), "17.000105.2.1", 0, 1, 1, 0, 0, 0, 0, 1, 1, 0);
 
 		// Fall 106: Mutation mit Abwesenheit
 		// Erstgesuch
-		assertGesuchZeitraumDataRow(rowsSorted.get(9), "17.000106.1.1", 0, 0, 0,0, 0, 0, 0, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(9), "17.000106.1.1", 0, 0, 0, 0, 0, 0, 0, 1, 1, 0);
 		// Mutation
-		assertGesuchZeitraumDataRow(rowsSorted.get(10), "17.000106.1.1", 1, 0, 0,0, 0, 0, 0, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(10), "17.000106.1.1", 1, 0, 0, 0, 0, 0, 0, 1, 1, 0);
 
 		// Fall 107: Mutation Kind Name
 		// Betreuung 1
-		assertGesuchZeitraumDataRow(rowsSorted.get(11), "17.000107.1.1", 0, 0, 0,0, 0, 0, 0, 1, 0, 0);
-		assertGesuchZeitraumDataRow(rowsSorted.get(12), "17.000107.1.1", 0, 0, 1,0, 0, 0, 0, 1, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(11), "17.000107.1.1", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(12), "17.000107.1.1", 0, 0, 1, 0, 0, 0, 0, 1, 0, 0);
 		// Betreuung 2
-		assertGesuchZeitraumDataRow(rowsSorted.get(13), "17.000107.1.2", 0, 0, 0,0, 0, 0, 0, 1, 0, 0);
-		assertGesuchZeitraumDataRow(rowsSorted.get(14), "17.000107.1.2", 0, 0, 1,0, 0, 0, 0, 1, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(13), "17.000107.1.2", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(14), "17.000107.1.2", 0, 0, 1, 0, 0, 0, 0, 1, 0, 0);
 
 		// Fall 108: Verfügt, Beschwerde, Beschwerde aufgehoben, STV, STV geprüft
-		assertGesuchZeitraumDataRow(rowsSorted.get(15), "17.000108.1.1", 0, 0, 0,0, 1, 1, 1, 1, 1, 0);
-		assertGesuchZeitraumDataRow(rowsSorted.get(16), "17.000108.2.1", 0, 0, 0,0, 1, 1, 1, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(15), "17.000108.1.1", 0, 0, 0, 0, 1, 1, 1, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(16), "17.000108.2.1", 0, 0, 0, 0, 1, 1, 1, 1, 1, 0);
 
 	}
 
@@ -178,11 +192,11 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	private void assertGesuchZeitraumDataRow(GesuchZeitraumDataRow row, String bgNummer,
-											 Integer anzahlMutationAbwesenheit, Integer anzahlMutationBetreuung, Integer anzahlMutationKind,
-											 Integer anzahlMahnungen, Integer anzahlBeschwerde,
-											 Integer anzahlSteueramtAusgeloest, Integer anzahlSteueramtGeprueft,
-											 Integer anzahlVerfuegungen,
-											 Integer anzahlVerfuegungenNormal, Integer anzahlVerfuegungenNichtEintreten) {
+		Integer anzahlMutationAbwesenheit, Integer anzahlMutationBetreuung, Integer anzahlMutationKind,
+		Integer anzahlMahnungen, Integer anzahlBeschwerde,
+		Integer anzahlSteueramtAusgeloest, Integer anzahlSteueramtGeprueft,
+		Integer anzahlVerfuegungen,
+		Integer anzahlVerfuegungenNormal, Integer anzahlVerfuegungenNichtEintreten) {
 		assertNotNull(row);
 		assertEquals(bgNummer, row.getBgNummer());
 		assertEquals(anzahlMutationAbwesenheit, row.getAnzahlMutationAbwesenheit());

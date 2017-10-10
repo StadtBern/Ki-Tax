@@ -1,14 +1,20 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.types;
 
-import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.validators.CheckDateRange;
-import com.google.common.base.MoreObjects;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -16,8 +22,22 @@ import java.time.Month;
 import java.time.chrono.ChronoLocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
+
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.validators.CheckDateRange;
+import com.google.common.base.MoreObjects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -63,13 +83,13 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 		this(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis());
 	}
 
-
 	/**
 	 * DateRange für ein ganzes Kalender-Jahr
-     */
+	 */
 	public DateRange(@Nonnull Integer jahr) {
 		this(LocalDate.of(jahr, Month.JANUARY, 1), LocalDate.of(jahr, Month.DECEMBER, 31));
 	}
+
 	/**
 	 * true, when the other DateRange is completely contained in this DateRange
 	 */
@@ -128,7 +148,7 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 
 	/**
 	 * gueltigAb == other.gueltigAb
-     */
+	 */
 	public boolean startsSameDay(@Nonnull DateRange other) {
 		return getGueltigAb().isEqual(other.getGueltigAb());
 	}
@@ -199,13 +219,13 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 	/**
 	 * setzt das gueltig bis einer Range auf den Tag vor dem datum von der "other" range
 	 */
-	public void endOnDayBefore(@Nonnull DateRange other){
+	public void endOnDayBefore(@Nonnull DateRange other) {
 		this.setGueltigBis(other.gueltigAb.minusDays(1));
 	}
 
 	/**
 	 * Setzt das GueltigAb auf das GueltigBis + 1 des "other"
-     */
+	 */
 	public void startOnDayAfter(@Nonnull DateRange other) {
 		this.setGueltigAb(other.getGueltigBis().plusDays(1));
 	}
@@ -300,7 +320,6 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 
 	/**
 	 * Gibt 31.12.XXXX zurueck, wo XXXX ist das Vorjahr von gueltigAb.
-	 * @return
 	 */
 	public LocalDate calculateEndOfPreviousYear() {
 		int year = this.getGueltigAb().getYear();
@@ -320,7 +339,6 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 	public long getDays() {
 		return ChronoUnit.DAYS.between(gueltigAb, gueltigBis) + 1;
 	}
-
 
 	@Nonnull
 	public LocalDate getGueltigAb() {

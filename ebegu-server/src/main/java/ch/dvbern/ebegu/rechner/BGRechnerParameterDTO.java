@@ -1,4 +1,22 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.rechner;
+
+import java.math.BigDecimal;
+import java.util.Map;
 
 import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
@@ -9,10 +27,18 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
-import java.util.Map;
-
-import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_ABGELTUNG_PRO_TAG_KANTON;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_ANZAHL_TAGE_KANTON;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_BABY_ALTER_IN_MONATEN;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_BABY_FAKTOR;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_KOSTEN_PRO_STUNDE_MAX;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_KOSTEN_PRO_STUNDE_MAX_TAGESELTERN;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_KOSTEN_PRO_STUNDE_MIN;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MIN;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_STUNDEN_PRO_TAG_MAX_KITA;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_STUNDEN_PRO_TAG_TAGI;
 
 /**
  * Kapselung aller Parameter, welche für die BG-Berechnung aller Angebote benötigt werden.
@@ -22,47 +48,46 @@ public final class BGRechnerParameterDTO {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	private BigDecimal beitragKantonProTag; 		// PARAM_ABGELTUNG_PRO_TAG_KANTON
+	private BigDecimal beitragKantonProTag;        // PARAM_ABGELTUNG_PRO_TAG_KANTON
 
-	private BigDecimal beitragStadtProTagJahr1; 			// PARAM_FIXBETRAG_STADT_PRO_TAG_KITA
-	private BigDecimal beitragStadtProTagJahr2; 			// PARAM_FIXBETRAG_STADT_PRO_TAG_KITA
+	private BigDecimal beitragStadtProTagJahr1;            // PARAM_FIXBETRAG_STADT_PRO_TAG_KITA
+	private BigDecimal beitragStadtProTagJahr2;            // PARAM_FIXBETRAG_STADT_PRO_TAG_KITA
 
-	private BigDecimal anzahlTageTagi; 				// PARAM_ANZAHL_TAGE_KANTON
-	private BigDecimal anzahlTageMaximal; 			// PARAM_ANZAL_TAGE_MAX_KITA
+	private BigDecimal anzahlTageTagi;                // PARAM_ANZAHL_TAGE_KANTON
+	private BigDecimal anzahlTageMaximal;            // PARAM_ANZAL_TAGE_MAX_KITA
 
-	private BigDecimal anzahlStundenProTagTagi; 	// PARAM_STUNDEN_PRO_TAG_TAGI
-	private BigDecimal anzahlStundenProTagMaximal; 	// PARAM_STUNDEN_PRO_TAG_MAX_KITA
+	private BigDecimal anzahlStundenProTagTagi;    // PARAM_STUNDEN_PRO_TAG_TAGI
+	private BigDecimal anzahlStundenProTagMaximal;    // PARAM_STUNDEN_PRO_TAG_MAX_KITA
 
 	private BigDecimal kostenProStundeMaximalKitaTagi; // PARAM_KOSTEN_PRO_STUNDE_MAX
 	private BigDecimal kostenProStundeMaximalTageseltern; // PARAM_KOSTEN_PRO_STUNDE_MAX_TAGESELTERN
-	private BigDecimal kostenProStundeMinimal; 		// PARAM_KOSTEN_PRO_STUNDE_MIN
+	private BigDecimal kostenProStundeMinimal;        // PARAM_KOSTEN_PRO_STUNDE_MIN
 
 	private BigDecimal massgebendesEinkommenMaximal; // PARAM_MASSGEBENDES_EINKOMMEN_MIN
 	private BigDecimal massgebendesEinkommenMinimal; // PARAM_MASSGEBENDES_EINKOMMEN_MAX
 
-	private BigDecimal babyFaktor;					// PARAM_BABY_FAKTOR
-	private int babyAlterInMonaten;					// PARAM_BABY_ALTER_IN_MONATEN
+	private BigDecimal babyFaktor;                    // PARAM_BABY_FAKTOR
+	private int babyAlterInMonaten;                    // PARAM_BABY_ALTER_IN_MONATEN
 
 	public BGRechnerParameterDTO(Map<EbeguParameterKey, EbeguParameter> paramMap, Gesuchsperiode gesuchsperiode, Mandant mandant) {
 
-		this.setBeitragKantonProTag                 (asBigDecimal(paramMap, PARAM_ABGELTUNG_PRO_TAG_KANTON, gesuchsperiode, mandant));
-		this.setAnzahlTageMaximal                   (asBigDecimal(paramMap, PARAM_ANZAL_TAGE_MAX_KITA, gesuchsperiode, mandant));
-		this.setAnzahlStundenProTagMaximal          (asBigDecimal(paramMap, PARAM_STUNDEN_PRO_TAG_MAX_KITA, gesuchsperiode, mandant));
-		this.setKostenProStundeMaximalKitaTagi      (asBigDecimal(paramMap, PARAM_KOSTEN_PRO_STUNDE_MAX, gesuchsperiode, mandant));
-		this.setKostenProStundeMinimal              (asBigDecimal(paramMap, PARAM_KOSTEN_PRO_STUNDE_MIN, gesuchsperiode, mandant));
-		this.setMassgebendesEinkommenMaximal        (asBigDecimal(paramMap, PARAM_MASSGEBENDES_EINKOMMEN_MAX, gesuchsperiode, mandant));
-		this.setMassgebendesEinkommenMinimal        (asBigDecimal(paramMap, PARAM_MASSGEBENDES_EINKOMMEN_MIN, gesuchsperiode, mandant));
-		this.setAnzahlTageTagi                      (asBigDecimal(paramMap, PARAM_ANZAHL_TAGE_KANTON, gesuchsperiode, mandant));
-		this.setAnzahlStundenProTagTagi             (asBigDecimal(paramMap, PARAM_STUNDEN_PRO_TAG_TAGI, gesuchsperiode, mandant));
-		this.setKostenProStundeMaximalTageseltern   (asBigDecimal(paramMap, PARAM_KOSTEN_PRO_STUNDE_MAX_TAGESELTERN, gesuchsperiode, mandant));
-		this.setBabyAlterInMonaten					(asInteger(paramMap, PARAM_BABY_ALTER_IN_MONATEN, gesuchsperiode, mandant));
-		this.setBabyFaktor                          (asBigDecimal(paramMap, PARAM_BABY_FAKTOR, gesuchsperiode, mandant));
+		this.setBeitragKantonProTag(asBigDecimal(paramMap, PARAM_ABGELTUNG_PRO_TAG_KANTON, gesuchsperiode, mandant));
+		this.setAnzahlTageMaximal(asBigDecimal(paramMap, PARAM_ANZAL_TAGE_MAX_KITA, gesuchsperiode, mandant));
+		this.setAnzahlStundenProTagMaximal(asBigDecimal(paramMap, PARAM_STUNDEN_PRO_TAG_MAX_KITA, gesuchsperiode, mandant));
+		this.setKostenProStundeMaximalKitaTagi(asBigDecimal(paramMap, PARAM_KOSTEN_PRO_STUNDE_MAX, gesuchsperiode, mandant));
+		this.setKostenProStundeMinimal(asBigDecimal(paramMap, PARAM_KOSTEN_PRO_STUNDE_MIN, gesuchsperiode, mandant));
+		this.setMassgebendesEinkommenMaximal(asBigDecimal(paramMap, PARAM_MASSGEBENDES_EINKOMMEN_MAX, gesuchsperiode, mandant));
+		this.setMassgebendesEinkommenMinimal(asBigDecimal(paramMap, PARAM_MASSGEBENDES_EINKOMMEN_MIN, gesuchsperiode, mandant));
+		this.setAnzahlTageTagi(asBigDecimal(paramMap, PARAM_ANZAHL_TAGE_KANTON, gesuchsperiode, mandant));
+		this.setAnzahlStundenProTagTagi(asBigDecimal(paramMap, PARAM_STUNDEN_PRO_TAG_TAGI, gesuchsperiode, mandant));
+		this.setKostenProStundeMaximalTageseltern(asBigDecimal(paramMap, PARAM_KOSTEN_PRO_STUNDE_MAX_TAGESELTERN, gesuchsperiode, mandant));
+		this.setBabyAlterInMonaten(asInteger(paramMap, PARAM_BABY_ALTER_IN_MONATEN, gesuchsperiode, mandant));
+		this.setBabyFaktor(asBigDecimal(paramMap, PARAM_BABY_FAKTOR, gesuchsperiode, mandant));
 	}
 
 	public BGRechnerParameterDTO() {
 
 	}
-
 
 	private int asInteger(Map<EbeguParameterKey, EbeguParameter> paramMap, EbeguParameterKey paramKey, Gesuchsperiode gesuchsperiode, Mandant mandant) {
 		EbeguParameter param = paramMap.get(paramKey);
@@ -73,7 +98,6 @@ public final class BGRechnerParameterDTO {
 		return param.getValueAsInteger();
 	}
 
-
 	private BigDecimal asBigDecimal(Map<EbeguParameterKey, EbeguParameter> paramMap, EbeguParameterKey paramKey, Gesuchsperiode gesuchsperiode, Mandant mandant) {
 		EbeguParameter param = paramMap.get(paramKey);
 		if (param == null) {
@@ -82,7 +106,6 @@ public final class BGRechnerParameterDTO {
 		}
 		return param.getValueAsBigDecimal();
 	}
-
 
 	public BigDecimal getBeitragKantonProTag() {
 		return beitragKantonProTag;

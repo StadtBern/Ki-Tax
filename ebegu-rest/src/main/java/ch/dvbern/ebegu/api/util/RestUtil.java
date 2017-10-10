@@ -1,4 +1,39 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.api.util;
+
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.regex.Pattern;
+
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
+import javax.annotation.Nonnull;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxInstitution;
@@ -13,25 +48,6 @@ import com.google.common.net.UrlEscapers;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.regex.Pattern;
 
 import static ch.dvbern.ebegu.api.EbeguApplicationV1.API_ROOT_PATH;
 
@@ -80,8 +96,8 @@ public final class RestUtil {
 			contentType = "application/octet-stream";
 		}
 		final byte[] bytes = Files.readAllBytes(filePath);
-        String filename = fileMetadata.getFilename();
-        //Prepare Headerfield Content-Disposition:
+		String filename = fileMetadata.getFilename();
+		//Prepare Headerfield Content-Disposition:
 		//we want percantage-encoding instead of url-encoding (spaces are %20 in percentage encoding but + in url-encoding)
 		String isoEncodedFilename = URLEncoder.encode(filename, "ISO-8859-1").replace("+", "%20"); //percantage encoding mit utf-8 und %20 fuer space statt +
 		// because of a bug in chrome, we replace all commas in filename
@@ -95,13 +111,12 @@ public final class RestUtil {
 			.header(HttpHeaders.CONTENT_LENGTH, bytes.length)
 			.type(MediaType.valueOf(contentType)).build();
 
-
 	}
 
 	/**
 	 * Entfernt von der uebergebenen Collection von KindContainer die Kinder, die keine Betreuung mit einer der uebergebenen Institutionen hat.
 	 *
-	 * @param kindContainers    Alle KindContainers
+	 * @param kindContainers Alle KindContainers
 	 * @param userInstitutionen Institutionen mit denen, die Kinder eine Beziehung haben muessen.
 	 */
 	public static void purgeKinderAndBetreuungenOfInstitutionen(Collection<JaxKindContainer> kindContainers, Collection<Institution> userInstitutionen) {

@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.api.resource;
 
 import java.net.URI;
@@ -63,7 +78,6 @@ public class ErwerbspensumResource {
 	@Inject
 	private ResourceHelper resourceHelper;
 
-
 	@ApiOperation(value = "Create a new ErwerbspensumContainer in the database. The object also has a relations to " +
 		"Erwerbspensum data Objects, those will be created as well", response = JaxErwerbspensumContainer.class)
 	@Nonnull
@@ -72,7 +86,7 @@ public class ErwerbspensumResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveErwerbspensum(
-		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerId,
 		@Nonnull @NotNull @Valid JaxErwerbspensumContainer jaxErwerbspensumContainer,
 		@Context UriInfo uriInfo,
@@ -140,7 +154,6 @@ public class ErwerbspensumResource {
 			.map(erwerbspensumContainer -> converter.erwerbspensumContainerToJAX(erwerbspensumContainer))
 			.collect(Collectors.toList());
 	}
-
 
 	@ApiOperation(value = "Remove the ErwerbspensumContainer with the specified ID from the database.",
 		response = Void.class)

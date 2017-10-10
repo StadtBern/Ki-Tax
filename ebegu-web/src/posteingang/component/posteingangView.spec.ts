@@ -1,19 +1,29 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import GesuchRS from '../../gesuch/service/gesuchRS.rest';
-import {IScope, IQService, IFilterService, IHttpBackendService} from 'angular';
+import {IFilterService, IHttpBackendService, IQService, IScope} from 'angular';
 import GesuchModelManager from '../../gesuch/service/gesuchModelManager';
 import BerechnungsManager from '../../gesuch/service/berechnungsManager';
 import {IStateService} from 'angular-ui-router';
 import {EbeguWebPosteingang} from '../posteingang.module';
-import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import TestDataUtil from '../../utils/TestDataUtil';
 import {PosteingangViewController} from './posteingangView';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
 import TSMitteilung from '../../models/TSMitteilung';
-import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
-import TSGesuch from '../../models/TSGesuch';
-import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSFall from '../../models/TSFall';
 import {TSMitteilungTeilnehmerTyp} from '../../models/enums/TSMitteilungTeilnehmerTyp';
 import TSUser from '../../models/TSUser';
@@ -21,7 +31,6 @@ import {TSRole} from '../../models/enums/TSRole';
 import {TSMitteilungStatus} from '../../models/enums/TSMitteilungStatus';
 import MitteilungRS from '../../core/service/mitteilungRS.rest';
 import EbeguUtil from '../../utils/EbeguUtil';
-
 
 describe('posteingangView', function () {
 

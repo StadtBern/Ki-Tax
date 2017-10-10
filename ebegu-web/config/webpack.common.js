@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 var webpack = require('webpack');
 var helpers = require('./helpers');
 var loaderRules = require('./rules');
@@ -9,11 +24,10 @@ var parser = new xml2js.Parser();
 
 var contents = fs.readFileSync(__dirname + '/../pom.xml').toString();
 
-var re = new RegExp("<artifactId>ebegu</artifactId>[\\s\\S]*?<version>(.*?)</version>[\\s\\S]*?<packaging>pom</packaging>","im");
+var re = new RegExp("<artifactId>ebegu</artifactId>[\\s\\S]*?<version>(.*?)</version>[\\s\\S]*?<packaging>pom</packaging>", "im");
 var myMatchArray = re.exec(contents);
-parsedversion = ( myMatchArray !== null) ?  myMatchArray[1] : 'unknown';
+parsedversion = ( myMatchArray !== null) ? myMatchArray[1] : 'unknown';
 console.log("Parsed Version from pom is " + parsedversion);
-
 
 var currentTime = new Date();
 /**
@@ -38,8 +52,6 @@ const METADATA = {
  * See: http://webpack.github.io/docs/configuration.html#cli
  */
 module.exports = {
-
-
 
     // Static metadata for index.html
     //
@@ -68,7 +80,7 @@ module.exports = {
     //
     // See: http://webpack.github.io/docs/configuration.html#resolve
     resolve: {
-        modules:[helpers.root('src'), 'node_modules'],
+        modules: [helpers.root('src'), 'node_modules'],
 
         // An array of extensions that should be used to resolve modules.
         //
@@ -109,8 +121,6 @@ module.exports = {
         //
         // See: https://github.com/s-panferov/awesome-typescript-loader#forkchecker-boolean-defaultfalse
         // new ForkCheckerPlugin(),
-
-
 
         // Plugin: CommonsChunkPlugin
         // Description: Shares common code between the pages.

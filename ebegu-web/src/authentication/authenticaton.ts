@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import AuthServiceRS from './service/AuthServiceRS.rest';
@@ -6,6 +21,7 @@ import IWindowService = angular.IWindowService;
 import IHttpParamSerializer = angular.IHttpParamSerializer;
 import ITimeoutService = angular.ITimeoutService;
 import ILocationService = angular.ILocationService;
+
 let template = require('./authentication.html');
 require('./authentication.less');
 
@@ -18,7 +34,6 @@ export class AuthenticationComponentConfig implements IComponentOptions {
 
 export class AuthenticationListViewController {
 
-
     static $inject: string[] = ['$state', '$stateParams', '$window', '$httpParamSerializer', '$timeout', 'AuthServiceRS'
         , '$location'];
 
@@ -29,7 +44,6 @@ export class AuthenticationListViewController {
     private logoutHref: string;
     private redirecting: boolean;
     private countdown: number = 0;
-
 
     constructor(private $state: IStateService, private $stateParams: IAuthenticationStateParams,
                 private $window: IWindowService, private $httpParamSerializer: IHttpParamSerializer,
@@ -89,7 +103,6 @@ export class AuthenticationListViewController {
         return this.authService.getPrincipal() ? true : false;
     }
 
-
     public redirect = () => {
         let urlToGoTo = this.redirectionHref;
         console.log('redirecting to login', urlToGoTo);
@@ -108,7 +121,6 @@ export class AuthenticationListViewController {
                 this.singlelogout();
             });
         }
-
 
     }
 

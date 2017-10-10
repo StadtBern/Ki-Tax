@@ -1,14 +1,30 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import IComponentOptions = angular.IComponentOptions;
+import IScope = angular.IScope;
 import {TSMessageEvent} from '../../../../models/enums/TSErrorEvent';
 import ErrorService from '../../service/ErrorService';
 import TSExceptionReport from '../../../../models/TSExceptionReport';
 import {TSErrorLevel} from '../../../../models/enums/TSErrorLevel';
-import IScope = angular.IScope;
 import {TSRoleUtil} from '../../../../utils/TSRoleUtil';
 import {TSErrorAction} from '../../../../models/enums/TSErrorAction';
 import {DvDialog} from '../../../directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../../gesuch/dialog/RemoveDialogController';
 import GesuchRS from '../../../../gesuch/service/gesuchRS.rest';
+
 let templ = require('./dvb-error-messages-panel.html');
 let style = require('./dvb-error-messages-panel.less');
 let removeDialogTemplate = require('../../../../gesuch/dialog/removeDialogTemplate.html');
