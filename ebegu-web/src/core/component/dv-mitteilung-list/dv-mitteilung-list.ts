@@ -172,21 +172,21 @@ export class DVMitteilungListController {
 
         //role-dependent attributes
         if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) { // Ein GS darf nur dem JA schreiben
-            this.currentMitteilung.empfaenger = this.fall.verantwortlicher ? this.fall.verantwortlicher : undefined;
-            this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
-            this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.GESUCHSTELLER;
+            this.setSenderAndEmpfaenger(this.fall.verantwortlicher, TSMitteilungTeilnehmerTyp.JUGENDAMT, TSMitteilungTeilnehmerTyp.GESUCHSTELLER);
 
         } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) { // Das JA/SCH darf nur dem GS schreiben
-            this.currentMitteilung.empfaenger = this.fall.besitzer ? this.fall.besitzer : undefined;
-            this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.GESUCHSTELLER;
-            // Im Moment auch für Schulamt TeilnehmerTyp JUGENDAMT, es ist noch zu überlegen, ob sie einen eigenen Typ brauchen
-            this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
+            // todo Im Moment auch für Schulamt TeilnehmerTyp JUGENDAMT, es ist noch zu überlegen, ob sie einen eigenen Typ brauchen
+            this.setSenderAndEmpfaenger(this.fall.besitzer, TSMitteilungTeilnehmerTyp.GESUCHSTELLER, TSMitteilungTeilnehmerTyp.JUGENDAMT);
 
         } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) { // Eine Institution darf nur dem JA schreiben
-            this.currentMitteilung.empfaenger = this.fall.verantwortlicher ? this.fall.verantwortlicher : undefined;
-            this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
-            this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.INSTITUTION;
+            this.setSenderAndEmpfaenger(this.fall.verantwortlicher, TSMitteilungTeilnehmerTyp.JUGENDAMT, TSMitteilungTeilnehmerTyp.INSTITUTION);
         }
+    }
+
+    private setSenderAndEmpfaenger(empfaenger: TSUser, empfaengerTyp: TSMitteilungTeilnehmerTyp, senderTyp: TSMitteilungTeilnehmerTyp) {
+        this.currentMitteilung.empfaenger = empfaenger ? empfaenger : undefined;
+        this.currentMitteilung.empfaengerTyp = empfaengerTyp;
+        this.currentMitteilung.senderTyp = senderTyp;
     }
 
     public getCurrentMitteilung(): TSMitteilung {
