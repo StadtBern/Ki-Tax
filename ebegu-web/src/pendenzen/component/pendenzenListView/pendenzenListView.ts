@@ -41,34 +41,7 @@ export class PendenzenListViewController {
 
     constructor(private gesuchModelManager: GesuchModelManager, private $state: IStateService, private $log: ILogService,
                 private searchRS: SearchRS) {
-        // this.initViewModel();
     }
-
-    // private initViewModel() {
-    //     // Initial werden die Pendenzen des eingeloggten Benutzers geladen
-    //     this.updatePendenzenList(this.authServiceRS.getPrincipal().username);
-    // }
-
-    // private updatePendenzenList(username: string) {
-    //     this.pendenzRS.getPendenzenListForUser(username).then((response: any) => {
-    //         this.pendenzenList = angular.copy(response);
-    //         if (this.pendenzenList && this.pendenzenList.length) {
-    //             this.totalResultCount = this.pendenzenList.length.toString();
-    //         } else {
-    //             this.totalResultCount = '0';
-    //         }
-    //     });
-    // }
-
-    // public getPendenzenList(): Array<TSAntragDTO> {
-    //     return this.pendenzenList;
-    // }
-
-    // public userChanged(user: TSUser): void {
-    //     if (user) {
-    //         this.updatePendenzenList(user.username);
-    //     }
-    // }
 
     public passFilterToServer = (tableFilterState: any): IPromise<TSAntragSearchresultDTO> => {
         this.$log.debug('Triggering ServerFiltering with Filter Object', tableFilterState);

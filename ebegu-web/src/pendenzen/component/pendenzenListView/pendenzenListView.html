@@ -18,11 +18,6 @@
         <div class="row">
             <div class="col-md-12 table-responsive">
 
-                <!--<dv-pendenzen-list antraege="vm.getPendenzenList()" items-by-page="20" initial-all="false"-->
-                                   <!--show-selection-all="false" on-user-changed="vm.userChanged(user)"-->
-                                   <!--table-title="'PENDENZEN_LIST'" table-id="pendenzenJATable"-->
-                                   <!--total-result-count="vm.totalResultCount">-->
-                <!--</dv-pendenzen-list>-->
                 <dv-antrag-list
                     table-title="PENDENZEN_LIST"
                     on-filter-change="vm.passFilterToServer(tableState)"
@@ -30,7 +25,8 @@
                     table-id="pendenzenJATable"
                     add-button-visible="false"
                     total-result-count="vm.totalResultCount"
-                    action-visible="false">
+                    action-visible="false"
+                    pendenz="true">
                 </dv-antrag-list>
 
             </div>
