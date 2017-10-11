@@ -157,7 +157,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = { ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR })
+	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SCHULAMT, ADMINISTRATOR_SCHULAMT})
 	public Set<KindDubletteDTO> getKindDubletten(@Nonnull String gesuchId) {
 		Set<KindDubletteDTO> dublettenOfAllKinder = new HashSet<>();
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);
