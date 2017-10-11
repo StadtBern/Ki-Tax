@@ -2356,23 +2356,26 @@ public class JaxBConverter {
 		return jaxContainers;
 	}
 
-	public void disguiseStatus(Gesuch gesuch, JaxAntragDTO antrag, UserRole userRole) {
-		switch (userRole) {
-		case GESUCHSTELLER:
-		case SACHBEARBEITER_INSTITUTION:
-		case SACHBEARBEITER_TRAEGERSCHAFT:
-			switch (gesuch.getStatus()) {
-			case PRUEFUNG_STV:
-			case GEPRUEFT_STV:
-			case IN_BEARBEITUNG_STV:
-				antrag.setStatus(AntragStatusDTO.VERFUEGT);
+	/**
+	 * Using the existing GesuchStatus and the UserRole it will translate the Status into the right one for this role.
+	 */public void disguiseStatus(Gesuch gesuch, JaxAntragDTO antrag, @Nullable UserRole userRole) {
+		if (userRole != null) {
+			switch (userRole) {
+			case GESUCHSTELLER:
+			case SACHBEARBEITER_INSTITUTION:
+			case SACHBEARBEITER_TRAEGERSCHAFT:
+				switch (gesuch.getStatus()) {
+					case PRUEFUNG_STV:
+					case GEPRUEFT_STV:
+					case IN_BEARBEITUNG_STV:
+						antrag.setStatus(AntragStatusDTO.VERFUEGT);
+						break;
+					default:
+						break;
+				}
 				break;
 			default:
-				break;
-			}
-			break;
-		default:
-			break;
+				break;}
 		}
 	}
 
@@ -2381,27 +2384,27 @@ public class JaxBConverter {
 	 * - Fuer die Rolle Steueramt werden saemtlichen Daten von den Kindern nicht geladen
 	 * - Fuer die Rolle Institution/Traegerschaft werden nur die relevanten Institutionen und Angebote geladen
 	 */
-	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch, UserRole userRole, Collection<Institution> allowedInst) {
+	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch, @Nullable UserRole userRole, Collection<Institution> allowedInst) {
 		//wir koennen nicht mit den container auf dem gesuch arbeiten weil das gesuch attached ist. hibernate
 		//wuerde uns dann die kinder wegloeschen, daher besser transformieren
 		Collection<JaxKindContainer> jaxKindContainers = new ArrayList<>(gesuch.getKindContainers().size());
 
 		JaxAntragDTO antrag = gesuchToAntragDTOBasic(gesuch);
 
-		if (!userRole.equals(UserRole.STEUERAMT)) {
+		if (userRole != UserRole.STEUERAMT) {
 			for (final KindContainer kind : gesuch.getKindContainers()) {
 				jaxKindContainers.add(kindContainerToJAX(kind));
 			}
 			antrag.setKinder(createKinderList(jaxKindContainers));
 		}
 
-		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) {
+		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == userRole || UserRole.SACHBEARBEITER_INSTITUTION == userRole) {
 			RestUtil.purgeKinderAndBetreuungenOfInstitutionen(jaxKindContainers, allowedInst);
 		}
 
 		disguiseStatus(gesuch, antrag, userRole);
 
-		if (!userRole.equals(UserRole.STEUERAMT)) {
+		if (userRole != UserRole.STEUERAMT) {
 			antrag.setAngebote(createAngeboteList(jaxKindContainers));
 			antrag.setInstitutionen(createInstitutionenList(jaxKindContainers));
 		}

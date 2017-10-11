@@ -107,6 +107,7 @@ import {DatabaseMigrationRS} from '../admin/service/databaseMigrationRS.rest';
 import HttpVersionInterceptor from './service/version/HttpVersionInterceptor';
 import {DVVersionComponentConfig} from './component/dv-version/dv-version';
 import {DvSkiplinksComponentConfig} from './component/dv-skiplinks/dv-skiplinks';
+import SearchRS from '../gesuch/service/searchRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -169,6 +170,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('FamiliensituationRS', FamiliensituationRS)
     .service('GesuchModelManager', GesuchModelManager)
     .service('GesuchRS', GesuchRS)
+    .service('SearchRS', SearchRS)
     .service('FinanzielleSituationRS', FinanzielleSituationRS)
     .service('EinkommensverschlechterungContainerRS', EinkommensverschlechterungContainerRS)
     .service('EinkommensverschlechterungInfoRS', EinkommensverschlechterungInfoRS)

@@ -18,22 +18,22 @@ import TSAntragDTO from '../../../models/TSAntragDTO';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
-import {InstitutionRS} from '../../../core/service/institutionRS.rest';
+import {InstitutionRS} from '../../service/institutionRS.rest';
 import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
 import {IStateService} from 'angular-ui-router';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import TSGesuch from '../../../models/TSGesuch';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
-import PendenzRS from '../../../pendenzen/service/PendenzRS.rest';
 import {EbeguWebPendenzen} from '../../../pendenzen/pendenzen.module';
 import {DVPendenzenListController} from './dv-pendenzen-list';
+import SearchRS from '../../../gesuch/service/searchRS.rest';
 
 describe('DVPendenzenList', function () {
 
     let institutionRS: InstitutionRS;
     let gesuchsperiodeRS: GesuchsperiodeRS;
     let gesuchRS: GesuchRS;
-    let pendenzRS: PendenzRS;
+    let searchRS: SearchRS;
     let pendenzListViewController: DVPendenzenListController;
     let $q: IQService;
     let $scope: IScope;
@@ -47,7 +47,7 @@ describe('DVPendenzenList', function () {
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
-        pendenzRS = $injector.get('PendenzRS');
+        searchRS = $injector.get('SearchRS');
         institutionRS = $injector.get('InstitutionRS');
         gesuchsperiodeRS = $injector.get('GesuchsperiodeRS');
         $q = $injector.get('$q');
@@ -103,7 +103,7 @@ describe('DVPendenzenList', function () {
         let mockPendenz: TSAntragDTO = new TSAntragDTO('66345345', 123, 'name', TSAntragTyp.ERSTGESUCH,
             undefined, undefined, undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined);
         let result: Array<TSAntragDTO> = [mockPendenz];
-        spyOn(pendenzRS, 'getPendenzenList').and.returnValue($q.when(result));
+        spyOn(searchRS, 'getPendenzenList').and.returnValue($q.when(result));
         return mockPendenz;
     }
 

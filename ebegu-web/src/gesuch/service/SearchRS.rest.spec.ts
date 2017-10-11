@@ -13,17 +13,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import TSAntragDTO from '../../models/TSAntragDTO';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpBackendService} from 'angular';
-import {EbeguWebPendenzen} from '../pendenzen.module';
-import PendenzRS from './PendenzRS.rest';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import TSAntragDTO from '../../models/TSAntragDTO';
+import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
+import {EbeguWebPendenzen} from '../../pendenzen/pendenzen.module';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import SearchRS from './searchRS.rest';
 
-describe('pendenzInstitutionRS', function () {
+describe('searchRS', function () {
 
-    let pendenzRS: PendenzRS;
+    let searchRS: SearchRS;
     let $httpBackend: IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockPendenz: TSAntragDTO;
@@ -32,7 +33,7 @@ describe('pendenzInstitutionRS', function () {
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
-        pendenzRS = $injector.get('PendenzRS');
+        searchRS = $injector.get('SearchRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
     }));
@@ -45,27 +46,34 @@ describe('pendenzInstitutionRS', function () {
 
     describe('Public API', function () {
         it('check Service name', function () {
-            expect(pendenzRS.getServiceName()).toBe('PendenzRS');
+            expect(searchRS.getServiceName()).toBe('SearchRS');
         });
         it('should include a getPendenzenList() function', function () {
-            expect(pendenzRS.getPendenzenList).toBeDefined();
+            expect(searchRS.getPendenzenList).toBeDefined();
         });
     });
 
     describe('API Usage', function () {
         describe('findBetreuung', () => {
             it('should return all pending Antraege', () => {
-                let arrayResult: Array<any> = [mockPendenzRest];
-                $httpBackend.expectGET(pendenzRS.serviceURL + '/jugendamt/').respond(arrayResult);
+                let tsAntragDTO: TSAntragDTO = new TSAntragDTO();
+                tsAntragDTO.fallNummer = 1234;
+                let searchResult: any = {
+                    antragDTOs: [tsAntragDTO],
+                    paginationDTO: {totalItemCount: 1}
+                };
 
-                let foundPendenzen: Array<TSAntragDTO>;
-                pendenzRS.getPendenzenList().then((result) => {
+                let filter: any = {};
+                $httpBackend.expectPOST(searchRS.serviceURL + '/jugendamt/', filter).respond(searchResult);
+
+                let foundPendenzen: TSAntragSearchresultDTO;
+                searchRS.getPendenzenList(filter).then((result) => {
                     foundPendenzen = result;
                 });
                 $httpBackend.flush();
                 expect(foundPendenzen).toBeDefined();
-                expect(foundPendenzen.length).toBe(1);
-                expect(foundPendenzen[0]).toEqual(mockPendenz);
+                expect(foundPendenzen.totalResultSize).toBe(1);
+                expect(foundPendenzen.antragDTOs[0]).toEqual(tsAntragDTO);
             });
         });
     });

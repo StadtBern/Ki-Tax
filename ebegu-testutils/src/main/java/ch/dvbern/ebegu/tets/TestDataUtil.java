@@ -34,6 +34,7 @@ import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragSearchDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragSortDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.AbwesenheitContainer;
@@ -85,6 +86,7 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
+import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
@@ -101,6 +103,7 @@ import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.EbeguParameterService;
+import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
@@ -735,7 +738,7 @@ public final class TestDataUtil {
 		return persistAllEntities(persistence, eingangsdatum, testfall);
 	}
 
-	public static Gesuch createAndPersistBeckerNoraGesuch(InstitutionService instService, Persistence persistence, LocalDate eingangsdatum, AntragStatus status) {
+	public static Gesuch createAndPersistBeckerNoraGesuch(InstitutionService instService, Persistence persistence, @Nullable LocalDate eingangsdatum, AntragStatus status) {
 		instService.getAllInstitutionen();
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiWeissenstein());
@@ -889,7 +892,7 @@ public final class TestDataUtil {
 
 	}
 
-	public static Benutzer createBenutzer(UserRole role, String userName, Traegerschaft traegerschaft, Institution institution, Mandant mandant) {
+	public static Benutzer createBenutzer(UserRole role, String userName, Traegerschaft traegerschaft, @Nullable Institution institution, Mandant mandant) {
 		final Benutzer benutzer = new Benutzer();
 		benutzer.setUsername(userName);
 		benutzer.setNachname("anonymous");
@@ -1074,5 +1077,45 @@ public final class TestDataUtil {
 
 		return savedBetreuung;
 
+	}
+
+	/**
+	 * Verfuegt das uebergebene Gesuch. Dies muss in Status IN_BEARBEITUNG_JA uebergeben werden.
+	 */
+	public static Gesuch gesuchVerfuegen(@Nonnull Gesuch gesuch, @Nonnull GesuchService gesuchService) {
+		gesuch.setStatus(AntragStatus.GEPRUEFT);
+		final Gesuch gesuchToVerfuegt = gesuchService.updateGesuch(gesuch, true, null);
+		gesuchToVerfuegt.setStatus(AntragStatus.VERFUEGEN);
+		final Gesuch verfuegenGesuch = gesuchService.updateGesuch(gesuchToVerfuegt, true, null);
+		verfuegenGesuch.setStatus(AntragStatus.VERFUEGT);
+		return gesuchService.updateGesuch(verfuegenGesuch, true, null);
+	}
+
+	public static Gesuch persistNewGesuchInStatus(@Nonnull AntragStatus status, @Nonnull Persistence persistence, @Nonnull GesuchService gesuchService) {
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		gesuch.setEingangsart(Eingangsart.PAPIER);
+		gesuch.setStatus(status);
+		gesuch.setGesuchsperiode(persistence.persist(gesuch.getGesuchsperiode()));
+		gesuch.setFall(persistence.persist(gesuch.getFall()));
+		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer(gesuch));
+		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(TestDataUtil.createFinanzielleSituationContainer());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationJA(TestDataUtil.createDefaultFinanzielleSituation());
+		gesuchService.createGesuch(gesuch);
+		return gesuch;
+	}
+
+	@Nonnull
+	public static AntragTableFilterDTO createDefaultAntragTableFilterDTO() {
+		AntragTableFilterDTO antragSearch = new AntragTableFilterDTO();
+		PaginationDTO pagination = new PaginationDTO();
+		pagination.setNumber(20);
+		pagination.setStart(0);
+		pagination.setNumberOfPages(1);
+		antragSearch.setPagination(pagination);
+		AntragSearchDTO searchDTO = new AntragSearchDTO();
+		PredicateObjectDTO predicateObj = new PredicateObjectDTO();
+		searchDTO.setPredicateObject(predicateObj);
+		antragSearch.setSearch(searchDTO);
+		return antragSearch;
 	}
 }

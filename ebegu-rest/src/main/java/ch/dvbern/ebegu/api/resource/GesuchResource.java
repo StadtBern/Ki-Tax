@@ -17,7 +17,6 @@ package ch.dvbern.ebegu.api.resource;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -46,15 +45,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.resource.util.ResourceHelper;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -75,14 +71,12 @@ import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.DateUtil;
-import ch.dvbern.ebegu.util.MonitoringUtil;
 import com.google.common.collect.ArrayListMultimap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -349,38 +343,7 @@ public class GesuchResource {
 		throw new EbeguEntityNotFoundException("updateStatus", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + gesuchJAXPId.getId());
 	}
 
-	@ApiOperation(value = "Sucht Antraege mit den uebergebenen Suchkriterien/Filtern. Es werden nur Antraege zurueck " +
-		"gegeben, fuer die der eingeloggte Benutzer berechtigt ist.", response = JaxAntragSearchresultDTO.class)
-	@Nonnull
-	@POST
-	@Path("/search")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response searchAntraege(
-		@Nonnull @NotNull AntragTableFilterDTO antragSearch,
-		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) {
 
-		return MonitoringUtil.monitor(GesuchResource.class, "searchAntraege", () -> {
-			Pair<Long, List<Gesuch>> searchResultPair = gesuchService.searchAntraege(antragSearch);
-			List<Gesuch> foundAntraege = searchResultPair.getRight();
-
-			Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
-
-			List<JaxAntragDTO> antragDTOList = new ArrayList<>(foundAntraege.size());
-			foundAntraege.forEach(gesuch -> {
-				JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch, principalBean.discoverMostPrivilegedRole(), allowedInst);
-				antragDTO.setFamilienName(gesuch.extractFamiliennamenString());
-				antragDTOList.add(antragDTO);
-			});
-			JaxAntragSearchresultDTO resultDTO = new JaxAntragSearchresultDTO();
-			resultDTO.setAntragDTOs(antragDTOList);
-			PaginationDTO pagination = antragSearch.getPagination();
-			pagination.setTotalItemCount(searchResultPair.getLeft());
-			resultDTO.setPaginationDTO(pagination);
-			return Response.ok(resultDTO).build();
-		});
-	}
 
 	/**
 	 * iteriert durch eine Liste von Antragen und gibt jeweils pro Fall nur den Antrag mit dem neusten Eingangsdatum zurueck
