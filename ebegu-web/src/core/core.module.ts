@@ -74,7 +74,6 @@ import WizardStepRS from '../gesuch/service/WizardStepRS.rest';
 import EinkommensverschlechterungInfoRS from '../gesuch/service/einkommensverschlechterungInfoRS.rest';
 import {DVNavigation} from './directive/dv-navigation/dv-navigation';
 import {DVAntragListConfig} from './component/dv-antrag-list/dv-antrag-list';
-import {DVPendenzenListConfig} from './component/dv-pendenzen-list/dv-pendenzen-list';
 import AntragStatusHistoryRS from './service/antragStatusHistoryRS.rest';
 import {NavigationLogger} from './service/NavigationLogger';
 import GlobalCacheService from '../gesuch/service/globalCacheService';
@@ -100,7 +99,7 @@ import {DVDisplayElement} from './directive/dv-display-element/dv-display-elemen
 import {DVsTPersistService} from './service/dVsTPersistService';
 import DVSTResetSearch from './directive/dv-st-reset-search/dv-st-reset-search';
 import DVSTPersistAntraege from './directive/dv-st-persist-antraege/dv-st-persist-antraege';
-import DVSTPersistPendenzen from './directive/dv-st-persist-pendenzen/dv-st-persist-pendenzen';
+import DVSTPersistPendenzen from './directive/dv-st-persist-quicksearch/dv-st-persist-quicksearch';
 import {DvDownloadmenuComponentConfig} from './component/dv-downloadmenu/dv-downloadmenu';
 import {DVVorlageListConfig} from './component/dv-vorlage-list/dv-vorlage-list';
 import {DatabaseMigrationRS} from '../admin/service/databaseMigrationRS.rest';
@@ -237,7 +236,6 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvDokumenteList', new DVDokumenteListConfig())
     .component('dvAntragList', new DVAntragListConfig())
     .component('dvVorlageList', new DVVorlageListConfig())
-    .component('dvPendenzenList', new DVPendenzenListConfig())
     .component('dvQuicksearchbox', new DvQuicksearchboxComponentConfig())
     .component('dvSearchResultIcon', new DvSearchResultIconComponentConfig())
     .component('dvMitteilungList', new DVMitteilungListConfig())

@@ -18,9 +18,9 @@ import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import TSAntragDTO from '../../models/TSAntragDTO';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
-import {EbeguWebPendenzen} from '../../pendenzen/pendenzen.module';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import SearchRS from './searchRS.rest';
+import {EbeguWebCore} from '../../core/core.module';
 
 describe('searchRS', function () {
 
@@ -30,7 +30,7 @@ describe('searchRS', function () {
     let mockPendenz: TSAntragDTO;
     let mockPendenzRest: any;
 
-    beforeEach(angular.mock.module(EbeguWebPendenzen.name));
+    beforeEach(angular.mock.module(EbeguWebCore.name));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         searchRS = $injector.get('SearchRS');
