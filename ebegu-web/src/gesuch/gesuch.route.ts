@@ -654,10 +654,10 @@ export function reloadGesuchModelManager(gesuchModelManager: GesuchModelManager,
 getKinderDubletten.$inject = ['$stateParams', '$q', '$log', 'KindRS', 'AuthServiceRS'];
 /* @ngInject */
 
-// Die Kinderdubletten werden nur für JA-Mitarbeiter (inkl. Revisor und Jurist) angezeigt
+// Die Kinderdubletten werden nur für SCH-Mitarbeiter oder JA-Mitarbeiter (inkl. Revisor und Jurist) angezeigt
 export function getKinderDubletten($stateParams: IGesuchStateParams, $q: IQService, $log: ILogService, KindRS: KindRS, authService: AuthServiceRS) {
-    let isAdmin: boolean = authService.isOneOfRoles(TSRoleUtil.getJugendamtRole());
-    if (isAdmin && $stateParams && $stateParams.gesuchId) {
+    let isUserAllowed: boolean = authService.isOneOfRoles(TSRoleUtil.getJugendamtAndSchulamtRole());
+    if (isUserAllowed && $stateParams && $stateParams.gesuchId) {
         let gesuchIdParam = $stateParams.gesuchId;
         return KindRS.getKindDubletten(gesuchIdParam);
     }
