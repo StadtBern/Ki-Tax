@@ -61,7 +61,7 @@ describe('gesuchToolbar', function () {
 
         gesuchToolbarController = new GesuchToolbarController(userRS, ebeguUtil,
             CONSTANTS, gesuchRS, $state, $stateParams, $scope, gesuchModelManager,
-            authServiceRS, $mdSidenav, undefined, gesuchsperiodeRS, fallRS, dvDialog);
+            authServiceRS, $mdSidenav, undefined, gesuchsperiodeRS, fallRS, dvDialog, undefined);
     }));
 
     describe('getVerantwortlicherFullName', () => {

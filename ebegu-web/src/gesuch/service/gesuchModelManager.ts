@@ -1358,4 +1358,8 @@ export default class GesuchModelManager {
                return response;
         });
     }
+
+    public isErwerbspensumRequired(gesuchId: string): IPromise<boolean> {
+        return this.erwerbspensumRS.isErwerbspensumRequired(gesuchId);
+    }
 }

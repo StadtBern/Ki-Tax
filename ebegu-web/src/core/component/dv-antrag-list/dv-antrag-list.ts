@@ -60,6 +60,7 @@ export class DVAntragListController {
     selectedAenderungsdatum: string;
     selectedEingangsdatumSTV: string;
     selectedVerantwortlicher: TSUser;
+    selectedDokumenteHochgeladen: string;
 
     tableId: string;
     tableTitle: string;

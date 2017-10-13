@@ -624,6 +624,7 @@ export default class EbeguRestUtil {
         restGesuch.datumGewarntFehlendeQuittung = DateUtil.momentToLocalDate(gesuch.datumGewarntFehlendeQuittung);
         restGesuch.timestampVerfuegt = DateUtil.momentToLocalDateTime(gesuch.timestampVerfuegt);
         restGesuch.gueltig = gesuch.gueltig;
+        restGesuch.dokumenteHochgeladen = gesuch.dokumenteHochgeladen;
         return restGesuch;
     }
 
@@ -648,6 +649,7 @@ export default class EbeguRestUtil {
             gesuchTS.datumGewarntFehlendeQuittung = DateUtil.localDateToMoment(gesuchFromServer.datumGewarntFehlendeQuittung);
             gesuchTS.timestampVerfuegt = DateUtil.localDateTimeToMoment(gesuchFromServer.timestampVerfuegt);
             gesuchTS.gueltig = gesuchFromServer.gueltig;
+            gesuchTS.dokumenteHochgeladen = gesuchFromServer.dokumenteHochgeladen;
             return gesuchTS;
         }
         return undefined;
@@ -1371,6 +1373,7 @@ export default class EbeguRestUtil {
         restPendenz.gesuchBetreuungenStatus = pendenz.gesuchBetreuungenStatus;
         restPendenz.eingangsart = pendenz.eingangsart;
         restPendenz.besitzerUsername = pendenz.besitzerUsername;
+        restPendenz.dokumenteHochgeladen = pendenz.dokumenteHochgeladen;
         return restPendenz;
     }
 
@@ -1395,6 +1398,7 @@ export default class EbeguRestUtil {
         antragTS.gesuchBetreuungenStatus = antragFromServer.gesuchBetreuungenStatus;
         antragTS.eingangsart = antragFromServer.eingangsart;
         antragTS.besitzerUsername = antragFromServer.besitzerUsername;
+        antragTS.dokumenteHochgeladen = antragFromServer.dokumenteHochgeladen;
         return antragTS;
     }
 

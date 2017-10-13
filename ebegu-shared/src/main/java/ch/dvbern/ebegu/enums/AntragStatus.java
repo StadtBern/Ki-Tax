@@ -12,15 +12,12 @@ public enum AntragStatus {
     IN_BEARBEITUNG_GS,
     FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
     NUR_SCHULAMT,
-	NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN,
     FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
     IN_BEARBEITUNG_JA,
     ERSTE_MAHNUNG,
-	ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
     ERSTE_MAHNUNG_ABGELAUFEN,
     ZWEITE_MAHNUNG,
     ZWEITE_MAHNUNG_ABGELAUFEN,
-	ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
     GEPRUEFT,
     VERFUEGEN,
     VERFUEGT,
@@ -34,11 +31,9 @@ public enum AntragStatus {
 		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
 		IN_BEARBEITUNG_JA,
 		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		ERSTE_MAHNUNG_ABGELAUFEN,
 		ZWEITE_MAHNUNG,
 		ZWEITE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		GEPRUEFT,
 		VERFUEGEN,
 		VERFUEGT,
@@ -52,15 +47,12 @@ public enum AntragStatus {
 		IN_BEARBEITUNG_GS,
 		FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
 		NUR_SCHULAMT,
-		NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN,
 		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
 		IN_BEARBEITUNG_JA,
 		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		ERSTE_MAHNUNG_ABGELAUFEN,
 		ZWEITE_MAHNUNG,
 		ZWEITE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		GEPRUEFT,
 		VERFUEGEN,
 		VERFUEGT,
@@ -71,15 +63,12 @@ public enum AntragStatus {
 
 	public static final Set<AntragStatus> FOR_SCHULAMT_ROLE = EnumSet.of(
 		NUR_SCHULAMT,
-		NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN,
 		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
 		IN_BEARBEITUNG_JA,
 		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		ERSTE_MAHNUNG_ABGELAUFEN,
 		ZWEITE_MAHNUNG,
 		ZWEITE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		GEPRUEFT,
 		VERFUEGEN,
 		VERFUEGT,
@@ -94,15 +83,12 @@ public enum AntragStatus {
 
 	public static final Set<AntragStatus> FOR_JURIST_REVISOR_ROLE = EnumSet.of(
 		NUR_SCHULAMT,
-		NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN,
 		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
 		IN_BEARBEITUNG_JA,
 		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		ERSTE_MAHNUNG_ABGELAUFEN,
 		ZWEITE_MAHNUNG,
 		ZWEITE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		GEPRUEFT,
 		VERFUEGEN,
 		VERFUEGT,
@@ -133,11 +119,9 @@ public enum AntragStatus {
 		FREIGEGEBEN,
 		IN_BEARBEITUNG_JA,
 		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		ERSTE_MAHNUNG_ABGELAUFEN,
 		ZWEITE_MAHNUNG,
 		ZWEITE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		GEPRUEFT,
 		VERFUEGEN,
 		BESCHWERDE_HAENGIG,
@@ -145,22 +129,19 @@ public enum AntragStatus {
 
 	public static final Set<AntragStatus> FOR_KIND_DUBLETTEN = EnumSet.of(
 		NUR_SCHULAMT,
-		NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN,
 		FREIGEGEBEN,
 		IN_BEARBEITUNG_JA,
 		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		ERSTE_MAHNUNG_ABGELAUFEN,
 		ZWEITE_MAHNUNG,
 		ZWEITE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		GEPRUEFT,
 		VERFUEGEN,
 		VERFUEGT,
 		KEIN_ANGEBOT,
 		BESCHWERDE_HAENGIG);
 
-	public static final Set<AntragStatus> ERLEDIGTE_PENDENZ = EnumSet.of(VERFUEGT, NUR_SCHULAMT, NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN, KEIN_ANGEBOT);
+	public static final Set<AntragStatus> ERLEDIGTE_PENDENZ = EnumSet.of(VERFUEGT, NUR_SCHULAMT, KEIN_ANGEBOT);
 
 	private static final Set<AntragStatus> inBearbeitung = EnumSet.range(IN_BEARBEITUNG_GS, IN_BEARBEITUNG_JA);
 
@@ -211,7 +192,7 @@ public enum AntragStatus {
 	}
 
 	public static Collection<AntragStatus> getAllVerfuegtStates() {
-		return Arrays.asList(VERFUEGT, NUR_SCHULAMT, NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN, BESCHWERDE_HAENGIG,
+		return Arrays.asList(VERFUEGT, NUR_SCHULAMT, BESCHWERDE_HAENGIG,
 			PRUEFUNG_STV, IN_BEARBEITUNG_STV, GEPRUEFT_STV, KEIN_ANGEBOT);
 	}
 
@@ -236,17 +217,17 @@ public enum AntragStatus {
 	 * ob ein Gesuch verfuegt ist.
 	 */
 	public boolean isAnyStatusOfVerfuegtOrVefuegen() {
-		return getAllVerfuegtStates().contains(this) || this.equals(VERFUEGEN);
+		return getAllVerfuegtStates().contains(this) || this == VERFUEGEN;
 	}
 
 	public boolean inBearbeitung() { return inBearbeitung.contains(this); }
 
 	public boolean isAnyOfInBearbeitungGS(){
-		return this.equals(FREIGABEQUITTUNG) || this.equals(IN_BEARBEITUNG_GS);
+		return this == FREIGABEQUITTUNG || this == IN_BEARBEITUNG_GS;
 	}
 
 	public boolean isAnyOfSchulamtOnly(){
-		return this.equals(NUR_SCHULAMT) || this.equals(NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN);
+		return this == NUR_SCHULAMT;
 	}
 
 
@@ -263,7 +244,6 @@ public enum AntragStatus {
 
 	/**
 	 * schulamt darf eigentlich alle Status lesen ausser denen die noch vom GS bearbeitet werden
-	 * @return
 	 */
 	public boolean isReadableBySchulamtSachbearbeiter() {
 		return !(this.isAnyOfInBearbeitungGS());
@@ -274,7 +254,7 @@ public enum AntragStatus {
 	 */
 	public boolean isReadableBySteueramt() {
 		// GEPRUEFT_STV ist dabei, weil es beim Freigeben schon in diesem Status ist
-		return forSteueramt.contains(this) || this.equals(GEPRUEFT_STV);
+		return forSteueramt.contains(this) || this == GEPRUEFT_STV;
 	}
 
 	public boolean isReadableByJurist() {
@@ -290,11 +270,9 @@ public enum AntragStatus {
 		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
 		IN_BEARBEITUNG_JA,
 		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		ERSTE_MAHNUNG_ABGELAUFEN,
 		ZWEITE_MAHNUNG,
 		ZWEITE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		GEPRUEFT,
 		VERFUEGEN,
 		VERFUEGT,
@@ -310,32 +288,27 @@ public enum AntragStatus {
 		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
 		IN_BEARBEITUNG_JA,
 		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		ERSTE_MAHNUNG_ABGELAUFEN,
 		ZWEITE_MAHNUNG,
 		ZWEITE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		GEPRUEFT,
 		VERFUEGEN);
 
 	public static final Set<AntragStatus> FOR_GESUCHSTELLER_ROLE_WRITE = EnumSet.of(
 		IN_BEARBEITUNG_GS,
 		NUR_SCHULAMT, // Damit eine Mutation erstellt werden kann
-		NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN, // Damit eine Mutation erstellt werden kann
 		FREIGABEQUITTUNG,
 		NUR_SCHULAMT, // damit eine Mutation erstellt werden kann
-		NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN, // damit eine Mutation erstellt werden kann
 		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		ERSTE_MAHNUNG_ABGELAUFEN,
 		ZWEITE_MAHNUNG,
-		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		ZWEITE_MAHNUNG_ABGELAUFEN,
 		VERFUEGT // Damit eine Mutation erstellt werden kann
 	);
 
 	public static final Set<AntragStatus> FOR_SCHULAMT_ROLE_WRITE = EnumSet.of(
-		FREIGABEQUITTUNG);
+		FREIGABEQUITTUNG,
+		NUR_SCHULAMT); // Wegen Dokumente-Upload Button
 
 	public static final Set<AntragStatus> FOR_STEUERAMT_ROLE_WRITE = EnumSet.of(
 		PRUEFUNG_STV,

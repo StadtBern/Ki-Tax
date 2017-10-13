@@ -123,6 +123,10 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 	@NotNull
 	private GesuchBetreuungenStatus gesuchBetreuungenStatus;
 
+	private boolean dokumenteHochgeladen;
+
+
+
 	public String getAntragId() {
 		return antragId;
 	}
@@ -269,5 +273,13 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 
 	public void setGesuchBetreuungenStatus(GesuchBetreuungenStatus gesuchBetreuungenStatus) {
 		this.gesuchBetreuungenStatus = gesuchBetreuungenStatus;
+	}
+
+	public boolean isDokumenteHochgeladen() {
+		return dokumenteHochgeladen;
+	}
+
+	public void setDokumenteHochgeladen(boolean dokumenteHochgeladen) {
+		this.dokumenteHochgeladen = dokumenteHochgeladen;
 	}
 }

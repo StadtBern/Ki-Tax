@@ -53,4 +53,10 @@ export default class ErwerbspensumRS {
                 return response;
             });
     }
+
+    public isErwerbspensumRequired(gesuchId: string): IPromise<boolean> {
+        return this.http.get(this.serviceURL + '/required/' + encodeURIComponent(gesuchId)).then((response: any) => {
+            return response.data;
+        });
+    }
 }

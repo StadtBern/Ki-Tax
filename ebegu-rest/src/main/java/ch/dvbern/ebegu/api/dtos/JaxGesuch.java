@@ -100,6 +100,8 @@ public class JaxGesuch extends JaxAbstractDTO {
 
 	private boolean gueltig;
 
+	private boolean dokumenteHochgeladen;
+
 	@NotNull
 	private GesuchBetreuungenStatus gesuchBetreuungenStatus = GesuchBetreuungenStatus.ALLE_BESTAETIGT;
 
@@ -254,8 +256,6 @@ public class JaxGesuch extends JaxAbstractDTO {
 		this.gesuchBetreuungenStatus = gesuchBetreuungenStatus;
 	}
 
-
-
 	public JaxFall getFall() {
 		return fall;
 	}
@@ -321,6 +321,14 @@ public class JaxGesuch extends JaxAbstractDTO {
 
 	public void setEingangsart(Eingangsart eingangsart) {
 		this.eingangsart = eingangsart;
+	}
+
+	public boolean isDokumenteHochgeladen() {
+		return dokumenteHochgeladen;
+	}
+
+	public void setDokumenteHochgeladen(boolean dokumenteHochgeladen) {
+		this.dokumenteHochgeladen = dokumenteHochgeladen;
 	}
 }
 

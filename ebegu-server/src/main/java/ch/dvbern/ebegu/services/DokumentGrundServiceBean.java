@@ -17,10 +17,12 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.DokumentGrund_;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -52,6 +54,9 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 	@Inject
 	private Authorizer authorizer;
 
+	@Inject
+	private PrincipalBean principalBean;
+
 
 	@Nonnull
 	@Override
@@ -63,6 +68,11 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 					dokument.setTimestampUpload(LocalDateTime.now());
 				}
 			});
+		}
+		// Falls es der Gesuchsteller war, der das Dokument hochgeladen hat, soll das Flag auf dem Gesuch gesetzt werden,
+		// damit das Jugendamt es sieht. Allerdings nur wenn das Gesuch schon freigegeben wurde
+		if (principalBean.isCallerInRole(UserRole.GESUCHSTELLER) && !dokumentGrund.getGesuch().getStatus().isAnyOfInBearbeitungGS()) {
+			dokumentGrund.getGesuch().setDokumenteHochgeladen(Boolean.TRUE);
 		}
 		final DokumentGrund mergedDokumentGrund = persistence.merge(dokumentGrund);
 		wizardStepService.updateSteps(mergedDokumentGrund.getGesuch().getId(), null, null, WizardStepName.DOKUMENTE);
@@ -121,10 +131,10 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN,})
 	public void removeAllDokumentGrundeFromGesuch(@Nonnull Gesuch gesuch) {
-		LOGGER.info("Deleting Dokument-Gruende of Gesuch: " + gesuch.getFall() + " / " + gesuch.getGesuchsperiode().getGesuchsperiodeString());
+		LOGGER.info("Deleting Dokument-Gruende of Gesuch: {} / {}", gesuch.getFall(), gesuch.getGesuchsperiode().getGesuchsperiodeString());
 		Collection<DokumentGrund> dokumentsFromGesuch = findAllDokumentGrundByGesuch(gesuch);
 		for (DokumentGrund dokument : dokumentsFromGesuch) {
-			LOGGER.info("Deleting DokumentGrund: " + dokument.getId());
+			LOGGER.info("Deleting DokumentGrund: {}", dokument.getId());
 			persistence.remove(DokumentGrund.class, dokument.getId());
 		}
 	}

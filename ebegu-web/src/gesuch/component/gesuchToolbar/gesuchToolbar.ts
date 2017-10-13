@@ -1,4 +1,4 @@
-import {IComponentOptions, ILogService} from 'angular';
+import {IComponentOptions, IFormController, ILogService} from 'angular';
 import UserRS from '../../../core/service/userRS.rest';
 import TSUser from '../../../models/TSUser';
 import EbeguUtil from '../../../utils/EbeguUtil';
@@ -10,7 +10,7 @@ import TSAntragDTO from '../../../models/TSAntragDTO';
 import {IGesuchStateParams} from '../../gesuch.route';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
+import {isAnyStatusOfVerfuegt, isAtLeastFreigegebenOrFreigabequittung, isStatusVerfuegenVerfuegt} from '../../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import * as moment from 'moment';
@@ -21,15 +21,19 @@ import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 import FallRS from '../../service/fallRS.rest';
 import TSFall from '../../../models/TSFall';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+
 import {ShowTooltipController} from '../../dialog/ShowTooltipController';
+import IPromise = angular.IPromise;
 import Moment = moment.Moment;
 import IScope = angular.IScope;
-import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
 let showKontaktTemplate = require('../../../gesuch/dialog/showKontaktTemplate.html');
+let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 require('./gesuchToolbar.less');
 
 export class GesuchToolbarComponentConfig implements IComponentOptions {
@@ -83,7 +87,7 @@ export class GesuchToolbarController implements IDVFocusableController {
 
     static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
         '$state', '$stateParams', '$scope', 'GesuchModelManager', 'AuthServiceRS',
-        '$mdSidenav', '$log', 'GesuchsperiodeRS', 'FallRS', 'DvDialog'];
+        '$mdSidenav', '$log', 'GesuchsperiodeRS', 'FallRS', 'DvDialog', 'unsavedWarningSharedService'];
 
     constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
                 private CONSTANTS: any, private gesuchRS: GesuchRS,
@@ -94,7 +98,8 @@ export class GesuchToolbarController implements IDVFocusableController {
                 private $log: ILogService,
                 private gesuchsperiodeRS: GesuchsperiodeRS,
                 private fallRS: FallRS,
-                private DvDialog: DvDialog) {
+                private dvDialog: DvDialog,
+                private unsavedWarningSharedService: any) {
 
     }
 
@@ -572,6 +577,63 @@ export class GesuchToolbarController implements IDVFocusableController {
         });
     }
 
+    public showGesuchLoeschen(): boolean {
+        if (!this.getGesuch() ||  this.getGesuch().isNew()) {
+            return false;
+        }
+        if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
+            // GS darf nur vor der Freigabe loeschen
+            if (this.hideActionButtons || this.isDashboardScreen || isAtLeastFreigegebenOrFreigabequittung(this.getGesuch().status)) {
+                return false;
+            }
+        } else {
+            // JA: Darf nicht verfuegen oder verfuegt sein und muss Papier sein
+            if (isStatusVerfuegenVerfuegt(this.getGesuch().status) || this.getGesuch().eingangsart === TSEingangsart.ONLINE) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public gesuchLoeschen(): IPromise<void> {
+        return this.dvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'CONFIRM_GESUCH_LOESCHEN',
+            deleteText: 'BESCHREIBUNG_GESUCH_LOESCHEN',
+            parentController: this,
+            elementID: 'gesuchLoeschenButton'
+        }).then(() => {
+            this.setAllFormsPristine();
+            if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
+                this.gesuchRS.removeGesuchstellerAntrag(this.getGesuch().id).then(result => {
+                    this.gesuchModelManager.setGesuch(new TSGesuch());
+                    this.resetNavigationParameters();
+                    this.$state.go('gesuchstellerDashboard');
+                });
+            } else {
+                this.gesuchRS.removePapiergesuch(this.getGesuch().id).then(result => {
+                    if (this.antragList.length > 1) {
+                        let navObj: any = {
+                            createNew: false,
+                            gesuchId: this.antragList[0].antragId
+                        };
+                        this.$state.go('gesuch.fallcreation', navObj);
+                    } else {
+                        this.$state.go('pendenzen');
+                    }
+                });
+            }
+        });
+    }
+
+    private setAllFormsPristine(): void {
+        let forms: [IFormController] = this.unsavedWarningSharedService.allForms();
+        for (let index = 0; index < forms.length; index++) {
+            let form: IFormController = forms[index];
+            form.$setPristine();
+            form.$setUntouched();
+        }
+    }
+
     public openAlleVerfuegungen(): void {
         this.$state.go('alleVerfuegungen', {
             fallId: this.fallid
@@ -593,7 +655,7 @@ export class GesuchToolbarController implements IDVFocusableController {
     }
 
     public showKontakt(): void {
-        this.DvDialog.showDialog(showKontaktTemplate, ShowTooltipController, {
+        this.dvDialog.showDialog(showKontaktTemplate, ShowTooltipController, {
             title: '',
             text: '<span>Jugendamt</span><br>'
             + '<span>Effingerstrasse 21</span><br>'

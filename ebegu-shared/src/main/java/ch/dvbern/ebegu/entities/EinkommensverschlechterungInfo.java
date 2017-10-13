@@ -1,10 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
-
-import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.util.EbeguUtil;
-import org.hibernate.envers.Audited;
 import java.time.LocalDate;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -13,7 +10,9 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import java.util.Objects;
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.EbeguUtil;
+import org.hibernate.envers.Audited;
 
 /**
  * Entity für die Erfassung von Einkommensverschlechterungen für das Gesuch
@@ -244,7 +243,9 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 			&& Boolean.FALSE.equals(getEinkommensverschlechterung())) {
 			return true;
 		}
-		return isSameBasisJahrPlus1(otherEKVInfo) && isSameBasisJahrPlus2(otherEKVInfo);
+		return isSameBasisJahrPlus1(otherEKVInfo) && isSameBasisJahrPlus2(otherEKVInfo)
+			&& EbeguUtil.isSameOrNullBoolean(this.ekvBasisJahrPlus1Annulliert, otherEKVInfo.ekvBasisJahrPlus1Annulliert)
+			&& EbeguUtil.isSameOrNullBoolean(this.ekvBasisJahrPlus2Annulliert, otherEKVInfo.ekvBasisJahrPlus2Annulliert);
 	}
 
 	private boolean isSameBasisJahrPlus1(EinkommensverschlechterungInfo otherEKVInfo) {

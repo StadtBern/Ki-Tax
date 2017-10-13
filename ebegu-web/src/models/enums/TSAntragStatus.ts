@@ -3,13 +3,10 @@ export enum TSAntragStatus {
     IN_BEARBEITUNG_GS = <any> 'IN_BEARBEITUNG_GS',
     FREIGABEQUITTUNG = <any> 'FREIGABEQUITTUNG',
     NUR_SCHULAMT = <any> 'NUR_SCHULAMT',
-    NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN = <any> 'NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN',
     FREIGEGEBEN = <any> 'FREIGEGEBEN',
     ERSTE_MAHNUNG = <any> 'ERSTE_MAHNUNG',
-    ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN = <any> 'ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN',
     ERSTE_MAHNUNG_ABGELAUFEN = <any> 'ERSTE_MAHNUNG_ABGELAUFEN',
     ZWEITE_MAHNUNG = <any> 'ZWEITE_MAHNUNG',
-    ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN = <any> 'ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN',
     ZWEITE_MAHNUNG_ABGELAUFEN = <any> 'ZWEITE_MAHNUNG_ABGELAUFEN',
     IN_BEARBEITUNG_JA = <any> 'IN_BEARBEITUNG_JA',
     GEPRUEFT = <any> 'GEPRUEFT',
@@ -31,13 +28,10 @@ export function getTSAntragStatusValues(): Array<TSAntragStatus> {
         TSAntragStatus.IN_BEARBEITUNG_GS,
         TSAntragStatus.FREIGABEQUITTUNG,
         TSAntragStatus.NUR_SCHULAMT,
-        TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN,
         TSAntragStatus.FREIGEGEBEN,
         TSAntragStatus.ERSTE_MAHNUNG,
-        TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
         TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN,
         TSAntragStatus.ZWEITE_MAHNUNG,
-        TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
         TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN,
         TSAntragStatus.IN_BEARBEITUNG_JA,
         TSAntragStatus.GEPRUEFT,
@@ -62,16 +56,15 @@ export function getTSAntragStatusValuesByRole(userrole: TSRole): Array<TSAntragS
         case TSRole.SACHBEARBEITER_JA:
         case TSRole.ADMIN:
             return getTSAntragStatusValues().filter(element => (element !== TSAntragStatus.IN_BEARBEITUNG_GS
-                && element !== TSAntragStatus.FREIGABEQUITTUNG && element !== TSAntragStatus.NUR_SCHULAMT
-                && element !== TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN));
+                && element !== TSAntragStatus.FREIGABEQUITTUNG && element !== TSAntragStatus.NUR_SCHULAMT));
         case TSRole.REVISOR:
         case TSRole.JURIST:
             return getTSAntragStatusValues().filter(element => (element !== TSAntragStatus.IN_BEARBEITUNG_GS
-            && element !== TSAntragStatus.FREIGABEQUITTUNG));
+                && element !== TSAntragStatus.FREIGABEQUITTUNG));
         case TSRole.SACHBEARBEITER_INSTITUTION:
         case TSRole.SACHBEARBEITER_TRAEGERSCHAFT:
             return getTSAntragStatusValues().filter(element => (element !== TSAntragStatus.PRUEFUNG_STV
-            && element !== TSAntragStatus.IN_BEARBEITUNG_STV && element !== TSAntragStatus.GEPRUEFT_STV));
+                && element !== TSAntragStatus.IN_BEARBEITUNG_STV && element !== TSAntragStatus.GEPRUEFT_STV));
         default:
             return getTSAntragStatusValues();
     }
@@ -89,13 +82,10 @@ export function getTSAntragStatusPendenzValues(userrole: TSRole): Array<TSAntrag
 export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {
     let validStates: Array<TSAntragStatus> = [
         TSAntragStatus.NUR_SCHULAMT,
-        TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN,
         TSAntragStatus.FREIGEGEBEN,
         TSAntragStatus.ERSTE_MAHNUNG,
-        TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
         TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN,
         TSAntragStatus.ZWEITE_MAHNUNG,
-        TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
         TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN,
         TSAntragStatus.IN_BEARBEITUNG_JA,
         TSAntragStatus.GEPRUEFT,
@@ -116,7 +106,7 @@ export function isAtLeastFreigegebenOrFreigabequittung(status: TSAntragStatus): 
 }
 
 export function isAnyStatusOfVerfuegt(status: TSAntragStatus): boolean {
-    return status === TSAntragStatus.NUR_SCHULAMT || status === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN ||
+    return status === TSAntragStatus.NUR_SCHULAMT ||
         status === TSAntragStatus.VERFUEGT || status === TSAntragStatus.BESCHWERDE_HAENGIG || status === TSAntragStatus.PRUEFUNG_STV
         || status === TSAntragStatus.IN_BEARBEITUNG_STV || status === TSAntragStatus.GEPRUEFT_STV || status === TSAntragStatus.KEIN_ANGEBOT;
 }
@@ -138,4 +128,9 @@ export function isVerfuegtOrSTV(status: TSAntragStatus): boolean {
  */
 export function isStatusVerfuegenVerfuegt(status: TSAntragStatus): boolean {
     return isAnyStatusOfVerfuegt(status) || status === TSAntragStatus.VERFUEGEN;
+}
+
+export function isAnyStatusOfMahnung(status: TSAntragStatus): boolean {
+    return status === TSAntragStatus.ERSTE_MAHNUNG || status === TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN
+        || status === TSAntragStatus.ZWEITE_MAHNUNG || status === TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN;
 }
