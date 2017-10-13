@@ -69,6 +69,13 @@ export function getTSAntragStatusValuesByRole(userrole: TSRole): Array<TSAntragS
                 TSAntragStatus.PRUEFUNG_STV,
                 TSAntragStatus.IN_BEARBEITUNG_STV
             ];
+        case TSRole.SCHULAMT:
+        case TSRole.ADMINISTRATOR_SCHULAMT:
+            return [
+                // todo noch genauer zu definieren was eine Pendenz fuers SCH ist
+                TSAntragStatus.NUR_SCHULAMT,
+                TSAntragStatus.FREIGABEQUITTUNG
+            ];
         case TSRole.SACHBEARBEITER_JA:
         case TSRole.ADMIN:
             return getTSAntragStatusValues().filter(element => (element !== TSAntragStatus.IN_BEARBEITUNG_GS
@@ -92,7 +99,8 @@ export function getTSAntragStatusValuesByRole(userrole: TSRole): Array<TSAntragS
  * @returns {TSAntragStatus[]}
  */
 export function getTSAntragStatusPendenzValues(userrole: TSRole): Array<TSAntragStatus> {
-    return getTSAntragStatusValuesByRole(userrole).filter(element => (element !== TSAntragStatus.VERFUEGT && element !== TSAntragStatus.KEIN_ANGEBOT));
+    return getTSAntragStatusValuesByRole(userrole).filter(element => (element !== TSAntragStatus.VERFUEGT
+        && element !== TSAntragStatus.KEIN_ANGEBOT));
 }
 
 export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {

@@ -13,9 +13,9 @@
   ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div class="dv-pendenzen-list">
-    <div st-table="displayedCollection" st-set-filter="pendenzFilter" st-safe-src="vm.getPendenzenList()"
-         st-delay="20" dv-st-persist-pendenzen="{{vm.tableId}}">
+<div class="dv-quicksearch-list">
+    <div st-table="displayedCollection" st-safe-src="vm.getQuicksearchList()"
+         st-delay="20" st-set-filter="quicksearchFilter" dv-st-persist-quicksearch="{{vm.tableId}}">
 
         <div class="row">
             <div class="col-md-10">
@@ -136,7 +136,7 @@
                 <!--Spaltendefinitionen-->
                 <tbody>
                 <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                    ng-click="vm.editPendenzJA(row, $event)">
+                    ng-click="vm.editAntrag(row, $event)">
                     <td class="ellipsis" ellipsis-tooltip="{{vm.addZerosToFallnummer(row.fallNummer)}}"
                         ng-bind="vm.addZerosToFallnummer(row.fallNummer)"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.familienName}}" ng-bind="row.familienName"></td>

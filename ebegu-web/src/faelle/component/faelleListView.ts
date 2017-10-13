@@ -15,7 +15,6 @@
 
 import {IComponentOptions, IFilterService} from 'angular';
 import {IStateService} from 'angular-ui-router';
-import GesuchRS from '../../gesuch/service/gesuchRS.rest';
 import GesuchModelManager from '../../gesuch/service/gesuchModelManager';
 import BerechnungsManager from '../../gesuch/service/berechnungsManager';
 import TSAntragDTO from '../../models/TSAntragDTO';
@@ -26,6 +25,7 @@ import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import IQService = angular.IQService;
+import SearchRS from '../../gesuch/service/searchRS.rest';
 let template = require('./faelleListView.html');
 require('./faelleListView.less');
 
@@ -42,13 +42,11 @@ export class FaelleListViewController {
     totalResultCount: string = '0';
 
 
-    static $inject: string[] = ['$filter', 'GesuchRS', 'GesuchModelManager',
-        'BerechnungsManager', '$state', '$log', 'CONSTANTS', 'AuthServiceRS', '$q'];
+    static $inject: string[] = ['$filter', 'GesuchModelManager', '$state', '$log', 'AuthServiceRS', 'SearchRS'];
 
-    constructor(private $filter: IFilterService, private gesuchRS: GesuchRS,
-                private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
-                private $state: IStateService, private $log: ILogService, private CONSTANTS: any,
-                private authServiceRS: AuthServiceRS, private $q: IQService) {
+    constructor(private $filter: IFilterService, private gesuchModelManager: GesuchModelManager,
+                private $state: IStateService, private $log: ILogService,
+                private authServiceRS: AuthServiceRS, private searchRS: SearchRS) {
         this.initViewModel();
     }
 
@@ -60,14 +58,13 @@ export class FaelleListViewController {
 
     public passFilterToServer = (tableFilterState: any): IPromise<TSAntragSearchresultDTO> => {
         this.$log.debug('Triggering ServerFiltering with Filter Object', tableFilterState);
-        return this.gesuchRS.searchAntraege(tableFilterState).then((response: TSAntragSearchresultDTO) => {
+        return this.searchRS.searchAntraege(tableFilterState).then((response: TSAntragSearchresultDTO) => {
             this.totalResultCount = response.totalResultSize ? response.totalResultSize.toString() : '0';
             this.antragList = response.antragDTOs;
             return response;
         });
 
     }
-
 
     public getAntragList(): Array<TSAntragDTO> {
         return this.antragList;

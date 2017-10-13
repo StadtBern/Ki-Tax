@@ -18,25 +18,25 @@ import TSUser from '../../../models/TSUser';
 import UserRS from '../../service/userRS.rest';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import {DVsTPersistService} from '../../service/dVsTPersistService';
-import {DVPendenzenListController} from '../../component/dv-pendenzen-list/dv-pendenzen-list';
+import {DVQuicksearchListController} from '../../../quicksearch/component/dv-quicksearch-list/dv-quicksearch-list';
 
 /**
  * This directive allows a filter and sorting configuration to be saved after leaving the table.
  * The information will be stored in an angular-service, whi
  */
-export default class DVSTPersistPendenzen implements IDirective {
+export default class DVSTPersistQuicksearch implements IDirective {
     static $inject: string[] = ['UserRS', 'InstitutionRS', 'DVsTPersistService'];
 
     restrict = 'A';
-    require = ['^stTable', '^dvPendenzenList'];
+    require = ['^stTable', '^dvQuicksearchList'];
     link: IDirectiveLinkFn;
 
     /* @ngInject */
     constructor(private userRS: UserRS, private institutionRS: InstitutionRS, private dVsTPersistService: DVsTPersistService) {
         this.link = (scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ctrlArray: any) => {
-            let nameSpace: string = attrs.dvStPersistPendenzen;
+            let nameSpace: string = attrs.dvStPersistQuicksearch;
             let stTableCtrl: any = ctrlArray[0];
-            let pendenzenListController: DVPendenzenListController = ctrlArray[1];
+            let quicksearchListController: DVQuicksearchListController = ctrlArray[1];
 
             //save the table state every time it changes
             scope.$watch(function () {
@@ -55,17 +55,17 @@ export default class DVSTPersistPendenzen implements IDirective {
             let savedState = dVsTPersistService.loadData(nameSpace);
             if (savedState) {
                 if (savedState.search && savedState.search.predicateObject) { //update all objects of the model for the filters
-                    pendenzenListController.selectedAntragTyp = savedState.search.predicateObject.antragTyp;
-                    pendenzenListController.selectedGesuchsperiode = savedState.search.predicateObject.gesuchsperiodeString;
-                    pendenzenListController.selectedAntragStatus = savedState.search.predicateObject.status;
-                    pendenzenListController.selectedBetreuungsangebotTyp = savedState.search.predicateObject.angebote;
-                    this.setInstitutionFromName(pendenzenListController, savedState.search.predicateObject.institutionen);
-                    pendenzenListController.selectedFallNummer = savedState.search.predicateObject.fallNummer;
-                    pendenzenListController.selectedFamilienName = savedState.search.predicateObject.familienName;
-                    pendenzenListController.selectedKinder = savedState.search.predicateObject.kinder;
-                    pendenzenListController.selectedEingangsdatum = savedState.search.predicateObject.eingangsdatum;
-                    pendenzenListController.selectedDokumenteHochgeladen = savedState.search.predicateObject.dokumenteHochgeladen;
-                    this.setUserFromName(pendenzenListController, savedState.search.predicateObject.verantwortlicher);
+                    quicksearchListController.selectedAntragTyp = savedState.search.predicateObject.antragTyp;
+                    quicksearchListController.selectedGesuchsperiode = savedState.search.predicateObject.gesuchsperiodeString;
+                    quicksearchListController.selectedAntragStatus = savedState.search.predicateObject.status;
+                    quicksearchListController.selectedBetreuungsangebotTyp = savedState.search.predicateObject.angebote;
+                    this.setInstitutionFromName(quicksearchListController, savedState.search.predicateObject.institutionen);
+                    quicksearchListController.selectedFallNummer = savedState.search.predicateObject.fallNummer;
+                    quicksearchListController.selectedFamilienName = savedState.search.predicateObject.familienName;
+                    quicksearchListController.selectedKinder = savedState.search.predicateObject.kinder;
+                    quicksearchListController.selectedEingangsdatum = savedState.search.predicateObject.eingangsdatum;
+                    quicksearchListController.selectedDokumenteHochgeladen = savedState.search.predicateObject.dokumenteHochgeladen;
+                    this.setUserFromName(quicksearchListController, savedState.search.predicateObject.verantwortlicher);
                 }
                 let tableState = stTableCtrl.tableState();
 
@@ -81,15 +81,15 @@ export default class DVSTPersistPendenzen implements IDirective {
      * while the dropdownlist is constructed using the object TSUser. So in order to be able to select the right user
      * with need the complete object and not only its Fullname.
      */
-    private setUserFromName(pendenzenListController: DVPendenzenListController, verantwortlicherFullname: string): void {
-        if (verantwortlicherFullname && pendenzenListController) {
+    private setUserFromName(quicksearchListController: DVQuicksearchListController, verantwortlicherFullname: string): void {
+        if (verantwortlicherFullname && quicksearchListController) {
             this.userRS.getBenutzerJAorAdmin().then((response: any) => {
                 let userList: TSUser[] = angular.copy(response);
                 if (userList) {
                     for (let i = 0; i < userList.length; i++) {
                         if (userList[i] && userList[i].getFullName() === verantwortlicherFullname) {
-                            pendenzenListController.selectedVerantwortlicher = userList[i];
-                            pendenzenListController.userChanged(pendenzenListController.selectedVerantwortlicher);
+                            quicksearchListController.selectedVerantwortlicher = userList[i];
+                            quicksearchListController.userChanged(quicksearchListController.selectedVerantwortlicher);
                             break;
                         }
                     }
@@ -102,13 +102,13 @@ export default class DVSTPersistPendenzen implements IDirective {
      * Extracts the Institution from the institutionList of the controller using the name that had been saved in the
      * filter. This is needed because the filter saves the name and not the object.
      */
-    private setInstitutionFromName(pendenzenListController: DVPendenzenListController, institution: string): void {
-        if (institution && pendenzenListController) {
+    private setInstitutionFromName(quicksearchListController: DVQuicksearchListController, institution: string): void {
+        if (institution && quicksearchListController) {
             this.institutionRS.getInstitutionenForCurrentBenutzer().then((institutionList: any) => {
                 if (institutionList) {
                     for (let i = 0; i < institutionList.length; i++) {
                         if (institutionList[i].name === institution) {
-                            pendenzenListController.selectedInstitution = institutionList[i];
+                            quicksearchListController.selectedInstitution = institutionList[i];
                             break;
                         }
                     }
@@ -118,7 +118,7 @@ export default class DVSTPersistPendenzen implements IDirective {
     }
 
     static factory(): IDirectiveFactory {
-        const directive = (userRS: any, institutionRS: any, dVsTPersistService: any) => new DVSTPersistPendenzen(userRS, institutionRS, dVsTPersistService);
+        const directive = (userRS: any, institutionRS: any, dVsTPersistService: any) => new DVSTPersistQuicksearch(userRS, institutionRS, dVsTPersistService);
         directive.$inject = ['UserRS', 'InstitutionRS', 'DVsTPersistService'];
         return directive;
     }

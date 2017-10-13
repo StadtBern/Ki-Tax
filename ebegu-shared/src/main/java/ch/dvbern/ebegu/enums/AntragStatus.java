@@ -141,6 +141,11 @@ public enum AntragStatus {
 		BESCHWERDE_HAENGIG,
 		GEPRUEFT_STV);
 
+	// todo noch zu definieren. Die neuen Status fuer Schulamt muessen hinzugefuegt werden
+	public static final Set<AntragStatus> FOR_SACHBEARBEITER_SCHULAMT_PENDENZEN = EnumSet.of(
+		FREIGEGEBEN,
+		NUR_SCHULAMT);
+
 	public static final Set<AntragStatus> FOR_KIND_DUBLETTEN = EnumSet.of(
 		NUR_SCHULAMT,
 		FREIGEGEBEN,
@@ -180,6 +185,25 @@ public enum AntragStatus {
             case ADMINISTRATOR_SCHULAMT: return forSchulamtRole;
             case STEUERAMT: return forSteueramt;
             default: return none;
+        }
+    }
+
+
+	public static Set<AntragStatus> pendenzenForRole(UserRole userRole) {
+        switch (userRole) {
+			case SUPER_ADMIN:
+			case ADMIN:
+            case JURIST:
+            case REVISOR:
+            case SACHBEARBEITER_JA:
+            	return FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN;
+            case SCHULAMT:
+            case ADMINISTRATOR_SCHULAMT:
+            	return FOR_SACHBEARBEITER_SCHULAMT_PENDENZEN;
+            case STEUERAMT:
+            case GESUCHSTELLER:
+            default:
+            	return none;
         }
     }
 
