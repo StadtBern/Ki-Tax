@@ -15,7 +15,6 @@
 
 import {IFilterService, IHttpBackendService, IQService, IScope} from 'angular';
 import GesuchModelManager from '../../gesuch/service/gesuchModelManager';
-import BerechnungsManager from '../../gesuch/service/berechnungsManager';
 import {IStateService} from 'angular-ui-router';
 import {EbeguWebFaelle} from '../faelle.module';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
@@ -42,10 +41,8 @@ describe('faelleListView', function () {
     let $filter: IFilterService;
     let $httpBackend: IHttpBackendService;
     let gesuchModelManager: GesuchModelManager;
-    let berechnungsManager: BerechnungsManager;
     let $state: IStateService;
     let $log: any;
-    let CONSTANTS: any;
     let wizardStepManager: WizardStepManager;
     let mockAntrag: TSAntragDTO;
 
@@ -61,10 +58,8 @@ describe('faelleListView', function () {
         $filter = $injector.get('$filter');
         $httpBackend = $injector.get('$httpBackend');
         gesuchModelManager = $injector.get('GesuchModelManager');
-        berechnungsManager = $injector.get('BerechnungsManager');
         $state = $injector.get('$state');
         $log = $injector.get('$log');
-        CONSTANTS = $injector.get('CONSTANTS');
         wizardStepManager = $injector.get('WizardStepManager');
         mockAntrag = mockGetPendenzenList();
     }));
@@ -74,7 +69,7 @@ describe('faelleListView', function () {
             it('should return the list with found Faellen', function () {
                 mockRestCalls();
                 faelleListViewController = new FaelleListViewController($filter, gesuchModelManager,
-                    berechnungsManager, $state, $log, CONSTANTS, authServiceRS, $q, searchRS);
+                    $state, $log, authServiceRS, searchRS);
 
                 faelleListViewController.passFilterToServer({});
                 expect(searchRS.searchAntraege).toHaveBeenCalledTimes(1);
@@ -128,8 +123,8 @@ describe('faelleListView', function () {
         mockRestCalls();
         spyOn($state, 'go');
         spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue(undefined);
-        faelleListViewController = new FaelleListViewController($filter, gesuchModelManager, berechnungsManager,
-            $state, $log, CONSTANTS, authServiceRS, $q, searchRS);
+        faelleListViewController = new FaelleListViewController($filter, gesuchModelManager,
+            $state, $log, authServiceRS, searchRS);
 
         let tsGesuch = new TSGesuch();
         spyOn(gesuchRS, 'findGesuch').and.returnValue($q.when(tsGesuch));
