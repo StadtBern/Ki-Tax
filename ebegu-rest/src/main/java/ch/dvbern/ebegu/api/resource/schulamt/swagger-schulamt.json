@@ -1,0 +1,274 @@
+{
+	"swagger" : "2.0",
+	"info" : {
+		"version" : "1.0",
+		"title" : "eBEGU REST Interface"
+	},
+	"host" : "localhost:8080",
+	"basePath" : "/ebegu/api/v1",
+	"schemes" : [ "http" ],
+	"paths" : {
+		"/schulamt/anmeldung/{bgNummer}" : {
+			"get" : {
+				"summary" : "Gibt eine Anmeldung fuer ein Schulamt-Angebot zurueck (Tagesschule oder Ferieninsel)",
+				"description" : "",
+				"operationId" : "getAnmeldung",
+				"produces" : [ "application/json" ],
+				"parameters" : [ ],
+				"responses" : {
+					"200" : {
+						"description" : "successful operation",
+						"schema" : {
+							"$ref" : "#/definitions/JaxExternalAnmeldung"
+						}
+					},
+					"401" : {
+						"description" : "not authorized"
+					},
+					"204" : {
+						"description" : "no data found"
+					}
+				}
+			},
+			"parameters" : [ {
+				"name" : "bgNummer",
+				"in" : "path",
+				"required" : true,
+				"type" : "string"
+			} ]
+		},
+		"/schulamt/anmeldungFerieninsel/{bgNummer}" : {
+			"get" : {
+				"summary" : "Gibt eine Anmeldung fuer eine Ferieninsel zurueck.",
+				"description" : "",
+				"operationId" : "getAnmeldungFerieninsel",
+				"produces" : [ "application/json" ],
+				"parameters" : [ ],
+				"responses" : {
+					"200" : {
+						"description" : "successful operation",
+						"schema" : {
+							"$ref" : "#/definitions/JaxExternalAnmeldungFerieninsel"
+						}
+					},
+					"401" : {
+						"description" : "not authorized"
+					},
+					"204" : {
+						"description" : "no data found"
+					}
+				}
+			},
+			"parameters" : [ {
+				"name" : "bgNummer",
+				"in" : "path",
+				"required" : true,
+				"type" : "string"
+			} ]
+		},
+		"/schulamt/anmeldungTagesschule/{bgNummer}" : {
+			"get" : {
+				"summary" : "Gibt eine Anmeldung fuer eine Tagesschule zurueck.",
+				"description" : "",
+				"operationId" : "getAnmeldungTagesschule",
+				"produces" : [ "application/json" ],
+				"parameters" : [ ],
+				"responses" : {
+					"200" : {
+						"description" : "successful operation",
+						"schema" : {
+							"$ref" : "#/definitions/JaxExternalAnmeldungTagesschule"
+						}
+					},
+					"401" : {
+						"description" : "not authorized"
+					},
+					"204" : {
+						"description" : "no data found"
+					}
+				}
+			},
+			"parameters" : [ {
+				"name" : "bgNummer",
+				"in" : "path",
+				"required" : true,
+				"type" : "string"
+			} ]
+		},
+		"/schulamt/finanziellesituation" : {
+			"get" : {
+				"summary" : "Gibt eine Anmeldung fuer ein Schulamt-Angebot zurueck (Tagesschule oder Ferieninsel)",
+				"description" : "",
+				"operationId" : "getFinanzielleSituation",
+				"consumes" : [ "*/*" ],
+				"produces" : [ "application/json" ],
+				"parameters" : [ {
+					"name" : "stichtag",
+					"in" : "query",
+					"required" : false,
+					"type" : "string"
+				}, {
+					"name" : "faelle",
+					"in" : "query",
+					"required" : false,
+					"type" : "string"
+				} ],
+				"responses" : {
+					"200" : {
+						"description" : "successful operation",
+						"schema" : {
+							"type" : "array",
+							"items" : {
+								"$ref" : "#/definitions/JaxExternalFinanzielleSituation"
+							}
+						}
+					},
+					"401" : {
+						"description" : "not authorized"
+					},
+					"204" : {
+						"description" : "no data found"
+					}
+				}
+			}
+		},
+		"/schulamt/heartbeat" : {
+			"get" : {
+				"summary" : "Gibt die Version von Ki-Tax zurück. Kann als Testmethode verwendet werden, da ohne Authentifizierung aufrufbar",
+				"description" : "",
+				"operationId" : "getHeartBeat",
+				"produces" : [ "text/plain" ],
+				"parameters" : [ ],
+				"responses" : {
+					"200" : {
+						"description" : "successful operation",
+						"schema" : {
+							"type" : "string"
+						}
+					}
+				}
+			}
+		}
+	},
+	"definitions" : {
+		"JaxExternalAnmeldungTagesschule" : {
+			"type" : "object",
+			"properties" : {
+				"bgNummer" : {
+					"type" : "string"
+				},
+				"betreuungsstatus" : {
+					"type" : "string",
+					"enum" : [ "WARTEN", "SCHULAMT", "ABGEWIESEN", "NICHT_EINGETRETEN", "STORNIERT", "BESTAETIGT", "VERFUEGT", "GESCHLOSSEN_OHNE_VERFUEGUNG" ]
+				},
+				"betreuungsangebotTyp" : {
+					"type" : "string",
+					"enum" : [ "TAGESSCHULE", "FERIENINSEL" ]
+				},
+				"keyInstitution" : {
+					"type" : "string"
+				},
+				"anmeldungen" : {
+					"type" : "array",
+					"items" : {
+						"$ref" : "#/definitions/JaxExternalModul"
+					}
+				}
+			}
+		},
+		"JaxExternalFinanzielleSituation" : {
+			"type" : "object",
+			"properties" : {
+				"fallNummer" : {
+					"type" : "integer",
+					"format" : "int64"
+				},
+				"stichtag" : {
+					"type" : "string",
+					"format" : "date"
+				},
+				"massgebendesEinkommen" : {
+					"type" : "number"
+				},
+				"antragStatus" : {
+					"type" : "string",
+					"enum" : [ "IN_BEARBEITUNG_GS", "FREIGABEQUITTUNG", "NUR_SCHULAMT", "FREIGEGEBEN", "IN_BEARBEITUNG_JA", "ERSTE_MAHNUNG", "ERSTE_MAHNUNG_ABGELAUFEN", "ZWEITE_MAHNUNG", "ZWEITE_MAHNUNG_ABGELAUFEN", "GEPRUEFT", "VERFUEGEN", "VERFUEGT", "KEIN_ANGEBOT", "BESCHWERDE_HAENGIG", "PRUEFUNG_STV", "IN_BEARBEITUNG_STV", "GEPRUEFT_STV" ]
+				},
+				"tarifart" : {
+					"type" : "string",
+					"enum" : [ "VOLLZAHLER", "BASISZAHLER", "DETAILBERECHNUNG" ]
+				}
+			}
+		},
+		"JaxExternalModul" : {
+			"type" : "object",
+			"properties" : {
+				"tag" : {
+					"type" : "string",
+					"enum" : [ "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY" ]
+				},
+				"stufe" : {
+					"type" : "string",
+					"enum" : [ "VORMITTAG", "MITTAG", "MITTAG_HALB", "NACHMITTAGS_1", "NACHMITTAGS_1_HALB", "NACHMITTAGS_2", "NACHMITTAGS_2_HALB" ]
+				}
+			}
+		},
+		"JaxExternalAnmeldungFerieninsel" : {
+			"type" : "object",
+			"properties" : {
+				"bgNummer" : {
+					"type" : "string"
+				},
+				"betreuungsstatus" : {
+					"type" : "string",
+					"enum" : [ "WARTEN", "SCHULAMT", "ABGEWIESEN", "NICHT_EINGETRETEN", "STORNIERT", "BESTAETIGT", "VERFUEGT", "GESCHLOSSEN_OHNE_VERFUEGUNG" ]
+				},
+				"betreuungsangebotTyp" : {
+					"type" : "string",
+					"enum" : [ "TAGESSCHULE", "FERIENINSEL" ]
+				},
+				"keyInstitution" : {
+					"type" : "string"
+				},
+				"ferieninsel" : {
+					"$ref" : "#/definitions/JaxExternalFerieninsel"
+				}
+			}
+		},
+		"JaxExternalAnmeldung" : {
+			"type" : "object",
+			"properties" : {
+				"bgNummer" : {
+					"type" : "string"
+				},
+				"betreuungsstatus" : {
+					"type" : "string",
+					"enum" : [ "WARTEN", "SCHULAMT", "ABGEWIESEN", "NICHT_EINGETRETEN", "STORNIERT", "BESTAETIGT", "VERFUEGT", "GESCHLOSSEN_OHNE_VERFUEGUNG" ]
+				},
+				"betreuungsangebotTyp" : {
+					"type" : "string",
+					"enum" : [ "TAGESSCHULE", "FERIENINSEL" ]
+				},
+				"keyInstitution" : {
+					"type" : "string"
+				}
+			}
+		},
+		"JaxExternalFerieninsel" : {
+			"type" : "object",
+			"properties" : {
+				"ferien" : {
+					"type" : "string",
+					"enum" : [ "SOMMERFERIEN", "HERBSTFERIEN", "WEIHNACHTSFERIEN", "FRUEHLINGSFERIEN" ]
+				},
+				"tage" : {
+					"type" : "array",
+					"items" : {
+						"type" : "string",
+						"format" : "date"
+					}
+				}
+			}
+		}
+	}
+}

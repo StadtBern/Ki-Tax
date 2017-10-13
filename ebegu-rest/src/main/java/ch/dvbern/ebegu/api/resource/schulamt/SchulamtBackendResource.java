@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -28,6 +30,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -47,15 +50,19 @@ import ch.dvbern.ebegu.util.DateUtil;
 import ch.dvbern.ebegu.util.MathUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Path("/schulamt")
 @Api(description = "Resource für die Schnittstelle zu externen Schulamt-Applikationen")
 @SuppressWarnings({ "EjbInterceptorInspection", "EjbClassBasicInspection" })
+@PermitAll
 @Stateless
 public class SchulamtBackendResource {
 
@@ -85,6 +92,11 @@ public class SchulamtBackendResource {
 
 	@ApiOperation(value = "Gibt eine Anmeldung fuer ein Schulamt-Angebot zurueck (Tagesschule oder Ferieninsel)",
 		response = JaxExternalAnmeldung.class)
+	@ApiResponses({
+		@ApiResponse(code = 204, message = "no data found"),
+		@ApiResponse(code = 401, message = "not authorized")
+	})
+	@RolesAllowed(SUPER_ADMIN)
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -103,6 +115,11 @@ public class SchulamtBackendResource {
 
 	@ApiOperation(value = "Gibt eine Anmeldung fuer eine Tagesschule zurueck.",
 		response = JaxExternalAnmeldungTagesschule.class)
+	@ApiResponses({
+		@ApiResponse(code = 204, message = "no data found"),
+		@ApiResponse(code = 401, message = "not authorized")
+	})
+	@RolesAllowed(SUPER_ADMIN)
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -125,6 +142,11 @@ public class SchulamtBackendResource {
 
 	@ApiOperation(value = "Gibt eine Anmeldung fuer eine Ferieninsel zurueck.",
 		response = JaxExternalAnmeldungFerieninsel.class)
+	@ApiResponses({
+		@ApiResponse(code = 204, message = "no data found"),
+		@ApiResponse(code = 401, message = "not authorized")
+	})
+	@RolesAllowed(SUPER_ADMIN)
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -147,11 +169,16 @@ public class SchulamtBackendResource {
 
 	@ApiOperation(value = "Gibt eine Anmeldung fuer ein Schulamt-Angebot zurueck (Tagesschule oder Ferieninsel)", responseContainer = "List",
 		response = JaxExternalFinanzielleSituation.class)
+	@ApiResponses({
+		@ApiResponse(code = 204, message = "no data found"),
+		@ApiResponse(code = 401, message = "not authorized")
+	})
+	@RolesAllowed(SUPER_ADMIN)
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/finanziellesituation")
-	public Response getFinanzielleSituation(@Nonnull String stichtagParam, @Nonnull String csFaelleParam) {
+	public Response getFinanzielleSituation(@Nonnull @QueryParam("stichtag") String stichtagParam, @Nonnull @QueryParam("faelle") String csFaelleParam) {
 		Validate.notNull(stichtagParam);
 		Validate.notNull(csFaelleParam);
 
