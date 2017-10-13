@@ -866,6 +866,8 @@ export default class EbeguRestUtil {
         restFinanzielleSituation.nettolohn = finanzielleSituation.nettolohn;
         restFinanzielleSituation.geschaeftsgewinnBasisjahrMinus2 = finanzielleSituation.geschaeftsgewinnBasisjahrMinus2;
         restFinanzielleSituation.geschaeftsgewinnBasisjahrMinus1 = finanzielleSituation.geschaeftsgewinnBasisjahrMinus1;
+        restFinanzielleSituation.sozialhilfeBezueger = finanzielleSituation.sozialhilfeBezueger;
+        restFinanzielleSituation.verguenstigungGewuenscht = finanzielleSituation.verguenstigungGewuenscht;
         return restFinanzielleSituation;
     }
 
@@ -908,6 +910,8 @@ export default class EbeguRestUtil {
             finanzielleSituationTS.nettolohn = finanzielleSituationFromServer.nettolohn;
             finanzielleSituationTS.geschaeftsgewinnBasisjahrMinus2 = finanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus2;
             finanzielleSituationTS.geschaeftsgewinnBasisjahrMinus1 = finanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus1;
+            finanzielleSituationTS.sozialhilfeBezueger = finanzielleSituationFromServer.sozialhilfeBezueger;
+            finanzielleSituationTS.verguenstigungGewuenscht = finanzielleSituationFromServer.verguenstigungGewuenscht;
             return finanzielleSituationTS;
         }
         return undefined;

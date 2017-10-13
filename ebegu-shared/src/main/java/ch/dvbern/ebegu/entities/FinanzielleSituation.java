@@ -16,7 +16,9 @@
 package ch.dvbern.ebegu.entities;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -34,14 +36,26 @@ public class FinanzielleSituation extends AbstractFinanzielleSituation {
 
 	private static final long serialVersionUID = -4401110366293613225L;
 
+	@Nullable
 	@Column(nullable = true)
 	private BigDecimal nettolohn;
 
+	@Nullable
 	@Column(nullable = true)
 	private BigDecimal geschaeftsgewinnBasisjahrMinus2;
 
+	@Nullable
 	@Column(nullable = true)
 	private BigDecimal geschaeftsgewinnBasisjahrMinus1;
+
+	// Diese beiden Felder werden nicht immer eingegeben, deswegen Boolean und nicht boolean, damit sie auch null sein duerfen
+	@Nullable
+	@Column(nullable = true)
+	private Boolean sozialhilfeBezueger;
+
+	@Nullable
+	@Column(nullable = true)
+	private Boolean verguenstigungGewuenscht;
 
 	public FinanzielleSituation() {
 	}
@@ -51,29 +65,51 @@ public class FinanzielleSituation extends AbstractFinanzielleSituation {
 		return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(this);
 	}
 
+	@Nullable
 	@Override
 	public BigDecimal getNettolohn() {
 		return nettolohn;
 	}
 
-	public void setNettolohn(final BigDecimal nettolohn) {
+	@Nullable
+	public void setNettolohn(@Nullable final BigDecimal nettolohn) {
 		this.nettolohn = nettolohn;
 	}
 
+	@Nullable
 	public BigDecimal getGeschaeftsgewinnBasisjahrMinus2() {
 		return geschaeftsgewinnBasisjahrMinus2;
 	}
 
-	public void setGeschaeftsgewinnBasisjahrMinus2(final BigDecimal geschaeftsgewinnBasisjahrMinus2) {
+	public void setGeschaeftsgewinnBasisjahrMinus2(@Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus2) {
 		this.geschaeftsgewinnBasisjahrMinus2 = geschaeftsgewinnBasisjahrMinus2;
 	}
 
+	@Nullable
 	public BigDecimal getGeschaeftsgewinnBasisjahrMinus1() {
 		return geschaeftsgewinnBasisjahrMinus1;
 	}
 
-	public void setGeschaeftsgewinnBasisjahrMinus1(final BigDecimal geschaeftsgewinnBasisjahrMinus1) {
+	public void setGeschaeftsgewinnBasisjahrMinus1(@Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus1) {
 		this.geschaeftsgewinnBasisjahrMinus1 = geschaeftsgewinnBasisjahrMinus1;
+	}
+
+	@Nullable
+	public Boolean getSozialhilfeBezueger() {
+		return sozialhilfeBezueger;
+	}
+
+	public void setSozialhilfeBezueger(@Nullable Boolean sozialhilfeBezueger) {
+		this.sozialhilfeBezueger = sozialhilfeBezueger;
+	}
+
+	@Nullable
+	public Boolean getVerguenstigungGewuenscht() {
+		return verguenstigungGewuenscht;
+	}
+
+	public void setVerguenstigungGewuenscht(@Nullable Boolean verguenstigungGewuenscht) {
+		this.verguenstigungGewuenscht = verguenstigungGewuenscht;
 	}
 
 	public FinanzielleSituation copyForMutation(FinanzielleSituation mutation) {
@@ -81,6 +117,8 @@ public class FinanzielleSituation extends AbstractFinanzielleSituation {
 		mutation.setNettolohn(this.getNettolohn());
 		mutation.setGeschaeftsgewinnBasisjahrMinus1(this.getGeschaeftsgewinnBasisjahrMinus1());
 		mutation.setGeschaeftsgewinnBasisjahrMinus2(this.getGeschaeftsgewinnBasisjahrMinus2());
+		mutation.setSozialhilfeBezueger(this.getSozialhilfeBezueger());
+		mutation.setVerguenstigungGewuenscht(this.getVerguenstigungGewuenscht());
 		return mutation;
 	}
 
@@ -102,6 +140,8 @@ public class FinanzielleSituation extends AbstractFinanzielleSituation {
 		final FinanzielleSituation otherFinSit = (FinanzielleSituation) other;
 		return MathUtil.isSame(getNettolohn(), otherFinSit.getNettolohn()) &&
 			MathUtil.isSame(getGeschaeftsgewinnBasisjahrMinus1(), otherFinSit.getGeschaeftsgewinnBasisjahrMinus1()) &&
-			MathUtil.isSame(getGeschaeftsgewinnBasisjahrMinus2(), otherFinSit.getGeschaeftsgewinnBasisjahrMinus2());
+			MathUtil.isSame(getGeschaeftsgewinnBasisjahrMinus2(), otherFinSit.getGeschaeftsgewinnBasisjahrMinus2()) &&
+			Objects.equals(getSozialhilfeBezueger(), otherFinSit.getSozialhilfeBezueger()) &&
+			Objects.equals(getVerguenstigungGewuenscht(), otherFinSit.getVerguenstigungGewuenscht());
 	}
 }

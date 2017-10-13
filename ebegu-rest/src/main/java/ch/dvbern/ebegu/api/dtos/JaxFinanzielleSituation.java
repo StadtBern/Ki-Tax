@@ -36,28 +36,55 @@ public class JaxFinanzielleSituation extends JaxAbstractFinanzielleSituation {
 
 	private BigDecimal geschaeftsgewinnBasisjahrMinus1;
 
+	@Nullable
+	private Boolean sozialhilfeBezueger;
+
+	@Nullable
+	private Boolean verguenstigungGewuenscht;
+
+
+	@Nullable
 	public BigDecimal getNettolohn() {
 		return nettolohn;
 	}
 
-	public void setNettolohn(final BigDecimal nettolohn) {
+	public void setNettolohn(@Nullable final BigDecimal nettolohn) {
 		this.nettolohn = nettolohn;
 	}
 
+	@Nullable
 	public BigDecimal getGeschaeftsgewinnBasisjahrMinus2() {
 		return geschaeftsgewinnBasisjahrMinus2;
 	}
 
-	public void setGeschaeftsgewinnBasisjahrMinus2(final BigDecimal geschaeftsgewinnBasisjahrMinus2) {
+	public void setGeschaeftsgewinnBasisjahrMinus2(@Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus2) {
 		this.geschaeftsgewinnBasisjahrMinus2 = geschaeftsgewinnBasisjahrMinus2;
 	}
 
+	@Nullable
 	public BigDecimal getGeschaeftsgewinnBasisjahrMinus1() {
 		return geschaeftsgewinnBasisjahrMinus1;
 	}
 
-	public void setGeschaeftsgewinnBasisjahrMinus1(final BigDecimal geschaeftsgewinnBasisjahrMinus1) {
+	public void setGeschaeftsgewinnBasisjahrMinus1(@Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus1) {
 		this.geschaeftsgewinnBasisjahrMinus1 = geschaeftsgewinnBasisjahrMinus1;
 	}
 
+	@Nullable
+	public Boolean getSozialhilfeBezueger() {
+		return sozialhilfeBezueger;
+	}
+
+	public void setSozialhilfeBezueger(@Nullable Boolean sozialhilfeBezueger) {
+		this.sozialhilfeBezueger = sozialhilfeBezueger;
+	}
+
+	@Nullable
+	public Boolean getVerguenstigungGewuenscht() {
+		return verguenstigungGewuenscht;
+	}
+
+	public void setVerguenstigungGewuenscht(@Nullable Boolean verguenstigungGewuenscht) {
+		this.verguenstigungGewuenscht = verguenstigungGewuenscht;
+	}
 }
