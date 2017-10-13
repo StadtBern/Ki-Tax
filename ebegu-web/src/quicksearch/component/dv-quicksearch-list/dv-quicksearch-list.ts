@@ -15,24 +15,24 @@
 
 import {IComponentOptions, IFilterService} from 'angular';
 import {getNormalizedTSAntragTypValues, TSAntragTyp} from '../../../models/enums/TSAntragTyp';
-import {getTSAntragStatusPendenzValues, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {getTSAntragStatusValuesByRole, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import TSInstitution from '../../../models/TSInstitution';
 import TSAntragDTO from '../../../models/TSAntragDTO';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import EbeguUtil from '../../../utils/EbeguUtil';
-import {InstitutionRS} from '../../service/institutionRS.rest';
-import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
+import {InstitutionRS} from '../../../core/service/institutionRS.rest';
+import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import {IStateService} from 'angular-ui-router';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import TSUser from '../../../models/TSUser';
 import TSAbstractAntragDTO from '../../../models/TSAbstractAntragDTO';
 import TSFallAntragDTO from '../../../models/TSFallAntragDTO';
 
-let template = require('./dv-pendenzen-list.html');
-require('./dv-pendenzen-list.less');
+let template = require('./dv-quicksearch-list.html');
+require('./dv-quicksearch-list.less');
 
-export class DVPendenzenListConfig implements IComponentOptions {
+export class DVQuicksearchListConfig implements IComponentOptions {
     transclude = false;
 
     bindings: any = {
@@ -47,11 +47,11 @@ export class DVPendenzenListConfig implements IComponentOptions {
     };
 
     template = template;
-    controller = DVPendenzenListController;
+    controller = DVQuicksearchListController;
     controllerAs = 'vm';
 }
 
-export class DVPendenzenListController {
+export class DVQuicksearchListController {
 
     antraege: Array<TSAntragDTO> = []; //muss hier gesuch haben damit Felder die wir anzeigen muessen da sind
 
@@ -102,12 +102,8 @@ export class DVPendenzenListController {
         return getNormalizedTSAntragTypValues();
     }
 
-    /**
-     * Alle TSAntragStatus ausser VERFUEGT. Da es in der Pendenzenliste nicht notwendig ist
-     * @returns {Array<TSAntragStatus>}
-     */
     public getAntragStatus(): Array<TSAntragStatus> {
-        return getTSAntragStatusPendenzValues(this.authServiceRS.getPrincipalRole());
+        return getTSAntragStatusValuesByRole(this.authServiceRS.getPrincipalRole());
     }
 
     public getBetreuungsangebotTypen(): Array<TSBetreuungsangebotTyp> {
@@ -129,7 +125,7 @@ export class DVPendenzenListController {
         });
     }
 
-    public getPendenzenList(): Array<TSAntragDTO> {
+    public getQuicksearchList(): Array<TSAntragDTO> {
         return this.antraege;
     }
 
@@ -157,31 +153,31 @@ export class DVPendenzenListController {
         return result;
     }
 
-    public editPendenzJA(pendenz: TSAbstractAntragDTO, event: any): void {
-        if (pendenz) {
+    public editAntrag(abstractAntrag: TSAbstractAntragDTO, event: any): void {
+        if (abstractAntrag) {
             let isCtrlKeyPressed: boolean = (event && event.ctrlKey);
-            if (pendenz instanceof TSAntragDTO) {
-                this.navigateToGesuch(pendenz, isCtrlKeyPressed);
-            } else if (pendenz instanceof TSFallAntragDTO) {
-                this.navigateToMitteilungen(isCtrlKeyPressed, pendenz);
+            if (abstractAntrag instanceof TSAntragDTO) {
+                this.navigateToGesuch(abstractAntrag, isCtrlKeyPressed);
+            } else if (abstractAntrag instanceof TSFallAntragDTO) {
+                this.navigateToMitteilungen(isCtrlKeyPressed, abstractAntrag);
             }
         }
     }
 
-    private navigateToMitteilungen(isCtrlKeyPressed: boolean, pendenz: TSFallAntragDTO) {
+    private navigateToMitteilungen(isCtrlKeyPressed: boolean, fallAntrag: TSFallAntragDTO) {
         if (isCtrlKeyPressed) {
-            let url = this.$state.href('mitteilungen', {fallId: pendenz.fallID});
+            let url = this.$state.href('mitteilungen', {fallId: fallAntrag.fallID});
             window.open(url, '_blank');
         } else {
-            this.$state.go('mitteilungen', {fallId: pendenz.fallID});
+            this.$state.go('mitteilungen', {fallId: fallAntrag.fallID});
         }
     }
 
-    private navigateToGesuch(pendenz: TSAntragDTO, isCtrlKeyPressed: boolean) {
-        if (pendenz.antragId) {
+    private navigateToGesuch(antragDTO: TSAntragDTO, isCtrlKeyPressed: boolean) {
+        if (antragDTO.antragId) {
             let navObj: any = {
                 createNew: false,
-                gesuchId: pendenz.antragId
+                gesuchId: antragDTO.antragId
             };
             if (isCtrlKeyPressed) {
                 let url = this.$state.href('gesuch.fallcreation', navObj);

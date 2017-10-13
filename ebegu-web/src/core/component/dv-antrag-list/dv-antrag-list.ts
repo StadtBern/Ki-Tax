@@ -16,7 +16,7 @@
 import {IComponentOptions, IFilterService, ILogService, IPromise} from 'angular';
 import TSAbstractAntragEntity from '../../../models/TSAbstractAntragEntity';
 import {getNormalizedTSAntragTypValues, TSAntragTyp} from '../../../models/enums/TSAntragTyp';
-import {getTSAntragStatusValuesByRole, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {getTSAntragStatusPendenzValues, getTSAntragStatusValuesByRole, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import TSInstitution from '../../../models/TSInstitution';
 import TSAntragDTO from '../../../models/TSAntragDTO';
@@ -25,7 +25,6 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import TSAntragSearchresultDTO from '../../../models/TSAntragSearchresultDTO';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
-import * as moment from 'moment';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import TSUser from '../../../models/TSUser';
@@ -46,7 +45,8 @@ export class DVAntragListConfig implements IComponentOptions {
         tableTitle: '@',
         actionVisible: '@',
         addButtonVisible: '@',
-        addButtonText: '@'
+        addButtonText: '@',
+        pendenz: '='
     };
     template = template;
     controller = DVAntragListController;
@@ -70,9 +70,11 @@ export class DVAntragListController {
     selectedFamilienName: string;
     selectedKinder: string;
     selectedAenderungsdatum: string;
+    selectedEingangsdatum: string;
     selectedEingangsdatumSTV: string;
     selectedVerantwortlicher: TSUser;
     selectedDokumenteHochgeladen: string;
+    pendenz: boolean;
 
     tableId: string;
     tableTitle: string;
@@ -106,6 +108,9 @@ export class DVAntragListController {
     $onInit() {
         if (!this.addButtonText) {
             this.addButtonText = 'add item';
+        }
+        if (this.pendenz === null || this.pendenz === undefined) {
+            this.pendenz = false;
         }
         if (this.addButtonVisible === undefined) {
             this.addButtonVisible = 'false';
@@ -168,7 +173,11 @@ export class DVAntragListController {
      * @returns {Array<TSAntragStatus>}
      */
     public getAntragStatus(): Array<TSAntragStatus> {
-        return getTSAntragStatusValuesByRole(this.authServiceRS.getPrincipalRole());
+        if (this.pendenz) {
+            return getTSAntragStatusPendenzValues(this.authServiceRS.getPrincipalRole());
+        } else {
+            return getTSAntragStatusValuesByRole(this.authServiceRS.getPrincipalRole());
+        }
     }
 
     /**

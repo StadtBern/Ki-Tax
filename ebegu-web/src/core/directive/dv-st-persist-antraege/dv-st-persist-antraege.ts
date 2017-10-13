@@ -64,6 +64,7 @@ export default class DVSTPersistAntraege implements IDirective {
                     antragListController.selectedFamilienName = savedState.search.predicateObject.familienName;
                     antragListController.selectedKinder = savedState.search.predicateObject.kinder;
                     antragListController.selectedAenderungsdatum = savedState.search.predicateObject.aenderungsdatum;
+                    antragListController.selectedEingangsdatum = savedState.search.predicateObject.eingangsdatum;
                     antragListController.selectedDokumenteHochgeladen = savedState.search.predicateObject.dokumenteHochgeladen;
                     antragListController.selectedEingangsdatumSTV = savedState.search.predicateObject.eingangsdatumSTV;
                     this.setUserFromName(antragListController, savedState.search.predicateObject.verantwortlicher);

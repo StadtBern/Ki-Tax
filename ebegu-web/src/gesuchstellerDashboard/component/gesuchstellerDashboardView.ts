@@ -15,21 +15,21 @@
 
 import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
-import TSAntragDTO from '../../models/TSAntragDTO';
-import PendenzRS from '../../pendenzen/service/PendenzRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
-import TSFall from '../../models/TSFall';
-import {TSEingangsart} from '../../models/enums/TSEingangsart';
-import FallRS from '../../gesuch/service/fallRS.rest';
-import {IN_BEARBEITUNG_BASE_NAME, isAnyStatusOfVerfuegt, TSAntragStatus} from '../../models/enums/TSAntragStatus';
-import {TSRoleUtil} from '../../utils/TSRoleUtil';
-import EbeguUtil from '../../utils/EbeguUtil';
 import MitteilungRS from '../../core/service/mitteilungRS.rest';
+import FallRS from '../../gesuch/service/fallRS.rest';
+import SearchRS from '../../gesuch/service/searchRS.rest';
+import {IN_BEARBEITUNG_BASE_NAME, isAnyStatusOfVerfuegt, TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {TSEingangsart} from '../../models/enums/TSEingangsart';
 import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
-import IPromise = angular.IPromise;
+import TSAntragDTO from '../../models/TSAntragDTO';
+import TSFall from '../../models/TSFall';
+import TSGesuchsperiode from '../../models/TSGesuchsperiode';
+import EbeguUtil from '../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import ILogService = angular.ILogService;
+import IPromise = angular.IPromise;
 import ITranslateService = angular.translate.ITranslateService;
 
 let template = require('./gesuchstellerDashboardView.html');
@@ -51,11 +51,11 @@ export class GesuchstellerDashboardListViewController {
     amountNewMitteilungen: number;
 
 
-    static $inject: string[] = ['$state', '$log', 'CONSTANTS', 'AuthServiceRS', 'PendenzRS', 'EbeguUtil', 'GesuchsperiodeRS',
+    static $inject: string[] = ['$state', '$log', 'AuthServiceRS', 'SearchRS', 'EbeguUtil', 'GesuchsperiodeRS',
         'FallRS', '$translate', 'MitteilungRS'];
 
-    constructor(private $state: IStateService, private $log: ILogService, private CONSTANTS: any,
-                private authServiceRS: AuthServiceRS, private pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil,
+    constructor(private $state: IStateService, private $log: ILogService,
+                private authServiceRS: AuthServiceRS, private searchRS: SearchRS, private ebeguUtil: EbeguUtil,
                 private gesuchsperiodeRS: GesuchsperiodeRS, private fallRS: FallRS, private $translate: ITranslateService,
                 private mitteilungRS: MitteilungRS) {
     }
@@ -75,7 +75,7 @@ export class GesuchstellerDashboardListViewController {
         return this.fallRS.findFallByCurrentBenutzerAsBesitzer().then((existingFall: TSFall) => {
             if (existingFall) {
                 this.fallId = existingFall.id;
-                return this.pendenzRS.getAntraegeGesuchstellerList().then((response: any) => {
+                return this.searchRS.getAntraegeGesuchstellerList().then((response: any) => {
                     this.antragList = angular.copy(response);
                     return this.antragList;
                 });

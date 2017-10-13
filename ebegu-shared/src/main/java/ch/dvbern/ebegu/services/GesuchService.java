@@ -118,14 +118,6 @@ public interface GesuchService {
 
 	/**
 	 * Gibt alle existierenden Gesuche zurueck, deren Status nicht VERFUEGT ist
-	 *
-	 * @return Liste aller Gesuche aus der DB
-	 */
-	@Nonnull
-	Collection<Gesuch> getAllActiveGesuche();
-
-	/**
-	 * Gibt alle existierenden Gesuche zurueck, deren Status nicht VERFUEGT ist
 	 * und die dem übergebenen Benutzer als "Verantwortliche Person" zugeteilt sind.
 	 *
 	 * @return Liste aller Gesuche aus der DB
@@ -153,13 +145,6 @@ public interface GesuchService {
 	 */
 	@Nonnull
 	List<Gesuch> getAntraegeByCurrentBenutzer();
-
-	/**
-	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
-	 *
-	 * @return Resultatpaar, der erste Wert im Paar ist die Anzahl Resultate, der zweite Wert ist die Resultatliste
-	 */
-	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragTableFilterDto);
 
 	/**
 	 * Gibt ein DTO mit saemtlichen Antragen eins bestimmten Falls zurueck
