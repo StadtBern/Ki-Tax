@@ -107,6 +107,7 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 		AuthDataUtil.getBasePath(request);
 		if (path.startsWith(apiBasePath + "/auth/login")
 			|| path.startsWith(apiBasePath + "/connector/heartbeat")
+			|| path.startsWith(apiBasePath + "/schulamt/heartbeat")
 			|| path.startsWith(apiBasePath + "/auth/singleSignOn")
 			|| path.startsWith(apiBasePath + "/auth/singleLogout")
 			|| path.startsWith(apiBasePath + "/swagger.json")
@@ -125,6 +126,10 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 
 		if (path.startsWith(apiBasePath + "/connector")) {
 			return checkAuthorizationForInternalApiAccess(request, httpMsgContext);
+		}
+
+		if (path.startsWith(apiBasePath + "/schulamt")) {
+			return checkAuthorizationForSchulamtApiAccess(request, httpMsgContext);
 		}
 
 		//pages that do not fall under de security-context that was defined in webx.xml
@@ -211,6 +216,14 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 				return setResponseUnauthorised(httpMsgContext);
 			}
 		}
+	}
+
+	private AuthStatus checkAuthorizationForSchulamtApiAccess(HttpServletRequest request, HttpMsgContext httpMsgContext) {
+		//TODO (team) Richtiges Login mit User/Password!
+		LOG.info("Logging in directly as Admin: Schulamt-Schnittstelle. TODO User/Pwd");
+		List<String> roles = new ArrayList<>();
+		roles.add(UserRoleName.SUPER_ADMIN);
+		return httpMsgContext.notifyContainerAboutLogin("SchulamtSchnittstelle", roles);
 	}
 
 	private void prepareLogvars(HttpMsgContext msgContext) {
