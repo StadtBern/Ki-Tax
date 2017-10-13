@@ -26,7 +26,7 @@ export default class PendenzInstitutionRS {
     static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log'];
     /* @ngInject */
     constructor($http: IHttpService, private REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService) {
-        this.serviceURL = REST_API + 'pendenzen/institution';
+        this.serviceURL = REST_API + 'search/institution';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
         this.log = $log;

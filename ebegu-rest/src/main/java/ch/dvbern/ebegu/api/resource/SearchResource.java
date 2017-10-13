@@ -22,33 +22,46 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
 import ch.dvbern.ebegu.api.dtos.JaxPendenzInstitution;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.SearchService;
+import ch.dvbern.ebegu.util.MonitoringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * REST Resource fuer Pendenzen
  */
-@Path("pendenzen")
+@Path("search")
 @Stateless
-@Api(description = "Resource für die Verwaltung der Pendenzlisten")
-public class PendenzResource {
+@Api(description = "Resource für die Verwaltung der Pendenzlisten und die Fall-Suche")
+public class SearchResource {
 
 	@Inject
 	private JaxBConverter converter;
@@ -57,10 +70,17 @@ public class PendenzResource {
 	private GesuchService gesuchService;
 
 	@Inject
+	private SearchService searchService;
+
+	@Inject
 	private BetreuungService betreuungService;
 
 	@Inject
 	private PrincipalBean principalBean;
+
+	@Inject
+	private InstitutionService institutionService;
+
 
 	/**
 	 * Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck.
@@ -69,17 +89,23 @@ public class PendenzResource {
 	@ApiOperation(value = "Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck",
 		responseContainer = "List", response = JaxAntragDTO.class)
 	@Nonnull
-	@GET
-	@Consumes(MediaType.WILDCARD)
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/jugendamt")
-	public List<JaxAntragDTO> getAllPendenzenJA() {
-		Collection<Gesuch> gesucheList = gesuchService.getAllActiveGesuche();
+	public Response getAllPendenzenJA(
+		@Nonnull @NotNull AntragTableFilterDTO antragSearch,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) {
 
-		List<JaxAntragDTO> pendenzenList = new ArrayList<>();
-		gesucheList.stream().filter(gesuch -> gesuch.getFall() != null)
-			.forEach(gesuch -> pendenzenList.add(converter.gesuchToAntragDTO(gesuch, principalBean.discoverMostPrivilegedRole())));
-		return pendenzenList;
+		return MonitoringUtil.monitor(SearchResource.class, "getAllPendenzenJA", () -> {
+			Pair<Long, List<Gesuch>> searchResultPair = searchService.searchPendenzen(antragSearch);
+			List<Gesuch> foundAntraege = searchResultPair.getRight();
+
+			List<JaxAntragDTO> antragDTOList = convertAntraegeToDTO(foundAntraege);
+			JaxAntragSearchresultDTO resultDTO = buildResultDTO(antragSearch, searchResultPair, antragDTOList);
+			return Response.ok(resultDTO).build();
+		});
 	}
 
 	/**
@@ -92,7 +118,7 @@ public class PendenzResource {
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/jugendamt/{benutzername}")
+	@Path("/jugendamt/user/{benutzername}")
 	public List<JaxAntragDTO> getAllPendenzenJA(@Nonnull @NotNull @PathParam("benutzername") String benutzername) {
 		Validate.notNull(benutzername);
 		Collection<Gesuch> gesucheList = gesuchService.getAllActiveGesucheOfVerantwortlichePerson(benutzername);
@@ -154,10 +180,55 @@ public class PendenzResource {
 		return convertToAntragDTOList(antraege);
 	}
 
+	@ApiOperation(value = "Sucht Antraege mit den uebergebenen Suchkriterien/Filtern. Es werden nur Antraege zurueck " +
+		"gegeben, fuer die der eingeloggte Benutzer berechtigt ist.", response = JaxAntragSearchresultDTO.class)
+	@Nonnull
+	@POST
+	@Path("/search")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response searchAntraege(
+		@Nonnull @NotNull AntragTableFilterDTO antragSearch,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) {
+
+		return MonitoringUtil.monitor(GesuchResource.class, "searchAntraege", () -> {
+			Pair<Long, List<Gesuch>> searchResultPair = searchService.searchAllAntraege(antragSearch);
+			List<Gesuch> foundAntraege = searchResultPair.getRight();
+
+			List<JaxAntragDTO> antragDTOList = convertAntraegeToDTO(foundAntraege);
+			JaxAntragSearchresultDTO resultDTO = buildResultDTO(antragSearch, searchResultPair, antragDTOList);
+			return Response.ok(resultDTO).build();
+		});
+	}
+
 	@Nonnull
 	private List<JaxAntragDTO> convertToAntragDTOList(List<Gesuch> antraege) {
 		List<JaxAntragDTO> pendenzenList = new ArrayList<>();
 		antraege.forEach(gesuch -> pendenzenList.add(converter.gesuchToAntragDTO(gesuch, principalBean.discoverMostPrivilegedRole())));
 		return pendenzenList;
+	}
+
+	@Nonnull
+	private List<JaxAntragDTO> convertAntraegeToDTO(List<Gesuch> foundAntraege) {
+		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+
+		List<JaxAntragDTO> antragDTOList = new ArrayList<>(foundAntraege.size());
+		foundAntraege.forEach(gesuch -> {
+			JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch, principalBean.discoverMostPrivilegedRole(), allowedInst);
+			antragDTO.setFamilienName(gesuch.extractFamiliennamenString());
+			antragDTOList.add(antragDTO);
+		});
+		return antragDTOList;
+	}
+
+	@Nonnull
+	private JaxAntragSearchresultDTO buildResultDTO(@Nonnull @NotNull AntragTableFilterDTO antragSearch, Pair<Long, List<Gesuch>> searchResultPair, List<JaxAntragDTO> antragDTOList) {
+		JaxAntragSearchresultDTO resultDTO = new JaxAntragSearchresultDTO();
+		resultDTO.setAntragDTOs(antragDTOList);
+		PaginationDTO pagination = antragSearch.getPagination();
+		pagination.setTotalItemCount(searchResultPair.getLeft());
+		resultDTO.setPaginationDTO(pagination);
+		return resultDTO;
 	}
 }

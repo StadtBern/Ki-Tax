@@ -20,8 +20,8 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import TSAntragDTO from '../../../models/TSAntragDTO';
 import TSAntragSearchresultDTO from '../../../models/TSAntragSearchresultDTO';
-import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import SearchRS from '../../../gesuch/service/searchRS.rest';
 
 let template = require('./pendenzenSteueramtListView.html');
 
@@ -38,10 +38,10 @@ export class PendenzenSteueramtListViewController {
     TSRoleUtil: any;
 
 
-    static $inject: string[] = ['GesuchModelManager', '$state', '$log', 'GesuchRS'];
+    static $inject: string[] = ['GesuchModelManager', '$state', '$log', 'SearchRS'];
 
     constructor(private gesuchModelManager: GesuchModelManager, private $state: IStateService, private $log: ILogService,
-                private gesuchRS: GesuchRS) {
+                private searchRS: SearchRS) {
         this.TSRoleUtil = TSRoleUtil;
     }
 
@@ -58,7 +58,7 @@ export class PendenzenSteueramtListViewController {
 
     public passFilterToServer = (tableFilterState: any): IPromise<TSAntragSearchresultDTO> => {
         this.$log.debug('Triggering ServerFiltering with Filter Object', tableFilterState);
-        return this.gesuchRS.searchAntraege(tableFilterState).then((response: TSAntragSearchresultDTO) => {
+        return this.searchRS.searchAntraege(tableFilterState).then((response: TSAntragSearchresultDTO) => {
             this.totalResultCount = response.totalResultSize ? response.totalResultSize.toString() : '0';
             return response;
         });
@@ -77,5 +77,4 @@ export class PendenzenSteueramtListViewController {
             this.$state.go('gesuch.familiensituation', navObj);
         }
     }
-
 }
