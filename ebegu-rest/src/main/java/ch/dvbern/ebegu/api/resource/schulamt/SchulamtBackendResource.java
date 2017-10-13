@@ -82,7 +82,6 @@ public class SchulamtBackendResource {
 		return builder.toString();
 	}
 
-
 	@ApiOperation(value = "Gibt eine Anmeldung fuer ein Schulamt-Angebot zurueck (Tagesschule oder Ferieninsel)",
 		response = JaxExternalAnmeldung.class)
 	@GET
