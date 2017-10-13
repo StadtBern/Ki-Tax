@@ -34,7 +34,6 @@ export class PendenzenListViewComponentConfig implements IComponentOptions {
 
 export class PendenzenListViewController {
 
-    // private pendenzenList: Array<TSAntragDTO>;
     totalResultCount: string = '0';
 
     static $inject: string[] = ['GesuchModelManager', '$state', '$log', 'SearchRS'];

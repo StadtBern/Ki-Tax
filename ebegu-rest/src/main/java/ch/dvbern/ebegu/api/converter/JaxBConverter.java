@@ -2358,7 +2358,8 @@ public class JaxBConverter {
 
 	/**
 	 * Using the existing GesuchStatus and the UserRole it will translate the Status into the right one for this role.
-	 */public void disguiseStatus(Gesuch gesuch, JaxAntragDTO antrag, @Nullable UserRole userRole) {
+	 */
+	public void disguiseStatus(Gesuch gesuch, JaxAntragDTO antrag, @Nullable UserRole userRole) {
 		if (userRole != null) {
 			switch (userRole) {
 			case GESUCHSTELLER:
@@ -2375,7 +2376,8 @@ public class JaxBConverter {
 				}
 				break;
 			default:
-				break;}
+				break;
+			}
 		}
 	}
 

@@ -235,8 +235,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertFalse(einkommensverschlechterungInfo.getEkvFuerBasisJahrPlus2());
 	}
 
-
-
 	@Test
 	public void testAntragMutieren() throws Exception {
 

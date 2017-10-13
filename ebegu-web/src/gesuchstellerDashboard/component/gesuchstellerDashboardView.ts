@@ -51,10 +51,10 @@ export class GesuchstellerDashboardListViewController {
     amountNewMitteilungen: number;
 
 
-    static $inject: string[] = ['$state', '$log', 'CONSTANTS', 'AuthServiceRS', 'SearchRS', 'EbeguUtil', 'GesuchsperiodeRS',
+    static $inject: string[] = ['$state', '$log', 'AuthServiceRS', 'SearchRS', 'EbeguUtil', 'GesuchsperiodeRS',
         'FallRS', '$translate', 'MitteilungRS'];
 
-    constructor(private $state: IStateService, private $log: ILogService, private CONSTANTS: any,
+    constructor(private $state: IStateService, private $log: ILogService,
                 private authServiceRS: AuthServiceRS, private searchRS: SearchRS, private ebeguUtil: EbeguUtil,
                 private gesuchsperiodeRS: GesuchsperiodeRS, private fallRS: FallRS, private $translate: ITranslateService,
                 private mitteilungRS: MitteilungRS) {

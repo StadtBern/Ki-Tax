@@ -26,11 +26,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
@@ -52,16 +55,12 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
 /**
  * REST Resource fuer Pendenzen
  */
 @Path("search")
 @Stateless
-@Api(description = "Resource für die Verwaltung der Pendenzlisten")
+@Api(description = "Resource für die Verwaltung der Pendenzlisten und die Fall-Suche")
 public class SearchResource {
 
 	@Inject

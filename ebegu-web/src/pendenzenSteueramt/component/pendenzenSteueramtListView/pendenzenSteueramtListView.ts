@@ -77,5 +77,4 @@ export class PendenzenSteueramtListViewController {
             this.$state.go('gesuch.familiensituation', navObj);
         }
     }
-
 }

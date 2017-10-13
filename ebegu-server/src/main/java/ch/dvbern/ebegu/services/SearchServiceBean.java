@@ -110,7 +110,6 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 		return countAndSearchAntraege(antragTableFilterDto, true);
 	}
 
-
 	@Override
 	@PermitAll
 	public Pair<Long, List<Gesuch>> searchAllAntraege(@Nonnull AntragTableFilterDTO antragTableFilterDto) {

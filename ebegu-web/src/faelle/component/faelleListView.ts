@@ -42,12 +42,11 @@ export class FaelleListViewController {
     totalResultCount: string = '0';
 
 
-    static $inject: string[] = ['$filter', 'GesuchModelManager', 'BerechnungsManager', '$state',
-        '$log', 'CONSTANTS', 'AuthServiceRS', '$q', 'SearchRS'];
+    static $inject: string[] = ['$filter', 'GesuchModelManager', '$state', '$log', 'AuthServiceRS', 'SearchRS'];
 
-    constructor(private $filter: IFilterService, private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
-                private $state: IStateService, private $log: ILogService, private CONSTANTS: any,
-                private authServiceRS: AuthServiceRS, private $q: IQService, private searchRS: SearchRS) {
+    constructor(private $filter: IFilterService, private gesuchModelManager: GesuchModelManager,
+                private $state: IStateService, private $log: ILogService,
+                private authServiceRS: AuthServiceRS, private searchRS: SearchRS) {
         this.initViewModel();
     }
 
@@ -66,7 +65,6 @@ export class FaelleListViewController {
         });
 
     }
-
 
     public getAntragList(): Array<TSAntragDTO> {
         return this.antragList;

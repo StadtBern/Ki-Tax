@@ -74,5 +74,4 @@ export default class SearchRS implements IEntityRS {
                 return this.ebeguRestUtil.parseAntragDTOs(response.data);
             });
     }
-
 }
