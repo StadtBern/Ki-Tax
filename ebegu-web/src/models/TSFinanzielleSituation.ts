@@ -20,23 +20,18 @@ export default class TSFinanzielleSituation extends TSAbstractFinanzielleSituati
     private _nettolohn: number;
     private _geschaeftsgewinnBasisjahrMinus2: number;
     private _geschaeftsgewinnBasisjahrMinus1: number;
-    private _sozialhilfeBezueger: boolean;
-    private _verguenstigungGewuenscht: boolean;
 
 
     constructor(steuerveranlagungErhalten?: boolean, steuererklaerungAusgefuellt?: boolean, nettolohn?: number,
                 familienzulage?: number, ersatzeinkommen?: number, erhalteneAlimente?: number, bruttovermoegen?: number,
                 schulden?: number, geschaeftsgewinnBasisjahrMinus2?: number, geschaeftsgewinnBasisjahrMinus1?: number,
-                geschaeftsgewinnBasisjahr?: number, geleisteteAlimente?: number, sozialhilfeBezueger?: boolean,
-                verguenstigungGewuenscht?: boolean) {
+                geschaeftsgewinnBasisjahr?: number, geleisteteAlimente?: number) {
         super(steuerveranlagungErhalten, steuererklaerungAusgefuellt,
             familienzulage, ersatzeinkommen, erhalteneAlimente, bruttovermoegen,
             schulden, geschaeftsgewinnBasisjahr, geleisteteAlimente);
         this._nettolohn = nettolohn;
         this._geschaeftsgewinnBasisjahrMinus2 = geschaeftsgewinnBasisjahrMinus2;
         this._geschaeftsgewinnBasisjahrMinus1 = geschaeftsgewinnBasisjahrMinus1;
-        this._sozialhilfeBezueger = sozialhilfeBezueger;
-        this._verguenstigungGewuenscht = verguenstigungGewuenscht;
     }
 
     get nettolohn(): number {
@@ -61,22 +56,6 @@ export default class TSFinanzielleSituation extends TSAbstractFinanzielleSituati
 
     set geschaeftsgewinnBasisjahrMinus1(value: number) {
         this._geschaeftsgewinnBasisjahrMinus1 = value;
-    }
-
-    public get sozialhilfeBezueger(): boolean {
-        return this._sozialhilfeBezueger;
-    }
-
-    public set sozialhilfeBezueger(value: boolean) {
-        this._sozialhilfeBezueger = value;
-    }
-
-    public get verguenstigungGewuenscht(): boolean {
-        return this._verguenstigungGewuenscht;
-    }
-
-    public set verguenstigungGewuenscht(value: boolean) {
-        this._verguenstigungGewuenscht = value;
     }
 
     public isSelbstaendig(): boolean {

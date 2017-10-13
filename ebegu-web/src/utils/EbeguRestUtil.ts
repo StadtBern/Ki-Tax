@@ -473,6 +473,8 @@ export default class EbeguRestUtil {
             restFamiliensituation.gesuchstellerKardinalitaet = familiensituation.gesuchstellerKardinalitaet;
             restFamiliensituation.gemeinsameSteuererklaerung = familiensituation.gemeinsameSteuererklaerung;
             restFamiliensituation.aenderungPer = DateUtil.momentToLocalDate(familiensituation.aenderungPer);
+            restFamiliensituation.sozialhilfeBezueger = familiensituation.sozialhilfeBezueger;
+            restFamiliensituation.verguenstigungGewuenscht = familiensituation.verguenstigungGewuenscht;
             return restFamiliensituation;
         }
         return undefined;
@@ -522,6 +524,8 @@ export default class EbeguRestUtil {
             familiensituation.gesuchstellerKardinalitaet = familiensituationFromServer.gesuchstellerKardinalitaet;
             familiensituation.gemeinsameSteuererklaerung = familiensituationFromServer.gemeinsameSteuererklaerung;
             familiensituation.aenderungPer = DateUtil.localDateToMoment(familiensituationFromServer.aenderungPer);
+            familiensituation.sozialhilfeBezueger = familiensituationFromServer.sozialhilfeBezueger;
+            familiensituation.verguenstigungGewuenscht = familiensituationFromServer.verguenstigungGewuenscht;
             return familiensituation;
         }
         return undefined;
@@ -866,8 +870,6 @@ export default class EbeguRestUtil {
         restFinanzielleSituation.nettolohn = finanzielleSituation.nettolohn;
         restFinanzielleSituation.geschaeftsgewinnBasisjahrMinus2 = finanzielleSituation.geschaeftsgewinnBasisjahrMinus2;
         restFinanzielleSituation.geschaeftsgewinnBasisjahrMinus1 = finanzielleSituation.geschaeftsgewinnBasisjahrMinus1;
-        restFinanzielleSituation.sozialhilfeBezueger = finanzielleSituation.sozialhilfeBezueger;
-        restFinanzielleSituation.verguenstigungGewuenscht = finanzielleSituation.verguenstigungGewuenscht;
         return restFinanzielleSituation;
     }
 
@@ -910,8 +912,6 @@ export default class EbeguRestUtil {
             finanzielleSituationTS.nettolohn = finanzielleSituationFromServer.nettolohn;
             finanzielleSituationTS.geschaeftsgewinnBasisjahrMinus2 = finanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus2;
             finanzielleSituationTS.geschaeftsgewinnBasisjahrMinus1 = finanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus1;
-            finanzielleSituationTS.sozialhilfeBezueger = finanzielleSituationFromServer.sozialhilfeBezueger;
-            finanzielleSituationTS.verguenstigungGewuenscht = finanzielleSituationFromServer.verguenstigungGewuenscht;
             return finanzielleSituationTS;
         }
         return undefined;

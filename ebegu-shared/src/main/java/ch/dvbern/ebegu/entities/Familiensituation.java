@@ -54,8 +54,18 @@ public class Familiensituation extends AbstractEntity {
 	@Column(nullable = true)
 	private Boolean gemeinsameSteuererklaerung;
 
+	// Diese beiden Felder werden nicht immer eingegeben, deswegen Boolean und nicht boolean, damit sie auch null sein duerfen
+	@Nullable
+	@Column(nullable = true)
+	private Boolean sozialhilfeBezueger;
+
+	@Nullable
+	@Column(nullable = true)
+	private Boolean verguenstigungGewuenscht;
+
 	@Column(nullable = true)
 	private LocalDate aenderungPer;
+
 
 	public Familiensituation() {
 	}
@@ -87,20 +97,40 @@ public class Familiensituation extends AbstractEntity {
 		this.gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
 	}
 
+	@Nullable
 	public Boolean getGemeinsameSteuererklaerung() {
 		return gemeinsameSteuererklaerung;
 	}
 
-	public void setGemeinsameSteuererklaerung(Boolean gemeinsameSteuererklaerung) {
+	public void setGemeinsameSteuererklaerung(@Nullable Boolean gemeinsameSteuererklaerung) {
 		this.gemeinsameSteuererklaerung = gemeinsameSteuererklaerung;
 	}
 
+	@Nullable
 	public LocalDate getAenderungPer() {
 		return aenderungPer;
 	}
 
-	public void setAenderungPer(LocalDate aenderungPer) {
+	public void setAenderungPer(@Nullable LocalDate aenderungPer) {
 		this.aenderungPer = aenderungPer;
+	}
+
+	@Nullable
+	public Boolean getSozialhilfeBezueger() {
+		return sozialhilfeBezueger;
+	}
+
+	public void setSozialhilfeBezueger(@Nullable Boolean sozialhilfeBezueger) {
+		this.sozialhilfeBezueger = sozialhilfeBezueger;
+	}
+
+	@Nullable
+	public Boolean getVerguenstigungGewuenscht() {
+		return verguenstigungGewuenscht;
+	}
+
+	public void setVerguenstigungGewuenscht(@Nullable Boolean verguenstigungGewuenscht) {
+		this.verguenstigungGewuenscht = verguenstigungGewuenscht;
 	}
 
 	@Transient
@@ -136,7 +166,9 @@ public class Familiensituation extends AbstractEntity {
 	private Familiensituation copyForMutationOrErneuerung(@Nonnull Familiensituation mutation) {
 		mutation.setFamilienstatus(this.getFamilienstatus());
 		mutation.setGemeinsameSteuererklaerung(this.getGemeinsameSteuererklaerung());
-		mutation.setGesuchstellerKardinalitaet(this.gesuchstellerKardinalitaet);
+		mutation.setGesuchstellerKardinalitaet(this.getGesuchstellerKardinalitaet());
+		mutation.setSozialhilfeBezueger(this.getSozialhilfeBezueger());
+		mutation.setVerguenstigungGewuenscht(this.getVerguenstigungGewuenscht());
 		return mutation;
 	}
 
@@ -156,7 +188,9 @@ public class Familiensituation extends AbstractEntity {
 		return Objects.equals(getAenderungPer(), otherFamiliensituation.getAenderungPer()) &&
 			Objects.equals(getFamilienstatus(), otherFamiliensituation.getFamilienstatus()) &&
 			Objects.equals(getGesuchstellerKardinalitaet(), otherFamiliensituation.getGesuchstellerKardinalitaet()) &&
-			EbeguUtil.isSameOrNullBoolean(getGemeinsameSteuererklaerung(), otherFamiliensituation.getGemeinsameSteuererklaerung());
+			EbeguUtil.isSameOrNullBoolean(getGemeinsameSteuererklaerung(), otherFamiliensituation.getGemeinsameSteuererklaerung()) &&
+			Objects.equals(getSozialhilfeBezueger(), otherFamiliensituation.getSozialhilfeBezueger()) &&
+			Objects.equals(getVerguenstigungGewuenscht(), otherFamiliensituation.getVerguenstigungGewuenscht());
 
 	}
 }
