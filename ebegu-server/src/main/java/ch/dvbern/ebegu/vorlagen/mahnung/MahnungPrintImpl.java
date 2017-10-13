@@ -109,7 +109,12 @@ public class MahnungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 
 	@Override
 	public String getMahnFristDatum() {
-		return Constants.DATE_FORMATTER.format(mahnung.getDatumFristablauf());
+		if (mahnung.getDatumFristablauf() != null) {
+			return Constants.DATE_FORMATTER.format(mahnung.getDatumFristablauf());
+		} else {
+			// Im Status ENTWURF ist noch kein Datum Fristablauf gesetzt
+			return "";
+		}
 	}
 
 	@Override
