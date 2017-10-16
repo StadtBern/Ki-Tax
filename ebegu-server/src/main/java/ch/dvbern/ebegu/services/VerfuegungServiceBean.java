@@ -102,16 +102,15 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		if (gesuch.isMutation() && betreuung.isAngebotKita()) { // Zahlungsstatus muss nur bei Mutationen und Angebote der Art KITA aktualisiert werden
 			Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuung);
 
-			for (VerfuegungZeitabschnitt verfuegungZeitabschnittNeu : verfuegung.getZeitabschnitte()) {
+			if (vorgaengerVerfuegung.isPresent()) {
+				for (VerfuegungZeitabschnitt verfuegungZeitabschnittNeu : verfuegung.getZeitabschnitte()) {
 
-				if (vorgaengerVerfuegung.isPresent()) {
 					List<VerfuegungZeitabschnitt> zeitabschnitteOnVorgaengerVerfuegung = findZeitabschnitteOnVorgaengerVerfuegung(verfuegungZeitabschnittNeu.getGueltigkeit(), vorgaengerVerfuegung.get());
 
 					Optional<VerfuegungZeitabschnitt> zeitabschnittSameGueltigkeitSameBetrag = VerfuegungUtil.findZeitabschnittSameGueltigkeitSameBetrag
 						(zeitabschnitteOnVorgaengerVerfuegung, verfuegungZeitabschnittNeu);
 
-					if (!zeitabschnittSameGueltigkeitSameBetrag.isPresent()) { // we only check the status if there has been any verrechnete zeitabschnitt. Otherwise
-						// NEU
+					if (!zeitabschnittSameGueltigkeitSameBetrag.isPresent()) { // we only check the status if there has been any verrechnete zeitabschnitt. Otherwise NEU
 						if (ignorieren) {
 							verfuegungZeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND);
 						} else {
