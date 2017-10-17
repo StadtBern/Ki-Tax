@@ -262,6 +262,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Predicate predicateStatus = joinBetreuung.get(Betreuung_.betreuungsstatus).in(Betreuungsstatus.VERFUEGT, Betreuungsstatus.STORNIERT);
 		predicates.add(predicateStatus);
 
+		query.orderBy(cb.asc(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigAb)));
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		return persistence.getCriteriaResults(query);
 	}
