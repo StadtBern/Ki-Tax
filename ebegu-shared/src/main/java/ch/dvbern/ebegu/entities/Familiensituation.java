@@ -66,7 +66,6 @@ public class Familiensituation extends AbstractEntity {
 	@Column(nullable = true)
 	private LocalDate aenderungPer;
 
-
 	public Familiensituation() {
 	}
 
