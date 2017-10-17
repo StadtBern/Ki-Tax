@@ -89,6 +89,8 @@ import TSEWKBeziehung from '../models/TSEWKBeziehung';
 import TSFallAntragDTO from '../models/TSFallAntragDTO';
 import TSModul from '../models/TSModul';
 import TSBelegung from '../models/TSBelegung';
+import TSFerieninselStammdaten from '../models/TSFerieninselStammdaten';
+import TSFerieninselZeitraum from '../models/TSFerieninselZeitraum';
 
 export default class EbeguRestUtil {
     static $inject = ['EbeguUtil'];
@@ -2343,6 +2345,51 @@ export default class EbeguRestUtil {
         if (belegungTS) {
             this.abstractEntityToRestObject(restBelegung, belegungTS);
             restBelegung.module = this.moduleArrayToRestObject(belegungTS.module);
+        }
+        return undefined;
+    }
+
+    public parseFerieninselStammdatenList(data: any): TSFerieninselStammdaten[] {
+        let ferieninselStammdatenList: TSFerieninselStammdaten[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                ferieninselStammdatenList[i] = this.parseFerieninselStammdaten(new TSFerieninselStammdaten(), data[i]);
+            }
+        } else {
+            ferieninselStammdatenList[0] = this.parseFerieninselStammdaten(new TSFerieninselStammdaten(), data);
+        }
+        return ferieninselStammdatenList;
+    }
+
+    public parseFerieninselStammdaten(ferieninselStammdatenTS: TSFerieninselStammdaten, receivedFerieninselStammdaten: any): TSFerieninselStammdaten {
+        if (receivedFerieninselStammdaten) {
+            this.parseAbstractEntity(ferieninselStammdatenTS, receivedFerieninselStammdaten);
+            ferieninselStammdatenTS.ferienname = receivedFerieninselStammdaten.ferienname;
+            ferieninselStammdatenTS.anmeldeschluss = DateUtil.localDateToMoment(receivedFerieninselStammdaten.anmeldeschluss);
+            ferieninselStammdatenTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), receivedFerieninselStammdaten.gesuchsperiode);
+            for (let i = 0; i < receivedFerieninselStammdaten.zeitraumList.length; i++) {
+                let zeitraum: TSFerieninselZeitraum = new TSFerieninselZeitraum();
+                this.parseDateRangeEntity(zeitraum, receivedFerieninselStammdaten.zeitraumList[i]);
+                ferieninselStammdatenTS.zeitraumList.push(zeitraum);
+            }
+            return ferieninselStammdatenTS;
+        }
+        return undefined;
+    }
+
+    public ferieninselStammdatenToRestObject(restFerieninselStammdaten: any, ferieninselStammdatenTS: TSFerieninselStammdaten): TSFerieninselStammdaten {
+        if (ferieninselStammdatenTS) {
+            this.abstractEntityToRestObject(restFerieninselStammdaten, ferieninselStammdatenTS);
+            restFerieninselStammdaten.ferienname = ferieninselStammdatenTS.ferienname;
+            restFerieninselStammdaten.anmeldeschluss = DateUtil.momentToLocalDate(ferieninselStammdatenTS.anmeldeschluss);
+            restFerieninselStammdaten.gesuchsperiode = this.gesuchsperiodeToRestObject({}, ferieninselStammdatenTS.gesuchsperiode);
+            for (let i = 0; i < ferieninselStammdatenTS.zeitraumList.length; i++) {
+                let zeitraum: any;
+                this.abstractDateRangeEntityToRestObject(zeitraum, ferieninselStammdatenTS.zeitraumList[i]);
+                ferieninselStammdatenTS.zeitraumList.push(zeitraum);
+            }
+
+            return restFerieninselStammdaten;
         }
         return undefined;
     }
