@@ -319,6 +319,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Predicate predicateStatus = joinBetreuung.get(Betreuung_.betreuungsstatus).in(Betreuungsstatus.VERFUEGT, Betreuungsstatus.STORNIERT);
 		predicates.add(predicateStatus);
 
+		query.orderBy(cb.asc(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigAb)));
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		return persistence.getCriteriaResults(query);
 	}
@@ -348,33 +349,16 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		List<VerfuegungZeitabschnitt> zeitabschnittOnVorgaengerVerfuegung = verfuegungService
 			.findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, zeitabschnittNeu.getVerfuegung().getBetreuung());
 		if (!zeitabschnittOnVorgaengerVerfuegung.isEmpty()) { // Korrekturen
-			BigDecimal vollkostenVorgaenger = BigDecimal.ZERO;
-			BigDecimal elternbeitragVorgaenger = BigDecimal.ZERO;
-			// Eventuell gab es fuer diesen Zeitabschnitt in der Vorgaengerverfuegung mehrere Abschnitte:
-			// Total der Vollkosten bzw. Elternbeitraege zusammenzaehlen
-			for (VerfuegungZeitabschnitt zeitabschnittBisher : zeitabschnittOnVorgaengerVerfuegung) {
+			Zahlung zahlung = findZahlungForInstitution(zeitabschnittNeu, zahlungsauftrag, zahlungProInstitution);
+			createZahlungspositionKorrekturNeuerWert(zeitabschnittNeu, zahlung); // Dies braucht man immer
+			for (VerfuegungZeitabschnitt vorgaengerZeitabschnitt : zeitabschnittOnVorgaengerVerfuegung) {
 				// Nur diejenigen Zeitabschnitte "korrigieren", die noch nicht VERRECHNET_KORRIGIERT sind, also noch im Status VERRECHNET
-				if (zeitabschnittBisher.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET) {
-					vollkostenVorgaenger = MathUtil.DEFAULT.add(vollkostenVorgaenger, zeitabschnittBisher.getVollkosten());
-					elternbeitragVorgaenger = MathUtil.DEFAULT.add(elternbeitragVorgaenger, zeitabschnittBisher.getElternbeitrag());
-				}
-			}
-			// Und ermitteln, ob es sich im Vergleich nur neuen Verfuegung geaendert hat
-			// Falls keine Aenderung -> Keine KorrekturZahlung notwendig!
-			boolean vollkostenChanged = vollkostenVorgaenger != null && vollkostenVorgaenger.compareTo(zeitabschnittNeu.getVollkosten()) != 0;
-			boolean elternbeitragChanged = elternbeitragVorgaenger != null && elternbeitragVorgaenger.compareTo(zeitabschnittNeu.getElternbeitrag()) != 0;
-			if (vollkostenChanged || elternbeitragChanged) {
-				// Irgendetwas hat geaendert, wir brauchen eine Korrekturzahlung
-				Zahlung zahlung = findZahlungForInstitution(zeitabschnittNeu, zahlungsauftrag, zahlungProInstitution);
-				createZahlungspositionKorrekturNeuerWert(zeitabschnittNeu, zahlung, vollkostenChanged);
-				for (VerfuegungZeitabschnitt vorgaengerZeitabschnitt : zeitabschnittOnVorgaengerVerfuegung) {
-					// Nur diejenigen Zeitabschnitte "korrigieren", die noch nicht VERRECHNET_KORRIGIERT sind, also noch im Status VERRECHNET
-					if (vorgaengerZeitabschnitt.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET) {
-						// Fuer die "alten" Verfuegungszeitabschnitte muessen Korrekturbuchungen erstellt werden
-						// Wenn die neuen Zeitabschnitte ignoriert sind, setzen wir die alten Zeitabschnitte auch als ignoriert
-						createZahlungspositionKorrekturAlterWert(vorgaengerZeitabschnitt, zahlung, vollkostenChanged,
-							zeitabschnittNeu.getZahlungsstatus().isIgnoriertIgnorierend());
-					}
+				if (vorgaengerZeitabschnitt.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET
+					|| vorgaengerZeitabschnitt.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT) {
+					// Fuer die "alten" Verfuegungszeitabschnitte muessen Korrekturbuchungen erstellt werden
+					// Wenn die neuen Zeitabschnitte ignoriert sind, setzen wir die alten Zeitabschnitte auch als ignoriert
+					createZahlungspositionKorrekturAlterWert(vorgaengerZeitabschnitt, zahlung,
+						zeitabschnittNeu.getZahlungsstatus().isIgnoriertIgnorierend());
 				}
 			}
 		} else { // Nachzahlungen bzw. Erstgesuche die rueckwirkend ausbezahlt werden muessen
@@ -385,13 +369,13 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	/**
 	 * Erstellt eine Zahlungsposition fuer eine Korrekturzahlung mit dem *neu gueltigen* Wert
 	 */
-	private void createZahlungspositionKorrekturNeuerWert(@Nonnull VerfuegungZeitabschnitt zeitabschnitt, @Nonnull Zahlung zahlung, boolean vollkostenChanged) {
+	private void createZahlungspositionKorrekturNeuerWert(@Nonnull VerfuegungZeitabschnitt zeitabschnitt, @Nonnull Zahlung zahlung) {
 		Zahlungsposition zahlungsposition = new Zahlungsposition();
 		zahlungsposition.setVerfuegungZeitabschnitt(zeitabschnitt);
 		zahlungsposition.setBetrag(zeitabschnitt.getVerguenstigung());
 		zahlungsposition.setZahlung(zahlung);
 		zahlungsposition.setIgnoriert(zeitabschnitt.getZahlungsstatus().isIgnoriertIgnorierend());
-		ZahlungspositionStatus status = vollkostenChanged ? ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN : ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG;
+		ZahlungspositionStatus status = ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN;
 		zahlungsposition.setStatus(status);
 		if (!zeitabschnitt.getZahlungsstatus().isIgnoriertIgnorierend()) {
 			zeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET);
@@ -404,17 +388,21 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	/**
 	 * Erstellt eine Zahlungsposition fuer eine Korrekturzahlung mit der Korrektur des *alten Wertes* (negiert)
 	 */
-	private void createZahlungspositionKorrekturAlterWert(@Nonnull VerfuegungZeitabschnitt vorgaengerZeitabschnitt, @Nonnull Zahlung zahlung, boolean vollkostenChanged,
-		boolean ignoriert) {
+	private void createZahlungspositionKorrekturAlterWert(@Nonnull VerfuegungZeitabschnitt vorgaengerZeitabschnitt, @Nonnull Zahlung zahlung,
+														  boolean ignoriert) {
 		Zahlungsposition korrekturPosition = new Zahlungsposition();
 		korrekturPosition.setVerfuegungZeitabschnitt(vorgaengerZeitabschnitt);
 		korrekturPosition.setBetrag(vorgaengerZeitabschnitt.getVerguenstigung().negate());
 		korrekturPosition.setZahlung(zahlung);
 		korrekturPosition.setIgnoriert(ignoriert); // ignoriert kommt vom neuen Zeitabschnitt
-		ZahlungspositionStatus status = vollkostenChanged ? ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN : ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG;
+		ZahlungspositionStatus status = ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN;
 		korrekturPosition.setStatus(status);
 		zahlung.getZahlungspositionen().add(korrekturPosition);
-		vorgaengerZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT);
+		if (vorgaengerZeitabschnitt.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT) {
+			vorgaengerZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT_KORRIGIERT);
+		} else { // by default VERRECHNET_KORRIGIERT
+			vorgaengerZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT);
+		}
 	}
 
 	/**

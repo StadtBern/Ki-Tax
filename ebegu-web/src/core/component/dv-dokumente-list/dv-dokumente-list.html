@@ -34,6 +34,8 @@
                     <th id="{{vm.tableId +'-tag'}}" width="20%" ng-if="vm.tag">
                         <span data-translate="{{vm.tag}}"></span>
                     </th>
+                    <th ng-if="!vm.tag">
+                    </th>
 
                     <th id="{{vm.tableId +'-fuer'}}" width="25%">
                         <span data-translate="DOK_FUER"> </span>
@@ -62,6 +64,8 @@
 
                     <!--with tag-->
                     <td headers="{{vm.tableId +'-tag'}}"  ng-bind="row.tag" ng-if="!vm.sonstige && vm.tag"
+                        ng-class="{'documents-vailable': vm.hasDokuments(row),'no-documents': !vm.hasDokuments(row)}"></td>
+                    <td ng-if="!vm.sonstige && !vm.tag"
                         ng-class="{'documents-vailable': vm.hasDokuments(row),'no-documents': !vm.hasDokuments(row)}"></td>
 
                     <td headers="{{vm.tableId +'-fuer'}}"  ng-bind="vm.extractFullName(row)"
