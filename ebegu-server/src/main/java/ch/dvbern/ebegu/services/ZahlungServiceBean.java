@@ -296,7 +296,8 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 			createZahlungspositionKorrekturNeuerWert(zeitabschnittNeu, zahlung); // Dies braucht man immer
 			for (VerfuegungZeitabschnitt vorgaengerZeitabschnitt : zeitabschnittOnVorgaengerVerfuegung) {
 				// Nur diejenigen Zeitabschnitte "korrigieren", die noch nicht VERRECHNET_KORRIGIERT sind, also noch im Status VERRECHNET
-				if (vorgaengerZeitabschnitt.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET) {
+				if (vorgaengerZeitabschnitt.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET
+					|| vorgaengerZeitabschnitt.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT) {
 					// Fuer die "alten" Verfuegungszeitabschnitte muessen Korrekturbuchungen erstellt werden
 					// Wenn die neuen Zeitabschnitte ignoriert sind, setzen wir die alten Zeitabschnitte auch als ignoriert
 					createZahlungspositionKorrekturAlterWert(vorgaengerZeitabschnitt, zahlung,
@@ -341,7 +342,11 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		ZahlungspositionStatus status = ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN;
 		korrekturPosition.setStatus(status);
 		zahlung.getZahlungspositionen().add(korrekturPosition);
-		vorgaengerZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT);
+		if (vorgaengerZeitabschnitt.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT) {
+			vorgaengerZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT_KORRIGIERT);
+		} else { // by default VERRECHNET_KORRIGIERT
+			vorgaengerZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT);
+		}
 	}
 
 	/**

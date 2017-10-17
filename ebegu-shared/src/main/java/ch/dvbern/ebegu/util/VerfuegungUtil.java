@@ -76,17 +76,20 @@ public class VerfuegungUtil {
 		for (VerfuegungZeitabschnitt zeitabschnittGSM : zeitabschnitteGSM) {
 			if (zeitabschnittGSM.getGueltigkeit().getOverlap(newZeitabschnitt.getGueltigkeit()).isPresent()) {
 				// wir gehen davon aus, dass Zahlung immer fuer einen ganzen Monat gemacht werden, deswegen reicht es wenn ein Zeitabschnitt VERRECHNET bzw. IGNORIERT ist
-				if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET)) {
+				if (zeitabschnittGSM.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET) {
 					return VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET;
 				}
-				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT)) {
+				if (zeitabschnittGSM.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT) {
 					return VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT;
 				}
-				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND)) {
+				if (zeitabschnittGSM.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND) {
 					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND;
 				}
-				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT)) {
+				if (zeitabschnittGSM.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT) {
 					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT;
+				}
+				if (zeitabschnittGSM.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT_KORRIGIERT) {
+					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT_KORRIGIERT;
 				}
 			}
 		}
