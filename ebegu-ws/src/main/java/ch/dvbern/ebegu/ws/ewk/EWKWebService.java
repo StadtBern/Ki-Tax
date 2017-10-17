@@ -60,7 +60,7 @@ public class EWKWebService implements IEWKWebService {
 	private static final String RETURN_CODE_OKAY = "00";
 	private static final String RETURN_CODE_NO_RESULT = "01";
 
-	private static final Logger logger = LoggerFactory.getLogger(EWKWebService.class.getSimpleName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(EWKWebService.class.getSimpleName());
 	public static final String METHOD_NAME_SUCHE_PERSON = "suchePerson";
 	public static final String METHOD_NAME_INIT_PERSONEN_SUCHE = "initPersonenSucheServicePort";
 
@@ -131,16 +131,16 @@ public class EWKWebService implements IEWKWebService {
 	private void handleResponseStatus(@Nonnull PersonenSucheResp response) throws PersonenSucheServiceBusinessException, PersonenSucheServiceException {
 		ReturnMessage returnMessage = response.getReturnMessage();
 		if (returnMessage == null) {
-			logger.error("Das Statusobjekt aus der Response vom SARI Service war null, dies ist unerwartet und darf nicht vorkommen");
+			LOGGER.error("Das Statusobjekt aus der Response vom SARI Service war null, dies ist unerwartet und darf nicht vorkommen");
 			throw new PersonenSucheServiceException("handleResponseStatus", "Status der Response muss gesetzt sein");
 		}
 		//wenn der Status nicht 0 ist ist es ein Fehler
 		if (!RETURN_CODE_OKAY.equals(returnMessage.getCode()) && !RETURN_CODE_NO_RESULT.equals(returnMessage.getCode())) {
 			String msg = "EWK: Fehler bei Webservice Aufruf: " + returnMessage.getCode() + " / " + returnMessage.getText();
-			logger.error(msg);
+			LOGGER.error(msg);
 			throw new PersonenSucheServiceBusinessException("handleResponseStatus", returnMessage.getCode(), returnMessage.getText());
 		} else {
-			logger.debug("Response indicates SUCCESS");
+			LOGGER.debug("Response indicates SUCCESS");
 		}
 	}
 
@@ -158,7 +158,7 @@ public class EWKWebService implements IEWKWebService {
 
 	@SuppressWarnings("PMD.NcssMethodCount")
 	private void initPersonenSucheServicePort() throws PersonenSucheServiceException {
-		logger.info("Initialising PersonenSucheService:");
+		LOGGER.info("Initialising PersonenSucheService:");
 		if (port == null) {
 			String endpointURL = config.getPersonenSucheEndpoint();
 			String wsdlURL = config.getPersonenSucheWsdl();
@@ -173,19 +173,19 @@ public class EWKWebService implements IEWKWebService {
 			if (StringUtils.isEmpty(password)) {
 				throw new PersonenSucheServiceException(METHOD_NAME_INIT_PERSONEN_SUCHE, "Es wurde keine Passwort definiert fuer den PersonenSuche Service");
 			}
-			logger.info("PersonenSucheService Endpoint: " + endpointURL);
-			logger.info("PersonenSucheService Username: " + username);
+			LOGGER.info("PersonenSucheService Endpoint: " + endpointURL);
+			LOGGER.info("PersonenSucheService Username: " + username);
 
 			URL url;
 			try {
 				// Test der neu mitgeteilten WSDL-URL:
 				url = new URL(wsdlURL);
-				logger.info("PersonenSucheService WSDL: " + url);
+				LOGGER.info("PersonenSucheService WSDL: " + url);
 				Object content = url.getContent();
-				logger.info("PersonenSucheService WSDL-Content: " + content);
+				LOGGER.info("PersonenSucheService WSDL-Content: " + content);
 			} catch (IOException e) {
 				url = null;
-				logger.error("PersonenSucheService WSDL not found: ", e);
+				LOGGER.error("PersonenSucheService WSDL not found: ", e);
 			}
 
 			try {
@@ -193,16 +193,16 @@ public class EWKWebService implements IEWKWebService {
 					// WSDL wird mitgeliefert. Die EndpointURL?wsdl funktioniert so nicht.
 					url = EWKWebService.class.getResource("/wsdl/Stadt_Bern_E-BEGU_Personensuche_v1.2.wsdl");
 					Validate.notNull(url, "WSDL konnte unter der angegebenen URI nicht gefunden werden. Kann Service-Port nicht erstellen");
-					logger.info("PersonenSucheService URL: " + url);
+					LOGGER.info("PersonenSucheService URL: " + url);
 				}
-				logger.info("PersonenSucheService TargetNameSpace: " + TARGET_NAME_SPACE);
-				logger.info("PersonenSucheService ServiceName: " + SERVICE_NAME);
+				LOGGER.info("PersonenSucheService TargetNameSpace: " + TARGET_NAME_SPACE);
+				LOGGER.info("PersonenSucheService ServiceName: " + SERVICE_NAME);
 				final QName qname = new QName(TARGET_NAME_SPACE, SERVICE_NAME);
-				logger.info("PersonenSucheService QName: " + qname);
+				LOGGER.info("PersonenSucheService QName: " + qname);
 				final Service service = Service.create(url, qname);
-				logger.info("PersonenSucheService Service created: " + service);
+				LOGGER.info("PersonenSucheService Service created: " + service);
 				port = service.getPort(PersonenSucheOB.class);
-				logger.info("PersonenSucheService Port created: " + port);
+				LOGGER.info("PersonenSucheService Port created: " + port);
 				final BindingProvider bp = (BindingProvider) port;
 
 				bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointURL);
@@ -214,17 +214,17 @@ public class EWKWebService implements IEWKWebService {
 				String authorizationHeaderValue = "Basic " + DatatypeConverter.printBase64Binary(usernameAndPassword.getBytes(UTF8));
 				headers.put(authorizationHeaderName, Collections.singletonList(authorizationHeaderValue));
 				bp.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, headers);
-				logger.info("PersonenSucheService Authorization Header set");
+				LOGGER.info("PersonenSucheService Authorization Header set");
 
 				bp.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
 				bp.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
-				logger.info("PersonenSucheService Context Properties set (Endpoint, Username, Password)");
+				LOGGER.info("PersonenSucheService Context Properties set (Endpoint, Username, Password)");
 			} catch (RuntimeException e) {
 				port = null;
-				logger.error("PersonenSucheOB-Service konnte nicht initialisiert werden: ", e);
+				LOGGER.error("PersonenSucheOB-Service konnte nicht initialisiert werden: ", e);
 				throw new PersonenSucheServiceException(METHOD_NAME_INIT_PERSONEN_SUCHE, "Could not create service port for endpoint " + endpointURL, e);
 			}
 		}
-		logger.info("PersonenSucheService erfolgreich initialisiert");
+		LOGGER.info("PersonenSucheService erfolgreich initialisiert");
 	}
 }

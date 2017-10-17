@@ -13,6 +13,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-.searchListView {
-    padding: 3rem;
-}
+import {EbeguWebCore} from '../core/core.module';
+import {DVQuicksearchListConfig} from './component/dv-quicksearch-list/dv-quicksearch-list';
+import {QuicksearchFilter} from './filter/quicksearchFilter';
+
+export const EbeguWebQuicksearch =
+    angular.module('ebeguWeb.quicksearch', [EbeguWebCore.name])
+        .filter('quicksearchFilter', QuicksearchFilter)
+        .component('dvQuicksearchList', new DVQuicksearchListConfig());

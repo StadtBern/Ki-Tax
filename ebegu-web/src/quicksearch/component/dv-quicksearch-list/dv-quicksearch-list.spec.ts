@@ -24,17 +24,17 @@ import {IStateService} from 'angular-ui-router';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import TSGesuch from '../../../models/TSGesuch';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
-import PendenzRS from '../../../pendenzen/service/PendenzRS.rest';
-import {EbeguWebPendenzen} from '../../../pendenzen/pendenzen.module';
-import {DVPendenzenListController} from './dv-pendenzen-list';
+import {DVQuicksearchListController} from './dv-quicksearch-list';
+import SearchRS from '../../../gesuch/service/searchRS.rest';
+import {EbeguWebCore} from '../../../core/core.module';
 
-describe('DVPendenzenList', function () {
+describe('DVQuicksearchList', function () {
 
     let institutionRS: InstitutionRS;
     let gesuchsperiodeRS: GesuchsperiodeRS;
     let gesuchRS: GesuchRS;
-    let pendenzRS: PendenzRS;
-    let pendenzListViewController: DVPendenzenListController;
+    let searchRS: SearchRS;
+    let quicksearchListViewController: DVQuicksearchListController;
     let $q: IQService;
     let $scope: IScope;
     let $filter: IFilterService;
@@ -44,10 +44,10 @@ describe('DVPendenzenList', function () {
     let wizardStepManager: WizardStepManager;
 
 
-    beforeEach(angular.mock.module(EbeguWebPendenzen.name));
+    beforeEach(angular.mock.module(EbeguWebCore.name));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
-        pendenzRS = $injector.get('PendenzRS');
+        searchRS = $injector.get('SearchRS');
         institutionRS = $injector.get('InstitutionRS');
         gesuchsperiodeRS = $injector.get('GesuchsperiodeRS');
         $q = $injector.get('$q');
@@ -64,33 +64,33 @@ describe('DVPendenzenList', function () {
 
         describe('translateBetreuungsangebotTypList', () => {
             it('returns a comma separated string with all BetreuungsangebotTypen', () => {
-                pendenzListViewController = new DVPendenzenListController(undefined, $filter,
+                quicksearchListViewController = new DVQuicksearchListController(undefined, $filter,
                     institutionRS, gesuchsperiodeRS, $state, CONSTANTS, undefined);
                 let list: Array<TSBetreuungsangebotTyp> = [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND];
-                expect(pendenzListViewController.translateBetreuungsangebotTypList(list))
+                expect(quicksearchListViewController.translateBetreuungsangebotTypList(list))
                     .toEqual('Kita – Tagesstätte für Kleinkinder, Tageseltern für Kleinkinder');
             });
             it('returns an empty string for invalid values or empty lists', () => {
-                pendenzListViewController = new DVPendenzenListController(undefined, $filter,
+                quicksearchListViewController = new DVQuicksearchListController(undefined, $filter,
                     institutionRS, gesuchsperiodeRS, $state, CONSTANTS, undefined);
-                expect(pendenzListViewController.translateBetreuungsangebotTypList([])).toEqual('');
-                expect(pendenzListViewController.translateBetreuungsangebotTypList(undefined)).toEqual('');
-                expect(pendenzListViewController.translateBetreuungsangebotTypList(null)).toEqual('');
+                expect(quicksearchListViewController.translateBetreuungsangebotTypList([])).toEqual('');
+                expect(quicksearchListViewController.translateBetreuungsangebotTypList(undefined)).toEqual('');
+                expect(quicksearchListViewController.translateBetreuungsangebotTypList(null)).toEqual('');
             });
         });
-        describe('editPendenzJA', function () {
+        describe('editAntrag', function () {
             it('should call findGesuch and open the view gesuch.fallcreation with it', function () {
-                let mockPendenz: TSAntragDTO = mockGetPendenzenList();
+                let mockAntrag: TSAntragDTO = mockGetAntragList();
                 mockRestCalls();
                 spyOn($state, 'go');
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue(undefined);
-                pendenzListViewController = new DVPendenzenListController(undefined, $filter,
+                quicksearchListViewController = new DVQuicksearchListController(undefined, $filter,
                     institutionRS, gesuchsperiodeRS, $state, CONSTANTS, undefined);
 
                 let tsGesuch = new TSGesuch();
                 spyOn(gesuchRS, 'findGesuch').and.returnValue($q.when(tsGesuch));
 
-                pendenzListViewController.editPendenzJA(mockPendenz, undefined); //pendenz wird eidtiert
+                quicksearchListViewController.editAntrag(mockAntrag, undefined); //antrag wird eidtiert
                 $scope.$apply();
 
                 expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation', {createNew: false, gesuchId: '66345345'});
@@ -99,12 +99,12 @@ describe('DVPendenzenList', function () {
         });
     });
 
-    function mockGetPendenzenList(): TSAntragDTO {
-        let mockPendenz: TSAntragDTO = new TSAntragDTO('66345345', 123, 'name', TSAntragTyp.ERSTGESUCH,
+    function mockGetAntragList(): TSAntragDTO {
+        let mockAntrag: TSAntragDTO = new TSAntragDTO('66345345', 123, 'name', TSAntragTyp.ERSTGESUCH,
             undefined, undefined, undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined);
-        let result: Array<TSAntragDTO> = [mockPendenz];
-        spyOn(pendenzRS, 'getPendenzenList').and.returnValue($q.when(result));
-        return mockPendenz;
+        let result: Array<TSAntragDTO> = [mockAntrag];
+        spyOn(searchRS, 'getPendenzenList').and.returnValue($q.when(result));
+        return mockAntrag;
     }
 
     function mockRestCalls(): void {
