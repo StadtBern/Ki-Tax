@@ -15,8 +15,6 @@
 
 package ch.dvbern.ebegu.util;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,7 +24,6 @@ import javax.annotation.Nonnull;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
-import ch.dvbern.ebegu.types.DateRange;
 
 /**
  * Allgemeine Utils fuer Verfuegung
@@ -34,30 +31,6 @@ import ch.dvbern.ebegu.types.DateRange;
 public final class VerfuegungUtil {
 
 	private VerfuegungUtil() {
-	}
-
-	/**
-	 * Fuer die gegebene DateRange wird berechnet, wie viel Verguenstigung es insgesamt berechnet wurde.
-	 * Diese wird dann als BigDecimal zurueckgegeben
-	 * Formel: Verguenstigung * (overlappedDays / totalDays)
-	 */
-	public static BigDecimal getVerguenstigungZeitInterval(@Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull DateRange interval) {
-		BigDecimal totalVerguenstigung = BigDecimal.ZERO;
-		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitte) {
-			final DateRange abschnittGueltigkeit = zeitabschnitt.getGueltigkeit();
-
-			final Optional<DateRange> overlap = interval.getOverlap(abschnittGueltigkeit);
-			if (overlap.isPresent()) { // only if there is overlap is it needed to calculate
-				final BigDecimal overlappedDays = new BigDecimal(overlap.get().getDays());
-				final BigDecimal totalAbschnittDays = new BigDecimal(abschnittGueltigkeit.getDays());
-				final BigDecimal rate = overlappedDays.divide(totalAbschnittDays, 5, RoundingMode.HALF_UP);
-				final BigDecimal overlappedElternbeitrag = zeitabschnitt.getElternbeitrag().multiply(rate);
-				final BigDecimal overlappedVollkosten = zeitabschnitt.getVollkosten().multiply(rate);
-				final BigDecimal verguenstigung = overlappedVollkosten.subtract(overlappedElternbeitrag);
-				totalVerguenstigung = totalVerguenstigung.add(verguenstigung);
-			}
-		}
-		return totalVerguenstigung.setScale(2, RoundingMode.HALF_UP);
 	}
 
 	public static void setIsSameVerfuegungsdaten(@Nonnull Verfuegung verfuegung) {
@@ -89,6 +62,19 @@ public final class VerfuegungUtil {
 		return Optional.empty();
 	}
 
+	public static Optional<VerfuegungZeitabschnitt> findZeitabschnittSameGueltigkeitSameBetrag(List<VerfuegungZeitabschnitt> vorgaengerZeitabschnittList,
+		VerfuegungZeitabschnitt
+			newZeitabschnitt) {
+		for (VerfuegungZeitabschnitt zeitabschnittGSM : vorgaengerZeitabschnittList) {
+			if (zeitabschnittGSM.getGueltigkeit().equals(newZeitabschnitt.getGueltigkeit())
+				&& zeitabschnittGSM.getVerguenstigung().compareTo(newZeitabschnitt.getVerguenstigung()) == 0
+				&& zeitabschnittGSM.getAnspruchberechtigtesPensum() == newZeitabschnitt.getAnspruchberechtigtesPensum()) {
+				return Optional.of(zeitabschnittGSM);
+			}
+		}
+		return Optional.empty();
+	}
+
 	public static void setZahlungsstatus(@Nonnull Verfuegung verfuegung) {
 		final Verfuegung verfuegungOnGesuchForMutation = verfuegung.getBetreuung().getVorgaengerVerfuegung();
 		if (verfuegungOnGesuchForMutation != null) {
@@ -106,14 +92,20 @@ public final class VerfuegungUtil {
 		for (VerfuegungZeitabschnitt zeitabschnittGSM : zeitabschnitteGSM) {
 			if (zeitabschnittGSM.getGueltigkeit().getOverlap(newZeitabschnitt.getGueltigkeit()).isPresent()) {
 				// wir gehen davon aus, dass Zahlung immer fuer einen ganzen Monat gemacht werden, deswegen reicht es wenn ein Zeitabschnitt VERRECHNET bzw. IGNORIERT ist
-				if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET)) {
+				if (zeitabschnittGSM.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET) {
 					return VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET;
-				} else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT)) {
+				}
+				if (zeitabschnittGSM.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT) {
 					return VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET_KORRIGIERT;
-				} else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND)) {
+				}
+				if (zeitabschnittGSM.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND) {
 					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND;
-				} else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT)) {
+				}
+				if (zeitabschnittGSM.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT) {
 					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT;
+				}
+				if (zeitabschnittGSM.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT_KORRIGIERT) {
+					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT_KORRIGIERT;
 				}
 			}
 		}
