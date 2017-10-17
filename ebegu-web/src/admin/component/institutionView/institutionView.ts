@@ -65,7 +65,6 @@ export class InstitutionViewController extends AbstractAdminViewController {
     selectedInstitutionStammdaten: TSInstitutionStammdaten = undefined;
     betreuungsangebotValues: Array<any>;
     errormessage: string = undefined;
-    isNew: boolean;
 
     static $inject = ['InstitutionRS', 'InstitutionStammdatenRS', 'ErrorService', 'DvDialog', 'EbeguUtil', 'AuthServiceRS', '$stateParams', '$state'];
 
@@ -80,11 +79,9 @@ export class InstitutionViewController extends AbstractAdminViewController {
         this.setBetreuungsangebotTypValues();
         if (this.$stateParams.institutionId === '') {
             this.createInstitution();
-            this.isNew = true;
         } else {
             this.institutionRS.findInstitution(this.$stateParams.institutionId).then((found: TSInstitution) => {
                 this.setSelectedInstitution(found);
-                this.isNew = false;
             });
         }
     }
@@ -103,7 +100,7 @@ export class InstitutionViewController extends AbstractAdminViewController {
         this.selectedInstitution = institution;
         this.selectedInstitutionStammdaten = null;
         if (!this.isCreateInstitutionsMode()) {
-            this.institutionStammdatenRS.getAllInstitutionStammdatenByInstitution(this.$stateParams.institutionId).then((loadedInstStammdaten) => {
+            this.institutionStammdatenRS.getAllInstitutionStammdatenByInstitution(this.selectedInstitution.id).then((loadedInstStammdaten) => {
                 this.instStammdatenList = loadedInstStammdaten;
             });
         }
@@ -121,14 +118,14 @@ export class InstitutionViewController extends AbstractAdminViewController {
     saveInstitution(form: IFormController): void {
         if (form.$valid) {
             this.errorService.clearAll();
-            if (this.selectedInstitution.isNew()) {
-
+            if (this.isCreateInstitutionsMode()) {
                 this.institutionRS.createInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
                     if (!institution.synchronizedWithOpenIdm) {
                         this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
                             title: 'INSTITUTION_CREATE_SYNCHRONIZE'
                         });
                     }
+                    this.setSelectedInstitution(institution);
                 });
             } else {
                 this.institutionRS.updateInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
@@ -140,7 +137,6 @@ export class InstitutionViewController extends AbstractAdminViewController {
                 });
             }
         }
-
     }
 
     private goBack() {
@@ -157,18 +153,16 @@ export class InstitutionViewController extends AbstractAdminViewController {
             title: 'LOESCHEN_DIALOG_TITLE',
             parentController: undefined,
             elementID: undefined
-        })
-            .then(() => {   //User confirmed removal
-                this.institutionStammdatenRS.removeInstitutionStammdaten(institutionStammdaten.id).then((result) => {
-                    let index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
-                    if (index > -1) {
-                        this.instStammdatenList.splice(index, 1);
-                    }
-                }).catch((ex) => {
-                    this.errormessage = 'INSTITUTION_STAMMDATEN_DELETE_FAILED';
-                });
+        }).then(() => {   //User confirmed removal
+            this.institutionStammdatenRS.removeInstitutionStammdaten(institutionStammdaten.id).then((result) => {
+                let index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
+                if (index > -1) {
+                    this.instStammdatenList.splice(index, 1);
+                }
+            }).catch((ex) => {
+                this.errormessage = 'INSTITUTION_STAMMDATEN_DELETE_FAILED';
             });
-
+        });
     }
 
     getDateString(dateRange: TSDateRange, format: string): string {
@@ -214,7 +208,6 @@ export class InstitutionViewController extends AbstractAdminViewController {
         this.$state.go('institutionstammdaten', {
             institutionId: this.selectedInstitution.id,
             institutionStammdatenId: null
-
         });
     }
 

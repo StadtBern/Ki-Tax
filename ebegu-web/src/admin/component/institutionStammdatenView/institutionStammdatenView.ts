@@ -57,13 +57,12 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
     laenderList: TSLand[];
     errormessage: string = undefined;
     hasDifferentZahlungsadresse: boolean = false;
-    isNew: boolean;
 
     static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService', '$state', 'ListResourceRS', 'AuthServiceRS', '$stateParams'];
 
     constructor(private institutionRS: InstitutionRS, private ebeguUtil: EbeguUtil, private institutionStammdatenRS: InstitutionStammdatenRS,
-                private errorService: ErrorService, private $state: IStateService,
-                private listResourceRS: ListResourceRS, authServiceRS: AuthServiceRS, private $stateParams: IInstitutionStammdatenStateParams) {
+                private errorService: ErrorService, private $state: IStateService, private listResourceRS: ListResourceRS, authServiceRS: AuthServiceRS,
+                private $stateParams: IInstitutionStammdatenStateParams) {
         super(authServiceRS);
     }
 
@@ -76,12 +75,10 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
             this.institutionRS.findInstitution(this.$stateParams.institutionId).then((institution) => {
                 this.selectedInstitution = institution;
                 this.createInstitutionStammdaten();
-                this.isNew = true;
             });
         } else {
             this.institutionStammdatenRS.findInstitutionStammdaten(this.$stateParams.institutionStammdatenId).then((institutionStammdaten) => {
                 this.setSelectedInstitutionStammdaten(institutionStammdaten);
-                this.isNew = false;
             });
         }
     }
