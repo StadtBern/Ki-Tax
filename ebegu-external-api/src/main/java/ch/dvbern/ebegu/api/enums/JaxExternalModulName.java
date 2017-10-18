@@ -13,12 +13,33 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum TSDayOfWeek {
-    MONDAY = <any> 'MONDAY',
-    TUESDAY = <any> 'TUESDAY',
-    WEDNESDAY = <any> 'WEDNESDAY',
-    THURSDAY = <any> 'THURSDAY',
-    FRIDAY = <any> 'FRIDAY',
-    SATURDAY = <any> 'SATURDAY',
-    SUNDAY = <any> 'SUNDAY'
+package ch.dvbern.ebegu.api.enums;
+
+/**
+ * Enum fuer the names of the Modul for Tagesschule.
+ */
+public enum JaxExternalModulName {
+
+	VORMITTAG(1),
+	MITTAG(2),
+	MITTAG_HALB(3),
+	NACHMITTAGS_1(4),
+	NACHMITTAGS_1_HALB(5),
+	NACHMITTAGS_2(6),
+	NACHMITTAGS_2_HALB(7);
+
+	private final int stufe;
+
+	JaxExternalModulName(int stufe) {
+		this.stufe = stufe;
+	}
+
+	public static JaxExternalModulName getByStufe(int stufe) {
+		for (JaxExternalModulName o : values()) {
+			if (o.stufe == stufe) {
+				return o;
+			}
+		}
+		return null;
+	}
 }

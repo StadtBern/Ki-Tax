@@ -34,6 +34,7 @@ public final class DateUtil {
 	 * Parset den gegebenen String als LocalDate mit dem Format "yyyy-MM-dd"
 	 * Sollte der gegebene String null oder leer sein, wird now() zurueckgegeben
 	 */
+	@Nonnull
 	public static LocalDate parseStringToDateOrReturnNow(@Nullable String stringDate) {
 		LocalDate date = LocalDate.now();
 		if (stringDate != null && !stringDate.isEmpty()) {
@@ -46,6 +47,7 @@ public final class DateUtil {
 	 * Parset den gegebenen String als LocalDateTime mit dem Format "yyyy-MM-dd HH:mm:ss"
 	 * Sollte der gegebene String null oder leer sein, wird now() zurueckgegeben
 	 */
+	@Nonnull
 	public static LocalDateTime parseStringToDateTimeOrReturnNow(@Nonnull String stringDateTime) {
 		LocalDateTime date = LocalDateTime.now();
 		if (!stringDateTime.isEmpty()) {
