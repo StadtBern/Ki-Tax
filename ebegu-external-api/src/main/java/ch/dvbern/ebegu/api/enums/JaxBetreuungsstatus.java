@@ -13,12 +13,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum TSDayOfWeek {
-    MONDAY = <any> 'MONDAY',
-    TUESDAY = <any> 'TUESDAY',
-    WEDNESDAY = <any> 'WEDNESDAY',
-    THURSDAY = <any> 'THURSDAY',
-    FRIDAY = <any> 'FRIDAY',
-    SATURDAY = <any> 'SATURDAY',
-    SUNDAY = <any> 'SUNDAY'
+package ch.dvbern.ebegu.api.enums;
+
+public enum JaxBetreuungsstatus {
+
+	//TODO (team) werden von Scolaris alle Betreuungsstatus benötigt?
+
+	WARTEN,
+	SCHULAMT,
+	ABGEWIESEN,
+	NICHT_EINGETRETEN,
+	STORNIERT,
+	BESTAETIGT,
+	VERFUEGT,
+	GESCHLOSSEN_OHNE_VERFUEGUNG;
 }
