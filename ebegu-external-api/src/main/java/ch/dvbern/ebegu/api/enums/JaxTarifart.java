@@ -16,7 +16,7 @@
 package ch.dvbern.ebegu.api.enums;
 
 /**
- * Enum fuer den Status vom Gesuch.
+ * Enum fuer die Tarifart eines Gesuchs
  */
 public enum JaxTarifart {
 

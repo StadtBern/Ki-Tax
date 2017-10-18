@@ -105,7 +105,7 @@ public class SchulamtBackendResource {
 		Validate.notNull(bgNummer);
 
 		JaxExternalAnmeldung anmeldung;
-		if (bgNummer.endsWith("1")) {
+		if (bgNummer.endsWith("1")) {//todo dummy if
 			anmeldung = (JaxExternalAnmeldung) getAnmeldungFerieninsel(bgNummer).getEntity();
 		} else {
 			anmeldung = (JaxExternalAnmeldung) getAnmeldungTagesschule(bgNummer).getEntity();
@@ -167,7 +167,7 @@ public class SchulamtBackendResource {
 		return Response.noContent().build();
 	}
 
-	@ApiOperation(value = "Gibt eine Anmeldung fuer ein Schulamt-Angebot zurueck (Tagesschule oder Ferieninsel)", responseContainer = "List",
+	@ApiOperation(value = "Gibt das massgebende Einkommen fuer die uebergebenen Faelle (kommaseparierte Fall-Ids) zurueck (Tagesschule oder Ferieninsel). Falls das massgebende Einkommen noch nicht erfasst wurde, wird 204 zurueckgegeben.", responseContainer = "List",
 		response = JaxExternalFinanzielleSituation.class)
 	@ApiResponses({
 		@ApiResponse(code = 204, message = "no data found"),

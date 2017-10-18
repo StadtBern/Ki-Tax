@@ -97,7 +97,7 @@
 		},
 		"/schulamt/finanziellesituation" : {
 			"get" : {
-				"summary" : "Gibt eine Anmeldung fuer ein Schulamt-Angebot zurueck (Tagesschule oder Ferieninsel)",
+				"summary" : "Gibt das massgebende Einkommen fuer die uebergebenen Faelle (kommaseparierte Fall-Ids) zurueck (Tagesschule oder Ferieninsel). Falls das massgebende Einkommen noch nicht erfasst wurde, wird 204 zurueckgegeben.",
 				"description" : "",
 				"operationId" : "getFinanzielleSituation",
 				"consumes" : [ "*/*" ],
