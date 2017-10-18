@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.entities;
 
 import java.math.BigDecimal;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -34,12 +35,15 @@ public class FinanzielleSituation extends AbstractFinanzielleSituation {
 
 	private static final long serialVersionUID = -4401110366293613225L;
 
+	@Nullable
 	@Column(nullable = true)
 	private BigDecimal nettolohn;
 
+	@Nullable
 	@Column(nullable = true)
 	private BigDecimal geschaeftsgewinnBasisjahrMinus2;
 
+	@Nullable
 	@Column(nullable = true)
 	private BigDecimal geschaeftsgewinnBasisjahrMinus1;
 
@@ -51,28 +55,32 @@ public class FinanzielleSituation extends AbstractFinanzielleSituation {
 		return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(this);
 	}
 
+	@Nullable
 	@Override
 	public BigDecimal getNettolohn() {
 		return nettolohn;
 	}
 
-	public void setNettolohn(final BigDecimal nettolohn) {
+	@Nullable
+	public void setNettolohn(@Nullable final BigDecimal nettolohn) {
 		this.nettolohn = nettolohn;
 	}
 
+	@Nullable
 	public BigDecimal getGeschaeftsgewinnBasisjahrMinus2() {
 		return geschaeftsgewinnBasisjahrMinus2;
 	}
 
-	public void setGeschaeftsgewinnBasisjahrMinus2(final BigDecimal geschaeftsgewinnBasisjahrMinus2) {
+	public void setGeschaeftsgewinnBasisjahrMinus2(@Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus2) {
 		this.geschaeftsgewinnBasisjahrMinus2 = geschaeftsgewinnBasisjahrMinus2;
 	}
 
+	@Nullable
 	public BigDecimal getGeschaeftsgewinnBasisjahrMinus1() {
 		return geschaeftsgewinnBasisjahrMinus1;
 	}
 
-	public void setGeschaeftsgewinnBasisjahrMinus1(final BigDecimal geschaeftsgewinnBasisjahrMinus1) {
+	public void setGeschaeftsgewinnBasisjahrMinus1(@Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus1) {
 		this.geschaeftsgewinnBasisjahrMinus1 = geschaeftsgewinnBasisjahrMinus1;
 	}
 

@@ -50,6 +50,12 @@ public class JaxFamiliensituation extends JaxAbstractDTO {
 	private Boolean gemeinsameSteuererklaerung;
 
 	@Nullable
+	private Boolean sozialhilfeBezueger;
+
+	@Nullable
+	private Boolean verguenstigungGewuenscht;
+
+	@Nullable
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate aenderungPer = null;
 
@@ -82,11 +88,12 @@ public class JaxFamiliensituation extends JaxAbstractDTO {
 		this.gesuch = gesuch;
 	}
 
+	@NotNull
 	public Boolean getGemeinsameSteuererklaerung() {
 		return gemeinsameSteuererklaerung;
 	}
 
-	public void setGemeinsameSteuererklaerung(Boolean gemeinsameSteuererklaerung) {
+	public void setGemeinsameSteuererklaerung(@NotNull Boolean gemeinsameSteuererklaerung) {
 		this.gemeinsameSteuererklaerung = gemeinsameSteuererklaerung;
 	}
 
@@ -98,4 +105,23 @@ public class JaxFamiliensituation extends JaxAbstractDTO {
 	public void setAenderungPer(@Nullable LocalDate aenderungPer) {
 		this.aenderungPer = aenderungPer;
 	}
+
+	@Nullable
+	public Boolean getSozialhilfeBezueger() {
+		return sozialhilfeBezueger;
+	}
+
+	public void setSozialhilfeBezueger(@Nullable Boolean sozialhilfeBezueger) {
+		this.sozialhilfeBezueger = sozialhilfeBezueger;
+	}
+
+	@Nullable
+	public Boolean getVerguenstigungGewuenscht() {
+		return verguenstigungGewuenscht;
+	}
+
+	public void setVerguenstigungGewuenscht(@Nullable Boolean verguenstigungGewuenscht) {
+		this.verguenstigungGewuenscht = verguenstigungGewuenscht;
+	}
+
 }
