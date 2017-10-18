@@ -475,6 +475,8 @@ export default class EbeguRestUtil {
             restFamiliensituation.gesuchstellerKardinalitaet = familiensituation.gesuchstellerKardinalitaet;
             restFamiliensituation.gemeinsameSteuererklaerung = familiensituation.gemeinsameSteuererklaerung;
             restFamiliensituation.aenderungPer = DateUtil.momentToLocalDate(familiensituation.aenderungPer);
+            restFamiliensituation.sozialhilfeBezueger = familiensituation.sozialhilfeBezueger;
+            restFamiliensituation.verguenstigungGewuenscht = familiensituation.verguenstigungGewuenscht;
             return restFamiliensituation;
         }
         return undefined;
@@ -524,6 +526,8 @@ export default class EbeguRestUtil {
             familiensituation.gesuchstellerKardinalitaet = familiensituationFromServer.gesuchstellerKardinalitaet;
             familiensituation.gemeinsameSteuererklaerung = familiensituationFromServer.gemeinsameSteuererklaerung;
             familiensituation.aenderungPer = DateUtil.localDateToMoment(familiensituationFromServer.aenderungPer);
+            familiensituation.sozialhilfeBezueger = familiensituationFromServer.sozialhilfeBezueger;
+            familiensituation.verguenstigungGewuenscht = familiensituationFromServer.verguenstigungGewuenscht;
             return familiensituation;
         }
         return undefined;
