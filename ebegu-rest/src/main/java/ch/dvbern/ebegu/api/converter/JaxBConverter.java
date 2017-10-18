@@ -70,6 +70,8 @@ import ch.dvbern.ebegu.api.dtos.JaxFachstelle;
 import ch.dvbern.ebegu.api.dtos.JaxFall;
 import ch.dvbern.ebegu.api.dtos.JaxFamiliensituation;
 import ch.dvbern.ebegu.api.dtos.JaxFamiliensituationContainer;
+import ch.dvbern.ebegu.api.dtos.JaxFerieninselStammdaten;
+import ch.dvbern.ebegu.api.dtos.JaxFerieninselZeitraum;
 import ch.dvbern.ebegu.api.dtos.JaxFile;
 import ch.dvbern.ebegu.api.dtos.JaxFinanzielleSituation;
 import ch.dvbern.ebegu.api.dtos.JaxFinanzielleSituationContainer;
@@ -128,6 +130,8 @@ import ch.dvbern.ebegu.entities.Fachstelle;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.FamiliensituationContainer;
+import ch.dvbern.ebegu.entities.FerieninselStammdaten;
+import ch.dvbern.ebegu.entities.FerieninselZeitraum;
 import ch.dvbern.ebegu.entities.FileMetadata;
 import ch.dvbern.ebegu.entities.FinanzielleSituation;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
@@ -2712,5 +2716,36 @@ public class JaxBConverter {
 		jaxZahlungs.setInstitutionsId(persistedZahlung.getInstitutionStammdaten().getInstitution().getId());
 
 		return jaxZahlungs;
+	}
+
+	public FerieninselStammdaten ferieninselStammdatenToEntity(JaxFerieninselStammdaten ferieninselStammdatenJAX, FerieninselStammdaten ferieninselStammdaten) {
+		Validate.notNull(ferieninselStammdatenJAX);
+		Validate.notNull(ferieninselStammdaten);
+
+		convertAbstractFieldsToEntity(ferieninselStammdatenJAX, ferieninselStammdaten);
+		ferieninselStammdaten.setFerienname(ferieninselStammdatenJAX.getFerienname());
+		ferieninselStammdaten.setAnmeldeschluss(ferieninselStammdatenJAX.getAnmeldeschluss());
+		ferieninselStammdaten.setGesuchsperiode(gesuchsperiodeToEntity(ferieninselStammdatenJAX.getGesuchsperiode(), new Gesuchsperiode()));
+		for (JaxFerieninselZeitraum jaxFerieninselZeitraum : ferieninselStammdatenJAX.getZeitraumList()) {
+			FerieninselZeitraum ferieninselZeitraum = new FerieninselZeitraum();
+			convertAbstractDateRangedFieldsToEntity(jaxFerieninselZeitraum, ferieninselZeitraum);
+			ferieninselStammdaten.getZeitraumList().add(ferieninselZeitraum);
+		}
+		return ferieninselStammdaten;
+	}
+
+	public JaxFerieninselStammdaten ferieninselStammdatenToJAX(FerieninselStammdaten persistedFerieninselStammdaten) {
+		final JaxFerieninselStammdaten jaxFerieninselStammdaten = new JaxFerieninselStammdaten();
+
+		convertAbstractFieldsToJAX(persistedFerieninselStammdaten, jaxFerieninselStammdaten);
+		jaxFerieninselStammdaten.setFerienname(persistedFerieninselStammdaten.getFerienname());
+		jaxFerieninselStammdaten.setAnmeldeschluss(persistedFerieninselStammdaten.getAnmeldeschluss());
+		jaxFerieninselStammdaten.setGesuchsperiode(gesuchsperiodeToJAX(persistedFerieninselStammdaten.getGesuchsperiode()));
+		for (FerieninselZeitraum ferieninselZeitraum : persistedFerieninselStammdaten.getZeitraumList()) {
+			JaxFerieninselZeitraum jaxFerieninselZeitraum = new JaxFerieninselZeitraum();
+			convertAbstractDateRangedFieldsToJAX(ferieninselZeitraum, jaxFerieninselZeitraum);
+			jaxFerieninselStammdaten.getZeitraumList().add(jaxFerieninselZeitraum);
+		}
+		return jaxFerieninselStammdaten;
 	}
 }
