@@ -40,19 +40,19 @@ public interface FerieninselStammdatenService {
 	Optional<FerieninselStammdaten> findFerieninselStammdaten(@Nonnull String ferieninselStammdatenId);
 
 	/**
-	 * Gibt alle existierenden FerieninselStammdaten (aller Gesuchsperioden) zurueck.
+	 * Gibt alle existierenden FerieninselStammdaten-Objekte (aller Gesuchsperioden) zurueck.
 	 */
 	@Nonnull
 	Collection<FerieninselStammdaten> getAllFerieninselStammdaten();
 
 	/**
-	 * Gibt alle FerieninselStammdaten fuer die uebergebene Gesuchsperiode zurueck.
+	 * Gibt alle FerieninselStammdaten-Objekte fuer die uebergebene Gesuchsperiode zurueck.
 	 */
 	@Nonnull
 	Collection<FerieninselStammdaten> findFerieninselStammdatenForGesuchsperiode(@Nonnull String gesuchsperiodeId);
 
 	/**
-	 * Loescht das uebergebene FerieninselStammdaten
+	 * Loescht das uebergebene FerieninselStammdaten-Objekt
 	 */
 	void removeFerieninselStammdaten(@Nonnull String ferieninselStammdatenId);
 
