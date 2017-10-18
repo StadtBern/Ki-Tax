@@ -23,8 +23,8 @@ export default class TSFinanzielleSituation extends TSAbstractFinanzielleSituati
 
     constructor(steuerveranlagungErhalten?: boolean, steuererklaerungAusgefuellt?: boolean, nettolohn?: number,
                 familienzulage?: number, ersatzeinkommen?: number, erhalteneAlimente?: number, bruttovermoegen?: number,
-                schulden?: number, geschaeftsgewinnBasisjahrMinus2?: number,
-                geschaeftsgewinnBasisjahrMinus1?: number, geschaeftsgewinnBasisjahr?: number, geleisteteAlimente?: number) {
+                schulden?: number, geschaeftsgewinnBasisjahrMinus2?: number, geschaeftsgewinnBasisjahrMinus1?: number,
+                geschaeftsgewinnBasisjahr?: number, geleisteteAlimente?: number) {
         super(steuerveranlagungErhalten, steuererklaerungAusgefuellt,
             familienzulage, ersatzeinkommen, erhalteneAlimente, bruttovermoegen,
             schulden, geschaeftsgewinnBasisjahr, geleisteteAlimente);

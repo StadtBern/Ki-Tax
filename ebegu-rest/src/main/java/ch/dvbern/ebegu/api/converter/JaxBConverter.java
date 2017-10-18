@@ -616,6 +616,8 @@ public class JaxBConverter {
 		familiensituation.setGesuchstellerKardinalitaet(familiensituationJAXP.getGesuchstellerKardinalitaet());
 		familiensituation.setGemeinsameSteuererklaerung(familiensituationJAXP.getGemeinsameSteuererklaerung());
 		familiensituation.setAenderungPer(familiensituationJAXP.getAenderungPer());
+		familiensituation.setSozialhilfeBezueger(familiensituationJAXP.getSozialhilfeBezueger());
+		familiensituation.setVerguenstigungGewuenscht(familiensituationJAXP.getVerguenstigungGewuenscht());
 		return familiensituation;
 	}
 
@@ -626,6 +628,8 @@ public class JaxBConverter {
 		jaxFamiliensituation.setGesuchstellerKardinalitaet(persistedFamiliensituation.getGesuchstellerKardinalitaet());
 		jaxFamiliensituation.setGemeinsameSteuererklaerung(persistedFamiliensituation.getGemeinsameSteuererklaerung());
 		jaxFamiliensituation.setAenderungPer(persistedFamiliensituation.getAenderungPer());
+		jaxFamiliensituation.setSozialhilfeBezueger(persistedFamiliensituation.getSozialhilfeBezueger());
+		jaxFamiliensituation.setVerguenstigungGewuenscht(persistedFamiliensituation.getVerguenstigungGewuenscht());
 		return jaxFamiliensituation;
 	}
 
@@ -1478,16 +1482,15 @@ public class JaxBConverter {
 		return finanzielleSituation;
 	}
 
+	@Nullable
 	private JaxFinanzielleSituation finanzielleSituationToJAX(@Nullable final FinanzielleSituation persistedFinanzielleSituation) {
 
 		if (persistedFinanzielleSituation != null) {
 			JaxFinanzielleSituation jaxFinanzielleSituation = new JaxFinanzielleSituation();
-
 			abstractFinanzielleSituationToJAX(persistedFinanzielleSituation, jaxFinanzielleSituation);
 			jaxFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(persistedFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2());
 			jaxFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(persistedFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
 			jaxFinanzielleSituation.setNettolohn(persistedFinanzielleSituation.getNettolohn());
-
 			return jaxFinanzielleSituation;
 
 		}
