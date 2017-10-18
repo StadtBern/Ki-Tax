@@ -137,6 +137,7 @@ public class SchulamtBackendResource {
 				"TODO_eindeutige_ID_Tagesschule", anmeldungen);
 			return Response.ok(anmeldung).build();
 		}
+		LOG.warn("Wrong input data"); //todo improve logging
 		return Response.noContent().build();
 	}
 

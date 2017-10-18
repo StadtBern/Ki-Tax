@@ -220,6 +220,7 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 
 	private AuthStatus checkAuthorizationForSchulamtApiAccess(HttpServletRequest request, HttpMsgContext httpMsgContext) {
 		//TODO (team) Richtiges Login mit User/Password!
+		request.getHeader("Authorization");
 		LOG.info("Logging in directly as Admin: Schulamt-Schnittstelle. TODO User/Pwd");
 		List<String> roles = new ArrayList<>();
 		roles.add(UserRoleName.SUPER_ADMIN);
