@@ -22,15 +22,10 @@ import TSInstitution from '../../../models/TSInstitution';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import AbstractAdminViewController from '../../abstractAdminView';
 import './institutionenListView.less';
-import IPromise = angular.IPromise;
 import IStateService = angular.ui.IStateService;
-import IFormController = angular.IFormController;
-import IQService = angular.IQService;
 let template = require('./institutionenListView.html');
 let style = require('./institutionenListView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
-let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
-let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
 
 export class InstitutionenListViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
@@ -45,7 +40,7 @@ export class InstitutionenListViewComponentConfig implements IComponentOptions {
 export class InstitutionenListViewController extends AbstractAdminViewController {
 
     institutionen: TSInstitution[];
-    selectedInstitution: TSInstitution = null;
+    selectedInstitution: TSInstitution = undefined;
 
     static $inject = ['InstitutionRS', 'DvDialog', 'AuthServiceRS', '$state'];
     /* @ngInject */
@@ -64,7 +59,7 @@ export class InstitutionenListViewController extends AbstractAdminViewController
             parentController: undefined,
             elementID: undefined
         }).then(() => {   //User confirmed removal
-            this.selectedInstitution = null;
+            this.selectedInstitution = undefined;
             this.institutionRS.removeInstitution(institution.id).then((response) => {
                 let index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
                 if (index > -1) {
@@ -76,7 +71,7 @@ export class InstitutionenListViewController extends AbstractAdminViewController
 
     createInstitution(): void {
         this.$state.go('institution', {
-            institutionId: null
+            institutionId: undefined
         });
     }
 

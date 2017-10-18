@@ -13,8 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentOptions, IHttpResponse} from 'angular';
-import * as moment from 'moment';
+import {IComponentOptions} from 'angular';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import ErrorService from '../../../core/errors/service/ErrorService';
@@ -34,14 +33,13 @@ import AbstractAdminViewController from '../../abstractAdminView';
 import {IInstitutionStateParams} from '../../admin.route';
 import IStateService = angular.ui.IStateService;
 import IFormController = angular.IFormController;
-import ITranslateService = angular.translate.ITranslateService;
-import Moment = moment.Moment;
 
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
 let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
 let template = require('./institutionView.html');
 require('./institutionView.less');
+import $ = require('jquery');
 
 export class InstitutionViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
@@ -77,7 +75,7 @@ export class InstitutionViewController extends AbstractAdminViewController {
 
     $onInit() {
         this.setBetreuungsangebotTypValues();
-        if (this.$stateParams.institutionId === '') {
+        if (!this.$stateParams.institutionId) {
             this.createInstitution();
         } else {
             this.institutionRS.findInstitution(this.$stateParams.institutionId).then((found: TSInstitution) => {
@@ -93,12 +91,12 @@ export class InstitutionViewController extends AbstractAdminViewController {
     createInstitution(): void {
         this.selectedInstitution = new TSInstitution();
         this.selectedInstitution.mandant = this.mandant;
-        this.selectedInstitutionStammdaten = null;
+        this.selectedInstitutionStammdaten = undefined;
     }
 
     setSelectedInstitution(institution: TSInstitution): void {
         this.selectedInstitution = institution;
-        this.selectedInstitutionStammdaten = null;
+        this.selectedInstitutionStammdaten = undefined;
         if (!this.isCreateInstitutionsMode()) {
             this.institutionStammdatenRS.getAllInstitutionStammdatenByInstitution(this.selectedInstitution.id).then((loadedInstStammdaten) => {
                 this.instStammdatenList = loadedInstStammdaten;
@@ -207,7 +205,7 @@ export class InstitutionViewController extends AbstractAdminViewController {
     createInstitutionStammdaten(): void {
         this.$state.go('institutionstammdaten', {
             institutionId: this.selectedInstitution.id,
-            institutionStammdatenId: null
+            institutionStammdatenId: undefined
         });
     }
 

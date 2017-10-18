@@ -13,8 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentOptions, IHttpResponse} from 'angular';
-import * as moment from 'moment';
+import {IComponentOptions} from 'angular';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {InstitutionRS} from '../../../core/service/institutionRS.rest';
@@ -30,12 +29,7 @@ import AbstractAdminViewController from '../../abstractAdminView';
 import {IInstitutionStammdatenStateParams} from '../../admin.route';
 import IStateService = angular.ui.IStateService;
 import IFormController = angular.IFormController;
-import ITranslateService = angular.translate.ITranslateService;
-import Moment = moment.Moment;
 
-let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
-let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
-let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
 let template = require('./institutionStammdatenView.html');
 require('./institutionStammdatenView.less');
 
@@ -71,7 +65,7 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
         this.listResourceRS.getLaenderList().then((laenderList: TSLand[]) => {
             this.laenderList = laenderList;
         });
-        if (this.$stateParams.institutionStammdatenId === '') {
+        if (!this.$stateParams.institutionStammdatenId) {
             this.institutionRS.findInstitution(this.$stateParams.institutionId).then((institution) => {
                 this.selectedInstitution = institution;
                 this.createInstitutionStammdaten();
@@ -142,11 +136,8 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
     }
 
     isKita(): boolean {
-        if (this.selectedInstitutionStammdatenBetreuungsangebot && this.selectedInstitutionStammdatenBetreuungsangebot.key === TSBetreuungsangebotTyp.KITA) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.selectedInstitutionStammdatenBetreuungsangebot
+            && this.selectedInstitutionStammdatenBetreuungsangebot.key === TSBetreuungsangebotTyp.KITA;
     }
 
     private setBetreuungsangebotTypValues(): void {
