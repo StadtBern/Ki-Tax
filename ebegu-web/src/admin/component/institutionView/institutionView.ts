@@ -20,7 +20,6 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import {InstitutionRS} from '../../../core/service/institutionRS.rest';
 import {InstitutionStammdatenRS} from '../../../core/service/institutionStammdatenRS.rest';
 import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
-import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import TSInstitution from '../../../models/TSInstitution';
@@ -36,7 +35,6 @@ import IFormController = angular.IFormController;
 
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
-let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
 let template = require('./institutionView.html');
 require('./institutionView.less');
 import $ = require('jquery');
@@ -172,17 +170,6 @@ export class InstitutionViewController extends AbstractAdminViewController {
             }
         }
         return '';
-    }
-
-    private syncWithOpenIdm(): void {
-        this.institutionRS.synchronizeInstitutions().then((respone) => {
-            let returnString = respone.data.replace(/(?:\r\n|\r|\n)/g, '<br />');
-            return this.dvDialog.showDialog(okHtmlDialogTempl, OkHtmlDialogController, {
-                title: returnString
-            }).then(() => {
-                //do nothing
-            });
-        });
     }
 
     getBetreuungsangebotFromInstitutionList(betreuungsangebotTyp: TSBetreuungsangebotTyp) {

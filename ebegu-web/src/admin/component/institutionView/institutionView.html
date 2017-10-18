@@ -18,7 +18,7 @@
     <form role="form" name="form" class="" unsaved-warning-form novalidate>
 
         <fieldset>
-            <div class="row col-md-12 form-group">
+            <div class="row col-md-12">
                 <div class="viewTitle">
                     <h1 data-translate="INSTITUTION"></h1>
                 </div>
@@ -112,27 +112,30 @@
                         <!--Knöpfe unterhalb der Tabelle zum Anzeigen aller Institutions-Stammdaten-->
                         <div class="row" ng-if="!vm.isReadonly()">
                             <div class="col-md-12">
-                                <!--Knopf zum hinzufügen einer InstitutionStammdaten zur Institution-->
-                                <dv-loading-button type="button"
-                                                   button-click="vm.createInstitutionStammdaten(); form.$setPristine(); form.$setUntouched()"
-                                                   button-disabled="vm.isCreateInstitutionsMode()">
-                                    <i class="glyphicon glyphicon-plus"></i>
-                                    <span
-                                        data-translate="INSTITUTION_STAMMDATEN_HINZUFUEGEN"></span>
-                                </dv-loading-button>
+                                <div class="marginTop20">
+                                    <!--Knopf zum hinzufügen einer InstitutionStammdaten zur Institution-->
+                                    <dv-loading-button type="button"
+                                                       button-click="vm.createInstitutionStammdaten(); form.$setPristine(); form.$setUntouched()"
+                                                       button-disabled="vm.isCreateInstitutionsMode()">
+                                        <i class="glyphicon glyphicon-plus"></i>
+                                        <span
+                                            data-translate="INSTITUTION_STAMMDATEN_HINZUFUEGEN"></span>
+                                    </dv-loading-button>
+                                </div>
                                 <div class="marginTop20">
                                     <!--Knopf zum speichern der ausgewählen oder neuer Institution-->
-                                    <dv-loading-button type="submit" button-click="vm.saveInstitution(form)">
+                                    <dv-loading-button type="submit"
+                                                       button-click="vm.saveInstitution(form)">
                                         <span data-translate="INSTITUTION_SPEICHERN"></span>
                                     </dv-loading-button>
                                 </div>
                             </div>
                         </div>
-                        <div class="marginTop50">
-                            <a ng-click="vm.goBack()" data-translate="INSTITUTIONEN_BACK"></a>
-                        </div>
                     </div>
                 </div>
+            </div>
+            <div class="row col-md-12 marginTop50">
+                <a class="nav skip" ng-click="vm.goBack()" data-translate="INSTITUTIONEN_BACK"></a>
             </div>
         </fieldset>
     </form>
