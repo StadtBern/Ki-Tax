@@ -13,12 +13,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum TSDayOfWeek {
-    MONDAY = <any> 'MONDAY',
-    TUESDAY = <any> 'TUESDAY',
-    WEDNESDAY = <any> 'WEDNESDAY',
-    THURSDAY = <any> 'THURSDAY',
-    FRIDAY = <any> 'FRIDAY',
-    SATURDAY = <any> 'SATURDAY',
-    SUNDAY = <any> 'SUNDAY'
+package ch.dvbern.ebegu.api.dtos;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+/**
+ * DTO fuer Zeitraeume einer Ferieninsel
+ */
+@XmlRootElement(name = "ferieninselZeitraum")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class JaxFerieninselZeitraum extends JaxAbstractDateRangedDTO {
+
+	private static final long serialVersionUID = -2187358084085027053L;
 }

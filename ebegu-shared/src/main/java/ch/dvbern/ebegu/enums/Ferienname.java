@@ -13,12 +13,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum TSDayOfWeek {
-    MONDAY = <any> 'MONDAY',
-    TUESDAY = <any> 'TUESDAY',
-    WEDNESDAY = <any> 'WEDNESDAY',
-    THURSDAY = <any> 'THURSDAY',
-    FRIDAY = <any> 'FRIDAY',
-    SATURDAY = <any> 'SATURDAY',
-    SUNDAY = <any> 'SUNDAY'
+package ch.dvbern.ebegu.enums;
+
+/**
+ * Enum fuer die Ferien, fuer welche es eine Ferieninsel gibt.
+ */
+public enum Ferienname {
+
+	SOMMERFERIEN,
+	HERBSTFERIEN,
+	SPORTFERIEN,
+	FRUEHLINGSFERIEN
+
 }

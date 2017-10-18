@@ -37,6 +37,7 @@ import javax.persistence.criteria.Root;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
 import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.FerieninselStammdaten;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuch_;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
@@ -78,6 +79,9 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 
 	@Inject
 	private FallService fallService;
+
+	@Inject
+	private FerieninselStammdatenService ferieninselStammdatenService;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
@@ -158,12 +162,13 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	@RolesAllowed({ SUPER_ADMIN })
+	@RolesAllowed(SUPER_ADMIN)
 	public void removeGesuchsperiode(@Nonnull String gesuchsPeriodeId) {
 		Optional<Gesuchsperiode> gesuchsperiodeOptional = findGesuchsperiode(gesuchsPeriodeId);
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeOptional.orElseThrow(() -> new EbeguEntityNotFoundException("deleteGesuchsperiodeAndGesuche", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsPeriodeId));
 		LOGGER.info("Handling Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString());
-		if (gesuchsperiode.getStatus().equals(GesuchsperiodeStatus.GESCHLOSSEN)) {
+		if (gesuchsperiode.getStatus() == GesuchsperiodeStatus.GESCHLOSSEN) {
+			// Gesuche der Periode loeschen
 			Collection<Gesuch> gesucheOfPeriode = criteriaQueryHelper.getEntitiesByAttribute(Gesuch.class, gesuchsperiode, Gesuch_.gesuchsperiode);
 			for (Gesuch gesuch : gesucheOfPeriode) {
 				Fall fall = gesuch.getFall();
@@ -176,6 +181,11 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 					LOGGER.info("This was the last Gesuch of Fall, deleting Fall " + fall.getFallNummer());
 					fallService.removeFall(fall);
 				}
+			}
+			// FerieninselStammdaten dieser Gesuchsperiode loeschen
+			Collection<FerieninselStammdaten> ferieninselStammdatenList = ferieninselStammdatenService.findFerieninselStammdatenForGesuchsperiode(gesuchsPeriodeId);
+			for (FerieninselStammdaten ferieninselStammdaten : ferieninselStammdatenList) {
+				ferieninselStammdatenService.removeFerieninselStammdaten(ferieninselStammdaten.getId());
 			}
 			// Gesuchsperiode
 			LOGGER.info("Deleting Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString());

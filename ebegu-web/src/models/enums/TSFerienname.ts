@@ -13,12 +13,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum TSDayOfWeek {
-    MONDAY = <any> 'MONDAY',
-    TUESDAY = <any> 'TUESDAY',
-    WEDNESDAY = <any> 'WEDNESDAY',
-    THURSDAY = <any> 'THURSDAY',
-    FRIDAY = <any> 'FRIDAY',
-    SATURDAY = <any> 'SATURDAY',
-    SUNDAY = <any> 'SUNDAY'
+export enum TSFerienname {
+    SOMMERFERIEN = <any> 'SOMMERFERIEN',
+    HERBSTFERIEN = <any> 'HERBSTFERIEN',
+    SPORTFERIEN = <any> 'SPORTFERIEN',
+    FRUEHLINGSFERIEN = <any> 'FRUEHLINGSFERIEN'
+}
+
+export function getTSFeriennameValues(): Array<TSFerienname> {
+    return [
+        TSFerienname.SOMMERFERIEN,
+        TSFerienname.HERBSTFERIEN,
+        TSFerienname.SPORTFERIEN,
+        TSFerienname.FRUEHLINGSFERIEN
+    ];
 }

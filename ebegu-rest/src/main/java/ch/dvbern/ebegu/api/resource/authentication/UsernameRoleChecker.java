@@ -42,8 +42,8 @@ public class UsernameRoleChecker {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UsernameRoleChecker.class);
 	private static final String ROLE_SEPARATOR = ",";
-	private static final String ROLES_MISSING_MESSAGE = "Could not initialaze UsernameRoleChecker because roles could not be loaded: ";
-	private static final String USER_MISSING_MESSAGE = "Could not initialaze UsernameRoleChecker because users property file  could not be loaded: ";
+	private static final String ROLES_MISSING_MESSAGE = "UsernameRoleChecker konnte nicht initialisiert werden, weil die Rollen nicht geladen werden konnten: ";
+	private static final String USER_MISSING_MESSAGE = "UsernameRoleChecker konnte nicht initialisiert werden, weil die users-property-Datei nicht geladen werden konnte: ";
 
 	/**
 	 * The name of the default properties resource containing user/passwords

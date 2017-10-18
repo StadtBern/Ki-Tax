@@ -13,12 +13,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum TSDayOfWeek {
-    MONDAY = <any> 'MONDAY',
-    TUESDAY = <any> 'TUESDAY',
-    WEDNESDAY = <any> 'WEDNESDAY',
-    THURSDAY = <any> 'THURSDAY',
-    FRIDAY = <any> 'FRIDAY',
-    SATURDAY = <any> 'SATURDAY',
-    SUNDAY = <any> 'SUNDAY'
+package ch.dvbern.ebegu.entities;
+
+import javax.persistence.Entity;
+
+import org.hibernate.envers.Audited;
+
+/**
+ * Entity for a Zeitraum of a Ferieninsel
+ */
+@Audited
+@Entity
+public class FerieninselZeitraum extends AbstractDateRangedEntity {
+
+	private static final long serialVersionUID = 2918865169295094143L;
 }

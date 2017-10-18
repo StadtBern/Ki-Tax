@@ -13,12 +13,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum TSDayOfWeek {
-    MONDAY = <any> 'MONDAY',
-    TUESDAY = <any> 'TUESDAY',
-    WEDNESDAY = <any> 'WEDNESDAY',
-    THURSDAY = <any> 'THURSDAY',
-    FRIDAY = <any> 'FRIDAY',
-    SATURDAY = <any> 'SATURDAY',
-    SUNDAY = <any> 'SUNDAY'
+package ch.dvbern.ebegu.api.enums;
+
+public enum JaxExternalFerienName {
+
+	SOMMERFERIEN(1),
+	HERBSTFERIEN(2),
+	WEIHNACHTSFERIEN(3),
+	FRUEHLINGSFERIEN(4);
+
+	private final int ferienNr;
+
+	JaxExternalFerienName(int ferienNr) {
+		this.ferienNr = ferienNr;
+	}
+
+	public static JaxExternalFerienName getByFerienNr(int ferienNr) {
+		for (JaxExternalFerienName o : values()) {
+			if (o.ferienNr == ferienNr) {
+				return o;
+			}
+		}
+		return null;
+	}
 }
