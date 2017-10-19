@@ -29,6 +29,8 @@ import {TraegerschaftViewComponentConfig} from './component/traegerschaftView/tr
 import {EbeguVorlageRS} from './service/ebeguVorlageRS.rest';
 import {TestFaelleRS} from './service/testFaelleRS.rest';
 import {TestdatenViewComponentConfig} from './component/testdatenView/testdatenView';
+import {FerieninselStammdatenRS} from './service/ferieninselStammdatenRS.rest';
+import {FerieninselViewComponentConfig} from './component/ferieninselView/ferieninselView';
 
 export const EbeguWebAdmin = angular.module('ebeguWeb.admin', [EbeguWebCore.name, 'smart-table'])
     .service('ApplicationPropertyRS', ApplicationPropertyRS)
@@ -37,11 +39,13 @@ export const EbeguWebAdmin = angular.module('ebeguWeb.admin', [EbeguWebCore.name
     .service('EbeguVorlageRS', EbeguVorlageRS)
     .service('ReindexRS', ReindexRS)
     .service('TestFaelleRS', TestFaelleRS)
+    .service('FerieninselStammdatenRS', FerieninselStammdatenRS)
     .component('dvAdminView', new AdminViewComponentConfig())
     .component('dvInstitutionView', new InstitutionViewComponentConfig())
     .component('dvParameterView', new ParameterViewComponentConfig())
     .component('dvTraegerschaftView', new TraegerschaftViewComponentConfig())
     .component('dvTestdatenView', new TestdatenViewComponentConfig())
+    .component('dvFerieninselView', new FerieninselViewComponentConfig())
     .run(adminRun);
 
 export default EbeguWebAdmin;

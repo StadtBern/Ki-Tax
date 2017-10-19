@@ -59,6 +59,11 @@ function getStates(): IState[] {
             url: '/parameter',
         },
         {
+            name: 'ferieninsel',
+            template: '<dv-ferieninsel-view flex="auto" class="overflow-scroll"></dv-ferieninsel-view>',
+            url: '/ferieninsel',
+        },
+        {
             name: 'traegerschaft',
             template: '<dv-traegerschaft-view flex="auto" class="overflow-scroll" traegerschaften="$resolve.traegerschaften" ></dv-traegerschaft-view>',
             url: '/traegerschaft',

@@ -1,0 +1,156 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div flex="auto" class="ferieninselView adminModul overflow-auto">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <!-- Gesuchsperioden -->
+            <div class="viewTitle">
+                <h1>
+                    <span data-translate="GESUCHSPERIODEN"></span>
+                </h1>
+            </div>
+            <!-- Gesuchsperioden Tabelle -->
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+                    <table st-table="displayedCollection" st-safe-src="vm.gesuchsperiodenList" st-delay="20"
+                           class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th data-translate="GESUCHSPERIODE_GUELTIG_AB"></th>
+                            <th data-translate="GESUCHSPERIODE_GUELTIG_BIS"></th>
+                            <th data-translate="GESUCHSPERIODE_STATUS"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                            ng-click="vm.gesuchsperiodeClicked(row)">
+                            <td ng-bind="row.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
+                            <td ng-bind="row.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
+                            <td ng-bind="row.status"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <form ng-submit="form.$valid && vm.submit()" name="form" role="form" novalidate>
+                        <fieldset ng-disabled="vm.isReadonly()">
+
+                            <!-- Gesuchsperiode Detail -->
+                            <div ng-if="vm.gesuchsperiode">
+
+                                <p>
+                                    {{"FERIENINSEL_STAMMDATEN_INFO"|translate}}
+                                </p>
+
+                                <!-- Titelzeile -->
+                                <div class="row">
+                                    <div class="col-md-2">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span data-translate="ANMELDESCHLUSS"></span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span data-translate="VON"></span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span data-translate="BIS"></span>
+                                    </div>
+                                </div>
+
+                                <div ng-repeat="ferien in vm.getFeriennamen()">
+
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <span data-translate="{{ferien}}"></span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <dv-datepicker input-id="{{ferien}}_anmeldeschluss" name="{{ferien}}_anmeldeschluss"
+                                                           ng-model="vm.getFerieninselStammdaten(ferien).anmeldeschluss"
+                                                           ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <dv-datepicker input-id="{{ferien}}_gueltigAb" name="{{ferien}}_gueltigAb"
+                                                           ng-model="vm.getFerieninselStammdaten(ferien).zeitraum.gueltigkeit.gueltigAb"
+                                                           ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <dv-datepicker input-id="{{ferien}}_gueltigBis" name="{{ferien}}_gueltigBis"
+                                                           ng-model="vm.getFerieninselStammdaten(ferien).zeitraum.gueltigkeit.gueltigBis"
+                                                           ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <dv-loading-button type="button" button-click="vm.saveFerieninselStammdaten(vm.getFerieninselStammdaten(ferien));"
+                                                               button-class="dv-btn-operation"
+                                                               title="{{'FERIENINSELSTAMMDATEN_SAVE' | translate}}"
+                                                               aria-label="{{'FERIENINSELSTAMMDATEN_SAVE'|translate}}">
+                                                <i class="fa fa-lg fa-floppy-o" aria-label="{{'FERIENINSELSTAMMDATEN_SAVE' | translate}}"></i>
+                                            </dv-loading-button>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <dv-loading-button type="button" button-click="vm.addFerieninselZeitraum(vm.getFerieninselStammdaten(ferien));"
+                                                               button-class="dv-btn-operation"
+                                                               title="{{'FERIENINSELZEITRAUM_ADD' | translate}}"
+                                                               aria-label="{{'FERIENINSELZEITRAUM_ADD'|translate}}">
+                                                <i class="fa fa-lg fa-plus-circle" aria-label="{{'FERIENINSELZEITRAUM_ADD' | translate}}"></i>
+                                            </dv-loading-button>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" ng-repeat="zeitraum in vm.getFerieninselStammdaten(ferien).zeitraumList">
+                                        <div class="col-md-4"></div>
+                                        <div class="col-md-2">
+                                            <dv-datepicker input-id="{{zeitraum}}_gueltigAb" name="{{zeitraum}}_gueltigAb"
+                                                           ng-model="zeitraum.gueltigkeit.gueltigAb"
+                                                           ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <dv-datepicker input-id="{{zeitraum}}_gueltigBis" name="{{zeitraum}}_gueltigBis"
+                                                           ng-model="zeitraum.gueltigkeit.gueltigBis"
+                                                           ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <dv-loading-button type="button" button-click="vm.removeFerieninselZeitraum(vm.getFerieninselStammdaten(ferien), zeitraum);"
+                                                               button-class="dv-btn-operation"
+                                                               title="{{'FERIENINSELSTAMMDATEN_SAVE' | translate}}"
+                                                               aria-label="{{'FERIENINSELSTAMMDATEN_SAVE'|translate}}">
+                                                <i class="fa fa-lg fa-trash-o" aria-label="{{'FERIENINSELSTAMMDATEN_SAVE' | translate}}"></i>
+                                            </dv-loading-button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
