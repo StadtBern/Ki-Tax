@@ -16,6 +16,7 @@
 package ch.dvbern.ebegu.entities;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -51,7 +52,7 @@ public class FerieninselStammdaten extends AbstractEntity {
 	@Valid
 	@SortNatural
 	@OneToMany(cascade = CascadeType.ALL)
-	private List<FerieninselZeitraum> zeitraumList;
+	private List<FerieninselZeitraum> zeitraumList = new ArrayList<>();
 
 	@NotNull
 	@Column(nullable = false)

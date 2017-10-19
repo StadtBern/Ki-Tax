@@ -44,6 +44,7 @@ import ch.dvbern.ebegu.entities.FerieninselStammdaten;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.FerieninselStammdatenService;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
@@ -80,7 +81,7 @@ public class FerieninselStammdatenResource {
 	public JaxFerieninselStammdaten saveFerieninselStammdaten(
 		@Nonnull @NotNull @Valid JaxFerieninselStammdaten jaxFerieninselStammdaten,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguEntityNotFoundException {
+		@Context HttpServletResponse response) throws EbeguException {
 
 		FerieninselStammdaten ferieninselStammdaten = new FerieninselStammdaten();
 		if (jaxFerieninselStammdaten.getId() != null) {
