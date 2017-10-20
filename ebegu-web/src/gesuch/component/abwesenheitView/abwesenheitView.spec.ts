@@ -1,19 +1,15 @@
-import {AbwesenheitViewController, KindBetreuungUI} from './abwesenheitView';
 import {EbeguWebCore} from '../../../core/core.module';
-import GesuchModelManager from '../../service/gesuchModelManager';
-import WizardStepManager from '../../service/wizardStepManager';
-import BerechnungsManager from '../../service/berechnungsManager';
-import ErrorService from '../../../core/errors/service/ErrorService';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import ErrorService from '../../../core/errors/service/ErrorService';
 import TSBetreuung from '../../../models/TSBetreuung';
-import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import TSInstitution from '../../../models/TSInstitution';
+import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import TSKind from '../../../models/TSKind';
 import TSKindContainer from '../../../models/TSKindContainer';
-import ITranslateService = angular.translate.ITranslateService;
-import IQService = angular.IQService;
-import IScope = angular.IScope;
-import {ITimeoutService} from 'angular';
+import BerechnungsManager from '../../service/berechnungsManager';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import WizardStepManager from '../../service/wizardStepManager';
+import {AbwesenheitViewController, KindBetreuungUI} from './abwesenheitView';
 
 describe('abwesenheitView', function () {
 
@@ -22,15 +18,15 @@ describe('abwesenheitView', function () {
     let wizardStepManager: WizardStepManager;
     let berechnungsManager: BerechnungsManager;
     let errorService: ErrorService;
-    let $translate: ITranslateService;
+    let $translate: angular.translate.ITranslateService;
     let dialog: DvDialog;
-    let $q: IQService;
-    let $scope: IScope;
-    let $timeout: ITimeoutService;
+    let $q: angular.IQService;
+    let $scope: angular.IScope;
+    let $timeout: angular.ITimeoutService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         gesuchModelManager = $injector.get('GesuchModelManager');
         wizardStepManager = $injector.get('WizardStepManager');
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});

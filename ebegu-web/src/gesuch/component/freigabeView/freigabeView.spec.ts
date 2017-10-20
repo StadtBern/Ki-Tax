@@ -1,52 +1,40 @@
-import {EbeguWebGesuch} from '../../gesuch.module';
-import {FreigabeViewController} from './freigabeView';
-import TSGesuch from '../../../models/TSGesuch';
-import WizardStepManager from '../../service/wizardStepManager';
+import {EbeguWebAdmin} from '../../../admin/admin.module';
+import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
-import TSDownloadFile from '../../../models/TSDownloadFile';
-import GesuchModelManager from '../../service/gesuchModelManager';
-import TestDataUtil from '../../../utils/TestDataUtil';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
-import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
-import {EbeguWebAdmin} from '../../../admin/admin.module';
-import IScope = angular.IScope;
-import IPromise = angular.IPromise;
-import IQService = angular.IQService;
-import IHttpBackendService = angular.IHttpBackendService;
-import IFormController = angular.IFormController;
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {ITimeoutService} from 'angular';
+import TSDownloadFile from '../../../models/TSDownloadFile';
+import TSGesuch from '../../../models/TSGesuch';
+import TestDataUtil from '../../../utils/TestDataUtil';
+import {EbeguWebGesuch} from '../../gesuch.module';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import WizardStepManager from '../../service/wizardStepManager';
+import {FreigabeViewController} from './freigabeView';
 
 describe('freigabeView', function () {
 
     let controller: FreigabeViewController;
-    let $scope: IScope;
+    let $scope: angular.IScope;
     let wizardStepManager: WizardStepManager;
     let dialog: DvDialog;
     let downloadRS: DownloadRS;
-    let $q: IQService;
+    let $q: angular.IQService;
     let gesuchModelManager: GesuchModelManager;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let applicationPropertyRS: any;
     let authServiceRS: AuthServiceRS;
-    let $timeout: ITimeoutService;
+    let $timeout: angular.ITimeoutService;
 
     let gesuch: TSGesuch;
-
 
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
     beforeEach(angular.mock.module(EbeguWebAdmin.name));  //to inject applicationPropertyRS
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
-
-    }));
-
-
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         $scope = $injector.get('$rootScope');
         wizardStepManager = $injector.get('WizardStepManager');
         dialog = $injector.get('DvDialog');
@@ -58,13 +46,13 @@ describe('freigabeView', function () {
         authServiceRS = $injector.get('AuthServiceRS');
         $timeout = $injector.get('$timeout');
 
-        spyOn(applicationPropertyRS , 'isDevMode').and.returnValue($q.when(false));
-        spyOn(authServiceRS , 'isOneOfRoles').and.returnValue(true);
+        spyOn(applicationPropertyRS, 'isDevMode').and.returnValue($q.when(false));
+        spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
         spyOn(wizardStepManager, 'updateCurrentWizardStepStatus').and.returnValue({});
 
         controller = new FreigabeViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
             wizardStepManager, dialog, downloadRS, $scope, applicationPropertyRS, authServiceRS, $timeout);
-        controller.form = <IFormController>{};
+        controller.form = <angular.IFormController>{};
 
         spyOn(controller, 'isGesuchValid').and.callFake(function () {
             return controller.form.$valid;
@@ -106,7 +94,7 @@ describe('freigabeView', function () {
         it('should return undefined when the form is not valid', function () {
             controller.form.$valid = false;
 
-            let returned: IPromise<void> = controller.gesuchEinreichen();
+            let returned: angular.IPromise<void> = controller.gesuchEinreichen();
 
             expect(returned).toBeUndefined();
         });
@@ -114,7 +102,7 @@ describe('freigabeView', function () {
             controller.form.$valid = true;
             controller.bestaetigungFreigabequittung = false;
 
-            let returned: IPromise<void> = controller.gesuchEinreichen();
+            let returned: angular.IPromise<void> = controller.gesuchEinreichen();
 
             expect(returned).toBeUndefined();
         });
@@ -125,7 +113,7 @@ describe('freigabeView', function () {
             controller.form.$valid = true;
             spyOn(dialog, 'showDialog').and.returnValue($q.when({}));
 
-            let returned: IPromise<void> = controller.gesuchEinreichen();
+            let returned: angular.IPromise<void> = controller.gesuchEinreichen();
             $scope.$apply();
 
             expect(dialog.showDialog).toHaveBeenCalled();

@@ -1,37 +1,32 @@
-import '../../../bootstrap.ts';
-import 'angular-mocks';
-import GesuchModelManager from '../../service/gesuchModelManager';
-import {StammdatenViewController} from './stammdatenView';
-import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
-import {IStammdatenStateParams} from '../../gesuch.route';
-import TSGesuchsteller from '../../../models/TSGesuchsteller';
-import IScope = angular.IScope;
-import IQService = angular.IQService;
-import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
-import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import EwkRS from '../../../core/service/ewkRS.rest';
-import {ITimeoutService} from 'angular';
+import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
+import TSGesuchsteller from '../../../models/TSGesuchsteller';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import {IStammdatenStateParams} from '../../gesuch.route';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import WizardStepManager from '../../service/wizardStepManager';
+import {StammdatenViewController} from './stammdatenView';
 
 describe('stammdatenView', function () {
 
     let gesuchModelManager: GesuchModelManager;
     let stammdatenViewController: StammdatenViewController;
     let $stateParams: IStammdatenStateParams;
-    let $q: IQService;
-    let $rootScope:  any;
-    let $scope: IScope;
+    let $q: angular.IQService;
+    let $rootScope: any;
+    let $scope: angular.IScope;
     let ewkRS: EwkRS;
-    let $timeout: ITimeoutService;
+    let $timeout: angular.ITimeoutService;
 
     beforeEach(angular.mock.module('ebeguWeb.gesuch'));
 
-
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         gesuchModelManager = $injector.get('GesuchModelManager');
-        let wizardStepManager = $injector.get('WizardStepManager');
+        let wizardStepManager: WizardStepManager = $injector.get('WizardStepManager');
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
-        let $stateParams = $injector.get('$stateParams');
-        $stateParams.gesuchstellerNumber = 1;
+        $stateParams = $injector.get('$stateParams');
+        $stateParams.gesuchstellerNumber = '1';
         gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
         $q = $injector.get('$q');
         $rootScope = $injector.get('$rootScope');

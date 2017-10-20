@@ -1,6 +1,6 @@
 import * as webpack from 'webpack';
+import {HashedModuleIdsPlugin} from 'webpack';
 import * as webpackMerge from 'webpack-merge';
-import {root} from './helpers';
 import commonConfig, {METADATA} from './webpack.common';
 
 /**
@@ -15,7 +15,6 @@ const DefinePlugin = require('webpack/lib/DefinePlugin');
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const CompressionPlugin = require('compression-webpack-plugin');
-const WebpackMd5Hash = require('webpack-md5-hash');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const BundleAnalyzer = require('webpack-bundle-analyzer');
 
@@ -30,48 +29,29 @@ METADATA.HOST = HOST;
 METADATA.PORT = PORT;
 
 export default (env: any): webpack.Configuration => webpackMerge(commonConfig(env), {
-
-    // Developer tool to enhance debugging
-    //
-    // See: http://webpack.github.io/docs/configuration.html#devtool
-    // See: https://github.com/webpack/docs/wiki/build-performance#sourcemaps
-    devtool: 'cheap-module-source-map ',
-
-    // Options affecting the output of the compilation.
-    //
-    // See: http://webpack.github.io/docs/configuration.html#output
+    devtool: 'source-map',
     output: {
-
-        // The output directory as absolute path (required).
-        //
-        // See: http://webpack.github.io/docs/configuration.html#output-path
-        path: root('dist'),
-
         // Specifies the name of each output file on disk.
         // IMPORTANT: You must not specify an absolute path here!
         //
-        // See: http://webpack.github.io/docs/configuration.html#output-filename
+        // See: https://webpack.js.org/configuration/output/#output-filename
         filename: '[name].[chunkhash].bundle.js',
 
         // The filename of the SourceMaps for the JavaScript files.
         // They are inside the output.path directory.
         //
-        // See: http://webpack.github.io/docs/configuration.html#output-sourcemapfilename
-        sourceMapFilename: '[name].[chunkhash].bundle.map',
+        // See: https://webpack.js.org/configuration/output/#output-sourcemapfilename
+        sourceMapFilename: '[file].map',
 
         // The filename of non-entry chunks as relative path
         // inside the output.path directory.
         //
-        // See: http://webpack.github.io/docs/configuration.html#output-chunkfilename
-        chunkFilename: '[id].[chunkhash].chunk.js'
+        // See: https://webpack.js.org/configuration/output/#output-chunkfilename
+        chunkFilename: '[id].[chunkhash].chunk.js',
 
     },
-
-    // Add additional plugins to the compiler.
-    //
-    // See: http://webpack.github.io/docs/configuration.html#plugins
     plugins: [
-
+        // Sets these variables on each loader.
         new LoaderOptionsPlugin({
             debug: false,
             minimize: true
@@ -79,11 +59,12 @@ export default (env: any): webpack.Configuration => webpackMerge(commonConfig(en
 
         new ExtractTextPlugin('[name].[hash].css'),
 
-        // Plugin: WebpackMd5Hash
-        // Description: Plugin to replace a standard webpack chunkhash with md5.
-        //
-        // See: https://www.npmjs.com/package/webpack-md5-hash
-        new WebpackMd5Hash(),
+        // Cause hashes to be based on the relative path of the module, generating a string as the module id.
+        new HashedModuleIdsPlugin({
+            hashFunction: 'md5',
+            hashDigest: 'base64',
+            hashDigestLength: 4,
+        }),
 
         // Plugin: DefinePlugin
         // Description: Define free variables.
@@ -113,93 +94,20 @@ export default (env: any): webpack.Configuration => webpackMerge(commonConfig(en
             reportFilename: 'bundle-report.html',
         }),
 
-        // Plugin: UglifyJsPlugin
-        // Description: Minimize all JavaScript output of chunks.
-        // Loaders are switched into minimizing mode.
-        //
-        // See: https://webpack.github.io/docs/list-of-plugins.html#uglifyjsplugin
-        // NOTE: To debug prod builds uncomment //debug lines and comment //prod lines
+        // Minimize all JavaScript output of chunks.
         new UglifyJsPlugin({
-            // beautify: true, //debug
-            // mangle: false, //debug
-            // dead_code: false, //debug
-            // unused: false, //debug
-            // deadCode: false, //debug
-            // compress: {
-            //   screw_ie8: true,
-            //   keep_fnames: true,
-            //   drop_debugger: false,
-            //   dead_code: false,
-            //   unused: false
-            // }, // debug
-            // comments: true, //debug
-
-            beautify: false, //prod
-
+            beautify: false,
             mangle: {
                 screw_ie8: true,
                 keep_fnames: true
-            }, //prod
-            /*
-             mangle: {
-             screw_ie8: true,
-             except: [
-             'App',
-             'About',
-             'Contact',
-             'Home',
-             'Menu',
-             'Footer',
-             'XLarge',
-             'RouterActive',
-             'RouterLink',
-             'RouterOutlet',
-             'NgFor',
-             'NgIf',
-             'NgClass',
-             'NgSwitch',
-             'NgStyle',
-             'NgSwitchDefault',
-             'NgControl',
-             'NgControlName',
-             'NgControlGroup',
-             'NgFormControl',
-             'NgModel',
-             'NgFormModel',
-             'NgForm',
-             'NgSelectOption',
-             'DefaultValueAccessor',
-             'NumberValueAccessor',
-             'CheckboxControlValueAccessor',
-             'SelectControlValueAccessor',
-             'RadioControlValueAccessor',
-             'NgControlStatus',
-             'RequiredValidator',
-             'MinLengthValidator',
-             'MaxLengthValidator',
-             'PatternValidator',
-             'AsyncPipe',
-             'DatePipe',
-             'JsonPipe',
-             'NumberPipe',
-             'DecimalPipe',
-             'PercentPipe',
-             'CurrencyPipe',
-             'LowerCasePipe',
-             'UpperCasePipe',
-             'SlicePipe',
-             'ReplacePipe',
-             'I18nPluralPipe',
-             'I18nSelectPipe'
-             ] // Needed for uglify RouterLink problem
-             }, // prod
-             */
+            },
             compress: {
                 screw_ie8: true,
                 // warnings are from vendor libraries that are safely to ignore
                 warnings: false,
-            }, //prod
-            comments: false //prod
+            },
+            comments: false,
+            sourceMap: true,
         }),
 
         // Plugin: CompressionPlugin
@@ -217,13 +125,4 @@ export default (env: any): webpack.Configuration => webpackMerge(commonConfig(en
         ])
 
     ],
-
-    node: {
-        global: true,
-        crypto: 'empty',
-        process: false,
-        module: false,
-        clearImmediate: false,
-        setImmediate: false
-    }
 });

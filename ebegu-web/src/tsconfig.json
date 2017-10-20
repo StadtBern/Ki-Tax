@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "module": "amd",
+        "module": "commonjs",
         "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
@@ -10,11 +10,11 @@
         "removeComments": false,
         "preserveConstEnums": true,
         "noImplicitReturns": true,
-        "allowSyntheticDefaultImports": true,
-        "outDir": "../temp/js"
+        "outDir": "temp/js"
     },
     "exclude": [
-        "../node_modules",
+        "node_modules",
+        "build",
         "dist",
         "temp",
         "target"

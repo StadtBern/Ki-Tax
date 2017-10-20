@@ -1,6 +1,5 @@
 import {EbeguWebCore} from '../../core.module';
 import {ValueinputController} from './dv-valueinput';
-import INgModelController = angular.INgModelController;
 
 describe('dvValueinput', function () {
 
@@ -8,16 +7,16 @@ describe('dvValueinput', function () {
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
 
         controller = new ValueinputController($injector.get('$timeout'));
         controller.ngModelCtrl = <any> {
             $modelValue: undefined,
             // renderCalled: false,
-            $setViewValue: function(passedValue: any) {
+            $setViewValue: function (passedValue: any) {
                 this.$modelValue = passedValue;
             },
-            $render: function() {
+            $render: function () {
                 return; // this.renderCalled = true;
             }
         };

@@ -1,22 +1,21 @@
-import TSAntragDTO from '../../models/TSAntragDTO';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpBackendService} from 'angular';
-import {EbeguWebPendenzen} from '../pendenzen.module';
-import PendenzRS from './PendenzRS.rest';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import TSAntragDTO from '../../models/TSAntragDTO';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import {EbeguWebPendenzen} from '../pendenzen.module';
+import PendenzRS from './PendenzRS.rest';
 
 describe('pendenzInstitutionRS', function () {
 
     let pendenzRS: PendenzRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockPendenz: TSAntragDTO;
     let mockPendenzRest: any;
 
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         pendenzRS = $injector.get('PendenzRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');

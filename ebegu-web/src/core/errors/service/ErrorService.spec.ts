@@ -1,21 +1,18 @@
-import '../../../bootstrap.ts';
-import 'angular-mocks';
+import {TSMessageEvent} from '../../../models/enums/TSErrorEvent';
 import {TSErrorLevel} from '../../../models/enums/TSErrorLevel';
 import {TSErrorType} from '../../../models/enums/TSErrorType';
-import {TSMessageEvent} from '../../../models/enums/TSErrorEvent';
 import TSExceptionReport from '../../../models/TSExceptionReport';
-import HttpErrorInterceptor from './HttpErrorInterceptor';
 import ErrorService from './ErrorService';
-import IRootScopeService = angular.IRootScopeService;
+import HttpErrorInterceptor from './HttpErrorInterceptor';
 
 describe('errorService', function () {
 
     let httpErrorInterceptor: HttpErrorInterceptor, errorService: ErrorService;
-    let $rootScope: IRootScopeService;
+    let $rootScope: angular.IRootScopeService;
 
     beforeEach(angular.mock.module('dvbAngular.errors'));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         httpErrorInterceptor = $injector.get('HttpErrorInterceptor');
         $rootScope = $injector.get('$rootScope');
         errorService = $injector.get('ErrorService');
@@ -24,7 +21,6 @@ describe('errorService', function () {
     beforeEach(inject(function () {
         spyOn($rootScope, '$broadcast').and.callThrough();
     }));
-
 
     describe('Public API', function () {
         it('should include a getErrors() function', function () {

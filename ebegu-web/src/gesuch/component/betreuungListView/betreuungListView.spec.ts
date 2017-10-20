@@ -1,31 +1,35 @@
 import {EbeguWebCore} from '../../../core/core.module';
-import {IStateService} from 'angular-ui-router';
-import {EbeguWebGesuch} from '../../gesuch.module';
-import {BetreuungListViewController} from './betreuungListView';
-import GesuchModelManager from '../../service/gesuchModelManager';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import ErrorService from '../../../core/errors/service/ErrorService';
 import TSKindContainer from '../../../models/TSKindContainer';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import {EbeguWebGesuch} from '../../gesuch.module';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import WizardStepManager from '../../service/wizardStepManager';
+import {BetreuungListViewController} from './betreuungListView';
 
 describe('betreuungListViewTest', function () {
 
     let betreuungListView: BetreuungListViewController;
     let gesuchModelManager: GesuchModelManager;
-    let $state: IStateService;
+    let $state: angular.ui.IStateService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         gesuchModelManager = $injector.get('GesuchModelManager');
-        let wizardStepManager = $injector.get('WizardStepManager');
+        let wizardStepManager: WizardStepManager = $injector.get('WizardStepManager');
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         spyOn(gesuchModelManager, 'convertKindNumberToKindIndex').and.returnValue(0);
         $state = $injector.get('$state');
-        let mddialog = $injector.get('$mdDialog');
-        let dialog = $injector.get('DvDialog');
-        let ebeguRestUtil = $injector.get('EbeguRestUtil');
-        let errorService = $injector.get('ErrorService');
+        let $translate: angular.translate.ITranslateService = $injector.get('$translate');
+        let dialog: DvDialog = $injector.get('DvDialog');
+        let ebeguUtil: EbeguUtil = $injector.get('EbeguUtil');
+        let errorService: ErrorService = $injector.get('ErrorService');
         let $timeout = $injector.get('$timeout');
-        betreuungListView = new BetreuungListViewController($state, gesuchModelManager, mddialog, dialog, ebeguRestUtil, undefined,
+
+        betreuungListView = new BetreuungListViewController($state, gesuchModelManager, $translate, dialog, ebeguUtil, undefined,
             errorService, wizardStepManager, undefined, $injector.get('$rootScope'), undefined, $timeout);
     }));
 
@@ -48,10 +52,13 @@ describe('betreuungListViewTest', function () {
 
                 expect(gesuchModelManager.getKindIndex()).toBe(0);
 
-                expect($state.go).toHaveBeenCalledWith('gesuch.betreuung', { betreuungNumber: undefined, kindNumber: 1, gesuchId: ''});
+                expect($state.go).toHaveBeenCalledWith('gesuch.betreuung', {
+                    betreuungNumber: undefined,
+                    kindNumber: 1,
+                    gesuchId: ''
+                });
             });
         });
     });
-
 
 });

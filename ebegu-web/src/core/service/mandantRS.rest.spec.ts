@@ -1,25 +1,23 @@
-import {EbeguWebCore} from '../core.module';
-import {MandantRS} from './mandantRS.rest';
 import {TSMandant} from '../../models/TSMandant';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpBackendService} from 'angular';
+import {EbeguWebCore} from '../core.module';
+import {MandantRS} from './mandantRS.rest';
 
 describe('mandantRS', function () {
 
     let mandantRS: MandantRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockMandant: TSMandant;
     let mockMandantRest: any;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         mandantRS = $injector.get('MandantRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
     }));
-
 
     beforeEach(() => {
         mockMandant = new TSMandant('MandantTest');
@@ -36,7 +34,6 @@ describe('mandantRS', function () {
             expect(mandantRS.findMandant).toBeDefined();
         });
     });
-
 
     describe('API Usage', function () {
         describe('findMandant', () => {

@@ -1,8 +1,4 @@
-import '../../../bootstrap.ts';
-import 'angular-mocks';
 import {EbeguWebGesuch} from '../../gesuch.module';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
 
 describe('familiensituationView', function () {
 
@@ -10,9 +6,9 @@ describe('familiensituationView', function () {
 
     let component: any;
     let scope: angular.IScope;
-    let $componentController: any;
+    let $componentController: angular.IComponentControllerService;
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         $componentController = $injector.get('$componentController');
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();

@@ -1,19 +1,17 @@
-import GesuchsperiodeRS from './gesuchsperiodeRS.rest';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {EbeguWebCore} from '../core.module';
-import {IHttpBackendService} from 'angular';
+import * as moment from 'moment';
+import {TSGesuchsperiodeStatus} from '../../models/enums/TSGesuchsperiodeStatus';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import {TSDateRange} from '../../models/types/TSDateRange';
 import DateUtil from '../../utils/DateUtil';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TestDataUtil from '../../utils/TestDataUtil';
-import * as moment from 'moment';
-import {TSGesuchsperiodeStatus} from '../../models/enums/TSGesuchsperiodeStatus';
-
+import {EbeguWebCore} from '../core.module';
+import GesuchsperiodeRS from './gesuchsperiodeRS.rest';
 
 describe('gesuchsperiodeRS', function () {
 
     let gesuchsperiodeRS: GesuchsperiodeRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockGesuchsperiode: TSGesuchsperiode;
     let mockGesuchsperiodeRest: any;
@@ -21,7 +19,7 @@ describe('gesuchsperiodeRS', function () {
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         gesuchsperiodeRS = $injector.get('GesuchsperiodeRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
@@ -133,7 +131,8 @@ describe('gesuchsperiodeRS', function () {
         });
     });
 
-    function checkFieldValues(createdGesuchsperiode: TSGesuchsperiode, mockGesuchsperiode: TSGesuchsperiode, active: boolean) {
+    function checkFieldValues(createdGesuchsperiode: TSGesuchsperiode, mockGesuchsperiode: TSGesuchsperiode,
+                              active: boolean) {
         expect(createdGesuchsperiode).toBeDefined();
         expect(createdGesuchsperiode.status).toBe(TSGesuchsperiodeStatus.AKTIV);
         TestDataUtil.checkGueltigkeitAndSetIfSame(createdGesuchsperiode, mockGesuchsperiode);

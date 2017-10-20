@@ -1,20 +1,19 @@
-import {FachstelleRS} from './fachstelleRS.rest';
-import {IHttpBackendService} from 'angular';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {TSFachstelle} from '../../models/TSFachstelle';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {EbeguWebCore} from '../core.module';
+import {FachstelleRS} from './fachstelleRS.rest';
 
 describe('fachstelleRS', function () {
 
     let fachstelleRS: FachstelleRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockFachstelle: TSFachstelle;
     let mockFachstelleRest: any;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         fachstelleRS = $injector.get('FachstelleRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');

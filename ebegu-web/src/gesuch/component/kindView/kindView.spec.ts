@@ -1,13 +1,13 @@
-import IScope = angular.IScope;
 describe('kindView', function () {
 
     beforeEach(angular.mock.module('ebeguWeb.gesuch'));
 
     let component: any;
     let scope: angular.IScope;
-    let $componentController: any;
+    let $componentController: angular.IComponentControllerService;
 
-    beforeEach(angular.mock.inject(function (_$componentController_: any, $rootScope: IScope) {
+    beforeEach(angular.mock.inject(function (_$componentController_: angular.IComponentControllerService,
+                                             $rootScope: angular.IRootScopeService) {
         $componentController = _$componentController_;
         scope = $rootScope.$new();
     }));

@@ -52,6 +52,23 @@ export function packageSort(packages) {
     };
 }
 
+const entryPoints = ['inline', 'polyfills', 'sw-register', 'vendor', 'main'];
+
+export function chunksSort(left: { names: string[] }, right: { names: string[] }): number {
+    const leftIndex = entryPoints.indexOf(left.names[0]);
+    const rightindex = entryPoints.indexOf(right.names[0]);
+
+    if (leftIndex > rightindex) {
+        return 1;
+    }
+
+    if (leftIndex < rightindex) {
+        return -1;
+    }
+
+    return 0;
+}
+
 export function reverse(arr) {
     return arr.reverse();
 }

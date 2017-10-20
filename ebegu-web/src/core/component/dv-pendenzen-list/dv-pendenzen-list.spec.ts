@@ -1,16 +1,14 @@
-import {IScope, IQService, IFilterService, IHttpBackendService} from 'angular';
-import TSAntragDTO from '../../../models/TSAntragDTO';
+import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
+import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
-import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
-import {InstitutionRS} from '../../../core/service/institutionRS.rest';
-import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
-import {IStateService} from 'angular-ui-router';
-import TestDataUtil from '../../../utils/TestDataUtil';
+import TSAntragDTO from '../../../models/TSAntragDTO';
 import TSGesuch from '../../../models/TSGesuch';
-import WizardStepManager from '../../../gesuch/service/wizardStepManager';
-import PendenzRS from '../../../pendenzen/service/PendenzRS.rest';
 import {EbeguWebPendenzen} from '../../../pendenzen/pendenzen.module';
+import PendenzRS from '../../../pendenzen/service/PendenzRS.rest';
+import TestDataUtil from '../../../utils/TestDataUtil';
+import {InstitutionRS} from '../../service/institutionRS.rest';
 import {DVPendenzenListController} from './dv-pendenzen-list';
 
 describe('DVPendenzenList', function () {
@@ -20,18 +18,17 @@ describe('DVPendenzenList', function () {
     let gesuchRS: GesuchRS;
     let pendenzRS: PendenzRS;
     let pendenzListViewController: DVPendenzenListController;
-    let $q: IQService;
-    let $scope: IScope;
-    let $filter: IFilterService;
-    let $httpBackend: IHttpBackendService;
-    let $state: IStateService;
+    let $q: angular.IQService;
+    let $scope: angular.IScope;
+    let $filter: angular.IFilterService;
+    let $httpBackend: angular.IHttpBackendService;
+    let $state: angular.ui.IStateService;
     let CONSTANTS: any;
     let wizardStepManager: WizardStepManager;
 
-
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         pendenzRS = $injector.get('PendenzRS');
         institutionRS = $injector.get('InstitutionRS');
         gesuchsperiodeRS = $injector.get('GesuchsperiodeRS');

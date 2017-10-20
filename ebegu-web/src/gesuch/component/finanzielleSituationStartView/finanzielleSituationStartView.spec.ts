@@ -1,14 +1,11 @@
-import '../../../bootstrap.ts';
-import 'angular-mocks';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
+import TSFamiliensituation from '../../../models/TSFamiliensituation';
+import TSFamiliensituationContainer from '../../../models/TSFamiliensituationContainer';
+import TSGesuchsteller from '../../../models/TSGesuchsteller';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import {EbeguWebGesuch} from '../../gesuch.module';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import TSFamiliensituation from '../../../models/TSFamiliensituation';
-import TSGesuchsteller from '../../../models/TSGesuchsteller';
-import TSFamiliensituationContainer from '../../../models/TSFamiliensituationContainer';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
-import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
-import {TSEingangsart} from '../../../models/enums/TSEingangsart';
+import WizardStepManager from '../../service/wizardStepManager';
 
 describe('finanzielleSituationStartView', function () {
 
@@ -18,12 +15,12 @@ describe('finanzielleSituationStartView', function () {
 
     let component: any;
     let scope: angular.IScope;
-    let $componentController: any;
+    let $componentController: angular.IComponentControllerService;
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         $componentController = $injector.get('$componentController');
         gesuchModelManager = $injector.get('GesuchModelManager');
-        let wizardStepManager = $injector.get('WizardStepManager');
+        let wizardStepManager: WizardStepManager = $injector.get('WizardStepManager');
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();

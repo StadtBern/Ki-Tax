@@ -1,14 +1,13 @@
-import {IWindowService, IRootScopeService} from 'angular';
-import HttpAuthInterceptor from './HttpAuthInterceptor';
-import {EbeguAuthentication} from '../authentication.module';
 import {EbeguWebCore} from '../../core/core.module';
 import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
+import {EbeguAuthentication} from '../authentication.module';
+import HttpAuthInterceptor from './HttpAuthInterceptor';
 
 describe('HttpAuthInterceptor', function () {
 
     let httpAuthInterceptor: HttpAuthInterceptor;
-    let $rootScope: IRootScopeService;
-    let $window: IWindowService;
+    let $rootScope: angular.IRootScopeService;
+    let $window: angular.IWindowService;
 
     let authErrorResponse: any = {
         status: 401,
@@ -19,12 +18,13 @@ describe('HttpAuthInterceptor', function () {
     beforeEach(angular.mock.module(EbeguWebCore.name));
     beforeEach(angular.mock.module(EbeguAuthentication.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         httpAuthInterceptor = $injector.get('HttpAuthInterceptor');
         $rootScope = $injector.get('$rootScope');
         $window = $injector.get('$window');
         window.onbeforeunload = () => 'Oh no!';
-        spyOn($rootScope, '$broadcast').and.callFake(() => {});
+        spyOn($rootScope, '$broadcast').and.callFake(() => {
+        });
     }));
 
     describe('Public API', function () {

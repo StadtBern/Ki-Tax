@@ -1,19 +1,18 @@
-import {EbeguWebCore} from '../core.module';
-import {IHttpBackendService} from 'angular';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
-import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
-import TSInstitution from '../../models/TSInstitution';
-import {InstitutionStammdatenRS} from './institutionStammdatenRS.rest';
-import DateUtil from '../../utils/DateUtil';
-import {TSDateRange} from '../../models/types/TSDateRange';
-import TSAdresse from '../../models/TSAdresse';
 import * as moment from 'moment';
+import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import TSAdresse from '../../models/TSAdresse';
+import TSInstitution from '../../models/TSInstitution';
+import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
+import {TSDateRange} from '../../models/types/TSDateRange';
+import DateUtil from '../../utils/DateUtil';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import {EbeguWebCore} from '../core.module';
+import {InstitutionStammdatenRS} from './institutionStammdatenRS.rest';
 
 describe('institutionStammdatenRS', function () {
 
     let institutionStammdatenRS: InstitutionStammdatenRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockInstitutionStammdaten: TSInstitutionStammdaten;
     let mockInstitutionStammdatenRest: any;
@@ -23,7 +22,7 @@ describe('institutionStammdatenRS', function () {
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         institutionStammdatenRS = $injector.get('InstitutionStammdatenRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
@@ -162,7 +161,8 @@ describe('institutionStammdatenRS', function () {
         });
     });
 
-    function checkFieldValues(institutionStammdaten1: TSInstitutionStammdaten, institutionStammdaten2: TSInstitutionStammdaten) {
+    function checkFieldValues(institutionStammdaten1: TSInstitutionStammdaten,
+                              institutionStammdaten2: TSInstitutionStammdaten) {
         expect(institutionStammdaten1).toBeDefined();
         expect(institutionStammdaten1.iban).toEqual(institutionStammdaten2.iban);
         expect(institutionStammdaten1.id).toEqual(institutionStammdaten2.id);

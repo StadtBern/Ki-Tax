@@ -1,12 +1,12 @@
-import {EbeguWebPendenzen} from '../pendenzen.module';
-import TSAntragDTO from '../../models/TSAntragDTO';
-import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
-import TSGesuchsperiode from '../../models/TSGesuchsperiode';
-import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
-import {TSDateRange} from '../../models/types/TSDateRange';
 import * as moment from 'moment';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
+import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import {TSGesuchsperiodeStatus} from '../../models/enums/TSGesuchsperiodeStatus';
+import TSAntragDTO from '../../models/TSAntragDTO';
+import TSGesuchsperiode from '../../models/TSGesuchsperiode';
+import {TSDateRange} from '../../models/types/TSDateRange';
+import {EbeguWebPendenzen} from '../pendenzen.module';
 
 describe('pendenzFilter', function () {
 
@@ -19,7 +19,7 @@ describe('pendenzFilter', function () {
 
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         pendenzFilter = $injector.get('$filter')('pendenzFilter');
 
         let ab = moment('31.08.2016', 'DD.MM.YYYY');
@@ -55,13 +55,21 @@ describe('pendenzFilter', function () {
         it('should return an array with only the elements with the given Familienname or containing the given string', function () {
             expect(pendenzFilter(pendenzArray, {familienName: 'Hernandez'})).toEqual([pendenz1]);
             expect(pendenzFilter(pendenzArray, {familienName: 'ez'})).toEqual([pendenz1, pendenz2, pendenz3]);
-            expect(pendenzFilter(pendenzArray, {familienName: ''})).toEqual([pendenz1, pendenz2, pendenz3]); // empty string returns all elements
+            expect(pendenzFilter(pendenzArray, {familienName: ''})).toEqual([pendenz1, pendenz2, pendenz3]); // empty
+                                                                                                             // string
+                                                                                                             // returns
+                                                                                                             // all
+                                                                                                             // elements
             expect(pendenzFilter(pendenzArray, {familienName: 'rrr'})).toEqual([]); // no familienname with this pattern
         });
         it('should return an array with only the elements of the given antragTyp', function () {
             expect(pendenzFilter(pendenzArray, {antragTyp: TSAntragTyp.ERSTGESUCH})).toEqual([pendenz1, pendenz2]);
             expect(pendenzFilter(pendenzArray, {antragTyp: TSAntragTyp.MUTATION})).toEqual([pendenz3]);
-            expect(pendenzFilter(pendenzArray, {antragTyp: ''})).toEqual([pendenz1, pendenz2, pendenz3]); // empty string returns all elements
+            expect(pendenzFilter(pendenzArray, {antragTyp: ''})).toEqual([pendenz1, pendenz2, pendenz3]); // empty
+                                                                                                          // string
+                                                                                                          // returns
+                                                                                                          // all
+                                                                                                          // elements
             expect(pendenzFilter(pendenzArray, {antragTyp: 'error'})).toEqual([]);
         });
         it('should return an array with only the elements of the given gesuchsperiodeGueltigAb', function () {

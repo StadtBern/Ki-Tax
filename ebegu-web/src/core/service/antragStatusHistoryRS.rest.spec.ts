@@ -1,22 +1,21 @@
-import {EbeguWebCore} from '../core.module';
-import AntragStatusHistoryRS from './antragStatusHistoryRS.rest';
-import TSAntragStatusHistory from '../../models/TSAntragStatusHistory';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import TSAntragStatusHistory from '../../models/TSAntragStatusHistory';
+import TSGesuch from '../../models/TSGesuch';
 import DateUtil from '../../utils/DateUtil';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TestDataUtil from '../../utils/TestDataUtil';
-import TSGesuch from '../../models/TSGesuch';
-import IHttpBackendService = angular.IHttpBackendService;
+import {EbeguWebCore} from '../core.module';
+import AntragStatusHistoryRS from './antragStatusHistoryRS.rest';
 
 describe('antragStatusHistoryRS', function () {
 
     let antragStatusHistoryRS: AntragStatusHistoryRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         antragStatusHistoryRS = $injector.get('AntragStatusHistoryRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');

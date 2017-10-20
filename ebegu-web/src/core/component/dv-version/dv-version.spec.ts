@@ -1,5 +1,3 @@
-import '../../../bootstrap.ts';
-import 'angular-mocks';
 import {EbeguWebCore} from '../../core.module';
 
 describe('dvVersion', function () {
@@ -7,10 +5,10 @@ describe('dvVersion', function () {
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
     let component: any;
-    let scope: IScope;
-    let $componentController: any;
+    let scope: angular.IScope;
+    let $componentController: angular.IComponentControllerService;
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         $componentController = $injector.get('$componentController');
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();

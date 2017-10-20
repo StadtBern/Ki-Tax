@@ -1,26 +1,24 @@
 import {EbeguWebCore} from '../../../core/core.module';
-import {FallCreationViewController} from './fallCreationView';
-import GesuchModelManager from '../../service/gesuchModelManager';
-import {IQService, IScope} from 'angular';
-import {IStateService} from 'angular-ui-router';
-import TestDataUtil from '../../../utils/TestDataUtil';
-import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
-import TSGesuch from '../../../models/TSGesuch';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import TSGesuch from '../../../models/TSGesuch';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import TestDataUtil from '../../../utils/TestDataUtil';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import {FallCreationViewController} from './fallCreationView';
 
 describe('fallCreationView', function () {
 
     let fallCreationview: FallCreationViewController;
     let gesuchModelManager: GesuchModelManager;
-    let $state: IStateService;
-    let $q: IQService;
-    let $rootScope: IScope;
+    let $state: angular.ui.IStateService;
+    let $q: angular.IQService;
+    let $rootScope: angular.IScope;
     let form: any;
     let gesuch: TSGesuch;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         gesuchModelManager = $injector.get('GesuchModelManager');
         TestDataUtil.mockLazyGesuchModelManagerHttpCalls($injector.get('$httpBackend'));
         $state = $injector.get('$state');
@@ -44,7 +42,7 @@ describe('fallCreationView', function () {
     describe('nextStep', () => {
         it('submitted but rejected -> it does not go to the next step', () => {
             spyOn($state, 'go');
-            let reject = $q.reject({}).catch( () => {
+            let reject = $q.reject({}).catch(() => {
                 //need to catch rejected promise
             });
             spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue(reject);

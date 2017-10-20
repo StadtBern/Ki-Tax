@@ -1,13 +1,12 @@
 import {EbeguWebCore} from '../../core/core.module';
-import FallRS from './fallRS.rest';
-import {IHttpBackendService} from 'angular';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFall from '../../models/TSFall';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import FallRS from './fallRS.rest';
 
 describe('fallRS', function () {
 
     let fallRS: FallRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let REST_API: string;
     let mockFall: TSFall;
@@ -15,7 +14,7 @@ describe('fallRS', function () {
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         fallRS = $injector.get('FallRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');

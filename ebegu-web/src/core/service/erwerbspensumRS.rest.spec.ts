@@ -1,30 +1,26 @@
-import {IHttpBackendService, IQService} from 'angular';
+import WizardStepManager from '../../gesuch/service/wizardStepManager';
+import TSErwerbspensum from '../../models/TSErwerbspensum';
+import TSErwerbspensumContainer from '../../models/TSErwerbspensumContainer';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import TestDataUtil from '../../utils/TestDataUtil';
 import {EbeguWebCore} from '../core.module';
 import ErwerbspensumRS from './erwerbspensumRS.rest';
-import TSErwerbspensumContainer from '../../models/TSErwerbspensumContainer';
-import TSErwerbspensum from '../../models/TSErwerbspensum';
-import TestDataUtil from '../../utils/TestDataUtil';
-import IInjectorService = angular.auto.IInjectorService;
-import moment = require('moment');
-import WizardStepManager from '../../gesuch/service/wizardStepManager';
 
 describe('ErwerbspensumRS', function () {
 
     let erwerbspensumRS: ErwerbspensumRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockErwerbspensum: TSErwerbspensumContainer;
     let mockErwerbspensumRS: any;
     let gesuchId: string;
     let gesuchstellerId: string;
-    let $q: IQService;
+    let $q: angular.IQService;
     let wizardStepManager: WizardStepManager;
-
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         erwerbspensumRS = $injector.get('ErwerbspensumRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
@@ -90,7 +86,7 @@ describe('ErwerbspensumRS', function () {
 
     describe('updateErwerbspensumContainer', () => {
         it('should update an ErwerbspensumContainer', () => {
-            let  changedEwp: TSErwerbspensum = TestDataUtil.createErwerbspensum();
+            let changedEwp: TSErwerbspensum = TestDataUtil.createErwerbspensum();
             changedEwp.pensum = 40;
             changedEwp.zuschlagsprozent = 10;
             mockErwerbspensum.erwerbspensumJA = changedEwp;
@@ -124,7 +120,6 @@ describe('ErwerbspensumRS', function () {
             expect(deleteResult.status).toEqual(200);
         });
     });
-
 
     function checkFieldValues(foundEWPCont: TSErwerbspensumContainer) {
         expect(foundEWPCont).toBeDefined();

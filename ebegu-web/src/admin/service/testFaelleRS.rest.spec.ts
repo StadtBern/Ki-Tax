@@ -1,16 +1,14 @@
-import {TestFaelleRS} from './testFaelleRS.rest';
-import {IHttpBackendService} from 'angular';
 import {EbeguWebAdmin} from '../admin.module';
+import {TestFaelleRS} from './testFaelleRS.rest';
 
 describe('TestFaelleRS', function () {
 
     let testFaelleRS: TestFaelleRS;
-    let $httpBackend: IHttpBackendService;
-
+    let $httpBackend: angular.IHttpBackendService;
 
     beforeEach(angular.mock.module(EbeguWebAdmin.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         testFaelleRS = $injector.get('TestFaelleRS');
         $httpBackend = $injector.get('$httpBackend');
     }));

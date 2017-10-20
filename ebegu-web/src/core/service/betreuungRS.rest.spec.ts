@@ -1,32 +1,26 @@
-import '../../bootstrap.ts';
-import 'angular-mocks';
-import {EbeguWebCore} from '../core.module';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpBackendService, IQService} from 'angular';
-import TSBetreuung from '../../models/TSBetreuung';
-import IInjectorService = angular.auto.IInjectorService;
-import BetreuungRS from './betreuungRS.rest';
-import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
-import TestDataUtil from '../../utils/TestDataUtil';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
-
+import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
+import TSBetreuung from '../../models/TSBetreuung';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import TestDataUtil from '../../utils/TestDataUtil';
+import {EbeguWebCore} from '../core.module';
+import BetreuungRS from './betreuungRS.rest';
 
 describe('betreuungRS', function () {
 
     let betreuungRS: BetreuungRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockBetreuung: TSBetreuung;
     let wizardStepManager: WizardStepManager;
     let mockBetreuungRest: any;
     let kindId: string;
     let gesuchId: string;
-    let $q: IQService;
-
+    let $q: angular.IQService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         betreuungRS = $injector.get('BetreuungRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');

@@ -1,14 +1,10 @@
 import * as webpack from 'webpack';
 import * as webpackMerge from 'webpack-merge';
-import {hasProcessFlag, root} from './helpers';
+import {hasProcessFlag} from './helpers';
 import commonConfig from './webpack.common';
-
-/**
- * Webpack Plugins
- */
-const DefinePlugin = require('webpack/lib/DefinePlugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
+import ExtractTextPlugin = require('extract-text-webpack-plugin');
+import DefinePlugin = require('webpack/lib/DefinePlugin');
+import LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 
 /**
  * Webpack Constants
@@ -28,38 +24,7 @@ const METADATA = {
 
 export default (env: any): webpack.Configuration => webpackMerge(commonConfig(env), {
 
-    // Developer tool to enhance debugging
-    //
-    // See: http://webpack.github.io/docs/configuration.html#devtool
-    // See: https://github.com/webpack/docs/wiki/build-performance#sourcemaps
     devtool: 'cheap-module-eval-source-map',
-
-    output: {
-        // The output directory as absolute path (required).
-        //
-        // See: http://webpack.github.io/docs/configuration.html#output-path
-        path: root('dist'),
-
-        // Specifies the name of each output file on disk.
-        // IMPORTANT: You must not specify an absolute path here!
-        //
-        // See: http://webpack.github.io/docs/configuration.html#output-filename
-        filename: '[name].bundle.js',
-
-        // The filename of the SourceMaps for the JavaScript files.
-        // They are inside the output.path directory.
-        //
-        // See: http://webpack.github.io/docs/configuration.html#output-sourcemapfilename
-        sourceMapFilename: '[name].map',
-
-        // The filename of non-entry chunks as relative path
-        // inside the output.path directory.
-        //
-        // See: http://webpack.github.io/docs/configuration.html#output-chunkfilename
-        chunkFilename: '[id].chunk.js'
-
-    },
-
     plugins: [
         new LoaderOptionsPlugin({
             debug: true
@@ -88,23 +53,6 @@ export default (env: any): webpack.Configuration => webpackMerge(commonConfig(en
             }
         })
     ],
-
-    // Static analysis linter for TypeScript advanced options configuration
-    // Description: An extensible linter for the TypeScript language.
-    //
-    // See: https://github.com/wbuchwalter/tslint-loader
-    // tslint: {
-    //     emitErrors: false,
-    //     failOnHint: false,
-    //     resourcePath: 'src'
-    // },
-
-    // Webpack Development Server configuration
-    // Description: The webpack-dev-server is a little node.js Express server.
-    // The server emits information about the compilation state to the client,
-    // which reacts to those events.
-    //
-    // See: https://webpack.github.io/docs/webpack-dev-server.html
     devServer: {
         port: METADATA.port,
         host: METADATA.host,
@@ -120,13 +68,5 @@ export default (env: any): webpack.Configuration => webpackMerge(commonConfig(en
                 secure: false
             }
         }
-    },
-    node: {
-        global: true,
-        crypto: 'empty',
-        process: true,
-        module: false,
-        clearImmediate: false,
-        setImmediate: false
     }
 });

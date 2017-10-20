@@ -1,23 +1,29 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import * as webpack from 'webpack';
-import {packageSort, reverse, root} from './helpers';
+import {ContextReplacementPlugin, NoEmitOnErrorsPlugin, ProvidePlugin} from 'webpack';
+import {chunksSort, root} from './helpers';
 import rules from './rules';
+import CircularDependencyPlugin = require('circular-dependency-plugin');
+import CleanWebpackPlugin = require('clean-webpack-plugin');
+import CopyWebpackPlugin = require('copy-webpack-plugin');
+import ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+import HtmlWebpackPlugin = require('html-webpack-plugin');
+import DefinePlugin = require('webpack/lib/DefinePlugin');
+import CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 
 let contents = fs.readFileSync(__dirname + '/../pom.xml').toString();
 
 let re = new RegExp('<artifactId>ebegu</artifactId>[\\s\\S]*?<version>(.*?)</version>[\\s\\S]*?<packaging>pom</packaging>', 'im');
 let myMatchArray = re.exec(contents);
-let parsedversion = ( myMatchArray !== null) ? myMatchArray[1] : 'unknown';
+let parsedversion = (myMatchArray === null) ? 'unknown' : myMatchArray[1];
 console.log('Parsed Version from pom is ' + parsedversion);
 
 let currentTime = new Date();
-/**
- * Webpack Plugins
- */
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const DefinePlugin = require('webpack/lib/DefinePlugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+
+const nodeModules = path.join(process.cwd(), 'node_modules');
+const realNodeModules = fs.realpathSync(nodeModules);
+const genDirNodeModules = path.join(process.cwd(), 'src', '$$_gendir', 'node_modules');
 /**
  * Webpack Constants
  */
@@ -32,6 +38,25 @@ export const METADATA = {
     buildtstamp: currentTime.toISOString() || ''
 };
 
+export const vendorChunk = {
+    name: 'vendor',
+    minChunks: (module): boolean => {
+        return module.resource
+            && (module.resource.startsWith(nodeModules)
+                || module.resource.startsWith(genDirNodeModules)
+                || module.resource.startsWith(realNodeModules));
+    },
+    chunks: [
+        'main',
+    ],
+};
+
+export const mainChunk = {
+    name: 'main',
+    minChunks: 2,
+    async: 'common',
+};
+
 /**
  * Webpack configuration
  *
@@ -40,63 +65,45 @@ export const METADATA = {
 export default (env: string): webpack.Configuration => {
 
     return {
-
-        // Static metadata for index.html
-        //
-        // See: (custom attribute)
-        // metadata: METADATA,
-
-        // Cache generated modules and chunks to improve performance for multiple incremental builds.
-        // This is enabled by default in watch mode.
-        // You can pass false to disable it.
-        //
-        // See: http://webpack.github.io/docs/configuration.html#cache
-        // cache: false,
-
-        // The entry point for the bundle
-        // Our Angular.js app
-        //
-        // See: http://webpack.github.io/docs/configuration.html#entry
-        // change dvbern
         entry: {
-            // 'polyfills': './src/polyfills.ts',
-            'vendor': './src/vendor.ts',
-            'main': './src/bootstrap.ts'
+            'main': root('src', 'bootstrap.ts')
         },
-
-        // Options affecting the resolving of modules.
-        //
-        // See: http://webpack.github.io/docs/configuration.html#resolve
+        output: {
+            path: path.join(process.cwd(), 'dist'),
+            filename: '[name].bundle.js',
+            chunkFilename: '[chunkhash].chunk.js',
+        },
+        module: {
+            rules: rules()
+        },
         resolve: {
-            modules: [root('src'), 'node_modules'],
-
-            // An array of extensions that should be used to resolve modules.
-            //
-            // See: http://webpack.github.io/docs/configuration.html#resolve-extensions
             extensions: ['.ts', '.js']
         },
 
-        // Options affecting the normal modules.
-        //
-        // See: http://webpack.github.io/docs/configuration.html#module
-        module: {
-
-            // An array of automatically applied loaders.
-            //
-            // IMPORTANT: The loaders here are resolved relative to the resource which they are applied to.
-            // This means they are not resolved relative to the configuration file.
-            //
-            // See: http://webpack.github.io/docs/configuration.html#module-loaders
-            // loaders: loaders
-            rules: rules()
-        },
-
-        // Add additional plugins to the compiler.
-        //
-        // See: http://webpack.github.io/docs/configuration.html#plugins
         plugins: [
+            // clean dist before we start
+            new CleanWebpackPlugin(['dist'], {
+                root: process.cwd(),
+            }),
 
-            new webpack.ProvidePlugin({
+            // skip the emitting phase whenever there are errors while compiling
+            new NoEmitOnErrorsPlugin(),
+
+            new ForkTsCheckerWebpackPlugin({
+                checkSyntacticErrors: true,
+                // tslint runs through tslint-loader
+                tslint: true,
+                tsconfig: root('src', 'tsconfig.json')
+            }),
+
+            // Detect modules with circular dependencies when bundling with webpack
+            new CircularDependencyPlugin({
+                exclude: /([\\\/])node_modules([\\\/])/,
+                failOnError: false,
+            }),
+
+            // run TypeScript checker in a separate thread for build performance gain
+            new ProvidePlugin({
                 $: 'jquery',
                 jQuery: 'jquery',
                 'window.jQuery': 'jquery',
@@ -104,31 +111,19 @@ export default (env: string): webpack.Configuration => {
                 'moment': 'moment'
             }),
 
+            // Moment: include only DE and FR locales
+            new ContextReplacementPlugin(/moment[\\/]locale$/, /^\.\/(de|fr)$/),
 
-        // run TypeScript checker in a separate thread for build performance gain
-        new ForkTsCheckerWebpackPlugin({
-            checkSyntacticErrors: true,
-            // tslint runs through tslint-loader
-            tslint: true,
-            tsconfig: root('src', 'tsconfig.json')
-        }),
-
-            // Plugin: ForkCheckerPlugin
-            // Description: Do type checking in a separate process, so webpack don't need to wait.
-            //
-            // See: https://github.com/s-panferov/awesome-typescript-loader#forkchecker-boolean-defaultfalse
-            // new ForkCheckerPlugin(),
-
-            // Plugin: CommonsChunkPlugin
-            // Description: Shares common code between the pages.
-            // It identifies common modules and put them into a commons chunk.
-            //
-            // See: https://webpack.github.io/docs/list-of-plugins.html#commonschunkplugin
-            // See: https://github.com/webpack/docs/wiki/optimization#multi-page-app
-            new webpack.optimize.CommonsChunkPlugin({
-                name: reverse(['polyfills', 'vendor', 'main']),
-                minChunks: Infinity
+            // Bundle webpack code into a prefixed chunk
+            new CommonsChunkPlugin({
+                name: 'inline',
             }),
+
+            // Bundle vendor modules together
+            new CommonsChunkPlugin(vendorChunk),
+
+            // Bundle main chunk
+            new CommonsChunkPlugin(mainChunk),
 
             // Plugin: CopyWebpackPlugin
             // Description: Copy files and directories in webpack.
@@ -148,7 +143,18 @@ export default (env: string): webpack.Configuration => {
             // See: https://github.com/ampedandwired/html-webpack-plugin
             new HtmlWebpackPlugin({
                 template: 'src/index.html',
-                chunksSortMode: packageSort(['polyfills', 'vendor', 'main'])
+                hash: false,
+                inject: 'head',
+                compile: true,
+                favicon: false,
+                minify: false,
+                cache: true,
+                showErrors: true,
+                chunks: 'all',
+                excludeChunks: [],
+                title: 'Ki-Tax',
+                xhtml: true,
+                chunksSortMode: chunksSort,
             }),
 
             new DefinePlugin({
@@ -171,11 +177,15 @@ export default (env: string): webpack.Configuration => {
         //
         // See: https://webpack.github.io/docs/configuration.html#node
         node: {
+            fs: 'empty',
             global: true,
             crypto: 'empty',
+            tls: 'empty',
+            net: 'empty',
+            process: true,
             module: false,
             clearImmediate: false,
-            setImmediate: false
+            setImmediate: false,
         },
     };
 };

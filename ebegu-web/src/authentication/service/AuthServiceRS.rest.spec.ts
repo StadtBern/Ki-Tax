@@ -1,28 +1,25 @@
-import {EbeguAuthentication} from '../authentication.module';
-import AuthServiceRS from './AuthServiceRS.rest';
-import {IHttpService, IQService, IScope, ITimeoutService} from 'angular';
 import {EbeguWebCore} from '../../core/core.module';
 import {TSRole} from '../../models/enums/TSRole';
 import TSUser from '../../models/TSUser';
 import TestDataUtil from '../../utils/TestDataUtil';
-import ICookiesService = angular.cookies.ICookiesService;
-import IHttpBackendService = angular.IHttpBackendService;
+import {EbeguAuthentication} from '../authentication.module';
+import AuthServiceRS from './AuthServiceRS.rest';
 
 describe('AuthServiceRS', function () {
 
     let authServiceRS: AuthServiceRS;
-    let $http: IHttpService;
-    let $httpBackend: IHttpBackendService;
-    let $q: IQService;
-    let $rootScope: IScope;
-    let $timeout: ITimeoutService;
-    let $cookies: ICookiesService;
+    let $http: angular.IHttpService;
+    let $httpBackend: angular.IHttpBackendService;
+    let $q: angular.IQService;
+    let $rootScope: angular.IScope;
+    let $timeout: angular.ITimeoutService;
+    let $cookies: angular.cookies.ICookiesService;
     let base64: any;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
     beforeEach(angular.mock.module(EbeguAuthentication.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         authServiceRS = $injector.get('AuthServiceRS');
         $http = $injector.get('$http');
         $httpBackend = $injector.get('$httpBackend');

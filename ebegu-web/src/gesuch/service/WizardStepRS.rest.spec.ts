@@ -1,14 +1,13 @@
-import WizardStepRS from './WizardStepRS.rest';
-import {IHttpBackendService} from 'angular';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import TSWizardStep from '../../models/TSWizardStep';
 import {EbeguWebCore} from '../../core/core.module';
+import TSWizardStep from '../../models/TSWizardStep';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TestDataUtil from '../../utils/TestDataUtil';
+import WizardStepRS from './WizardStepRS.rest';
 
 describe('WizardStepRS', function () {
 
     let wizardStepRS: WizardStepRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let REST_API: string;
     let mockWizardStep: TSWizardStep;
@@ -18,7 +17,7 @@ describe('WizardStepRS', function () {
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         wizardStepRS = $injector.get('WizardStepRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');

@@ -1,4 +1,3 @@
-import {IComponentControllerService, IRootScopeService} from 'angular';
 import {DvRadioContainerComponentConfig} from './dv-radio-container';
 
 describe('dvRadioContainer', function () {
@@ -6,11 +5,11 @@ describe('dvRadioContainer', function () {
     beforeEach(angular.mock.module('ebeguWeb.core'));
 
     let component: DvRadioContainerComponentConfig;
-    let scope: IScope;
-    let $componentController: IComponentControllerService;
+    let scope: angular.IScope;
+    let $componentController: angular.IComponentControllerService;
 
-    beforeEach(angular.mock.inject(function (_$componentController_: IComponentControllerService,
-                                             $rootScope: IRootScopeService) {
+    beforeEach(angular.mock.inject(function (_$componentController_: angular.IComponentControllerService,
+                                             $rootScope: angular.IRootScopeService) {
         $componentController = _$componentController_;
         scope = $rootScope.$new();
     }));
@@ -20,7 +19,7 @@ describe('dvRadioContainer', function () {
          To initialise your component controller you have to setup your (mock) bindings and
          pass them to $componentController.
          */
-        let bindings: {};
+        let bindings = {};
         component = $componentController('dvRadioContainer', {$scope: scope}, bindings);
         expect(component).toBeDefined();
     });

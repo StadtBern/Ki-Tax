@@ -1,11 +1,7 @@
-import DateUtil from './DateUtil';
 import * as moment from 'moment';
-import Moment = moment.Moment;
+import DateUtil from './DateUtil';
 
 describe('dateUtil', function () {
-
-   // beforeEach(angular.mock.module(EbeguWebCore));
-
 
     describe('localDateToMoment()', function () {
         it('should return null for invalid input', function () {

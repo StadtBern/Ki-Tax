@@ -1,22 +1,15 @@
-import '../../../bootstrap.ts';
-import 'angular-mocks';
-import {UmzugViewController} from './umzugView';
-import {TSBetroffene} from '../../../models/enums/TSBetroffene';
-import GesuchModelManager from '../../service/gesuchModelManager';
-import TSGesuch from '../../../models/TSGesuch';
 import {EbeguWebCore} from '../../../core/core.module';
-import WizardStepManager from '../../service/wizardStepManager';
-import TestDataUtil from '../../../utils/TestDataUtil';
-import ErrorService from '../../../core/errors/service/ErrorService';
-import BerechnungsManager from '../../service/berechnungsManager';
-import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import ErrorService from '../../../core/errors/service/ErrorService';
+import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
+import {TSBetroffene} from '../../../models/enums/TSBetroffene';
 import TSAdresseContainer from '../../../models/TSAdresseContainer';
-import IHttpBackendService = angular.IHttpBackendService;
-import ITranslateService = angular.translate.ITranslateService;
-import IQService = angular.IQService;
-import IScope = angular.IScope;
-import {ITimeoutService} from 'angular';
+import TSGesuch from '../../../models/TSGesuch';
+import TestDataUtil from '../../../utils/TestDataUtil';
+import BerechnungsManager from '../../service/berechnungsManager';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import WizardStepManager from '../../service/wizardStepManager';
+import {UmzugViewController} from './umzugView';
 
 describe('umzugView', function () {
 
@@ -25,16 +18,16 @@ describe('umzugView', function () {
     let wizardStepManager: WizardStepManager;
     let berechnungsManager: BerechnungsManager;
     let errorService: ErrorService;
-    let $translate: ITranslateService;
+    let $translate: angular.translate.ITranslateService;
     let dialog: DvDialog;
-    let $q: IQService;
-    let $rootScope: IScope;
-    let $httpBackend: IHttpBackendService;
-    let $timeout: ITimeoutService;
+    let $q: angular.IQService;
+    let $rootScope: angular.IRootScopeService;
+    let $httpBackend: angular.IHttpBackendService;
+    let $timeout: angular.ITimeoutService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         gesuchModelManager = $injector.get('GesuchModelManager');
         wizardStepManager = $injector.get('WizardStepManager');
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
@@ -174,7 +167,6 @@ describe('umzugView', function () {
 
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
                 wizardStepManager, errorService, $translate, dialog, $q, $rootScope, $timeout);
-
 
             expect(umzugController.getUmzugAdressenList().length).toBe(1);
             expect(umzugController.getUmzugAdressenList()[0].betroffene).toBe(TSBetroffene.GESUCHSTELLER_1);

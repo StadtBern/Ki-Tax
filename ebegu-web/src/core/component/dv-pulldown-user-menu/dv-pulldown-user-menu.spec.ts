@@ -1,20 +1,18 @@
-import {EbeguWebCore} from '../../core.module';
-import {IStateService} from 'angular-ui-router';
-import {IScope, IQService} from 'angular';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {EbeguWebCore} from '../../core.module';
 import {DvPulldownUserMenuController} from './dv-pulldown-user-menu';
 
 describe('DvPulldownUserMenuController', function () {
 
     let authServiceRS: AuthServiceRS;
-    let $state: IStateService;
+    let $state: angular.ui.IStateService;
     let controller: DvPulldownUserMenuController;
-    let $q: IQService;
-    let scope: IScope;
+    let $q: angular.IQService;
+    let scope: angular.IScope;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         authServiceRS = $injector.get('AuthServiceRS');
         scope = $injector.get('$rootScope').$new();
         $q = $injector.get('$q');
