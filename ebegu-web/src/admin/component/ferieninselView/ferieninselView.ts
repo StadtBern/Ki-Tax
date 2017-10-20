@@ -64,6 +64,15 @@ export class FerieninselViewController extends AbstractAdminViewController {
         });
     }
 
+    public gesuchsperiodeClicked(gesuchsperiode: any) {
+        if (gesuchsperiode.isSelected) {
+            this.gesuchsperiode = gesuchsperiode;
+            this.readFerieninselStammdatenByGesuchsperiode();
+        } else {
+            this.gesuchsperiode = undefined;
+        }
+    }
+
     private readFerieninselStammdatenByGesuchsperiode(): void {
         this.ferieninselStammdatenMap = {};
         this.ferieninselStammdatenRS.findFerieninselStammdatenByGesuchsperiode(this.gesuchsperiode.id).then((response: TSFerieninselStammdaten[]) => {
@@ -92,7 +101,7 @@ export class FerieninselViewController extends AbstractAdminViewController {
     }
 
     public saveFerieninselStammdaten(ferieninselStammdaten: TSFerieninselStammdaten): void {
-        if (this.form.$valid) {
+        if (this.form.$valid && this.isFerieninselStammdatenValid(ferieninselStammdaten)) {
             this.ferieninselStammdatenRS.saveFerieninselStammdaten(ferieninselStammdaten);
         }
     }
@@ -109,12 +118,44 @@ export class FerieninselViewController extends AbstractAdminViewController {
         ferieninselStammdaten.zeitraumList.splice(index, 1);
     }
 
-    public gesuchsperiodeClicked(gesuchsperiode: any) {
-        if (gesuchsperiode.isSelected) {
-            this.gesuchsperiode = gesuchsperiode;
-            this.readFerieninselStammdatenByGesuchsperiode();
-        } else {
-            this.gesuchsperiode = undefined;
-        }
+    public isFerieninselStammdatenValid(ferieninselStammdaten: TSFerieninselStammdaten): boolean {
+        let fiValid: boolean = !(FerieninselViewController.isNullOrUndefined(ferieninselStammdaten.anmeldeschluss)
+            || FerieninselViewController.isNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigAb)
+            || FerieninselViewController.isNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigBis));
+
+        return fiValid;
+    }
+
+    public isSaveButtonDisabled(ferieninselStammdaten: TSFerieninselStammdaten): boolean {
+        // Disabled, solange noch keines der Felder ausgefuellt ist
+        return FerieninselViewController.isNullOrUndefined(ferieninselStammdaten.anmeldeschluss)
+            && FerieninselViewController.isNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigAb)
+            && FerieninselViewController.isNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigBis);
+    }
+
+    public isAnmeldeschlussRequired(ferieninselStammdaten: TSFerieninselStammdaten): boolean {
+        // Wenn mindestens ein Zeitraum erfasst ist
+        return FerieninselViewController.notNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigAb)
+            || FerieninselViewController.notNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigBis);
+    }
+
+    public isDatumAbRequired(ferieninselZeitraum: TSFerieninselZeitraum, ferieninselStammdaten: TSFerieninselStammdaten) {
+        // Wenn entweder der Anmeldeschluss erfasst ist, oder das Datum bis
+        return FerieninselViewController.notNullOrUndefined(ferieninselStammdaten.anmeldeschluss)
+            || FerieninselViewController.notNullOrUndefined(ferieninselZeitraum.gueltigkeit.gueltigBis);
+    }
+
+    public isDatumBisRequired(ferieninselZeitraum: TSFerieninselZeitraum, ferieninselStammdaten: TSFerieninselStammdaten) {
+        // Wenn entweder der Anmeldeschluss erfasst ist, oder das Datum ab
+       return FerieninselViewController.notNullOrUndefined(ferieninselStammdaten.anmeldeschluss)
+            || FerieninselViewController.notNullOrUndefined(ferieninselZeitraum.gueltigkeit.gueltigAb);
+    }
+
+    private static isNullOrUndefined(data: any): boolean {
+        return data === null || data === undefined;
+    }
+
+    private static notNullOrUndefined(data: any): boolean {
+        return !FerieninselViewController.isNullOrUndefined(data);
     }
 }
