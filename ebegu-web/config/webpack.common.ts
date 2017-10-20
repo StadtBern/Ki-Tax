@@ -112,7 +112,7 @@ export default (env: string): webpack.Configuration => {
             }),
 
             // Moment: include only DE and FR locales
-            new ContextReplacementPlugin(/moment[\\/]locale$/, /^\.\/(de|fr)$/),
+            new ContextReplacementPlugin(/moment[\\/]locale$/, /^\.\/(de)$/),
 
             // Bundle webpack code into a prefixed chunk
             new CommonsChunkPlugin({

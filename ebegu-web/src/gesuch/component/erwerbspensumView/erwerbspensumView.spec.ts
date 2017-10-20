@@ -3,6 +3,7 @@ import {ErwerbspensumViewComponentConfig} from './erwerbspensumView';
 describe('erwerbspensumView', function () {
 
     beforeEach(angular.mock.module('ebeguWeb.gesuch'));
+    beforeEach(angular.mock.module('ebeguWeb.admin'));
 
     let component: ErwerbspensumViewComponentConfig;
     let scope: angular.IScope;
