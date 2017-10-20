@@ -13,7 +13,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentControllerService, IRootScopeService} from 'angular';
 import {DvInputContainerComponentConfig} from './dv-input-container';
 
 describe('dvInputContainer', function () {
@@ -22,10 +21,10 @@ describe('dvInputContainer', function () {
 
     let component: DvInputContainerComponentConfig;
     let scope: angular.IScope;
-    let $componentController: IComponentControllerService;
+    let $componentController: angular.IComponentControllerService;
 
-    beforeEach(angular.mock.inject(function (_$componentController_: IComponentControllerService,
-                                             $rootScope: IRootScopeService) {
+    beforeEach(angular.mock.inject(function (_$componentController_: angular.IComponentControllerService,
+                                             $rootScope: angular.IRootScopeService) {
         $componentController = _$componentController_;
         scope = $rootScope.$new();
     }));

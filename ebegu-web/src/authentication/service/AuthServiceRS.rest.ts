@@ -13,11 +13,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
+import {TSRole} from '../../models/enums/TSRole';
 import TSUser from '../../models/TSUser';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import HttpBuffer from './HttpBuffer';
 import ICookiesService = angular.cookies.ICookiesService;
+import IHttpService = angular.IHttpService;
+import IPromise = angular.IPromise;
+import IQService = angular.IQService;
+import IRequestConfig = angular.IRequestConfig;
 import IRootScopeService = angular.IRootScopeService;
+import ITimeoutService = angular.ITimeoutService;
 
 export default class AuthServiceRS {
 

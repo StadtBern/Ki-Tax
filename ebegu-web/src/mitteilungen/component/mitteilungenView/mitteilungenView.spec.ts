@@ -27,6 +27,7 @@ import TSUser from '../../../models/TSUser';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import {EbeguWebMitteilungen} from '../../mitteilungen.module';
 import {IMitteilungenStateParams} from '../../mitteilungen.route';
+import ITimeoutService = angular.ITimeoutService;
 
 describe('mitteilungenView', function () {
 
@@ -42,7 +43,7 @@ describe('mitteilungenView', function () {
     let besitzer: TSUser;
     let verantwortlicher: TSUser;
     let scope: angular.IScope;
-	let $timeout: ITimeoutService;
+    let $timeout: ITimeoutService;
 
     beforeEach(angular.mock.module(EbeguWebMitteilungen.name));
 

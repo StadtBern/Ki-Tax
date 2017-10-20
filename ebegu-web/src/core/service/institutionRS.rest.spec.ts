@@ -1,4 +1,3 @@
-import TSInstitution from '../../models/TSInstitution';
 /*
  * Ki-Tax: System for the management of external childcare subsidies
  * Copyright (C) 2017 City of Bern Switzerland
@@ -14,6 +13,7 @@ import TSInstitution from '../../models/TSInstitution';
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import TSInstitution from '../../models/TSInstitution';
 import {TSMandant} from '../../models/TSMandant';
 import {TSTraegerschaft} from '../../models/TSTraegerschaft';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';

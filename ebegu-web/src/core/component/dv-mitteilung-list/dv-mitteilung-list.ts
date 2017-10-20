@@ -39,6 +39,7 @@ import IQService = angular.IQService;
 import IRootScopeService = angular.IRootScopeService;
 import IScope = angular.IScope;
 import IWindowService = angular.IWindowService;
+import ITimeoutService = angular.ITimeoutService;
 
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');

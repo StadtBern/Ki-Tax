@@ -13,8 +13,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import TSAntragStatusHistory from '../../models/TSAntragStatusHistory';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import TSAntragStatusHistory from '../../models/TSAntragStatusHistory';
+import TSGesuch from '../../models/TSGesuch';
 import DateUtil from '../../utils/DateUtil';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TestDataUtil from '../../utils/TestDataUtil';

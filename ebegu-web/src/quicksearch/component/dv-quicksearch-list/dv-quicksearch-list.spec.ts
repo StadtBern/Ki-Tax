@@ -13,19 +13,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {EbeguWebCore} from '../../../core/core.module';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import {InstitutionRS} from '../../../core/service/institutionRS.rest';
 import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
+import SearchRS from '../../../gesuch/service/searchRS.rest';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import TSAntragDTO from '../../../models/TSAntragDTO';
 import TSGesuch from '../../../models/TSGesuch';
 import TestDataUtil from '../../../utils/TestDataUtil';
-import {InstitutionRS} from '../../service/institutionRS.rest';
 import {DVQuicksearchListController} from './dv-quicksearch-list';
-import SearchRS from '../../../gesuch/service/searchRS.rest';
-import {DVPendenzenListController} from './dv-pendenzen-list';
-import {EbeguWebCore} from '../../../core/core.module';
 
 describe('DVQuicksearchList', function () {
 

@@ -13,7 +13,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IHttpBackendService} from 'angular';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import TSAntragDTO from '../../models/TSAntragDTO';
@@ -25,7 +24,7 @@ import {EbeguWebCore} from '../../core/core.module';
 describe('searchRS', function () {
 
     let searchRS: SearchRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockPendenz: TSAntragDTO;
     let mockPendenzRest: any;
