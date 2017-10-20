@@ -94,5 +94,4 @@ export class InstitutionenListViewController extends AbstractAdminViewController
             });
         });
     }
-
 }

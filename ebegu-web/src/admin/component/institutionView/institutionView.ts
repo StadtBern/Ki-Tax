@@ -195,5 +195,4 @@ export class InstitutionViewController extends AbstractAdminViewController {
             institutionStammdatenId: undefined
         });
     }
-
 }

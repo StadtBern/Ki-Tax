@@ -86,7 +86,6 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
         this.selectedInstitution = institutionStammdaten.institution;
         this.selectedInstitutionStammdatenBetreuungsangebot = this.getBetreuungsangebotFromInstitutionList(institutionStammdaten.betreuungsangebotTyp);
         this.hasDifferentZahlungsadresse = !!this.selectedInstitutionStammdaten.adresseKontoinhaber;
-
     }
 
     getSelectedInstitutionStammdaten(): TSInstitutionStammdaten {
@@ -143,5 +142,4 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
     private setBetreuungsangebotTypValues(): void {
         this.betreuungsangebotValues = this.ebeguUtil.translateStringList(getTSBetreuungsangebotTypValues());
     }
-
 }

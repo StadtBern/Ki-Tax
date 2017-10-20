@@ -206,10 +206,9 @@ public class InstitutionStammdatenResource {
 
 		Validate.notNull(institutionJAXPId.getId());
 		String institutionID = converter.toEntityId(institutionJAXPId);
-		List<JaxInstitutionStammdaten> list = institutionStammdatenService.getAllInstitutionStammdatenByInstitution(institutionID).stream()
+		return institutionStammdatenService.getAllInstitutionStammdatenByInstitution(institutionID).stream()
 			.map(instStammdaten -> converter.institutionStammdatenToJAX(instStammdaten))
 			.collect(Collectors.toList());
-		return list;
 	}
 
 	/**
