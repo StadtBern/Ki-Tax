@@ -28,6 +28,16 @@
     <properties>
         <npm.arguments>run --no-color build:dev</npm.arguments>
         <skipTests>false</skipTests>
+
+        <!-- exclude files from sonar analysis (must match tsconfig.json exclusions -->
+        <sonar.exclusions>build/**/*,dist/**/*,node_modules/**/*,temp/**/*,target/**/*,tslint.json</sonar.exclusions>
+        <!-- disable coverage calculations for unit test files -->
+        <sonar.coverage.exclusions>**.spec.ts</sonar.coverage.exclusions>
+        <!-- disable duplication detection for spec files -->
+        <sonar.cpd.exclusions>**.spec.ts</sonar.cpd.exclusions>
+        <sonar.sources>./src</sonar.sources>
+        <sonar.junit.reportPaths>build/karma-results.xml</sonar.junit.reportPaths>
+        <sonar.typescript.lcov.reportPaths>build/coverage/lcov.info</sonar.typescript.lcov.reportPaths>
     </properties>
 
     <profiles>
@@ -39,7 +49,6 @@
                 <npm.arguments>run --no-color build:prod</npm.arguments>
             </properties>
         </profile>
-
     </profiles>
 
     <build>
@@ -64,7 +73,7 @@
                         </goals>
                         <configuration>
                             <nodeVersion>v6.10.0</nodeVersion>
-                            <npmVersion>4.4.1</npmVersion>
+                            <npmVersion>5.4.2</npmVersion>
                             <nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
                             <npmDownloadRoot>https://registry.npmjs.org/npm/-/</npmDownloadRoot>
                         </configuration>
