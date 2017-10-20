@@ -31,7 +31,7 @@ describe('searchRS', function () {
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         searchRS = $injector.get('SearchRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');

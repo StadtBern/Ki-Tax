@@ -14,21 +14,33 @@
  */
 
 import {ErwerbspensumViewComponentConfig} from './erwerbspensumView';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 
 describe('erwerbspensumView', function () {
 
     beforeEach(angular.mock.module('ebeguWeb.gesuch'));
     beforeEach(angular.mock.module('ebeguWeb.admin'));
 
+    let gesuchModelManager: GesuchModelManager;
     let component: ErwerbspensumViewComponentConfig;
     let scope: angular.IScope;
     let $componentController: angular.IComponentControllerService;
 
-    beforeEach(angular.mock.inject(function (_$componentController_: angular.IComponentControllerService,
-                                             $rootScope: angular.IRootScopeService) {
-        $componentController = _$componentController_;
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
+        $componentController = $injector.get('$componentController');
+        gesuchModelManager = $injector.get('GesuchModelManager');
+        let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
     }));
+
+    beforeEach(function () {
+        gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
+        let tsGesuchsperiode = new TSGesuchsperiode();
+        tsGesuchsperiode.id = '123';
+        gesuchModelManager.getGesuch().gesuchsperiode = tsGesuchsperiode;
+    });
 
     it('should be defined', function () {
         /*

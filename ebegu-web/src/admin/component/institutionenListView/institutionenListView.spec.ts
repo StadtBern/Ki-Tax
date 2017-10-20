@@ -12,20 +12,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import 'angular-mocks';
-import '../../../bootstrap.ts';
 import {EbeguWebAdmin} from '../../admin.module';
-import IScope = angular.IScope;
 
 describe('adminView', function () {
 
     beforeEach(angular.mock.module(EbeguWebAdmin.name));
 
     let component: any;
-    let scope: IScope;
-    let $componentController: any;
+    let scope: angular.IScope;
+    let $componentController: angular.IComponentControllerService;
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         $componentController = $injector.get('$componentController');
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
