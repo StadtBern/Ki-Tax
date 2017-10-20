@@ -15,6 +15,16 @@
         <nexus.url>${maven.nexus.snapshot.url}</nexus.url>
         <npm.arguments>run --no-color build:dev</npm.arguments>
         <skipTests>false</skipTests>
+
+        <!-- exclude files from sonar analysis (must match tsconfig.json exclusions -->
+        <sonar.exclusions>build/**/*,dist/**/*,node_modules/**/*,temp/**/*,target/**/*,tslint.json</sonar.exclusions>
+        <!-- disable coverage calculations for unit test files -->
+        <sonar.coverage.exclusions>**.spec.ts</sonar.coverage.exclusions>
+        <!-- disable duplication detection for spec files -->
+        <sonar.cpd.exclusions>**.spec.ts</sonar.cpd.exclusions>
+        <sonar.sources>./src</sonar.sources>
+        <sonar.junit.reportPaths>build/karma-results.xml</sonar.junit.reportPaths>
+        <sonar.typescript.lcov.reportPaths>build/coverage/lcov.info</sonar.typescript.lcov.reportPaths>
     </properties>
 
     <profiles>
@@ -27,6 +37,47 @@
                 <nexus.url>${maven.nexus.url}</nexus.url>
                 <npm.arguments>run --no-color build:prod</npm.arguments>
             </properties>
+        </profile>
+
+        <profile>
+            <id>sonar-build</id>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+
+                        <executions>
+
+                            <execution>
+                                <id>install node and npm</id>
+                                <goals>
+                                    <goal>install-node-and-npm</goal>
+                                </goals>
+
+                            </execution>
+
+                            <execution>
+                                <id>npm install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                            </execution>
+
+                            <execution>
+                                <id>test</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>run test -- --no-colors</arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
     </profiles>
@@ -54,7 +105,7 @@
                         </goals>
                         <configuration>
                             <nodeVersion>v6.10.0</nodeVersion>
-                            <npmVersion>4.4.1</npmVersion>
+                            <npmVersion>5.4.2</npmVersion>
                             <nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
                             <npmDownloadRoot>https://registry.npmjs.org/npm/-/</npmDownloadRoot>
                         </configuration>
