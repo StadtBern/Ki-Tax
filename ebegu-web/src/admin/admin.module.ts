@@ -16,17 +16,19 @@
 import 'angular';
 import 'angular-smart-table';
 import {EbeguWebCore} from '../core/core.module';
+import {InstitutionRS} from '../core/service/institutionRS.rest';
 import './admin.module.less';
+import {adminRun} from './admin.route';
 import {AdminViewComponentConfig} from './component/adminView/adminView';
+import {InstitutionenListViewComponentConfig} from './component/institutionenListView/institutionenListView';
+import {InstitutionStammdatenViewComponentConfig} from './component/institutionStammdatenView/institutionStammdatenView';
 import {InstitutionViewComponentConfig} from './component/institutionView/institutionView';
 import {ParameterViewComponentConfig} from './component/parameterView/parameterView';
-import {ApplicationPropertyRS} from './service/applicationPropertyRS.rest';
-import {ReindexRS} from './service/reindexRS.rest';
-import {adminRun} from './admin.route';
-import {InstitutionRS} from '../core/service/institutionRS.rest';
-import {EbeguParameterRS} from './service/ebeguParameterRS.rest';
 import {TraegerschaftViewComponentConfig} from './component/traegerschaftView/traegerschaftView';
+import {ApplicationPropertyRS} from './service/applicationPropertyRS.rest';
+import {EbeguParameterRS} from './service/ebeguParameterRS.rest';
 import {EbeguVorlageRS} from './service/ebeguVorlageRS.rest';
+import {ReindexRS} from './service/reindexRS.rest';
 import {TestFaelleRS} from './service/testFaelleRS.rest';
 import {TestdatenViewComponentConfig} from './component/testdatenView/testdatenView';
 import {FerieninselStammdatenRS} from './service/ferieninselStammdatenRS.rest';
@@ -41,7 +43,9 @@ export const EbeguWebAdmin = angular.module('ebeguWeb.admin', [EbeguWebCore.name
     .service('TestFaelleRS', TestFaelleRS)
     .service('FerieninselStammdatenRS', FerieninselStammdatenRS)
     .component('dvAdminView', new AdminViewComponentConfig())
+    .component('dvInstitutionenListView', new InstitutionenListViewComponentConfig())
     .component('dvInstitutionView', new InstitutionViewComponentConfig())
+    .component('dvInstitutionStammdatenView', new InstitutionStammdatenViewComponentConfig())
     .component('dvParameterView', new ParameterViewComponentConfig())
     .component('dvTraegerschaftView', new TraegerschaftViewComponentConfig())
     .component('dvTestdatenView', new TestdatenViewComponentConfig())

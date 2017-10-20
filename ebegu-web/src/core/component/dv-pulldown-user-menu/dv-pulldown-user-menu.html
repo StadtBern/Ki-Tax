@@ -15,7 +15,7 @@
 
 <md-menu-bar ng-if="vm.getPrincipal()" class="user-menu">
     <md-menu>
-        <button ng-click="$mdOpenMenu()" aria-label="{{vm.getPrincipal().getFullName()}}" id="usermenu" >
+        <button ng-click="$mdOpenMenu()" aria-label="{{vm.getPrincipal().getFullName()}}" id="usermenu">
             <span ng-bind="vm.getPrincipal().getFullName()"></span>
             <i class="fa fa-angle-down"></i>
         </button>
@@ -42,7 +42,7 @@
                 </md-button>
             </md-menu-item>
             <md-menu-item dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorRevisorRole()">
-                <md-button ui-sref-active="active" ui-sref="institution" aria-label="{{'INSTITUTION' | translate}}">
+                <md-button ui-sref-active="active" ui-sref="institutionen" aria-label="{{'INSTITUTION' | translate}}">
                     <a href="javascript:void(0)" data-translate="INSTITUTION" aria-hidden></a>
                 </md-button>
             </md-menu-item>
