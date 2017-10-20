@@ -16,7 +16,7 @@
 import TSEbeguParameter from '../../../models/TSEbeguParameter';
 import {EbeguParameterRS} from '../../service/ebeguParameterRS.rest';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
-import {IComponentOptions, ILogService} from 'angular';
+import {IComponentOptions, IFormController, ILogService} from 'angular';
 import './parameterView.less';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
@@ -51,6 +51,8 @@ export class ParameterViewController extends AbstractAdminViewController {
     static $inject = ['EbeguParameterRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$translate', 'EbeguVorlageRS',
         'EbeguUtil', 'DvDialog', '$log', 'GlobalCacheService', 'GesuchModelManager', '$timeout',
         '$window', 'AuthServiceRS'];
+
+    form: IFormController;
 
     ebeguParameterRS: EbeguParameterRS;
     ebeguRestUtil: EbeguRestUtil;
@@ -145,19 +147,21 @@ export class ParameterViewController extends AbstractAdminViewController {
     }
 
     saveGesuchsperiodeFreischaltungTagesschule(): void {
-        // Zweite Rückfrage falls neu ein Datum für die Freischaltung der Tagesschulen gesetzt wurde
-        if (!this.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert() && this.datumFreischaltungTagesschule) {
-            this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
-                title: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TITLE',
-                deleteText: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TEXT',
-                parentController: undefined,
-                elementID: undefined
-            }).then(() => {
-                this.gesuchsperiode.datumFreischaltungTagesschule = this.datumFreischaltungTagesschule;
+        if (this.form.$valid) {
+            // Zweite Rückfrage falls neu ein Datum für die Freischaltung der Tagesschulen gesetzt wurde
+            if (!this.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert() && this.datumFreischaltungTagesschule) {
+                this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                    title: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TITLE',
+                    deleteText: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TEXT',
+                    parentController: undefined,
+                    elementID: undefined
+                }).then(() => {
+                    this.gesuchsperiode.datumFreischaltungTagesschule = this.datumFreischaltungTagesschule;
+                    this.doSave();
+                });
+            } else {
                 this.doSave();
-            });
-        } else {
-            this.doSave();
+            }
         }
     }
 
@@ -291,5 +295,16 @@ export class ParameterViewController extends AbstractAdminViewController {
             }
         }
         return true;
+    }
+
+    public ersterSchultagRequired(): boolean {
+        return (this.notNullOrUndefined(this.gesuchsperiode.datumFreischaltungTagesschule)
+            &&  this.gesuchsperiode.datumFreischaltungTagesschule.isBefore(this.gesuchsperiode.gueltigkeit.gueltigAb))
+            || (this.notNullOrUndefined(this.datumFreischaltungTagesschule)
+                && this.datumFreischaltungTagesschule.isBefore(this.gesuchsperiode.gueltigkeit.gueltigAb));
+    }
+
+    private notNullOrUndefined(data: any): boolean {
+        return !(data === null || data === undefined);
     }
 }

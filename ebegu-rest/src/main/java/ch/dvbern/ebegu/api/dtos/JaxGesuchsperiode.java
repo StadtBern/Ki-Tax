@@ -41,6 +41,10 @@ public class JaxGesuchsperiode extends JaxAbstractDateRangedDTO {
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate datumFreischaltungTagesschule;
 
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate datumErsterSchultag;
+
 
 	public GesuchsperiodeStatus getStatus() {
 		return status;
@@ -57,5 +61,14 @@ public class JaxGesuchsperiode extends JaxAbstractDateRangedDTO {
 
 	public void setDatumFreischaltungTagesschule(@Nullable LocalDate datumFreischaltungTagesschule) {
 		this.datumFreischaltungTagesschule = datumFreischaltungTagesschule;
+	}
+
+	@Nullable
+	public LocalDate getDatumErsterSchultag() {
+		return datumErsterSchultag;
+	}
+
+	public void setDatumErsterSchultag(@Nullable LocalDate datumErsterSchultag) {
+		this.datumErsterSchultag = datumErsterSchultag;
 	}
 }
