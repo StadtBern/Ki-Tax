@@ -1,3 +1,19 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import 'angular';
 import './core.module.less';
 import {appRun} from './core.route';
 import {configure} from './config';
@@ -46,6 +62,7 @@ import {DvAccordionComponentConfig} from './component/dv-accordion/dv-accordion'
 import {DvAccordionTabComponentConfig} from './component/dv-accordion/dv-accordion-tab/dv-accordion-tab';
 import HttpResponseInterceptor from './service/HttpResponseInterceptor';
 import DVSubmitevent from './directive/dv-submitevent/dv-submitevent';
+import 'ng-file-upload';
 import {UploadRS} from './service/uploadRS.rest';
 import {DownloadRS} from './service/downloadRS.rest';
 import VerfuegungRS from './service/verfuegungRS.rest';
@@ -57,7 +74,6 @@ import WizardStepRS from '../gesuch/service/WizardStepRS.rest';
 import EinkommensverschlechterungInfoRS from '../gesuch/service/einkommensverschlechterungInfoRS.rest';
 import {DVNavigation} from './directive/dv-navigation/dv-navigation';
 import {DVAntragListConfig} from './component/dv-antrag-list/dv-antrag-list';
-import {DVPendenzenListConfig} from './component/dv-pendenzen-list/dv-pendenzen-list';
 import AntragStatusHistoryRS from './service/antragStatusHistoryRS.rest';
 import {NavigationLogger} from './service/NavigationLogger';
 import GlobalCacheService from '../gesuch/service/globalCacheService';
@@ -83,13 +99,14 @@ import {DVDisplayElement} from './directive/dv-display-element/dv-display-elemen
 import {DVsTPersistService} from './service/dVsTPersistService';
 import DVSTResetSearch from './directive/dv-st-reset-search/dv-st-reset-search';
 import DVSTPersistAntraege from './directive/dv-st-persist-antraege/dv-st-persist-antraege';
-import DVSTPersistPendenzen from './directive/dv-st-persist-pendenzen/dv-st-persist-pendenzen';
+import DVSTPersistPendenzen from './directive/dv-st-persist-quicksearch/dv-st-persist-quicksearch';
 import {DvDownloadmenuComponentConfig} from './component/dv-downloadmenu/dv-downloadmenu';
 import {DVVorlageListConfig} from './component/dv-vorlage-list/dv-vorlage-list';
 import {DatabaseMigrationRS} from '../admin/service/databaseMigrationRS.rest';
 import HttpVersionInterceptor from './service/version/HttpVersionInterceptor';
 import {DVVersionComponentConfig} from './component/dv-version/dv-version';
 import {DvSkiplinksComponentConfig} from './component/dv-skiplinks/dv-skiplinks';
+import SearchRS from '../gesuch/service/searchRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -152,6 +169,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('FamiliensituationRS', FamiliensituationRS)
     .service('GesuchModelManager', GesuchModelManager)
     .service('GesuchRS', GesuchRS)
+    .service('SearchRS', SearchRS)
     .service('FinanzielleSituationRS', FinanzielleSituationRS)
     .service('EinkommensverschlechterungContainerRS', EinkommensverschlechterungContainerRS)
     .service('EinkommensverschlechterungInfoRS', EinkommensverschlechterungInfoRS)
@@ -218,7 +236,6 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvDokumenteList', new DVDokumenteListConfig())
     .component('dvAntragList', new DVAntragListConfig())
     .component('dvVorlageList', new DVVorlageListConfig())
-    .component('dvPendenzenList', new DVPendenzenListConfig())
     .component('dvQuicksearchbox', new DvQuicksearchboxComponentConfig())
     .component('dvSearchResultIcon', new DvSearchResultIconComponentConfig())
     .component('dvMitteilungList', new DVMitteilungListConfig())

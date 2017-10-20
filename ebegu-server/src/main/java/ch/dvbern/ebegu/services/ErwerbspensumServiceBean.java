@@ -1,4 +1,33 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.validation.Valid;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
@@ -12,27 +41,21 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
-import javax.annotation.Nonnull;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
-import static ch.dvbern.ebegu.enums.UserRoleName.*;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
+import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
+import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Service fuer {@link ErwerbspensumContainer} diese beinhalten einzelne Objekte mit den Daten von GS und JA
  */
 @Stateless
 @Local(ErwerbspensumService.class)
-@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,  GESUCHSTELLER})
+@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 public class ErwerbspensumServiceBean extends AbstractBaseService implements ErwerbspensumService {
 
 	@Inject
@@ -57,24 +80,23 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST,  GESUCHSTELLER, SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, GESUCHSTELLER, ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public Optional<ErwerbspensumContainer> findErwerbspensum(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		ErwerbspensumContainer ewpCnt =  persistence.find(ErwerbspensumContainer.class, key);
+		ErwerbspensumContainer ewpCnt = persistence.find(ErwerbspensumContainer.class, key);
 		authorizer.checkReadAuthorization(ewpCnt);
 		return Optional.ofNullable(ewpCnt);
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST,  GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, GESUCHSTELLER })
 	public Collection<ErwerbspensumContainer> findErwerbspensenForGesuchsteller(@Nonnull GesuchstellerContainer gesuchsteller) {
 		return criteriaQueryHelper.getEntitiesByAttribute(ErwerbspensumContainer.class, gesuchsteller, ErwerbspensumContainer_.gesuchstellerContainer);
 	}
 
-
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST,  GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, GESUCHSTELLER })
 	public Collection<ErwerbspensumContainer> findErwerbspensenFromGesuch(@Nonnull String gesuchId) {
 		Collection<ErwerbspensumContainer> result = new ArrayList<>();
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);
@@ -92,7 +114,7 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,  REVISOR, JURIST, })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, })
 	public Collection<ErwerbspensumContainer> getAllErwerbspensenenContainer() {
 		Collection<ErwerbspensumContainer> ewpContainers = criteriaQueryHelper.getAll(ErwerbspensumContainer.class);
 		ewpContainers.forEach(ewpContainer -> authorizer.checkReadAuthorization(ewpContainer));
@@ -100,7 +122,7 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST,  GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, GESUCHSTELLER })
 	public void removeErwerbspensum(@Nonnull String erwerbspensumContainerID, Gesuch gesuch) {
 		Objects.requireNonNull(erwerbspensumContainerID);
 		Optional<ErwerbspensumContainer> ewpCont = this.findErwerbspensum(erwerbspensumContainerID);

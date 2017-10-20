@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.tests;
 
 import java.util.Optional;
@@ -28,9 +43,8 @@ import static ch.dvbern.ebegu.tets.util.JBossLoginContextFactory.createLoginCont
  */
 public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 
-
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractEbeguLoginTest.class);
-	private  LoginContext loginContext;
+	private LoginContext loginContext;
 
 	@Inject
 	private Persistence persistence;
@@ -40,7 +54,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 	private BenutzerService benutzerService;
 
 	@Before
-	public  void performLogin() {
+	public void performLogin() {
 		dummyAdmin = TestDataUtil.createDummySuperAdmin(persistence);
 		try {
 			loginAsSuperadmin();
@@ -55,7 +69,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 	}
 
 	@After
-	public  void performLogout() {
+	public void performLogout() {
 		try {
 			if (loginContext != null) {
 				loginContext.logout();
@@ -91,6 +105,18 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 
 		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
 		Benutzer schulamt = createOrFindBenutzer(UserRole.SCHULAMT, "schulamt", null, null, mandant);
+		return persistence.merge(schulamt);
+	}
+
+	protected Benutzer loginAsAdminSchulamt() {
+		try {
+			createLoginContext("schulamtadmin", "schulamtadmin").login();
+		} catch (LoginException e) {
+			LOG.error("could not login as admin schulamt for tests");
+		}
+
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
+		Benutzer schulamt = createOrFindBenutzer(UserRole.ADMINISTRATOR_SCHULAMT, "schulamtadmin", null, null, mandant);
 		return persistence.merge(schulamt);
 	}
 

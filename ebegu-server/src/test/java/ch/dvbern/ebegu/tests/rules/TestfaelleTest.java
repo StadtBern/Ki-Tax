@@ -1,15 +1,35 @@
-package ch.dvbern.ebegu.tests.rules;
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
-import ch.dvbern.ebegu.testfaelle.*;
-import ch.dvbern.ebegu.tets.TestDataUtil;
-import org.junit.Test;
+package ch.dvbern.ebegu.tests.rules;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
+import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
+import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
+import ch.dvbern.ebegu.testfaelle.Testfall03_PerreiraMarcia;
+import ch.dvbern.ebegu.testfaelle.Testfall04_WaltherLaura;
+import ch.dvbern.ebegu.testfaelle.Testfall05_LuethiMeret;
+import ch.dvbern.ebegu.testfaelle.Testfall06_BeckerNora;
+import ch.dvbern.ebegu.tets.TestDataUtil;
+import org.junit.Test;
 
 /**
  * Test der die vom JA gemeldeten Testfaelle ueberprueft.

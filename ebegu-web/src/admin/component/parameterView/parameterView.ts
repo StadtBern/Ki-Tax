@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import TSEbeguParameter from '../../../models/TSEbeguParameter';
 import {EbeguParameterRS} from '../../service/ebeguParameterRS.rest';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
@@ -17,8 +32,10 @@ import AbstractAdminViewController from '../../abstractAdminView';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {getTSGesuchsperiodeStatusValues, TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import * as moment from 'moment';
 import ITranslateService = angular.translate.ITranslateService;
 import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./parameterView.html');
 let style = require('./parameterView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -48,6 +65,7 @@ export class ParameterViewController extends AbstractAdminViewController {
     ebeguParameterListJahr: TSEbeguParameter[]; // enthält alle Params für nur 1 Jahr
 
     statusChanged: boolean = false;
+    datumFreischaltungTagesschule: moment.Moment;
 
     /* @ngInject */
     constructor(ebeguParameterRS: EbeguParameterRS, private gesuchsperiodeRS: GesuchsperiodeRS,
@@ -87,6 +105,7 @@ export class ParameterViewController extends AbstractAdminViewController {
         if (gesuchsperiode.isSelected) {
             this.gesuchsperiode = gesuchsperiode;
             this.readEbeguParameterByGesuchsperiode();
+            this.datumFreischaltungTagesschule = undefined;
         } else {
             this.cancelGesuchsperiode();
         }
@@ -99,11 +118,13 @@ export class ParameterViewController extends AbstractAdminViewController {
 
     createGesuchsperiode(): void {
         this.gesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.ENTWURF, new TSDateRange());
+        this.datumFreischaltungTagesschule = undefined;
         if (this.gesuchsperiodenList) {
             let prevGesPer: TSGesuchsperiode = this.gesuchsperiodenList[0];
             this.gesuchsperiode.gueltigkeit.gueltigAb = prevGesPer.gueltigkeit.gueltigAb.clone().add('years', 1);
             this.gesuchsperiode.gueltigkeit.gueltigBis = prevGesPer.gueltigkeit.gueltigBis.clone().add('years', 1);
         }
+        this.gesuchsperiode.datumFreischaltungTagesschule = this.gesuchsperiode.gueltigkeit.gueltigAb;
     }
 
     saveGesuchsperiode(): void {
@@ -116,6 +137,23 @@ export class ParameterViewController extends AbstractAdminViewController {
                 parentController: undefined,
                 elementID: undefined
             }).then(() => {
+                this.saveGesuchsperiodeFreischaltungTagesschule();
+            });
+        } else {
+            this.saveGesuchsperiodeFreischaltungTagesschule();
+        }
+    }
+
+    saveGesuchsperiodeFreischaltungTagesschule(): void {
+        // Zweite Rückfrage falls neu ein Datum für die Freischaltung der Tagesschulen gesetzt wurde
+        if (!this.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert() && this.datumFreischaltungTagesschule) {
+            this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                title: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TITLE',
+                deleteText: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TEXT',
+                parentController: undefined,
+                elementID: undefined
+            }).then(() => {
+                this.gesuchsperiode.datumFreischaltungTagesschule = this.datumFreischaltungTagesschule;
                 this.doSave();
             });
         } else {
@@ -126,6 +164,7 @@ export class ParameterViewController extends AbstractAdminViewController {
     private doSave(): void {
         this.gesuchsperiodeRS.updateGesuchsperiode(this.gesuchsperiode).then((response: TSGesuchsperiode) => {
             this.gesuchsperiode = response;
+            this.datumFreischaltungTagesschule = undefined;
 
             let index: number = EbeguUtil.getIndexOfElementwithID(response, this.gesuchsperiodenList);
             if (index !== -1) {
@@ -169,7 +208,20 @@ export class ParameterViewController extends AbstractAdminViewController {
 
     cancelGesuchsperiode(): void {
         this.gesuchsperiode = undefined;
+        this.datumFreischaltungTagesschule = undefined;
         this.ebeguParameterListGesuchsperiode = undefined;
+    }
+
+    getStatusTagesschulenFreischaltung(gp: TSGesuchsperiode): string {
+        if (gp.hasTagesschulenAnmeldung()) {
+            if (gp.isTagesschulenAnmeldungKonfiguriert()) {
+                return this.$translate.instant('FREISCHALTUNG_TAGESSCHULE_KONFIGURIERT');
+            } else {
+                return this.$translate.instant('FREISCHALTUNG_TAGESSCHULE_NOT_YET');
+            }
+        } else {
+            return this.$translate.instant('FREISCHALTUNG_TAGESSCHULE_NONE');
+        }
     }
 
     cancelJahresabhaengig(): void {
@@ -189,6 +241,7 @@ export class ParameterViewController extends AbstractAdminViewController {
         this.gesuchsperiodeRS.updateActiveGesuchsperiodenList();
         this.gesuchsperiodeRS.updateNichtAbgeschlosseneGesuchsperiodenList();
         this.gesuchsperiode = undefined;
+        this.datumFreischaltungTagesschule = undefined;
     }
 
     saveParameterByJahr(): void {

@@ -1,16 +1,36 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.entities;
+
+import java.time.LocalDate;
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.util.Objects;
 
 /**
  * Entitaet zum Speichern von Familiensituation in der Datenbank.
@@ -34,9 +54,17 @@ public class Familiensituation extends AbstractEntity {
 	@Column(nullable = true)
 	private Boolean gemeinsameSteuererklaerung;
 
+	// Diese beiden Felder werden nicht immer eingegeben, deswegen Boolean und nicht boolean, damit sie auch null sein duerfen
+	@Nullable
+	@Column(nullable = true)
+	private Boolean sozialhilfeBezueger;
+
+	@Nullable
+	@Column(nullable = true)
+	private Boolean verguenstigungGewuenscht;
+
 	@Column(nullable = true)
 	private LocalDate aenderungPer;
-
 
 	public Familiensituation() {
 	}
@@ -68,33 +96,53 @@ public class Familiensituation extends AbstractEntity {
 		this.gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
 	}
 
+	@Nullable
 	public Boolean getGemeinsameSteuererklaerung() {
 		return gemeinsameSteuererklaerung;
 	}
 
-	public void setGemeinsameSteuererklaerung(Boolean gemeinsameSteuererklaerung) {
+	public void setGemeinsameSteuererklaerung(@Nullable Boolean gemeinsameSteuererklaerung) {
 		this.gemeinsameSteuererklaerung = gemeinsameSteuererklaerung;
 	}
 
+	@Nullable
 	public LocalDate getAenderungPer() {
 		return aenderungPer;
 	}
 
-	public void setAenderungPer(LocalDate aenderungPer) {
+	public void setAenderungPer(@Nullable LocalDate aenderungPer) {
 		this.aenderungPer = aenderungPer;
+	}
+
+	@Nullable
+	public Boolean getSozialhilfeBezueger() {
+		return sozialhilfeBezueger;
+	}
+
+	public void setSozialhilfeBezueger(@Nullable Boolean sozialhilfeBezueger) {
+		this.sozialhilfeBezueger = sozialhilfeBezueger;
+	}
+
+	@Nullable
+	public Boolean getVerguenstigungGewuenscht() {
+		return verguenstigungGewuenscht;
+	}
+
+	public void setVerguenstigungGewuenscht(@Nullable Boolean verguenstigungGewuenscht) {
+		this.verguenstigungGewuenscht = verguenstigungGewuenscht;
 	}
 
 	@Transient
 	public boolean hasSecondGesuchsteller() {
 		if (this.familienstatus != null) {
 			switch (this.familienstatus) {
-				case ALLEINERZIEHEND:
-				case WENIGER_FUENF_JAHRE:
-					return EnumGesuchstellerKardinalitaet.ZU_ZWEIT == this.getGesuchstellerKardinalitaet();
-				case VERHEIRATET:
-				case KONKUBINAT:
-				case LAENGER_FUENF_JAHRE:
-					return true;
+			case ALLEINERZIEHEND:
+			case WENIGER_FUENF_JAHRE:
+				return EnumGesuchstellerKardinalitaet.ZU_ZWEIT == this.getGesuchstellerKardinalitaet();
+			case VERHEIRATET:
+			case KONKUBINAT:
+			case LAENGER_FUENF_JAHRE:
+				return true;
 			}
 		}
 		return false;
@@ -117,7 +165,9 @@ public class Familiensituation extends AbstractEntity {
 	private Familiensituation copyForMutationOrErneuerung(@Nonnull Familiensituation mutation) {
 		mutation.setFamilienstatus(this.getFamilienstatus());
 		mutation.setGemeinsameSteuererklaerung(this.getGemeinsameSteuererklaerung());
-		mutation.setGesuchstellerKardinalitaet(this.gesuchstellerKardinalitaet);
+		mutation.setGesuchstellerKardinalitaet(this.getGesuchstellerKardinalitaet());
+		mutation.setSozialhilfeBezueger(this.getSozialhilfeBezueger());
+		mutation.setVerguenstigungGewuenscht(this.getVerguenstigungGewuenscht());
 		return mutation;
 	}
 
@@ -137,7 +187,9 @@ public class Familiensituation extends AbstractEntity {
 		return Objects.equals(getAenderungPer(), otherFamiliensituation.getAenderungPer()) &&
 			Objects.equals(getFamilienstatus(), otherFamiliensituation.getFamilienstatus()) &&
 			Objects.equals(getGesuchstellerKardinalitaet(), otherFamiliensituation.getGesuchstellerKardinalitaet()) &&
-			EbeguUtil.isSameOrNullBoolean(getGemeinsameSteuererklaerung(), otherFamiliensituation.getGemeinsameSteuererklaerung());
+			EbeguUtil.isSameOrNullBoolean(getGemeinsameSteuererklaerung(), otherFamiliensituation.getGemeinsameSteuererklaerung()) &&
+			Objects.equals(getSozialhilfeBezueger(), otherFamiliensituation.getSozialhilfeBezueger()) &&
+			Objects.equals(getVerguenstigungGewuenscht(), otherFamiliensituation.getVerguenstigungGewuenscht());
 
 	}
 }

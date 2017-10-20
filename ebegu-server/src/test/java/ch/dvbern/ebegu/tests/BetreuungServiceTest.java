@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.tests;
 
 import java.time.LocalDate;
@@ -7,16 +22,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.security.auth.login.LoginException;
 
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.persistence.UsingDataSet;
-import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
-import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -24,6 +29,8 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.BetreuungService;
@@ -32,6 +39,13 @@ import ch.dvbern.ebegu.services.KindService;
 import ch.dvbern.ebegu.services.MitteilungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.persistence.UsingDataSet;
+import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
+import org.jboss.arquillian.transaction.api.annotation.Transactional;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * Tests fuer die Klasse betreuungService
@@ -68,7 +82,7 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		Betreuung betreuung = betreuungOpt.get();
 		Assert.assertEquals(persitedBetreuung.getBetreuungsstatus(), betreuung.getBetreuungsstatus());
 
-		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, betreuung.extractGesuch().getGesuchBetreuungenStatus());
+		Assert.assertEquals(GesuchBetreuungenStatus.WARTEN, betreuung.extractGesuch().getGesuchBetreuungenStatus());
 		betreuung.setGrundAblehnung("abgewiesen");
 		betreuung.setBetreuungsstatus(Betreuungsstatus.ABGEWIESEN);
 		betreuungService.saveBetreuung(betreuung, false);
@@ -85,14 +99,20 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 	public void removeBetreuungTest() {
 		Assert.assertNotNull(betreuungService);
 		Betreuung persitedBetreuung = TestDataUtil.persistBetreuung(betreuungService, persistence);
-		Optional<Betreuung> betreuung = betreuungService.findBetreuung(persitedBetreuung.getId());
-		Assert.assertTrue(betreuung.isPresent());
-		final String gesuchId = betreuung.get().extractGesuch().getId();
-		betreuungService.removeBetreuung(betreuung.get().getId());
+		Optional<Betreuung> betreuungOptional = betreuungService.findBetreuung(persitedBetreuung.getId());
+		Assert.assertTrue(betreuungOptional.isPresent());
+		Betreuung betreuung = betreuungOptional.get();
+
+		Gesuch gesuch = betreuung.extractGesuch();
+		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer(gesuch));
+		persistence.merge(gesuch);
+
+		final String gesuchId = betreuung.extractGesuch().getId();
+		betreuungService.removeBetreuung(betreuung.getId());
 
 		Optional<Betreuung> betreuungAfterRemove = betreuungService.findBetreuung(persitedBetreuung.getId());
 		Assert.assertFalse(betreuungAfterRemove.isPresent());
-		final Gesuch gesuch = persistence.find(Gesuch.class, gesuchId);
+		gesuch = persistence.find(Gesuch.class, gesuchId);
 		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, gesuch.getGesuchBetreuungenStatus());
 	}
 
@@ -101,11 +121,11 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		prepareDependentObjects();
 		Gesuch dagmarGesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.now());
 		Mitteilung mitteilung = TestDataUtil.createMitteilung(dagmarGesuch.getFall(), empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
-				sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
 		Betreuung betreuungUnderTest = dagmarGesuch.extractAllBetreuungen().get(0);
 		mitteilung.setBetreuung(betreuungUnderTest);
 		final Mitteilung persistedMitteilung = mitteilungService.sendMitteilung(mitteilung);
-		Assert.assertEquals(betreuungUnderTest , persistedMitteilung.getBetreuung());
+		Assert.assertEquals(betreuungUnderTest, persistedMitteilung.getBetreuung());
 
 		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungUnderTest.getId());
 		Assert.assertTrue(betreuung.isPresent());
@@ -116,9 +136,9 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		Optional<Betreuung> betreuungAfterRemove = betreuungService.findBetreuung(betreuungUnderTest.getId());
 		Assert.assertFalse(betreuungAfterRemove.isPresent());
 		Collection<Mitteilung> mitteilungenAfterRemove = this.mitteilungService.findAllMitteilungenForBetreuung(betreuungUnderTest);
-				Assert.assertEquals(0, mitteilungenAfterRemove.size());
+		Assert.assertEquals(0, mitteilungenAfterRemove.size());
 
-				//die Mitteilung muss noch existieren
+		//die Mitteilung muss noch existieren
 		Optional<Mitteilung> stillExistingMitteilung = this.mitteilungService.findMitteilung(mitteilungen.stream().findFirst().get().getId());
 		Assert.assertNotNull(stillExistingMitteilung.get());
 		Assert.assertNull(stillExistingMitteilung.get().getBetreuung());
@@ -150,7 +170,7 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		Optional<Betreuung> betreuungAfterRemove = betreuungService.findBetreuung(betreuungUnderTest.getId());
 		Assert.assertFalse(betreuungAfterRemove.isPresent());
 		Collection<Mitteilung> mitteilungenAfterRemove = this.mitteilungService.findAllMitteilungenForBetreuung(betreuungUnderTest);
-				Assert.assertEquals(0, mitteilungenAfterRemove.size());
+		Assert.assertEquals(0, mitteilungenAfterRemove.size());
 		//die Betreuungsmitteilung muss geloescht sein
 		Optional<Mitteilung> removedMitteilung = this.mitteilungService.findMitteilung(mitteilungen.stream().findFirst().get().getId());
 		Assert.assertFalse(removedMitteilung.isPresent());

@@ -1,4 +1,20 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import {TSRole} from './TSRole';
+
 export enum TSAntragStatus {
     IN_BEARBEITUNG_GS = <any> 'IN_BEARBEITUNG_GS',
     FREIGABEQUITTUNG = <any> 'FREIGABEQUITTUNG',
@@ -53,6 +69,13 @@ export function getTSAntragStatusValuesByRole(userrole: TSRole): Array<TSAntragS
                 TSAntragStatus.PRUEFUNG_STV,
                 TSAntragStatus.IN_BEARBEITUNG_STV
             ];
+        case TSRole.SCHULAMT:
+        case TSRole.ADMINISTRATOR_SCHULAMT:
+            return [
+                // todo noch genauer zu definieren was eine Pendenz fuers SCH ist
+                TSAntragStatus.NUR_SCHULAMT,
+                TSAntragStatus.FREIGABEQUITTUNG
+            ];
         case TSRole.SACHBEARBEITER_JA:
         case TSRole.ADMIN:
             return getTSAntragStatusValues().filter(element => (element !== TSAntragStatus.IN_BEARBEITUNG_GS
@@ -76,7 +99,8 @@ export function getTSAntragStatusValuesByRole(userrole: TSRole): Array<TSAntragS
  * @returns {TSAntragStatus[]}
  */
 export function getTSAntragStatusPendenzValues(userrole: TSRole): Array<TSAntragStatus> {
-    return getTSAntragStatusValuesByRole(userrole).filter(element => (element !== TSAntragStatus.VERFUEGT && element !== TSAntragStatus.KEIN_ANGEBOT));
+    return getTSAntragStatusValuesByRole(userrole).filter(element => (element !== TSAntragStatus.VERFUEGT
+        && element !== TSAntragStatus.KEIN_ANGEBOT));
 }
 
 export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {

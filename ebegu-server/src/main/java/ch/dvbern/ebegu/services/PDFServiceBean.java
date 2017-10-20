@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.io.IOException;
@@ -45,22 +60,12 @@ import ch.dvbern.ebegu.vorlagen.verfuegung.VerfuegungPrintMergeSource;
 import com.google.common.io.ByteStreams;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
 import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
 import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
-/**
- * Copyright (c) 2016 DV Bern AG, Switzerland
- * <p>
- * Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
- * geschuetzt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulaessig. Dies gilt
- * insbesondere fuer Vervielfaeltigungen, die Einspeicherung und Verarbeitung in
- * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
- * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
- * <p>
- * Created by medu on 28/11/2016.
- */
 @Stateless
 @Local(PDFService.class)
 public class PDFServiceBean extends AbstractPrintService implements PDFService {
@@ -123,15 +128,15 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 		EbeguVorlageKey vorlageKey;
 
 		switch (mahnung.getMahnungTyp()) {
-			case ERSTE_MAHNUNG:
-				vorlageKey = EbeguVorlageKey.VORLAGE_MAHNUNG_1;
-				break;
-			case ZWEITE_MAHNUNG:
-				vorlageKey = EbeguVorlageKey.VORLAGE_MAHNUNG_2;
-				break;
-			default:
-				throw new MergeDocException("generateMahnung()",
-					"Unexpected Mahnung Type", null, OBJECTARRAY);
+		case ERSTE_MAHNUNG:
+			vorlageKey = EbeguVorlageKey.VORLAGE_MAHNUNG_1;
+			break;
+		case ZWEITE_MAHNUNG:
+			vorlageKey = EbeguVorlageKey.VORLAGE_MAHNUNG_2;
+			break;
+		default:
+			throw new MergeDocException("generateMahnung()",
+				"Unexpected Mahnung Type", null, OBJECTARRAY);
 		}
 
 		try {
@@ -201,7 +206,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public byte[] generateFinanzielleSituation(@Nonnull Gesuch gesuch, Verfuegung famGroessenVerfuegung,
 		boolean writeProtected) throws MergeDocException {
 
@@ -233,7 +238,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 	@Override
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
 	public byte[] generateVerfuegungForBetreuung(Betreuung betreuung,
-		@Nullable LocalDate	letzteVerfuegungDatum, boolean writeProtected) throws MergeDocException {
+		@Nullable LocalDate letzteVerfuegungDatum, boolean writeProtected) throws MergeDocException {
 
 		final DateRange gueltigkeit = betreuung.extractGesuchsperiode().getGueltigkeit();
 		EbeguVorlageKey vorlageFromBetreuungsangebottyp = getVorlageFromBetreuungsangebottyp(betreuung);
@@ -262,15 +267,15 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			}
 		}
 		switch (betreuung.getBetreuungsangebotTyp()) {
-			case TAGESELTERN_KLEINKIND:
-				return EbeguVorlageKey.VORLAGE_VERFUEGUNG_TAGESELTERN_KLEINKINDER;
-			case TAGESELTERN_SCHULKIND:
-				return EbeguVorlageKey.VORLAGE_BRIEF_TAGESELTERN_SCHULKINDER;
-			case TAGI:
-				return EbeguVorlageKey.VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER;
-			case KITA:
-			default:
-				return EbeguVorlageKey.VORLAGE_VERFUEGUNG_KITA;
+		case TAGESELTERN_KLEINKIND:
+			return EbeguVorlageKey.VORLAGE_VERFUEGUNG_TAGESELTERN_KLEINKINDER;
+		case TAGESELTERN_SCHULKIND:
+			return EbeguVorlageKey.VORLAGE_BRIEF_TAGESELTERN_SCHULKINDER;
+		case TAGI:
+			return EbeguVorlageKey.VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER;
+		case KITA:
+		default:
+			return EbeguVorlageKey.VORLAGE_VERFUEGUNG_KITA;
 		}
 	}
 

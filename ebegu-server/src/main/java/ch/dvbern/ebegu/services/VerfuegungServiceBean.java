@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.io.IOException;
@@ -40,6 +55,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
 import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
 import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
@@ -55,7 +71,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(VerfuegungService.class)
-@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT})
+@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT })
 public class VerfuegungServiceBean extends AbstractBaseService implements VerfuegungService {
 
 	@Inject
@@ -85,10 +101,12 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Inject
 	private GeneratedDokumentService generatedDokumentService;
 
+	@Inject
+	private MailService mailService;
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public Verfuegung verfuegen(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId, boolean ignorieren) {
 		setZahlungsstatus(verfuegung, betreuungId, ignorieren);
 		final Verfuegung persistedVerfuegung = persistVerfuegung(verfuegung, betreuungId, Betreuungsstatus.VERFUEGT);
@@ -97,15 +115,17 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		// Dokument erstellen
 		Betreuung betreuung = persistedVerfuegung.getBetreuung();
 		generateVerfuegungDokument(betreuung);
+
+		mailService.sendInfoBetreuungVerfuegt(betreuung);
 		return persistedVerfuegung;
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public void generateVerfuegungDokument(@Nonnull Betreuung betreuung) {
 		try {
 			generatedDokumentService
-				.getVerfuegungDokumentAccessTokenGeneratedDokument(betreuung.extractGesuch(), betreuung,"",true);
+				.getVerfuegungDokumentAccessTokenGeneratedDokument(betreuung.extractGesuch(), betreuung, "", true);
 		} catch (IOException | MimeTypeParseException | MergeDocException e) {
 			throw new EbeguRuntimeException("generateVerfuegungDokument", "Verfuegung-Dokument konnte nicht erstellt werden"
 				+ betreuung.getId(), e);
@@ -116,18 +136,23 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	private void setZahlungsstatus(Verfuegung verfuegung, @Nonnull String betreuungId, boolean ignorieren) {
 		Betreuung betreuung = persistence.find(Betreuung.class, betreuungId);
 		final Gesuch gesuch = betreuung.extractGesuch();
-		if (gesuch.isMutation() && betreuung.isAngebotKita()) { // Zahlungsstatus muss nur bei Mutationen und Angebote der Art KITA aktualisiert werden
-			for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : verfuegung.getZeitabschnitte()) {
-				List<VerfuegungZeitabschnitt> zeitabschnitteOnVorgaengerVerfuegung =
-					findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(verfuegungZeitabschnitt, betreuung);
 
-				if (!zeitabschnitteOnVorgaengerVerfuegung.isEmpty()) { // we only check the status if there has been any verrechnete zeitabschnitt. Otherwise NEU
-					final BigDecimal totalVerrechneteVerguenstigung = VerfuegungUtil.getVerguenstigungZeitInterval(zeitabschnitteOnVorgaengerVerfuegung, verfuegungZeitabschnitt.getGueltigkeit());
-					if (verfuegungZeitabschnitt.getVerguenstigung().compareTo(totalVerrechneteVerguenstigung) != 0) {
+		if (gesuch.isMutation() && betreuung.isAngebotKita()) { // Zahlungsstatus muss nur bei Mutationen und Angebote der Art KITA aktualisiert werden
+			Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuung);
+
+			if (vorgaengerVerfuegung.isPresent()) {
+				for (VerfuegungZeitabschnitt verfuegungZeitabschnittNeu : verfuegung.getZeitabschnitte()) {
+
+					List<VerfuegungZeitabschnitt> zeitabschnitteOnVorgaengerVerfuegung = findZeitabschnitteOnVorgaengerVerfuegung(verfuegungZeitabschnittNeu.getGueltigkeit(), vorgaengerVerfuegung.get());
+
+					Optional<VerfuegungZeitabschnitt> zeitabschnittSameGueltigkeitSameBetrag = VerfuegungUtil.findZeitabschnittSameGueltigkeitSameBetrag
+						(zeitabschnitteOnVorgaengerVerfuegung, verfuegungZeitabschnittNeu);
+
+					if (!zeitabschnittSameGueltigkeitSameBetrag.isPresent()) { // we only check the status if there has been any verrechnete zeitabschnitt. Otherwise NEU
 						if (ignorieren) {
-							verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND);
+							verfuegungZeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND);
 						} else {
-							verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
+							verfuegungZeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
 						}
 					}
 				}
@@ -160,7 +185,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public Verfuegung nichtEintreten(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId) {
 		// Bei Nich-Eintreten muss der Anspruch auf der Verfuegung auf 0 gesetzt werden, da diese u.U. bei Mutationen
 		// als Vergleichswert hinzugezogen werden
@@ -184,7 +209,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public Verfuegung persistVerfuegung(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId, @Nonnull Betreuungsstatus betreuungsstatus) {
 		Objects.requireNonNull(verfuegung);
 		Objects.requireNonNull(betreuungId);
@@ -212,7 +237,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER })
 	public Optional<Verfuegung> findVerfuegung(@Nonnull String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
 		Verfuegung a = persistence.find(Verfuegung.class, id);
@@ -220,19 +245,17 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		return Optional.ofNullable(a);
 	}
 
-
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER })
 	public Collection<Verfuegung> getAllVerfuegungen() {
 		Collection<Verfuegung> verfuegungen = criteriaQueryHelper.getAll(Verfuegung.class);
 		authorizer.checkReadAuthorizationVerfuegungen(verfuegungen);
 		return verfuegungen;
 	}
 
-
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public void removeVerfuegung(@Nonnull Verfuegung verfuegung) {
 		Validate.notNull(verfuegung);
 		Optional<Verfuegung> entityToRemove = this.findVerfuegung(verfuegung.getId());
@@ -241,11 +264,10 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		persistence.remove(loadedVerf);
 	}
 
-
 	@SuppressWarnings("OptionalIsPresent")
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public Gesuch calculateVerfuegung(@Nonnull Gesuch gesuch) {
 		this.finanzielleSituationService.calculateFinanzDaten(gesuch);
 		Mandant mandant = mandantService.getFirst();   //gesuch get mandant?
@@ -271,7 +293,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public Optional<Verfuegung> findVorgaengerVerfuegung(@Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
 		if (betreuung.getVorgaengerId() == null) {
@@ -292,7 +314,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER })
 	public Optional<LocalDate> findVorgaengerVerfuegungDate(@Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
 		Optional<Verfuegung> vorgaengerVerfuegungOpt = findVorgaengerVerfuegung(betreuung);
@@ -310,7 +332,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Override
 	@Nonnull
 	public List<VerfuegungZeitabschnitt> findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu,
-																							 @Nonnull Betreuung betreuungNeu) {
+		@Nonnull Betreuung betreuungNeu) {
 		Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuungNeu);
 		if (vorgaengerVerfuegung.isPresent()) {
 			List<VerfuegungZeitabschnitt> zeitabschnitteOnVorgaengerVerfuegung = findZeitabschnitteOnVorgaengerVerfuegung(zeitabschnittNeu.getGueltigkeit(), vorgaengerVerfuegung.get());
@@ -336,8 +358,8 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	private List<VerfuegungZeitabschnitt> findZeitabschnitteOnVorgaengerVerfuegung(@Nonnull DateRange newVerfuegungGueltigkeit, @Nonnull Verfuegung lastVerfuegung) {
 		List<VerfuegungZeitabschnitt> lastVerfuegungsZeitabschnitte = new ArrayList<>();
 		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : lastVerfuegung.getZeitabschnitte()) {
-			final DateRange gueltigkeit = verfuegungZeitabschnitt.getGueltigkeit();
-			if (gueltigkeit.contains(newVerfuegungGueltigkeit.getGueltigAb()) || gueltigkeit.contains(newVerfuegungGueltigkeit.getGueltigBis())) {
+			final DateRange gueltigkeitExistingZeitabschnitt = verfuegungZeitabschnitt.getGueltigkeit();
+			if (gueltigkeitExistingZeitabschnitt.getOverlap(newVerfuegungGueltigkeit).isPresent()) {
 				lastVerfuegungsZeitabschnitte.add(verfuegungZeitabschnitt);
 			}
 		}

@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import {IComponentOptions} from 'angular';
 import TSUser from '../models/TSUser';
 import {TSRole} from '../models/enums/TSRole';
@@ -8,8 +23,8 @@ import TSInstitution from '../models/TSInstitution';
 import {TSTraegerschaft} from '../models/TSTraegerschaft';
 import AuthenticationUtil from '../utils/AuthenticationUtil';
 import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest';
-import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./dummyAuthentication.html');
 require('./dummyAuthentication.less');
 
@@ -31,10 +46,10 @@ export class DummyAuthenticationListViewController {
     private traegerschaftSGF: TSTraegerschaft;
     private devMode: boolean;
 
-    static $inject: string[] = ['$state', 'AuthServiceRS', '$timeout' , 'ApplicationPropertyRS'];
+    static $inject: string[] = ['$state', 'AuthServiceRS', '$timeout', 'ApplicationPropertyRS'];
 
     constructor(private $state: IStateService, private authServiceRS: AuthServiceRS,
-              private $timeout: ITimeoutService, private applicationPropertyRS: ApplicationPropertyRS) {
+                private $timeout: ITimeoutService, private applicationPropertyRS: ApplicationPropertyRS) {
         this.usersList = [];
         this.mandant = this.getMandant();
         this.traegerschaftStadtBern = this.getTraegerschaftStadtBern();
@@ -62,11 +77,11 @@ export class DummyAuthenticationListViewController {
 
         this.usersList.push(new TSUser('Rodolfo', 'Geldmacher', 'gero', 'password11', 'rodolfo.geldmacher@myemail.ch', this.mandant, TSRole.STEUERAMT));
         this.usersList.push(new TSUser('Julien', 'Schuler', 'scju', 'password9', 'julien.schuler@myemail.ch', this.mandant, TSRole.SCHULAMT));
+        this.usersList.push(new TSUser('Adrian', 'Schuler', 'scad', 'password9', 'adrian.schuler@myemail.ch', this.mandant, TSRole.ADMINISTRATOR_SCHULAMT));
         this.usersList.push(new TSUser('Julia', 'Jurist', 'juju', 'password9', 'julia.jurist@myemail.ch', this.mandant, TSRole.JURIST));
         this.usersList.push(new TSUser('Reto', 'Revisor', 'rere', 'password9', 'reto.revisor@myemail.ch', this.mandant, TSRole.REVISOR));
         this.superadmin = new TSUser('E-BEGU', 'Superuser', 'ebegu', 'password10', 'hallo@dvbern.ch', this.mandant, TSRole.SUPER_ADMIN);
     }
-
 
     /**
      * Der Mandant wird direkt gegeben. Diese Daten und die Daten der DB muessen uebereinstimmen

@@ -1,16 +1,30 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import {IHttpPromise, IHttpService, ILogService, IPromise} from 'angular';
+import * as moment from 'moment';
 import {IEntityRS} from '../../core/service/iEntityRS.rest';
-import {IHttpPromise, IHttpService, IPromise, ILogService} from 'angular';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
+import {TSMitteilungEvent} from '../../models/enums/TSMitteilungEvent';
+import TSAntragDTO from '../../models/TSAntragDTO';
 import TSGesuch from '../../models/TSGesuch';
+import DateUtil from '../../utils/DateUtil';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import WizardStepManager from './wizardStepManager';
-import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
-import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
-import TSAntragDTO from '../../models/TSAntragDTO';
-import DateUtil from '../../utils/DateUtil';
-import * as moment from 'moment';
-import {TSMitteilungEvent} from '../../models/enums/TSMitteilungEvent';
 import IRootScopeService = angular.IRootScopeService;
-import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
 
 export default class GesuchRS implements IEntityRS {
     serviceURL: string;
@@ -80,17 +94,6 @@ export default class GesuchRS implements IEntityRS {
                 this.$log.debug('PARSING gesuch (fuer Institutionen) REST object ', response.data);
                 return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
             });
-    }
-
-    public searchAntraege(antragSearch: any): IPromise<TSAntragSearchresultDTO> {
-        return this.http.post(this.serviceURL + '/search/', antragSearch, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then((response: any) => {
-            this.$log.debug('PARSING antraege REST array object', response.data);
-            return new TSAntragSearchresultDTO(this.ebeguRestUtil.parseAntragDTOs(response.data.antragDTOs), response.data.paginationDTO.totalItemCount);
-        });
     }
 
     public updateBemerkung(gesuchID: string, bemerkung: string): IHttpPromise<any> {

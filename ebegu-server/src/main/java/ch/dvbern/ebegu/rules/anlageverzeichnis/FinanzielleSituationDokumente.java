@@ -1,12 +1,32 @@
-package ch.dvbern.ebegu.rules.anlageverzeichnis;
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
-import ch.dvbern.ebegu.enums.DokumentGrundTyp;
-import ch.dvbern.ebegu.enums.DokumentTyp;
+package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
 import java.math.BigDecimal;
 import java.util.Set;
+
+import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.FinanzielleSituation;
+import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
+import ch.dvbern.ebegu.enums.DokumentTyp;
 
 /**
  * Dokumente für FinanzielleSituation:
@@ -63,7 +83,7 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 	}
 
 	private void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, GesuchstellerContainer gesuchsteller,
-											  boolean gemeinsam, int gesuchstellerNumber, int basisJahr) {
+		boolean gemeinsam, int gesuchstellerNumber, int basisJahr) {
 
 		if (gesuchsteller == null || gesuchsteller.getFinanzielleSituationContainer() == null) {
 			return;
@@ -97,12 +117,12 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 		if (abstractFinanzielleSituation instanceof FinanzielleSituation) {
 			FinanzielleSituation finanzielleSituation = (FinanzielleSituation) abstractFinanzielleSituation;
 			switch (minus) {
-				case 0:
-					return !finanzielleSituation.getSteuerveranlagungErhalten() && (finanzielleSituation.getGeschaeftsgewinnBasisjahr() != null);
-				case 1:
-					return !finanzielleSituation.getSteuerveranlagungErhalten() && (finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1() != null);
-				case 2:
-					return !finanzielleSituation.getSteuerveranlagungErhalten() && (finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2() != null);
+			case 0:
+				return !finanzielleSituation.getSteuerveranlagungErhalten() && (finanzielleSituation.getGeschaeftsgewinnBasisjahr() != null);
+			case 1:
+				return !finanzielleSituation.getSteuerveranlagungErhalten() && (finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1() != null);
+			case 2:
+				return !finanzielleSituation.getSteuerveranlagungErhalten() && (finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2() != null);
 			}
 		}
 		return false;

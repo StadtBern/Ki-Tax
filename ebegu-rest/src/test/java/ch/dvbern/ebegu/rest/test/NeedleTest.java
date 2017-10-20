@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
@@ -27,11 +42,10 @@ import org.junit.Test;
 // dass die businessmethoden innerhalb eines services damit gestestet werden
 public class NeedleTest {
 
+	@Rule
+	public NeedleRule needleRule = new NeedleRule();
 
-    @Rule
-    public NeedleRule needleRule = new NeedleRule();
-
-    @ObjectUnderTest
+	@ObjectUnderTest
 	private JaxBConverter converter;
 
 	@InjectIntoMany
@@ -46,21 +60,21 @@ public class NeedleTest {
 	@ObjectUnderTest
 	private final AdresseService leistungsrechnungService = new AdresseServiceBean();
 
-    @Test
-    public void testConverter() throws Exception {
+	@Test
+	public void testConverter() throws Exception {
 		JaxAdresseContainer adr = TestJaxDataUtil.createTestJaxAdr(null);
-				adr.getAdresseJA().setGueltigAb(null);
-				adr.getAdresseJA().setGueltigBis(null);
-				GesuchstellerAdresseContainer adrEntity = converter.adresseContainerToEntity(adr, new GesuchstellerAdresseContainer());
-				Assert.assertEquals(Constants.START_OF_TIME, adrEntity.extractGueltigkeit().getGueltigAb());
-				Assert.assertEquals(Constants.END_OF_TIME,adrEntity.extractGueltigkeit().getGueltigBis());
-    }
+		adr.getAdresseJA().setGueltigAb(null);
+		adr.getAdresseJA().setGueltigBis(null);
+		GesuchstellerAdresseContainer adrEntity = converter.adresseContainerToEntity(adr, new GesuchstellerAdresseContainer());
+		Assert.assertEquals(Constants.START_OF_TIME, adrEntity.extractGueltigkeit().getGueltigAb());
+		Assert.assertEquals(Constants.END_OF_TIME, adrEntity.extractGueltigkeit().getGueltigBis());
+	}
 
 	/**
 	 * Testet das Umzugadresse konvertiert wird
 	 */
 	@Test
-	public void convertJaxGesuchstellerWithUmzgTest(){
+	public void convertJaxGesuchstellerWithUmzgTest() {
 		JaxGesuchstellerContainer gesuchstellerWith3Adr = TestJaxDataUtil.createTestJaxGesuchstellerWithUmzug();
 		GesuchstellerContainer gesuchsteller = converter.gesuchstellerContainerToEntity(gesuchstellerWith3Adr, new GesuchstellerContainer());
 		Assert.assertEquals(gesuchstellerWith3Adr.getGesuchstellerJA().getGeburtsdatum(), gesuchsteller.getGesuchstellerJA().getGeburtsdatum());

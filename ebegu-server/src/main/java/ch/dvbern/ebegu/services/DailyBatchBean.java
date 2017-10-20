@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.time.LocalDate;
@@ -32,7 +47,6 @@ import org.slf4j.LoggerFactory;
 @Local(DailyBatch.class)
 public class DailyBatchBean implements DailyBatch {
 
-
 	private static final long serialVersionUID = -4627435482413298843L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(DailyBatchBean.class);
 
@@ -51,13 +65,12 @@ public class DailyBatchBean implements DailyBatch {
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 
-
 	@Override
 	@Asynchronous
 	public void runBatchCleanDownloadFiles() {
 		try {
 			LOGGER.info("Starting Job Cleanup Download-Files...");
-		    downloadFileService.cleanUp();
+			downloadFileService.cleanUp();
 			LOGGER.info("... Job Cleanup Download-Files finished");
 		} catch (RuntimeException e) {
 			LOGGER.error("Batch-Job Cleanup Download-Files konnte nicht durchgefuehrt werden!", e);
@@ -116,7 +129,9 @@ public class DailyBatchBean implements DailyBatch {
 	public void runBatchGesucheLoeschen() {
 		try {
 			LOGGER.info("Starting Job GesucheLoeschen...");
+
 			final int anzahl = gesuchService.deleteGesucheOhneFreigabeOderQuittung();
+
 			LOGGER.info("Es wurden " + anzahl + " Gesuche ohne Freigabe oder Quittung gefunden, die geloescht werden muessen");
 			LOGGER.info("... Job GesucheLoeschen finished");
 		} catch (RuntimeException e) {

@@ -1,10 +1,25 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import {IComponentOptions, IPromise} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import EbeguUtil from '../../../utils/EbeguUtil';
-import {getTSMonthValues, TSMonth, getTSMonthWithVorjahrValues} from '../../../models/enums/TSMonth';
+import {getTSMonthValues, getTSMonthWithVorjahrValues, TSMonth} from '../../../models/enums/TSMonth';
 import TSEinkommensverschlechterungInfo from '../../../models/TSEinkommensverschlechterungInfo';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
@@ -20,10 +35,10 @@ import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import EinkommensverschlechterungContainerRS from '../../service/einkommensverschlechterungContainerRS.rest';
+import {isAtLeastFreigegeben} from '../../../models/enums/TSAntragStatus';
 import IQService = angular.IQService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
-import {isAtLeastFreigegeben} from '../../../models/enums/TSAntragStatus';
 
 let template = require('./einkommensverschlechterungInfoView.html');
 require('./einkommensverschlechterungInfoView.less');

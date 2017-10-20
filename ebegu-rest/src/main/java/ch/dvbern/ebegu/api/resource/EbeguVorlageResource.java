@@ -1,7 +1,55 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.api.resource;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.activation.MimeTypeParseException;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxAdresse;
 import ch.dvbern.ebegu.api.dtos.JaxEbeguVorlage;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxVorlage;
@@ -24,29 +72,6 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.activation.MimeTypeParseException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
-
 /**
  * REST Resource fuer Dokument-Vorlagen
  */
@@ -60,7 +85,6 @@ public class EbeguVorlageResource {
 	private static final String VORLAGE_KEY_HEADER = "x-vorlagekey";
 	private static final String GESUCHSPERIODE_HEADER = "x-gesuchsperiode";
 	private static final String PROGESUCHSPERIODE_HEADER = "x-progesuchsperiode";
-
 
 	private static final Logger LOG = LoggerFactory.getLogger(EbeguVorlageResource.class);
 
@@ -76,7 +100,6 @@ public class EbeguVorlageResource {
 
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
-
 
 	@ApiOperation(value = "Gibt alle Vorlagen fuer die Gesuchsperiode mit der uebergebenen Id zurueck",
 		responseContainer = "List", response = JaxEbeguVorlage.class)
@@ -205,7 +228,6 @@ public class EbeguVorlageResource {
 		jaxEbeguVorlage.getVorlage().setFilename(fileInfo.getFilename());
 		jaxEbeguVorlage.getVorlage().setFilepfad(fileInfo.getPath());
 		jaxEbeguVorlage.getVorlage().setFilesize(fileInfo.getSizeString());
-
 
 		final Optional<EbeguVorlage> ebeguVorlageOptional = ebeguVorlageService.getEbeguVorlageByDatesAndKey(jaxEbeguVorlage.getGueltigAb(),
 			jaxEbeguVorlage.getGueltigBis(), jaxEbeguVorlage.getName());

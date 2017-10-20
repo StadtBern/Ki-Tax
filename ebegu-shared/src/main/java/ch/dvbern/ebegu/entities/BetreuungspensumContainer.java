@@ -1,15 +1,35 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.entities;
+
+import javax.annotation.Nonnull;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.util.EbeguUtil;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nonnull;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 
 /**
  * Container-Entity für die Betreuungspensen: Diese muss für jeden Benutzertyp (GS, JA) einzeln geführt werden,
@@ -36,10 +56,8 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuungspensum_container_betreuungspensum_ja"))
 	private Betreuungspensum betreuungspensumJA;
 
-
 	public BetreuungspensumContainer() {
 	}
-
 
 	public Betreuung getBetreuung() {
 		return this.betreuung;
@@ -65,7 +83,7 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 		this.betreuungspensumJA = betreuungspensumJA;
 	}
 
-	@SuppressWarnings({"OverlyComplexBooleanExpression"})
+	@SuppressWarnings({ "OverlyComplexBooleanExpression" })
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality
@@ -84,12 +102,11 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 	}
 
 	/**
-	 *
 	 * @return geht durch die internen Datenstrukturen hoch bis zur Gesuchsperiode und gibt diese zureuck
 	 * @throws IllegalArgumentException wenn einer der benoetigten Pfade null ist
 	 */
 	@Transient
-	public Gesuchsperiode extractGesuchsperiode(){
+	public Gesuchsperiode extractGesuchsperiode() {
 		Validate.notNull(this.getBetreuung(), "Can not extract Gesuchsperiode because Betreuung is null");
 		Validate.notNull(this.getBetreuung().getKind(), "Can not extract Gesuchsperiode because Kind is null");
 		Validate.notNull(this.getBetreuung().getKind().getGesuch(), "Can not extract Gesuchsperiode because Gesuch is null");
@@ -97,10 +114,9 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 	}
 
 	@Transient
-	public Gesuch extractGesuch(){
+	public Gesuch extractGesuch() {
 		return this.getBetreuung().getKind().getGesuch();
 	}
-
 
 	@Override
 	public int compareTo(BetreuungspensumContainer o) {

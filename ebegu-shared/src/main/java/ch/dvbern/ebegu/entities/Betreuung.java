@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.entities;
 
 import java.time.LocalDate;
@@ -31,6 +46,7 @@ import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.validators.CheckAbwesenheitDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
@@ -55,8 +71,8 @@ import org.hibernate.search.annotations.Indexed;
 @CheckAbwesenheitDatesOverlapping
 @Table(
 	uniqueConstraints = {
-		@UniqueConstraint(columnNames = {"betreuungNummer", "kind_id"}, name = "UK_betreuung_kind_betreuung_nummer"),
-		@UniqueConstraint(columnNames = {"verfuegung_id"}, name = "UK_betreuung_verfuegung_id")    //hibernate ignoriert den namen leider
+		@UniqueConstraint(columnNames = { "betreuungNummer", "kind_id" }, name = "UK_betreuung_kind_betreuung_nummer"),
+		@UniqueConstraint(columnNames = { "verfuegung_id" }, name = "UK_betreuung_verfuegung_id")    //hibernate ignoriert den namen leider
 	}
 )
 @Indexed()
@@ -108,6 +124,11 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_verfuegung_id"), nullable = true)
 	private Verfuegung verfuegung;
 
+	@Nullable
+	@OneToOne(optional = true, cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_belegung_id"), nullable = true)
+	private Belegung belegung;
+
 	@NotNull
 	@Column(nullable = false)
 	private Boolean vertrag = false;
@@ -135,10 +156,8 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@Column(nullable = false)
 	private boolean gueltig = false;
 
-
 	public Betreuung() {
 	}
-
 
 	public KindContainer getKind() {
 		return kind;
@@ -203,6 +222,15 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 
 	public void setVerfuegung(Verfuegung verfuegung) {
 		this.verfuegung = verfuegung;
+	}
+
+	@Nullable
+	public Belegung getBelegung() {
+		return belegung;
+	}
+
+	public void setBelegung(@Nullable Belegung belegung) {
+		this.belegung = belegung;
 	}
 
 	public Boolean getVertrag() {
@@ -325,12 +353,18 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		return BetreuungsangebotTyp.TAGESELTERN_KLEINKIND.equals(getBetreuungsangebotTyp());
 	}
 
+	@Nullable
 	@Transient
 	public BetreuungsangebotTyp getBetreuungsangebotTyp() {
 		if (getInstitutionStammdaten() != null) {
 			return getInstitutionStammdaten().getBetreuungsangebotTyp();
 		}
 		return null;
+	}
+
+	@Transient
+	public String getBetreuungsangebotTypTranslated() {
+		return ServerMessageUtil.translateEnumValue(getBetreuungsangebotTyp());
 	}
 
 	/**
@@ -340,9 +374,9 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@SuppressFBWarnings("NM_CONFUSING")
 	public String getBGNummer() {
 		if (getKind().getGesuch() != null) {
-			String kind = "" + getKind().getKindNummer();
-			String betreuung = "" + getBetreuungNummer();
-			return getKind().getGesuch().getJahrAndFallnummer() + "." + kind + "." + betreuung;
+			String kindNumberAsString = String.valueOf(getKind().getKindNummer());
+			String betreuung = String.valueOf(getBetreuungNummer());
+			return getKind().getGesuch().getJahrAndFallnummer() + '.' + kindNumberAsString + '.' + betreuung;
 		}
 		return "";
 	}
@@ -366,7 +400,6 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 			return getVorgaengerVerfuegung();
 		}
 	}
-
 
 	public Verfuegung getVorgaengerVerfuegung() {
 		return vorgaengerVerfuegung;

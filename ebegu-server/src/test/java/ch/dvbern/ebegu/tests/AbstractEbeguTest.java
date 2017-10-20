@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.tests;
 
 import java.io.File;
@@ -105,7 +120,7 @@ public abstract class AbstractEbeguTest {
 			// .addPackages(true, "ch/dvbern/ebegu/enums")
 			.addClasses(AbstractEbeguLoginTest.class, Persistence.class, ISessionContextService.class, AbstractEntity.class)
 			.addPackages(true, "ch/dvbern/ebegu/services/authentication")
-//			.addClass(Authorizer.class)
+			//			.addClass(Authorizer.class)
 			.addAsLibraries(runtimeDeps).addAsLibraries(testDeps)
 			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
 			.addAsResource("reporting/GesuchStichtag.xlsx", "reporting/GesuchStichtag.xlsx")
@@ -125,6 +140,8 @@ public abstract class AbstractEbeguTest {
 			.addAsResource("vorlagen/entwurfWasserzeichen.png", "vorlagen/entwurfWasserzeichen.png")
 			.addAsResource("mail/templates/InfoBetreuungAbgelehnt.ftl", "mail/templates/InfoBetreuungAbgelehnt.ftl")
 			.addAsResource("mail/templates/InfoBetreuungenBestaetigt.ftl", "mail/templates/InfoBetreuungenBestaetigt.ftl")
+			.addAsResource("mail/templates/InfoBetreuungGeloescht.ftl", "mail/templates/InfoBetreuungGeloescht.ftl")
+			.addAsResource("mail/templates/InfoBetreuungVerfuegt.ftl", "mail/templates/InfoBetreuungVerfuegt.ftl")
 			.addAsResource("mail/templates/InfoMahnung.ftl", "mail/templates/InfoMahnung.ftl")
 			.addAsResource("mail/templates/InfoVerfuegtGesuch.ftl", "mail/templates/InfoVerfuegtGesuch.ftl")
 			.addAsResource("mail/templates/InfoVerfuegtMutation.ftl", "mail/templates/InfoVerfuegtMutation.ftl")
@@ -196,9 +213,9 @@ public abstract class AbstractEbeguTest {
 	 * Helper für init. Speichert Benutzer in DB
 	 */
 	protected void createBenutzer(Mandant mandant) {
-		try{
+		try {
 			JBossLoginContextFactory.createLoginContext("superadmin", "superadmin").login();
-		} catch (LoginException ex){
+		} catch (LoginException ex) {
 			LOG.error("could not login as admin user for test");
 		}
 		Benutzer i = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);

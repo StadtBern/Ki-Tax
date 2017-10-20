@@ -1,21 +1,37 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
-import TSAntragDTO from '../../models/TSAntragDTO';
-import PendenzRS from '../../pendenzen/service/PendenzRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
-import TSFall from '../../models/TSFall';
-import {TSEingangsart} from '../../models/enums/TSEingangsart';
-import FallRS from '../../gesuch/service/fallRS.rest';
-import {TSAntragStatus, IN_BEARBEITUNG_BASE_NAME, isAnyStatusOfVerfuegt} from '../../models/enums/TSAntragStatus';
-import {TSRoleUtil} from '../../utils/TSRoleUtil';
-import EbeguUtil from '../../utils/EbeguUtil';
-import IPromise = angular.IPromise;
-import ILogService = angular.ILogService;
-import ITranslateService = angular.translate.ITranslateService;
 import MitteilungRS from '../../core/service/mitteilungRS.rest';
+import FallRS from '../../gesuch/service/fallRS.rest';
+import SearchRS from '../../gesuch/service/searchRS.rest';
+import {IN_BEARBEITUNG_BASE_NAME, isAnyStatusOfVerfuegt, TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {TSEingangsart} from '../../models/enums/TSEingangsart';
 import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
+import TSAntragDTO from '../../models/TSAntragDTO';
+import TSFall from '../../models/TSFall';
+import TSGesuchsperiode from '../../models/TSGesuchsperiode';
+import EbeguUtil from '../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../utils/TSRoleUtil';
+import ILogService = angular.ILogService;
+import IPromise = angular.IPromise;
+import ITranslateService = angular.translate.ITranslateService;
+
 let template = require('./gesuchstellerDashboardView.html');
 require('./gesuchstellerDashboardView.less');
 
@@ -35,11 +51,11 @@ export class GesuchstellerDashboardListViewController {
     amountNewMitteilungen: number;
 
 
-    static $inject: string[] = ['$state', '$log', 'CONSTANTS', 'AuthServiceRS', 'PendenzRS', 'EbeguUtil', 'GesuchsperiodeRS',
+    static $inject: string[] = ['$state', '$log', 'AuthServiceRS', 'SearchRS', 'EbeguUtil', 'GesuchsperiodeRS',
         'FallRS', '$translate', 'MitteilungRS'];
 
-    constructor(private $state: IStateService, private $log: ILogService, private CONSTANTS: any,
-                private authServiceRS: AuthServiceRS, private pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil,
+    constructor(private $state: IStateService, private $log: ILogService,
+                private authServiceRS: AuthServiceRS, private searchRS: SearchRS, private ebeguUtil: EbeguUtil,
                 private gesuchsperiodeRS: GesuchsperiodeRS, private fallRS: FallRS, private $translate: ITranslateService,
                 private mitteilungRS: MitteilungRS) {
     }
@@ -59,7 +75,7 @@ export class GesuchstellerDashboardListViewController {
         return this.fallRS.findFallByCurrentBenutzerAsBesitzer().then((existingFall: TSFall) => {
             if (existingFall) {
                 this.fallId = existingFall.id;
-                return this.pendenzRS.getAntraegeGesuchstellerList().then((response: any) => {
+                return this.searchRS.getAntraegeGesuchstellerList().then((response: any) => {
                     this.antragList = angular.copy(response);
                     return this.antragList;
                 });

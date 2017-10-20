@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.util.ArrayList;
@@ -49,15 +64,14 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 	@Inject
 	private WizardStepService wizardStepService;
 
-
 	@Override
 	@Nonnull
-	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public EinkommensverschlechterungContainer saveEinkommensverschlechterungContainer(
 		@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer, String gesuchId) {
 		Objects.requireNonNull(einkommensverschlechterungContainer);
 		final EinkommensverschlechterungContainer persistedEKV = persistence.merge(einkommensverschlechterungContainer);
-		if(gesuchId != null) {
+		if (gesuchId != null) {
 			wizardStepService.updateSteps(gesuchId, null, einkommensverschlechterungContainer, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 		}
 		return persistedEKV;
@@ -80,7 +94,7 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 	}
 
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public void removeEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer) {
 		Validate.notNull(einkommensverschlechterungContainer);
 		einkommensverschlechterungContainer.getGesuchsteller().setEinkommensverschlechterungContainer(null);
@@ -93,7 +107,7 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 	}
 
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public void removeEinkommensverschlechterung(@Nonnull Einkommensverschlechterung einkommensverschlechterung) {
 		Validate.notNull(einkommensverschlechterung);
 		persistence.remove(Einkommensverschlechterung.class, einkommensverschlechterung.getId());
@@ -107,7 +121,7 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 	}
 
 	@Override
-	@RolesAllowed({ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public boolean removeAllEKVOfGesuch(@Nonnull Gesuch gesuch, int yearPlus) {
 		if (yearPlus != 1 && yearPlus != 2) {
 			return false;
@@ -123,8 +137,7 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 			if (yearPlus == 1 && gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() != null) {
 				removeEinkommensverschlechterung(gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1());
 				gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(null);
-			}
-			 else if (yearPlus == 2 && gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() != null) {
+			} else if (yearPlus == 2 && gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() != null) {
 				removeEinkommensverschlechterung(gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2());
 				gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(null);
 			}

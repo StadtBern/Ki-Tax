@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import {IComponentOptions, IPromise} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
@@ -57,8 +72,7 @@ export class DVMitteilungListController {
     ebeguUtil: EbeguUtil;
 
     static $inject: any[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS', 'FallRS', 'BetreuungRS',
-        '$q', '$window', '$rootScope', '$state', 'EbeguUtil', 'DvDialog', 'GesuchModelManager', '$scope'];
-
+        '$q', '$window', '$rootScope', '$state', 'EbeguUtil', 'DvDialog', 'GesuchModelManager', '$scope', '$timeout'];
     /* @ngInject */
     constructor(private $stateParams: IMitteilungenStateParams, private mitteilungRS: MitteilungRS,
                 private authServiceRS: AuthServiceRS,
@@ -66,7 +80,8 @@ export class DVMitteilungListController {
                 private $window: IWindowService,
                 private $rootScope: IRootScopeService, private $state: IStateService, ebeguUtil: EbeguUtil,
                 private DvDialog: DvDialog,
-                private gesuchModelManager: GesuchModelManager, private $scope: IScope) {
+                private gesuchModelManager: GesuchModelManager, private $scope: IScope,
+                private $timeout: ITimeoutService) {
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
         this.ebeguUtil = ebeguUtil;
@@ -121,9 +136,9 @@ export class DVMitteilungListController {
         // Wenn der Fall keinen Besitzer hat, darf auch keine Nachricht geschrieben werden
         // Ausser wir sind Institutionsbenutzer
         let isGesuchsteller: boolean = this.authServiceRS.isRole(TSRole.GESUCHSTELLER);
-        let isJugendamtAndFallHasBesitzer: boolean = this.fall.besitzer && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+        let isJugendamtOrSchulamtAndFallHasBesitzer: boolean = this.fall.besitzer && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles());
         let isInstitutionsUser: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles());
-        if (isGesuchsteller || isJugendamtAndFallHasBesitzer || isInstitutionsUser) {
+        if (isGesuchsteller || isJugendamtOrSchulamtAndFallHasBesitzer || isInstitutionsUser) {
             if (this.betreuung) {
                 this.mitteilungRS.getEntwurfForCurrentRolleForBetreuung(this.betreuung.id).then((entwurf: TSMitteilung) => {
                     if (entwurf) {
@@ -158,20 +173,21 @@ export class DVMitteilungListController {
 
         //role-dependent attributes
         if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) { // Ein GS darf nur dem JA schreiben
-            this.currentMitteilung.empfaenger = this.fall.verantwortlicher ? this.fall.verantwortlicher : undefined;
-            this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
-            this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.GESUCHSTELLER;
+            this.setSenderAndEmpfaenger(this.fall.verantwortlicher, TSMitteilungTeilnehmerTyp.JUGENDAMT, TSMitteilungTeilnehmerTyp.GESUCHSTELLER);
 
-        } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) { // Das JA darf nur dem GS schreiben
-            this.currentMitteilung.empfaenger = this.fall.besitzer ? this.fall.besitzer : undefined;
-            this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.GESUCHSTELLER;
-            this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
+        } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) { // Das JA/SCH darf nur dem GS schreiben
+            // todo Im Moment auch für Schulamt TeilnehmerTyp JUGENDAMT, es ist noch zu überlegen, ob sie einen eigenen Typ brauchen
+            this.setSenderAndEmpfaenger(this.fall.besitzer, TSMitteilungTeilnehmerTyp.GESUCHSTELLER, TSMitteilungTeilnehmerTyp.JUGENDAMT);
 
         } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) { // Eine Institution darf nur dem JA schreiben
-            this.currentMitteilung.empfaenger = this.fall.verantwortlicher ? this.fall.verantwortlicher : undefined;
-            this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
-            this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.INSTITUTION;
+            this.setSenderAndEmpfaenger(this.fall.verantwortlicher, TSMitteilungTeilnehmerTyp.JUGENDAMT, TSMitteilungTeilnehmerTyp.INSTITUTION);
         }
+    }
+
+    private setSenderAndEmpfaenger(empfaenger: TSUser, empfaengerTyp: TSMitteilungTeilnehmerTyp, senderTyp: TSMitteilungTeilnehmerTyp) {
+        this.currentMitteilung.empfaenger = empfaenger ? empfaenger : undefined;
+        this.currentMitteilung.empfaengerTyp = empfaengerTyp;
+        this.currentMitteilung.senderTyp = senderTyp;
     }
 
     public getCurrentMitteilung(): TSMitteilung {
@@ -183,6 +199,7 @@ export class DVMitteilungListController {
      */
     public sendMitteilung(): IPromise<TSMitteilung> {
         if (this.form.$invalid) {
+            EbeguUtil.selectFirstInvalid();
             return undefined;
         }
         if (!this.isMitteilungEmpty()) {
@@ -341,6 +358,12 @@ export class DVMitteilungListController {
 
     public canApplyBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
         return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    }
+
+    $postLink() {
+        this.$timeout(() => {
+            EbeguUtil.selectFirst();
+        }, 200);
     }
 
     public applyBetreuungsmitteilung(mitteilung: TSMitteilung): void {

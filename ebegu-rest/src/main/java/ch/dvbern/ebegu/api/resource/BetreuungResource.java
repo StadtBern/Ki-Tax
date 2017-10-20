@@ -1,4 +1,43 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.api.resource;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
@@ -19,23 +58,6 @@ import ch.dvbern.ebegu.services.KindService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * REST Resource fuer Betreuungen. Betreuung = ein Kind in einem Betreuungsangebot bei einer Institution.
@@ -58,8 +80,6 @@ public class BetreuungResource {
 	@Inject
 	private GesuchService gesuchService;
 
-
-
 	//TODO (hefr) Dieser Service wird immer nur fuer Betreuungen verwendet, nie fuer Abwesenheiten
 	@ApiOperation(value = "Speichert eine Betreuung in der Datenbank", response = JaxBetreuung.class)
 	@Nonnull
@@ -70,7 +90,7 @@ public class BetreuungResource {
 	public JaxBetreuung saveBetreuung(
 		@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
 		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
-		@Nonnull @NotNull @PathParam ("abwesenheit") Boolean abwesenheit,
+		@Nonnull @NotNull @PathParam("abwesenheit") Boolean abwesenheit,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
@@ -95,7 +115,7 @@ public class BetreuungResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxBetreuung> saveBetreuungen(
 		@Nonnull @NotNull @Valid List<JaxBetreuung> betreuungenJAXP,
-		@Nonnull @NotNull @PathParam ("abwesenheit") Boolean abwesenheit,
+		@Nonnull @NotNull @PathParam("abwesenheit") Boolean abwesenheit,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 

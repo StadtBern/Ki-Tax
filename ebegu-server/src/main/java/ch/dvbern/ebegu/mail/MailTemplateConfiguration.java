@@ -1,16 +1,20 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.mail;
 
-import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.util.Constants;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-
-import javax.annotation.Nonnull;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.time.LocalDate;
@@ -18,6 +22,25 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.Mitteilung;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.Constants;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 /**
  * Configuration For Freemarker Templates
@@ -38,7 +61,6 @@ public class MailTemplateConfiguration {
 	@Inject
 	private EbeguConfiguration ebeguConfiguration;
 
-
 	public MailTemplateConfiguration() {
 		final Configuration ourFreeMarkerConfig = new Configuration();
 		ourFreeMarkerConfig.setClassForTemplateLoading(MailTemplateConfiguration.class, "/mail/templates");
@@ -52,6 +74,23 @@ public class MailTemplateConfiguration {
 
 	public String getInfoBetreuungenBestaetigt(@Nonnull Gesuch gesuch, @Nonnull Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
 		return processTemplateGesuch("InfoBetreuungenBestaetigt.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
+	}
+
+	public String getInfoBetreuungGeloescht(@Nonnull Betreuung betreuung, @Nonnull Fall fall, @Nonnull Gesuchsteller gesuchsteller1, @Nonnull Kind kind,
+		@Nonnull Institution institution, @Nonnull String empfaengerMail, @Nonnull LocalDate datumErstellung, @Nonnull LocalDate birthdayKind) {
+
+		return processTemplateBetreuungGeloescht("InfoBetreuungGeloescht.ftl", betreuung, fall, kind, gesuchsteller1, institution,
+			toArgumentPair(EMPFAENGER_MAIL, empfaengerMail),
+			toArgumentPair("datumErstellung", Constants.DATE_FORMATTER.format(datumErstellung)),
+			toArgumentPair("birthday", Constants.DATE_FORMATTER.format(birthdayKind)));
+	}
+
+	public String getInfoBetreuungVerfuegt(@Nonnull Betreuung betreuung, @Nonnull Fall fall, @Nonnull Gesuchsteller gesuchsteller1, @Nonnull Kind kind,
+		@Nonnull Institution institution, @Nonnull String empfaengerMail, @Nonnull LocalDate birthdayKind) {
+
+		return processTemplateBetreuungVerfuegt("InfoBetreuungVerfuegt.ftl", betreuung, fall, kind, gesuchsteller1, institution,
+			toArgumentPair(EMPFAENGER_MAIL, empfaengerMail),
+			toArgumentPair("birthday", Constants.DATE_FORMATTER.format(birthdayKind)));
 	}
 
 	public String getInfoMitteilungErhalten(@Nonnull Mitteilung mitteilung, @Nonnull String empfaengerMail) {
@@ -105,6 +144,28 @@ public class MailTemplateConfiguration {
 		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 2);
 		paramsToPass[paramsToPass.length - 1] = new Object[] { "betreuung", betreuung };
 		paramsToPass[paramsToPass.length - 2] = new Object[] { GESUCHSTELLER, gesuchsteller };
+		return doProcessTemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
+	}
+
+	@SuppressWarnings("Duplicates")
+	private String processTemplateBetreuungGeloescht(String nameOfTemplate, Betreuung betreuung, Fall fall, Kind kind, Gesuchsteller gesuchsteller1, Institution institution, Object[]... extraValuePairs) {
+		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 5);
+		paramsToPass[paramsToPass.length - 1] = new Object[] { "betreuung", betreuung };
+		paramsToPass[paramsToPass.length - 2] = new Object[] { "fall", fall };
+		paramsToPass[paramsToPass.length - 3] = new Object[] { "kind", kind };
+		paramsToPass[paramsToPass.length - 4] = new Object[] { GESUCHSTELLER, gesuchsteller1 };
+		paramsToPass[paramsToPass.length - 5] = new Object[] { "institution", institution };
+		return doProcessTemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
+	}
+
+	@SuppressWarnings("Duplicates")
+	private String processTemplateBetreuungVerfuegt(String nameOfTemplate, Betreuung betreuung, Fall fall, Kind kind, Gesuchsteller gesuchsteller1, Institution institution, Object[]... extraValuePairs) {
+		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 5);
+		paramsToPass[paramsToPass.length - 1] = new Object[] { "betreuung", betreuung };
+		paramsToPass[paramsToPass.length - 2] = new Object[] { "fall", fall };
+		paramsToPass[paramsToPass.length - 3] = new Object[] { "kind", kind };
+		paramsToPass[paramsToPass.length - 4] = new Object[] { GESUCHSTELLER, gesuchsteller1 };
+		paramsToPass[paramsToPass.length - 5] = new Object[] { "institution", institution };
 		return doProcessTemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
 	}
 

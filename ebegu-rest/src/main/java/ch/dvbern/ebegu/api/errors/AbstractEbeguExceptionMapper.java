@@ -1,10 +1,22 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.api.errors;
 
-import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.util.Constants;
-import org.jboss.resteasy.api.validation.Validation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -13,13 +25,18 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-import java.util.List;
-import java.util.Locale;
+
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.util.Constants;
+import org.jboss.resteasy.api.validation.Validation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by imanol on 02.03.16.
  * Basis Exception Mapper
- * @see  <a href="https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly/" >https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly</a>
+ *
+ * @see <a href="https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly/" >https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly</a>
  */
 public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implements ExceptionMapper<E> {
 
@@ -48,6 +65,7 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 
 	/**
 	 * unwrapped alle causes und fuegt sie zum Stringbuffer hinzu
+	 *
 	 * @param sb buffer to append to
 	 * @param t throwable
 	 */
@@ -64,7 +82,6 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 	}
 
 	/**
-	 *
 	 * @param accept Liste mit Accepted media types
 	 * @return Gibt den ersten von uns unterstuetzten MediaType zurueck
 	 */
@@ -85,9 +102,8 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 	}
 
 	protected void logException(Exception exception) {
-		LOG.warn("Exception occured: " ,exception);
+		LOG.warn("Exception occured: ", exception);
 	}
-
 
 	protected Locale getLocaleFromHeader() {
 		if (!headers.getAcceptableLanguages().isEmpty()) {

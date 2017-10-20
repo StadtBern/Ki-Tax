@@ -1,3 +1,18 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <div flex="auto" class="parameterView adminModul overflow-auto">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
@@ -17,6 +32,7 @@
                             <th data-translate="GESUCHSPERIODE_GUELTIG_AB"></th>
                             <th data-translate="GESUCHSPERIODE_GUELTIG_BIS"></th>
                             <th data-translate="GESUCHSPERIODE_STATUS"></th>
+                            <th data-translate="GESUCHSPERIODE_STATUS_TAGESSCHULEANMELDUNG"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -25,6 +41,7 @@
                             <td ng-bind="row.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
                             <td ng-bind="row.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
                             <td ng-bind="row.status"></td>
+                            <td ng-bind="vm.getStatusTagesschulenFreischaltung(row)"></td>
                         </tr>
                         </tbody>
                     </table>
@@ -104,6 +121,39 @@
                                         <div class="row">
                                             <div class="col-md-8 col-md-offset-4">
                                                 <dv-error-messages for="form.gpstatus.$error"></dv-error-messages>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" ng-show="!vm.gesuchsperiode.isEntwurf()">
+                                    <div class="col-md-6 form-group">
+                                        <div class="row col-md-12" ng-show="!vm.gesuchsperiode.hasTagesschulenAnmeldung()">
+                                            <label data-translate="FREISCHALTUNG_TAGESSCHULE_NONE"/>
+                                        </div>
+                                        <div class="row" ng-show="vm.gesuchsperiode.hasTagesschulenAnmeldung()">
+                                            <div class="col-md-4">
+                                                <label data-translate="FREISCHALTUNG_TAGESSCHULE" for="datumFreischaltungTagesschule_ID"/>
+                                            </div>
+                                            <div class="col-md-8 ">
+                                                <div ng-show="!vm.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert()">
+                                                    <dv-datepicker input-id="datumFreischaltungTagesschule_ID" name="datumFreischaltungTagesschule"
+                                                                   ng-model="vm.datumFreischaltungTagesschule"
+                                                                   class="input-element contrast">
+                                                    </dv-datepicker>
+                                                </div>
+                                                <div ng-show="vm.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert()">
+                                                    <dv-datepicker input-id="datumFreischaltungTagesschule_ID" name="datumFreischaltungTagesschule"
+                                                                   ng-model="vm.gesuchsperiode.datumFreischaltungTagesschule"
+                                                                   class="input-element contrast"
+                                                                   ng-disabled="true">
+                                                    </dv-datepicker>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-4">
+                                                <dv-error-messages for="form.datumFreischaltungTagesschule.$error"></dv-error-messages>
                                             </div>
                                         </div>
                                     </div>

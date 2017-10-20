@@ -11,32 +11,32 @@ Content-Type: text/html;charset=utf-8
 <html>
 <head>
 ${templateConfiguration.mailCss}
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Ki-Tax - Ihr Gesuch wurde gelöscht</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Ki-Tax - Ihr Gesuch wurde gelöscht</title>
 
 </head>
 
 <body>
 
 <div>
-    <p>
-        Guten Tag
-    </p>
-    <p>
-        Sie haben Ihr Antrag auf <a href="www.bern.ch/ki-tax">www.bern.ch/ki-tax</a> bearbeitet, diesen aber nicht
-        freigegeben oder die Freigabequittung nicht eingereicht. Wir hatten Sie diesbezüglich bereits informiert.
-    </p
-    <p>
-        Ihre Angaben wurden am ${datumGeloescht?date} automatisch gelöscht.
-    </p>
-    <p>
-        Freundliche Grüsse <br/>
-        Jugendamt der Stadt Bern
-    </p>
-    <p>
-        Dies ist eine automatisch versendete E-Mail. Bitte antworten Sie nicht auf diese Nachricht.
-    </p>
+	<p>
+		Guten Tag
+	</p>
+	<p>
+		Sie haben Ihr Antrag auf <a href="www.bern.ch/ki-tax">www.bern.ch/ki-tax</a> bearbeitet, diesen aber nicht
+		freigegeben oder die Freigabequittung nicht eingereicht. Wir hatten Sie diesbezüglich bereits informiert.
+	</p
+	<p>
+		Ihre Angaben wurden am ${datumGeloescht?date} automatisch gelöscht.
+	</p>
+	<p>
+		Freundliche Grüsse <br/>
+		Jugendamt der Stadt Bern
+	</p>
+	<p>
+		Dies ist eine automatisch versendete E-Mail. Bitte antworten Sie nicht auf diese Nachricht.
+	</p>
 </div>
 
 </body>

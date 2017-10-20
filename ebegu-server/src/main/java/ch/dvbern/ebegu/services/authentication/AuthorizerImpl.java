@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services.authentication;
 
 import java.util.Collection;
@@ -45,6 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRole.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRole.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRole.GESUCHSTELLER;
 import static ch.dvbern.ebegu.enums.UserRole.JURIST;
 import static ch.dvbern.ebegu.enums.UserRole.REVISOR;
@@ -64,8 +80,8 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizerImpl.class);
 
-	private static final UserRole[] JA_OR_ADM = {ADMIN, SACHBEARBEITER_JA};
-	private static final UserRole[] OTHER_AMT_ROLES = {REVISOR, JURIST, STEUERAMT};
+	private static final UserRole[] JA_OR_ADM = { ADMIN, SACHBEARBEITER_JA };
+	private static final UserRole[] OTHER_AMT_ROLES = { REVISOR, JURIST, STEUERAMT };
 
 	@Inject
 	private PrincipalBean principalBean;
@@ -102,7 +118,6 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			gesuche.forEach(this::checkReadAuthorization);
 		}
 	}
-
 
 	@Override
 	public void checkCreateAuthorizationGesuch() {
@@ -158,8 +173,8 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 		validateMandantMatches(fall);
 		//berechtigte Rollen pruefen
-		UserRole[] allowedRoles = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,
-			SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT, JURIST, REVISOR};
+		UserRole[] allowedRoles = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,
+			SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT, STEUERAMT, JURIST, REVISOR };
 		if (principalBean.isCallerInAnyOfRole(allowedRoles)) {
 			return true;
 		}
@@ -195,7 +210,6 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		}
 	}
 
-
 	@Override
 	public void checkWriteAuthorization(Gesuch gesuch) throws EJBAccessException {
 		if (gesuch == null) {
@@ -205,16 +219,16 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 		//Wir pruefen schulamt separat (schulamt darf schulamt-only Gesuche vom Status FREIGABEQUITTUNG zum Status SCHULAMT schieben)
 		boolean allowedSchulamt = false;
-		if (!allowedJAORGS && principalBean.isCallerInRole(SCHULAMT)
-			&& AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus())) {
+		if (!allowedJAORGS && principalBean.isCallerInAnyOfRole(SCHULAMT, ADMINISTRATOR_SCHULAMT)
+			&& AntragStatus.FREIGABEQUITTUNG == gesuch.getStatus()) {
 			allowedSchulamt = true;
 		}
 
 		//Wir pruefen steueramt separat (steueramt darf nur das Gesuch speichern wenn es im Status PRUEFUNG_STV oder IN_BEARBEITUNG_STV ist)
 		boolean allowedSteueramt = false;
-		if (!allowedJAORGS && ! allowedSchulamt && principalBean.isCallerInRole(STEUERAMT)
-			&& (AntragStatus.PRUEFUNG_STV.equals(gesuch.getStatus()) || AntragStatus.IN_BEARBEITUNG_STV.equals(gesuch.getStatus())
-			|| AntragStatus.GEPRUEFT_STV.equals(gesuch.getStatus()))) {
+		if (!allowedJAORGS && !allowedSchulamt && principalBean.isCallerInRole(STEUERAMT)
+			&& (AntragStatus.PRUEFUNG_STV == gesuch.getStatus() || AntragStatus.IN_BEARBEITUNG_STV == gesuch.getStatus()
+			|| AntragStatus.GEPRUEFT_STV == gesuch.getStatus())) {
 			allowedSteueramt = true;
 		}
 
@@ -315,7 +329,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	public void checkReadAuthorization(@Nullable ErwerbspensumContainer ewpCnt) {
 		if (ewpCnt != null) {
 			//Wenn wir hier 100% korrekt sein wollen muessten wir auch noch das Gesuch laden und den status pruefen.
-			UserRole[] allowedRoles = {SACHBEARBEITER_JA, SUPER_ADMIN, ADMIN, REVISOR, JURIST, SCHULAMT};
+			UserRole[] allowedRoles = { SACHBEARBEITER_JA, SUPER_ADMIN, ADMIN, REVISOR, JURIST, ADMINISTRATOR_SCHULAMT, SCHULAMT };
 			boolean allowed = isInRoleOrGSOwner(allowedRoles, () -> extractGesuch(ewpCnt), principalBean.getPrincipal().getName());
 			if (!allowed) {
 				throwViolation(ewpCnt);
@@ -359,9 +373,9 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	}
 
 	private boolean isReadAuthorizedFreigabe(Gesuch gesuch) {
-		if (AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus())) {
+		if (AntragStatus.FREIGABEQUITTUNG == gesuch.getStatus()) {
 			boolean schulamtOnly = gesuch.hasOnlyBetreuungenOfSchulamt();
-			if (principalBean.isCallerInRole(SCHULAMT)) {
+			if (principalBean.isCallerInAnyOfRole(SCHULAMT, ADMINISTRATOR_SCHULAMT)) {
 				if (schulamtOnly) {
 					return true; //schulamt dar nur solche lesen die nur_schulamt sind
 				}
@@ -387,7 +401,6 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		}
 		return false;
 	}
-
 
 	private boolean isGSOwner(Supplier<Fall> fallSupplier, String principalName) {
 		if (principalBean.isCallerInRole(GESUCHSTELLER.name())) {
@@ -422,7 +435,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			Institution instToMatch = betreuung.getInstitutionStammdaten().getInstitution();
 			return institutions.stream().anyMatch(instToMatch::equals);
 		}
-		if (principalBean.isCallerInRole(SCHULAMT)) {
+		if (principalBean.isCallerInAnyOfRole(SCHULAMT, ADMINISTRATOR_SCHULAMT)) {
 			return betreuung.getBetreuungsangebotTyp().isSchulamt();
 		}
 		return false;
@@ -482,7 +495,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	}
 
 	private boolean isAllowedSchulamt(Gesuch entity) {
-		if (principalBean.isCallerInRole(SCHULAMT)) {
+		if (principalBean.isCallerInAnyOfRole(SCHULAMT, ADMINISTRATOR_SCHULAMT)) {
 			return entity.hasBetreuungOfSchulamt() && entity.getStatus().isReadableBySchulamtSachbearbeiter();
 		}
 		return false;
@@ -505,7 +518,6 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		return false;
 	}
 
-
 	//this method is named slightly wrong because it only checks write authorization for Admins SachbearbeiterJA and GS
 	private boolean isWriteAuthorized(Supplier<Gesuch> gesuchSupplier, String principalName) {
 		if (principalBean.isCallerInRole(UserRoleName.SUPER_ADMIN)) {
@@ -519,10 +531,10 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			throw new EbeguRuntimeException("isWriteAuthorized", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, gesuch.getId(), msg);
 		}
 		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM)) {
-			return gesuch.getStatus().isReadableByJugendamtSteueramt() || AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus());
+			return gesuch.getStatus().isReadableByJugendamtSteueramt() || AntragStatus.FREIGABEQUITTUNG == gesuch.getStatus();
 		}
 
-		if (principalBean.isCallerInRole(SCHULAMT) && gesuch.hasOnlyBetreuungenOfSchulamt()) {
+		if (principalBean.isCallerInAnyOfRole(SCHULAMT, ADMINISTRATOR_SCHULAMT) && gesuch.hasOnlyBetreuungenOfSchulamt()) {
 			return AntragStatus.writeAllowedForRole(userRole).contains(gesuch.getStatus()); //Schulamt darf Freigabequittung scannen und Dokumente-Button setzen
 		}
 

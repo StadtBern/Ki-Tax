@@ -1,3 +1,18 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <div class="dv-antrag-list">
     <div class="row" dv-st-persist-antraege="{{vm.tableId}}"
          st-table="vm.displayedCollection" st-delay="20"
@@ -34,7 +49,13 @@
                     <th st-sort="gesuchsperiode" class="sortable row-periode" data-translate="PERIODE_UPPER"></th>
                     <th st-sort="aenderungsdatum" class="sortable row-geandert"
                         data-translate="GEANDERT_UPPER" dv-display-element
-                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()"
+                        dv-display-expression="!vm.pendenz">
+                    </th>
+                    <th st-sort="eingangsdatumSTV" class="sortable row-geandert"
+                        data-translate="EINGANG_UPPER" dv-display-element
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()"
+                        dv-display-expression="vm.pendenz">
                     </th>
                     <th st-sort="eingangsdatumSTV" class="sortable row-geandert"
                         data-translate="EINGANG_UPPER" dv-display-element
@@ -91,9 +112,16 @@
                         </div>
                     </th>
                     <th dv-display-element
-                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()"
+                        dv-display-expression="!vm.pendenz">
                         <input st-search="aenderungsdatum" class="form-control" type="text"
                                ng-model="vm.selectedAenderungsdatum"/>
+                    </th>
+                    <th dv-display-element
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()"
+                        dv-display-expression="vm.pendenz">
+                        <input st-search="eingangsdatum" class="form-control" type="text"
+                               ng-model="vm.selectedEingangsdatum"/>
                     </th>
                     <th dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
@@ -173,7 +201,13 @@
                     <td class="ellipsis" ellipsis-tooltip="{{row.aenderungsdatum | amDateFormat : 'DD.MM.YYYY'}}"
                         ng-bind="row.aenderungsdatum | amDateFormat : 'DD.MM.YYYY'"
                         dv-display-element
-                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()"
+                        dv-display-expression="!vm.pendenz">
+                    <td class="ellipsis" ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
+                        ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"
+                        dv-display-element
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()"
+                        dv-display-expression="vm.pendenz">
                     <td class="ellipsis" ellipsis-tooltip="{{row.eingangsdatumSTV | amDateFormat : 'DD.MM.YYYY'}}"
                         ng-bind="row.eingangsdatumSTV | amDateFormat : 'DD.MM.YYYY'"
                         dv-display-element

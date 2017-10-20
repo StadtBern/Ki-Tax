@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
@@ -25,10 +40,12 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {isVerfuegtOrSTV} from '../../../models/enums/TSAntragStatus';
 import * as moment from 'moment';
 import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
+import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ILogService = angular.ILogService;
-import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -55,13 +72,13 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     isNewestGesuch: boolean;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
-        'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout'];
+        'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout', '$translate'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $stateParams: IBetreuungStateParams,
                 private mitteilungRS: MitteilungRS, private dvDialog: DvDialog, private $log: ILogService,
-                $timeout: ITimeoutService) {
+                $timeout: ITimeoutService, private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG, $timeout);
 
     }
@@ -518,5 +535,25 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                 this.existingMutationsMeldung = response;
             });
         }
+    }
+
+    public tageschuleSaveDisabled(): boolean {
+        let gp: TSGesuchsperiode = this.gesuchModelManager.getGesuch().gesuchsperiode;
+        return this.getBetreuungModel().isAngebotTagesschule() && gp.hasTagesschulenAnmeldung() && !gp.isTageschulenAnmeldungAktiv();
+    }
+
+    public getTagesschuleAnmeldungNotYetReadyText(): string {
+        let gp: TSGesuchsperiode = this.gesuchModelManager.getGesuch().gesuchsperiode;
+        if (gp.hasTagesschulenAnmeldung()) {
+            if (gp.isTagesschulenAnmeldungKonfiguriert()) {
+                let terminValue: string = DateUtil.momentToLocalDateFormat(gp.datumFreischaltungTagesschule, 'DD.MM.YYYY');
+                return this.$translate.instant('FREISCHALTUNG_TAGESSCHULE_AB_INFO', {
+                    termin: terminValue
+                });
+            } else {
+                return this.$translate.instant('FREISCHALTUNG_TAGESSCHULE_INFO');
+            }
+        }
+        return '';
     }
 }

@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.tests;
 
 import java.time.LocalDate;
@@ -35,8 +50,6 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
-
-
 	@Test
 	public void createPersonInstitutionStammdatenTest() {
 		Assert.assertNotNull(institutionStammdatenService);
@@ -56,7 +69,7 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguLoginTest {
 
 		Optional<InstitutionStammdaten> institutionStammdatenOptional = institutionStammdatenService.findInstitutionStammdaten(insertedInstitutionStammdaten.getId());
 		Assert.assertTrue(institutionStammdatenOptional.isPresent());
-		InstitutionStammdaten persistedInstStammdaten= institutionStammdatenOptional.get();
+		InstitutionStammdaten persistedInstStammdaten = institutionStammdatenOptional.get();
 		Assert.assertEquals(insertedInstitutionStammdaten.getIban(), persistedInstStammdaten.getIban());
 
 		persistedInstStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
@@ -72,7 +85,7 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguLoginTest {
 		Collection<InstitutionStammdaten> allInstitutionStammdatenByDate = institutionStammdatenService.getAllInstitutionStammdatenByDate(LocalDate.now());
 		Assert.assertEquals(0, allInstitutionStammdatenByDate.size());
 
-		insertedInstitutionStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010,1,1), Constants.END_OF_TIME));
+		insertedInstitutionStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010, 1, 1), Constants.END_OF_TIME));
 		institutionStammdatenService.saveInstitutionStammdaten(insertedInstitutionStammdaten);
 		Collection<InstitutionStammdaten> allInstitutionStammdatenByDate2 = institutionStammdatenService.getAllInstitutionStammdatenByDate(LocalDate.now());
 		Assert.assertEquals(1, allInstitutionStammdatenByDate2.size());
@@ -87,7 +100,6 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(1, allInstitutionStammdatenByInstitution.size());
 
 	}
-
 
 	// HELP METHODS
 

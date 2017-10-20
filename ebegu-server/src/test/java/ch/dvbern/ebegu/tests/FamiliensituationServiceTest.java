@@ -1,6 +1,29 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
+import ch.dvbern.ebegu.entities.FamiliensituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
@@ -15,11 +38,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Arquillian Tests fuer die Klasse FamiliensituationService
@@ -37,8 +55,6 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private Persistence persistence;
-
-
 
 	@Test
 	public void testCreateFamiliensituation() {
@@ -79,13 +95,12 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		gesuch.setTyp(AntragTyp.MUTATION);
 
-
 		final EinkommensverschlechterungInfoContainer evInfo = TestDataUtil.createDefaultEinkommensverschlechterungsInfoContainer(gesuch);
 		final Optional<EinkommensverschlechterungInfoContainer> einkommensverschlechterungInfo = evInfoService.createEinkommensverschlechterungInfo(evInfo);
 		gesuch.setEinkommensverschlechterungInfoContainer(einkommensverschlechterungInfo.get());
 
 		Optional<FamiliensituationContainer> familiensituation = createFamiliensituationContainer();
-		final FamiliensituationContainer newFamiliensituation = familiensituation.get().copyForMutation(new FamiliensituationContainer(),false);
+		final FamiliensituationContainer newFamiliensituation = familiensituation.get().copyForMutation(new FamiliensituationContainer(), false);
 		newFamiliensituation.extractFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
 		newFamiliensituation.extractFamiliensituation().setGemeinsameSteuererklaerung(null);
 
@@ -96,7 +111,6 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertFalse(gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP1());
 		Assert.assertFalse(gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP2());
 	}
-
 
 	// HELP METHODS
 

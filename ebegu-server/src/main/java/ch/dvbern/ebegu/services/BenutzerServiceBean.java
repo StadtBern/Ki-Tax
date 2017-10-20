@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
 import java.security.Principal;
@@ -47,7 +62,6 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	@Inject
 	private PrincipalBean principalBean;
 
-
 	@Nonnull
 	@Override
 	@PermitAll
@@ -88,7 +102,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 	@Nonnull
 	@Override
-	@RolesAllowed({UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
+	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
 	public Collection<Benutzer> getGesuchsteller() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Benutzer> query = cb.createQuery(Benutzer.class);
@@ -101,9 +115,8 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		return persistence.getCriteriaResults(query);
 	}
 
-
 	@Override
-	@RolesAllowed({UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
+	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
 	public void removeBenutzer(@Nonnull String username) {
 		Objects.requireNonNull(username);
 		Optional<Benutzer> benutzerToRemove = findBenutzer(username);
@@ -134,7 +147,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	public Benutzer updateOrStoreUserFromIAM(Benutzer benutzer) {
 		Optional<Benutzer> foundUser = this.findBenutzer(benutzer.getUsername());
 		if (foundUser.isPresent()) {
-            // Unsere Metadaten werden in das IAM Objekt kopiert und dieses wird gespeichert
+			// Unsere Metadaten werden in das IAM Objekt kopiert und dieses wird gespeichert
 			benutzer.setId(foundUser.get().getId());
 			benutzer.setVersion(foundUser.get().getVersion()); //we circumveil the optimistic locking and just save the new version
 			benutzer.setTimestampErstellt(foundUser.get().getTimestampErstellt());

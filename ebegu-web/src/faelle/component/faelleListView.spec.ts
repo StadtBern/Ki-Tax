@@ -1,9 +1,20 @@
-import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import BerechnungsManager from '../../gesuch/service/berechnungsManager';
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import GesuchModelManager from '../../gesuch/service/gesuchModelManager';
-import GesuchRS from '../../gesuch/service/gesuchRS.rest';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
-import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import TSAntragDTO from '../../models/TSAntragDTO';
@@ -12,21 +23,24 @@ import TSGesuch from '../../models/TSGesuch';
 import TestDataUtil from '../../utils/TestDataUtil';
 import {EbeguWebFaelle} from '../faelle.module';
 import {FaelleListViewController} from './faelleListView';
+import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import SearchRS from '../../gesuch/service/searchRS.rest';
+import GesuchRS from '../../gesuch/service/gesuchRS.rest';
 
 describe('faelleListView', function () {
 
     let authServiceRS: AuthServiceRS;
     let gesuchRS: GesuchRS;
+    let searchRS: SearchRS;
     let faelleListViewController: FaelleListViewController;
     let $q: angular.IQService;
     let $scope: angular.IScope;
     let $filter: angular.IFilterService;
     let $httpBackend: angular.IHttpBackendService;
     let gesuchModelManager: GesuchModelManager;
-    let berechnungsManager: BerechnungsManager;
     let $state: angular.ui.IStateService;
     let $log: angular.ILogService;
-    let CONSTANTS: any;
     let wizardStepManager: WizardStepManager;
     let mockAntrag: TSAntragDTO;
 
@@ -35,15 +49,14 @@ describe('faelleListView', function () {
     beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         authServiceRS = $injector.get('AuthServiceRS');
         gesuchRS = $injector.get('GesuchRS');
+        searchRS = $injector.get('SearchRS');
         $q = $injector.get('$q');
         $scope = $injector.get('$rootScope');
         $filter = $injector.get('$filter');
         $httpBackend = $injector.get('$httpBackend');
         gesuchModelManager = $injector.get('GesuchModelManager');
-        berechnungsManager = $injector.get('BerechnungsManager');
         $state = $injector.get('$state');
         $log = $injector.get('$log');
-        CONSTANTS = $injector.get('CONSTANTS');
         wizardStepManager = $injector.get('WizardStepManager');
         mockAntrag = mockGetPendenzenList();
     }));
@@ -52,11 +65,11 @@ describe('faelleListView', function () {
         describe('searchFaelle', function () {
             it('should return the list with found Faellen', function () {
                 mockRestCalls();
-                faelleListViewController = new FaelleListViewController($filter, gesuchRS,
-                    gesuchModelManager, berechnungsManager, $state, $log, CONSTANTS, authServiceRS, $q);
+                faelleListViewController = new FaelleListViewController($filter,
+                    gesuchModelManager,  $state, $log,  authServiceRS, searchRS);
 
                 faelleListViewController.passFilterToServer({});
-                expect(gesuchRS.searchAntraege).toHaveBeenCalledTimes(1);
+                expect(searchRS.searchAntraege).toHaveBeenCalledTimes(1);
                 $scope.$apply();
 
                 let list: Array<TSAntragDTO> = faelleListViewController.getAntragList();
@@ -92,7 +105,7 @@ describe('faelleListView', function () {
         let dtoList: Array<TSAntragDTO> = [mockPendenz];
         let totalSize: number = 1;
         let searchresult: TSAntragSearchresultDTO = new TSAntragSearchresultDTO(dtoList, totalSize);
-        spyOn(gesuchRS, 'searchAntraege').and.returnValue($q.when(searchresult));
+        spyOn(searchRS, 'searchAntraege').and.returnValue($q.when(searchresult));
         return mockPendenz;
     }
 
@@ -107,8 +120,8 @@ describe('faelleListView', function () {
         mockRestCalls();
         spyOn($state, 'go');
         spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue(undefined);
-        faelleListViewController = new FaelleListViewController($filter, gesuchRS,
-            gesuchModelManager, berechnungsManager, $state, $log, CONSTANTS, authServiceRS, $q);
+        faelleListViewController = new FaelleListViewController($filter, gesuchModelManager,
+            $state, $log, authServiceRS, searchRS);
 
         let tsGesuch = new TSGesuch();
         spyOn(gesuchRS, 'findGesuch').and.returnValue($q.when(tsGesuch));

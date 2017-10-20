@@ -1,7 +1,65 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.validation.Valid;
+
+import ch.dvbern.ebegu.entities.Abwesenheit;
+import ch.dvbern.ebegu.entities.AbwesenheitContainer;
+import ch.dvbern.ebegu.entities.AbwesenheitContainer_;
+import ch.dvbern.ebegu.entities.Abwesenheit_;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuung_;
+import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.entities.Gesuchsperiode_;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.KindContainer_;
+import ch.dvbern.ebegu.entities.Mitteilung;
+import ch.dvbern.ebegu.entities.Verfuegung_;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -9,23 +67,24 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.criteria.*;
-import javax.validation.Valid;
-import java.util.*;
-
-import static ch.dvbern.ebegu.enums.UserRoleName.*;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
+import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
+import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.STEUERAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Service fuer Betreuung
  */
 @Stateless
 @Local(BetreuungService.class)
-@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT})
+@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT })
 public class BetreuungServiceBean extends AbstractBaseService implements BetreuungService {
 
 	@Inject
@@ -45,13 +104,12 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungServiceBean.class.getSimpleName());
 
-
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER })
 	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung, @Nonnull Boolean isAbwesenheit) {
 		Objects.requireNonNull(betreuung);
-		if (betreuung.getBetreuungsstatus().equals(Betreuungsstatus.SCHULAMT)) {
+		if (betreuung.getBetreuungsstatus() == Betreuungsstatus.SCHULAMT) {
 			// Wir setzen auch Schulamt-Betreuungen auf gueltig, for future use
 			betreuung.setGueltig(true);
 			if (betreuung.getVorgaengerId() != null) {
@@ -60,6 +118,10 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 			}
 		}
 		final Betreuung mergedBetreuung = persistence.merge(betreuung);
+		// we need to manually add this new Betreuung to the Kind
+		final Set<Betreuung> betreuungen = mergedBetreuung.getKind().getBetreuungen();
+		betreuungen.add(mergedBetreuung);
+		mergedBetreuung.getKind().setBetreuungen(betreuungen);
 
 		//jetzt noch wizard step updaten
 		if (isAbwesenheit) {
@@ -75,7 +137,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
 	public Betreuung betreuungPlatzAbweisen(@Valid @Nonnull Betreuung betreuung) {
 		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
 		try {
@@ -89,7 +151,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
 	public Betreuung betreuungPlatzBestaetigen(@Valid @Nonnull Betreuung betreuung) {
 		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
 		try {
@@ -106,14 +168,14 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER })
 	public Optional<Betreuung> findBetreuung(@Nonnull String key) {
 		return findBetreuung(key, true);
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER })
 	public Optional<Betreuung> findBetreuung(@Nonnull String key, boolean doAuthCheck) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Betreuung betr = persistence.find(Betreuung.class, key);
@@ -125,7 +187,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER })
 	public Optional<Betreuung> findBetreuungWithBetreuungsPensen(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -169,10 +231,14 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		final String gesuchId = betreuungToRemove.getKind().getGesuch().getId();
 		removeBetreuung(betreuungToRemove);
 		wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.BETREUUNG); //auch bei entfernen wizard updaten
+
+		List<Betreuung> betreuungen = new ArrayList<>();
+		betreuungen.add(betreuungToRemove);
+		mailService.sendInfoBetreuungGeloescht(betreuungen);
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER })
 	public void removeBetreuung(@Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung);
 		authorizer.checkWriteAuthorization(betreuung);
@@ -189,7 +255,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value ={ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed(value = { ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT })
 	public Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser() {
 		Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
 		if (!instForCurrBenutzer.isEmpty()) {
@@ -200,7 +266,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER })
 	public List<Betreuung> findAllBetreuungenFromGesuch(@Nonnull String gesuchId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
@@ -215,14 +281,12 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER })
 	public List<Betreuung> findAllBetreuungenWithVerfuegungFromFall(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall, "fall muss gesetzt sein");
 
-
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
-
 
 		Root<Betreuung> root = query.from(Betreuung.class);
 		List<Predicate> predicatesToUse = new ArrayList<>();
@@ -249,12 +313,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		return criteriaResults;
 	}
 
-
 	/**
 	 * Liest alle Betreuungen die zu einer der mitgegebenen Institution gehoeren und die im Status WARTEN sind
-	 *
-	 * @param institutionen
-	 * @return
 	 */
 	@Nonnull
 	private Collection<Betreuung> getPendenzenForInstitution(@Nonnull Institution... institutionen) {
@@ -281,13 +341,13 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public Betreuung schliessenOhneVerfuegen(@Nonnull Betreuung betreuung) {
 		return closeBetreuung(betreuung, Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG);
 	}
 
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	private Betreuung closeBetreuung(@Nonnull Betreuung betreuung, @Nonnull Betreuungsstatus status) {
 		betreuung.setBetreuungsstatus(status);
 		final Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
@@ -298,7 +358,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, REVISOR})
+	@RolesAllowed(value = { ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, REVISOR })
 	public List<Betreuung> getAllBetreuungenWithMissingStatistics() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
@@ -318,7 +378,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, REVISOR})
+	@RolesAllowed(value = { ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, REVISOR })
 	public List<Abwesenheit> getAllAbwesenheitenWithMissingStatistics() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Abwesenheit> query = cb.createQuery(Abwesenheit.class);

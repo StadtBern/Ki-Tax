@@ -1,4 +1,22 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.rest.test;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.UriInfo;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungInfoContainer;
@@ -22,9 +40,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.UriInfo;
-
 /**
  * Testet die Gesuchsperiode Resource
  */
@@ -32,7 +47,6 @@ import javax.ws.rs.core.UriInfo;
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
 public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRestLoginTest {
-
 
 	@Inject
 	private EinkommensverschlechterungInfoResource einkommensverschlechterungInfoResource;
@@ -51,7 +65,6 @@ public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRes
 
 	@Inject
 	private Persistence persistence;
-
 
 	@Test
 	public void createEinkommensverschlechterungInfoTest() throws EbeguException {
@@ -80,12 +93,10 @@ public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRes
 		JaxGesuch testJaxGesuch = TestJaxDataUtil.createTestJaxGesuch();
 		testJaxGesuch.getFall().setVerantwortlicher(converter.benutzerToAuthLoginElement(verantwortlicher));
 
-
 		JaxFall returnedFall = fallResource.saveFall(testJaxGesuch.getFall(), uri, null);
 		testJaxGesuch.setGesuchsperiode(saveGesuchsperiodeInStatusAktiv(testJaxGesuch.getGesuchsperiode()));
 		testJaxGesuch.setFall(returnedFall);
 		return (JaxGesuch) gesuchResource.create(testJaxGesuch, uri, null).getEntity();
 	}
-
 
 }

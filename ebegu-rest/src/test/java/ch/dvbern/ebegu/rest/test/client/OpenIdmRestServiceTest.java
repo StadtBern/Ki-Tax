@@ -1,10 +1,31 @@
-package ch.dvbern.ebegu.rest.test.client;
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
+package ch.dvbern.ebegu.rest.test.client;
 
 import java.util.Optional;
 
 import javax.inject.Inject;
 
+import ch.dvbern.ebegu.api.client.JaxOpenIdmResponse;
+import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
+import ch.dvbern.ebegu.api.client.OpenIdmRestService;
+import ch.dvbern.ebegu.api.util.OpenIDMUtil;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.rest.test.AbstractEbeguRestLoginTest;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -13,14 +34,6 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import ch.dvbern.ebegu.api.client.JaxOpenIdmResponse;
-import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
-import ch.dvbern.ebegu.api.client.OpenIdmRestService;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.Traegerschaft;
-import ch.dvbern.ebegu.rest.test.AbstractEbeguRestLoginTest;
-import ch.dvbern.ebegu.util.OpenIDMUtil;
 
 /**
  * Testet die Verbindung zum OpenIdm Server.
@@ -31,7 +44,6 @@ import ch.dvbern.ebegu.util.OpenIDMUtil;
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class OpenIdmRestServiceTest extends AbstractEbeguRestLoginTest {
-
 
 	private static final String INSTID1 = "b4dc7d30-b63e-4176-a166-00deadbeef01";
 	private static final String INSTID2 = "b4dc7d30-b63e-4176-a166-00deadbeef02";

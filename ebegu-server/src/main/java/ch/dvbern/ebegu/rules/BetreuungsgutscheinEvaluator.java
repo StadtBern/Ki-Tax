@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.rules;
 
 import java.util.ArrayList;
@@ -26,7 +41,6 @@ import ch.dvbern.ebegu.util.VerfuegungUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * This is the Evaluator that runs all the rules and calculations for a given Antrag to determine the Betreuungsgutschein
  */
@@ -50,7 +64,6 @@ public class BetreuungsgutscheinEvaluator {
 		this.isDebug = enableDebugOutput;
 	}
 
-
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
 
 	/**
@@ -67,7 +80,6 @@ public class BetreuungsgutscheinEvaluator {
 		// Fuer die Familiensituation ist die Betreuung nicht relevant. Wir brauchen aber eine, da die Signatur der Rules
 		// mit Betreuungen funktioniert. Wir nehmen einfach die erste von irgendeinem Kind, das heisst ohne betreuung koennen wir nicht berechnen
 		Betreuung firstBetreuungOfGesuch = getFirstBetreuungOfGesuch(gesuch);
-
 
 		// Die Initialen Zeitabschnitte erstellen (1 pro Gesuchsperiode)
 		List<VerfuegungZeitabschnitt> zeitabschnitte = createInitialenRestanspruch(gesuch.getGesuchsperiode());
@@ -91,7 +103,7 @@ public class BetreuungsgutscheinEvaluator {
 		return verfuegung;
 	}
 
-	@SuppressWarnings({"OverlyComplexMethod", "OverlyNestedMethod", "PMD.NcssMethodCount"})
+	@SuppressWarnings({ "OverlyComplexMethod", "OverlyNestedMethod", "PMD.NcssMethodCount" })
 	public void evaluate(Gesuch gesuch, BGRechnerParameterDTO bgRechnerParameterDTO) {
 
 		// Wenn diese Methode aufgerufen wird, muss die Berechnung der Finanzdaten bereits erfolgt sein:
@@ -199,7 +211,7 @@ public class BetreuungsgutscheinEvaluator {
 		List<VerfuegungZeitabschnitt> restanspruchZeitabschnitte;
 		Verfuegung verfuegungForRestanspruch = betreuung.getVerfuegungOrVorgaengerVerfuegung();
 		if (verfuegungForRestanspruch == null) {
-			String message = "Ungueltiger Zustand, geschlossene  Betreuung ohne Verfuegung oder Vorgaengerverfuegung (" + betreuung.getId()+")";
+			String message = "Ungueltiger Zustand, geschlossene  Betreuung ohne Verfuegung oder Vorgaengerverfuegung (" + betreuung.getId() + ")";
 			throw new EbeguRuntimeException("getRestanspruchForVerfuegteBetreung", message, message);
 		}
 		restanspruchZeitabschnitte = restanspruchInitializer.createVerfuegungsZeitabschnitte(

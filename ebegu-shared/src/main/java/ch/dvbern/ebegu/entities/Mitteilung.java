@@ -1,18 +1,39 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.entities;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.validators.CheckMitteilungCompleteness;
 import org.hibernate.envers.Audited;
-
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 import static ch.dvbern.ebegu.util.Constants.DB_TEXTAREA_LENGTH;
@@ -75,7 +96,6 @@ public class Mitteilung extends AbstractEntity {
 	@Column(nullable = true)
 	private LocalDateTime sentDatum;
 
-
 	@NotNull
 	public Fall getFall() {
 		return fall;
@@ -89,7 +109,7 @@ public class Mitteilung extends AbstractEntity {
 		return betreuung;
 	}
 
-	public void setBetreuung(Betreuung betreuung) {
+	public void setBetreuung(@Nullable Betreuung betreuung) {
 		this.betreuung = betreuung;
 	}
 
@@ -165,7 +185,7 @@ public class Mitteilung extends AbstractEntity {
 		return MitteilungStatus.ENTWURF.equals(this.mitteilungStatus);
 	}
 
-	@SuppressWarnings({"OverlyComplexBooleanExpression", "OverlyComplexMethod"})
+	@SuppressWarnings({ "OverlyComplexBooleanExpression", "OverlyComplexMethod" })
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality

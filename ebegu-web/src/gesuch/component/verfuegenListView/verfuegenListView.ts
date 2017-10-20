@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import {IComponentOptions, ILogService, IPromise, IScope} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
@@ -10,10 +25,11 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {
-    TSAntragStatus,
-    isAtLeastFreigegeben,
+    isAnyStatusOfMahnung,
     isAnyStatusOfVerfuegt,
-    isAnyStatusOfVerfuegtButSchulamt, isAnyStatusOfMahnung
+    isAnyStatusOfVerfuegtButSchulamt,
+    isAtLeastFreigegeben,
+    TSAntragStatus
 } from '../../../models/enums/TSAntragStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
@@ -259,7 +275,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                     // For this reason we have to navigate directly out of the gesuch once it has been saved. We navigate to the
                     // default start page for the current role.
                     // createNeededPDFs is not being called for the same reason. Anyway, the Gesuch vanishes for the role JA and is only
-                    // available for the role SCHULAMT, so JA doesn't need the PDFs to be created. When a Schulamt worker opens this Gesuch,
+                    // available for the role SCHULAMT/ADMINISTRATOR_SCHULAMT, so JA doesn't need the PDFs to be created. When a Schulamt worker opens this Gesuch,
                     // she can generate the PDFs by clicking on the corresponding links
                     AuthenticationUtil.navigateToStartPageForRole(this.authServiceRs.getPrincipal(), this.$state);
                     return this.gesuchModelManager.getGesuch();

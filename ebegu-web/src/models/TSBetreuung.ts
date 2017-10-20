@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import TSAbstractEntity from './TSAbstractEntity';
 import TSInstitutionStammdaten from './TSInstitutionStammdaten';
 import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
@@ -7,6 +22,7 @@ import TSAbwesenheitContainer from './TSAbwesenheitContainer';
 import TSGesuchsperiode from './TSGesuchsperiode';
 import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import * as moment from 'moment';
+import TSBelegung from './TSBelegung';
 
 export default class TSBetreuung extends TSAbstractEntity {
 
@@ -28,14 +44,14 @@ export default class TSBetreuung extends TSAbstractEntity {
     private _betreuungMutiert: boolean;
     private _abwesenheitMutiert: boolean;
     private _gueltig: boolean;
-
+    private _belegung: TSBelegung;
 
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
                 betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, abwesenheitContainers?: Array<TSAbwesenheitContainer>,
                 betreuungNummer?: number, verfuegung?: TSVerfuegung, vertrag?: boolean, erweiterteBeduerfnisse?: boolean,
                 grundAblehnung?: string, datumAblehnung?: moment.Moment, datumBestaetigung?: moment.Moment, kindFullname?: string,
                 kindNummer?: number, gesuchId?: string, gesuchsperiode?: TSGesuchsperiode,
-                betreuungMutiert?: boolean, abwesenheitMutiert?: boolean, gueltig?: boolean) {
+                betreuungMutiert?: boolean, abwesenheitMutiert?: boolean, gueltig?: boolean, belegung?: TSBelegung) {
         super();
         this._institutionStammdaten = institutionStammdaten;
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
@@ -55,6 +71,7 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._betreuungMutiert = betreuungMutiert;
         this._abwesenheitMutiert = abwesenheitMutiert;
         this._gueltig = gueltig;
+        this._belegung = belegung;
     }
 
     get institutionStammdaten(): TSInstitutionStammdaten {
@@ -201,9 +218,25 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._gueltig = value;
     }
 
+    public get belegung(): TSBelegung {
+        return this._belegung;
+    }
+
+    public set belegung(value: TSBelegung) {
+        this._belegung = value;
+    }
+
     public isAngebotKITA(): boolean {
+       return this.isAngebot(TSBetreuungsangebotTyp.KITA);
+    }
+
+    public isAngebotTagesschule(): boolean {
+       return this.isAngebot(TSBetreuungsangebotTyp.TAGESSCHULE);
+    }
+
+    private isAngebot(typ: TSBetreuungsangebotTyp) {
         if (this.institutionStammdaten && this.institutionStammdaten.betreuungsangebotTyp) {
-            return this.institutionStammdaten.betreuungsangebotTyp === TSBetreuungsangebotTyp.KITA;
+            return this.institutionStammdaten.betreuungsangebotTyp === typ;
         }
         return false;
     }

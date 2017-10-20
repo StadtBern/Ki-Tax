@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {DVMitteilungListController} from '../../../core/component/dv-mitteilung-list/dv-mitteilung-list';
 import BetreuungRS from '../../../core/service/betreuungRS.rest';
@@ -27,6 +42,7 @@ describe('mitteilungenView', function () {
     let besitzer: TSUser;
     let verantwortlicher: TSUser;
     let scope: angular.IScope;
+	let $timeout: ITimeoutService;
 
     beforeEach(angular.mock.module(EbeguWebMitteilungen.name));
 
@@ -36,6 +52,8 @@ describe('mitteilungenView', function () {
         fallRS = $injector.get('FallRS');
         betreuungRS = $injector.get('BetreuungRS');
         stateParams = $injector.get('$stateParams');
+        stateParams = $injector.get('$stateParams');
+        $timeout = $injector.get('$timeout');
         $rootScope = $injector.get('$rootScope');
         $q = $injector.get('$q');
         scope = $rootScope.$new();
@@ -168,7 +186,7 @@ describe('mitteilungenView', function () {
         spyOn(mitteilungRS, 'getMitteilungenForCurrentRolleForFall').and.returnValue($q.when([{}]));
         spyOn(mitteilungRS, 'setAllNewMitteilungenOfFallGelesen').and.returnValue($q.when([{}]));
         controller = new DVMitteilungListController(stateParams, mitteilungRS, authServiceRS, fallRS, betreuungRS, $q, null,
-            $rootScope, undefined, undefined, undefined, undefined, scope);
+            $rootScope, undefined, undefined, undefined, undefined, scope, $timeout);
         controller.$onInit();   // hack, muesste wohl eher so gehen
                                 // http://stackoverflow.com/questions/38631204/how-to-trigger-oninit-or-onchanges-implictly-in-unit-testing-angular-component
         $rootScope.$apply();

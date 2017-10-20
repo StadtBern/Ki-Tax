@@ -1,4 +1,39 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.entities;
+
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
@@ -10,17 +45,6 @@ import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
-
 /**
  * Container-Entity fuer die Kinder: Diese muss für jeden Benutzertyp (GS, JA) einzeln gefuehrt werden,
  * damit die Veraenderungen / Korrekturen angezeigt werden koennen.
@@ -28,7 +52,7 @@ import java.util.TreeSet;
 @Audited
 @Entity
 @Table(
-	uniqueConstraints = @UniqueConstraint(columnNames = {"kindNummer", "gesuch_id"}, name = "UK_kindcontainer_gesuch_kind_nummer")
+	uniqueConstraints = @UniqueConstraint(columnNames = { "kindNummer", "gesuch_id" }, name = "UK_kindcontainer_gesuch_kind_nummer")
 )
 @Indexed
 @Analyzer(impl = EBEGUGermanAnalyzer.class)
@@ -42,12 +66,12 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	private Gesuch gesuch;
 
 	@Valid
-	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_kind_container_kindgs_id"), nullable = true)
 	private Kind kindGS;
 
 	@Valid
-	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_kind_container_kindja_id"), nullable = true)
 	@IndexedEmbedded
 	private Kind kindJA;
@@ -76,10 +100,8 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	@Nullable
 	private Boolean kindMutiert;
 
-
 	public KindContainer() {
 	}
-
 
 	public Gesuch getGesuch() {
 		return gesuch;
@@ -186,7 +208,7 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	@Nonnull
 	@Override
 	public String getSearchResultSummary() {
-		if(getKindJA()!=null){
+		if (getKindJA() != null) {
 			return getKindJA().getFullName();
 		}
 		return "-";

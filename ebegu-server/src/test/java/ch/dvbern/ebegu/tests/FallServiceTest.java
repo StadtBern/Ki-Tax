@@ -1,3 +1,18 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.tests;
 
 import java.util.ArrayList;
@@ -39,7 +54,6 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private InstitutionService institutionService;
-
 
 	@Test
 	public void createFallTest() {
@@ -129,19 +143,18 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals("gesuchst2", fall2.get().getBesitzer().getUsername());
 	}
 
-
 	@Test
 	public void testGetEmailAddressForFallFromFall() {
 		loginAsGesuchsteller("gesuchst");
 		final Optional<Fall> fallOpt = fallService.createFallForCurrentGesuchstellerAsBesitzer();
 		Assert.assertTrue(fallOpt.isPresent());
 		Fall fall = fallOpt.get();
-		Assert.assertEquals("e@e",fall.getBesitzer().getEmail());
+		Assert.assertEquals("e@e", fall.getBesitzer().getEmail());
 		Assert.assertEquals("gesuchst", fall.getBesitzer().getUsername());
 		Optional<String> emailAddressForFall = fallService.getCurrentEmailAddress(fall.getId());
 		Assert.assertTrue(emailAddressForFall.isPresent());
 		String email = emailAddressForFall.get();
-		Assert.assertEquals( "e@e",email);
+		Assert.assertEquals("e@e", email);
 	}
 
 	@Test
@@ -156,7 +169,7 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 		Optional<String> emailAddressForFall = fallService.getCurrentEmailAddress(gesuch.getFall().getId());
 		Assert.assertTrue(emailAddressForFall.isPresent());
 		String email = emailAddressForFall.get();
-		Assert.assertEquals( "test@email.com",email);
+		Assert.assertEquals("test@email.com", email);
 
 	}
 

@@ -1,4 +1,19 @@
 <!DOCTYPE html>
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <html lang="de">
 <head>
     <base href="">
@@ -11,27 +26,30 @@
     <link rel="shortcut icon" type="image/x-icon" href="src/assets/images/favicon.ico"/>
 </head>
 <body class="ebegu" md-no-ink ng-class="{loaded:true}" style="opacity: 0;" dv-barcode-listener>
-<dv-skiplinks dv-show-element  dv-show-allowed-roles="['GESUCHSTELLER']">
+<dv-skiplinks dv-show-element dv-show-allowed-roles="['GESUCHSTELLER']">
 </dv-skiplinks>
 
 <div id="Intro" class="logo-bern">
     <h1 class="access-for-all-title" data-translate="AFA_INDEXBAR"></h1>
     <dv-home-icon></dv-home-icon>
-    <dv-quicksearchbox dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'JURIST', 'REVISOR']"></dv-quicksearchbox>
-    <dv-downloadmenu dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'JURIST', 'REVISOR', 'STEUERAMT']"></dv-downloadmenu>
-    <dv-pulldown-user-menu  dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'STEUERAMT', 'JURIST', 'REVISOR']"></dv-pulldown-user-menu>
-    <dv-pulldown-user-menu hide-sm hide-xs  dv-show-element  dv-show-allowed-roles="['GESUCHSTELLER']"></dv-pulldown-user-menu>
-    <dv-mobile-navigation-toggle hide-gt-sm dv-show-element  dv-show-allowed-roles="['GESUCHSTELLER']"></dv-mobile-navigation-toggle>
+    <dv-quicksearchbox dv-show-element
+                       dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'JURIST', 'REVISOR']"></dv-quicksearchbox>
+    <dv-downloadmenu dv-show-element
+                     dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'JURIST', 'REVISOR', 'STEUERAMT']"></dv-downloadmenu>
+    <dv-pulldown-user-menu dv-show-element
+                           dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'STEUERAMT', 'JURIST', 'REVISOR']"></dv-pulldown-user-menu>
+    <dv-pulldown-user-menu hide-sm hide-xs dv-show-element dv-show-allowed-roles="['GESUCHSTELLER']"></dv-pulldown-user-menu>
+    <dv-mobile-navigation-toggle hide-gt-sm dv-show-element dv-show-allowed-roles="['GESUCHSTELLER']"></dv-mobile-navigation-toggle>
 </div>
 
 <nav class="navbar navbar-default" dv-show-element
-     dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'STEUERAMT', 'REVISOR', 'JURIST']">
+     dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'STEUERAMT', 'REVISOR', 'JURIST']">
     <div flex layout="row" layout-align="center center">
 
         <div id="navbar" class="navbar-header">
             <ul class="nav navbar-nav noMargin">
                 <li ui-sref-active="active" dv-show-element
-                    dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'GESUCHSTELLER', 'SUPER_ADMIN']">
+                    dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'GESUCHSTELLER', 'SUPER_ADMIN', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT']">
                     <a ui-sref="pendenzen" data-translate="MENU_PENDENZEN"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
@@ -43,7 +61,7 @@
                     <a ui-sref="pendenzenSteueramt" data-translate="MENU_PENDENZEN_STEUERAMT"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
-                    dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'SCHULAMT', 'REVISOR', 'JURIST']">
+                    dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'REVISOR', 'JURIST']">
                     <a ui-sref="faelle" data-translate="MENU_ALL_FAELLE"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
@@ -56,11 +74,11 @@
                     <a ui-sref="zahlungsauftrag" data-translate="MENU_ZAHLUNG"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
-                    dv-show-allowed-roles="[ 'ADMIN', 'SUPER_ADMIN',  'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'SCHULAMT', 'REVISOR']">
+                    dv-show-allowed-roles="[ 'ADMIN', 'SUPER_ADMIN',  'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'REVISOR']">
                     <a ui-sref="statistik" data-translate="MENU_STATISTIK"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
-                    dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA']">
+                    dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT']">
                     <dv-posteingang ui-sref="posteingang"></dv-posteingang>
                 </li>
             </ul>

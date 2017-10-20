@@ -1,4 +1,28 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ch.dvbern.ebegu.tests.vorlagen;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
 
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -9,14 +33,6 @@ import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
 import org.junit.Assert;
 import org.junit.Test;
-
-import javax.annotation.Nonnull;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Test fuer PrintUtil
@@ -118,7 +134,6 @@ public class PrintUtilTest {
 		Assert.assertEquals(korrespondenzadresse, gesuchstellerAdresse.get());
 		Assert.assertEquals("korrespondezStrasse", gesuchstellerAdresse.get().extractStrasse());
 	}
-
 
 	@Nonnull
 	private GesuchstellerAdresseContainer createKorrespondenzadresse(GesuchstellerContainer gesuchsteller) {
