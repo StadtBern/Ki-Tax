@@ -13,7 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IFormController} from 'angular';
 import './ferieninselView.less';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
@@ -38,6 +38,8 @@ export class FerieninselViewComponentConfig implements IComponentOptions {
 
 export class FerieninselViewController extends AbstractAdminViewController {
     static $inject = ['GesuchsperiodeRS', 'FerieninselStammdatenRS', '$timeout', 'AuthServiceRS'];
+
+    form: IFormController;
 
     gesuchsperiodenList: Array<TSGesuchsperiode> = [];
     gesuchsperiode: TSGesuchsperiode;
@@ -90,7 +92,9 @@ export class FerieninselViewController extends AbstractAdminViewController {
     }
 
     public saveFerieninselStammdaten(ferieninselStammdaten: TSFerieninselStammdaten): void {
-        this.ferieninselStammdatenRS.saveFerieninselStammdaten(ferieninselStammdaten);
+        if (this.form.$valid) {
+            this.ferieninselStammdatenRS.saveFerieninselStammdaten(ferieninselStammdaten);
+        }
     }
 
     public addFerieninselZeitraum(ferieninselStammdaten: TSFerieninselStammdaten): void {

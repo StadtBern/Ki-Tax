@@ -47,7 +47,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <form ng-submit="form.$valid && vm.submit()" name="form" role="form" novalidate>
+                    <form ng-submit="form.$valid && vm.submit()" name="vm.form" role="form" novalidate>
                         <fieldset ng-disabled="vm.isReadonly()">
 
                             <!-- Gesuchsperiode Detail -->
@@ -84,6 +84,7 @@
                                                            ng-required="true"
                                                            class="input-element">
                                             </dv-datepicker>
+                                            <dv-error-messages for="form[ferien + '_anmeldeschluss'].$error" class="error"></dv-error-messages>
                                         </div>
                                         <div class="col-md-2">
                                             <dv-datepicker input-id="{{ferien}}_gueltigAb" name="{{ferien}}_gueltigAb"
@@ -91,6 +92,7 @@
                                                            ng-required="true"
                                                            class="input-element">
                                             </dv-datepicker>
+                                            <dv-error-messages for="form[ferien + '_gueltigAb'].$error" class="error"></dv-error-messages>
                                         </div>
                                         <div class="col-md-2">
                                             <dv-datepicker input-id="{{ferien}}_gueltigBis" name="{{ferien}}_gueltigBis"
@@ -98,9 +100,10 @@
                                                            ng-required="true"
                                                            class="input-element">
                                             </dv-datepicker>
+                                            <dv-error-messages for="form[ferien + '_gueltigBis'].$error" class="error"></dv-error-messages>
                                         </div>
                                         <div class="col-md-1">
-                                            <dv-loading-button type="button" button-click="vm.saveFerieninselStammdaten(vm.getFerieninselStammdaten(ferien));"
+                                            <dv-loading-button type="submit" button-click="vm.saveFerieninselStammdaten(vm.getFerieninselStammdaten(ferien));"
                                                                button-class="dv-btn-operation"
                                                                title="{{'FERIENINSELSTAMMDATEN_SAVE' | translate}}"
                                                                aria-label="{{'FERIENINSELSTAMMDATEN_SAVE'|translate}}">
@@ -125,6 +128,7 @@
                                                            ng-required="true"
                                                            class="input-element">
                                             </dv-datepicker>
+                                            <dv-error-messages for="form[zeitraum + '_gueltigAb'].$error" class="error"></dv-error-messages>
                                         </div>
                                         <div class="col-md-2">
                                             <dv-datepicker input-id="{{zeitraum}}_gueltigBis" name="{{zeitraum}}_gueltigBis"
@@ -132,6 +136,7 @@
                                                            ng-required="true"
                                                            class="input-element">
                                             </dv-datepicker>
+                                            <dv-error-messages for="form[zeitraum + '_gueltigBis'].$error" class="error"></dv-error-messages>
                                         </div>
                                         <div class="col-md-1">
                                             <dv-loading-button type="button" button-click="vm.removeFerieninselZeitraum(vm.getFerieninselStammdaten(ferien), zeitraum);"
