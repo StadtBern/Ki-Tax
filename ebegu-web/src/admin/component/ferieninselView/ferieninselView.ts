@@ -142,13 +142,15 @@ export class FerieninselViewController extends AbstractAdminViewController {
     public isDatumAbRequired(ferieninselZeitraum: TSFerieninselZeitraum, ferieninselStammdaten: TSFerieninselStammdaten) {
         // Wenn entweder der Anmeldeschluss erfasst ist, oder das Datum bis
         return FerieninselViewController.notNullOrUndefined(ferieninselStammdaten.anmeldeschluss)
-            || FerieninselViewController.notNullOrUndefined(ferieninselZeitraum.gueltigkeit.gueltigBis);
+            || (FerieninselViewController.notNullOrUndefined(ferieninselZeitraum.gueltigkeit)
+                && FerieninselViewController.notNullOrUndefined(ferieninselZeitraum.gueltigkeit.gueltigBis));
     }
 
     public isDatumBisRequired(ferieninselZeitraum: TSFerieninselZeitraum, ferieninselStammdaten: TSFerieninselStammdaten) {
         // Wenn entweder der Anmeldeschluss erfasst ist, oder das Datum ab
        return FerieninselViewController.notNullOrUndefined(ferieninselStammdaten.anmeldeschluss)
-            || FerieninselViewController.notNullOrUndefined(ferieninselZeitraum.gueltigkeit.gueltigAb);
+            || (FerieninselViewController.notNullOrUndefined(ferieninselZeitraum.gueltigkeit)
+               && FerieninselViewController.notNullOrUndefined(ferieninselZeitraum.gueltigkeit.gueltigAb));
     }
 
     private static isNullOrUndefined(data: any): boolean {

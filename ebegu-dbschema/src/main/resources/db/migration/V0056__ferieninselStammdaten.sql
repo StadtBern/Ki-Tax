@@ -1,101 +1,102 @@
-create table ferieninsel_zeitraum (
-	id varchar(36) not null,
-	timestamp_erstellt datetime not null,
-	timestamp_mutiert datetime not null,
-	user_erstellt varchar(36) not null,
-	user_mutiert varchar(36) not null,
-	version bigint not null,
-	vorgaenger_id varchar(36),
-	gueltig_ab date not null,
-	gueltig_bis date not null,
-	primary key (id)
+CREATE TABLE ferieninsel_zeitraum (
+	id                 VARCHAR(36) NOT NULL,
+	timestamp_erstellt DATETIME    NOT NULL,
+	timestamp_mutiert  DATETIME    NOT NULL,
+	user_erstellt      VARCHAR(36) NOT NULL,
+	user_mutiert       VARCHAR(36) NOT NULL,
+	version            BIGINT      NOT NULL,
+	vorgaenger_id      VARCHAR(36),
+	gueltig_ab         DATE        NOT NULL,
+	gueltig_bis        DATE        NOT NULL,
+	PRIMARY KEY (id)
 );
 
-create table ferieninsel_zeitraum_aud (
-	id varchar(36) not null,
-	rev integer not null,
-	revtype tinyint,
-	timestamp_erstellt datetime,
-	timestamp_mutiert datetime,
-	user_erstellt varchar(36),
-	user_mutiert varchar(36),
-	vorgaenger_id varchar(36),
-	gueltig_ab date,
-	gueltig_bis date,
-	primary key (id, rev)
+CREATE TABLE ferieninsel_zeitraum_aud (
+	id                 VARCHAR(36) NOT NULL,
+	rev                INTEGER     NOT NULL,
+	revtype            TINYINT,
+	timestamp_erstellt DATETIME,
+	timestamp_mutiert  DATETIME,
+	user_erstellt      VARCHAR(36),
+	user_mutiert       VARCHAR(36),
+	vorgaenger_id      VARCHAR(36),
+	gueltig_ab         DATE,
+	gueltig_bis        DATE,
+	PRIMARY KEY (id, rev)
 );
 
-create table ferieninsel_stammdaten (
-	id varchar(36) not null,
-	timestamp_erstellt datetime not null,
-	timestamp_mutiert datetime not null,
-	user_erstellt varchar(36) not null,
-	user_mutiert varchar(36) not null,
-	version bigint not null,
-	vorgaenger_id varchar(36),
-	anmeldeschluss date not null,
-	ferienname varchar(255) not null,
-	gesuchsperiode_id varchar(36) not null,
-	primary key (id)
+CREATE TABLE ferieninsel_stammdaten (
+	id                 VARCHAR(36)  NOT NULL,
+	timestamp_erstellt DATETIME     NOT NULL,
+	timestamp_mutiert  DATETIME     NOT NULL,
+	user_erstellt      VARCHAR(36)  NOT NULL,
+	user_mutiert       VARCHAR(36)  NOT NULL,
+	version            BIGINT       NOT NULL,
+	vorgaenger_id      VARCHAR(36),
+	anmeldeschluss     DATE         NOT NULL,
+	ferienname         VARCHAR(255) NOT NULL,
+	gesuchsperiode_id  VARCHAR(36)  NOT NULL,
+	PRIMARY KEY (id)
 );
 
-create table ferieninsel_stammdaten_aud (
-	id varchar(36) not null,
-	rev integer not null,
-	revtype tinyint,
-	timestamp_erstellt datetime,
-	timestamp_mutiert datetime,
-	user_erstellt varchar(36),
-	user_mutiert varchar(36),
-	vorgaenger_id varchar(36),
-	anmeldeschluss date,
-	ferienname varchar(255),
-	gesuchsperiode_id varchar(36),
-	primary key (id, rev)
+CREATE TABLE ferieninsel_stammdaten_aud (
+	id                 VARCHAR(36) NOT NULL,
+	rev                INTEGER     NOT NULL,
+	revtype            TINYINT,
+	timestamp_erstellt DATETIME,
+	timestamp_mutiert  DATETIME,
+	user_erstellt      VARCHAR(36),
+	user_mutiert       VARCHAR(36),
+	vorgaenger_id      VARCHAR(36),
+	anmeldeschluss     DATE,
+	ferienname         VARCHAR(255),
+	gesuchsperiode_id  VARCHAR(36),
+	PRIMARY KEY (id, rev)
 );
 
-create table ferieninsel_stammdaten_ferieninsel_zeitraum (
-	ferieninsel_stammdaten_id varchar(36) not null,
-	zeitraum_list_id varchar(36) not null
+CREATE TABLE ferieninsel_stammdaten_ferieninsel_zeitraum (
+	ferieninsel_stammdaten_id VARCHAR(36) NOT NULL,
+	zeitraum_list_id          VARCHAR(36) NOT NULL,
+	PRIMARY KEY (ferieninsel_stammdaten_id, zeitraum_list_id)
 );
 
-create table ferieninsel_stammdaten_ferieninsel_zeitraum_aud (
-	rev integer not null,
-	ferieninsel_stammdaten_id varchar(36) not null,
-	zeitraum_list_id varchar(36) not null,
-	revtype tinyint,
-	primary key (rev, ferieninsel_stammdaten_id, zeitraum_list_id)
+CREATE TABLE ferieninsel_stammdaten_ferieninsel_zeitraum_aud (
+	rev                       INTEGER     NOT NULL,
+	ferieninsel_stammdaten_id VARCHAR(36) NOT NULL,
+	zeitraum_list_id          VARCHAR(36) NOT NULL,
+	revtype                   TINYINT,
+	PRIMARY KEY (rev, ferieninsel_stammdaten_id, zeitraum_list_id)
 );
 
-alter table ferieninsel_stammdaten_aud
-	add constraint FK_ferieninsel_stammdaten_aud_rev
-foreign key (rev)
-references revinfo (rev);
+ALTER TABLE ferieninsel_stammdaten_aud
+	ADD CONSTRAINT FK_ferieninsel_stammdaten_aud_rev
+FOREIGN KEY (rev)
+REFERENCES revinfo (rev);
 
-alter table ferieninsel_stammdaten_ferieninsel_zeitraum_aud
-	add constraint FK_ferieninsel_stammdaten_ferieninsel_zeitraum_aud_rev
-foreign key (rev)
-references revinfo (rev);
+ALTER TABLE ferieninsel_stammdaten_ferieninsel_zeitraum_aud
+	ADD CONSTRAINT FK_ferieninsel_stammdaten_ferieninsel_zeitraum_aud_rev
+FOREIGN KEY (rev)
+REFERENCES revinfo (rev);
 
-alter table ferieninsel_zeitraum_aud
-	add constraint FK_ferieninsel_zeitraum_aud_rev
-foreign key (rev)
-references revinfo (rev);
+ALTER TABLE ferieninsel_zeitraum_aud
+	ADD CONSTRAINT FK_ferieninsel_zeitraum_aud_rev
+FOREIGN KEY (rev)
+REFERENCES revinfo (rev);
 
-alter table ferieninsel_stammdaten
-	add constraint FK_ferieninsel_stammdaten_gesuchsperiodeId
-foreign key (gesuchsperiode_id)
-references gesuchsperiode (id);
+ALTER TABLE ferieninsel_stammdaten
+	ADD CONSTRAINT FK_ferieninsel_stammdaten_gesuchsperiodeId
+FOREIGN KEY (gesuchsperiode_id)
+REFERENCES gesuchsperiode (id);
 
-alter table ferieninsel_stammdaten_ferieninsel_zeitraum
-	add constraint UK_ferieninsel_stammdaten_ferieninsel_zeitraum unique (zeitraum_list_id);
+ALTER TABLE ferieninsel_stammdaten_ferieninsel_zeitraum
+	ADD CONSTRAINT UK_ferieninsel_stammdaten_ferieninsel_zeitraum UNIQUE (zeitraum_list_id);
 
-alter table ferieninsel_stammdaten_ferieninsel_zeitraum
-	add constraint FK_ferieninsel_stammdaten_ferieninsel_zeitraum_zeitraumListId
-foreign key (zeitraum_list_id)
-references ferieninsel_zeitraum (id);
+ALTER TABLE ferieninsel_stammdaten_ferieninsel_zeitraum
+	ADD CONSTRAINT FK_ferieninsel_stammdaten_ferieninsel_zeitraum_zeitraumListId
+FOREIGN KEY (zeitraum_list_id)
+REFERENCES ferieninsel_zeitraum (id);
 
-alter table ferieninsel_stammdaten_ferieninsel_zeitraum
-	add constraint FK_ferieninsel_stammdaten_ferieninsel_zeitraum_stammdatenId
-foreign key (ferieninsel_stammdaten_id)
-references ferieninsel_stammdaten (id)
+ALTER TABLE ferieninsel_stammdaten_ferieninsel_zeitraum
+	ADD CONSTRAINT FK_ferieninsel_stammdaten_ferieninsel_zeitraum_stammdatenId
+FOREIGN KEY (ferieninsel_stammdaten_id)
+REFERENCES ferieninsel_stammdaten (id);
