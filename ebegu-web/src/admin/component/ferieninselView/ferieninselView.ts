@@ -25,6 +25,7 @@ import TSFerieninselStammdaten from '../../../models/TSFerieninselStammdaten';
 import {getTSFeriennameValues, TSFerienname} from '../../../models/enums/TSFerienname';
 import TSFerieninselZeitraum from '../../../models/TSFerieninselZeitraum';
 import ITimeoutService = angular.ITimeoutService;
+import EbeguUtil from '../../../utils/EbeguUtil';
 
 let template = require('./ferieninselView.html');
 let style = require('./ferieninselView.less');
@@ -119,45 +120,37 @@ export class FerieninselViewController extends AbstractAdminViewController {
     }
 
     public isFerieninselStammdatenValid(ferieninselStammdaten: TSFerieninselStammdaten): boolean {
-        let fiValid: boolean = !(FerieninselViewController.isNullOrUndefined(ferieninselStammdaten.anmeldeschluss)
-            || FerieninselViewController.isNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigAb)
-            || FerieninselViewController.isNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigBis));
+        let fiValid: boolean = !(EbeguUtil.isNullOrUndefined(ferieninselStammdaten.anmeldeschluss)
+            || EbeguUtil.isNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigAb)
+            || EbeguUtil.isNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigBis));
 
         return fiValid;
     }
 
     public isSaveButtonDisabled(ferieninselStammdaten: TSFerieninselStammdaten): boolean {
         // Disabled, solange noch keines der Felder ausgefuellt ist
-        return FerieninselViewController.isNullOrUndefined(ferieninselStammdaten.anmeldeschluss)
-            && FerieninselViewController.isNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigAb)
-            && FerieninselViewController.isNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigBis);
+        return EbeguUtil.isNullOrUndefined(ferieninselStammdaten.anmeldeschluss)
+            && EbeguUtil.isNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigAb)
+            && EbeguUtil.isNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigBis);
     }
 
     public isAnmeldeschlussRequired(ferieninselStammdaten: TSFerieninselStammdaten): boolean {
         // Wenn mindestens ein Zeitraum erfasst ist
-        return FerieninselViewController.notNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigAb)
-            || FerieninselViewController.notNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigBis);
+        return EbeguUtil.isNotNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigAb)
+            || EbeguUtil.isNotNullOrUndefined(ferieninselStammdaten.zeitraum.gueltigkeit.gueltigBis);
     }
 
     public isDatumAbRequired(ferieninselZeitraum: TSFerieninselZeitraum, ferieninselStammdaten: TSFerieninselStammdaten) {
         // Wenn entweder der Anmeldeschluss erfasst ist, oder das Datum bis
-        return FerieninselViewController.notNullOrUndefined(ferieninselStammdaten.anmeldeschluss)
-            || (FerieninselViewController.notNullOrUndefined(ferieninselZeitraum.gueltigkeit)
-                && FerieninselViewController.notNullOrUndefined(ferieninselZeitraum.gueltigkeit.gueltigBis));
+        return EbeguUtil.isNotNullOrUndefined(ferieninselStammdaten.anmeldeschluss)
+            || (EbeguUtil.isNotNullOrUndefined(ferieninselZeitraum.gueltigkeit)
+                && EbeguUtil.isNotNullOrUndefined(ferieninselZeitraum.gueltigkeit.gueltigBis));
     }
 
     public isDatumBisRequired(ferieninselZeitraum: TSFerieninselZeitraum, ferieninselStammdaten: TSFerieninselStammdaten) {
         // Wenn entweder der Anmeldeschluss erfasst ist, oder das Datum ab
-       return FerieninselViewController.notNullOrUndefined(ferieninselStammdaten.anmeldeschluss)
-            || (FerieninselViewController.notNullOrUndefined(ferieninselZeitraum.gueltigkeit)
-               && FerieninselViewController.notNullOrUndefined(ferieninselZeitraum.gueltigkeit.gueltigAb));
-    }
-
-    private static isNullOrUndefined(data: any): boolean {
-        return data === null || data === undefined;
-    }
-
-    private static notNullOrUndefined(data: any): boolean {
-        return !FerieninselViewController.isNullOrUndefined(data);
+       return EbeguUtil.isNotNullOrUndefined(ferieninselStammdaten.anmeldeschluss)
+            || (EbeguUtil.isNotNullOrUndefined(ferieninselZeitraum.gueltigkeit)
+               && EbeguUtil.isNotNullOrUndefined(ferieninselZeitraum.gueltigkeit.gueltigAb));
     }
 }

@@ -2743,7 +2743,7 @@ public class JaxBConverter {
 			final FerieninselZeitraum zeitraumToAdd = (FerieninselZeitraum) convertAbstractDateRangedFieldsToEntity(zeitraumJAX, zeitraumToMergeWith);
 			final boolean added = transformedZeitraeume.add(zeitraumToAdd);
 			if (!added) {
-				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + zeitraumToAdd);
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + "{}", zeitraumToAdd);
 			}
 		}
 		zeitraeumeList.clear();
