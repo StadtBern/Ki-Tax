@@ -13,32 +13,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import '../../bootstrap.ts';
-import 'angular-mocks';
-import GesuchstellerRS from './gesuchstellerRS.rest';
-import {EbeguWebCore} from '../core.module';
-import TSGesuchsteller from '../../models/TSGesuchsteller';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpBackendService, IQService} from 'angular';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
+import TSGesuchsteller from '../../models/TSGesuchsteller';
 import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
-
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import {EbeguWebCore} from '../core.module';
+import GesuchstellerRS from './gesuchstellerRS.rest';
 
 describe('GesuchstellerRS', function () {
 
     let gesuchstellerRS: GesuchstellerRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockGesuchsteller: TSGesuchstellerContainer;
     let mockGesuchstellerRest: any;
     let dummyGesuchID: string = '123';
-    let $q: IQService;
+    let $q: angular.IQService;
     let wizardStepManager: WizardStepManager;
-
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         gesuchstellerRS = $injector.get('GesuchstellerRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
@@ -77,7 +72,6 @@ describe('GesuchstellerRS', function () {
                     $httpBackend.expectPUT(gesuchstellerRS.serviceURL + '/' + dummyGesuchID + '/gsNumber/1/false',
                         ebeguRestUtil.gesuchstellerContainerToRestObject({}, mockGesuchsteller))
                         .respond(ebeguRestUtil.gesuchstellerContainerToRestObject({}, mockGesuchsteller));
-
 
                     gesuchstellerRS.saveGesuchsteller(mockGesuchsteller, dummyGesuchID, 1, false).then((result) => {
                         updatedGesuchsteller = result;

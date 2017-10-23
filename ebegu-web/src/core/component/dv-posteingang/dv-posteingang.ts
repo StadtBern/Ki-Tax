@@ -14,11 +14,12 @@
  */
 
 import {IComponentOptions, ILogService} from 'angular';
-import MitteilungRS from '../../service/mitteilungRS.rest';
-import {TSAuthEvent} from '../../../models/enums/TSAuthEvent';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSAuthEvent} from '../../../models/enums/TSAuthEvent';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import MitteilungRS from '../../service/mitteilungRS.rest';
 import IRootScopeService = angular.IRootScopeService;
+
 let template = require('./dv-posteingang.html');
 
 export class DvPosteingangComponentConfig implements IComponentOptions {
@@ -36,8 +37,9 @@ export class DvPosteingangController {
 
     static $inject: any[] = ['MitteilungRS', '$rootScope', 'AuthServiceRS', '$log'];
 
-    constructor(private mitteilungRS: MitteilungRS, private $rootScope: IRootScopeService, private authServiceRS: AuthServiceRS,
-        private $log: ILogService) {
+    constructor(private mitteilungRS: MitteilungRS, private $rootScope: IRootScopeService,
+                private authServiceRS: AuthServiceRS,
+                private $log: ILogService) {
         this.getAmountNewMitteilungen();
 
         this.$rootScope.$on('POSTEINGANG_MAY_CHANGED', (event: any) => {
@@ -50,12 +52,13 @@ export class DvPosteingangController {
 
                 if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) { // not for GS
                     // call every 5 minutes (5*60*1000)
-                    this.reloadAmountMitteilungenInterval = setInterval(() => this.getAmountNewMitteilungen(), 300000);
+                    this.reloadAmountMitteilungenInterval = window.setInterval(() => this.getAmountNewMitteilungen(), 300000);
                 }
             }
         });
 
-        // Das Interval muss nach jedem LOGOUT entfernt werden, um zu vermeiden dass es bei Benutzern auftritt die keinen Mitteilungen haben
+        // Das Interval muss nach jedem LOGOUT entfernt werden, um zu vermeiden dass es bei Benutzern auftritt die
+        // keinen Mitteilungen haben
         this.$rootScope.$on(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], () => {
             clearInterval(this.reloadAmountMitteilungenInterval);
         });

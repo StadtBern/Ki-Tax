@@ -155,7 +155,7 @@ export class ValueinputController {
             this.dvOnBlur();
         }
 
-    };
+    }
 
     private static numberToString(num: number): string {
         if (num || num === 0) {

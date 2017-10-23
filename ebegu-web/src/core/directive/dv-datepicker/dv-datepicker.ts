@@ -16,10 +16,11 @@
 import {IDirective, IDirectiveFactory} from 'angular';
 import * as moment from 'moment';
 import DateUtil from '../../../utils/DateUtil';
-import Moment = moment.Moment;
-import INgModelController = angular.INgModelController;
 import IAttributes = angular.IAttributes;
 import ILogService = angular.ILogService;
+import INgModelController = angular.INgModelController;
+import Moment = moment.Moment;
+
 let template = require('./dv-datepicker.html');
 
 export class DVDatepicker implements IDirective {
@@ -40,6 +41,7 @@ export class DVDatepicker implements IDirective {
     controllerAs = 'vm';
     bindToController = true;
     template = template;
+
     /* constructor() { this.link = this.unboundLink.bind(this); }*/
     static factory(): IDirectiveFactory {
         const directive = () => new DVDatepicker();
@@ -47,6 +49,7 @@ export class DVDatepicker implements IDirective {
         return directive;
     }
 }
+
 export class DatepickerController {
     static $inject: string[] = ['$log', '$attrs'];
     date: Date;
@@ -169,7 +172,7 @@ export class DatepickerController {
 
     updateModelValue() {
         this.ngModelCtrl.$setViewValue(this.date);
-    };
+    }
 
     private static momentToString(mom: Moment): string {
         if (mom && mom.isValid()) {

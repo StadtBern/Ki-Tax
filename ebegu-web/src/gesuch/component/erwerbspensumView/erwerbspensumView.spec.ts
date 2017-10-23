@@ -13,25 +13,41 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {ErwerbspensumViewComponentConfig} from './erwerbspensumView';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+
 describe('erwerbspensumView', function () {
 
     beforeEach(angular.mock.module('ebeguWeb.gesuch'));
+    beforeEach(angular.mock.module('ebeguWeb.admin'));
 
-    var component: any;
-    var scope: angular.IScope;
-    var $componentController: any;
+    let gesuchModelManager: GesuchModelManager;
+    let component: ErwerbspensumViewComponentConfig;
+    let scope: angular.IScope;
+    let $componentController: angular.IComponentControllerService;
 
-    beforeEach(angular.mock.inject(function (_$componentController_, $rootScope) {
-        $componentController = _$componentController_;
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
+        $componentController = $injector.get('$componentController');
+        gesuchModelManager = $injector.get('GesuchModelManager');
+        let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
     }));
+
+    beforeEach(function () {
+        gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
+        let tsGesuchsperiode = new TSGesuchsperiode();
+        tsGesuchsperiode.id = '123';
+        gesuchModelManager.getGesuch().gesuchsperiode = tsGesuchsperiode;
+    });
 
     it('should be defined', function () {
         /*
          To initialise your component controller you have to setup your (mock) bindings and
          pass them to $componentController.
          */
-        var bindings: {};
+        let bindings = {};
         component = $componentController('erwerbspensumView', {$scope: scope}, bindings);
         expect(component).toBeDefined();
     });
