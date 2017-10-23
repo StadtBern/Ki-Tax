@@ -13,19 +13,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EbeguWebCore} from '../../core.module';
+import {DvRadioContainerComponentConfig} from './dv-radio-container';
 
-describe('dvErrorMessages', function () {
+describe('dvRadioContainer', function () {
 
-    beforeEach(angular.mock.module(EbeguWebCore.name));
+    beforeEach(angular.mock.module('ebeguWeb.core'));
 
-    let component: any;
+    let component: DvRadioContainerComponentConfig;
     let scope: angular.IScope;
     let $componentController: angular.IComponentControllerService;
 
-    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
-        $componentController = $injector.get('$componentController');
-        let $rootScope = $injector.get('$rootScope');
+    beforeEach(angular.mock.inject(function (_$componentController_: angular.IComponentControllerService,
+                                             $rootScope: angular.IRootScopeService) {
+        $componentController = _$componentController_;
         scope = $rootScope.$new();
     }));
 
@@ -35,7 +35,7 @@ describe('dvErrorMessages', function () {
          pass them to $componentController.
          */
         let bindings = {};
-        component = $componentController('dvErrorMessages', {$scope: scope}, bindings);
+        component = $componentController('dvRadioContainer', {$scope: scope}, bindings);
         expect(component).toBeDefined();
     });
 });

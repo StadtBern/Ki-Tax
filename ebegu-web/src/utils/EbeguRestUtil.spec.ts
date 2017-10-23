@@ -13,57 +13,54 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import '../bootstrap.ts';
-import 'angular-mocks';
-import {IFilterService} from 'angular';
-import EbeguRestUtil from './EbeguRestUtil';
-import TSAdresse from '../models/TSAdresse';
+import * as moment from 'moment';
 import {EbeguWebCore} from '../core/core.module';
-import TSGesuchsteller from '../models/TSGesuchsteller';
-import {TSGeschlecht} from '../models/enums/TSGeschlecht';
 import {TSAdressetyp} from '../models/enums/TSAdressetyp';
-import {TSFachstelle} from '../models/TSFachstelle';
-import {TSMandant} from '../models/TSMandant';
-import {TSTraegerschaft} from '../models/TSTraegerschaft';
-import TSInstitution from '../models/TSInstitution';
-import TSInstitutionStammdaten from '../models/TSInstitutionStammdaten';
+import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../models/enums/TSBetreuungsangebotTyp';
-import DateUtil from './DateUtil';
-import {TSDateRange} from '../models/types/TSDateRange';
-import TSErwerbspensum from '../models/TSErwerbspensum';
-import TSBetreuung from '../models/TSBetreuung';
 import {TSBetreuungsstatus} from '../models/enums/TSBetreuungsstatus';
-import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
+import {TSGeschlecht} from '../models/enums/TSGeschlecht';
+import {TSGesuchsperiodeStatus} from '../models/enums/TSGesuchsperiodeStatus';
+import {TSVerfuegungZeitabschnittZahlungsstatus} from '../models/enums/TSVerfuegungZeitabschnittZahlungsstatus';
+import TSAbwesenheit from '../models/TSAbwesenheit';
+import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
+import TSAdresse from '../models/TSAdresse';
+import TSAntragDTO from '../models/TSAntragDTO';
+import TSBetreuung from '../models/TSBetreuung';
 import TSBetreuungspensum from '../models/TSBetreuungspensum';
+import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
+import TSErwerbspensum from '../models/TSErwerbspensum';
+import {TSFachstelle} from '../models/TSFachstelle';
+import TSFall from '../models/TSFall';
+import TSFamiliensituation from '../models/TSFamiliensituation';
+import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
 import TSGesuch from '../models/TSGesuch';
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
-import TSFall from '../models/TSFall';
-import TSAntragDTO from '../models/TSAntragDTO';
-import {TSAntragTyp} from '../models/enums/TSAntragTyp';
-import {EbeguWebPendenzen} from '../pendenzen/pendenzen.module';
-import TSFamiliensituation from '../models/TSFamiliensituation';
+import TSGesuchsteller from '../models/TSGesuchsteller';
+import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
+import TSInstitution from '../models/TSInstitution';
+import TSInstitutionStammdaten from '../models/TSInstitutionStammdaten';
+import {TSMandant} from '../models/TSMandant';
+import {TSTraegerschaft} from '../models/TSTraegerschaft';
 import TSVerfuegung from '../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
-import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
-import TSAbwesenheit from '../models/TSAbwesenheit';
-import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
+import {TSDateRange} from '../models/types/TSDateRange';
+import {EbeguWebPendenzen} from '../pendenzen/pendenzen.module';
+import DateUtil from './DateUtil';
+import EbeguRestUtil from './EbeguRestUtil';
 import TestDataUtil from './TestDataUtil';
-import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
-import * as moment from 'moment';
-import {TSVerfuegungZeitabschnittZahlungsstatus} from '../models/enums/TSVerfuegungZeitabschnittZahlungsstatus';
-import {TSGesuchsperiodeStatus} from '../models/enums/TSGesuchsperiodeStatus';
 import Moment = moment.Moment;
 
 describe('EbeguRestUtil', function () {
 
     let ebeguRestUtil: EbeguRestUtil;
-    let filter: IFilterService;
+    let filter: angular.IFilterService;
     let today: moment.Moment;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         ebeguRestUtil = $injector.get('EbeguRestUtil');
         filter = $injector.get('$filter');
         today = DateUtil.today();
@@ -154,9 +151,12 @@ describe('EbeguRestUtil', function () {
                 expect(transformedPers).toBeDefined();
                 expect(myGesuchsteller.gesuchstellerJA.nachname).toEqual(transformedPers.gesuchstellerJA.nachname);
 
-                expect(transformedPers.gesuchstellerJA.telefon).toBeUndefined(); // der leere String wurde in undefined umgewandelt deswegen muessen wir hier
+                expect(transformedPers.gesuchstellerJA.telefon).toBeUndefined(); // der leere String wurde in undefined
+                                                                                 // umgewandelt deswegen muessen wir
+                                                                                 // hier
                                                                                  // undefined zurueckbekommen
-                transformedPers.gesuchstellerJA.telefon = ''; // um das Objekt zu validieren, muessen wird das Telefon wieder auf '' setzen
+                transformedPers.gesuchstellerJA.telefon = ''; // um das Objekt zu validieren, muessen wird das Telefon
+                                                              // wieder auf '' setzen
 
                 expect(myGesuchsteller).toEqual(transformedPers);
 

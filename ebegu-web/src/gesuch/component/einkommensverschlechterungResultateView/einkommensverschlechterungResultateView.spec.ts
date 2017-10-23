@@ -13,28 +13,23 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import '../../../bootstrap.ts';
-import 'angular-mocks';
-import {EbeguWebGesuch} from '../../gesuch.module';
-import GesuchModelManager from '../../service/gesuchModelManager';
-import BerechnungsManager from '../../service/berechnungsManager';
-import {EinkommensverschlechterungResultateViewController} from './einkommensverschlechterungResultateView';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
-import WizardStepManager from '../../service/wizardStepManager';
-import TSFinanzModel from '../../../models/TSFinanzModel';
-import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
-import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
-import {ITimeoutService} from 'angular';
-import IStateService = angular.ui.IStateService;
-import IScope = angular.IScope;
+import TSFinanzModel from '../../../models/TSFinanzModel';
+import TSGesuchsteller from '../../../models/TSGesuchsteller';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import {EbeguWebGesuch} from '../../gesuch.module';
+import BerechnungsManager from '../../service/berechnungsManager';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import WizardStepManager from '../../service/wizardStepManager';
+import {EinkommensverschlechterungResultateViewController} from './einkommensverschlechterungResultateView';
 
 describe('einkommensverschlechterungResultateView', function () {
 
     let gesuchModelManager: GesuchModelManager;
     let berechnungsManager: BerechnungsManager;
     let ekvrvc: EinkommensverschlechterungResultateViewController;
-    let $state: IStateService;
+    let $state: angular.ui.IStateService;
 
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
@@ -45,10 +40,10 @@ describe('einkommensverschlechterungResultateView', function () {
     let consta: any;
     let errorservice: any;
     let wizardStepManager: WizardStepManager;
-    let $rootScope: IScope;
-    let $timeout: ITimeoutService;
+    let $rootScope: angular.IScope;
+    let $timeout: angular.ITimeoutService;
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         $componentController = $injector.get('$componentController');
         gesuchModelManager = $injector.get('GesuchModelManager');
         berechnungsManager = $injector.get('BerechnungsManager');
@@ -60,7 +55,6 @@ describe('einkommensverschlechterungResultateView', function () {
         errorservice = $injector.get('ErrorService');
         wizardStepManager = $injector.get('WizardStepManager');
         $timeout = $injector.get('$timeout');
-
 
         spyOn(berechnungsManager, 'calculateFinanzielleSituation').and.returnValue($q.when({}));
 
@@ -144,7 +138,7 @@ describe('einkommensverschlechterungResultateView', function () {
             expect(ekvrvc.calculateVeraenderung()).toEqual('+ 100.00 %');
         });
 
-        function setValues( massgebendesEinkommen_vj: number, massgebendesEinkommen_bj: number) {
+        function setValues(massgebendesEinkommen_vj: number, massgebendesEinkommen_bj: number) {
             let finsint: TSFinanzielleSituationResultateDTO = new TSFinanzielleSituationResultateDTO();
             finsint.massgebendesEinkVorAbzFamGr = massgebendesEinkommen_bj;
 

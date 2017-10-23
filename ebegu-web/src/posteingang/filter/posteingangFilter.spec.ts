@@ -13,13 +13,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EbeguWebPosteingang} from '../posteingang.module';
 import * as moment from 'moment';
+import {TSMitteilungStatus} from '../../models/enums/TSMitteilungStatus';
+import {TSMitteilungTeilnehmerTyp} from '../../models/enums/TSMitteilungTeilnehmerTyp';
+import TSFall from '../../models/TSFall';
 import TSMitteilung from '../../models/TSMitteilung';
 import TSUser from '../../models/TSUser';
-import TSFall from '../../models/TSFall';
-import {TSMitteilungTeilnehmerTyp} from '../../models/enums/TSMitteilungTeilnehmerTyp';
-import {TSMitteilungStatus} from '../../models/enums/TSMitteilungStatus';
+import {EbeguWebPosteingang} from '../posteingang.module';
 
 describe('posteingangFilter', function () {
 
@@ -33,7 +33,7 @@ describe('posteingangFilter', function () {
 
     beforeEach(angular.mock.module(EbeguWebPosteingang.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         posteingangFilter = $injector.get('$filter')('posteingangFilter');
 
         let ja1 = new TSUser();
@@ -91,7 +91,8 @@ describe('posteingangFilter', function () {
             expect(posteingangFilter(mitteilungArray, {sender: 'berger'})).toEqual([mitteilung1, mitteilung2]);
             expect(posteingangFilter(mitteilungArray, {sender: 'er'})).toEqual([mitteilung1, mitteilung2, mitteilung3, mitteilung4, mitteilung5]);
             expect(posteingangFilter(mitteilungArray, {sender: ''})).toEqual([mitteilung1, mitteilung2, mitteilung3, mitteilung4, mitteilung5]);
-            expect(posteingangFilter(mitteilungArray, {sender: 'rrr'})).toEqual([]); // no familienname with this pattern
+            expect(posteingangFilter(mitteilungArray, {sender: 'rrr'})).toEqual([]); // no familienname with this
+                                                                                     // pattern
         });
         it('should return an array with only the element with the given Fallnummer', function () {
             expect(posteingangFilter(mitteilungArray, {'fall': {'fallNummer': '000'}})).toEqual([mitteilung1, mitteilung2, mitteilung3, mitteilung4]);
@@ -109,7 +110,8 @@ describe('posteingangFilter', function () {
             expect(posteingangFilter(mitteilungArray, {subject: 'frage'})).toEqual([mitteilung1, mitteilung3]);
             expect(posteingangFilter(mitteilungArray, {subject: 'Dok'})).toEqual([mitteilung3]);
             expect(posteingangFilter(mitteilungArray, {subject: ''})).toEqual([mitteilung1, mitteilung2, mitteilung3, mitteilung4, mitteilung5]);
-            expect(posteingangFilter(mitteilungArray, {subject: 'rrr'})).toEqual([]); // no familienname with this pattern
+            expect(posteingangFilter(mitteilungArray, {subject: 'rrr'})).toEqual([]); // no familienname with this
+                                                                                      // pattern
         });
         it('should return an array with only the elements of the given sentDatum', function () {
             expect(posteingangFilter(mitteilungArray, {sentDatum: '02.02.2016'})).toEqual([mitteilung2, mitteilung4, mitteilung5]);

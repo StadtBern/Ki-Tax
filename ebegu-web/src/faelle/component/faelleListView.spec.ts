@@ -13,18 +13,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IFilterService, IHttpBackendService, IQService, IScope} from 'angular';
 import GesuchModelManager from '../../gesuch/service/gesuchModelManager';
-import {IStateService} from 'angular-ui-router';
-import {EbeguWebFaelle} from '../faelle.module';
-import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
-import TestDataUtil from '../../utils/TestDataUtil';
-import {FaelleListViewController} from './faelleListView';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
-import TSAntragDTO from '../../models/TSAntragDTO';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
-import TSGesuch from '../../models/TSGesuch';
+import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import TSAntragDTO from '../../models/TSAntragDTO';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
+import TSGesuch from '../../models/TSGesuch';
+import TestDataUtil from '../../utils/TestDataUtil';
+import {EbeguWebFaelle} from '../faelle.module';
+import {FaelleListViewController} from './faelleListView';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import SearchRS from '../../gesuch/service/searchRS.rest';
@@ -36,20 +34,19 @@ describe('faelleListView', function () {
     let gesuchRS: GesuchRS;
     let searchRS: SearchRS;
     let faelleListViewController: FaelleListViewController;
-    let $q: IQService;
-    let $scope: IScope;
-    let $filter: IFilterService;
-    let $httpBackend: IHttpBackendService;
+    let $q: angular.IQService;
+    let $scope: angular.IScope;
+    let $filter: angular.IFilterService;
+    let $httpBackend: angular.IHttpBackendService;
     let gesuchModelManager: GesuchModelManager;
-    let $state: IStateService;
-    let $log: any;
+    let $state: angular.ui.IStateService;
+    let $log: angular.ILogService;
     let wizardStepManager: WizardStepManager;
     let mockAntrag: TSAntragDTO;
 
-
     beforeEach(angular.mock.module(EbeguWebFaelle.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         authServiceRS = $injector.get('AuthServiceRS');
         gesuchRS = $injector.get('GesuchRS');
         searchRS = $injector.get('SearchRS');
@@ -68,8 +65,8 @@ describe('faelleListView', function () {
         describe('searchFaelle', function () {
             it('should return the list with found Faellen', function () {
                 mockRestCalls();
-                faelleListViewController = new FaelleListViewController($filter, gesuchModelManager,
-                    $state, $log, authServiceRS, searchRS);
+                faelleListViewController = new FaelleListViewController($filter,
+                    gesuchModelManager,  $state, $log,  authServiceRS, searchRS);
 
                 faelleListViewController.passFilterToServer({});
                 expect(searchRS.searchAntraege).toHaveBeenCalledTimes(1);
@@ -85,20 +82,20 @@ describe('faelleListView', function () {
             it('should call findGesuch and open the view gesuch.fallcreation with it for normal user', function () {
                 let tsGesuch = callEditFall();
 
-                expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation', { createNew: false, gesuchId: '66345345' });
+                expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation', {createNew: false, gesuchId: '66345345'});
 
             });
             it('should call findGesuch and open the view gesuch.betreuungen with it for INS/TRAEGER user if gesuch not verfuegt', function () {
                 spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
                 let tsGesuch = callEditFall();
-                expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen', { createNew: false, gesuchId: '66345345' });
+                expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen', {createNew: false, gesuchId: '66345345'});
             });
             it('should call findGesuch and open the view gesuch.verfuegen with it for INS/TRAEGER user if gesuch verfuegt', function () {
-               spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
+                spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
                 mockAntrag.status = TSAntragStatus.VERFUEGT;
-               let tsGesuch = callEditFall();
-               expect($state.go).toHaveBeenCalledWith('gesuch.verfuegen', { createNew: false, gesuchId: '66345345' });
-           });
+                let tsGesuch = callEditFall();
+                expect($state.go).toHaveBeenCalledWith('gesuch.verfuegen', {createNew: false, gesuchId: '66345345'});
+            });
         });
     });
 

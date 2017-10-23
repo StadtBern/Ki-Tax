@@ -13,31 +13,30 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpBackendService} from 'angular';
-import {EbeguWebPendenzenInstitution} from '../pendenzenInstitution.module';
-import PendenzInstitutionRS from './PendenzInstitutionRS.rest';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import TSPendenzInstitution from '../../models/TSPendenzInstitution';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import {EbeguWebPendenzenInstitution} from '../pendenzenInstitution.module';
+import PendenzInstitutionRS from './PendenzInstitutionRS.rest';
 
 describe('pendenzInstitutionRS', function () {
 
     let pendenzInstitutionRS: PendenzInstitutionRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockPendenzInstitution: TSPendenzInstitution;
     let mockPendenzInstitutionRest: any;
 
     beforeEach(angular.mock.module(EbeguWebPendenzenInstitution.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         pendenzInstitutionRS = $injector.get('PendenzInstitutionRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
     }));
 
     beforeEach(() => {
-        mockPendenzInstitution = new TSPendenzInstitution('123.12.12', '123',  '123',  '123', 'Kind', 'Kilian', undefined, 'Platzbestaetigung', undefined,
+        mockPendenzInstitution = new TSPendenzInstitution('123.12.12', '123', '123', '123', 'Kind', 'Kilian', undefined, 'Platzbestaetigung', undefined,
             undefined, undefined, TSBetreuungsangebotTyp.KITA, undefined);
         mockPendenzInstitutionRest = ebeguRestUtil.pendenzInstitutionToRestObject({}, mockPendenzInstitution);
     });

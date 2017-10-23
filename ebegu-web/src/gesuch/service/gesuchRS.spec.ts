@@ -13,21 +13,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {EbeguWebCore} from '../../core/core.module';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import GesuchRS from './gesuchRS.rest';
-import IHttpBackendService = angular.IHttpBackendService;
 
 describe('gesuch', function () {
 
     let gesuchRS: GesuchRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let REST_API: string;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         gesuchRS = $injector.get('GesuchRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
@@ -47,7 +46,6 @@ describe('gesuch', function () {
         it('should include a updateGesuch() function', function () {
             expect(gesuchRS.updateGesuch).toBeDefined();
         });
-
 
     });
 

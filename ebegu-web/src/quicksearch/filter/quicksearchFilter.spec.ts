@@ -34,7 +34,7 @@ describe('quicksearchFilter', function () {
 
     beforeEach(angular.mock.module(EbeguWebQuicksearch.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         quicksearchFilter = $injector.get('$filter')('quicksearchFilter');
 
         let ab = moment('31.08.2016', 'DD.MM.YYYY');

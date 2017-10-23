@@ -70,11 +70,11 @@ export default class TSExceptionReport {
         let validMsgKey = typeof this.msgKey === 'string' && this.msgKey.length > 0;
 
         return validType && validSeverity && validMsgKey;
-    };
+    }
 
     isInternal() {
         return this.type === TSErrorType.INTERNAL;
-    };
+    }
 
     get type(): TSErrorType {
         return this._type;
