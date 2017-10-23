@@ -13,13 +13,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EbeguWebCore} from '../core/core.module';
-import GesuchModelManager from './service/gesuchModelManager';
-import TestDataUtil from '../utils/TestDataUtil';
 import * as moment from 'moment';
-import {GesuchRouteController} from './gesuch';
-import TSGesuch from '../models/TSGesuch';
+import {EbeguWebCore} from '../core/core.module';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
+import TSGesuch from '../models/TSGesuch';
+import TestDataUtil from '../utils/TestDataUtil';
+import {GesuchRouteController} from './gesuch';
+import GesuchModelManager from './service/gesuchModelManager';
 
 describe('gesuch', function () {
 
@@ -29,7 +29,7 @@ describe('gesuch', function () {
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         gesuchModelManager = $injector.get('GesuchModelManager');
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($injector.get('$httpBackend'));
         gesuchRouteController = new GesuchRouteController(gesuchModelManager, $injector.get('BerechnungsManager'),

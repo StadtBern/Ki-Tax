@@ -13,19 +13,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import {InstitutionRS} from '../../../core/service/institutionRS.rest';
+import {InstitutionStammdatenRS} from '../../../core/service/institutionStammdatenRS.rest';
+import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
+import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
+import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
+import TSPendenzInstitution from '../../../models/TSPendenzInstitution';
+import TestDataUtil from '../../../utils/TestDataUtil';
 import {EbeguWebPendenzenInstitution} from '../../pendenzenInstitution.module';
 import PendenzInstitutionRS from '../../service/PendenzInstitutionRS.rest';
 import {PendenzenInstitutionListViewController} from './pendenzenInstitutionListView';
-import {IHttpBackendService, IQService, IScope} from 'angular';
-import TSPendenzInstitution from '../../../models/TSPendenzInstitution';
-import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
-import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
-import {InstitutionRS} from '../../../core/service/institutionRS.rest';
-import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
-import {IStateService} from 'angular-ui-router';
-import TestDataUtil from '../../../utils/TestDataUtil';
-import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
-import {InstitutionStammdatenRS} from '../../../core/service/institutionStammdatenRS.rest';
 
 describe('pendenzenInstitutionListView', function () {
 
@@ -34,18 +32,17 @@ describe('pendenzenInstitutionListView', function () {
     let institutionStammdatenRS: InstitutionStammdatenRS;
     let pendenzInstitutionRS: PendenzInstitutionRS;
     let pendenzInstitutionListViewController: PendenzenInstitutionListViewController;
-    let $q: IQService;
-    let $scope: IScope;
-    let $httpBackend: IHttpBackendService;
+    let $q: angular.IQService;
+    let $scope: angular.IScope;
+    let $httpBackend: angular.IHttpBackendService;
     let gesuchModelManager: GesuchModelManager;
     let berechnungsManager: BerechnungsManager;
-    let $state: IStateService;
+    let $state: angular.ui.IStateService;
     let CONSTANTS: any;
-
 
     beforeEach(angular.mock.module(EbeguWebPendenzenInstitution.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         pendenzInstitutionRS = $injector.get('PendenzInstitutionRS');
         institutionRS = $injector.get('InstitutionRS');
         institutionStammdatenRS = $injector.get('InstitutionStammdatenRS');

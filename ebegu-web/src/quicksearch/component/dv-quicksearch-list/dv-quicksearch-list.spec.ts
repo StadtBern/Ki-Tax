@@ -13,20 +13,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IFilterService, IHttpBackendService, IQService, IScope} from 'angular';
-import TSAntragDTO from '../../../models/TSAntragDTO';
-import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
-import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
+import {EbeguWebCore} from '../../../core/core.module';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import {InstitutionRS} from '../../../core/service/institutionRS.rest';
 import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
-import {IStateService} from 'angular-ui-router';
-import TestDataUtil from '../../../utils/TestDataUtil';
-import TSGesuch from '../../../models/TSGesuch';
-import WizardStepManager from '../../../gesuch/service/wizardStepManager';
-import {DVQuicksearchListController} from './dv-quicksearch-list';
 import SearchRS from '../../../gesuch/service/searchRS.rest';
-import {EbeguWebCore} from '../../../core/core.module';
+import WizardStepManager from '../../../gesuch/service/wizardStepManager';
+import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
+import TSAntragDTO from '../../../models/TSAntragDTO';
+import TSGesuch from '../../../models/TSGesuch';
+import TestDataUtil from '../../../utils/TestDataUtil';
+import {DVQuicksearchListController} from './dv-quicksearch-list';
 
 describe('DVQuicksearchList', function () {
 
@@ -35,18 +33,17 @@ describe('DVQuicksearchList', function () {
     let gesuchRS: GesuchRS;
     let searchRS: SearchRS;
     let quicksearchListViewController: DVQuicksearchListController;
-    let $q: IQService;
-    let $scope: IScope;
-    let $filter: IFilterService;
-    let $httpBackend: IHttpBackendService;
-    let $state: IStateService;
+    let $q: angular.IQService;
+    let $scope: angular.IScope;
+    let $filter: angular.IFilterService;
+    let $httpBackend: angular.IHttpBackendService;
+    let $state: angular.ui.IStateService;
     let CONSTANTS: any;
     let wizardStepManager: WizardStepManager;
 
-
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         searchRS = $injector.get('SearchRS');
         institutionRS = $injector.get('InstitutionRS');
         gesuchsperiodeRS = $injector.get('GesuchsperiodeRS');

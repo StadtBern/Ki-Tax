@@ -13,15 +13,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EbeguWebCore} from '../../core.module';
-import {DVDokumenteListController} from './dv-dokumente-list';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
-import TSDokumentGrund from '../../../models/TSDokumentGrund';
 import {TSDokumentGrundPersonType} from '../../../models/enums/TSDokumentGrundPersonType';
+import TSDokumentGrund from '../../../models/TSDokumentGrund';
 import TSGesuch from '../../../models/TSGesuch';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
-import TSKindContainer from '../../../models/TSKindContainer';
 import TSKind from '../../../models/TSKind';
+import TSKindContainer from '../../../models/TSKindContainer';
+import {EbeguWebCore} from '../../core.module';
+import {DVDokumenteListController} from './dv-dokumente-list';
 
 describe('dvDokumenteList', function () {
 
@@ -30,7 +30,7 @@ describe('dvDokumenteList', function () {
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         gesuchModelManager = $injector.get('GesuchModelManager');
 
         controller = new DVDokumenteListController(undefined, gesuchModelManager, undefined, undefined,

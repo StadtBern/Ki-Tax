@@ -13,15 +13,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-describe('dvInputContainer', function () {
+import {ErwerbspensumListViewComponentConfig} from './erwerbspensumListView';
 
-    beforeEach(angular.mock.module('ebeguWeb.core'));
+describe('erwerbspensumListView', function () {
 
-    var component : any;
-    var scope : angular.IScope;
-    var $componentController : any;
+    beforeEach(angular.mock.module('ebeguWeb.gesuch'));
 
-    beforeEach(angular.mock.inject(function (_$componentController_, $rootScope) {
+    let component: ErwerbspensumListViewComponentConfig;
+    let scope: angular.IScope;
+    let $componentController: angular.IComponentControllerService;
+
+    beforeEach(angular.mock.inject(function (_$componentController_: angular.IComponentControllerService,
+                                             $rootScope: angular.IRootScopeService) {
         $componentController = _$componentController_;
         scope = $rootScope.$new();
     }));
@@ -31,8 +34,8 @@ describe('dvInputContainer', function () {
          To initialise your component controller you have to setup your (mock) bindings and
          pass them to $componentController.
          */
-        var bindings: {};
-        component = $componentController('dvInputContainer', {$scope: scope}, bindings);
+        let bindings = {};
+        component = $componentController('erwerbspensumListView', {$scope: scope}, bindings);
         expect(component).toBeDefined();
     });
 });

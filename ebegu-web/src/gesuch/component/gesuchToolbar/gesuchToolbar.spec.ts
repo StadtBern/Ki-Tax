@@ -13,24 +13,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EbeguWebCore} from '../../../core/core.module';
-import GesuchModelManager from '../../service/gesuchModelManager';
-import {GesuchToolbarController} from './gesuchToolbar';
-import UserRS from '../../../core/service/userRS.rest';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import EbeguUtil from '../../../utils/EbeguUtil';
-import GesuchRS from '../../service/gesuchRS.rest';
-import BerechnungsManager from '../../service/berechnungsManager';
-import {IStateService} from 'angular-ui-router';
-import {IGesuchStateParams} from '../../gesuch.route';
-import TSUser from '../../../models/TSUser';
-import TSGesuch from '../../../models/TSGesuch';
-import TSFall from '../../../models/TSFall';
-import {TSEingangsart} from '../../../models/enums/TSEingangsart';
-import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import {EbeguWebCore} from '../../../core/core.module';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import UserRS from '../../../core/service/userRS.rest';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
+import TSFall from '../../../models/TSFall';
+import TSGesuch from '../../../models/TSGesuch';
+import TSUser from '../../../models/TSUser';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import {IGesuchStateParams} from '../../gesuch.route';
+import BerechnungsManager from '../../service/berechnungsManager';
 import FallRS from '../../service/fallRS.rest';
-import IScope = angular.IScope;
+import GesuchModelManager from '../../service/gesuchModelManager';
+import GesuchRS from '../../service/gesuchRS.rest';
+import {GesuchToolbarController} from './gesuchToolbar';
 
 describe('gesuchToolbar', function () {
 
@@ -42,19 +40,19 @@ describe('gesuchToolbar', function () {
     let CONSTANTS: any;
     let gesuchRS: GesuchRS;
     let berechnungsManager: BerechnungsManager;
-    let $state: IStateService;
+    let $state: angular.ui.IStateService;
     let $stateParams: IGesuchStateParams;
-    let $scope: IScope;
-    let $rootScope: IScope;
+    let $scope: angular.IScope;
+    let $rootScope: angular.IRootScopeService;
     let user: TSUser;
-    let $mdSidenav: ng.material.ISidenavService;
+    let $mdSidenav: angular.material.ISidenavService;
     let gesuchsperiodeRS: GesuchsperiodeRS;
     let fallRS: FallRS;
     let dvDialog: DvDialog;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         gesuchModelManager = $injector.get('GesuchModelManager');
         userRS = $injector.get('UserRS');
         authServiceRS = $injector.get('AuthServiceRS');
