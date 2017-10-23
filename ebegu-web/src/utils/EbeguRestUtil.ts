@@ -1184,7 +1184,7 @@ export default class EbeguRestUtil {
         restBetreuung.betreuungMutiert = betreuung.betreuungMutiert;
         restBetreuung.abwesenheitMutiert = betreuung.abwesenheitMutiert;
         restBetreuung.gueltig = betreuung.gueltig;
-        restBetreuung.module = this.belegungToRestObject({}, betreuung.belegung);
+        restBetreuung.belegung = this.belegungToRestObject({}, betreuung.belegung);
         return restBetreuung;
     }
 
@@ -2343,6 +2343,8 @@ export default class EbeguRestUtil {
         if (belegungFromServer) {
             this.parseAbstractEntity(belegungTS, belegungFromServer);
             belegungTS.module = this.parseModuleArray(belegungFromServer.module);
+            belegungTS.eintrittsdatum = DateUtil.localDateToMoment(belegungFromServer.eintrittsdatum);
+            return belegungTS;
         }
         return undefined;
     }
@@ -2351,6 +2353,8 @@ export default class EbeguRestUtil {
         if (belegungTS) {
             this.abstractEntityToRestObject(restBelegung, belegungTS);
             restBelegung.module = this.moduleArrayToRestObject(belegungTS.module);
+            restBelegung.eintrittsdatum = DateUtil.momentToLocalDate(belegungTS.eintrittsdatum);
+            return restBelegung;
         }
         return undefined;
     }

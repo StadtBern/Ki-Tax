@@ -1647,7 +1647,11 @@ public class JaxBConverter {
 		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
 		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
 		betreuung.setGueltig(betreuungJAXP.isGueltig());
-		betreuung.setBelegung(belegungToEntity(betreuungJAXP.getBelegung(), new Belegung()));
+		if (betreuung.getBelegung() != null) {
+			betreuung.setBelegung(belegungToEntity(betreuungJAXP.getBelegung(), betreuung.getBelegung()));
+		} else {
+			betreuung.setBelegung(belegungToEntity(betreuungJAXP.getBelegung(), new Belegung()));
+		}
 
 		//ACHTUNG: Verfuegung wird hier nicht synchronisiert aus sicherheitsgruenden
 		return betreuung;
@@ -1658,8 +1662,9 @@ public class JaxBConverter {
 		if (belegungJAXP != null) {
 			convertAbstractFieldsToEntity(belegungJAXP, belegung);
 			moduleListToEntity(belegungJAXP.getModule(), belegung.getModule());
+			belegung.setEintrittsdatum(belegungJAXP.getEintrittsdatum());
 		}
-		return null;
+		return belegung;
 	}
 
 	public Betreuung betreuungToStoreableEntity(@Nonnull final JaxBetreuung betreuungJAXP) {
@@ -1870,6 +1875,8 @@ public class JaxBConverter {
 			final JaxBelegung jaxBelegung = new JaxBelegung();
 			convertAbstractFieldsToJAX(belegungFromServer, jaxBelegung);
 			jaxBelegung.setModule(moduleListToJax(belegungFromServer.getModule()));
+			jaxBelegung.setEintrittsdatum(belegungFromServer.getEintrittsdatum());
+			return jaxBelegung;
 		}
 		return null;
 	}
