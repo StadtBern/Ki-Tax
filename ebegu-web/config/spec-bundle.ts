@@ -13,26 +13,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-describe('erwerbspensumListView', function () {
+const __karmaWebpackManifest__ = [];
 
-    beforeEach(angular.mock.module('ebeguWeb.gesuch'));
+// require all modules ending in "_test" from the
+// current directory and all subdirectories
+const testsContext =  (<any>require).context('../src', true, /\.spec\.ts/);
+//console.log('specbundle output', testsContext.keys());
 
-    var component: any;
-    var scope: angular.IScope;
-    var $componentController: any;
+function inManifest(path) {
+    return __karmaWebpackManifest__.indexOf(path) >= 0;
+}
 
-    beforeEach(angular.mock.inject(function (_$componentController_, $rootScope) {
-        $componentController = _$componentController_;
-        scope = $rootScope.$new();
-    }));
+let runnable = testsContext.keys().filter(inManifest);
 
-    it('should be defined', function () {
-        /*
-         To initialise your component controller you have to setup your (mock) bindings and
-         pass them to $componentController.
-         */
-        var bindings: {};
-        component = $componentController('erwerbspensumListView', {$scope: scope}, bindings);
-        expect(component).toBeDefined();
-    });
-});
+// Run all tests if we didn't find any changes
+if (!runnable.length) {
+    runnable = testsContext.keys();
+}
+
+runnable.forEach(testsContext);

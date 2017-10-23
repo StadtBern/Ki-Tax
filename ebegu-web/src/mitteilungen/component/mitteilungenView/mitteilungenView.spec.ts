@@ -13,22 +13,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EbeguWebMitteilungen} from '../../mitteilungen.module';
-import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {TSMitteilungTeilnehmerTyp} from '../../../models/enums/TSMitteilungTeilnehmerTyp';
-import {TSMitteilungStatus} from '../../../models/enums/TSMitteilungStatus';
-import TSUser from '../../../models/TSUser';
-import {TSRole} from '../../../models/enums/TSRole';
-import {IMitteilungenStateParams} from '../../mitteilungen.route';
-import FallRS from '../../../gesuch/service/fallRS.rest';
-import TSFall from '../../../models/TSFall';
-import TSMitteilung from '../../../models/TSMitteilung';
-import TestDataUtil from '../../../utils/TestDataUtil';
 import {DVMitteilungListController} from '../../../core/component/dv-mitteilung-list/dv-mitteilung-list';
 import BetreuungRS from '../../../core/service/betreuungRS.rest';
-import {IScope} from 'angular';
-import IQService = angular.IQService;
+import MitteilungRS from '../../../core/service/mitteilungRS.rest';
+import FallRS from '../../../gesuch/service/fallRS.rest';
+import {TSMitteilungStatus} from '../../../models/enums/TSMitteilungStatus';
+import {TSMitteilungTeilnehmerTyp} from '../../../models/enums/TSMitteilungTeilnehmerTyp';
+import {TSRole} from '../../../models/enums/TSRole';
+import TSFall from '../../../models/TSFall';
+import TSMitteilung from '../../../models/TSMitteilung';
+import TSUser from '../../../models/TSUser';
+import TestDataUtil from '../../../utils/TestDataUtil';
+import {EbeguWebMitteilungen} from '../../mitteilungen.module';
+import {IMitteilungenStateParams} from '../../mitteilungen.route';
 import ITimeoutService = angular.ITimeoutService;
 
 describe('mitteilungenView', function () {
@@ -39,18 +37,17 @@ describe('mitteilungenView', function () {
     let fallRS: FallRS;
     let betreuungRS: BetreuungRS;
     let fall: TSFall;
-    let $rootScope: IScope;
-    let $q: IQService;
+    let $rootScope: angular.IRootScopeService;
+    let $q: angular.IQService;
     let controller: DVMitteilungListController;
     let besitzer: TSUser;
     let verantwortlicher: TSUser;
-    let scope: IScope;
+    let scope: angular.IScope;
     let $timeout: ITimeoutService;
-
 
     beforeEach(angular.mock.module(EbeguWebMitteilungen.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         mitteilungRS = $injector.get('MitteilungRS');
         authServiceRS = $injector.get('AuthServiceRS');
         fallRS = $injector.get('FallRS');
@@ -175,7 +172,6 @@ describe('mitteilungenView', function () {
         });
     });
 
-
     function compareCommonAttributes(currentUser: TSUser): void {
         expect(controller.getCurrentMitteilung()).toBeDefined();
         expect(controller.getCurrentMitteilung().fall).toBe(fall);
@@ -192,7 +188,8 @@ describe('mitteilungenView', function () {
         spyOn(mitteilungRS, 'setAllNewMitteilungenOfFallGelesen').and.returnValue($q.when([{}]));
         controller = new DVMitteilungListController(stateParams, mitteilungRS, authServiceRS, fallRS, betreuungRS, $q, null,
             $rootScope, undefined, undefined, undefined, undefined, scope, $timeout);
-        controller.$onInit();   // hack, muesste wohl eher so gehen   http://stackoverflow.com/questions/38631204/how-to-trigger-oninit-or-onchanges-implictly-in-unit-testing-angular-component
+        controller.$onInit();   // hack, muesste wohl eher so gehen
+                                // http://stackoverflow.com/questions/38631204/how-to-trigger-oninit-or-onchanges-implictly-in-unit-testing-angular-component
         $rootScope.$apply();
     }
 

@@ -13,30 +13,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import KindRS from './kindRS.rest';
-import {IHttpBackendService, IQService} from 'angular';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {EbeguWebCore} from '../core.module';
-import TSKindContainer from '../../models/TSKindContainer';
-import TSKind from '../../models/TSKind';
-import TestDataUtil from '../../utils/TestDataUtil';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
+import TSKind from '../../models/TSKind';
+import TSKindContainer from '../../models/TSKindContainer';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import TestDataUtil from '../../utils/TestDataUtil';
+import {EbeguWebCore} from '../core.module';
+import KindRS from './kindRS.rest';
 
 describe('KindRS', function () {
 
     let kindRS: KindRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockKind: TSKindContainer;
     let mockKindRest: any;
     let gesuchId: string;
-    let $q: IQService;
+    let $q: angular.IQService;
     let wizardStepManager: WizardStepManager;
-
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         kindRS = $injector.get('KindRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');

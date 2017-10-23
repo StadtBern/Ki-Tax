@@ -13,29 +13,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IHttpBackendService} from 'angular';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {EbeguWebCore} from '../core.module';
-import TSKindContainer from '../../models/TSKindContainer';
-import VerfuegungRS from './verfuegungRS.rest';
 import TSKind from '../../models/TSKind';
+import TSKindContainer from '../../models/TSKindContainer';
 import TSVerfuegung from '../../models/TSVerfuegung';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TestDataUtil from '../../utils/TestDataUtil';
+import {EbeguWebCore} from '../core.module';
+import VerfuegungRS from './verfuegungRS.rest';
 
 describe('VerfuegungRS', function () {
 
     let verfuegungRS: VerfuegungRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockKindContainerListRest: Array<any> = [];
     let mockKind: TSKindContainer;
     let gesuchId: string = '1234567789';
     let betreuungId: string = '321123';
 
-
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         verfuegungRS = $injector.get('VerfuegungRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
