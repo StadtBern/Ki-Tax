@@ -50,7 +50,7 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	private Betreuungsstatus betreuungsstatus;
 
 	@Nullable
-	private JaxBelegung belegung;
+	private JaxBelegungTagesschule belegungTagesschule;
 
 	@NotNull
 	private List<JaxBetreuungspensumContainer> betreuungspensumContainers = new ArrayList<>();
@@ -255,12 +255,12 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	}
 
 	@Nullable
-	public JaxBelegung getBelegung() {
-		return belegung;
+	public JaxBelegungTagesschule getBelegungTagesschule() {
+		return belegungTagesschule;
 	}
 
-	public void setBelegung(@Nullable JaxBelegung belegung) {
-		this.belegung = belegung;
+	public void setBelegungTagesschule(@Nullable JaxBelegungTagesschule belegungTagesschule) {
+		this.belegungTagesschule = belegungTagesschule;
 	}
 
 	@Override

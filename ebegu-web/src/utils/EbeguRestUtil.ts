@@ -88,7 +88,7 @@ import TSEWKAdresse from '../models/TSEWKAdresse';
 import TSEWKBeziehung from '../models/TSEWKBeziehung';
 import TSFallAntragDTO from '../models/TSFallAntragDTO';
 import TSModul from '../models/TSModul';
-import TSBelegung from '../models/TSBelegung';
+import TSBelegungTagesschule from '../models/TSBelegungTagesschule';
 import TSFerieninselStammdaten from '../models/TSFerieninselStammdaten';
 import TSFerieninselZeitraum from '../models/TSFerieninselZeitraum';
 
@@ -1184,7 +1184,7 @@ export default class EbeguRestUtil {
         restBetreuung.betreuungMutiert = betreuung.betreuungMutiert;
         restBetreuung.abwesenheitMutiert = betreuung.abwesenheitMutiert;
         restBetreuung.gueltig = betreuung.gueltig;
-        restBetreuung.module = this.belegungToRestObject({}, betreuung.belegung);
+        restBetreuung.module = this.belegungTagesschuleToRestObject({}, betreuung.belegungTagesschule);
         return restBetreuung;
     }
 
@@ -1261,7 +1261,7 @@ export default class EbeguRestUtil {
             betreuungTS.betreuungMutiert = betreuungFromServer.betreuungMutiert;
             betreuungTS.abwesenheitMutiert = betreuungFromServer.abwesenheitMutiert;
             betreuungTS.gueltig = betreuungFromServer.gueltig;
-            betreuungTS.belegung = this.parseBelegung(new TSBelegung(), betreuungFromServer.belegung);
+            betreuungTS.belegungTagesschule = this.parseBelegungTagesschule(new TSBelegungTagesschule(), betreuungFromServer.belegungTagesschule);
             return betreuungTS;
         }
         return undefined;
@@ -2337,7 +2337,7 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    private parseBelegung(belegungTS: TSBelegung, belegungFromServer: any): TSBelegung {
+    private parseBelegungTagesschule(belegungTS: TSBelegungTagesschule, belegungFromServer: any): TSBelegungTagesschule {
         if (belegungFromServer) {
             this.parseAbstractEntity(belegungTS, belegungFromServer);
             belegungTS.module = this.parseModuleArray(belegungFromServer.module);
@@ -2345,7 +2345,7 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    private belegungToRestObject(restBelegung: any, belegungTS: TSBelegung): any {
+    private belegungTagesschuleToRestObject(restBelegung: any, belegungTS: TSBelegungTagesschule): any {
         if (belegungTS) {
             this.abstractEntityToRestObject(restBelegung, belegungTS);
             restBelegung.module = this.moduleArrayToRestObject(belegungTS.module);

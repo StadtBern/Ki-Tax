@@ -22,7 +22,7 @@ import TSAbwesenheitContainer from './TSAbwesenheitContainer';
 import TSGesuchsperiode from './TSGesuchsperiode';
 import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import * as moment from 'moment';
-import TSBelegung from './TSBelegung';
+import TSBelegungTagesschule from './TSBelegungTagesschule';
 
 export default class TSBetreuung extends TSAbstractEntity {
 
@@ -44,14 +44,14 @@ export default class TSBetreuung extends TSAbstractEntity {
     private _betreuungMutiert: boolean;
     private _abwesenheitMutiert: boolean;
     private _gueltig: boolean;
-    private _belegung: TSBelegung;
+    private _belegungTagesschule: TSBelegungTagesschule;
 
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
                 betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, abwesenheitContainers?: Array<TSAbwesenheitContainer>,
                 betreuungNummer?: number, verfuegung?: TSVerfuegung, vertrag?: boolean, erweiterteBeduerfnisse?: boolean,
                 grundAblehnung?: string, datumAblehnung?: moment.Moment, datumBestaetigung?: moment.Moment, kindFullname?: string,
                 kindNummer?: number, gesuchId?: string, gesuchsperiode?: TSGesuchsperiode,
-                betreuungMutiert?: boolean, abwesenheitMutiert?: boolean, gueltig?: boolean, belegung?: TSBelegung) {
+                betreuungMutiert?: boolean, abwesenheitMutiert?: boolean, gueltig?: boolean, belegungTagesschule?: TSBelegungTagesschule) {
         super();
         this._institutionStammdaten = institutionStammdaten;
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
@@ -71,7 +71,7 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._betreuungMutiert = betreuungMutiert;
         this._abwesenheitMutiert = abwesenheitMutiert;
         this._gueltig = gueltig;
-        this._belegung = belegung;
+        this._belegungTagesschule = belegungTagesschule;
     }
 
     get institutionStammdaten(): TSInstitutionStammdaten {
@@ -218,12 +218,12 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._gueltig = value;
     }
 
-    public get belegung(): TSBelegung {
-        return this._belegung;
+    public get belegungTagesschule(): TSBelegungTagesschule {
+        return this._belegungTagesschule;
     }
 
-    public set belegung(value: TSBelegung) {
-        this._belegung = value;
+    public set belegungTagesschule(value: TSBelegungTagesschule) {
+        this._belegungTagesschule = value;
     }
 
     public isAngebotKITA(): boolean {

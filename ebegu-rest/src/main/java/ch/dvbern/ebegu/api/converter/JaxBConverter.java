@@ -47,7 +47,7 @@ import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
 import ch.dvbern.ebegu.api.dtos.JaxAntragStatusHistory;
 import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
-import ch.dvbern.ebegu.api.dtos.JaxBelegung;
+import ch.dvbern.ebegu.api.dtos.JaxBelegungTagesschule;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilungPensum;
@@ -108,7 +108,7 @@ import ch.dvbern.ebegu.entities.AbwesenheitContainer;
 import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.AntragStatusHistory;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
-import ch.dvbern.ebegu.entities.Belegung;
+import ch.dvbern.ebegu.entities.BelegungTagesschule;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -1647,17 +1647,17 @@ public class JaxBConverter {
 		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
 		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
 		betreuung.setGueltig(betreuungJAXP.isGueltig());
-		betreuung.setBelegung(belegungToEntity(betreuungJAXP.getBelegung(), new Belegung()));
+		betreuung.setBelegungTagesschule(belegungToEntity(betreuungJAXP.getBelegungTagesschule(), new BelegungTagesschule()));
 
 		//ACHTUNG: Verfuegung wird hier nicht synchronisiert aus sicherheitsgruenden
 		return betreuung;
 	}
 
 	@Nullable
-	private Belegung belegungToEntity(@Nullable JaxBelegung belegungJAXP, @NotNull Belegung belegung) {
-		if (belegungJAXP != null) {
-			convertAbstractFieldsToEntity(belegungJAXP, belegung);
-			moduleListToEntity(belegungJAXP.getModule(), belegung.getModule());
+	private BelegungTagesschule belegungToEntity(@Nullable JaxBelegungTagesschule belegungTagesschuleJAXP, @NotNull BelegungTagesschule belegungTagesschule) {
+		if (belegungTagesschuleJAXP != null) {
+			convertAbstractFieldsToEntity(belegungTagesschuleJAXP, belegungTagesschule);
+			moduleListToEntity(belegungTagesschuleJAXP.getModule(), belegungTagesschule.getModule());
 		}
 		return null;
 	}
@@ -1860,16 +1860,16 @@ public class JaxBConverter {
 		jaxBetreuung.setBetreuungMutiert(betreuungFromServer.getBetreuungMutiert());
 		jaxBetreuung.setAbwesenheitMutiert(betreuungFromServer.getAbwesenheitMutiert());
 		jaxBetreuung.setGueltig(betreuungFromServer.isGueltig());
-		jaxBetreuung.setBelegung(belegungToJax(betreuungFromServer.getBelegung()));
+		jaxBetreuung.setBelegungTagesschule(belegungToJax(betreuungFromServer.getBelegungTagesschule()));
 		return jaxBetreuung;
 	}
 
 	@Nullable
-	private JaxBelegung belegungToJax(@Nullable Belegung belegungFromServer) {
+	private JaxBelegungTagesschule belegungToJax(@Nullable BelegungTagesschule belegungFromServer) {
 		if (belegungFromServer != null) {
-			final JaxBelegung jaxBelegung = new JaxBelegung();
-			convertAbstractFieldsToJAX(belegungFromServer, jaxBelegung);
-			jaxBelegung.setModule(moduleListToJax(belegungFromServer.getModule()));
+			final JaxBelegungTagesschule jaxBelegungTagesschule = new JaxBelegungTagesschule();
+			convertAbstractFieldsToJAX(belegungFromServer, jaxBelegungTagesschule);
+			jaxBelegungTagesschule.setModule(moduleListToJax(belegungFromServer.getModule()));
 		}
 		return null;
 	}

@@ -16,7 +16,7 @@
 import TSAbstractEntity from './TSAbstractEntity';
 import TSModul from './TSModul';
 
-export default class TSBelegung extends TSAbstractEntity {
+export default class TSBelegungTagesschule extends TSAbstractEntity {
 
     private _module: TSModul[];
 

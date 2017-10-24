@@ -32,7 +32,7 @@ import org.hibernate.envers.Audited;
  */
 @Audited
 @Entity
-public class Belegung extends AbstractEntity {
+public class BelegungTagesschule extends AbstractEntity {
 
 	private static final long serialVersionUID = -8403435739182708718L;
 
@@ -52,7 +52,7 @@ public class Belegung extends AbstractEntity {
 			return false;
 		}
 		//noinspection RedundantIfStatement
-		if (!(other instanceof Belegung)) {
+		if (!(other instanceof BelegungTagesschule)) {
 			return false;
 		}
 		return true;
