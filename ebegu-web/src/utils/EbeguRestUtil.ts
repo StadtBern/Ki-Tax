@@ -91,6 +91,8 @@ import TSModul from '../models/TSModul';
 import TSBelegungTagesschule from '../models/TSBelegungTagesschule';
 import TSFerieninselStammdaten from '../models/TSFerieninselStammdaten';
 import TSFerieninselZeitraum from '../models/TSFerieninselZeitraum';
+import TSBelegungFerieninsel from '../models/TSBelegungFerieninsel';
+import TSBelegungFerieninselTag from '../models/TSBelegungFerieninselTag';
 
 export default class EbeguRestUtil {
     static $inject = ['EbeguUtil'];
@@ -2394,6 +2396,49 @@ export default class EbeguRestUtil {
             }
 
             return restFerieninselStammdaten;
+        }
+        return undefined;
+    }
+
+    public parseBelegungFerieninselList(data: any): TSBelegungFerieninsel[] {
+        let belegungFerieninselList: TSBelegungFerieninsel[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                belegungFerieninselList[i] = this.parseBelegungFerieninsel(new TSBelegungFerieninsel(), data[i]);
+            }
+        } else {
+            belegungFerieninselList[0] = this.parseBelegungFerieninsel(new TSBelegungFerieninsel(), data);
+        }
+        return belegungFerieninselList;
+    }
+
+    public parseBelegungFerieninsel(belegungFerieninselTS: TSBelegungFerieninsel, receivedBelegungFerieninsel: any): TSBelegungFerieninsel {
+        if (receivedBelegungFerieninsel) {
+            this.parseAbstractEntity(belegungFerieninselTS, receivedBelegungFerieninsel);
+            belegungFerieninselTS.ferienname = receivedBelegungFerieninsel.ferienname;
+            for (let i = 0; i < receivedBelegungFerieninsel.tage.length; i++) {
+                let tagTS: TSBelegungFerieninselTag = new TSBelegungFerieninselTag();
+                this.parseAbstractEntity(tagTS, receivedBelegungFerieninsel.tage[i]);
+                tagTS.tag = receivedBelegungFerieninsel.tage[i].tag;
+                belegungFerieninselTS.tage.push(tagTS);
+            }
+            return belegungFerieninselTS;
+        }
+        return undefined;
+    }
+
+    public belegungFerieninselToRestObject(restBelegungFerieninsel: any, belegungFerieninselTS: TSBelegungFerieninsel): TSBelegungFerieninsel {
+        if (belegungFerieninselTS) {
+            this.abstractEntityToRestObject(restBelegungFerieninsel, belegungFerieninselTS);
+            restBelegungFerieninsel.ferienname = belegungFerieninselTS.ferienname;
+            for (let i = 0; i < belegungFerieninselTS.tage.length; i++) {
+                let tagRest: any;
+                this.abstractEntityToRestObject(tagRest, belegungFerieninselTS.tage[i]);
+                tagRest.tag = belegungFerieninselTS.tage[i].tag;
+                belegungFerieninselTS.tage.push(tagRest);
+            }
+
+            return restBelegungFerieninsel;
         }
         return undefined;
     }

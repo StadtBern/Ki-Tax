@@ -47,6 +47,8 @@ import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
 import ch.dvbern.ebegu.api.dtos.JaxAntragStatusHistory;
 import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
+import ch.dvbern.ebegu.api.dtos.JaxBelegungFerieninsel;
+import ch.dvbern.ebegu.api.dtos.JaxBelegungFerieninselTag;
 import ch.dvbern.ebegu.api.dtos.JaxBelegungTagesschule;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
@@ -108,6 +110,8 @@ import ch.dvbern.ebegu.entities.AbwesenheitContainer;
 import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.AntragStatusHistory;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.ebegu.entities.BelegungFerieninsel;
+import ch.dvbern.ebegu.entities.BelegungFerieninselTag;
 import ch.dvbern.ebegu.entities.BelegungTagesschule;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
@@ -2747,5 +2751,34 @@ public class JaxBConverter {
 			jaxFerieninselStammdaten.getZeitraumList().add(jaxFerieninselZeitraum);
 		}
 		return jaxFerieninselStammdaten;
+	}
+
+	public BelegungFerieninsel belegungFerieninselToEntity(JaxBelegungFerieninsel belegungFerieninselJAX, BelegungFerieninsel belegungFerieninsel) {
+		Validate.notNull(belegungFerieninselJAX);
+		Validate.notNull(belegungFerieninsel);
+
+		convertAbstractFieldsToEntity(belegungFerieninselJAX, belegungFerieninsel);
+		belegungFerieninsel.setFerienname(belegungFerieninselJAX.getFerienname());
+		for (JaxBelegungFerieninselTag jaxTag : belegungFerieninselJAX.getTage()) {
+			BelegungFerieninselTag tag = new BelegungFerieninselTag();
+			convertAbstractFieldsToEntity(jaxTag, tag);
+			tag.setTag(jaxTag.getTag());
+			belegungFerieninsel.getTage().add(tag);
+		}
+		return belegungFerieninsel;
+	}
+
+	public JaxBelegungFerieninsel belegungFerieninselToJAX(BelegungFerieninsel persistedBelegungFerieninsel) {
+		final JaxBelegungFerieninsel jaxBelegungFerieninsel = new JaxBelegungFerieninsel();
+
+		convertAbstractFieldsToJAX(persistedBelegungFerieninsel, jaxBelegungFerieninsel);
+		jaxBelegungFerieninsel.setFerienname(persistedBelegungFerieninsel.getFerienname());
+		for (BelegungFerieninselTag tag : persistedBelegungFerieninsel.getTage()) {
+			JaxBelegungFerieninselTag jaxTag = new JaxBelegungFerieninselTag();
+			convertAbstractFieldsToJAX(tag, jaxTag);
+			jaxTag.setTag(tag.getTag());
+			jaxBelegungFerieninsel.getTage().add(jaxTag);
+		}
+		return jaxBelegungFerieninsel;
 	}
 }
