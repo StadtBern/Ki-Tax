@@ -46,7 +46,6 @@ export class FerieninselViewController extends AbstractAdminViewController {
     gesuchsperiodenList: Array<TSGesuchsperiode> = [];
     gesuchsperiode: TSGesuchsperiode;
 
-    ferieninselStammdatenList: TSFerieninselStammdaten[] = [];
     ferieninselStammdatenMap: { [key: string]: TSFerieninselStammdaten; } = {};
 
     TSRoleUtil: TSRoleUtil;
@@ -81,8 +80,8 @@ export class FerieninselViewController extends AbstractAdminViewController {
     private readFerieninselStammdatenByGesuchsperiode(): void {
         this.ferieninselStammdatenMap = {};
         this.ferieninselStammdatenRS.findFerieninselStammdatenByGesuchsperiode(this.gesuchsperiode.id).then((response: TSFerieninselStammdaten[]) => {
-            this.ferieninselStammdatenList = response;
-            for (let obj of this.ferieninselStammdatenList) {
+            let ferieninselStammdatenList: TSFerieninselStammdaten[] =  response;
+            for (let obj of ferieninselStammdatenList) {
                 this.ferieninselStammdatenMap[obj.ferienname] = obj;
             }
         });
@@ -107,7 +106,9 @@ export class FerieninselViewController extends AbstractAdminViewController {
 
     public saveFerieninselStammdaten(ferieninselStammdaten: TSFerieninselStammdaten): void {
         if (this.form.$valid && this.isFerieninselStammdatenValid(ferieninselStammdaten)) {
-            this.ferieninselStammdatenRS.saveFerieninselStammdaten(ferieninselStammdaten);
+            this.ferieninselStammdatenRS.saveFerieninselStammdaten(ferieninselStammdaten).then((response: TSFerieninselStammdaten) => {
+                this.ferieninselStammdatenMap[response.ferienname] = response;
+            });
         }
     }
 
