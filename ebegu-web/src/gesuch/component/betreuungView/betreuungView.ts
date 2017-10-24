@@ -177,11 +177,16 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public changedAngebot() {
         if (this.getBetreuungModel()) {
-            if (this.isTagesschule()) {
-                this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
-                // Fuer Tagesschule setzen wir eine Dummy-Tagesschule als Institution
-                this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
-                this.setSelectedInstitutionStammdaten();
+            if (this.isSchulamt()) {
+                if (this.isTagesschule()) {
+                    this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
+                    // Fuer Tagesschule setzen wir eine Dummy-Tagesschule als Institution
+                    this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
+                    this.setSelectedInstitutionStammdaten();
+                } else {
+                    // Ferieninsel. Vorerst mal Status SCHULAMT, spaeter kommt dann ein eigener Status
+                    this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
+                }
             } else {
                 this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
             }
@@ -406,6 +411,10 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public isTageseltern(): boolean {
         return this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND) ||
             this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_SCHULKIND);
+    }
+
+    public isSchulamt(): boolean {
+        return this.isTagesschule() || this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.FERIENINSEL);
     }
 
     private isBetreuungsangebottyp(betAngTyp: TSBetreuungsangebotTyp): boolean {
