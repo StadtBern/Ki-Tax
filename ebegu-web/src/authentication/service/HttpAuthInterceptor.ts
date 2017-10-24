@@ -26,7 +26,7 @@ export default class HttpAuthInterceptor implements IHttpInterceptor {
                 private httpBuffer: HttpBuffer) {
     }
 
-    responseError<T>(response: any): IPromise<IHttpResponse<T>> | IHttpResponse<T> {
+    responseError = <T>(response: any): IPromise<IHttpResponse<T>> | IHttpResponse<T> => {
         switch (response.status) {
             case 401:
                 // exclude requests from the login form

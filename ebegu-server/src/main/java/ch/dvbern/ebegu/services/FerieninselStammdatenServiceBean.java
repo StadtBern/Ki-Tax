@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -32,6 +33,7 @@ import javax.persistence.criteria.Root;
 import ch.dvbern.ebegu.entities.FerieninselStammdaten;
 import ch.dvbern.ebegu.entities.FerieninselStammdaten_;
 import ch.dvbern.ebegu.entities.Gesuchsperiode_;
+import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
@@ -51,6 +53,7 @@ public class FerieninselStammdatenServiceBean extends AbstractBaseService implem
 
 	@Nonnull
 	@Override
+	@RolesAllowed({ UserRoleName.ADMINISTRATOR_SCHULAMT, UserRoleName.SUPER_ADMIN })
 	public FerieninselStammdaten saveFerieninselStammdaten(@Nonnull FerieninselStammdaten ferieninselStammdaten) {
 		Objects.requireNonNull(ferieninselStammdaten);
 		return persistence.merge(ferieninselStammdaten);
@@ -58,6 +61,7 @@ public class FerieninselStammdatenServiceBean extends AbstractBaseService implem
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Optional<FerieninselStammdaten> findFerieninselStammdaten(@Nonnull String ferieninselStammdatenId) {
 		Objects.requireNonNull(ferieninselStammdatenId, "ferieninselStammdatenId muss gesetzt sein");
 		FerieninselStammdaten ferieninselStammdaten = persistence.find(FerieninselStammdaten.class, ferieninselStammdatenId);
@@ -66,12 +70,14 @@ public class FerieninselStammdatenServiceBean extends AbstractBaseService implem
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Collection<FerieninselStammdaten> getAllFerieninselStammdaten() {
 		return criteriaQueryHelper.getAll(FerieninselStammdaten.class);
 	}
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Collection<FerieninselStammdaten> findFerieninselStammdatenForGesuchsperiode(@Nonnull String gesuchsperiodeId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<FerieninselStammdaten> query = cb.createQuery(FerieninselStammdaten.class);
@@ -84,6 +90,7 @@ public class FerieninselStammdatenServiceBean extends AbstractBaseService implem
 	}
 
 	@Override
+	@RolesAllowed(UserRoleName.SUPER_ADMIN)
 	public void removeFerieninselStammdaten(@Nonnull String ferieninselStammdatenId) {
 		Objects.requireNonNull(ferieninselStammdatenId, "ferieninselStammdatenId muss gesetzt sein");
 		persistence.remove(FerieninselStammdaten.class, ferieninselStammdatenId);
