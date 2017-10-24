@@ -47,7 +47,11 @@ export class TSRoleUtil {
     }
 
     public static getAdministratorRoles(): Array<TSRole> {
-        return [TSRole.SUPER_ADMIN, TSRole.ADMIN];
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.ADMINISTRATOR_SCHULAMT];
+    }
+
+    public static getSchulamtAdministratorRoles(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN, TSRole.ADMINISTRATOR_SCHULAMT];
     }
 
     public static getTraegerschaftInstitutionRoles(): Array<TSRole> {
@@ -71,7 +75,7 @@ export class TSRoleUtil {
     }
 
     public static getAdministratorRevisorRole(): Array<TSRole> {
-        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.REVISOR];
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.ADMINISTRATOR_SCHULAMT, TSRole.REVISOR];
     }
 
     public static getJugendamtRole(): Array<TSRole> {

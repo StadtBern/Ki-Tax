@@ -153,7 +153,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, ADMINISTRATOR_SCHULAMT })
 	public Collection<EbeguParameter> getJahresabhParameter() {
 		List<EbeguParameterKey> jahresabhParamsKey = Arrays.stream(EbeguParameterKey.values()).filter(ebeguParameterKey -> !ebeguParameterKey.isProGesuchsperiode()).collect(Collectors.toList());
 		return getEbeguParameterByKey(jahresabhParamsKey);

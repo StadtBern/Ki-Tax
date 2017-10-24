@@ -35,7 +35,7 @@ export class FerieninselStammdatenRS {
         this.ebeguRestUtil = ebeguRestUtil;
     }
 
-    private saveFerieninselStammdaten(stammdaten: TSFerieninselStammdaten): IPromise<TSFerieninselStammdaten> {
+    public saveFerieninselStammdaten(stammdaten: TSFerieninselStammdaten): IPromise<TSFerieninselStammdaten> {
         let stammdatenObj = {};
         stammdatenObj = this.ebeguRestUtil.ferieninselStammdatenToRestObject(stammdatenObj, stammdaten);
 
