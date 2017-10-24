@@ -26,6 +26,7 @@ import {getTSFeriennameValues, TSFerienname} from '../../../models/enums/TSFerie
 import TSFerieninselZeitraum from '../../../models/TSFerieninselZeitraum';
 import ITimeoutService = angular.ITimeoutService;
 import EbeguUtil from '../../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 
 let template = require('./ferieninselView.html');
 let style = require('./ferieninselView.less');
@@ -48,12 +49,15 @@ export class FerieninselViewController extends AbstractAdminViewController {
     ferieninselStammdatenList: TSFerieninselStammdaten[] = [];
     ferieninselStammdatenMap: { [key: string]: TSFerieninselStammdaten; } = {};
 
+    TSRoleUtil: TSRoleUtil;
+
 
     /* @ngInject */
     constructor(private gesuchsperiodeRS: GesuchsperiodeRS,
                 private ferieninselStammdatenRS: FerieninselStammdatenRS,
                 private $timeout: ITimeoutService, authServiceRS: AuthServiceRS) {
         super(authServiceRS);
+        this.TSRoleUtil = TSRoleUtil;
         $timeout(() => {
             this.readGesuchsperioden();
         });

@@ -48,7 +48,9 @@
             <div class="row">
                 <div class="col-md-12">
                     <form ng-submit="form.$valid && vm.submit()" name="vm.form" role="form" novalidate>
-                        <fieldset ng-disabled="vm.isReadonly()">
+                        <fieldset dv-enable-element
+                                  dv-enable-allowed-roles="vm.TSRoleUtil.getSchulamtAdministratorRoles()"
+                                  dv-enable-expression="!vm.isReadonly()">
 
                             <!-- Gesuchsperiode Detail -->
                             <div ng-if="vm.gesuchsperiode">
@@ -66,7 +68,8 @@
                                                 <span data-translate="{{ferien}}"></span>
                                             </h2>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-2" dv-show-element
+                                             dv-show-allowed-roles="vm.TSRoleUtil.getSchulamtAdministratorRoles()">
                                             <dv-loading-button type="button" button-click="vm.addFerieninselZeitraum(vm.getFerieninselStammdaten(ferien));"
                                                                button-class="dv-btn-operation"
                                                                title="{{'FERIENINSELZEITRAUM_ADD' | translate}}"
@@ -75,14 +78,15 @@
                                                 <span data-translate="FERIENINSELZEITRAUM_ADD"></span>
                                             </dv-loading-button>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-2" dv-show-element
+                                             dv-show-allowed-roles="vm.TSRoleUtil.getSchulamtAdministratorRoles()">
                                             <dv-loading-button type="button" button-click="vm.saveFerieninselStammdaten(vm.getFerieninselStammdaten(ferien));"
                                                                button-class="dv-btn-operation"
                                                                title="{{'FERIENINSELSTAMMDATEN_SAVE' | translate}}"
                                                                aria-label="{{'FERIENINSELSTAMMDATEN_SAVE'|translate}}"
                                                                button-disabled="vm.isSaveButtonDisabled(vm.getFerieninselStammdaten(ferien))">
                                                 <i class="fa fa-lg fa-floppy-o" aria-label="{{'FERIENINSELSTAMMDATEN_SAVE' | translate}}"></i>
-                                                <span data-translate="SAVE"></span>
+                                                <span data-translate="FERIENINSELSTAMMDATEN_SAVE"></span>
                                             </dv-loading-button>
                                         </div>
                                     </div>
@@ -110,7 +114,8 @@
                                                            ng-required="vm.isAnmeldeschlussRequired(vm.getFerieninselStammdaten(ferien))"
                                                            class="input-element">
                                             </dv-datepicker>
-                                            <dv-error-messages for="form[ferien + '_anmeldeschluss'].$error" class="error"></dv-error-messages>
+                                            <dv-error-messages input-id="{{ferien}}_anmeldeschluss" class="error"
+                                                               for="vm.form[ferien + '_anmeldeschluss'].$error"></dv-error-messages>
                                         </div>
                                         <div class="col-md-2">
                                             <dv-datepicker input-id="{{ferien}}_gueltigAb" name="{{ferien}}_gueltigAb"
@@ -118,7 +123,8 @@
                                                            ng-required="vm.isDatumAbRequired(vm.getFerieninselStammdaten(ferien).zeitraum, vm.getFerieninselStammdaten(ferien))"
                                                            class="input-element">
                                             </dv-datepicker>
-                                            <dv-error-messages for="form[ferien + '_gueltigAb'].$error" class="error"></dv-error-messages>
+                                            <dv-error-messages input-id="{{ferien}}_gueltigAb" class="error"
+                                                               for="vm.form[ferien + '_gueltigAb'].$error"></dv-error-messages>
                                         </div>
                                         <div class="col-md-2">
                                             <dv-datepicker input-id="{{ferien}}_gueltigBis" name="{{ferien}}_gueltigBis"
@@ -126,7 +132,8 @@
                                                            ng-required="vm.isDatumBisRequired(vm.getFerieninselStammdaten(ferien).zeitraum, vm.getFerieninselStammdaten(ferien))"
                                                            class="input-element">
                                             </dv-datepicker>
-                                            <dv-error-messages for="form[ferien + '_gueltigBis'].$error" class="error"></dv-error-messages>
+                                            <dv-error-messages input-id="{{ferien}}_gueltigBis" class="error"
+                                                               for="vm.form[ferien + '_gueltigBis'].$error"></dv-error-messages>
                                         </div>
                                     </div>
 
@@ -138,7 +145,8 @@
                                                            ng-required="vm.isDatumAbRequired(zeitraum, vm.getFerieninselStammdaten(ferien))"
                                                            class="input-element">
                                             </dv-datepicker>
-                                            <dv-error-messages for="form[zeitraum + '_gueltigAb'].$error" class="error"></dv-error-messages>
+                                            <dv-error-messages input-id="{{zeitraum}}_gueltigAb" class="error"
+                                                               for="vm.form[zeitraum + '_gueltigAb'].$error"></dv-error-messages>
                                         </div>
                                         <div class="col-md-2">
                                             <dv-datepicker input-id="{{zeitraum}}_gueltigBis" name="{{zeitraum}}_gueltigBis"
@@ -146,7 +154,8 @@
                                                            ng-required="vm.isDatumBisRequired(zeitraum, vm.getFerieninselStammdaten(ferien))"
                                                            class="input-element">
                                             </dv-datepicker>
-                                            <dv-error-messages for="form[zeitraum + '_gueltigBis'].$error" class="error"></dv-error-messages>
+                                            <dv-error-messages input-id="{{zeitraum}}_gueltigBis" class="error"
+                                                               for="vm.form[zeitraum + '_gueltigBis'].$error"></dv-error-messages>
                                         </div>
                                         <div class="col-md-1">
                                             <dv-loading-button type="button" button-click="vm.removeFerieninselZeitraum(vm.getFerieninselStammdaten(ferien), zeitraum);"
