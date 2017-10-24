@@ -170,11 +170,11 @@ export class FerieninselViewController extends AbstractAdminViewController {
         this.form.$setUntouched();
 
         // iterate over all from properties
-        angular.forEach(this.form, function(ctrl, name) {
+        angular.forEach(this.form, (ctrl, name) => {
             // ignore angular fields and functions
-            if (name.indexOf('$') != 0) {
+            if (name.indexOf('$') !== 0) {
                 // iterate over all $errors for each field
-                angular.forEach(ctrl.$error, function(value, name) {
+                angular.forEach(ctrl.$error, (value, name) => {
                     // reset validity
                     ctrl.$setValidity(name, null);
                 });
