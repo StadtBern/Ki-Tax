@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -330,11 +331,12 @@ public class JaxBConverter {
 	 * @param dateRangedJAXP AbstractDateRanged jax where to take the date from
 	 * @param dateRangedEntity AbstractDateRanged entity where to store the date into
 	 */
-	private void convertAbstractDateRangedFieldsToEntity(final JaxAbstractDateRangedDTO dateRangedJAXP, final AbstractDateRangedEntity dateRangedEntity) {
+	private AbstractDateRangedEntity convertAbstractDateRangedFieldsToEntity(final JaxAbstractDateRangedDTO dateRangedJAXP, final AbstractDateRangedEntity dateRangedEntity) {
 		convertAbstractFieldsToEntity(dateRangedJAXP, dateRangedEntity);
 		final LocalDate dateAb = dateRangedJAXP.getGueltigAb() == null ? LocalDate.now() : dateRangedJAXP.getGueltigAb();
 		final LocalDate dateBis = dateRangedJAXP.getGueltigBis() == null ? Constants.END_OF_TIME : dateRangedJAXP.getGueltigBis();
 		dateRangedEntity.setGueltigkeit(new DateRange(dateAb, dateBis));
+		return dateRangedEntity;
 	}
 
 	/***
@@ -2730,12 +2732,26 @@ public class JaxBConverter {
 		ferieninselStammdaten.setFerienname(ferieninselStammdatenJAX.getFerienname());
 		ferieninselStammdaten.setAnmeldeschluss(ferieninselStammdatenJAX.getAnmeldeschluss());
 		ferieninselStammdaten.setGesuchsperiode(gesuchsperiodeToEntity(ferieninselStammdatenJAX.getGesuchsperiode(), new Gesuchsperiode()));
-		for (JaxFerieninselZeitraum jaxFerieninselZeitraum : ferieninselStammdatenJAX.getZeitraumList()) {
-			FerieninselZeitraum ferieninselZeitraum = new FerieninselZeitraum();
-			convertAbstractDateRangedFieldsToEntity(jaxFerieninselZeitraum, ferieninselZeitraum);
-			ferieninselStammdaten.getZeitraumList().add(ferieninselZeitraum);
-		}
+		ferieninselZeitraumListToEntity(ferieninselStammdatenJAX.getZeitraumList(), ferieninselStammdaten.getZeitraumList());
 		return ferieninselStammdaten;
+	}
+
+	private void ferieninselZeitraumListToEntity(final List<JaxFerieninselZeitraum> zeitraeumeListJAX, final Collection<FerieninselZeitraum> zeitraeumeList) {
+		final Set<FerieninselZeitraum> transformedZeitraeume = new TreeSet<>();
+		for (final JaxFerieninselZeitraum zeitraumJAX : zeitraeumeListJAX) {
+			final FerieninselZeitraum zeitraumToMergeWith = zeitraeumeList
+				.stream()
+				.filter(existingZeitraum -> existingZeitraum.getId().equals(zeitraumJAX.getId()))
+				.reduce(StreamsUtil.toOnlyElement())
+				.orElse(new FerieninselZeitraum());
+			final FerieninselZeitraum zeitraumToAdd = (FerieninselZeitraum) convertAbstractDateRangedFieldsToEntity(zeitraumJAX, zeitraumToMergeWith);
+			final boolean added = transformedZeitraeume.add(zeitraumToAdd);
+			if (!added) {
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + "{}", zeitraumToAdd);
+			}
+		}
+		zeitraeumeList.clear();
+		zeitraeumeList.addAll(transformedZeitraeume);
 	}
 
 	public JaxFerieninselStammdaten ferieninselStammdatenToJAX(FerieninselStammdaten persistedFerieninselStammdaten) {
@@ -2745,6 +2761,7 @@ public class JaxBConverter {
 		jaxFerieninselStammdaten.setFerienname(persistedFerieninselStammdaten.getFerienname());
 		jaxFerieninselStammdaten.setAnmeldeschluss(persistedFerieninselStammdaten.getAnmeldeschluss());
 		jaxFerieninselStammdaten.setGesuchsperiode(gesuchsperiodeToJAX(persistedFerieninselStammdaten.getGesuchsperiode()));
+		Collections.sort(persistedFerieninselStammdaten.getZeitraumList());
 		for (FerieninselZeitraum ferieninselZeitraum : persistedFerieninselStammdaten.getZeitraumList()) {
 			JaxFerieninselZeitraum jaxFerieninselZeitraum = new JaxFerieninselZeitraum();
 			convertAbstractDateRangedFieldsToJAX(ferieninselZeitraum, jaxFerieninselZeitraum);
