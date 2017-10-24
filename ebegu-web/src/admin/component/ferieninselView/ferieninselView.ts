@@ -57,7 +57,7 @@ export class FerieninselViewController extends AbstractAdminViewController {
                 private $timeout: ITimeoutService, authServiceRS: AuthServiceRS) {
         super(authServiceRS);
         this.TSRoleUtil = TSRoleUtil;
-        $timeout(() => {
+        this.$timeout(() => {
             this.readGesuchsperioden();
         });
     }
@@ -84,6 +84,7 @@ export class FerieninselViewController extends AbstractAdminViewController {
             for (let obj of ferieninselStammdatenList) {
                 this.ferieninselStammdatenMap[obj.ferienname] = obj;
             }
+            this.resetErrors();
         });
     }
 
@@ -157,5 +158,27 @@ export class FerieninselViewController extends AbstractAdminViewController {
        return EbeguUtil.isNotNullOrUndefined(ferieninselStammdaten.anmeldeschluss)
             || (EbeguUtil.isNotNullOrUndefined(ferieninselZeitraum.gueltigkeit)
                && EbeguUtil.isNotNullOrUndefined(ferieninselZeitraum.gueltigkeit.gueltigAb));
+    }
+
+    /**
+     * Alle errors werden zurueckgesetzt. Dies ist notwendig, weil beim Wechseln zwischen Gesuchsperiode, das Form nicht neugemacht wird.
+     * Deswegen werden alle alten Daten bzw. Errors beibehalten und deshalb falsche Failures gegeben. Ausserdem wird das Form als Pristine gesetzt
+     * damit keine Reste aus den alten Daten uebernommen werden.
+     */
+    private resetErrors() {
+        this.form.$setPristine();
+        this.form.$setUntouched();
+
+        // iterate over all from properties
+        angular.forEach(this.form, function(ctrl, name) {
+            // ignore angular fields and functions
+            if (name.indexOf('$') != 0) {
+                // iterate over all $errors for each field
+                angular.forEach(ctrl.$error, function(value, name) {
+                    // reset validity
+                    ctrl.$setValidity(name, null);
+                });
+            }
+        });
     }
 }
