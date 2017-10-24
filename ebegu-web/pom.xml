@@ -26,7 +26,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <npm.arguments>run build:dev -- --no-color --progress false</npm.arguments>
+        <npm.arguments>run build:dev -- --no-color --progress=false</npm.arguments>
         <skipTests>false</skipTests>
     </properties>
 
@@ -36,7 +36,7 @@
             <!--stellt sich die frage ob wir zwei builds machen, ist mir noch unklar-->
             <id>release-mode</id>
             <properties>
-                <npm.arguments>run build:prod -- --no-color --progress false</npm.arguments>
+                <npm.arguments>run build:prod -- --no-color --progress=false</npm.arguments>
             </properties>
         </profile>
     </profiles>
