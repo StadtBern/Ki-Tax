@@ -51,7 +51,7 @@ public class FerieninselStammdaten extends AbstractEntity {
 	@NotNull
 	@Valid
 	@SortNatural
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<FerieninselZeitraum> zeitraumList = new ArrayList<>();
 
 	@NotNull
