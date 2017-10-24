@@ -187,16 +187,21 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 		case STEUERAMT:
 			break;
 		case SACHBEARBEITER_JA:
-			// Jugendamt-Mitarbeiter duerfen auch Faelle sehen, die noch gar keine Kinder/Betreuungen haben.
-			// Wenn aber solche erfasst sind, dann duerfen sie nur diejenigen sehen, die nicht nur Schulamt haben
-			// zudem muss auch der status ensprechend sein
-			Predicate predicateKeineKinder = kindContainers.isNull();
-			Predicate predicateKeineBetreuungen = betreuungen.isNull();
-			Predicate predicateKeineInstitutionsstammdaten = institutionstammdaten.isNull();
-			Predicate predicateKeineInstitution = institution.isNull();
-			Predicate predicateAngebotstyp = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
-			Predicate predicateRichtigerAngebotstypOderNichtAusgefuellt = cb.or(predicateKeineKinder, predicateKeineBetreuungen, predicateKeineInstitutionsstammdaten, predicateKeineInstitution, predicateAngebotstyp);
-			predicates.add(predicateRichtigerAngebotstypOderNichtAusgefuellt);
+			// (deprecated- warten auf Datenschutz) Jugendamt-Mitarbeiter duerfen auch Faelle sehen, die noch gar keine Kinder/Betreuungen haben.
+			// (deprecated- warten auf Datenschutz) Wenn aber solche erfasst sind, dann duerfen sie nur diejenigen sehen, die nicht nur Schulamt haben
+			// (deprecated- warten auf Datenschutz) zudem muss auch der status ensprechend sein
+
+			//todo dieser Predicate macht keinen Sinn mehr, weil es sein kann, dass das JA ein Gesuch bearbeiten muss, das nur Schulamtangebote hat. Dies sollte allerdings
+			// kein Problem mehr sein wenn es erlaubt wird, dass JA und SCH alle Gesuch sehen duerfen. Dies bleibt auskommentiert bis die Entscheidung getroffen ist
+//			Predicate predicateKeineKinder = kindContainers.isNull();
+//			Predicate predicateKeineBetreuungen = betreuungen.isNull();
+//			Predicate predicateKeineInstitutionsstammdaten = institutionstammdaten.isNull();
+//			Predicate predicateKeineInstitution = institution.isNull();
+//			Predicate predicateAngebotstyp = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
+//			Predicate predicateRichtigerAngebotstypOderNichtAusgefuellt = cb.or(predicateKeineKinder, predicateKeineBetreuungen, predicateKeineInstitutionsstammdaten, predicateKeineInstitution, predicateAngebotstyp);
+
+//			Predicate predicateRichtigerAngebotstypOderNichtAusgefuellt = cb.or(predicateKeineKinder, predicateKeineBetreuungen, predicateKeineInstitutionsstammdaten, predicateKeineInstitution, predicateInstitution);
+//			predicates.add(predicateRichtigerAngebotstypOderNichtAusgefuellt);
 			break;
 		case SACHBEARBEITER_TRAEGERSCHAFT:
 			predicates.add(cb.equal(institution.get(Institution_.traegerschaft), user.getTraegerschaft()));
