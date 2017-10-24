@@ -332,5 +332,7 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
 	<entity class="ch.dvbern.ebegu.entities.Modul"/>
 	<entity class="ch.dvbern.ebegu.entities.FerieninselStammdaten"/>
 	<entity class="ch.dvbern.ebegu.entities.FerieninselZeitraum"/>
+	<entity class="ch.dvbern.ebegu.entities.BelegungFerieninsel"/>
+	<entity class="ch.dvbern.ebegu.entities.BelegungFerieninselTag"/>
 
 </entity-mappings>
