@@ -1121,6 +1121,15 @@
     "FREISCHALTUNG_TAGESSCHULE_DIALOG_TITLE": "Wollen Sie die Anmeldung für Tagesschulen wirklich freischalten?",
     "FREISCHALTUNG_TAGESSCHULE_DIALOG_TEXT": "Ab diesem Zeitpunkt können Gesuchsteller sich für Tagesschulen anmelden.",
     "FREISCHALTUNG_TAGESSCHULE_INFO": "Die Anmeldung ist im Moment noch nicht möglich. Die Funktionalität wird erst mit dem Versand der Stundenpläne aufgeschaltet.",
-    "FREISCHALTUNG_TAGESSCHULE_AB_INFO": "Die Anmeldung ist im Moment noch nicht möglich. Die Funktionalität wird erst mit dem Versand der Stundenpläne am {{termin}} aufgeschaltet."
-
+    "FREISCHALTUNG_TAGESSCHULE_AB_INFO": "Die Anmeldung ist im Moment noch nicht möglich. Die Funktionalität wird erst mit dem Versand der Stundenpläne am {{termin}} aufgeschaltet.",
+    "FERIENINSEL": "Ferieninsel",
+    "SOMMERFERIEN": "Sommerferien",
+    "HERBSTFERIEN": "Herbstferien",
+    "SPORTFERIEN": "Sportferien",
+    "FRUEHLINGSFERIEN": "Frühlingsferien",
+    "ANMELDESCHLUSS": "Anmeldeschluss",
+    "FERIENINSEL_STAMMDATEN_INFO": "Geben Sie hier die Daten der Ferieninsel pro Ferien ein. Erst wenn Sie mindestens einen Zeitraum eingegeben haben, sind Anmeldungen für diese Ferieninsel möglich.",
+    "FERIENINSELZEITRAUM_ADD": "Zeitraum hinzufügen",
+    "FERIENINSELSTAMMDATEN_SAVE": "Speichern",
+    "FERIENINSEL_TITLE": "Daten der Ferieninseln"
 }
