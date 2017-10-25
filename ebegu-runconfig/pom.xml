@@ -34,6 +34,12 @@
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
+        <dependency>
+            <groupId>ch.dvbern.ebegu</groupId>
+            <artifactId>ebegu-web</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+        </dependency>
     </dependencies>
 
     <profiles>
