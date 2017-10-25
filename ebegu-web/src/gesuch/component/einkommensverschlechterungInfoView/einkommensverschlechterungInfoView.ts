@@ -347,5 +347,8 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
             || (this.isJugendamt() && this.showEkvi() && this.showJahrPlus2());
     }
 
+    public isFinanzielleSituationRequired(): boolean {
+        return this.gesuchModelManager.isFinanzielleSituationRequired();
+    }
 }
 
