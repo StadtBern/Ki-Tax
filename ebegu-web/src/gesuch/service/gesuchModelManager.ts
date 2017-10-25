@@ -1135,10 +1135,10 @@ export default class GesuchModelManager {
      * Returns false also if there are no Kinder with betreuungsbedarf
      */
     public areThereOnlySchulamtAngebote(): boolean {
-        if (!this.gesuch) {
+        if (!this.getGesuch()) {
             return false;
         }
-        return this.gesuch.areThereOnlySchulamtAngebote();
+        return this.getGesuch().areThereOnlySchulamtAngebote();
     }
 
     /**
@@ -1379,7 +1379,7 @@ export default class GesuchModelManager {
     }
 
     public isFinanzielleSituationRequired(): boolean {
-        return !this.getGesuch().areThereOnlySchulamtAngebote() || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht
+        return !this.areThereOnlySchulamtAngebote() || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht
             && !this.getGesuch().extractFamiliensituation().sozialhilfeBezueger);
     }
 }
