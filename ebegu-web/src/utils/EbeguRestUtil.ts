@@ -1184,7 +1184,7 @@ export default class EbeguRestUtil {
         restBetreuung.betreuungMutiert = betreuung.betreuungMutiert;
         restBetreuung.abwesenheitMutiert = betreuung.abwesenheitMutiert;
         restBetreuung.gueltig = betreuung.gueltig;
-        restBetreuung.module = this.belegungToRestObject({}, betreuung.belegung);
+        restBetreuung.belegung = this.belegungToRestObject({}, betreuung.belegung);
         return restBetreuung;
     }
 
@@ -1363,6 +1363,7 @@ export default class EbeguRestUtil {
             this.abstractDateRangeEntityToRestObject(restGesuchsperiode, gesuchsperiode);
             restGesuchsperiode.status = gesuchsperiode.status;
             restGesuchsperiode.datumFreischaltungTagesschule = DateUtil.momentToLocalDate(gesuchsperiode.datumFreischaltungTagesschule);
+            restGesuchsperiode.datumErsterSchultag = DateUtil.momentToLocalDate(gesuchsperiode.datumErsterSchultag);
             return restGesuchsperiode;
         }
         return undefined;
@@ -1373,6 +1374,7 @@ export default class EbeguRestUtil {
             this.parseDateRangeEntity(gesuchsperiodeTS, gesuchsperiodeFromServer);
             gesuchsperiodeTS.status = gesuchsperiodeFromServer.status;
             gesuchsperiodeTS.datumFreischaltungTagesschule = DateUtil.localDateToMoment(gesuchsperiodeFromServer.datumFreischaltungTagesschule);
+            gesuchsperiodeTS.datumErsterSchultag = DateUtil.localDateToMoment(gesuchsperiodeFromServer.datumErsterSchultag);
             return gesuchsperiodeTS;
         }
         return undefined;
@@ -2341,6 +2343,8 @@ export default class EbeguRestUtil {
         if (belegungFromServer) {
             this.parseAbstractEntity(belegungTS, belegungFromServer);
             belegungTS.module = this.parseModuleArray(belegungFromServer.module);
+            belegungTS.eintrittsdatum = DateUtil.localDateToMoment(belegungFromServer.eintrittsdatum);
+            return belegungTS;
         }
         return undefined;
     }
@@ -2349,6 +2353,8 @@ export default class EbeguRestUtil {
         if (belegungTS) {
             this.abstractEntityToRestObject(restBelegung, belegungTS);
             restBelegung.module = this.moduleArrayToRestObject(belegungTS.module);
+            restBelegung.eintrittsdatum = DateUtil.momentToLocalDate(belegungTS.eintrittsdatum);
+            return restBelegung;
         }
         return undefined;
     }
@@ -2371,7 +2377,13 @@ export default class EbeguRestUtil {
             ferieninselStammdatenTS.ferienname = receivedFerieninselStammdaten.ferienname;
             ferieninselStammdatenTS.anmeldeschluss = DateUtil.localDateToMoment(receivedFerieninselStammdaten.anmeldeschluss);
             ferieninselStammdatenTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), receivedFerieninselStammdaten.gesuchsperiode);
-            for (let i = 0; i < receivedFerieninselStammdaten.zeitraumList.length; i++) {
+            if (receivedFerieninselStammdaten.zeitraumList[0]) {
+                let firstZeitraum: TSFerieninselZeitraum = new TSFerieninselZeitraum();
+                this.parseDateRangeEntity(firstZeitraum, receivedFerieninselStammdaten.zeitraumList[0]);
+                ferieninselStammdatenTS.zeitraum = firstZeitraum;
+            }
+            ferieninselStammdatenTS.zeitraumList = [];
+            for (let i = 1; i < receivedFerieninselStammdaten.zeitraumList.length; i++) {
                 let zeitraum: TSFerieninselZeitraum = new TSFerieninselZeitraum();
                 this.parseDateRangeEntity(zeitraum, receivedFerieninselStammdaten.zeitraumList[i]);
                 ferieninselStammdatenTS.zeitraumList.push(zeitraum);
@@ -2381,18 +2393,25 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public ferieninselStammdatenToRestObject(restFerieninselStammdaten: any, ferieninselStammdatenTS: TSFerieninselStammdaten): TSFerieninselStammdaten {
+    public ferieninselStammdatenToRestObject(restFerieninselStammdaten: any, ferieninselStammdatenTS: TSFerieninselStammdaten): any {
         if (ferieninselStammdatenTS) {
             this.abstractEntityToRestObject(restFerieninselStammdaten, ferieninselStammdatenTS);
             restFerieninselStammdaten.ferienname = ferieninselStammdatenTS.ferienname;
             restFerieninselStammdaten.anmeldeschluss = DateUtil.momentToLocalDate(ferieninselStammdatenTS.anmeldeschluss);
             restFerieninselStammdaten.gesuchsperiode = this.gesuchsperiodeToRestObject({}, ferieninselStammdatenTS.gesuchsperiode);
-            for (let i = 0; i < ferieninselStammdatenTS.zeitraumList.length; i++) {
-                let zeitraum: any;
-                this.abstractDateRangeEntityToRestObject(zeitraum, ferieninselStammdatenTS.zeitraumList[i]);
-                ferieninselStammdatenTS.zeitraumList.push(zeitraum);
+            if (ferieninselStammdatenTS.zeitraum) {
+                let firstZeitraum: any = {};
+                this.abstractDateRangeEntityToRestObject(firstZeitraum, ferieninselStammdatenTS.zeitraum);
+                restFerieninselStammdaten.zeitraumList = [];
+                restFerieninselStammdaten.zeitraumList[0] = firstZeitraum;
             }
-
+            if (ferieninselStammdatenTS.zeitraumList) {
+                for (let i = 0; i < ferieninselStammdatenTS.zeitraumList.length; i++) {
+                    let zeitraum: any = {};
+                    this.abstractDateRangeEntityToRestObject(zeitraum, ferieninselStammdatenTS.zeitraumList[i]);
+                    restFerieninselStammdaten.zeitraumList[i + 1] = zeitraum;
+                }
+            }
             return restFerieninselStammdaten;
         }
         return undefined;

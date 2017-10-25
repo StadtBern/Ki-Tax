@@ -245,4 +245,12 @@ export default class EbeguUtil {
         }
     }
 
+    public static isNullOrUndefined(data: any): boolean {
+        return data === null || data === undefined;
+    }
+
+    public static isNotNullOrUndefined(data: any): boolean {
+        return !EbeguUtil.isNullOrUndefined(data);
+    }
+
 }

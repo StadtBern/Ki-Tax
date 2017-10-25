@@ -22,11 +22,13 @@ export default class TSGesuchsperiode extends TSAbstractDateRangedEntity {
 
     private _status: TSGesuchsperiodeStatus;
     private _datumFreischaltungTagesschule: moment.Moment;
+    private _datumErsterSchultag: moment.Moment;
 
-    constructor(status?: TSGesuchsperiodeStatus, gueltigkeit?: TSDateRange, datumFreischaltungTagesschule?: moment.Moment) {
+    constructor(status?: TSGesuchsperiodeStatus, gueltigkeit?: TSDateRange, datumFreischaltungTagesschule?: moment.Moment, datumErsterSchultag?: moment.Moment) {
         super(gueltigkeit);
         this._status = status;
         this._datumFreischaltungTagesschule = datumFreischaltungTagesschule;
+        this._datumErsterSchultag = datumErsterSchultag;
     }
 
     get status(): TSGesuchsperiodeStatus {
@@ -43,6 +45,14 @@ export default class TSGesuchsperiode extends TSAbstractDateRangedEntity {
 
     set datumFreischaltungTagesschule(value: moment.Moment) {
         this._datumFreischaltungTagesschule = value;
+    }
+
+    get datumErsterSchultag(): moment.Moment {
+        return this._datumErsterSchultag;
+    }
+
+    set datumErsterSchultag(value: moment.Moment) {
+        this._datumErsterSchultag = value;
     }
 
     get gesuchsperiodeString(): string {

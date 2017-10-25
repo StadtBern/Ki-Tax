@@ -29,7 +29,6 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import DateUtil from '../../../utils/DateUtil';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
@@ -46,6 +45,8 @@ import ITimeoutService = angular.ITimeoutService;
 import ILogService = angular.ILogService;
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import ITranslateService = angular.translate.ITranslateService;
+import TSBelegung from '../../../models/TSBelegung';
+import DateUtil from '../../../utils/DateUtil';
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -183,6 +184,14 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                     // Fuer Tagesschule setzen wir eine Dummy-Tagesschule als Institution
                     this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
                     this.setSelectedInstitutionStammdaten();
+                    if (!this.getBetreuungModel().belegung) {
+                        this.getBetreuungModel().belegung = new TSBelegung();
+                        // Default Eintrittsdatum ist erster Schultag, wenn noch in Zukunft
+                        let ersterSchultag: moment.Moment = this.gesuchModelManager.getGesuchsperiode().datumErsterSchultag;
+                        if (DateUtil.today().isBefore(ersterSchultag)) {
+                            this.getBetreuungModel().belegung.eintrittsdatum = ersterSchultag;
+                        }
+                    }
                 } else {
                     // Ferieninsel. Vorerst mal Status SCHULAMT, spaeter kommt dann ein eigener Status
                     this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
