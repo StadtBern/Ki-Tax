@@ -14,7 +14,6 @@
  */
 
 import {IComponentOptions} from 'angular';
-import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import TSFinanzielleSituationContainer from '../../../models/TSFinanzielleSituationContainer';
@@ -22,15 +21,12 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSRole} from '../../../models/enums/TSRole';
-import TSFinanzModel from '../../../models/TSFinanzModel';
 import ITimeoutService = angular.ITimeoutService;
-import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import IScope = angular.IScope;
 import ITranslateService = angular.translate.ITranslateService;
+import {FinanzielleSituationAbstractViewController} from '../finanzielleSituationAbstractView';
 
 let template = require('./finanzielleSituationView.html');
 require('./finanzielleSituationView.less');
@@ -42,36 +38,27 @@ export class FinanzielleSituationViewComponentConfig implements IComponentOption
     controllerAs = 'vm';
 }
 
-export class FinanzielleSituationViewController extends AbstractGesuchViewController<TSFinanzModel> {
+export class FinanzielleSituationViewController extends FinanzielleSituationAbstractViewController {
 
-    finanzielleSituationRequired: boolean;
-    areThereOnlySchulamtangebote: boolean;
     public showSelbstaendig: boolean;
     public showSelbstaendigGS: boolean;
-    allowedRoles: Array<TSRole>;
-
-    private initialModel: TSFinanzModel;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService',
         'WizardStepManager', '$q', '$scope', '$translate', '$timeout'];
 
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, private $translate: ITranslateService, $timeout: ITimeoutService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FINANZIELLE_SITUATION, $timeout);
+                berechnungsManager: BerechnungsManager, errorService: ErrorService, wizardStepManager: WizardStepManager,
+                $q: IQService, $scope: IScope, private $translate: ITranslateService, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, errorService, $q, wizardStepManager, $scope, $timeout);
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         if (!parsedNum) {
             parsedNum = 1;
         }
-        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
-        this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), parsedNum);
-        this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
-        this.initialModel = angular.copy(this.model);
+        this.initModel(parsedNum);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
         this.initViewModel();
         this.calculate();
-        this.areThereOnlySchulamtangebote = this.gesuchModelManager.areThereOnlySchulamtAngebote(); // so we load it just once
     }
 
     private initViewModel() {
@@ -125,20 +112,6 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         }
     }
 
-    private save(): IPromise<TSFinanzielleSituationContainer> {
-        if (this.isGesuchValid()) {
-            this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
-            if (!this.form.$dirty) {
-                // If there are no changes in form we don't need anything to update on Server and we could return the
-                // promise immediately
-                return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer);
-            }
-            this.errorService.clearAll();
-            return this.gesuchModelManager.saveFinanzielleSituation();
-        }
-        return undefined;
-    }
-
     calculate() {
         this.berechnungsManager.calculateFinanzielleSituationTemp(this.model);
     }
@@ -185,9 +158,5 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         return (this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahr === null || this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahr === undefined)
             && (this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1 === null || this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1 === undefined)
             && (this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2 === null || this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2 === undefined);
-    }
-
-    public isFinanziellesituationRequired(): boolean {
-        return this.finanzielleSituationRequired;
     }
 }

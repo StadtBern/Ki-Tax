@@ -13,21 +13,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentOptions, IPromise} from 'angular';
-import AbstractGesuchViewController from '../abstractGesuchView';
+import {IComponentOptions} from 'angular';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSFinanzielleSituation from '../../../models/TSFinanzielleSituation';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import TSGesuch from '../../../models/TSGesuch';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import TSFinanzModel from '../../../models/TSFinanzModel';
 import IQService = angular.IQService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
+import {FinanzielleSituationAbstractViewController} from '../finanzielleSituationAbstractView';
 
 let template = require('./finanzielleSituationStartView.html');
 require('./finanzielleSituationStartView.less');
@@ -39,27 +35,18 @@ export class FinanzielleSituationStartViewComponentConfig implements IComponentO
     controllerAs = 'vm';
 }
 
-export class FinanzielleSituationStartViewController extends AbstractGesuchViewController<TSFinanzModel> {
-
-    finanzielleSituationRequired: boolean;
-    areThereOnlySchulamtangebote: boolean;
-    allowedRoles: Array<TSRoleUtil>;
-    private initialModel: TSFinanzModel;
+export class FinanzielleSituationStartViewController extends FinanzielleSituationAbstractViewController {
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService',
         'WizardStepManager', '$q', '$scope', '$timeout'];
 
     /* @ngInject */
-    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, $timeout: ITimeoutService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FINANZIELLE_SITUATION, $timeout);
+    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, errorService: ErrorService,
+                wizardStepManager: WizardStepManager, $q: IQService, $scope: IScope, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, errorService, $q, wizardStepManager, $scope, $timeout);
 
-        this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
-        this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
-
-        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
+        this.initModel(null);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
-        this.areThereOnlySchulamtangebote = this.gesuchModelManager.areThereOnlySchulamtAngebote(); // so we load it just once
     }
 
     showSteuerveranlagung(): boolean {
@@ -70,39 +57,12 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
         return this.getFinanzielleSituationGS1().steuerveranlagungErhalten === false;
     }
 
-    private save(): IPromise<TSGesuch> {
-        if (this.isGesuchValid()) {
-            this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
-            this.initialModel = angular.copy(this.model);
-            if (!this.form.$dirty) {
-                // If there are no changes in form we don't need anything to update on Server and we could return the
-                // promise immediately
-                return this.$q.when(this.gesuchModelManager.getGesuch());
-            }
-            this.errorService.clearAll();
-            return this.gesuchModelManager.updateGesuch()
-                .then((gesuch: TSGesuch) => {
-                    // Noetig, da nur das ganze Gesuch upgedated wird und die Aeenderng bei der FinSit sonst nicht
-                    // bemerkt werden
-                    if (this.gesuchModelManager.getGesuch().isMutation()) {
-                        this.wizardStepManager.updateCurrentWizardStepStatusMutiert();
-                    }
-                    return gesuch;
-                });
-        }
-        return undefined;
-    }
-
     public getFinanzielleSituationGS1(): TSFinanzielleSituation {
         return this.model.finanzielleSituationContainerGS1.finanzielleSituationJA;
     }
 
     private getFinanzielleSituationGS2(): TSFinanzielleSituation {
         return this.model.finanzielleSituationContainerGS2.finanzielleSituationJA;
-    }
-
-    public isFinanziellesituationRequired(): boolean {
-        return this.finanzielleSituationRequired;
     }
 
     public getMaxMassgebendesEinkommen(): string {

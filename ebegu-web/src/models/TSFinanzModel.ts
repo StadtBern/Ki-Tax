@@ -85,22 +85,22 @@ export default class TSFinanzModel {
 
     public copyFinSitDataFromGesuch(gesuch: TSGesuch) {
 
-        if (gesuch.extractFamiliensituation().gemeinsameSteuererklaerung) {
-            this.gemeinsameSteuererklaerung = angular.copy(gesuch.extractFamiliensituation().gemeinsameSteuererklaerung);
-        } else {
-            this.gemeinsameSteuererklaerung = false;
-        }
-        if (gesuch.extractFamiliensituation().sozialhilfeBezueger) {
-            this.sozialhilfeBezueger = angular.copy(gesuch.extractFamiliensituation().sozialhilfeBezueger);
-        }
-        if (gesuch.extractFamiliensituation().verguenstigungGewuenscht) {
-            this.verguenstigungGewuenscht = angular.copy(gesuch.extractFamiliensituation().verguenstigungGewuenscht);
-        }
+        this.gemeinsameSteuererklaerung = this.getCopiedValueOrFalse(gesuch.extractFamiliensituation().gemeinsameSteuererklaerung);
+        this.sozialhilfeBezueger = this.getCopiedValueOrFalse(gesuch.extractFamiliensituation().sozialhilfeBezueger);
+        this.verguenstigungGewuenscht = this.getCopiedValueOrFalse(gesuch.extractFamiliensituation().verguenstigungGewuenscht);
         this.finanzielleSituationContainerGS1 = angular.copy(gesuch.gesuchsteller1.finanzielleSituationContainer);
         if (gesuch.gesuchsteller2) {
             this.finanzielleSituationContainerGS2 = angular.copy(gesuch.gesuchsteller2.finanzielleSituationContainer);
         }
         this.initFinSit();
+    }
+
+    private getCopiedValueOrFalse(value: boolean): boolean {
+        if (value) {
+            return angular.copy(value);
+        } else {
+            return false;
+        }
     }
 
     copyEkvDataFromGesuch(gesuch: TSGesuch) {
