@@ -62,6 +62,8 @@
     "FILE_LOESCHEN": "Wollen Sie das Dokument wirklich löschen",
     "FINANZIELLE_SITUATION": "Finanzielle Situation {{gesuchsteller}} {{basisjahr}}",
     "FINANZIELLE_SITUATION_RESULTATE": "Resultate Finanzielle Situation {{basisjahr}}",
+    "FINANZIELLE_SITUATION_SOZIALHILFE_BEZUEGER": "Beziehen Sie wirtschaftliche Sozialhilfe?",
+    "FINANZIELLE_SITUATION_VERGUENSTIGUNG_GEWUENSCHT": "Wünschen Sie einen vergünstigten Betreuungsplatz (Massgebendes Einkommen < CHF {{maxEinkommen}}.-)?",
     "FINANZIELLE_SITUATION_STEK_GEMEINSAM": "Haben Sie eine gemeinsame Steuererklärung {{basisjahr}} mit {{namegs2}} erhalten?",
     "FINANZIELLE_SITUATION_STEUERVERANLAGUNG": "Haben Sie Ihre Steuerveranlagung {{basisjahr}} erhalten?",
     "FINANZIELLE_SITUATION_STEUERERKLAERUNG": "Haben Sie die Steuererklärung für das Jahr {{basisjahr}} ausgefüllt?",

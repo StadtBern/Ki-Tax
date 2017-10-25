@@ -44,6 +44,8 @@ export class FinanzielleSituationViewComponentConfig implements IComponentOption
 
 export class FinanzielleSituationViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
+    finanzielleSituationRequired: boolean;
+    areThereOnlySchulamtangebote: boolean;
     public showSelbstaendig: boolean;
     public showSelbstaendigGS: boolean;
     allowedRoles: Array<TSRole>;
@@ -69,6 +71,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
         this.initViewModel();
         this.calculate();
+        this.areThereOnlySchulamtangebote = this.gesuchModelManager.areThereOnlySchulamtAngebote(); // so we load it just once
     }
 
     private initViewModel() {
@@ -182,5 +185,9 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         return (this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahr === null || this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahr === undefined)
             && (this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1 === null || this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1 === undefined)
             && (this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2 === null || this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2 === undefined);
+    }
+
+    public isFinanziellesituationRequired(): boolean {
+        return this.finanzielleSituationRequired;
     }
 }

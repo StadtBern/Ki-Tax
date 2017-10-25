@@ -41,6 +41,8 @@ export class FinanzielleSituationStartViewComponentConfig implements IComponentO
 
 export class FinanzielleSituationStartViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
+    finanzielleSituationRequired: boolean;
+    areThereOnlySchulamtangebote: boolean;
     allowedRoles: Array<TSRoleUtil>;
     private initialModel: TSFinanzModel;
 
@@ -57,6 +59,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
 
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
+        this.areThereOnlySchulamtangebote = this.gesuchModelManager.areThereOnlySchulamtAngebote(); // so we load it just once
     }
 
     showSteuerveranlagung(): boolean {
@@ -96,6 +99,19 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
 
     private getFinanzielleSituationGS2(): TSFinanzielleSituation {
         return this.model.finanzielleSituationContainerGS2.finanzielleSituationJA;
+    }
+
+    public isFinanziellesituationRequired(): boolean {
+        return this.finanzielleSituationRequired;
+    }
+
+    public getMaxMassgebendesEinkommen(): string {
+        // todo
+        return '';
+    }
+
+    public sozialhilfeBezuegerClicked(): void {
+        // todo umsetzen -> wird gebraucht???
     }
 
     public gemeinsameStekClicked(): void {
