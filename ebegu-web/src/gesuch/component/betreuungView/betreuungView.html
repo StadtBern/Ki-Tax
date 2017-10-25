@@ -448,6 +448,12 @@
 
                         </div>
                     </div>
+
+                    <!-- Ferieninsel -->
+                    <div ng-if="vm.isFerieninsel()">
+                        <betreuung-ferieninsel-view betreuung="vm.getBetreuungModel()"></betreuung-ferieninsel-view>
+                    </div>
+
                 </fieldset>
 
                 <!--Buttons-->
