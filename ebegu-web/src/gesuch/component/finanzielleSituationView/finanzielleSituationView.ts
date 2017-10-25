@@ -25,8 +25,12 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import ITimeoutService = angular.ITimeoutService;
 import IQService = angular.IQService;
 import IScope = angular.IScope;
+import IPromise = angular.IPromise;
 import ITranslateService = angular.translate.ITranslateService;
-import {FinanzielleSituationAbstractViewController} from '../finanzielleSituationAbstractView';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import TSFinanzModel from '../../../models/TSFinanzModel';
+import AbstractGesuchViewController from '../abstractGesuchView';
+import {TSRole} from '../../../models/enums/TSRole';
 
 let template = require('./finanzielleSituationView.html');
 require('./finanzielleSituationView.less');
@@ -38,24 +42,30 @@ export class FinanzielleSituationViewComponentConfig implements IComponentOption
     controllerAs = 'vm';
 }
 
-export class FinanzielleSituationViewController extends FinanzielleSituationAbstractViewController {
+export class FinanzielleSituationViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
     public showSelbstaendig: boolean;
     public showSelbstaendigGS: boolean;
+    allowedRoles: Array<TSRole>;
+
+    private initialModel: TSFinanzModel;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService',
         'WizardStepManager', '$q', '$scope', '$translate', '$timeout'];
 
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, errorService: ErrorService, wizardStepManager: WizardStepManager,
-                $q: IQService, $scope: IScope, private $translate: ITranslateService, $timeout: ITimeoutService) {
-        super(gesuchModelManager, berechnungsManager, errorService, $q, wizardStepManager, $scope, $timeout);
+                berechnungsManager: BerechnungsManager, private errorService: ErrorService,
+                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, private $translate: ITranslateService, $timeout: ITimeoutService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FINANZIELLE_SITUATION, $timeout);
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         if (!parsedNum) {
             parsedNum = 1;
         }
-        this.initModel(parsedNum);
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
+        this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), parsedNum);
+        this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
+        this.initialModel = angular.copy(this.model);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
         this.initViewModel();
         this.calculate();
@@ -110,6 +120,20 @@ export class FinanzielleSituationViewController extends FinanzielleSituationAbst
                 this.model.finanzielleSituationContainerGS2.finanzielleSituationJA.steuererklaerungAusgefuellt = undefined;
             }
         }
+    }
+
+    private save(): IPromise<TSFinanzielleSituationContainer> {
+        if (this.isGesuchValid()) {
+            this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
+            if (!this.form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer);
+            }
+            this.errorService.clearAll();
+            return this.gesuchModelManager.saveFinanzielleSituation();
+        }
+        return undefined;
     }
 
     calculate() {

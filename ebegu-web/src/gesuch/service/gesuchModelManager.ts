@@ -1377,4 +1377,9 @@ export default class GesuchModelManager {
     public isErwerbspensumRequired(gesuchId: string): IPromise<boolean> {
         return this.erwerbspensumRS.isErwerbspensumRequired(gesuchId);
     }
+
+    public isFinanzielleSituationRequired(): boolean {
+        return !this.getGesuch().areThereOnlySchulamtAngebote() || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht
+            && !this.getGesuch().extractFamiliensituation().sozialhilfeBezueger);
+    }
 }
