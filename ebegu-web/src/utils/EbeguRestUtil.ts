@@ -1186,7 +1186,8 @@ export default class EbeguRestUtil {
         restBetreuung.betreuungMutiert = betreuung.betreuungMutiert;
         restBetreuung.abwesenheitMutiert = betreuung.abwesenheitMutiert;
         restBetreuung.gueltig = betreuung.gueltig;
-        restBetreuung.module = this.belegungTagesschuleToRestObject({}, betreuung.belegungTagesschule);
+        restBetreuung.belegungTagesschule = this.belegungTagesschuleToRestObject({}, betreuung.belegungTagesschule);
+        restBetreuung.belegungFerieninsel = this.belegungFerieninselToRestObject({}, betreuung.belegungFerieninsel);
         return restBetreuung;
     }
 
@@ -1264,6 +1265,7 @@ export default class EbeguRestUtil {
             betreuungTS.abwesenheitMutiert = betreuungFromServer.abwesenheitMutiert;
             betreuungTS.gueltig = betreuungFromServer.gueltig;
             betreuungTS.belegungTagesschule = this.parseBelegungTagesschule(new TSBelegungTagesschule(), betreuungFromServer.belegungTagesschule);
+            betreuungTS.belegungFerieninsel = this.parseBelegungFerieninsel(new TSBelegungFerieninsel(), betreuungFromServer.belegungFerieninsel);
             return betreuungTS;
         }
         return undefined;
@@ -2444,13 +2446,14 @@ export default class EbeguRestUtil {
         if (belegungFerieninselTS) {
             this.abstractEntityToRestObject(restBelegungFerieninsel, belegungFerieninselTS);
             restBelegungFerieninsel.ferienname = belegungFerieninselTS.ferienname;
-            for (let i = 0; i < belegungFerieninselTS.tage.length; i++) {
-                let tagRest: any;
-                this.abstractEntityToRestObject(tagRest, belegungFerieninselTS.tage[i]);
-                tagRest.tag = belegungFerieninselTS.tage[i].tag;
-                belegungFerieninselTS.tage.push(tagRest);
+            if (belegungFerieninselTS.tage) {
+                for (let i = 0; i < belegungFerieninselTS.tage.length; i++) {
+                    let tagRest: any;
+                    this.abstractEntityToRestObject(tagRest, belegungFerieninselTS.tage[i]);
+                    tagRest.tag = belegungFerieninselTS.tage[i].tag;
+                    belegungFerieninselTS.tage.push(tagRest);
+                }
             }
-
             return restBelegungFerieninsel;
         }
         return undefined;

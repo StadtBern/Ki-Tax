@@ -1653,14 +1653,15 @@ public class JaxBConverter {
 		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
 		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
 		betreuung.setGueltig(betreuungJAXP.isGueltig());
-		betreuung.setBelegungTagesschule(belegungToEntity(betreuungJAXP.getBelegungTagesschule(), new BelegungTagesschule()));
+		betreuung.setBelegungTagesschule(belegungTagesschuleToEntity(betreuungJAXP.getBelegungTagesschule(), new BelegungTagesschule()));
+		betreuung.setBelegungFerieninsel(belegungFerieninselToEntity(betreuungJAXP.getBelegungFerieninsel(), new BelegungFerieninsel()));
 
 		//ACHTUNG: Verfuegung wird hier nicht synchronisiert aus sicherheitsgruenden
 		return betreuung;
 	}
 
 	@Nullable
-	private BelegungTagesschule belegungToEntity(@Nullable JaxBelegungTagesschule belegungTagesschuleJAXP, @NotNull BelegungTagesschule belegungTagesschule) {
+	private BelegungTagesschule belegungTagesschuleToEntity(@Nullable JaxBelegungTagesschule belegungTagesschuleJAXP, @NotNull BelegungTagesschule belegungTagesschule) {
 		if (belegungTagesschuleJAXP != null) {
 			convertAbstractFieldsToEntity(belegungTagesschuleJAXP, belegungTagesschule);
 			moduleListToEntity(belegungTagesschuleJAXP.getModule(), belegungTagesschule.getModule());
@@ -1866,12 +1867,13 @@ public class JaxBConverter {
 		jaxBetreuung.setBetreuungMutiert(betreuungFromServer.getBetreuungMutiert());
 		jaxBetreuung.setAbwesenheitMutiert(betreuungFromServer.getAbwesenheitMutiert());
 		jaxBetreuung.setGueltig(betreuungFromServer.isGueltig());
-		jaxBetreuung.setBelegungTagesschule(belegungToJax(betreuungFromServer.getBelegungTagesschule()));
+		jaxBetreuung.setBelegungTagesschule(belegungTagesschuleToJax(betreuungFromServer.getBelegungTagesschule()));
+		jaxBetreuung.setBelegungFerieninsel(belegungFerieninselToJAX(betreuungFromServer.getBelegungFerieninsel()));
 		return jaxBetreuung;
 	}
 
 	@Nullable
-	private JaxBelegungTagesschule belegungToJax(@Nullable BelegungTagesschule belegungFromServer) {
+	private JaxBelegungTagesschule belegungTagesschuleToJax(@Nullable BelegungTagesschule belegungFromServer) {
 		if (belegungFromServer != null) {
 			final JaxBelegungTagesschule jaxBelegungTagesschule = new JaxBelegungTagesschule();
 			convertAbstractFieldsToJAX(belegungFromServer, jaxBelegungTagesschule);
@@ -2770,32 +2772,38 @@ public class JaxBConverter {
 		return jaxFerieninselStammdaten;
 	}
 
+	@Nullable
 	public BelegungFerieninsel belegungFerieninselToEntity(JaxBelegungFerieninsel belegungFerieninselJAX, BelegungFerieninsel belegungFerieninsel) {
-		Validate.notNull(belegungFerieninselJAX);
-		Validate.notNull(belegungFerieninsel);
+		if (belegungFerieninselJAX != null) {
+			Validate.notNull(belegungFerieninsel);
 
-		convertAbstractFieldsToEntity(belegungFerieninselJAX, belegungFerieninsel);
-		belegungFerieninsel.setFerienname(belegungFerieninselJAX.getFerienname());
-		for (JaxBelegungFerieninselTag jaxTag : belegungFerieninselJAX.getTage()) {
-			BelegungFerieninselTag tag = new BelegungFerieninselTag();
-			convertAbstractFieldsToEntity(jaxTag, tag);
-			tag.setTag(jaxTag.getTag());
-			belegungFerieninsel.getTage().add(tag);
+			convertAbstractFieldsToEntity(belegungFerieninselJAX, belegungFerieninsel);
+			belegungFerieninsel.setFerienname(belegungFerieninselJAX.getFerienname());
+			for (JaxBelegungFerieninselTag jaxTag : belegungFerieninselJAX.getTage()) {
+				BelegungFerieninselTag tag = new BelegungFerieninselTag();
+				convertAbstractFieldsToEntity(jaxTag, tag);
+				tag.setTag(jaxTag.getTag());
+				belegungFerieninsel.getTage().add(tag);
+			}
+			return belegungFerieninsel;
 		}
-		return belegungFerieninsel;
+		return null;
 	}
 
-	public JaxBelegungFerieninsel belegungFerieninselToJAX(BelegungFerieninsel persistedBelegungFerieninsel) {
-		final JaxBelegungFerieninsel jaxBelegungFerieninsel = new JaxBelegungFerieninsel();
-
-		convertAbstractFieldsToJAX(persistedBelegungFerieninsel, jaxBelegungFerieninsel);
-		jaxBelegungFerieninsel.setFerienname(persistedBelegungFerieninsel.getFerienname());
-		for (BelegungFerieninselTag tag : persistedBelegungFerieninsel.getTage()) {
-			JaxBelegungFerieninselTag jaxTag = new JaxBelegungFerieninselTag();
-			convertAbstractFieldsToJAX(tag, jaxTag);
-			jaxTag.setTag(tag.getTag());
-			jaxBelegungFerieninsel.getTage().add(jaxTag);
+	@Nullable
+	public JaxBelegungFerieninsel belegungFerieninselToJAX(@Nullable  BelegungFerieninsel persistedBelegungFerieninsel) {
+		if (persistedBelegungFerieninsel != null) {
+			final JaxBelegungFerieninsel jaxBelegungFerieninsel = new JaxBelegungFerieninsel();
+			convertAbstractFieldsToJAX(persistedBelegungFerieninsel, jaxBelegungFerieninsel);
+			jaxBelegungFerieninsel.setFerienname(persistedBelegungFerieninsel.getFerienname());
+			for (BelegungFerieninselTag tag : persistedBelegungFerieninsel.getTage()) {
+				JaxBelegungFerieninselTag jaxTag = new JaxBelegungFerieninselTag();
+				convertAbstractFieldsToJAX(tag, jaxTag);
+				jaxTag.setTag(tag.getTag());
+				jaxBelegungFerieninsel.getTage().add(jaxTag);
+			}
+			return jaxBelegungFerieninsel;
 		}
-		return jaxBelegungFerieninsel;
+		return null;
 	}
 }
