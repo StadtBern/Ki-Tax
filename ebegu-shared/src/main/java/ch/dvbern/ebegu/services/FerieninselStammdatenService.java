@@ -21,6 +21,7 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 
 import ch.dvbern.ebegu.entities.FerieninselStammdaten;
+import ch.dvbern.ebegu.enums.Ferienname;
 
 /**
  * Service zum Verwalten von Ferieninsel-Stammdaten
@@ -50,6 +51,12 @@ public interface FerieninselStammdatenService {
 	 */
 	@Nonnull
 	Collection<FerieninselStammdaten> findFerieninselStammdatenForGesuchsperiode(@Nonnull String gesuchsperiodeId);
+
+	/**
+	 * Gibt alle FerieninselStammdaten-Objekte fuer die uebergebene Gesuchsperiode und Ferien zurueck.
+	 */
+	@Nonnull
+	Optional<FerieninselStammdaten> findFerieninselStammdatenForGesuchsperiodeAndFerienname(@Nonnull String gesuchsperiodeId, @Nonnull Ferienname ferienname);
 
 	/**
 	 * Loescht das uebergebene FerieninselStammdaten-Objekt

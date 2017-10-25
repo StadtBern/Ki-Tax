@@ -33,6 +33,7 @@ import javax.persistence.criteria.Root;
 import ch.dvbern.ebegu.entities.FerieninselStammdaten;
 import ch.dvbern.ebegu.entities.FerieninselStammdaten_;
 import ch.dvbern.ebegu.entities.Gesuchsperiode_;
+import ch.dvbern.ebegu.enums.Ferienname;
 import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -87,6 +88,23 @@ public class FerieninselStammdatenServiceBean extends AbstractBaseService implem
 		query.where(predicateGesuchsperiode);
 		query.orderBy(cb.asc(root.get(FerieninselStammdaten_.ferienname)));
 		return persistence.getCriteriaResults(query);
+	}
+
+	@Nonnull
+	@Override
+	@PermitAll
+	public Optional<FerieninselStammdaten> findFerieninselStammdatenForGesuchsperiodeAndFerienname(
+			@Nonnull String gesuchsperiodeId, @Nonnull Ferienname ferienname) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<FerieninselStammdaten> query = cb.createQuery(FerieninselStammdaten.class);
+		Root<FerieninselStammdaten> root = query.from(FerieninselStammdaten.class);
+		query.select(root);
+		Predicate predicateGesuchsperiode = cb.equal(root.get(FerieninselStammdaten_.gesuchsperiode).get(Gesuchsperiode_.id), gesuchsperiodeId);
+		Predicate predicateFerienname = cb.equal(root.get(FerieninselStammdaten_.ferienname), ferienname);
+		query.where(predicateGesuchsperiode, predicateFerienname);
+		query.orderBy(cb.asc(root.get(FerieninselStammdaten_.ferienname)));
+		FerieninselStammdaten fiStammdatenOrNull = persistence.getCriteriaSingleResult(query);
+		return Optional.ofNullable(fiStammdatenOrNull);
 	}
 
 	@Override

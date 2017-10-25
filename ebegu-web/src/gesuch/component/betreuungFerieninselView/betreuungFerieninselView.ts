@@ -32,6 +32,10 @@ import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
+import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
+import {FerieninselStammdatenRS} from '../../../admin/service/ferieninselStammdatenRS.rest';
+import TSFerieninselStammdaten from '../../../models/TSFerieninselStammdaten';
+import DateUtil from '../../../utils/DateUtil';
 
 let template = require('./betreuungFerieninselView.html');
 require('./betreuungFerieninselView.less');
@@ -50,16 +54,17 @@ export class BetreuungFerieninselViewComponentConfig implements IComponentOption
 export class BetreuungFerieninselViewController extends BetreuungViewController {
 
     betreuung: TSBetreuung;
+    ferieninselStammdaten: TSFerieninselStammdaten;
 
     //TODO (hefr) am schluss die injects aufraeumen
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
-        'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout', '$translate'];
+        'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout', '$translate', 'FerieninselStammdatenRS'];
     /* @ngInject */
     constructor($state: IStateService, gesuchModelManager: GesuchModelManager, ebeguUtil: EbeguUtil, CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, errorService: ErrorService,
                 authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams,
                 mitteilungRS: MitteilungRS, dvDialog: DvDialog, $log: ILogService,
-                $timeout: ITimeoutService, $translate: ITranslateService) {
+                $timeout: ITimeoutService, $translate: ITranslateService, private ferieninselStammdatenRS: FerieninselStammdatenRS) {
         super($state, gesuchModelManager, ebeguUtil, CONSTANTS, $scope, berechnungsManager, errorService, authServiceRS, wizardStepManager, $stateParams,
             mitteilungRS, dvDialog, $log, $timeout, $translate);
     }
@@ -73,12 +78,30 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     }
 
     private initFerieninselViewModel() {
+        this.betreuung.betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
         if (EbeguUtil.isNullOrUndefined(this.betreuung.belegungFerieninsel)) {
             this.betreuung.belegungFerieninsel = new TSBelegungFerieninsel();
         }
     }
 
     public changedFerien() {
+        this.ferieninselStammdatenRS.findFerieninselStammdatenByGesuchsperiodeAndFerien(
+            this.gesuchModelManager.getGesuchsperiode().id, this.betreuung.belegungFerieninsel.ferienname).then((response: TSFerieninselStammdaten) => {
+            this.ferieninselStammdaten = response;
+        });
         //TODO (hefr) Tage der Ferieninsel zur Auswahl stellen
+    }
+
+    public anmeldungNichtFreigegeben(): boolean {
+        // Ferien sind ausgewaehlt, aber es gibt keine Stammdaten dazu
+        return EbeguUtil.isNotNullOrUndefined(this.betreuung.belegungFerieninsel.ferienname)
+            && EbeguUtil.isNullOrUndefined(this.ferieninselStammdaten);
+    }
+
+    public anmeldeschlussAbgelaufen(): boolean {
+        // Ferien sind ausgewaehlt, es gibt Stammdaten, aber das Anmeldedatum ist abgelaufen
+        return EbeguUtil.isNotNullOrUndefined(this.betreuung.belegungFerieninsel.ferienname)
+            && EbeguUtil.isNotNullOrUndefined(this.ferieninselStammdaten)
+            && this.ferieninselStammdaten.anmeldeschluss.isBefore(DateUtil.today());
     }
 }
