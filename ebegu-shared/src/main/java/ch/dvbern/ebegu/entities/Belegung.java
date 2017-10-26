@@ -74,11 +74,12 @@ public class Belegung extends AbstractEntity {
 		this.module = module;
 	}
 
+	@NotNull
 	public LocalDate getEintrittsdatum() {
 		return eintrittsdatum;
 	}
 
-	public void setEintrittsdatum(LocalDate eintrittsdatum) {
+	public void setEintrittsdatum(@NotNull LocalDate eintrittsdatum) {
 		this.eintrittsdatum = eintrittsdatum;
 	}
 }
