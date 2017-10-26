@@ -52,6 +52,10 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 	@Column(nullable = true)
 	private LocalDate datumFreischaltungTagesschule;
 
+	@Nullable
+	@Column(nullable = true)
+	private LocalDate datumErsterSchultag;
+
 
 	public GesuchsperiodeStatus getStatus() {
 		return status;
@@ -88,6 +92,15 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 
 	public void setDatumFreischaltungTagesschule(@Nullable LocalDate datumFreischaltungTagesschule) {
 		this.datumFreischaltungTagesschule = datumFreischaltungTagesschule;
+	}
+
+	@Nullable
+	public LocalDate getDatumErsterSchultag() {
+		return datumErsterSchultag;
+	}
+
+	public void setDatumErsterSchultag(@Nullable LocalDate datumErsterSchultag) {
+		this.datumErsterSchultag = datumErsterSchultag;
 	}
 
 	@SuppressWarnings({ "OverlyComplexBooleanExpression" })

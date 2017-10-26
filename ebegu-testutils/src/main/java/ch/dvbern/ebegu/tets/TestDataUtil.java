@@ -41,6 +41,7 @@ import ch.dvbern.ebegu.entities.AbwesenheitContainer;
 import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.ebegu.entities.Belegung;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -442,7 +443,14 @@ public final class TestDataUtil {
 		betreuung.setBetreuungspensumContainers(new TreeSet<>());
 		betreuung.setAbwesenheitContainers(new HashSet<>());
 		betreuung.setKind(createDefaultKindContainer());
+		betreuung.setBelegung(createDefaultBelegung());
 		return betreuung;
+	}
+
+	public static Belegung createDefaultBelegung() {
+		Belegung belegung = new Belegung();
+		belegung.setEintrittsdatum(LocalDate.now());
+		return belegung;
 	}
 
 	public static BetreuungspensumContainer createBetPensContainer(Betreuung betreuung) {

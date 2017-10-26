@@ -125,7 +125,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	private Verfuegung verfuegung;
 
 	@Nullable
-	@OneToOne(optional = true, cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_belegung_id"), nullable = true)
 	private Belegung belegung;
 
