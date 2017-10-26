@@ -13,6 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'angular-ui-router';
 import RouterHelperProvider from './route-helper-provider';
 
 export default angular.module('dvbAngular.router', [

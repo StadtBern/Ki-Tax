@@ -15,8 +15,10 @@
 
 package ch.dvbern.ebegu.entities;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Entity;
 
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
 /**
@@ -24,7 +26,15 @@ import org.hibernate.envers.Audited;
  */
 @Audited
 @Entity
-public class FerieninselZeitraum extends AbstractDateRangedEntity {
+public class FerieninselZeitraum extends AbstractDateRangedEntity implements Comparable<FerieninselZeitraum> {
 
 	private static final long serialVersionUID = 2918865169295094143L;
+
+	@Override
+	public int compareTo(@Nonnull FerieninselZeitraum o) {
+		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(this.getGueltigkeit().getGueltigAb(), o.getGueltigkeit().getGueltigAb());
+		builder.append(this.getGueltigkeit().getGueltigBis(), o.getGueltigkeit().getGueltigBis());
+		return builder.toComparison();
+	}
 }

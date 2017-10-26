@@ -13,36 +13,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.dvbern.ebegu.enums;
-
-/**
- * Enum fuers Feld betreuungsangebotTyp in Institution.
- */
-public enum BetreuungsangebotTyp {
-	KITA,
-	TAGESSCHULE,
-	TAGESELTERN_KLEINKIND,
-	TAGESELTERN_SCHULKIND,
-	TAGI,
-	FERIENINSEL;
-
-	public boolean isSchulamt() {
-		return TAGESSCHULE == this || FERIENINSEL == this;
-	}
-
-	public boolean isTageseltern() {
-		return TAGESELTERN_KLEINKIND == this || TAGESELTERN_SCHULKIND == this;
-	}
-
-	public boolean isAngebotJugendamtKleinkind() {
-		return KITA == this || TAGESELTERN_KLEINKIND == this;
-	}
-
-	public boolean isAngebotJugendamtSchulkind() {
-		return TAGI == this || TAGESELTERN_SCHULKIND == this;
-	}
-
-	public boolean isJugendamt() {
-		return !isSchulamt();
-	}
+.ferieninselView {
+    input[type="text"], select {
+        background: rgb(240, 240, 240);
+    }
 }

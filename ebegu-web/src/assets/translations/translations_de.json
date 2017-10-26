@@ -563,6 +563,7 @@
     "TAGESELTERN_KLEINKIND": "Tageseltern für Kleinkinder",
     "TAGESELTERN_SCHULKIND": "Tageseltern für Schulkinder",
     "TAGESSCHULE": "Tagesschule",
+    "FERIENINSEL": "Ferieninsel",
     "BEZEICHNUNG": "Bezeichnung",
     "TAETIGKEIT_WAEHLEN": "Beschäftigungsart wählen",
     "TAETIGKEIT_WAEHLEN_HELP": "Wie werden Sie zu Beginn der Gutschein-Gültigkeit beschäftigt sein?<br>Sie können auch mehrere Tätigkeiten erfassen.<br><br>Falls Sie Ihr Kind aus gesundheitlichen Gründen nicht betreuen können, wählen Sie „Gesundheitliche Einschränkung“. In diesem Fall benötigen Sie von Ihrer Ärztin oder Ihrem Arzt eine Fachstellenbestätigung. Darin muss das benötigte Kita-Pensum des Kindes stehen. Diese Bestätigung gilt höchstens 6 Monate.  <a href=\"http://www.bern.ch/themen/kinder-jugendliche-und-familie/kinderbetreuung/tagesstaetten-fuer-kleinkinder-kitas/betreuungsgutscheine/formulare-fuer-die-gesuchstellung-ab-01-08-1.2017/20160201-bestatigung.pdf/download\" target=\"_blank\">Hier können Sie die Fachstellenbestätigung herunterladen</a>.<br><br>Wenn keine Option in der Auswahlliste auf Sie zutrifft, nehmen Sie bitte mit uns Kontakt auf (kinderbetreuung@bern.ch oder Tel. 031 321 51 15).",
@@ -1121,6 +1122,17 @@
     "FREISCHALTUNG_TAGESSCHULE_DIALOG_TITLE": "Wollen Sie die Anmeldung für Tagesschulen wirklich freischalten?",
     "FREISCHALTUNG_TAGESSCHULE_DIALOG_TEXT": "Ab diesem Zeitpunkt können Gesuchsteller sich für Tagesschulen anmelden.",
     "FREISCHALTUNG_TAGESSCHULE_INFO": "Die Anmeldung ist im Moment noch nicht möglich. Die Funktionalität wird erst mit dem Versand der Stundenpläne aufgeschaltet.",
-    "FREISCHALTUNG_TAGESSCHULE_AB_INFO": "Die Anmeldung ist im Moment noch nicht möglich. Die Funktionalität wird erst mit dem Versand der Stundenpläne am {{termin}} aufgeschaltet."
-
+    "FREISCHALTUNG_TAGESSCHULE_AB_INFO": "Die Anmeldung ist im Moment noch nicht möglich. Die Funktionalität wird erst mit dem Versand der Stundenpläne am {{termin}} aufgeschaltet.",
+    "ERSTER_SCHULTAG_TAGESSCHULE": "Erster Schultag",
+    "FERIENINSEL": "Ferieninsel",
+    "SOMMERFERIEN": "Sommerferien",
+    "HERBSTFERIEN": "Herbstferien",
+    "SPORTFERIEN": "Sportferien",
+    "FRUEHLINGSFERIEN": "Frühlingsferien",
+    "ANMELDESCHLUSS": "Anmeldeschluss",
+    "FERIENINSEL_STAMMDATEN_INFO": "Geben Sie hier die Daten der Ferieninsel pro Ferien ein. Erst wenn Sie mindestens einen Zeitraum eingegeben haben, sind Anmeldungen für diese Ferieninsel möglich.",
+    "FERIENINSELZEITRAUM_ADD": "Zeitraum hinzufügen",
+    "FERIENINSELSTAMMDATEN_SAVE": "Speichern",
+    "FERIENINSEL_TITLE": "Daten der Ferieninseln",
+    "EINTRITTSDATUM": "Eintrittsdatum"
 }

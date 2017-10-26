@@ -444,7 +444,14 @@ public final class TestDataUtil {
 		betreuung.setBetreuungspensumContainers(new TreeSet<>());
 		betreuung.setAbwesenheitContainers(new HashSet<>());
 		betreuung.setKind(createDefaultKindContainer());
+		betreuung.setBelegung(createDefaultBelegung());
 		return betreuung;
+	}
+
+	public static Belegung createDefaultBelegung() {
+		Belegung belegung = new Belegung();
+		belegung.setEintrittsdatum(LocalDate.now());
+		return belegung;
 	}
 
 	public static BetreuungspensumContainer createBetPensContainer(Betreuung betreuung) {

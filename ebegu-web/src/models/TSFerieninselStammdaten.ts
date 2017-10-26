@@ -22,14 +22,16 @@ import TSFerieninselZeitraum from './TSFerieninselZeitraum';
 export default class TSFerieninselStammdaten extends TSAbstractEntity {
 
     private _ferienname: TSFerienname;
-    private _zeitraumList: Array<TSFerieninselZeitraum>;
+    private _zeitraum: TSFerieninselZeitraum;              // Der erste Zeitraum
+    private _zeitraumList: TSFerieninselZeitraum[] = [];   // Evt. weitere Zeitraeume
     private _anmeldeschluss: moment.Moment;
     private _gesuchsperiode: TSGesuchsperiode;
 
 
-    constructor(ferienname?: TSFerienname, zeitraumList?: Array<TSFerieninselZeitraum>, anmeldeschluss?: moment.Moment, gesuchsperiode?: TSGesuchsperiode) {
+    constructor(ferienname?: TSFerienname, zeitraum?: TSFerieninselZeitraum, zeitraumList?: TSFerieninselZeitraum[], anmeldeschluss?: moment.Moment, gesuchsperiode?: TSGesuchsperiode) {
         super();
         this._ferienname = ferienname;
+        this._zeitraum = zeitraum;
         this._zeitraumList = zeitraumList;
         this._anmeldeschluss = anmeldeschluss;
         this._gesuchsperiode = gesuchsperiode;
@@ -44,11 +46,19 @@ export default class TSFerieninselStammdaten extends TSAbstractEntity {
         this._ferienname = value;
     }
 
-    public get zeitraumList(): Array<TSFerieninselZeitraum> {
+    public get zeitraum(): TSFerieninselZeitraum {
+        return this._zeitraum;
+    }
+
+    public set zeitraum(value: TSFerieninselZeitraum) {
+        this._zeitraum = value;
+    }
+
+    public get zeitraumList(): TSFerieninselZeitraum[] {
         return this._zeitraumList;
     }
 
-    public set zeitraumList(value: Array<TSFerieninselZeitraum>) {
+    public set zeitraumList(value: TSFerieninselZeitraum[]) {
         this._zeitraumList = value;
     }
 
