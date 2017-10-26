@@ -23,22 +23,23 @@ public enum BetreuungsangebotTyp {
 	TAGESSCHULE,
 	TAGESELTERN_KLEINKIND,
 	TAGESELTERN_SCHULKIND,
-	TAGI;
+	TAGI,
+	FERIENINSEL;
 
 	public boolean isSchulamt() {
-		return TAGESSCHULE.equals(this);
+		return TAGESSCHULE == this || FERIENINSEL == this;
 	}
 
 	public boolean isTageseltern() {
-		return TAGESELTERN_KLEINKIND.equals(this) || TAGESELTERN_SCHULKIND.equals(this);
+		return TAGESELTERN_KLEINKIND == this || TAGESELTERN_SCHULKIND == this;
 	}
 
 	public boolean isAngebotJugendamtKleinkind() {
-		return KITA.equals(this) || TAGESELTERN_KLEINKIND.equals(this);
+		return KITA == this || TAGESELTERN_KLEINKIND == this;
 	}
 
 	public boolean isAngebotJugendamtSchulkind() {
-		return TAGI.equals(this) || TAGESELTERN_SCHULKIND.equals(this);
+		return TAGI == this || TAGESELTERN_SCHULKIND == this;
 	}
 
 	public boolean isJugendamt() {
