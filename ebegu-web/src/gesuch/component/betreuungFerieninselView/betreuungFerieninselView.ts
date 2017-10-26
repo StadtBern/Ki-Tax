@@ -39,10 +39,11 @@ import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 
 let template = require('./betreuungFerieninselView.html');
 require('./betreuungFerieninselView.less');
-let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
+let dialogTemplate = require('../../dialog/removeDialogTemplate.html');
 
 export class BetreuungFerieninselViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -146,12 +147,19 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     }
 
     public anmelden() {
-        this.betreuung.belegungFerieninsel.tage = [];
-        for (let tag of this.ferieninselTage) {
-            if (tag.angemeldet) {
-                this.betreuung.belegungFerieninsel.tage.push(tag);
+        return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
+            title: 'CONFIRM_SAVE_FERIENINSEL',
+            deleteText: 'BESCHREIBUNG_SAVE_FERIENINSEL',
+            parentController: undefined,
+            elementID: undefined
+        }).then(() => {
+            this.betreuung.belegungFerieninsel.tage = [];
+            for (let tag of this.ferieninselTage) {
+                if (tag.angemeldet) {
+                    this.betreuung.belegungFerieninsel.tage.push(tag);
+                }
             }
-        }
-        this.onSave();
+            this.onSave();
+        });
     }
 }
