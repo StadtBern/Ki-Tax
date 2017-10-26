@@ -102,6 +102,10 @@ export class TSRoleUtil {
         return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.ADMINISTRATOR_SCHULAMT, TSRole.SCHULAMT, TSRole.STEUERAMT];
     }
 
+    public static getAdministratorJugendamtSchulamtGesuchstellerRoles(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.ADMINISTRATOR_SCHULAMT, TSRole.SCHULAMT, TSRole.GESUCHSTELLER];
+    }
+
     public static getAllButAdministratorJugendamtRole(): Array<string> {
         return TSRoleUtil.getAllRoles().filter(element =>
             element !== TSRole[TSRole.SACHBEARBEITER_JA] &&

@@ -20,6 +20,9 @@ export default class TSBelegungFerieninselTag extends TSAbstractEntity {
 
     private _tag: moment.Moment;
 
+    private _selected: boolean;
+    private _angemeldet: boolean; // Transient, wird nicht auf Server synchronisiert, bzw. nur die mit angemeldet=true
+
 
     constructor(tag?: moment.Moment) {
         super();
@@ -32,5 +35,21 @@ export default class TSBelegungFerieninselTag extends TSAbstractEntity {
 
     public set tag(value: moment.Moment) {
         this._tag = value;
+    }
+
+    public get selected(): boolean {
+        return this._selected;
+    }
+
+    public set selected(value: boolean) {
+        this._selected = value;
+    }
+
+    public get angemeldet(): boolean {
+        return this._angemeldet;
+    }
+
+    public set angemeldet(value: boolean) {
+        this._angemeldet = value;
     }
 }

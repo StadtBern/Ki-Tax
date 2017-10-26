@@ -183,9 +183,6 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                     // Fuer Tagesschule setzen wir eine Dummy-Tagesschule als Institution
                     this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
                     this.setSelectedInstitutionStammdaten();
-                } else {
-                    // Ferieninsel. Vorerst mal Status SCHULAMT, spaeter kommt dann ein eigener Status
-                    this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
                 }
             } else {
                 this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
@@ -218,6 +215,11 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             this.form.$setPristine();
             return undefined;
         });
+    }
+
+    public anmeldenSchulamt(): void {
+        //TODO (team) spaeter Status ANMELDUNG_AUSGELOEST. Dieselbe Methode kann dann vermtl. auch fuer Tagesschule verwendet werden
+        this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen', undefined);
     }
 
     private setBetreuungsangebotTypValues(): void {
@@ -357,9 +359,10 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      * @returns {boolean}
      */
     public isEnabled(): boolean {
+        //TODO (team) dies muss dann mit den neuen SCH-Status nochmals ueberdacht werden
         if (this.getBetreuungModel()) {
             return !this.getBetreuungModel().hasVorgaenger()
-                && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND) || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT)
+                && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND) || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST)
                 && !this.isKorrekturModusJugendamt()));
         }
         return false;
@@ -552,7 +555,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public tageschuleSaveDisabled(): boolean {
         let gp: TSGesuchsperiode = this.gesuchModelManager.getGesuch().gesuchsperiode;
-        return this.getBetreuungModel().isAngebotTagesschule() && gp.hasTagesschulenAnmeldung() && !gp.isTageschulenAnmeldungAktiv();
+        return (this.getBetreuungModel().isAngebotTagesschule() && gp.hasTagesschulenAnmeldung() && !gp.isTageschulenAnmeldungAktiv()
+        	|| this.getBetreuungModel().isAngebotFerieninsel() && !this.getBetreuungModel().isEnabled());
     }
 
     public getTagesschuleAnmeldungNotYetReadyText(): string {

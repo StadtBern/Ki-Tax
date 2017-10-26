@@ -2431,10 +2431,11 @@ export default class EbeguRestUtil {
         if (receivedBelegungFerieninsel) {
             this.parseAbstractEntity(belegungFerieninselTS, receivedBelegungFerieninsel);
             belegungFerieninselTS.ferienname = receivedBelegungFerieninsel.ferienname;
+            belegungFerieninselTS.tage = [];
             for (let i = 0; i < receivedBelegungFerieninsel.tage.length; i++) {
                 let tagTS: TSBelegungFerieninselTag = new TSBelegungFerieninselTag();
                 this.parseAbstractEntity(tagTS, receivedBelegungFerieninsel.tage[i]);
-                tagTS.tag = receivedBelegungFerieninsel.tage[i].tag;
+                tagTS.tag = DateUtil.localDateToMoment(receivedBelegungFerieninsel.tage[i].tag);
                 belegungFerieninselTS.tage.push(tagTS);
             }
             return belegungFerieninselTS;
@@ -2442,16 +2443,17 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public belegungFerieninselToRestObject(restBelegungFerieninsel: any, belegungFerieninselTS: TSBelegungFerieninsel): TSBelegungFerieninsel {
+    public belegungFerieninselToRestObject(restBelegungFerieninsel: any, belegungFerieninselTS: TSBelegungFerieninsel): any {
         if (belegungFerieninselTS) {
             this.abstractEntityToRestObject(restBelegungFerieninsel, belegungFerieninselTS);
             restBelegungFerieninsel.ferienname = belegungFerieninselTS.ferienname;
+            restBelegungFerieninsel.tage = [];
             if (belegungFerieninselTS.tage) {
                 for (let i = 0; i < belegungFerieninselTS.tage.length; i++) {
-                    let tagRest: any;
+                    let tagRest: any = {};
                     this.abstractEntityToRestObject(tagRest, belegungFerieninselTS.tage[i]);
-                    tagRest.tag = belegungFerieninselTS.tage[i].tag;
-                    belegungFerieninselTS.tage.push(tagRest);
+                    tagRest.tag = DateUtil.momentToLocalDate(belegungFerieninselTS.tage[i].tag);
+                    restBelegungFerieninsel.tage.push(tagRest);
                 }
             }
             return restBelegungFerieninsel;

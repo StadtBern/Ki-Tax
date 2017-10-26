@@ -451,7 +451,7 @@
 
                     <!-- Ferieninsel -->
                     <div ng-if="vm.isFerieninsel()">
-                        <betreuung-ferieninsel-view betreuung="vm.getBetreuungModel()"></betreuung-ferieninsel-view>
+                        <betreuung-ferieninsel-view betreuung="vm.getBetreuungModel()" on-save="vm.anmeldenSchulamt()"></betreuung-ferieninsel-view>
                     </div>
 
                 </fieldset>
@@ -470,7 +470,6 @@
                             <span data-translate="SPEICHERN_UPPER"></span>
                         </dv-loading-button>
                     </div>
-
 
                     <!--Institution Buttons-->
                     <div dv-show-element

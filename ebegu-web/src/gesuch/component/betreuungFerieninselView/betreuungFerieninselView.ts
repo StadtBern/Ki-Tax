@@ -15,13 +15,20 @@
 
 import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
+import * as moment from 'moment';
+import {FerieninselStammdatenRS} from '../../../admin/service/ferieninselStammdatenRS.rest';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import MitteilungRS from '../../../core/service/mitteilungRS.rest';
+import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import {getTSFeriennameValues, TSFerienname} from '../../../models/enums/TSFerienname';
 import TSBelegungFerieninsel from '../../../models/TSBelegungFerieninsel';
+import TSBelegungFerieninselTag from '../../../models/TSBelegungFerieninselTag';
 import TSBetreuung from '../../../models/TSBetreuung';
+import TSFerieninselStammdaten from '../../../models/TSFerieninselStammdaten';
+import TSFerieninselZeitraum from '../../../models/TSFerieninselZeitraum';
+import DateUtil from '../../../utils/DateUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import {IBetreuungStateParams} from '../../gesuch.route';
 import BerechnungsManager from '../../service/berechnungsManager';
@@ -32,10 +39,6 @@ import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
-import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
-import {FerieninselStammdatenRS} from '../../../admin/service/ferieninselStammdatenRS.rest';
-import TSFerieninselStammdaten from '../../../models/TSFerieninselStammdaten';
-import DateUtil from '../../../utils/DateUtil';
 
 let template = require('./betreuungFerieninselView.html');
 require('./betreuungFerieninselView.less');
@@ -44,7 +47,8 @@ let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 export class BetreuungFerieninselViewComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {
-        betreuung: '='
+        betreuung: '=',
+        onSave: '&'
     };
     template = template;
     controller = BetreuungFerieninselViewController;
@@ -54,9 +58,12 @@ export class BetreuungFerieninselViewComponentConfig implements IComponentOption
 export class BetreuungFerieninselViewController extends BetreuungViewController {
 
     betreuung: TSBetreuung;
-    ferieninselStammdaten: TSFerieninselStammdaten;
+    onSave: () => void;
 
-    //TODO (hefr) am schluss die injects aufraeumen
+    ferieninselStammdaten: TSFerieninselStammdaten;
+    ferieninselTage: TSBelegungFerieninselTag[] = [];
+
+
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout', '$translate', 'FerieninselStammdatenRS'];
     /* @ngInject */
@@ -78,9 +85,12 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     }
 
     private initFerieninselViewModel() {
-        this.betreuung.betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
         if (EbeguUtil.isNullOrUndefined(this.betreuung.belegungFerieninsel)) {
+            this.betreuung.betreuungsstatus = TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST;
             this.betreuung.belegungFerieninsel = new TSBelegungFerieninsel();
+            this.betreuung.belegungFerieninsel.tage = [];
+        } else {
+            this.changedFerien();
         }
     }
 
@@ -88,20 +98,60 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
         this.ferieninselStammdatenRS.findFerieninselStammdatenByGesuchsperiodeAndFerien(
             this.gesuchModelManager.getGesuchsperiode().id, this.betreuung.belegungFerieninsel.ferienname).then((response: TSFerieninselStammdaten) => {
             this.ferieninselStammdaten = response;
+            this.createPossibleFerieninselTageList();
         });
-        //TODO (hefr) Tage der Ferieninsel zur Auswahl stellen
     }
 
-    public anmeldungNichtFreigegeben(): boolean {
+    private createPossibleFerieninselTageList(): void {
+        // TODO (hefr) Diese Logik muss auf den Server gezuegelt werden: Wochentage und Feiertage beruecksichtigen
+        this.ferieninselTage = [];
+        if (this.ferieninselStammdaten) {
+            if (this.ferieninselStammdaten.zeitraum) {
+                this.createPossibleFerieninselTageForZeitraum(this.ferieninselStammdaten.zeitraum);
+            }
+            if (this.ferieninselStammdaten.zeitraumList) {
+                for (let zeitraum of this.ferieninselStammdaten.zeitraumList) {
+                    this.createPossibleFerieninselTageForZeitraum(zeitraum);
+                }
+            }
+        }
+    }
+
+    private createPossibleFerieninselTageForZeitraum(zeitraum: TSFerieninselZeitraum): void {
+        let currentDate: moment.Moment = zeitraum.gueltigkeit.gueltigAb;
+        while (!currentDate.isAfter(zeitraum.gueltigkeit.gueltigBis)) {
+            let newDay: TSBelegungFerieninselTag = new TSBelegungFerieninselTag();
+            newDay.tag = angular.copy(currentDate);
+            this.ferieninselTage.push(newDay);
+            currentDate = currentDate.add(1, 'days');
+        }
+    }
+
+    public isAnmeldungNichtFreigegeben(): boolean {
         // Ferien sind ausgewaehlt, aber es gibt keine Stammdaten dazu
         return EbeguUtil.isNotNullOrUndefined(this.betreuung.belegungFerieninsel.ferienname)
             && EbeguUtil.isNullOrUndefined(this.ferieninselStammdaten);
     }
 
-    public anmeldeschlussAbgelaufen(): boolean {
+    public isAnmeldeschlussAbgelaufen(): boolean {
         // Ferien sind ausgewaehlt, es gibt Stammdaten, aber das Anmeldedatum ist abgelaufen
         return EbeguUtil.isNotNullOrUndefined(this.betreuung.belegungFerieninsel.ferienname)
             && EbeguUtil.isNotNullOrUndefined(this.ferieninselStammdaten)
             && this.ferieninselStammdaten.anmeldeschluss.isBefore(DateUtil.today());
+    }
+
+    public isAnmeldungMoeglich(): boolean {
+        return EbeguUtil.isNotNullOrUndefined(this.betreuung.belegungFerieninsel.ferienname)
+            && !this.isAnmeldeschlussAbgelaufen();
+    }
+
+    public anmelden() {
+        this.betreuung.belegungFerieninsel.tage = [];
+        for (let tag of this.ferieninselTage) {
+            if (tag.angemeldet) {
+                this.betreuung.belegungFerieninsel.tage.push(tag);
+            }
+        }
+        this.onSave();
     }
 }

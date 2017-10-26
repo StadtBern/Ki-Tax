@@ -246,10 +246,23 @@ export default class TSBetreuung extends TSAbstractEntity {
        return this.isAngebot(TSBetreuungsangebotTyp.TAGESSCHULE);
     }
 
+    public isAngebotFerieninsel(): boolean {
+        return this.isAngebot(TSBetreuungsangebotTyp.FERIENINSEL);
+    }
+
     private isAngebot(typ: TSBetreuungsangebotTyp) {
         if (this.institutionStammdaten && this.institutionStammdaten.betreuungsangebotTyp) {
             return this.institutionStammdaten.betreuungsangebotTyp === typ;
         }
         return false;
+    }
+
+    public isEnabled(): boolean {
+        return !this.hasVorgaenger()
+            && this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND) || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST);
+    }
+
+    public isBetreuungsstatus(status: TSBetreuungsstatus): boolean {
+        return this.betreuungsstatus === status;
     }
 }
