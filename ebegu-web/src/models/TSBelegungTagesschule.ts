@@ -15,14 +15,17 @@
 
 import TSAbstractEntity from './TSAbstractEntity';
 import TSModul from './TSModul';
+import * as moment from 'moment';
 
 export default class TSBelegungTagesschule extends TSAbstractEntity {
 
     private _module: TSModul[];
+    private _eintrittsdatum: moment.Moment;
 
-    constructor(module?: TSModul[]) {
+    constructor(module?: TSModul[], eintrittsdatum?: moment.Moment) {
         super();
         this._module = module;
+        this._eintrittsdatum = eintrittsdatum;
     }
 
     public get module(): TSModul[] {
@@ -31,5 +34,13 @@ export default class TSBelegungTagesschule extends TSAbstractEntity {
 
     public set module(value: TSModul[]) {
         this._module = value;
+    }
+
+    public get eintrittsdatum(): moment.Moment {
+        return this._eintrittsdatum;
+    }
+
+    public set eintrittsdatum(value: moment.Moment) {
+        this._eintrittsdatum = value;
     }
 }

@@ -15,14 +15,17 @@
 
 package ch.dvbern.ebegu.entities;
 
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
@@ -41,6 +44,10 @@ public class BelegungTagesschule extends AbstractEntity {
 	@SortNatural
 	@ManyToMany(cascade = CascadeType.ALL)
 	private Set<Modul> module = new TreeSet<>();
+
+	@NotNull
+	@Column(nullable = false)
+	private LocalDate eintrittsdatum;
 
 	@Override
 	public boolean isSame(AbstractEntity other) {
@@ -65,5 +72,13 @@ public class BelegungTagesschule extends AbstractEntity {
 
 	public void setModule(@Nullable Set<Modul> module) {
 		this.module = module;
+	}
+
+	public LocalDate getEintrittsdatum() {
+		return eintrittsdatum;
+	}
+
+	public void setEintrittsdatum(LocalDate eintrittsdatum) {
+		this.eintrittsdatum = eintrittsdatum;
 	}
 }

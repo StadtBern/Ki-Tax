@@ -1653,8 +1653,16 @@ public class JaxBConverter {
 		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
 		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
 		betreuung.setGueltig(betreuungJAXP.isGueltig());
-		betreuung.setBelegungTagesschule(belegungTagesschuleToEntity(betreuungJAXP.getBelegungTagesschule(), new BelegungTagesschule()));
-		betreuung.setBelegungFerieninsel(belegungFerieninselToEntity(betreuungJAXP.getBelegungFerieninsel(), new BelegungFerieninsel()));
+		if (betreuung.getBelegungTagesschule() != null) {
+			betreuung.setBelegungTagesschule(belegungTagesschuleToEntity(betreuungJAXP.getBelegungTagesschule(), betreuung.getBelegungTagesschule()));
+		} else {
+			betreuung.setBelegungTagesschule(belegungTagesschuleToEntity(betreuungJAXP.getBelegungTagesschule(), new BelegungTagesschule()));
+		}
+		if (betreuung.getBelegungFerieninsel() != null) {
+			betreuung.setBelegungFerieninsel(belegungFerieninselToEntity(betreuungJAXP.getBelegungFerieninsel(), betreuung.getBelegungFerieninsel()));
+		} else {
+			betreuung.setBelegungFerieninsel(belegungFerieninselToEntity(betreuungJAXP.getBelegungFerieninsel(), new BelegungFerieninsel()));
+		}
 
 		//ACHTUNG: Verfuegung wird hier nicht synchronisiert aus sicherheitsgruenden
 		return betreuung;
@@ -1665,6 +1673,7 @@ public class JaxBConverter {
 		if (belegungTagesschuleJAXP != null) {
 			convertAbstractFieldsToEntity(belegungTagesschuleJAXP, belegungTagesschule);
 			moduleListToEntity(belegungTagesschuleJAXP.getModule(), belegungTagesschule.getModule());
+			belegungTagesschule.setEintrittsdatum(belegungTagesschuleJAXP.getEintrittsdatum());
 		}
 		return null;
 	}
@@ -1878,6 +1887,8 @@ public class JaxBConverter {
 			final JaxBelegungTagesschule jaxBelegungTagesschule = new JaxBelegungTagesschule();
 			convertAbstractFieldsToJAX(belegungFromServer, jaxBelegungTagesschule);
 			jaxBelegungTagesschule.setModule(moduleListToJax(belegungFromServer.getModule()));
+			jaxBelegungTagesschule.setEintrittsdatum(belegungFromServer.getEintrittsdatum());
+			return jaxBelegungTagesschule;
 		}
 		return null;
 	}
@@ -2116,6 +2127,7 @@ public class JaxBConverter {
 		convertAbstractDateRangedFieldsToJAX(persistedGesuchsperiode, jaxGesuchsperiode);
 		jaxGesuchsperiode.setStatus(persistedGesuchsperiode.getStatus());
 		jaxGesuchsperiode.setDatumFreischaltungTagesschule(persistedGesuchsperiode.getDatumFreischaltungTagesschule());
+		jaxGesuchsperiode.setDatumErsterSchultag(persistedGesuchsperiode.getDatumErsterSchultag());
 		return jaxGesuchsperiode;
 	}
 
@@ -2123,6 +2135,7 @@ public class JaxBConverter {
 		convertAbstractDateRangedFieldsToEntity(jaxGesuchsperiode, gesuchsperiode);
 		gesuchsperiode.setStatus(jaxGesuchsperiode.getStatus());
 		gesuchsperiode.setDatumFreischaltungTagesschule(jaxGesuchsperiode.getDatumFreischaltungTagesschule());
+		gesuchsperiode.setDatumErsterSchultag(jaxGesuchsperiode.getDatumErsterSchultag());
 		return gesuchsperiode;
 	}
 

@@ -1367,6 +1367,7 @@ export default class EbeguRestUtil {
             this.abstractDateRangeEntityToRestObject(restGesuchsperiode, gesuchsperiode);
             restGesuchsperiode.status = gesuchsperiode.status;
             restGesuchsperiode.datumFreischaltungTagesschule = DateUtil.momentToLocalDate(gesuchsperiode.datumFreischaltungTagesschule);
+            restGesuchsperiode.datumErsterSchultag = DateUtil.momentToLocalDate(gesuchsperiode.datumErsterSchultag);
             return restGesuchsperiode;
         }
         return undefined;
@@ -1377,6 +1378,7 @@ export default class EbeguRestUtil {
             this.parseDateRangeEntity(gesuchsperiodeTS, gesuchsperiodeFromServer);
             gesuchsperiodeTS.status = gesuchsperiodeFromServer.status;
             gesuchsperiodeTS.datumFreischaltungTagesschule = DateUtil.localDateToMoment(gesuchsperiodeFromServer.datumFreischaltungTagesschule);
+            gesuchsperiodeTS.datumErsterSchultag = DateUtil.localDateToMoment(gesuchsperiodeFromServer.datumErsterSchultag);
             return gesuchsperiodeTS;
         }
         return undefined;
@@ -2345,6 +2347,8 @@ export default class EbeguRestUtil {
         if (belegungFromServer) {
             this.parseAbstractEntity(belegungTS, belegungFromServer);
             belegungTS.module = this.parseModuleArray(belegungFromServer.module);
+            belegungTS.eintrittsdatum = DateUtil.localDateToMoment(belegungFromServer.eintrittsdatum);
+            return belegungTS;
         }
         return undefined;
     }
@@ -2353,6 +2357,8 @@ export default class EbeguRestUtil {
         if (belegungTS) {
             this.abstractEntityToRestObject(restBelegung, belegungTS);
             restBelegung.module = this.moduleArrayToRestObject(belegungTS.module);
+            restBelegung.eintrittsdatum = DateUtil.momentToLocalDate(belegungTS.eintrittsdatum);
+            return restBelegung;
         }
         return undefined;
     }
