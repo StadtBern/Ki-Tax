@@ -27,6 +27,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -119,6 +120,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@Column(nullable = false)
 	private Integer betreuungNummer = 1;
 
+	@Nullable
 	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.REMOVE, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_verfuegung_id"), nullable = true)
@@ -126,8 +128,13 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 
 	@Nullable
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_belegung_id"), nullable = true)
-	private Belegung belegung;
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_belegung_tagesschule_id"), nullable = true)
+	private BelegungTagesschule belegungTagesschule;
+
+	@Nullable
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_belegung_ferieninsel_id"), nullable = true)
+	private BelegungFerieninsel belegungFerieninsel;
 
 	@NotNull
 	@Column(nullable = false)
@@ -216,21 +223,31 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		this.betreuungNummer = betreuungNummer;
 	}
 
+	@Nullable
 	public Verfuegung getVerfuegung() {
 		return verfuegung;
 	}
 
-	public void setVerfuegung(Verfuegung verfuegung) {
+	public void setVerfuegung(@Nullable Verfuegung verfuegung) {
 		this.verfuegung = verfuegung;
 	}
 
 	@Nullable
-	public Belegung getBelegung() {
-		return belegung;
+	public BelegungTagesschule getBelegungTagesschule() {
+		return belegungTagesschule;
 	}
 
-	public void setBelegung(@Nullable Belegung belegung) {
-		this.belegung = belegung;
+	public void setBelegungTagesschule(@Nullable BelegungTagesschule belegungTagesschule) {
+		this.belegungTagesschule = belegungTagesschule;
+	}
+
+	@Nullable
+	public BelegungFerieninsel getBelegungFerieninsel() {
+		return belegungFerieninsel;
+	}
+
+	public void setBelegungFerieninsel(@Nullable BelegungFerieninsel belegungFerieninsel) {
+		this.belegungFerieninsel = belegungFerieninsel;
 	}
 
 	public Boolean getVertrag() {
