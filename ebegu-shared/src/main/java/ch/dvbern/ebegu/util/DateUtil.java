@@ -15,6 +15,7 @@
 
 package ch.dvbern.ebegu.util;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -54,5 +55,9 @@ public final class DateUtil {
 			date = LocalDateTime.parse(stringDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		}
 		return date;
+	}
+
+	public static boolean isWeekday(@Nonnull LocalDate date) {
+		return date.getDayOfWeek().equals(DayOfWeek.SATURDAY) || date.getDayOfWeek().equals(DayOfWeek.SUNDAY);
 	}
 }
