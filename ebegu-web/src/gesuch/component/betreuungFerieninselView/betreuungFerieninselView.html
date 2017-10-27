@@ -34,7 +34,7 @@
 		</div>
 
 		<!-- Auswahl der Tage -->
-		<div ng-if="vm.isAnmeldungMoeglich()">
+		<div ng-if="vm.isAnmeldungMoeglich() && !vm.isAnmeldungNichtFreigegeben()">
 			<div class="row">
 				<div class="col-sm-12 dv-input-container-medium form-group">
 					<span data-translate="FERIENINSELTAGE"></span>
