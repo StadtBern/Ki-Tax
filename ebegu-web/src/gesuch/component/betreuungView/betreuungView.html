@@ -155,7 +155,7 @@
                     <!--vertrag-->
                     <div class="row marginBottom50 marginTop20" dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                         dv-show-expression="!vm.isTagesschule()">
+                         dv-show-expression="!vm.isSchulamt()">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getBetreuungModel().vertrag" name="vertrag"
@@ -407,7 +407,8 @@
 
                         <!--Hint-->
                         <p class="inlineHint marginTop20" data-translate="BETREUUNGSPENSUM_HINT1"
-                           dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerRoles()"></p>
+                           dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerRoles()"
+                           dv-show-expression="!vm.isSchulamt()"></p>
 
                     </div>
 

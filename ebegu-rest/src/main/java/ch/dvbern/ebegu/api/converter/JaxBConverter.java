@@ -1665,8 +1665,9 @@ public class JaxBConverter {
 			convertAbstractFieldsToEntity(belegungJAXP, belegung);
 			moduleListToEntity(belegungJAXP.getModule(), belegung.getModule());
 			belegung.setEintrittsdatum(belegungJAXP.getEintrittsdatum());
+			return belegung;
 		}
-		return belegung;
+		return null;
 	}
 
 	public Betreuung betreuungToStoreableEntity(@Nonnull final JaxBetreuung betreuungJAXP) {
