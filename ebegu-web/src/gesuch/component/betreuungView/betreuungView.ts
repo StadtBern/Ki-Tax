@@ -45,8 +45,8 @@ import ITimeoutService = angular.ITimeoutService;
 import ILogService = angular.ILogService;
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import ITranslateService = angular.translate.ITranslateService;
-import TSBelegung from '../../../models/TSBelegung';
 import DateUtil from '../../../utils/DateUtil';
+import TSBelegungTagesschule from '../../../models/TSBelegungTagesschule';
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -187,12 +187,12 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                     // Nur fuer die neuen Gesuchsperiode kann die Belegung erfast werden
                     if (this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung()
                         && this.gesuchModelManager.getGesuchsperiode().isTageschulenAnmeldungAktiv()) {
-                        if (!this.getBetreuungModel().belegung) {
-                            this.getBetreuungModel().belegung = new TSBelegung();
+                        if (!this.getBetreuungModel().belegungTagesschule) {
+                            this.getBetreuungModel().belegungTagesschule = new TSBelegungTagesschule();
                             // Default Eintrittsdatum ist erster Schultag, wenn noch in Zukunft
                             let ersterSchultag: moment.Moment = this.gesuchModelManager.getGesuchsperiode().datumErsterSchultag;
                             if (DateUtil.today().isBefore(ersterSchultag)) {
-                                this.getBetreuungModel().belegung.eintrittsdatum = ersterSchultag;
+                                this.getBetreuungModel().belegungTagesschule.eintrittsdatum = ersterSchultag;
                             }
                         }
                     } else {

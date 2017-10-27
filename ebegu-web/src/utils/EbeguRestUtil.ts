@@ -1186,7 +1186,7 @@ export default class EbeguRestUtil {
         restBetreuung.betreuungMutiert = betreuung.betreuungMutiert;
         restBetreuung.abwesenheitMutiert = betreuung.abwesenheitMutiert;
         restBetreuung.gueltig = betreuung.gueltig;
-        restBetreuung.belegung = this.belegungTagesschuleToRestObject({}, betreuung.belegungTagesschule);
+        restBetreuung.belegungTagesschule = this.belegungTagesschuleToRestObject({}, betreuung.belegungTagesschule);
         return restBetreuung;
     }
 

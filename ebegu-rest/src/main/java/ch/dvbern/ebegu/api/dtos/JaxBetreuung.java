@@ -195,6 +195,7 @@ public class JaxBetreuung extends JaxAbstractDTO {
 		this.datumBestaetigung = datumBestaetigung;
 	}
 
+	@Nullable
 	public String getKindFullname() {
 		return kindFullname;
 	}
@@ -230,6 +231,7 @@ public class JaxBetreuung extends JaxAbstractDTO {
 		this.gesuchsperiode = gesuchsperiode;
 	}
 
+	@Nullable
 	public Boolean getBetreuungMutiert() {
 		return betreuungMutiert;
 	}
@@ -238,6 +240,7 @@ public class JaxBetreuung extends JaxAbstractDTO {
 		this.betreuungMutiert = betreuungMutiert;
 	}
 
+	@Nullable
 	public Boolean getAbwesenheitMutiert() {
 		return abwesenheitMutiert;
 	}
