@@ -41,7 +41,9 @@ import ch.dvbern.ebegu.entities.AbwesenheitContainer;
 import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
-import ch.dvbern.ebegu.entities.Belegung;
+import ch.dvbern.ebegu.entities.BelegungFerieninsel;
+import ch.dvbern.ebegu.entities.BelegungFerieninselTag;
+import ch.dvbern.ebegu.entities.BelegungTagesschule;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -443,14 +445,14 @@ public final class TestDataUtil {
 		betreuung.setBetreuungspensumContainers(new TreeSet<>());
 		betreuung.setAbwesenheitContainers(new HashSet<>());
 		betreuung.setKind(createDefaultKindContainer());
-		betreuung.setBelegung(createDefaultBelegung());
+		betreuung.setBelegungTagesschule(createDefaultBelegungTagesschule());
 		return betreuung;
 	}
 
-	public static Belegung createDefaultBelegung() {
-		Belegung belegung = new Belegung();
-		belegung.setEintrittsdatum(LocalDate.now());
-		return belegung;
+	public static BelegungTagesschule createDefaultBelegungTagesschule() {
+		final BelegungTagesschule belegungTagesschule = new BelegungTagesschule();
+		belegungTagesschule.setEintrittsdatum(LocalDate.now());
+		return belegungTagesschule;
 	}
 
 	public static BetreuungspensumContainer createBetPensContainer(Betreuung betreuung) {
@@ -1142,5 +1144,19 @@ public final class TestDataUtil {
 		stammdaten.setZeitraumList(zeitraumList);
 		stammdaten.setGesuchsperiode(gesuchsperiode);
 		return stammdaten;
+	}
+
+	public static BelegungFerieninsel createDefaultBelegungFerieninsel() {
+		BelegungFerieninsel belegungFerieninsel = new BelegungFerieninsel();
+		belegungFerieninsel.setFerienname(Ferienname.SOMMERFERIEN);
+		belegungFerieninsel.setTage(new ArrayList<>());
+		belegungFerieninsel.getTage().add(createBelegungFerieninselTag(LocalDate.now().plusMonths(3)));
+		return belegungFerieninsel;
+	}
+
+	public static BelegungFerieninselTag createBelegungFerieninselTag(LocalDate date) {
+		BelegungFerieninselTag tag = new BelegungFerieninselTag();
+		tag.setTag(date);
+		return tag;
 	}
 }
