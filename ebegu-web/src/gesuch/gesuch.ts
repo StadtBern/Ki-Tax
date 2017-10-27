@@ -61,7 +61,7 @@ export class GesuchRouteController {
     }
 
     showFinanzsituationStart(): boolean {
-        return this.gesuchModelManager.isGesuchsteller2Required();
+        return this.gesuchModelManager.isGesuchsteller2Required() || this.gesuchModelManager.areThereOnlySchulamtAngebote();
     }
 
     public getDateFromGesuch(): string {

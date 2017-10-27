@@ -26,32 +26,42 @@
     <div class="row">
         <div class="col-md-12">
             <form role="form" name="vm.form" class="" unsaved-warning-form="" novalidate>
-                <fieldset ng-disabled="vm.isGesuchReadonly()">
+                <div class="row" ng-if="!vm.isFinanzielleSituationRequired()">
+                    <div class="col-md-12">
+                        <p>
+                            <!-- todo voruebergehender Text. Evtl. ersetzen-->
+                            <span data-translate="EKV_FIN_SIT_NOT_REQUIRED">
+                            </span>
+                        </p>
+                    </div>
+                </div>
 
-                    <!--Einkommensverschlechterung-->
-                    <div class="row">
-                        <div class="col-xs-12 dv-input-container-question">
-                            <div class="form-group">
+                <div class="row" ng-if="vm.isFinanzielleSituationRequired()">
+                    <fieldset ng-disabled="vm.isGesuchReadonly()">
+                        <!--Einkommensverschlechterung-->
+                        <div class="row">
+                            <div class="col-xs-12 dv-input-container-question">
+                                <div class="form-group">
                                 <span class="ebeguH1 required"
                                       data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN"
                                       data-translate-values="{{vm.basisJahrUndPeriode}}"></span>
-                                <dv-tooltip
-                                    text="'EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN_HELP' | translate"></dv-tooltip>
-                                <dv-radio-container name="einkommensverschlechterung"
-                                                    ng-model="vm.getEinkommensverschlechterungsInfo().einkommensverschlechterung"
-                                                    ng-required="true" class="radio input-element"
-                                                    dv-enable-element
-                                                    dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
-                                                    aria-label="{{ 'EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN' |translate}}"
-                                                    aria-described-by="einkommensverschlechterung-radio-error">
-                                </dv-radio-container>
-                                <dv-error-messages input-id="einkommensverschlechterung-radio"
-                                                   for="vm.form.einkommensverschlechterung.$error"
-                                                   class="error"></dv-error-messages>
+                                    <dv-tooltip
+                                        text="'EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN_HELP' | translate"></dv-tooltip>
+                                    <dv-radio-container name="einkommensverschlechterung"
+                                                        ng-model="vm.getEinkommensverschlechterungsInfo().einkommensverschlechterung"
+                                                        ng-required="true" class="radio input-element"
+                                                        dv-enable-element
+                                                        dv-enable-allowed-roles="vm.allowedRoles"
+                                                        dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
+                                                        aria-label="{{ 'EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN' |translate}}"
+                                                        aria-described-by="einkommensverschlechterung-radio-error">
+                                    </dv-radio-container>
+                                    <dv-error-messages input-id="einkommensverschlechterung-radio"
+                                                       for="vm.form.einkommensverschlechterung.$error"
+                                                       class="error"></dv-error-messages>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
                     <!-- Auswahl Basisjahr Plus 1 -->
                     <div class="row">
@@ -229,9 +239,8 @@
                                 </md-checkbox>
                             </div>
                         </div>
-                    </div>
-
-                </fieldset>
+                    </fieldset>
+                </div>
                 <!-- -------------------------------------------Navigation--------------------------------------------  -->
                 <dv-navigation dv-previous="true" dv-next="!vm.isSteueramtLetzterStep()" dv-save="vm.confirmAndSave()"
                                dv-sub-step="1">
