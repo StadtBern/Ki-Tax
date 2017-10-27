@@ -136,7 +136,8 @@ public class FerieninselStammdatenResource {
 			.collect(Collectors.toList());
 	}
 
-	@ApiOperation(value = "Returns the FerieninselStammdaten for the Gesuchsperiode with the specified ID for the given Ferien",
+	@ApiOperation(value = "Returns the FerieninselStammdaten for the Gesuchsperiode with the specified ID for the given Ferien. The result also contains a "
+		+ "list of potentially available dates of this Ferieninsel (time period minus weekends and holidays)",
 		response = JaxFerieninselStammdaten.class)
 	@Nullable
 	@GET
