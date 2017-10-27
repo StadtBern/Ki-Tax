@@ -2787,7 +2787,8 @@ public class JaxBConverter {
 	}
 
 	@Nullable
-	public BelegungFerieninsel belegungFerieninselToEntity(JaxBelegungFerieninsel belegungFerieninselJAX, BelegungFerieninsel belegungFerieninsel) {
+	public BelegungFerieninsel belegungFerieninselToEntity(@Nullable JaxBelegungFerieninsel belegungFerieninselJAX,
+			@Nonnull BelegungFerieninsel belegungFerieninsel) {
 		if (belegungFerieninselJAX != null) {
 			Validate.notNull(belegungFerieninsel);
 

@@ -2440,7 +2440,6 @@ export default class EbeguRestUtil {
         if (receivedBelegungFerieninsel) {
             this.parseAbstractEntity(belegungFerieninselTS, receivedBelegungFerieninsel);
             belegungFerieninselTS.ferienname = receivedBelegungFerieninsel.ferienname;
-            belegungFerieninselTS.tage = [];
             belegungFerieninselTS.tage = this.parseBelegungFerieninselTagList(receivedBelegungFerieninsel.tage);
             return belegungFerieninselTS;
         }
