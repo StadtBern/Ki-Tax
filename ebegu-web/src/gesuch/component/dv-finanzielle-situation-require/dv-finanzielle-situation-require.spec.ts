@@ -15,19 +15,30 @@
 
 import {EbeguWebGesuch} from '../../gesuch.module';
 import {DVFinanzielleSituationRequireController} from './dv-finanzielle-situation-require';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import {EbeguParameterRS} from '../../../admin/service/ebeguParameterRS.rest';
+import EbeguWebAdmin from '../../../admin/admin.module';
 
 describe('finanzielleSituationRequire', function () {
 
+    beforeEach(angular.mock.module(EbeguWebAdmin.name));
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
     let component: any;
     let scope: angular.IScope;
     let $componentController: angular.IComponentControllerService;
     let controller: DVFinanzielleSituationRequireController;
+    let gesuchModelManager: GesuchModelManager;
+    let ebeguParameterRS: EbeguParameterRS;
+    let $q: angular.IQService;
 
     beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
+        gesuchModelManager = $injector.get('GesuchModelManager');
+        ebeguParameterRS = $injector.get('EbeguParameterRS');
+        $q = $injector.get('$q');
         $componentController = $injector.get('$componentController');
-        controller = new DVFinanzielleSituationRequireController();
+        spyOn(ebeguParameterRS, 'getEbeguParameterByKeyAndDate').and.returnValue($q.when(150000));
+        controller = new DVFinanzielleSituationRequireController(ebeguParameterRS, gesuchModelManager);
     }));
 
     it('should be defined', function () {

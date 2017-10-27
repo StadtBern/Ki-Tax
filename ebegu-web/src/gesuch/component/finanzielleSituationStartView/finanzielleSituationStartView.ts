@@ -106,15 +106,6 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
         return this.finanzielleSituationRequired;
     }
 
-    public getMaxMassgebendesEinkommen(): string {
-        // todo
-        return '';
-    }
-
-    public sozialhilfeBezuegerClicked(): void {
-        // todo umsetzen -> wird gebraucht???
-    }
-
     public gemeinsameStekClicked(): void {
         if (this.model.gemeinsameSteuererklaerung === false && this.model.finanzielleSituationContainerGS1 && !this.model.finanzielleSituationContainerGS1.isNew()) {
             // Wenn neu NEIN und schon was eingegeben -> Fragen mal auf false setzen und Status auf nok damit man sicher noch weiter muss!

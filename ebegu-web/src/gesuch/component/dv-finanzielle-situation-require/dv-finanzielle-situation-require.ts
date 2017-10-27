@@ -14,6 +14,10 @@
  */
 
 import {IComponentOptions} from 'angular';
+import {EbeguParameterRS} from '../../../admin/service/ebeguParameterRS.rest';
+import {TSEbeguParameterKey} from '../../../models/enums/TSEbeguParameterKey';
+import GesuchModelManager from '../../service/gesuchModelManager';
+
 let template = require('./dv-finanzielle-situation-require.html');
 
 export class DvFinanzielleSituationRequire implements IComponentOptions {
@@ -36,14 +40,22 @@ export class DVFinanzielleSituationRequireController {
     sozialhilfeBezueger: boolean;
     verguenstigungGewuenscht: boolean;
 
-    static $inject: any[] = [];
+    maxMassgebendesEinkommen: string;
+
+    static $inject: any[] = ['EbeguParameterRS', 'GesuchModelManager'];
 
     /* @ngInject */
-    constructor() {
+    constructor(private ebeguParameterRS: EbeguParameterRS, private gesuchModelManager: GesuchModelManager) {
     }
 
     $onInit() {
         this.setFinanziellesituationRequired();
+        // Den Parameter fuer das Maximale Einkommen lesen
+        this.ebeguParameterRS.getEbeguParameterByKeyAndDate(
+                this.gesuchModelManager.getGesuchsperiode().gueltigkeit.gueltigAb,
+                TSEbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX).then(response => {
+            this.maxMassgebendesEinkommen = response.value;
+        });
     }
 
     /**
@@ -67,5 +79,9 @@ export class DVFinanzielleSituationRequireController {
     public setFinanziellesituationRequired(): void {
         this.finanzielleSituationRequired = !this.showSozialhilfeBezueger()
             || (this.showVerguenstigungGewuenscht() && this.verguenstigungGewuenscht === true);
+    }
+
+    public getMaxMassgebendesEinkommen(): string {
+        return this.maxMassgebendesEinkommen;
     }
 }
