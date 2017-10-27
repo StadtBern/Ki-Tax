@@ -16,6 +16,7 @@
 package ch.dvbern.ebegu.api.resource;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,8 +38,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxBelegungFerieninselTag;
 import ch.dvbern.ebegu.api.dtos.JaxFerieninselStammdaten;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.entities.BelegungFerieninselTag;
 import ch.dvbern.ebegu.entities.FerieninselStammdaten;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -151,11 +154,17 @@ public class FerieninselStammdatenResource {
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gpEntityID).orElseThrow(()
 			-> new EbeguRuntimeException("findFerieninselStammdatenForGesuchsperiode", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gpEntityID));
 
-		Optional<FerieninselStammdaten> ferieninselStammdatenList = ferieninselStammdatenService.findFerieninselStammdatenForGesuchsperiodeAndFerienname
+		Optional<FerieninselStammdaten> stammdatenOptional = ferieninselStammdatenService.findFerieninselStammdatenForGesuchsperiodeAndFerienname
 			(gesuchsperiode.getId(), ferienname);
 
-		if (ferieninselStammdatenList.isPresent()) {
-			return converter.ferieninselStammdatenToJAX(ferieninselStammdatenList.get());
+		if (stammdatenOptional.isPresent()) {
+			FerieninselStammdaten stammdaten = stammdatenOptional.get();
+			JaxFerieninselStammdaten ferieninselStammdatenJAX = converter.ferieninselStammdatenToJAX(stammdaten);
+			// Zur gefundenen Ferieninsel die tatsaechlich verfuegbaren Tage fuer die Belegung ermitteln (nur Wochentage, ohne Feiertage)
+			List<BelegungFerieninselTag> possibleFerieninselTage = ferieninselStammdatenService.getPossibleFerieninselTage(stammdaten);
+			List<JaxBelegungFerieninselTag> possibleFerieninselTageJAX = converter.belegungFerieninselTageListToJAX(possibleFerieninselTage);
+			ferieninselStammdatenJAX.setPotenzielleFerieninselTageFuerBelegung(possibleFerieninselTageJAX);
+			return ferieninselStammdatenJAX;
 		}
 		return null;
 	}

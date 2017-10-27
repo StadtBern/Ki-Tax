@@ -2809,14 +2809,24 @@ public class JaxBConverter {
 			final JaxBelegungFerieninsel jaxBelegungFerieninsel = new JaxBelegungFerieninsel();
 			convertAbstractFieldsToJAX(persistedBelegungFerieninsel, jaxBelegungFerieninsel);
 			jaxBelegungFerieninsel.setFerienname(persistedBelegungFerieninsel.getFerienname());
-			for (BelegungFerieninselTag tag : persistedBelegungFerieninsel.getTage()) {
-				JaxBelegungFerieninselTag jaxTag = new JaxBelegungFerieninselTag();
-				convertAbstractFieldsToJAX(tag, jaxTag);
-				jaxTag.setTag(tag.getTag());
-				jaxBelegungFerieninsel.getTage().add(jaxTag);
-			}
+			jaxBelegungFerieninsel.setTage(belegungFerieninselTageListToJAX(persistedBelegungFerieninsel.getTage()));
 			return jaxBelegungFerieninsel;
 		}
 		return null;
+	}
+
+	public List<JaxBelegungFerieninselTag> belegungFerieninselTageListToJAX(Collection<BelegungFerieninselTag> persistedFerieninselTageList) {
+		List<JaxBelegungFerieninselTag> returnList = new ArrayList<>();
+		persistedFerieninselTageList.forEach(ferieninselTag -> {
+			returnList.add(belegungFerieninselTagToJAX(ferieninselTag));
+		});
+		return returnList;
+	}
+
+	public JaxBelegungFerieninselTag belegungFerieninselTagToJAX(BelegungFerieninselTag persistedFerieninselTag) {
+		JaxBelegungFerieninselTag jaxTag = new JaxBelegungFerieninselTag();
+		convertAbstractFieldsToJAX(persistedFerieninselTag, jaxTag);
+		jaxTag.setTag(persistedFerieninselTag.getTag());
+		return jaxTag;
 	}
 }

@@ -2392,6 +2392,9 @@ export default class EbeguRestUtil {
                 this.parseDateRangeEntity(zeitraum, receivedFerieninselStammdaten.zeitraumList[i]);
                 ferieninselStammdatenTS.zeitraumList.push(zeitraum);
             }
+            if (receivedFerieninselStammdaten.potenzielleFerieninselTageFuerBelegung) {
+                ferieninselStammdatenTS.potenzielleFerieninselTageFuerBelegung = this.parseBelegungFerieninselTagList(receivedFerieninselStammdaten.potenzielleFerieninselTageFuerBelegung);
+            }
             return ferieninselStammdatenTS;
         }
         return undefined;
@@ -2438,13 +2441,29 @@ export default class EbeguRestUtil {
             this.parseAbstractEntity(belegungFerieninselTS, receivedBelegungFerieninsel);
             belegungFerieninselTS.ferienname = receivedBelegungFerieninsel.ferienname;
             belegungFerieninselTS.tage = [];
-            for (let i = 0; i < receivedBelegungFerieninsel.tage.length; i++) {
-                let tagTS: TSBelegungFerieninselTag = new TSBelegungFerieninselTag();
-                this.parseAbstractEntity(tagTS, receivedBelegungFerieninsel.tage[i]);
-                tagTS.tag = DateUtil.localDateToMoment(receivedBelegungFerieninsel.tage[i].tag);
-                belegungFerieninselTS.tage.push(tagTS);
-            }
+            belegungFerieninselTS.tage = this.parseBelegungFerieninselTagList(receivedBelegungFerieninsel.tage);
             return belegungFerieninselTS;
+        }
+        return undefined;
+    }
+
+    private parseBelegungFerieninselTagList(data: any): TSBelegungFerieninselTag[] {
+        let belegungFerieninselTagList: TSBelegungFerieninselTag[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                belegungFerieninselTagList[i] = this.parseBelegungFerieninselTag(new TSBelegungFerieninselTag(), data[i]);
+            }
+        } else {
+            belegungFerieninselTagList[0] = this.parseBelegungFerieninselTag(new TSBelegungFerieninselTag(), data);
+        }
+        return belegungFerieninselTagList;
+    }
+
+    private parseBelegungFerieninselTag(belegungFerieninselTagTS: TSBelegungFerieninselTag, receivedBelegungFerieninselTag: any): TSBelegungFerieninselTag {
+        if (receivedBelegungFerieninselTag) {
+            this.parseAbstractEntity(belegungFerieninselTagTS, receivedBelegungFerieninselTag);
+            belegungFerieninselTagTS.tag = DateUtil.localDateToMoment(receivedBelegungFerieninselTag.tag);
+            return belegungFerieninselTagTS;
         }
         return undefined;
     }

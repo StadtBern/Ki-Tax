@@ -42,7 +42,7 @@
 			</div>
 			<!-- Noch nicht abgeschickt: Tage auswaehlbar -->
 			<div class="row" ng-if="vm.betreuung.isEnabled()">
-				<div class="col-xs-12 dv-input-container-question" ng-repeat="tag in vm.ferieninselTage">
+				<div class="col-xs-12 dv-input-container-question" ng-repeat="tag in vm.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung">
 					<md-checkbox ng-model="tag.angemeldet"
 								 aria-label="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}">
 						<span data-translate="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}"></span>

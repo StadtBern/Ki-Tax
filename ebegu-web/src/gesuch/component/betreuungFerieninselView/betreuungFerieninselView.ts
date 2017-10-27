@@ -15,7 +15,6 @@
 
 import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
-import * as moment from 'moment';
 import {FerieninselStammdatenRS} from '../../../admin/service/ferieninselStammdatenRS.rest';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
@@ -24,12 +23,11 @@ import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import {getTSFeriennameValues, TSFerienname} from '../../../models/enums/TSFerienname';
 import TSBelegungFerieninsel from '../../../models/TSBelegungFerieninsel';
-import TSBelegungFerieninselTag from '../../../models/TSBelegungFerieninselTag';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSFerieninselStammdaten from '../../../models/TSFerieninselStammdaten';
-import TSFerieninselZeitraum from '../../../models/TSFerieninselZeitraum';
 import DateUtil from '../../../utils/DateUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {IBetreuungStateParams} from '../../gesuch.route';
 import BerechnungsManager from '../../service/berechnungsManager';
 import GesuchModelManager from '../../service/gesuchModelManager';
@@ -39,7 +37,6 @@ import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
-import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 
 let template = require('./betreuungFerieninselView.html');
 require('./betreuungFerieninselView.less');
@@ -62,7 +59,6 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     onSave: () => void;
 
     ferieninselStammdaten: TSFerieninselStammdaten;
-    ferieninselTage: TSBelegungFerieninselTag[] = [];
 
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
@@ -99,33 +95,7 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
         this.ferieninselStammdatenRS.findFerieninselStammdatenByGesuchsperiodeAndFerien(
             this.gesuchModelManager.getGesuchsperiode().id, this.betreuung.belegungFerieninsel.ferienname).then((response: TSFerieninselStammdaten) => {
             this.ferieninselStammdaten = response;
-            this.createPossibleFerieninselTageList();
         });
-    }
-
-    private createPossibleFerieninselTageList(): void {
-        // TODO (hefr) Diese Logik muss auf den Server gezuegelt werden: Wochentage und Feiertage beruecksichtigen
-        this.ferieninselTage = [];
-        if (this.ferieninselStammdaten) {
-            if (this.ferieninselStammdaten.zeitraum) {
-                this.createPossibleFerieninselTageForZeitraum(this.ferieninselStammdaten.zeitraum);
-            }
-            if (this.ferieninselStammdaten.zeitraumList) {
-                for (let zeitraum of this.ferieninselStammdaten.zeitraumList) {
-                    this.createPossibleFerieninselTageForZeitraum(zeitraum);
-                }
-            }
-        }
-    }
-
-    private createPossibleFerieninselTageForZeitraum(zeitraum: TSFerieninselZeitraum): void {
-        let currentDate: moment.Moment = zeitraum.gueltigkeit.gueltigAb;
-        while (!currentDate.isAfter(zeitraum.gueltigkeit.gueltigBis)) {
-            let newDay: TSBelegungFerieninselTag = new TSBelegungFerieninselTag();
-            newDay.tag = angular.copy(currentDate);
-            this.ferieninselTage.push(newDay);
-            currentDate = currentDate.add(1, 'days');
-        }
     }
 
     public isAnmeldungNichtFreigegeben(): boolean {
@@ -154,7 +124,8 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
             elementID: undefined
         }).then(() => {
             this.betreuung.belegungFerieninsel.tage = [];
-            for (let tag of this.ferieninselTage) {
+            // for (let tag of this.ferieninselTage) {
+            for (let tag of this.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung) {
                 if (tag.angemeldet) {
                     this.betreuung.belegungFerieninsel.tage.push(tag);
                 }
