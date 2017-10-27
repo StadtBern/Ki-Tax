@@ -42,6 +42,7 @@ import {UmzugViewComponentConfig} from './component/umzugView/umzugView';
 import {AbwesenheitViewComponentConfig} from './component/abwesenheitView/abwesenheitView';
 import {FreigabeViewComponentConfig} from './component/freigabeView/freigabeView';
 import {BetreuungMitteilungViewComponentConfig} from './component/betreuungMitteilungView/betreuungMitteilungView';
+import {DvFinanzielleSituationRequire} from './component/dv-finanzielle-situation-require/dv-finanzielle-situation-require';
 import {BetreuungFerieninselViewComponentConfig} from './component/betreuungFerieninselView/betreuungFerieninselView';
 
 export const EbeguWebGesuch =
@@ -54,6 +55,7 @@ export const EbeguWebGesuch =
         .component('finanzielleSituationView', new FinanzielleSituationViewComponentConfig())
         .component('finanzielleSituationStartView', new FinanzielleSituationStartViewComponentConfig())
         .component('finanzielleSituationResultateView', new FinanzielleSituationResultateViewComponentConfig())
+        .component('dvFinanzielleSituationRequire', new DvFinanzielleSituationRequire())
         .component('kindView', new KindViewComponentConfig())
         .component('betreuungListView', new BetreuungListViewComponentConfig())
         .component('betreuungView', new BetreuungViewComponentConfig())

@@ -1674,6 +1674,7 @@ public class JaxBConverter {
 			convertAbstractFieldsToEntity(belegungTagesschuleJAXP, belegungTagesschule);
 			moduleListToEntity(belegungTagesschuleJAXP.getModule(), belegungTagesschule.getModule());
 			belegungTagesschule.setEintrittsdatum(belegungTagesschuleJAXP.getEintrittsdatum());
+			return belegungTagesschule;
 		}
 		return null;
 	}

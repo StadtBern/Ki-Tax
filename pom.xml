@@ -57,16 +57,6 @@
 
         <ebegu-iam-connector-war.version>1.0.0</ebegu-iam-connector-war.version>
 
-        <!-- exclude files from sonar analysis (must match tsconfig.json exclusions -->
-        <sonar.exclusions>build/**/*,dist/**/*,node_modules/**/*,temp/**/*,target/**/*,tslint.json</sonar.exclusions>
-        <!-- disable coverage calculations for unit test files -->
-        <sonar.coverage.exclusions>**.spec.ts</sonar.coverage.exclusions>
-        <!-- disable duplication detection for spec files -->
-        <sonar.cpd.exclusions>**.spec.ts</sonar.cpd.exclusions>
-        <sonar.sources>./src</sonar.sources>
-        <sonar.junit.reportPaths>build/karma-results.xml</sonar.junit.reportPaths>
-        <sonar.typescript.lcov.reportPaths>build/coverage/lcov.info</sonar.typescript.lcov.reportPaths>
-
     </properties>
 
     <dependencyManagement>

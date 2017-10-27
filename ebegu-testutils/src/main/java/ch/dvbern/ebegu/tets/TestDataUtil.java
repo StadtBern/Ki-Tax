@@ -445,14 +445,14 @@ public final class TestDataUtil {
 		betreuung.setBetreuungspensumContainers(new TreeSet<>());
 		betreuung.setAbwesenheitContainers(new HashSet<>());
 		betreuung.setKind(createDefaultKindContainer());
-		betreuung.setBelegungTagesschule(createDefaultBelegung());
+		betreuung.setBelegungTagesschule(createDefaultBelegungTagesschule());
 		return betreuung;
 	}
 
-	public static BelegungTagesschule createDefaultBelegung() {
-		BelegungTagesschule belegung = new BelegungTagesschule();
-		belegung.setEintrittsdatum(LocalDate.now());
-		return belegung;
+	public static BelegungTagesschule createDefaultBelegungTagesschule() {
+		final BelegungTagesschule belegungTagesschule = new BelegungTagesschule();
+		belegungTagesschule.setEintrittsdatum(LocalDate.now());
+		return belegungTagesschule;
 	}
 
 	public static BetreuungspensumContainer createBetPensContainer(Betreuung betreuung) {

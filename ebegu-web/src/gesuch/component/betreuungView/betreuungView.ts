@@ -185,14 +185,20 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                     // Fuer Tagesschule setzen wir eine Dummy-Tagesschule als Institution
                     this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
                     this.setSelectedInstitutionStammdaten();
-
-                    if (!this.getBetreuungModel().belegungTagesschule) {
-                        this.getBetreuungModel().belegungTagesschule = new TSBelegungTagesschule();
-                        // Default Eintrittsdatum ist erster Schultag, wenn noch in Zukunft
-                        let ersterSchultag: moment.Moment = this.gesuchModelManager.getGesuchsperiode().datumErsterSchultag;
-                        if (DateUtil.today().isBefore(ersterSchultag)) {
-                            this.getBetreuungModel().belegungTagesschule.eintrittsdatum = ersterSchultag;
+                    // Nur fuer die neuen Gesuchsperiode kann die Belegung erfast werden
+                    if (this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung()
+                        && this.gesuchModelManager.getGesuchsperiode().isTageschulenAnmeldungAktiv()) {
+                        if (!this.getBetreuungModel().belegungTagesschule) {
+                            this.getBetreuungModel().belegungTagesschule = new TSBelegungTagesschule();
+                            // Default Eintrittsdatum ist erster Schultag, wenn noch in Zukunft
+                            let ersterSchultag: moment.Moment = this.gesuchModelManager.getGesuchsperiode().datumErsterSchultag;
+                            if (DateUtil.today().isBefore(ersterSchultag)) {
+                                this.getBetreuungModel().belegungTagesschule.eintrittsdatum = ersterSchultag;
+                            }
                         }
+                    } else {
+                        // Ferieninsel. Vorerst mal Status SCHULAMT, spaeter kommt dann ein eigener Status
+                        this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT; // todo entfernen. oben schon gemacht
                     }
                 }
             } else {

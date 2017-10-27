@@ -23,6 +23,8 @@ import TSEinkommensverschlechterungInfoContainer from './TSEinkommensverschlecht
 export default class TSFinanzModel {
 
     private _gemeinsameSteuererklaerung: boolean;
+    private _sozialhilfeBezueger: boolean;
+    private _verguenstigungGewuenscht: boolean;
     private _finanzielleSituationContainerGS1: TSFinanzielleSituationContainer;
     private _finanzielleSituationContainerGS2: TSFinanzielleSituationContainer;
     private _einkommensverschlechterungContainerGS1: TSEinkommensverschlechterungContainer;
@@ -49,6 +51,22 @@ export default class TSFinanzModel {
         this._gemeinsameSteuererklaerung = value;
     }
 
+    public get sozialhilfeBezueger(): boolean {
+        return this._sozialhilfeBezueger;
+    }
+
+    public set sozialhilfeBezueger(value: boolean) {
+        this._sozialhilfeBezueger = value;
+    }
+
+    public get verguenstigungGewuenscht(): boolean {
+        return this._verguenstigungGewuenscht;
+    }
+
+    public set verguenstigungGewuenscht(value: boolean) {
+        this._verguenstigungGewuenscht = value;
+    }
+
     get finanzielleSituationContainerGS1(): TSFinanzielleSituationContainer {
         return this._finanzielleSituationContainerGS1;
     }
@@ -67,16 +85,22 @@ export default class TSFinanzModel {
 
     public copyFinSitDataFromGesuch(gesuch: TSGesuch) {
 
-        if (gesuch.extractFamiliensituation().gemeinsameSteuererklaerung) {
-            this.gemeinsameSteuererklaerung = angular.copy(gesuch.extractFamiliensituation().gemeinsameSteuererklaerung);
-        } else {
-            this.gemeinsameSteuererklaerung = false;
-        }
+        this.gemeinsameSteuererklaerung = this.getCopiedValueOrFalse(gesuch.extractFamiliensituation().gemeinsameSteuererklaerung);
+        this.sozialhilfeBezueger = this.getCopiedValueOrFalse(gesuch.extractFamiliensituation().sozialhilfeBezueger);
+        this.verguenstigungGewuenscht = this.getCopiedValueOrFalse(gesuch.extractFamiliensituation().verguenstigungGewuenscht);
         this.finanzielleSituationContainerGS1 = angular.copy(gesuch.gesuchsteller1.finanzielleSituationContainer);
         if (gesuch.gesuchsteller2) {
             this.finanzielleSituationContainerGS2 = angular.copy(gesuch.gesuchsteller2.finanzielleSituationContainer);
         }
         this.initFinSit();
+    }
+
+    private getCopiedValueOrFalse(value: boolean): boolean {
+        if (value) {
+            return angular.copy(value);
+        } else {
+            return false;
+        }
     }
 
     copyEkvDataFromGesuch(gesuch: TSGesuch) {
@@ -109,6 +133,8 @@ export default class TSFinanzModel {
 
     copyFinSitDataToGesuch(gesuch: TSGesuch): TSGesuch {
         gesuch.extractFamiliensituation().gemeinsameSteuererklaerung = this.gemeinsameSteuererklaerung;
+        gesuch.extractFamiliensituation().sozialhilfeBezueger = this.sozialhilfeBezueger;
+        gesuch.extractFamiliensituation().verguenstigungGewuenscht = this.verguenstigungGewuenscht;
         gesuch.gesuchsteller1.finanzielleSituationContainer = this.finanzielleSituationContainerGS1;
         if (gesuch.gesuchsteller2) {
             gesuch.gesuchsteller2.finanzielleSituationContainer = this.finanzielleSituationContainerGS2;

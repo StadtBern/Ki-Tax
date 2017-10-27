@@ -13,21 +13,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentOptions, IPromise} from 'angular';
-import AbstractGesuchViewController from '../abstractGesuchView';
+import {IComponentOptions} from 'angular';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSFinanzielleSituation from '../../../models/TSFinanzielleSituation';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import TSGesuch from '../../../models/TSGesuch';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import TSFinanzModel from '../../../models/TSFinanzModel';
 import IQService = angular.IQService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
+import IPromise = angular.IPromise;
+import AbstractGesuchViewController from '../abstractGesuchView';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import TSFinanzModel from '../../../models/TSFinanzModel';
+import TSGesuch from '../../../models/TSGesuch';
 
 let template = require('./finanzielleSituationStartView.html');
 require('./finanzielleSituationStartView.less');
@@ -41,6 +42,8 @@ export class FinanzielleSituationStartViewComponentConfig implements IComponentO
 
 export class FinanzielleSituationStartViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
+    finanzielleSituationRequired: boolean;
+    areThereOnlySchulamtangebote: boolean;
     allowedRoles: Array<TSRoleUtil>;
     private initialModel: TSFinanzModel;
 
@@ -57,6 +60,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
 
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
+        this.areThereOnlySchulamtangebote = this.gesuchModelManager.areThereOnlySchulamtAngebote(); // so we load it just once
     }
 
     showSteuerveranlagung(): boolean {
@@ -96,6 +100,10 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
 
     private getFinanzielleSituationGS2(): TSFinanzielleSituation {
         return this.model.finanzielleSituationContainerGS2.finanzielleSituationJA;
+    }
+
+    public isFinanziellesituationRequired(): boolean {
+        return this.finanzielleSituationRequired;
     }
 
     public gemeinsameStekClicked(): void {
@@ -154,5 +162,9 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
             this.model.finanzielleSituationContainerGS2.finanzielleSituationJA.steuererklaerungAusgefuellt =
                 this.model.finanzielleSituationContainerGS1.finanzielleSituationJA.steuererklaerungAusgefuellt;
         }
+    }
+
+    public is2GSRequired(): boolean {
+        return this.gesuchModelManager.isGesuchsteller2Required();
     }
 }
