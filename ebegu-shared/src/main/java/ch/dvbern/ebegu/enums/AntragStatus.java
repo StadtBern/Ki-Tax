@@ -164,6 +164,57 @@ public enum AntragStatus {
 
 	private static final Set<AntragStatus> inBearbeitung = EnumSet.range(IN_BEARBEITUNG_GS, IN_BEARBEITUNG_JA);
 
+	public static final Set<AntragStatus> FOR_ADMIN_ROLE_WRITE = EnumSet.of(
+		FREIGABEQUITTUNG,
+		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
+		IN_BEARBEITUNG_JA,
+		ERSTE_MAHNUNG,
+		ERSTE_MAHNUNG_ABGELAUFEN,
+		ZWEITE_MAHNUNG,
+		ZWEITE_MAHNUNG_ABGELAUFEN,
+		GEPRUEFT,
+		VERFUEGEN,
+		VERFUEGT,
+		KEIN_ANGEBOT,
+		BESCHWERDE_HAENGIG,
+		PRUEFUNG_STV,
+		IN_BEARBEITUNG_STV,
+		GEPRUEFT_STV);
+
+	public static final Set<AntragStatus> FOR_INSTITUTION_ROLE_WRITE = EnumSet.of(
+		IN_BEARBEITUNG_GS,
+		FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
+		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
+		IN_BEARBEITUNG_JA,
+		ERSTE_MAHNUNG,
+		ERSTE_MAHNUNG_ABGELAUFEN,
+		ZWEITE_MAHNUNG,
+		ZWEITE_MAHNUNG_ABGELAUFEN,
+		GEPRUEFT,
+		VERFUEGEN);
+
+	public static final Set<AntragStatus> FOR_GESUCHSTELLER_ROLE_WRITE = EnumSet.of(
+		IN_BEARBEITUNG_GS,
+		NUR_SCHULAMT, // Damit eine Mutation erstellt werden kann
+		FREIGABEQUITTUNG,
+		NUR_SCHULAMT, // damit eine Mutation erstellt werden kann
+		ERSTE_MAHNUNG,
+		ERSTE_MAHNUNG_ABGELAUFEN,
+		ZWEITE_MAHNUNG,
+		ZWEITE_MAHNUNG_ABGELAUFEN,
+		VERFUEGT // Damit eine Mutation erstellt werden kann
+	);
+
+	public static final Set<AntragStatus> FOR_SCHULAMT_ROLE_WRITE = EnumSet.of(
+		FREIGABEQUITTUNG,
+		NUR_SCHULAMT); // Wegen Dokumente-Upload Button
+
+	public static final Set<AntragStatus> FOR_STEUERAMT_ROLE_WRITE = EnumSet.of(
+		PRUEFUNG_STV,
+		IN_BEARBEITUNG_STV,
+		GEPRUEFT_STV // Der Status wird schon vor dem Speichern gesetzt. Falls dies mal in eine separate Methode kommt, kann dieser Status entfernt werden
+	);
+
 	/**
 	 * Implementierung eines Berechtigungskonzepts fuer die Antragssuche.
 	 *
@@ -302,54 +353,4 @@ public enum AntragStatus {
 		return forRevisorRole.contains(this);
 	}
 
-	public static final Set<AntragStatus> FOR_ADMIN_ROLE_WRITE = EnumSet.of(
-		FREIGABEQUITTUNG,
-		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
-		IN_BEARBEITUNG_JA,
-		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG,
-		ZWEITE_MAHNUNG_ABGELAUFEN,
-		GEPRUEFT,
-		VERFUEGEN,
-		VERFUEGT,
-		KEIN_ANGEBOT,
-		BESCHWERDE_HAENGIG,
-		PRUEFUNG_STV,
-		IN_BEARBEITUNG_STV,
-		GEPRUEFT_STV);
-
-	public static final Set<AntragStatus> FOR_INSTITUTION_ROLE_WRITE = EnumSet.of(
-		IN_BEARBEITUNG_GS,
-		FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
-		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
-		IN_BEARBEITUNG_JA,
-		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG,
-		ZWEITE_MAHNUNG_ABGELAUFEN,
-		GEPRUEFT,
-		VERFUEGEN);
-
-	public static final Set<AntragStatus> FOR_GESUCHSTELLER_ROLE_WRITE = EnumSet.of(
-		IN_BEARBEITUNG_GS,
-		NUR_SCHULAMT, // Damit eine Mutation erstellt werden kann
-		FREIGABEQUITTUNG,
-		NUR_SCHULAMT, // damit eine Mutation erstellt werden kann
-		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG,
-		ZWEITE_MAHNUNG_ABGELAUFEN,
-		VERFUEGT // Damit eine Mutation erstellt werden kann
-	);
-
-	public static final Set<AntragStatus> FOR_SCHULAMT_ROLE_WRITE = EnumSet.of(
-		FREIGABEQUITTUNG,
-		NUR_SCHULAMT); // Wegen Dokumente-Upload Button
-
-	public static final Set<AntragStatus> FOR_STEUERAMT_ROLE_WRITE = EnumSet.of(
-		PRUEFUNG_STV,
-		IN_BEARBEITUNG_STV,
-		GEPRUEFT_STV // Der Status wird schon vor dem Speichern gesetzt. Falls dies mal in eine separate Methode kommt, kann dieser Status entfernt werden
-	);
 }
