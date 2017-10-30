@@ -79,19 +79,19 @@ ALTER TABLE modul_tagesschule_aud
 
 # FK Belegung zu ModulTagesschule
 ALTER TABLE belegung_tagesschule_modul_tagesschule
-	ADD CONSTRAINT FK_belegung_tagesschule_modul_tagesschule_module_tagesschule_id
+	ADD CONSTRAINT FK_belegung_ts_modul_ts_module_ts_id
 FOREIGN KEY (module_tagesschule_id)
 REFERENCES modul_tagesschule (id);
 
 # FK ModulTagesschule zu Belegung
 ALTER TABLE belegung_tagesschule_modul_tagesschule
-	ADD CONSTRAINT FK_belegung_tagesschule_modul_tagesschule_belegung_tagesschule_id
+	ADD CONSTRAINT FK_belegung_ts_modul_ts_belegung_ts_id
 FOREIGN KEY (belegung_tagesschule_id)
 REFERENCES belegung_tagesschule (id);
 
 # AUD Belegung und Modul Tagesschule
 ALTER TABLE belegung_tagesschule_modul_tagesschule_aud
-	ADD CONSTRAINT FK_belegung_tagesschule_modul_tagesschule_aud_revinfo
+	ADD CONSTRAINT FK_belegung_ts_modul_ts_aud_revinfo
 FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 
@@ -101,12 +101,12 @@ FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 
 ALTER TABLE modul_tagesschule
-	ADD CONSTRAINT FK_modul_tagesschule_institution_stammdaten_tagesschule_id
+	ADD CONSTRAINT FK_modul_tagesschule_inst_stammdaten_tagesschule_id
 FOREIGN KEY (institution_stammdaten_tagesschule_id)
 REFERENCES institution_stammdaten_tagesschule (id);
 
 ALTER TABLE institution_stammdaten
-	ADD CONSTRAINT FK_institution_stammdaten_institution_stammdaten_tagesschule_id
+	ADD CONSTRAINT FK_inst_stammdaten_inst_stammdaten_tagesschule_id
 FOREIGN KEY (institution_stammdaten_tagesschule_id)
 REFERENCES institution_stammdaten_tagesschule (id);
 
