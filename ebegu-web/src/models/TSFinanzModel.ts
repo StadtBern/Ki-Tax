@@ -104,7 +104,7 @@ export default class TSFinanzModel {
     }
 
     private getCopiedValueOrUndefined(value: boolean): boolean {
-        if (value) {
+        if (value === true || value === false) {
             return angular.copy(value);
         } else {
             return undefined;
