@@ -86,8 +86,8 @@ export default class TSFinanzModel {
     public copyFinSitDataFromGesuch(gesuch: TSGesuch) {
 
         this.gemeinsameSteuererklaerung = this.getCopiedValueOrFalse(gesuch.extractFamiliensituation().gemeinsameSteuererklaerung);
-        this.sozialhilfeBezueger = this.getCopiedValueOrFalse(gesuch.extractFamiliensituation().sozialhilfeBezueger);
-        this.verguenstigungGewuenscht = this.getCopiedValueOrFalse(gesuch.extractFamiliensituation().verguenstigungGewuenscht);
+        this.sozialhilfeBezueger = this.getCopiedValueOrUndefined(gesuch.extractFamiliensituation().sozialhilfeBezueger);
+        this.verguenstigungGewuenscht = this.getCopiedValueOrUndefined(gesuch.extractFamiliensituation().verguenstigungGewuenscht);
         this.finanzielleSituationContainerGS1 = angular.copy(gesuch.gesuchsteller1.finanzielleSituationContainer);
         if (gesuch.gesuchsteller2) {
             this.finanzielleSituationContainerGS2 = angular.copy(gesuch.gesuchsteller2.finanzielleSituationContainer);
@@ -100,6 +100,14 @@ export default class TSFinanzModel {
             return angular.copy(value);
         } else {
             return false;
+        }
+    }
+
+    private getCopiedValueOrUndefined(value: boolean): boolean {
+        if (value) {
+            return angular.copy(value);
+        } else {
+            return undefined;
         }
     }
 
