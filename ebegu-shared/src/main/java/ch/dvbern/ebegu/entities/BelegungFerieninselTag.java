@@ -16,69 +16,48 @@
 package ch.dvbern.ebegu.entities;
 
 import java.time.LocalDate;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Objects;
 
-import javax.annotation.Nullable;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 
 /**
- * Entity for the Belegung of the Tageschulangebote in a Betreuung.
+ * Entity for a Tag of a Ferieninsel-Belegung
  */
 @Audited
 @Entity
-public class Belegung extends AbstractEntity {
+public class BelegungFerieninselTag extends AbstractEntity {
 
-	private static final long serialVersionUID = -8403435739182708718L;
-
-	@Nullable
-	@Valid
-	@SortNatural
-	@ManyToMany(cascade = CascadeType.ALL)
-	private Set<Modul> module = new TreeSet<>();
+	private static final long serialVersionUID = 6815485579662587990L;
 
 	@NotNull
 	@Column(nullable = false)
-	private LocalDate eintrittsdatum;
+	private LocalDate tag;
+
 
 	@Override
 	public boolean isSame(AbstractEntity other) {
-		//noinspection ObjectEquality
 		if (this == other) {
 			return true;
 		}
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-		//noinspection RedundantIfStatement
-		if (!(other instanceof Belegung)) {
+		if (!(other instanceof BelegungFerieninselTag)) {
 			return false;
 		}
-		return true;
+		BelegungFerieninselTag that = (BelegungFerieninselTag) other;
+		return Objects.equals(tag, that.tag);
 	}
 
-	@Nullable
-	public Set<Modul> getModule() {
-		return module;
+	public LocalDate getTag() {
+		return tag;
 	}
 
-	public void setModule(@Nullable Set<Modul> module) {
-		this.module = module;
-	}
-
-	public LocalDate getEintrittsdatum() {
-		return eintrittsdatum;
-	}
-
-	public void setEintrittsdatum(LocalDate eintrittsdatum) {
-		this.eintrittsdatum = eintrittsdatum;
+	public void setTag(LocalDate tag) {
+		this.tag = tag;
 	}
 }

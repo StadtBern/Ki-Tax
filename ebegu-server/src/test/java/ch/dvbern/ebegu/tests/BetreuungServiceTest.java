@@ -22,6 +22,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.security.auth.login.LoginException;
 
+import ch.dvbern.ebegu.entities.BelegungFerieninsel;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -175,6 +176,43 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		Optional<Mitteilung> removedMitteilung = this.mitteilungService.findMitteilung(mitteilungen.stream().findFirst().get().getId());
 		Assert.assertFalse(removedMitteilung.isPresent());
 
+	}
+
+	@Test
+	public void betreuungMitBelegungFerieninsel() {
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.now());
+		final Betreuung betreuungUnderTest = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+
+		BelegungFerieninsel belegungFerieninsel = TestDataUtil.createDefaultBelegungFerieninsel();
+		betreuungUnderTest.setBelegungFerieninsel(belegungFerieninsel);
+		Betreuung persistedBetreuung = betreuungService.saveBetreuung(betreuungUnderTest, false);
+
+		Assert.assertNotNull(persistedBetreuung);
+		Assert.assertNotNull(persistedBetreuung.getBelegungFerieninsel());
+		Assert.assertNotNull(persistedBetreuung.getBelegungFerieninsel().getFerienname());
+		Assert.assertNotNull(persistedBetreuung.getBelegungFerieninsel().getTage());
+		Assert.assertFalse(persistedBetreuung.getBelegungFerieninsel().getTage().isEmpty());
+		Assert.assertEquals(1, persistedBetreuung.getBelegungFerieninsel().getTage().size());
+
+		// Einen Tag hinzufügen
+		persistedBetreuung.getBelegungFerieninsel().getTage().add(TestDataUtil.createBelegungFerieninselTag(LocalDate.now().plusMonths(4)));
+		persistedBetreuung = betreuungService.saveBetreuung(persistedBetreuung, false);
+		Assert.assertNotNull(persistedBetreuung);
+		Assert.assertNotNull(persistedBetreuung.getBelegungFerieninsel());
+		Assert.assertNotNull(persistedBetreuung.getBelegungFerieninsel().getFerienname());
+		Assert.assertNotNull(persistedBetreuung.getBelegungFerieninsel().getTage());
+		Assert.assertFalse(persistedBetreuung.getBelegungFerieninsel().getTage().isEmpty());
+		Assert.assertEquals(2, persistedBetreuung.getBelegungFerieninsel().getTage().size());
+
+		// Einen wieder loeschen
+		persistedBetreuung.getBelegungFerieninsel().getTage().remove(1);
+		persistedBetreuung = betreuungService.saveBetreuung(persistedBetreuung, false);
+		Assert.assertNotNull(persistedBetreuung);
+		Assert.assertNotNull(persistedBetreuung.getBelegungFerieninsel());
+		Assert.assertNotNull(persistedBetreuung.getBelegungFerieninsel().getFerienname());
+		Assert.assertNotNull(persistedBetreuung.getBelegungFerieninsel().getTage());
+		Assert.assertFalse(persistedBetreuung.getBelegungFerieninsel().getTage().isEmpty());
+		Assert.assertEquals(1, persistedBetreuung.getBelegungFerieninsel().getTage().size());
 	}
 
 	private void prepareDependentObjects() {

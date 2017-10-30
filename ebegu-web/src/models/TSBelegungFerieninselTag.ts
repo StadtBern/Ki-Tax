@@ -13,34 +13,24 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import TSAbstractEntity from './TSAbstractEntity';
-import TSModul from './TSModul';
 import * as moment from 'moment';
+import TSAbstractEntity from './TSAbstractEntity';
 
-export default class TSBelegung extends TSAbstractEntity {
+export default class TSBelegungFerieninselTag extends TSAbstractEntity {
 
-    private _module: TSModul[];
-    private _eintrittsdatum: moment.Moment;
+    private _tag: moment.Moment;
 
-    constructor(module?: TSModul[], eintrittsdatum?: moment.Moment) {
+
+    constructor(tag?: moment.Moment) {
         super();
-        this._module = module;
-        this._eintrittsdatum = eintrittsdatum;
+        this._tag = tag;
     }
 
-    public get module(): TSModul[] {
-        return this._module;
+    public get tag(): moment.Moment {
+        return this._tag;
     }
 
-    public set module(value: TSModul[]) {
-        this._module = value;
-    }
-
-    public get eintrittsdatum(): moment.Moment {
-        return this._eintrittsdatum;
-    }
-
-    public set eintrittsdatum(value: moment.Moment) {
-        this._eintrittsdatum = value;
+    public set tag(value: moment.Moment) {
+        this._tag = value;
     }
 }

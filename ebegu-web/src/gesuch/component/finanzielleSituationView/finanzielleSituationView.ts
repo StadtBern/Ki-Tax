@@ -14,7 +14,6 @@
  */
 
 import {IComponentOptions} from 'angular';
-import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import TSFinanzielleSituationContainer from '../../../models/TSFinanzielleSituationContainer';
@@ -22,15 +21,16 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSRole} from '../../../models/enums/TSRole';
-import TSFinanzModel from '../../../models/TSFinanzModel';
 import ITimeoutService = angular.ITimeoutService;
-import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import IScope = angular.IScope;
+import IPromise = angular.IPromise;
 import ITranslateService = angular.translate.ITranslateService;
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import TSFinanzModel from '../../../models/TSFinanzModel';
+import AbstractGesuchViewController from '../abstractGesuchView';
+import {TSRole} from '../../../models/enums/TSRole';
 
 let template = require('./finanzielleSituationView.html');
 require('./finanzielleSituationView.less');

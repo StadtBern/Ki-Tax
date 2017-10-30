@@ -13,36 +13,34 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.dvbern.ebegu.enums;
+import TSAbstractEntity from './TSAbstractEntity';
+import TSModul from './TSModul';
+import * as moment from 'moment';
 
-/**
- * Enum fuers Feld betreuungsangebotTyp in Institution.
- */
-public enum BetreuungsangebotTyp {
-	KITA,
-	TAGESSCHULE,
-	TAGESELTERN_KLEINKIND,
-	TAGESELTERN_SCHULKIND,
-	TAGI,
-	FERIENINSEL;
+export default class TSBelegungTagesschule extends TSAbstractEntity {
 
-	public boolean isSchulamt() {
-		return TAGESSCHULE == this || FERIENINSEL == this;
-	}
+    private _module: TSModul[];
+    private _eintrittsdatum: moment.Moment;
 
-	public boolean isTageseltern() {
-		return TAGESELTERN_KLEINKIND == this || TAGESELTERN_SCHULKIND == this;
-	}
+    constructor(module?: TSModul[], eintrittsdatum?: moment.Moment) {
+        super();
+        this._module = module;
+        this._eintrittsdatum = eintrittsdatum;
+    }
 
-	public boolean isAngebotJugendamtKleinkind() {
-		return KITA == this || TAGESELTERN_KLEINKIND == this;
-	}
+    public get module(): TSModul[] {
+        return this._module;
+    }
 
-	public boolean isAngebotJugendamtSchulkind() {
-		return TAGI == this || TAGESELTERN_SCHULKIND == this;
-	}
+    public set module(value: TSModul[]) {
+        this._module = value;
+    }
 
-	public boolean isJugendamt() {
-		return !isSchulamt();
-	}
+    public get eintrittsdatum(): moment.Moment {
+        return this._eintrittsdatum;
+    }
+
+    public set eintrittsdatum(value: moment.Moment) {
+        this._eintrittsdatum = value;
+    }
 }

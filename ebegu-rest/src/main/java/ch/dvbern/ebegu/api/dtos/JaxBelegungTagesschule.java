@@ -31,9 +31,9 @@ import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 /**
  * DTO fuer Daten der Belegungen.
  */
-@XmlRootElement(name = "belegung")
+@XmlRootElement(name = "belegungTagesschule")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxBelegung extends JaxAbstractDTO {
+public class JaxBelegungTagesschule extends JaxAbstractDTO {
 
 	private static final long serialVersionUID = -1297972380574937397L;
 

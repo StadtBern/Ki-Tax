@@ -239,14 +239,22 @@ export class NavigatorController {
 
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName()) {
             if (this.dvSubStep === 1) {
-                if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
+                // noinspection NegatedIfStatementJS - the other way makes no sense
+                if (!this.gesuchModelManager.isFinanzielleSituationRequired()) {
+                    this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
+                } else if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
                     this.navigateToStepFinanzielleSituation('2');
                 } else {
                     this.navigateToFinanziellSituationResultate();
                 }
 
             } else if (this.dvSubStep === 2) {
-                this.navigateToStepFinanzielleSituation('1');
+                // noinspection NegatedIfStatementJS - the other way makes no sense
+                if (!this.gesuchModelManager.isFinanzielleSituationRequired()) {
+                    this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
+                } else {
+                    this.navigateToStepFinanzielleSituation('1');
+                }
 
             } else if (this.dvSubStep === 3) {
                 this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
@@ -322,7 +330,8 @@ export class NavigatorController {
                 if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
                     this.navigateToStepFinanzielleSituation('1');
 
-                } else if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && this.gesuchModelManager.isGesuchsteller2Required()) {
+                } else if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && (this.gesuchModelManager.isGesuchsteller2Required()
+                    || this.gesuchModelManager.areThereOnlySchulamtAngebote())) {
                     this.navigateToStep(TSWizardStepName.FINANZIELLE_SITUATION);
                 } else {
                     this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch()));
@@ -408,7 +417,7 @@ export class NavigatorController {
             });
 
         } else if (stepName === TSWizardStepName.FINANZIELLE_SITUATION) {
-            if (this.gesuchModelManager.isGesuchsteller2Required()) {
+            if (this.gesuchModelManager.isGesuchsteller2Required() || this.gesuchModelManager.areThereOnlySchulamtAngebote()) {
                 this.state.go('gesuch.finanzielleSituationStart', {
                     gesuchId: this.getGesuchId()
                 });

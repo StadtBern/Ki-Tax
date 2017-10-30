@@ -182,18 +182,15 @@ describe('dvNavigation', function () {
             expect($state.go).toHaveBeenCalledWith('gesuch.dokumente', {gesuchId: '123'});
         });
         it('moves to gesuch.finanzielleSituation when coming from ERWERBSPENSUM substep 1 and 2GS not required', () => {
-            spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.ERWERBSPENSUM);
-            spyOn(wizardStepManager, 'getNextStep').and.returnValue(TSWizardStepName.FINANZIELLE_SITUATION);
-            spyOn(wizardStepManager, 'isNextStepBesucht').and.returnValue(true);
-            spyOn(wizardStepManager, 'isNextStepEnabled').and.returnValue(true);
-            spyOn(wizardStepManager, 'updateCurrentWizardStepStatus').and.returnValue($q.when({}));
-            navController.dvSubStep = 1;
-            mockGesuch();
-            spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(false);
-            callNextStep();
-            $rootScope.$apply();
+            moveComingFromErwerbspensum(false);
             expect($state.go).toHaveBeenCalledWith('gesuch.finanzielleSituation', {
                 gesuchstellerNumber: '1',
+                gesuchId: '123'
+            });
+        });
+        it('moves to gesuch.finanzielleSituationStart when coming from ERWERBSPENSUM substep 1 and 2GS and FinSit not required', () => {
+            moveComingFromErwerbspensum(true);
+            expect($state.go).toHaveBeenCalledWith('gesuch.finanzielleSituationStart', {
                 gesuchId: '123'
             });
         });
@@ -499,7 +496,7 @@ describe('dvNavigation', function () {
         });
     });
 
-    function mockGesuch() {
+    function mockGesuch(): TSGesuch {
         let gesuch: TSGesuch = new TSGesuch();
         gesuch.typ = TSAntragTyp.ERSTGESUCH;
         gesuch.eingangsart = TSEingangsart.ONLINE;
@@ -521,6 +518,20 @@ describe('dvNavigation', function () {
     function callNextStep() {
         spyOn($state, 'go').and.returnValue({}); // do nothing
         navController.nextStep();
+        $rootScope.$apply();
+    }
+
+    function moveComingFromErwerbspensum(areThereOnlySchulamtAngebote: boolean) {
+        spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.ERWERBSPENSUM);
+        spyOn(wizardStepManager, 'getNextStep').and.returnValue(TSWizardStepName.FINANZIELLE_SITUATION);
+        spyOn(wizardStepManager, 'isNextStepBesucht').and.returnValue(true);
+        spyOn(wizardStepManager, 'isNextStepEnabled').and.returnValue(true);
+        spyOn(wizardStepManager, 'updateCurrentWizardStepStatus').and.returnValue($q.when({}));
+        navController.dvSubStep = 1;
+        mockGesuch();
+        spyOn(gesuchModelManager, 'areThereOnlySchulamtAngebote').and.returnValue(areThereOnlySchulamtAngebote);
+        spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(false);
+        callNextStep();
         $rootScope.$apply();
     }
 });

@@ -45,8 +45,8 @@ import ITimeoutService = angular.ITimeoutService;
 import ILogService = angular.ILogService;
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import ITranslateService = angular.translate.ITranslateService;
-import TSBelegung from '../../../models/TSBelegung';
 import DateUtil from '../../../utils/DateUtil';
+import TSBelegungTagesschule from '../../../models/TSBelegungTagesschule';
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -178,21 +178,26 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public changedAngebot() {
         if (this.getBetreuungModel()) {
-            if (this.isTagesschule()) {
-                this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
-                // Fuer Tagesschule setzen wir eine Dummy-Tagesschule als Institution
-                this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
-                this.setSelectedInstitutionStammdaten();
-                // Nur fuer die neuen Gesuchsperiode kann die Belegung erfast werden
-                if (this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung()
+            if (this.isSchulamt()) {
+                if (this.isTagesschule()) {
+                    this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
+                    // Fuer Tagesschule setzen wir eine Dummy-Tagesschule als Institution
+                    this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
+                    this.setSelectedInstitutionStammdaten();
+                    // Nur fuer die neuen Gesuchsperiode kann die Belegung erfast werden
+                    if (this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung()
                         && this.gesuchModelManager.getGesuchsperiode().isTageschulenAnmeldungAktiv()) {
-                    if (!this.getBetreuungModel().belegung) {
-                        this.getBetreuungModel().belegung = new TSBelegung();
-                        // Default Eintrittsdatum ist erster Schultag, wenn noch in Zukunft
-                        let ersterSchultag: moment.Moment = this.gesuchModelManager.getGesuchsperiode().datumErsterSchultag;
-                        if (DateUtil.today().isBefore(ersterSchultag)) {
-                            this.getBetreuungModel().belegung.eintrittsdatum = ersterSchultag;
+                        if (!this.getBetreuungModel().belegungTagesschule) {
+                            this.getBetreuungModel().belegungTagesschule = new TSBelegungTagesschule();
+                            // Default Eintrittsdatum ist erster Schultag, wenn noch in Zukunft
+                            let ersterSchultag: moment.Moment = this.gesuchModelManager.getGesuchsperiode().datumErsterSchultag;
+                            if (DateUtil.today().isBefore(ersterSchultag)) {
+                                this.getBetreuungModel().belegungTagesschule.eintrittsdatum = ersterSchultag;
+                            }
                         }
+                    } else {
+                        // Ferieninsel. Vorerst mal Status SCHULAMT, spaeter kommt dann ein eigener Status
+                        this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT; // todo entfernen. oben schon gemacht
                     }
                 }
             } else {
@@ -419,6 +424,10 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public isTageseltern(): boolean {
         return this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND) ||
             this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_SCHULKIND);
+    }
+
+    public isSchulamt(): boolean {
+        return this.isTagesschule() || this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.FERIENINSEL);
     }
 
     private isBetreuungsangebottyp(betAngTyp: TSBetreuungsangebotTyp): boolean {
