@@ -23,6 +23,8 @@ import java.time.format.DateTimeFormatter;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import ch.dvbern.lib.date.feiertage.FeiertageHelper;
+
 /**
  * Utils fuer Date Elemente
  */
@@ -59,5 +61,9 @@ public final class DateUtil {
 
 	public static boolean isWeekday(@Nonnull LocalDate date) {
 		return date.getDayOfWeek().equals(DayOfWeek.SATURDAY) || date.getDayOfWeek().equals(DayOfWeek.SUNDAY);
+	}
+
+	public static boolean isHoliday(@Nonnull LocalDate date) {
+		return FeiertageHelper.isFeiertag_CH(java.sql.Date.valueOf(date));
 	}
 }
