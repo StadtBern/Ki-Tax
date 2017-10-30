@@ -48,7 +48,7 @@ public class JaxInstitutionStammdaten extends JaxAbstractDateRangedDTO {
 	private JaxInstitution institution;
 
 	@NotNull
-	private Set<JaxModul> module = new LinkedHashSet<>();
+	private Set<JaxModulTagesschule> moduleTagesschule = new LinkedHashSet<>();
 
 
 	@NotNull
@@ -129,11 +129,11 @@ public class JaxInstitutionStammdaten extends JaxAbstractDateRangedDTO {
 		this.adresseKontoinhaber = adresseKontoinhaber;
 	}
 
-	public Set<JaxModul> getModule() {
-		return module;
+	public Set<JaxModulTagesschule> getModuleTagesschule() {
+		return moduleTagesschule;
 	}
 
-	public void setModule(Set<JaxModul> module) {
-		this.module = module;
+	public void setModuleTagesschule(Set<JaxModulTagesschule> moduleTagesschule) {
+		this.moduleTagesschule = moduleTagesschule;
 	}
 }

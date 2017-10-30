@@ -43,7 +43,7 @@ public class BelegungTagesschule extends AbstractEntity {
 	@Valid
 	@SortNatural
 	@ManyToMany(cascade = CascadeType.ALL)
-	private Set<Modul> module = new TreeSet<>();
+	private Set<ModulTagesschule> moduleTagesschule = new TreeSet<>();
 
 	@NotNull
 	@Column(nullable = false)
@@ -66,12 +66,12 @@ public class BelegungTagesschule extends AbstractEntity {
 	}
 
 	@Nullable
-	public Set<Modul> getModule() {
-		return module;
+	public Set<ModulTagesschule> getModuleTagesschule() {
+		return moduleTagesschule;
 	}
 
-	public void setModule(@Nullable Set<Modul> module) {
-		this.module = module;
+	public void setModuleTagesschule(@Nullable Set<ModulTagesschule> module) {
+		this.moduleTagesschule = module;
 	}
 
 	@NotNull

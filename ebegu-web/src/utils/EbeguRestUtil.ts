@@ -87,12 +87,12 @@ import TSEWKEinwohnercode from '../models/TSEWKEinwohnercode';
 import TSEWKAdresse from '../models/TSEWKAdresse';
 import TSEWKBeziehung from '../models/TSEWKBeziehung';
 import TSFallAntragDTO from '../models/TSFallAntragDTO';
-import TSModul from '../models/TSModul';
 import TSBelegungTagesschule from '../models/TSBelegungTagesschule';
 import TSFerieninselStammdaten from '../models/TSFerieninselStammdaten';
 import TSFerieninselZeitraum from '../models/TSFerieninselZeitraum';
 import TSBelegungFerieninsel from '../models/TSBelegungFerieninsel';
 import TSBelegungFerieninselTag from '../models/TSBelegungFerieninselTag';
+import TSModulTagesschule from '../models/TSModulTagesschule';
 
 export default class EbeguRestUtil {
     static $inject = ['EbeguUtil'];
@@ -810,7 +810,7 @@ export default class EbeguRestUtil {
             restInstitutionStammdaten.adresse = this.adresseToRestObject({}, institutionStammdaten.adresse);
             restInstitutionStammdaten.kontoinhaber = institutionStammdaten.kontoinhaber;
             restInstitutionStammdaten.adresseKontoinhaber = this.adresseToRestObject({}, institutionStammdaten.adresseKontoinhaber);
-            restInstitutionStammdaten.module = this.moduleArrayToRestObject(institutionStammdaten.module);
+            restInstitutionStammdaten.moduleTagesschule = this.moduleTagesschuleArrayToRestObject(institutionStammdaten.moduleTagesschule);
             return restInstitutionStammdaten;
         }
         return undefined;
@@ -827,7 +827,7 @@ export default class EbeguRestUtil {
             institutionStammdatenTS.adresse = this.parseAdresse(new TSAdresse(), institutionStammdatenFromServer.adresse);
             institutionStammdatenTS.kontoinhaber = institutionStammdatenFromServer.kontoinhaber;
             institutionStammdatenTS.adresseKontoinhaber = this.parseAdresse(new TSAdresse(), institutionStammdatenFromServer.adresseKontoinhaber);
-            institutionStammdatenTS.module = this.parseModuleArray(institutionStammdatenFromServer.module);
+            institutionStammdatenTS.moduleTagesschule = this.parseModuleTagesschuleArray(institutionStammdatenFromServer.moduleTagesschule);
             return institutionStammdatenTS;
         }
         return undefined;
@@ -2297,46 +2297,46 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    private parseModuleArray(data: Array<any>): TSModul[] {
-        let module: TSModul[] = [];
+    private parseModuleTagesschuleArray(data: Array<any>): TSModulTagesschule[] {
+        let moduleTagesschule: TSModulTagesschule[] = [];
         if (data && Array.isArray(data)) {
             for (let i = 0; i < data.length; i++) {
-                module[i] = this.parseModul(new TSModul(), data[i]);
+                moduleTagesschule[i] = this.parseModulTagesschule(new TSModulTagesschule(), data[i]);
             }
         } else {
-            module[0] = this.parseModul(new TSModul(), data);
+            moduleTagesschule[0] = this.parseModulTagesschule(new TSModulTagesschule(), data);
         }
-        return module;
+        return moduleTagesschule;
     }
 
-    private parseModul(modulTS: TSModul, modulFromServer: any): TSModul {
+    private parseModulTagesschule(modulTagesschuleTS: TSModulTagesschule, modulFromServer: any): TSModulTagesschule {
         if (modulFromServer) {
-            this.parseAbstractEntity(modulTS, modulFromServer);
-            modulTS.modulname = modulFromServer.modulname;
-            modulTS.wochentag = modulFromServer.wochentag;
-            modulTS.zeitVon = DateUtil.localDateToMoment(modulFromServer.zeitVon);
-            modulTS.zeitBis = DateUtil.localDateToMoment(modulFromServer.zeitBis);
+            this.parseAbstractEntity(modulTagesschuleTS, modulFromServer);
+            modulTagesschuleTS.modulTagesschuleName = modulFromServer.modulTagesschuleName;
+            modulTagesschuleTS.wochentag = modulFromServer.wochentag;
+            modulTagesschuleTS.zeitVon = DateUtil.localDateToMoment(modulFromServer.zeitVon);
+            modulTagesschuleTS.zeitBis = DateUtil.localDateToMoment(modulFromServer.zeitBis);
         }
         return undefined;
     }
 
-    private moduleArrayToRestObject(module: Array<TSModul>): any[] {
+    private moduleTagesschuleArrayToRestObject(moduleTagesschule: Array<TSModulTagesschule>): any[] {
         let list: any[] = [];
-        if (module) {
-            for (let i = 0; i < module.length; i++) {
-                list[i] = this.modulToRestObject({}, module[i]);
+        if (moduleTagesschule) {
+            for (let i = 0; i < moduleTagesschule.length; i++) {
+                list[i] = this.modulTagesschuleToRestObject({}, moduleTagesschule[i]);
             }
         }
         return list;
     }
 
-    private modulToRestObject(restModul: any, modulTS: TSModul): any {
-        if (modulTS) {
-            this.abstractEntityToRestObject(restModul, modulTS);
-            restModul.modulname = modulTS.modulname;
-            restModul.wochentag = modulTS.wochentag;
-            restModul.zeitVon = DateUtil.momentToLocalDate(modulTS.zeitVon);
-            restModul.zeitBis = DateUtil.momentToLocalDate(modulTS.zeitBis);
+    private modulTagesschuleToRestObject(restModul: any, modulTagesschuleTS: TSModulTagesschule): any {
+        if (modulTagesschuleTS) {
+            this.abstractEntityToRestObject(restModul, modulTagesschuleTS);
+            restModul.modulTagesschuleName = modulTagesschuleTS.modulTagesschuleName;
+            restModul.wochentag = modulTagesschuleTS.wochentag;
+            restModul.zeitVon = DateUtil.momentToLocalDate(modulTagesschuleTS.zeitVon);
+            restModul.zeitBis = DateUtil.momentToLocalDate(modulTagesschuleTS.zeitBis);
         }
         return undefined;
     }
@@ -2344,7 +2344,7 @@ export default class EbeguRestUtil {
     private parseBelegungTagesschule(belegungTS: TSBelegungTagesschule, belegungFromServer: any): TSBelegungTagesschule {
         if (belegungFromServer) {
             this.parseAbstractEntity(belegungTS, belegungFromServer);
-            belegungTS.module = this.parseModuleArray(belegungFromServer.module);
+            belegungTS.moduleTagesschule = this.parseModuleTagesschuleArray(belegungFromServer.moduleTagesschule);
             belegungTS.eintrittsdatum = DateUtil.localDateToMoment(belegungFromServer.eintrittsdatum);
             return belegungTS;
         }
@@ -2354,7 +2354,7 @@ export default class EbeguRestUtil {
     private belegungTagesschuleToRestObject(restBelegung: any, belegungTS: TSBelegungTagesschule): any {
         if (belegungTS) {
             this.abstractEntityToRestObject(restBelegung, belegungTS);
-            restBelegung.module = this.moduleArrayToRestObject(belegungTS.module);
+            restBelegung.moduleTagesschule = this.moduleTagesschuleArrayToRestObject(belegungTS.moduleTagesschule);
             restBelegung.eintrittsdatum = DateUtil.momentToLocalDate(belegungTS.eintrittsdatum);
             return restBelegung;
         }

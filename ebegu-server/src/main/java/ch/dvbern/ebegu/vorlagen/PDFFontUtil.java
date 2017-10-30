@@ -41,7 +41,7 @@ public class PDFFontUtil {
 
         /*
 		// Auskommentiert, Seitenummer Problem, DABU 07.06.2015
-        // Dazu PDFBox im Kom. Modul < 2.0 kann nicht Dokumente mit embedded Fonts korrekt drucken ("Fett Problem")
+        // Dazu PDFBox im Kom. ModulTagesschule < 2.0 kann nicht Dokumente mit embedded Fonts korrekt drucken ("Fett Problem")
         FontFactory.register(TTF_ARIAL_RESOURCE, FONT_FACE_ARIAL);
         FontFactory.register(TTF_CALIBRI_RESOURCE, FONT_FACE_CALIBRI);
         FontFactory.register(TTF_CALIBRIB_RESOURCE, FONT_FACE_CALIBRIB);

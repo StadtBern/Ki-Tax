@@ -28,7 +28,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
-import ch.dvbern.ebegu.enums.ModulName;
+import ch.dvbern.ebegu.enums.ModulTagesschuleName;
 import org.hibernate.envers.Audited;
 
 /**
@@ -36,13 +36,13 @@ import org.hibernate.envers.Audited;
  */
 @Audited
 @Entity
-public class Modul extends AbstractEntity {
+public class ModulTagesschule extends AbstractEntity {
 
 	private static final long serialVersionUID = -8403411439182708718L;
 
 	@NotNull
 	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_modul_institution_stammdaten_id"), nullable = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_modul_tagesschule_institution_stammdaten_id"), nullable = false)
 	private InstitutionStammdaten instStammdaten;
 
 	@Enumerated(value = EnumType.STRING)
@@ -53,7 +53,7 @@ public class Modul extends AbstractEntity {
 	@Enumerated(value = EnumType.STRING)
 	@NotNull
 	@Column(nullable = false)
-	private ModulName modulname;
+	private ModulTagesschuleName modulTagesschuleName;
 
 	@Column(nullable = false)
 	private LocalTime zeitVon;
@@ -70,14 +70,14 @@ public class Modul extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-		if (!(other instanceof Modul)) {
+		if (!(other instanceof ModulTagesschule)) {
 			return false;
 		}
-		final Modul otherModul = (Modul) other;
-		return getModulname() == otherModul.getModulname() &&
-			getWochentag() == otherModul.getWochentag() &&
-			Objects.equals(getZeitVon(), otherModul.getZeitVon()) &&
-			Objects.equals(getZeitBis(), otherModul.getZeitBis());
+		final ModulTagesschule otherModulTagesschule = (ModulTagesschule) other;
+		return getModulTagesschuleName() == otherModulTagesschule.getModulTagesschuleName() &&
+			getWochentag() == otherModulTagesschule.getWochentag() &&
+			Objects.equals(getZeitVon(), otherModulTagesschule.getZeitVon()) &&
+			Objects.equals(getZeitBis(), otherModulTagesschule.getZeitBis());
 	}
 
 	public DayOfWeek getWochentag() {
@@ -88,12 +88,12 @@ public class Modul extends AbstractEntity {
 		this.wochentag = wochentag;
 	}
 
-	public ModulName getModulname() {
-		return modulname;
+	public ModulTagesschuleName getModulTagesschuleName() {
+		return modulTagesschuleName;
 	}
 
-	public void setModulname(ModulName modulname) {
-		this.modulname = modulname;
+	public void setModulTagesschuleName(ModulTagesschuleName modulname) {
+		this.modulTagesschuleName = modulname;
 	}
 
 	public LocalTime getZeitVon() {
