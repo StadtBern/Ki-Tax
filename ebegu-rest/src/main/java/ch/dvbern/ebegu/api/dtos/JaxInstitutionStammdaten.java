@@ -16,8 +16,6 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import java.math.BigDecimal;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -46,10 +44,8 @@ public class JaxInstitutionStammdaten extends JaxAbstractDateRangedDTO {
 	private BetreuungsangebotTyp betreuungsangebotTyp;
 	@NotNull
 	private JaxInstitution institution;
-
-	@NotNull
-	private Set<JaxModulTagesschule> moduleTagesschule = new LinkedHashSet<>();
-
+	@Nullable
+	private JaxInstitutionStammdatenTagesschule institutionStammdatenTagesschule;
 
 	@NotNull
 	private JaxAdresse adresse;
@@ -129,11 +125,12 @@ public class JaxInstitutionStammdaten extends JaxAbstractDateRangedDTO {
 		this.adresseKontoinhaber = adresseKontoinhaber;
 	}
 
-	public Set<JaxModulTagesschule> getModuleTagesschule() {
-		return moduleTagesschule;
+	@Nullable
+	public JaxInstitutionStammdatenTagesschule getInstitutionStammdatenTagesschule() {
+		return institutionStammdatenTagesschule;
 	}
 
-	public void setModuleTagesschule(Set<JaxModulTagesschule> moduleTagesschule) {
-		this.moduleTagesschule = moduleTagesschule;
+	public void setInstitutionStammdatenTagesschule(@Nullable JaxInstitutionStammdatenTagesschule institutionStammdatenTagesschule) {
+		this.institutionStammdatenTagesschule = institutionStammdatenTagesschule;
 	}
 }

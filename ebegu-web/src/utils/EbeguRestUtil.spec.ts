@@ -40,6 +40,7 @@ import TSGesuchsteller from '../models/TSGesuchsteller';
 import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
 import TSInstitution from '../models/TSInstitution';
 import TSInstitutionStammdaten from '../models/TSInstitutionStammdaten';
+import TSInstitutionStammdatenTagesschule from '../models/TSInstitutionStammdatenTagesschule';
 import {TSMandant} from '../models/TSMandant';
 import {TSTraegerschaft} from '../models/TSTraegerschaft';
 import TSVerfuegung from '../models/TSVerfuegung';
@@ -336,7 +337,7 @@ describe('EbeguRestUtil', function () {
             it('should transform TSInstitutionStammdaten to REST object and back', () => {
                 let myInstitution = createInstitution();
                 let myInstitutionStammdaten = new TSInstitutionStammdaten('iban', 250, 12, TSBetreuungsangebotTyp.KITA, myInstitution, undefined,
-                    new TSDateRange(DateUtil.today(), DateUtil.today()), '', undefined, []);
+                    new TSDateRange(DateUtil.today(), DateUtil.today()), '', undefined, new TSInstitutionStammdatenTagesschule());
                 TestDataUtil.setAbstractFieldsUndefined(myInstitutionStammdaten);
 
                 let restInstitutionStammdaten = ebeguRestUtil.institutionStammdatenToRestObject({}, myInstitutionStammdaten);
