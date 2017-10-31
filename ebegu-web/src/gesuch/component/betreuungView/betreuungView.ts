@@ -379,8 +379,11 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         //TODO (team) dies muss dann mit den neuen SCH-Status nochmals ueberdacht werden
         if (this.getBetreuungModel()) {
             return !this.getBetreuungModel().hasVorgaenger()
-                && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND) || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST)
+                && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)
+                    || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST)
+                    || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT)
                 && !this.isKorrekturModusJugendamt()));
+
         }
         return false;
     }
