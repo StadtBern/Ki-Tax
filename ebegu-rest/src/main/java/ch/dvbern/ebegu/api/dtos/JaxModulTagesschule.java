@@ -24,15 +24,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import ch.dvbern.ebegu.enums.ModulName;
+import ch.dvbern.ebegu.enums.ModulTagesschuleName;
 import ch.dvbern.lib.date.converters.LocalTimeXMLConverter;
 
 /**
  * DTO fuer Module fuer die Tagesschulen
  */
-@XmlRootElement(name = "modul")
+@XmlRootElement(name = "modulTagesschule")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxModul extends JaxAbstractDTO {
+public class JaxModulTagesschule extends JaxAbstractDTO {
 
 	private static final long serialVersionUID = -1893537808325618626L;
 
@@ -40,7 +40,7 @@ public class JaxModul extends JaxAbstractDTO {
 	private DayOfWeek wochentag;
 
 	@NotNull
-	private ModulName modulname;
+	private ModulTagesschuleName modulTagesschuleName;
 
 	@NotNull
 	@XmlJavaTypeAdapter(LocalTimeXMLConverter.class)
@@ -59,12 +59,12 @@ public class JaxModul extends JaxAbstractDTO {
 		this.wochentag = wochentag;
 	}
 
-	public ModulName getModulname() {
-		return modulname;
+	public ModulTagesschuleName getModulTagesschuleName() {
+		return modulTagesschuleName;
 	}
 
-	public void setModulname(ModulName modulname) {
-		this.modulname = modulname;
+	public void setModulTagesschuleName(ModulTagesschuleName modulTagesschuleName) {
+		this.modulTagesschuleName = modulTagesschuleName;
 	}
 
 	public LocalTime getZeitVon() {

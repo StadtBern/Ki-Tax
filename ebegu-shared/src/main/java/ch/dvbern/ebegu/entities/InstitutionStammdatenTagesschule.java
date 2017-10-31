@@ -15,39 +15,35 @@
 
 package ch.dvbern.ebegu.entities;
 
-import java.time.LocalDate;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 
 /**
- * Entity for the Belegung of the Tageschulangebote in a Betreuung.
+ * Entitaet zum Speichern von InstitutionStammdatenTagesschule in der Datenbank.
  */
 @Audited
 @Entity
-public class BelegungTagesschule extends AbstractEntity {
+public class InstitutionStammdatenTagesschule extends AbstractEntity {
 
-	private static final long serialVersionUID = -8403435739182708718L;
+	private static final long serialVersionUID = 3991623541799163623L;
 
 	@Nullable
 	@Valid
 	@SortNatural
-	@ManyToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "institutionStammdatenTagesschule")
 	private Set<ModulTagesschule> moduleTagesschule = new TreeSet<>();
 
-	@NotNull
-	@Column(nullable = false)
-	private LocalDate eintrittsdatum;
+	public InstitutionStammdatenTagesschule() {
+	}
 
 	@Override
 	public boolean isSame(AbstractEntity other) {
@@ -58,8 +54,7 @@ public class BelegungTagesschule extends AbstractEntity {
 		if (other == null || !getClass().equals(other.getClass())) {
 			return false;
 		}
-		//noinspection RedundantIfStatement
-		if (!(other instanceof BelegungTagesschule)) {
+		if (!(other instanceof InstitutionStammdatenTagesschule)) {
 			return false;
 		}
 		return true;
@@ -70,16 +65,7 @@ public class BelegungTagesschule extends AbstractEntity {
 		return moduleTagesschule;
 	}
 
-	public void setModuleTagesschule(@Nullable Set<ModulTagesschule> module) {
-		this.moduleTagesschule = module;
-	}
-
-	@NotNull
-	public LocalDate getEintrittsdatum() {
-		return eintrittsdatum;
-	}
-
-	public void setEintrittsdatum(@NotNull LocalDate eintrittsdatum) {
-		this.eintrittsdatum = eintrittsdatum;
+	public void setModuleTagesschule(@Nullable Set<ModulTagesschule> moduleTagesschule) {
+		this.moduleTagesschule = moduleTagesschule;
 	}
 }

@@ -13,86 +13,87 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import TSApplicationProperty from '../models/TSApplicationProperty';
-import TSAbstractEntity from '../models/TSAbstractEntity';
-import TSAdresse from '../models/TSAdresse';
-import {TSAdressetyp} from '../models/enums/TSAdressetyp';
-import TSGesuchsteller from '../models/TSGesuchsteller';
-import TSGesuch from '../models/TSGesuch';
-import TSFall from '../models/TSFall';
-import DateUtil from './DateUtil';
-import TSLand from '../models/types/TSLand';
-import TSFamiliensituation from '../models/TSFamiliensituation';
-import {TSFachstelle} from '../models/TSFachstelle';
-import TSFinanzielleSituation from '../models/TSFinanzielleSituation';
-import TSFinanzielleSituationContainer from '../models/TSFinanzielleSituationContainer';
-import {TSMandant} from '../models/TSMandant';
-import {TSTraegerschaft} from '../models/TSTraegerschaft';
-import TSInstitution from '../models/TSInstitution';
-import TSInstitutionStammdaten from '../models/TSInstitutionStammdaten';
-import {TSDateRange} from '../models/types/TSDateRange';
-import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
-import TSKind from '../models/TSKind';
-import TSAbstractPersonEntity from '../models/TSAbstractPersonEntity';
-import {TSPensumFachstelle} from '../models/TSPensumFachstelle';
-import TSErwerbspensumContainer from '../models/TSErwerbspensumContainer';
-import TSErwerbspensum from '../models/TSErwerbspensum';
-import {TSAbstractPensumEntity} from '../models/TSAbstractPensumEntity';
-import TSFinanzielleSituationResultateDTO from '../models/dto/TSFinanzielleSituationResultateDTO';
-import TSBetreuung from '../models/TSBetreuung';
-import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
-import TSBetreuungspensum from '../models/TSBetreuungspensum';
-import TSEbeguParameter from '../models/TSEbeguParameter';
-import TSGesuchsperiode from '../models/TSGesuchsperiode';
-import TSAbstractAntragEntity from '../models/TSAbstractAntragEntity';
-import TSAntragDTO from '../models/TSAntragDTO';
-import EbeguUtil from './EbeguUtil';
-import TSKindContainer from '../models/TSKindContainer';
-import TSUser from '../models/TSUser';
-import TSEinkommensverschlechterungInfo from '../models/TSEinkommensverschlechterungInfo';
-import TSEinkommensverschlechterungContainer from '../models/TSEinkommensverschlechterungContainer';
-import TSAbstractFinanzielleSituation from '../models/TSAbstractFinanzielleSituation';
-import TSEinkommensverschlechterung from '../models/TSEinkommensverschlechterung';
 import TSDokumenteDTO from '../models/dto/TSDokumenteDTO';
-import TSDokumentGrund from '../models/TSDokumentGrund';
-import TSDokument from '../models/TSDokument';
-import TSVerfuegung from '../models/TSVerfuegung';
-import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
-import TSDownloadFile from '../models/TSDownloadFile';
-import TSPendenzInstitution from '../models/TSPendenzInstitution';
-import TSWizardStep from '../models/TSWizardStep';
-import TSEbeguVorlage from '../models/TSEbeguVorlage';
-import TSVorlage from '../models/TSVorlage';
-import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
-import TSFile from '../models/TSFile';
-import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
-import TSAbwesenheit from '../models/TSAbwesenheit';
-import TSMahnung from '../models/TSMahnung';
-import TSFinanzModel from '../models/TSFinanzModel';
-import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
-import TSAdresseContainer from '../models/TSAdresseContainer';
-import TSEinkommensverschlechterungInfoContainer from '../models/TSEinkommensverschlechterungInfoContainer';
-import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
-import TSMitteilung from '../models/TSMitteilung';
+import TSFinanzielleSituationResultateDTO from '../models/dto/TSFinanzielleSituationResultateDTO';
 import TSQuickSearchResult from '../models/dto/TSQuickSearchResult';
 import TSSearchResultEntry from '../models/dto/TSSearchResultEntry';
-import TSBetreuungsmitteilung from '../models/TSBetreuungsmitteilung';
-import TSBetreuungsmitteilungPensum from '../models/TSBetreuungsmitteilungPensum';
-import TSZahlungsauftrag from '../models/TSZahlungsauftrag';
-import TSZahlung from '../models/TSZahlung';
-import TSKindDublette from '../models/TSKindDublette';
-import TSEWKResultat from '../models/TSEWKResultat';
-import TSEWKPerson from '../models/TSEWKPerson';
-import TSEWKEinwohnercode from '../models/TSEWKEinwohnercode';
-import TSEWKAdresse from '../models/TSEWKAdresse';
-import TSEWKBeziehung from '../models/TSEWKBeziehung';
-import TSFallAntragDTO from '../models/TSFallAntragDTO';
-import TSModul from '../models/TSModul';
-import TSBelegungTagesschule from '../models/TSBelegungTagesschule';
-import TSFerieninselStammdaten from '../models/TSFerieninselStammdaten';
-import TSFerieninselZeitraum from '../models/TSFerieninselZeitraum';
+import {TSAdressetyp} from '../models/enums/TSAdressetyp';
+import TSAbstractAntragEntity from '../models/TSAbstractAntragEntity';
+import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
+import TSAbstractEntity from '../models/TSAbstractEntity';
+import TSAbstractFinanzielleSituation from '../models/TSAbstractFinanzielleSituation';
+import {TSAbstractPensumEntity} from '../models/TSAbstractPensumEntity';
+import TSAbstractPersonEntity from '../models/TSAbstractPersonEntity';
+import TSAbwesenheit from '../models/TSAbwesenheit';
+import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
+import TSAdresse from '../models/TSAdresse';
+import TSAdresseContainer from '../models/TSAdresseContainer';
+import TSAntragDTO from '../models/TSAntragDTO';
+import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
+import TSApplicationProperty from '../models/TSApplicationProperty';
 import TSBelegungFerieninsel from '../models/TSBelegungFerieninsel';
 import TSBelegungFerieninselTag from '../models/TSBelegungFerieninselTag';
+import TSBelegungTagesschule from '../models/TSBelegungTagesschule';
+import TSBetreuung from '../models/TSBetreuung';
+import TSBetreuungsmitteilung from '../models/TSBetreuungsmitteilung';
+import TSBetreuungsmitteilungPensum from '../models/TSBetreuungsmitteilungPensum';
+import TSBetreuungspensum from '../models/TSBetreuungspensum';
+import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
+import TSDokument from '../models/TSDokument';
+import TSDokumentGrund from '../models/TSDokumentGrund';
+import TSDownloadFile from '../models/TSDownloadFile';
+import TSEbeguParameter from '../models/TSEbeguParameter';
+import TSEbeguVorlage from '../models/TSEbeguVorlage';
+import TSEinkommensverschlechterung from '../models/TSEinkommensverschlechterung';
+import TSEinkommensverschlechterungContainer from '../models/TSEinkommensverschlechterungContainer';
+import TSEinkommensverschlechterungInfo from '../models/TSEinkommensverschlechterungInfo';
+import TSEinkommensverschlechterungInfoContainer from '../models/TSEinkommensverschlechterungInfoContainer';
+import TSErwerbspensum from '../models/TSErwerbspensum';
+import TSErwerbspensumContainer from '../models/TSErwerbspensumContainer';
+import TSEWKAdresse from '../models/TSEWKAdresse';
+import TSEWKBeziehung from '../models/TSEWKBeziehung';
+import TSEWKEinwohnercode from '../models/TSEWKEinwohnercode';
+import TSEWKPerson from '../models/TSEWKPerson';
+import TSEWKResultat from '../models/TSEWKResultat';
+import {TSFachstelle} from '../models/TSFachstelle';
+import TSFall from '../models/TSFall';
+import TSFallAntragDTO from '../models/TSFallAntragDTO';
+import TSFamiliensituation from '../models/TSFamiliensituation';
+import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
+import TSFerieninselStammdaten from '../models/TSFerieninselStammdaten';
+import TSFerieninselZeitraum from '../models/TSFerieninselZeitraum';
+import TSFile from '../models/TSFile';
+import TSFinanzielleSituation from '../models/TSFinanzielleSituation';
+import TSFinanzielleSituationContainer from '../models/TSFinanzielleSituationContainer';
+import TSFinanzModel from '../models/TSFinanzModel';
+import TSGesuch from '../models/TSGesuch';
+import TSGesuchsperiode from '../models/TSGesuchsperiode';
+import TSGesuchsteller from '../models/TSGesuchsteller';
+import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
+import TSInstitution from '../models/TSInstitution';
+import TSInstitutionStammdaten from '../models/TSInstitutionStammdaten';
+import TSInstitutionStammdatenTagesschule from '../models/TSInstitutionStammdatenTagesschule';
+import TSKind from '../models/TSKind';
+import TSKindContainer from '../models/TSKindContainer';
+import TSKindDublette from '../models/TSKindDublette';
+import TSMahnung from '../models/TSMahnung';
+import {TSMandant} from '../models/TSMandant';
+import TSMitteilung from '../models/TSMitteilung';
+import TSModulTagesschule from '../models/TSModulTagesschule';
+import TSPendenzInstitution from '../models/TSPendenzInstitution';
+import {TSPensumFachstelle} from '../models/TSPensumFachstelle';
+import {TSTraegerschaft} from '../models/TSTraegerschaft';
+import TSUser from '../models/TSUser';
+import TSVerfuegung from '../models/TSVerfuegung';
+import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
+import TSVorlage from '../models/TSVorlage';
+import TSWizardStep from '../models/TSWizardStep';
+import TSZahlung from '../models/TSZahlung';
+import TSZahlungsauftrag from '../models/TSZahlungsauftrag';
+import {TSDateRange} from '../models/types/TSDateRange';
+import TSLand from '../models/types/TSLand';
+import DateUtil from './DateUtil';
+import EbeguUtil from './EbeguUtil';
 
 export default class EbeguRestUtil {
     static $inject = ['EbeguUtil'];
@@ -810,7 +811,7 @@ export default class EbeguRestUtil {
             restInstitutionStammdaten.adresse = this.adresseToRestObject({}, institutionStammdaten.adresse);
             restInstitutionStammdaten.kontoinhaber = institutionStammdaten.kontoinhaber;
             restInstitutionStammdaten.adresseKontoinhaber = this.adresseToRestObject({}, institutionStammdaten.adresseKontoinhaber);
-            restInstitutionStammdaten.module = this.moduleArrayToRestObject(institutionStammdaten.module);
+            restInstitutionStammdaten.institutionStammdatenTagesschule = this.institutionStammdatenTagesschuleToRestObject({}, institutionStammdaten.institutionStammdatenTagesschule);
             return restInstitutionStammdaten;
         }
         return undefined;
@@ -827,7 +828,8 @@ export default class EbeguRestUtil {
             institutionStammdatenTS.adresse = this.parseAdresse(new TSAdresse(), institutionStammdatenFromServer.adresse);
             institutionStammdatenTS.kontoinhaber = institutionStammdatenFromServer.kontoinhaber;
             institutionStammdatenTS.adresseKontoinhaber = this.parseAdresse(new TSAdresse(), institutionStammdatenFromServer.adresseKontoinhaber);
-            institutionStammdatenTS.module = this.parseModuleArray(institutionStammdatenFromServer.module);
+            institutionStammdatenTS.institutionStammdatenTagesschule = this.parseInstitutionStammdatenTagesschule(new TSInstitutionStammdatenTagesschule(),
+                institutionStammdatenFromServer.institutionStammdatenTagesschule);
             return institutionStammdatenTS;
         }
         return undefined;
@@ -843,6 +845,26 @@ export default class EbeguRestUtil {
             institutionStammdaten[0] = this.parseInstitutionStammdaten(new TSInstitutionStammdaten(), data);
         }
         return institutionStammdaten;
+    }
+
+    public institutionStammdatenTagesschuleToRestObject(restInstitutionStammdatenTagesschule: any,
+                                                        institutionStammdatenTagesschule: TSInstitutionStammdatenTagesschule): any {
+        if (institutionStammdatenTagesschule) {
+            this.abstractEntityToRestObject(restInstitutionStammdatenTagesschule, institutionStammdatenTagesschule);
+            restInstitutionStammdatenTagesschule.moduleTagesschule = this.moduleTagesschuleArrayToRestObject(institutionStammdatenTagesschule.moduleTagesschule);
+            return restInstitutionStammdatenTagesschule;
+        }
+        return undefined;
+    }
+
+    public parseInstitutionStammdatenTagesschule(institutionStammdatenTagesschuleTS: TSInstitutionStammdatenTagesschule,
+                                                 institutionStammdatenTagesschuleFromServer: any): TSInstitutionStammdatenTagesschule {
+        if (institutionStammdatenTagesschuleFromServer) {
+            this.parseAbstractEntity(institutionStammdatenTagesschuleTS, institutionStammdatenTagesschuleFromServer);
+            institutionStammdatenTagesschuleTS.moduleTagesschule = this.parseModuleTagesschuleArray(institutionStammdatenTagesschuleFromServer.moduleTagesschule);
+            return institutionStammdatenTagesschuleTS;
+        }
+        return undefined;
     }
 
     public finanzielleSituationContainerToRestObject(restFinanzielleSituationContainer: any,
@@ -2297,46 +2319,46 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    private parseModuleArray(data: Array<any>): TSModul[] {
-        let module: TSModul[] = [];
+    private parseModuleTagesschuleArray(data: Array<any>): TSModulTagesschule[] {
+        let moduleTagesschule: TSModulTagesschule[] = [];
         if (data && Array.isArray(data)) {
             for (let i = 0; i < data.length; i++) {
-                module[i] = this.parseModul(new TSModul(), data[i]);
+                moduleTagesschule[i] = this.parseModulTagesschule(new TSModulTagesschule(), data[i]);
             }
         } else {
-            module[0] = this.parseModul(new TSModul(), data);
+            moduleTagesschule[0] = this.parseModulTagesschule(new TSModulTagesschule(), data);
         }
-        return module;
+        return moduleTagesschule;
     }
 
-    private parseModul(modulTS: TSModul, modulFromServer: any): TSModul {
+    private parseModulTagesschule(modulTagesschuleTS: TSModulTagesschule, modulFromServer: any): TSModulTagesschule {
         if (modulFromServer) {
-            this.parseAbstractEntity(modulTS, modulFromServer);
-            modulTS.modulname = modulFromServer.modulname;
-            modulTS.wochentag = modulFromServer.wochentag;
-            modulTS.zeitVon = DateUtil.localDateToMoment(modulFromServer.zeitVon);
-            modulTS.zeitBis = DateUtil.localDateToMoment(modulFromServer.zeitBis);
+            this.parseAbstractEntity(modulTagesschuleTS, modulFromServer);
+            modulTagesschuleTS.modulTagesschuleName = modulFromServer.modulTagesschuleName;
+            modulTagesschuleTS.wochentag = modulFromServer.wochentag;
+            modulTagesschuleTS.zeitVon = DateUtil.localDateToMoment(modulFromServer.zeitVon);
+            modulTagesschuleTS.zeitBis = DateUtil.localDateToMoment(modulFromServer.zeitBis);
         }
         return undefined;
     }
 
-    private moduleArrayToRestObject(module: Array<TSModul>): any[] {
+    private moduleTagesschuleArrayToRestObject(moduleTagesschule: Array<TSModulTagesschule>): any[] {
         let list: any[] = [];
-        if (module) {
-            for (let i = 0; i < module.length; i++) {
-                list[i] = this.modulToRestObject({}, module[i]);
+        if (moduleTagesschule) {
+            for (let i = 0; i < moduleTagesschule.length; i++) {
+                list[i] = this.modulTagesschuleToRestObject({}, moduleTagesschule[i]);
             }
         }
         return list;
     }
 
-    private modulToRestObject(restModul: any, modulTS: TSModul): any {
-        if (modulTS) {
-            this.abstractEntityToRestObject(restModul, modulTS);
-            restModul.modulname = modulTS.modulname;
-            restModul.wochentag = modulTS.wochentag;
-            restModul.zeitVon = DateUtil.momentToLocalDate(modulTS.zeitVon);
-            restModul.zeitBis = DateUtil.momentToLocalDate(modulTS.zeitBis);
+    private modulTagesschuleToRestObject(restModul: any, modulTagesschuleTS: TSModulTagesschule): any {
+        if (modulTagesschuleTS) {
+            this.abstractEntityToRestObject(restModul, modulTagesschuleTS);
+            restModul.modulTagesschuleName = modulTagesschuleTS.modulTagesschuleName;
+            restModul.wochentag = modulTagesschuleTS.wochentag;
+            restModul.zeitVon = DateUtil.momentToLocalDate(modulTagesschuleTS.zeitVon);
+            restModul.zeitBis = DateUtil.momentToLocalDate(modulTagesschuleTS.zeitBis);
         }
         return undefined;
     }
@@ -2344,7 +2366,7 @@ export default class EbeguRestUtil {
     private parseBelegungTagesschule(belegungTS: TSBelegungTagesschule, belegungFromServer: any): TSBelegungTagesschule {
         if (belegungFromServer) {
             this.parseAbstractEntity(belegungTS, belegungFromServer);
-            belegungTS.module = this.parseModuleArray(belegungFromServer.module);
+            belegungTS.moduleTagesschule = this.parseModuleTagesschuleArray(belegungFromServer.moduleTagesschule);
             belegungTS.eintrittsdatum = DateUtil.localDateToMoment(belegungFromServer.eintrittsdatum);
             return belegungTS;
         }
@@ -2354,7 +2376,7 @@ export default class EbeguRestUtil {
     private belegungTagesschuleToRestObject(restBelegung: any, belegungTS: TSBelegungTagesschule): any {
         if (belegungTS) {
             this.abstractEntityToRestObject(restBelegung, belegungTS);
-            restBelegung.module = this.moduleArrayToRestObject(belegungTS.module);
+            restBelegung.moduleTagesschule = this.moduleTagesschuleArrayToRestObject(belegungTS.moduleTagesschule);
             restBelegung.eintrittsdatum = DateUtil.momentToLocalDate(belegungTS.eintrittsdatum);
             return restBelegung;
         }
