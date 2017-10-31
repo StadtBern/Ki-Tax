@@ -42,7 +42,7 @@ public class ModulTagesschule extends AbstractEntity {
 
 	@NotNull
 	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_modul_tagesschule_institution_stammdaten_id"), nullable = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_modul_tagesschule_inst_stammdaten_tagesschule_id"), nullable = false)
 	private InstitutionStammdaten instStammdaten;
 
 	@Enumerated(value = EnumType.STRING)

@@ -24,8 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Created by imanol on 17.03.16.
- * DTO fuer InstitutionStammdaten
+ * DTO fuer InstitutionStammdatenTagesschule
  */
 @XmlRootElement(name = "institutionStammdatenTagesschule")
 @XmlAccessorType(XmlAccessType.FIELD)
