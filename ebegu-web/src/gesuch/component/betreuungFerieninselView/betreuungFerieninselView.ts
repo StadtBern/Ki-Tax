@@ -13,7 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IFormController, IPromise} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import {FerieninselStammdatenRS} from '../../../admin/service/ferieninselStammdatenRS.rest';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
@@ -46,7 +46,8 @@ export class BetreuungFerieninselViewComponentConfig implements IComponentOption
     transclude = false;
     bindings: any = {
         betreuung: '=',
-        onSave: '&'
+        onSave: '&',
+        form: '='
     };
     template = template;
     controller = BetreuungFerieninselViewController;
@@ -57,6 +58,8 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
 
     betreuung: TSBetreuung;
     onSave: () => void;
+    form: IFormController;
+    showErrorMessage: boolean;
 
     ferieninselStammdaten: TSFerieninselStammdaten;
 
@@ -116,21 +119,32 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
             && !this.isAnmeldeschlussAbgelaufen();
     }
 
-    public anmelden() {
-        return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
-            title: 'CONFIRM_SAVE_FERIENINSEL',
-            deleteText: 'BESCHREIBUNG_SAVE_FERIENINSEL',
-            parentController: undefined,
-            elementID: undefined
-        }).then(() => {
-            this.betreuung.belegungFerieninsel.tage = [];
-            // for (let tag of this.ferieninselTage) {
-            for (let tag of this.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung) {
-                if (tag.angemeldet) {
-                    this.betreuung.belegungFerieninsel.tage.push(tag);
-                }
+    public anmelden(): IPromise<any> {
+        if (this.form.$valid) {
+            // Validieren, dass mindestens 1 Tag ausgewählt war
+            this.setChosenFerientage();
+            if (this.betreuung.belegungFerieninsel.tage.length <= 0) {
+                this.showErrorMessage = true;
+                return undefined;
             }
-            this.onSave();
-        });
+            return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
+                title: 'CONFIRM_SAVE_FERIENINSEL',
+                deleteText: 'BESCHREIBUNG_SAVE_FERIENINSEL',
+                parentController: undefined,
+                elementID: undefined
+            }).then(() => {
+                this.onSave();
+            });
+        }
+        return undefined;
+    }
+
+    private setChosenFerientage(): void {
+        this.betreuung.belegungFerieninsel.tage = [];
+        for (let tag of this.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung) {
+            if (tag.angemeldet) {
+                this.betreuung.belegungFerieninsel.tage.push(tag);
+            }
+        }
     }
 }

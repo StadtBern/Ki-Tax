@@ -457,7 +457,8 @@
 
                     <!-- Ferieninsel -->
                     <div ng-if="vm.isFerieninsel()">
-                        <betreuung-ferieninsel-view betreuung="vm.getBetreuungModel()" on-save="vm.anmeldenSchulamt()"></betreuung-ferieninsel-view>
+                        <betreuung-ferieninsel-view betreuung="vm.getBetreuungModel()" form="vm.form"
+                                                    on-save="vm.anmeldenSchulamt()"></betreuung-ferieninsel-view>
                     </div>
 
                 </fieldset>

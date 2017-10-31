@@ -73,6 +73,14 @@
 			</div>
 		</div>
 
+        <!-- Hinweis, wenn keine Tage ausgewaehlt -->
+        <div ng-if="vm.showErrorMessage === true">
+            <div class="well well-status-warten">
+                <i class="fa fa-exclamation " aria-hidden="true"></i>
+                <span data-translate="WARN_FERIEN_KEINE_TAGE_GEWAEHLT"></span>
+            </div>
+        </div>
+
         <!--Buttons-->
         <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
 			wenn wir die Direktive benutzen wollen muessen wir viel anpassen, daher lohnt es sich die Buttons direkt zu erstellen-->
