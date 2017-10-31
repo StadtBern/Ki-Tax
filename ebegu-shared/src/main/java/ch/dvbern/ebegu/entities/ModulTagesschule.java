@@ -43,7 +43,7 @@ public class ModulTagesschule extends AbstractEntity {
 	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_modul_tagesschule_inst_stammdaten_tagesschule_id"), nullable = false)
-	private InstitutionStammdaten instStammdaten;
+	private InstitutionStammdatenTagesschule institutionStammdatenTagesschule;
 
 	@Enumerated(value = EnumType.STRING)
 	@NotNull
@@ -112,11 +112,11 @@ public class ModulTagesschule extends AbstractEntity {
 		this.zeitBis = zeitBis;
 	}
 
-	public InstitutionStammdaten getInstStammdaten() {
-		return instStammdaten;
+	public InstitutionStammdatenTagesschule getInstitutionStammdatenTagesschule() {
+		return institutionStammdatenTagesschule;
 	}
 
-	public void setInstStammdaten(InstitutionStammdaten instStammdaten) {
-		this.instStammdaten = instStammdaten;
+	public void setInstitutionStammdatenTagesschule(InstitutionStammdatenTagesschule instStammdaten) {
+		this.institutionStammdatenTagesschule = instStammdaten;
 	}
 }

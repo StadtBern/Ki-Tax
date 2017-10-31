@@ -39,7 +39,7 @@ public class InstitutionStammdatenTagesschule extends AbstractEntity {
 	@Nullable
 	@Valid
 	@SortNatural
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "instStammdaten")
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "institutionStammdatenTagesschule")
 	private Set<ModulTagesschule> moduleTagesschule = new TreeSet<>();
 
 	public InstitutionStammdatenTagesschule() {
