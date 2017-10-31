@@ -310,7 +310,7 @@ dv-accordion.ewksubsub {
         left: 0;
         right: 0;
         transform: unset;
-        //position: absolute;
+        position: absolute;
         margin: 0;
         align-items: center;
         & > div {
@@ -406,9 +406,9 @@ dv-accordion.ewksubsub {
     }
     position: relative;
 
-    //& div {
-    //    position: static;
-    //}
+    & div:not(.md-container):not(.md-off):not(.md-on):not(.md-icon) {
+        position: static;
+    }
 }
 
 .betreuung-table-header {
