@@ -404,56 +404,14 @@
 
                     </div>
 
+                    <!-- Tagesschule -->
                     <div ng-if="vm.isEnabled() && vm.isTagesschule()">
-                        <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.hasTagesschulenAnmeldung()">
-
-                            <!-- Modulauswahl Tagesschule -->
-                            <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">
-
-                                <!-- Tagesschulen -->
-                                <div class="row">
-                                    <div class="col-sm-12 dv-input-container-medium form-group">
-                                        <label class="md-no-float required" data-translate="TAGESSCHULE" for="tagesschule"></label>
-                                        <div class="dv-select-style">
-                                            <select aria-describedby="tagesschule-error" name="tagesschule" id="tagesschule"
-                                                    ng-model="vm.instStammId"
-                                                    class="form-control"
-                                                    ng-options="institutionSD.id as institutionSD.institution.name for institutionSD in vm.getInstitutionenSDList() | orderBy: 'institution.name'"
-                                                    ng-required="true" ng-change="vm.setSelectedInstitutionStammdaten()"
-                                                    ng-disabled="!vm.isEnabled()">
-                                            </select>
-                                            <dv-error-messages input-id="tagesschule" for="vm.form.tagesschule.$error"></dv-error-messages>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Eintrittsdatum -->
-                                <div class="row">
-                                    <div class="col-sm-12 dv-input-container-small form-group">
-                                        <label class="md-no-float required" data-translate="EINTRITTSDATUM" for="eintrittsdatum_ID"></label>
-                                        <dv-datepicker input-id="eintrittsdatum_ID" name="eintrittsdatum"
-                                                       ng-model="vm.getBetreuungModel().belegungTagesschule.eintrittsdatum"
-                                                       ng-required="true"
-                                                       class="input-element">
-                                        </dv-datepicker>
-                                        <dv-error-messages input-id="eintrittsdatum" for="vm.form.eintrittsdatum.$error"></dv-error-messages>
-                                    </div>
-                                </div>
-
-                                <span>TODO Hier kommt dann die Modulauswahl für die Anmeldung</span>
-
-                            </div>
-
-                            <!-- Hinweis, dass Tageschulanmeldung ncoh nicht freigeschaltet -->
-                            <div ng-if="!vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">
-                                <div class="well well-status-warten">
-                                    <i class="fa fa-exclamation " aria-hidden="true"></i>
-                                    <span>{{vm.getTagesschuleAnmeldungNotYetReadyText()}}</span>
-                                </div>
-                            </div>
-
-                        </div>
+                        <betreuung-tagesschule-view betreuung="vm.getBetreuungModel()"
+                                                    tagesschule-list="vm.getInstitutionenSDList()"
+                                                    inst-stamm-id="vm.instStammId">
+                        </betreuung-tagesschule-view>
                     </div>
+
                 </fieldset>
 
                 <!--Buttons-->

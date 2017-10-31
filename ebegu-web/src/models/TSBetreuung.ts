@@ -240,4 +240,9 @@ export default class TSBetreuung extends TSAbstractEntity {
         }
         return false;
     }
+
+    public isEnabled(): boolean {
+        // todo richtigen Code hinyufuegen wenn 1462 gemergt ist
+        return true;
+    }
 }

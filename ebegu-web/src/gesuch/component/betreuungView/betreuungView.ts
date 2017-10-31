@@ -71,6 +71,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     mutationsmeldungModel: TSBetreuung;
     existingMutationsMeldung: TSBetreuungsmitteilung;
     isNewestGesuch: boolean;
+    $translate: ITranslateService;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout', '$translate'];
@@ -79,9 +80,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                 $scope: IScope, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $stateParams: IBetreuungStateParams,
                 private mitteilungRS: MitteilungRS, private dvDialog: DvDialog, private $log: ILogService,
-                $timeout: ITimeoutService, private $translate: ITranslateService) {
+                $timeout: ITimeoutService, $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG, $timeout);
-
+        this.$translate = $translate;
     }
 
     $onInit() {
@@ -562,20 +563,5 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public tageschuleSaveDisabled(): boolean {
         let gp: TSGesuchsperiode = this.gesuchModelManager.getGesuch().gesuchsperiode;
         return this.getBetreuungModel().isAngebotTagesschule() && gp.hasTagesschulenAnmeldung() && !gp.isTageschulenAnmeldungAktiv();
-    }
-
-    public getTagesschuleAnmeldungNotYetReadyText(): string {
-        let gp: TSGesuchsperiode = this.gesuchModelManager.getGesuch().gesuchsperiode;
-        if (gp.hasTagesschulenAnmeldung()) {
-            if (gp.isTagesschulenAnmeldungKonfiguriert()) {
-                let terminValue: string = DateUtil.momentToLocalDateFormat(gp.datumFreischaltungTagesschule, 'DD.MM.YYYY');
-                return this.$translate.instant('FREISCHALTUNG_TAGESSCHULE_AB_INFO', {
-                    termin: terminValue
-                });
-            } else {
-                return this.$translate.instant('FREISCHALTUNG_TAGESSCHULE_INFO');
-            }
-        }
-        return '';
     }
 }
