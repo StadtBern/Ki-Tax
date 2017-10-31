@@ -34,7 +34,7 @@
 		</div>
 
 		<!-- Auswahl der Tage -->
-		<div ng-if="vm.isAnmeldungMoeglich() && !vm.isAnmeldungNichtFreigegeben()">
+		<div ng-if="(vm.isAnmeldungMoeglich() && !vm.isAnmeldungNichtFreigegeben()) || !vm.betreuung.belegungFerieninsel.isNew()">
 			<div class="row">
 				<div class="col-sm-12 dv-input-container-medium form-group">
 					<span data-translate="FERIENINSELTAGE"></span>
@@ -66,7 +66,7 @@
 		</div>
 
 		<!-- Hinweis, wenn Anmeldeschluss schon abgelaufen -->
-		<div ng-if="vm.isAnmeldeschlussAbgelaufen()">
+		<div ng-if="vm.isAnmeldeschlussAbgelaufen() && vm.betreuung.belegungFerieninsel.isNew()">
 			<div class="well well-status-warten">
 				<i class="fa fa-exclamation " aria-hidden="true"></i>
 				<span data-translate="WARN_FERIEN_NICHT_MEHR_BUCHBAR"></span>
