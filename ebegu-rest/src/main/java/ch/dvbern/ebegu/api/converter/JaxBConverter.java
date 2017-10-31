@@ -1143,8 +1143,10 @@ public class JaxBConverter {
 			jaxInstStammdaten.setIban(persistedInstStammdaten.getIban().getIban());
 		}
 		jaxInstStammdaten.setBetreuungsangebotTyp(persistedInstStammdaten.getBetreuungsangebotTyp());
-		jaxInstStammdaten.setInstitutionStammdatenTagesschule(institutionStammdatenTagesschuleToJAX(persistedInstStammdaten
-			.getInstitutionStammdatenTagesschule()));
+		if (persistedInstStammdaten.getInstitutionStammdatenTagesschule() != null) {
+			jaxInstStammdaten.setInstitutionStammdatenTagesschule(institutionStammdatenTagesschuleToJAX(persistedInstStammdaten
+				.getInstitutionStammdatenTagesschule()));
+		}
 		jaxInstStammdaten.setInstitution(institutionToJAX(persistedInstStammdaten.getInstitution()));
 		jaxInstStammdaten.setAdresse(adresseToJAX(persistedInstStammdaten.getAdresse()));
 		jaxInstStammdaten.setKontoinhaber(persistedInstStammdaten.getKontoinhaber());
@@ -1168,9 +1170,10 @@ public class JaxBConverter {
 			institutionStammdaten.setIban(new IBAN(institutionStammdatenJAXP.getIban()));
 		}
 		institutionStammdaten.setBetreuungsangebotTyp(institutionStammdatenJAXP.getBetreuungsangebotTyp());
-		institutionStammdaten.setInstitutionStammdatenTagesschule(institutionStammdatenTagesschuleToEntity(institutionStammdatenJAXP
-			.getInstitutionStammdatenTagesschule(), institutionStammdaten.getInstitutionStammdatenTagesschule()));
-
+		if(institutionStammdatenJAXP.getInstitutionStammdatenTagesschule()!=null) {
+			institutionStammdaten.setInstitutionStammdatenTagesschule(institutionStammdatenTagesschuleToEntity(institutionStammdatenJAXP
+				.getInstitutionStammdatenTagesschule(), institutionStammdaten.getInstitutionStammdatenTagesschule()));
+		}
 		institutionStammdaten.setKontoinhaber(institutionStammdatenJAXP.getKontoinhaber());
 		if (institutionStammdatenJAXP.getAdresseKontoinhaber() != null) {
 			if (institutionStammdaten.getAdresseKontoinhaber() != null) {
