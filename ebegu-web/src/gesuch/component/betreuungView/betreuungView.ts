@@ -195,10 +195,10 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                                 this.getBetreuungModel().belegungTagesschule.eintrittsdatum = ersterSchultag;
                             }
                         }
-                    } else {
-                        // Ferieninsel. Vorerst mal Status SCHULAMT, spaeter kommt dann ein eigener Status
-                        this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT; // todo entfernen. oben schon gemacht
                     }
+                } else {
+                    // Ferieninsel. Vorerst mal Status SCHULAMT, spaeter kommt dann ein eigener Status
+                    this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT; // todo entfernen. oben schon gemacht
                 }
             } else {
                 this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
