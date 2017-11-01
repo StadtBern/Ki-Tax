@@ -13,34 +13,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as moment from 'moment';
-import TSAbstractEntity from './TSAbstractEntity';
+package ch.dvbern.ebegu.enums;
 
-export default class TSBelegungFerieninselTag extends TSAbstractEntity {
+/**
+ * Enum fuer the names of the ModulTagesschule for Tagesschule.
+ */
+public enum ModulTagesschuleName {
+	VORMITTAG,
+	MITTAG,
+	MITTAG_HALB,
+	NACHMITTAGS_1,
+	NACHMITTAGS_1_HALB,
+	NACHMITTAGS_2,
+	NACHMITTAGS_2_HALB
 
-    private _tag: moment.Moment;
-
-    private _angemeldet: boolean; // Transient, wird nicht auf Server synchronisiert, bzw. nur die mit angemeldet=true
-
-
-    constructor(tag?: moment.Moment) {
-        super();
-        this._tag = tag;
-    }
-
-    public get tag(): moment.Moment {
-        return this._tag;
-    }
-
-    public set tag(value: moment.Moment) {
-        this._tag = value;
-    }
-
-    public get angemeldet(): boolean {
-        return this._angemeldet;
-    }
-
-    public set angemeldet(value: boolean) {
-        this._angemeldet = value;
-    }
 }

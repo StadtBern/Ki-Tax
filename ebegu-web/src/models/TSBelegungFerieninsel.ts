@@ -20,7 +20,7 @@ import TSBelegungFerieninselTag from './TSBelegungFerieninselTag';
 export default class TSBelegungFerieninsel extends TSAbstractEntity {
 
     private _ferienname: TSFerienname;
-    private _tage: Array<TSBelegungFerieninselTag>;
+    private _tage: Array<TSBelegungFerieninselTag> = [];
 
 
     constructor(ferienname?: TSFerienname, tage?: Array<TSBelegungFerieninselTag>) {

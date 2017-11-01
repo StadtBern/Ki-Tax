@@ -16,11 +16,14 @@
 package ch.dvbern.ebegu.services;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
 
+import ch.dvbern.ebegu.entities.BelegungFerieninselTag;
 import ch.dvbern.ebegu.entities.FerieninselStammdaten;
+import ch.dvbern.ebegu.enums.Ferienname;
 
 /**
  * Service zum Verwalten von Ferieninsel-Stammdaten
@@ -50,6 +53,19 @@ public interface FerieninselStammdatenService {
 	 */
 	@Nonnull
 	Collection<FerieninselStammdaten> findFerieninselStammdatenForGesuchsperiode(@Nonnull String gesuchsperiodeId);
+
+	/**
+	 * Gibt alle FerieninselStammdaten-Objekte fuer die uebergebene Gesuchsperiode und Ferien zurueck.
+	 */
+	@Nonnull
+	Optional<FerieninselStammdaten> findFerieninselStammdatenForGesuchsperiodeAndFerienname(@Nonnull String gesuchsperiodeId, @Nonnull Ferienname ferienname);
+
+	/**
+	 * Gibt fuer eine Ferieninsel die potentiell buchbaren Daten zurück, also alle Wochentage des Zeitraums ohne
+	 * Feiertage
+	 */
+	@Nonnull
+	List<BelegungFerieninselTag> getPossibleFerieninselTage(@Nonnull FerieninselStammdaten ferieninselStammdaten);
 
 	/**
 	 * Loescht das uebergebene FerieninselStammdaten-Objekt

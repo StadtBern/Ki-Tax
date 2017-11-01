@@ -1126,7 +1126,6 @@
     "FREISCHALTUNG_TAGESSCHULE_INFO": "Die Anmeldung ist im Moment noch nicht möglich. Die Funktionalität wird erst mit dem Versand der Stundenpläne aufgeschaltet.",
     "FREISCHALTUNG_TAGESSCHULE_AB_INFO": "Die Anmeldung ist im Moment noch nicht möglich. Die Funktionalität wird erst mit dem Versand der Stundenpläne am {{termin}} aufgeschaltet.",
     "ERSTER_SCHULTAG_TAGESSCHULE": "Erster Schultag",
-    "FERIENINSEL": "Ferieninsel",
     "SOMMERFERIEN": "Sommerferien",
     "HERBSTFERIEN": "Herbstferien",
     "SPORTFERIEN": "Sportferien",
@@ -1137,6 +1136,13 @@
     "FERIENINSELSTAMMDATEN_SAVE": "Speichern",
     "FERIENINSEL_TITLE": "Daten der Ferieninseln",
     "EINTRITTSDATUM": "Eintrittsdatum",
-    "EKV_FIN_SIT_NOT_REQUIRED": "Eine Einkommenverschlechterung muss in diesem Fall nicht erfasst werden. Klicken Sie auf \"Weiter\", um fortzufahren."
-
+    "EKV_FIN_SIT_NOT_REQUIRED": "Eine Einkommenverschlechterung muss in diesem Fall nicht erfasst werden. Klicken Sie auf \"Weiter\", um fortzufahren.",
+    "FERIENNAME": "Ferien",
+    "WARN_FERIEN_NOCH_NICHT_BUCHBAR": "Für diese Ferien kann noch keine Ferieninsel gebucht werden. Versuchen Sie es später wieder.",
+    "WARN_FERIEN_NICHT_MEHR_BUCHBAR": "Der Anmeldeschluss für diese Ferieninsel ist bereits abgelaufen!",
+    "WARN_FERIEN_KEINE_TAGE_GEWAEHLT": "Bitte wählen Sie mindestens einen Tag aus",
+    "FERIENINSELTAGE": "An welchen Tagen möchten Sie Ihr Kind für die Ferieninsel anmelden?",
+    "ANMELDEN_FERIENINSEL": "Ferieninsel definitiv anmelden",
+    "CONFIRM_SAVE_FERIENINSEL": "Sind Sie sicher, dass Sie Ihr Kind definitiv anmelden wollen?",
+    "BESCHREIBUNG_SAVE_FERIENINSEL": "Diese Anmeldung kann danach nicht mehr verändert werden. Sie können aber weitere Anmeldungen für diese oder andere Ferieninseln erstellen."
 }
