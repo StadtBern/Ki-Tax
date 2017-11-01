@@ -244,6 +244,14 @@ public class VerfuegungResource {
 			gesuch.getGesuchsteller2().getAdressen().size();
 			gesuch.getGesuchsteller2().getErwerbspensenContainers().size();
 		}
+		gesuch.extractAllBetreuungen().forEach(betreuung -> {
+			if (betreuung.getBelegungTagesschule() != null && betreuung.getBelegungTagesschule().getModuleTagesschule() != null) {
+				betreuung.getBelegungTagesschule().getModuleTagesschule().size();
+			}
+			if (betreuung.getBelegungFerieninsel() != null) {
+				betreuung.getBelegungFerieninsel().getTage().size();
+			}
+		});
 		persistence.getEntityManager().detach(gesuch);
 	}
 }
