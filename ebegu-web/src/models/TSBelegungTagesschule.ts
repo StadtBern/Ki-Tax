@@ -13,27 +13,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import TSAbstractEntity from './TSAbstractEntity';
-import TSModul from './TSModul';
 import * as moment from 'moment';
+import TSAbstractEntity from './TSAbstractEntity';
+import TSModulTagesschule from './TSModulTagesschule';
 
 export default class TSBelegungTagesschule extends TSAbstractEntity {
 
-    private _module: TSModul[];
+    private _moduleTagesschule: TSModulTagesschule[];
     private _eintrittsdatum: moment.Moment;
 
-    constructor(module?: TSModul[], eintrittsdatum?: moment.Moment) {
+    constructor(moduleTagesschule?: TSModulTagesschule[], eintrittsdatum?: moment.Moment) {
         super();
-        this._module = module;
+        this._moduleTagesschule = moduleTagesschule;
         this._eintrittsdatum = eintrittsdatum;
     }
 
-    public get module(): TSModul[] {
-        return this._module;
+    public get moduleTagesschule(): TSModulTagesschule[] {
+        return this._moduleTagesschule;
     }
 
-    public set module(value: TSModul[]) {
-        this._module = value;
+    public set moduleTagesschule(value: TSModulTagesschule[]) {
+        this._moduleTagesschule = value;
     }
 
     public get eintrittsdatum(): moment.Moment {
