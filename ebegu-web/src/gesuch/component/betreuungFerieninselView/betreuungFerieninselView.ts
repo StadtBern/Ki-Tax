@@ -47,6 +47,7 @@ export class BetreuungFerieninselViewComponentConfig implements IComponentOption
     bindings: any = {
         betreuung: '=',
         onSave: '&',
+        cancel: '&',
         form: '='
     };
     template = template;
@@ -116,7 +117,8 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
 
     public isAnmeldungMoeglich(): boolean {
         return EbeguUtil.isNotNullOrUndefined(this.betreuung.belegungFerieninsel.ferienname)
-            && !this.isAnmeldeschlussAbgelaufen();
+            && !this.isAnmeldeschlussAbgelaufen()
+            && !this.isAnmeldungNichtFreigegeben();
     }
 
     public anmelden(): IPromise<any> {
