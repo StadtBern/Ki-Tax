@@ -15,6 +15,7 @@
 
 package ch.dvbern.ebegu.util;
 
+import java.sql.Date;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -64,6 +65,6 @@ public final class DateUtil {
 	}
 
 	public static boolean isHoliday(@Nonnull LocalDate date) {
-		return FeiertageHelper.isFeiertag_CH(java.sql.Date.valueOf(date));
+		return FeiertageHelper.isFeiertag_CH(Date.valueOf(date));
 	}
 }
