@@ -40,11 +40,12 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.ejb3.annotation.TransactionTimeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * Service zum Ausfuehren von manuellen DB-Migrationen
@@ -58,7 +59,6 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseMigrationServiceBean.class.getSimpleName());
 	public static final String SEPARATOR = " / ";
-
 
 	@Inject
 	private GesuchService gesuchService;
@@ -87,6 +87,8 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 	@Inject
 	private Persistence persistence;
 
+	@Inject
+	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Override
 	@Asynchronous
@@ -106,11 +108,15 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 		case "1136":
 			processScript1136_RemoveDuplicatedStatusTransition();
 			break;
+		case "1470":
+			processScript1470_GesuchTimestampVerfuegt();
+			break;
 		}
 		// to avoid errors due to missing Context because Principal is set as RequestScoped
 		persistence.getEntityManager().flush();
 		return new AsyncResult<>(Boolean.TRUE);
 	}
+
 
 	@SuppressWarnings({ "PMD.NcssMethodCount", "OverlyComplexMethod", "OverlyNestedMethod" })
 	private void processScript1105_GesuchGueltigDatumVerfuegt() {
@@ -130,7 +136,7 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 				Gesuch gesuch = gesuchOptional.get();
 				Collection<AntragStatusHistory> allAntragStatusHistoryByGesuch = antragStatusHistoryService.findAllAntragStatusHistoryByGesuch(gesuch);
 				Optional<AntragStatusHistory> historyOptional = allAntragStatusHistoryByGesuch.stream()
-					.filter(history -> !AntragStatus.FIRST_STATUS_OF_VERFUEGT.contains(history.getStatus()))
+					.filter(history -> AntragStatus.FIRST_STATUS_OF_VERFUEGT.contains(history.getStatus()))
 					.sorted(Comparator.comparing(AntragStatusHistory::getTimestampVon))
 					.findFirst();
 				String gesuchInfo = getGesuchInfo(gesuch);
@@ -189,7 +195,8 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 	}
 
 	private String getGesuchInfo(Gesuch gesuch) {
-		String gesuchInfo = gesuch.getFall().getFallNummer() + SEPARATOR + gesuch.getGesuchsperiode().getGesuchsperiodeString() + SEPARATOR + gesuch.getId();
+		String gesuchInfo = gesuch.getFall().getFallNummer() + SEPARATOR + gesuch.getGesuchsperiode().getGesuchsperiodeString() + SEPARATOR + gesuch.getId()
+			+  SEPARATOR + gesuch.getStatus();
 		return gesuchInfo;
 	}
 
@@ -352,5 +359,38 @@ public class DatabaseMigrationServiceBean extends AbstractBaseService implements
 			}
 		}
 		LOGGER.info("... processing of script 1136 finished");
+	}
+
+	private void processScript1470_GesuchTimestampVerfuegt() {
+		LOGGER.info("Starting Migration EBEGU-1470");
+		Collection<Gesuch> allGesuche = criteriaQueryHelper.getAll(Gesuch.class);
+		for (Gesuch gesuch : allGesuche) {
+			Collection<AntragStatusHistory> allAntragStatusHistoryByGesuch = antragStatusHistoryService.findAllAntragStatusHistoryByGesuch(gesuch);
+			Optional<AntragStatusHistory> historyOptional = allAntragStatusHistoryByGesuch.stream()
+				.filter(history -> AntragStatus.FIRST_STATUS_OF_VERFUEGT.contains(history.getStatus()))
+				.sorted(Comparator.comparing(AntragStatusHistory::getTimestampVon))
+				.findFirst();
+			String gesuchInfo = getGesuchInfo(gesuch);
+			if (historyOptional.isPresent()) {
+				// Das Gesuch ist verfuegt
+				LocalDateTime timestampVon = historyOptional.get().getTimestampVon();
+				if (gesuch.getTimestampVerfuegt() != null) {
+					LocalDateTime bisherVerfuegt = gesuch.getTimestampVerfuegt();
+					if (bisherVerfuegt.toLocalDate().isEqual(timestampVon.toLocalDate())) {
+						continue;
+					}
+				}
+				boolean datumKorrigiert = gesuch.getTimestampVerfuegt() != null;
+				if (datumKorrigiert) {
+					LOGGER.info("Aktualisiere TimestampVerfuegt: {} Bisher: {} Neu: {}", gesuchInfo, gesuch.getTimestampVerfuegt(), timestampVon);
+				} else {
+					LOGGER.info("Setze TimestampVerfuegt: {}", gesuchInfo);
+				}
+				gesuch.setSkipPreUpdate(true); // with this flag we skip the preUpdate and timestampMutiert doesn't get updated
+				gesuch.setTimestampVerfuegt(timestampVon);
+				gesuchService.updateGesuch(gesuch, false, null);
+			}
+		}
+		LOGGER.info("Migration EBEGU-1470 beendet");
 	}
 }

@@ -236,4 +236,12 @@ public class ZahlungResource {
 		zahlungService.deleteZahlungsauftrag(zahlungsauftragId);
 		return Response.ok().build();
 	}
+
+	@ApiOperation(value = "Zahlungsauftrag kontrollieren", response = Void.class)
+	@GET
+	@Path("/kontrollieren")
+	public Response zahlungenKontrollieren() {
+		zahlungService.zahlungenKontrollieren();
+		return Response.ok().build();
+	}
 }

@@ -83,4 +83,9 @@ public interface ZahlungService {
 	 */
 	void deleteZahlungspositionenOfGesuch(@Nonnull Gesuch gesuch);
 
+	/**
+	 * Kontrolliert die Zahlungen Stand heute: Es werden die Zahlen aus der letzt gueltigen Verfuegung jedes Falls
+	 * verglichen mit den tatsaechlich erfolgten Zahlungen.
+	 */
+	void zahlungenKontrollieren();
 }

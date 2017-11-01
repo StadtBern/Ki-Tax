@@ -99,4 +99,9 @@ export default class ZahlungRS {
         });
     }
 
+    public zahlungenKontrollieren(): IPromise<void> {
+        return this.http.get(this.serviceURL + '/kontrollieren').then((response: any) => {
+            this.$log.debug('PARSING user REST array object', response.data);
+        });
+    }
 }

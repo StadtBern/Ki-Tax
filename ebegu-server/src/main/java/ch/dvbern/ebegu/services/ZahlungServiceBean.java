@@ -73,6 +73,9 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	@Inject
 	private GeneratedDokumentService generatedDokumentService;
 
+	@Inject
+	private ZahlungUeberpruefungServiceBean zahlungUeberpruefungServiceBean;
+
 	@Override
 	@Nonnull
 	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
@@ -181,9 +184,11 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 					totalZahlung = MathUtil.DEFAULT.add(totalZahlung, zahlungsposition.getBetrag());
 				}
 			}
+			//noinspection ConstantConditions
 			zahlung.setBetragTotalZahlung(totalZahlung);
 			totalAuftrag = MathUtil.DEFAULT.add(totalAuftrag, totalZahlung);
 		}
+		//noinspection ConstantConditions
 		zahlungsauftrag.setBetragTotalAuftrag(totalAuftrag);
 	}
 
@@ -602,6 +607,11 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		return zahlungsauftrag;
 	}
 
+	@Override
+	public void zahlungenKontrollieren() {
+		Optional<Zahlungsauftrag> lastZahlungsauftrag = findLastZahlungsauftrag();
+		lastZahlungsauftrag.ifPresent(zahlungsauftrag -> zahlungUeberpruefungServiceBean.pruefungZahlungen(zahlungsauftrag.getDatumGeneriert()));
+	}
 }
 
 
