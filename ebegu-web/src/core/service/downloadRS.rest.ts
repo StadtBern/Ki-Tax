@@ -162,6 +162,7 @@ export class DownloadRS {
                 myWindow.focus();
             }
             //as soon as the window is ready send it to the download
+            this.addCloseButtonHandler(myWindow);
             this.redirectWindowToDownloadWhenReady(myWindow, href, accessToken);
 
             //This would be the way to open file in new window (for now it's better to open in new tab)
@@ -203,7 +204,19 @@ export class DownloadRS {
         let buttonElement = win.document.getElementById('closeButton');
         if (buttonElement) {
             buttonElement.style.display = 'block';
+            this.addCloseButtonHandler(win);
         }
 
+    }
+
+    public addCloseButtonHandler(win: Window) {
+        let element = win.document.getElementById('closeButton');
+        if (element) {
+            element.addEventListener('click', () => {
+                win.close();
+            }, false);
+        } else {
+            console.log('element not found, can not attach window close handler spinner');
+        }
     }
 }
