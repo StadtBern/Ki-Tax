@@ -32,6 +32,7 @@ import {EbeguWebZahlungsauftrag} from './zahlungsauftrag/zahlungsauftrag.module'
 import {EbeguWebAlleVerfuegungen} from './alleVerfuegungen/alleVerfuegungen.module';
 import {EbeguWebPendenzenSteueramt} from './pendenzenSteueramt/pendenzenSteueramt.module';
 import {EbeguWebQuicksearch} from './quicksearch/quicksearch.module';
+import './style/mediaqueries.less';
 
 export default angular.module('ebeguWeb', [EbeguWebCore.name, EbeguWebAdmin.name, EbeguWebGesuch.name, EbeguWebPendenzen.name,
     EbeguWebPendenzenInstitution.name, EbeguWebPendenzenSteueramt.name, EbeguWebFaelle.name, EbeguWebGesuchstellerDashboard.name,

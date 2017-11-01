@@ -47,6 +47,7 @@ export class BetreuungFerieninselViewComponentConfig implements IComponentOption
     bindings: any = {
         betreuung: '=',
         onSave: '&',
+        cancel: '&',
         form: '='
     };
     template = template;

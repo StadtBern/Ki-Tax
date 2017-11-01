@@ -81,21 +81,27 @@
             </div>
         </div>
 
-        <!--Buttons-->
-        <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
-			wenn wir die Direktive benutzen wollen muessen wir viel anpassen, daher lohnt es sich die Buttons direkt zu erstellen-->
-        <div class="nav-row-betreuung">
-			<div dv-show-element
-				 dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles()"
-				 dv-show-expression="vm.betreuung.isEnabled()">
-				<dv-loading-button button-click="vm.anmelden()" type="submit"
-								   button-class="save">
-					<span data-translate="ANMELDEN_FERIENINSEL"></span>
-				</dv-loading-button>
-			</div>
-		</div>
-
     </fieldset>
+
+    <!--Buttons-->
+    <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
+        wenn wir die Direktive benutzen wollen muessen wir viel anpassen, daher lohnt es sich die Buttons direkt zu erstellen-->
+    <div class="nav-row-betreuung"
+         dv-show-element
+         dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles()">
+        <div ng-if="vm.betreuung.isEnabled()">
+            <dv-loading-button button-click="vm.anmelden()" type="submit"
+                               button-class="save">
+                <span data-translate="ANMELDEN_FERIENINSEL"></span>
+            </dv-loading-button>
+        </div>
+        <div>
+            <dv-loading-button button-click="vm.cancel()" button-class="cancel"
+                               type="reset">
+                <span data-translate="ABBRECHEN_UPPER"></span>
+            </dv-loading-button>
+        </div>
+    </div>
 
 </div>
 
