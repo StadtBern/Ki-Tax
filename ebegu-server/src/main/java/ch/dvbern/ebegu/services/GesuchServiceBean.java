@@ -1126,8 +1126,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return Optional.of(erneuerungsgesuch);
 	}
 
+	@Override
 	@Nonnull
-	private Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall, boolean doAuthCheck) {
+	public Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Fall fall, boolean doAuthCheck) {
 		authorizer.checkReadAuthorizationFall(fall);
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
