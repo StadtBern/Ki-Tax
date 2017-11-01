@@ -128,7 +128,7 @@ public class FerieninselStammdatenServiceBean extends AbstractBaseService implem
 		List<BelegungFerieninselTag> potentielleFerieninselTage = new LinkedList<>();
 		LocalDate currentDate = zeitraum.getGueltigkeit().getGueltigAb();
 		while (!currentDate.isAfter(zeitraum.getGueltigkeit().getGueltigBis())) {
-			if (!DateUtil.isWeekday(currentDate) && !DateUtil.isHoliday(currentDate)) {
+			if (!DateUtil.isWeekend(currentDate) && !DateUtil.isHoliday(currentDate)) {
 				BelegungFerieninselTag belegungTag = new BelegungFerieninselTag();
 				belegungTag.setTag(currentDate);
 				potentielleFerieninselTage.add(belegungTag);

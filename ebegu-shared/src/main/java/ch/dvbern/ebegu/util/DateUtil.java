@@ -59,8 +59,8 @@ public final class DateUtil {
 		return date;
 	}
 
-	public static boolean isWeekday(@Nonnull LocalDate date) {
-		return date.getDayOfWeek().equals(DayOfWeek.SATURDAY) || date.getDayOfWeek().equals(DayOfWeek.SUNDAY);
+	public static boolean isWeekend(@Nonnull LocalDate date) {
+		return date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY;
 	}
 
 	public static boolean isHoliday(@Nonnull LocalDate date) {

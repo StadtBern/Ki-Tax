@@ -30,7 +30,6 @@ import javax.persistence.ForeignKey;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -38,16 +37,12 @@ import javax.validation.Valid;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
-import java.util.Set;
-import java.util.TreeSet;
-
 import javax.validation.constraints.Size;
 
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
-import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
@@ -111,12 +106,9 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_stammdaten_adressekontoinhaber_id"), nullable = true)
 	private Adresse adresseKontoinhaber;
 
-	@Nullable
-	@Valid
-	@SortNatural
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "instStammdaten")
-	private Set<Modul> module = new TreeSet<>();
-
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_inst_stammdaten_inst_stammdaten_tagesschule_id"), nullable = true)
+	private InstitutionStammdatenTagesschule institutionStammdatenTagesschule;
 
 	public InstitutionStammdaten() {
 	}
@@ -213,11 +205,11 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	}
 
 	@Nullable
-	public Set<Modul> getModule() {
-		return module;
+	public InstitutionStammdatenTagesschule getInstitutionStammdatenTagesschule() {
+		return institutionStammdatenTagesschule;
 	}
 
-	public void setModule(@Nullable Set<Modul> module) {
-		this.module = module;
+	public void setInstitutionStammdatenTagesschule(@Nullable InstitutionStammdatenTagesschule institutionStammdatenTagesschule) {
+		this.institutionStammdatenTagesschule = institutionStammdatenTagesschule;
 	}
 }

@@ -153,10 +153,10 @@ public class FerieninselStammdatenResource {
 		Ferienname ferienname = Ferienname.valueOf(feriennameParam);
 
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gpEntityID).orElseThrow(()
-			-> new EbeguRuntimeException("findFerieninselStammdatenForGesuchsperiode", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gpEntityID));
+			-> new EbeguRuntimeException("findFerieninselStammdatenForGesuchsperiodeAndFerienname", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gpEntityID));
 
-		Optional<FerieninselStammdaten> stammdatenOptional = ferieninselStammdatenService.findFerieninselStammdatenForGesuchsperiodeAndFerienname
-			(gesuchsperiode.getId(), ferienname);
+		Optional<FerieninselStammdaten> stammdatenOptional = ferieninselStammdatenService
+			.findFerieninselStammdatenForGesuchsperiodeAndFerienname(gesuchsperiode.getId(), ferienname);
 
 		if (stammdatenOptional.isPresent()) {
 			FerieninselStammdaten stammdaten = stammdatenOptional.get();
