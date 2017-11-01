@@ -51,6 +51,7 @@ import DateUtil from './DateUtil';
 import EbeguRestUtil from './EbeguRestUtil';
 import TestDataUtil from './TestDataUtil';
 import Moment = moment.Moment;
+import TSModulTagesschule from '../models/TSModulTagesschule';
 
 describe('EbeguRestUtil', function () {
 
@@ -336,8 +337,13 @@ describe('EbeguRestUtil', function () {
         describe('parseInstitutionStammdaten()', () => {
             it('should transform TSInstitutionStammdaten to REST object and back', () => {
                 let myInstitution = createInstitution();
+                let tsInstStammdatenTagesschule = new TSInstitutionStammdatenTagesschule();
+                let tsModul = new TSModulTagesschule();
+                TestDataUtil.setAbstractFieldsUndefined(tsModul);
+                tsInstStammdatenTagesschule.moduleTagesschule = [tsModul];
+                TestDataUtil.setAbstractFieldsUndefined(tsInstStammdatenTagesschule);
                 let myInstitutionStammdaten = new TSInstitutionStammdaten('iban', 250, 12, TSBetreuungsangebotTyp.KITA, myInstitution, undefined,
-                    new TSDateRange(DateUtil.today(), DateUtil.today()), '', undefined, new TSInstitutionStammdatenTagesschule());
+                    new TSDateRange(DateUtil.today(), DateUtil.today()), '', undefined, tsInstStammdatenTagesschule);
                 TestDataUtil.setAbstractFieldsUndefined(myInstitutionStammdaten);
 
                 let restInstitutionStammdaten = ebeguRestUtil.institutionStammdatenToRestObject({}, myInstitutionStammdaten);
@@ -349,6 +355,10 @@ describe('EbeguRestUtil', function () {
                 expect(restInstitutionStammdaten.gueltigBis).toEqual(DateUtil.momentToLocalDate(myInstitutionStammdaten.gueltigkeit.gueltigBis));
                 expect(restInstitutionStammdaten.betreuungsangebotTyp).toEqual(myInstitutionStammdaten.betreuungsangebotTyp);
                 expect(restInstitutionStammdaten.institution.name).toEqual(myInstitutionStammdaten.institution.name);
+                expect(restInstitutionStammdaten.institutionStammdatenTagesschule).toBeDefined();
+                expect(restInstitutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule).toBeDefined();
+                expect(restInstitutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule.length).toBe(1);
+                expect(restInstitutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule[0].wochentag).toBeUndefined();
 
                 let transformedInstitutionStammdaten = ebeguRestUtil.parseInstitutionStammdaten(new TSInstitutionStammdaten(), restInstitutionStammdaten);
 

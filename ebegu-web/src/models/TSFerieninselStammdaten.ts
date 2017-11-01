@@ -18,6 +18,7 @@ import {TSFerienname} from './enums/TSFerienname';
 import * as moment from 'moment';
 import TSGesuchsperiode from './TSGesuchsperiode';
 import TSFerieninselZeitraum from './TSFerieninselZeitraum';
+import TSBelegungFerieninselTag from './TSBelegungFerieninselTag';
 
 export default class TSFerieninselStammdaten extends TSAbstractEntity {
 
@@ -26,15 +27,18 @@ export default class TSFerieninselStammdaten extends TSAbstractEntity {
     private _zeitraumList: TSFerieninselZeitraum[] = [];   // Evt. weitere Zeitraeume
     private _anmeldeschluss: moment.Moment;
     private _gesuchsperiode: TSGesuchsperiode;
+    private _potenzielleFerieninselTageFuerBelegung: TSBelegungFerieninselTag[] = [];
 
 
-    constructor(ferienname?: TSFerienname, zeitraum?: TSFerieninselZeitraum, zeitraumList?: TSFerieninselZeitraum[], anmeldeschluss?: moment.Moment, gesuchsperiode?: TSGesuchsperiode) {
+    constructor(ferienname?: TSFerienname, zeitraum?: TSFerieninselZeitraum, zeitraumList?: TSFerieninselZeitraum[], anmeldeschluss?: moment.Moment,
+                gesuchsperiode?: TSGesuchsperiode, potenzielleFerieninselTageFuerBelegung?: TSBelegungFerieninselTag[]) {
         super();
         this._ferienname = ferienname;
         this._zeitraum = zeitraum;
         this._zeitraumList = zeitraumList;
         this._anmeldeschluss = anmeldeschluss;
         this._gesuchsperiode = gesuchsperiode;
+        this._potenzielleFerieninselTageFuerBelegung = potenzielleFerieninselTageFuerBelegung;
     }
 
 
@@ -76,5 +80,13 @@ export default class TSFerieninselStammdaten extends TSAbstractEntity {
 
     public set gesuchsperiode(value: TSGesuchsperiode) {
         this._gesuchsperiode = value;
+    }
+
+    public get potenzielleFerieninselTageFuerBelegung(): TSBelegungFerieninselTag[] {
+        return this._potenzielleFerieninselTageFuerBelegung;
+    }
+
+    public set potenzielleFerieninselTageFuerBelegung(value: TSBelegungFerieninselTag[]) {
+        this._potenzielleFerieninselTageFuerBelegung = value;
     }
 }

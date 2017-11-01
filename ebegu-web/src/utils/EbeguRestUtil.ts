@@ -1209,6 +1209,7 @@ export default class EbeguRestUtil {
         restBetreuung.abwesenheitMutiert = betreuung.abwesenheitMutiert;
         restBetreuung.gueltig = betreuung.gueltig;
         restBetreuung.belegungTagesschule = this.belegungTagesschuleToRestObject({}, betreuung.belegungTagesschule);
+        restBetreuung.belegungFerieninsel = this.belegungFerieninselToRestObject({}, betreuung.belegungFerieninsel);
         return restBetreuung;
     }
 
@@ -1286,6 +1287,7 @@ export default class EbeguRestUtil {
             betreuungTS.abwesenheitMutiert = betreuungFromServer.abwesenheitMutiert;
             betreuungTS.gueltig = betreuungFromServer.gueltig;
             betreuungTS.belegungTagesschule = this.parseBelegungTagesschule(new TSBelegungTagesschule(), betreuungFromServer.belegungTagesschule);
+            betreuungTS.belegungFerieninsel = this.parseBelegungFerieninsel(new TSBelegungFerieninsel(), betreuungFromServer.belegungFerieninsel);
             return betreuungTS;
         }
         return undefined;
@@ -2338,6 +2340,7 @@ export default class EbeguRestUtil {
             modulTagesschuleTS.wochentag = modulFromServer.wochentag;
             modulTagesschuleTS.zeitVon = DateUtil.localDateToMoment(modulFromServer.zeitVon);
             modulTagesschuleTS.zeitBis = DateUtil.localDateToMoment(modulFromServer.zeitBis);
+            return modulTagesschuleTS;
         }
         return undefined;
     }
@@ -2359,6 +2362,7 @@ export default class EbeguRestUtil {
             restModul.wochentag = modulTagesschuleTS.wochentag;
             restModul.zeitVon = DateUtil.momentToLocalDate(modulTagesschuleTS.zeitVon);
             restModul.zeitBis = DateUtil.momentToLocalDate(modulTagesschuleTS.zeitBis);
+            return restModul;
         }
         return undefined;
     }
@@ -2412,6 +2416,9 @@ export default class EbeguRestUtil {
                 this.parseDateRangeEntity(zeitraum, receivedFerieninselStammdaten.zeitraumList[i]);
                 ferieninselStammdatenTS.zeitraumList.push(zeitraum);
             }
+            if (receivedFerieninselStammdaten.potenzielleFerieninselTageFuerBelegung) {
+                ferieninselStammdatenTS.potenzielleFerieninselTageFuerBelegung = this.parseBelegungFerieninselTagList(receivedFerieninselStammdaten.potenzielleFerieninselTageFuerBelegung);
+            }
             return ferieninselStammdatenTS;
         }
         return undefined;
@@ -2457,28 +2464,46 @@ export default class EbeguRestUtil {
         if (receivedBelegungFerieninsel) {
             this.parseAbstractEntity(belegungFerieninselTS, receivedBelegungFerieninsel);
             belegungFerieninselTS.ferienname = receivedBelegungFerieninsel.ferienname;
-            for (let i = 0; i < receivedBelegungFerieninsel.tage.length; i++) {
-                let tagTS: TSBelegungFerieninselTag = new TSBelegungFerieninselTag();
-                this.parseAbstractEntity(tagTS, receivedBelegungFerieninsel.tage[i]);
-                tagTS.tag = receivedBelegungFerieninsel.tage[i].tag;
-                belegungFerieninselTS.tage.push(tagTS);
-            }
+            belegungFerieninselTS.tage = this.parseBelegungFerieninselTagList(receivedBelegungFerieninsel.tage);
             return belegungFerieninselTS;
         }
         return undefined;
     }
 
-    public belegungFerieninselToRestObject(restBelegungFerieninsel: any, belegungFerieninselTS: TSBelegungFerieninsel): TSBelegungFerieninsel {
+    private parseBelegungFerieninselTagList(data: any): TSBelegungFerieninselTag[] {
+        let belegungFerieninselTagList: TSBelegungFerieninselTag[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                belegungFerieninselTagList[i] = this.parseBelegungFerieninselTag(new TSBelegungFerieninselTag(), data[i]);
+            }
+        } else {
+            belegungFerieninselTagList[0] = this.parseBelegungFerieninselTag(new TSBelegungFerieninselTag(), data);
+        }
+        return belegungFerieninselTagList;
+    }
+
+    private parseBelegungFerieninselTag(belegungFerieninselTagTS: TSBelegungFerieninselTag, receivedBelegungFerieninselTag: any): TSBelegungFerieninselTag {
+        if (receivedBelegungFerieninselTag) {
+            this.parseAbstractEntity(belegungFerieninselTagTS, receivedBelegungFerieninselTag);
+            belegungFerieninselTagTS.tag = DateUtil.localDateToMoment(receivedBelegungFerieninselTag.tag);
+            return belegungFerieninselTagTS;
+        }
+        return undefined;
+    }
+
+    public belegungFerieninselToRestObject(restBelegungFerieninsel: any, belegungFerieninselTS: TSBelegungFerieninsel): any {
         if (belegungFerieninselTS) {
             this.abstractEntityToRestObject(restBelegungFerieninsel, belegungFerieninselTS);
             restBelegungFerieninsel.ferienname = belegungFerieninselTS.ferienname;
-            for (let i = 0; i < belegungFerieninselTS.tage.length; i++) {
-                let tagRest: any;
-                this.abstractEntityToRestObject(tagRest, belegungFerieninselTS.tage[i]);
-                tagRest.tag = belegungFerieninselTS.tage[i].tag;
-                belegungFerieninselTS.tage.push(tagRest);
+            restBelegungFerieninsel.tage = [];
+            if (belegungFerieninselTS.tage) {
+                for (let i = 0; i < belegungFerieninselTS.tage.length; i++) {
+                    let tagRest: any = {};
+                    this.abstractEntityToRestObject(tagRest, belegungFerieninselTS.tage[i]);
+                    tagRest.tag = DateUtil.momentToLocalDate(belegungFerieninselTS.tage[i].tag);
+                    restBelegungFerieninsel.tage.push(tagRest);
+                }
             }
-
             return restBelegungFerieninsel;
         }
         return undefined;
