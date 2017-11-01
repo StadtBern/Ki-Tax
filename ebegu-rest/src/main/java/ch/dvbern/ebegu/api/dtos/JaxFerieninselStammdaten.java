@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -50,6 +51,10 @@ public class JaxFerieninselStammdaten extends JaxAbstractDTO {
 	@NotNull
 	private JaxGesuchsperiode gesuchsperiode;
 
+	@Nullable
+	private List<JaxBelegungFerieninselTag> potenzielleFerieninselTageFuerBelegung;
+
+
 	public Ferienname getFerienname() {
 		return ferienname;
 	}
@@ -80,5 +85,14 @@ public class JaxFerieninselStammdaten extends JaxAbstractDTO {
 
 	public void setGesuchsperiode(JaxGesuchsperiode gesuchsperiode) {
 		this.gesuchsperiode = gesuchsperiode;
+	}
+
+	@Nullable
+	public List<JaxBelegungFerieninselTag> getPotenzielleFerieninselTageFuerBelegung() {
+		return potenzielleFerieninselTageFuerBelegung;
+	}
+
+	public void setPotenzielleFerieninselTageFuerBelegung(@Nullable List<JaxBelegungFerieninselTag> potenzielleFerieninselTageFuerBelegung) {
+		this.potenzielleFerieninselTageFuerBelegung = potenzielleFerieninselTageFuerBelegung;
 	}
 }
