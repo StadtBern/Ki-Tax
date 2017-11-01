@@ -45,8 +45,8 @@ import ITimeoutService = angular.ITimeoutService;
 import ILogService = angular.ILogService;
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import ITranslateService = angular.translate.ITranslateService;
-import TSBelegung from '../../../models/TSBelegung';
 import DateUtil from '../../../utils/DateUtil';
+import TSBelegungTagesschule from '../../../models/TSBelegungTagesschule';
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -71,6 +71,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     mutationsmeldungModel: TSBetreuung;
     existingMutationsMeldung: TSBetreuungsmitteilung;
     isNewestGesuch: boolean;
+    dvDialog: DvDialog;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout', '$translate'];
@@ -78,10 +79,10 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $stateParams: IBetreuungStateParams,
-                private mitteilungRS: MitteilungRS, private dvDialog: DvDialog, private $log: ILogService,
+                private mitteilungRS: MitteilungRS, dvDialog: DvDialog, private $log: ILogService,
                 $timeout: ITimeoutService, private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG, $timeout);
-
+        this.dvDialog = dvDialog;
     }
 
     $onInit() {
@@ -178,22 +179,27 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public changedAngebot() {
         if (this.getBetreuungModel()) {
-            if (this.isTagesschule()) {
-                this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
-                // Fuer Tagesschule setzen wir eine Dummy-Tagesschule als Institution
-                this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
-                this.setSelectedInstitutionStammdaten();
-                // Nur fuer die neuen Gesuchsperiode kann die Belegung erfast werden
-                if (this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung()
+            if (this.isSchulamt()) {
+                if (this.isTagesschule()) {
+                    this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
+                    // Fuer Tagesschule setzen wir eine Dummy-Tagesschule als Institution
+                    this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
+                    this.setSelectedInstitutionStammdaten();
+                    // Nur fuer die neuen Gesuchsperiode kann die Belegung erfast werden
+                    if (this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung()
                         && this.gesuchModelManager.getGesuchsperiode().isTageschulenAnmeldungAktiv()) {
-                    if (!this.getBetreuungModel().belegung) {
-                        this.getBetreuungModel().belegung = new TSBelegung();
-                        // Default Eintrittsdatum ist erster Schultag, wenn noch in Zukunft
-                        let ersterSchultag: moment.Moment = this.gesuchModelManager.getGesuchsperiode().datumErsterSchultag;
-                        if (DateUtil.today().isBefore(ersterSchultag)) {
-                            this.getBetreuungModel().belegung.eintrittsdatum = ersterSchultag;
+                        if (!this.getBetreuungModel().belegungTagesschule) {
+                            this.getBetreuungModel().belegungTagesschule = new TSBelegungTagesschule();
+                            // Default Eintrittsdatum ist erster Schultag, wenn noch in Zukunft
+                            let ersterSchultag: moment.Moment = this.gesuchModelManager.getGesuchsperiode().datumErsterSchultag;
+                            if (DateUtil.today().isBefore(ersterSchultag)) {
+                                this.getBetreuungModel().belegungTagesschule.eintrittsdatum = ersterSchultag;
+                            }
                         }
                     }
+                } else {
+                    // Ferieninsel. Vorerst mal Status SCHULAMT, spaeter kommt dann ein eigener Status
+                    this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT; // todo entfernen. oben schon gemacht
                 }
             } else {
                 this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
@@ -226,6 +232,11 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             this.form.$setPristine();
             return undefined;
         });
+    }
+
+    public anmeldenSchulamt(): void {
+        //TODO (team) spaeter Status ANMELDUNG_AUSGELOEST. Dieselbe Methode kann dann vermtl. auch fuer Tagesschule verwendet werden
+        this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen', undefined);
     }
 
     private setBetreuungsangebotTypValues(): void {
@@ -365,10 +376,14 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      * @returns {boolean}
      */
     public isEnabled(): boolean {
+        //TODO (team) dies muss dann mit den neuen SCH-Status nochmals ueberdacht werden
         if (this.getBetreuungModel()) {
             return !this.getBetreuungModel().hasVorgaenger()
-                && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND) || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT)
+                && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)
+                    || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST)
+                    || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT)
                 && !this.isKorrekturModusJugendamt()));
+
         }
         return false;
     }
@@ -416,9 +431,17 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         return this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESSCHULE);
     }
 
+    public isFerieninsel(): boolean {
+        return this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.FERIENINSEL);
+    }
+
     public isTageseltern(): boolean {
         return this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND) ||
             this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_SCHULKIND);
+    }
+
+    public isSchulamt(): boolean {
+        return this.isTagesschule() || this.isFerieninsel();
     }
 
     private isBetreuungsangebottyp(betAngTyp: TSBetreuungsangebotTyp): boolean {
@@ -552,7 +575,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public tageschuleSaveDisabled(): boolean {
         let gp: TSGesuchsperiode = this.gesuchModelManager.getGesuch().gesuchsperiode;
-        return this.getBetreuungModel().isAngebotTagesschule() && gp.hasTagesschulenAnmeldung() && !gp.isTageschulenAnmeldungAktiv();
+        return (this.getBetreuungModel().isAngebotTagesschule() && gp.hasTagesschulenAnmeldung() && !gp.isTageschulenAnmeldungAktiv()
+            || this.getBetreuungModel().isAngebotFerieninsel() && !this.getBetreuungModel().isEnabled());
     }
 
     public getTagesschuleAnmeldungNotYetReadyText(): string {

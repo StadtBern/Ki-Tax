@@ -15,12 +15,16 @@
 
 package ch.dvbern.ebegu.util;
 
+import java.sql.Date;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import ch.dvbern.lib.date.feiertage.FeiertageHelper;
 
 /**
  * Utils fuer Date Elemente
@@ -54,5 +58,13 @@ public final class DateUtil {
 			date = LocalDateTime.parse(stringDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		}
 		return date;
+	}
+
+	public static boolean isWeekend(@Nonnull LocalDate date) {
+		return date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY;
+	}
+
+	public static boolean isHoliday(@Nonnull LocalDate date) {
+		return FeiertageHelper.isFeiertag_CH(Date.valueOf(date));
 	}
 }

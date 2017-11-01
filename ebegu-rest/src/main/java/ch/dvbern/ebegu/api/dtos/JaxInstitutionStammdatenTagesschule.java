@@ -15,50 +15,30 @@
 
 package ch.dvbern.ebegu.api.dtos;
 
-import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 
 /**
- * DTO fuer Daten der Belegungen.
+ * DTO fuer InstitutionStammdatenTagesschule
  */
-@XmlRootElement(name = "belegung")
+@XmlRootElement(name = "institutionStammdatenTagesschule")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxBelegung extends JaxAbstractDTO {
+public class JaxInstitutionStammdatenTagesschule extends JaxAbstractDTO {
 
-	private static final long serialVersionUID = -1297972380574937397L;
-
+	private static final long serialVersionUID = 6958211446966611467L;
 	@NotNull
-	private Set<JaxModul> module = new LinkedHashSet<>();
+	private Set<JaxModulTagesschule> moduleTagesschule = new LinkedHashSet<>();
 
-	@Nullable
-	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
-	private LocalDate eintrittsdatum;
-
-
-	public Set<JaxModul> getModule() {
-		return module;
+	public Set<JaxModulTagesschule> getModuleTagesschule() {
+		return moduleTagesschule;
 	}
 
-	public void setModule(Set<JaxModul> module) {
-		this.module = module;
-	}
-
-	@Nullable
-	public LocalDate getEintrittsdatum() {
-		return eintrittsdatum;
-	}
-
-	public void setEintrittsdatum(@Nullable LocalDate eintrittsdatum) {
-		this.eintrittsdatum = eintrittsdatum;
+	public void setModuleTagesschule(Set<JaxModulTagesschule> moduleTagesschule) {
+		this.moduleTagesschule = moduleTagesschule;
 	}
 }

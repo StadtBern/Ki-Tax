@@ -13,34 +13,35 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {TSFerienname} from './enums/TSFerienname';
 import TSAbstractEntity from './TSAbstractEntity';
-import TSModul from './TSModul';
-import * as moment from 'moment';
+import TSBelegungFerieninselTag from './TSBelegungFerieninselTag';
 
-export default class TSBelegung extends TSAbstractEntity {
+export default class TSBelegungFerieninsel extends TSAbstractEntity {
 
-    private _module: TSModul[];
-    private _eintrittsdatum: moment.Moment;
+    private _ferienname: TSFerienname;
+    private _tage: Array<TSBelegungFerieninselTag> = [];
 
-    constructor(module?: TSModul[], eintrittsdatum?: moment.Moment) {
+
+    constructor(ferienname?: TSFerienname, tage?: Array<TSBelegungFerieninselTag>) {
         super();
-        this._module = module;
-        this._eintrittsdatum = eintrittsdatum;
+        this._ferienname = ferienname;
+        this._tage = tage;
     }
 
-    public get module(): TSModul[] {
-        return this._module;
+    public get ferienname(): TSFerienname {
+        return this._ferienname;
     }
 
-    public set module(value: TSModul[]) {
-        this._module = value;
+    public set ferienname(value: TSFerienname) {
+        this._ferienname = value;
     }
 
-    public get eintrittsdatum(): moment.Moment {
-        return this._eintrittsdatum;
+    public get tage(): Array<TSBelegungFerieninselTag> {
+        return this._tage;
     }
 
-    public set eintrittsdatum(value: moment.Moment) {
-        this._eintrittsdatum = value;
+    public set tage(value: Array<TSBelegungFerieninselTag>) {
+        this._tage = value;
     }
 }

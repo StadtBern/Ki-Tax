@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!-- sozialhilfeBezueger -->
+<div class="row" ng-if="vm.showSozialhilfeBezueger()">
+    <div class="col-xs-12 dv-input-container-question">
+        <div class="form-group">
+                            <span class="ebeguH1 required"
+                                  data-translate="FINANZIELLE_SITUATION_SOZIALHILFE_BEZUEGER"></span>
+            <dv-radio-container name="sozialhilfeBezueger" class="input-element"
+                                ng-model="vm.sozialhilfeBezueger"
+                                ng-required="true" class="radio" ng-change="vm.setFinanziellesituationRequired()"
+                                dv-enable-element
+                                dv-enable-allowed-roles="vm.allowedRoles"
+                                dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
+                                aria-label="{{ 'FINANZIELLE_SITUATION_SOZIALHILFE_BEZUEGER' |translate}}"
+                                aria-described-by="sozialhilfeBezueger-error">
+            </dv-radio-container>
+            <dv-error-messages input-id="sozialhilfeBezueger"
+                               for="vm.form.sozialhilfeBezueger.$error"
+                               class="error"></dv-error-messages>
+        </div>
+    </div>
+</div>
+
+<!-- verguenstigungGewuenscht -->
+<div class="row" ng-if="vm.showVerguenstigungGewuenscht()">
+    <div class="col-xs-12 dv-input-container-question">
+        <div class="form-group">
+            <span class="ebeguH1 required"
+                  data-translate="FINANZIELLE_SITUATION_VERGUENSTIGUNG_GEWUENSCHT"
+                  translate-values="{maxEinkommen: vm.getMaxMassgebendesEinkommen()}"></span>
+            <dv-radio-container name="verguenstigungGewuenscht" class="input-element"
+                                ng-model="vm.verguenstigungGewuenscht"
+                                ng-required="true" class="radio" ng-change="vm.setFinanziellesituationRequired()"
+                                dv-enable-element
+                                dv-enable-allowed-roles="vm.allowedRoles"
+                                dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
+                                aria-label="{{ 'FINANZIELLE_SITUATION_VERGUENSTIGUNG_GEWUENSCHT' |translate}}"
+                                aria-described-by="verguenstigungGewuenscht-error">
+            </dv-radio-container>
+            <dv-error-messages input-id="verguenstigungGewuenscht"
+                               for="vm.form.verguenstigungGewuenscht.$error"
+                               class="error"></dv-error-messages>
+        </div>
+    </div>
+</div>

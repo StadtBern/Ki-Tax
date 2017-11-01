@@ -15,8 +15,9 @@
 
 package ch.dvbern.ebegu.api.dtos;
 
-import java.time.DayOfWeek;
-import java.time.LocalTime;
+import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -24,62 +25,39 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import ch.dvbern.ebegu.enums.ModulName;
-import ch.dvbern.lib.date.converters.LocalTimeXMLConverter;
+import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 
 /**
- * DTO fuer Module fuer die Tagesschulen
+ * DTO fuer Daten der Belegungen.
  */
-@XmlRootElement(name = "modul")
+@XmlRootElement(name = "belegungTagesschule")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxModul extends JaxAbstractDTO {
+public class JaxBelegungTagesschule extends JaxAbstractDTO {
 
-	private static final long serialVersionUID = -1893537808325618626L;
-
-	@NotNull
-	private DayOfWeek wochentag;
+	private static final long serialVersionUID = -1297972380574937397L;
 
 	@NotNull
-	private ModulName modulname;
+	private Set<JaxModulTagesschule> moduleTagesschule = new LinkedHashSet<>();
 
 	@NotNull
-	@XmlJavaTypeAdapter(LocalTimeXMLConverter.class)
-	private LocalTime zeitVon = null;
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate eintrittsdatum;
+
+
+	public Set<JaxModulTagesschule> getModuleTagesschule() {
+		return moduleTagesschule;
+	}
+
+	public void setModuleTagesschule(Set<JaxModulTagesschule> moduleTagesschule) {
+		this.moduleTagesschule = moduleTagesschule;
+	}
 
 	@NotNull
-	@XmlJavaTypeAdapter(LocalTimeXMLConverter.class)
-	private LocalTime zeitBis = null;
-
-
-	public DayOfWeek getWochentag() {
-		return wochentag;
+	public LocalDate getEintrittsdatum() {
+		return eintrittsdatum;
 	}
 
-	public void setWochentag(DayOfWeek wochentag) {
-		this.wochentag = wochentag;
-	}
-
-	public ModulName getModulname() {
-		return modulname;
-	}
-
-	public void setModulname(ModulName modulname) {
-		this.modulname = modulname;
-	}
-
-	public LocalTime getZeitVon() {
-		return zeitVon;
-	}
-
-	public void setZeitVon(LocalTime zeitVon) {
-		this.zeitVon = zeitVon;
-	}
-
-	public LocalTime getZeitBis() {
-		return zeitBis;
-	}
-
-	public void setZeitBis(LocalTime zeitBis) {
-		this.zeitBis = zeitBis;
+	public void setEintrittsdatum(@NotNull LocalDate eintrittsdatum) {
+		this.eintrittsdatum = eintrittsdatum;
 	}
 }

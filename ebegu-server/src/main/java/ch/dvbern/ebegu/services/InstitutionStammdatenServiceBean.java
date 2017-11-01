@@ -69,7 +69,7 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 
 	@Nonnull
 	@Override
-	@RolesAllowed(value = { UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
+	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.ADMINISTRATOR_SCHULAMT })
 	public InstitutionStammdaten saveInstitutionStammdaten(@Nonnull InstitutionStammdaten institutionStammdaten) {
 		Objects.requireNonNull(institutionStammdaten);
 		return persistence.merge(institutionStammdaten);
@@ -92,7 +92,7 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	}
 
 	@Override
-	@RolesAllowed(value = { UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
+	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
 	public void removeInstitutionStammdaten(@Nonnull String institutionStammdatenId) {
 		Validate.notNull(institutionStammdatenId);
 		Optional<InstitutionStammdaten> institutionStammdatenToRemove = findInstitutionStammdaten(institutionStammdatenId);
