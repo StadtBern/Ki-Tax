@@ -124,7 +124,9 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
             // Validieren, dass mindestens 1 Tag ausgewählt war
             this.setChosenFerientage();
             if (this.betreuung.belegungFerieninsel.tage.length <= 0) {
-                this.showErrorMessage = true;
+                if (this.isAnmeldungMoeglich()) {
+                    this.showErrorMessage = true;
+                }
                 return undefined;
             }
             return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
