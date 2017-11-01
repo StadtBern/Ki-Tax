@@ -34,7 +34,7 @@
 		</div>
 
 		<!-- Auswahl der Tage -->
-		<div ng-if="(vm.isAnmeldungMoeglich() && !vm.isAnmeldungNichtFreigegeben()) || !vm.betreuung.belegungFerieninsel.isNew()">
+		<div ng-if="vm.isAnmeldungMoeglich() || !vm.betreuung.belegungFerieninsel.isNew()">
 			<div class="row">
 				<div class="col-sm-12 dv-input-container-medium form-group">
 					<span data-translate="FERIENINSELTAGE"></span>
@@ -89,7 +89,7 @@
     <div class="nav-row-betreuung"
          dv-show-element
          dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles()">
-        <div ng-if="vm.betreuung.isEnabled()">
+        <div ng-if="vm.betreuung.isEnabled() && vm.isAnmeldungMoeglich()">
             <dv-loading-button button-click="vm.anmelden()" type="submit"
                                button-class="save">
                 <span data-translate="ANMELDEN_FERIENINSEL"></span>
