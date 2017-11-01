@@ -14,17 +14,17 @@
  */
 
 export enum TSFerienname {
-    SOMMERFERIEN = <any> 'SOMMERFERIEN',
     HERBSTFERIEN = <any> 'HERBSTFERIEN',
     SPORTFERIEN = <any> 'SPORTFERIEN',
-    FRUEHLINGSFERIEN = <any> 'FRUEHLINGSFERIEN'
+    FRUEHLINGSFERIEN = <any> 'FRUEHLINGSFERIEN',
+    SOMMERFERIEN = <any> 'SOMMERFERIEN'
 }
 
 export function getTSFeriennameValues(): Array<TSFerienname> {
     return [
-        TSFerienname.SOMMERFERIEN,
         TSFerienname.HERBSTFERIEN,
         TSFerienname.SPORTFERIEN,
-        TSFerienname.FRUEHLINGSFERIEN
+        TSFerienname.FRUEHLINGSFERIEN,
+        TSFerienname.SOMMERFERIEN
     ];
 }
