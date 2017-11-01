@@ -2338,6 +2338,7 @@ export default class EbeguRestUtil {
             modulTagesschuleTS.wochentag = modulFromServer.wochentag;
             modulTagesschuleTS.zeitVon = DateUtil.localDateToMoment(modulFromServer.zeitVon);
             modulTagesschuleTS.zeitBis = DateUtil.localDateToMoment(modulFromServer.zeitBis);
+            return modulTagesschuleTS;
         }
         return undefined;
     }
@@ -2359,6 +2360,7 @@ export default class EbeguRestUtil {
             restModul.wochentag = modulTagesschuleTS.wochentag;
             restModul.zeitVon = DateUtil.momentToLocalDate(modulTagesschuleTS.zeitVon);
             restModul.zeitBis = DateUtil.momentToLocalDate(modulTagesschuleTS.zeitBis);
+            return restModul;
         }
         return undefined;
     }

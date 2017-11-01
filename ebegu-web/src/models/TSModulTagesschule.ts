@@ -25,6 +25,14 @@ export default class TSModulTagesschule extends TSAbstractEntity {
     private _zeitVon: moment.Moment;
     private _zeitBis: moment.Moment;
 
+    constructor(wochentag?: TSDayOfWeek, modulTagesschuleName?: TSModulTagesschuleName, zeitVon?: moment.Moment, zeitBis?: moment.Moment) {
+        super();
+        this._wochentag = wochentag;
+        this._modulTagesschuleName = modulTagesschuleName;
+        this._zeitVon = zeitVon;
+        this._zeitBis = zeitBis;
+    }
+
     public get wochentag(): TSDayOfWeek {
         return this._wochentag;
     }
