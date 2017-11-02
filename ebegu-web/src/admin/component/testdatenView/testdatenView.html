@@ -329,6 +329,16 @@
                 </button>
             </div>
 
+            <!-- Zahlungslaeufe kontrollieren -->
+            <div class="row marginTop10">
+                <div class="viewTitle marginTop10">
+                    <h2>Zahlungen kontrollieren</h2>
+                </div>
+                <button type="button" class=" btn-testfall"
+                        ng-click="vm.zahlungenKontrollieren()">
+                    <span>Zahlungen kontrollieren</span>
+                </button>
+            </div>
 
             <!-- Manuelle Skripts ausfuehren -->
             <div class="row marginTop10">
@@ -360,6 +370,13 @@
                     <button type="button" class=" btn-testfall"
                             ng-click="vm.processScript('1136')">
                         <span>EBEGU-1136: Eliminieren doppelter Statusübergänge</span>
+                    </button>
+                </div>
+                <div>
+                    <br/>
+                    <button type="button" class=" btn-testfall"
+                            ng-click="vm.processScript('1470')">
+                        <span>EBEGU-1470: TimestampVerfuegt auf allen verfuegten Gesuchen setzen</span>
                     </button>
                 </div>
             </div>

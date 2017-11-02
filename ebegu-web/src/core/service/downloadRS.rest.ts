@@ -204,7 +204,7 @@ export class DownloadRS {
         let buttonElement = win.document.getElementById('closeButton');
         if (buttonElement) {
             buttonElement.style.display = 'block';
-        this.addCloseButtonHandler(win);
+        	this.addCloseButtonHandler(win);
         }
     }
 
