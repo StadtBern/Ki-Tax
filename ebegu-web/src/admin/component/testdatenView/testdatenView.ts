@@ -26,6 +26,7 @@ import {ReindexRS} from '../../service/reindexRS.rest';
 import * as moment from 'moment';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import ZahlungRS from '../../../core/service/zahlungRS.rest';
 
 require('./testdatenView.less');
 let template = require('./testdatenView.html');
@@ -41,7 +42,7 @@ export class TestdatenViewComponentConfig implements IComponentOptions {
 
 export class TestdatenViewController {
     static $inject = ['TestFaelleRS', 'DvDialog', 'UserRS',
-        'ErrorService', 'ReindexRS', 'GesuchsperiodeRS', 'DatabaseMigrationRS'];
+        'ErrorService', 'ReindexRS', 'GesuchsperiodeRS', 'DatabaseMigrationRS', 'ZahlungRS'];
 
     testFaelleRS: TestFaelleRS;
     fallId: number;
@@ -59,7 +60,8 @@ export class TestdatenViewController {
     /* @ngInject */
     constructor(testFaelleRS: TestFaelleRS, private dvDialog: DvDialog, private userRS: UserRS,
                 private errorService: ErrorService, private reindexRS: ReindexRS,
-                private gesuchsperiodeRS: GesuchsperiodeRS, private databaseMigrationRS: DatabaseMigrationRS) {
+                private gesuchsperiodeRS: GesuchsperiodeRS, private databaseMigrationRS: DatabaseMigrationRS,
+                private zahlungRS: ZahlungRS) {
         this.testFaelleRS = testFaelleRS;
         this.fetchList();
     }
@@ -181,5 +183,9 @@ export class TestdatenViewController {
 
     public processScript(script: string): void {
         this.databaseMigrationRS.processScript(script);
+    }
+
+    public zahlungenKontrollieren(): void {
+        this.zahlungRS.zahlungenKontrollieren();
     }
 }
