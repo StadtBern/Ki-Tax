@@ -102,6 +102,7 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 		BG_WITH_KNOWN_PROBLEMS.put("17.001538.1.1", MathUtil.DEFAULT.from(-175.30d));
 		BG_WITH_KNOWN_PROBLEMS.put("17.001538.2.1", MathUtil.DEFAULT.from(-175.30d));
 		BG_WITH_KNOWN_PROBLEMS.put("17.001850.1.1", MathUtil.DEFAULT.from(-345.00d));
+		BG_WITH_KNOWN_PROBLEMS.put("17.001940.2.1", MathUtil.DEFAULT.from(-79.70d));
 	}
 
 	@Asynchronous
@@ -123,14 +124,14 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 		LOGGER.info("Sende Mail...");
 		try {
 			if (potentielleFehlerList.isEmpty()) {
-				mailService.sendMessage("Zahlungslauf: Keine Fehler gefunden", "Keine Fehler gefunden", "franziska.herger@dvbern.ch");
+				mailService.sendMessage("Zahlungslauf: Keine Fehler gefunden", "Keine Fehler gefunden", "eberhard.gugler@dvbern.ch");
 			} else {
 				StringBuilder sb = new StringBuilder();
 				for (String s : potentielleFehlerList) {
 					sb.append(s);
 					sb.append("\n*************************************\n");
 				}
-				mailService.sendMessage("Potentieller Fehler im Zahlungslauf", sb.toString(), "franziska.herger@dvbern.ch");
+				mailService.sendMessage("Potentieller Fehler im Zahlungslauf", sb.toString(), "eberhard.gugler@dvbern.ch");
 			}
 		} catch (MailException e) {
 			LOGGER.error("Senden der Mail nicht erfolgreich", e);
