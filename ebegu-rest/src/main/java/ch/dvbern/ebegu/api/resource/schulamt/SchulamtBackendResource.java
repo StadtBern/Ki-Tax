@@ -133,7 +133,7 @@ public class SchulamtBackendResource {
 			anmeldungen.add(new JaxExternalModul(DayOfWeek.MONDAY, JaxExternalModulName.NACHMITTAGS_1));
 			anmeldungen.add(new JaxExternalModul(DayOfWeek.MONDAY, JaxExternalModulName.NACHMITTAGS_2));
 			anmeldungen.add(new JaxExternalModul(DayOfWeek.FRIDAY, JaxExternalModulName.VORMITTAG));
-			JaxExternalAnmeldungTagesschule anmeldung = new JaxExternalAnmeldungTagesschule(bgNummer, JaxBetreuungsstatus.BESTAETIGT,
+			JaxExternalAnmeldungTagesschule anmeldung = new JaxExternalAnmeldungTagesschule(bgNummer, JaxBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST,
 				"TODO_eindeutige_ID_Tagesschule", anmeldungen);
 			return Response.ok(anmeldung).build();
 		}
@@ -161,7 +161,7 @@ public class SchulamtBackendResource {
 			datumList.add(LocalDate.now().plusMonths(2).plusDays(1));
 			datumList.add(LocalDate.now().plusMonths(2).plusDays(2));
 			JaxExternalFerieninsel ferieninsel = new JaxExternalFerieninsel(JaxExternalFerienName.HERBSTFERIEN, datumList);
-			JaxExternalAnmeldungFerieninsel anmeldung = new JaxExternalAnmeldungFerieninsel(bgNummer, JaxBetreuungsstatus.VERFUEGT,
+			JaxExternalAnmeldungFerieninsel anmeldung = new JaxExternalAnmeldungFerieninsel(bgNummer, JaxBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST,
 				"TODO_eindeutige_ID_Institution", ferieninsel);
 			return Response.ok(anmeldung).build();
 		}

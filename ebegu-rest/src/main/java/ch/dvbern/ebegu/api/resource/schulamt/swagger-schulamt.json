@@ -159,7 +159,7 @@
 				},
 				"betreuungsstatus" : {
 					"type" : "string",
-					"enum" : [ "WARTEN", "SCHULAMT", "ABGEWIESEN", "NICHT_EINGETRETEN", "STORNIERT", "BESTAETIGT", "VERFUEGT", "GESCHLOSSEN_OHNE_VERFUEGUNG" ]
+					"enum" : [ "SCHULAMT_ANMELDUNG_ERFASST", "SCHULAMT_ANMELDUNG_AUSGELOEST", "SCHULAMT_ANMELDUNG_UEBERNOMMEN", "SCHULAMT_ANMELDUNG_ABGELEHNT", "SCHULAMT_FALSCHE_INSTITUTION" ]
 				},
 				"betreuungsangebotTyp" : {
 					"type" : "string",
@@ -221,7 +221,7 @@
 				},
 				"betreuungsstatus" : {
 					"type" : "string",
-					"enum" : [ "WARTEN", "SCHULAMT", "ABGEWIESEN", "NICHT_EINGETRETEN", "STORNIERT", "BESTAETIGT", "VERFUEGT", "GESCHLOSSEN_OHNE_VERFUEGUNG" ]
+					"enum" : [ "SCHULAMT_ANMELDUNG_ERFASST", "SCHULAMT_ANMELDUNG_AUSGELOEST", "SCHULAMT_ANMELDUNG_UEBERNOMMEN", "SCHULAMT_ANMELDUNG_ABGELEHNT", "SCHULAMT_FALSCHE_INSTITUTION" ]
 				},
 				"betreuungsangebotTyp" : {
 					"type" : "string",
