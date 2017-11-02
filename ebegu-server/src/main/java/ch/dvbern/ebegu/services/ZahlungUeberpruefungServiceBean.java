@@ -133,7 +133,7 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 				mailService.sendMessage("Potentieller Fehler im Zahlungslauf", sb.toString(), "franziska.herger@dvbern.ch");
 			}
 		} catch (MailException e) {
-			LOGGER.error("Senden der Mail nicht erfolgreich");
+			LOGGER.error("Senden der Mail nicht erfolgreich", e);
 		}
 		LOGGER.info("... beendet");
 	}
@@ -194,9 +194,9 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 		}
 	}
 
-	private void logPossibleError(@Nonnull Betreuung betreuung,List<VerfuegungZeitabschnitt>
-		ausbezahlteAbschnitte, BigDecimal betragSoll,
-		BigDecimal betragIst, @Nullable BigDecimal expectedDifference) {
+	private void logPossibleError(@Nonnull Betreuung betreuung, List<VerfuegungZeitabschnitt>
+		ausbezahlteAbschnitte, BigDecimal betragSoll, BigDecimal betragIst, @Nullable BigDecimal expectedDifference) {
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("Soll und Ist nicht identisch: ").append(betreuung.getBGNummer()).append(" Soll: ").append(betragSoll).append(" Ist: ").append
 			(betragIst).append('\n');
