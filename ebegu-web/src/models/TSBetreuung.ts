@@ -250,6 +250,10 @@ export default class TSBetreuung extends TSAbstractEntity {
         return this.isAngebot(TSBetreuungsangebotTyp.FERIENINSEL);
     }
 
+    public isAngebotSchulamt(): boolean {
+        return this.isAngebotFerieninsel() || this.isAngebotTagesschule();
+    }
+
     private isAngebot(typ: TSBetreuungsangebotTyp) {
         if (this.institutionStammdaten && this.institutionStammdaten.betreuungsangebotTyp) {
             return this.institutionStammdaten.betreuungsangebotTyp === typ;
@@ -267,4 +271,6 @@ export default class TSBetreuung extends TSAbstractEntity {
     public isBetreuungsstatus(status: TSBetreuungsstatus): boolean {
         return this.betreuungsstatus === status;
     }
+
+
 }
