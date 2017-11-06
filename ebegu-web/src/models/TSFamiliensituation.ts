@@ -24,14 +24,19 @@ export default class TSFamiliensituation extends TSAbstractEntity {
     private _gesuchstellerKardinalitaet: TSGesuchstellerKardinalitaet;
     private _gemeinsameSteuererklaerung: boolean;
     private _aenderungPer: moment.Moment;
+    private _sozialhilfeBezueger: boolean;
+    private _verguenstigungGewuenscht: boolean;
 
     constructor(familienstatus?: TSFamilienstatus, gesuchstellerKardinalitaet?: TSGesuchstellerKardinalitaet,
-                gemeinsameSteuererklaerung?: boolean, aenderungPer?: moment.Moment) {
+                gemeinsameSteuererklaerung?: boolean, aenderungPer?: moment.Moment, sozialhilfeBezueger?: boolean,
+                verguenstigungGewuenscht?: boolean) {
         super();
         this._familienstatus = familienstatus;
         this._gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
         this._gemeinsameSteuererklaerung = gemeinsameSteuererklaerung;
         this._aenderungPer = aenderungPer;
+        this._sozialhilfeBezueger = sozialhilfeBezueger;
+        this._verguenstigungGewuenscht = verguenstigungGewuenscht;
     }
 
     public get familienstatus(): TSFamilienstatus {
@@ -66,6 +71,22 @@ export default class TSFamiliensituation extends TSAbstractEntity {
         this._aenderungPer = value;
     }
 
+    public get sozialhilfeBezueger(): boolean {
+        return this._sozialhilfeBezueger;
+    }
+
+    public set sozialhilfeBezueger(value: boolean) {
+        this._sozialhilfeBezueger = value;
+    }
+
+    public get verguenstigungGewuenscht(): boolean {
+        return this._verguenstigungGewuenscht;
+    }
+
+    public set verguenstigungGewuenscht(value: boolean) {
+        this._verguenstigungGewuenscht = value;
+    }
+
     public hasSecondGesuchsteller(): boolean {
         switch (this.familienstatus) {
             case TSFamilienstatus.ALLEINERZIEHEND:
@@ -75,9 +96,10 @@ export default class TSFamiliensituation extends TSAbstractEntity {
             case TSFamilienstatus.KONKUBINAT:
             case TSFamilienstatus.LAENGER_FUENF_JAHRE:
                 return true;
+            default:
+                //wir sollten hier nie hinkommen
+                return false;
         }
-        //wir sollten hier nie hinkommen
-        return false;
     }
 
     public isSameFamiliensituation(other: TSFamiliensituation) {

@@ -13,23 +13,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import TSUser from '../../models/TSUser';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {EbeguWebCore} from '../core.module';
 import UserRS from './userRS.rest';
-import {IHttpBackendService} from 'angular';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import TSUser from '../../models/TSUser';
 
 describe('userRS', function () {
 
     let userRS: UserRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockUser: TSUser;
     let mockUserRest: any;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         userRS = $injector.get('UserRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');

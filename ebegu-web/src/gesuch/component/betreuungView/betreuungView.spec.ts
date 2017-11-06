@@ -13,48 +13,45 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EbeguWebCore} from '../../../core/core.module';
-import {IStateService} from 'angular-ui-router';
-import {BetreuungViewController} from './betreuungView';
-import GesuchModelManager from '../../service/gesuchModelManager';
-import TSBetreuung from '../../../models/TSBetreuung';
-import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
-import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
-import {IHttpBackendService, IQService, ITimeoutService} from 'angular';
-import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
-import TestDataUtil from '../../../utils/TestDataUtil';
-import EbeguUtil from '../../../utils/EbeguUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import DateUtil from '../../../utils/DateUtil';
-import WizardStepManager from '../../service/wizardStepManager';
-import TSKindContainer from '../../../models/TSKindContainer';
-import {IBetreuungStateParams} from '../../gesuch.route';
-import TSGesuch from '../../../models/TSGesuch';
-import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import {EbeguWebCore} from '../../../core/core.module';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
-import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
+import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
+import TSBetreuung from '../../../models/TSBetreuung';
+import TSGesuch from '../../../models/TSGesuch';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
+import TSKindContainer from '../../../models/TSKindContainer';
+import DateUtil from '../../../utils/DateUtil';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import TestDataUtil from '../../../utils/TestDataUtil';
+import {IBetreuungStateParams} from '../../gesuch.route';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import WizardStepManager from '../../service/wizardStepManager';
+import {BetreuungViewController} from './betreuungView';
 
 describe('betreuungView', function () {
 
     let betreuungView: BetreuungViewController;
     let gesuchModelManager: GesuchModelManager;
-    let $state: IStateService;
+    let $state: angular.ui.IStateService;
     let ebeguUtil: EbeguUtil;
-    let $q: IQService;
+    let $q: angular.IQService;
     let betreuung: TSBetreuung;
     let kind: TSKindContainer;
-    let $rootScope:  any;
-    let $httpBackend: IHttpBackendService;
+    let $rootScope: angular.IRootScopeService;
+    let $httpBackend: angular.IHttpBackendService;
     let authServiceRS: AuthServiceRS;
     let wizardStepManager: WizardStepManager;
     let $stateParams: IBetreuungStateParams;
-    let $timeout: ITimeoutService;
-
+    let $timeout: angular.ITimeoutService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $state = $injector.get('$state');
         ebeguUtil = $injector.get('EbeguUtil');
@@ -73,8 +70,9 @@ describe('betreuungView', function () {
         spyOn(gesuchModelManager, 'isNeuestesGesuch').and.returnValue($q.when(true));
         // model = betreuung;
         spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.callFake(() => {
-             // wenn betreuung view ihr model schon kopiert hat geben wir das zurueck, sonst sind wir noch im constructor der view und geben betreuung zurueck
-            return betreuungView ?  betreuungView.model : betreuung;
+            // wenn betreuung view ihr model schon kopiert hat geben wir das zurueck, sonst sind wir noch im
+            // constructor der view und geben betreuung zurueck
+            return betreuungView ? betreuungView.model : betreuung;
         });
         $rootScope = $injector.get('$rootScope');
         authServiceRS = $injector.get('AuthServiceRS');
@@ -84,7 +82,7 @@ describe('betreuungView', function () {
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
             $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS,
             wizardStepManager, $stateParams, $injector.get('MitteilungRS'), $injector.get('DvDialog'), $injector.get('$log'),
-            $timeout);
+            $timeout, undefined);
         betreuungView.$onInit();
         $rootScope.$apply();
         betreuungView.model = betreuung;
@@ -102,7 +100,8 @@ describe('betreuungView', function () {
         describe('Object creation', () => {
             it('create an empty list of Betreuungspensen for a role different than Institution', () => {
                 let myBetreuungView: BetreuungViewController = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, null,
-                    $rootScope, null, null, authServiceRS, wizardStepManager, $stateParams, undefined, undefined, undefined, $timeout);
+                    $rootScope, null, null, authServiceRS, wizardStepManager, $stateParams, undefined, undefined, undefined,
+                    $timeout, undefined);
                 myBetreuungView.model = betreuung;
                 expect(myBetreuungView.getBetreuungspensen()).toBeDefined();
                 expect(myBetreuungView.getBetreuungspensen().length).toEqual(0);
@@ -297,9 +296,9 @@ describe('betreuungView', function () {
     }
 
     /**
-     * Das Parameter promiseResponse ist das Object das die Methode gesuchModelManager.saveBetreuung() zurueckgeben muss. Wenn dieses
-     * eine Exception (reject) ist, muss der $state nicht geaendert werden und daher wird die Methode $state.go()  nicht aufgerufen.
-     * Ansonsten wird sie mit  dem naechsten state 'gesuch.betreuungen' aufgerufen
+     * Das Parameter promiseResponse ist das Object das die Methode gesuchModelManager.saveBetreuung() zurueckgeben
+     * muss. Wenn dieses eine Exception (reject) ist, muss der $state nicht geaendert werden und daher wird die Methode
+     * $state.go()  nicht aufgerufen. Ansonsten wird sie mit  dem naechsten state 'gesuch.betreuungen' aufgerufen
      * @param promiseResponse
      * @param moveToNextStep
      */
@@ -313,7 +312,7 @@ describe('betreuungView', function () {
         $rootScope.$apply();
         expect(gesuchModelManager.saveBetreuung).toHaveBeenCalled();
         if (moveToNextStep) {
-            expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen', { gesuchId: '' });
+            expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen', {gesuchId: ''});
         } else {
             expect($state.go).not.toHaveBeenCalled();
         }

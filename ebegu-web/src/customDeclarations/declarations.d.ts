@@ -16,10 +16,10 @@
 // declare function require(string: string): any;
 
 // Extra variables that live on Global that will be replaced by webpack DefinePlugin
-declare let ENV: string;
-declare let VERSION: string;
-declare let BUILDTSTAMP: string;
-declare let HMR: boolean;
+declare const ENV: string;
+declare const VERSION: string;
+declare const BUILDTSTAMP: string;
+declare const HMR: boolean;
 
 interface GlobalEnvironment {
     ENV: any;

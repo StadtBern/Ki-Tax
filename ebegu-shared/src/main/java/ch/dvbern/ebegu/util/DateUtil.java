@@ -15,12 +15,16 @@
 
 package ch.dvbern.ebegu.util;
 
+import java.sql.Date;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import ch.dvbern.lib.date.feiertage.FeiertageHelper;
 
 /**
  * Utils fuer Date Elemente
@@ -34,6 +38,7 @@ public final class DateUtil {
 	 * Parset den gegebenen String als LocalDate mit dem Format "yyyy-MM-dd"
 	 * Sollte der gegebene String null oder leer sein, wird now() zurueckgegeben
 	 */
+	@Nonnull
 	public static LocalDate parseStringToDateOrReturnNow(@Nullable String stringDate) {
 		LocalDate date = LocalDate.now();
 		if (stringDate != null && !stringDate.isEmpty()) {
@@ -46,11 +51,20 @@ public final class DateUtil {
 	 * Parset den gegebenen String als LocalDateTime mit dem Format "yyyy-MM-dd HH:mm:ss"
 	 * Sollte der gegebene String null oder leer sein, wird now() zurueckgegeben
 	 */
+	@Nonnull
 	public static LocalDateTime parseStringToDateTimeOrReturnNow(@Nonnull String stringDateTime) {
 		LocalDateTime date = LocalDateTime.now();
 		if (!stringDateTime.isEmpty()) {
 			date = LocalDateTime.parse(stringDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		}
 		return date;
+	}
+
+	public static boolean isWeekend(@Nonnull LocalDate date) {
+		return date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY;
+	}
+
+	public static boolean isHoliday(@Nonnull LocalDate date) {
+		return FeiertageHelper.isFeiertag_CH(Date.valueOf(date));
 	}
 }

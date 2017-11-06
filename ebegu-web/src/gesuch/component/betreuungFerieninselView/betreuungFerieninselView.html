@@ -1,0 +1,107 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="betreuungFerieninselView">
+
+    <fieldset ng-disabled="!vm.betreuung.isEnabled()">
+
+		<!-- Ferienname -->
+		<div class="row">
+			<div class="col-sm-12 dv-input-container-medium form-group">
+				<label class="md-no-float required" data-translate="FERIENNAME" for="ferienname"></label>
+				<div class="dv-select-style">
+					<select aria-describedby="ferienname-error" name="ferienname" id="ferienname"
+							ng-model="vm.betreuung.belegungFerieninsel.ferienname"
+							class="form-control"
+							ng-options="(ferienname| translate) for ferienname in vm.getFeriennamen() "
+							ng-required="true" ng-change="vm.changedFerien()">
+					</select>
+					<dv-error-messages input-id="ferienname" for="vm.form.ferienname.$error"></dv-error-messages>
+				</div>
+			</div>
+		</div>
+
+		<!-- Auswahl der Tage -->
+		<div ng-if="vm.isAnmeldungMoeglich() || !vm.betreuung.belegungFerieninsel.isNew()">
+			<div class="row">
+				<div class="col-sm-12 dv-input-container-medium form-group">
+					<span data-translate="FERIENINSELTAGE"></span>
+				</div>
+			</div>
+			<!-- Noch nicht abgeschickt: Tage auswaehlbar -->
+			<div class="row" ng-if="vm.betreuung.isEnabled()">
+				<div class="col-xs-12 dv-input-container-question" ng-repeat="tag in vm.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung">
+					<md-checkbox ng-model="tag.angemeldet"
+								 aria-label="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}">
+						<span data-translate="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}"></span>
+					</md-checkbox>
+				</div>
+			</div>
+			<!-- Abgeschickt: Liste der gewaehlten Tage readonly -->
+			<div class="row" ng-if="!vm.betreuung.isEnabled()">
+				<div class="col-xs-12" ng-repeat="tag in vm.betreuung.belegungFerieninsel.tage">
+					<li data-translate="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}"></li>
+				</div>
+			</div>
+		</div>
+
+		<!-- Hinweis, wenn Ferien noch nicht buchbar -->
+		<div ng-if="vm.isAnmeldungNichtFreigegeben()">
+			<div class="well well-status-warten">
+				<i class="fa fa-exclamation " aria-hidden="true"></i>
+				<span data-translate="WARN_FERIEN_NOCH_NICHT_BUCHBAR"></span>
+			</div>
+		</div>
+
+		<!-- Hinweis, wenn Anmeldeschluss schon abgelaufen -->
+		<div ng-if="vm.isAnmeldeschlussAbgelaufen() && vm.betreuung.belegungFerieninsel.isNew()">
+			<div class="well well-status-warten">
+				<i class="fa fa-exclamation " aria-hidden="true"></i>
+				<span data-translate="WARN_FERIEN_NICHT_MEHR_BUCHBAR"></span>
+			</div>
+		</div>
+
+        <!-- Hinweis, wenn keine Tage ausgewaehlt -->
+        <div ng-if="vm.showErrorMessage === true">
+            <div class="well well-status-warten">
+                <i class="fa fa-exclamation " aria-hidden="true"></i>
+                <span data-translate="WARN_FERIEN_KEINE_TAGE_GEWAEHLT"></span>
+            </div>
+        </div>
+
+    </fieldset>
+
+    <!--Buttons-->
+    <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
+        wenn wir die Direktive benutzen wollen muessen wir viel anpassen, daher lohnt es sich die Buttons direkt zu erstellen-->
+    <div class="nav-row-betreuung"
+         dv-show-element
+         dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles()">
+        <div ng-if="vm.betreuung.isEnabled() && vm.isAnmeldungMoeglich()">
+            <dv-loading-button button-click="vm.anmelden()" type="submit"
+                               button-class="save">
+                <span data-translate="ANMELDEN_FERIENINSEL"></span>
+            </dv-loading-button>
+        </div>
+        <div>
+            <dv-loading-button button-click="vm.cancel()" button-class="cancel"
+                               type="reset">
+                <span data-translate="ABBRECHEN_UPPER"></span>
+            </dv-loading-button>
+        </div>
+    </div>
+
+</div>
+

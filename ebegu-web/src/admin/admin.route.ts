@@ -13,18 +13,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IState} from 'angular-ui-router';
+import {IState, IStateParamsService} from 'angular-ui-router';
+import {InstitutionRS} from '../core/service/institutionRS.rest';
+import {MandantRS} from '../core/service/mandantRS.rest';
+import {TraegerschaftRS} from '../core/service/traegerschaftRS.rest';
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import {ApplicationPropertyRS} from './service/applicationPropertyRS.rest';
-import {InstitutionRS} from '../core/service/institutionRS.rest';
-import {TraegerschaftRS} from '../core/service/traegerschaftRS.rest';
-import {MandantRS} from '../core/service/mandantRS.rest';
 
 adminRun.$inject = ['RouterHelper'];
 
 /* @ngInject */
 export function adminRun(routerHelper: RouterHelper) {
     routerHelper.configureStates(getStates());
+}
+
+export class IInstitutionStateParams implements IStateParamsService {
+    institutionId: string;
+}
+export class IInstitutionStammdatenStateParams implements IStateParamsService {
+    institutionStammdatenId: string;
+    institutionId: string;
 }
 
 function getStates(): IState[] {
@@ -43,20 +51,41 @@ function getStates(): IState[] {
             url: '/testdaten'
         },
         {
-            name: 'institution',
-            template: '<dv-institution-view flex="auto" class="overflow-scroll" institutionen="$resolve.institutionen" ' +
-            'traegerschaften="$resolve.traegerschaften" mandant="$resolve.mandant"></dv-institution-view>',
-            url: '/institution',
+            name: 'institutionen',
+            template: '<dv-institutionen-list-view flex="auto" class="overflow-scroll"'
+            + ' institutionen="$resolve.institutionen"></dv-institutionen-list-view>',
+            url: '/institutionen',
+
             resolve: {
                 institutionen: getInstitutionen,
+            }
+        },
+        {
+            name: 'institution',
+            template: '<dv-institution-view flex="auto" class="overflow-scroll"'
+            + ' traegerschaften="$resolve.traegerschaften"'
+            + ' mandant="$resolve.mandant"></dv-institution-view>',
+            url: '/institutionen/institution/:institutionId',
+
+            resolve: {
                 traegerschaften: getTraegerschaften,
                 mandant: getMandant
             }
         },
         {
+            name: 'institutionstammdaten',
+            template: '<dv-institution-stammdaten-view flex="auto" class="overflow-scroll"/>',
+            url: '/institutionen/institution/:institutionId/:institutionStammdatenId',
+        },
+        {
             name: 'parameter',
             template: '<dv-parameter-view flex="auto" class="overflow-scroll" ebeguParameter="vm.ebeguParameter"></dv-parameter-view>',
             url: '/parameter',
+        },
+        {
+            name: 'ferieninsel',
+            template: '<dv-ferieninsel-view flex="auto" class="overflow-scroll"></dv-ferieninsel-view>',
+            url: '/ferieninsel',
         },
         {
             name: 'traegerschaft',

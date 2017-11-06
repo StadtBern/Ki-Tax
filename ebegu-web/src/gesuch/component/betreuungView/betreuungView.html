@@ -155,7 +155,7 @@
                     <!--vertrag-->
                     <div class="row marginBottom50 marginTop20" dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                         dv-show-expression="!vm.isTagesschule()">
+                         dv-show-expression="!vm.isSchulamt()">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getBetreuungModel().vertrag" name="vertrag"
@@ -212,8 +212,6 @@
                                                    ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
                                                    ng-required="true"
                                                    ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
-                                            <!--<dv-bisher gs="vm.getBetreuungspensum($index).betreuungspensumGS.pensum"-->
-                                                       <!--ja="vm.getBetreuungspensum($index).betreuungspensumJA.pensum"></dv-bisher>-->
                                             <dv-error-messages input-id="betreuungspensum-{{$index}}"
                                                 for="vm.form['betreuungspensum-' + $index].$error"></dv-error-messages>
 
@@ -234,9 +232,6 @@
                                                            ng-required="true"
                                                            ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                             </dv-datepicker>
-                                            <!--<dv-bisher-->
-                                                <!--gs="vm.getBetreuungspensum($index).betreuungspensumGS.gueltigkeit.gueltigAb"-->
-                                                <!--ja="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigAb"></dv-bisher>-->
                                             <dv-error-messages input-id="datumAb-{{$index}}"
                                                 for="vm.form['datumAb-' + $index].$error"></dv-error-messages>
                                         </dv-input-container>
@@ -252,9 +247,6 @@
                                                            ng-required="false"
                                                            ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                             </dv-datepicker>
-                                            <!--<dv-bisher-->
-                                                <!--gs="vm.getBetreuungspensum($index).betreuungspensumGS.gueltigkeit.gueltigBis"-->
-                                                <!--ja="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigBis"></dv-bisher>-->
                                             <dv-error-messages input-id="datumBis-{{$index}}"
                                                 for="vm.form['datumBis-' + $index].$error"></dv-error-messages>
                                         </dv-input-container>
@@ -384,7 +376,6 @@
                             </div>
                         </div>
 
-
                         <!--falsche Angaben-->
                         <div class="row" dv-show-element
                              dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
@@ -408,26 +399,87 @@
 
                         <!--Hint-->
                         <p class="inlineHint marginTop20" data-translate="BETREUUNGSPENSUM_HINT1"
-                           dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerRoles()"></p>
+                           dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerRoles()"
+                           dv-show-expression="!vm.isSchulamt()"></p>
 
                     </div>
+
+                    <div ng-if="vm.isEnabled() && vm.isTagesschule()">
+                        <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.hasTagesschulenAnmeldung()">
+
+                            <!-- Modulauswahl Tagesschule -->
+                            <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">
+
+                                <!-- Tagesschulen -->
+                                <div class="row">
+                                    <div class="col-sm-12 dv-input-container-medium form-group">
+                                        <label class="md-no-float required" data-translate="TAGESSCHULE" for="tagesschule"></label>
+                                        <div class="dv-select-style">
+                                            <select aria-describedby="tagesschule-error" name="tagesschule" id="tagesschule"
+                                                    ng-model="vm.instStammId"
+                                                    class="form-control"
+                                                    ng-options="institutionSD.id as institutionSD.institution.name for institutionSD in vm.getInstitutionenSDList() | orderBy: 'institution.name'"
+                                                    ng-required="true" ng-change="vm.setSelectedInstitutionStammdaten()"
+                                                    ng-disabled="!vm.isEnabled()">
+                                            </select>
+                                            <dv-error-messages input-id="tagesschule" for="vm.form.tagesschule.$error"></dv-error-messages>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Eintrittsdatum -->
+                                <div class="row">
+                                    <div class="col-sm-12 dv-input-container-small form-group">
+                                        <label class="md-no-float required" data-translate="EINTRITTSDATUM" for="eintrittsdatum_ID"></label>
+                                        <dv-datepicker input-id="eintrittsdatum_ID" name="eintrittsdatum"
+                                                       ng-model="vm.getBetreuungModel().belegungTagesschule.eintrittsdatum"
+                                                       ng-required="true"
+                                                       class="input-element">
+                                        </dv-datepicker>
+                                        <dv-error-messages input-id="eintrittsdatum" for="vm.form.eintrittsdatum.$error"></dv-error-messages>
+                                    </div>
+                                </div>
+
+                                <span>TODO Hier kommt dann die Modulauswahl für die Anmeldung</span>
+
+                            </div>
+
+                            <!-- Hinweis, dass Tageschulanmeldung ncoh nicht freigeschaltet -->
+                            <div ng-if="!vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">
+                                <div class="well well-status-warten">
+                                    <i class="fa fa-exclamation " aria-hidden="true"></i>
+                                    <span>{{vm.getTagesschuleAnmeldungNotYetReadyText()}}</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Ferieninsel -->
+                    <div ng-if="vm.isFerieninsel()">
+                        <betreuung-ferieninsel-view betreuung="vm.getBetreuungModel()" form="vm.form"
+                                                    on-save="vm.anmeldenSchulamt()"
+                                                    cancel="vm.cancel()">
+                        </betreuung-ferieninsel-view>
+                    </div>
+
                 </fieldset>
 
                 <!--Buttons-->
                 <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
                     wenn wir die Direktive benutzen wollen muessen wir viel anpassen, daher lohnt es sich die Buttons direkt zu erstellen-->
-                <div class="nav-row-betreuung">
+                <!-- todo verbessern. Es muss fuer alle Angebottypen geprueft werden ob die Buttons hier oder in den individuellen Component implementiert sind-->
+                <div class="nav-row-betreuung" ng-if="!vm.isFerieninsel()">
                     <!--Die Order der Knoepfe soll im HTML so sein, dass der weiter Knopf als erster im Form ist, dies wird dann fuer die darstelltung
                     mit Flexlayout wieder korrigiert. Grund ist, dass beim druecken von Enter in einem input Feld automaitisch der erste submit button triggered wird-->
                     <div dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
-                         dv-show-expression="vm.isBetreuungsstatusSchulamt()">
+                         dv-show-expression="vm.isBetreuungsstatusSchulamt() && !vm.tageschuleSaveDisabled()">
                         <dv-loading-button button-click="vm.saveSchulamt()" type="submit"
                                            button-class="save">
                             <span data-translate="SPEICHERN_UPPER"></span>
                         </dv-loading-button>
                     </div>
-
 
                     <!--Institution Buttons-->
                     <div dv-show-element

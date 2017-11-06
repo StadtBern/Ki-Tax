@@ -29,7 +29,7 @@ import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
 import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
 import TSEWKPerson from '../models/TSEWKPerson';
 import GesuchstellerRS from '../core/service/gesuchstellerRS.rest';
-import {ILogService, IRootScopeService} from '@types/angular';
+import {ILogService, IRootScopeService} from 'angular';
 import TSEWKResultat from '../models/TSEWKResultat';
 import {TSGesuchEvent} from '../models/enums/TSGesuchEvent';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
@@ -61,7 +61,7 @@ export class GesuchRouteController {
     }
 
     showFinanzsituationStart(): boolean {
-        return this.gesuchModelManager.isGesuchsteller2Required();
+        return this.gesuchModelManager.isGesuchsteller2Required() || this.gesuchModelManager.areThereOnlySchulamtAngebote();
     }
 
     public getDateFromGesuch(): string {

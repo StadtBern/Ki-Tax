@@ -13,16 +13,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import '../../../bootstrap.ts';
-import 'angular-mocks';
-import {EbeguWebGesuch} from '../../gesuch.module';
-import GesuchModelManager from '../../service/gesuchModelManager';
-import BerechnungsManager from '../../service/berechnungsManager';
-import TSFamiliensituation from '../../../models/TSFamiliensituation';
-import TSGesuchsteller from '../../../models/TSGesuchsteller';
-import TSFamiliensituationContainer from '../../../models/TSFamiliensituationContainer';
-import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
+import TSFamiliensituation from '../../../models/TSFamiliensituation';
+import TSFamiliensituationContainer from '../../../models/TSFamiliensituationContainer';
+import TSGesuchsteller from '../../../models/TSGesuchsteller';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import {EbeguWebGesuch} from '../../gesuch.module';
+import BerechnungsManager from '../../service/berechnungsManager';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import WizardStepManager from '../../service/wizardStepManager';
 
 describe('finanzielleSituationResultateView', function () {
 
@@ -33,12 +32,12 @@ describe('finanzielleSituationResultateView', function () {
 
     let component: any;
     let scope: angular.IScope;
-    let $componentController: any;
+    let $componentController: angular.IComponentControllerService;
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         $componentController = $injector.get('$componentController');
         gesuchModelManager = $injector.get('GesuchModelManager');
-        let wizardStepManager = $injector.get('WizardStepManager');
+        let wizardStepManager: WizardStepManager = $injector.get('WizardStepManager');
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         berechnungsManager = $injector.get('BerechnungsManager');
         let $rootScope = $injector.get('$rootScope');

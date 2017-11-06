@@ -22,6 +22,8 @@ import TSAbwesenheitContainer from './TSAbwesenheitContainer';
 import TSGesuchsperiode from './TSGesuchsperiode';
 import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import * as moment from 'moment';
+import TSBelegungTagesschule from './TSBelegungTagesschule';
+import TSBelegungFerieninsel from './TSBelegungFerieninsel';
 
 export default class TSBetreuung extends TSAbstractEntity {
 
@@ -43,13 +45,16 @@ export default class TSBetreuung extends TSAbstractEntity {
     private _betreuungMutiert: boolean;
     private _abwesenheitMutiert: boolean;
     private _gueltig: boolean;
+    private _belegungTagesschule: TSBelegungTagesschule;
+    private _belegungFerieninsel: TSBelegungFerieninsel;
 
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
                 betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, abwesenheitContainers?: Array<TSAbwesenheitContainer>,
                 betreuungNummer?: number, verfuegung?: TSVerfuegung, vertrag?: boolean, erweiterteBeduerfnisse?: boolean,
                 grundAblehnung?: string, datumAblehnung?: moment.Moment, datumBestaetigung?: moment.Moment, kindFullname?: string,
                 kindNummer?: number, gesuchId?: string, gesuchsperiode?: TSGesuchsperiode,
-                betreuungMutiert?: boolean, abwesenheitMutiert?: boolean, gueltig?: boolean) {
+                betreuungMutiert?: boolean, abwesenheitMutiert?: boolean, gueltig?: boolean, belegungTagesschule?: TSBelegungTagesschule,
+                belegungFerieninsel?: TSBelegungFerieninsel) {
         super();
         this._institutionStammdaten = institutionStammdaten;
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
@@ -69,6 +74,8 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._betreuungMutiert = betreuungMutiert;
         this._abwesenheitMutiert = abwesenheitMutiert;
         this._gueltig = gueltig;
+        this._belegungTagesschule = belegungTagesschule;
+        this._belegungFerieninsel = belegungFerieninsel;
     }
 
     get institutionStammdaten(): TSInstitutionStammdaten {
@@ -215,10 +222,47 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._gueltig = value;
     }
 
+    public get belegungTagesschule(): TSBelegungTagesschule {
+        return this._belegungTagesschule;
+    }
+
+    public set belegungTagesschule(value: TSBelegungTagesschule) {
+        this._belegungTagesschule = value;
+    }
+
+    public get belegungFerieninsel(): TSBelegungFerieninsel {
+        return this._belegungFerieninsel;
+    }
+
+    public set belegungFerieninsel(value: TSBelegungFerieninsel) {
+        this._belegungFerieninsel = value;
+    }
+
     public isAngebotKITA(): boolean {
+       return this.isAngebot(TSBetreuungsangebotTyp.KITA);
+    }
+
+    public isAngebotTagesschule(): boolean {
+       return this.isAngebot(TSBetreuungsangebotTyp.TAGESSCHULE);
+    }
+
+    public isAngebotFerieninsel(): boolean {
+        return this.isAngebot(TSBetreuungsangebotTyp.FERIENINSEL);
+    }
+
+    private isAngebot(typ: TSBetreuungsangebotTyp) {
         if (this.institutionStammdaten && this.institutionStammdaten.betreuungsangebotTyp) {
-            return this.institutionStammdaten.betreuungsangebotTyp === TSBetreuungsangebotTyp.KITA;
+            return this.institutionStammdaten.betreuungsangebotTyp === typ;
         }
         return false;
+    }
+
+    public isEnabled(): boolean {
+        return !this.hasVorgaenger()
+            && this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND) || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST);
+    }
+
+    public isBetreuungsstatus(status: TSBetreuungsstatus): boolean {
+        return this.betreuungsstatus === status;
     }
 }

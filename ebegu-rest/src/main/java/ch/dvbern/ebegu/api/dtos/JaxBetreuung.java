@@ -49,6 +49,12 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@NotNull
 	private Betreuungsstatus betreuungsstatus;
 
+	@Nullable
+	private JaxBelegungTagesschule belegungTagesschule;
+
+	@Nullable
+	private JaxBelegungFerieninsel belegungFerieninsel;
+
 	@NotNull
 	private List<JaxBetreuungspensumContainer> betreuungspensumContainers = new ArrayList<>();
 
@@ -192,6 +198,7 @@ public class JaxBetreuung extends JaxAbstractDTO {
 		this.datumBestaetigung = datumBestaetigung;
 	}
 
+	@Nullable
 	public String getKindFullname() {
 		return kindFullname;
 	}
@@ -227,19 +234,21 @@ public class JaxBetreuung extends JaxAbstractDTO {
 		this.gesuchsperiode = gesuchsperiode;
 	}
 
+	@Nullable
 	public Boolean getBetreuungMutiert() {
 		return betreuungMutiert;
 	}
 
-	public void setBetreuungMutiert(Boolean betreuungMutiert) {
+	public void setBetreuungMutiert(@Nullable Boolean betreuungMutiert) {
 		this.betreuungMutiert = betreuungMutiert;
 	}
 
+	@Nullable
 	public Boolean getAbwesenheitMutiert() {
 		return abwesenheitMutiert;
 	}
 
-	public void setAbwesenheitMutiert(Boolean abwesenheitMutiert) {
+	public void setAbwesenheitMutiert(@Nullable Boolean abwesenheitMutiert) {
 		this.abwesenheitMutiert = abwesenheitMutiert;
 	}
 
@@ -249,6 +258,24 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setGueltig(boolean gueltig) {
 		this.gueltig = gueltig;
+	}
+
+	@Nullable
+	public JaxBelegungTagesschule getBelegungTagesschule() {
+		return belegungTagesschule;
+	}
+
+	public void setBelegungTagesschule(@Nullable JaxBelegungTagesschule belegungTagesschule) {
+		this.belegungTagesschule = belegungTagesschule;
+	}
+
+	@Nullable
+	public JaxBelegungFerieninsel getBelegungFerieninsel() {
+		return belegungFerieninsel;
+	}
+
+	public void setBelegungFerieninsel(@Nullable JaxBelegungFerieninsel belegungFerieninsel) {
+		this.belegungFerieninsel = belegungFerieninsel;
 	}
 
 	@Override

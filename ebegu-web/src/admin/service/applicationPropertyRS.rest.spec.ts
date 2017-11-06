@@ -13,22 +13,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import '../../bootstrap.ts';
-import 'angular-mocks';
-import '../admin.module';
-import {ApplicationPropertyRS} from './applicationPropertyRS.rest';
 import TSApplicationProperty from '../../models/TSApplicationProperty';
-import {EbeguWebAdmin} from '../admin.module';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import IHttpBackendService = angular.IHttpBackendService;
-
-import IPromise = angular.IPromise;
-import IHttpPromise = angular.IHttpPromise;
+import {EbeguWebAdmin} from '../admin.module';
+import {ApplicationPropertyRS} from './applicationPropertyRS.rest';
 
 describe('ApplicationPropertyRS', function () {
 
     let applicationPropertyRS: ApplicationPropertyRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let REST_API: string;
     let testName: string = 'myTestName';
@@ -42,7 +35,7 @@ describe('ApplicationPropertyRS', function () {
 
     beforeEach(angular.mock.module(EbeguWebAdmin.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         applicationPropertyRS = $injector.get('ApplicationPropertyRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
@@ -82,7 +75,7 @@ describe('ApplicationPropertyRS', function () {
 
             it('should fetch property with given name', function () {
                 $httpBackend.expectGET(REST_API + 'application-properties/key/' + testName);
-                let promise: IPromise<TSApplicationProperty> = applicationPropertyRS.getByName(testName);
+                let promise: angular.IPromise<TSApplicationProperty> = applicationPropertyRS.getByName(testName);
                 let property: TSApplicationProperty = undefined;
 
                 promise.then(function (data: any) {
@@ -100,7 +93,7 @@ describe('ApplicationPropertyRS', function () {
 
             it('should create property with name and value', function () {
                 $httpBackend.expectPOST(REST_API + 'application-properties/' + testName, mockApplicationPropertyRest.value);
-                let promise: IHttpPromise<any> = applicationPropertyRS.create(mockApplicationPropertyRest.name, mockApplicationPropertyRest.value);
+                let promise: angular.IHttpPromise<any> = applicationPropertyRS.create(mockApplicationPropertyRest.name, mockApplicationPropertyRest.value);
                 let property: TSApplicationProperty = undefined;
 
                 promise.then(function (response: any) {
@@ -117,7 +110,7 @@ describe('ApplicationPropertyRS', function () {
 
             it('should fetch a list of all properties', function () {
                 $httpBackend.expectGET(REST_API + 'application-properties/');
-                let promise: IPromise<TSApplicationProperty[]> = applicationPropertyRS.getAllApplicationProperties();
+                let promise: angular.IPromise<TSApplicationProperty[]> = applicationPropertyRS.getAllApplicationProperties();
                 let list: TSApplicationProperty[] = undefined;
 
                 promise.then(function (data: any) {

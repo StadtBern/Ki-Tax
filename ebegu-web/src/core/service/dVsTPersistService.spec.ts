@@ -26,14 +26,13 @@ describe('betreuungRS', function () {
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         dVsTPersistService = $injector.get('DVsTPersistService');
         object1 = {name: 'Angelina', nachname: 'Jolie'};
         object2 = {name: 'Brad', nachname: 'Pitt'};
         namespace_one = 'ns1';
         namespace_two = 'ns2';
     }));
-
 
     describe('save and load Data', function () {
         it('saves configurations in 2 different namespaces', function () {

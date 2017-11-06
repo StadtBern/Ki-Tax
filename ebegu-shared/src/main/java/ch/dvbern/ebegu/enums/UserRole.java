@@ -24,6 +24,12 @@ public enum UserRole {
 	JURIST,
 	REVISOR,
 	STEUERAMT,
+	ADMINISTRATOR_SCHULAMT,
 	SCHULAMT,
-	GESUCHSTELLER
+	GESUCHSTELLER;
+
+
+	public boolean isRolleSchulamt() {
+		return ADMINISTRATOR_SCHULAMT == this || SCHULAMT == this;
+	}
 }

@@ -13,20 +13,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IHttpInterceptor, IQService, IRootScopeService} from 'angular';
+import {IHttpInterceptor, IHttpResponse, IPromise, IQService, IRootScopeService} from 'angular';
 import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 import HttpBuffer from './HttpBuffer';
 
 export default class HttpAuthInterceptor implements IHttpInterceptor {
 
     static $inject = ['$rootScope', '$q', 'CONSTANTS', 'httpBuffer'];
+
     /* @ngInject */
     constructor(private $rootScope: IRootScopeService, private $q: IQService, private CONSTANTS: any,
                 private httpBuffer: HttpBuffer) {
     }
 
-
-    public responseError = (response: any) => {
+    responseError = <T>(response: any): IPromise<IHttpResponse<T>> | IHttpResponse<T> => {
         switch (response.status) {
             case 401:
                 // exclude requests from the login form
@@ -38,11 +38,12 @@ export default class HttpAuthInterceptor implements IHttpInterceptor {
                     console.debug('rejecting failed notokenrefresh response');
                     return this.$q.reject(response);
                 }
-                // all requests that failed due to notAuthenticated are appended to httpBuffer. Use httpBuffer.retryAll to submit them.
+                // all requests that failed due to notAuthenticated are appended to httpBuffer. Use httpBuffer.retryAll
+                // to submit them.
                 let deferred = this.$q.defer();
                 this.httpBuffer.append(response.config, deferred);
                 this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.NOT_AUTHENTICATED], response);
-                return deferred.promise;
+                return deferred.promise as IPromise<IHttpResponse<T>>;
             case 403:
                 this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.NOT_AUTHORISED], response);
                 return this.$q.reject(response);

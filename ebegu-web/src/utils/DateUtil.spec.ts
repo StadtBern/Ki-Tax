@@ -13,12 +13,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import DateUtil from './DateUtil';
 import * as moment from 'moment';
+import DateUtil from './DateUtil';
 
 describe('dateUtil', function () {
-
-    // beforeEach(angular.mock.module(EbeguWebCore));
 
     describe('localDateToMoment()', function () {
         it('should return null for invalid input', function () {

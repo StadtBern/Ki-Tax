@@ -13,25 +13,23 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import GesuchRS from '../../gesuch/service/gesuchRS.rest';
-import {IFilterService, IHttpBackendService, IQService, IScope} from 'angular';
-import GesuchModelManager from '../../gesuch/service/gesuchModelManager';
-import BerechnungsManager from '../../gesuch/service/berechnungsManager';
-import {IStateService} from 'angular-ui-router';
-import {EbeguWebPosteingang} from '../posteingang.module';
-import TestDataUtil from '../../utils/TestDataUtil';
-import {PosteingangViewController} from './posteingangView';
-import WizardStepManager from '../../gesuch/service/wizardStepManager';
-import TSMitteilung from '../../models/TSMitteilung';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import TSFall from '../../models/TSFall';
-import {TSMitteilungTeilnehmerTyp} from '../../models/enums/TSMitteilungTeilnehmerTyp';
-import TSUser from '../../models/TSUser';
-import {TSRole} from '../../models/enums/TSRole';
-import {TSMitteilungStatus} from '../../models/enums/TSMitteilungStatus';
 import MitteilungRS from '../../core/service/mitteilungRS.rest';
+import BerechnungsManager from '../../gesuch/service/berechnungsManager';
+import GesuchModelManager from '../../gesuch/service/gesuchModelManager';
+import GesuchRS from '../../gesuch/service/gesuchRS.rest';
+import WizardStepManager from '../../gesuch/service/wizardStepManager';
+import {TSMitteilungStatus} from '../../models/enums/TSMitteilungStatus';
+import {TSMitteilungTeilnehmerTyp} from '../../models/enums/TSMitteilungTeilnehmerTyp';
+import {TSRole} from '../../models/enums/TSRole';
+import TSFall from '../../models/TSFall';
+import TSMitteilung from '../../models/TSMitteilung';
+import TSUser from '../../models/TSUser';
 import EbeguUtil from '../../utils/EbeguUtil';
 
+import TestDataUtil from '../../utils/TestDataUtil';
+import {EbeguWebPosteingang} from '../posteingang.module';
+import {PosteingangViewController} from './posteingangView';
 describe('posteingangView', function () {
 
     let authServiceRS: AuthServiceRS;
@@ -39,27 +37,26 @@ describe('posteingangView', function () {
     let ebeguUtil: EbeguUtil;
     let mitteilungRS: MitteilungRS;
     let posteingangViewController: PosteingangViewController;
-    let $q: IQService;
-    let $scope: IScope;
-    let $filter: IFilterService;
-    let $httpBackend: IHttpBackendService;
+    let $q: angular.IQService;
+    let $rootScope: angular.IRootScopeService;
+    let $filter: angular.IFilterService;
+    let $httpBackend: angular.IHttpBackendService;
     let gesuchModelManager: GesuchModelManager;
     let berechnungsManager: BerechnungsManager;
-    let $state: IStateService;
+    let $state: angular.ui.IStateService;
     let $log: any;
     let CONSTANTS: any;
     let wizardStepManager: WizardStepManager;
     let mockMitteilung: TSMitteilung;
 
-
     beforeEach(angular.mock.module(EbeguWebPosteingang.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         authServiceRS = $injector.get('AuthServiceRS');
         mitteilungRS = $injector.get('MitteilungRS');
         gesuchRS = $injector.get('GesuchRS');
         $q = $injector.get('$q');
-        $scope = $injector.get('$rootScope');
+        $rootScope = $injector.get('$rootScope');
         $filter = $injector.get('$filter');
         $httpBackend = $injector.get('$httpBackend');
         gesuchModelManager = $injector.get('GesuchModelManager');
@@ -76,7 +73,7 @@ describe('posteingangView', function () {
             it('should return the list of Mitteilungen', function () {
                 mockRestCalls();
                 posteingangViewController = new PosteingangViewController(mitteilungRS, ebeguUtil, CONSTANTS, undefined);
-                $scope.$apply();
+                $rootScope.$apply();
                 expect(mitteilungRS.getMitteilungenForPosteingang).toHaveBeenCalled();
                 let list: Array<TSMitteilung> = posteingangViewController.getMitteilungen();
                 expect(list).toBeDefined();

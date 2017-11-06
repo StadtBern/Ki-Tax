@@ -13,11 +13,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import '../../../bootstrap.ts';
-import 'angular-mocks';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import {EbeguWebGesuch} from '../../gesuch.module';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {TSEingangsart} from '../../../models/enums/TSEingangsart';
+import WizardStepManager from '../../service/wizardStepManager';
 
 describe('kommentarView', function () {
 
@@ -29,10 +28,10 @@ describe('kommentarView', function () {
     let scope: angular.IScope;
     let $componentController: any;
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         $componentController = $injector.get('$componentController');
         gesuchModelManager = $injector.get('GesuchModelManager');
-        let wizardStepManager = $injector.get('WizardStepManager');
+        let wizardStepManager: WizardStepManager = $injector.get('WizardStepManager');
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();

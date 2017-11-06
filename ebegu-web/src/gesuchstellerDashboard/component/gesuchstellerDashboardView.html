@@ -60,7 +60,7 @@
 
         <h2 data-translate="GSDASHBOARD_ANTRAEGE"></h2>
 
-        <table st-table="displayedCollection" st-set-filter="pendenzFilter" st-safe-src="vm.getAntragList()"
+        <table st-table="displayedCollection" st-safe-src="vm.getAntragList()"
                st-delay="20"
                class="table fixedtable">
             <thead>
@@ -103,7 +103,7 @@
                 </td>
             </tr>
             <tr ng-if="vm.getAntragList().length === 0">
-                <td colspan="4" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-gt-sm></td>
+                <td colspan="3" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-gt-sm></td>
                 <td colspan="6" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-sm hide-xs></td>
             </tr>
             </tbody>
@@ -112,7 +112,7 @@
                 <td colspan="6" class="text-center" hide-sm hide-xs>
                     <div st-pagination="" st-items-by-page="10" st-displayed-pages="5"></div>
                 </td>
-                <td colspan="4" class="text-center" hide-gt-sm>
+                <td colspan="3" class="text-center" hide-gt-sm>
                     <div st-pagination="" st-items-by-page="10" st-displayed-pages="5"></div>
                 </td>
             </tr>

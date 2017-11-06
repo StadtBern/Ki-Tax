@@ -21,9 +21,11 @@ import IQService = angular.IQService;
 import IRootScopeService = angular.IRootScopeService;
 import IHttpInterceptor = angular.IHttpInterceptor;
 import ILogService = angular.ILogService;
+
 export default class HttpErrorInterceptor implements IHttpInterceptor {
 
     static $inject = ['$rootScope', '$q', 'ErrorService', '$log'];
+
     /* @ngInject */
     constructor(private $rootScope: IRootScopeService, private $q: IQService, private errorService: ErrorService,
                 private $log: ILogService) {
@@ -146,21 +148,6 @@ export default class HttpErrorInterceptor implements IHttpInterceptor {
         }
         return false;
 
-    }
-
-
-    private extractArgs(data: any) {
-        if (!data) {
-            return undefined;
-        }
-
-        if (Array.isArray(data.args)) {
-            return data.args.filter(function (arg: any) {
-                return arg;
-            });
-        }
-
-        return [data];
     }
 
     private isFileUploadException(response: String) {

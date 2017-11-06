@@ -18,7 +18,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>2.2.2</version>
+        <version>3.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -151,8 +151,6 @@
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>1.4.7</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -231,6 +229,12 @@
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces-security</artifactId>
             <version>0.6-ALPHA</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>socialauth</artifactId>
+                    <groupId>org.brickred</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

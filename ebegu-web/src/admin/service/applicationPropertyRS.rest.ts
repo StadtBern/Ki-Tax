@@ -13,9 +13,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import TSApplicationProperty from '../../models/TSApplicationProperty';
 import {IHttpPromise, IHttpService, IPromise} from 'angular';
+import TSApplicationProperty from '../../models/TSApplicationProperty';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
 
 export class ApplicationPropertyRS {
     serviceURL: string;
@@ -23,6 +23,7 @@ export class ApplicationPropertyRS {
     ebeguRestUtil: EbeguRestUtil;
 
     static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
+
     /* @ngInject */
     constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil) {
         this.serviceURL = REST_API + 'application-properties';
@@ -37,14 +38,14 @@ export class ApplicationPropertyRS {
     }
 
     isDevMode(): IPromise<boolean> {
-        return this.http.get(this.serviceURL + '/public/devmode',  {cache: true }).then((response) => {
-            return response.data;
+        return this.http.get(this.serviceURL + '/public/devmode', {cache: true}).then((response) => {
+            return response.data as boolean;
         });
     }
 
     isDummyMode(): IPromise<boolean> {
         return this.http.get(this.serviceURL + '/public/dummy').then((response) => {
-            return response.data;
+            return response.data as boolean;
         });
     }
 
@@ -81,8 +82,8 @@ export class ApplicationPropertyRS {
     }
 
     isZahlungenTestMode(): IPromise<boolean> {
-        return this.http.get(this.serviceURL + '/public/zahlungentestmode',  {cache: true }).then((response) => {
-            return response.data;
+        return this.http.get(this.serviceURL + '/public/zahlungentestmode', {cache: true}).then((response) => {
+            return response.data as boolean;
         });
     }
 }

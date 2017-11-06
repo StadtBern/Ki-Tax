@@ -13,12 +13,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import '../../../../bootstrap.ts';
-import 'angular-mocks';
-import {DvErrorMessagesPanelComponent} from './dvb-error-messages-panel';
-import TSExceptionReport from '../../../../models/TSExceptionReport';
 import {TSErrorAction} from '../../../../models/enums/TSErrorAction';
+import TSExceptionReport from '../../../../models/TSExceptionReport';
 import TestDataUtil from '../../../../utils/TestDataUtil';
+import {DvErrorMessagesPanelComponent} from './dvb-error-messages-panel';
 
 describe('dvbErrorMessages', function () {
 
@@ -27,7 +25,7 @@ describe('dvbErrorMessages', function () {
 
     beforeEach(angular.mock.module('dvbAngular.errors'));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         controller = new DvErrorMessagesPanelComponent($injector.get('$rootScope'), $injector.get('ErrorService'),
             undefined, undefined);
         spyOn(controller, 'show').and.returnValue({});

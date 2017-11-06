@@ -42,6 +42,7 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
 import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
 import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
@@ -79,7 +80,7 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, GESUCHSTELLER, SCHULAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, GESUCHSTELLER, ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public Optional<ErwerbspensumContainer> findErwerbspensum(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		ErwerbspensumContainer ewpCnt = persistence.find(ErwerbspensumContainer.class, key);

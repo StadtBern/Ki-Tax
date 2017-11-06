@@ -19,24 +19,27 @@ import TSUser from '../../../models/TSUser';
 import UserRS from '../../service/userRS.rest';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import {DVsTPersistService} from '../../service/dVsTPersistService';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 
 /**
  * This directive allows a filter and sorting configuration to be saved after leaving the table.
  * The information will be stored in an angular-service, whi
  */
 export default class DVSTPersistAntraege implements IDirective {
-    static $inject: string[] = ['UserRS', 'InstitutionRS', 'DVsTPersistService'];
+    static $inject: string[] = ['UserRS', 'InstitutionRS', 'AuthServiceRS', 'DVsTPersistService'];
 
     restrict = 'A';
     require = ['^stTable', '^dvAntragList'];
     link: IDirectiveLinkFn;
 
     /* @ngInject */
-    constructor(private userRS: UserRS, private institutionRS: InstitutionRS, private dVsTPersistService: DVsTPersistService) {
+    constructor(private userRS: UserRS, private institutionRS: InstitutionRS, private authServiceRS: AuthServiceRS,
+                private dVsTPersistService: DVsTPersistService) {
         this.link = (scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ctrlArray: any) => {
             let nameSpace: string = attrs.dvStPersistAntraege;
             let stTableCtrl: any = ctrlArray[0];
             let antragListController: DVAntragListController = ctrlArray[1];
+
 
             //save the table state every time it changes
             scope.$watch(function () {
@@ -53,6 +56,7 @@ export default class DVSTPersistAntraege implements IDirective {
 
             //fetch the table state when the directive is loaded
             let savedState = dVsTPersistService.loadData(nameSpace);
+            savedState = this.setCurrentUserAsVerantwortlicher(antragListController, savedState);
             if (savedState) {
                 if (savedState.search && savedState.search.predicateObject) { //update all objects of the model for the filters
                     antragListController.selectedAntragTyp = savedState.search.predicateObject.antragTyp;
@@ -64,6 +68,7 @@ export default class DVSTPersistAntraege implements IDirective {
                     antragListController.selectedFamilienName = savedState.search.predicateObject.familienName;
                     antragListController.selectedKinder = savedState.search.predicateObject.kinder;
                     antragListController.selectedAenderungsdatum = savedState.search.predicateObject.aenderungsdatum;
+                    antragListController.selectedEingangsdatum = savedState.search.predicateObject.eingangsdatum;
                     antragListController.selectedDokumenteHochgeladen = savedState.search.predicateObject.dokumenteHochgeladen;
                     antragListController.selectedEingangsdatumSTV = savedState.search.predicateObject.eingangsdatumSTV;
                     this.setUserFromName(antragListController, savedState.search.predicateObject.verantwortlicher);
@@ -118,9 +123,30 @@ export default class DVSTPersistAntraege implements IDirective {
     }
 
     static factory(): IDirectiveFactory {
-        const directive = (userRS: any, institutionRS: any, dVsTPersistService: any) => new DVSTPersistAntraege(userRS, institutionRS, dVsTPersistService);
-        directive.$inject = ['UserRS', 'InstitutionRS', 'DVsTPersistService'];
+        const directive = (userRS: any, institutionRS: any, authServiceRS: any, dVsTPersistService: any) =>
+            new DVSTPersistAntraege(userRS, institutionRS, authServiceRS, dVsTPersistService);
+        directive.$inject = ['UserRS', 'InstitutionRS', 'AuthServiceRS', 'DVsTPersistService'];
         return directive;
     }
-}
 
+    /**
+     * Setzt den aktuellen Benutzer als selectedVerantwotlicher wenn:
+     * - es eine pendenzenListe ist: ctrl.pendenz===true
+     * - es noch nicht gesetzt wurde, d.h. nichts war ausgewaehlt
+     */
+    private setCurrentUserAsVerantwortlicher(antragListController: DVAntragListController, savedState: any): any {
+        let savedStateToReturn: any = angular.copy(savedState);
+        if (antragListController.pendenz) {
+            if (!savedStateToReturn) {
+                savedStateToReturn = {search: {predicateObject: {verantwortlicher: this.authServiceRS.getPrincipal().getFullName()}}};
+            }
+            if (!savedStateToReturn.search.predicateObject) {
+                savedStateToReturn.search.predicateObject = {verantwortlicher: this.authServiceRS.getPrincipal().getFullName()};
+            }
+            if (!savedStateToReturn.search.predicateObject.verantwortlicher) {
+                savedStateToReturn.search.predicateObject.verantwortlicher = this.authServiceRS.getPrincipal().getFullName();
+            }
+        }
+        return savedStateToReturn;
+    }
+}
