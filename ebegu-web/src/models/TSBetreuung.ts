@@ -264,8 +264,7 @@ export default class TSBetreuung extends TSAbstractEntity {
     public isEnabled(): boolean {
         return !this.hasVorgaenger()
             && this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)
-            || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST)
-            || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION);
+            || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST);
     }
 
     public isBetreuungsstatus(status: TSBetreuungsstatus): boolean {

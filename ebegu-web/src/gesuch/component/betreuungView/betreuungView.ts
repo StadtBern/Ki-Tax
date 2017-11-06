@@ -254,7 +254,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public anmeldungSchulamtAblehnen(): void {
-        this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST, 'gesuch.betreuungen', undefined);
+        this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT, 'gesuch.betreuungen', undefined);
     }
 
     public anmeldungSchulamtFalscheInstitution(): void {
@@ -411,7 +411,6 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             return !this.getBetreuungModel().hasVorgaenger()
                 && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)
                     || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST)
-                    || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION)
                     || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT)
                 && !this.isKorrekturModusJugendamt()));
 
