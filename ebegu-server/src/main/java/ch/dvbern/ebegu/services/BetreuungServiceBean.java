@@ -87,6 +87,8 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 @RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT })
 public class BetreuungServiceBean extends AbstractBaseService implements BetreuungService {
 
+	public static final String BETREUUNG_DARF_NICHT_NULL_SEIN = "betreuung darf nicht null sein";
+
 	@Inject
 	private Persistence persistence;
 	@Inject
@@ -139,7 +141,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Nonnull
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
 	public Betreuung betreuungPlatzAbweisen(@Valid @Nonnull Betreuung betreuung) {
-		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
+		Objects.requireNonNull(betreuung, BETREUUNG_DARF_NICHT_NULL_SEIN);
 		betreuung.setBetreuungsstatus(Betreuungsstatus.ABGEWIESEN);
 		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
 		try {
@@ -155,7 +157,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Nonnull
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
 	public Betreuung betreuungPlatzBestaetigen(@Valid @Nonnull Betreuung betreuung) {
-		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
+		Objects.requireNonNull(betreuung, BETREUUNG_DARF_NICHT_NULL_SEIN);
 		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
 		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
 		try {
@@ -174,9 +176,15 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Nonnull
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
 	public Betreuung anmeldungSchulamtUebernehmen(@Valid @Nonnull Betreuung betreuung) {
-		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
+		Objects.requireNonNull(betreuung, BETREUUNG_DARF_NICHT_NULL_SEIN);
 		betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN);
 		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
+		try {
+			// Bei Uebernahme einer Anmeldung muss eine E-Mail geschickt werden
+			mailService.sendInfoSchulamtAnmeldungUebernommen(persistedBetreuung);
+		} catch (MailException e) {
+			LOG.error("Mail InfoSchulamtAnmeldungUebernommen konnte nicht verschickt werden fuer Betreuung " + betreuung.getId(), e);
+		}
 		return persistedBetreuung;
 	}
 
@@ -184,9 +192,15 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Nonnull
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
 	public Betreuung anmeldungSchulamtAblehnen(@Valid @Nonnull Betreuung betreuung) {
-		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
+		Objects.requireNonNull(betreuung, BETREUUNG_DARF_NICHT_NULL_SEIN);
 		betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT);
 		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
+		try {
+			// Bei Ablehnung einer Anmeldung muss eine E-Mail geschickt werden
+			mailService.sendInfoSchulamtAnmeldungAbgelehnt(persistedBetreuung);
+		} catch (MailException e) {
+			LOG.error("Mail InfoSchulamtAnmeldungAbgelehnt konnte nicht verschickt werden fuer Betreuung " + betreuung.getId(), e);
+		}
 		return persistedBetreuung;
 	}
 
@@ -194,7 +208,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Nonnull
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
 	public Betreuung anmeldungSchulamtFalscheInstitution(@Valid @Nonnull Betreuung betreuung) {
-		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
+		Objects.requireNonNull(betreuung, BETREUUNG_DARF_NICHT_NULL_SEIN);
 		betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION);
 		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
 		return persistedBetreuung;
@@ -210,10 +224,9 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Override
 	@Nonnull
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER })
-	public Optional<Betreuung> findBetreuung(@Nonnull String key, boolean doAuthCheck) { //TODO (hefr) hier kommt die belegungFerieninsel nicht mit!
+	public Optional<Betreuung> findBetreuung(@Nonnull String key, boolean doAuthCheck) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Betreuung betr = persistence.find(Betreuung.class, key);
-		betr.getBelegungFerieninsel();
 		if (doAuthCheck && betr != null) {
 			authorizer.checkReadAuthorization(betr);
 		}

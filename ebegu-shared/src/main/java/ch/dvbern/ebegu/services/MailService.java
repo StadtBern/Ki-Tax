@@ -47,6 +47,16 @@ public interface MailService {
 	void sendInfoBetreuungAbgelehnt(@Nonnull Betreuung betreuung) throws MailException;
 
 	/**
+	 * Sendet eine Email mit der Information, dass eine Anmeldung fuer ein Schulamt-Angebot ins Backend uebernommen wurde
+	 */
+	void sendInfoSchulamtAnmeldungUebernommen(@Nonnull Betreuung betreuung) throws MailException;
+
+	/**
+	 * Sendet eine Email mit der Information, dass eine Anmeldung fuer ein Schulamt-Angebot abgelehnt wurde.
+	 */
+	void sendInfoSchulamtAnmeldungAbgelehnt(@Nonnull Betreuung betreuung) throws MailException;
+
+	/**
 	 * Sendet eine Email mit der Benachrichtigung, dass eine In-System Nachricht erhalten wurde.
 	 */
 	void sendInfoMitteilungErhalten(@Nonnull Mitteilung mitteilung) throws MailException;

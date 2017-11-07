@@ -67,6 +67,8 @@ import org.apache.commons.lang3.Validate;
 @Api(description = "Resource zum Verwalten von Betreuungen (Ein Betreuungsangebot für ein Kind)")
 public class BetreuungResource {
 
+	public static final String KIND_CONTAINER_ID_INVALID = "KindContainerId invalid: ";
+
 	@Inject
 	private BetreuungService betreuungService;
 	@Inject
@@ -103,7 +105,7 @@ public class BetreuungResource {
 
 			return converter.betreuungToJAX(persistedBetreuung);
 		}
-		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
 	}
 
 	//TODO (hefr) dieser service wird immer nur fuer Abwesenheiten verwendet
@@ -161,7 +163,7 @@ public class BetreuungResource {
 
 			return converter.betreuungToJAX(persistedBetreuung);
 		}
-		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
 	}
 
 	@ApiOperation(value = "Betreuungsplatzanfrage wird durch die Institution bestätigt", response = JaxBetreuung.class)
@@ -192,7 +194,7 @@ public class BetreuungResource {
 
 			return converter.betreuungToJAX(persistedBetreuung);
 		}
-		throw new EbeguEntityNotFoundException("betreuungPlatzBestaetigen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+		throw new EbeguEntityNotFoundException("betreuungPlatzBestaetigen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
 	}
 
 	@ApiOperation(value = "Schulamt-Anmeldung wird durch die Institution bestätigt", response = JaxBetreuung.class)
@@ -222,7 +224,7 @@ public class BetreuungResource {
 
 			return converter.betreuungToJAX(persistedBetreuung);
 		}
-		throw new EbeguEntityNotFoundException("anmeldungSchulamtUebernehmen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+		throw new EbeguEntityNotFoundException("anmeldungSchulamtUebernehmen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
 	}
 
 	@ApiOperation(value = "Schulamt-Anmeldung wird durch die Institution abgelehnt", response = JaxBetreuung.class)
@@ -252,7 +254,7 @@ public class BetreuungResource {
 
 			return converter.betreuungToJAX(persistedBetreuung);
 		}
-		throw new EbeguEntityNotFoundException("anmeldungSchulamtAblehnen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+		throw new EbeguEntityNotFoundException("anmeldungSchulamtAblehnen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
 	}
 
 	@ApiOperation(value = "Schulamt-Anmeldung fuer falsche Institution gestellt", response = JaxBetreuung.class)
@@ -282,7 +284,7 @@ public class BetreuungResource {
 
 			return converter.betreuungToJAX(persistedBetreuung);
 		}
-		throw new EbeguEntityNotFoundException("anmeldungSchulamtFalscheInstitution", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+		throw new EbeguEntityNotFoundException("anmeldungSchulamtFalscheInstitution", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
 	}
 
 	@ApiOperation(value = "Sucht die Betreuung mit der übergebenen Id in der Datenbank. Dabei wird geprüft, ob der " +
