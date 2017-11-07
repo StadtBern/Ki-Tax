@@ -54,6 +54,24 @@ public interface BetreuungService {
 	Betreuung betreuungPlatzBestaetigen(@Valid @Nonnull Betreuung betreuung);
 
 	/**
+	 * Setzt die Schulamt-Anmeldung auf UEBERNOMMEN und sendet dem Gesuchsteller eine E-Mail.
+	 */
+	@Nonnull
+	Betreuung anmeldungSchulamtUebernehmen(@Valid @Nonnull Betreuung betreuung);
+
+	/**
+	 * Setzt die Schulamt-Anmeldung auf ABGELEHNT und sendet dem Gesuchsteller eine E-Mail
+	 */
+	@Nonnull
+	Betreuung anmeldungSchulamtAblehnen(@Valid @Nonnull Betreuung betreuung);
+
+	/**
+	 * Setzt die Schulamt-Anmeldung auf FALSCHE_INSTITUTION.
+	 */
+	@Nonnull
+	Betreuung anmeldungSchulamtFalscheInstitution(@Valid @Nonnull Betreuung betreuung);
+
+	/**
 	 * @param key PK (id) der Betreuung
 	 * @return Betreuung mit dem gegebenen key oder null falls nicht vorhanden
 	 */

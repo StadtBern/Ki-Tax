@@ -195,6 +195,96 @@ public class BetreuungResource {
 		throw new EbeguEntityNotFoundException("betreuungPlatzBestaetigen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
 	}
 
+	@ApiOperation(value = "Schulamt-Anmeldung wird durch die Institution bestätigt", response = JaxBetreuung.class)
+	@Nonnull
+	@PUT
+	@Path("/schulamt/uebernehmen/{kindId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxBetreuung anmeldungSchulamtUebernehmen(@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
+		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(betreuungJAXP.getId());
+
+		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
+
+		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
+		if (kind.isPresent()) {
+			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch());
+
+			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
+			convertedBetreuung.setKind(kind.get());
+			Betreuung persistedBetreuung = this.betreuungService.anmeldungSchulamtUebernehmen(convertedBetreuung);
+
+			return converter.betreuungToJAX(persistedBetreuung);
+		}
+		throw new EbeguEntityNotFoundException("anmeldungSchulamtUebernehmen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+	}
+
+	@ApiOperation(value = "Schulamt-Anmeldung wird durch die Institution abgelehnt", response = JaxBetreuung.class)
+	@Nonnull
+	@PUT
+	@Path("/schulamt/ablehnen/{kindId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxBetreuung anmeldungSchulamtAblehnen(@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
+		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(betreuungJAXP.getId());
+
+		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
+
+		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
+		if (kind.isPresent()) {
+			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch());
+
+			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
+			convertedBetreuung.setKind(kind.get());
+			Betreuung persistedBetreuung = this.betreuungService.anmeldungSchulamtAblehnen(convertedBetreuung);
+
+			return converter.betreuungToJAX(persistedBetreuung);
+		}
+		throw new EbeguEntityNotFoundException("anmeldungSchulamtAblehnen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+	}
+
+	@ApiOperation(value = "Schulamt-Anmeldung fuer falsche Institution gestellt", response = JaxBetreuung.class)
+	@Nonnull
+	@PUT
+	@Path("/schulamt/falscheInstitution/{kindId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxBetreuung anmeldungSchulamtFalscheInstitution(@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
+		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(betreuungJAXP.getId());
+
+		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
+
+		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
+		if (kind.isPresent()) {
+			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch());
+
+			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
+			convertedBetreuung.setKind(kind.get());
+			Betreuung persistedBetreuung = this.betreuungService.anmeldungSchulamtFalscheInstitution(convertedBetreuung);
+
+			return converter.betreuungToJAX(persistedBetreuung);
+		}
+		throw new EbeguEntityNotFoundException("anmeldungSchulamtFalscheInstitution", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+	}
+
 	@ApiOperation(value = "Sucht die Betreuung mit der übergebenen Id in der Datenbank. Dabei wird geprüft, ob der " +
 		"eingeloggte Benutzer für die gesuchte Betreuung berechtigt ist", response = JaxBetreuung.class)
 	@Nullable
