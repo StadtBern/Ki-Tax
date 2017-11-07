@@ -45,6 +45,7 @@ import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -152,12 +153,15 @@ public class SearchResource {
 			pendenz.setGesuchsperiode(converter.gesuchsperiodeToJAX(betreuung.extractGesuchsperiode()));
 			pendenz.setBetreuungsangebotTyp(betreuung.getBetreuungsangebotTyp());
 			pendenz.setInstitution(converter.institutionToJAX(betreuung.getInstitutionStammdaten().getInstitution()));
-
-			if (betreuung.getVorgaengerId() == null) {
-				pendenz.setTyp("PLATZBESTAETIGUNG");
+			if (betreuung.getBetreuungsstatus() == Betreuungsstatus.WARTEN) {
+				if (betreuung.getVorgaengerId() == null) {
+					pendenz.setTyp("PLATZBESTAETIGUNG");
+				} else {
+					//Wenn die Betreung eine VorgängerID hat ist sie mutiert
+					pendenz.setTyp("PLATZBESTAETIGUNG_MUTATION");
+				}
 			} else {
-				//Wenn die Betreung eine VorgängerID hat ist sie mutiert
-				pendenz.setTyp("PLATZBESTAETIGUNG_MUTATION");
+				pendenz.setTyp(betreuung.getBetreuungsstatus().name());
 			}
 
 			pendenzenList.add(pendenz);

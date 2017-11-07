@@ -1746,7 +1746,7 @@ public class JaxBConverter {
 		Validate.notNull(betreuungJAXP);
 		Betreuung betreuungToMergeWith = new Betreuung();
 		if (betreuungJAXP.getId() != null) {
-			final Optional<Betreuung> optionalBetreuung = betreuungService.findBetreuung(betreuungJAXP.getId());
+ 			final Optional<Betreuung> optionalBetreuung = betreuungService.findBetreuung(betreuungJAXP.getId());
 			betreuungToMergeWith = optionalBetreuung.orElse(new Betreuung());
 		}
 		return this.betreuungToEntity(betreuungJAXP, betreuungToMergeWith);
@@ -2863,15 +2863,42 @@ public class JaxBConverter {
 
 			convertAbstractFieldsToEntity(belegungFerieninselJAX, belegungFerieninsel);
 			belegungFerieninsel.setFerienname(belegungFerieninselJAX.getFerienname());
-			for (JaxBelegungFerieninselTag jaxTag : belegungFerieninselJAX.getTage()) {
-				BelegungFerieninselTag tag = new BelegungFerieninselTag();
-				convertAbstractFieldsToEntity(jaxTag, tag);
-				tag.setTag(jaxTag.getTag());
-				belegungFerieninsel.getTage().add(tag);
-			}
+			belegungFerieninselTageListToEntity(belegungFerieninselJAX.getTage(), belegungFerieninsel.getTage());
 			return belegungFerieninsel;
 		}
 		return null;
+	}
+
+
+	private void belegungFerieninselTageListToEntity(@Nonnull final List<JaxBelegungFerieninselTag> jaxTagList,
+			@Nonnull final Collection<BelegungFerieninselTag> tagList) {
+		final Set<BelegungFerieninselTag> transformedTagList = new TreeSet<>();
+		for (final JaxBelegungFerieninselTag jaxTag : jaxTagList) {
+			final BelegungFerieninselTag tagToMergeWith = tagList
+				.stream()
+				.filter(existingTagEntity -> existingTagEntity.getId().equals(jaxTag.getId()))
+				.reduce(StreamsUtil.toOnlyElement())
+				.orElse(new BelegungFerieninselTag());
+			final BelegungFerieninselTag tagToAdd = belegungFerieninselTagToEntity(jaxTag, tagToMergeWith);
+			final boolean added = transformedTagList.add(tagToAdd);
+			if (!added) {
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + tagToAdd);
+			}
+		}
+
+		//change the existing collection to reflect changes
+		// Already tested: All existing Betreuungspensen of the list remain as they were, that means their data are updated
+		// and the objects are not created again. ID and InsertTimeStamp are the same as before
+		tagList.clear();
+		tagList.addAll(transformedTagList);
+	}
+
+	private BelegungFerieninselTag belegungFerieninselTagToEntity(@Nonnull final JaxBelegungFerieninselTag jaxTag, @Nonnull  final BelegungFerieninselTag tag) {
+		Validate.notNull(jaxTag);
+		Validate.notNull(tag);
+		convertAbstractFieldsToEntity(jaxTag, tag);
+		tag.setTag(jaxTag.getTag());
+		return tag;
 	}
 
 	@Nullable

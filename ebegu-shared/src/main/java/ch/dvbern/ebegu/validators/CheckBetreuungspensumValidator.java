@@ -19,12 +19,15 @@ import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import javax.validation.constraints.Null;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungspensum;
@@ -67,30 +70,36 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 	}
 
 	@Override
-	public boolean isValid(Betreuung betreuung, ConstraintValidatorContext context) {
+	public boolean isValid(@Nonnull Betreuung betreuung, ConstraintValidatorContext context) {
+
+		if (betreuung.getBetreuungsstatus().isSchulamt()) {
+			// Keine Betreuungspensen
+			return true;
+		}
 
 		final EntityManager em = createEntityManager();
-		int index = 0;
-		for (BetreuungspensumContainer betPenContainer : betreuung.getBetreuungspensumContainers()) {
-			LocalDate betreuungAb = betPenContainer.getBetreuungspensumJA().getGueltigkeit().getGueltigAb();
-			LocalDate gesuchsperiodeStart = betPenContainer.extractGesuchsperiode().getGueltigkeit().getGueltigAb();
-			//Wir laden  die Parameter von Start-Gesuchsperiode falls Betreuung schon laenger als Gesuchsperiode besteht
-			LocalDate stichtagParameter = betreuungAb.isAfter(gesuchsperiodeStart) ? betreuungAb : gesuchsperiodeStart;
-			int betreuungsangebotTypMinValue = BetreuungUtil.getMinValueFromBetreuungsangebotTyp(
-				stichtagParameter, betreuung.getBetreuungsangebotTyp(), ebeguParameterService, em);
+			int index = 0;
+			for (BetreuungspensumContainer betPenContainer : betreuung.getBetreuungspensumContainers()) {
+				LocalDate betreuungAb = betPenContainer.getBetreuungspensumJA().getGueltigkeit().getGueltigAb();
+				LocalDate gesuchsperiodeStart = betPenContainer.extractGesuchsperiode().getGueltigkeit().getGueltigAb();
+				//Wir laden  die Parameter von Start-Gesuchsperiode falls Betreuung schon laenger als Gesuchsperiode besteht
+				LocalDate stichtagParameter = betreuungAb.isAfter(gesuchsperiodeStart) ? betreuungAb : gesuchsperiodeStart;
+				int betreuungsangebotTypMinValue = BetreuungUtil.getMinValueFromBetreuungsangebotTyp(
+					stichtagParameter, betreuung.getBetreuungsangebotTyp(), ebeguParameterService, em);
 
-			if (!validateBetreuungspensum(betPenContainer.getBetreuungspensumGS(), betreuungsangebotTypMinValue, index, "GS", context)
-				|| !validateBetreuungspensum(betPenContainer.getBetreuungspensumJA(), betreuungsangebotTypMinValue, index, "JA", context)) {
+				if (!validateBetreuungspensum(betPenContainer.getBetreuungspensumGS(), betreuungsangebotTypMinValue, index, "GS", context)
+					|| !validateBetreuungspensum(betPenContainer.getBetreuungspensumJA(), betreuungsangebotTypMinValue, index, "JA", context)) {
 
-				closeEntityManager(em);
-				return false;
+					closeEntityManager(em);
+					return false;
+				}
+				index++;
 			}
-			index++;
-		}
-		closeEntityManager(em);
+			closeEntityManager(em);
 		return true;
 	}
 
+	@Nullable
 	private EntityManager createEntityManager() {
 		if (entityManagerFactory != null) {
 			return entityManagerFactory.createEntityManager(); // creates a new EntityManager

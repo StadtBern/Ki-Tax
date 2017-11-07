@@ -47,6 +47,9 @@ export class BetreuungFerieninselViewComponentConfig implements IComponentOption
     bindings: any = {
         betreuung: '=',
         onSave: '&',
+        anmeldungSchulamtUebernehmen: '&',
+        anmeldungSchulamtAblehnen: '&',
+        anmeldungSchulamtFalscheInstitution: '&',
         cancel: '&',
         form: '='
     };
@@ -150,5 +153,9 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
                 this.betreuung.belegungFerieninsel.tage.push(tag);
             }
         }
+    }
+
+    public showButtonsInstitution(): boolean {
+        return this.betreuung.betreuungsstatus === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST && !this.isGesuchReadonly();
     }
 }

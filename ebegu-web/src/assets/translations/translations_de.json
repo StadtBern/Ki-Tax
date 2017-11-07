@@ -620,7 +620,7 @@
     "UMZUG_LIST_HINT": "Sämtliche Umzugsadressen für die ganze Gesuchsperiode müssen hier erfasst werden!",
     "DATE_PLACEHOLDER": "tt.mm.jjjj",
     "PERCENTAGE_PLACEHOLDER": "Angabe in %",
-    "FAM_ERGAENZENDE_BETREUUNG_HELP": "Besucht Ihr Kind in der Stadt Bern eine Kita, ein Tagi, Tageseltern oder eine Tagesschule? Oder ist der Besuch geplant?",
+    "FAM_ERGAENZENDE_BETREUUNG_HELP": "Besucht Ihr Kind in der Stadt Bern eine Kita, ein Tagi, eine Ferieninsel, Tageseltern oder eine Tagesschule? Oder ist der Besuch geplant?",
     "FAM_ERGAENZENDE_BETREUUNG_NOT_EDITABLE": "Um dieses Feld editieren zu können, löschen Sie zuerst alle Betreuungen des Kindes",
     "MUTTERSPRACHE_DEUTSCH_HELP": "Die Gesundheits- und Fürsorgedirektion des Kantons Bern benötigt diese Angabe für statistische Erhebungen.",
     "EINSCHULUNG_HELP": "Bitte klicken Sie auf ‚ja‘, wenn Ihr Kind ab August neu oder wie bisher den Kindergarten oder die Schule besucht.",
@@ -1149,5 +1149,10 @@
     "FERIENINSELTAGE": "An welchen Tagen möchten Sie Ihr Kind für die Ferieninsel anmelden?",
     "ANMELDEN_FERIENINSEL": "Ferieninsel definitiv anmelden",
     "CONFIRM_SAVE_FERIENINSEL": "Sind Sie sicher, dass Sie Ihr Kind definitiv anmelden wollen?",
-    "BESCHREIBUNG_SAVE_FERIENINSEL": "Diese Anmeldung kann danach nicht mehr verändert werden. Sie können aber weitere Anmeldungen für diese oder andere Ferieninseln erstellen."
+    "BESCHREIBUNG_SAVE_FERIENINSEL": "Diese Anmeldung kann danach nicht mehr verändert werden. Sie können aber weitere Anmeldungen für diese oder andere Ferieninseln erstellen.",
+    "SCHULAMT_ANMELDUNG_UEBERNEHMEN": "Anmeldung übernehmen",
+    "SCHULAMT_ANMELDUNG_ABLEHNEN": "Anmeldung ablehnen",
+    "SCHULAMT_FALSCHE_INSTITUTION": "Falsche Institution",
+    "CONFIRM_UEBERNAHME_SCHULAMT": "Anmeldung definitiv übernehmen?",
+    "BESCHREIBUNG_UEBERNAHME_SCHULAMT": "Die BetreuungsId wurde ins Clipboard übernommen, bitte übernehmen Sie die Daten in Scolaris, bevor Sie okay klicken"
 }

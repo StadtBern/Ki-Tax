@@ -215,7 +215,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         this.gesuchModelManager.setBetreuungToWorkWith(this.model); //setze model
         let oldStatus: TSBetreuungsstatus = this.model.betreuungsstatus;
         if (this.getBetreuungModel()) {
-            if (this.isTagesschule()) {
+            if (this.isSchulamt()) {
                 this.getBetreuungModel().betreuungspensumContainers = []; // fuer Tagesschule werden keine Betreuungspensum benoetigt, deswegen löschen wir sie vor dem Speichern
             }
         }
@@ -239,6 +239,35 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public anmeldenSchulamt(): void {
         this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST, 'gesuch.betreuungen', undefined);
+    }
+
+    public anmeldungSchulamtUebernehmen(): void {
+        this.copyBGNumberLToClipboard();
+        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            title: 'CONFIRM_UEBERNAHME_SCHULAMT',
+            deleteText: 'BESCHREIBUNG_UEBERNAHME_SCHULAMT',
+            parentController: undefined,
+            elementID: undefined
+        }).then(() => {
+            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN, 'gesuch.betreuungen', undefined);
+        });
+    }
+
+    public anmeldungSchulamtAblehnen(): void {
+        this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT, 'gesuch.betreuungen', undefined);
+    }
+
+    public anmeldungSchulamtFalscheInstitution(): void {
+        this.save(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION, 'gesuch.betreuungen', undefined);
+    }
+
+    private copyBGNumberLToClipboard(): void {
+        let bgNumber: string = this.ebeguUtil.calculateBetreuungsIdFromBetreuung(this.gesuchModelManager.getGesuch().fall, this.getBetreuungModel());
+        let $temp = $('<input>');
+        $('body').append($temp);
+        $temp.val(bgNumber).select();
+        document.execCommand('copy');
+        $temp.remove();
     }
 
     private setBetreuungsangebotTypValues(): void {
@@ -382,7 +411,6 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             return !this.getBetreuungModel().hasVorgaenger()
                 && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)
                     || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST)
-                    || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION)
                     || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT)
                 && !this.isKorrekturModusJugendamt()));
 

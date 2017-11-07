@@ -176,7 +176,7 @@
                 <fieldset ng-disabled="vm.isGesuchReadonly() && !vm.isMutationsmeldungStatus">
                     <!--Diese Felder werden fuer Betreuungsangebottyp TAGESSCHULE ausgeblendet. Fuer alle anderen eingeblendet-->
                     <!--Nur Institutionen duerfen neue Pensen eintragen. Bei anderen Rollen werden nur die existierenden Pensen angezeigt-->
-                    <div ng-if="!vm.isTagesschule()">
+                    <div ng-if="!vm.isSchulamt()">
 
                         <div class="row" dv-show-element
                              dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()"
@@ -459,6 +459,9 @@
                     <div ng-if="vm.isFerieninsel()">
                         <betreuung-ferieninsel-view betreuung="vm.getBetreuungModel()" form="vm.form"
                                                     on-save="vm.anmeldenSchulamt()"
+                                                    anmeldung-schulamt-uebernehmen="vm.anmeldungSchulamtUebernehmen()"
+                                                    anmeldung-schulamt-ablehnen="vm.anmeldungSchulamtAblehnen()"
+                                                    anmeldung-schulamt-falsche-institution="vm.anmeldungSchulamtFalscheInstitution()"
                                                     cancel="vm.cancel()">
                         </betreuung-ferieninsel-view>
                     </div>
