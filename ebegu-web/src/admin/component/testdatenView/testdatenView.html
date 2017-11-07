@@ -325,7 +325,7 @@
                         <span>Zahlungen kontrollieren</span>
                     </button>
                 </div>
-                <div>
+                <div ng-if="vm.devMode">
                     <br/>
                     <button type="button" class=" btn-testfall"
                             ng-click="vm.deleteAllZahlungsauftraege()">
