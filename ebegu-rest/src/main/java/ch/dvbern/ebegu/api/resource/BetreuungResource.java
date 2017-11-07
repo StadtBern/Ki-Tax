@@ -147,7 +147,7 @@ public class BetreuungResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(betreuungJAXP.getId());
-		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		// Sicherstellen, dass der Status des Server-Objektes genau dem erwarteten Status entspricht
 		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.WARTEN);
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
@@ -178,7 +178,7 @@ public class BetreuungResource {
 
 		Validate.notNull(betreuungJAXP.getId());
 
-		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		// Sicherstellen, dass der Status des Server-Objektes genau dem erwarteten Status entspricht
 		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.WARTEN);
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
@@ -208,7 +208,7 @@ public class BetreuungResource {
 
 		Validate.notNull(betreuungJAXP.getId());
 
-		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		// Sicherstellen, dass der Status des Server-Objektes genau dem erwarteten Status entspricht
 		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
@@ -238,7 +238,7 @@ public class BetreuungResource {
 
 		Validate.notNull(betreuungJAXP.getId());
 
-		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		// Sicherstellen, dass der Status des Server-Objektes genau dem erwarteten Status entspricht
 		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
@@ -268,7 +268,7 @@ public class BetreuungResource {
 
 		Validate.notNull(betreuungJAXP.getId());
 
-		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		// Sicherstellen, dass der Status des Server-Objektes genau dem erwarteten Status entspricht
 		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
