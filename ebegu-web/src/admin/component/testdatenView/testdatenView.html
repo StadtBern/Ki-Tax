@@ -332,12 +332,21 @@
             <!-- Zahlungslaeufe kontrollieren -->
             <div class="row marginTop10">
                 <div class="viewTitle marginTop10">
-                    <h2>Zahlungen kontrollieren</h2>
+                    <h2>Zahlungen</h2>
                 </div>
-                <button type="button" class=" btn-testfall"
-                        ng-click="vm.zahlungenKontrollieren()">
-                    <span>Zahlungen kontrollieren</span>
-                </button>
+                <div>
+                    <button type="button" class=" btn-testfall"
+                            ng-click="vm.zahlungenKontrollieren()">
+                        <span>Zahlungen kontrollieren</span>
+                    </button>
+                </div>
+                <div>
+                    <br/>
+                    <button type="button" class=" btn-testfall"
+                            ng-click="vm.deleteAllZahlungsauftraege()">
+                        <span>Alle Zahlungen löschen</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Manuelle Skripts ausfuehren -->
