@@ -31,6 +31,11 @@ ${templateConfiguration.mailCss}
 		Bei Fragen stehen wir während den Bürozeiten gerne zur Verfügung (Tel. 031 321 51 15).
 	</p>
 	<p>
+		Wichtig: In Ihrem Ki-Tax-Formular wählen Sie das Betreuungsangebot für Ihr Kind. Dieses Angebot muss durch die betreuende Institution
+		(Kita, Tagi, Tageseltern) online bestätigt werden, was bis zu vier Tage dauern kann. Ohne diese Bestätigung können Sie Ihr Gesuch nicht abschliessen,
+		beginnen Sie daher bitte frühzeitig mit dem Ausfüllen des Gesuchs.
+	</p>
+	<p>
 		Falls Sie für die Periode ${gesuchsperiode.gesuchsperiodeString} kein Gesuch stellen möchten, sind für Sie keine weiteren Schritte notwendig.
 	<p>
 		Freundliche Grüsse <br/>
