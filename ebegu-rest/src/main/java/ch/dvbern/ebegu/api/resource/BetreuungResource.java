@@ -82,7 +82,6 @@ public class BetreuungResource {
 	@Inject
 	private GesuchService gesuchService;
 
-	//TODO (hefr) Dieser Service wird immer nur fuer Betreuungen verwendet, nie fuer Abwesenheiten
 	@ApiOperation(value = "Speichert eine Betreuung in der Datenbank", response = JaxBetreuung.class)
 	@Nonnull
 	@PUT
@@ -108,14 +107,13 @@ public class BetreuungResource {
 		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
 	}
 
-	//TODO (hefr) dieser service wird immer nur fuer Abwesenheiten verwendet
 	@ApiOperation(value = "Speichert eine Abwesenheit in der Datenbank.", responseContainer = "List", response = JaxBetreuung.class)
 	@Nonnull
 	@PUT
 	@Path("/all/{abwesenheit}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<JaxBetreuung> saveBetreuungen(
+	public List<JaxBetreuung> saveAbwesenheiten(
 		@Nonnull @NotNull @Valid List<JaxBetreuung> betreuungenJAXP,
 		@Nonnull @NotNull @PathParam("abwesenheit") Boolean abwesenheit,
 		@Context UriInfo uriInfo,
