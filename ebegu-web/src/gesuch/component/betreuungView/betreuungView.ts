@@ -181,13 +181,10 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         if (this.getBetreuungModel()) {
             if (this.isSchulamt()) {
                 if (this.isTagesschule()) {
-                    this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
-                    // Fuer Tagesschule setzen wir eine Dummy-Tagesschule als Institution
-                    this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
-                    this.setSelectedInstitutionStammdaten();
                     // Nur fuer die neuen Gesuchsperiode kann die Belegung erfast werden
                     if (this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung()
-                        && this.gesuchModelManager.getGesuchsperiode().isTageschulenAnmeldungAktiv()) {
+                            && this.gesuchModelManager.getGesuchsperiode().isTageschulenAnmeldungAktiv()) {
+                        this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST;
                         if (!this.getBetreuungModel().belegungTagesschule) {
                             this.getBetreuungModel().belegungTagesschule = new TSBelegungTagesschule();
                             // Default Eintrittsdatum ist erster Schultag, wenn noch in Zukunft
@@ -196,10 +193,16 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                                 this.getBetreuungModel().belegungTagesschule.eintrittsdatum = ersterSchultag;
                             }
                         }
+                    } else {
+                        // "Alte" Tagesschule: Noch keine Modulanmeldung moeglich. Wir setzen Default-Institution
+                        this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
+                        // Fuer Tagesschule setzen wir eine Dummy-Tagesschule als Institution
+                        this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
+                        this.setSelectedInstitutionStammdaten();
                     }
                 } else {
                     // Ferieninsel. Vorerst mal Status SCHULAMT, spaeter kommt dann ein eigener Status
-                    this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT; // todo entfernen. oben schon gemacht
+                    // this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT; // todo entfernen. oben schon gemacht
                 }
             } else {
                 this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
@@ -235,8 +238,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public anmeldenSchulamt(): void {
-        //TODO (team) spaeter Status ANMELDUNG_AUSGELOEST. Dieselbe Methode kann dann vermtl. auch fuer Tagesschule verwendet werden
-        this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen', undefined);
+        this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST, 'gesuch.betreuungen', undefined);
     }
 
     private setBetreuungsangebotTypValues(): void {
@@ -376,11 +378,11 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      * @returns {boolean}
      */
     public isEnabled(): boolean {
-        //TODO (team) dies muss dann mit den neuen SCH-Status nochmals ueberdacht werden
         if (this.getBetreuungModel()) {
             return !this.getBetreuungModel().hasVorgaenger()
                 && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)
                     || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST)
+                    || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION)
                     || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT)
                 && !this.isKorrekturModusJugendamt()));
 

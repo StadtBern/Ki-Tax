@@ -109,7 +109,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER })
 	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung, @Nonnull Boolean isAbwesenheit) {
 		Objects.requireNonNull(betreuung);
-		if (betreuung.getBetreuungsstatus() == Betreuungsstatus.SCHULAMT) {
+		if (betreuung.getBetreuungsstatus().isSchulamt()) {
 			// Wir setzen auch Schulamt-Betreuungen auf gueltig, for future use
 			betreuung.setGueltig(true);
 			if (betreuung.getVorgaengerId() != null) {
