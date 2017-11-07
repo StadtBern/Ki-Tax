@@ -101,7 +101,7 @@ describe('gesuchModelManager', function () {
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
                 spyOn(gesuchRS, 'getGesuchBetreuungenStatus').and.returnValue($q.when(TSGesuchBetreuungenStatus.ALLE_BESTAETIGT));
 
-                gesuchModelManager.saveBetreuung(gesuchModelManager.getKindToWorkWith().betreuungen[0], false);
+                gesuchModelManager.saveBetreuung(gesuchModelManager.getKindToWorkWith().betreuungen[0], TSBetreuungsstatus.WARTEN, false);
                 scope.$apply();
 
                 expect(betreuungRS.saveBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb', undefined, false);

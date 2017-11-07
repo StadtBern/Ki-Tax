@@ -139,6 +139,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Nonnull
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
 	public Betreuung betreuungPlatzAbweisen(@Valid @Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
+		betreuung.setBetreuungsstatus(Betreuungsstatus.ABGEWIESEN);
 		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
 		try {
 			// Bei Ablehnung einer Betreuung muss eine E-Mail geschickt werden
@@ -153,6 +155,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Nonnull
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
 	public Betreuung betreuungPlatzBestaetigen(@Valid @Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
+		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
 		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
 		try {
 			Gesuch gesuch = betreuung.extractGesuch();
