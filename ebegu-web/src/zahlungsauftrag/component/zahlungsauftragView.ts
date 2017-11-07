@@ -151,21 +151,6 @@ export class ZahlungsauftragViewController {
         });
     }
 
-    public remove(zahlungsauftrag: TSZahlungsauftrag) {
-        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
-            deleteText: 'ZAHLUNG_LOESCHEN_DIALOG_TEXT',
-            title: 'ZAHLUNG_LOESCHEN_DIALOG_TITLE',
-            parentController: undefined,
-            elementID: undefined
-        })
-            .then(() => {   //User confirmed removal
-                let index = EbeguUtil.getIndexOfElementwithID(zahlungsauftrag, this.zahlungsauftragen);
-                this.zahlungRS.zahlungsauftragLoeschen(zahlungsauftrag.id).then((response: IHttpResponse<TSZahlungsauftrag>) => {
-                    this.zahlungsauftragen.splice(index, 1);
-                });
-            });
-    }
-
     public edit(zahlungsauftrag: TSZahlungsauftrag) {
         this.zahlungsauftragToEdit = zahlungsauftrag;
     }
