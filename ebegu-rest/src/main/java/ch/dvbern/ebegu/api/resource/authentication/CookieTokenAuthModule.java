@@ -26,12 +26,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import ch.dvbern.ebegu.api.AuthConstants;
-import ch.dvbern.ebegu.api.EbeguApplicationV1;
-import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.enums.UserRoleName;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.util.BasicAuthHelper;
 import org.omnifaces.security.jaspic.core.AuthParameters;
@@ -41,6 +35,13 @@ import org.omnifaces.security.jaspic.user.TokenAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+
+import ch.dvbern.ebegu.api.AuthConstants;
+import ch.dvbern.ebegu.api.EbeguApplicationV1;
+import ch.dvbern.ebegu.api.util.RestUtil;
+import ch.dvbern.ebegu.enums.UserRoleName;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.Constants;
 
 import static javax.security.auth.message.AuthStatus.SEND_FAILURE;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
@@ -109,7 +110,7 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 			|| path.startsWith(apiBasePath + "/connector/heartbeat")
 			|| path.startsWith(apiBasePath + "/auth/singleSignOn")
 			|| path.startsWith(apiBasePath + "/auth/singleLogout")
-			|| path.startsWith(apiBasePath + "/swagger.json")
+			|| path.startsWith(apiBasePath + "/swagger.json")           //todo  EBEGU-1515 Variante entscheiden
 			|| path.startsWith(request.getContextPath() + "/ebeguTestLogin.jsp")
 			|| path.startsWith(request.getContextPath() + "/logout.jsp")
 			|| path.startsWith(request.getContextPath() + "/samlinfo.jsp")
