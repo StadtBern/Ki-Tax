@@ -34,6 +34,9 @@ public interface VerfuegungService {
 	 */
 	void generateVerfuegungDokument(@Nonnull Betreuung betreuung);
 
+	@SuppressWarnings("LocalVariableNamingConvention")
+	void setZahlungsstatus(Verfuegung verfuegung, @Nonnull String betreuungId, boolean ignorieren);
+
 	/**
 	 * Speichert die Verfuegung neu in der DB falls der Key noch nicht existiert.
 	 * Die Betreuung erhaelt den Status NICHT_EINGETRETEN
@@ -91,9 +94,8 @@ public interface VerfuegungService {
 
 	/**
 	 * Sucht den Zeitabschnitt / die Zeitabschnitte mit demselben Zeitraum auf der Vorgängerverfügung,
-	 * und die verrechnet oder ignoriert sind
+	 * und die verrechnet oder ignoriert sind. Rekursive Methode, die die gegebene Liste mit den richtigen Objekten ausfuellt
 	 */
-	@Nonnull
-	List<VerfuegungZeitabschnitt> findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu,
-																					  @Nonnull Betreuung betreuungNeu);
+	void findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu,
+		@Nonnull Betreuung betreuungNeu, @Nonnull List<VerfuegungZeitabschnitt> vorgaengerZeitabschnitte);
 }

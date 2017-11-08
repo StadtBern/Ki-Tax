@@ -1,6 +1,8 @@
 package ch.dvbern.ebegu.services;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -356,6 +358,29 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 	@Override
+	@Nonnull
+	public Gesuch mutierenFinSit(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId, @Nonnull LocalDate eingangsdatum,
+		@Nonnull LocalDate aenderungPer, boolean verfuegen, BigDecimal nettoLohn, LocalDateTime timestampVerfuegt) {
+
+		Validate.notNull(eingangsdatum);
+		Validate.notNull(gesuchsperiodeId);
+		Validate.notNull(fallNummer);
+		Validate.notNull(aenderungPer);
+
+		Gesuch mutation = gesuchService.testfallMutieren(fallNummer, gesuchsperiodeId, eingangsdatum).orElseThrow(() -> new EbeguEntityNotFoundException
+			("mutierenHeirat", "Gesuch zum Mutieren nicht gefunden"));
+		Validate.notNull(mutation.getGesuchsteller1(), "GS1 muss gesetzt sein");
+		Validate.notNull(mutation.getGesuchsteller1().getFinanzielleSituationContainer(), "FinSit vom GS1 muss gesetzt sein");
+		mutation.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setNettolohn(nettoLohn);
+
+		gesuchstellerService.saveGesuchsteller(mutation.getGesuchsteller1(), mutation, 1, false);
+
+		gesuchService.createGesuch(mutation);
+		gesuchVerfuegenUndSpeichern(verfuegen, mutation, true);
+		return mutation;
+	}
+
+	@Override
 	@Nullable
 	public Gesuch mutierenScheidung(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
 			@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen) {
@@ -517,6 +542,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		if (verfuegen) {
 			FreigabeCopyUtil.copyForFreigabe(gesuch);
 			verfuegungService.calculateVerfuegung(gesuch);
+			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.setZahlungsstatus(betreuung.getVerfuegung(), betreuung.getId(), false)));
 			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId(), Betreuungsstatus.VERFUEGT)));
 			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.generateVerfuegungDokument(betreuung)));
 			generateDokFinSituation(gesuch); // the finSit document must be explicitly generated

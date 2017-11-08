@@ -1,6 +1,22 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.AntragStatusHistory;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.services.*;
@@ -13,15 +29,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import static ch.dvbern.ebegu.rechner.AbstractBGRechnerTest.checkTestfall01WaeltiDagmar;
 
@@ -99,7 +106,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		Set<KindContainer> kindContainers = gesuch.getKindContainers();
 		KindContainer kind = kindContainers.iterator().next();
-		Assert.assertEquals(kindContainers.size(), 1);
+		Assert.assertEquals(1, kindContainers.size());
 		Set<Betreuung> betreuungen = kind.getBetreuungen();
 		betreuungen.forEach(this::createAndPersistVerfuegteVerfuegung);
 		Betreuung betreuung = betreuungen.iterator().next();
@@ -115,6 +122,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 		antragStatusHistory.setGesuch(gesuch);
 		antragStatusHistory.setTimestampVon(timestampVerfuegt);
 		antragStatusHistories.add(antragStatusHistory);
+		Assert.assertNotNull(gesuch.getGesuchsteller1());
 		gesuch.getGesuchsteller1().getAdressen().get(0).setGesuchstellerContainer(gesuch.getGesuchsteller1());
 		persistence.persist(gesuch.getGesuchsteller1().getAdressen().get(0));
 		persistence.persist(antragStatusHistory);
@@ -148,6 +156,16 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 		this.verfuegungService.removeVerfuegung(verfuegung);
 	}
 
+	@Test
+	public void findVerrechnetenVorgaengerNoVorgaenger() {
+		VerfuegungZeitabschnitt zeitabschnitt = createGesuchWithVerfuegungZeitabschnitt();
+
+		List<VerfuegungZeitabschnitt> zeitabschnittListe = new ArrayList<>();
+		verfuegungService.findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnitt, zeitabschnitt.getVerfuegung().getBetreuung(), zeitabschnittListe);
+
+		Assert.assertEquals(0, zeitabschnittListe.size());
+	}
+
 	//Helpers
 
 
@@ -171,6 +189,13 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 		verfuegung.setBetreuung(betreuung);
 		betreuung.setVerfuegung(verfuegung);
 		return persistence.persist(verfuegung);
+	}
+
+	private VerfuegungZeitabschnitt createGesuchWithVerfuegungZeitabschnitt() {
+		Verfuegung verfuegung = insertVerfuegung();
+		VerfuegungZeitabschnitt zeitabschnitt = TestDataUtil.createDefaultZeitabschnitt(verfuegung);
+		persistence.persist(zeitabschnitt);
+		return zeitabschnitt;
 	}
 
 }

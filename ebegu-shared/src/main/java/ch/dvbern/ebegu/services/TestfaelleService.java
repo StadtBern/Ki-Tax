@@ -1,6 +1,8 @@
 package ch.dvbern.ebegu.services;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -60,6 +62,10 @@ public interface TestfaelleService {
 	Gesuch mutierenHeirat(@Nonnull Long fallNummer,
 						  @Nonnull String gesuchsperiodeId,
 						  @Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen);
+
+	@Nonnull
+	Gesuch mutierenFinSit(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
+		@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen, BigDecimal nettoLohn, LocalDateTime timestampVerfuegt);
 
 	@Nullable
 	Gesuch mutierenScheidung(@Nonnull Long fallNummer,
