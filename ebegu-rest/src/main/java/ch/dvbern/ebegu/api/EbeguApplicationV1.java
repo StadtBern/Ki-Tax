@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import static ch.dvbern.ebegu.config.EbeguConfigurationImpl.EBEGU_DEVELOPMENT_MODE;
+
 /**
  * Entry-Point of all REST-Services. Used by JAX-RS to List all available Service implementations
  * Also defines the api root path from the context onwards ebegu/api/v1
@@ -47,15 +49,18 @@ public class EbeguApplicationV1 extends Application {
 	}
 
 	private void configureSwagger() {
-		BeanConfig beanConfig = new BeanConfig();
-		beanConfig.setTitle("eBEGU REST Interface");
-		beanConfig.setVersion("1.0");
-		beanConfig.setSchemes(new String[]{"http"}); //later also add https
-		beanConfig.setHost("localhost:8080");
-		beanConfig.setBasePath("/ebegu" + API_ROOT_PATH); //context ist hier auch wichtig
-		beanConfig.setResourcePackage("ch.dvbern.ebegu.api.resource");
-		beanConfig.setScan(true);
-		beanConfig.setPrettyPrint(true);
+
+		if (Boolean.parseBoolean(System.getProperty(EBEGU_DEVELOPMENT_MODE, "true"))) {
+			BeanConfig beanConfig = new BeanConfig();
+			beanConfig.setTitle("eBEGU REST Interface");
+			beanConfig.setVersion("1.0");
+			beanConfig.setSchemes(new String[]{"http"}); //later also add https
+			beanConfig.setHost("localhost:8080");
+			beanConfig.setBasePath("/ebegu" + API_ROOT_PATH); //context ist hier auch wichtig
+			beanConfig.setResourcePackage("ch.dvbern.ebegu.api.resource");
+			beanConfig.setScan(true);
+			beanConfig.setPrettyPrint(true);
+		}
 	}
 
 	private static final Set<Class<?>> ALL_CLASSES = new HashSet<>(Arrays.asList(new Class<?>[]{
