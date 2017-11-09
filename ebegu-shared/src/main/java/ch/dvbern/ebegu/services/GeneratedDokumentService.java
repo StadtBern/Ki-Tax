@@ -51,7 +51,7 @@ public interface GeneratedDokumentService {
 																		Boolean forceCreation) throws MimeTypeParseException, MergeDocException, IOException;
 
 	WriteProtectedDokument getMahnungDokumentAccessTokenGeneratedDokument(Mahnung mahnung,
-																	 Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException;
+																	 Boolean createWriteProtected) throws MimeTypeParseException, IOException, MergeDocException;
 
 	WriteProtectedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(Betreuung betreuung,
 																			Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException;
