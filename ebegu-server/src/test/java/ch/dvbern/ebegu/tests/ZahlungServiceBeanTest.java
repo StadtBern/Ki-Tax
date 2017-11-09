@@ -167,8 +167,8 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(1, auftragSeptember.getZahlungen().size());
 		Assert.assertEquals(3, auftragSeptember.getZahlungen().get(0).getZahlungspositionen().size());
 		Assert.assertEquals(ZahlungspositionStatus.NORMAL, auftragSeptember.getZahlungen().get(0).getZahlungspositionen().get(0).getStatus());
-		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragSeptember.getZahlungen().get(0).getZahlungspositionen().get(1).getStatus());
-		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragSeptember.getZahlungen().get(0).getZahlungspositionen().get(2).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR, auftragSeptember.getZahlungen().get(0).getZahlungspositionen().get(1).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR, auftragSeptember.getZahlungen().get(0).getZahlungspositionen().get(2).getStatus());
 		zahlungService.zahlungsauftragAusloesen(auftragSeptember.getId());
 
 		// Eine (verfuegte) Mutation erstellen, welche rueckwirkende Auswirkungen hat auf Vollkosten
@@ -182,10 +182,10 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(1, auftragOktober.getZahlungen().size());
 		Assert.assertEquals(5, auftragOktober.getZahlungen().get(0).getZahlungspositionen().size());
 		Assert.assertEquals(ZahlungspositionStatus.NORMAL, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(0).getStatus());
-		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(1).getStatus());
-		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(2).getStatus());
-		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(3).getStatus());
-		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(4).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(1).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(2).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(3).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(4).getStatus());
 		zahlungService.zahlungsauftragAusloesen(auftragOktober.getId());
 	}
 
@@ -216,8 +216,8 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(4, auftragOktober.getZahlungen().get(0).getZahlungspositionen().size());
 		Assert.assertEquals(ZahlungspositionStatus.NORMAL, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(0).getStatus());
 		Assert.assertEquals(ZahlungspositionStatus.NORMAL, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(1).getStatus());
-		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(2).getStatus());
-		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(3).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(2).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(3).getStatus());
 		zahlungService.zahlungsauftragAusloesen(auftragOktober.getId());
 	}
 
