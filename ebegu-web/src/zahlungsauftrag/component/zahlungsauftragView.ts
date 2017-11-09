@@ -1,4 +1,4 @@
-import {IComponentOptions, IHttpResponse} from 'angular';
+import {IComponentOptions} from 'angular';
 import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
 import EbeguUtil from '../../utils/EbeguUtil';
 import ZahlungRS from '../../core/service/zahlungRS.rest';
@@ -149,21 +149,6 @@ export class ZahlungsauftragViewController {
                 this.ebeguUtil.handleSmarttablesUpdateBug(this.zahlungsauftragen);
             });
         });
-    }
-
-    public remove(zahlungsauftrag: TSZahlungsauftrag) {
-        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
-            deleteText: 'ZAHLUNG_LOESCHEN_DIALOG_TEXT',
-            title: 'ZAHLUNG_LOESCHEN_DIALOG_TITLE',
-            parentController: undefined,
-            elementID: undefined
-        })
-            .then(() => {   //User confirmed removal
-                let index = EbeguUtil.getIndexOfElementwithID(zahlungsauftrag, this.zahlungsauftragen);
-                this.zahlungRS.zahlungsauftragLoeschen(zahlungsauftrag.id).then((response: IHttpResponse<TSZahlungsauftrag>) => {
-                    this.zahlungsauftragen.splice(index, 1);
-                });
-            });
     }
 
     public edit(zahlungsauftrag: TSZahlungsauftrag) {

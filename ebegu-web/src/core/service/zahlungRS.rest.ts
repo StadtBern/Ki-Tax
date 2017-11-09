@@ -60,8 +60,8 @@ export default class ZahlungRS {
         });
     }
 
-    public zahlungsauftragLoeschen(zahlungsauftragId: string): IHttpPromise<any> {
-        return this.http.delete(this.serviceURL + '/delete' + '/' + encodeURIComponent(zahlungsauftragId), null);
+    public deleteAllZahlungsauftraege(): IHttpPromise<any> {
+        return this.http.delete(this.serviceURL + '/delete', null);
     }
 
     public zahlungBestaetigen(zahlungId: string): IPromise<TSZahlung> {
