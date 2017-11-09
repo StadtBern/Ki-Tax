@@ -65,7 +65,7 @@ public interface TestfaelleService {
 
 	@Nonnull
 	Gesuch mutierenFinSit(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
-		@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen, BigDecimal nettoLohn, LocalDateTime timestampVerfuegt);
+		@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen, BigDecimal nettoLohn, boolean ignorieren);
 
 	@Nullable
 	Gesuch mutierenScheidung(@Nonnull Long fallNummer,
@@ -88,5 +88,5 @@ public interface TestfaelleService {
 	@Nonnull
 	Gesuch createAndSaveGesuch(@Nonnull AbstractTestfall fromTestfall, boolean verfuegen, @Nullable Benutzer besitzer);
 
-	void gesuchVerfuegenUndSpeichern(boolean verfuegen, @Nonnull Gesuch gesuch, boolean mutation);
+	void gesuchVerfuegenUndSpeichern(boolean verfuegen, @Nonnull Gesuch gesuch, boolean mutation, boolean ignorieren);
 }

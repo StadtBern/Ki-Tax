@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -18,10 +19,13 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 import ch.dvbern.ebegu.entities.Zahlungsposition;
 import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
 import ch.dvbern.ebegu.enums.ZahlungStatus;
@@ -133,13 +137,86 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	/**
 	 * Ein Gesuch wird erstellt. Eine Zahlung wird gemacht
-	 * Die bereits erstellte Verfuegung mutieren mit zukuenftiger Aenderung. Darf nichts in der Yahlung erscheinen
+	 * Die bereits erstellte Verfuegung mutieren mit Aenderung. In der Zahlung muessen alle Korrekturen angezeigt werden.
 	 */
 	@Test
 	public void zahlungsauftragErstellenNormalUndMutationChange() throws Exception {
 		final Gesuch gesuch = createGesuch(true);
 		final Zahlungsauftrag zahlungsauftrag = checkZahlungErstgesuch(gesuch, DATUM_GENERIERT);
-		final Gesuch mutation = createMutationFinSit(gesuch, true, DATUM_AUGUST.atStartOfDay(), BigDecimal.valueOf(70000));
+		final Gesuch mutation = createMutationFinSit(gesuch, true, DATUM_AUGUST.atStartOfDay(), BigDecimal.valueOf(70000), false);
+		Assert.assertNotNull(mutation);
+
+		// gleiche Mutation wie in vorherigem Test aber die Yahlung erfolgt nun am Ende der Periode, daher Aenderungen in der Zahlung
+		Zahlungsauftrag zahlungsauftragMutation = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG.plusDays(1), "Testauftrag", DATUM_GENERIERT.plusDays(1));
+
+		final BigDecimal betragAugustMutation = getBetragAugustFromGesuch(mutation);
+
+		Assert.assertNotNull(zahlungsauftragMutation);
+		Assert.assertNotNull(zahlungsauftragMutation.getZahlungen());
+		Assert.assertEquals(1, zahlungsauftragMutation.getZahlungen().size());
+
+		Assert.assertEquals(11, zahlungsauftrag.getZahlungen().get(0).getZahlungspositionen().size());
+		// es hat 22: 11 die substraiert werden von der alten Zahlung und 11 die neu dazukommen
+		Assert.assertEquals(22, zahlungsauftragMutation.getZahlungen().get(0).getZahlungspositionen().size());
+
+		Assert.assertEquals(0, betragAugustMutation.compareTo(
+			zahlungsauftragMutation.getZahlungen().get(0).getZahlungspositionen().get(0).getBetrag()));
+
+		assertZahlungPositionenIgnored(zahlungsauftragMutation.getZahlungen().get(0).getZahlungspositionen(), false);
+		assertAllOldZahlungenAreSubstracted(zahlungsauftrag.getZahlungen().get(0).getZahlungspositionen(),
+			zahlungsauftragMutation.getZahlungen().get(0).getZahlungspositionen());
+	}
+
+	/**
+	 * Ein Gesuch wird erstellt. Eine Zahlung wird gemacht
+	 * Die bereits erstellte Verfuegung mutieren mit Aenderung.
+	 * Nochmal eine Mutation machen und die Aenderungen uebernehmen. Erst jetzt eine Zahlung machen
+	 * In der Zahlung muessen alle Korrekturen angezeigt werden aber die von erster Mutation nicht.
+	 */
+	@Test
+	public void zahlungsauftragErstellenNormalUndTwoMutationChange() throws Exception {
+		final Gesuch gesuch = createGesuch(true);
+		final Zahlungsauftrag zahlungsauftrag = checkZahlungErstgesuch(gesuch, DATUM_GENERIERT);
+		final Gesuch mutation = createMutationFinSit(gesuch, true, DATUM_AUGUST.atStartOfDay(), BigDecimal.valueOf(70000), false);
+		Assert.assertNotNull(mutation);
+		final Gesuch zweiteMutation = createMutationFinSit(mutation, true, DATUM_AUGUST.atStartOfDay(), BigDecimal.valueOf(90000), false);
+		Assert.assertNotNull(zweiteMutation);
+
+		// gleiche Mutation wie in vorherigem Test aber die Yahlung erfolgt nun am Ende der Periode, daher Aenderungen in der Zahlung
+		Zahlungsauftrag zahlungsauftragMutation = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG.plusDays(1), "Testauftrag", DATUM_GENERIERT.plusDays(1));
+
+		Assert.assertNotNull(zahlungsauftragMutation);
+		Assert.assertNotNull(zahlungsauftragMutation.getZahlungen());
+		Assert.assertEquals(1, zahlungsauftragMutation.getZahlungen().size());
+
+		final BigDecimal betragAugustGesuch = getBetragAugustFromGesuch(gesuch);
+		final BigDecimal betragAugustMutation = getBetragAugustFromGesuch(mutation);
+		final BigDecimal betragAugustZweiteMutation = getBetragAugustFromGesuch(zweiteMutation);
+
+		Assert.assertEquals(11, zahlungsauftrag.getZahlungen().get(0).getZahlungspositionen().size());
+		// es hat 22: 11 die substraiert werden von der alten Zahlung und 11 die neu dazukommen
+		Assert.assertEquals(22, zahlungsauftragMutation.getZahlungen().get(0).getZahlungspositionen().size());
+
+		Assert.assertEquals(0, betragAugustZweiteMutation.compareTo(
+			zahlungsauftragMutation.getZahlungen().get(0).getZahlungspositionen().get(0).getBetrag()));
+		Assert.assertEquals(0, betragAugustGesuch.negate().compareTo(
+			zahlungsauftragMutation.getZahlungen().get(0).getZahlungspositionen().get(1).getBetrag()));
+
+		assertZahlungPositionenIgnored(zahlungsauftragMutation.getZahlungen().get(0).getZahlungspositionen(), false);
+		assertErsteMutationIsNeverUsed(zahlungsauftragMutation.getZahlungen().get(0).getZahlungspositionen(), betragAugustMutation);
+		assertAllOldZahlungenAreSubstracted(zahlungsauftrag.getZahlungen().get(0).getZahlungspositionen(),
+			zahlungsauftragMutation.getZahlungen().get(0).getZahlungspositionen());
+	}
+
+	/**
+	 * Ein Gesuch wird erstellt. Eine Zahlung wird gemacht
+	 * Die bereits erstellte Verfuegung mutieren mit Aenderung aber diese ignorieren. Alle Korrekturen werden als ignoriert angezeigt
+	 */
+	@Test
+	public void zahlungsauftragErstellenNormalUndMutationChangeIgnoriert() throws Exception {
+		final Gesuch gesuch = createGesuch(true);
+		final Zahlungsauftrag zahlungsauftrag = checkZahlungErstgesuch(gesuch, DATUM_GENERIERT);
+		final Gesuch mutation = createMutationFinSit(gesuch, true, DATUM_AUGUST.atStartOfDay(), BigDecimal.valueOf(70000), true);
 		Assert.assertNotNull(mutation);
 
 		// gleiche Mutation wie in vorherigem Test aber die Yahlung erfolgt nun am Ende der Periode, daher Aenderungen in der Zahlung
@@ -153,12 +230,9 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		// es hat 22: 11 die substraiert werden von der alten Zahlung und 11 die neu dazukommen
 		Assert.assertEquals(22, zahlungsauftragMutation.getZahlungen().get(0).getZahlungspositionen().size());
 
-		Assert.assertEquals(0, BigDecimal.valueOf(1082.40).compareTo(
-			zahlungsauftragMutation.getZahlungen().get(0).getZahlungspositionen().get(0).getBetrag()));
-		Assert.assertEquals(zahlungsauftrag.getZahlungen().get(0).getZahlungspositionen().get(0).getBetrag(),
-			zahlungsauftragMutation.getZahlungen().get(0).getZahlungspositionen().get(1).getBetrag().negate());
-
-		checkAllOldZahlungenAreSubstracted(zahlungsauftrag.getZahlungen().get(0).getZahlungspositionen(),
+		// die ZahlungPositionen wurden der Zahlung hinzugefuegt aber sie muessen als ignoriert markiert sein
+		assertZahlungPositionenIgnored(zahlungsauftragMutation.getZahlungen().get(0).getZahlungspositionen(), true);
+		assertAllOldZahlungenAreSubstracted(zahlungsauftrag.getZahlungen().get(0).getZahlungspositionen(),
 			zahlungsauftragMutation.getZahlungen().get(0).getZahlungspositionen());
 	}
 
@@ -381,11 +455,11 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 			LocalDate.of(TestDataUtil.PERIODE_JAHR_0, Month.DECEMBER, 15), LocalDate.of(TestDataUtil.PERIODE_JAHR_1, Month.JANUARY, 15), verfuegen);
 	}
 
-	private Gesuch createMutationFinSit(@Nullable Gesuch gesuch, boolean verfuegen, LocalDateTime timestampVerfuegt, BigDecimal nettoLohn) {
+	private Gesuch createMutationFinSit(@Nullable Gesuch gesuch, boolean verfuegen, LocalDateTime timestampVerfuegt, BigDecimal nettoLohn, boolean ignorieren) {
 		Assert.assertNotNull(gesuch);
 		final Gesuch mutation = testfaelleService.mutierenFinSit(gesuch.getFall().getFallNummer(), gesuch.getGesuchsperiode().getId(),
 			LocalDate.of(TestDataUtil.PERIODE_JAHR_0, Month.DECEMBER, 15), LocalDate.of(TestDataUtil.PERIODE_JAHR_1, Month.JANUARY, 15),
-			verfuegen, nettoLohn, DATUM_AUGUST.atStartOfDay());// Im Gesuch ist nettolohn nicht definiert, also 0. Hier machen wir es hoeher
+			verfuegen, nettoLohn, ignorieren);// Im Gesuch ist nettolohn nicht definiert, also 0. Hier machen wir es hoeher
 		mutation.setTimestampVerfuegt(timestampVerfuegt);
 		persistence.merge(mutation);
 		return mutation;
@@ -406,7 +480,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 			}
 			gesuchService.createGesuch(mutation);
 			// es muss mit verfuegungService.verfuegen verfuegt werden, damit der Zahlungsstatus der Zeitabschnitte richtig gesetzt wird. So wird auch dies getestet
-			testfaelleService.gesuchVerfuegenUndSpeichern(false, mutation, true);
+			testfaelleService.gesuchVerfuegenUndSpeichern(false, mutation, true, false);
 			verfuegungService.calculateVerfuegung(mutation);
 			for (Betreuung betreuung : betreuungs) {
 				verfuegungService.verfuegen(betreuung.getVerfuegung(), betreuung.getId(), false);
@@ -440,7 +514,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 			mutation.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(60000d));
 			gesuchService.createGesuch(mutation);
 			// es muss mit verfuegungService.verfuegen verfuegt werden, damit der Zahlungsstatus der Zeitabschnitte richtig gesetzt wird. So wird auch dies getestet
-			testfaelleService.gesuchVerfuegenUndSpeichern(false, mutation, true);
+			testfaelleService.gesuchVerfuegenUndSpeichern(false, mutation, true, false);
 			verfuegungService.calculateVerfuegung(mutation);
 			List<Betreuung> betreuungs = mutation.extractAllBetreuungen();
 			for (Betreuung betreuung : betreuungs) {
@@ -475,7 +549,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		return zahlungsauftrag;
 	}
 
-	private void checkAllOldZahlungenAreSubstracted(List<Zahlungsposition> zahlungspositionen, List<Zahlungsposition> zahlungspositionenMutation) {
+	private void assertAllOldZahlungenAreSubstracted(List<Zahlungsposition> zahlungspositionen, List<Zahlungsposition> zahlungspositionenMutation) {
 		BigDecimal oldTotal = BigDecimal.ZERO;
 		for (Zahlungsposition zahlungsposition : zahlungspositionen) {
 			oldTotal = oldTotal.add(zahlungsposition.getBetrag());
@@ -487,5 +561,34 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 			}
 		}
 		Assert.assertEquals(oldTotal, allSubstracted.negate());
+	}
+
+	private void assertZahlungPositionenIgnored(List<Zahlungsposition> zahlungspositionen, boolean ignoriert) {
+		for (Zahlungsposition zahlungsposition : zahlungspositionen) {
+			Assert.assertEquals(ignoriert, zahlungsposition.isIgnoriert());
+		}
+	}
+
+	private void assertErsteMutationIsNeverUsed(List<Zahlungsposition> zahlungspositionen, BigDecimal betrag) {
+		for (Zahlungsposition zahlungsposition : zahlungspositionen) {
+			Assert.assertNotEquals(betrag, zahlungsposition.getBetrag());
+		}
+	}
+
+	/**
+	 * Berechnet den gesamten Betrag fuer den Monat August.
+	 * Voraussetzungen: Es gibt nur eine Betreuung der Art KITA. Sonst werden alle zusammenaddiert
+	 */
+	private BigDecimal getBetragAugustFromGesuch(@Nullable Gesuch gesuch) {
+		Assert.assertNotNull(gesuch);
+		BigDecimal betrag =  gesuch.extractAllBetreuungen().stream()
+			.filter(betreuung -> betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp() == BetreuungsangebotTyp.KITA)
+			.map(Betreuung::getVerfuegung)
+			.map(Verfuegung::getZeitabschnitte)
+			.flatMap(Collection::stream)
+			.filter(verfuegungZeitabschnitt -> verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb().getMonth() == Month.AUGUST)
+			.map(VerfuegungZeitabschnitt::getVerguenstigung)
+			.reduce(BigDecimal.ZERO, BigDecimal::add);
+		return betrag;
 	}
 }

@@ -353,14 +353,14 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 		mutation.setGesuchsteller2(gesuchsteller2);
 		gesuchService.createGesuch(mutation);
-		gesuchVerfuegenUndSpeichern(verfuegen, mutation, true);
+		gesuchVerfuegenUndSpeichern(verfuegen, mutation, true, false);
 		return mutation;
 	}
 
 	@Override
 	@Nonnull
 	public Gesuch mutierenFinSit(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId, @Nonnull LocalDate eingangsdatum,
-		@Nonnull LocalDate aenderungPer, boolean verfuegen, BigDecimal nettoLohn, LocalDateTime timestampVerfuegt) {
+		@Nonnull LocalDate aenderungPer, boolean verfuegen, BigDecimal nettoLohn, boolean ignorieren) {
 
 		Validate.notNull(eingangsdatum);
 		Validate.notNull(gesuchsperiodeId);
@@ -376,7 +376,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		gesuchstellerService.saveGesuchsteller(mutation.getGesuchsteller1(), mutation, 1, false);
 
 		gesuchService.createGesuch(mutation);
-		gesuchVerfuegenUndSpeichern(verfuegen, mutation, true);
+		gesuchVerfuegenUndSpeichern(verfuegen, mutation, true, ignorieren);
 		return mutation;
 	}
 
@@ -408,7 +408,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			familiensituationContainer.setFamiliensituationJA(newFamsit);
 			familiensituationService.saveFamiliensituation(mutation, familiensituationContainer, null);
 			gesuchService.createGesuch(mutation);
-			gesuchVerfuegenUndSpeichern(verfuegen, mutation, true);
+			gesuchVerfuegenUndSpeichern(verfuegen, mutation, true, false);
 			return mutation;
 		}
 
@@ -488,7 +488,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			gesuch.setEingangsart(Eingangsart.PAPIER);
 		}
 
-		gesuchVerfuegenUndSpeichern(verfuegen, gesuch, false);
+		gesuchVerfuegenUndSpeichern(verfuegen, gesuch, false, false);
 
 		return gesuch;
 
@@ -506,7 +506,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		gesuchService.createGesuch(mutation);
 		Validate.notNull(mutation.getFamiliensituationContainer(), "Familiensituation muss gesetzt sein!");
 		familiensituationService.saveFamiliensituation(mutation, mutation.getFamiliensituationContainer(), null);
-		gesuchVerfuegenUndSpeichern(verfuegen, mutation, true);
+		gesuchVerfuegenUndSpeichern(verfuegen, mutation, true, false);
 		setWizardStepOkayAndVerfuegbar(wizardStepService.findWizardStepFromGesuch(mutation.getId(), WizardStepName.GESUCHSTELLER).getId());
 		setWizardStepOkayAndVerfuegbar(wizardStepService.findWizardStepFromGesuch(mutation.getId(), WizardStepName.FINANZIELLE_SITUATION).getId());
 		setWizardStepOkayAndVerfuegbar(wizardStepService.findWizardStepFromGesuch(mutation.getId(), WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getId());
@@ -522,7 +522,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 	@Override
-	public void gesuchVerfuegenUndSpeichern(boolean verfuegen, @Nonnull Gesuch gesuch, boolean mutation) {
+	public void gesuchVerfuegenUndSpeichern(boolean verfuegen, @Nonnull Gesuch gesuch, boolean mutation, boolean ignorieren) {
 		final List<WizardStep> wizardStepsFromGesuch = wizardStepService.findWizardStepsFromGesuch(gesuch.getId());
 
 		if (!mutation) {
@@ -542,7 +542,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		if (verfuegen) {
 			FreigabeCopyUtil.copyForFreigabe(gesuch);
 			verfuegungService.calculateVerfuegung(gesuch);
-			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.setZahlungsstatus(betreuung.getVerfuegung(), betreuung.getId(), false)));
+			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.setZahlungsstatus(betreuung.getVerfuegung(), betreuung.getId(), ignorieren)));
 			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId(), Betreuungsstatus.VERFUEGT)));
 			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.generateVerfuegungDokument(betreuung)));
 			generateDokFinSituation(gesuch); // the finSit document must be explicitly generated

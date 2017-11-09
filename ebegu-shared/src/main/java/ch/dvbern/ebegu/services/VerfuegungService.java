@@ -34,6 +34,10 @@ public interface VerfuegungService {
 	 */
 	void generateVerfuegungDokument(@Nonnull Betreuung betreuung);
 
+	/**
+	 * Aendert den Status der Zahlung auf NEU oder IGNORIEREND fuer alle Zahlungen wo etwas korrigiert wurde.
+	 * Wird auf NEU gesetzt wenn ignorieren==false, sonst wird es auf IGNORIEREND gesetzt.
+	 */
 	@SuppressWarnings("LocalVariableNamingConvention")
 	void setZahlungsstatus(Verfuegung verfuegung, @Nonnull String betreuungId, boolean ignorieren);
 
