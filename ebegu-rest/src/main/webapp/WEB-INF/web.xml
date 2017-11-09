@@ -42,7 +42,6 @@
 		<display-name>SecurityConstraint</display-name>
 		<web-resource-collection>
 			<web-resource-name>ebegu-web-allowed-pattern</web-resource-name>
-			<!--todo  EBEGU-1515 Variante entscheiden-->
 			<url-pattern>/api/v1/swagger.json</url-pattern>
 			<url-pattern>/api/v1/login</url-pattern>
 			<url-pattern>/api/v1/auth/login</url-pattern>
