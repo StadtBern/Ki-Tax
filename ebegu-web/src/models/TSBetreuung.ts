@@ -270,6 +270,4 @@ export default class TSBetreuung extends TSAbstractEntity {
     public isBetreuungsstatus(status: TSBetreuungsstatus): boolean {
         return this.betreuungsstatus === status;
     }
-
-
 }

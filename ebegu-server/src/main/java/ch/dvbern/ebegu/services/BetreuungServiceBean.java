@@ -370,7 +370,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
 		Root<Betreuung> root = query.from(Betreuung.class);
-		// Status muss WARTEN sein
+		// Status muss WARTEN oder SCHULAMT_ANMELDUNG_AUSGELOEST sein
 		Predicate predicateStatus = root.get(Betreuung_.betreuungsstatus).in(Arrays.asList(Betreuungsstatus.forPendenzInstitution));
 		// Institution
 		Predicate predicateInstitution = root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen));
