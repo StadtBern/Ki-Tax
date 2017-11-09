@@ -50,7 +50,7 @@ public class EbeguApplicationV1 extends Application {
 
 	private void configureSwagger() {
 
-		if (Boolean.parseBoolean(System.getProperty(EBEGU_DEVELOPMENT_MODE, "true"))) {
+		if (Boolean.parseBoolean(System.getProperty(EBEGU_DEVELOPMENT_MODE, "false"))) {
 			BeanConfig beanConfig = new BeanConfig();
 			beanConfig.setTitle("eBEGU REST Interface");
 			beanConfig.setVersion("1.0");
