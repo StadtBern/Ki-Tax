@@ -1,4 +1,4 @@
-import {IComponentOptions, IHttpResponse} from 'angular';
+import {IComponentOptions} from 'angular';
 import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
 import EbeguUtil from '../../utils/EbeguUtil';
 import ZahlungRS from '../../core/service/zahlungRS.rest';

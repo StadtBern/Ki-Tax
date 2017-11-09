@@ -178,6 +178,7 @@ export class TestdatenViewController {
     public zahlungenKontrollieren(): void {
         this.zahlungRS.zahlungenKontrollieren();
     }
+
     public deleteAllZahlungsauftraege(): void {
         this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
             deleteText: 'ZAHLUNG_LOESCHEN_DIALOG_TEXT',
@@ -189,4 +190,5 @@ export class TestdatenViewController {
                 this.zahlungRS.deleteAllZahlungsauftraege();
             });
     }
+
 }
