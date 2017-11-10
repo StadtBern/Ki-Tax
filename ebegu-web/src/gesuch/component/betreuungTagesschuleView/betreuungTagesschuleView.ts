@@ -34,6 +34,8 @@ import ITranslateService = angular.translate.ITranslateService;
 import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import DateUtil from '../../../utils/DateUtil';
+import {getTSModulTagesschuleNameValues, TSModulTagesschuleName} from '../../../models/enums/TSModulTagesschuleName';
+import {getWeekdaysValues, TSDayOfWeek} from '../../../models/enums/TSDayOfWeek';
 
 let template = require('./betreuungTagesschuleView.html');
 require('./betreuungTagesschuleView.less');
@@ -87,5 +89,13 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
             }
         }
         return '';
+    }
+
+    public getModulTagesschuleNameList(): TSModulTagesschuleName[] {
+        return getTSModulTagesschuleNameValues();
+    }
+
+    public getWeekDays(): TSDayOfWeek[] {
+        return getWeekdaysValues();
     }
 }

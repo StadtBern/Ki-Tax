@@ -53,7 +53,25 @@
                     </div>
                 </div>
 
-                <span>TODO Hier kommt dann die Modulauswahl für die Anmeldung</span>
+                <table>
+                    <tr>
+                        <td></td>
+                        <td ng-repeat="weekDay in vm.getWeekDays()">
+                            <span ng-bind="weekDay | translate"></span>
+                        </td>
+                    </tr>
+                    <!--todo eingentlich muss eine Tagesschule unbedingt Module haben-->
+                    <tr ng-repeat="modulName in vm.getModulTagesschuleNameList()">
+                        <td ng-bind="modulName | translate"></td>
+                        <td ng-repeat="weekDay in vm.getWeekDays()">
+                            <div class=" checkbox">
+                                <md-checkbox ng-model="vm.getModel().diplomatenstatus" name="diplomatenstatus"
+                                             aria-label="{{'GESUCHSTELLER_DIPLOMATENSTATUS'|translate}}">
+                                </md-checkbox>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
 
             </div>
 

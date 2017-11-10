@@ -22,3 +22,13 @@ export enum TSDayOfWeek {
     SATURDAY = <any> 'SATURDAY',
     SUNDAY = <any> 'SUNDAY'
 }
+
+export function getWeekdaysValues(): Array<TSDayOfWeek> {
+    return [
+        TSDayOfWeek.MONDAY,
+        TSDayOfWeek.TUESDAY,
+        TSDayOfWeek.WEDNESDAY,
+        TSDayOfWeek.THURSDAY,
+        TSDayOfWeek.FRIDAY
+    ];
+}
