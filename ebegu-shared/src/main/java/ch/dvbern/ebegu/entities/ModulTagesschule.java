@@ -30,12 +30,14 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.enums.ModulTagesschuleName;
+import ch.dvbern.ebegu.validators.CheckTimeRange;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
 /**
  * Entity for the Module of the Tageschulangebote.
  */
+@CheckTimeRange
 @Audited
 @Entity
 public class ModulTagesschule extends AbstractEntity implements Comparable<ModulTagesschule> {

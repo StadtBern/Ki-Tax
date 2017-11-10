@@ -113,12 +113,4 @@ export class InstitutionStammdatenRS {
     public getServiceName(): string {
         return 'InstitutionStammdatenRS';
     }
-
-    public findMondayModuleTagesschuleByInstitutionStammdaten(institutionStammdatenID: string): IPromise<TSModulTagesschule[]> {
-        return this.http.get(this.serviceURL + '/mouduletagesschule' + '/' + encodeURIComponent(institutionStammdatenID))
-            .then((response: any) => {
-                this.log.debug('PARSING moduleTagesschule REST array object', response.data);
-                return this.ebeguRestUtil.parseModuleTagesschuleArray(response.data);
-            });
-    }
 }

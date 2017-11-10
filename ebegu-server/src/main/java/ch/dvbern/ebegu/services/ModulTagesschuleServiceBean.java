@@ -15,7 +15,6 @@
 
 package ch.dvbern.ebegu.services;
 
-import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,17 +29,10 @@ import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.SetJoin;
 
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.entities.InstitutionStammdatenTagesschule;
-import ch.dvbern.ebegu.entities.InstitutionStammdatenTagesschule_;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
 import ch.dvbern.ebegu.entities.ModulTagesschule;
 import ch.dvbern.ebegu.entities.ModulTagesschule_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -102,7 +94,7 @@ public class ModulTagesschuleServiceBean extends AbstractBaseService implements 
 	@Nonnull
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMINISTRATOR_SCHULAMT })
-	//TODO wijo brauchts das getAll?
+	//TODO (team) brauchts das getAll?
 	public Collection<ModulTagesschule> getAllModule() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(ModulTagesschule.class));
 	}
@@ -110,7 +102,7 @@ public class ModulTagesschuleServiceBean extends AbstractBaseService implements 
 	@Nonnull
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMINISTRATOR_SCHULAMT })
-	//TODO wijo brauchts das findByName?
+	//TODO (team) brauchts das findByName?
 	public List<ModulTagesschule> findModulByName(String modulTagesschuleName) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<ModulTagesschule> query = cb.createQuery(ModulTagesschule.class);
@@ -127,28 +119,6 @@ public class ModulTagesschuleServiceBean extends AbstractBaseService implements 
 		return q.getResultList();
 	}
 
-	@Nonnull
-	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMINISTRATOR_SCHULAMT })
-	public Collection<ModulTagesschule> findMondayModuleTagesschuleByInstitutionStammdaten(String institutionStammdatenID) {
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<ModulTagesschule> query = cb.createQuery(ModulTagesschule.class);
-		ParameterExpression<String> institutionStammdatenIdParam = cb.parameter(String.class, "institutionStammdatenId");
-		Root<InstitutionStammdaten> root = query.from(InstitutionStammdaten.class);
-		Predicate institutionsStammdatenPredicate = cb.equal(root.get(InstitutionStammdaten_.id), institutionStammdatenIdParam);
-		query.where(institutionsStammdatenPredicate);
-		Join<InstitutionStammdaten, InstitutionStammdatenTagesschule> joinInstStammdatenTagesschule = root.join(InstitutionStammdaten_
-			.institutionStammdatenTagesschule, JoinType.INNER);
-		SetJoin<InstitutionStammdatenTagesschule, ModulTagesschule> joinTagesschulModule = joinInstStammdatenTagesschule.join(InstitutionStammdatenTagesschule_
-			.moduleTagesschule, JoinType.INNER);
-		Predicate mondayTagesschulModule = cb.equal(joinTagesschulModule.get(ModulTagesschule_.wochentag), DayOfWeek.MONDAY);
-		query.select(joinTagesschulModule);
-		query.where(institutionsStammdatenPredicate, mondayTagesschulModule);
-
-		List<ModulTagesschule> modulTagesschuleList = persistence.getEntityManager().createQuery(query).setParameter("institutionStammdatenId",
-			institutionStammdatenID).getResultList();
-		return modulTagesschuleList;
-	}
 
 }
 

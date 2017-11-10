@@ -67,7 +67,7 @@ public interface ModulTagesschuleService {
 	 *
 	 * @return Liste aller Module aus der DB
 	 */
-	//TODO wijo brauchts das getAll?
+	//TODO (team) brauchts das getAll?
 	@Nonnull
 	Collection<ModulTagesschule> getAllModule();
 
@@ -77,16 +77,8 @@ public interface ModulTagesschuleService {
 	 *
 	 * @param modulname des Moduls
 	 */
-	//TODO wijo brauchts das findByName?
+	//TODO (team) brauchts das findByName?
 	@Nonnull
 	List<ModulTagesschule> findModulByName(String modulname);
-
-
-	/**
-	 * Gibt eine Liste der vorhandenen Montagsmodule der institutionsStammdaten (Tagesschule) zurueck
-	 * @param institutionStammdatenID
-	 * @return Liste der Montagsmodule der Tagesschule
-	 */
-	Collection<ModulTagesschule> findMondayModuleTagesschuleByInstitutionStammdaten(String institutionStammdatenID);
 
 }

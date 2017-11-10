@@ -1755,7 +1755,7 @@ public class JaxBConverter {
 		belegungTagesschule) {
 		if (belegungTagesschuleJAXP != null) {
 			convertAbstractFieldsToEntity(belegungTagesschuleJAXP, belegungTagesschule);
-			//TODO (team) hier müssen die InstitutionsStammdaten der Tagesschule mitgegeben werden sondt ist es nicht eindeutig
+			//TODO (team) hier müssen die InstitutionsStammdaten der Tagesschule mitgegeben werden sonst ist es nicht eindeutig
 			moduleTagesschuleListToEntity(belegungTagesschuleJAXP.getModuleTagesschule(), belegungTagesschule.getModuleTagesschule(),
 				new InstitutionStammdatenTagesschule());
 			belegungTagesschule.setEintrittsdatum(belegungTagesschuleJAXP.getEintrittsdatum());
