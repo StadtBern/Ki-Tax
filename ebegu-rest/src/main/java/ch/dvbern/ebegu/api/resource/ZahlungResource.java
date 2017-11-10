@@ -248,16 +248,12 @@ public class ZahlungResource {
 	@ApiOperation(value = "Loescht einen Zahlungsauftrag", response = Void.class)
 	@Nullable
 	@DELETE
-	@Path("/delete/{zahlungsauftragId}")
+	@Path("/delete")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response zahlungsauftragLoeschen(
-		@Nonnull @NotNull @PathParam("zahlungsauftragId") JaxId zahlungsauftragJAXPId) throws EbeguException, MimeTypeParseException {
+	public Response deleteAllZahlungsauftraege() throws EbeguException, MimeTypeParseException {
 
-		Validate.notNull(zahlungsauftragJAXPId.getId());
-		String zahlungsauftragId = converter.toEntityId(zahlungsauftragJAXPId);
-
-		zahlungService.deleteZahlungsauftrag(zahlungsauftragId);
+		zahlungService.deleteAllZahlungsauftraege();
 		return Response.ok().build();
 	}
 
