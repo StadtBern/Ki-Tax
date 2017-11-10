@@ -1158,8 +1158,7 @@ public class JaxBConverter {
 		return jaxInstStammdaten;
 	}
 
-	public InstitutionStammdaten institutionStammdatenToEntity(final JaxInstitutionStammdaten institutionStammdatenJAXP, final InstitutionStammdaten
-		institutionStammdaten) {
+	public InstitutionStammdaten institutionStammdatenToEntity(final JaxInstitutionStammdaten institutionStammdatenJAXP, final InstitutionStammdaten institutionStammdaten) {
 		Validate.notNull(institutionStammdatenJAXP);
 		Validate.notNull(institutionStammdatenJAXP.getInstitution());
 		Validate.notNull(institutionStammdaten);
@@ -1221,7 +1220,8 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(institutionStammdatenTagesschuleJAXP, institutionStammdatenTagesschule);
 		moduleTagesschuleListToEntity(institutionStammdatenTagesschuleJAXP.getModuleTagesschule(), institutionStammdatenTagesschule.getModuleTagesschule(),
 			institutionStammdatenTagesschule);
-		if(institutionStammdatenTagesschule.getModuleTagesschule()!=null && !institutionStammdatenTagesschule.getModuleTagesschule().isEmpty()){
+		//todo fragen warum??
+		if (institutionStammdatenTagesschule.getModuleTagesschule() != null && !institutionStammdatenTagesschule.getModuleTagesschule().isEmpty()) {
 			return institutionStammdatenTagesschule;
 		}
 		return null;
@@ -1755,7 +1755,7 @@ public class JaxBConverter {
 		belegungTagesschule) {
 		if (belegungTagesschuleJAXP != null) {
 			convertAbstractFieldsToEntity(belegungTagesschuleJAXP, belegungTagesschule);
-			//TODO (team) hier müssen die InstitutionsStammdaten der Tagesschule mitgegeben werden sonst ist es nicht eindeutig
+			//TODO (team) hier müssen die InstitutionsStammdaten der Tagesschule mitgegeben werden sonst ist es nicht eindeutig ????
 			moduleTagesschuleListToEntity(belegungTagesschuleJAXP.getModuleTagesschule(), belegungTagesschule.getModuleTagesschule(),
 				new InstitutionStammdatenTagesschule());
 			belegungTagesschule.setEintrittsdatum(belegungTagesschuleJAXP.getEintrittsdatum());
@@ -1983,6 +1983,7 @@ public class JaxBConverter {
 		return null;
 	}
 
+	//todo fragen warum list und nicht set???
 	private List<JaxModulTagesschule> moduleTagesschuleListToJax(@Nullable final Set<ModulTagesschule> module) {
 		final List<JaxModulTagesschule> jaxModulTagesschule = new ArrayList<>();
 		if (module != null) {
@@ -2951,29 +2952,30 @@ public class JaxBConverter {
 		return jaxTag;
 	}
 
+	/**
+	 * Kopiert die Daten die fuer den Motag eingegeben wurden in alle andere Wochentage
+	 */
+	//todo fragen gehoert es zu den Modulen? koennten wie dies vielleicht in JaxInstitutionStammdaten schieben??
 	public JaxInstitutionStammdaten updateJaxModuleTagesschule(@Nonnull JaxInstitutionStammdaten jaxInstDaten) {
 		Objects.requireNonNull(jaxInstDaten);
-		if (jaxInstDaten.getInstitutionStammdatenTagesschule() != null && jaxInstDaten.getInstitutionStammdatenTagesschule().getModuleTagesschule() != null &&
-			!jaxInstDaten.getInstitutionStammdatenTagesschule().getModuleTagesschule().isEmpty()) {
+		if (jaxInstDaten.getInstitutionStammdatenTagesschule() != null && !jaxInstDaten.getInstitutionStammdatenTagesschule().getModuleTagesschule().isEmpty()) {
 
 			List<JaxModulTagesschule> moduleTagesschule = jaxInstDaten.getInstitutionStammdatenTagesschule().getModuleTagesschule();
 			List<JaxModulTagesschule> moduleTagesschuleComplete = new ArrayList<>();
-			if (moduleTagesschule != null && !moduleTagesschule.isEmpty()) {
-				DayOfWeek[] arbeitstageOhneMontag = { DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY };
-				moduleTagesschule.stream()
-					.filter(m -> m.getWochentag().equals(DayOfWeek.MONDAY))
-					.forEach((res) -> {
-						moduleTagesschuleComplete.add(res);
-						for (DayOfWeek dayOfWeek : arbeitstageOhneMontag) {
-							JaxModulTagesschule modulTagesschule = new JaxModulTagesschule();
-							modulTagesschule.setWochentag(dayOfWeek);
-							modulTagesschule.setModulTagesschuleName(res.getModulTagesschuleName());
-							modulTagesschule.setZeitVon(res.getZeitVon());
-							modulTagesschule.setZeitBis(res.getZeitBis());
-							moduleTagesschuleComplete.add(modulTagesschule);
-						}
-					});
-			}
+			DayOfWeek[] arbeitstageOhneMontag = { DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY };
+			moduleTagesschule.stream()
+				.filter(m -> m.getWochentag() == DayOfWeek.MONDAY)
+				.forEach(res -> {
+					moduleTagesschuleComplete.add(res);
+					for (DayOfWeek dayOfWeek : arbeitstageOhneMontag) {
+						JaxModulTagesschule modulTagesschule = new JaxModulTagesschule();
+						modulTagesschule.setWochentag(dayOfWeek);
+						modulTagesschule.setModulTagesschuleName(res.getModulTagesschuleName());
+						modulTagesschule.setZeitVon(res.getZeitVon());
+						modulTagesschule.setZeitBis(res.getZeitBis());
+						moduleTagesschuleComplete.add(modulTagesschule);
+					}
+				});
 			jaxInstDaten.getInstitutionStammdatenTagesschule().setModuleTagesschule(moduleTagesschuleComplete);
 		}
 		return jaxInstDaten;

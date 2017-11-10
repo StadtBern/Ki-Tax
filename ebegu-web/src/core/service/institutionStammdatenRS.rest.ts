@@ -17,7 +17,6 @@ import {IHttpPromise, IHttpService, ILogService, IPromise} from 'angular';
 import * as moment from 'moment';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
-import TSModulTagesschule from '../../models/TSModulTagesschule';
 import DateUtil from '../../utils/DateUtil';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 

@@ -86,7 +86,7 @@ public class InstitutionStammdatenResource {
 			instDaten = new InstitutionStammdaten();
 			instDaten.setAdresse(new Adresse());
 		}
-		if(institutionStammdatenJAXP.getInstitutionStammdatenTagesschule()!=null && institutionStammdatenJAXP.getInstitutionStammdatenTagesschule().getModuleTagesschule()!=null) {
+		if (institutionStammdatenJAXP.getInstitutionStammdatenTagesschule() != null) {
 			institutionStammdatenJAXP = converter.updateJaxModuleTagesschule(institutionStammdatenJAXP);
 		}
 		InstitutionStammdaten convertedInstData = converter.institutionStammdatenToEntity(institutionStammdatenJAXP, instDaten);

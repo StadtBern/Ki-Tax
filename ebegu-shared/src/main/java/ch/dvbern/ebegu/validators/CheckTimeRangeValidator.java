@@ -30,6 +30,6 @@ public class CheckTimeRangeValidator implements ConstraintValidator<CheckTimeRan
 
 	@Override
 	public boolean isValid(@Nonnull ModulTagesschule modul, ConstraintValidatorContext constraintValidatorContext) {
-		return !modul.getZeitVon().isAfter(modul.getZeitBis());
+		return modul.getZeitVon().isBefore(modul.getZeitBis()); // es ist nicht erlaubt dass sie gleich sind
 	}
 }

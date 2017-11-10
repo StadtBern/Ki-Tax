@@ -163,7 +163,7 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
         let modul: TSModulTagesschule = this.modulTageschuleMap[modulname];
         if (!modul) {
             modul = new TSModulTagesschule();
-            modul.wochentag = TSDayOfWeek.MONDAY;
+            modul.wochentag = TSDayOfWeek.MONDAY; // als Vertreter der ganzen Woche
             modul.modulTagesschuleName = modulname;
             this.modulTageschuleMap[modulname] = modul;
         }
@@ -193,18 +193,18 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
     }
 
     private replaceTagesschulmoduleOnInstitutionStammdatenTagesschule(): void {
-        let definiedModulTagesschule = [];
+        let definedModulTagesschule = [];
         for (let modulname in this.modulTageschuleMap) {
             let tempModul: TSModulTagesschule = this.modulTageschuleMap[modulname];
             if (tempModul.zeitVon && tempModul.zeitBis) {
-                definiedModulTagesschule.push(tempModul);
+                definedModulTagesschule.push(tempModul);
             }
         }
-        if (definiedModulTagesschule.length > 0) {
+        if (definedModulTagesschule.length > 0) {
             if (!this.selectedInstitutionStammdaten.institutionStammdatenTagesschule) {
                 this.selectedInstitutionStammdaten.institutionStammdatenTagesschule = new TSInstitutionStammdatenTagesschule();
             }
-            this.selectedInstitutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule = definiedModulTagesschule;
+            this.selectedInstitutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule = definedModulTagesschule;
         }
     }
 }

@@ -15,8 +15,6 @@
 
 package ch.dvbern.ebegu.services;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
@@ -29,22 +27,13 @@ import ch.dvbern.ebegu.entities.ModulTagesschule;
 public interface ModulTagesschuleService {
 
 	/**
-	 * Erstellt ein neues ModulTagesschule in der DB
+	 * Aktualisiert das ModulTagesschule in der DB. Sollte das Modul nicht existieren wird es erstellt.
 	 *
-	 * @param modulTagesschule das zu speichernde Modul
-	 * @return das gespeicherte Modul
-	 */
-	@Nonnull
-	ModulTagesschule createModul(@Nonnull ModulTagesschule modulTagesschule);
-
-	/**
-	 * Aktualisiert das ModulTagesschule in der DB
-	 *
-	 * @param modulTagesschule das zu aktualisierende Modul
+	 * @param modulTagesschule das zu aktualisierende/erstellende Modul
 	 * @return Das aktualisierte Modul
 	 */
 	@Nonnull
-	ModulTagesschule updateModul(@Nonnull ModulTagesschule modulTagesschule);
+	ModulTagesschule saveModul(@Nonnull ModulTagesschule modulTagesschule);
 
 	/**
 	 * Laedt das ModulTagesschule mit der id aus der DB.
@@ -61,24 +50,5 @@ public interface ModulTagesschuleService {
 	 * @param modulTagesschuleId des zu entfernenden Moduls
 	 */
 	void removeModul(@Nonnull String modulTagesschuleId);
-
-	/**
-	 * Gibt alle existierenden ModulTagesschule zurueck.
-	 *
-	 * @return Liste aller Module aus der DB
-	 */
-	//TODO (team) brauchts das getAll?
-	@Nonnull
-	Collection<ModulTagesschule> getAllModule();
-
-	/**
-	 * Gibt eine Liste von Modulen zureck, deren Modulname angegebenen Namen  hat.
-	 * Achtung, damit ist ein Modul nicht eindeutig identifiziert!
-	 *
-	 * @param modulname des Moduls
-	 */
-	//TODO (team) brauchts das findByName?
-	@Nonnull
-	List<ModulTagesschule> findModulByName(String modulname);
 
 }

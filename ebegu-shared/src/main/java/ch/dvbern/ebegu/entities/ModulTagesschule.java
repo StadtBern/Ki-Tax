@@ -133,39 +133,5 @@ public class ModulTagesschule extends AbstractEntity implements Comparable<Modul
 		builder.append(this.getModulTagesschuleName(), o.getModulTagesschuleName());
 		return builder.toComparison();
 	}
-//
-//	@Override
-//	public boolean equals(@Nullable Object o) {
-//		if (this == o) {
-//			return true;
-//		}
-//
-//		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
-//			return false;
-//		}
-//
-//		ModulTagesschule that = (ModulTagesschule) o;
-//
-//		Objects.requireNonNull(getWochentag());
-//		Objects.requireNonNull(getModulTagesschuleName());
-//		Objects.requireNonNull(getInstitutionStammdatenTagesschule());
-//		Objects.requireNonNull(that.getWochentag());
-//		Objects.requireNonNull(that.getModulTagesschuleName());
-//		Objects.requireNonNull(that.getInstitutionStammdatenTagesschule());
-//
-//		boolean wochentag = getWochentag().equals(that.getWochentag());
-//		boolean name = getModulTagesschuleName().equals(that.getModulTagesschuleName());
-//		boolean instStammdatenTagesschule = getInstitutionStammdatenTagesschule().equals(that.getInstitutionStammdatenTagesschule());
-//
-//		return wochentag && name && instStammdatenTagesschule;
-//	}
-//
-//	@Override
-//	public int hashCode() {
-//		int result  = 31* (wochentag != null ? wochentag.hashCode() : 0);
-//		result = 31 * result + (modulTagesschuleName != null ? modulTagesschuleName.hashCode() : 0);
-//		result = 31 * result + (zeitVon != null ? zeitVon.hashCode() : 0);
-//		result = 31 * result + (zeitBis != null ? zeitBis.hashCode() : 0);
-//		return result;
-//	}
+
 }

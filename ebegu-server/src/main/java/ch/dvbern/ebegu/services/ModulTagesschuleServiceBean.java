@@ -15,9 +15,6 @@
 
 package ch.dvbern.ebegu.services;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -26,18 +23,10 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 import ch.dvbern.ebegu.entities.ModulTagesschule;
-import ch.dvbern.ebegu.entities.ModulTagesschule_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
@@ -53,21 +42,11 @@ public class ModulTagesschuleServiceBean extends AbstractBaseService implements 
 
 	@Inject
 	private Persistence persistence;
-	@Inject
-	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Nonnull
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMINISTRATOR_SCHULAMT })
-	public ModulTagesschule createModul(@Nonnull ModulTagesschule modulTagesschule) {
-		Objects.requireNonNull(modulTagesschule);
-		return persistence.persist(modulTagesschule);
-	}
-
-	@Nonnull
-	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMINISTRATOR_SCHULAMT })
-	public ModulTagesschule updateModul(@Nonnull ModulTagesschule modulTagesschule) {
+	public ModulTagesschule saveModul(@Nonnull ModulTagesschule modulTagesschule) {
 		Objects.requireNonNull(modulTagesschule);
 		return persistence.merge(modulTagesschule);
 	}
@@ -90,35 +69,6 @@ public class ModulTagesschuleServiceBean extends AbstractBaseService implements 
 			modulTagesschuleId));
 		persistence.remove(modulToRemove);
 	}
-
-	@Nonnull
-	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMINISTRATOR_SCHULAMT })
-	//TODO (team) brauchts das getAll?
-	public Collection<ModulTagesschule> getAllModule() {
-		return new ArrayList<>(criteriaQueryHelper.getAll(ModulTagesschule.class));
-	}
-
-	@Nonnull
-	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMINISTRATOR_SCHULAMT })
-	//TODO (team) brauchts das findByName?
-	public List<ModulTagesschule> findModulByName(String modulTagesschuleName) {
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<ModulTagesschule> query = cb.createQuery(ModulTagesschule.class);
-
-		Root<ModulTagesschule> root = query.from(ModulTagesschule.class);
-
-		ParameterExpression<String> nameParam = cb.parameter(String.class, "modulname");
-		Predicate namePredicate = cb.equal(root.get(ModulTagesschule_.modulTagesschuleName), nameParam);
-
-		query.where(namePredicate, namePredicate);
-		TypedQuery<ModulTagesschule> q = persistence.getEntityManager().createQuery(query);
-		q.setParameter(nameParam, modulTagesschuleName);
-
-		return q.getResultList();
-	}
-
 
 }
 

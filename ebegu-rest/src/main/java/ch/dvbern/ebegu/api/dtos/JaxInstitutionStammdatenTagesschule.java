@@ -31,14 +31,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class JaxInstitutionStammdatenTagesschule extends JaxAbstractDTO {
 
 	private static final long serialVersionUID = 6958211446966611467L;
+
+	//todo fragen warum list??
 	@NotNull
 	private List<JaxModulTagesschule> moduleTagesschule = new ArrayList<>();
 
+	@NotNull
 	public List<JaxModulTagesschule> getModuleTagesschule() {
 		return moduleTagesschule;
 	}
 
-	public void setModuleTagesschule(List<JaxModulTagesschule> moduleTagesschule) {
+	public void setModuleTagesschule(@NotNull List<JaxModulTagesschule> moduleTagesschule) {
 		this.moduleTagesschule = moduleTagesschule;
 	}
 }
