@@ -150,19 +150,133 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
+                <h1>
+                    <span data-translate="INSTITUTION_ADRESSE"></span>
+                </h1>
+                <!--Adresse-->
+                <fieldset>
+                    <div class="dv-adresse row">
+                        <!--Strasse-->
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="ADRESSE_STRASSE" for="inst-adr-strasse"></label>
+                                <input id="inst-adr-strasse" type="text" name="adresseStrasse"
+                                       ng-model="vm.getSelectedInstitutionStammdaten().adresse.strasse"
+                                       dv-max-length class="form-control" required>
+                                <dv-error-messages for="adresseForm.adresseStrasse.$error" class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float" data-translate="ADRESSE_HAUSNUMMER" for="inst-adr-hausnummer"></label>
+                                <input id="inst-adr-hausnummer" type="text"
+                                       name="adresseHausnummer"
+                                       ng-model="vm.getSelectedInstitutionStammdaten().adresse.hausnummer"
+                                       dv-max-length class="form-control">
+                                <dv-error-messages for="adresseForm.adresseHausnummer.$error" class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
+                    <!-- Adresse Zusatz-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="ADRESSE_ZUSATZZEILE" for="inst-adr-zusatzzeile"></label>
+                                <input id="inst-adr-zusatzzeile" type="text"
+                                       name="adresseZusatzzeile"
+                                       ng-model="vm.getSelectedInstitutionStammdaten().adresse.zusatzzeile"
+                                       dv-max-length class="form-control">
+                                <dv-error-messages for="adresseForm.adresseZusatzzeile.$error" class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
+                    <!-- PLZ ORT-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="ADRESSE_PLZ"
+                                       for="inst-adr-plz">
+                                </label>
+                                <input id="inst-adr-plz" type="text" name="adressePlz"
+                                       ng-model="vm.getSelectedInstitutionStammdaten().adresse.plz"
+                                       dv-max-length class="form-control" required>
+                                <dv-error-messages for="adresseForm.adressePlz.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float" data-translate="ADRESSE_ORT" for="inst-adr-ort"></label>
+                                <input id="inst-adr-ort" type="text" name="adresseOrt"
+                                       ng-model="vm.getSelectedInstitutionStammdaten().adresse.ort"
+                                       dv-max-length class="form-control" required>
+                                <dv-error-messages for="adresseForm.adresseOrt.$error" class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
+
+                    <!-- Land-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <div class="form-group">
+                                <label class="md-no-float" data-translate="ADRESSE_LAND"
+                                       for="inst-adr-land">
+                                </label>
+                                <div class="dv-select-style">
+                                    <select name="adresseLand" id="inst-adr-land"
+                                            ng-model="vm.getSelectedInstitutionStammdaten().adresse.land"
+                                            ng-options="land.code as land.name for land in vm.laenderList | orderBy: 'name'"
+                                            class="form-control"
+                                            required>
+                                    </select>
+                                    <dv-error-messages for="adresseForm.adresseLand.$error" class="error"></dv-error-messages>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!--Dieser Teil wird nur angezeigt, wenn das Betreuungsangebot eine Kita ist-->
+                <div ng-if="vm.isKita()">
                     <h1>
-                        <span data-translate="INSTITUTION_ADRESSE"></span>
+                        <span data-translate="INSTITUTION_ZAHLUNGSANGABEN"></span>
                     </h1>
-                    <!--Adresse-->
-                    <fieldset>
+                    <p><span data-translate="INSTITUTION_ZAHLUNGSANGABEN_INFO"></span></p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float"
+                                       data-translate="INSTITUTION_KONTOINHABER"
+                                       for="kontoinhaber"></label>
+                                <input id="kontoinhaber" type="text" name="kontoinhaber"
+                                       ng-model="vm.getSelectedInstitutionStammdaten().kontoinhaber"
+                                       dv-max-length class="form-control">
+                                <dv-error-messages for="form.kontoinhaber.$error" class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 checkbox">
+                            <md-checkbox ng-model="vm.hasDifferentZahlungsadresse"
+                                         name="korrespondenzAdr"
+                                         aria-label="{{'INSTITUTION_DIFFERENT_ZAHLUNGSADRESSE'|translate}}"
+                                         ng-change="vm.differentZahlungsadresseClicked()">
+                                <span data-translate="INSTITUTION_DIFFERENT_ZAHLUNGSADRESSE"></span>
+                            </md-checkbox>
+                        </div>
+                    </div>
+
+                    <fieldset ng-if="vm.hasDifferentZahlungsadresse">
                         <div class="dv-adresse row">
                             <!--Strasse-->
                             <div class="col-sm-12 dv-input-container-small">
                                 <dv-input-container class="form-group">
                                     <label class="md-no-float" data-translate="ADRESSE_STRASSE" for="inst-adr-strasse"></label>
-                                    <input id="inst-adr-strasse" type="text" name="adresseStrasse"
-                                           ng-model="vm.getSelectedInstitutionStammdaten().adresse.strasse"
+                                    <input id="inst-adrKonto-strasse" type="text"
+                                           name="adresseStrasse"
+                                           ng-model="vm.getSelectedInstitutionStammdaten().adresseKontoinhaber.strasse"
                                            dv-max-length class="form-control" required>
                                     <dv-error-messages for="adresseForm.adresseStrasse.$error" class="error"></dv-error-messages>
                                 </dv-input-container>
@@ -170,9 +284,9 @@
                             <div class="col-sm-12 dv-input-container-small">
                                 <dv-input-container class="form-group secondColumn">
                                     <label class="md-no-float" data-translate="ADRESSE_HAUSNUMMER" for="inst-adr-hausnummer"></label>
-                                    <input id="inst-adr-hausnummer" type="text"
+                                    <input id="inst-adrKonto-hausnummer" type="text"
                                            name="adresseHausnummer"
-                                           ng-model="vm.getSelectedInstitutionStammdaten().adresse.hausnummer"
+                                           ng-model="vm.getSelectedInstitutionStammdaten().adresseKontoinhaber.hausnummer"
                                            dv-max-length class="form-control">
                                     <dv-error-messages for="adresseForm.adresseHausnummer.$error" class="error"></dv-error-messages>
                                 </dv-input-container>
@@ -182,10 +296,13 @@
                         <div class="row">
                             <div class="col-sm-12 dv-input-container-small">
                                 <dv-input-container class="form-group">
-                                    <label class="md-no-float" data-translate="ADRESSE_ZUSATZZEILE" for="inst-adr-zusatzzeile"></label>
-                                    <input id="inst-adr-zusatzzeile" type="text"
+                                    <label class="md-no-float"
+                                           data-translate="ADRESSE_ZUSATZZEILE"
+                                           for="inst-adr-zusatzzeile">
+                                    </label>
+                                    <input id="inst-adrKonto-zusatzzeile" type="text"
                                            name="adresseZusatzzeile"
-                                           ng-model="vm.getSelectedInstitutionStammdaten().adresse.zusatzzeile"
+                                           ng-model="vm.getSelectedInstitutionStammdaten().adresseKontoinhaber.zusatzzeile"
                                            dv-max-length class="form-control">
                                     <dv-error-messages for="adresseForm.adresseZusatzzeile.$error" class="error"></dv-error-messages>
                                 </dv-input-container>
@@ -198,18 +315,19 @@
                                     <label class="md-no-float" data-translate="ADRESSE_PLZ"
                                            for="inst-adr-plz">
                                     </label>
-                                    <input id="inst-adr-plz" type="text" name="adressePlz"
-                                           ng-model="vm.getSelectedInstitutionStammdaten().adresse.plz"
+                                    <input id="inst-adrKonto-plz" type="text" name="adressePlz"
+                                           ng-model="vm.getSelectedInstitutionStammdaten().adresseKontoinhaber.plz"
                                            dv-max-length class="form-control" required>
-                                    <dv-error-messages for="adresseForm.adressePlz.$error"
-                                                       class="error"></dv-error-messages>
+                                    <dv-error-messages for="adresseForm.adressePlz.$error" class="error"></dv-error-messages>
                                 </dv-input-container>
                             </div>
                             <div class="col-sm-12 dv-input-container-small">
                                 <dv-input-container class="form-group secondColumn">
-                                    <label class="md-no-float" data-translate="ADRESSE_ORT" for="inst-adr-ort"></label>
-                                    <input id="inst-adr-ort" type="text" name="adresseOrt"
-                                           ng-model="vm.getSelectedInstitutionStammdaten().adresse.ort"
+                                    <label class="md-no-float" data-translate="ADRESSE_ORT"
+                                           for="inst-adr-ort">
+                                    </label>
+                                    <input id="inst-adrKonto-ort" type="text" name="adresseOrt"
+                                           ng-model="vm.getSelectedInstitutionStammdaten().adresseKontoinhaber.ort"
                                            dv-max-length class="form-control" required>
                                     <dv-error-messages for="adresseForm.adresseOrt.$error" class="error"></dv-error-messages>
                                 </dv-input-container>
@@ -224,8 +342,8 @@
                                            for="inst-adr-land">
                                     </label>
                                     <div class="dv-select-style">
-                                        <select name="adresseLand" id="inst-adr-land"
-                                                ng-model="vm.getSelectedInstitutionStammdaten().adresse.land"
+                                        <select name="adresseLand" id="inst-adrKonto-land"
+                                                ng-model="vm.getSelectedInstitutionStammdaten().adresseKontoinhaber.land"
                                                 ng-options="land.code as land.name for land in vm.laenderList | orderBy: 'name'"
                                                 class="form-control"
                                                 required>
@@ -236,133 +354,16 @@
                             </div>
                         </div>
                     </fieldset>
-
-                    <!--Dieser Teil wird nur angezeigt, wenn das Betreuungsangebot eine Kita ist-->
-                    <div ng-if="vm.isKita()">
-                        <h1>
-                            <span data-translate="INSTITUTION_ZAHLUNGSANGABEN"></span>
-                        </h1>
-                        <p><span data-translate="INSTITUTION_ZAHLUNGSANGABEN_INFO"></span></p>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <dv-input-container class="form-group">
-                                    <label class="md-no-float"
-                                           data-translate="INSTITUTION_KONTOINHABER"
-                                           for="kontoinhaber"></label>
-                                    <input id="kontoinhaber" type="text" name="kontoinhaber"
-                                           ng-model="vm.getSelectedInstitutionStammdaten().kontoinhaber"
-                                           dv-max-length class="form-control">
-                                    <dv-error-messages for="form.kontoinhaber.$error" class="error"></dv-error-messages>
-                                </dv-input-container>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 checkbox">
-                                <md-checkbox ng-model="vm.hasDifferentZahlungsadresse"
-                                             name="korrespondenzAdr"
-                                             aria-label="{{'INSTITUTION_DIFFERENT_ZAHLUNGSADRESSE'|translate}}"
-                                             ng-change="vm.differentZahlungsadresseClicked()">
-                                    <span data-translate="INSTITUTION_DIFFERENT_ZAHLUNGSADRESSE"></span>
-                                </md-checkbox>
-                            </div>
-                        </div>
-
-                        <fieldset ng-if="vm.hasDifferentZahlungsadresse">
-                            <div class="dv-adresse row">
-                                <!--Strasse-->
-                                <div class="col-sm-12 dv-input-container-small">
-                                    <dv-input-container class="form-group">
-                                        <label class="md-no-float" data-translate="ADRESSE_STRASSE" for="inst-adr-strasse"></label>
-                                        <input id="inst-adrKonto-strasse" type="text"
-                                               name="adresseStrasse"
-                                               ng-model="vm.getSelectedInstitutionStammdaten().adresseKontoinhaber.strasse"
-                                               dv-max-length class="form-control" required>
-                                        <dv-error-messages for="adresseForm.adresseStrasse.$error" class="error"></dv-error-messages>
-                                    </dv-input-container>
-                                </div>
-                                <div class="col-sm-12 dv-input-container-small">
-                                    <dv-input-container class="form-group secondColumn">
-                                        <label class="md-no-float" data-translate="ADRESSE_HAUSNUMMER" for="inst-adr-hausnummer"></label>
-                                        <input id="inst-adrKonto-hausnummer" type="text"
-                                               name="adresseHausnummer"
-                                               ng-model="vm.getSelectedInstitutionStammdaten().adresseKontoinhaber.hausnummer"
-                                               dv-max-length class="form-control">
-                                        <dv-error-messages for="adresseForm.adresseHausnummer.$error" class="error"></dv-error-messages>
-                                    </dv-input-container>
-                                </div>
-                            </div>
-                            <!-- Adresse Zusatz-->
-                            <div class="row">
-                                <div class="col-sm-12 dv-input-container-small">
-                                    <dv-input-container class="form-group">
-                                        <label class="md-no-float"
-                                               data-translate="ADRESSE_ZUSATZZEILE"
-                                               for="inst-adr-zusatzzeile">
-                                        </label>
-                                        <input id="inst-adrKonto-zusatzzeile" type="text"
-                                               name="adresseZusatzzeile"
-                                               ng-model="vm.getSelectedInstitutionStammdaten().adresseKontoinhaber.zusatzzeile"
-                                               dv-max-length class="form-control">
-                                        <dv-error-messages for="adresseForm.adresseZusatzzeile.$error" class="error"></dv-error-messages>
-                                    </dv-input-container>
-                                </div>
-                            </div>
-                            <!-- PLZ ORT-->
-                            <div class="row">
-                                <div class="col-sm-12 dv-input-container-small">
-                                    <dv-input-container class="form-group">
-                                        <label class="md-no-float" data-translate="ADRESSE_PLZ"
-                                               for="inst-adr-plz">
-                                        </label>
-                                        <input id="inst-adrKonto-plz" type="text" name="adressePlz"
-                                               ng-model="vm.getSelectedInstitutionStammdaten().adresseKontoinhaber.plz"
-                                               dv-max-length class="form-control" required>
-                                        <dv-error-messages for="adresseForm.adressePlz.$error" class="error"></dv-error-messages>
-                                    </dv-input-container>
-                                </div>
-                                <div class="col-sm-12 dv-input-container-small">
-                                    <dv-input-container class="form-group secondColumn">
-                                        <label class="md-no-float" data-translate="ADRESSE_ORT"
-                                               for="inst-adr-ort">
-                                        </label>
-                                        <input id="inst-adrKonto-ort" type="text" name="adresseOrt"
-                                               ng-model="vm.getSelectedInstitutionStammdaten().adresseKontoinhaber.ort"
-                                               dv-max-length class="form-control" required>
-                                        <dv-error-messages for="adresseForm.adresseOrt.$error" class="error"></dv-error-messages>
-                                    </dv-input-container>
-                                </div>
-                            </div>
-
-                            <!-- Land-->
-                            <div class="row">
-                                <div class="col-sm-12 dv-input-container-small">
-                                    <div class="form-group">
-                                        <label class="md-no-float" data-translate="ADRESSE_LAND"
-                                               for="inst-adr-land">
-                                        </label>
-                                        <div class="dv-select-style">
-                                            <select name="adresseLand" id="inst-adrKonto-land"
-                                                    ng-model="vm.getSelectedInstitutionStammdaten().adresseKontoinhaber.land"
-                                                    ng-options="land.code as land.name for land in vm.laenderList | orderBy: 'name'"
-                                                    class="form-control"
-                                                    required>
-                                            </select>
-                                            <dv-error-messages for="adresseForm.adresseLand.$error" class="error"></dv-error-messages>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>
-                    <div class="row col-md-12 marginTop20">
-                        <!--Knopf zum speichern der ausgewählen oder neuer InstitutionStammdaten-->
-                        <dv-loading-button type="submit"
-                                           button-click="vm.saveInstitutionStammdaten(form)"
-                                           button-class="">
-                            <span data-translate="INSTITUTION_STAMMDATEN_SPEICHERN"></span>
-                        </dv-loading-button>
-                    </div>
                 </div>
+                <div class="row col-md-12 marginTop20">
+                    <!--Knopf zum speichern der ausgewählen oder neuer InstitutionStammdaten-->
+                    <dv-loading-button type="submit"
+                                       button-click="vm.saveInstitutionStammdaten(form)"
+                                       button-class="">
+                        <span data-translate="INSTITUTION_STAMMDATEN_SPEICHERN"></span>
+                    </dv-loading-button>
+                </div>
+
                 <div class="row col-md-12 marginTop50">
                     <a class="nav skip" ng-click="vm.goBack()" data-translate="INSTITUTION_BACK"></a>
                 </div>
