@@ -13,13 +13,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IPromise} from 'angular';
-import TSEbeguVorlage from '../../models/TSEbeguVorlage';
-import IQService = angular.IQService;
-import IHttpPromise = angular.IHttpPromise;
+import {TSFerienname} from '../../models/enums/TSFerienname';
 import TSFerieninselStammdaten from '../../models/TSFerieninselStammdaten';
-
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import IQService = angular.IQService;
 
 export class FerieninselStammdatenRS {
     serviceURL: string;
@@ -59,6 +57,13 @@ export class FerieninselStammdatenRS {
         return this.http.get(this.serviceURL + '/gesuchsperiode/' + encodeURIComponent(gesuchsperiodeId))
             .then((response: any) => {
                 return this.ebeguRestUtil.parseFerieninselStammdatenList(response.data);
+            });
+    }
+
+    public findFerieninselStammdatenByGesuchsperiodeAndFerien(gesuchsperiodeId: string, ferienname: TSFerienname): IPromise<TSFerieninselStammdaten> {
+        return this.http.get(this.serviceURL + '/gesuchsperiode/' + encodeURIComponent(gesuchsperiodeId) + '/' + ferienname)
+            .then((response: any) => {
+                return this.ebeguRestUtil.parseFerieninselStammdaten(new TSFerieninselStammdaten(), response.data);
             });
     }
 

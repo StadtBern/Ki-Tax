@@ -61,7 +61,7 @@ export class DummyAuthenticationListViewController {
         });
         this.usersList.push(new TSUser('Kurt', 'Blaser', 'blku', 'password5', 'kurt.blaser@bern.ch', this.mandant, TSRole.ADMIN));
         this.usersList.push(new TSUser('Jörg', 'Becker', 'jobe', 'password1', 'joerg.becker@bern.ch', this.mandant, TSRole.SACHBEARBEITER_JA));
-        this.usersList.push(new TSUser('Jennifer', 'Müller', 'jemu', 'password2', 'jenniver.mueller@bern.ch', this.mandant, TSRole.SACHBEARBEITER_JA));
+        this.usersList.push(new TSUser('Jennifer', 'Müller', 'jemu', 'password2', 'jennifer.mueller@bern.ch', this.mandant, TSRole.SACHBEARBEITER_JA));
         this.usersList.push(new TSUser('Sophie', 'Bergmann', 'beso', 'password3', 'sophie.bergmann@gugus.ch',
             this.mandant, TSRole.SACHBEARBEITER_INSTITUTION, undefined, this.institution));
         this.usersList.push(new TSUser('Agnes', 'Krause', 'krad', 'password4', 'agnes.krause@gugus.ch',

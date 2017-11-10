@@ -149,6 +149,15 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         return '';
     }
 
+    public getBetreuungDetails(betreuung: TSBetreuung): string {
+        let detail: string = betreuung.institutionStammdaten.institution.name;
+        if (betreuung.isAngebotFerieninsel()) {
+            let ferien: string = this.$translate.instant(betreuung.belegungFerieninsel.ferienname.toLocaleString());
+            detail = detail + ' (' + ferien + ')';
+        }
+        return detail;
+    }
+
     public canRemoveBetreuung(betreuung: TSBetreuung): boolean {
         return !this.isGesuchReadonly() && !betreuung.vorgaengerId;
     }

@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -38,27 +37,27 @@ public class JaxBelegungTagesschule extends JaxAbstractDTO {
 	private static final long serialVersionUID = -1297972380574937397L;
 
 	@NotNull
-	private Set<JaxModul> module = new LinkedHashSet<>();
+	private Set<JaxModulTagesschule> moduleTagesschule = new LinkedHashSet<>();
 
-	@Nullable
+	@NotNull
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate eintrittsdatum;
 
 
-	public Set<JaxModul> getModule() {
-		return module;
+	public Set<JaxModulTagesschule> getModuleTagesschule() {
+		return moduleTagesschule;
 	}
 
-	public void setModule(Set<JaxModul> module) {
-		this.module = module;
+	public void setModuleTagesschule(Set<JaxModulTagesschule> moduleTagesschule) {
+		this.moduleTagesschule = moduleTagesschule;
 	}
 
-	@Nullable
+	@NotNull
 	public LocalDate getEintrittsdatum() {
 		return eintrittsdatum;
 	}
 
-	public void setEintrittsdatum(@Nullable LocalDate eintrittsdatum) {
+	public void setEintrittsdatum(@NotNull LocalDate eintrittsdatum) {
 		this.eintrittsdatum = eintrittsdatum;
 	}
 }

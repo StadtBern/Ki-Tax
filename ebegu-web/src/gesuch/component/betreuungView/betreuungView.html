@@ -176,7 +176,7 @@
                 <fieldset ng-disabled="vm.isGesuchReadonly() && !vm.isMutationsmeldungStatus">
                     <!--Diese Felder werden fuer Betreuungsangebottyp TAGESSCHULE ausgeblendet. Fuer alle anderen eingeblendet-->
                     <!--Nur Institutionen duerfen neue Pensen eintragen. Bei anderen Rollen werden nur die existierenden Pensen angezeigt-->
-                    <div ng-if="!vm.isTagesschule()">
+                    <div ng-if="!vm.isSchulamt()">
 
                         <div class="row" dv-show-element
                              dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()"
@@ -412,23 +412,34 @@
                         </betreuung-tagesschule-view>
                     </div>
 
+                    <!-- Ferieninsel -->
+                    <div ng-if="vm.isFerieninsel()">
+                        <betreuung-ferieninsel-view betreuung="vm.getBetreuungModel()" form="vm.form"
+                                                    on-save="vm.anmeldenSchulamt()"
+                                                    anmeldung-schulamt-uebernehmen="vm.anmeldungSchulamtUebernehmen()"
+                                                    anmeldung-schulamt-ablehnen="vm.anmeldungSchulamtAblehnen()"
+                                                    anmeldung-schulamt-falsche-institution="vm.anmeldungSchulamtFalscheInstitution()"
+                                                    cancel="vm.cancel()">
+                        </betreuung-ferieninsel-view>
+                    </div>
+
                 </fieldset>
 
                 <!--Buttons-->
                 <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
                     wenn wir die Direktive benutzen wollen muessen wir viel anpassen, daher lohnt es sich die Buttons direkt zu erstellen-->
-                <div class="nav-row-betreuung">
+                <!-- todo verbessern. Es muss fuer alle Angebottypen geprueft werden ob die Buttons hier oder in den individuellen Component implementiert sind-->
+                <div class="nav-row-betreuung" ng-if="!vm.isFerieninsel()">
                     <!--Die Order der Knoepfe soll im HTML so sein, dass der weiter Knopf als erster im Form ist, dies wird dann fuer die darstelltung
                     mit Flexlayout wieder korrigiert. Grund ist, dass beim druecken von Enter in einem input Feld automaitisch der erste submit button triggered wird-->
                     <div dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
-                         dv-show-expression="vm.isBetreuungsstatusSchulamt() && !vm.tageschuleSaveDisabled()">
+                         dv-show-expression="vm.getBetreuungModel().isAngebotSchulamt() && !vm.tageschuleSaveDisabled()">
                         <dv-loading-button button-click="vm.saveSchulamt()" type="submit"
                                            button-class="save">
                             <span data-translate="SPEICHERN_UPPER"></span>
                         </dv-loading-button>
                     </div>
-
 
                     <!--Institution Buttons-->
                     <div dv-show-element

@@ -192,7 +192,7 @@ public class BetreuungResource {
 
 			return converter.betreuungToJAX(persistedBetreuung);
 		}
-		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+		throw new EbeguEntityNotFoundException("betreuungPlatzBestaetigen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
 	}
 
 	@ApiOperation(value = "Sucht die Betreuung mit der übergebenen Id in der Datenbank. Dabei wird geprüft, ob der " +

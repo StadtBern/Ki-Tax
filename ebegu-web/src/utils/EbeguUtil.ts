@@ -24,6 +24,7 @@ import * as moment from 'moment';
 import TSGesuch from '../models/TSGesuch';
 import ITranslateService = angular.translate.ITranslateService;
 import Moment = moment.Moment;
+import TSBetreuung from '../models/TSBetreuung';
 
 /**
  * Klasse die allgemeine utils Methoden implementiert
@@ -133,6 +134,18 @@ export default class EbeguUtil {
                 + '.' + this.addZerosToNumber(fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH)
                 + '.' + kindContainerNumber
                 + '.' + betreuungNumber;
+        }
+        return betreuungsId;
+    }
+
+    public calculateBetreuungsIdFromBetreuung(fall: TSFall, betreuung: TSBetreuung): string {
+        let betreuungsId: string = '';
+        if (betreuung && fall) {
+            betreuungsId =
+                betreuung.gesuchsperiode.gueltigkeit.gueltigAb.year().toString().substring(2)
+                + '.' + this.addZerosToNumber(fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH)
+                + '.' + betreuung.kindNummer
+                + '.' + betreuung.betreuungNummer;
         }
         return betreuungsId;
     }

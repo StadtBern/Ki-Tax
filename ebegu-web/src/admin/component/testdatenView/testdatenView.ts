@@ -26,6 +26,8 @@ import {ReindexRS} from '../../service/reindexRS.rest';
 import * as moment from 'moment';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import ZahlungRS from '../../../core/service/zahlungRS.rest';
+import {ApplicationPropertyRS} from '../../service/applicationPropertyRS.rest';
 
 require('./testdatenView.less');
 let template = require('./testdatenView.html');
@@ -41,7 +43,7 @@ export class TestdatenViewComponentConfig implements IComponentOptions {
 
 export class TestdatenViewController {
     static $inject = ['TestFaelleRS', 'DvDialog', 'UserRS',
-        'ErrorService', 'ReindexRS', 'GesuchsperiodeRS', 'DatabaseMigrationRS'];
+        'ErrorService', 'ReindexRS', 'GesuchsperiodeRS', 'DatabaseMigrationRS', 'ZahlungRS', 'ApplicationPropertyRS'];
 
     testFaelleRS: TestFaelleRS;
     fallId: number;
@@ -56,20 +58,25 @@ export class TestdatenViewController {
     selectedGesuchsperiode: TSGesuchsperiode;
     gesuchsperiodeList: Array<TSGesuchsperiode>;
 
+    devMode: boolean;
+
     /* @ngInject */
     constructor(testFaelleRS: TestFaelleRS, private dvDialog: DvDialog, private userRS: UserRS,
                 private errorService: ErrorService, private reindexRS: ReindexRS,
-                private gesuchsperiodeRS: GesuchsperiodeRS, private databaseMigrationRS: DatabaseMigrationRS) {
+                private gesuchsperiodeRS: GesuchsperiodeRS, private databaseMigrationRS: DatabaseMigrationRS,
+                private zahlungRS: ZahlungRS, private applicationPropertyRS: ApplicationPropertyRS) {
         this.testFaelleRS = testFaelleRS;
-        this.fetchList();
     }
 
-    fetchList() {
+    $onInit() {
         this.userRS.getAllGesuchsteller().then((result: Array<TSUser>) => {
             this.gesuchstellerList = result;
         });
         this.gesuchsperiodeRS.getAllGesuchsperioden().then((result: Array<TSGesuchsperiode>) => {
             this.gesuchsperiodeList = result;
+        });
+        this.applicationPropertyRS.isDevMode().then((response: boolean) => {
+            this.devMode = response;
         });
     }
 
@@ -181,5 +188,20 @@ export class TestdatenViewController {
 
     public processScript(script: string): void {
         this.databaseMigrationRS.processScript(script);
+    }
+
+    public zahlungenKontrollieren(): void {
+        this.zahlungRS.zahlungenKontrollieren();
+    }
+    public deleteAllZahlungsauftraege(): void {
+        this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+            deleteText: 'ZAHLUNG_LOESCHEN_DIALOG_TEXT',
+            title: 'ZAHLUNG_LOESCHEN_DIALOG_TITLE',
+            parentController: undefined,
+            elementID: undefined
+        })
+            .then(() => {   //User confirmed removal
+                this.zahlungRS.deleteAllZahlungsauftraege();
+            });
     }
 }

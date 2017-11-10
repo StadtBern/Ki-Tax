@@ -115,6 +115,7 @@ public class RestUtilTest {
 
 	@Test
 	public void purgeSingleKindAndBetreuungenOfInstitutionenTestStatusSCHULAMT() {
+		// Neu sehen grundsätzlich alle alles!
 		final JaxKindContainer kind = prepareKindData();
 		kind.getBetreuungen().iterator().next().setBetreuungsstatus(Betreuungsstatus.SCHULAMT);
 		Collection<Institution> institutionen = createArrayWithTwoInstitutions();
@@ -122,12 +123,7 @@ public class RestUtilTest {
 		RestUtil.purgeSingleKindAndBetreuungenOfInstitutionen(kind, institutionen);
 
 		Assert.assertNotNull(kind.getBetreuungen());
-		Assert.assertEquals(1, kind.getBetreuungen().size());
-		final JaxBetreuung betreuung = kind.getBetreuungen().iterator().next();
-		Assert.assertEquals(institutionID1,
-			betreuung.getInstitutionStammdaten().getInstitution().getId());
-		Assert.assertNotEquals(Betreuungsstatus.SCHULAMT,
-			betreuung.getBetreuungsstatus());
+		Assert.assertEquals(2, kind.getBetreuungen().size());
 	}
 
 	// HELP METHODS

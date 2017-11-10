@@ -315,11 +315,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (WizardStepName.VERFUEGEN == wizardStep.getWizardStepName()
 				&& WizardStepStatus.OK != wizardStep.getWizardStepStatus()) {
 				final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
-				if (betreuungenFromGesuch.stream().allMatch(betreuung ->
-					Betreuungsstatus.VERFUEGT == betreuung.getBetreuungsstatus() ||
-						Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG == betreuung.getBetreuungsstatus() ||
-						Betreuungsstatus.NICHT_EINGETRETEN == betreuung.getBetreuungsstatus() ||
-						Betreuungsstatus.SCHULAMT == betreuung.getBetreuungsstatus())) {
+				if (betreuungenFromGesuch.stream().allMatch(betreuung -> betreuung.getBetreuungsstatus().isGeschlossen())) {
 
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 					wizardStep.getGesuch().setStatus(AntragStatus.VERFUEGT);

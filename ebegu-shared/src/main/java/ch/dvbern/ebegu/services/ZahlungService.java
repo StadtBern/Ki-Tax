@@ -69,9 +69,9 @@ public interface ZahlungService {
 	Optional<Zahlung> findZahlung(String zahlungId);
 
 	/**
-	 * Loescht einen Zahlungsauftrag (nur im Status ENTWURF moeglich)
+	 * Loescht ALLE Zahlungsauftraege
 	 */
-	void deleteZahlungsauftrag(String auftragId);
+	void deleteAllZahlungsauftraege();
 
 	/**
 	 * Gibt alle Zahlungsauftraege zurueck
@@ -98,4 +98,9 @@ public interface ZahlungService {
 	 */
 	void deleteZahlungspositionenOfGesuch(@Nonnull Gesuch gesuch);
 
+	/**
+	 * Kontrolliert die Zahlungen Stand heute: Es werden die Zahlen aus der letzt gueltigen Verfuegung jedes Falls
+	 * verglichen mit den tatsaechlich erfolgten Zahlungen.
+	 */
+	void zahlungenKontrollieren();
 }

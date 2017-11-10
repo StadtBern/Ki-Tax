@@ -31,6 +31,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.enums.Ferienname;
+import ch.dvbern.ebegu.validators.CheckFerieninselStammdatenDatesOverlapping;
 import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 
@@ -39,6 +40,7 @@ import org.hibernate.envers.Audited;
  */
 @Audited
 @Entity
+@CheckFerieninselStammdatenDatesOverlapping
 public class FerieninselStammdaten extends AbstractEntity {
 
 	private static final long serialVersionUID = 6703477164293147908L;

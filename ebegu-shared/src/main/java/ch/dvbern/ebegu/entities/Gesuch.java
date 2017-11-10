@@ -602,8 +602,7 @@ public class Gesuch extends AbstractEntity implements Searchable {
 	public boolean areAllBetreuungenBestaetigt() {
 		List<Betreuung> betreuungs = extractAllBetreuungen();
 		for (Betreuung betreuung : betreuungs) {
-			if (Betreuungsstatus.AUSSTEHEND == betreuung.getBetreuungsstatus() ||
-				Betreuungsstatus.WARTEN == betreuung.getBetreuungsstatus() ||
+			if (Betreuungsstatus.WARTEN == betreuung.getBetreuungsstatus() ||
 				Betreuungsstatus.ABGEWIESEN == betreuung.getBetreuungsstatus()) {
 				return false;
 			}

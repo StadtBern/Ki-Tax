@@ -75,8 +75,8 @@ export default class ZahlungRS {
         });
     }
 
-    public zahlungsauftragLoeschen(zahlungsauftragId: string): IHttpPromise<any> {
-        return this.http.delete(this.serviceURL + '/delete' + '/' + encodeURIComponent(zahlungsauftragId), null);
+    public deleteAllZahlungsauftraege(): IHttpPromise<any> {
+        return this.http.delete(this.serviceURL + '/delete', null);
     }
 
     public zahlungBestaetigen(zahlungId: string): IPromise<TSZahlung> {
@@ -114,4 +114,9 @@ export default class ZahlungRS {
         });
     }
 
+    public zahlungenKontrollieren(): IPromise<void> {
+        return this.http.get(this.serviceURL + '/kontrollieren').then((response: any) => {
+            this.$log.debug('PARSING user REST array object', response.data);
+        });
+    }
 }

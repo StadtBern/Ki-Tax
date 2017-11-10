@@ -14,16 +14,24 @@
  */
 
 import TSAbstractEntity from './TSAbstractEntity';
-import {TSModulname} from './enums/TSModulname';
+import {TSModulTagesschuleName} from './enums/TSModulTagesschuleName';
 import {TSDayOfWeek} from './enums/TSDayOfWeek';
 import * as moment from 'moment';
 
-export default class TSModul extends TSAbstractEntity {
+export default class TSModulTagesschule extends TSAbstractEntity {
 
     private _wochentag: TSDayOfWeek;
-    private _modulname: TSModulname;
+    private _modulTagesschuleName: TSModulTagesschuleName;
     private _zeitVon: moment.Moment;
     private _zeitBis: moment.Moment;
+
+    constructor(wochentag?: TSDayOfWeek, modulTagesschuleName?: TSModulTagesschuleName, zeitVon?: moment.Moment, zeitBis?: moment.Moment) {
+        super();
+        this._wochentag = wochentag;
+        this._modulTagesschuleName = modulTagesschuleName;
+        this._zeitVon = zeitVon;
+        this._zeitBis = zeitBis;
+    }
 
     public get wochentag(): TSDayOfWeek {
         return this._wochentag;
@@ -33,12 +41,12 @@ export default class TSModul extends TSAbstractEntity {
         this._wochentag = value;
     }
 
-    public get modulname(): TSModulname {
-        return this._modulname;
+    public get modulTagesschuleName(): TSModulTagesschuleName {
+        return this._modulTagesschuleName;
     }
 
-    public set modulname(value: TSModulname) {
-        this._modulname = value;
+    public set modulTagesschuleName(value: TSModulTagesschuleName) {
+        this._modulTagesschuleName = value;
     }
 
     public get zeitVon(): moment.Moment {

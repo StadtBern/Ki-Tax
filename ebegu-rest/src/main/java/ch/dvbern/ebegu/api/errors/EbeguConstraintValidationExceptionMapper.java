@@ -15,6 +15,8 @@
 
 package ch.dvbern.ebegu.api.errors;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +28,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
-import ch.dvbern.ebegu.api.util.RestUtil;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jboss.resteasy.api.validation.ResteasyViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ch.dvbern.ebegu.api.util.RestUtil;
 
 /**
  * Created by imanol on 01.03.16.
@@ -62,7 +65,13 @@ public class EbeguConstraintValidationExceptionMapper extends AbstractEbeguExcep
 			return RestUtil.sendErrorNotAuthorized();    // nackte 403 status antwort
 		}
 		// wir bauen hier auch eine eigene response fuer EJBTransactionRolledbackException die wir nicht erwarten
-		return buildResponse(unwrapException(exception), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
+		// die unwrapped exception sollten wir nur zurueckgeben wenn wir im dev mode sind um keine infos zu leaken
+		if (configuration.getIsDevmode()) {
+			return buildResponse(unwrapException(exception), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
+		} else {
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Internal error in E-Begu. Timestamp: " +
+				LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)).type("text/plain").build();
+		}
 	}
 }
 

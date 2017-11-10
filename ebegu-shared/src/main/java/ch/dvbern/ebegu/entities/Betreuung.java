@@ -132,7 +132,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	private BelegungTagesschule belegungTagesschule;
 
 	@Nullable
-	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_belegung_ferieninsel_id"), nullable = true)
 	private BelegungFerieninsel belegungFerieninsel;
 

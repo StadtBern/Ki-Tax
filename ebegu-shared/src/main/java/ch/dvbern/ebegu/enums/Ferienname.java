@@ -20,9 +20,9 @@ package ch.dvbern.ebegu.enums;
  */
 public enum Ferienname {
 
-	SOMMERFERIEN,
 	HERBSTFERIEN,
 	SPORTFERIEN,
-	FRUEHLINGSFERIEN
+	FRUEHLINGSFERIEN,
+	SOMMERFERIEN
 
 }
