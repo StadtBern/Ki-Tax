@@ -2321,7 +2321,7 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    private parseModuleTagesschuleArray(data: Array<any>): TSModulTagesschule[] {
+    public parseModuleTagesschuleArray(data: Array<any>): TSModulTagesschule[] {
         let moduleTagesschule: TSModulTagesschule[] = [];
         if (data && Array.isArray(data)) {
             for (let i = 0; i < data.length; i++) {
@@ -2338,8 +2338,8 @@ export default class EbeguRestUtil {
             this.parseAbstractEntity(modulTagesschuleTS, modulFromServer);
             modulTagesschuleTS.modulTagesschuleName = modulFromServer.modulTagesschuleName;
             modulTagesschuleTS.wochentag = modulFromServer.wochentag;
-            modulTagesschuleTS.zeitVon = DateUtil.localDateToMoment(modulFromServer.zeitVon);
-            modulTagesschuleTS.zeitBis = DateUtil.localDateToMoment(modulFromServer.zeitBis);
+            modulTagesschuleTS.zeitVon = DateUtil.localDateTimeToMoment(modulFromServer.zeitVon);
+            modulTagesschuleTS.zeitBis = DateUtil.localDateTimeToMoment(modulFromServer.zeitBis);
             return modulTagesschuleTS;
         }
         return undefined;
@@ -2360,8 +2360,8 @@ export default class EbeguRestUtil {
             this.abstractEntityToRestObject(restModul, modulTagesschuleTS);
             restModul.modulTagesschuleName = modulTagesschuleTS.modulTagesschuleName;
             restModul.wochentag = modulTagesschuleTS.wochentag;
-            restModul.zeitVon = DateUtil.momentToLocalDate(modulTagesschuleTS.zeitVon);
-            restModul.zeitBis = DateUtil.momentToLocalDate(modulTagesschuleTS.zeitBis);
+            restModul.zeitVon = DateUtil.momentToLocalDateTime(modulTagesschuleTS.zeitVon);
+            restModul.zeitBis = DateUtil.momentToLocalDateTime(modulTagesschuleTS.zeitBis);
             return restModul;
         }
         return undefined;

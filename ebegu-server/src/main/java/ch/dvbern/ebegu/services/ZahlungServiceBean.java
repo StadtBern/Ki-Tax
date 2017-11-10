@@ -106,8 +106,8 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(ZahlungService.class)
-@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
-@SuppressWarnings(value = { "PMD.AvoidDuplicateLiterals", "SpringAutowiredFieldsWarningInspection", "InstanceMethodNamingConvention" })
+@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "SpringAutowiredFieldsWarningInspection", "InstanceMethodNamingConvention" })
 public class ZahlungServiceBean extends AbstractBaseService implements ZahlungService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZahlungServiceBean.class.getSimpleName());
@@ -135,14 +135,14 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Zahlungsauftrag zahlungsauftragErstellen(@Nonnull LocalDate datumFaelligkeit, @Nonnull String beschreibung) {
 		return zahlungsauftragErstellen(datumFaelligkeit, beschreibung, LocalDateTime.now());
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Zahlungsauftrag zahlungsauftragErstellen(@Nonnull LocalDate datumFaelligkeit, @Nonnull String beschreibung, @Nonnull LocalDateTime datumGeneriert) {
 		// Es darf immer nur ein Zahlungsauftrag im Status ENTWURF sein
 		Optional<Zahlungsauftrag> lastZahlungsauftrag = findLastZahlungsauftrag();
@@ -150,7 +150,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 			throw new EbeguRuntimeException("zahlungsauftragErstellen", ErrorCodeEnum.ERROR_ZAHLUNG_ERSTELLEN);
 		}
 
-		LOGGER.info("Erstelle Zahlungsauftrag mit Faelligkeit: " + Constants.DATE_FORMATTER.format(datumFaelligkeit));
+		LOGGER.info("Erstelle Zahlungsauftrag mit Faelligkeit: {}", Constants.DATE_FORMATTER.format(datumFaelligkeit));
 		Zahlungsauftrag zahlungsauftrag = new Zahlungsauftrag();
 		zahlungsauftrag.setStatus(ZahlungauftragStatus.ENTWURF);
 		zahlungsauftrag.setBeschrieb(beschreibung);
@@ -193,7 +193,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 		// "Normale" Zahlungen
 		if (!isRepetition) {
-			LOGGER.info("Ermittle normale Zahlungen im Zeitraum " + zahlungsauftrag.getGueltigkeit().toRangeString());
+			LOGGER.info("Ermittle normale Zahlungen im Zeitraum {}", zahlungsauftrag.getGueltigkeit().toRangeString());
 			Collection<VerfuegungZeitabschnitt> gueltigeVerfuegungZeitabschnitte = getGueltigeVerfuegungZeitabschnitte(zeitabschnittVon, zeitabschnittBis);
 			for (VerfuegungZeitabschnitt zeitabschnitt : gueltigeVerfuegungZeitabschnitte) {
 				if (zeitabschnitt.getZahlungsstatus().isNeu()) {
@@ -295,8 +295,8 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Objects.requireNonNull(zeitabschnittBis, "zeitabschnittBis muss gesetzt sein");
 
 		LOGGER.info("Ermittle Korrekturzahlungen:");
-		LOGGER.info("Zeitabschnitt endet vor: " + Constants.DATE_FORMATTER.format(zeitabschnittBis));
-		LOGGER.info("Gesuch verfuegt zwischen: " + Constants.DATE_FORMATTER.format(datumVerfuegtVon) + " - " + Constants.DATE_FORMATTER.format(datumVerfuegtBis));
+		LOGGER.info("Zeitabschnitt endet vor: {}", Constants.DATE_FORMATTER.format(zeitabschnittBis));
+		LOGGER.info("Gesuch verfuegt zwischen: {} - {}", Constants.DATE_FORMATTER.format(datumVerfuegtVon), Constants.DATE_FORMATTER.format(datumVerfuegtBis));
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<VerfuegungZeitabschnitt> query = cb.createQuery(VerfuegungZeitabschnitt.class);
@@ -351,8 +351,8 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	 */
 	private void createZahlungspositionenKorrekturUndNachzahlung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu, @Nonnull Zahlungsauftrag zahlungsauftrag, @Nonnull Map<String, Zahlung> zahlungProInstitution) {
 		// Ermitteln, ob die Vollkosten geaendert haben, seit der letzten Verfuegung, die auch verrechnet wurde!
-		List<VerfuegungZeitabschnitt> zeitabschnittOnVorgaengerVerfuegung = verfuegungService
-			.findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, zeitabschnittNeu.getVerfuegung().getBetreuung());
+		List<VerfuegungZeitabschnitt> zeitabschnittOnVorgaengerVerfuegung = new ArrayList<>();
+		verfuegungService.findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, zeitabschnittNeu.getVerfuegung().getBetreuung(), zeitabschnittOnVorgaengerVerfuegung);
 		if (!zeitabschnittOnVorgaengerVerfuegung.isEmpty()) { // Korrekturen
 			Zahlung zahlung = findZahlungForInstitution(zeitabschnittNeu, zahlungsauftrag, zahlungProInstitution);
 			createZahlungspositionKorrekturNeuerWert(zeitabschnittNeu, zahlung); // Dies braucht man immer
@@ -374,18 +374,18 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	/**
 	 * Erstellt eine Zahlungsposition fuer eine Korrekturzahlung mit dem *neu gueltigen* Wert
 	 */
-	private void createZahlungspositionKorrekturNeuerWert(@Nonnull VerfuegungZeitabschnitt zeitabschnitt, @Nonnull Zahlung zahlung) {
+	private void createZahlungspositionKorrekturNeuerWert(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu, @Nonnull Zahlung zahlung) {
 		Zahlungsposition zahlungsposition = new Zahlungsposition();
-		zahlungsposition.setVerfuegungZeitabschnitt(zeitabschnitt);
-		zahlungsposition.setBetrag(zeitabschnitt.getVerguenstigung());
+		zahlungsposition.setVerfuegungZeitabschnitt(zeitabschnittNeu);
+		zahlungsposition.setBetrag(zeitabschnittNeu.getVerguenstigung());
 		zahlungsposition.setZahlung(zahlung);
-		zahlungsposition.setIgnoriert(zeitabschnitt.getZahlungsstatus().isIgnoriertIgnorierend());
+		zahlungsposition.setIgnoriert(zeitabschnittNeu.getZahlungsstatus().isIgnoriertIgnorierend());
 		ZahlungspositionStatus status = ZahlungspositionStatus.KORREKTUR;
 		zahlungsposition.setStatus(status);
-		if (!zeitabschnitt.getZahlungsstatus().isIgnoriertIgnorierend()) {
-			zeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET);
-		} else if (zeitabschnitt.getZahlungsstatus().isIgnorierend()) {
-			zeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT);
+		if (!zeitabschnittNeu.getZahlungsstatus().isIgnoriertIgnorierend()) {
+			zeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET);
+		} else if (zeitabschnittNeu.getZahlungsstatus().isIgnorierend()) {
+			zeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT);
 		}
 		zahlung.getZahlungspositionen().add(zahlungsposition);
 	}
@@ -471,17 +471,15 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 				auftrag.setBeschrieb(beschreibung);
 				auftrag.setDatumFaellig(datumFaelligkeit);
 				return persistence.merge(auftrag);
-			} else {
-				throw new IllegalStateException("Auftrag kann nicht mehr veraendert werden: " + auftragId);
 			}
-		} else {
-			throw new EbeguEntityNotFoundException("zahlungsauftragAktualisieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId);
+			throw new IllegalStateException("Auftrag kann nicht mehr veraendert werden: " + auftragId);
 		}
+		throw new EbeguEntityNotFoundException("zahlungsauftragAktualisieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId);
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = { SUPER_ADMIN, ADMIN })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN })
 	public Zahlungsauftrag zahlungsauftragAusloesen(@Nonnull String auftragId) {
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Zahlungsauftrag zahlungsauftrag = persistence.find(Zahlungsauftrag.class, auftragId);
@@ -493,7 +491,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 			throw new IllegalStateException("Pain-File konnte nicht erstellt werden: " + auftragId, e);
 		}
 		for (Zahlung zahlung : zahlungsauftrag.getZahlungen()) {
-			if (!ZahlungStatus.ENTWURF.equals(zahlung.getStatus())) {
+			if (ZahlungStatus.ENTWURF != zahlung.getStatus()) {
 				throw new IllegalArgumentException("Zahlung muss im Status ENTWURF sein, wenn der Auftrag ausgelöst wird: " + zahlung.getId());
 			}
 			zahlung.setStatus(ZahlungStatus.AUSGELOEST);
@@ -504,7 +502,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
 	public Optional<Zahlungsauftrag> findZahlungsauftrag(@Nonnull String auftragId) {
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Zahlungsauftrag zahlungsauftrag = persistence.find(Zahlungsauftrag.class, auftragId);
@@ -513,7 +511,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
 	public Optional<Zahlung> findZahlung(@Nonnull String zahlungId) {
 		Objects.requireNonNull(zahlungId, "zahlungId muss gesetzt sein");
 		Zahlung zahlung = persistence.find(Zahlung.class, zahlungId);
@@ -521,44 +519,42 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	}
 
 	@Override
-	@RolesAllowed(value = { SUPER_ADMIN })
-	public void deleteZahlungsauftrag(@Nonnull String auftragId) {
-		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
-		Optional<Zahlungsauftrag> auftragOptional = findZahlungsauftrag(auftragId);
-		if (auftragOptional.isPresent()) {
-			// Alle Pain-Files loeschen
-			Optional<Pain001Dokument> painDokumentOptional = criteriaQueryHelper.getEntityByUniqueAttribute(Pain001Dokument.class, auftragOptional.get(), Pain001Dokument_.zahlungsauftrag);
-			painDokumentOptional.ifPresent(pain001Dokument -> {
-				LOGGER.info("Pain001Dokument removed: " + pain001Dokument.getId() + ". Filename (file not removed): " + pain001Dokument.getFilename());
-				persistence.remove(Pain001Dokument.class, pain001Dokument.getId());
-			});
-			// Alle verknuepften Zeitabschnitte wieder auf "unbezahlt" setzen
-			Zahlungsauftrag auftrag = auftragOptional.get();
-			for (Zahlung zahlung : auftrag.getZahlungen()) {
-				for (Zahlungsposition zahlungsposition : zahlung.getZahlungspositionen()) {
-					if (zahlungsposition.getVerfuegungZeitabschnitt().getZahlungsstatus().isVerrechnet()) {
-						zahlungsposition.getVerfuegungZeitabschnitt().setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
-						persistence.merge(zahlungsposition.getVerfuegungZeitabschnitt());
-					}
-				}
+	@RolesAllowed(SUPER_ADMIN)
+	public void deleteAllZahlungsauftraege() {
+		// Es koennen nur ALLE Auftaege geloescht werden, da wir bei einem einzelnen Auftrag nicht wissen, wie der Status des Abschnitts vorher war
+		// (1) Alle  Zeitabschnitte wieder auf noch-nicht-verrechnet setzen, also entweder NEU oder IGNORIEREND
+			Collection<VerfuegungZeitabschnitt> allVerfuegungZeitabschnitt = criteriaQueryHelper.getAll(VerfuegungZeitabschnitt.class);
+			for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : allVerfuegungZeitabschnitt) {
+					if (verfuegungZeitabschnitt.getZahlungsstatus().isVerrechnet()) {
+						verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
+						persistence.merge(verfuegungZeitabschnitt);
+					}else if (verfuegungZeitabschnitt.getZahlungsstatus().isIgnoriert()) {
+				verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND);
+				persistence.merge(verfuegungZeitabschnitt);
 			}
 		}
-		// Dann erst den Auftrag loeschen
-		Zahlungsauftrag auftragToRemove = auftragOptional.orElseThrow(() -> new EbeguEntityNotFoundException("deleteZahlungsauftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
-		LOGGER.info("Zahlungsauftrag and its Zahlungen removed: " + auftragToRemove.getId());
-		persistence.remove(auftragToRemove);
+		// (2) Alle Pain-Files loeschen
+		criteriaQueryHelper.deleteAllBefore(Pain001Dokument.class, LocalDateTime.now());
+		// (3) Alle Zahlungspositionen löschen
+		criteriaQueryHelper.deleteAllBefore(Zahlungsposition.class, LocalDateTime.now());
+		// (4) Alle Zahlungen loeschen
+		criteriaQueryHelper.deleteAllBefore(Zahlung.class, LocalDateTime.now());
+		// (5) Alle Zahlungsauftraege loeschen
+		criteriaQueryHelper.deleteAllBefore(Zahlungsauftrag.class, LocalDateTime.now());
+
+		LOGGER.info("All Zahlungsauftraege and their Zahlungen removed");
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
 	public Collection<Zahlungsauftrag> getAllZahlungsauftraege() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(Zahlungsauftrag.class));
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = { SUPER_ADMIN, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT })
+	@RolesAllowed({ SUPER_ADMIN, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT })
 	public Zahlung zahlungBestaetigen(@Nonnull String zahlungId) {
 		Objects.requireNonNull(zahlungId, "zahlungId muss gesetzt sein");
 		Zahlung zahlung = persistence.find(Zahlung.class, zahlungId);
@@ -583,7 +579,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	}
 
 	@Override
-	@RolesAllowed(value = { SUPER_ADMIN })
+	@RolesAllowed(SUPER_ADMIN)
 	public void deleteZahlungspositionenOfGesuch(@Nonnull Gesuch gesuch) {
 		Objects.requireNonNull(gesuch, "gesuch muss gesetzt sein");
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -652,14 +648,12 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		return potenziellZuLoeschenZahlungsauftraegeList;
 	}
 
-	@Nonnull
-	private Zahlungsauftrag zahlungauftragBestaetigenIfAllZahlungenBestaetigt(@Nonnull Zahlungsauftrag zahlungsauftrag) {
+	private void zahlungauftragBestaetigenIfAllZahlungenBestaetigt(@Nonnull Zahlungsauftrag zahlungsauftrag) {
 		Objects.requireNonNull(zahlungsauftrag, "zahlungsauftrag darf nicht null sein");
-		if (zahlungsauftrag.getZahlungen().stream().allMatch(zahlung -> zahlung.getStatus().equals(ZahlungStatus.BESTAETIGT))) {
+		if (zahlungsauftrag.getZahlungen().stream().allMatch(zahlung -> zahlung.getStatus() == ZahlungStatus.BESTAETIGT)) {
 			zahlungsauftrag.setStatus(ZahlungauftragStatus.BESTAETIGT);
-			return persistence.merge(zahlungsauftrag);
+			persistence.merge(zahlungsauftrag);
 		}
-		return zahlungsauftrag;
 	}
 
 	@Override

@@ -16,8 +16,8 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -36,19 +36,20 @@ public class JaxBelegungTagesschule extends JaxAbstractDTO {
 
 	private static final long serialVersionUID = -1297972380574937397L;
 
+	//todo fragen warum list??
 	@NotNull
-	private Set<JaxModulTagesschule> moduleTagesschule = new LinkedHashSet<>();
+	private List<JaxModulTagesschule> moduleTagesschule = new ArrayList<>();
 
 	@NotNull
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate eintrittsdatum;
 
 
-	public Set<JaxModulTagesschule> getModuleTagesschule() {
+	public List<JaxModulTagesschule> getModuleTagesschule() {
 		return moduleTagesschule;
 	}
 
-	public void setModuleTagesschule(Set<JaxModulTagesschule> moduleTagesschule) {
+	public void setModuleTagesschule(List<JaxModulTagesschule> moduleTagesschule) {
 		this.moduleTagesschule = moduleTagesschule;
 	}
 
