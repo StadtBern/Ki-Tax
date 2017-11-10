@@ -40,7 +40,6 @@ import {MandantRS} from './service/mandantRS.rest';
 import {TraegerschaftRS} from './service/traegerschaftRS.rest';
 import {InstitutionRS} from './service/institutionRS.rest';
 import {InstitutionStammdatenRS} from './service/institutionStammdatenRS.rest';
-import {ModulTagesschuleRS} from './service/modulTagesschuleRS.rest';
 import {DvBisherComponentConfig} from './component/dv-bisher/dv-bisher';
 import KindRS from './service/kindRS.rest';
 import {DvDialog} from './directive/dv-dialog/dv-dialog';
@@ -179,7 +178,6 @@ export const EbeguWebCore: angular.IModule = angular
     .service('TraegerschaftRS', TraegerschaftRS)
     .service('InstitutionRS', InstitutionRS)
     .service('InstitutionStammdatenRS', InstitutionStammdatenRS)
-    .service('ModulTagesschuleRS', ModulTagesschuleRS)
     .service('ErwerbspensumRS', ErwerbspensumRS)
     .service('KindRS', KindRS)
     .service('DvDialog', DvDialog)

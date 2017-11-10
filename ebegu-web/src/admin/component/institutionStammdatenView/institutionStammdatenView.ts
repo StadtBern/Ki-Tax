@@ -56,7 +56,7 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
     hasDifferentZahlungsadresse: boolean = false;
     modulTageschuleMap: { [key: string]: TSModulTagesschule; } = {};
 
-    static $inject = ['InstitutionRS', 'ModulTagesschuleRS', 'EbeguUtil', '$state', 'ListResourceRS', 'AuthServiceRS', '$stateParams'];
+    static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', '$state', 'ListResourceRS', 'AuthServiceRS', '$stateParams'];
 
     constructor(private institutionRS: InstitutionRS, private ebeguUtil: EbeguUtil,
                 private institutionStammdatenRS: InstitutionStammdatenRS,
