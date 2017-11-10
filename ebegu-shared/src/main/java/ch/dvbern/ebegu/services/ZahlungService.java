@@ -54,9 +54,9 @@ public interface ZahlungService {
 	Optional<Zahlung> findZahlung(String zahlungId);
 
 	/**
-	 * Loescht einen Zahlungsauftrag (nur im Status ENTWURF moeglich)
+	 * Loescht ALLE Zahlungsauftraege
 	 */
-	void deleteZahlungsauftrag(String auftragId);
+	void deleteAllZahlungsauftraege();
 
 	/**
 	 * Gibt alle Zahlungsauftraege zurueck

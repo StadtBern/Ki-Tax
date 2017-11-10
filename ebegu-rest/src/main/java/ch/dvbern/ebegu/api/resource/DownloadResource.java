@@ -318,12 +318,11 @@ public class DownloadResource {
 		"&uuml;bergebenen Mahnung.")
 	@Nonnull
 	@PUT
-	@Path("/MAHNUNG/{forceCreation}/generated")
+	@Path("/MAHNUNG/generated")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getMahnungDokumentAccessTokenGeneratedDokument(
 		@Nonnull @NotNull @Valid JaxMahnung jaxMahnung,
-		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException,
 		IOException, MimeTypeParseException, MergeDocException {
 
@@ -333,7 +332,7 @@ public class DownloadResource {
 		Mahnung mahnung = converter.mahnungToEntity(jaxMahnung, new Mahnung());
 
 		WriteProtectedDokument persistedDokument = generatedDokumentService
-			.getMahnungDokumentAccessTokenGeneratedDokument(mahnung, forceCreation);
+			.getMahnungDokumentAccessTokenGeneratedDokument(mahnung, false);
 
 		return getFileDownloadResponse(uriInfo, ip, persistedDokument);
 

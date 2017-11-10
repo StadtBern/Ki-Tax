@@ -106,7 +106,7 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	@TransactionTimeout(value = Constants.MAX_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionTimeout(value = 360, unit = TimeUnit.MINUTES)
 	public void pruefungZahlungen(@Nonnull LocalDateTime datumLetzteZahlung) {
 		LOGGER.info("Pruefe Zahlungen");
 		zahlungenIstMap = pruefeZahlungenIst();

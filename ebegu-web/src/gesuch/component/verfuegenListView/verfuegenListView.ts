@@ -465,7 +465,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         if (mahnung == null) {
             mahnung = this.mahnung;
         }
-        this.downloadRS.getAccessTokenMahnungGeneratedDokument(mahnung, false)
+        this.downloadRS.getAccessTokenMahnungGeneratedDokument(mahnung)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
