@@ -29,8 +29,6 @@ import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import ZahlungRS from '../../../core/service/zahlungRS.rest';
 import {ApplicationPropertyRS} from '../../service/applicationPropertyRS.rest';
 
-import ZahlungRS from '../../../core/service/zahlungRS.rest';
-
 require('./testdatenView.less');
 let template = require('./testdatenView.html');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
@@ -207,5 +205,4 @@ export class TestdatenViewController {
                 this.zahlungRS.deleteAllZahlungsauftraege();
             });
     }
-
 }
