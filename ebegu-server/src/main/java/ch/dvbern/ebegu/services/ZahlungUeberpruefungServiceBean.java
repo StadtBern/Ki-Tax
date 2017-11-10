@@ -90,19 +90,6 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 	private Map<String, List<Zahlungsposition>> zahlungenIstMap;
 	private List<String> potentielleFehlerList = new ArrayList<>();
 
-	private static final Map<String, BigDecimal> BG_WITH_KNOWN_PROBLEMS = new HashMap<>();
-
-	static {
-		BG_WITH_KNOWN_PROBLEMS.put("17.000332.1.1", MathUtil.DEFAULT.from(-152.35d));
-		BG_WITH_KNOWN_PROBLEMS.put("17.000332.2.1", MathUtil.DEFAULT.from(-152.35d));
-		BG_WITH_KNOWN_PROBLEMS.put("17.001057.1.1", MathUtil.DEFAULT.from(-1713.85d));
-		BG_WITH_KNOWN_PROBLEMS.put("17.001402.1.1", MathUtil.DEFAULT.from(-587.95d));
-		BG_WITH_KNOWN_PROBLEMS.put("17.001402.2.1", MathUtil.DEFAULT.from(-587.95d));
-		BG_WITH_KNOWN_PROBLEMS.put("17.001444.1.1", MathUtil.DEFAULT.from(-137.00d));
-		BG_WITH_KNOWN_PROBLEMS.put("17.001538.1.1", MathUtil.DEFAULT.from(-175.30d));
-		BG_WITH_KNOWN_PROBLEMS.put("17.001538.2.1", MathUtil.DEFAULT.from(-175.30d));
-		BG_WITH_KNOWN_PROBLEMS.put("17.001850.1.1", MathUtil.DEFAULT.from(-345.00d));
-	}
 
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -123,14 +110,14 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 		LOGGER.info("Sende Mail...");
 		try {
 			if (potentielleFehlerList.isEmpty()) {
-				mailService.sendMessage("Zahlungslauf: Keine Fehler gefunden", "Keine Fehler gefunden", "franziska.herger@dvbern.ch");
+				mailService.sendMessage("Zahlungslauf: Keine Fehler gefunden", "Keine Fehler gefunden", "eberhard.gugler@dvbern.ch");
 			} else {
 				StringBuilder sb = new StringBuilder();
 				for (String s : potentielleFehlerList) {
 					sb.append(s);
 					sb.append("\n*************************************\n");
 				}
-				mailService.sendMessage("Potentieller Fehler im Zahlungslauf", sb.toString(), "franziska.herger@dvbern.ch");
+				mailService.sendMessage("Potentieller Fehler im Zahlungslauf", sb.toString(), "eberhard.gugler@dvbern.ch");
 			}
 		} catch (MailException e) {
 			LOGGER.error("Senden der Mail nicht erfolgreich", e);
@@ -180,17 +167,8 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 
 		if (!MathUtil.isSame(betragSoll, betragIst)) {
 			List<VerfuegungZeitabschnitt> ausbezahlteAbschnitte = getAusbezahlteZeitabschnitte(betreuung, dateAusbezahltBis);
-			if (BG_WITH_KNOWN_PROBLEMS.containsKey(betreuung.getBGNummer())) {
-				BigDecimal expectedDifference = BG_WITH_KNOWN_PROBLEMS.get(betreuung.getBGNummer());
-				//noinspection ConstantConditions
-				if (MathUtil.DEFAULT.subtract(betragIst, betragSoll).compareTo(expectedDifference) == 0) {
-					LOGGER.info("Expected Difference of {} on Betreuung {}", expectedDifference, betreuung.getBGNummer());
-				} else {
-					logPossibleError(betreuung, ausbezahlteAbschnitte, betragSoll, betragIst, expectedDifference);
-				}
-			} else {
-				logPossibleError(betreuung, ausbezahlteAbschnitte, betragSoll, betragIst, null);
-			}
+			logPossibleError(betreuung, ausbezahlteAbschnitte, betragSoll, betragIst, null);
+
 		}
 	}
 
