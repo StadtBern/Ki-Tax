@@ -13,24 +13,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum TSModulTagesschuleName {
-    VORMITTAG = <any> 'VORMITTAG',
-    MITTAG = <any> 'MITTAG',
-    MITTAG_HALB = <any> 'MITTAG_HALB',
-    NACHMITTAGS_1 = <any> 'NACHMITTAGS_1',
-    NACHMITTAGS_1_HALB = <any> 'NACHMITTAGS_1_HALB',
-    NACHMITTAGS_2 = <any> 'NACHMITTAGS_2',
-    NACHMITTAGS_2_HALB = <any> 'NACHMITTAGS_2_HALB'
-}
+package ch.dvbern.ebegu.validators;
 
-export function getTSModulTagesschuleNameValues(): Array<TSModulTagesschuleName> {
-    return [
-        TSModulTagesschuleName.VORMITTAG,
-        TSModulTagesschuleName.MITTAG,
-        TSModulTagesschuleName.MITTAG_HALB,
-        TSModulTagesschuleName.NACHMITTAGS_1,
-        TSModulTagesschuleName.NACHMITTAGS_1_HALB,
-        TSModulTagesschuleName.NACHMITTAGS_2,
-        TSModulTagesschuleName.NACHMITTAGS_2_HALB
-    ];
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import javax.validation.Constraint;
+import javax.validation.Payload;
+
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+@Target({ TYPE, ANNOTATION_TYPE })
+@Retention(RUNTIME)
+@Constraint(validatedBy = CheckTimeRangeValidator.class)
+@Documented
+public @interface CheckTimeRange {
+
+	String message() default "{invalid_time_range}";
+
+	Class<?>[] groups() default {};
+
+	Class<? extends Payload>[] payload() default {};
 }

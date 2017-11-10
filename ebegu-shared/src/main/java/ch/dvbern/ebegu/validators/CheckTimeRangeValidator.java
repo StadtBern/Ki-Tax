@@ -13,24 +13,23 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum TSModulTagesschuleName {
-    VORMITTAG = <any> 'VORMITTAG',
-    MITTAG = <any> 'MITTAG',
-    MITTAG_HALB = <any> 'MITTAG_HALB',
-    NACHMITTAGS_1 = <any> 'NACHMITTAGS_1',
-    NACHMITTAGS_1_HALB = <any> 'NACHMITTAGS_1_HALB',
-    NACHMITTAGS_2 = <any> 'NACHMITTAGS_2',
-    NACHMITTAGS_2_HALB = <any> 'NACHMITTAGS_2_HALB'
-}
+package ch.dvbern.ebegu.validators;
 
-export function getTSModulTagesschuleNameValues(): Array<TSModulTagesschuleName> {
-    return [
-        TSModulTagesschuleName.VORMITTAG,
-        TSModulTagesschuleName.MITTAG,
-        TSModulTagesschuleName.MITTAG_HALB,
-        TSModulTagesschuleName.NACHMITTAGS_1,
-        TSModulTagesschuleName.NACHMITTAGS_1_HALB,
-        TSModulTagesschuleName.NACHMITTAGS_2,
-        TSModulTagesschuleName.NACHMITTAGS_2_HALB
-    ];
+import javax.annotation.Nonnull;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+import ch.dvbern.ebegu.entities.ModulTagesschule;
+
+public class CheckTimeRangeValidator implements ConstraintValidator<CheckTimeRange, ModulTagesschule> {
+
+	@Override
+	public void initialize(CheckTimeRange constraintAnnotation) {
+		// nop
+	}
+
+	@Override
+	public boolean isValid(@Nonnull ModulTagesschule modul, ConstraintValidatorContext constraintValidatorContext) {
+		return modul.getZeitVon().isBefore(modul.getZeitBis()); // es ist nicht erlaubt dass sie gleich sind
+	}
 }
