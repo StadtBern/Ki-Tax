@@ -19,6 +19,7 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -29,6 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.enums.ModulTagesschuleName;
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
 /**
@@ -36,7 +38,7 @@ import org.hibernate.envers.Audited;
  */
 @Audited
 @Entity
-public class ModulTagesschule extends AbstractEntity {
+public class ModulTagesschule extends AbstractEntity implements Comparable<ModulTagesschule> {
 
 	private static final long serialVersionUID = -8403411439182708718L;
 
@@ -119,4 +121,49 @@ public class ModulTagesschule extends AbstractEntity {
 	public void setInstitutionStammdatenTagesschule(InstitutionStammdatenTagesschule instStammdaten) {
 		this.institutionStammdatenTagesschule = instStammdaten;
 	}
+
+	@Override
+	public int compareTo(@Nonnull ModulTagesschule o) {
+		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(this.getZeitVon(), o.getZeitVon());
+		builder.append(this.getZeitBis(), o.getZeitBis());
+		builder.append(this.getWochentag(), o.getWochentag());
+		builder.append(this.getModulTagesschuleName(), o.getModulTagesschuleName());
+		return builder.toComparison();
+	}
+//
+//	@Override
+//	public boolean equals(@Nullable Object o) {
+//		if (this == o) {
+//			return true;
+//		}
+//
+//		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+//			return false;
+//		}
+//
+//		ModulTagesschule that = (ModulTagesschule) o;
+//
+//		Objects.requireNonNull(getWochentag());
+//		Objects.requireNonNull(getModulTagesschuleName());
+//		Objects.requireNonNull(getInstitutionStammdatenTagesschule());
+//		Objects.requireNonNull(that.getWochentag());
+//		Objects.requireNonNull(that.getModulTagesschuleName());
+//		Objects.requireNonNull(that.getInstitutionStammdatenTagesschule());
+//
+//		boolean wochentag = getWochentag().equals(that.getWochentag());
+//		boolean name = getModulTagesschuleName().equals(that.getModulTagesschuleName());
+//		boolean instStammdatenTagesschule = getInstitutionStammdatenTagesschule().equals(that.getInstitutionStammdatenTagesschule());
+//
+//		return wochentag && name && instStammdatenTagesschule;
+//	}
+//
+//	@Override
+//	public int hashCode() {
+//		int result  = 31* (wochentag != null ? wochentag.hashCode() : 0);
+//		result = 31 * result + (modulTagesschuleName != null ? modulTagesschuleName.hashCode() : 0);
+//		result = 31 * result + (zeitVon != null ? zeitVon.hashCode() : 0);
+//		result = 31 * result + (zeitBis != null ? zeitBis.hashCode() : 0);
+//		return result;
+//	}
 }

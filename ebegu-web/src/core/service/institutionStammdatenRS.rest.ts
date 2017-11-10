@@ -14,11 +14,12 @@
  */
 
 import {IHttpPromise, IHttpService, ILogService, IPromise} from 'angular';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
-import DateUtil from '../../utils/DateUtil';
-import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import * as moment from 'moment';
+import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
+import TSModulTagesschule from '../../models/TSModulTagesschule';
+import DateUtil from '../../utils/DateUtil';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
 
 export class InstitutionStammdatenRS {
     serviceURL: string;
@@ -113,4 +114,11 @@ export class InstitutionStammdatenRS {
         return 'InstitutionStammdatenRS';
     }
 
+    public findMondayModuleTagesschuleByInstitutionStammdaten(institutionStammdatenID: string): IPromise<TSModulTagesschule[]> {
+        return this.http.get(this.serviceURL + '/mouduletagesschule' + '/' + encodeURIComponent(institutionStammdatenID))
+            .then((response: any) => {
+                this.log.debug('PARSING moduleTagesschule REST array object', response.data);
+                return this.ebeguRestUtil.parseModuleTagesschuleArray(response.data);
+            });
+    }
 }

@@ -19,10 +19,15 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import {InstitutionRS} from '../../../core/service/institutionRS.rest';
 import {InstitutionStammdatenRS} from '../../../core/service/institutionStammdatenRS.rest';
 import ListResourceRS from '../../../core/service/listResourceRS.rest';
+import {ModulTagesschuleRS} from '../../../core/service/modulTagesschuleRS.rest';
 import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
+import {TSDayOfWeek} from '../../../models/enums/TSDayOfWeek';
+import {getTSModulTagesschuleNameValues, TSModulTagesschuleName} from '../../../models/enums/TSModulTagesschuleName';
 import TSAdresse from '../../../models/TSAdresse';
 import TSInstitution from '../../../models/TSInstitution';
 import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
+import TSInstitutionStammdatenTagesschule from '../../../models/TSInstitutionStammdatenTagesschule';
+import TSModulTagesschule from '../../../models/TSModulTagesschule';
 import TSLand from '../../../models/types/TSLand';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import AbstractAdminViewController from '../../abstractAdminView';
@@ -51,10 +56,12 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
     laenderList: TSLand[];
     errormessage: string = undefined;
     hasDifferentZahlungsadresse: boolean = false;
+    modulTageschuleMap: { [key: string]: TSModulTagesschule; } = {};
 
-    static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService', '$state', 'ListResourceRS', 'AuthServiceRS', '$stateParams'];
+    static $inject = ['InstitutionRS', 'ModulTagesschuleRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService', '$state', 'ListResourceRS', 'AuthServiceRS', '$stateParams'];
 
-    constructor(private institutionRS: InstitutionRS, private ebeguUtil: EbeguUtil, private institutionStammdatenRS: InstitutionStammdatenRS,
+    constructor(private institutionRS: InstitutionRS, private modulTagesschuleRS: ModulTagesschuleRS, private ebeguUtil: EbeguUtil,
+                private institutionStammdatenRS: InstitutionStammdatenRS,
                 private errorService: ErrorService, private $state: IStateService, private listResourceRS: ListResourceRS, authServiceRS: AuthServiceRS,
                 private $stateParams: IInstitutionStammdatenStateParams) {
         super(authServiceRS);
@@ -69,10 +76,12 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
             this.institutionRS.findInstitution(this.$stateParams.institutionId).then((institution) => {
                 this.selectedInstitution = institution;
                 this.createInstitutionStammdaten();
+                this.loadModuleTagesschule();
             });
         } else {
             this.institutionStammdatenRS.findInstitutionStammdaten(this.$stateParams.institutionStammdatenId).then((institutionStammdaten) => {
                 this.setSelectedInstitutionStammdaten(institutionStammdaten);
+                this.loadModuleTagesschule();
             });
         }
     }
@@ -109,7 +118,7 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
     saveInstitutionStammdaten(form: IFormController): void {
         if (form.$valid) {
             this.selectedInstitutionStammdaten.betreuungsangebotTyp = this.selectedInstitutionStammdatenBetreuungsangebot.key;
-            this.errorService.clearAll();
+            this.replaceTagesschulmoduleOnInstitutionStammdatenTagesschule();
             if (this.isCreateStammdatenMode()) {
                 this.institutionStammdatenRS.createInstitutionStammdaten(this.selectedInstitutionStammdaten).then((institutionStammdaten: TSInstitutionStammdaten) => {
                     this.goBack();
@@ -139,7 +148,65 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
             && this.selectedInstitutionStammdatenBetreuungsangebot.key === TSBetreuungsangebotTyp.KITA;
     }
 
+    isTagesschule(): boolean {
+        return this.selectedInstitutionStammdatenBetreuungsangebot
+            && this.selectedInstitutionStammdatenBetreuungsangebot.key === TSBetreuungsangebotTyp.TAGESSCHULE;
+    }
+
     private setBetreuungsangebotTypValues(): void {
         this.betreuungsangebotValues = this.ebeguUtil.translateStringList(getTSBetreuungsangebotTypValues());
+    }
+
+    public getModulTagesschuleNamen(): TSModulTagesschuleName[] {
+        return getTSModulTagesschuleNameValues();
+    }
+
+    public getModulTagesschule(modulname: TSModulTagesschuleName): TSModulTagesschule {
+        let modul: TSModulTagesschule = this.modulTageschuleMap[modulname];
+        if (!modul) {
+            modul = new TSModulTagesschule();
+            modul.wochentag = TSDayOfWeek.MONDAY;
+            modul.modulTagesschuleName = modulname;
+            this.modulTageschuleMap[modulname] = modul;
+        }
+        return modul;
+    }
+
+    private loadModuleTagesschule(): void {
+        this.modulTageschuleMap = {};
+        if (this.selectedInstitutionStammdaten && this.selectedInstitutionStammdaten.id) {
+            if (this.selectedInstitutionStammdaten.institutionStammdatenTagesschule && this.selectedInstitutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule) {
+                this.fillModulTagesschuleMap(this.selectedInstitutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule);
+            }
+        } else {
+            this.fillModulTagesschuleMap([]);
+        }
+    }
+
+    private fillModulTagesschuleMap(modulListFromServer: TSModulTagesschule[]) {
+        getTSModulTagesschuleNameValues().forEach((modulname: TSModulTagesschuleName) => {
+            let foundmodul = modulListFromServer.filter(modul => (modul.modulTagesschuleName === modulname))[0];
+            if (foundmodul) {
+                this.modulTageschuleMap[modulname] = foundmodul;
+            } else {
+                this.modulTageschuleMap[modulname] = this.getModulTagesschule(modulname);
+            }
+        });
+    }
+
+    private replaceTagesschulmoduleOnInstitutionStammdatenTagesschule(): void {
+        let definiedModulTagesschule = [];
+        for (let modulname in this.modulTageschuleMap) {
+            let tempModul: TSModulTagesschule = this.modulTageschuleMap[modulname];
+            if (tempModul.zeitVon && tempModul.zeitBis) {
+                definiedModulTagesschule.push(tempModul);
+            }
+        }
+        if (definiedModulTagesschule.length > 0) {
+            if (!this.selectedInstitutionStammdaten.institutionStammdatenTagesschule) {
+                this.selectedInstitutionStammdaten.institutionStammdatenTagesschule = new TSInstitutionStammdatenTagesschule();
+            }
+            this.selectedInstitutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule = definiedModulTagesschule;
+        }
     }
 }

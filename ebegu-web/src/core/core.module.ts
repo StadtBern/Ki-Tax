@@ -32,6 +32,7 @@ import FinanzielleSituationRS from '../gesuch/service/finanzielleSituationRS.res
 import EinkommensverschlechterungContainerRS from '../gesuch/service/einkommensverschlechterungContainerRS.rest';
 import DVMaxLength from './directive/dv-max-length';
 import {DVDatepicker} from './directive/dv-datepicker/dv-datepicker';
+import {DVTimepicker} from './directive/dv-timepicker/dv-timepicker';
 import {FachstelleRS} from './service/fachstelleRS.rest';
 import {DvInputContainerComponentConfig} from './component/dv-input-container/dv-input-container';
 import {DvRadioContainerComponentConfig} from './component/dv-radio-container/dv-radio-container';
@@ -39,6 +40,7 @@ import {MandantRS} from './service/mandantRS.rest';
 import {TraegerschaftRS} from './service/traegerschaftRS.rest';
 import {InstitutionRS} from './service/institutionRS.rest';
 import {InstitutionStammdatenRS} from './service/institutionStammdatenRS.rest';
+import {ModulTagesschuleRS} from './service/modulTagesschuleRS.rest';
 import {DvBisherComponentConfig} from './component/dv-bisher/dv-bisher';
 import KindRS from './service/kindRS.rest';
 import {DvDialog} from './directive/dv-dialog/dv-dialog';
@@ -177,6 +179,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('TraegerschaftRS', TraegerschaftRS)
     .service('InstitutionRS', InstitutionRS)
     .service('InstitutionStammdatenRS', InstitutionStammdatenRS)
+    .service('ModulTagesschuleRS', ModulTagesschuleRS)
     .service('ErwerbspensumRS', ErwerbspensumRS)
     .service('KindRS', KindRS)
     .service('DvDialog', DvDialog)
@@ -195,6 +198,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('ExportRS', ExportRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
+    .directive('dvTimepicker', DVTimepicker.factory())
     .directive('dvValueinput', DVValueinput.factory())
     .directive('dvUserselect', DVUserselect.factory())
     .directive('dvNavigation', DVNavigation.factory())
