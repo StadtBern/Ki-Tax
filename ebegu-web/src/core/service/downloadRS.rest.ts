@@ -79,11 +79,10 @@ export class DownloadRS {
             });
     }
 
-    public getAccessTokenMahnungGeneratedDokument(mahnung: TSMahnung, forceCreation: boolean): IPromise<TSDownloadFile> {
+    public getAccessTokenMahnungGeneratedDokument(mahnung: TSMahnung): IPromise<TSDownloadFile> {
         let restMahnung = {};
         restMahnung = this.ebeguRestUtil.mahnungToRestObject(restMahnung, mahnung);
-        return this.http.put(this.serviceURL + '/' + encodeURIComponent(TSGeneratedDokumentTyp[TSGeneratedDokumentTyp.MAHNUNG])
-            + '/' + forceCreation + '/generated', restMahnung, {
+        return this.http.put(this.serviceURL + '/' + encodeURIComponent(TSGeneratedDokumentTyp[TSGeneratedDokumentTyp.MAHNUNG]) + '/generated', restMahnung, {
             headers: {
                 'Content-Type': 'application/json'
             }

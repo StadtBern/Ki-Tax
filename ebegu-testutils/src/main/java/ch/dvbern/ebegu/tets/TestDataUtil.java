@@ -77,6 +77,8 @@ import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.entities.PensumFachstelle;
 import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
@@ -139,6 +141,7 @@ public final class TestDataUtil {
 
 	private static final String iban = "CH39 0900 0000 3066 3817 2";
 
+	public static final int PERIODE_JAHR_0 = 2016;
 	public static final int PERIODE_JAHR_1 = 2017;
 	public static final int PERIODE_JAHR_2 = 2018;
 
@@ -1074,5 +1077,15 @@ public final class TestDataUtil {
 
 		return betreuung;
 
+	}
+
+	public static VerfuegungZeitabschnitt createDefaultZeitabschnitt(Verfuegung verfuegung) {
+		VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt();
+		zeitabschnitt.setVerfuegung(verfuegung);
+		zeitabschnitt.setBetreuungspensum(10);
+		zeitabschnitt.setAnspruchberechtigtesPensum(50);
+		zeitabschnitt.setEinkommensjahr(PERIODE_JAHR_1);
+		zeitabschnitt.setZuSpaetEingereicht(false);
+		return zeitabschnitt;
 	}
 }
