@@ -32,6 +32,7 @@ import FinanzielleSituationRS from '../gesuch/service/finanzielleSituationRS.res
 import EinkommensverschlechterungContainerRS from '../gesuch/service/einkommensverschlechterungContainerRS.rest';
 import DVMaxLength from './directive/dv-max-length';
 import {DVDatepicker} from './directive/dv-datepicker/dv-datepicker';
+import {DVTimepicker} from './directive/dv-timepicker/dv-timepicker';
 import {FachstelleRS} from './service/fachstelleRS.rest';
 import {DvInputContainerComponentConfig} from './component/dv-input-container/dv-input-container';
 import {DvRadioContainerComponentConfig} from './component/dv-radio-container/dv-radio-container';
@@ -195,6 +196,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('ExportRS', ExportRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
+    .directive('dvTimepicker', DVTimepicker.factory())
     .directive('dvValueinput', DVValueinput.factory())
     .directive('dvUserselect', DVUserselect.factory())
     .directive('dvNavigation', DVNavigation.factory())
