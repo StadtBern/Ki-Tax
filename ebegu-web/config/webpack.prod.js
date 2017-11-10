@@ -218,9 +218,9 @@ module.exports = webpackMerge(commonConfig, {
             threshold: 2 * 1024
         }),
         //copy swagger-ui to dist
-        new CopyWebpackPlugin([
-            {from: 'node_modules/swagger-ui/dist/', to: 'swagger-ui/'}
-        ])
+//        new CopyWebpackPlugin([
+//            {from: 'node_modules/swagger-ui/dist/', to: 'swagger-ui/'}
+//        ])
 
     ],
 
