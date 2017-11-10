@@ -96,8 +96,9 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	public void removeInstitutionStammdaten(@Nonnull String institutionStammdatenId) {
 		Validate.notNull(institutionStammdatenId);
 		Optional<InstitutionStammdaten> institutionStammdatenToRemove = findInstitutionStammdaten(institutionStammdatenId);
-		institutionStammdatenToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeInstitutionStammdaten", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionStammdatenId));
-		persistence.remove(institutionStammdatenToRemove.get());
+		final InstitutionStammdaten removeInstitutionStammdaten = institutionStammdatenToRemove.orElseThrow(() -> new EbeguEntityNotFoundException
+			("removeInstitutionStammdaten", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionStammdatenId));
+		persistence.remove(removeInstitutionStammdaten);
 	}
 
 	@Override
