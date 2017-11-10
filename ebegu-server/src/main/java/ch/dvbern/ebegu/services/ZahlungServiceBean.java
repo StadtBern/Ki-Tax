@@ -135,14 +135,14 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Zahlungsauftrag zahlungsauftragErstellen(@Nonnull LocalDate datumFaelligkeit, @Nonnull String beschreibung) {
 		return zahlungsauftragErstellen(datumFaelligkeit, beschreibung, LocalDateTime.now());
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Zahlungsauftrag zahlungsauftragErstellen(@Nonnull LocalDate datumFaelligkeit, @Nonnull String beschreibung, @Nonnull LocalDateTime datumGeneriert) {
 		// Es darf immer nur ein Zahlungsauftrag im Status ENTWURF sein
 		Optional<Zahlungsauftrag> lastZahlungsauftrag = findLastZahlungsauftrag();
@@ -351,8 +351,8 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	 */
 	private void createZahlungspositionenKorrekturUndNachzahlung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu, @Nonnull Zahlungsauftrag zahlungsauftrag, @Nonnull Map<String, Zahlung> zahlungProInstitution) {
 		// Ermitteln, ob die Vollkosten geaendert haben, seit der letzten Verfuegung, die auch verrechnet wurde!
-		List<VerfuegungZeitabschnitt> zeitabschnittOnVorgaengerVerfuegung = verfuegungService
-			.findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, zeitabschnittNeu.getVerfuegung().getBetreuung());
+		List<VerfuegungZeitabschnitt> zeitabschnittOnVorgaengerVerfuegung = new ArrayList<>();
+		verfuegungService.findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, zeitabschnittNeu.getVerfuegung().getBetreuung(), zeitabschnittOnVorgaengerVerfuegung);
 		if (!zeitabschnittOnVorgaengerVerfuegung.isEmpty()) { // Korrekturen
 			Zahlung zahlung = findZahlungForInstitution(zeitabschnittNeu, zahlungsauftrag, zahlungProInstitution);
 			createZahlungspositionKorrekturNeuerWert(zeitabschnittNeu, zahlung); // Dies braucht man immer
@@ -522,13 +522,13 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	@RolesAllowed(SUPER_ADMIN)
 	public void deleteAllZahlungsauftraege() {
 		// Es koennen nur ALLE Auftaege geloescht werden, da wir bei einem einzelnen Auftrag nicht wissen, wie der Status des Abschnitts vorher war
-		// (1) Alle Zeitabschnitte wieder auf noch-nicht-verrechnet setzen, also entweder NEU oder IGNORIEREND
-		Collection<VerfuegungZeitabschnitt> allVerfuegungZeitabschnitt = criteriaQueryHelper.getAll(VerfuegungZeitabschnitt.class);
-		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : allVerfuegungZeitabschnitt) {
-			if (verfuegungZeitabschnitt.getZahlungsstatus().isVerrechnet()) {
-				verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
-				persistence.merge(verfuegungZeitabschnitt);
-			} else if (verfuegungZeitabschnitt.getZahlungsstatus().isIgnoriert()) {
+		// (1) Alle  Zeitabschnitte wieder auf noch-nicht-verrechnet setzen, also entweder NEU oder IGNORIEREND
+			Collection<VerfuegungZeitabschnitt> allVerfuegungZeitabschnitt = criteriaQueryHelper.getAll(VerfuegungZeitabschnitt.class);
+			for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : allVerfuegungZeitabschnitt) {
+					if (verfuegungZeitabschnitt.getZahlungsstatus().isVerrechnet()) {
+						verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
+						persistence.merge(verfuegungZeitabschnitt);
+					}else if (verfuegungZeitabschnitt.getZahlungsstatus().isIgnoriert()) {
 				verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND);
 				persistence.merge(verfuegungZeitabschnitt);
 			}
