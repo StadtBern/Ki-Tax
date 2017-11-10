@@ -1074,7 +1074,7 @@ public final class TestDataUtil {
 		zeitabschnitt.setVerfuegung(verfuegung);
 		zeitabschnitt.setBetreuungspensum(10);
 		zeitabschnitt.setAnspruchberechtigtesPensum(50);
-		zeitabschnitt.setEinkommensjahr(2017);
+		zeitabschnitt.setEinkommensjahr(PERIODE_JAHR_1);
 		zeitabschnitt.setZuSpaetEingereicht(false);
 		return zeitabschnitt;
 	}

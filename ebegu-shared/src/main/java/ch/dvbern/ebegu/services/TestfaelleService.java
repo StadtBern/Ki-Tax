@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.services;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -65,7 +64,8 @@ public interface TestfaelleService {
 
 	@Nonnull
 	Gesuch mutierenFinSit(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
-		@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen, BigDecimal nettoLohn, boolean ignorieren);
+							@Nonnull LocalDate eingangsdatum, @Nonnull LocalDate aenderungPer, boolean verfuegen,
+							BigDecimal nettoLohn, boolean ignorieren);
 
 	@Nullable
 	Gesuch mutierenScheidung(@Nonnull Long fallNummer,
@@ -88,5 +88,5 @@ public interface TestfaelleService {
 	@Nonnull
 	Gesuch createAndSaveGesuch(@Nonnull AbstractTestfall fromTestfall, boolean verfuegen, @Nullable Benutzer besitzer);
 
-	void gesuchVerfuegenUndSpeichern(boolean verfuegen, @Nonnull Gesuch gesuch, boolean mutation, boolean ignorieren);
+	void gesuchVerfuegenUndSpeichern(boolean verfuegen, @Nonnull Gesuch gesuch, boolean mutation, boolean ignorierenInZahlungslauf);
 }

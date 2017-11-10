@@ -28,7 +28,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateful;
@@ -46,14 +45,14 @@ import ch.dvbern.ebegu.entities.Zahlungsposition;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.util.MathUtil;
 import org.jboss.ejb3.annotation.TransactionTimeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+import static ch.dvbern.ebegu.util.MathUtil.DEFAULT;
+import static ch.dvbern.ebegu.util.MathUtil.isSame;
 
 /**
  * Test-Service fuer Zahlungen. Es wird fuer alle Faelle die letzt gueltige Verfuegung verglichen mit den tatsaechlich erfolgten
@@ -87,8 +86,9 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 	private MailService mailService;
 
 
-	private Map<String, List<Zahlungsposition>> zahlungenIstMap;
-	private List<String> potentielleFehlerList = new ArrayList<>();
+	private Map<String, List<Zahlungsposition>> zahlungenIstMap = null;
+	private final List<String> potentielleFehlerList = new ArrayList<>();
+	private final List<String> potenzielleFehlerListZusammenfassung = new ArrayList<>();
 
 
 	@Asynchronous
@@ -113,6 +113,13 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 				mailService.sendMessage("Zahlungslauf: Keine Fehler gefunden", "Keine Fehler gefunden", "eberhard.gugler@dvbern.ch");
 			} else {
 				StringBuilder sb = new StringBuilder();
+				sb.append("Zusammenfassung: \n");
+				for (String s : potenzielleFehlerListZusammenfassung) {
+					sb.append(s);
+					sb.append('\n');
+				}
+				sb.append("Zusammenfassung Ende\n");
+
 				for (String s : potentielleFehlerList) {
 					sb.append(s);
 					sb.append("\n*************************************\n");
@@ -165,22 +172,19 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 		BigDecimal betragSoll = getBetragSoll(betreuung, dateAusbezahltBis);
 		BigDecimal betragIst = getBetragIst(betreuung);
 
-		if (!MathUtil.isSame(betragSoll, betragIst)) {
+		if (!isSame(betragSoll, betragIst)) {
 			List<VerfuegungZeitabschnitt> ausbezahlteAbschnitte = getAusbezahlteZeitabschnitte(betreuung, dateAusbezahltBis);
-			logPossibleError(betreuung, ausbezahlteAbschnitte, betragSoll, betragIst, null);
-
+			logPossibleError(betreuung, ausbezahlteAbschnitte, betragSoll, betragIst);
 		}
 	}
 
 	private void logPossibleError(@Nonnull Betreuung betreuung, List<VerfuegungZeitabschnitt>
-		ausbezahlteAbschnitte, BigDecimal betragSoll, BigDecimal betragIst, @Nullable BigDecimal expectedDifference) {
+		ausbezahlteAbschnitte, BigDecimal betragSoll, BigDecimal betragIst) {
 
 		StringBuilder sb = new StringBuilder();
+		BigDecimal differenz = DEFAULT.subtract(betragIst, betragSoll);
 		sb.append("Soll und Ist nicht identisch: ").append(betreuung.getBGNummer()).append(" Soll: ").append(betragSoll).append(" Ist: ").append
-			(betragIst).append('\n');
-		if (expectedDifference != null) {
-			sb.append("Erwartete Differenz: ").append(expectedDifference).append('\n');
-		}
+			(betragIst).append('\n').append(" Differenz: ").append(differenz);
 		sb.append("Aktuell gueltige Betreuung: ").append(betreuung.getId()).append('\n');
 		sb.append("Vergangene Zeitabschnitte").append('\n');
 		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : ausbezahlteAbschnitte) {
@@ -200,6 +204,7 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 			}
 		}
 		potentielleFehlerList.add(sb.toString());
+		potenzielleFehlerListZusammenfassung.add(betreuung.getBGNummer() + ": " + differenz);
 		LOGGER.warn(sb.toString());
 	}
 
@@ -222,7 +227,7 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 			for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : betreuung.getVerfuegung().getZeitabschnitte()) {
 				if (!verfuegungZeitabschnitt.getGueltigkeit().getGueltigBis().isAfter(dateAusbezahltBis)) {
 					// Dieser Zeitabschnitt muesste ausbezahlt sein
-					betragSoll = MathUtil.DEFAULT.add(betragSoll, verfuegungZeitabschnitt.getVerguenstigung());
+					betragSoll = DEFAULT.add(betragSoll, verfuegungZeitabschnitt.getVerguenstigung());
 				}
 			}
 		}
@@ -235,7 +240,7 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 		if (zahlungenIstMap.containsKey(betreuung.getBGNummer())) {
 			List<Zahlungsposition> zahlungspositionList = zahlungenIstMap.get(betreuung.getBGNummer());
 			for (Zahlungsposition zahlungsposition : zahlungspositionList) {
-				betragIst = MathUtil.DEFAULT.add(betragIst, zahlungsposition.getBetrag());
+				betragIst = DEFAULT.add(betragIst, zahlungsposition.getBetrag());
 			}
 		}
 		//noinspection ConstantConditions

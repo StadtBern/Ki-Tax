@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.services;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -368,7 +367,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		Validate.notNull(aenderungPer);
 
 		Gesuch mutation = gesuchService.testfallMutieren(fallNummer, gesuchsperiodeId, eingangsdatum).orElseThrow(() -> new EbeguEntityNotFoundException
-			("mutierenHeirat", "Gesuch zum Mutieren nicht gefunden"));
+			("mutierenFinSit", "Gesuch zum Mutieren nicht gefunden"));
 		Validate.notNull(mutation.getGesuchsteller1(), "GS1 muss gesetzt sein");
 		Validate.notNull(mutation.getGesuchsteller1().getFinanzielleSituationContainer(), "FinSit vom GS1 muss gesetzt sein");
 		mutation.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setNettolohn(nettoLohn);
@@ -522,7 +521,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 	@Override
-	public void gesuchVerfuegenUndSpeichern(boolean verfuegen, @Nonnull Gesuch gesuch, boolean mutation, boolean ignorieren) {
+	public void gesuchVerfuegenUndSpeichern(boolean verfuegen, @Nonnull Gesuch gesuch, boolean mutation, boolean ignorierenInZahlungslauf) {
 		final List<WizardStep> wizardStepsFromGesuch = wizardStepService.findWizardStepsFromGesuch(gesuch.getId());
 
 		if (!mutation) {
@@ -542,7 +541,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		if (verfuegen) {
 			FreigabeCopyUtil.copyForFreigabe(gesuch);
 			verfuegungService.calculateVerfuegung(gesuch);
-			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.setZahlungsstatus(betreuung.getVerfuegung(), betreuung.getId(), ignorieren)));
+			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.setZahlungsstatus(betreuung.getVerfuegung(), betreuung.getId(), ignorierenInZahlungslauf)));
 			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId(), Betreuungsstatus.VERFUEGT)));
 			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.generateVerfuegungDokument(betreuung)));
 			generateDokFinSituation(gesuch); // the finSit document must be explicitly generated
