@@ -53,20 +53,21 @@
                     </div>
                 </div>
 
-                <table>
+                <table ng-if="vm.isTagesschuleAlreadySelected()">
                     <tr>
                         <td></td>
                         <td ng-repeat="weekDay in vm.getWeekDays()">
                             <span ng-bind="weekDay | translate"></span>
                         </td>
                     </tr>
-                    <!--todo eingentlich muss eine Tagesschule unbedingt Module haben-->
                     <tr ng-repeat="modulName in vm.getModulTagesschuleNameList()">
                         <td ng-bind="modulName | translate"></td>
                         <td ng-repeat="weekDay in vm.getWeekDays()">
                             <div class=" checkbox">
-                                <md-checkbox ng-model="vm.getModel().diplomatenstatus" name="diplomatenstatus"
-                                             aria-label="{{'GESUCHSTELLER_DIPLOMATENSTATUS'|translate}}">
+                                <md-checkbox name="modul_{{modulName}}_{{weekDay}}"
+                                             ng-model="vm.getModul(modulName, weekDay).angemeldet"
+                                             aria-label="Modul {{modulName | translate}} {{weekDay | translate}}"
+                                             ng-disabled="!vm.isModulEnabled(modulName, weekDay)">
                                 </md-checkbox>
                             </div>
                         </td>
@@ -86,6 +87,44 @@
         </div>
 
     </fieldset>
+
+    <!--Buttons-->
+    <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
+        wenn wir die Direktive benutzen wollen muessen wir viel anpassen, daher lohnt es sich die Buttons direkt zu erstellen-->
+    <!-- Buttons fuer JA/SCH und Gesuchsteller -->
+    <div class="nav-row-betreuung"
+         dv-show-element
+         dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles()">
+        <div ng-if="vm.betreuung.isEnabled()">
+            <dv-loading-button button-click="vm.anmelden()" type="submit" button-class="save">
+                <span data-translate="ANMELDEN_TAGESSCHULE"></span>
+            </dv-loading-button>
+        </div>
+    </div>
+
+    <!-- Buttons fuer Institution / Tagesschule -->
+    <!--todo verbesserung in eigene Direktive da in betreuungFerieninsel dupliziert-->
+    <div class="nav-row-betreuung"
+         dv-show-element
+         dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+         dv-show-expression="vm.showButtonsInstitution()">
+
+        <dv-loading-button button-click="vm.anmeldungSchulamtUebernehmen()" type="button" button-class="save">
+            <span data-translate="SCHULAMT_ANMELDUNG_UEBERNEHMEN"></span>
+        </dv-loading-button>
+        <dv-loading-button button-click="vm.anmeldungSchulamtAblehnen()" type="button" button-class="save">
+            <span data-translate="SCHULAMT_ANMELDUNG_ABLEHNEN"></span>
+        </dv-loading-button>
+        <dv-loading-button button-click="vm.anmeldungSchulamtFalscheInstitution()" type="button" button-class="save">
+            <span data-translate="SCHULAMT_FALSCHE_INSTITUTION"></span>
+        </dv-loading-button>
+    </div>
+    <!-- Abbrechen: Immer vorhanden -->
+    <div>
+        <dv-loading-button button-click="vm.cancel()" button-class="cancel" type="reset">
+            <span data-translate="ABBRECHEN_UPPER"></span>
+        </dv-loading-button>
+    </div>
 
 </div>
 

@@ -610,4 +610,20 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         return (this.getBetreuungModel().isAngebotTagesschule() && gp.hasTagesschulenAnmeldung() && !gp.isTageschulenAnmeldungAktiv()
             || this.getBetreuungModel().isAngebotFerieninsel() && !this.getBetreuungModel().isEnabled());
     }
+
+    /**
+     * Die globale navigation Buttons werden nur angezeigt, wenn es  kein Schulamtangebot ist oder wenn der Betreuungsstatus=SCHULAMT,
+     * das letzte um die alten Betreuungen zu unterstuetzen.
+     */
+    public displayGlobalNavigationButtons(): boolean {
+        return !this.isSchulamt() || !this.gesuchModelManager.getGesuch().gesuchsperiode.hasTagesschulenAnmeldung();
+    }
+
+    /**
+     * Die Felder fuer die Module muessen nur angezeigt werden wenn es Tagesschule ist oder status=SCHULAMT,
+     * das letzte um die alten Betreuungen zu unterstuetzen.
+     */
+    public displayModuleTagesschule(): boolean {
+        return this.isTagesschule() && this.gesuchModelManager.getGesuch().gesuchsperiode.hasTagesschulenAnmeldung();
+    }
 }

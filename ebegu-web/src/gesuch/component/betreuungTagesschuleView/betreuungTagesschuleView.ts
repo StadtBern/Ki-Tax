@@ -27,6 +27,8 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import {BetreuungViewController} from '../betreuungView/betreuungView';
+import IFormController = angular.IFormController;
+import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
@@ -36,6 +38,8 @@ import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import DateUtil from '../../../utils/DateUtil';
 import {getTSModulTagesschuleNameValues, TSModulTagesschuleName} from '../../../models/enums/TSModulTagesschuleName';
 import {getWeekdaysValues, TSDayOfWeek} from '../../../models/enums/TSDayOfWeek';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import TSModulTagesschule from '../../../models/TSModulTagesschule';
 
 let template = require('./betreuungTagesschuleView.html');
 require('./betreuungTagesschuleView.less');
@@ -45,8 +49,11 @@ export class BetreuungTagesschuleViewComponentConfig implements IComponentOption
     transclude = false;
     bindings: any = {
         betreuung: '=',
+        onSave: '&',
         instStammId: '=',
-        tagesschuleList: '&'
+        tagesschuleList: '&',
+        cancel: '&',
+        form: '='
     };
     template = template;
     controller = BetreuungTagesschuleViewController;
@@ -56,6 +63,8 @@ export class BetreuungTagesschuleViewComponentConfig implements IComponentOption
 export class BetreuungTagesschuleViewController extends BetreuungViewController {
 
     instStammId: string;
+    onSave: () => void;
+    form: IFormController;
     betreuung: TSBetreuung;
     tagesschuleList: () => Array<TSInstitutionStammdaten>;
 
@@ -74,6 +83,17 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
 
     $onInit() {
         this.model = this.betreuung;
+        this.copyModuleToBelegung();
+    }
+
+    /**
+     * Kopiert alle Module der ausgewaehlten Tagesschule in die Belegung, sodass man direkt in die Belegung die Module auswaehlen kann.
+     */
+    private copyModuleToBelegung() {
+        if (this.model.institutionStammdaten && this.model.institutionStammdaten.institutionStammdatenTagesschule
+            && this.model.institutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule) {
+            this.model.belegungTagesschule.moduleTagesschule = angular.copy(this.model.institutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule);
+        }
     }
 
     public getTagesschuleAnmeldungNotYetReadyText(): string {
@@ -98,4 +118,58 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     public getWeekDays(): TSDayOfWeek[] {
         return getWeekdaysValues();
     }
+
+    public isTagesschuleAlreadySelected(): boolean {
+        return this.instStammId !== null && this.instStammId !== undefined;
+    }
+
+    public isModulEnabled(modulName: TSModulTagesschuleName, weekday: TSDayOfWeek): boolean {
+        return this.isEnabled() && this.isModulDefinedInSelectedTS(modulName, weekday);
+    }
+
+    /**
+     * Gibt true zurueck wenn das gegebene Modul fuer die ausgewaehlte TS definiert wurde und zwar mit zeitBis und zeitVon.
+     */
+    public isModulDefinedInSelectedTS(modulName: TSModulTagesschuleName, weekday: TSDayOfWeek): boolean {
+        let modulTS: TSModulTagesschule = this.getModul(modulName, weekday);
+        return !!(modulTS && modulTS.zeitBis && modulTS.zeitVon);
+    }
+
+    public getModul(modulName: TSModulTagesschuleName, weekday: TSDayOfWeek): TSModulTagesschule {
+        if (this.model.belegungTagesschule && this.model.belegungTagesschule.moduleTagesschule) {
+            for (let modulTS of this.model.belegungTagesschule.moduleTagesschule) {
+                if (modulTS.modulTagesschuleName === modulName && modulTS.wochentag === weekday) {
+                    return modulTS;
+                }
+            }
+        }
+        return null;
+    }
+
+    public anmelden(): IPromise<any> {
+        if (this.form.$valid) {
+            // Validieren, dass mindestens 1 Modul ausgewählt war
+            if (this.model.belegungTagesschule.moduleTagesschule.length <= 0) {
+                // if (this.isAnmeldungMoeglich()) {
+                //     this.showErrorMessage = true;
+                // }
+                return undefined;
+            }
+            return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
+                title: 'CONFIRM_SAVE_TAGESSCHULE',
+                deleteText: 'BESCHREIBUNG_SAVE_TAGESSCHULE',
+                parentController: undefined,
+                elementID: undefined
+            }).then(() => {
+                this.onSave();
+            });
+        }
+        return undefined;
+    }
+
+    public setSelectedInstitutionStammdaten(): void {
+        super.setSelectedInstitutionStammdaten();
+        this.copyModuleToBelegung();
+    }
+
 }

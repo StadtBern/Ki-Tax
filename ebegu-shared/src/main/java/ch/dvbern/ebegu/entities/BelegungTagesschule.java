@@ -39,7 +39,7 @@ public class BelegungTagesschule extends AbstractEntity {
 
 	private static final long serialVersionUID = -8403435739182708718L;
 
-	@Nullable
+	@NotNull
 	@Valid
 	@SortNatural
 	@ManyToMany(cascade = CascadeType.ALL)
@@ -65,12 +65,12 @@ public class BelegungTagesschule extends AbstractEntity {
 		return true;
 	}
 
-	@Nullable
+	@NotNull
 	public Set<ModulTagesschule> getModuleTagesschule() {
 		return moduleTagesschule;
 	}
 
-	public void setModuleTagesschule(@Nullable Set<ModulTagesschule> module) {
+	public void setModuleTagesschule(@NotNull Set<ModulTagesschule> module) {
 		this.moduleTagesschule = module;
 	}
 
