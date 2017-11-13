@@ -161,7 +161,7 @@ public class BetreuungResource {
 
 			return converter.betreuungToJAX(persistedBetreuung);
 		}
-		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
+		throw new EbeguEntityNotFoundException("betreuungPlatzAbweisen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
 	}
 
 	@ApiOperation(value = "Betreuungsplatzanfrage wird durch die Institution bestätigt", response = JaxBetreuung.class)
