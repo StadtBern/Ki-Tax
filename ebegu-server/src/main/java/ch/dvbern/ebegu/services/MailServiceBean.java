@@ -107,6 +107,36 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	}
 
 	@Override
+	public void sendInfoSchulamtAnmeldungUebernommen(@Nonnull Betreuung betreuung) throws MailException {
+		if (doSendMail(betreuung.extractGesuch().getFall())) {
+			Gesuchsteller gesuchsteller = betreuung.extractGesuch().extractGesuchsteller1();
+			String mailaddress = fallService.getCurrentEmailAddress(betreuung.extractGesuch().getFall().getId()).orElse(null);
+			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+				String message = mailTemplateConfig.getInfoSchulamtAnmeldungUebernommen(betreuung, gesuchsteller, mailaddress);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoSchulamtAnmeldungUebernommen wurde versendet an {}", mailaddress);
+			} else {
+				LOG.warn("skipping sendInfoSchulamtAnmeldungUebernommen because Gesuchsteller 1 or mailaddress is null");
+			}
+		}
+	}
+
+	@Override
+	public void sendInfoSchulamtAnmeldungAbgelehnt(@Nonnull Betreuung betreuung) throws MailException {
+		if (doSendMail(betreuung.extractGesuch().getFall())) {
+			Gesuchsteller gesuchsteller = betreuung.extractGesuch().extractGesuchsteller1();
+			String mailaddress = fallService.getCurrentEmailAddress(betreuung.extractGesuch().getFall().getId()).orElse(null);
+			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+				String message = mailTemplateConfig.getInfoSchulamtAnmeldungAbgelehnt(betreuung, gesuchsteller, mailaddress);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoSchulamtAnmeldungAbgelehnt wurde versendet an {}", mailaddress);
+			} else {
+				LOG.warn("skipping sendInfoSchulamtAnmeldungAbgelehnt because Gesuchsteller 1 or mailaddress is null");
+			}
+		}
+	}
+
+	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT, ADMINISTRATOR_SCHULAMT})
 	public void sendInfoMitteilungErhalten(@Nonnull Mitteilung mitteilung) throws MailException {
 		if (doSendMail(mitteilung.getFall())) {

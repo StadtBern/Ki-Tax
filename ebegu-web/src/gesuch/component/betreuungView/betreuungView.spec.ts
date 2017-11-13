@@ -188,7 +188,7 @@ describe('betreuungView', function () {
                 betreuungView.platzAbweisen();
 
                 expect(gesuchModelManager.setBetreuungToWorkWith).toHaveBeenCalledWith(betreuungView.model);
-                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.ABGEWIESEN);
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND); // Status wird serverseitig gesetzt
                 expect(gesuchModelManager.getBetreuungToWorkWith().grundAblehnung).toEqual('mein Grund');
                 expect(gesuchModelManager.getBetreuungToWorkWith().datumAblehnung).toEqual(DateUtil.today());
                 expect(gesuchModelManager.getBetreuungToWorkWith().erweiterteBeduerfnisse).toBe(true);
@@ -203,7 +203,7 @@ describe('betreuungView', function () {
                 betreuungView.model.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
                 betreuungView.platzAnfordern();
-                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.WARTEN);
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND); // Status wird serverseitig gesetzt
                 expect(gesuchModelManager.saveBetreuung).toHaveBeenCalled();
             });
         });
