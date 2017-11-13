@@ -32,7 +32,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final Logger LOG = LoggerFactory.getLogger(EbeguConfigurationImpl.class.getSimpleName());
 
 	private static final long serialVersionUID = 463057263479503486L;
-	private static final String EBEGU_DEVELOPMENT_MODE = "ebegu.development.mode";
+	public static final String EBEGU_DEVELOPMENT_MODE = "ebegu.development.mode";
 	private static final String EBEGU_DOCUMENT_FILE_PATH = "ebegu.document.file.path";
 	private static final String EBEGU_FEDLET_CONFIG_PATH = "ebegu.fedlet.config.path";
 	private static final String EBEGU_CLIENT_USING_HTTPS = "ebegu.client.using.https";
