@@ -213,10 +213,9 @@ public class BetreuungResource {
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
-			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
-			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch());
-
 			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
+			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch(), convertedBetreuung);
 			convertedBetreuung.setKind(kind.get());
 			Betreuung persistedBetreuung = this.betreuungService.anmeldungSchulamtUebernehmen(convertedBetreuung);
 
@@ -243,10 +242,9 @@ public class BetreuungResource {
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
-			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
-			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch());
-
 			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
+			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch(), convertedBetreuung);
 			convertedBetreuung.setKind(kind.get());
 			Betreuung persistedBetreuung = this.betreuungService.anmeldungSchulamtAblehnen(convertedBetreuung);
 
@@ -273,10 +271,9 @@ public class BetreuungResource {
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
-			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
-			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch());
-
 			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
+			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch(), convertedBetreuung);
 			convertedBetreuung.setKind(kind.get());
 			Betreuung persistedBetreuung = this.betreuungService.anmeldungSchulamtFalscheInstitution(convertedBetreuung);
 
