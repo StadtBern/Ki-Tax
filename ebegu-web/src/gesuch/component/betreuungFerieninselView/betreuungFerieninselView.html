@@ -92,7 +92,7 @@
          dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles()">
         <div ng-if="vm.betreuung.isEnabled() && vm.isAnmeldungMoeglich()">
             <dv-loading-button button-click="vm.anmelden()" type="submit" button-class="save">
-                <span data-translate="ANMELDEN_FERIENINSEL"></span>
+                <span data-translate="{{vm.getButtonTextSpeichern()}}"></span>
             </dv-loading-button>
         </div>
     </div>

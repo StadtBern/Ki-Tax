@@ -124,6 +124,10 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
             && !this.isAnmeldungNichtFreigegeben();
     }
 
+    public getButtonTextSpeichern(): string {
+        return this.direktAnmeldenSchulamt() ? 'ANMELDEN_FERIENINSEL' : 'SAVE';
+    }
+
     public anmelden(): IPromise<any> {
         if (this.form.$valid) {
             // Validieren, dass mindestens 1 Tag ausgewählt war
@@ -134,14 +138,18 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
                 }
                 return undefined;
             }
-            return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
-                title: 'CONFIRM_SAVE_FERIENINSEL',
-                deleteText: 'BESCHREIBUNG_SAVE_FERIENINSEL',
-                parentController: undefined,
-                elementID: undefined
-            }).then(() => {
+            if (this.direktAnmeldenSchulamt()) {
+                return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
+                    title: 'CONFIRM_SAVE_FERIENINSEL',
+                    deleteText: 'BESCHREIBUNG_SAVE_FERIENINSEL',
+                    parentController: undefined,
+                    elementID: undefined
+                }).then(() => {
+                    this.onSave();
+                });
+            } else {
                 this.onSave();
-            });
+            }
         }
         return undefined;
     }
@@ -156,6 +164,6 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     }
 
     public showButtonsInstitution(): boolean {
-        return this.betreuung.betreuungsstatus === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST && !this.isGesuchReadonly();
+        return this.betreuung.betreuungsstatus === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST && !this.gesuchModelManager.isGesuchReadonlyForRole();
     }
 }
