@@ -42,7 +42,8 @@ public class BelegungTagesschule extends AbstractEntity {
 	@NotNull
 	@Valid
 	@SortNatural
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
+	// es darf nicht cascadeAll sein, da sonst die Module geloescht werden, wenn die Belegung geloescht wird, obwohl das Modul eigentlich zur Institutione gehoert
 	private Set<ModulTagesschule> moduleTagesschule = new TreeSet<>();
 
 	@NotNull
