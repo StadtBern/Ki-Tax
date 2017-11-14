@@ -173,7 +173,7 @@
 
                 </fieldset>
 
-                <fieldset ng-disabled="!vm.isMutationsmeldungStatus">
+                <fieldset ng-disabled="vm.isGesuchReadonly() && !vm.isMutationsmeldungStatus">
                     <!--Diese Felder werden fuer Betreuungsangebottyp TAGESSCHULE ausgeblendet. Fuer alle anderen eingeblendet-->
                     <!--Nur Institutionen duerfen neue Pensen eintragen. Bei anderen Rollen werden nur die existierenden Pensen angezeigt-->
                     <div ng-if="!vm.isSchulamt()">
