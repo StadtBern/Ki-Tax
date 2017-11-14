@@ -32,6 +32,7 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
+import {isStatusVerfuegenVerfuegt} from '../../../models/enums/TSAntragStatus';
 import ITranslateService = angular.translate.ITranslateService;
 import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
@@ -105,6 +106,24 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         }
     }
 
+    public createAnmeldungFerieninsel(kind: TSKindContainer): void {
+       this.createAnmeldungSchulamt(TSBetreuungsangebotTyp.FERIENINSEL, kind);
+    }
+
+    public createAnmeldungTagesschule(kind: TSKindContainer): void {
+        this.createAnmeldungSchulamt(TSBetreuungsangebotTyp.TAGESSCHULE, kind);
+    }
+
+    private createAnmeldungSchulamt(betreuungstyp: TSBetreuungsangebotTyp, kind: TSKindContainer): void {
+        let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
+        if (kindIndex >= 0) {
+            this.gesuchModelManager.setKindIndex(kindIndex);
+            this.openAnmeldungView(kind.kindNummer, betreuungstyp);
+        } else {
+            this.$log.error('kind nicht gefunden ', kind);
+        }
+    }
+
     public removeBetreuung(kind: TSKindContainer, betreuung: TSBetreuung, index: any): void {
         this.gesuchModelManager.findKind(kind);     //kind index setzen
         let remTitleText: any = this.$translate.instant('BETREUUNG_LOESCHEN', {
@@ -133,6 +152,15 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
             betreuungNumber: betreuungNumber,
             kindNumber: kindNumber,
             gesuchId: this.getGesuchId()
+        });
+    }
+
+    private openAnmeldungView(kindNumber: number, betreuungsangebotTyp: TSBetreuungsangebotTyp): void {
+        this.$state.go('gesuch.betreuung', {
+            betreuungNumber: undefined,
+            kindNumber: kindNumber,
+            gesuchId: this.getGesuchId(),
+            betreuungsangebotTyp: betreuungsangebotTyp.toString()
         });
     }
 
@@ -177,5 +205,16 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
 
     public setFocusBack(elementID: string): void {
         angular.element('#' + elementID).first().focus();
+    }
+
+    public showButtonAnmeldungSchulamt(): boolean {
+        // Anmeldung Schulamt: Solange das Gesuch noch "normal" editiert werden kann, soll der Weg ueber "Betreuung hinzufuegen" verwendet werden
+        // Nachdem readonly: nur fuer Jugendamt, Schulamt und Gesuchsteller verfuegbar sein
+        let isStatus: boolean = isStatusVerfuegenVerfuegt(this.gesuchModelManager.getGesuch().status)
+            || this.gesuchModelManager.isGesuchReadonlyForRole()
+            || this.gesuchModelManager.isKorrekturModusJugendamt()
+            || this.gesuchModelManager.getGesuch().gesperrtWegenBeschwerde;
+        let isRole: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles());
+        return isStatus && isStatus;
     }
 }
