@@ -97,8 +97,8 @@ public class BetreuungResource {
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
-			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch());
 			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
+			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch(), convertedBetreuung);
 			convertedBetreuung.setKind(kind.get());
 			Betreuung persistedBetreuung = this.betreuungService.saveBetreuung(convertedBetreuung, abwesenheit);
 
