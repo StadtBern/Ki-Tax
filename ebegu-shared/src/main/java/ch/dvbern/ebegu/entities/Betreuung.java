@@ -72,7 +72,7 @@ import org.hibernate.search.annotations.Indexed;
 @CheckAbwesenheitDatesOverlapping
 @Table(
 	uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "betreuung_nummer", "kind_id" }, name = "UK_betreuung_kind_betreuung_nummer"),
+		@UniqueConstraint(columnNames = { "betreuungNummer", "kind_id" }, name = "UK_betreuung_kind_betreuung_nummer"),
 		@UniqueConstraint(columnNames = { "verfuegung_id" }, name = "UK_betreuung_verfuegung_id")    //hibernate ignoriert den namen leider
 	}
 )

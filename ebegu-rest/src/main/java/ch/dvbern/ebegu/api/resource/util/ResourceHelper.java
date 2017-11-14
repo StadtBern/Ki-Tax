@@ -111,6 +111,7 @@ public class ResourceHelper {
 		}
 	}
 
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	public void assertGesuchStatusForBenutzerRole(@Nonnull Gesuch gesuch, @Nonnull Betreuung betreuung) {
 		UserRole userRole = principalBean.discoverMostPrivilegedRole();
 		if (userRole == UserRole.SUPER_ADMIN) {
