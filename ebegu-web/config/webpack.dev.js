@@ -137,7 +137,11 @@ module.exports = webpackMerge(commonConfig, {
                 target: 'http://localhost:8080',
                 secure: false
             }
-        }
+        },
+        headers: {
+                   'Content-Security-Policy': "default-src 'none'; object-src 'self'; script-src 'self' 'unsafe-eval' ajax.googleapis.com; connect-src 'self' ws:; img-src 'self'; style-src 'self' 'unsafe-inline'  https://fonts.googleapis.com; font-src 'self'  https://fonts.googleapis.com https://fonts.gstatic.com;",
+                   'X-Frame-Options': 'DENY'
+               }
     },
     node: {
         global: true,
