@@ -215,6 +215,6 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
             || this.gesuchModelManager.isKorrekturModusJugendamt()
             || this.gesuchModelManager.getGesuch().gesperrtWegenBeschwerde;
         let isRole: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles());
-        return isStatus && isStatus;
+        return isStatus && isRole;
     }
 }

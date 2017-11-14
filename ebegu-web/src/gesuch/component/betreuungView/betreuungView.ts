@@ -15,38 +15,39 @@
 
 import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
-import AbstractGesuchViewController from '../abstractGesuchView';
-import GesuchModelManager from '../../service/gesuchModelManager';
-import TSKindContainer from '../../../models/TSKindContainer';
-import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
-import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
-import TSBetreuungspensumContainer from '../../../models/TSBetreuungspensumContainer';
-import TSBetreuung from '../../../models/TSBetreuung';
-import TSBetreuungspensum from '../../../models/TSBetreuungspensum';
-import {TSDateRange} from '../../../models/types/TSDateRange';
-import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
-import BerechnungsManager from '../../service/berechnungsManager';
-import EbeguUtil from '../../../utils/EbeguUtil';
-import ErrorService from '../../../core/errors/service/ErrorService';
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import WizardStepManager from '../../service/wizardStepManager';
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import {IBetreuungStateParams} from '../../gesuch.route';
-import MitteilungRS from '../../../core/service/mitteilungRS.rest';
-import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
-import {RemoveDialogController} from '../../dialog/RemoveDialogController';
-import {isVerfuegtOrSTV} from '../../../models/enums/TSAntragStatus';
 import * as moment from 'moment';
-import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import ErrorService from '../../../core/errors/service/ErrorService';
+import MitteilungRS from '../../../core/service/mitteilungRS.rest';
+import {isVerfuegtOrSTV, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
+import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import TSBelegungTagesschule from '../../../models/TSBelegungTagesschule';
+import TSBetreuung from '../../../models/TSBetreuung';
+import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
+import TSBetreuungspensum from '../../../models/TSBetreuungspensum';
+import TSBetreuungspensumContainer from '../../../models/TSBetreuungspensumContainer';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
+import TSKindContainer from '../../../models/TSKindContainer';
+import {TSDateRange} from '../../../models/types/TSDateRange';
+import DateUtil from '../../../utils/DateUtil';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import {IBetreuungStateParams} from '../../gesuch.route';
+import BerechnungsManager from '../../service/berechnungsManager';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import WizardStepManager from '../../service/wizardStepManager';
+import AbstractGesuchViewController from '../abstractGesuchView';
+import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
-import ILogService = angular.ILogService;
-import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import ITranslateService = angular.translate.ITranslateService;
-import DateUtil from '../../../utils/DateUtil';
-import TSBelegungTagesschule from '../../../models/TSBelegungTagesschule';
+
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -91,7 +92,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt(this.$stateParams.kindNumber, 10));
         if (kindIndex >= 0) {
             this.gesuchModelManager.setKindIndex(kindIndex);
-            if (this.$stateParams.betreuungNumber) {
+            if (this.$stateParams.betreuungNumber && this.$stateParams.betreuungNumber.length > 0) {
                 this.betreuungIndex = this.gesuchModelManager.convertBetreuungNumberToBetreuungIndex(parseInt(this.$stateParams.betreuungNumber));
                 this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungIndex]);
                 this.initialBetreuung = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungIndex]);
@@ -105,7 +106,16 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             }
 
             this.setBetreuungsangebotTypValues();
-            this.betreuungsangebot = undefined;
+            // Falls ein Typ gesetzt ist, handelt es sich um eine direkt-Anmeldung
+            if (this.$stateParams.betreuungsangebotTyp) {
+                for (let obj of this.betreuungsangebotValues) {
+                    if (obj.key === this.$stateParams.betreuungsangebotTyp) {
+                        this.betreuungsangebot = obj;
+                    }
+                }
+            } else {
+                this.betreuungsangebot = undefined;
+            }
             this.initViewModel();
 
             // just to read!
@@ -237,7 +247,16 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public anmeldenSchulamt(): void {
-        this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST, 'gesuch.betreuungen', undefined);
+        if (this.direktAnmeldenSchulamt()) {
+            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST, 'gesuch.betreuungen', undefined);
+        } else {
+            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST, 'gesuch.betreuungen', undefined);
+        }
+    }
+
+    public direktAnmeldenSchulamt(): boolean {
+        // Eigentlich immer ausser in Bearbeitung GS
+        return !(this.isGesuchInStatus(TSAntragStatus.IN_BEARBEITUNG_GS) || this.isGesuchInStatus(TSAntragStatus.FREIGABEQUITTUNG));
     }
 
     public anmeldungSchulamtUebernehmen(): void {
@@ -248,16 +267,16 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             parentController: undefined,
             elementID: undefined
         }).then(() => {
-            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN, 'gesuch.betreuungen', undefined);
+            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN, 'pendenzenInstitution', undefined);
         });
     }
 
     public anmeldungSchulamtAblehnen(): void {
-        this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT, 'gesuch.betreuungen', undefined);
+        this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT, 'pendenzenInstitution', undefined);
     }
 
     public anmeldungSchulamtFalscheInstitution(): void {
-        this.save(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION, 'gesuch.betreuungen', undefined);
+        this.save(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION, 'pendenzenInstitution', undefined);
     }
 
     private copyBGNumberLToClipboard(): void {
@@ -406,15 +425,25 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      * @returns {boolean}
      */
     public isEnabled(): boolean {
-        if (this.getBetreuungModel()) {
+        if (this.getBetreuungModel() && this.getBetreuungModel().betreuungsstatus) {
             return !this.getBetreuungModel().hasVorgaenger()
                 && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)
                     || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST)
                     || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT)
-                && !this.isKorrekturModusJugendamt()));
-
+                        && !this.isKorrekturModusJugendamt()));
         }
-        return false;
+        return true;
+    }
+
+    /**
+     * Returns true when the Gesuch must be readonly
+     * @returns {boolean}
+     */
+    public isGesuchReadonly(): boolean {
+        if (!this.getBetreuungModel().isAngebotSchulamt()) {
+            return super.isGesuchReadonly();
+        }
+        return !this.getBetreuungModel().isEnabled();
     }
 
     public isBetreuungsstatusWarten(): boolean {

@@ -92,7 +92,7 @@
                         </div>
                     </div>
 
-                <fieldset ng-disabled="vm.isGesuchReadonly()">
+                <fieldset>
 
                     <!--Betreuungsangebot (Mit diesem Wert filtern wir die Institutionen)-->
                     <div class="row marginTop20" ng-disabled="!vm.isEnabled()">
@@ -173,7 +173,7 @@
 
                 </fieldset>
 
-                <fieldset ng-disabled="vm.isGesuchReadonly() && !vm.isMutationsmeldungStatus">
+                <fieldset ng-disabled="!vm.isMutationsmeldungStatus">
                     <!--Diese Felder werden fuer Betreuungsangebottyp TAGESSCHULE ausgeblendet. Fuer alle anderen eingeblendet-->
                     <!--Nur Institutionen duerfen neue Pensen eintragen. Bei anderen Rollen werden nur die existierenden Pensen angezeigt-->
                     <div ng-if="!vm.isSchulamt()">
@@ -312,7 +312,7 @@
                                                      name="erweiterteBeduerfnisse"
                                                      aria-label="{{'ERWEITERTE_BEDUERFNISSE'|translate}}" dv-enable-element
                                                      dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                                                     dv-enable-expression="!vm.isGesuchReadonly() && ((vm.isBetreuungsstatusWarten() && !vm.isSavingData) || vm.isMutationsmeldungStatus)">
+                                                     dv-enable-expression="vm.isEnabled() && ((vm.isBetreuungsstatusWarten() && !vm.isSavingData) || vm.isMutationsmeldungStatus)">
                                             <span data-translate="ERWEITERTE_BEDUERFNISSE"></span>
                                         </md-checkbox>
                                         <dv-error-messages
@@ -455,18 +455,18 @@
                         </div>
                     </div>
 
-                    <!-- Ferieninsel -->
-                    <div ng-if="vm.isFerieninsel()">
-                        <betreuung-ferieninsel-view betreuung="vm.getBetreuungModel()" form="vm.form"
-                                                    on-save="vm.anmeldenSchulamt()"
-                                                    anmeldung-schulamt-uebernehmen="vm.anmeldungSchulamtUebernehmen()"
-                                                    anmeldung-schulamt-ablehnen="vm.anmeldungSchulamtAblehnen()"
-                                                    anmeldung-schulamt-falsche-institution="vm.anmeldungSchulamtFalscheInstitution()"
-                                                    cancel="vm.cancel()">
-                        </betreuung-ferieninsel-view>
-                    </div>
-
                 </fieldset>
+
+                <!-- Ferieninsel -->
+                <div ng-if="vm.isFerieninsel()">
+                    <betreuung-ferieninsel-view betreuung="vm.getBetreuungModel()" form="vm.form"
+                                                on-save="vm.anmeldenSchulamt()"
+                                                anmeldung-schulamt-uebernehmen="vm.anmeldungSchulamtUebernehmen()"
+                                                anmeldung-schulamt-ablehnen="vm.anmeldungSchulamtAblehnen()"
+                                                anmeldung-schulamt-falsche-institution="vm.anmeldungSchulamtFalscheInstitution()"
+                                                cancel="vm.cancel()">
+                    </betreuung-ferieninsel-view>
+                </div>
 
                 <!--Buttons-->
                 <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
@@ -503,7 +503,7 @@
 
                     <div dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                         dv-show-expression="vm.isBetreuungsstatusWarten() && !vm.isGesuchReadonly()">
+                         dv-show-expression="vm.isBetreuungsstatusWarten()">
 
                         <div ng-if="vm.isFromMutation()">
                             <dv-loading-button button-click="vm.stornieren()"
