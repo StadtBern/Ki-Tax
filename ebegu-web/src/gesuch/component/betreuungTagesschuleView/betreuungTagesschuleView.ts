@@ -198,4 +198,16 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
         return this.getBetreuungModel().belegungTagesschule.moduleTagesschule
             .filter(modul => modul.angemeldet === true).length > 0;
     }
+
+    public getModulName(modulName: TSModulTagesschuleName): string {
+        let modul: TSModulTagesschule = this.getModul(modulName, TSDayOfWeek.MONDAY); // monday ist der Vertreter fuer die ganze Woche
+        return this.$translate.instant(TSModulTagesschuleName[modulName]) + this.getModulTimeAsString(modul);
+    }
+
+    public getModulTimeAsString(modul: TSModulTagesschule): string {
+        if (modul) {
+            return ' (' + modul.zeitVon.format('HH:mm') + ' - ' + modul.zeitBis.format('HH:mm') + ')';
+        }
+        return '';
+    }
 }

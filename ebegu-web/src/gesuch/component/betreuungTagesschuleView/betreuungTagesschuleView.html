@@ -61,7 +61,7 @@
                         </td>
                     </tr>
                     <tr ng-repeat="modulName in vm.getModulTagesschuleNameList()">
-                        <td ng-bind="modulName | translate"></td>
+                        <td ng-bind="vm.getModulName(modulName)"></td>
                         <td ng-repeat="weekDay in vm.getWeekDays()">
                             <div class=" checkbox">
                                 <md-checkbox name="modul_{{modulName}}_{{weekDay}}"
