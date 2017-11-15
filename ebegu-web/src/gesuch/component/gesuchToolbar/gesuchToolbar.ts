@@ -25,7 +25,11 @@ import TSAntragDTO from '../../../models/TSAntragDTO';
 import {IGesuchStateParams} from '../../gesuch.route';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {isAnyStatusOfVerfuegt, isAtLeastFreigegebenOrFreigabequittung, isStatusVerfuegenVerfuegt} from '../../../models/enums/TSAntragStatus';
+import {
+    isAnyStatusOfVerfuegt,
+    isAtLeastFreigegebenOrFreigabequittung,
+    isStatusVerfuegenVerfuegt
+} from '../../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import * as moment from 'moment';
@@ -105,16 +109,16 @@ export class GesuchToolbarController implements IDVFocusableController {
         '$mdSidenav', '$log', 'GesuchsperiodeRS', 'FallRS', 'DvDialog', 'unsavedWarningSharedService'];
 
     constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
-                private CONSTANTS: any, private gesuchRS: GesuchRS,
-                private $state: IStateService, private $stateParams: IGesuchStateParams, private $scope: IScope,
-                private gesuchModelManager: GesuchModelManager,
-                private authServiceRS: AuthServiceRS,
-                private $mdSidenav: ng.material.ISidenavService,
-                private $log: ILogService,
-                private gesuchsperiodeRS: GesuchsperiodeRS,
-                private fallRS: FallRS,
-                private dvDialog: DvDialog,
-                private unsavedWarningSharedService: any) {
+        private CONSTANTS: any, private gesuchRS: GesuchRS,
+        private $state: IStateService, private $stateParams: IGesuchStateParams, private $scope: IScope,
+        private gesuchModelManager: GesuchModelManager,
+        private authServiceRS: AuthServiceRS,
+        private $mdSidenav: ng.material.ISidenavService,
+        private $log: ILogService,
+        private gesuchsperiodeRS: GesuchsperiodeRS,
+        private fallRS: FallRS,
+        private dvDialog: DvDialog,
+        private unsavedWarningSharedService: any) {
 
     }
 
@@ -227,9 +231,12 @@ export class GesuchToolbarController implements IDVFocusableController {
     }
 
     public updateUserList(): void {
-        this.userRS.getBenutzerJAorAdmin().then((response) => {
-            this.userList = angular.copy(response);
-        });
+        //not needed for Gesuchsteller
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAllRolesButGesuchsteller())) {
+            this.userRS.getBenutzerJAorAdmin().then((response) => {
+                this.userList = angular.copy(response);
+            });
+        }
     }
 
     public updateAntragDTOList(): void {
@@ -593,7 +600,7 @@ export class GesuchToolbarController implements IDVFocusableController {
     }
 
     public showGesuchLoeschen(): boolean {
-        if (!this.getGesuch() ||  this.getGesuch().isNew()) {
+        if (!this.getGesuch() || this.getGesuch().isNew()) {
             return false;
         }
         if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
