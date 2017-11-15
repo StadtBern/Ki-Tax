@@ -15,7 +15,9 @@
 
 import {IComponentOptions} from 'angular';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import {TSRole} from '../../../models/enums/TSRole';
 import INgModelController = angular.INgModelController;
+
 let template = require('./dv-radio-container.html');
 require('./dv-radio-container.less');
 
@@ -45,7 +47,7 @@ export class DvRadioContainerController {
     // D.h. dv-enable-element muss in diesem Fall immer gesetzt sein. Aus diesem Grund spielen wir
     // immer mit den Werten von dv-enable-allowed-roles und dv-enable-expression. Wenn die Direktive nicht gesetzt werden muss, bekommen diese attributen
     // die Werte by default allRoles und true, sodass es immer angezeigt wird.
-    allRoles: Array<string>;
+    allRoles: Array<TSRole>;
 
     static $inject: any[] = [];
     /* @ngInject */
