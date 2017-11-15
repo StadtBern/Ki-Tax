@@ -20,26 +20,20 @@ import {getTSRoleValues, TSRole} from '../models/enums/TSRole';
  */
 export class TSRoleUtil {
 
-    public static getAllRolesButGesuchsteller(): Array<string> {
+    public static getAllRolesButGesuchsteller(): Array<TSRole> {
         return TSRoleUtil.getAllRoles().filter(element =>
-            element !== TSRole[TSRole.GESUCHSTELLER]
+            element !== TSRole.GESUCHSTELLER
         );
     }
 
-    public static getAllRolesForMenuAlleVerfuegungen(): Array<string> {
+    public static getAllRolesForMenuAlleVerfuegungen(): Array<TSRole> {
         return TSRoleUtil.getAllRoles().filter(element =>
-            element !== TSRole[TSRole.SCHULAMT] && element !== TSRole[TSRole.ADMINISTRATOR_SCHULAMT] && element !== TSRole[TSRole.STEUERAMT]
+            element !== TSRole.SCHULAMT && element !== TSRole.ADMINISTRATOR_SCHULAMT && element !== TSRole.STEUERAMT
         );
     }
 
-    public static getAllRoles(): Array<string> {
-        let result: Array<string> = [];
-        for (let prop in TSRole) {
-            if ((isNaN(parseInt(prop)))) {
-                result.push(prop);
-            }
-        }
-        return result;
+    public static getAllRoles(): Array<TSRole> {
+        return getTSRoleValues();
     }
 
     public static getSuperAdminRoles(): Array<TSRole> {
@@ -106,11 +100,11 @@ export class TSRoleUtil {
         return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.ADMINISTRATOR_SCHULAMT, TSRole.SCHULAMT, TSRole.GESUCHSTELLER];
     }
 
-    public static getAllButAdministratorJugendamtRole(): Array<string> {
+    public static getAllButAdministratorJugendamtRole(): Array<TSRole> {
         return TSRoleUtil.getAllRoles().filter(element =>
-            element !== TSRole[TSRole.SACHBEARBEITER_JA] &&
-            element !== TSRole[TSRole.ADMIN] &&
-            element !== TSRole[TSRole.SUPER_ADMIN]
+            element !== TSRole.SACHBEARBEITER_JA &&
+            element !== TSRole.ADMIN  &&
+            element !== TSRole.SUPER_ADMIN
         );
     }
 
@@ -122,22 +116,22 @@ export class TSRoleUtil {
         );
     }
 
-    public static getAllRolesButTraegerschaftInstitution(): Array<string> {
+    public static getAllRolesButTraegerschaftInstitution(): Array<TSRole> {
         return TSRoleUtil.getAllRoles().filter(element =>
-            element !== TSRole[TSRole.SACHBEARBEITER_INSTITUTION] && element !== TSRole[TSRole.SACHBEARBEITER_TRAEGERSCHAFT]
+            element !== TSRole.SACHBEARBEITER_INSTITUTION && element !== TSRole.SACHBEARBEITER_TRAEGERSCHAFT
         );
     }
 
-    public static getAllRolesButTraegerschaftInstitutionSteueramt(): Array<string> {
+    public static getAllRolesButTraegerschaftInstitutionSteueramt(): Array<TSRole> {
         return TSRoleUtil.getAllRoles().filter(element =>
-            element !== TSRole[TSRole.SACHBEARBEITER_INSTITUTION] && element !== TSRole[TSRole.SACHBEARBEITER_TRAEGERSCHAFT]
-            && element !== TSRole[TSRole.STEUERAMT]
+            element !== TSRole.SACHBEARBEITER_INSTITUTION && element !== TSRole.SACHBEARBEITER_TRAEGERSCHAFT
+            && element !== TSRole.STEUERAMT
         );
     }
 
-    public static getAllRolesButSteueramt(): Array<string> {
+    public static getAllRolesButSteueramt(): Array<TSRole> {
         return TSRoleUtil.getAllRoles().filter(element =>
-            element !== TSRole[TSRole.STEUERAMT]
+            element !== TSRole.STEUERAMT
         );
     }
 
