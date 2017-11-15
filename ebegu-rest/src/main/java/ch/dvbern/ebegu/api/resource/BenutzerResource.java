@@ -59,18 +59,6 @@ public class BenutzerResource {
 	@Inject
 	private JaxBConverter converter;
 
-	@ApiOperation(value = "Gibt alle Benutzer zurück", responseContainer = "List", response = JaxAuthLoginElement.class)
-	@Nonnull
-	@GET
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ SUPER_ADMIN })
-	public List<JaxAuthLoginElement> getAllUsers() {
-		return benutzerService.getAllBenutzer().stream()
-			.map(benutzer -> converter.benutzerToAuthLoginElement(benutzer))
-			.collect(Collectors.toList());
-	}
-
 	@ApiOperation(value = "Gibt alle existierenden Benutzer mit Rolle ADMIN oder SACHBEARBEITER_JA zurueck", responseContainer = "List", response = JaxAuthLoginElement.class)
 	@Nonnull
 	@GET
