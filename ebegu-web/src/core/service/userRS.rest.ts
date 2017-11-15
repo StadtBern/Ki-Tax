@@ -31,13 +31,6 @@ export default class UserRS implements IEntityRS {
         this.ebeguRestUtil = ebeguRestUtil;
     }
 
-    public getAllUsers(): IPromise<TSUser[]> {
-        return this.http.get(this.serviceURL).then((response: any) => {
-            this.$log.debug('PARSING user REST array object', response.data);
-            return this.ebeguRestUtil.parseUserList(response.data);
-        });
-    }
-
     public getBenutzerJAorAdmin(): IPromise<TSUser[]> {
         return this.http.get(this.serviceURL + '/JAorAdmin').then((response: any) => {
             this.$log.debug('PARSING user REST array object', response.data);
@@ -55,5 +48,4 @@ export default class UserRS implements IEntityRS {
             return this.ebeguRestUtil.parseUserList(response.data);
         });
     }
-
 }

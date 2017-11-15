@@ -40,6 +40,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+
 import ch.dvbern.ebegu.api.AuthConstants;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElementCookieData;
@@ -52,9 +57,6 @@ import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
-import com.google.gson.Gson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This resource has functions to login or logout
@@ -200,7 +202,8 @@ public class AuthResource {
 	}
 
 	private boolean isCookieSecure() {
-		return request.isSecure();
+		final boolean forceCookieSecureFlag = configuration.forceCookieSecureFlag();
+		return request.isSecure() || forceCookieSecureFlag;
 	}
 
 	@POST
