@@ -78,7 +78,7 @@ public class BenutzerResource {
 	@Path("/gesuchsteller")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ SUPER_ADMIN })
+	@RolesAllowed(SUPER_ADMIN)
 	public List<JaxAuthLoginElement> getGesuchsteller() {
 		return benutzerService.getGesuchsteller().stream()
 			.map(benutzer -> converter.benutzerToAuthLoginElement(benutzer))
