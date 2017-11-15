@@ -84,6 +84,14 @@
                 </div>
             </div>
 
+            <!-- Hinweis, wenn keine Module ausgewaehlt -->
+            <div ng-if="vm.showErrorMessageNoModule === true">
+                <div class="well well-status-warten">
+                    <i class="fa fa-exclamation" aria-hidden="true"></i>
+                    <span data-translate="WARN_TAGESSCHULE_KEIN_MODUL_GEWAEHLT"></span>
+                </div>
+            </div>
+
         </div>
 
     </fieldset>

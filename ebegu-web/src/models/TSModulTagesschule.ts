@@ -75,11 +75,13 @@ export default class TSModulTagesschule extends TSAbstractEntity {
         this._angemeldet = value;
     }
 
-    public equals(instModul: TSModulTagesschule): boolean {
+    /**
+     * Prueft ob beide Module gleich sind. Sie sind glech wenn wochentag und modulTagesschuleName gleich sind.
+     * Die ZeitVon und ZeitBis spielt keine Rolle in diesem Fall, da so Module unterschiedlichen Institutionen verglichen werden koennen.
+     */
+    public isSameModul(instModul: TSModulTagesschule): boolean {
         return instModul
             && this.wochentag === instModul.wochentag
-            && this.modulTagesschuleName === instModul.modulTagesschuleName
-            && this.zeitVon.isSame(instModul.zeitVon)
-            && this.zeitBis.isSame(instModul.zeitBis);
+            && this.modulTagesschuleName === instModul.modulTagesschuleName;
     }
 }

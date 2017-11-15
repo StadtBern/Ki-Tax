@@ -67,6 +67,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     form: IFormController;
     betreuung: TSBetreuung;
     tagesschuleList: () => Array<TSInstitutionStammdaten>;
+    showErrorMessageNoModule: boolean;
 
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
@@ -98,7 +99,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
             if (angemeldeteModule) {
                 angemeldeteModule.forEach(angemeldetesModul => {
                     this.getBetreuungModel().belegungTagesschule.moduleTagesschule.forEach(instModul => {
-                        if (angemeldetesModul.equals(instModul)) {
+                        if (angemeldetesModul.isSameModul(instModul)) {
                             instModul.angemeldet = true;
                         }
                     });
@@ -160,10 +161,8 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     public anmelden(): IPromise<any> {
         if (this.form.$valid) {
             // Validieren, dass mindestens 1 Modul ausgewählt war
-            if (this.getBetreuungModel().belegungTagesschule.moduleTagesschule.length <= 0) {
-                // if (this.isAnmeldungMoeglich()) {
-                //     this.showErrorMessage = true;
-                // }
+            if (!this.isThereAnyAnmeldung()) {
+                this.showErrorMessageNoModule = true;
                 return undefined;
             }
             this.filterOnlyAngemeldeteModule();
@@ -181,6 +180,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
 
     public setSelectedInstitutionStammdaten(): void {
         super.setSelectedInstitutionStammdaten();
+        this.filterOnlyAngemeldeteModule();
         this.copyModuleToBelegung();
     }
 
@@ -192,5 +192,10 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
         let angemeldeteModule: TSModulTagesschule[] = this.getBetreuungModel().belegungTagesschule.moduleTagesschule
             .filter(modul => modul.angemeldet === true);
         this.getBetreuungModel().belegungTagesschule.moduleTagesschule = angemeldeteModule;
+    }
+
+    private isThereAnyAnmeldung(): boolean {
+        return this.getBetreuungModel().belegungTagesschule.moduleTagesschule
+            .filter(modul => modul.angemeldet === true).length > 0;
     }
 }
