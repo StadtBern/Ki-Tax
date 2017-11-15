@@ -1763,7 +1763,7 @@ public class JaxBConverter {
 	private BelegungTagesschule belegungTagesschuleToEntity(@Nullable JaxBelegungTagesschule belegungTagesschuleJAXP,
 		@NotNull BelegungTagesschule belegungTagesschule, @NotNull InstitutionStammdatenTagesschule instStammdatenTagesschule) {
 
-		if (belegungTagesschuleJAXP != null) {
+		if (belegungTagesschuleJAXP != null && instStammdatenTagesschule != null) {
 			convertAbstractFieldsToEntity(belegungTagesschuleJAXP, belegungTagesschule);
 
 			final Set<ModulTagesschule> convertedModule = moduleTagesschuleListToEntity(belegungTagesschuleJAXP.getModuleTagesschule(),
