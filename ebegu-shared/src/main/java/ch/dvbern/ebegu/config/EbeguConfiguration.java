@@ -169,4 +169,10 @@ public interface EbeguConfiguration {
 	 * @return das Benutzerpasswort fuer den internen API USER
 	 */
 	String getInternalAPIPassword();
+
+	/**
+	 * @return by default the secure flag of cookies will be set based on the incoming request. To force the application
+	 * to only set cookies with the secure flag this property can be set to true (default is false)
+	 */
+	boolean forceCookieSecureFlag();
 }
