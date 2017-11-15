@@ -90,9 +90,20 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
      * Kopiert alle Module der ausgewaehlten Tagesschule in die Belegung, sodass man direkt in die Belegung die Module auswaehlen kann.
      */
     private copyModuleToBelegung() {
-        if (this.model.institutionStammdaten && this.model.institutionStammdaten.institutionStammdatenTagesschule
-            && this.model.institutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule) {
-            this.model.belegungTagesschule.moduleTagesschule = angular.copy(this.model.institutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule);
+        if (this.getBetreuungModel().institutionStammdaten && this.getBetreuungModel().institutionStammdaten.institutionStammdatenTagesschule
+            && this.getBetreuungModel().institutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule) {
+
+            let angemeldeteModule: TSModulTagesschule[] = angular.copy(this.getBetreuungModel().belegungTagesschule.moduleTagesschule);
+            this.getBetreuungModel().belegungTagesschule.moduleTagesschule = angular.copy(this.getBetreuungModel().institutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule);
+            if (angemeldeteModule) {
+                angemeldeteModule.forEach(angemeldetesModul => {
+                    this.getBetreuungModel().belegungTagesschule.moduleTagesschule.forEach(instModul => {
+                        if (angemeldetesModul.equals(instModul)) {
+                            instModul.angemeldet = true;
+                        }
+                    });
+                });
+            }
         }
     }
 
@@ -136,8 +147,8 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     }
 
     public getModul(modulName: TSModulTagesschuleName, weekday: TSDayOfWeek): TSModulTagesschule {
-        if (this.model.belegungTagesschule && this.model.belegungTagesschule.moduleTagesschule) {
-            for (let modulTS of this.model.belegungTagesschule.moduleTagesschule) {
+        if (this.getBetreuungModel().belegungTagesschule && this.getBetreuungModel().belegungTagesschule.moduleTagesschule) {
+            for (let modulTS of this.getBetreuungModel().belegungTagesschule.moduleTagesschule) {
                 if (modulTS.modulTagesschuleName === modulName && modulTS.wochentag === weekday) {
                     return modulTS;
                 }
@@ -149,12 +160,13 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     public anmelden(): IPromise<any> {
         if (this.form.$valid) {
             // Validieren, dass mindestens 1 Modul ausgewählt war
-            if (this.model.belegungTagesschule.moduleTagesschule.length <= 0) {
+            if (this.getBetreuungModel().belegungTagesschule.moduleTagesschule.length <= 0) {
                 // if (this.isAnmeldungMoeglich()) {
                 //     this.showErrorMessage = true;
                 // }
                 return undefined;
             }
+            this.filterOnlyAngemeldeteModule();
             return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
                 title: 'CONFIRM_SAVE_TAGESSCHULE',
                 deleteText: 'BESCHREIBUNG_SAVE_TAGESSCHULE',
@@ -172,4 +184,13 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
         this.copyModuleToBelegung();
     }
 
+    /**
+     * Entfernt alle Module die nicht als angemeldet markiert sind
+     */
+    private filterOnlyAngemeldeteModule() {
+        // noinspection UnnecessaryLocalVariableJS
+        let angemeldeteModule: TSModulTagesschule[] = this.getBetreuungModel().belegungTagesschule.moduleTagesschule
+            .filter(modul => modul.angemeldet === true);
+        this.getBetreuungModel().belegungTagesschule.moduleTagesschule = angemeldeteModule;
+    }
 }

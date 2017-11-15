@@ -74,4 +74,12 @@ export default class TSModulTagesschule extends TSAbstractEntity {
     public set angemeldet(value: boolean) {
         this._angemeldet = value;
     }
+
+    public equals(instModul: TSModulTagesschule): boolean {
+        return instModul
+            && this.wochentag === instModul.wochentag
+            && this.modulTagesschuleName === instModul.modulTagesschuleName
+            && this.zeitVon.isSame(instModul.zeitVon)
+            && this.zeitBis.isSame(instModul.zeitBis);
+    }
 }
