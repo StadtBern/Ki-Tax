@@ -222,8 +222,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             }
         }
         this.errorService.clearAll();
-        this.model.betreuungsstatus = newStatus;
-        this.gesuchModelManager.saveBetreuung(this.model, false).then((betreuungResponse: any) => {
+        this.gesuchModelManager.saveBetreuung(this.model, newStatus, false).then((betreuungResponse: any) => {
             this.isSavingData = false;
             this.form.$setPristine();
             this.$state.go(nextStep, params);

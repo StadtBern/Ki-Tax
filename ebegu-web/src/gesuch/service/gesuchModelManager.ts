@@ -680,8 +680,8 @@ export default class GesuchModelManager {
     }
 
 
-    public saveBetreuung(betreuungToSave: TSBetreuung, abwesenheit: boolean): IPromise<TSBetreuung> {
-        if (betreuungToSave.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN) {
+    public saveBetreuung(betreuungToSave: TSBetreuung, betreuungsstatusNeu: TSBetreuungsstatus, abwesenheit: boolean): IPromise<TSBetreuung> {
+        if (betreuungsstatusNeu === TSBetreuungsstatus.ABGEWIESEN) {
             return this.betreuungRS.betreuungsPlatzAbweisen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
                 .then((storedBetreuung: any) => {
                     return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
@@ -689,7 +689,7 @@ export default class GesuchModelManager {
                         return this.handleSavedBetreuung(storedBetreuung);
                     });
                 });
-        } else  if (betreuungToSave.betreuungsstatus === TSBetreuungsstatus.BESTAETIGT) {
+        } else  if (betreuungsstatusNeu === TSBetreuungsstatus.BESTAETIGT) {
             return this.betreuungRS.betreuungsPlatzBestaetigen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
                 .then((storedBetreuung: any) => {
                     return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
@@ -697,7 +697,32 @@ export default class GesuchModelManager {
                         return this.handleSavedBetreuung(storedBetreuung);
                     });
                 });
+        } else  if (betreuungsstatusNeu === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN) {
+            return this.betreuungRS.anmeldungSchulamtUebernehmen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
+                .then((storedBetreuung: any) => {
+                    return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
+                        this.gesuch.gesuchBetreuungenStatus = betreuungenStatus;
+                        return this.handleSavedBetreuung(storedBetreuung);
+                    });
+                });
+        } else  if (betreuungsstatusNeu === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT) {
+            return this.betreuungRS.anmeldungSchulamtAblehnen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
+                .then((storedBetreuung: any) => {
+                    return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
+                        this.gesuch.gesuchBetreuungenStatus = betreuungenStatus;
+                        return this.handleSavedBetreuung(storedBetreuung);
+                    });
+                });
+        } else  if (betreuungsstatusNeu === TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION) {
+            return this.betreuungRS.anmeldungSchulamtFalscheInstitution(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
+                .then((storedBetreuung: any) => {
+                    return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
+                        this.gesuch.gesuchBetreuungenStatus = betreuungenStatus;
+                        return this.handleSavedBetreuung(storedBetreuung);
+                    });
+                });
         } else {
+            betreuungToSave.betreuungsstatus = betreuungsstatusNeu;
             return this.betreuungRS.saveBetreuung(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id, abwesenheit)
                 .then((storedBetreuung: any) => {
                     return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {

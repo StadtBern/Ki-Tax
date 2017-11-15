@@ -67,6 +67,8 @@ import org.apache.commons.lang3.Validate;
 @Api(description = "Resource zum Verwalten von Betreuungen (Ein Betreuungsangebot für ein Kind)")
 public class BetreuungResource {
 
+	public static final String KIND_CONTAINER_ID_INVALID = "KindContainerId invalid: ";
+
 	@Inject
 	private BetreuungService betreuungService;
 	@Inject
@@ -80,7 +82,6 @@ public class BetreuungResource {
 	@Inject
 	private GesuchService gesuchService;
 
-	//TODO (hefr) Dieser Service wird immer nur fuer Betreuungen verwendet, nie fuer Abwesenheiten
 	@ApiOperation(value = "Speichert eine Betreuung in der Datenbank", response = JaxBetreuung.class)
 	@Nonnull
 	@PUT
@@ -103,17 +104,16 @@ public class BetreuungResource {
 
 			return converter.betreuungToJAX(persistedBetreuung);
 		}
-		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
 	}
 
-	//TODO (hefr) dieser service wird immer nur fuer Abwesenheiten verwendet
 	@ApiOperation(value = "Speichert eine Abwesenheit in der Datenbank.", responseContainer = "List", response = JaxBetreuung.class)
 	@Nonnull
 	@PUT
 	@Path("/all/{abwesenheit}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<JaxBetreuung> saveBetreuungen(
+	public List<JaxBetreuung> saveAbwesenheiten(
 		@Nonnull @NotNull @Valid List<JaxBetreuung> betreuungenJAXP,
 		@Nonnull @NotNull @PathParam("abwesenheit") Boolean abwesenheit,
 		@Context UriInfo uriInfo,
@@ -147,7 +147,7 @@ public class BetreuungResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(betreuungJAXP.getId());
-		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		// Sicherstellen, dass der Status des Server-Objektes genau dem erwarteten Status entspricht
 		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.WARTEN);
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
@@ -161,7 +161,7 @@ public class BetreuungResource {
 
 			return converter.betreuungToJAX(persistedBetreuung);
 		}
-		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+		throw new EbeguEntityNotFoundException("betreuungPlatzAbweisen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
 	}
 
 	@ApiOperation(value = "Betreuungsplatzanfrage wird durch die Institution bestätigt", response = JaxBetreuung.class)
@@ -178,7 +178,7 @@ public class BetreuungResource {
 
 		Validate.notNull(betreuungJAXP.getId());
 
-		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
+		// Sicherstellen, dass der Status des Server-Objektes genau dem erwarteten Status entspricht
 		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.WARTEN);
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
@@ -192,7 +192,97 @@ public class BetreuungResource {
 
 			return converter.betreuungToJAX(persistedBetreuung);
 		}
-		throw new EbeguEntityNotFoundException("betreuungPlatzBestaetigen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+		throw new EbeguEntityNotFoundException("betreuungPlatzBestaetigen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
+	}
+
+	@ApiOperation(value = "Schulamt-Anmeldung wird durch die Institution bestätigt", response = JaxBetreuung.class)
+	@Nonnull
+	@PUT
+	@Path("/schulamt/uebernehmen/{kindId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxBetreuung anmeldungSchulamtUebernehmen(@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
+		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(betreuungJAXP.getId());
+
+		// Sicherstellen, dass der Status des Server-Objektes genau dem erwarteten Status entspricht
+		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
+
+		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
+		if (kind.isPresent()) {
+			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch());
+
+			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
+			convertedBetreuung.setKind(kind.get());
+			Betreuung persistedBetreuung = this.betreuungService.anmeldungSchulamtUebernehmen(convertedBetreuung);
+
+			return converter.betreuungToJAX(persistedBetreuung);
+		}
+		throw new EbeguEntityNotFoundException("anmeldungSchulamtUebernehmen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
+	}
+
+	@ApiOperation(value = "Schulamt-Anmeldung wird durch die Institution abgelehnt", response = JaxBetreuung.class)
+	@Nonnull
+	@PUT
+	@Path("/schulamt/ablehnen/{kindId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxBetreuung anmeldungSchulamtAblehnen(@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
+		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(betreuungJAXP.getId());
+
+		// Sicherstellen, dass der Status des Server-Objektes genau dem erwarteten Status entspricht
+		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
+
+		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
+		if (kind.isPresent()) {
+			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch());
+
+			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
+			convertedBetreuung.setKind(kind.get());
+			Betreuung persistedBetreuung = this.betreuungService.anmeldungSchulamtAblehnen(convertedBetreuung);
+
+			return converter.betreuungToJAX(persistedBetreuung);
+		}
+		throw new EbeguEntityNotFoundException("anmeldungSchulamtAblehnen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
+	}
+
+	@ApiOperation(value = "Schulamt-Anmeldung fuer falsche Institution gestellt", response = JaxBetreuung.class)
+	@Nonnull
+	@PUT
+	@Path("/schulamt/falscheInstitution/{kindId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxBetreuung anmeldungSchulamtFalscheInstitution(@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
+		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(betreuungJAXP.getId());
+
+		// Sicherstellen, dass der Status des Server-Objektes genau dem erwarteten Status entspricht
+		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
+
+		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
+		if (kind.isPresent()) {
+			// Sicherstellen, dass das dazugehoerige Gesuch ueberhaupt noch editiert werden darf fuer meine Rolle
+			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch());
+
+			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
+			convertedBetreuung.setKind(kind.get());
+			Betreuung persistedBetreuung = this.betreuungService.anmeldungSchulamtFalscheInstitution(convertedBetreuung);
+
+			return converter.betreuungToJAX(persistedBetreuung);
+		}
+		throw new EbeguEntityNotFoundException("anmeldungSchulamtFalscheInstitution", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
 	}
 
 	@ApiOperation(value = "Sucht die Betreuung mit der übergebenen Id in der Datenbank. Dabei wird geprüft, ob der " +
