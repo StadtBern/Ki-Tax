@@ -127,6 +127,7 @@ public class ModulTagesschule extends AbstractEntity implements Comparable<Modul
 	@Override
 	public int compareTo(@Nonnull ModulTagesschule o) {
 		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(this.getInstitutionStammdatenTagesschule(), o.getInstitutionStammdatenTagesschule());
 		builder.append(this.getZeitVon(), o.getZeitVon());
 		builder.append(this.getZeitBis(), o.getZeitBis());
 		builder.append(this.getWochentag(), o.getWochentag());

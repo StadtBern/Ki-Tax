@@ -448,7 +448,6 @@ public final class TestDataUtil {
 		betreuung.setBetreuungspensumContainers(new TreeSet<>());
 		betreuung.setAbwesenheitContainers(new HashSet<>());
 		betreuung.setKind(createDefaultKindContainer());
-		betreuung.setBelegungTagesschule(createDefaultBelegungTagesschule());
 		return betreuung;
 	}
 
