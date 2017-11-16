@@ -44,6 +44,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
 
     finanzielleSituationRequired: boolean;
     areThereOnlySchulamtangebote: boolean;
+    areThereOnlyFerieninsel: boolean;
     allowedRoles: Array<TSRoleUtil>;
     private initialModel: TSFinanzModel;
 
@@ -61,6 +62,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.areThereOnlySchulamtangebote = this.gesuchModelManager.areThereOnlySchulamtAngebote(); // so we load it just once
+        this.areThereOnlyFerieninsel = this.gesuchModelManager.areThereOnlyFerieninsel(); // so we load it just once
     }
 
     showSteuerveranlagung(): boolean {
