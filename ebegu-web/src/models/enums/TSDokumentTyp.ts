@@ -43,7 +43,7 @@ export enum TSDokumentTyp {
     NACHWEIS_EINKOMMENSSITUATION_MONAT = <any> 'NACHWEIS_EINKOMMENSSITUATION_MONAT',
     DIV = <any> 'DIV',
     ORIGINAL_PAPIERGESUCH = <any> 'ORIGINAL_PAPIERGESUCH',
-
+    UNTERSTUETZUNGSBESTAETIGUNG = <any> 'UNTERSTUETZUNGSBESTAETIGUNG'
 }
 
 export function getTSTSDokumentTypValues(): Array<TSDokumentTyp> {
@@ -76,6 +76,7 @@ export function getTSTSDokumentTypValues(): Array<TSDokumentTyp> {
         TSDokumentTyp.ERFOLGSRECHNUNGEN_JAHR_MINUS2,
         TSDokumentTyp.NACHWEIS_EINKOMMENSSITUATION_MONAT,
         TSDokumentTyp.DIV,
-        TSDokumentTyp.ORIGINAL_PAPIERGESUCH
+        TSDokumentTyp.ORIGINAL_PAPIERGESUCH,
+        TSDokumentTyp.UNTERSTUETZUNGSBESTAETIGUNG
     ];
 }
