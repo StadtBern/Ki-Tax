@@ -36,7 +36,6 @@ public class JaxBelegungTagesschule extends JaxAbstractDTO {
 
 	private static final long serialVersionUID = -1297972380574937397L;
 
-	//todo fragen warum list??
 	@NotNull
 	private List<JaxModulTagesschule> moduleTagesschule = new ArrayList<>();
 

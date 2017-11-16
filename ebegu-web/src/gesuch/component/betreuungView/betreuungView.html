@@ -95,7 +95,7 @@
                 <fieldset>
 
                     <!--Betreuungsangebot (Mit diesem Wert filtern wir die Institutionen)-->
-                    <div class="row marginTop20" ng-disabled="!vm.isEnabled()">
+                    <div class="row marginTop20" ng-disabled="!vm.enableBetreuungsangebotsTyp()">
                         <div class="col-sm-12 dv-input-container-medium">
                             <div class="form-group">
                                 <label class="md-no-float"
@@ -109,7 +109,7 @@
                                             ng-model="vm.betreuungsangebot"
                                             class="form-control"
                                             ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues"
-                                            ng-required="true" ng-disabled="!vm.isEnabled()"
+                                            ng-required="true" ng-disabled="!vm.isEnabled() || !vm.enableBetreuungsangebotsTyp()"
                                             ng-change="vm.changedAngebot()">
                                     </select>
                                     <dv-error-messages input-id="betreuungsangebot"
@@ -119,8 +119,9 @@
                         </div>
                     </div>
                     <!--Institutionen-->
-                    <div class="row" ng-if="vm.isEnabled() && !vm.isTagesschule()"
-                         ng-disabled="!vm.isEnabled()">
+                    <div class="row"
+                         ng-if="vm.showInstitutionenList()"
+                         ng-disabled="!vm.model.isEnabled()">
                         <div class="col-sm-12 dv-input-container-medium form-group">
                             <label class="md-no-float required" data-translate="INSTITUTION" for="institution">
                             </label>
@@ -403,76 +404,35 @@
                            dv-show-expression="!vm.isSchulamt()"></p>
 
                     </div>
-
-                    <div ng-if="vm.isEnabled() && vm.isTagesschule()">
-                        <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.hasTagesschulenAnmeldung()">
-
-                            <!-- Modulauswahl Tagesschule -->
-                            <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">
-
-                                <!-- Tagesschulen -->
-                                <div class="row">
-                                    <div class="col-sm-12 dv-input-container-medium form-group">
-                                        <label class="md-no-float required" data-translate="TAGESSCHULE" for="tagesschule"></label>
-                                        <div class="dv-select-style">
-                                            <select aria-describedby="tagesschule-error" name="tagesschule" id="tagesschule"
-                                                    ng-model="vm.instStammId"
-                                                    class="form-control"
-                                                    ng-options="institutionSD.id as institutionSD.institution.name for institutionSD in vm.getInstitutionenSDList() | orderBy: 'institution.name'"
-                                                    ng-required="true" ng-change="vm.setSelectedInstitutionStammdaten()"
-                                                    ng-disabled="!vm.isEnabled()">
-                                            </select>
-                                            <dv-error-messages input-id="tagesschule" for="vm.form.tagesschule.$error"></dv-error-messages>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Eintrittsdatum -->
-                                <div class="row">
-                                    <div class="col-sm-12 dv-input-container-small form-group">
-                                        <label class="md-no-float required" data-translate="EINTRITTSDATUM" for="eintrittsdatum_ID"></label>
-                                        <dv-datepicker input-id="eintrittsdatum_ID" name="eintrittsdatum"
-                                                       ng-model="vm.getBetreuungModel().belegungTagesschule.eintrittsdatum"
-                                                       ng-required="true"
-                                                       class="input-element">
-                                        </dv-datepicker>
-                                        <dv-error-messages input-id="eintrittsdatum" for="vm.form.eintrittsdatum.$error"></dv-error-messages>
-                                    </div>
-                                </div>
-
-                                <span>TODO Hier kommt dann die Modulauswahl für die Anmeldung</span>
-
-                            </div>
-
-                            <!-- Hinweis, dass Tageschulanmeldung ncoh nicht freigeschaltet -->
-                            <div ng-if="!vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">
-                                <div class="well well-status-warten">
-                                    <i class="fa fa-exclamation " aria-hidden="true"></i>
-                                    <span>{{vm.getTagesschuleAnmeldungNotYetReadyText()}}</span>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
                 </fieldset>
 
-                <!-- Ferieninsel -->
-                <div ng-if="vm.isFerieninsel()">
-                    <betreuung-ferieninsel-view betreuung="vm.getBetreuungModel()" form="vm.form"
-                                                on-save="vm.anmeldenSchulamt()"
+				<!-- Tagesschule -->
+				<div ng-if="vm.displayModuleTagesschule()">
+					<betreuung-tagesschule-view betreuung="vm.getBetreuungModel()" form="vm.form"
+												on-save="vm.anmeldenSchulamt()"
                                                 anmeldung-schulamt-uebernehmen="vm.anmeldungSchulamtUebernehmen()"
                                                 anmeldung-schulamt-ablehnen="vm.anmeldungSchulamtAblehnen()"
                                                 anmeldung-schulamt-falsche-institution="vm.anmeldungSchulamtFalscheInstitution()"
-                                                cancel="vm.cancel()">
-                    </betreuung-ferieninsel-view>
-                </div>
+												cancel="vm.cancel()">
+					</betreuung-tagesschule-view>
+				</div>
+
+                <!-- Ferieninsel -->
+				<div ng-if="vm.isFerieninsel()">
+					<betreuung-ferieninsel-view betreuung="vm.getBetreuungModel()" form="vm.form"
+												on-save="vm.anmeldenSchulamt()"
+												anmeldung-schulamt-uebernehmen="vm.anmeldungSchulamtUebernehmen()"
+												anmeldung-schulamt-ablehnen="vm.anmeldungSchulamtAblehnen()"
+												anmeldung-schulamt-falsche-institution="vm.anmeldungSchulamtFalscheInstitution()"
+												cancel="vm.cancel()">
+					</betreuung-ferieninsel-view>
+				</div>
 
                 <!--Buttons-->
                 <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
                     wenn wir die Direktive benutzen wollen muessen wir viel anpassen, daher lohnt es sich die Buttons direkt zu erstellen-->
                 <!-- todo verbessern. Es muss fuer alle Angebottypen geprueft werden ob die Buttons hier oder in den individuellen Component implementiert sind-->
-                <div class="nav-row-betreuung" ng-if="!vm.isFerieninsel()">
+                <div class="nav-row-betreuung" ng-if="vm.displayGlobalNavigationButtons()">
                     <!--Die Order der Knoepfe soll im HTML so sein, dass der weiter Knopf als erster im Form ist, dies wird dann fuer die darstelltung
                     mit Flexlayout wieder korrigiert. Grund ist, dass beim druecken von Enter in einem input Feld automaitisch der erste submit button triggered wird-->
                     <div dv-show-element

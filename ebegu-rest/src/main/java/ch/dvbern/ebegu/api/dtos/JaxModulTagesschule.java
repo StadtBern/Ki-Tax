@@ -42,7 +42,6 @@ public class JaxModulTagesschule extends JaxAbstractDTO {
 	@NotNull
 	private ModulTagesschuleName modulTagesschuleName;
 
-	//todo fragen warum DateTime -> welches Date???
 	@NotNull
 	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
 	private LocalDateTime zeitVon = null;

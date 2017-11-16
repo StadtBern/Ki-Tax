@@ -19,12 +19,12 @@ import TSModulTagesschule from './TSModulTagesschule';
 
 export default class TSBelegungTagesschule extends TSAbstractEntity {
 
-    private _moduleTagesschule: TSModulTagesschule[];
+    private _moduleTagesschule: TSModulTagesschule[] = [];
     private _eintrittsdatum: moment.Moment;
 
     constructor(moduleTagesschule?: TSModulTagesschule[], eintrittsdatum?: moment.Moment) {
         super();
-        this._moduleTagesschule = moduleTagesschule;
+        this._moduleTagesschule = moduleTagesschule ? moduleTagesschule : [];
         this._eintrittsdatum = eintrittsdatum;
     }
 

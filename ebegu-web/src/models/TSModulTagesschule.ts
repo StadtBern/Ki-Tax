@@ -25,6 +25,8 @@ export default class TSModulTagesschule extends TSAbstractEntity {
     private _zeitVon: moment.Moment;
     private _zeitBis: moment.Moment;
 
+    private _angemeldet: boolean; // Transient, wird nicht auf Server synchronisiert, bzw. nur die mit angemeldet=true
+
     constructor(wochentag?: TSDayOfWeek, modulTagesschuleName?: TSModulTagesschuleName, zeitVon?: moment.Moment, zeitBis?: moment.Moment) {
         super();
         this._wochentag = wochentag;
@@ -63,5 +65,23 @@ export default class TSModulTagesschule extends TSAbstractEntity {
 
     public set zeitBis(value: moment.Moment) {
         this._zeitBis = value;
+    }
+
+    public get angemeldet(): boolean {
+        return this._angemeldet;
+    }
+
+    public set angemeldet(value: boolean) {
+        this._angemeldet = value;
+    }
+
+    /**
+     * Prueft ob beide Module gleich sind. Sie sind glech wenn wochentag und modulTagesschuleName gleich sind.
+     * Die ZeitVon und ZeitBis spielt keine Rolle in diesem Fall, da so Module unterschiedlichen Institutionen verglichen werden koennen.
+     */
+    public isSameModul(instModul: TSModulTagesschule): boolean {
+        return instModul
+            && this.wochentag === instModul.wochentag
+            && this.modulTagesschuleName === instModul.modulTagesschuleName;
     }
 }
