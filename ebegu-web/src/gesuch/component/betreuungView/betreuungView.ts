@@ -113,6 +113,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                 for (let obj of this.betreuungsangebotValues) {
                     if (obj.key === this.$stateParams.betreuungsangebotTyp) {
                         this.betreuungsangebot = obj;
+                        this.changedAngebot();
                     }
                 }
             } else {
@@ -259,6 +260,14 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public direktAnmeldenSchulamt(): boolean {
         // Eigentlich immer ausser in Bearbeitung GS
         return !(this.isGesuchInStatus(TSAntragStatus.IN_BEARBEITUNG_GS) || this.isGesuchInStatus(TSAntragStatus.FREIGABEQUITTUNG));
+    }
+
+    public enableBetreuungsangebotsTyp(): boolean {
+        return !this.gesuchModelManager.isGesuchReadonly();
+    }
+
+    public showInstitutionenList(): boolean {
+        return this.isEnabled() && (!this.isTagesschule() || this.gesuchModelManager.getGesuchsperiode().isTageschulenAnmeldungAktiv());
     }
 
     public anmeldungSchulamtUebernehmen(): void {
@@ -432,7 +441,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                 && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)
                     || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST)
                     || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT)
-                        && !this.isKorrekturModusJugendamt()));
+                        && this.getBetreuungModel().isNew()));
         }
         return true;
     }
@@ -634,9 +643,12 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public tageschuleSaveDisabled(): boolean {
-        let gp: TSGesuchsperiode = this.gesuchModelManager.getGesuch().gesuchsperiode;
-        return (this.getBetreuungModel().isAngebotTagesschule() && gp.hasTagesschulenAnmeldung() && !gp.isTageschulenAnmeldungAktiv()
-            || this.getBetreuungModel().isAngebotFerieninsel() && !this.getBetreuungModel().isEnabled());
+        if (this.getBetreuungModel().isNew()) {
+            let gp: TSGesuchsperiode = this.gesuchModelManager.getGesuch().gesuchsperiode;
+            return (this.getBetreuungModel().isAngebotTagesschule() && gp.hasTagesschulenAnmeldung() && !gp.isTageschulenAnmeldungAktiv()
+                || this.getBetreuungModel().isAngebotFerieninsel() && !this.getBetreuungModel().isEnabled());
+        }
+        return true;
     }
 
     /**

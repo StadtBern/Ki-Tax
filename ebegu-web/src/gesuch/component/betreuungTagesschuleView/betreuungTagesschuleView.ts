@@ -163,6 +163,10 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
         return null;
     }
 
+    public getButtonTextSpeichern(): string {
+        return this.direktAnmeldenSchulamt() ? 'ANMELDEN_TAGESSCHULE' : 'SAVE';
+    }
+
     public anmelden(): IPromise<any> {
         if (this.form.$valid) {
             // Validieren, dass mindestens 1 Modul ausgewählt war
@@ -171,14 +175,18 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
                 return undefined;
             }
             this.filterOnlyAngemeldeteModule();
-            return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
-                title: 'CONFIRM_SAVE_TAGESSCHULE',
-                deleteText: 'BESCHREIBUNG_SAVE_TAGESSCHULE',
-                parentController: undefined,
-                elementID: undefined
-            }).then(() => {
+            if (this.direktAnmeldenSchulamt()) {
+                return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
+                    title: 'CONFIRM_SAVE_TAGESSCHULE',
+                    deleteText: 'BESCHREIBUNG_SAVE_TAGESSCHULE',
+                    parentController: undefined,
+                    elementID: undefined
+                }).then(() => {
+                    this.onSave();
+                });
+            } else {
                 this.onSave();
-            });
+            }
         }
         return undefined;
     }

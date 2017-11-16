@@ -89,7 +89,7 @@
              dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles()"
              dv-show-expression="vm.betreuung.isEnabled()">
             <dv-loading-button button-click="vm.anmelden()" type="submit" button-class="save">
-                <span data-translate="ANMELDEN_TAGESSCHULE"></span>
+                <span data-translate="{{vm.getButtonTextSpeichern()}}"></span>
             </dv-loading-button>
         </div>
 

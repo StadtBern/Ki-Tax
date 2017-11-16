@@ -95,7 +95,7 @@
                 <fieldset>
 
                     <!--Betreuungsangebot (Mit diesem Wert filtern wir die Institutionen)-->
-                    <div class="row marginTop20" ng-disabled="!vm.isEnabled()">
+                    <div class="row marginTop20" ng-disabled="!vm.enableBetreuungsangebotsTyp()">
                         <div class="col-sm-12 dv-input-container-medium">
                             <div class="form-group">
                                 <label class="md-no-float"
@@ -109,7 +109,7 @@
                                             ng-model="vm.betreuungsangebot"
                                             class="form-control"
                                             ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues"
-                                            ng-required="true" ng-disabled="!vm.isEnabled()"
+                                            ng-required="true" ng-disabled="!vm.isEnabled() || !vm.enableBetreuungsangebotsTyp()"
                                             ng-change="vm.changedAngebot()">
                                     </select>
                                     <dv-error-messages input-id="betreuungsangebot"
@@ -119,8 +119,9 @@
                         </div>
                     </div>
                     <!--Institutionen-->
-                    <div class="row" ng-if="vm.isEnabled()"
-                         ng-disabled="!vm.isEnabled()">
+                    <div class="row"
+                         ng-if="vm.showInstitutionenList()"
+                         ng-disabled="!vm.model.isEnabled()">
                         <div class="col-sm-12 dv-input-container-medium form-group">
                             <label class="md-no-float required" data-translate="INSTITUTION" for="institution">
                             </label>
