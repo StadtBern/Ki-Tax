@@ -13,22 +13,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum TSDayOfWeek {
-    MONDAY = <any> 'MONDAY',
-    TUESDAY = <any> 'TUESDAY',
-    WEDNESDAY = <any> 'WEDNESDAY',
-    THURSDAY = <any> 'THURSDAY',
-    FRIDAY = <any> 'FRIDAY',
-    SATURDAY = <any> 'SATURDAY',
-    SUNDAY = <any> 'SUNDAY'
-}
+@import '../../../style/variables.less';
 
-export function getWeekdaysValues(): Array<TSDayOfWeek> {
-    return [
-        TSDayOfWeek.MONDAY,
-        TSDayOfWeek.TUESDAY,
-        TSDayOfWeek.WEDNESDAY,
-        TSDayOfWeek.THURSDAY,
-        TSDayOfWeek.FRIDAY
-    ];
+md-checkbox.checkbox-error {
+    background: #ffe6e6;
 }
