@@ -1730,6 +1730,7 @@ public class JaxBConverter {
 		// InstitutionStammdaten muessen bereits existieren
 		if (betreuungJAXP.getInstitutionStammdaten() != null) {
 			final String instStammdatenID = betreuungJAXP.getInstitutionStammdaten().getId();
+			Objects.requireNonNull(instStammdatenID, "Die Institutionsstammdaten muessen gesetzt sein");
 			final Optional<InstitutionStammdaten> optInstStammdaten = institutionStammdatenService.findInstitutionStammdaten(instStammdatenID);
 			final InstitutionStammdaten instStammdatenToMerge =
 				optInstStammdaten.orElseThrow(() -> new EbeguEntityNotFoundException("betreuungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND,
@@ -1741,6 +1742,8 @@ public class JaxBConverter {
 		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
 		betreuung.setGueltig(betreuungJAXP.isGueltig());
 		if (betreuungJAXP.getBelegungTagesschule() != null) {
+			Objects.requireNonNull(betreuung.getInstitutionStammdaten().getInstitutionStammdatenTagesschule(),
+				"InstitutionsStammdatenTagesschule muessen gesetzt sein");
 			if (betreuung.getBelegungTagesschule() != null) {
 				betreuung.setBelegungTagesschule(belegungTagesschuleToEntity(betreuungJAXP.getBelegungTagesschule(), betreuung.getBelegungTagesschule(),
 					betreuung.getInstitutionStammdaten().getInstitutionStammdatenTagesschule()));

@@ -119,7 +119,7 @@
                         </div>
                     </div>
                     <!--Institutionen-->
-                    <div class="row" ng-if="vm.isEnabled() && !vm.isTagesschule()"
+                    <div class="row" ng-if="vm.isEnabled()"
                          ng-disabled="!vm.isEnabled()">
                         <div class="col-sm-12 dv-input-container-medium form-group">
                             <label class="md-no-float required" data-translate="INSTITUTION" for="institution">
@@ -403,29 +403,32 @@
                            dv-show-expression="!vm.isSchulamt()"></p>
 
                     </div>
-
-                    <!-- Tagesschule -->
-                    <div ng-if="vm.displayModuleTagesschule()">
-                        <betreuung-tagesschule-view betreuung="vm.getBetreuungModel()" form="vm.form"
-                                                    on-save="vm.anmeldenSchulamt()"
-                                                    tagesschule-list="vm.getInstitutionenSDList()"
-                                                    inst-stamm-id="vm.instStammId"
-                                                    cancel="vm.cancel()">
-                        </betreuung-tagesschule-view>
-                    </div>
-
-                    <!-- Ferieninsel -->
-                    <div ng-if="vm.isFerieninsel()">
-                        <betreuung-ferieninsel-view betreuung="vm.getBetreuungModel()" form="vm.form"
-                                                    on-save="vm.anmeldenSchulamt()"
-                                                    anmeldung-schulamt-uebernehmen="vm.anmeldungSchulamtUebernehmen()"
-                                                    anmeldung-schulamt-ablehnen="vm.anmeldungSchulamtAblehnen()"
-                                                    anmeldung-schulamt-falsche-institution="vm.anmeldungSchulamtFalscheInstitution()"
-                                                    cancel="vm.cancel()">
-                        </betreuung-ferieninsel-view>
-                    </div>
-
                 </fieldset>
+
+
+				<!-- Tagesschule -->
+				<div ng-if="vm.displayModuleTagesschule()">
+					<betreuung-tagesschule-view betreuung="vm.getBetreuungModel()" form="vm.form"
+												on-save="vm.anmeldenSchulamt()"
+                                                anmeldung-schulamt-uebernehmen="vm.anmeldungSchulamtUebernehmen()"
+                                                anmeldung-schulamt-ablehnen="vm.anmeldungSchulamtAblehnen()"
+                                                anmeldung-schulamt-falsche-institution="vm.anmeldungSchulamtFalscheInstitution()"
+												cancel="vm.cancel()">
+					</betreuung-tagesschule-view>
+				</div>
+
+				<!-- Ferieninsel -->
+				<div ng-if="vm.isFerieninsel()">
+					<betreuung-ferieninsel-view betreuung="vm.getBetreuungModel()" form="vm.form"
+												on-save="vm.anmeldenSchulamt()"
+												anmeldung-schulamt-uebernehmen="vm.anmeldungSchulamtUebernehmen()"
+												anmeldung-schulamt-ablehnen="vm.anmeldungSchulamtAblehnen()"
+												anmeldung-schulamt-falsche-institution="vm.anmeldungSchulamtFalscheInstitution()"
+												cancel="vm.cancel()">
+					</betreuung-ferieninsel-view>
+				</div>
+
+
 
                 <!--Buttons-->
                 <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.

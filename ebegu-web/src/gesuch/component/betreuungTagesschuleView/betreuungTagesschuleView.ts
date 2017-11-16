@@ -13,33 +13,31 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import MitteilungRS from '../../../core/service/mitteilungRS.rest';
+import {getWeekdaysValues, TSDayOfWeek} from '../../../models/enums/TSDayOfWeek';
+import {getTSModulTagesschuleNameValues, TSModulTagesschuleName} from '../../../models/enums/TSModulTagesschuleName';
 import TSBetreuung from '../../../models/TSBetreuung';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import TSModulTagesschule from '../../../models/TSModulTagesschule';
+import DateUtil from '../../../utils/DateUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {IBetreuungStateParams} from '../../gesuch.route';
 import BerechnungsManager from '../../service/berechnungsManager';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import {BetreuungViewController} from '../betreuungView/betreuungView';
 import IFormController = angular.IFormController;
-import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
+import IPromise = angular.IPromise;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
-import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
-import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
-import DateUtil from '../../../utils/DateUtil';
-import {getTSModulTagesschuleNameValues, TSModulTagesschuleName} from '../../../models/enums/TSModulTagesschuleName';
-import {getWeekdaysValues, TSDayOfWeek} from '../../../models/enums/TSDayOfWeek';
-import {RemoveDialogController} from '../../dialog/RemoveDialogController';
-import TSModulTagesschule from '../../../models/TSModulTagesschule';
 
 let template = require('./betreuungTagesschuleView.html');
 require('./betreuungTagesschuleView.less');
@@ -50,9 +48,10 @@ export class BetreuungTagesschuleViewComponentConfig implements IComponentOption
     bindings: any = {
         betreuung: '=',
         onSave: '&',
-        instStammId: '=',
-        tagesschuleList: '&',
         cancel: '&',
+        anmeldungSchulamtUebernehmen: '&',
+        anmeldungSchulamtAblehnen: '&',
+        anmeldungSchulamtFalscheInstitution: '&',
         form: '='
     };
     template = template;
@@ -62,11 +61,9 @@ export class BetreuungTagesschuleViewComponentConfig implements IComponentOption
 
 export class BetreuungTagesschuleViewController extends BetreuungViewController {
 
-    instStammId: string;
     onSave: () => void;
     form: IFormController;
     betreuung: TSBetreuung;
-    tagesschuleList: () => Array<TSInstitutionStammdaten>;
     showErrorMessageNoModule: boolean;
 
 
@@ -80,10 +77,18 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
                 $timeout: ITimeoutService, $translate: ITranslateService) {
         super($state, gesuchModelManager, ebeguUtil, CONSTANTS, $scope, berechnungsManager, errorService, authServiceRS,
             wizardStepManager, $stateParams, mitteilungRS, dvDialog, $log, $timeout, $translate);
+
+        this.$scope.$watch(() => {
+            return this.betreuung.institutionStammdaten;
+        }, (newValue, oldValue) => {
+            if (newValue !== oldValue) {
+                this.filterOnlyAngemeldeteModule();
+                this.copyModuleToBelegung();
+            }
+        });
     }
 
     $onInit() {
-        this.model = this.betreuung;
         this.copyModuleToBelegung();
     }
 
@@ -91,14 +96,14 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
      * Kopiert alle Module der ausgewaehlten Tagesschule in die Belegung, sodass man direkt in die Belegung die Module auswaehlen kann.
      */
     private copyModuleToBelegung() {
-        if (this.getBetreuungModel().institutionStammdaten && this.getBetreuungModel().institutionStammdaten.institutionStammdatenTagesschule
-            && this.getBetreuungModel().institutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule) {
+        if (this.betreuung.institutionStammdaten && this.betreuung.institutionStammdaten.institutionStammdatenTagesschule
+            && this.betreuung.institutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule) {
 
-            let angemeldeteModule: TSModulTagesschule[] = angular.copy(this.getBetreuungModel().belegungTagesschule.moduleTagesschule);
-            this.getBetreuungModel().belegungTagesschule.moduleTagesschule = angular.copy(this.getBetreuungModel().institutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule);
+            let angemeldeteModule: TSModulTagesschule[] = angular.copy(this.betreuung.belegungTagesschule.moduleTagesschule);
+            this.betreuung.belegungTagesschule.moduleTagesschule = angular.copy(this.betreuung.institutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule);
             if (angemeldeteModule) {
                 angemeldeteModule.forEach(angemeldetesModul => {
-                    this.getBetreuungModel().belegungTagesschule.moduleTagesschule.forEach(instModul => {
+                    this.betreuung.belegungTagesschule.moduleTagesschule.forEach(instModul => {
                         if (angemeldetesModul.isSameModul(instModul)) {
                             instModul.angemeldet = true;
                         }
@@ -132,11 +137,11 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     }
 
     public isTagesschuleAlreadySelected(): boolean {
-        return this.instStammId !== null && this.instStammId !== undefined;
+        return EbeguUtil.isNotNullOrUndefined(this.betreuung.institutionStammdaten);
     }
 
     public isModulEnabled(modulName: TSModulTagesschuleName, weekday: TSDayOfWeek): boolean {
-        return this.isEnabled() && this.isModulDefinedInSelectedTS(modulName, weekday);
+        return this.betreuung.isEnabled() && this.isModulDefinedInSelectedTS(modulName, weekday);
     }
 
     /**
@@ -148,8 +153,8 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     }
 
     public getModul(modulName: TSModulTagesschuleName, weekday: TSDayOfWeek): TSModulTagesschule {
-        if (this.getBetreuungModel().belegungTagesschule && this.getBetreuungModel().belegungTagesschule.moduleTagesschule) {
-            for (let modulTS of this.getBetreuungModel().belegungTagesschule.moduleTagesschule) {
+        if (this.betreuung.belegungTagesschule && this.betreuung.belegungTagesschule.moduleTagesschule) {
+            for (let modulTS of this.betreuung.belegungTagesschule.moduleTagesschule) {
                 if (modulTS.modulTagesschuleName === modulName && modulTS.wochentag === weekday) {
                     return modulTS;
                 }
@@ -178,24 +183,18 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
         return undefined;
     }
 
-    public setSelectedInstitutionStammdaten(): void {
-        super.setSelectedInstitutionStammdaten();
-        this.filterOnlyAngemeldeteModule();
-        this.copyModuleToBelegung();
-    }
-
     /**
      * Entfernt alle Module die nicht als angemeldet markiert sind
      */
     private filterOnlyAngemeldeteModule() {
         // noinspection UnnecessaryLocalVariableJS
-        let angemeldeteModule: TSModulTagesschule[] = this.getBetreuungModel().belegungTagesschule.moduleTagesschule
+        let angemeldeteModule: TSModulTagesschule[] = this.betreuung.belegungTagesschule.moduleTagesschule
             .filter(modul => modul.angemeldet === true);
-        this.getBetreuungModel().belegungTagesschule.moduleTagesschule = angemeldeteModule;
+        this.betreuung.belegungTagesschule.moduleTagesschule = angemeldeteModule;
     }
 
     private isThereAnyAnmeldung(): boolean {
-        return this.getBetreuungModel().belegungTagesschule.moduleTagesschule
+        return this.betreuung.belegungTagesschule.moduleTagesschule
             .filter(modul => modul.angemeldet === true).length > 0;
     }
 

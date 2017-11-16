@@ -87,11 +87,11 @@
     <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
         wenn wir die Direktive benutzen wollen muessen wir viel anpassen, daher lohnt es sich die Buttons direkt zu erstellen-->
     <!-- Buttons fuer JA/SCH und Gesuchsteller -->
-    <!--todo verbesserung in eigene Direktive da in betreuungFerieninsel dupliziert-->
-    <div class="nav-row-betreuung"
-         dv-show-element
-         dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles()">
-        <div ng-if="vm.betreuung.isEnabled() && vm.isAnmeldungMoeglich()">
+    <!--todo verbesserung in eigene Direktive da in betreuungTagesschule dupliziert-->
+    <div class="nav-row-betreuung">
+        <div dv-show-element
+             dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles()"
+             dv-show-expression="vm.betreuung.isEnabled() && vm.isAnmeldungMoeglich()">
             <dv-loading-button button-click="vm.anmelden()" type="submit" button-class="save">
                 <span data-translate="ANMELDEN_FERIENINSEL"></span>
             </dv-loading-button>
