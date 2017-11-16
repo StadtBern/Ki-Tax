@@ -31,6 +31,9 @@ import ch.dvbern.ebegu.enums.DokumentTyp;
  * Wird nur bei Mutation der Familiensituation verlangt, nicht bei Erstgesuch.
  * Notwendig beim Wechsel von zwei Gesuchsteller auf einen.
  * Nur eines der drei Dokumente ist notwendig. Die Dokumente werden im Anlageverzeichnis als 1 Punkt geführt
+ * <p>
+ * Unterstützungsnachweis / Bestätigung Sozialdienst
+ * Notwendig, wenn die GS Sozialhilfe bekommen
  **/
 public class FamiliensituationDokumente extends AbstractDokumente<Familiensituation, Familiensituation> {
 
