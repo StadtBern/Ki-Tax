@@ -37,6 +37,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang3.Validate;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxDokument;
 import ch.dvbern.ebegu.api.dtos.JaxDokumentGrund;
@@ -54,9 +56,9 @@ import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.FileSaverService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.util.DokumenteUtil;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.Validate;
 
 /**
  * REST Resource fuer Dokumente
@@ -82,7 +84,7 @@ public class DokumenteResource {
 	@Inject
 	private FileSaverService fileSaverService;
 
-	@ApiOperation(value = "Gibt alle Dokumente zurück, welche zum übergebenen Gesuch vorhanden sind.",
+	@ApiOperation(value = "Gibt alle Dokumentgruende zurück, welche zum uebergebenen Gesuch vorhanden sind.",
 		response = JaxDokumente.class)
 	@Nullable
 	@GET
@@ -104,7 +106,7 @@ public class DokumenteResource {
 		throw new EbeguEntityNotFoundException("getDokumente", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}
 
-	@ApiOperation(value = "Gibt alle Dokumente eines bestimmten Typs zurück, die zu einem Gesuch vorhanden sind",
+	@ApiOperation(value = "Gibt alle Dokumentegruende eines bestimmten Typs zurück, die zu einem Gesuch vorhanden sind",
 		response = JaxDokumente.class)
 	@Nullable
 	@GET
@@ -126,7 +128,7 @@ public class DokumenteResource {
 		throw new EbeguEntityNotFoundException("getDokumente", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}
 
-	@ApiOperation(value = "Aktualisiert ein Dokument in der Datenbank", response = JaxDokumentGrund.class)
+	@ApiOperation(value = "Aktualisiert einen Dokumentgrund in der Datenbank", response = JaxDokumentGrund.class)
 	@Nullable
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)

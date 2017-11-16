@@ -24,6 +24,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import ch.dvbern.ebegu.entities.Dokument;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 /**
@@ -36,12 +37,22 @@ public class DokumentServiceBean extends AbstractBaseService implements Dokument
 	@Inject
 	private Persistence persistence;
 
+	@Inject
+	private Authorizer authorizer;
+
 	@Override
 	@Nonnull
 	public Optional<Dokument> findDokument(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		Dokument a = persistence.find(Dokument.class, key);
-		return Optional.ofNullable(a);
+		Dokument doc = persistence.find(Dokument.class, key);
+		if (doc == null) {
+			return Optional.empty();
+		} else{
+			final Gesuch gesuch = doc.getDokumentGrund().getGesuch();//may not be null
+			this.authorizer.checkReadAuthorization(gesuch);
+			return Optional.of(doc);
+		}
+
 	}
 
 }
