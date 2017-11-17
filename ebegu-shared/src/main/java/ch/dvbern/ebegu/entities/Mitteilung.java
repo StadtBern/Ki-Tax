@@ -33,6 +33,7 @@ import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.validators.CheckMitteilungCompleteness;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.envers.Audited;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
@@ -208,5 +209,16 @@ public class Mitteilung extends AbstractEntity {
 			Objects.equals(getSubject(), otherMitteilung.getSubject()) &&
 			Objects.equals(getMessage(), otherMitteilung.getMessage()) &&
 			getMitteilungStatus() == otherMitteilung.getMitteilungStatus();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+			.append("senderTyp", senderTyp)
+			.append("empfaengerTyp", empfaengerTyp)
+			.append("sender", sender)
+			.append("empfaenger", empfaenger)
+			.append("mitteilungStatus", mitteilungStatus)
+			.toString();
 	}
 }

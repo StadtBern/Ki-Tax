@@ -45,13 +45,13 @@ public class JaxMitteilung extends JaxAbstractDTO {
 	@Nullable
 	private JaxBetreuung betreuung;
 
-	@NotNull
+	@Nullable
 	private MitteilungTeilnehmerTyp senderTyp;
 
-	@NotNull
+	@Nullable
 	private MitteilungTeilnehmerTyp empfaengerTyp;
 
-	@NotNull
+	@Nullable
 	private JaxAuthLoginElement sender;
 
 	@Nullable
