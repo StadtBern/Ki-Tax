@@ -95,11 +95,13 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp) {
 		this.dokumentGrundTyp = dokumentGrundTyp;
+		this.needed = !dokumentGrundTyp.equals(DokumentGrundTyp.SONSTIGE_NACHWEISE);
 	}
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, @Nullable String tag,
 		DokumentGrundPersonType personType, Integer personNumber) {
 		this.dokumentGrundTyp = dokumentGrundTyp;
+		this.needed = !dokumentGrundTyp.equals(DokumentGrundTyp.SONSTIGE_NACHWEISE);
 		this.tag = tag;
 		this.personType = personType;
 		this.personNumber = personNumber;
@@ -246,11 +248,18 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 		mutation.setPersonType(this.getPersonType());
 		mutation.setDokumentTyp(this.getDokumentTyp());
 		if (this.getDokumente() != null) {
+			if (mutation.getDokumente() == null) {
+				mutation.setDokumente(new HashSet<>());
+			}
 			for (Dokument dokument : this.getDokumente()) {
 				mutation.getDokumente().add(dokument.copyForMutation(new Dokument(), mutation));
 			}
 		}
-		mutation.setNeeded(this.isNeeded());
+		if (this.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE)) {
+			mutation.setNeeded(false);
+		} else {
+			mutation.setNeeded(this.isNeeded());
+		}
 		return mutation;
 	}
 
@@ -273,5 +282,6 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 			Objects.equals(getPersonNumber(), otherDokumentGrund.getPersonNumber()) &&
 			getDokumentTyp() == otherDokumentGrund.getDokumentTyp() &&
 			Objects.equals(isNeeded(), otherDokumentGrund.isNeeded());
+		//TODO reviewer dieses (isNeeded()) sollte moeglicherweise entfernt werden, bei der isSame abfrage. needed ist Transient
 	}
 }

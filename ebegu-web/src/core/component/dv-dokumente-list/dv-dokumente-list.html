@@ -22,8 +22,7 @@
             {{vm.titleValue}}
         </h2>
         <div class="overflow-scroll-table">
-            <table st-table="table" st-safe-src="vm.dokumente" st-
-                   class="table dokumentgrundtable" id="{{vm.tableId}}">
+            <table st-table="table" st-safe-src="vm.dokumente" class="table dokumentgrundtable" id="{{vm.tableId}}">
                 <thead>
                 <tr ng-if="!vm.sonstige">
                     <!--without tag-->
@@ -42,13 +41,6 @@
                     <th width="5%"></th>
                     <th id="{{vm.tableId +'-status'}}" width="5%"></th>
                     <th id="{{vm.tableId +'-upload'}}" width="5%"></th>
-                </tr>
-                <tr ng-if="vm.sonstige" class="sonstige">
-                    <th width="vm.getWidth()"></th>
-                    <th width="5%"></th>
-                    <th width="5%"></th>
-                    <th width="5%"></th>
-                    <th width="5%"></th>
                 </tr>
                 </thead>
                 <tbody>
