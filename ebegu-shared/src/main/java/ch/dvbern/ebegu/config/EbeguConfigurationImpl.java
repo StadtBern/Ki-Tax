@@ -60,6 +60,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_LOGIN_API_ALLOW_REMOTE = "ebegu.login.api.allow.remote";
 	private static final String EBEGU_LOGIN_API_INTERNAL_USER = "ebegu.login.api.internal.user";
 	private static final String EBEGU_LOGIN_API_INTERNAL_PASSWORD = "ebegu.login.api.internal.password";
+	private static final String EBEGU_FORCE_COOKIE_SECURE_FLAG = "ebegu.force.cookie.secure.flag";
 
 	public EbeguConfigurationImpl() {
 
@@ -209,5 +210,10 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 				EBEGU_LOGIN_API_INTERNAL_PASSWORD);
 		}
 		return internalUserPW;
+	}
+
+	@Override
+	public boolean forceCookieSecureFlag() {
+		return getBoolean(EBEGU_FORCE_COOKIE_SECURE_FLAG, false);
 	}
 }
