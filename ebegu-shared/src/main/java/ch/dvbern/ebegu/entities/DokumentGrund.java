@@ -95,13 +95,13 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp) {
 		this.dokumentGrundTyp = dokumentGrundTyp;
-		this.needed = !dokumentGrundTyp.equals(DokumentGrundTyp.SONSTIGE_NACHWEISE);
+		this.needed = !(dokumentGrundTyp.equals(DokumentGrundTyp.SONSTIGE_NACHWEISE) || !dokumentGrundTyp.equals(DokumentGrundTyp.PAPIERGESUCH));
 	}
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, @Nullable String tag,
 		DokumentGrundPersonType personType, Integer personNumber) {
 		this.dokumentGrundTyp = dokumentGrundTyp;
-		this.needed = !dokumentGrundTyp.equals(DokumentGrundTyp.SONSTIGE_NACHWEISE);
+		this.needed = ! (dokumentGrundTyp.equals(DokumentGrundTyp.SONSTIGE_NACHWEISE) ||dokumentGrundTyp.equals(DokumentGrundTyp.PAPIERGESUCH));
 		this.tag = tag;
 		this.personType = personType;
 		this.personNumber = personNumber;
@@ -255,7 +255,7 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 				mutation.getDokumente().add(dokument.copyForMutation(new Dokument(), mutation));
 			}
 		}
-		if (this.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE)) {
+		if (this.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE) || this.getDokumentGrundTyp().equals(DokumentGrundTyp.PAPIERGESUCH)) {
 			mutation.setNeeded(false);
 		} else {
 			mutation.setNeeded(this.isNeeded());

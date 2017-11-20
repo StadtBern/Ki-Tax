@@ -140,9 +140,9 @@ public class DokumenteResource {
 		Validate.notNull(dokumentGrundJAXP.getId());
 		Optional<DokumentGrund> dokumentGrundOptional = dokumentGrundService.findDokumentGrund(dokumentGrundJAXP.getId());
 		DokumentGrund dokumentGrundFromDB = dokumentGrundOptional.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, dokumentGrundJAXP.getId()));
-		// beim DokumentGrund mit dem DokumentGrundTyp SONSTIGE_NACHWEISE soll das needed-Flag (transient)
+		// beim DokumentGrund mit dem DokumentGrundTyp SONSTIGE_NACHWEISE oder PAPIERGESUCH  soll das needed-Flag (transient)
 		// per default auf false sein. sonst stimmt der Wizardstep-Status nicht
-		if(dokumentGrundFromDB.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE)){
+		if(dokumentGrundFromDB.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE) || dokumentGrundFromDB.getDokumentGrundTyp().equals(DokumentGrundTyp.PAPIERGESUCH)){
 			dokumentGrundFromDB.setNeeded(false);
 		}
 		// Files where not in the list anymore, should be deleted on Filesystem!

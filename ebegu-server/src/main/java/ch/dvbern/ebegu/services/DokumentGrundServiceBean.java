@@ -90,9 +90,9 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 			dokumentGrund.getGesuch().setDokumenteHochgeladen(Boolean.TRUE);
 		}
 		final DokumentGrund mergedDokumentGrund = persistence.merge(dokumentGrund);
-		// beim DokumentGrund mit dem DokumentGrundTyp SONSTIGE_NACHWEISE soll das needed-Flag (transient)
+		// beim DokumentGrund mit dem DokumentGrundTyp SONSTIGE_NACHWEISE oder PAPIERGESUCH  soll das needed-Flag (transient)
 		// per default auf false sein. sonst stimmt der Wizardstep-Status nicht
-		if(mergedDokumentGrund.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE)){
+		if(mergedDokumentGrund.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE) || mergedDokumentGrund.getDokumentGrundTyp().equals(DokumentGrundTyp.PAPIERGESUCH)){
 			dokumentGrund.setNeeded(false);
 		}
 		wizardStepService.updateSteps(mergedDokumentGrund.getGesuch().getId(), null, null, WizardStepName.DOKUMENTE);
@@ -113,10 +113,10 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 		Objects.requireNonNull(gesuch);
 		this.authorizer.checkReadAuthorization(gesuch);
 		Collection<DokumentGrund> dokumentGrunds = criteriaQueryHelper.getEntitiesByAttribute(DokumentGrund.class, gesuch, DokumentGrund_.gesuch);
-		// beim DokumentGrund mit dem DokumentGrundTyp SONSTIGE_NACHWEISE soll das needed-Flag (transient)
+		// beim DokumentGrund mit dem DokumentGrundTyp SONSTIGE_NACHWEISE oder PAPIERGESUCH  soll das needed-Flag (transient)
 		// per default auf false sein. sonst stimmt der Wizardstep-Status nicht
 		dokumentGrunds.stream().forEach(d-> {
-			if (d.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE)) {
+			if (d.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE)||d.getDokumentGrundTyp().equals(DokumentGrundTyp.PAPIERGESUCH)) {
 				d.setNeeded(false);
 			}
 		});
@@ -139,10 +139,10 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 
 		query.where(predicateGesuch, predicateDokumentGrundTyp);
 		List<DokumentGrund> dokumentGrunds = persistence.getCriteriaResults(query);
-		// beim DokumentGrund mit dem DokumentGrundTyp SONSTIGE_NACHWEISE soll das needed-Flag (transient)
+		// beim DokumentGrund mit dem DokumentGrundTyp SONSTIGE_NACHWEISE oder PAPIERGESUCH soll das needed-Flag (transient)
 		// per default auf false sein. sonst stimmt der Wizardstep-Status nicht
 		dokumentGrunds.stream().forEach(d ->{
-			if (d.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE)) {
+			if (d.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE) ||d.getDokumentGrundTyp().equals(DokumentGrundTyp.PAPIERGESUCH)) {
 				d.setNeeded(false);
 			}
 		});
@@ -154,16 +154,16 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 	public DokumentGrund updateDokumentGrund(@Nonnull DokumentGrund dokumentGrund) {
 		Objects.requireNonNull(dokumentGrund);
 
-		//Wenn DokumentGrund keine Dokumente mehr hat und nicht gebraucht wird, wird er entfernt ausser es ist Sonstige Nachweise (da ist needed immer false)
-		if (!dokumentGrund.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE) && (!dokumentGrund.isNeeded() && (dokumentGrund.getDokumente() ==
+		//Wenn DokumentGrund keine Dokumente mehr hat und nicht gebraucht wird, wird er entfernt ausser es ist SONSTIGE NACHWEISE oder PAPIERGESUCH  (da ist needed immer false)
+		if ((!(dokumentGrund.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE) || dokumentGrund.getDokumentGrundTyp().equals(DokumentGrundTyp.PAPIERGESUCH))) && (!dokumentGrund.isNeeded() && (dokumentGrund.getDokumente() ==
 			null || dokumentGrund.getDokumente().isEmpty()))) {
 			persistence.remove(dokumentGrund);
 			return null;
 		}
 		final DokumentGrund mergedDokument = persistence.merge(dokumentGrund);
-		// beim DokumentGrund mit dem DokumentGrundTyp SONSTIGE_NACHWEISE soll das needed-Flag (transient)
+		// beim DokumentGrund mit dem DokumentGrundTyp SONSTIGE_NACHWEISE oder PAPIERGESUCH soll das needed-Flag (transient)
 		// per default auf false sein. sonst stimmt der Wizardstep-Status nicht
-		if(mergedDokument.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE)) {
+		if(mergedDokument.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE) || mergedDokument.getDokumentGrundTyp().equals(DokumentGrundTyp.PAPIERGESUCH) ) {
 			mergedDokument.setNeeded(false);
 		}
 		wizardStepService.updateSteps(mergedDokument.getGesuch().getId(), null, null, WizardStepName.DOKUMENTE);

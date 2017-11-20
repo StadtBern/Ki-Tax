@@ -275,21 +275,22 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 				boolean allNeededDokumenteUploaded = true;
 				for (DokumentGrund dokumentGrund : dokumentGrundsMerged) {
-					//der DokumenntGrundTyp SONSTIGE_NACHWEISE gehoert nie zu den needed dokumenten
-					if (!dokumentGrund.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE) && dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
+					//der DokumenntGrundTyp SONSTIGE_NACHWEISE und PAPIERGESUCH gehoert nie zu den needed dokumenten
+					if ( (!(dokumentGrund.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE) || dokumentGrund.getDokumentGrundTyp().equals(DokumentGrundTyp.PAPIERGESUCH))) && dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
 						allNeededDokumenteUploaded = false;
 						break;
 					}
 				}
 
 				// TODO reviewer // wenn ersichtlich sein soll dass die sonstigen Dokumente angepasst wurden, muss das hier angepasst werden
-				// TODO reviewer // dies ist aber warscheinlich nicht nötig... da es nicht relevante dokumente sind
+				// TODO reviewer // ist dies nun noetig, auch wenn es nicht relevante Dokumente sind?
 				if (allNeededDokumenteUploaded) {
 					setWizardStepOkOrMutiert(wizardStep);
 				} else {
 					if (wizardStep.getGesuch().isMutation()) {
 						//TODO reviewer // der wizardstepstatus (bei Dokumente) einer Mutation kann in den Zustand "mutiert" wechseln, obwohl nichts geändert wurde
 						//TODO reviewer // wenn nicht alle Dokumente vorhanden waren aber dieses update trotzdem aufgerufen wird (upload bei sonstige und dann wieder loeschen)
+						//TODO BUG EBEGU-1534
 						wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
 					} else {
 						wizardStep.setWizardStepStatus(WizardStepStatus.IN_BEARBEITUNG);
