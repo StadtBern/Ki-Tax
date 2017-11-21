@@ -44,14 +44,14 @@
                         </td>
                     </tr>
                     <tr class="dv-tagesschule-table__tr" ng-repeat="modulName in vm.getModulTagesschuleNameList()">
-                        <td ng-if="vm.isModulEnabled(modulName, vm.getMonday())" ng-bind="vm.getModulName(modulName)"></td>
-                        <td ng-if="vm.isModulEnabled(modulName, vm.getMonday())"
+                        <td ng-if="vm.isModulDefinedInSelectedTS(modulName, vm.getMonday())" ng-bind="vm.getModulName(modulName)"></td>
+                        <td ng-if="vm.isModulDefinedInSelectedTS(modulName, vm.getMonday())"
                             ng-repeat="weekDay in vm.getWeekDays()">
                             <div class="checkbox dv-tagesschule-table__checkbox">
-                                <md-checkbox ng-if="vm.isModulEnabled(modulName, weekDay)"
-                                             name="modul_{{modulName}}_{{weekDay}}"
+                                <md-checkbox name="modul_{{modulName}}_{{weekDay}}"
                                              ng-model="vm.getModul(modulName, weekDay).angemeldet"
-                                             aria-label="Modul {{modulName | translate}} {{weekDay | translate}}">
+                                             aria-label="Modul {{modulName | translate}} {{weekDay | translate}}"
+                                             ng-disabled="!vm.isModulEnabled(modulName, weekDay)">
                                 </md-checkbox>
                             </div>
                         </td>
