@@ -111,6 +111,30 @@ public class ResourceHelper {
 		}
 	}
 
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
+	public void assertGesuchStatusForBenutzerRole(@Nonnull Gesuch gesuch, @Nonnull Betreuung betreuung) {
+		UserRole userRole = principalBean.discoverMostPrivilegedRole();
+		if (userRole == UserRole.SUPER_ADMIN) {
+			// Superadmin darf alles
+			return;
+		}
+		String msg = "Cannot update entity containing Gesuch " + gesuch.getId() + " in Status " + gesuch.getStatus() + " in UserRole " + userRole;
+		if (userRole == UserRole.GESUCHSTELLER && gesuch.getStatus() != AntragStatus.IN_BEARBEITUNG_GS) {
+			// Schulamt-Anmeldungen duerfen auch nach der Freigabe hinzugefügt werden!
+			if (betreuung.getBetreuungsangebotTyp() == null || !betreuung.getBetreuungsangebotTyp().isSchulamt()) {
+				LOGGER.error(msg);
+				throw new EbeguRuntimeException("assertGesuchStatusForBenutzerRole", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, gesuch.getId(), msg);
+			}
+		}
+		if (gesuch.getStatus().ordinal() >= AntragStatus.VERFUEGEN.ordinal()) {
+			// Schulamt-Anmeldungen duerfen auch nach der Freigabe hinzugefügt werden!
+			if (betreuung.getBetreuungsangebotTyp() == null || !betreuung.getBetreuungsangebotTyp().isSchulamt()) {
+				LOGGER.error(msg);
+				throw new EbeguRuntimeException("assertGesuchStatusForBenutzerRole", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, gesuch.getId(), msg);
+			}
+		}
+	}
+
 	public void assertBetreuungStatusEqual(@Nonnull String betreuungId, @Nonnull Betreuungsstatus betreuungsstatusFromClient) {
 		Validate.notNull(betreuungId);
 		Optional<Betreuung> optBetreuung = betreuungService.findBetreuung(betreuungId);

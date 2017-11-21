@@ -565,6 +565,13 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				}
 			}
 
+			// Eventuelle Schulamt-Anmeldungen auf AUSGELOEST setzen
+			for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
+				if (betreuung.getBetreuungsstatus() == Betreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST) {
+					betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
+				}
+			}
+
 			// Den Gesuchsstatus setzen
 			gesuch.setStatus(calculateFreigegebenStatus(gesuch));
 

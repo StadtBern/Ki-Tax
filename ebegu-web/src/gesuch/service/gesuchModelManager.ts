@@ -1251,7 +1251,7 @@ export default class GesuchModelManager {
     /**
      * checks if the gesuch is readonly for a given role based on its state
      */
-    private isGesuchReadonlyForRole(): boolean {
+    public isGesuchReadonlyForRole(): boolean {
         let periodeReadonly: boolean = this.isGesuchsperiodeReadonly();
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getReadOnlyRoles())) {
             return true;  // schulamt hat immer nur readonly zugriff
