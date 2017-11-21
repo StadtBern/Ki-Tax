@@ -30,15 +30,18 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.FileMetadata;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.util.UploadFileInfo;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
@@ -78,7 +81,7 @@ public class FileSaverServiceBean implements FileSaverService {
 			if (!Files.exists(file.getParent())) {
 				Files.createDirectories(file.getParent());
 			}
-			uploadFileInfo.setSize(Files.size(Files.write(file, uploadFileInfo.getBytes())));
+			uploadFileInfo.setSize(Files.size(Files.write(file, uploadFileInfo.getBytes())));//here we write to filesystem
 			LOG.info("Save file in FileSystem: {}", absoluteFilePath);
 
 		} catch (IOException e) {
@@ -135,12 +138,7 @@ public class FileSaverServiceBean implements FileSaverService {
 	}
 
 	private String getFileNameEnding(String filename) {
-		String extension = "";
-		int i = filename.lastIndexOf('.');
-		if (i > 0) {
-			extension = filename.substring(i + 1);
-		}
-		return extension;
+		return FilenameUtils.getExtension(filename);
 	}
 
 	@Override
