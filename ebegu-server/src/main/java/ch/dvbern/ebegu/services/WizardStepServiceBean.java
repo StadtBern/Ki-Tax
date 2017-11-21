@@ -275,7 +275,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 				boolean allNeededDokumenteUploaded = true;
 				for (DokumentGrund dokumentGrund : dokumentGrundsMerged) {
-					//der DokumenntGrundTyp SONSTIGE_NACHWEISE und PAPIERGESUCH gehoert nie zu den needed dokumenten
+					//TODO der DokumenntGrundTyp SONSTIGE_NACHWEISE und PAPIERGESUCH gehoert "eigentlich" nie zu den needed dokumenten
 					if ( (!(dokumentGrund.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE) || dokumentGrund.getDokumentGrundTyp().equals(DokumentGrundTyp.PAPIERGESUCH))) && dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
 						allNeededDokumenteUploaded = false;
 						break;
