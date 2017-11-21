@@ -131,10 +131,10 @@ public class EWKWebService implements IEWKWebService {
 	private void handleResponseStatus(@Nonnull PersonenSucheResp response) throws PersonenSucheServiceBusinessException, PersonenSucheServiceException {
 		ReturnMessage returnMessage = response.getReturnMessage();
 		if (returnMessage == null) {
-			logger.error("Das Statusobjekt aus der Response vom SARI Service war null, dies ist unerwartet und darf nicht vorkommen");
-			throw new PersonenSucheServiceException("handleResponseStatus", "Status der Response muss gesetzt sein");
+			logger.error("Die Return Message aus der Response vom EWK Service war null, dies ist unerwartet und darf nicht vorkommen");
+			throw new PersonenSucheServiceException("handleResponseStatus", "Return Message der Response muss gesetzt sein");
 		}
-		//wenn der Status nicht 0 ist ist es ein Fehler
+		//wenn der Status nicht 00 oder 01 ist, ist es ein Fehler
 		if (!RETURN_CODE_OKAY.equals(returnMessage.getCode()) && !RETURN_CODE_NO_RESULT.equals(returnMessage.getCode())) {
 			String msg = "EWK: Fehler bei Webservice Aufruf: " + returnMessage.getCode() + " / " + returnMessage.getText();
 			logger.error(msg);

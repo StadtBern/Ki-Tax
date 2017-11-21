@@ -13,29 +13,30 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import GesuchModelManager from './service/gesuchModelManager';
-import BerechnungsManager from './service/berechnungsManager';
-import DateUtil from '../utils/DateUtil';
-import WizardStepManager from './service/wizardStepManager';
+import {ILogService, IRootScopeService} from '@types/angular';
+import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
+import ErrorService from '../core/errors/service/ErrorService';
+import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
+import EwkRS from '../core/service/ewkRS.rest';
+import GesuchstellerRS from '../core/service/gesuchstellerRS.rest';
+import {IN_BEARBEITUNG_BASE_NAME, TSAntragStatus} from '../models/enums/TSAntragStatus';
+import {TSAntragTyp} from '../models/enums/TSAntragTyp';
+import {TSGesuchBetreuungenStatus} from '../models/enums/TSGesuchBetreuungenStatus';
+import {TSGesuchEvent} from '../models/enums/TSGesuchEvent';
+import {TSRole} from '../models/enums/TSRole';
 import {TSWizardStepName} from '../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../models/enums/TSWizardStepStatus';
-import EbeguUtil from '../utils/EbeguUtil';
-import {IN_BEARBEITUNG_BASE_NAME, TSAntragStatus} from '../models/enums/TSAntragStatus';
-import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
-import TSGesuch from '../models/TSGesuch';
-import {TSRoleUtil} from '../utils/TSRoleUtil';
-import {TSRole} from '../models/enums/TSRole';
-import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
-import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
 import TSEWKPerson from '../models/TSEWKPerson';
-import GesuchstellerRS from '../core/service/gesuchstellerRS.rest';
-import {ILogService, IRootScopeService} from '@types/angular';
 import TSEWKResultat from '../models/TSEWKResultat';
-import {TSGesuchEvent} from '../models/enums/TSGesuchEvent';
-import {TSAntragTyp} from '../models/enums/TSAntragTyp';
-import EwkRS from '../core/service/ewkRS.rest';
+import TSGesuch from '../models/TSGesuch';
 import TSGesuchsteller from '../models/TSGesuchsteller';
-import {TSGesuchBetreuungenStatus} from '../models/enums/TSGesuchBetreuungenStatus';
+import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
+import DateUtil from '../utils/DateUtil';
+import EbeguUtil from '../utils/EbeguUtil';
+import {TSRoleUtil} from '../utils/TSRoleUtil';
+import BerechnungsManager from './service/berechnungsManager';
+import GesuchModelManager from './service/gesuchModelManager';
+import WizardStepManager from './service/wizardStepManager';
 import ITranslateService = angular.translate.ITranslateService;
 
 export class GesuchRouteController {
@@ -44,12 +45,13 @@ export class GesuchRouteController {
     TSRoleUtil: any;
     openEwkSidenav: boolean;
 
-    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
+    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil', 'ErrorService',
         'AntragStatusHistoryRS', '$translate', 'AuthServiceRS', '$mdSidenav', 'CONSTANTS', 'GesuchstellerRS', 'EwkRS', '$log', '$rootScope'];
 
     /* @ngInject */
     constructor(private gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
+                private errorService: ErrorService,
                 private antragStatusHistoryRS: AntragStatusHistoryRS, private $translate: ITranslateService,
                 private authServiceRS: AuthServiceRS, private $mdSidenav: ng.material.ISidenavService, private CONSTANTS: any,
                 private gesuchstellerRS: GesuchstellerRS, private ewkRS: EwkRS,
@@ -298,24 +300,39 @@ export class GesuchRouteController {
     }
 
     public searchGesuchsteller(n: number): void {
+        this.errorService.clearAll();
         this.ewkRS.suchePerson(n).then(response => {
             switch (n) {
                 case 1:
                     this.gesuchModelManager.ewkResultatGS1 = response;
                     if (this.gesuchModelManager.ewkResultatGS1.anzahlResultate === 1) {
                         this.selectPerson(this.gesuchModelManager.ewkResultatGS1.personen[0], n);
+                    } else {
+                        this.setDateEWKAbfrage(n);
                     }
                     break;
                 case 2:
                     this.gesuchModelManager.ewkResultatGS2 = response;
                     if (this.gesuchModelManager.ewkResultatGS2.anzahlResultate === 1) {
                         this.selectPerson(this.gesuchModelManager.ewkResultatGS2.personen[0], n);
+                    } else {
+                        this.setDateEWKAbfrage(n);
                     }
                     break;
                 default:
                     break;
             }
         }).catch((exception) => {
+            let bussinesExceptionMitFehlercode = (this.errorService.getErrors().filter(
+                    function filterForBusinessException(e) {
+                        return (e.errorCodeEnum === 'ERROR_PERSONENSUCHE_BUSINESS' && e.argumentList[0]);
+                    }).length) > 0;
+
+            if (bussinesExceptionMitFehlercode) {
+                // es war eine Businessexception und der Sercvice hat mit einem ErrorCode geantwortet
+                // Abfrage hat stattgefunden
+                this.setDateEWKAbfrage(n);
+            }
             this.$log.error('there was an error searching the person in EWK ', exception);
         });
     }
@@ -349,5 +366,20 @@ export class GesuchRouteController {
 
     public isDocumentUploaded(): boolean {
         return this.getGesuch() && this.getGesuch().dokumenteHochgeladen;
+    }
+
+    private setDateEWKAbfrage(n: number) {
+        this.ewkRS.selectPerson(n, null);
+        switch (n) {
+            case 1:
+                this.$rootScope.$broadcast(TSGesuchEvent[TSGesuchEvent.EWK_PERSON_SELECTED], 1, null);
+                break;
+            case 2:
+                this.$rootScope.$broadcast(TSGesuchEvent[TSGesuchEvent.EWK_PERSON_SELECTED], 2, null);
+                break;
+            default:
+                break;
+        }
+
     }
 }

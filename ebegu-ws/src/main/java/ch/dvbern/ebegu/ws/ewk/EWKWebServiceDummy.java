@@ -98,6 +98,8 @@ public class EWKWebServiceDummy implements IEWKWebService {
 			response = parse(FILE_FANNY_HUBER);
 		} else if ("Anderegg".equalsIgnoreCase(name)) {
 			response = parse(FILE_SANDRA_ANDEREGG);
+		}else if("Baumann".equalsIgnoreCase(name)){
+			response = parse(FILE_NO_RESULT);
 		} else if ("PersonenSucheServiceException".equalsIgnoreCase(name)) {
 			PersonenSucheServiceException e = new PersonenSucheServiceException("suchePerson", "PersonenSucheServiceException aufgetreten");
 			LOGGER.error("Absichtlich provozierter Fehler bei Personensuche im Dummy-Service", e);
