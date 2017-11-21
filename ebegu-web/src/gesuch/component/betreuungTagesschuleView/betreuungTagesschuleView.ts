@@ -67,9 +67,9 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     betreuung: TSBetreuung;
     showErrorMessageNoModule: boolean;
 
-
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout', '$translate'];
+
     /* @ngInject */
     constructor($state: IStateService, gesuchModelManager: GesuchModelManager, ebeguUtil: EbeguUtil, CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, errorService: ErrorService,
@@ -143,6 +143,10 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
 
     public isModulEnabled(modulName: TSModulTagesschuleName, weekday: TSDayOfWeek): boolean {
         return this.betreuung.isEnabled() && this.isModulDefinedInSelectedTS(modulName, weekday);
+    }
+
+    public getMonday(): TSDayOfWeek {
+        return TSDayOfWeek.MONDAY;
     }
 
     /**

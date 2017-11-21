@@ -12,9 +12,28 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 @import '../../../style/variables.less';
 
 md-checkbox.checkbox-error {
     background: #ffe6e6;
+}
+
+.dv-tagesschule-table {
+    &__checkbox {
+        height: 1.7rem;
+        width: 1.7rem;
+        margin: auto;
+        md-checkbox {
+            margin: 0 !important;
+        }
+    }
+    &__weekdays {
+        text-align: center;
+        padding: 0 1rem;
+    }
+    &__tr {
+        td {
+            padding: 1rem 0;
+        }
+    }
 }

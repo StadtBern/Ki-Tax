@@ -36,17 +36,18 @@
                     </div>
                 </div>
 
-                <table ng-if="vm.isTagesschuleAlreadySelected()">
+                <table ng-if="vm.isTagesschuleAlreadySelected()" class="dv-tagesschule-table">
                     <tr>
                         <td></td>
-                        <td ng-repeat="weekDay in vm.getWeekDays()">
+                        <td class="dv-tagesschule-table__weekdays" ng-repeat="weekDay in vm.getWeekDays()">
                             <span ng-bind="weekDay | translate"></span>
                         </td>
                     </tr>
-                    <tr ng-repeat="modulName in vm.getModulTagesschuleNameList()">
-                        <td ng-bind="vm.getModulName(modulName)"></td>
-                        <td ng-repeat="weekDay in vm.getWeekDays()">
-                            <div class=" checkbox">
+                    <tr class="dv-tagesschule-table__tr" ng-repeat="modulName in vm.getModulTagesschuleNameList()">
+                        <td ng-if="vm.isModulDefinedInSelectedTS(modulName, vm.getMonday())" ng-bind="vm.getModulName(modulName)"></td>
+                        <td ng-if="vm.isModulDefinedInSelectedTS(modulName, vm.getMonday())"
+                            ng-repeat="weekDay in vm.getWeekDays()">
+                            <div class="checkbox dv-tagesschule-table__checkbox">
                                 <md-checkbox name="modul_{{modulName}}_{{weekDay}}"
                                              ng-model="vm.getModul(modulName, weekDay).angemeldet"
                                              aria-label="Modul {{modulName | translate}} {{weekDay | translate}}"
