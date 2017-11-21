@@ -114,6 +114,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <!-- Betreuung hinzufuegen - Normalfall alle Typen, nicht verfuegt -->
                     <div class="col-md-12" dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                          dv-show-expression="!vm.isGesuchReadonly()">
@@ -124,7 +125,26 @@
                             <span data-translate="BETREUUNG_HINZUFUEGEN"></span>
                         </dv-loading-button>
                     </div>
-
+					<!-- Ferieninsel Anmeldung hinzufuegen, auch wenn verfuegt -->
+                    <div class="col-md-12" dv-show-element
+                         dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                         dv-show-expression="vm.showButtonAnmeldungSchulamt()">
+                        <dv-loading-button type="button" button-click="vm.createAnmeldungFerieninsel(kind)"
+                                           button-class="dv-btn-operation">
+                            <i class="fa fa-lg fa-plus-circle"></i>
+                            <span data-translate="BETREUUNG_FERIENINSEL_HINZUFUEGEN"></span>
+                        </dv-loading-button>
+                    </div>
+					<!-- Tagesschule Anmeldung hinzufuegen, auch wenn verfuegt -->
+                    <div class="col-md-12" dv-show-element
+                         dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                         dv-show-expression="vm.showButtonAnmeldungSchulamt()">
+                        <dv-loading-button type="button" button-click="vm.createAnmeldungTagesschule(kind)"
+                                           button-class="dv-btn-operation">
+                            <i class="fa fa-lg fa-plus-circle"></i>
+                            <span data-translate="BETREUUNG_TAGESSCHULE_HINZUFUEGEN"></span>
+                        </dv-loading-button>
+                    </div>
                 </div>
             </div>
             <div class="row marginTop20" ng-show="vm.hasBetreuungInStatusWarten()" dv-show-element
