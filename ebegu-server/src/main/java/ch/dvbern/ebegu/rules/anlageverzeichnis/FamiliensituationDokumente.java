@@ -22,6 +22,7 @@ import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
+import ch.dvbern.ebegu.util.EbeguUtil;
 
 /**
  * Dokumente für Familiensituation:
@@ -54,7 +55,7 @@ public class FamiliensituationDokumente extends AbstractDokumente<Familiensituat
 		}
 		switch (dokumentTyp) {
 		case UNTERSTUETZUNGSBESTAETIGUNG:
-			return familiensituation.getSozialhilfeBezueger();
+			return !EbeguUtil.isNullOrFalse(familiensituation.getSozialhilfeBezueger());
 		default:
 			return false;
 		}
