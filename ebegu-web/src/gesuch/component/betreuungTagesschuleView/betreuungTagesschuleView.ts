@@ -38,6 +38,7 @@ import IPromise = angular.IPromise;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
+import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 
 let template = require('./betreuungTagesschuleView.html');
 require('./betreuungTagesschuleView.less');
@@ -216,5 +217,9 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
             return ' (' + modul.zeitVon.format('HH:mm') + ' - ' + modul.zeitBis.format('HH:mm') + ')';
         }
         return '';
+    }
+
+    public showButtonsInstitution(): boolean {
+        return this.betreuung.betreuungsstatus === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST && !this.gesuchModelManager.isGesuchReadonlyForRole();
     }
 }
