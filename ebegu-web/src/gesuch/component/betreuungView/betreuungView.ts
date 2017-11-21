@@ -652,11 +652,12 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     /**
-     * Die globale navigation Buttons werden nur angezeigt, wenn es  kein Schulamtangebot ist oder wenn der Betreuungsstatus=SCHULAMT,
-     * das letzte um die alten Betreuungen zu unterstuetzen.
+     * Die globale navigation Buttons werden nur angezeigt, wenn es  kein Schulamtangebot ist oder wenn beim Tagesschulangebot
+     * die Periode keine Tagesschuleanmeldung definiert hat.
      */
     public displayGlobalNavigationButtons(): boolean {
-        return !this.isSchulamt() || !this.gesuchModelManager.getGesuch().gesuchsperiode.hasTagesschulenAnmeldung();
+        return !this.isSchulamt() ||
+            (this.isTagesschule() && !this.gesuchModelManager.getGesuch().gesuchsperiode.hasTagesschulenAnmeldung());
     }
 
     /**
