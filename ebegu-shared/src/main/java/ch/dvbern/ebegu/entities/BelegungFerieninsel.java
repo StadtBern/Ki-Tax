@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -87,5 +88,15 @@ public class BelegungFerieninsel extends AbstractEntity {
 
 	public void setTage(List<BelegungFerieninselTag> tage) {
 		this.tage = tage;
+	}
+
+	@Nonnull
+	public BelegungFerieninsel copyForMutation(@Nonnull BelegungFerieninsel mutation) {
+		super.copyForMutation(mutation);
+		mutation.setFerienname(ferienname);
+		for (BelegungFerieninselTag belegungFerieninselTag : tage) {
+			mutation.getTage().add(belegungFerieninselTag.copyForMutation(new BelegungFerieninselTag()));
+		}
+		return mutation;
 	}
 }

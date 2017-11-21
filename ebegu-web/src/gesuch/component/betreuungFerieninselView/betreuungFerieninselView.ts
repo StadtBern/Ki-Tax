@@ -99,9 +99,19 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     }
 
     public changedFerien() {
+        // Die Stammdaten und potentiellen Ferientage der gewaehlten Ferieninsel lesen
         this.ferieninselStammdatenRS.findFerieninselStammdatenByGesuchsperiodeAndFerien(
             this.gesuchModelManager.getGesuchsperiode().id, this.betreuung.belegungFerieninsel.ferienname).then((response: TSFerieninselStammdaten) => {
             this.ferieninselStammdaten = response;
+            // Bereits gespeicherte Daten wieder ankreuzen
+            for (let obj of this.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung) {
+                for (let tagAngemeldet of this.betreuung.belegungFerieninsel.tage) {
+                    if (tagAngemeldet.tag.isSame(obj.tag)) {
+                        obj.angemeldet = true;
+                        continue;
+                    }
+                }
+            }
         });
     }
 
@@ -124,6 +134,10 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
             && !this.isAnmeldungNichtFreigegeben();
     }
 
+    public getButtonTextSpeichern(): string {
+        return this.direktAnmeldenSchulamt() ? 'ANMELDEN_FERIENINSEL' : 'SAVE';
+    }
+
     public anmelden(): IPromise<any> {
         if (this.form.$valid) {
             // Validieren, dass mindestens 1 Tag ausgewählt war
@@ -134,14 +148,18 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
                 }
                 return undefined;
             }
-            return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
-                title: 'CONFIRM_SAVE_FERIENINSEL',
-                deleteText: 'BESCHREIBUNG_SAVE_FERIENINSEL',
-                parentController: undefined,
-                elementID: undefined
-            }).then(() => {
+            if (this.direktAnmeldenSchulamt()) {
+                return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
+                    title: 'CONFIRM_SAVE_FERIENINSEL',
+                    deleteText: 'BESCHREIBUNG_SAVE_FERIENINSEL',
+                    parentController: undefined,
+                    elementID: undefined
+                }).then(() => {
+                    this.onSave();
+                });
+            } else {
                 this.onSave();
-            });
+            }
         }
         return undefined;
     }
@@ -156,6 +174,6 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     }
 
     public showButtonsInstitution(): boolean {
-        return this.betreuung.betreuungsstatus === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST && !this.isGesuchReadonly();
+        return this.betreuung.betreuungsstatus === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST && !this.gesuchModelManager.isGesuchReadonlyForRole();
     }
 }

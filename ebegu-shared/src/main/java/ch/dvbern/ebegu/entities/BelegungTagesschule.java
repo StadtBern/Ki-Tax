@@ -19,8 +19,7 @@ import java.time.LocalDate;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.annotation.Nullable;
-import javax.persistence.CascadeType;
+import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -82,5 +81,13 @@ public class BelegungTagesschule extends AbstractEntity {
 
 	public void setEintrittsdatum(@NotNull LocalDate eintrittsdatum) {
 		this.eintrittsdatum = eintrittsdatum;
+	}
+
+	@Nonnull
+	public BelegungTagesschule copyForMutation(@Nonnull BelegungTagesschule mutation, @Nonnull Betreuung parentBetreuung) {
+		super.copyForMutation(mutation);
+		mutation.setEintrittsdatum(LocalDate.from(eintrittsdatum));
+		//TODO (team) Implementieren!
+		return mutation;
 	}
 }

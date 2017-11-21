@@ -68,6 +68,7 @@ import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -205,10 +206,12 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 			break;
 		case SACHBEARBEITER_TRAEGERSCHAFT:
 			predicates.add(cb.equal(institution.get(Institution_.traegerschaft), user.getTraegerschaft()));
+			predicates.add(createPredicateSchulamtAngebote(cb, betreuungen, institutionstammdaten));
 			break;
 		case SACHBEARBEITER_INSTITUTION:
 			// es geht hier nicht um die institution des zugewiesenen benutzers sondern um die institution des eingeloggten benutzers
 			predicates.add(cb.equal(institution, user.getInstitution()));
+			predicates.add(createPredicateSchulamtAngebote(cb, betreuungen, institutionstammdaten));
 			break;
 		case SCHULAMT:
 		case ADMINISTRATOR_SCHULAMT:
@@ -345,6 +348,27 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 			break;
 		}
 		return result;
+	}
+
+	/**
+	 * ((TS or FI) and notAusgeloest) or (otherAngebotTyps)
+	 */
+	private Predicate createPredicateSchulamtAngebote(CriteriaBuilder cb, SetJoin<KindContainer, Betreuung> betreuungen,
+		Join<Betreuung, InstitutionStammdaten> institutionstammdaten) {
+
+		//(TS or FI) and notAusgeloest)
+		Predicate predicateTagesschule = cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
+		Predicate predicateFerieninsel = cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.FERIENINSEL);
+		Predicate predicateTSOderFI = cb.or(predicateTagesschule, predicateFerieninsel);
+		Predicate predicateNotAusgelost = cb.notEqual(betreuungen.get(Betreuung_.betreuungsstatus), Betreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST);
+		Predicate predicateTSOderFINotAusgelost = cb.and(predicateTSOderFI, predicateNotAusgelost);
+
+		//all otherAngebotTyps
+		Predicate predicateNotTagesschule = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
+		Predicate predicateNotFerieninsel = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.FERIENINSEL);
+		Predicate predicateNotTSOderFI = cb.and(predicateNotTagesschule, predicateNotFerieninsel);
+
+		return cb.or(predicateTSOderFINotAusgelost, predicateNotTSOderFI);
 	}
 
 	private List<String> determineDistinctGesuchIdsToLoad(List<String> allGesuchIds, int startindex, int maxresults) {

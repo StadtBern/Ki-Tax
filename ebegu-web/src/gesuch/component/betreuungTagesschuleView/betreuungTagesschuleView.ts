@@ -38,6 +38,7 @@ import IPromise = angular.IPromise;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
+import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 
 let template = require('./betreuungTagesschuleView.html');
 require('./betreuungTagesschuleView.less');
@@ -163,6 +164,10 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
         return null;
     }
 
+    public getButtonTextSpeichern(): string {
+        return this.direktAnmeldenSchulamt() ? 'ANMELDEN_TAGESSCHULE' : 'SAVE';
+    }
+
     public anmelden(): IPromise<any> {
         if (this.form.$valid) {
             // Validieren, dass mindestens 1 Modul ausgewählt war
@@ -171,14 +176,18 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
                 return undefined;
             }
             this.filterOnlyAngemeldeteModule();
-            return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
-                title: 'CONFIRM_SAVE_TAGESSCHULE',
-                deleteText: 'BESCHREIBUNG_SAVE_TAGESSCHULE',
-                parentController: undefined,
-                elementID: undefined
-            }).then(() => {
+            if (this.direktAnmeldenSchulamt()) {
+                return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
+                    title: 'CONFIRM_SAVE_TAGESSCHULE',
+                    deleteText: 'BESCHREIBUNG_SAVE_TAGESSCHULE',
+                    parentController: undefined,
+                    elementID: undefined
+                }).then(() => {
+                    this.onSave();
+                });
+            } else {
                 this.onSave();
-            });
+            }
         }
         return undefined;
     }
@@ -208,5 +217,9 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
             return ' (' + modul.zeitVon.format('HH:mm') + ' - ' + modul.zeitBis.format('HH:mm') + ')';
         }
         return '';
+    }
+
+    public showButtonsInstitution(): boolean {
+        return this.betreuung.betreuungsstatus === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST && !this.gesuchModelManager.isGesuchReadonlyForRole();
     }
 }

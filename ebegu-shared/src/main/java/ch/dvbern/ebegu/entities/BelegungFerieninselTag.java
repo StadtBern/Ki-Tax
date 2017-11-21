@@ -70,4 +70,11 @@ public class BelegungFerieninselTag extends AbstractEntity implements Comparable
 		compareToBuilder.append(this.getId(), other.getId());  // wenn ids nicht gleich sind wollen wir auch compare to nicht gleich
 		return compareToBuilder.toComparison();
 	}
+
+	@Nonnull
+	public BelegungFerieninselTag copyForMutation(@Nonnull BelegungFerieninselTag mutation) {
+		super.copyForMutation(mutation);
+		mutation.setTag(LocalDate.from(tag));
+		return mutation;
+	}
 }
