@@ -1170,6 +1170,17 @@ export default class GesuchModelManager {
     }
 
     /**
+     * Returns true when all Betreuungen are of kind FERIENINSEL.
+     * Returns false also if there are no Kinder with betreuungsbedarf
+     */
+    public areThereOnlyFerieninsel(): boolean {
+        if (!this.getGesuch()) {
+            return false;
+        }
+        return this.getGesuch().areThereOnlyFerieninsel();
+    }
+
+    /**
      * Returns true when all Betreuungen are of kind SCHULAMT.
      * Returns false also if there are no Kinder with betreuungsbedarf
      */
@@ -1407,7 +1418,8 @@ export default class GesuchModelManager {
     }
 
     public isFinanzielleSituationRequired(): boolean {
-        return !this.areThereOnlySchulamtAngebote() || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht
-            && !this.getGesuch().extractFamiliensituation().sozialhilfeBezueger);
+        return !this.areThereOnlyFerieninsel() || !this.areThereOnlySchulamtAngebote()
+            || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht
+                && !this.getGesuch().extractFamiliensituation().sozialhilfeBezueger);
     }
 }
