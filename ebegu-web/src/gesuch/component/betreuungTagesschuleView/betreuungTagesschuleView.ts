@@ -179,7 +179,6 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
                 this.showErrorMessageNoModule = true;
                 return undefined;
             }
-            this.filterOnlyAngemeldeteModule();
             if (this.direktAnmeldenSchulamt()) {
                 return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
                     title: 'CONFIRM_SAVE_TAGESSCHULE',
@@ -194,16 +193,6 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
             }
         }
         return undefined;
-    }
-
-    /**
-     * Entfernt alle Module die nicht als angemeldet markiert sind
-     */
-    private filterOnlyAngemeldeteModule() {
-        // noinspection UnnecessaryLocalVariableJS
-        let angemeldeteModule: TSModulTagesschule[] = this.betreuung.belegungTagesschule.moduleTagesschule
-            .filter(modul => modul.angemeldet === true);
-        this.betreuung.belegungTagesschule.moduleTagesschule = angemeldeteModule;
     }
 
     private isThereAnyAnmeldung(): boolean {
