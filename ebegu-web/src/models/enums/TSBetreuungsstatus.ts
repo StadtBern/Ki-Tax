@@ -29,3 +29,8 @@ export enum TSBetreuungsstatus {
     SCHULAMT_ANMELDUNG_ABGELEHNT = <any> 'SCHULAMT_ANMELDUNG_ABGELEHNT',
     SCHULAMT_FALSCHE_INSTITUTION = <any> 'SCHULAMT_FALSCHE_INSTITUTION'
 }
+
+export function isBetreuungsstatusTSAusgeloest(status: TSBetreuungsstatus): boolean {
+    return status === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST || status === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT ||
+        status === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN || status === TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION;
+}
