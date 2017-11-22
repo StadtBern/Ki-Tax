@@ -153,8 +153,8 @@
                             </div>
                         </td>
                         <!-- status -->
-                        <td class="ellipsis" ellipsis-tooltip="{{row.status}}">
-                            <span ng-bind="'ZAHLUNGSAUFTRAG_'+row.status | translate"></span>
+                        <td class="ellipsis" ellipsis-tooltip="{{vm.calculatetStatus(row)}}">
+                            <span ng-bind="'ZAHLUNGSAUFTRAG_'+vm.getCalculatetStatus(row) | translate"></span>
                         </td>
                         <!-- edit / save button -->
                         <td class="symbol text-center" ng-click="$event.stopPropagation()" dv-show-element
