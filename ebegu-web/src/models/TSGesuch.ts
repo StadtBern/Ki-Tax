@@ -248,7 +248,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     }
 
     /**
-     * Returns true when all Betreuungen are of one the given types
+     * Returns true when all Betreuungen are of one of the given types
      */
     private areThereOnlyAngeboteOfType(types: TSBetreuungsangebotTyp[]): boolean {
         let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
