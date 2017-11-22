@@ -16,8 +16,10 @@
 package ch.dvbern.ebegu.api.resource;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -42,6 +44,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
 import ch.dvbern.ebegu.config.EbeguConfiguration;
@@ -51,6 +59,7 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.ApplicationPropertyService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -73,6 +82,8 @@ public class ApplicationPropertyResource {
 
 	@Inject
 	private EbeguConfiguration ebeguConfiguration;
+
+	private static final Logger LOG = LoggerFactory.getLogger(ApplicationPropertyResource.class.getSimpleName());
 
 	@ApiOperation(value = "Find a property by its unique name (called key)", response = JaxApplicationProperties.class)
 	@Nullable
@@ -97,6 +108,32 @@ public class ApplicationPropertyResource {
 	@Path("/public/devmode")
 	public Response isDevMode(@Context HttpServletResponse response) {
 		return Response.ok(ebeguConfiguration.getIsDevmode()).build();
+	}
+
+	@ApiOperation(value = "converts the list of whitelisted mimetypes (for uploads) into a list of file-extensions and "
+		+ "retunrs it as a property ", response = JaxApplicationProperties.class)
+	@Nullable
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/public/UPLOAD_FILETYPES_WHITELIST")
+	public JaxApplicationProperties getWhitelist(
+		@Context HttpServletResponse response) {
+
+		final Collection<String> whitelist = this.applicationPropertyService.readMimeTypeWhitelist();
+		MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
+
+		final List<String> extensions = whitelist.stream().map(mimetype -> {
+			try {
+				return allTypes.forName(mimetype).getExtension();
+			} catch (MimeTypeException e) {
+				LOG.error("Could not find extension for mime type " + mimetype);
+				return null;
+			}
+		}).filter(Objects::nonNull).collect(Collectors.toList());
+		final String list = StringUtils.join(extensions, ",");
+		ApplicationProperty applicationProperty = new ApplicationProperty(ApplicationPropertyKey.UPLOAD_FILETYPES_WHITELIST, list);
+		return converter.applicationPropertyToJAX(applicationProperty);
 	}
 
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")

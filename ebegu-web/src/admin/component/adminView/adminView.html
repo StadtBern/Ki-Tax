@@ -29,13 +29,13 @@
                         <thead>
                         <tr>
                             <th st-sort="name" class="sortable" data-translate="PROPERTY_NAME"></th>
-                            <th st-sort="value" class="sortable" data-translate="PROPERTY_VALUE"></th>
+                            <th st-sort="value" class="sortable valCol" data-translate="PROPERTY_VALUE"></th>
                             <th st-sort="timestampErstellt" class="sortable" data-translate="TIMEERSTELLT"></th>
                         </tr>
                         <tr>
                             <th><input st-search="name" class="form-control" placeholder="Suche nach Name"
                                        type="text"/></th>
-                            <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
+                            <th><input st-search="value valCol" class="form-control" placeholder="Suche Nach Text"
                                        type="text"/></th>
                             <th></th>
                         </tr>
@@ -44,7 +44,7 @@
                         <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                             ng-click="vm.editRow(row)">
                             <td ng-bind="row.name"></td>
-                            <td ng-bind="row.value"></td>
+                            <td ng-bind="row.value" class="valCol" title="{{row.value}}"></td>
                             <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
                         </tr>
                         </tbody>
@@ -77,7 +77,7 @@
                                     <div class="col-md-4">
                                         <input id="propVal" type="text" name="propertyValue"
                                                ng-model="vm.applicationProperty.value"
-                                               dv-max-length class="smallfont">
+                                               ng-maxlength="4000" class="smallfont">
                                     </div>
                                 </div>
                                 <div class="row form-group">
@@ -98,7 +98,7 @@
                                 </dv-loading-button>
                             </div>
                             <div class="col-md-4 ">
-                                <a href="javascript:;" id="cancelLink" unsaved-warning-clear
+                                <a id="cancelLink" unsaved-warning-clear
                                    ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();">
                                     <span data-translate="CANCEL"></span>
                                 </a>

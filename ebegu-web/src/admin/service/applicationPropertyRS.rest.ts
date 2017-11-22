@@ -15,7 +15,7 @@
 
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSApplicationProperty from '../../models/TSApplicationProperty';
-import {IHttpPromise, IHttpService, IPromise} from 'angular';
+import {IHttpPromise, IHttpResponse, IHttpService, IPromise} from 'angular';
 
 export class ApplicationPropertyRS {
     serviceURL: string;
@@ -23,6 +23,7 @@ export class ApplicationPropertyRS {
     ebeguRestUtil: EbeguRestUtil;
 
     static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
+
     /* @ngInject */
     constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil) {
         this.serviceURL = REST_API + 'application-properties';
@@ -30,14 +31,24 @@ export class ApplicationPropertyRS {
         this.ebeguRestUtil = ebeguRestUtil;
     }
 
+    getAllowedMimetypes(): IPromise<TSApplicationProperty> {
+        return this.http.get(this.serviceURL + '/public/' + encodeURIComponent('UPLOAD_FILETYPES_WHITELIST'),
+            {cache: true})
+        .then((response: IHttpResponse<TSApplicationProperty>) => {
+            return this.ebeguRestUtil.parseApplicationProperty(new TSApplicationProperty(), response.data);
+        });
+    }
+
     getByName(name: string): IPromise<TSApplicationProperty> {
         return this.http.get(this.serviceURL + '/key/' + encodeURIComponent(name)).then(
-            (response: any) => this.ebeguRestUtil.parseApplicationProperty(new TSApplicationProperty(), response.data)
+            (response: any) => {
+                return this.ebeguRestUtil.parseApplicationProperty(new TSApplicationProperty(), response.data);
+            }
         );
     }
 
     isDevMode(): IPromise<boolean> {
-        return this.http.get(this.serviceURL + '/public/devmode',  {cache: true }).then((response) => {
+        return this.http.get(this.serviceURL + '/public/devmode', {cache: true}).then((response) => {
             return response.data;
         });
     }
@@ -81,7 +92,7 @@ export class ApplicationPropertyRS {
     }
 
     isZahlungenTestMode(): IPromise<boolean> {
-        return this.http.get(this.serviceURL + '/public/zahlungentestmode',  {cache: true }).then((response) => {
+        return this.http.get(this.serviceURL + '/public/zahlungentestmode', {cache: true}).then((response) => {
             return response.data;
         });
     }

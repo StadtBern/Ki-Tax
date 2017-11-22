@@ -31,6 +31,8 @@ import {TSDokumentGrundPersonType} from '../../../models/enums/TSDokumentGrundPe
 import TSKindContainer from '../../../models/TSKindContainer';
 import {TSRole} from '../../../models/enums/TSRole';
 import {isAnyStatusOfVerfuegtButSchulamt} from '../../../models/enums/TSAntragStatus';
+import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
+import TSApplicationProperty from '../../../models/TSApplicationProperty';
 import ITranslateService = angular.translate.ITranslateService;
 
 let template = require('./dv-dokumente-list.html');
@@ -67,18 +69,25 @@ export class DVDokumenteListController {
     onUploadDone: (dokumentGrund: any) => void;
     onRemove: (attrs: any) => void;
     sonstige: boolean;
+    allowedMimetypes: string = '';
 
     static $inject: any[] = ['UploadRS', 'GesuchModelManager', 'EbeguUtil', 'DownloadRS', 'DvDialog', 'WizardStepManager',
-        '$log', 'AuthServiceRS', '$translate', '$window'];
+        '$log', 'AuthServiceRS', '$translate', '$window', 'ApplicationPropertyRS'];
+
     /* @ngInject */
     constructor(private uploadRS: UploadRS, private gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil,
-                private downloadRS: DownloadRS, private dvDialog: DvDialog, private wizardStepManager: WizardStepManager,
-                private $log: ILogService, private authServiceRS: AuthServiceRS, private $translate: ITranslateService,
-                private $window: ng.IWindowService) {
+        private downloadRS: DownloadRS, private dvDialog: DvDialog, private wizardStepManager: WizardStepManager,
+        private $log: ILogService, private authServiceRS: AuthServiceRS, private $translate: ITranslateService,
+        private $window: ng.IWindowService, private applicationPropertyRS: ApplicationPropertyRS) {
 
     }
 
     $onInit() {
+        this.applicationPropertyRS.getAllowedMimetypes().then((response: TSApplicationProperty) => {
+            if (response !== undefined) {
+                this.allowedMimetypes = response.value;
+            }
+        });
 
     }
 
@@ -157,7 +166,7 @@ export class DVDokumenteListController {
         if (roleLoggedIn === TSRole.GESUCHSTELLER) {
             return !readonly;
         } else if (roleLoggedIn === TSRole.SACHBEARBEITER_JA) {
-            return !readonly &&  documentUploadedByJA;
+            return !readonly && documentUploadedByJA;
         } else if (roleLoggedIn === TSRole.ADMIN || roleLoggedIn === TSRole.SUPER_ADMIN) {
             return documentUploadedByJA;
         }
@@ -172,10 +181,10 @@ export class DVDokumenteListController {
             parentController: undefined,
             elementID: undefined
         })
-            .then(() => {   //User confirmed removal
-                this.onRemove({dokumentGrund: dokumentGrund, dokument: dokument});
+        .then(() => {   //User confirmed removal
+            this.onRemove({dokumentGrund: dokumentGrund, dokument: dokument});
 
-            });
+        });
     }
 
     download(dokument: TSDokument, attachment: boolean) {
@@ -183,14 +192,14 @@ export class DVDokumenteListController {
         let win: Window = this.downloadRS.prepareDownloadWindow();
 
         this.downloadRS.getAccessTokenDokument(dokument.id)
-            .then((downloadFile: TSDownloadFile) => {
-                this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment, win);
-            })
-            .catch((ex) => {
-                win.close();
-                this.$log.error('An error occurred downloading the document, closing download window.');
-            });
+        .then((downloadFile: TSDownloadFile) => {
+            this.$log.debug('accessToken: ' + downloadFile.accessToken);
+            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment, win);
+        })
+        .catch((ex) => {
+            win.close();
+            this.$log.error('An error occurred downloading the document, closing download window.');
+        });
     }
 
     getWidth(): String {
@@ -227,7 +236,7 @@ export class DVDokumenteListController {
         if (dokumentGrund.personType === TSDokumentGrundPersonType.FREETEXT) {
             return dokumentGrund.fullName;
         } else if (dokumentGrund.personType === TSDokumentGrundPersonType.GESUCHSTELLER) {
-            if (this.gesuchModelManager.getGesuch())  {
+            if (this.gesuchModelManager.getGesuch()) {
                 if (dokumentGrund.personNumber === 2 && this.gesuchModelManager.getGesuch().gesuchsteller2) {
                     return this.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName();
 
@@ -236,9 +245,9 @@ export class DVDokumenteListController {
                 }
             }
         } else if (dokumentGrund.personType === TSDokumentGrundPersonType.KIND) {
-            if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().kindContainers)  {
+            if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().kindContainers) {
                 let kindContainer: TSKindContainer = this.gesuchModelManager.getGesuch().extractKindFromKindNumber(dokumentGrund.personNumber);
-                if (kindContainer && kindContainer.kindJA)  {
+                if (kindContainer && kindContainer.kindJA) {
                     return kindContainer.kindJA.getFullName();
                 }
             }
