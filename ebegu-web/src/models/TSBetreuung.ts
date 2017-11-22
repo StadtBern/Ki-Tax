@@ -15,7 +15,7 @@
 
 import * as moment from 'moment';
 import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
-import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
+import {isBetreuungsstatusTSAusgeloest, TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
 import TSAbstractEntity from './TSAbstractEntity';
 import TSAbwesenheitContainer from './TSAbwesenheitContainer';
 import TSBelegungFerieninsel from './TSBelegungFerieninsel';
@@ -269,5 +269,9 @@ export default class TSBetreuung extends TSAbstractEntity {
 
     public isBetreuungsstatus(status: TSBetreuungsstatus): boolean {
         return this.betreuungsstatus === status;
+    }
+
+    public isTSAusgeloest(): boolean {
+        return this.isAngebotSchulamt() && isBetreuungsstatusTSAusgeloest(this.betreuungsstatus);
     }
 }
