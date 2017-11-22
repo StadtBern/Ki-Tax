@@ -246,7 +246,6 @@ public class UploadResource {
 			}
 			if(!getMimeTypeWhitelist().contains(contentType)){
 				fileSaverService.remove(fileInfo.getPath());
-				final String validTypes = StringUtils.join(getMimeTypeWhitelist(), ",");
 				LOG.debug("Blocked upload of filetype that is not in whitelist: " + contentType);
 				throw new EbeguRuntimeException("checkFiletypeAllowed", ErrorCodeEnum.ERROR_UPLOAD_INVALID_FILETYPE, contentType);
 			}
