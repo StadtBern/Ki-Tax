@@ -37,6 +37,7 @@ import javax.validation.constraints.Size;
 import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
@@ -95,13 +96,13 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp) {
 		this.dokumentGrundTyp = dokumentGrundTyp;
-		this.needed = !(dokumentGrundTyp.equals(DokumentGrundTyp.SONSTIGE_NACHWEISE) || !dokumentGrundTyp.equals(DokumentGrundTyp.PAPIERGESUCH));
+		this.needed = !DokumentGrundTyp.isSonstigeOrPapiergesuch(dokumentGrundTyp);
 	}
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, @Nullable String tag,
-		DokumentGrundPersonType personType, Integer personNumber) {
+		@Nullable DokumentGrundPersonType personType, @Nullable Integer personNumber) {
 		this.dokumentGrundTyp = dokumentGrundTyp;
-		this.needed = ! (dokumentGrundTyp.equals(DokumentGrundTyp.SONSTIGE_NACHWEISE) ||dokumentGrundTyp.equals(DokumentGrundTyp.PAPIERGESUCH));
+		this.needed = !DokumentGrundTyp.isSonstigeOrPapiergesuch(dokumentGrundTyp);
 		this.tag = tag;
 		this.personType = personType;
 		this.personNumber = personNumber;
@@ -255,7 +256,7 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 				mutation.getDokumente().add(dokument.copyForMutation(new Dokument(), mutation));
 			}
 		}
-		if (this.getDokumentGrundTyp().equals(DokumentGrundTyp.SONSTIGE_NACHWEISE) || this.getDokumentGrundTyp().equals(DokumentGrundTyp.PAPIERGESUCH)) {
+		if (DokumentGrundTyp.isSonstigeOrPapiergesuch(this.getDokumentGrundTyp())) {
 			mutation.setNeeded(false);
 		} else {
 			mutation.setNeeded(this.isNeeded());
@@ -281,7 +282,6 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 			getPersonType() == otherDokumentGrund.getPersonType() &&
 			Objects.equals(getPersonNumber(), otherDokumentGrund.getPersonNumber()) &&
 			getDokumentTyp() == otherDokumentGrund.getDokumentTyp() &&
-			Objects.equals(isNeeded(), otherDokumentGrund.isNeeded());
-		//TODO reviewer dieses (isNeeded()) sollte moeglicherweise entfernt werden, bei der isSame abfrage. needed ist Transient
+			EbeguUtil.areListsSameSize(getDokumente(), otherDokumentGrund.getDokumente());
 	}
 }
