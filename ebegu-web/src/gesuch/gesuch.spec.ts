@@ -13,13 +13,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EbeguWebCore} from '../core/core.module';
-import GesuchModelManager from './service/gesuchModelManager';
-import TestDataUtil from '../utils/TestDataUtil';
 import * as moment from 'moment';
-import {GesuchRouteController} from './gesuch';
-import TSGesuch from '../models/TSGesuch';
+import {EbeguWebCore} from '../core/core.module';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
+import TSGesuch from '../models/TSGesuch';
+import TestDataUtil from '../utils/TestDataUtil';
+import {GesuchRouteController} from './gesuch';
+import GesuchModelManager from './service/gesuchModelManager';
 
 describe('gesuch', function () {
 
@@ -33,7 +33,7 @@ describe('gesuch', function () {
         gesuchModelManager = $injector.get('GesuchModelManager');
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($injector.get('$httpBackend'));
         gesuchRouteController = new GesuchRouteController(gesuchModelManager, $injector.get('BerechnungsManager'),
-            $injector.get('WizardStepManager'), $injector.get('EbeguUtil'), $injector.get('AntragStatusHistoryRS'),
+            $injector.get('WizardStepManager'), $injector.get('EbeguUtil'), $injector.get('ErrorService'), $injector.get('AntragStatusHistoryRS'),
             $injector.get('$translate'), $injector.get('AuthServiceRS'), $injector.get('$mdSidenav'), $injector.get('CONSTANTS'),
             undefined, undefined, undefined, undefined);
         gesuch = new TSGesuch();
