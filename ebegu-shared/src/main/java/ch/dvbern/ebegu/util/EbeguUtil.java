@@ -20,10 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Dokument;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.FamiliensituationContainer;
@@ -96,5 +98,18 @@ public class EbeguUtil {
 
 	public static boolean isNullOrFalse(@Nullable Boolean value) {
 		return value == null || !value;
+	}
+
+	/**
+	 * Returns true if both list are null or if they have the same number of elements
+	 */
+	public static boolean areListsSameSize(Set<Dokument> dokumente, Set<Dokument> otherDokumente) {
+		if (dokumente == null && otherDokumente == null) {
+			return true;
+		}
+		if (dokumente != null && otherDokumente != null) {
+			return dokumente.size() == otherDokumente.size();
+		}
+		return false;
 	}
 }
