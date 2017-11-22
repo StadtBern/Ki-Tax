@@ -172,6 +172,9 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
         return this.direktAnmeldenSchulamt() ? 'ANMELDEN_TAGESSCHULE' : 'SAVE';
     }
 
+    /**
+     * Diese Methode wird aufgerufen wenn die Anmeldung erfasst oder gespeichert wird.
+     */
     public anmelden(): IPromise<any> {
         if (this.form.$valid) {
             // Validieren, dass mindestens 1 Modul ausgewählt war

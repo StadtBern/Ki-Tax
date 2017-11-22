@@ -271,7 +271,7 @@ export default class TSBetreuung extends TSAbstractEntity {
         return this.betreuungsstatus === status;
     }
 
-    public isTSAusgeloest(): boolean {
+    public isSchulamtangebotAusgeloest(): boolean {
         return this.isAngebotSchulamt() && isBetreuungsstatusTSAusgeloest(this.betreuungsstatus);
     }
 }
