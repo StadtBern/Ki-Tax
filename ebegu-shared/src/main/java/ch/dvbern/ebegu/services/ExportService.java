@@ -37,7 +37,7 @@ public interface ExportService {
 	/**
 	 * exports all existing Verfuegungen of a single Betreuung
 	 *
-	 * @param antragId ID of the Betreuung
+	 * @param betreuungID ID of the Betreuung
 	 * @return DTO containing containing a list of verfuegungen belonging to the given betreuung
 	 */
 	@Nonnull

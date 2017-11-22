@@ -47,6 +47,7 @@ import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
+import TSModulTagesschule from '../../../models/TSModulTagesschule';
 
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
@@ -230,6 +231,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         if (this.getBetreuungModel()) {
             if (this.isSchulamt()) {
                 this.getBetreuungModel().betreuungspensumContainers = []; // fuer Tagesschule werden keine Betreuungspensum benoetigt, deswegen löschen wir sie vor dem Speichern
+                if (this.isTagesschule()) {
+                    this.filterOnlyAngemeldeteModule();
+                }
             }
         }
         this.errorService.clearAll();
@@ -247,6 +251,16 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             this.form.$setPristine();
             return undefined;
         });
+    }
+
+    /**
+     * Entfernt alle Module die nicht als angemeldet markiert sind
+     */
+    public filterOnlyAngemeldeteModule() {
+        // noinspection UnnecessaryLocalVariableJS
+        let angemeldeteModule: TSModulTagesschule[] = this.getBetreuungModel().belegungTagesschule.moduleTagesschule
+            .filter(modul => modul.angemeldet === true);
+        this.getBetreuungModel().belegungTagesschule.moduleTagesschule = angemeldeteModule;
     }
 
     public anmeldenSchulamt(): void {
