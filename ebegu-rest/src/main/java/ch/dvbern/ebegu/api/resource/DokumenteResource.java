@@ -37,6 +37,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang3.Validate;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxDokument;
 import ch.dvbern.ebegu.api.dtos.JaxDokumentGrund;
@@ -54,9 +56,9 @@ import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.FileSaverService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.util.DokumenteUtil;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.Validate;
 
 /**
  * REST Resource fuer Dokumente
@@ -82,7 +84,7 @@ public class DokumenteResource {
 	@Inject
 	private FileSaverService fileSaverService;
 
-	@ApiOperation(value = "Gibt alle Dokumente zurück, welche zum übergebenen Gesuch vorhanden sind.",
+	@ApiOperation(value = "Gibt alle Dokumentgruende zurück, welche zum uebergebenen Gesuch vorhanden sind.",
 		response = JaxDokumente.class)
 	@Nullable
 	@GET
@@ -95,6 +97,7 @@ public class DokumenteResource {
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
 		if (gesuch.isPresent()) {
 			final Set<DokumentGrund> dokumentGrundsNeeded = dokumentenverzeichnisEvaluator.calculate(gesuch.get());
+			//TODO reviewer addSonstige und addPapiergesuch sollte moeglichwerweise hier nicht zu den needed hinzugefuegt werden... weil sie ja eigentlich nicht needed sind und nur auf dem GUI angezeigt werden sollen
 			dokumentenverzeichnisEvaluator.addSonstige(dokumentGrundsNeeded);
 			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded, gesuch.get());
 			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.findAllDokumentGrundByGesuch(gesuch.get());
@@ -104,7 +107,7 @@ public class DokumenteResource {
 		throw new EbeguEntityNotFoundException("getDokumente", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}
 
-	@ApiOperation(value = "Gibt alle Dokumente eines bestimmten Typs zurück, die zu einem Gesuch vorhanden sind",
+	@ApiOperation(value = "Gibt alle Dokumentegruende eines bestimmten Typs zurück, die zu einem Gesuch vorhanden sind",
 		response = JaxDokumente.class)
 	@Nullable
 	@GET
@@ -126,7 +129,7 @@ public class DokumenteResource {
 		throw new EbeguEntityNotFoundException("getDokumente", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}
 
-	@ApiOperation(value = "Aktualisiert ein Dokument in der Datenbank", response = JaxDokumentGrund.class)
+	@ApiOperation(value = "Aktualisiert einen Dokumentgrund in der Datenbank", response = JaxDokumentGrund.class)
 	@Nullable
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -139,7 +142,11 @@ public class DokumenteResource {
 		Validate.notNull(dokumentGrundJAXP.getId());
 		Optional<DokumentGrund> dokumentGrundOptional = dokumentGrundService.findDokumentGrund(dokumentGrundJAXP.getId());
 		DokumentGrund dokumentGrundFromDB = dokumentGrundOptional.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, dokumentGrundJAXP.getId()));
-
+		// beim DokumentGrund mit dem DokumentGrundTyp SONSTIGE_NACHWEISE oder PAPIERGESUCH  soll das needed-Flag (transient)
+		// per default auf false sein. sonst stimmt der Wizardstep-Status spaeter nicht
+		if (DokumentGrundTyp.isSonstigeOrPapiergesuch(dokumentGrundFromDB.getDokumentGrundTyp())) {
+			dokumentGrundFromDB.setNeeded(false);
+		}
 		// Files where not in the list anymore, should be deleted on Filesystem!
 		Set<Dokument> dokumentsToRemove = findDokumentToRemove(dokumentGrundJAXP, dokumentGrundFromDB);
 		for (Dokument dokument : dokumentsToRemove) {

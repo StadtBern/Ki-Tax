@@ -32,7 +32,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final Logger LOG = LoggerFactory.getLogger(EbeguConfigurationImpl.class.getSimpleName());
 
 	private static final long serialVersionUID = 463057263479503486L;
-	private static final String EBEGU_DEVELOPMENT_MODE = "ebegu.development.mode";
+	public static final String EBEGU_DEVELOPMENT_MODE = "ebegu.development.mode";
 	private static final String EBEGU_DOCUMENT_FILE_PATH = "ebegu.document.file.path";
 	private static final String EBEGU_FEDLET_CONFIG_PATH = "ebegu.fedlet.config.path";
 	private static final String EBEGU_CLIENT_USING_HTTPS = "ebegu.client.using.https";
@@ -60,6 +60,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_LOGIN_API_ALLOW_REMOTE = "ebegu.login.api.allow.remote";
 	private static final String EBEGU_LOGIN_API_INTERNAL_USER = "ebegu.login.api.internal.user";
 	private static final String EBEGU_LOGIN_API_INTERNAL_PASSWORD = "ebegu.login.api.internal.password";
+	private static final String EBEGU_FORCE_COOKIE_SECURE_FLAG = "ebegu.force.cookie.secure.flag";
 
 	public EbeguConfigurationImpl() {
 
@@ -209,5 +210,10 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 				EBEGU_LOGIN_API_INTERNAL_PASSWORD);
 		}
 		return internalUserPW;
+	}
+
+	@Override
+	public boolean forceCookieSecureFlag() {
+		return getBoolean(EBEGU_FORCE_COOKIE_SECURE_FLAG, false);
 	}
 }

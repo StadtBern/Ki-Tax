@@ -22,8 +22,7 @@
             {{vm.titleValue}}
         </h2>
         <div class="overflow-scroll-table">
-            <table st-table="table" st-safe-src="vm.dokumente" st-
-                   class="table dokumentgrundtable" id="{{vm.tableId}}">
+            <table st-table="table" st-safe-src="vm.dokumente" class="table dokumentgrundtable" id="{{vm.tableId}}">
                 <thead>
                 <tr ng-if="!vm.sonstige">
                     <!--without tag-->
@@ -42,13 +41,6 @@
                     <th width="5%"></th>
                     <th id="{{vm.tableId +'-status'}}" width="5%"></th>
                     <th id="{{vm.tableId +'-upload'}}" width="5%"></th>
-                </tr>
-                <tr ng-if="vm.sonstige" class="sonstige">
-                    <th width="vm.getWidth()"></th>
-                    <th width="5%"></th>
-                    <th width="5%"></th>
-                    <th width="5%"></th>
-                    <th width="5%"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -89,10 +81,11 @@
                     <td headers="{{vm.tableId +'-upload'}}" width="5%" class="symbol" tabindex="-1"
                     ng-click="$event.stopPropagation()"
                         ng-class="{'documents-vailable': vm.hasDokuments(row),'no-documents': !vm.hasDokuments(row),'no-color' : vm.sonstige}">
-                        <button ngf-select="vm.uploadAnhaenge($files, row)" ngf-multiple="true"
-                                class="fa fa-upload dv-btn-operation" title="{{'GS_DOKUMENT_HOCHLADEN' | translate}}"
-                                aria-label="{{'GS_DOKUMENT_HOCHLADEN' | translate}}"
-                                ng-disabled="vm.isDokumenteUploadDisabled()" tabindex="0"></button>
+                        <button  ngf-select="vm.uploadAnhaenge($files, row)" ngf-multiple="true"
+                               accept="{{vm.allowedMimetypes}}"
+                               class="fa fa-upload dv-btn-operation" title="{{'GS_DOKUMENT_HOCHLADEN' | translate}}"
+                               aria-label="{{'GS_DOKUMENT_HOCHLADEN' | translate}}"
+                               ng-disabled="vm.isDokumenteUploadDisabled()" tabindex="0">
                     </td>
                 </tr>
 

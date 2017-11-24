@@ -38,6 +38,10 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Adresse;
@@ -74,12 +78,15 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import ch.dvbern.oss.lib.iso20022.pain001.v00103ch02.AuszahlungDTO;
 import ch.dvbern.oss.lib.iso20022.pain001.v00103ch02.Pain001DTO;
 import ch.dvbern.oss.lib.iso20022.pain001.v00103ch02.Pain001Service;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
+import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
@@ -461,23 +468,28 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	}
 
 	@Override
-	public WriteProtectedDokument getMahnungDokumentAccessTokenGeneratedDokument(Mahnung mahnung, Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException {
+	public WriteProtectedDokument getMahnungDokumentAccessTokenGeneratedDokument(Mahnung mahnung, Boolean createWriteProtected) throws MimeTypeParseException,
+		IOException, MergeDocException {
 
 		Gesuch gesuch = mahnung.getGesuch();
 		Mahnung mahnungDB = persistence.find(Mahnung.class, mahnung.getId());
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.MAHNUNG,
 			mahnungDB == null || mahnungDB.getTimestampErstellt() == null ? "ENTWURF" : Constants.FILENAME_DATE_TIME_FORMATTER.format(mahnungDB.getTimestampErstellt()));
 
-		WriteProtectedDokument documentIfExistsAndIsWriteProtected = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), fileNameForGeneratedDokumentTyp, forceCreation);
-		if (documentIfExistsAndIsWriteProtected != null) {
-			return documentIfExistsAndIsWriteProtected;
+		// Das Dokument muss solange neu erstellt werden, bis die Mahnung ausgelöst war
+		boolean regenerateFile = mahnungDB == null;
+		// Wenn wir es nicht neu generieren wollen, suchen wir erst gar nicht nach einem evt. schon existierenden file. Grund: Der Entwurf wird immer unter
+		// demselben Namen gespeichert, so dass wir im Status ENTWURF sehr wahrscheinlich bereits ein altes File finden.
+		if (!regenerateFile) {
+			WriteProtectedDokument documentIfExistsAndIsWriteProtected = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(),
+				fileNameForGeneratedDokumentTyp, false);
+			if (documentIfExistsAndIsWriteProtected != null) {
+				return documentIfExistsAndIsWriteProtected;
+			}
 		}
 
 		WriteProtectedDokument persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp);
-		if (persistedDokument == null || forceCreation) {
-
-			// generateFinalVersion only true, when button "Mahnung erstellen" is pressed. Therefore we can use as trigger for write protection
-			boolean writeProtectPDF = forceCreation;
+		if (persistedDokument == null || regenerateFile) {
 
 			GeneratedDokumentTyp dokumentTyp = GeneratedDokumentTyp.MAHNUNG;
 
@@ -489,10 +501,10 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				vorgaengerMahnung = mahnungService.findAktiveErstMahnung(gesuch);
 			}
 
-			byte[] data = pdfService.generateMahnung(mahnung, vorgaengerMahnung, writeProtectPDF);
+			byte[] data = pdfService.generateMahnung(mahnung, vorgaengerMahnung, createWriteProtected);
 
 			persistedDokument = saveGeneratedDokumentInDB(data, dokumentTyp, gesuch,
-				fileNameForGeneratedDokumentTyp, writeProtectPDF);
+				fileNameForGeneratedDokumentTyp, createWriteProtected);
 		}
 		return persistedDokument;
 
@@ -533,6 +545,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	}
 
 	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
 	public WriteProtectedDokument getPain001DokumentAccessTokenGeneratedDokument(Zahlungsauftrag zahlungsauftrag, Boolean forceCreation) throws MimeTypeParseException {
 
 		WriteProtectedDokument persistedDokument = null;

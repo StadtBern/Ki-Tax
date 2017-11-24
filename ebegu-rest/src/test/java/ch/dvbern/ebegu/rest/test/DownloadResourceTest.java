@@ -131,7 +131,7 @@ public class DownloadResourceTest extends AbstractEbeguRestLoginTest {
 		UriInfo uri = new ResteasyUriInfo("uri", "query", "path");
 
 		final Response dokumentResponse = downloadResource
-			.getMahnungDokumentAccessTokenGeneratedDokument(converter.mahnungToJAX(mahnung), true, request, uri);
+			.getMahnungDokumentAccessTokenGeneratedDokument(converter.mahnungToJAX(mahnung), request, uri);
 
 		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.MAHNUNG);
 	}

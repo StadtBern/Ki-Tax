@@ -41,11 +41,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxMahnung;
 import ch.dvbern.ebegu.api.util.RestUtil;
+import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.FileMetadata;
@@ -59,6 +64,7 @@ import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.services.Authorizer;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.DokumentService;
 import ch.dvbern.ebegu.services.DownloadFileService;
@@ -70,11 +76,10 @@ import ch.dvbern.ebegu.services.VorlageService;
 import ch.dvbern.ebegu.services.ZahlungService;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * REST Resource fuer den Download von Dokumenten
@@ -120,6 +125,14 @@ public class DownloadResource {
 	@Inject
 	private EbeguVorlageService ebeguVorlageService;
 
+	@Inject
+	private PrincipalBean principalBean;
+
+	@Inject
+	private Authorizer authorizer;
+
+	@SuppressWarnings("ConstantConditions")
+	@SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
 	@ApiOperation(value = "L&auml;dt das Dokument herunter, auf welches das &uuml;bergebene accessToken verweist")
 	@GET
 	@Path("blobdata/{accessToken}")
@@ -137,7 +150,9 @@ public class DownloadResource {
 			return Response.status(Response.Status.FORBIDDEN).entity("Ung&uuml;ltige Anfrage f&uuml;r download").build();
 		}
 
-		if (!downloadFile.getIp().equals(ip)) {
+		if (!downloadFile.getIp().equals(ip)
+			|| principalBean.getPrincipal() == null
+			|| !principalBean.getPrincipal().getName().equals(downloadFile.getUserErstellt())) {
 			return Response.status(Response.Status.FORBIDDEN).entity("Keine Berechtigung f&uuml;r download").build();
 		}
 
@@ -207,7 +222,7 @@ public class DownloadResource {
 	}
 
 	/**
-	 * Methode fuer alle GeneratedDokumentTyp. Hier wird es allgemein mit den Daten vom Gesuch gearbeitet.
+	 * Methode fuer alle GeneratedDokumentTyp. Hier wird allgemein mit den Daten vom Gesuch gearbeitet.
 	 * Alle anderen Vorlagen, die andere Daten brauchen, muessen ihre eigene Methode haben. So wie bei VERFUEGUNG
 	 *
 	 * @param jaxGesuchId gesuch ID
@@ -355,12 +370,11 @@ public class DownloadResource {
 		"&uuml;bergebenen Mahnung.")
 	@Nonnull
 	@PUT
-	@Path("/MAHNUNG/{forceCreation}/generated")
+	@Path("/MAHNUNG/generated")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getMahnungDokumentAccessTokenGeneratedDokument(
 		@Nonnull @NotNull @Valid JaxMahnung jaxMahnung,
-		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException,
 		IOException, MimeTypeParseException, MergeDocException {
 
@@ -368,9 +382,10 @@ public class DownloadResource {
 		String ip = getIP(request);
 
 		Mahnung mahnung = converter.mahnungToEntity(jaxMahnung, new Mahnung());
+		authorizer.checkReadAuthorization(mahnung.getGesuch());
 
 		WriteProtectedDokument persistedDokument = generatedDokumentService
-			.getMahnungDokumentAccessTokenGeneratedDokument(mahnung, forceCreation);
+			.getMahnungDokumentAccessTokenGeneratedDokument(mahnung, false);
 
 		return getFileDownloadResponse(uriInfo, ip, persistedDokument);
 

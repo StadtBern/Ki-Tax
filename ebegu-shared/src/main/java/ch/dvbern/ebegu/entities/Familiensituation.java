@@ -99,7 +99,7 @@ public class Familiensituation extends AbstractEntity {
 		return aenderungPer;
 	}
 
-	public void setAenderungPer(LocalDate aenderungPer) {
+	public void setAenderungPer(@Nullable LocalDate aenderungPer) {
 		this.aenderungPer = aenderungPer;
 	}
 
