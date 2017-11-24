@@ -95,6 +95,7 @@ public class DokumenteResource {
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
 		if (gesuch.isPresent()) {
 			final Set<DokumentGrund> dokumentGrundsNeeded = dokumentenverzeichnisEvaluator.calculate(gesuch.get());
+			//TODO reviewer addSonstige und addPapiergesuch sollte moeglichwerweise hier nicht zu den needed hinzugefuegt werden... weil sie ja eigentlich nicht needed sind und nur auf dem GUI angezeigt werden sollen
 			dokumentenverzeichnisEvaluator.addSonstige(dokumentGrundsNeeded);
 			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded, gesuch.get());
 			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.findAllDokumentGrundByGesuch(gesuch.get());
@@ -139,7 +140,11 @@ public class DokumenteResource {
 		Validate.notNull(dokumentGrundJAXP.getId());
 		Optional<DokumentGrund> dokumentGrundOptional = dokumentGrundService.findDokumentGrund(dokumentGrundJAXP.getId());
 		DokumentGrund dokumentGrundFromDB = dokumentGrundOptional.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, dokumentGrundJAXP.getId()));
-
+		// beim DokumentGrund mit dem DokumentGrundTyp SONSTIGE_NACHWEISE oder PAPIERGESUCH  soll das needed-Flag (transient)
+		// per default auf false sein. sonst stimmt der Wizardstep-Status spaeter nicht
+		if (DokumentGrundTyp.isSonstigeOrPapiergesuch(dokumentGrundFromDB.getDokumentGrundTyp())) {
+			dokumentGrundFromDB.setNeeded(false);
+		}
 		// Files where not in the list anymore, should be deleted on Filesystem!
 		Set<Dokument> dokumentsToRemove = findDokumentToRemove(dokumentGrundJAXP, dokumentGrundFromDB);
 		for (Dokument dokument : dokumentsToRemove) {

@@ -34,14 +34,14 @@
 		</div>
 
 		<!-- Auswahl der Tage -->
-		<div ng-if="vm.isAnmeldungMoeglich() || !vm.betreuung.belegungFerieninsel.isNew()">
+		<div ng-if="vm.isAnmeldungMoeglich() || !vm.betreuung.isEnabled()">
 			<div class="row">
 				<div class="col-sm-12 dv-input-container-medium form-group">
 					<span data-translate="FERIENINSELTAGE"></span>
 				</div>
 			</div>
 			<!-- Noch nicht abgeschickt: Tage auswaehlbar -->
-			<div class="row" ng-if="vm.betreuung.isEnabled()">
+			<div class="row" ng-if="!vm.isAnmeldeschlussAbgelaufen() && vm.betreuung.isEnabled()">
 				<div class="col-xs-12 dv-input-container-question" ng-repeat="tag in vm.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung">
 					<md-checkbox ng-model="tag.angemeldet"
 								 aria-label="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}">
@@ -66,7 +66,7 @@
 		</div>
 
 		<!-- Hinweis, wenn Anmeldeschluss schon abgelaufen -->
-		<div ng-if="vm.isAnmeldeschlussAbgelaufen() && vm.betreuung.belegungFerieninsel.isNew()">
+		<div ng-if="vm.isAnmeldeschlussAbgelaufen() && vm.betreuung.isEnabled()">
 			<div class="well well-status-warten">
 				<i class="fa fa-exclamation " aria-hidden="true"></i>
 				<span data-translate="WARN_FERIEN_NICHT_MEHR_BUCHBAR"></span>
@@ -86,21 +86,35 @@
     <!--Buttons-->
     <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
         wenn wir die Direktive benutzen wollen muessen wir viel anpassen, daher lohnt es sich die Buttons direkt zu erstellen-->
-    <div class="nav-row-betreuung"
-         dv-show-element
-         dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles()">
-        <div ng-if="vm.betreuung.isEnabled() && vm.isAnmeldungMoeglich()">
-            <dv-loading-button button-click="vm.anmelden()" type="submit"
-                               button-class="save">
-                <span data-translate="ANMELDEN_FERIENINSEL"></span>
+    <!-- Buttons fuer JA/SCH und Gesuchsteller -->
+    <!--todo verbesserung in eigene Direktive da in betreuungTagesschule dupliziert-->
+    <div class="nav-row-betreuung">
+        <div dv-show-element
+             dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles()"
+             dv-show-expression="vm.betreuung.isEnabled() && vm.isAnmeldungMoeglich()">
+            <dv-loading-button button-click="vm.anmelden()" type="submit" button-class="save">
+                <span data-translate="{{vm.getButtonTextSpeichern()}}"></span>
             </dv-loading-button>
         </div>
-        <div>
-            <dv-loading-button button-click="vm.cancel()" button-class="cancel"
-                               type="reset">
-                <span data-translate="ABBRECHEN_UPPER"></span>
+
+        <div dv-show-element
+             dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+             dv-show-expression="vm.showButtonsInstitution()">
+            <dv-loading-button button-click="vm.anmeldungSchulamtUebernehmen()" type="button" button-class="save">
+                <span data-translate="SCHULAMT_ANMELDUNG_UEBERNEHMEN"></span>
             </dv-loading-button>
+            <dv-loading-button button-click="vm.anmeldungSchulamtAblehnen()" type="button" button-class="save">
+                <span data-translate="SCHULAMT_ANMELDUNG_ABLEHNEN"></span>
+            </dv-loading-button>
+            <dv-loading-button button-click="vm.anmeldungSchulamtFalscheInstitution()" type="button" button-class="save">
+                <span data-translate="SCHULAMT_FALSCHE_INSTITUTION"></span>
+            </dv-loading-button>
+
         </div>
+        <!-- Abbrechen: Immer vorhanden -->
+        <dv-loading-button button-click="vm.cancel()" button-class="cancel" type="reset">
+            <span data-translate="ABBRECHEN_UPPER"></span>
+        </dv-loading-button>
     </div>
 
 </div>

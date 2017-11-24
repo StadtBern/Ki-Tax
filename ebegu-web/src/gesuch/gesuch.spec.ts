@@ -33,7 +33,7 @@ describe('gesuch', function () {
         gesuchModelManager = $injector.get('GesuchModelManager');
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($injector.get('$httpBackend'));
         gesuchRouteController = new GesuchRouteController(gesuchModelManager, $injector.get('BerechnungsManager'),
-            $injector.get('WizardStepManager'), $injector.get('EbeguUtil'), $injector.get('AntragStatusHistoryRS'),
+            $injector.get('WizardStepManager'), $injector.get('EbeguUtil'), $injector.get('ErrorService'), $injector.get('AntragStatusHistoryRS'),
             $injector.get('$translate'), $injector.get('AuthServiceRS'), $injector.get('$mdSidenav'), $injector.get('CONSTANTS'),
             undefined, undefined, undefined, undefined);
         gesuch = new TSGesuch();

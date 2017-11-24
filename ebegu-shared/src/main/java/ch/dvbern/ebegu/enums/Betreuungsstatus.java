@@ -23,35 +23,46 @@ import java.util.Set;
  */
 public enum Betreuungsstatus {
 
-	@Deprecated //wir glauben das gibts gar nicht mehr
-		AUSSTEHEND,
+	// Ablauf beim Jugendamt
 	WARTEN,
-	SCHULAMT,
+	SCHULAMT, //TODO (team) Diesen Status später entfernen?
 	ABGEWIESEN,
 	NICHT_EINGETRETEN,
 	STORNIERT,
 	BESTAETIGT,
 	VERFUEGT,
-	GESCHLOSSEN_OHNE_VERFUEGUNG;
+	GESCHLOSSEN_OHNE_VERFUEGUNG,
+
+	// Ablauf beim Schulamt
+	SCHULAMT_ANMELDUNG_ERFASST,
+	SCHULAMT_ANMELDUNG_AUSGELOEST,
+	SCHULAMT_ANMELDUNG_UEBERNOMMEN,
+	SCHULAMT_ANMELDUNG_ABGELEHNT,
+	SCHULAMT_FALSCHE_INSTITUTION;
 
 	private static final Set<Betreuungsstatus> all = EnumSet.allOf(Betreuungsstatus.class);
 	private static final Set<Betreuungsstatus> none = EnumSet.noneOf(Betreuungsstatus.class);
 
-	private static final Set<Betreuungsstatus> forSachbearbeiterInstitutionRole = EnumSet.of(WARTEN, VERFUEGT, BESTAETIGT, ABGEWIESEN, NICHT_EINGETRETEN, STORNIERT, GESCHLOSSEN_OHNE_VERFUEGUNG);
 	public static final Set<Betreuungsstatus> hasVerfuegung = EnumSet.of(VERFUEGT, NICHT_EINGETRETEN);
-
-	private static final Set<Betreuungsstatus> forSachbearbeiterTraegerschaftRole = forSachbearbeiterInstitutionRole;
+	public static final Set<Betreuungsstatus> forPendenzInstitution = EnumSet.of(WARTEN, SCHULAMT_ANMELDUNG_AUSGELOEST);
 
 	public boolean isGeschlossen() {
-		return VERFUEGT.equals(this) || GESCHLOSSEN_OHNE_VERFUEGUNG.equals(this) || NICHT_EINGETRETEN.equals(this);
+		return VERFUEGT == this || GESCHLOSSEN_OHNE_VERFUEGUNG == this || NICHT_EINGETRETEN == this
+			|| SCHULAMT_ANMELDUNG_UEBERNOMMEN == this || SCHULAMT_ANMELDUNG_ABGELEHNT == this;
 	}
 
 	public boolean isAnyStatusOfVerfuegt() {
-		return VERFUEGT.equals(this) || STORNIERT.equals(this) || SCHULAMT.equals(this);
+		return VERFUEGT == this || STORNIERT == this || SCHULAMT == this
+			|| SCHULAMT_ANMELDUNG_UEBERNOMMEN == this || SCHULAMT_ANMELDUNG_ABGELEHNT == this;
 	}
 
 	public boolean isSendToInstitution() {
-		return ABGEWIESEN.equals(this) || BESTAETIGT.equals(this) || WARTEN.equals(this);
+		return ABGEWIESEN == this || BESTAETIGT == this || WARTEN == this ;
+	}
+
+	public boolean isSchulamt() {
+		return SCHULAMT == this || SCHULAMT_ANMELDUNG_ERFASST  == this || SCHULAMT_ANMELDUNG_AUSGELOEST == this
+			|| SCHULAMT_ANMELDUNG_UEBERNOMMEN == this|| SCHULAMT_ANMELDUNG_ABGELEHNT == this  || SCHULAMT_FALSCHE_INSTITUTION == this;
 	}
 
 	@SuppressWarnings("Duplicates")
@@ -68,11 +79,11 @@ public enum Betreuungsstatus {
 		case REVISOR:
 			return all;
 		case SACHBEARBEITER_INSTITUTION:
-			return forSachbearbeiterInstitutionRole;
+			return all;
 		case SACHBEARBEITER_JA:
 			return all;
 		case SACHBEARBEITER_TRAEGERSCHAFT:
-			return forSachbearbeiterTraegerschaftRole;
+			return all;
 		case SCHULAMT:
 			return all;
 		case STEUERAMT:

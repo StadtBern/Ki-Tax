@@ -23,10 +23,14 @@ export enum TSBetreuungsstatus {
     BESTAETIGT = <any> 'BESTAETIGT',
     VERFUEGT = <any> 'VERFUEGT',
     GESCHLOSSEN_OHNE_VERFUEGUNG  = <any> 'GESCHLOSSEN_OHNE_VERFUEGUNG',
-    // TODO (team) ich habe die neuen Status hier schon eingefuegt, in Server aber noch nicht!
     SCHULAMT_ANMELDUNG_ERFASST = <any> 'SCHULAMT_ANMELDUNG_ERFASST',
     SCHULAMT_ANMELDUNG_AUSGELOEST = <any> 'SCHULAMT_ANMELDUNG_AUSGELOEST',
     SCHULAMT_ANMELDUNG_UEBERNOMMEN = <any> 'SCHULAMT_ANMELDUNG_UEBERNOMMEN',
     SCHULAMT_ANMELDUNG_ABGELEHNT = <any> 'SCHULAMT_ANMELDUNG_ABGELEHNT',
     SCHULAMT_FALSCHE_INSTITUTION = <any> 'SCHULAMT_FALSCHE_INSTITUTION'
+}
+
+export function isBetreuungsstatusTSAusgeloest(status: TSBetreuungsstatus): boolean {
+    return status === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST || status === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT ||
+        status === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN || status === TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION;
 }

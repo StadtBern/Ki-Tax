@@ -22,3 +22,15 @@ export enum TSModulTagesschuleName {
     NACHMITTAGS_2 = <any> 'NACHMITTAGS_2',
     NACHMITTAGS_2_HALB = <any> 'NACHMITTAGS_2_HALB'
 }
+
+export function getTSModulTagesschuleNameValues(): Array<TSModulTagesschuleName> {
+    return [
+        TSModulTagesschuleName.VORMITTAG,
+        TSModulTagesschuleName.MITTAG,
+        TSModulTagesschuleName.MITTAG_HALB,
+        TSModulTagesschuleName.NACHMITTAGS_1,
+        TSModulTagesschuleName.NACHMITTAGS_1_HALB,
+        TSModulTagesschuleName.NACHMITTAGS_2,
+        TSModulTagesschuleName.NACHMITTAGS_2_HALB
+    ];
+}

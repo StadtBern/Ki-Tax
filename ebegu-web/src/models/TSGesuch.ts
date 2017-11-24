@@ -22,7 +22,7 @@ import TSGesuchstellerContainer from './TSGesuchstellerContainer';
 import TSEinkommensverschlechterungInfoContainer from './TSEinkommensverschlechterungInfoContainer';
 import TSFamiliensituationContainer from './TSFamiliensituationContainer';
 import {TSEingangsart} from './enums/TSEingangsart';
-import {isSchulamt} from './enums/TSBetreuungsangebotTyp';
+import {getSchulamtBetreuungsangebotTypValues, isOfAnyBetreuungsangebotTyp, TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
 import {TSAntragStatus} from './enums/TSAntragStatus';
 import * as moment from 'moment';
@@ -248,22 +248,37 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     }
 
     /**
-     * Returns true when all Betreuungen are of kind SCHULAMT.
-     * Returns false also if there are no Kinder with betreuungsbedarf
+     * Returns true when all Betreuungen are of one of the given types
      */
-    public areThereOnlySchulamtAngebote(): boolean {
+    private areThereOnlyAngeboteOfType(types: TSBetreuungsangebotTyp[]): boolean {
         let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
         if (kinderWithBetreuungList.length <= 0) {
             return false; // no Kind with bedarf
         }
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
-                if (!isSchulamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
+                if (!isOfAnyBetreuungsangebotTyp(betreuung.institutionStammdaten.betreuungsangebotTyp, types)) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    /**
+     * Returns true when all Betreuungen are of kind SCHULAMT.
+     * Returns false also if there are no Kinder with betreuungsbedarf
+     */
+    public areThereOnlySchulamtAngebote(): boolean {
+        return this.areThereOnlyAngeboteOfType(getSchulamtBetreuungsangebotTypValues());
+    }
+
+    /**
+     * Returns true when all Betreuungen are of kind FERIENINSEL.
+     * Returns false also if there are no Kinder with betreuungsbedarf
+     */
+    public areThereOnlyFerieninsel(): boolean {
+        return this.areThereOnlyAngeboteOfType([TSBetreuungsangebotTyp.FERIENINSEL]);
     }
 
     /**

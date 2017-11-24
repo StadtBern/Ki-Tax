@@ -13,17 +13,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import TSAbstractEntity from './TSAbstractEntity';
-import TSInstitutionStammdaten from './TSInstitutionStammdaten';
-import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
-import TSBetreuungspensumContainer from './TSBetreuungspensumContainer';
-import TSVerfuegung from './TSVerfuegung';
-import TSAbwesenheitContainer from './TSAbwesenheitContainer';
-import TSGesuchsperiode from './TSGesuchsperiode';
-import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import * as moment from 'moment';
-import TSBelegungTagesschule from './TSBelegungTagesschule';
+import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
+import {isBetreuungsstatusTSAusgeloest, TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
+import TSAbstractEntity from './TSAbstractEntity';
+import TSAbwesenheitContainer from './TSAbwesenheitContainer';
 import TSBelegungFerieninsel from './TSBelegungFerieninsel';
+import TSBelegungTagesschule from './TSBelegungTagesschule';
+import TSBetreuungspensumContainer from './TSBetreuungspensumContainer';
+import TSGesuchsperiode from './TSGesuchsperiode';
+import TSInstitutionStammdaten from './TSInstitutionStammdaten';
+import TSVerfuegung from './TSVerfuegung';
 
 export default class TSBetreuung extends TSAbstractEntity {
 
@@ -250,6 +250,10 @@ export default class TSBetreuung extends TSAbstractEntity {
         return this.isAngebot(TSBetreuungsangebotTyp.FERIENINSEL);
     }
 
+    public isAngebotSchulamt(): boolean {
+        return this.isAngebotFerieninsel() || this.isAngebotTagesschule();
+    }
+
     private isAngebot(typ: TSBetreuungsangebotTyp) {
         if (this.institutionStammdaten && this.institutionStammdaten.betreuungsangebotTyp) {
             return this.institutionStammdaten.betreuungsangebotTyp === typ;
@@ -258,11 +262,16 @@ export default class TSBetreuung extends TSAbstractEntity {
     }
 
     public isEnabled(): boolean {
-        return !this.hasVorgaenger()
-            && this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND) || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST);
+        return (!this.hasVorgaenger() || this.isAngebotSchulamt())
+            && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)
+            || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST));
     }
 
     public isBetreuungsstatus(status: TSBetreuungsstatus): boolean {
         return this.betreuungsstatus === status;
+    }
+
+    public isSchulamtangebotAusgeloest(): boolean {
+        return this.isAngebotSchulamt() && isBetreuungsstatusTSAusgeloest(this.betreuungsstatus);
     }
 }

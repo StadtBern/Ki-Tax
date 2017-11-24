@@ -52,6 +52,7 @@ import ch.dvbern.ebegu.entities.WizardStep_;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
@@ -275,11 +276,13 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 				boolean allNeededDokumenteUploaded = true;
 				for (DokumentGrund dokumentGrund : dokumentGrundsMerged) {
-					if (dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
+					if (!DokumentGrundTyp.isSonstigeOrPapiergesuch(dokumentGrund.getDokumentGrundTyp())
+						&& dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
 						allNeededDokumenteUploaded = false;
 						break;
 					}
 				}
+
 				if (allNeededDokumenteUploaded) {
 					setWizardStepOkOrMutiert(wizardStep);
 				} else {
@@ -315,11 +318,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (WizardStepName.VERFUEGEN == wizardStep.getWizardStepName()
 				&& WizardStepStatus.OK != wizardStep.getWizardStepStatus()) {
 				final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
-				if (betreuungenFromGesuch.stream().allMatch(betreuung ->
-					Betreuungsstatus.VERFUEGT == betreuung.getBetreuungsstatus() ||
-						Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG == betreuung.getBetreuungsstatus() ||
-						Betreuungsstatus.NICHT_EINGETRETEN == betreuung.getBetreuungsstatus() ||
-						Betreuungsstatus.SCHULAMT == betreuung.getBetreuungsstatus())) {
+				if (betreuungenFromGesuch.stream().allMatch(betreuung -> betreuung.getBetreuungsstatus().isGeschlossen())) {
 
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 					wizardStep.getGesuch().setStatus(AntragStatus.VERFUEGT);

@@ -18,10 +18,12 @@ package ch.dvbern.ebegu.entities;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
 /**
@@ -29,7 +31,7 @@ import org.hibernate.envers.Audited;
  */
 @Audited
 @Entity
-public class BelegungFerieninselTag extends AbstractEntity {
+public class BelegungFerieninselTag extends AbstractEntity implements Comparable<BelegungFerieninselTag> {
 
 	private static final long serialVersionUID = 6815485579662587990L;
 
@@ -37,6 +39,14 @@ public class BelegungFerieninselTag extends AbstractEntity {
 	@Column(nullable = false)
 	private LocalDate tag;
 
+
+	public LocalDate getTag() {
+		return tag;
+	}
+
+	public void setTag(LocalDate tag) {
+		this.tag = tag;
+	}
 
 	@Override
 	public boolean isSame(AbstractEntity other) {
@@ -53,11 +63,18 @@ public class BelegungFerieninselTag extends AbstractEntity {
 		return Objects.equals(tag, that.tag);
 	}
 
-	public LocalDate getTag() {
-		return tag;
+	@Override
+	public int compareTo(@Nonnull BelegungFerieninselTag other) {
+		CompareToBuilder compareToBuilder = new CompareToBuilder();
+		compareToBuilder.append(this.getTag(), other.getTag());
+		compareToBuilder.append(this.getId(), other.getId());  // wenn ids nicht gleich sind wollen wir auch compare to nicht gleich
+		return compareToBuilder.toComparison();
 	}
 
-	public void setTag(LocalDate tag) {
-		this.tag = tag;
+	@Nonnull
+	public BelegungFerieninselTag copyForMutation(@Nonnull BelegungFerieninselTag mutation) {
+		super.copyForMutation(mutation);
+		mutation.setTag(LocalDate.from(tag));
+		return mutation;
 	}
 }

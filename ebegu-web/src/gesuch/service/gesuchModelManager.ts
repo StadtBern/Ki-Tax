@@ -680,8 +680,8 @@ export default class GesuchModelManager {
     }
 
 
-    public saveBetreuung(betreuungToSave: TSBetreuung, abwesenheit: boolean): IPromise<TSBetreuung> {
-        if (betreuungToSave.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN) {
+    public saveBetreuung(betreuungToSave: TSBetreuung, betreuungsstatusNeu: TSBetreuungsstatus, abwesenheit: boolean): IPromise<TSBetreuung> {
+        if (betreuungsstatusNeu === TSBetreuungsstatus.ABGEWIESEN) {
             return this.betreuungRS.betreuungsPlatzAbweisen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
                 .then((storedBetreuung: any) => {
                     return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
@@ -689,7 +689,7 @@ export default class GesuchModelManager {
                         return this.handleSavedBetreuung(storedBetreuung);
                     });
                 });
-        } else  if (betreuungToSave.betreuungsstatus === TSBetreuungsstatus.BESTAETIGT) {
+        } else  if (betreuungsstatusNeu === TSBetreuungsstatus.BESTAETIGT) {
             return this.betreuungRS.betreuungsPlatzBestaetigen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
                 .then((storedBetreuung: any) => {
                     return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
@@ -697,7 +697,32 @@ export default class GesuchModelManager {
                         return this.handleSavedBetreuung(storedBetreuung);
                     });
                 });
+        } else  if (betreuungsstatusNeu === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN) {
+            return this.betreuungRS.anmeldungSchulamtUebernehmen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
+                .then((storedBetreuung: any) => {
+                    return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
+                        this.gesuch.gesuchBetreuungenStatus = betreuungenStatus;
+                        return this.handleSavedBetreuung(storedBetreuung);
+                    });
+                });
+        } else  if (betreuungsstatusNeu === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT) {
+            return this.betreuungRS.anmeldungSchulamtAblehnen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
+                .then((storedBetreuung: any) => {
+                    return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
+                        this.gesuch.gesuchBetreuungenStatus = betreuungenStatus;
+                        return this.handleSavedBetreuung(storedBetreuung);
+                    });
+                });
+        } else  if (betreuungsstatusNeu === TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION) {
+            return this.betreuungRS.anmeldungSchulamtFalscheInstitution(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
+                .then((storedBetreuung: any) => {
+                    return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
+                        this.gesuch.gesuchBetreuungenStatus = betreuungenStatus;
+                        return this.handleSavedBetreuung(storedBetreuung);
+                    });
+                });
         } else {
+            betreuungToSave.betreuungsstatus = betreuungsstatusNeu;
             return this.betreuungRS.saveBetreuung(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id, abwesenheit)
                 .then((storedBetreuung: any) => {
                     return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
@@ -1104,6 +1129,9 @@ export default class GesuchModelManager {
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
                 if (betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.VERFUEGT
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.NICHT_EINGETRETEN
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
@@ -1139,6 +1167,17 @@ export default class GesuchModelManager {
             return false;
         }
         return this.getGesuch().areThereOnlySchulamtAngebote();
+    }
+
+    /**
+     * Returns true when all Betreuungen are of kind FERIENINSEL.
+     * Returns false also if there are no Kinder with betreuungsbedarf
+     */
+    public areThereOnlyFerieninsel(): boolean {
+        if (!this.getGesuch()) {
+            return false;
+        }
+        return this.getGesuch().areThereOnlyFerieninsel();
     }
 
     /**
@@ -1223,7 +1262,7 @@ export default class GesuchModelManager {
     /**
      * checks if the gesuch is readonly for a given role based on its state
      */
-    private isGesuchReadonlyForRole(): boolean {
+    public isGesuchReadonlyForRole(): boolean {
         let periodeReadonly: boolean = this.isGesuchsperiodeReadonly();
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getReadOnlyRoles())) {
             return true;  // schulamt hat immer nur readonly zugriff
@@ -1379,7 +1418,8 @@ export default class GesuchModelManager {
     }
 
     public isFinanzielleSituationRequired(): boolean {
-        return !this.areThereOnlySchulamtAngebote() || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht
-            && !this.getGesuch().extractFamiliensituation().sozialhilfeBezueger);
+        return !this.areThereOnlyFerieninsel() || !this.areThereOnlySchulamtAngebote()
+            || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht
+                && !this.getGesuch().extractFamiliensituation().sozialhilfeBezueger);
     }
 }

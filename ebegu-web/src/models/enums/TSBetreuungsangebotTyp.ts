@@ -33,10 +33,24 @@ export function getTSBetreuungsangebotTypValues(): Array<TSBetreuungsangebotTyp>
     ];
 }
 
+export function getSchulamtBetreuungsangebotTypValues(): Array<TSBetreuungsangebotTyp> {
+    return [
+        TSBetreuungsangebotTyp.TAGESSCHULE,
+        TSBetreuungsangebotTyp.FERIENINSEL
+    ];
+}
+
 export function isSchulamt(status: TSBetreuungsangebotTyp): boolean {
     return status === TSBetreuungsangebotTyp.TAGESSCHULE || status === TSBetreuungsangebotTyp.FERIENINSEL;
 }
 
 export function isJugendamt(status: TSBetreuungsangebotTyp): boolean {
     return !isSchulamt(status);
+}
+
+/**
+ * Gibt true zurueck wenn der gegebene betreuungsangebotTyp in der Liste types gefunden wird
+ */
+export function isOfAnyBetreuungsangebotTyp(betreuungsangebotTyp: TSBetreuungsangebotTyp, types: TSBetreuungsangebotTyp[]): boolean {
+    return types.filter(type => betreuungsangebotTyp === type).length > 0;
 }

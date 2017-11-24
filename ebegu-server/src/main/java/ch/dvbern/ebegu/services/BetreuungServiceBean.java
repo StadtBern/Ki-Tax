@@ -87,6 +87,8 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 @RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT })
 public class BetreuungServiceBean extends AbstractBaseService implements BetreuungService {
 
+	public static final String BETREUUNG_DARF_NICHT_NULL_SEIN = "betreuung darf nicht null sein";
+
 	@Inject
 	private Persistence persistence;
 	@Inject
@@ -106,10 +108,10 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung, @Nonnull Boolean isAbwesenheit) {
 		Objects.requireNonNull(betreuung);
-		if (betreuung.getBetreuungsstatus() == Betreuungsstatus.SCHULAMT) {
+		if (betreuung.getBetreuungsstatus().isSchulamt()) {
 			// Wir setzen auch Schulamt-Betreuungen auf gueltig, for future use
 			betreuung.setGueltig(true);
 			if (betreuung.getVorgaengerId() != null) {
@@ -139,6 +141,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Nonnull
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
 	public Betreuung betreuungPlatzAbweisen(@Valid @Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, BETREUUNG_DARF_NICHT_NULL_SEIN);
+		betreuung.setBetreuungsstatus(Betreuungsstatus.ABGEWIESEN);
 		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
 		try {
 			// Bei Ablehnung einer Betreuung muss eine E-Mail geschickt werden
@@ -153,6 +157,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Nonnull
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
 	public Betreuung betreuungPlatzBestaetigen(@Valid @Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, BETREUUNG_DARF_NICHT_NULL_SEIN);
+		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
 		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
 		try {
 			Gesuch gesuch = betreuung.extractGesuch();
@@ -163,6 +169,48 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		} catch (MailException e) {
 			LOG.error("Mail InfoBetreuungenBestaetigt konnte nicht verschickt werden fuer Betreuung " + betreuung.getId(), e);
 		}
+		return persistedBetreuung;
+	}
+
+	@Override
+	@Nonnull
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
+	public Betreuung anmeldungSchulamtUebernehmen(@Valid @Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, BETREUUNG_DARF_NICHT_NULL_SEIN);
+		betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN);
+		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
+		try {
+			// Bei Uebernahme einer Anmeldung muss eine E-Mail geschickt werden
+			mailService.sendInfoSchulamtAnmeldungUebernommen(persistedBetreuung);
+		} catch (MailException e) {
+			LOG.error("Mail InfoSchulamtAnmeldungUebernommen konnte nicht verschickt werden fuer Betreuung " + betreuung.getId(), e);
+		}
+		return persistedBetreuung;
+	}
+
+	@Override
+	@Nonnull
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
+	public Betreuung anmeldungSchulamtAblehnen(@Valid @Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, BETREUUNG_DARF_NICHT_NULL_SEIN);
+		betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT);
+		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
+		try {
+			// Bei Ablehnung einer Anmeldung muss eine E-Mail geschickt werden
+			mailService.sendInfoSchulamtAnmeldungAbgelehnt(persistedBetreuung);
+		} catch (MailException e) {
+			LOG.error("Mail InfoSchulamtAnmeldungAbgelehnt konnte nicht verschickt werden fuer Betreuung " + betreuung.getId(), e);
+		}
+		return persistedBetreuung;
+	}
+
+	@Override
+	@Nonnull
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
+	public Betreuung anmeldungSchulamtFalscheInstitution(@Valid @Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, BETREUUNG_DARF_NICHT_NULL_SEIN);
+		betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION);
+		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
 		return persistedBetreuung;
 	}
 
@@ -318,25 +366,21 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	 */
 	@Nonnull
 	private Collection<Betreuung> getPendenzenForInstitution(@Nonnull Institution... institutionen) {
-		if (institutionen != null) {
-			Objects.requireNonNull(institutionen, "institutionen muss gesetzt sein");
-			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-			final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
-			Root<Betreuung> root = query.from(Betreuung.class);
-			// Status muss WARTEN sein
-			Predicate predicateStatus = cb.equal(root.get(Betreuung_.betreuungsstatus), Betreuungsstatus.WARTEN);
-			// Institution
-			Predicate predicateInstitution = root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen));
-			// Gesuchsperiode darf nicht geschlossen sein
-			Predicate predicateGesuchsperiode = root.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.status).in(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV);
+		Objects.requireNonNull(institutionen, "institutionen muss gesetzt sein");
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
+		Root<Betreuung> root = query.from(Betreuung.class);
+		// Status muss WARTEN oder SCHULAMT_ANMELDUNG_AUSGELOEST sein
+		Predicate predicateStatus = root.get(Betreuung_.betreuungsstatus).in(Arrays.asList(Betreuungsstatus.forPendenzInstitution));
+		// Institution
+		Predicate predicateInstitution = root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen));
+		// Gesuchsperiode darf nicht geschlossen sein
+		Predicate predicateGesuchsperiode = root.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.status).in(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV);
 
-			query.where(predicateStatus, predicateInstitution, predicateGesuchsperiode);
-			List<Betreuung> betreuungen = persistence.getCriteriaResults(query);
-			authorizer.checkReadAuthorizationForAllBetreuungen(betreuungen);
-			return betreuungen;
-		}
-		LOG.warn("Tried to read Pendenzen for institution but no institutionen specified");
-		return Collections.emptyList();
+		query.where(predicateStatus, predicateInstitution, predicateGesuchsperiode);
+		List<Betreuung> betreuungen = persistence.getCriteriaResults(query);
+		authorizer.checkReadAuthorizationForAllBetreuungen(betreuungen);
+		return betreuungen;
 	}
 
 	@Override

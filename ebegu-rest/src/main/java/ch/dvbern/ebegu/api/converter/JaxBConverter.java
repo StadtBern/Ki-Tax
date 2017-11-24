@@ -16,7 +16,9 @@
 package ch.dvbern.ebegu.api.converter;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1156,8 +1158,7 @@ public class JaxBConverter {
 		return jaxInstStammdaten;
 	}
 
-	public InstitutionStammdaten institutionStammdatenToEntity(final JaxInstitutionStammdaten institutionStammdatenJAXP, final InstitutionStammdaten
-		institutionStammdaten) {
+	public InstitutionStammdaten institutionStammdatenToEntity(final JaxInstitutionStammdaten institutionStammdatenJAXP, final InstitutionStammdaten institutionStammdaten) {
 		Validate.notNull(institutionStammdatenJAXP);
 		Validate.notNull(institutionStammdatenJAXP.getInstitution());
 		Validate.notNull(institutionStammdaten);
@@ -1170,9 +1171,15 @@ public class JaxBConverter {
 			institutionStammdaten.setIban(new IBAN(institutionStammdatenJAXP.getIban()));
 		}
 		institutionStammdaten.setBetreuungsangebotTyp(institutionStammdatenJAXP.getBetreuungsangebotTyp());
-		if(institutionStammdatenJAXP.getInstitutionStammdatenTagesschule()!=null) {
-			institutionStammdaten.setInstitutionStammdatenTagesschule(institutionStammdatenTagesschuleToEntity(institutionStammdatenJAXP
-				.getInstitutionStammdatenTagesschule(), institutionStammdaten.getInstitutionStammdatenTagesschule()));
+		if (institutionStammdatenJAXP.getInstitutionStammdatenTagesschule() != null) {
+			//			wenn InstitutionStammdatenTagesschule vorhanden ist es eine Tagesschule und Objekt muss, wenn noch nicht vorhanden, erzeugt werden
+			if (institutionStammdaten.getInstitutionStammdatenTagesschule() != null) {
+				institutionStammdaten.setInstitutionStammdatenTagesschule(institutionStammdatenTagesschuleToEntity(institutionStammdatenJAXP
+					.getInstitutionStammdatenTagesschule(), institutionStammdaten.getInstitutionStammdatenTagesschule()));
+			} else {
+				institutionStammdaten.setInstitutionStammdatenTagesschule(institutionStammdatenTagesschuleToEntity(institutionStammdatenJAXP
+					.getInstitutionStammdatenTagesschule(), new InstitutionStammdatenTagesschule()));
+			}
 		}
 		institutionStammdaten.setKontoinhaber(institutionStammdatenJAXP.getKontoinhaber());
 		if (institutionStammdatenJAXP.getAdresseKontoinhaber() != null) {
@@ -1206,47 +1213,64 @@ public class JaxBConverter {
 		return jaxInstStammdatenTagesschule;
 	}
 
+	@Nullable
 	public InstitutionStammdatenTagesschule institutionStammdatenTagesschuleToEntity(final JaxInstitutionStammdatenTagesschule
 		institutionStammdatenTagesschuleJAXP, final InstitutionStammdatenTagesschule institutionStammdatenTagesschule) {
 		Validate.notNull(institutionStammdatenTagesschuleJAXP);
 		Validate.notNull(institutionStammdatenTagesschule);
 		convertAbstractFieldsToEntity(institutionStammdatenTagesschuleJAXP, institutionStammdatenTagesschule);
-		moduleTagesschuleListToEntity(institutionStammdatenTagesschuleJAXP.getModuleTagesschule(), institutionStammdatenTagesschule.getModuleTagesschule());
-		return institutionStammdatenTagesschule;
+
+		final Set<ModulTagesschule> convertedModuleTagesschule = moduleTagesschuleListToEntity(institutionStammdatenTagesschuleJAXP.getModuleTagesschule(),
+			institutionStammdatenTagesschule.getModuleTagesschule(), institutionStammdatenTagesschule);
+		if (convertedModuleTagesschule != null) {
+			//change the existing collection to reflect changes
+			// Already tested: All existing module of the list remain as they were, that means their data are updated
+			// and the objects are not created again. ID and InsertTimeStamp are the same as before
+			institutionStammdatenTagesschule.getModuleTagesschule().clear();
+			institutionStammdatenTagesschule.getModuleTagesschule().addAll(convertedModuleTagesschule);
+		}
+
+		if (institutionStammdatenTagesschule.getModuleTagesschule() != null && !institutionStammdatenTagesschule.getModuleTagesschule().isEmpty()) {
+			return institutionStammdatenTagesschule;
+		}
+		return null;
 
 	}
 
-	private void moduleTagesschuleListToEntity(@Nullable Set<JaxModulTagesschule> jaxModuleTagesschule, @Nullable Set<ModulTagesschule> existingModule) {
-		if (existingModule != null && jaxModuleTagesschule != null) {
+	@Nullable
+	private Set<ModulTagesschule> moduleTagesschuleListToEntity(@Nullable List<JaxModulTagesschule> jaxModuleTagesschule, @Nullable Set<ModulTagesschule> moduleOfInstitution,
+		@NotNull InstitutionStammdatenTagesschule institutionStammdatenTagesschule) {
+
+		if (moduleOfInstitution != null && jaxModuleTagesschule != null) {
 			final Set<ModulTagesschule> transformedModule = new TreeSet<>();
 			for (final JaxModulTagesschule jaxModulTagesschule : jaxModuleTagesschule) {
-				final ModulTagesschule modulTagesschuleToMergeWith = existingModule.stream().filter(existingModul -> existingModul.getId()
+				final ModulTagesschule modulTagesschuleToMergeWith = moduleOfInstitution.stream().filter(existingModul -> existingModul.getId()
 					.equalsIgnoreCase(jaxModulTagesschule.getId()))
 					.reduce(StreamsUtil.toOnlyElement())
 					.orElse(new ModulTagesschule());
 				final ModulTagesschule modulTagesschuleToAdd = modulTagesschuleToEntity(jaxModulTagesschule, modulTagesschuleToMergeWith);
-				final boolean added = transformedModule.add(modulTagesschuleToAdd);
-				if (!added) {
-					LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + modulTagesschuleToAdd);
+				if (modulTagesschuleToAdd != null) {
+					modulTagesschuleToAdd.setInstitutionStammdatenTagesschule(institutionStammdatenTagesschule);
+					final boolean added = transformedModule.add(modulTagesschuleToAdd);
+					if (!added) {
+						LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + "{}", modulTagesschuleToAdd);
+					}
 				}
 			}
-			//change the existing collection to reflect changes
-			// Already tested: All existing Betreuungspensen of the list remain as they were, that means their data are updated
-
-			// and the objects are not created again. ID and InsertTimeStamp are the same as before
-			existingModule.clear();
-			existingModule.addAll(transformedModule);
+			return transformedModule;
 		}
+		return null;
 	}
 
 	@Nullable
 	private ModulTagesschule modulTagesschuleToEntity(@Nullable JaxModulTagesschule jaxModulTagesschule, @NotNull ModulTagesschule modulTagesschule) {
-		if (jaxModulTagesschule != null) {
+		if (jaxModulTagesschule != null && jaxModulTagesschule.getZeitVon() != null && jaxModulTagesschule.getZeitBis() != null) {
 			convertAbstractFieldsToEntity(jaxModulTagesschule, modulTagesschule);
 			modulTagesschule.setModulTagesschuleName(jaxModulTagesschule.getModulTagesschuleName());
 			modulTagesschule.setWochentag(jaxModulTagesschule.getWochentag());
-			modulTagesschule.setZeitVon(jaxModulTagesschule.getZeitVon());
-			modulTagesschule.setZeitBis(jaxModulTagesschule.getZeitBis());
+			modulTagesschule.setZeitVon(jaxModulTagesschule.getZeitVon().toLocalTime());
+			modulTagesschule.setZeitBis(jaxModulTagesschule.getZeitBis().toLocalTime());
+			return modulTagesschule;
 		}
 		return null;
 	}
@@ -1706,6 +1730,7 @@ public class JaxBConverter {
 		// InstitutionStammdaten muessen bereits existieren
 		if (betreuungJAXP.getInstitutionStammdaten() != null) {
 			final String instStammdatenID = betreuungJAXP.getInstitutionStammdaten().getId();
+			Objects.requireNonNull(instStammdatenID, "Die Institutionsstammdaten muessen gesetzt sein");
 			final Optional<InstitutionStammdaten> optInstStammdaten = institutionStammdatenService.findInstitutionStammdaten(instStammdatenID);
 			final InstitutionStammdaten instStammdatenToMerge =
 				optInstStammdaten.orElseThrow(() -> new EbeguEntityNotFoundException("betreuungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND,
@@ -1716,10 +1741,16 @@ public class JaxBConverter {
 		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
 		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
 		betreuung.setGueltig(betreuungJAXP.isGueltig());
-		if (betreuung.getBelegungTagesschule() != null) {
-			betreuung.setBelegungTagesschule(belegungTagesschuleToEntity(betreuungJAXP.getBelegungTagesschule(), betreuung.getBelegungTagesschule()));
-		} else {
-			betreuung.setBelegungTagesschule(belegungTagesschuleToEntity(betreuungJAXP.getBelegungTagesschule(), new BelegungTagesschule()));
+		if (betreuungJAXP.getBelegungTagesschule() != null) {
+			Objects.requireNonNull(betreuung.getInstitutionStammdaten().getInstitutionStammdatenTagesschule(),
+				"InstitutionsStammdatenTagesschule muessen gesetzt sein");
+			if (betreuung.getBelegungTagesschule() != null) {
+				betreuung.setBelegungTagesschule(belegungTagesschuleToEntity(betreuungJAXP.getBelegungTagesschule(), betreuung.getBelegungTagesschule(),
+					betreuung.getInstitutionStammdaten().getInstitutionStammdatenTagesschule()));
+			} else {
+				betreuung.setBelegungTagesschule(belegungTagesschuleToEntity(betreuungJAXP.getBelegungTagesschule(), new BelegungTagesschule(),
+					betreuung.getInstitutionStammdaten().getInstitutionStammdatenTagesschule()));
+			}
 		}
 		if (betreuung.getBelegungFerieninsel() != null) {
 			betreuung.setBelegungFerieninsel(belegungFerieninselToEntity(betreuungJAXP.getBelegungFerieninsel(), betreuung.getBelegungFerieninsel()));
@@ -1732,10 +1763,22 @@ public class JaxBConverter {
 	}
 
 	@Nullable
-	private BelegungTagesschule belegungTagesschuleToEntity(@Nullable JaxBelegungTagesschule belegungTagesschuleJAXP, @NotNull BelegungTagesschule belegungTagesschule) {
-		if (belegungTagesschuleJAXP != null) {
+	private BelegungTagesschule belegungTagesschuleToEntity(@Nullable JaxBelegungTagesschule belegungTagesschuleJAXP,
+		@NotNull BelegungTagesschule belegungTagesschule, @NotNull InstitutionStammdatenTagesschule instStammdatenTagesschule) {
+
+		if (belegungTagesschuleJAXP != null && instStammdatenTagesschule != null) {
 			convertAbstractFieldsToEntity(belegungTagesschuleJAXP, belegungTagesschule);
-			moduleTagesschuleListToEntity(belegungTagesschuleJAXP.getModuleTagesschule(), belegungTagesschule.getModuleTagesschule());
+
+			final Set<ModulTagesschule> convertedModule = moduleTagesschuleListToEntity(belegungTagesschuleJAXP.getModuleTagesschule(),
+				instStammdatenTagesschule.getModuleTagesschule(), instStammdatenTagesschule);
+			if (convertedModule != null) {
+				//change the existing collection to reflect changes
+				// Already tested: All existing module of the list remain as they were, that means their data are updated
+				// and the objects are not created again. ID and InsertTimeStamp are the same as before
+				belegungTagesschule.getModuleTagesschule().clear();
+				belegungTagesschule.getModuleTagesschule().addAll(convertedModule);
+			}
+
 			belegungTagesschule.setEintrittsdatum(belegungTagesschuleJAXP.getEintrittsdatum());
 			return belegungTagesschule;
 		}
@@ -1961,8 +2004,8 @@ public class JaxBConverter {
 		return null;
 	}
 
-	private Set<JaxModulTagesschule> moduleTagesschuleListToJax(@Nullable final Set<ModulTagesschule> module) {
-		final Set<JaxModulTagesschule> jaxModulTagesschule = new TreeSet<>();
+	private List<JaxModulTagesschule> moduleTagesschuleListToJax(@Nullable final Set<ModulTagesschule> module) {
+		final List<JaxModulTagesschule> jaxModulTagesschule = new ArrayList<>();
 		if (module != null) {
 			jaxModulTagesschule.addAll(module.stream().map(this::modulTagesschuleToJAX).collect(Collectors.toList()));
 		}
@@ -1970,14 +2013,15 @@ public class JaxBConverter {
 	}
 
 	@Nullable
-	private JaxModulTagesschule modulTagesschuleToJAX(@Nullable ModulTagesschule modulTagesschule) {
+	public JaxModulTagesschule modulTagesschuleToJAX(@Nullable ModulTagesschule modulTagesschule) {
 		if (modulTagesschule != null) {
 			final JaxModulTagesschule jaxModulTagesschule = new JaxModulTagesschule();
 			convertAbstractFieldsToJAX(modulTagesschule, jaxModulTagesschule);
 			jaxModulTagesschule.setModulTagesschuleName(modulTagesschule.getModulTagesschuleName());
 			jaxModulTagesschule.setWochentag(modulTagesschule.getWochentag());
-			jaxModulTagesschule.setZeitBis(modulTagesschule.getZeitBis());
-			jaxModulTagesschule.setZeitVon(modulTagesschule.getZeitVon());
+			jaxModulTagesschule.setZeitVon(LocalDateTime.of(LocalDate.now(), modulTagesschule.getZeitVon()));
+			jaxModulTagesschule.setZeitBis(LocalDateTime.of(LocalDate.now(), modulTagesschule.getZeitBis()));
+			return jaxModulTagesschule;
 		}
 		return null;
 	}
@@ -2857,25 +2901,52 @@ public class JaxBConverter {
 
 	@Nullable
 	public BelegungFerieninsel belegungFerieninselToEntity(@Nullable JaxBelegungFerieninsel belegungFerieninselJAX,
-			@Nonnull BelegungFerieninsel belegungFerieninsel) {
+		@Nonnull BelegungFerieninsel belegungFerieninsel) {
 		if (belegungFerieninselJAX != null) {
 			Validate.notNull(belegungFerieninsel);
 
 			convertAbstractFieldsToEntity(belegungFerieninselJAX, belegungFerieninsel);
 			belegungFerieninsel.setFerienname(belegungFerieninselJAX.getFerienname());
-			for (JaxBelegungFerieninselTag jaxTag : belegungFerieninselJAX.getTage()) {
-				BelegungFerieninselTag tag = new BelegungFerieninselTag();
-				convertAbstractFieldsToEntity(jaxTag, tag);
-				tag.setTag(jaxTag.getTag());
-				belegungFerieninsel.getTage().add(tag);
-			}
+			belegungFerieninselTageListToEntity(belegungFerieninselJAX.getTage(), belegungFerieninsel.getTage());
 			return belegungFerieninsel;
 		}
 		return null;
 	}
 
+	private void belegungFerieninselTageListToEntity(@Nonnull final List<JaxBelegungFerieninselTag> jaxTagList,
+		@Nonnull final Collection<BelegungFerieninselTag> tagList) {
+		final Set<BelegungFerieninselTag> transformedTagList = new TreeSet<>();
+		for (final JaxBelegungFerieninselTag jaxTag : jaxTagList) {
+			final BelegungFerieninselTag tagToMergeWith = tagList
+				.stream()
+				.filter(existingTagEntity -> existingTagEntity.getId().equals(jaxTag.getId()))
+				.reduce(StreamsUtil.toOnlyElement())
+				.orElse(new BelegungFerieninselTag());
+			final BelegungFerieninselTag tagToAdd = belegungFerieninselTagToEntity(jaxTag, tagToMergeWith);
+			final boolean added = transformedTagList.add(tagToAdd);
+			if (!added) {
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + tagToAdd);
+			}
+		}
+
+		//change the existing collection to reflect changes
+		// Already tested: All existing Betreuungspensen of the list remain as they were, that means their data are updated
+		// and the objects are not created again. ID and InsertTimeStamp are the same as before
+		tagList.clear();
+		tagList.addAll(transformedTagList);
+	}
+
+	private BelegungFerieninselTag belegungFerieninselTagToEntity(@Nonnull final JaxBelegungFerieninselTag jaxTag, @Nonnull  final BelegungFerieninselTag
+		tag) {
+		Validate.notNull(jaxTag);
+		Validate.notNull(tag);
+		convertAbstractFieldsToEntity(jaxTag, tag);
+		tag.setTag(jaxTag.getTag());
+		return tag;
+	}
+
 	@Nullable
-	public JaxBelegungFerieninsel belegungFerieninselToJAX(@Nullable  BelegungFerieninsel persistedBelegungFerieninsel) {
+	public JaxBelegungFerieninsel belegungFerieninselToJAX(@Nullable BelegungFerieninsel persistedBelegungFerieninsel) {
 		if (persistedBelegungFerieninsel != null) {
 			final JaxBelegungFerieninsel jaxBelegungFerieninsel = new JaxBelegungFerieninsel();
 			convertAbstractFieldsToJAX(persistedBelegungFerieninsel, jaxBelegungFerieninsel);
@@ -2899,5 +2970,33 @@ public class JaxBConverter {
 		convertAbstractFieldsToJAX(persistedFerieninselTag, jaxTag);
 		jaxTag.setTag(persistedFerieninselTag.getTag());
 		return jaxTag;
+	}
+
+	/**
+	 * Kopiert die Daten die fuer den Motag eingegeben wurden in alle andere Wochentage
+	 */
+	public JaxInstitutionStammdaten updateJaxModuleTagesschule(@Nonnull JaxInstitutionStammdaten jaxInstDaten) {
+		Objects.requireNonNull(jaxInstDaten);
+		if (jaxInstDaten.getInstitutionStammdatenTagesschule() != null && !jaxInstDaten.getInstitutionStammdatenTagesschule().getModuleTagesschule().isEmpty()) {
+
+			List<JaxModulTagesschule> moduleTagesschule = jaxInstDaten.getInstitutionStammdatenTagesschule().getModuleTagesschule();
+			List<JaxModulTagesschule> moduleTagesschuleComplete = new ArrayList<>();
+			DayOfWeek[] arbeitstageOhneMontag = { DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY };
+			moduleTagesschule.stream()
+				.filter(m -> m.getWochentag() == DayOfWeek.MONDAY)
+				.forEach(res -> {
+					moduleTagesschuleComplete.add(res);
+					for (DayOfWeek dayOfWeek : arbeitstageOhneMontag) {
+						JaxModulTagesschule modulTagesschule = new JaxModulTagesschule();
+						modulTagesschule.setWochentag(dayOfWeek);
+						modulTagesschule.setModulTagesschuleName(res.getModulTagesschuleName());
+						modulTagesschule.setZeitVon(res.getZeitVon());
+						modulTagesschule.setZeitBis(res.getZeitBis());
+						moduleTagesschuleComplete.add(modulTagesschule);
+					}
+				});
+			jaxInstDaten.getInstitutionStammdatenTagesschule().setModuleTagesschule(moduleTagesschuleComplete);
+		}
+		return jaxInstDaten;
 	}
 }

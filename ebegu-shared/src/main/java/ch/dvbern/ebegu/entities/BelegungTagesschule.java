@@ -19,8 +19,7 @@ import java.time.LocalDate;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.annotation.Nullable;
-import javax.persistence.CascadeType;
+import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -39,10 +38,11 @@ public class BelegungTagesschule extends AbstractEntity {
 
 	private static final long serialVersionUID = -8403435739182708718L;
 
-	@Nullable
+	@NotNull
 	@Valid
 	@SortNatural
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
+	// es darf nicht cascadeAll sein, da sonst die Module geloescht werden, wenn die Belegung geloescht wird, obwohl das Modul eigentlich zur Institutione gehoert
 	private Set<ModulTagesschule> moduleTagesschule = new TreeSet<>();
 
 	@NotNull
@@ -65,12 +65,12 @@ public class BelegungTagesschule extends AbstractEntity {
 		return true;
 	}
 
-	@Nullable
+	@NotNull
 	public Set<ModulTagesschule> getModuleTagesschule() {
 		return moduleTagesschule;
 	}
 
-	public void setModuleTagesschule(@Nullable Set<ModulTagesschule> module) {
+	public void setModuleTagesschule(@NotNull Set<ModulTagesschule> module) {
 		this.moduleTagesschule = module;
 	}
 
@@ -81,5 +81,13 @@ public class BelegungTagesschule extends AbstractEntity {
 
 	public void setEintrittsdatum(@NotNull LocalDate eintrittsdatum) {
 		this.eintrittsdatum = eintrittsdatum;
+	}
+
+	@Nonnull
+	public BelegungTagesschule copyForMutation(@Nonnull BelegungTagesschule mutation, @Nonnull Betreuung parentBetreuung) {
+		super.copyForMutation(mutation);
+		mutation.setEintrittsdatum(LocalDate.from(eintrittsdatum));
+		//TODO (team) Implementieren!
+		return mutation;
 	}
 }

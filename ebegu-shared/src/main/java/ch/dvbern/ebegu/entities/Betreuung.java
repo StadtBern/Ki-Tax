@@ -132,7 +132,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	private BelegungTagesschule belegungTagesschule;
 
 	@Nullable
-	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_belegung_ferieninsel_id"), nullable = true)
 	private BelegungFerieninsel belegungFerieninsel;
 
@@ -362,12 +362,17 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 
 	@Transient
 	public boolean isAngebotKita() {
-		return BetreuungsangebotTyp.KITA.equals(getBetreuungsangebotTyp());
+		return BetreuungsangebotTyp.KITA == getBetreuungsangebotTyp();
 	}
 
 	@Transient
 	public boolean isAngebotTageselternKleinkinder() {
-		return BetreuungsangebotTyp.TAGESELTERN_KLEINKIND.equals(getBetreuungsangebotTyp());
+		return BetreuungsangebotTyp.TAGESELTERN_KLEINKIND == getBetreuungsangebotTyp();
+	}
+
+	@Transient
+	public boolean isAngebotSchulamt() {
+		return BetreuungsangebotTyp.TAGESSCHULE == getBetreuungsangebotTyp() || BetreuungsangebotTyp.FERIENINSEL == getBetreuungsangebotTyp();
 	}
 
 	@Nullable
@@ -432,12 +437,14 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		mutation.setInstitutionStammdaten(this.getInstitutionStammdaten());
 		// Bereits verfuegte Betreuungen werden als BESTAETIGT kopiert, alle anderen behalten ihren Status
 		if (this.getBetreuungsstatus().isGeschlossen()) {
-			// Falls sämtliche Betreuungspensum-Container dieser Betreuung ein effektives Pensum von 0 haben, handelt es sich um die
-			// Verfügung eines stornierten Platzes. Wir übernehmen diesen als "STORNIERT"
-			if (hasAnyNonZeroPensum()) {
-				mutation.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
-			} else {
-				mutation.setBetreuungsstatus(Betreuungsstatus.STORNIERT);
+			if (!isAngebotSchulamt()) {
+				// Falls sämtliche Betreuungspensum-Container dieser Betreuung ein effektives Pensum von 0 haben, handelt es sich um die
+				// Verfügung eines stornierten Platzes. Wir übernehmen diesen als "STORNIERT"
+				if (hasAnyNonZeroPensum()) {
+					mutation.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
+				} else {
+					mutation.setBetreuungsstatus(Betreuungsstatus.STORNIERT);
+				}
 			}
 		} else {
 			mutation.setBetreuungsstatus(this.getBetreuungsstatus());
@@ -447,6 +454,12 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		}
 		for (AbwesenheitContainer abwesenheitContainer : this.getAbwesenheitContainers()) {
 			mutation.getAbwesenheitContainers().add(abwesenheitContainer.copyForMutation(new AbwesenheitContainer(), mutation));
+		}
+		if (belegungFerieninsel != null) {
+			mutation.setBelegungFerieninsel(belegungFerieninsel.copyForMutation(new BelegungFerieninsel()));
+		}
+		if (belegungTagesschule != null) {
+			mutation.setBelegungTagesschule(belegungTagesschule.copyForMutation(new BelegungTagesschule(), mutation));
 		}
 		mutation.setGrundAblehnung(this.getGrundAblehnung());
 		mutation.setBetreuungNummer(this.getBetreuungNummer());
