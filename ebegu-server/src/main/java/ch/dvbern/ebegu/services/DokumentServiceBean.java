@@ -47,12 +47,10 @@ public class DokumentServiceBean extends AbstractBaseService implements Dokument
 		Dokument doc = persistence.find(Dokument.class, key);
 		if (doc == null) {
 			return Optional.empty();
-		} else{
-			final Gesuch gesuch = doc.getDokumentGrund().getGesuch();//may not be null
-			this.authorizer.checkReadAuthorization(gesuch);
-			return Optional.of(doc);
 		}
-
+		final Gesuch gesuch = doc.getDokumentGrund().getGesuch(); //may not be null
+		this.authorizer.checkReadAuthorization(gesuch);
+		return Optional.of(doc);
 	}
 
 }

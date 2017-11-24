@@ -107,10 +107,9 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 		DokumentGrund dokGrund = persistence.find(DokumentGrund.class, key);
 		if (dokGrund == null) {
 			return Optional.empty();
-		} else {
-			authorizer.checkReadAuthorization(dokGrund.getGesuch());
-			return Optional.of(dokGrund);
 		}
+		authorizer.checkReadAuthorization(dokGrund.getGesuch());
+		return Optional.of(dokGrund);
 	}
 
 	@Override
