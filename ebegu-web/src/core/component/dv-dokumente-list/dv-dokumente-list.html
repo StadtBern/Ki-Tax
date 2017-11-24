@@ -85,10 +85,11 @@
                     <td headers="{{vm.tableId +'-upload'}}" width="5%" class="symbol" tabindex="-1"
                     ng-click="$event.stopPropagation()"
                         ng-class="{'documents-vailable': vm.hasDokuments(row),'no-documents': !vm.hasDokuments(row),'no-color' : vm.sonstige}">
-                        <button ngf-select="vm.uploadAnhaenge($files, row)" ngf-multiple="true"
-                                class="fa fa-upload dv-btn-operation" title="{{'GS_DOKUMENT_HOCHLADEN' | translate}}"
-                                aria-label="{{'GS_DOKUMENT_HOCHLADEN' | translate}}"
-                                ng-disabled="vm.isDokumenteUploadDisabled()" tabindex="0"></button>
+                        <button  ngf-select="vm.uploadAnhaenge($files, row)" ngf-multiple="true"
+                               accept="{{vm.allowedMimetypes}}"
+                               class="fa fa-upload dv-btn-operation" title="{{'GS_DOKUMENT_HOCHLADEN' | translate}}"
+                               aria-label="{{'GS_DOKUMENT_HOCHLADEN' | translate}}"
+                               ng-disabled="vm.isDokumenteUploadDisabled()" tabindex="0">
                     </td>
                 </tr>
 

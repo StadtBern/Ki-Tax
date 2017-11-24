@@ -1,0 +1,3 @@
+INSERT INTO application_property (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name, value)
+VALUES ('bacfe390-4c81-43c6-b433-d877f716887d', '2017-11-22 12:00:00', '2017-11-22 12:00:00', 'flyway', 'flyway', 0,
+        'UPLOAD_FILETYPES_WHITELIST', 'application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png, application/msword, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.oasis.opendocument.text, image/tiff, text/plain, application/vnd.oasis.opendocument.spreadsheet, text/csv,  application/rtf');

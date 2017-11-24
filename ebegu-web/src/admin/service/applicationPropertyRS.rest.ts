@@ -13,9 +13,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IHttpPromise, IHttpService, IPromise} from 'angular';
-import TSApplicationProperty from '../../models/TSApplicationProperty';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import TSApplicationProperty from '../../models/TSApplicationProperty';
+import {IHttpPromise, IHttpResponse, IHttpService, IPromise} from 'angular';
 
 export class ApplicationPropertyRS {
     serviceURL: string;
@@ -31,9 +31,19 @@ export class ApplicationPropertyRS {
         this.ebeguRestUtil = ebeguRestUtil;
     }
 
+    getAllowedMimetypes(): IPromise<TSApplicationProperty> {
+        return this.http.get(this.serviceURL + '/public/' + encodeURIComponent('UPLOAD_FILETYPES_WHITELIST'),
+            {cache: true})
+        .then((response: IHttpResponse<TSApplicationProperty>) => {
+            return this.ebeguRestUtil.parseApplicationProperty(new TSApplicationProperty(), response.data);
+        });
+    }
+
     getByName(name: string): IPromise<TSApplicationProperty> {
         return this.http.get(this.serviceURL + '/key/' + encodeURIComponent(name)).then(
-            (response: any) => this.ebeguRestUtil.parseApplicationProperty(new TSApplicationProperty(), response.data)
+            (response: any) => {
+                return this.ebeguRestUtil.parseApplicationProperty(new TSApplicationProperty(), response.data);
+            }
         );
     }
 

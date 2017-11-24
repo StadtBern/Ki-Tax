@@ -99,6 +99,7 @@
                 </div>
 
                 <div ng-if="!vm.hasPapiergesuch() && !vm.isGesuchReadonly()"
+                     accept=".pdf, .docx, .odt"
                      ngf-select="vm.upload($files)" ngf-multiple="false"
                      ngf-drop="vm.upload($files)"
                      ngf-drag-over-class="'dragover'"

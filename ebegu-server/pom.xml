@@ -164,6 +164,13 @@
             <version>${project.version}</version>
         </dependency>
 
+
+        <dependency>
+          <groupId>org.apache.tika</groupId>
+          <artifactId>tika-core</artifactId>
+          <version>1.16</version>
+        </dependency>
+
         <!-- Fuer DB-Skripts (TransactionTimeout) -->
         <dependency>
             <groupId>org.jboss.ejb3</groupId>

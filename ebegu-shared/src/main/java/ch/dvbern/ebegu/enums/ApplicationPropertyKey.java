@@ -74,5 +74,12 @@ public enum ApplicationPropertyKey {
 	/**
 	 * Anzahl Tage nach Warnung bis Gesuch geloescht wird, wenn er Quittung nicht schickt
 	 */
-	ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG;
+	ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG,
+
+	/**
+	 * Key fuer Komma separierte Whiteliste von zugelassenen Filetypen fuer den upload
+	 *
+	 */
+	UPLOAD_FILETYPES_WHITELIST,
+
 }
