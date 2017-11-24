@@ -17,9 +17,14 @@ package ch.dvbern.ebegu.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,6 +34,11 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.entities.ApplicationProperty_;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
@@ -36,9 +46,6 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
@@ -81,6 +88,23 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 	@PermitAll
 	public Optional<ApplicationProperty> readApplicationProperty(@Nonnull final ApplicationPropertyKey key) {
 		return criteriaQueryHelper.getEntityByUniqueAttribute(ApplicationProperty.class, key, ApplicationProperty_.name);
+	}
+
+	@Nonnull
+	@Override
+	public Collection<String> readMimeTypeWhitelist() {
+		//note this is a candidate for caching
+		Set<String> allowedTypes = Collections.emptySet();
+		final Optional<ApplicationProperty> whitelistVal = this.readApplicationProperty(ApplicationPropertyKey.UPLOAD_FILETYPES_WHITELIST);
+		if (whitelistVal.isPresent() && StringUtils.isNotEmpty(whitelistVal.get().getValue())) {
+			final String[] values = whitelistVal.get().getValue().split(",");
+			allowedTypes = Arrays.stream(values)
+				.map(StringUtils::trimToNull)
+				.filter(Objects::nonNull)
+				.collect(Collectors.toSet());
+
+		}
+		return allowedTypes;
 	}
 
 	@Override

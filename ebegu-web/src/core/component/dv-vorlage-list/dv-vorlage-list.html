@@ -25,6 +25,7 @@
                     <td ng-click="$event.stopPropagation()" width="50%">
                         <a ng-bind="row.name | translate"
                            ngf-select="vm.uploadAnhaenge($files, row)"
+                           accept=".pdf, .docx, .doc, image/*"
                            ngf-multiple="false"
                            ngf-max-size="'10MB'" ngf-max-total-size="100MB"
                            ngf-drop="vm.uploadAnhaenge($files, row)"

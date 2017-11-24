@@ -48,6 +48,14 @@ public interface ApplicationPropertyService {
 	@Nonnull
 	Optional<ApplicationProperty> readApplicationProperty(@Nonnull ApplicationPropertyKey key);
 
+
+	/**
+	 * List die Liste der zugelassenen Mimetypes
+	 * @return
+	 */
+	@Nonnull
+	Collection<String> readMimeTypeWhitelist();
+
 	/**
 	 * Versucht den uebergebenen String in einene  key umzuwandeln und gibt dann das ensprechende property zurueck.
 	 * Wenn der String keinem key enspricht exception
