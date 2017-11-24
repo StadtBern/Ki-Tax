@@ -465,7 +465,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			}
 		}
 		else if (WizardStepName.DOKUMENTE == wizardStepName) {
-			relatedObjects.addAll(dokumentGrundService.findAllDokumentGrundByGesuch(gesuch));
+			relatedObjects.addAll(dokumentGrundService.findAllDokumentGrundByGesuch(gesuch, false));
 		}
 		return relatedObjects;
 	}
