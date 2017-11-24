@@ -20,6 +20,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Betreuung;
@@ -48,8 +51,6 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_INSTITUTION;
 import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_TRAEGERSCHAFT;
@@ -383,7 +384,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 	private WizardStepStatus getWizardStepStatusOkOrMutiert(WizardStep wizardStep) {
 		if (AntragTyp.MUTATION != wizardStep.getGesuch().getTyp()) {
-			// just to avoid doing the calculation for Mutation if it is not needed
+			// just to avoid doing the calculation for Gesuche that are not of Type Mutation if it is not needed
 			return WizardStepStatus.OK;
 		}
 

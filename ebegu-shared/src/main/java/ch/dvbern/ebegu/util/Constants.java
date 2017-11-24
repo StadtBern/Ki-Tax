@@ -34,6 +34,8 @@ public interface Constants {
 
 	int ABWESENHEIT_DAYS_LIMIT = 30;
 
+	int STATISTIK_TIMEOUT_MINUTES = 40; // minutes
+
 	Locale DEFAULT_LOCALE = new Locale("de", "CH");
 
 

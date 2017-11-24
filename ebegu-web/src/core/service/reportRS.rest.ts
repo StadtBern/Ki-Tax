@@ -10,6 +10,7 @@ export class ReportRS {
     log: ILogService;
     ebeguRestUtil: EbeguRestUtil;
     http: IHttpService;
+    reportingTimeout: number = 240000;
 
     static $inject = ['$httpParamSerializer', 'REST_API', '$log', '$window', 'EbeguRestUtil', '$http'];
     /* @ngInject */
@@ -28,7 +29,7 @@ export class ReportRS {
             gesuchPeriodeID: gesuchPeriodeID
         });
 
-        return this.http.get(this.serviceURL + '/excel/gesuchStichtag?' + reportParams)
+        return this.http.get(this.serviceURL + '/excel/gesuchStichtag?' + reportParams, {timeout: this.reportingTimeout})
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
@@ -44,7 +45,7 @@ export class ReportRS {
             gesuchPeriodeID: gesuchPeriodeID
         });
 
-        return this.http.get(this.serviceURL + '/excel/gesuchZeitraum?' + reportParams)
+        return this.http.get(this.serviceURL + '/excel/gesuchZeitraum?' + reportParams, {timeout: this.reportingTimeout})
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
@@ -58,7 +59,7 @@ export class ReportRS {
             auswertungBis: auswertungBis
         });
 
-        return this.http.get(this.serviceURL + '/excel/kanton?' + reportParams)
+        return this.http.get(this.serviceURL + '/excel/kanton?' + reportParams, {timeout: this.reportingTimeout})
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
@@ -70,7 +71,7 @@ export class ReportRS {
             auswertungVon: auswertungVon,
             auswertungBis: auswertungBis
         });
-        return this.http.get(this.serviceURL + '/excel/mitarbeiterinnen?' + reportParams)
+        return this.http.get(this.serviceURL + '/excel/mitarbeiterinnen?' + reportParams, {timeout: this.reportingTimeout})
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
@@ -83,7 +84,7 @@ export class ReportRS {
             zahlungsauftragID: zahlungsauftragID
         });
 
-        return this.http.get(this.serviceURL + '/excel/zahlungsauftrag?' + reportParams)
+        return this.http.get(this.serviceURL + '/excel/zahlungsauftrag?' + reportParams, {timeout: this.reportingTimeout})
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
@@ -96,7 +97,7 @@ export class ReportRS {
             zahlungID: zahlungID
         });
 
-        return this.http.get(this.serviceURL + '/excel/zahlung?' + reportParams)
+        return this.http.get(this.serviceURL + '/excel/zahlung?' + reportParams, {timeout: this.reportingTimeout})
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
@@ -108,7 +109,7 @@ export class ReportRS {
             gesuchsperiodeID: gesuchsperiode
         });
 
-        return this.http.get(this.serviceURL + '/excel/zahlungperiode?' + reportParams)
+        return this.http.get(this.serviceURL + '/excel/zahlungperiode?' + reportParams, {timeout: this.reportingTimeout})
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
@@ -122,7 +123,7 @@ export class ReportRS {
             auswertungBis: auswertungBis,
             gesuchPeriodeID: gesuchPeriodeID
         });
-        return this.http.get(this.serviceURL + '/excel/gesuchstellerkinderbetreuung?' + reportParams)
+        return this.http.get(this.serviceURL + '/excel/gesuchstellerkinderbetreuung?' + reportParams, {timeout: this.reportingTimeout})
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
@@ -135,7 +136,7 @@ export class ReportRS {
             auswertungBis: auswertungBis,
             gesuchPeriodeID: gesuchPeriodeID
         });
-        return this.http.get(this.serviceURL + '/excel/kinder?' + reportParams)
+        return this.http.get(this.serviceURL + '/excel/kinder?' + reportParams, {timeout: this.reportingTimeout})
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
@@ -146,7 +147,7 @@ export class ReportRS {
         let reportParams: string = this.httpParamSerializer({
             stichtag: stichtag
         });
-        return this.http.get(this.serviceURL + '/excel/gesuchsteller?' + reportParams)
+        return this.http.get(this.serviceURL + '/excel/gesuchsteller?' + reportParams, {timeout: this.reportingTimeout})
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
