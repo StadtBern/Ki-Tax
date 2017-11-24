@@ -127,10 +127,11 @@ public class ApplicationPropertyResource {
 			try {
 				return allTypes.forName(mimetype).getExtension();
 			} catch (MimeTypeException e) {
-				LOG.error("Could not find extension for mime type " + mimetype);
+				LOG.error("Could not find extension for mime type {}", mimetype);
 				return null;
 			}
 		}).filter(Objects::nonNull).collect(Collectors.toList());
+
 		final String list = StringUtils.join(extensions, ",");
 		ApplicationProperty applicationProperty = new ApplicationProperty(ApplicationPropertyKey.UPLOAD_FILETYPES_WHITELIST, list);
 		return converter.applicationPropertyToJAX(applicationProperty);

@@ -19,21 +19,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.activation.MimeTypeParseException;
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -48,25 +40,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxDokument;
 import ch.dvbern.ebegu.api.dtos.JaxDokumentGrund;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -75,9 +54,18 @@ import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.FileSaverService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.util.UploadFileInfo;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.apache.tika.Tika;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * REST Resource zum Upload von Dokumenten
@@ -187,7 +175,7 @@ public class UploadResource {
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(EinkommensverschlechterungInfoResource.class)
-			.path("/" + persistedDokumentGrund.getId())
+			.path('/' + persistedDokumentGrund.getId())
 			.build();
 
 		return Response.created(uri).entity(jaxDokumentGrundToReturn).build();
@@ -205,7 +193,7 @@ public class UploadResource {
 
 	private void extractFilesFromInput(MultipartFormDataInput input, String[] encodedFilenames, String gesuchId, JaxDokumentGrund jaxDokumentGrund) throws MimeTypeParseException, IOException {
 		int filecounter = 0;
-		String partrileName = PART_FILE + "[" + filecounter + "]";
+		String partrileName = PART_FILE + '[' + filecounter + ']';
 
 		// do for every file:
 		List<InputPart> inputParts = input.getFormDataMap().get(partrileName);
@@ -230,7 +218,7 @@ public class UploadResource {
 			addFileToDokumentGrund(jaxDokumentGrund, fileInfo);
 
 			filecounter++;
-			partrileName = PART_FILE + "[" + filecounter + "]";
+			partrileName = PART_FILE + '[' + filecounter + ']';
 			inputParts = input.getFormDataMap().get(partrileName);
 		}
 	}
@@ -239,14 +227,15 @@ public class UploadResource {
 		//we dont purly trust the filetype set in the header, so we perform our own content-type guessing
 		java.nio.file.Path filePath = Paths.get(fileInfo.getPath());
 		try {
-			String contentType = Files.probeContentType(filePath);
+			Tika tika = new Tika();
+			String contentType = tika.detect(filePath); //tika should be more accurate than Files.probeContentType
 			if (contentType == null || !contentType.equals(fileInfo.getContentType().toString())) {
 				LOG.warn("Content type from Header did not match content type returned from probing. "
 					+ "\n\t header:   {} \n\t probing:  {}", fileInfo.getContentType(), contentType);
 			}
-			if(!getMimeTypeWhitelist().contains(contentType)){
+			if(!applicationPropertyService.readMimeTypeWhitelist().contains(contentType)){
 				fileSaverService.remove(fileInfo.getPath());
-				LOG.debug("Blocked upload of filetype that is not in whitelist: " + contentType);
+				LOG.debug("Blocked upload of filetype that is not in whitelist: {}", contentType);
 				throw new EbeguRuntimeException("checkFiletypeAllowed", ErrorCodeEnum.ERROR_UPLOAD_INVALID_FILETYPE, contentType);
 			}
 
@@ -268,7 +257,7 @@ public class UploadResource {
 				jaxDokument.setFilename(uploadFileInfo.getFilename());
 				jaxDokument.setFilepfad(uploadFileInfo.getPath());
 				jaxDokument.setFilesize(uploadFileInfo.getSizeString());
-				LOG.info("Replace placeholder on " + jaxDokumentGrund.getDokumentTyp() + " by file " + uploadFileInfo.getFilename());
+				LOG.info("Replace placeholder on {} by file {}", jaxDokumentGrund.getDokumentTyp(), uploadFileInfo.getFilename());
 				return;
 			}
 		}
@@ -279,22 +268,7 @@ public class UploadResource {
 		dokument.setFilepfad(uploadFileInfo.getPath());
 		dokument.setFilesize(uploadFileInfo.getSizeString());
 		jaxDokumentGrund.getDokumente().add(dokument);
-		LOG.info("Add on " + jaxDokumentGrund.getDokumentTyp() + " file " + uploadFileInfo.getFilename());
+		LOG.info("Add on {} file {}", jaxDokumentGrund.getDokumentTyp(), uploadFileInfo.getFilename());
 	}
 
-	@Nonnull
-	public Collection<String> getMimeTypeWhitelist() {
-		//note this is a candidate for caching
-		Set<String> allowedTypes = Collections.emptySet();
-		final Optional<ApplicationProperty> whitelistVal = this.applicationPropertyService.readApplicationProperty(ApplicationPropertyKey.UPLOAD_FILETYPES_WHITELIST);
-		if (whitelistVal.isPresent() && StringUtils.isNotEmpty(whitelistVal.get().getValue())) {
-			final String[] values = whitelistVal.get().getValue().split(",");
-			allowedTypes = Arrays.stream(values)
-				.map(StringUtils::trimToNull)
-				.filter(Objects::nonNull)
-				.collect(Collectors.toSet());
-
-		}
-		return allowedTypes;
-	}
 }
