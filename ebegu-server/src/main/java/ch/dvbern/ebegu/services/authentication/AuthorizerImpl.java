@@ -619,13 +619,22 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			UserRole userRole = principalBean.discoverMostPrivilegedRole();
 			Objects.requireNonNull(userRole);
 			switch (userRole) {
-				case GESUCHSTELLER:
+				case GESUCHSTELLER: {
+					// Beim schreiben (Entwurf speichern oder Mitteilung senden) muss der eingeloggte GS der Absender sein
+					if (!isCurrentUserMitteilungsSender(mitteilung)) {
+						throwViolation(mitteilung);
+					}
+					break;
+				}
 				case SACHBEARBEITER_INSTITUTION:
 				case SACHBEARBEITER_TRAEGERSCHAFT:
+					if (!isSenderTyp(mitteilung, MitteilungTeilnehmerTyp.INSTITUTION)) {
+						throwViolation(mitteilung);
+					}
+					break;
 				case SACHBEARBEITER_JA:
-				case ADMIN:{
-					// Beim schreiben (Entwurf speichern oder Mitteilung senden) muss der eingeloggte Benutzer der Absender sein
-					if (!isCurrentUserMitteilungsSender(mitteilung)) {
+				case ADMIN: {
+					if (!isSenderTyp(mitteilung, MitteilungTeilnehmerTyp.JUGENDAMT)) {
 						throwViolation(mitteilung);
 					}
 					break;
@@ -666,14 +675,13 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 				}
 				case SACHBEARBEITER_INSTITUTION:
 				case SACHBEARBEITER_TRAEGERSCHAFT: {
-					if (!isCurrentUserMitteilungsSender(mitteilung)) {
+					if (!isSenderTypOrEmpfaengerTyp(mitteilung, MitteilungTeilnehmerTyp.INSTITUTION)) {
 						throwViolation(mitteilung);
 					}
 					break;
 				}
 				case SACHBEARBEITER_JA: {
-					if (!(mitteilung.getSenderTyp() == MitteilungTeilnehmerTyp.JUGENDAMT
-						|| mitteilung.getEmpfaengerTyp() == MitteilungTeilnehmerTyp.JUGENDAMT)) {
+					if (!isSenderTypOrEmpfaengerTyp(mitteilung, MitteilungTeilnehmerTyp.JUGENDAMT)) {
 						throwViolation(mitteilung);
 					}
 					break;
@@ -688,6 +696,20 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 				}
 			}
 		}
+	}
+
+	private boolean isSenderTypOrEmpfaengerTyp(@Nullable Mitteilung mitteilung, MitteilungTeilnehmerTyp typ) {
+		if (mitteilung != null) {
+			return mitteilung.getSenderTyp() == typ || mitteilung.getEmpfaengerTyp() == typ;
+		}
+		return false;
+	}
+
+	private boolean isSenderTyp(@Nullable Mitteilung mitteilung, MitteilungTeilnehmerTyp typ) {
+		if (mitteilung != null) {
+			return mitteilung.getSenderTyp() == typ;
+		}
+		return false;
 	}
 
 	private boolean isCurrentUserMitteilungsSender(@Nonnull Mitteilung mitteilung) {

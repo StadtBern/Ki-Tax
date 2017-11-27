@@ -129,18 +129,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	public Mitteilung sendMitteilung(@Nonnull Mitteilung mitteilung) {
 		Objects.requireNonNull(mitteilung);
 
-		if (!mitteilung.isNew()) {
-			Mitteilung persistedMitteilung = findMitteilung(mitteilung.getId()).orElseThrow(() -> new EbeguEntityNotFoundException
-				("sendMitteilung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "MitteilungId invalid: " + mitteilung.getId()));
-
-			// Die gespeicherte wie auch die uebergebene Mitteilung muss im Status ENTWURF sein
-			if (MitteilungStatus.ENTWURF != persistedMitteilung.getMitteilungStatus()) {
-				throw new IllegalArgumentException("Mitteilung aus DB ist nicht im Status ENTWURF und kann nicht gesendet werden");
-			}
-			if (!persistedMitteilung.getSender().equals(mitteilung.getSender())) {
-				throw new IllegalArgumentException("Mitteilung aus DB hat anderen Sender gesetzt");
-			}
-		}
+		checkMitteilungDataConsistency(mitteilung);
 
 		if (MitteilungStatus.ENTWURF != mitteilung.getMitteilungStatus()) {
 			throw new IllegalArgumentException("Mitteilung ist nicht im Status ENTWURF und kann nicht gesendet werden");
@@ -173,6 +162,21 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return persistence.merge(mitteilung);
 	}
 
+	private void checkMitteilungDataConsistency(@Nonnull Mitteilung mitteilung) {
+		if (!mitteilung.isNew()) {
+			Mitteilung persistedMitteilung = findMitteilung(mitteilung.getId()).orElseThrow(() -> new EbeguEntityNotFoundException
+				("sendMitteilung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "MitteilungId invalid: " + mitteilung.getId()));
+
+			// Die gespeicherte wie auch die uebergebene Mitteilung muss im Status ENTWURF sein
+			if (MitteilungStatus.ENTWURF != persistedMitteilung.getMitteilungStatus()) {
+				throw new IllegalArgumentException("Mitteilung aus DB ist nicht im Status ENTWURF und kann nicht gesendet werden");
+			}
+			if (!persistedMitteilung.getSender().equals(mitteilung.getSender())) {
+				throw new IllegalArgumentException("Mitteilung aus DB hat anderen Sender gesetzt");
+			}
+		}
+	}
+
 	private void setSenderAndEmpfaenger(@Nonnull Mitteilung mitteilung) {
 		Benutzer benutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new IllegalStateException("Benutzer ist nicht eingeloggt!"));
 		Benutzer verantwortlicher = mitteilung.getFall().getVerantwortlicher();
@@ -187,7 +191,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				}
 			}
 		}
-		//TODO (hefr) Rollen Schulamt einbauen!
+		//TODO (team) Rollen Schulamt einbauen!
 		switch (benutzer.getRole()) {
 		case GESUCHSTELLER: {
 			mitteilung.setEmpfaenger(verantwortlicher);
@@ -223,18 +227,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	public Mitteilung saveEntwurf(@Nonnull Mitteilung mitteilung) {
 		Objects.requireNonNull(mitteilung);
 
-		if (!mitteilung.isNew()) {
-			Mitteilung persistedMitteilung = findMitteilung(mitteilung.getId()).orElseThrow(() -> new EbeguEntityNotFoundException
-				("sendMitteilung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "MitteilungId invalid: " + mitteilung.getId()));
-
-			// Die gespeicherte wie auch die uebergebene Mitteilung muss im Status ENTWURF sein
-			if (MitteilungStatus.ENTWURF != persistedMitteilung.getMitteilungStatus()) {
-				throw new IllegalArgumentException("Entwurf aus DB ist nicht im Status ENTWURF und kann nicht gesendet werden");
-			}
-			if (!persistedMitteilung.getSender().equals(mitteilung.getSender())) {
-				throw new IllegalArgumentException("Entwurf aus DB hat anderen Sender gesetzt");
-			}
-		}
+		checkMitteilungDataConsistency(mitteilung);
 
 		if (MitteilungStatus.ENTWURF != mitteilung.getMitteilungStatus()) {
 			throw new IllegalArgumentException("Mitteilung ist nicht im Status ENTWURF und kann nicht als Entwurf gespeichert werden");

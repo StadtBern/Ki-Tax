@@ -34,7 +34,7 @@ describe('dvDokumenteList', function () {
         gesuchModelManager = $injector.get('GesuchModelManager');
 
         controller = new DVDokumenteListController(undefined, gesuchModelManager, undefined, undefined,
-            undefined, undefined, undefined, undefined, undefined, undefined);
+            undefined, undefined, undefined, undefined, undefined, undefined, undefined);
 
     }));
 
