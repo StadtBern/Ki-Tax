@@ -26,6 +26,7 @@ import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.FinanzielleSituation;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.WizardStep;
 
@@ -33,6 +34,7 @@ import ch.dvbern.ebegu.entities.WizardStep;
  * Interface fuer eine Klasse welche prueft ob der aktuelle Benutzer fuer ein Gesuch berechtigt ist
  * Wirft eine Exception wenn der aktuelle Benutzer nicht berechtigt ist.
  */
+@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 public interface Authorizer {
 
 	void checkReadAuthorization(@Nullable Gesuch gesuch);
@@ -128,4 +130,18 @@ public interface Authorizer {
 	 */
 	void checkReadAuthorizationForFreigabe(Gesuch gesuch);
 
+	/**
+	 * Prueft, ob der aktuelle Benutzer diese Mitteilung schreiben (senden oder Entwurf speichern) darf
+	 */
+	void checkWriteAuthorizationMitteilung(@Nullable Mitteilung mitteilung);
+
+	/**
+	 * Prueft, ob der aktuelle Benutzer alle uebergebenen Mitteilungen lesen darf
+	 */
+	void checkReadAuthorizationMitteilungen(@Nonnull Collection<Mitteilung> mitteilungen);
+
+	/**
+	 * Prueft, ob der aktuelle Benutzer die uebergebene Mitteilung lesen darf
+	 */
+	void checkReadAuthorizationMitteilung(@Nullable Mitteilung mitteilung);
 }

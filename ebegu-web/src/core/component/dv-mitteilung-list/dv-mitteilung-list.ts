@@ -169,23 +169,6 @@ export class DVMitteilungListController {
         }
         this.currentMitteilung.mitteilungStatus = TSMitteilungStatus.ENTWURF;
         this.currentMitteilung.sender = currentUser;
-
-        //role-dependent attributes
-        if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) { // Ein GS darf nur dem JA schreiben
-            this.currentMitteilung.empfaenger = this.fall.verantwortlicher ? this.fall.verantwortlicher : undefined;
-            this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
-            this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.GESUCHSTELLER;
-
-        } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) { // Das JA darf nur dem GS schreiben
-            this.currentMitteilung.empfaenger = this.fall.besitzer ? this.fall.besitzer : undefined;
-            this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.GESUCHSTELLER;
-            this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
-
-        } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) { // Eine Institution darf nur dem JA schreiben
-            this.currentMitteilung.empfaenger = this.fall.verantwortlicher ? this.fall.verantwortlicher : undefined;
-            this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
-            this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.INSTITUTION;
-        }
     }
 
     public getCurrentMitteilung(): TSMitteilung {

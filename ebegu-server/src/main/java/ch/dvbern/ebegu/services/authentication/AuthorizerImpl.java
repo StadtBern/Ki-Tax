@@ -16,6 +16,7 @@
 package ch.dvbern.ebegu.services.authentication;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -41,11 +42,13 @@ import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.entities.HasMandant;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -610,4 +613,110 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		return isReadAuthorized(gesuch);
 	}
 
+	@Override
+	public void checkWriteAuthorizationMitteilung(@Nullable Mitteilung mitteilung) {
+		if (mitteilung != null) {
+			UserRole userRole = principalBean.discoverMostPrivilegedRole();
+			Objects.requireNonNull(userRole);
+			switch (userRole) {
+				case GESUCHSTELLER: {
+					// Beim schreiben (Entwurf speichern oder Mitteilung senden) muss der eingeloggte GS der Absender sein
+					if (!isCurrentUserMitteilungsSender(mitteilung)) {
+						throwViolation(mitteilung);
+					}
+					break;
+				}
+				case SACHBEARBEITER_INSTITUTION:
+				case SACHBEARBEITER_TRAEGERSCHAFT:
+					if (!isSenderTyp(mitteilung, MitteilungTeilnehmerTyp.INSTITUTION)) {
+						throwViolation(mitteilung);
+					}
+					break;
+				case SACHBEARBEITER_JA:
+				case ADMIN: {
+					if (!isSenderTyp(mitteilung, MitteilungTeilnehmerTyp.JUGENDAMT)) {
+						throwViolation(mitteilung);
+					}
+					break;
+				}
+				case SUPER_ADMIN: {
+					// Superadmin darf alles!
+					break;
+				}
+				default: {
+					//TODO (team) Rollen Schulamt beruecksichtigen!
+					// Alle anderen Rollen sind nicht berechtigt
+					throwViolation(mitteilung);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void checkReadAuthorizationMitteilungen(@Nonnull Collection<Mitteilung> mitteilungen) {
+		mitteilungen.forEach(this::checkReadAuthorizationMitteilung);
+	}
+
+	@Override
+	public void checkReadAuthorizationMitteilung(@Nullable Mitteilung mitteilung) {
+		if (mitteilung != null) {
+			UserRole userRole = principalBean.discoverMostPrivilegedRole();
+			Objects.requireNonNull(userRole);
+			// Beim Lesen einer Mitteilung muss der eingeloggte Benutzer
+			// - der Sender oder der Empfaenger sein (GESUCHSTELLER)
+			// - der Sender sein (INSTITUTIONEN)
+			// - SenderTyp oder EmpfaengerTyp muss JUGENDAMT sein (SACHBEARBEITER_JA)
+			switch (userRole) {
+				case GESUCHSTELLER: {
+					if (!(isCurrentUserMitteilungsSender(mitteilung) || isCurrentUserMitteilungsEmpfaenger(mitteilung))) {
+						throwViolation(mitteilung);
+					}
+					break;
+				}
+				case SACHBEARBEITER_INSTITUTION:
+				case SACHBEARBEITER_TRAEGERSCHAFT: {
+					if (!isSenderTypOrEmpfaengerTyp(mitteilung, MitteilungTeilnehmerTyp.INSTITUTION)) {
+						throwViolation(mitteilung);
+					}
+					break;
+				}
+				case SACHBEARBEITER_JA: {
+					if (!isSenderTypOrEmpfaengerTyp(mitteilung, MitteilungTeilnehmerTyp.JUGENDAMT)) {
+						throwViolation(mitteilung);
+					}
+					break;
+				}
+				case SUPER_ADMIN:
+				case ADMIN: {
+					break;
+				}
+				default: {
+					//TODO (team) Rollen Schulamt beruecksichtigen!
+					throwViolation(mitteilung);
+				}
+			}
+		}
+	}
+
+	private boolean isSenderTypOrEmpfaengerTyp(@Nullable Mitteilung mitteilung, MitteilungTeilnehmerTyp typ) {
+		if (mitteilung != null) {
+			return mitteilung.getSenderTyp() == typ || mitteilung.getEmpfaengerTyp() == typ;
+		}
+		return false;
+	}
+
+	private boolean isSenderTyp(@Nullable Mitteilung mitteilung, MitteilungTeilnehmerTyp typ) {
+		if (mitteilung != null) {
+			return mitteilung.getSenderTyp() == typ;
+		}
+		return false;
+	}
+
+	private boolean isCurrentUserMitteilungsSender(@Nonnull Mitteilung mitteilung) {
+		return principalBean.getBenutzer().equals(mitteilung.getSender());
+	}
+
+	private boolean isCurrentUserMitteilungsEmpfaenger(@Nonnull Mitteilung mitteilung) {
+		return principalBean.getBenutzer().equals(mitteilung.getEmpfaenger());
+	}
 }
