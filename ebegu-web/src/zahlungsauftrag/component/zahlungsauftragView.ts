@@ -13,7 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentOptions, IHttpResponse} from 'angular';
+import {IComponentOptions} from 'angular';
 import * as moment from 'moment';
 import {ApplicationPropertyRS} from '../../admin/service/applicationPropertyRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
@@ -232,7 +232,7 @@ export class ZahlungsauftragViewController {
         this.form.$setUntouched();
     }
 
-    public getCalculatetStatus(zahlungsauftrag: TSZahlungsauftrag) {
+    public getCalculatedStatus(zahlungsauftrag: TSZahlungsauftrag) {
         if (zahlungsauftrag.status !== TSZahlungsauftragsstatus.BESTAETIGT && this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
             if (zahlungsauftrag.zahlungen.every(zahlung => zahlung.status === TSZahlungsstatus.BESTAETIGT)) {
                 return TSZahlungsstatus.BESTAETIGT;

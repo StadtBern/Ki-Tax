@@ -70,12 +70,6 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	private ReportService reportService;
 
 	@Inject
-	private Persistence persistence;
-
-	@Inject
-	private InstitutionService institutionService;
-
-	@Inject
 	private GesuchService gesuchService;
 
 	@Inject
@@ -91,7 +85,7 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 		Collection<Fall> allFall = criteriaQueryHelper.getAll(Fall.class);
 		Collection<Gesuch> allGesuch = criteriaQueryHelper.getAll(Gesuch.class);
 
-		Assert.assertEquals("1 Mandant aus File, einer aus Superklasse", 2, allMandant.size());
+		Assert.assertEquals(1, allMandant.size());
 		Assert.assertEquals(1, allGesuchsperiode.size());
 		Assert.assertEquals(ANZAHL_FAELLE, allFall.size());
 		Assert.assertEquals(ANZAHL_GESUCHE, allGesuch.size());
