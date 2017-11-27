@@ -171,24 +171,6 @@ export class DVMitteilungListController {
         }
         this.currentMitteilung.mitteilungStatus = TSMitteilungStatus.ENTWURF;
         this.currentMitteilung.sender = currentUser;
-
-        //role-dependent attributes
-        if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) { // Ein GS darf nur dem JA schreiben
-            this.setSenderAndEmpfaenger(this.fall.verantwortlicher, TSMitteilungTeilnehmerTyp.JUGENDAMT, TSMitteilungTeilnehmerTyp.GESUCHSTELLER);
-
-        } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) { // Das JA/SCH darf nur dem GS schreiben
-            // todo Im Moment auch für Schulamt TeilnehmerTyp JUGENDAMT, es ist noch zu überlegen, ob sie einen eigenen Typ brauchen
-            this.setSenderAndEmpfaenger(this.fall.besitzer, TSMitteilungTeilnehmerTyp.GESUCHSTELLER, TSMitteilungTeilnehmerTyp.JUGENDAMT);
-
-        } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) { // Eine Institution darf nur dem JA schreiben
-            this.setSenderAndEmpfaenger(this.fall.verantwortlicher, TSMitteilungTeilnehmerTyp.JUGENDAMT, TSMitteilungTeilnehmerTyp.INSTITUTION);
-        }
-    }
-
-    private setSenderAndEmpfaenger(empfaenger: TSUser, empfaengerTyp: TSMitteilungTeilnehmerTyp, senderTyp: TSMitteilungTeilnehmerTyp) {
-        this.currentMitteilung.empfaenger = empfaenger ? empfaenger : undefined;
-        this.currentMitteilung.empfaengerTyp = empfaengerTyp;
-        this.currentMitteilung.senderTyp = senderTyp;
     }
 
     public getCurrentMitteilung(): TSMitteilung {
