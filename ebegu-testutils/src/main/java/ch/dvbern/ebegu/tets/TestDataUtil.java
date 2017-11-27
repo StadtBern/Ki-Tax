@@ -940,10 +940,12 @@ public final class TestDataUtil {
 		return dokument;
 	}
 
-	public static Benutzer createDummySuperAdmin(Persistence persistence) {
+	public static Benutzer createDummySuperAdmin(Persistence persistence, @Nullable Mandant mandant) {
 		//machmal brauchen wir einen dummy admin in der DB
-		final Mandant mandant = TestDataUtil.createDefaultMandant();
-		persistence.persist(mandant);
+		if (mandant == null) {
+			mandant = TestDataUtil.createDefaultMandant();
+			persistence.persist(mandant);
+		}
 		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SUPER_ADMIN, "superadmin", null, null, mandant);
 		persistence.merge(benutzer);
 		return benutzer;
