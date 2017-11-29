@@ -300,38 +300,43 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (WizardStepName.VERFUEGEN == wizardStep.getWizardStepName()
 				&& WizardStepStatus.OK != wizardStep.getWizardStepStatus()) {
 				final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
-				if (betreuungenFromGesuch.stream().allMatch(betreuung ->
-					Betreuungsstatus.VERFUEGT == betreuung.getBetreuungsstatus() ||
-						Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG == betreuung.getBetreuungsstatus() ||
-						Betreuungsstatus.NICHT_EINGETRETEN == betreuung.getBetreuungsstatus() ||
-						Betreuungsstatus.SCHULAMT == betreuung.getBetreuungsstatus())) {
-
-					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
-					wizardStep.getGesuch().setStatus(AntragStatus.VERFUEGT);
-					gesuchService.postGesuchVerfuegen(wizardStep.getGesuch());
-
-					// Hier wird das Gesuch oder die Mutation effektiv verfügt. Daher müssen hier noch andere Services gerufen werden!
-					try {
-						generatedDokumentService.getBegleitschreibenDokument(wizardStep.getGesuch());
-					} catch (MimeTypeParseException | MergeDocException e) {
-						LOG.error("Error updating Deckblatt Dokument", e);
-					}
-
-					try {
-						if (!wizardStep.getGesuch().isMutation()) {
-							// Erstgesuch
-							mailService.sendInfoVerfuegtGesuch(wizardStep.getGesuch());
-						} else {
-							// Mutation
-							mailService.sendInfoVerfuegtMutation(wizardStep.getGesuch());
-						}
-					} catch (MailException e) {
-						LOG.error("Error sending Mail zu gesuchsteller", e);
-					}
-
-					antragStatusHistoryService.saveStatusChange(wizardStep.getGesuch(), null);
+				if (betreuungenFromGesuch.stream().allMatch(betreuung -> betreuung.getBetreuungsstatus().isGeschlossen())) {
+					gesuchVerfuegen(wizardStep);
 				}
 			}
+		}
+	}
+
+	/**
+	 * In dieser Methode werden alle Sachen gemacht, die gebraucht werden, um ein Gesuch zu verfuegen.
+	 */
+	@Override
+	public void gesuchVerfuegen(@NotNull WizardStep verfuegenWizardStep) {
+		if (verfuegenWizardStep.getWizardStepName() == WizardStepName.VERFUEGEN) {
+			verfuegenWizardStep.setWizardStepStatus(WizardStepStatus.OK);
+			verfuegenWizardStep.getGesuch().setStatus(AntragStatus.VERFUEGT);
+			gesuchService.postGesuchVerfuegen(verfuegenWizardStep.getGesuch());
+
+			// Hier wird das Gesuch oder die Mutation effektiv verfügt. Daher müssen hier noch andere Services gerufen werden!
+			try {
+				generatedDokumentService.getBegleitschreibenDokument(verfuegenWizardStep.getGesuch());
+			} catch (MimeTypeParseException | MergeDocException e) {
+				LOG.error("Error updating Deckblatt Dokument", e);
+			}
+
+			try {
+				if (!verfuegenWizardStep.getGesuch().isMutation()) {
+					// Erstgesuch
+					mailService.sendInfoVerfuegtGesuch(verfuegenWizardStep.getGesuch());
+				} else {
+					// Mutation
+					mailService.sendInfoVerfuegtMutation(verfuegenWizardStep.getGesuch());
+				}
+			} catch (MailException e) {
+				LOG.error("Error sending Mail zu gesuchsteller", e);
+			}
+
+			antragStatusHistoryService.saveStatusChange(verfuegenWizardStep.getGesuch(), null);
 		}
 	}
 

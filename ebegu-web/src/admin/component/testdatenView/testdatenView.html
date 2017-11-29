@@ -299,6 +299,28 @@
                 </div>
             </div>
 
+            <!-- verfuegen -->
+            <h2 class="marginTop20">
+                <span data-translate="VERFUEGEN"></span>
+            </h2>
+            <div class="row">
+                <div class="col-md-12 dv-input-container-small">
+                    <dv-input-container class="form-group">
+                        <label class="md-no-float" data-translate="GESUCH_ID" for="verfuegenGesuchid">
+                        </label>
+                        <input id="verfuegenGesuchid" type="text" name="verfuegenGesuchid" ng-model="vm.verfuegenGesuchid"
+                               dv-max-length class="form-control" style="background: #F0F0F0;">
+                    </dv-input-container>
+                </div>
+                <div>
+                    <br/>
+                    <button type="button" class="btn-verfuegenGesuch"
+                            ng-click="vm.gesuchVerfuegen()">
+                        <span>Gesuch verfügen</span>
+                    </button>
+                </div>
+            </div>
+
             <!-- Schulungsdaten -->
             <div class="row marginTop10">
                 <div class="viewTitle marginTop10">
