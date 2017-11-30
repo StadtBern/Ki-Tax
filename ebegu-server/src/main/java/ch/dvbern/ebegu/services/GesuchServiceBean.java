@@ -95,6 +95,7 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -190,11 +191,27 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			authorizer.checkWriteAuthorization(gesuch);
 		}
 		Objects.requireNonNull(gesuch);
-		final Gesuch merged = persistence.merge(gesuch);
+		final Gesuch gesuchToMerge = removeFinanzieleSituationIfNeeded(gesuch);
+		final Gesuch merged = persistence.merge(gesuchToMerge);
 		if (saveInStatusHistory) {
 			antragStatusHistoryService.saveStatusChange(merged, saveAsUser);
 		}
 		return merged;
+	}
+
+	private Gesuch removeFinanzieleSituationIfNeeded(@Nonnull Gesuch gesuch) {
+		if (!EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
+			if (gesuch.getGesuchsteller1() != null) {
+				gesuch.getGesuchsteller1().setFinanzielleSituationContainer(null);
+				gesuch.getGesuchsteller1().setEinkommensverschlechterungContainer(null);
+			}
+			if (gesuch.getGesuchsteller2() != null) {
+				gesuch.getGesuchsteller2().setFinanzielleSituationContainer(null);
+				gesuch.getGesuchsteller2().setEinkommensverschlechterungContainer(null);
+			}
+			gesuch.setEinkommensverschlechterungInfoContainer(null);
+		}
+		return gesuch;
 	}
 
 	@Nonnull
