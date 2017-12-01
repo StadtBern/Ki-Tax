@@ -64,10 +64,12 @@ import ch.dvbern.ebegu.entities.Betreuung_;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Fall_;
+import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuch_;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Gesuchsperiode_;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer_;
 import ch.dvbern.ebegu.entities.Gesuchsteller_;
 import ch.dvbern.ebegu.entities.Institution;
@@ -199,19 +201,31 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return merged;
 	}
 
-	private Gesuch removeFinanzieleSituationIfNeeded(@Nonnull Gesuch gesuch) {
+	private Gesuch removeFinanzieleSituationIfNeeded(@NotNull Gesuch gesuch) {
 		if (!EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
-			if (gesuch.getGesuchsteller1() != null) {
-				gesuch.getGesuchsteller1().setFinanzielleSituationContainer(null);
-				gesuch.getGesuchsteller1().setEinkommensverschlechterungContainer(null);
-			}
-			if (gesuch.getGesuchsteller2() != null) {
-				gesuch.getGesuchsteller2().setFinanzielleSituationContainer(null);
-				gesuch.getGesuchsteller2().setEinkommensverschlechterungContainer(null);
-			}
+			resetFieldsFamiliensituation(gesuch);
+			removeFinanzielleSituationGS(gesuch.getGesuchsteller1());
+			removeFinanzielleSituationGS(gesuch.getGesuchsteller2());
 			gesuch.setEinkommensverschlechterungInfoContainer(null);
 		}
 		return gesuch;
+	}
+
+	private void removeFinanzielleSituationGS(@Nullable GesuchstellerContainer gesuchsteller) {
+		if (gesuchsteller != null) {
+			gesuchsteller.setFinanzielleSituationContainer(null);
+			gesuchsteller.setEinkommensverschlechterungContainer(null);
+		}
+	}
+
+	private void resetFieldsFamiliensituation(@NotNull Gesuch gesuch) {
+		final Familiensituation familiensituation = gesuch.extractFamiliensituation();
+		if (familiensituation != null) {
+			if (Objects.equals(true, familiensituation.getSozialhilfeBezueger())) {
+				familiensituation.setVerguenstigungGewuenscht(null);
+			}
+			familiensituation.setGemeinsameSteuererklaerung(null);
+		}
 	}
 
 	@Nonnull

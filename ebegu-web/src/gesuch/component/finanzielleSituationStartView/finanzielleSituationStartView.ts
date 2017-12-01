@@ -50,8 +50,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     areThereOnlyFerieninsel: boolean;
     allowedRoles: Array<TSRoleUtil>;
     private initialModel: TSFinanzModel;
-    private sozialhilfeInitialValue: boolean;
-    private verguenstigungInitialValue: boolean;
+
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService',
         'WizardStepManager', '$q', '$scope', '$timeout', 'DvDialog'];
@@ -64,17 +63,12 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
 
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
         this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
-        this.setInitialValues();
+        this.initialModel = angular.copy(this.model);
 
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.areThereOnlySchulamtangebote = this.gesuchModelManager.areThereOnlySchulamtAngebote(); // so we load it just once
         this.areThereOnlyFerieninsel = this.gesuchModelManager.areThereOnlyFerieninsel(); // so we load it just once
-    }
-
-    private setInitialValues(): void {
-        this.sozialhilfeInitialValue = this.model.sozialhilfeBezueger;
-        this.verguenstigungInitialValue = this.model.verguenstigungGewuenscht;
     }
 
     showSteuerveranlagung(): boolean {
@@ -101,13 +95,12 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     private confirmAndSave(): IPromise<TSGesuch> {
         if (this.isGesuchValid()) {
             this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
-            this.initialModel = angular.copy(this.model);
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getGesuch());
             }
-            if (this.initialValuesChanged()) {
+            if (this.finanzielleSituationTurnedNotRequired()) {
                 return this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
                     title: 'FINSIT_WARNING',
                     deleteText: 'FINSIT_WARNING_BESCHREIBUNG',
@@ -123,9 +116,8 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
         return undefined;
     }
 
-    public initialValuesChanged(): boolean {
-        return (this.model.sozialhilfeBezueger === true && this.sozialhilfeInitialValue !== true)
-            || (this.model.verguenstigungGewuenscht === false && this.verguenstigungInitialValue === true);
+    public finanzielleSituationTurnedNotRequired(): boolean {
+        return this.initialModel.isFinanzielleSituationRequired() && !this.model.isFinanzielleSituationRequired();
     }
 
     public getFinanzielleSituationGS1(): TSFinanzielleSituation {

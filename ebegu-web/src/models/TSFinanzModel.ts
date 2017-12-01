@@ -323,4 +323,11 @@ export default class TSFinanzModel {
     getBasisJahrPlus() {
         return this.basisjahrPlus;
     }
+
+    /**
+     * Indicates whether FinSit must be filled out or not. It supposes that it is enabled.
+     */
+    public isFinanzielleSituationRequired(): boolean {
+        return this.verguenstigungGewuenscht && !this.sozialhilfeBezueger;
+    }
 }
