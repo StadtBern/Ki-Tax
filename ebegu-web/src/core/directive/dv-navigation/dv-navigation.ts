@@ -331,7 +331,7 @@ export class NavigatorController {
                     this.navigateToStepFinanzielleSituation('1');
 
                 } else if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && (this.gesuchModelManager.isGesuchsteller2Required()
-                    || this.gesuchModelManager.areThereOnlySchulamtAngebote())) {
+                    || (this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung() && this.gesuchModelManager.areThereOnlySchulamtAngebote()))) {
                     this.navigateToStep(TSWizardStepName.FINANZIELLE_SITUATION);
                 } else {
                     this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch()));
@@ -417,10 +417,12 @@ export class NavigatorController {
             });
 
         } else if (stepName === TSWizardStepName.FINANZIELLE_SITUATION) {
-            if (this.gesuchModelManager.isGesuchsteller2Required() || this.gesuchModelManager.areThereOnlySchulamtAngebote()) {
+            if (this.gesuchModelManager.showFinanzielleSituationStart()) {
+
                 this.state.go('gesuch.finanzielleSituationStart', {
                     gesuchId: this.getGesuchId()
                 });
+
             } else {
                 this.state.go('gesuch.finanzielleSituation', {
                     gesuchstellerNumber: '1',

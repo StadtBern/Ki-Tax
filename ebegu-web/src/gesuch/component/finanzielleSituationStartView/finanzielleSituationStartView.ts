@@ -132,6 +132,10 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
         return this.finanzielleSituationRequired;
     }
 
+    private hasTagesschulenAnmeldung(): boolean {
+        return this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung();
+    }
+
     public gemeinsameStekClicked(): void {
         if (this.model.gemeinsameSteuererklaerung === false && this.model.finanzielleSituationContainerGS1 && !this.model.finanzielleSituationContainerGS1.isNew()) {
             // Wenn neu NEIN und schon was eingegeben -> Fragen mal auf false setzen und Status auf nok damit man sicher noch weiter muss!

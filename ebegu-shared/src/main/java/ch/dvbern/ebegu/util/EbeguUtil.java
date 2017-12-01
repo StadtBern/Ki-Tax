@@ -115,8 +115,9 @@ public class EbeguUtil {
 	}
 
 	public static boolean isFinanzielleSituationRequired(@NotNull Gesuch gesuch) {
-		return gesuch.getFamiliensituationContainer() != null && gesuch.getFamiliensituationContainer().getFamiliensituationJA() != null
+		return !gesuch.getGesuchsperiode().hasTagesschulenAnmeldung() ||
+			(gesuch.getFamiliensituationContainer() != null && gesuch.getFamiliensituationContainer().getFamiliensituationJA() != null
 			&& Objects.equals(false, gesuch.getFamiliensituationContainer().getFamiliensituationJA().getSozialhilfeBezueger())
-			&& Objects.equals(true, gesuch.getFamiliensituationContainer().getFamiliensituationJA().getVerguenstigungGewuenscht());
+			&& Objects.equals(true, gesuch.getFamiliensituationContainer().getFamiliensituationJA().getVerguenstigungGewuenscht()));
 	}
 }
