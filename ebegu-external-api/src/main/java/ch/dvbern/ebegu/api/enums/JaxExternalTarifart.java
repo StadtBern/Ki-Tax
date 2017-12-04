@@ -18,7 +18,7 @@ package ch.dvbern.ebegu.api.enums;
 /**
  * Enum fuer die Tarifart eines Gesuchs
  */
-public enum JaxTarifart {
+public enum JaxExternalTarifart {
 
 	VOLLZAHLER,
 	BASISZAHLER,

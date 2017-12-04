@@ -14,40 +14,50 @@
  */
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsangebotTyp;
-import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsstatus;
+import ch.dvbern.ebegu.api.enums.JaxExternalErrorCode;
 
 import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 /**
- * DTO für die Anmeldung eines Ferieninsel-Angebots für die externe Schnittstelle
+ * ErrorObjekt für eine Anmeldung eines Schulamt-Angebots (Tagesschule oder Ferieninsel) für die externe Schnittstelle
  */
-@XmlRootElement(name = "anmeldungFerieninsel")
-public class JaxExternalAnmeldungFerieninsel extends JaxExternalAnmeldung {
+@XmlRootElement(name = "error")
+public class JaxExternalError implements Serializable {
 
 	private static final long serialVersionUID = 5211944101244853396L;
 
+	@Nonnull
+	private String description;
 
 	@Nonnull
-	private JaxExternalFerieninsel ferieninsel;
+	private JaxExternalErrorCode externalErrorCode;
 
-	public JaxExternalAnmeldungFerieninsel(
-		@Nonnull String bgNummer,
-		@Nonnull JaxExternalBetreuungsstatus betreuungsstatus,
-		@Nonnull String keyInstitution,
-		@Nonnull JaxExternalFerieninsel ferieninsel) {
 
-		super(bgNummer, betreuungsstatus, JaxExternalBetreuungsangebotTyp.FERIENINSEL, keyInstitution);
-		this.ferieninsel = ferieninsel;
+	public JaxExternalError(
+		@Nonnull JaxExternalErrorCode externalErrorCode,
+		@Nonnull String description) {
+
+		this.externalErrorCode = externalErrorCode;
+		this.description = description;
 	}
 
 	@Nonnull
-	public JaxExternalFerieninsel getFerieninsel() {
-		return ferieninsel;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setFerieninsel(@Nonnull JaxExternalFerieninsel ferieninsel) {
-		this.ferieninsel = ferieninsel;
+	public void setDescription(@Nonnull String description) {
+		this.description = description;
+	}
+
+	@Nonnull
+	public JaxExternalErrorCode getExternalErrorCode() {
+		return externalErrorCode;
+	}
+
+	public void setExternalErrorCode(@Nonnull JaxExternalErrorCode externalErrorCode) {
+		this.externalErrorCode = externalErrorCode;
 	}
 }

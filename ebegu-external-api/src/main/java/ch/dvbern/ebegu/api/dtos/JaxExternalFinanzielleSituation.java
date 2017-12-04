@@ -14,17 +14,16 @@
  */
 package ch.dvbern.ebegu.api.dtos;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import ch.dvbern.ebegu.api.enums.JaxExternalAntragstatus;
+import ch.dvbern.ebegu.api.enums.JaxExternalTarifart;
+import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 
 import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import ch.dvbern.ebegu.api.enums.JaxAntragstatus;
-import ch.dvbern.ebegu.api.enums.JaxTarifart;
-import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 /**
  * DTO für die Finanzielle Situation für die externe Schnittstelle
@@ -45,10 +44,10 @@ public class JaxExternalFinanzielleSituation implements Serializable {
 	private BigDecimal massgebendesEinkommen;
 
 	@Nonnull
-	private JaxAntragstatus antragStatus;
+	private JaxExternalAntragstatus antragStatus;
 
 	@Nonnull
-	private JaxTarifart tarifart;
+	private JaxExternalTarifart tarifart;
 
 	//TODO (team) Massgebendes Einkommen VOR Familienabzug?
 	//TODO (team) Müsste hier nicht die Rechnungsadresse noch rein?
@@ -58,8 +57,8 @@ public class JaxExternalFinanzielleSituation implements Serializable {
 		@Nonnull Long fallNummer,
 		@Nonnull LocalDate stichtag,
 		@Nonnull BigDecimal massgebendesEinkommen,
-		@Nonnull JaxAntragstatus antragStatus,
-		@Nonnull JaxTarifart tarifart) {
+		@Nonnull JaxExternalAntragstatus antragStatus,
+		@Nonnull JaxExternalTarifart tarifart) {
 
 		this.fallNummer = fallNummer;
 		this.stichtag = stichtag;
@@ -96,20 +95,20 @@ public class JaxExternalFinanzielleSituation implements Serializable {
 	}
 
 	@Nonnull
-	public JaxAntragstatus getAntragStatus() {
+	public JaxExternalAntragstatus getAntragStatus() {
 		return antragStatus;
 	}
 
-	public void setAntragStatus(@Nonnull JaxAntragstatus antragStatus) {
+	public void setAntragStatus(@Nonnull JaxExternalAntragstatus antragStatus) {
 		this.antragStatus = antragStatus;
 	}
 
 	@Nonnull
-	public JaxTarifart getTarifart() {
+	public JaxExternalTarifart getTarifart() {
 		return tarifart;
 	}
 
-	public void setTarifart(@Nonnull JaxTarifart tarifart) {
+	public void setTarifart(@Nonnull JaxExternalTarifart tarifart) {
 		this.tarifart = tarifart;
 	}
 }
