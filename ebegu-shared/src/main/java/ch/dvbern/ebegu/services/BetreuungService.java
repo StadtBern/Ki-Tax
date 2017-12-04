@@ -87,7 +87,7 @@ public interface BetreuungService {
 
 	/**
 	 * @param betreuungNummer betreuungNummer der Betreuung
-	 * @return Betreuung mit der angegebenen Nummer oder null falls nicht vorhanden
+	 * @return Betreuung mit der angegebenen ID (z.B. 18.000116.1.2) oder null falls nicht vorhanden
 	 */
 	List<Betreuung> findBetreuungByBetreuungId(@Nonnull String betreuungId);
 
