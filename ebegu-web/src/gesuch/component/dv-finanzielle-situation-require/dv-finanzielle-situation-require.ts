@@ -72,10 +72,6 @@ export class DVFinanzielleSituationRequireController {
         return this.showSozialhilfeBezueger() && this.sozialhilfeBezueger === false;
     }
 
-    public sozialhilfeBezuegerClicked(): void {
-        // todo umsetzen -> wird gebraucht???
-    }
-
     public setFinanziellesituationRequired(): void {
         this.finanzielleSituationRequired = !this.showSozialhilfeBezueger()
             || (this.showVerguenstigungGewuenscht() && this.verguenstigungGewuenscht === true);

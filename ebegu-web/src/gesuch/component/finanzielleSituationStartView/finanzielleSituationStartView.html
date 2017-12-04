@@ -39,14 +39,17 @@
                 </div>
 
                 <div ng-if="!vm.areThereOnlyFerieninsel">
-                    <dv-finanzielle-situation-require sozialhilfe-bezueger="vm.model.sozialhilfeBezueger"
-                                                      verguenstigung-gewuenscht="vm.model.verguenstigungGewuenscht"
-                                                      finanzielle-situation-required="vm.finanzielleSituationRequired"
-                                                      are-there-only-schulamtangebote="vm.areThereOnlySchulamtangebote">
-                    </dv-finanzielle-situation-require>
+
+                    <div ng-if="vm.hasTagesschulenAnmeldung()">
+                        <dv-finanzielle-situation-require sozialhilfe-bezueger="vm.model.sozialhilfeBezueger"
+                                                          verguenstigung-gewuenscht="vm.model.verguenstigungGewuenscht"
+                                                          finanzielle-situation-required="vm.finanzielleSituationRequired"
+                                                          are-there-only-schulamtangebote="vm.areThereOnlySchulamtangebote">
+                        </dv-finanzielle-situation-require>
+                    </div>
 
 
-                    <div ng-if="vm.isFinanziellesituationRequired() && vm.is2GSRequired()">
+                    <div ng-if="!vm.hasTagesschulenAnmeldung() || (vm.isFinanziellesituationRequired() && vm.is2GSRequired())">
                         <!-- Gemeinsame Steuererklaerung -->
                         <div class="row">
                             <div class="col-xs-12 dv-input-container-question">
@@ -115,7 +118,7 @@
                     </div>
                 </div>
                 <!--Buttons-->
-                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save()" dv-sub-step="2">
+                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.confirmAndSave()" dv-sub-step="2">
                 </dv-navigation>
             </form>
         </div>

@@ -825,6 +825,8 @@
     "FAMILIENSITUATION_WARNING_BESCHREIBUNG": "Der/die Gesuchsteller/in {{gsfullname}} und alle seine Daten werden damit auch gelöscht.",
     "EINKVERS_WARNING": "Wollen Sie diese Änderungen wirklich speichern?",
     "EINKVERS_WARNING_BESCHREIBUNG": "Die bereits eingetragenen Daten von der Einkommensverschlechterung werden damit gelöscht",
+    "FINSIT_WARNING": "Wollen Sie diese Änderungen wirklich speichern?",
+    "FINSIT_WARNING_BESCHREIBUNG": "Die bereits eingetragenen Daten der finanziellen Situation und Einkommensverschlechterung werden damit gelöscht",
     "IN_BEARBEITUNG_GS": "In Bearbeitung Gesuchsteller/in",
     "FREIGABEQUITTUNG": "Freigabequittung ausstehend",
     "NUR_SCHULAMT": "Schulamt",
