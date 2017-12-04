@@ -262,6 +262,9 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		Optional<Verfuegung> entityToRemove = this.findVerfuegung(verfuegung.getId());
 		Verfuegung loadedVerf = entityToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, verfuegung));
 		authorizer.checkWriteAuthorization(loadedVerf);
+		loadedVerf.getZeitabschnitte().forEach(verfuegungZeitabschnitt ->
+			persistence.remove(verfuegungZeitabschnitt)
+		);
 		persistence.remove(loadedVerf);
 	}
 

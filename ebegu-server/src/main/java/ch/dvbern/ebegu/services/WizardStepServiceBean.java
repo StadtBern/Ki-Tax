@@ -35,6 +35,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Betreuung;
@@ -64,8 +67,6 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRole.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_INSTITUTION;
@@ -319,33 +320,42 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 				&& WizardStepStatus.OK != wizardStep.getWizardStepStatus()) {
 				final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
 				if (betreuungenFromGesuch.stream().allMatch(betreuung -> betreuung.getBetreuungsstatus().isGeschlossen())) {
-
-					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
-					wizardStep.getGesuch().setStatus(AntragStatus.VERFUEGT);
-					gesuchService.postGesuchVerfuegen(wizardStep.getGesuch());
-
-					// Hier wird das Gesuch oder die Mutation effektiv verfügt. Daher müssen hier noch andere Services gerufen werden!
-					try {
-						generatedDokumentService.getBegleitschreibenDokument(wizardStep.getGesuch());
-					} catch (MimeTypeParseException | MergeDocException e) {
-						LOG.error("Error updating Deckblatt Dokument", e);
-					}
-
-					try {
-						if (!wizardStep.getGesuch().isMutation()) {
-							// Erstgesuch
-							mailService.sendInfoVerfuegtGesuch(wizardStep.getGesuch());
-						} else {
-							// Mutation
-							mailService.sendInfoVerfuegtMutation(wizardStep.getGesuch());
-						}
-					} catch (MailException e) {
-						LOG.error("Error sending Mail zu gesuchsteller", e);
-					}
-
-					antragStatusHistoryService.saveStatusChange(wizardStep.getGesuch(), null);
+					gesuchVerfuegen(wizardStep);
 				}
 			}
+		}
+	}
+
+	/**
+	 * In dieser Methode werden alle Sachen gemacht, die gebraucht werden, um ein Gesuch zu verfuegen.
+	 */
+	@Override
+	public void gesuchVerfuegen(@NotNull WizardStep verfuegenWizardStep) {
+		if (verfuegenWizardStep.getWizardStepName() == WizardStepName.VERFUEGEN) {
+			verfuegenWizardStep.setWizardStepStatus(WizardStepStatus.OK);
+			verfuegenWizardStep.getGesuch().setStatus(AntragStatus.VERFUEGT);
+			gesuchService.postGesuchVerfuegen(verfuegenWizardStep.getGesuch());
+
+			// Hier wird das Gesuch oder die Mutation effektiv verfügt. Daher müssen hier noch andere Services gerufen werden!
+			try {
+				generatedDokumentService.getBegleitschreibenDokument(verfuegenWizardStep.getGesuch());
+			} catch (MimeTypeParseException | MergeDocException e) {
+				LOG.error("Error updating Deckblatt Dokument", e);
+			}
+
+			try {
+				if (!verfuegenWizardStep.getGesuch().isMutation()) {
+					// Erstgesuch
+					mailService.sendInfoVerfuegtGesuch(verfuegenWizardStep.getGesuch());
+				} else {
+					// Mutation
+					mailService.sendInfoVerfuegtMutation(verfuegenWizardStep.getGesuch());
+				}
+			} catch (MailException e) {
+				LOG.error("Error sending Mail zu gesuchsteller", e);
+			}
+
+			antragStatusHistoryService.saveStatusChange(verfuegenWizardStep.getGesuch(), null);
 		}
 	}
 
@@ -398,7 +408,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 	private WizardStepStatus getWizardStepStatusOkOrMutiert(WizardStep wizardStep) {
 		if (AntragTyp.MUTATION != wizardStep.getGesuch().getTyp()) {
-			// just to avoid doing the calculation for Mutation if it is not needed
+			// just to avoid doing the calculation for Gesuche that are not of Type Mutation if it is not needed
 			return WizardStepStatus.OK;
 		}
 
@@ -470,7 +480,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 				}
 			}
 		} else if (WizardStepName.DOKUMENTE == wizardStepName) {
-			relatedObjects.addAll(dokumentGrundService.findAllDokumentGrundByGesuch(gesuch));
+			relatedObjects.addAll(dokumentGrundService.findAllDokumentGrundByGesuch(gesuch, false));
 		}
 		return relatedObjects;
 	}

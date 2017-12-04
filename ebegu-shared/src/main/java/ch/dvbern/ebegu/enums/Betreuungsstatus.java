@@ -46,9 +46,13 @@ public enum Betreuungsstatus {
 	public static final Set<Betreuungsstatus> hasVerfuegung = EnumSet.of(VERFUEGT, NICHT_EINGETRETEN);
 	public static final Set<Betreuungsstatus> forPendenzInstitution = EnumSet.of(WARTEN, SCHULAMT_ANMELDUNG_AUSGELOEST);
 
-	public boolean isGeschlossen() {
+	public boolean isGeschlossenJA() {
 		return VERFUEGT == this || GESCHLOSSEN_OHNE_VERFUEGUNG == this || NICHT_EINGETRETEN == this
 			|| SCHULAMT_ANMELDUNG_UEBERNOMMEN == this || SCHULAMT_ANMELDUNG_ABGELEHNT == this;
+	}
+
+	public boolean isGeschlossen() {
+		return VERFUEGT == this || GESCHLOSSEN_OHNE_VERFUEGUNG == this || NICHT_EINGETRETEN == this || SCHULAMT == this;
 	}
 
 	public boolean isAnyStatusOfVerfuegt() {
