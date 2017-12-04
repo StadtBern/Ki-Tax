@@ -29,9 +29,12 @@ import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import TSGesuch from '../../../models/TSGesuch';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 
 let template = require('./finanzielleSituationStartView.html');
 require('./finanzielleSituationStartView.less');
+let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 
 export class FinanzielleSituationStartViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -48,16 +51,19 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     allowedRoles: Array<TSRoleUtil>;
     private initialModel: TSFinanzModel;
 
+
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService',
-        'WizardStepManager', '$q', '$scope', '$timeout'];
+        'WizardStepManager', '$q', '$scope', '$timeout', 'DvDialog'];
 
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, $timeout: ITimeoutService) {
+                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, $timeout: ITimeoutService,
+                private dvDialog: DvDialog) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FINANZIELLE_SITUATION, $timeout);
 
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
         this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
+        this.initialModel = angular.copy(this.model);
 
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
@@ -74,26 +80,44 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     private save(): IPromise<TSGesuch> {
+        this.errorService.clearAll();
+        return this.gesuchModelManager.updateGesuch()
+            .then((gesuch: TSGesuch) => {
+                // Noetig, da nur das ganze Gesuch upgedated wird und die Aeenderng bei der FinSit sonst nicht
+                // bemerkt werden
+                if (this.gesuchModelManager.getGesuch().isMutation()) {
+                    this.wizardStepManager.updateCurrentWizardStepStatusMutiert();
+                }
+                return gesuch;
+            });
+    }
+
+    private confirmAndSave(): IPromise<TSGesuch> {
         if (this.isGesuchValid()) {
             this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
-            this.initialModel = angular.copy(this.model);
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getGesuch());
             }
-            this.errorService.clearAll();
-            return this.gesuchModelManager.updateGesuch()
-                .then((gesuch: TSGesuch) => {
-                    // Noetig, da nur das ganze Gesuch upgedated wird und die Aeenderng bei der FinSit sonst nicht
-                    // bemerkt werden
-                    if (this.gesuchModelManager.getGesuch().isMutation()) {
-                        this.wizardStepManager.updateCurrentWizardStepStatusMutiert();
-                    }
-                    return gesuch;
+            if (this.finanzielleSituationTurnedNotRequired()) {
+                return this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                    title: 'FINSIT_WARNING',
+                    deleteText: 'FINSIT_WARNING_BESCHREIBUNG',
+                    parentController: undefined,
+                    elementID: undefined
+                }).then(() => {   //User confirmed changes
+                    return this.save();
                 });
+            } else {
+                return this.save();
+            }
         }
         return undefined;
+    }
+
+    public finanzielleSituationTurnedNotRequired(): boolean {
+        return this.initialModel.isFinanzielleSituationRequired() && !this.model.isFinanzielleSituationRequired();
     }
 
     public getFinanzielleSituationGS1(): TSFinanzielleSituation {
@@ -106,6 +130,10 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
 
     public isFinanziellesituationRequired(): boolean {
         return this.finanzielleSituationRequired;
+    }
+
+    private hasTagesschulenAnmeldung(): boolean {
+        return this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung();
     }
 
     public gemeinsameStekClicked(): void {

@@ -1417,9 +1417,24 @@ export default class GesuchModelManager {
         return this.erwerbspensumRS.isErwerbspensumRequired(gesuchId);
     }
 
+    /**
+     * Indicates whether the FinSit is available to be filled out or not.
+     */
+    public isFinanzielleSituationEnabled(): boolean {
+        return !this.areThereOnlyFerieninsel();
+    }
+
+    /**
+     * Indicates whether FinSit must be filled out or not. It supposes that it is enabled.
+     */
     public isFinanzielleSituationRequired(): boolean {
-        return !this.areThereOnlyFerieninsel() || !this.areThereOnlySchulamtAngebote()
-            || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht
-                && !this.getGesuch().extractFamiliensituation().sozialhilfeBezueger);
+        return !this.getGesuchsperiode().hasTagesschulenAnmeldung() ||
+            (!this.areThereOnlySchulamtAngebote() || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht
+                && !this.getGesuch().extractFamiliensituation().sozialhilfeBezueger));
+    }
+
+    public showFinanzielleSituationStart(): boolean {
+        return this.isGesuchsteller2Required() ||
+            (this.getGesuchsperiode().hasTagesschulenAnmeldung() && this.areThereOnlySchulamtAngebote());
     }
 }

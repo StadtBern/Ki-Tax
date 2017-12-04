@@ -436,7 +436,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		mutation.setKind(kindContainerMutation);
 		mutation.setInstitutionStammdaten(this.getInstitutionStammdaten());
 		// Bereits verfuegte Betreuungen werden als BESTAETIGT kopiert, alle anderen behalten ihren Status
-		if (this.getBetreuungsstatus().isGeschlossen()) {
+		if (this.getBetreuungsstatus().isGeschlossenJA()) {
 			if (!isAngebotSchulamt()) {
 				// Falls sämtliche Betreuungspensum-Container dieser Betreuung ein effektives Pensum von 0 haben, handelt es sich um die
 				// Verfügung eines stornierten Platzes. Wir übernehmen diesen als "STORNIERT"

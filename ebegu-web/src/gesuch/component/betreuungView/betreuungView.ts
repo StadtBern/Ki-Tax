@@ -254,13 +254,17 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     /**
-     * Entfernt alle Module die nicht als angemeldet markiert sind
+     * Entfernt alle Module die nicht als angemeldet markiert sind. Nur fuer Gesuchsperiode in denen die Tagesschuleanmeldung
+     * aktiv ist.
      */
-    public filterOnlyAngemeldeteModule() {
-        // noinspection UnnecessaryLocalVariableJS
-        let angemeldeteModule: TSModulTagesschule[] = this.getBetreuungModel().belegungTagesschule.moduleTagesschule
-            .filter(modul => modul.angemeldet === true);
-        this.getBetreuungModel().belegungTagesschule.moduleTagesschule = angemeldeteModule;
+    public filterOnlyAngemeldeteModule(): void {
+        if (this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung() &&
+            this.getBetreuungModel().belegungTagesschule && this.getBetreuungModel().belegungTagesschule.moduleTagesschule) {
+            // noinspection UnnecessaryLocalVariableJS
+            let angemeldeteModule: TSModulTagesschule[] = this.getBetreuungModel().belegungTagesschule.moduleTagesschule
+                .filter(modul => modul.angemeldet === true);
+            this.getBetreuungModel().belegungTagesschule.moduleTagesschule = angemeldeteModule;
+        }
     }
 
     public anmeldenSchulamt(): void {

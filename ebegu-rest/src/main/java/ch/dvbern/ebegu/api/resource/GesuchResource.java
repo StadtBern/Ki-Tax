@@ -45,6 +45,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.resource.util.ResourceHelper;
@@ -788,5 +789,25 @@ public class GesuchResource {
 		}
 		Gesuch gesuchToReturn = gesuchOptional.get();
 		return Response.ok(gesuchToReturn.getGesuchBetreuungenStatus()).build();
+	}
+
+	@ApiOperation(value = "verfuegt das gegebene Gesuch. Funktioniert nur bei Gesuchen, bei denen alle Betreuungen verfügt sind, der Status"
+		+ " vom Gesuch aber noch nicht als VERFUEGT gesetzt wurde.", response = JaxAntragSearchresultDTO.class)
+	@Nonnull
+	@POST
+	@Path("/gesuchVerfuegen/{gesuchId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response gesuchVerfuegen(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) {
+
+		Validate.notNull(gesuchJAXPId.getId());
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId));
+		if (!gesuchOptional.isPresent()) {
+			throw new EbeguEntityNotFoundException("gesuchVerfuegen", ErrorCodeEnum
+				.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + gesuchJAXPId.getId());
+		}
+		gesuchService.gesuchVerfuegen(gesuchOptional.get());
+		return Response.ok().build();
 	}
 }

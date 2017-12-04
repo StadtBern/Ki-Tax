@@ -64,10 +64,12 @@ import ch.dvbern.ebegu.entities.Betreuung_;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Fall_;
+import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuch_;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Gesuchsperiode_;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer_;
 import ch.dvbern.ebegu.entities.Gesuchsteller_;
 import ch.dvbern.ebegu.entities.Institution;
@@ -76,6 +78,7 @@ import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
 import ch.dvbern.ebegu.entities.Institution_;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.KindContainer_;
+import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
@@ -87,6 +90,7 @@ import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -95,6 +99,7 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -190,11 +195,39 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			authorizer.checkWriteAuthorization(gesuch);
 		}
 		Objects.requireNonNull(gesuch);
-		final Gesuch merged = persistence.merge(gesuch);
+		final Gesuch gesuchToMerge = removeFinanzieleSituationIfNeeded(gesuch);
+		final Gesuch merged = persistence.merge(gesuchToMerge);
 		if (saveInStatusHistory) {
 			antragStatusHistoryService.saveStatusChange(merged, saveAsUser);
 		}
 		return merged;
+	}
+
+	private Gesuch removeFinanzieleSituationIfNeeded(@NotNull Gesuch gesuch) {
+		if (!EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
+			resetFieldsFamiliensituation(gesuch);
+			removeFinanzielleSituationGS(gesuch.getGesuchsteller1());
+			removeFinanzielleSituationGS(gesuch.getGesuchsteller2());
+			gesuch.setEinkommensverschlechterungInfoContainer(null);
+		}
+		return gesuch;
+	}
+
+	private void removeFinanzielleSituationGS(@Nullable GesuchstellerContainer gesuchsteller) {
+		if (gesuchsteller != null) {
+			gesuchsteller.setFinanzielleSituationContainer(null);
+			gesuchsteller.setEinkommensverschlechterungContainer(null);
+		}
+	}
+
+	private void resetFieldsFamiliensituation(@NotNull Gesuch gesuch) {
+		final Familiensituation familiensituation = gesuch.extractFamiliensituation();
+		if (familiensituation != null) {
+			if (Objects.equals(true, familiensituation.getSozialhilfeBezueger())) {
+				familiensituation.setVerguenstigungGewuenscht(null);
+			}
+			familiensituation.setGemeinsameSteuererklaerung(null);
+		}
 	}
 
 	@Nonnull
@@ -1302,6 +1335,19 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			}
 		}
 		persistence.merge(gesuch);
+	}
+
+	@Override
+	public void gesuchVerfuegen(@NotNull Gesuch gesuch) {
+		if (gesuch.getStatus() != AntragStatus.VERFUEGT) {
+			final WizardStep verfuegenStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.VERFUEGEN);
+			if (verfuegenStep.getWizardStepStatus() == WizardStepStatus.OK) {
+				final List<Betreuung> allBetreuungen = gesuch.extractAllBetreuungen();
+				if (allBetreuungen.stream().allMatch(betreuung -> betreuung.getBetreuungsstatus().isGeschlossen())) {
+					wizardStepService.gesuchVerfuegen(verfuegenStep);
+				}
+			}
+		}
 	}
 
 	@Nonnull

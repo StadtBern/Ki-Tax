@@ -62,8 +62,8 @@ export class GesuchRouteController {
         this.TSRoleUtil = TSRoleUtil;
     }
 
-    showFinanzsituationStart(): boolean {
-        return this.gesuchModelManager.isGesuchsteller2Required() || this.gesuchModelManager.areThereOnlySchulamtAngebote();
+    showFinanzielleSituationStart(): boolean {
+        return this.gesuchModelManager.showFinanzielleSituationStart();
     }
 
     public getDateFromGesuch(): string {

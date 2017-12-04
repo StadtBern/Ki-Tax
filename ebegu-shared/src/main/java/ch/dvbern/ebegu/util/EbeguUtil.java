@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Dokument;
@@ -111,5 +112,12 @@ public class EbeguUtil {
 			return dokumente.size() == otherDokumente.size();
 		}
 		return false;
+	}
+
+	public static boolean isFinanzielleSituationRequired(@NotNull Gesuch gesuch) {
+		return !gesuch.getGesuchsperiode().hasTagesschulenAnmeldung() ||
+			(gesuch.getFamiliensituationContainer() != null && gesuch.getFamiliensituationContainer().getFamiliensituationJA() != null
+			&& Objects.equals(false, gesuch.getFamiliensituationContainer().getFamiliensituationJA().getSozialhilfeBezueger())
+			&& Objects.equals(true, gesuch.getFamiliensituationContainer().getFamiliensituationJA().getVerguenstigungGewuenscht()));
 	}
 }
