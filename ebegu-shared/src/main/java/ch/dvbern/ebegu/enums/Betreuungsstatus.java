@@ -42,8 +42,12 @@ public enum Betreuungsstatus {
 
 	private static final Set<Betreuungsstatus> forSachbearbeiterTraegerschaftRole = forSachbearbeiterInstitutionRole;
 
-	public boolean isGeschlossen() {
+	public boolean isGeschlossenJA() {
 		return VERFUEGT.equals(this) || GESCHLOSSEN_OHNE_VERFUEGUNG.equals(this) || NICHT_EINGETRETEN.equals(this);
+	}
+
+	public boolean isGeschlossen() {
+		return VERFUEGT == this || GESCHLOSSEN_OHNE_VERFUEGUNG == this || NICHT_EINGETRETEN == this || SCHULAMT == this;
 	}
 
 	public boolean isAnyStatusOfVerfuegt() {

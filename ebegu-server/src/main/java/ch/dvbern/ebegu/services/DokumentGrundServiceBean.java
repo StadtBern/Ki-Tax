@@ -115,8 +115,17 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 	@Override
 	@Nonnull
 	public Collection<DokumentGrund> findAllDokumentGrundByGesuch(@Nonnull Gesuch gesuch) {
+		return this.findAllDokumentGrundByGesuch(gesuch, true);
+
+	}
+
+	@Nonnull
+	@Override
+	public Collection<DokumentGrund> findAllDokumentGrundByGesuch(@Nonnull Gesuch gesuch, boolean doAuthCheck) {
 		Objects.requireNonNull(gesuch);
-		this.authorizer.checkReadAuthorization(gesuch);
+		if (doAuthCheck) {
+			this.authorizer.checkReadAuthorization(gesuch);
+		}
 		Collection<DokumentGrund> dokumentGrunds = criteriaQueryHelper.getEntitiesByAttribute(DokumentGrund.class, gesuch, DokumentGrund_.gesuch);
 		setSonstigeNeededFalse(dokumentGrunds);
 		return dokumentGrunds;

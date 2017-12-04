@@ -28,6 +28,7 @@ import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import ZahlungRS from '../../../core/service/zahlungRS.rest';
 import {ApplicationPropertyRS} from '../../service/applicationPropertyRS.rest';
+import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
 
 require('./testdatenView.less');
 let template = require('./testdatenView.html');
@@ -42,11 +43,12 @@ export class TestdatenViewComponentConfig implements IComponentOptions {
 }
 
 export class TestdatenViewController {
-    static $inject = ['TestFaelleRS', 'DvDialog', 'UserRS',
-        'ErrorService', 'ReindexRS', 'GesuchsperiodeRS', 'DatabaseMigrationRS', 'ZahlungRS', 'ApplicationPropertyRS'];
+    static $inject = ['TestFaelleRS', 'DvDialog', 'UserRS', 'ErrorService', 'ReindexRS', 'GesuchsperiodeRS',
+        'DatabaseMigrationRS', 'ZahlungRS', 'ApplicationPropertyRS', 'GesuchRS'];
 
     testFaelleRS: TestFaelleRS;
     fallId: number;
+    verfuegenGesuchid: string;
     mutationsdatum: moment.Moment;
     aenderungperHeirat: moment.Moment;
     aenderungperScheidung: moment.Moment;
@@ -64,7 +66,8 @@ export class TestdatenViewController {
     constructor(testFaelleRS: TestFaelleRS, private dvDialog: DvDialog, private userRS: UserRS,
                 private errorService: ErrorService, private reindexRS: ReindexRS,
                 private gesuchsperiodeRS: GesuchsperiodeRS, private databaseMigrationRS: DatabaseMigrationRS,
-                private zahlungRS: ZahlungRS, private applicationPropertyRS: ApplicationPropertyRS) {
+                private zahlungRS: ZahlungRS, private applicationPropertyRS: ApplicationPropertyRS,
+                private gesuchRS: GesuchRS) {
         this.testFaelleRS = testFaelleRS;
     }
 
@@ -205,4 +208,17 @@ export class TestdatenViewController {
                 this.zahlungRS.deleteAllZahlungsauftraege();
             });
     }
+
+    public gesuchVerfuegen(): void {
+        this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+            deleteText: 'GESUCH_VERFUEGEN_DIALOG_TEXT',
+            title: 'GESUCH_VERFUEGEN_DIALOG_TITLE',
+            parentController: undefined,
+            elementID: undefined
+        })
+            .then(() => {   //User confirmed removal
+                this.gesuchRS.gesuchVerfuegen(this.verfuegenGesuchid);
+            });
+    }
+
 }

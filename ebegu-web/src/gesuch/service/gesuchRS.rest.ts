@@ -244,4 +244,8 @@ export default class GesuchRS implements IEntityRS {
                 return response.data;
             });
     }
+
+    public gesuchVerfuegen(antragId: string): IHttpPromise<any> {
+        return this.http.post(this.serviceURL + '/gesuchVerfuegen/' + encodeURIComponent(antragId), null);
+    }
 }

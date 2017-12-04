@@ -133,7 +133,7 @@ public class BetreuungsgutscheinEvaluator {
 							// es kann sein dass eine neue Betreuung in der Mutation abgelehnt wird, dann gibts keinen Vorgaenger und keine aktuelle
 							//verfuegung und wir muessen keinenr restanspruch berechnen (vergl EBEGU-890)
 							continue;
-						} else if (betreuung.getBetreuungsstatus().isGeschlossen()) {
+						} else if (betreuung.getBetreuungsstatus().isGeschlossenJA()) {
 							// Verfuegte Betreuungen duerfen nicht neu berechnet werden
 							LOG.info("Betreuung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
 							// Restanspruch muss mit Daten von Verfügung für nächste Betreuung richtig gesetzt werden

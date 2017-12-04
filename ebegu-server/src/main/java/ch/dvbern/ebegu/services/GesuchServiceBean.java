@@ -1700,6 +1700,19 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		persistence.merge(gesuch);
 	}
 
+	@Override
+	public void gesuchVerfuegen(@NotNull Gesuch gesuch) {
+		if (gesuch.getStatus() != AntragStatus.VERFUEGT) {
+			final WizardStep verfuegenStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.VERFUEGEN);
+			if (verfuegenStep.getWizardStepStatus() == WizardStepStatus.OK) {
+				final List<Betreuung> allBetreuungen = gesuch.extractAllBetreuungen();
+				if (allBetreuungen.stream().allMatch(betreuung -> betreuung.getBetreuungsstatus().isGeschlossen())) {
+					wizardStepService.gesuchVerfuegen(verfuegenStep);
+				}
+			}
+		}
+	}
+
 	@Nonnull
 	private Optional<Gesuch> getNeuestesGesuchForFallAndPeriod(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		authorizer.checkReadAuthorizationFall(fall);
