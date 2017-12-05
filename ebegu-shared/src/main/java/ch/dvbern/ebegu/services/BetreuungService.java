@@ -15,16 +15,15 @@
 
 package ch.dvbern.ebegu.services;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.validation.Valid;
-
 import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Fall;
+
+import javax.annotation.Nonnull;
+import javax.validation.Valid;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Service zum Verwalten von Betreuungen
@@ -85,6 +84,37 @@ public interface BetreuungService {
 	 */
 	@Nonnull
 	Optional<Betreuung> findBetreuung(@Nonnull String key, boolean doAuthCheck);
+
+	/**
+	 * @param betreuungNummer betreuungNummer der Betreuung
+	 * @return Betreuung mit der angegebenen ID (z.B. 18.000116.1.2) oder null falls nicht vorhanden
+	 */
+	List<Betreuung> findBetreuungByBGNummer(@Nonnull String betreuungId);
+
+	/**
+	 * Extract Fallnummer form betreuungsId
+	 * @return Extracted Fallnummer
+	 */
+	Long getFallnummerFromBetreuungsId(String betreuungsId);
+
+
+	/**
+	 * Extract Year form betreuungsId
+	 * @return Extracted year
+	 */
+	int getYearFromBGNummer(String betreuungsId);
+
+	/**
+	 * Extract KindNummer form betreuungsId
+	 * @return Extracted kindNummer
+	 */
+	int getKindNummerFromBGNummer(String betreuungsId);
+
+	/**
+	 * Extract BetreuungNummer form betreuungsId
+	 * @return Extracted BetreuungNummer
+	 */
+	int getBetreuungNummerFromBGNummer(String betreuungsId);
 
 	/**
 	 * @param key PK (id) der Betreuung

@@ -15,37 +15,12 @@
 
 package ch.dvbern.ebegu.api.resource.schulamt;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import ch.dvbern.ebegu.api.dtos.JaxExternalAnmeldung;
-import ch.dvbern.ebegu.api.dtos.JaxExternalAnmeldungFerieninsel;
-import ch.dvbern.ebegu.api.dtos.JaxExternalAnmeldungTagesschule;
-import ch.dvbern.ebegu.api.dtos.JaxExternalFerieninsel;
-import ch.dvbern.ebegu.api.dtos.JaxExternalFinanzielleSituation;
-import ch.dvbern.ebegu.api.dtos.JaxExternalModul;
-import ch.dvbern.ebegu.api.enums.JaxAntragstatus;
-import ch.dvbern.ebegu.api.enums.JaxBetreuungsstatus;
-import ch.dvbern.ebegu.api.enums.JaxExternalFerienName;
-import ch.dvbern.ebegu.api.enums.JaxExternalModulName;
-import ch.dvbern.ebegu.api.enums.JaxTarifart;
+import ch.dvbern.ebegu.api.dtos.*;
+import ch.dvbern.ebegu.api.enums.*;
 import ch.dvbern.ebegu.api.util.version.VersionInfoBean;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.util.DateUtil;
 import ch.dvbern.ebegu.util.MathUtil;
 import io.swagger.annotations.Api;
@@ -56,13 +31,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 
-import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+import javax.annotation.Nonnull;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Path("/schulamt")
 @Api(description = "Resource für die Schnittstelle zu externen Schulamt-Applikationen")
-@SuppressWarnings({ "EjbInterceptorInspection", "EjbClassBasicInspection" })
-@PermitAll
+@SuppressWarnings({"EjbInterceptorInspection", "EjbClassBasicInspection"})
 @Stateless
 public class SchulamtBackendResource {
 
@@ -71,6 +54,8 @@ public class SchulamtBackendResource {
 	@Inject
 	private VersionInfoBean versionInfoBean;
 
+	@Inject
+	private BetreuungService betreuungService;
 
 	@ApiOperation(value = "Gibt die Version von Ki-Tax zurück. Kann als Testmethode verwendet werden, da ohne Authentifizierung aufrufbar",
 		response = String.class)
@@ -93,80 +78,85 @@ public class SchulamtBackendResource {
 	@ApiOperation(value = "Gibt eine Anmeldung fuer ein Schulamt-Angebot zurueck (Tagesschule oder Ferieninsel)",
 		response = JaxExternalAnmeldung.class)
 	@ApiResponses({
-		@ApiResponse(code = 204, message = "no data found"),
-		@ApiResponse(code = 401, message = "not authorized")
+		@ApiResponse(code = 400, message = "no data found"),
+		@ApiResponse(code = 500, message = "server error")
 	})
-	@RolesAllowed(SUPER_ADMIN)
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/anmeldung/{bgNummer}")
 	public Response getAnmeldung(@Nonnull @PathParam("bgNummer") String bgNummer) {
-		Validate.notNull(bgNummer);
 
-		JaxExternalAnmeldung anmeldung;
-		if (bgNummer.endsWith("1")) {//todo dummy if
-			anmeldung = (JaxExternalAnmeldung) getAnmeldungFerieninsel(bgNummer).getEntity();
-		} else {
-			anmeldung = (JaxExternalAnmeldung) getAnmeldungTagesschule(bgNummer).getEntity();
+		try {
+			final List<Betreuung> betreuungen = betreuungService.findBetreuungByBGNummer(bgNummer);
+
+			if (betreuungen == null || betreuungen.isEmpty()) {
+				// Betreuung not found
+				return Response.status(Response.Status.BAD_REQUEST).entity(
+					new JaxExternalError(
+						JaxExternalErrorCode.NO_RESULTS,
+						"No Betreuung with id " + bgNummer + " found")).build();
+			} else if (betreuungen.size() > 1) {
+				// More than one betreuung
+				return Response.status(Response.Status.BAD_REQUEST).entity(
+					new JaxExternalError(
+						JaxExternalErrorCode.TOO_MANY_RESULTS,
+						"More than one Betreuung with id " + bgNummer + " found")).build();
+			}
+
+			final Betreuung betreuung = betreuungen.get(0);
+			if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp() == BetreuungsangebotTyp.TAGESSCHULE) {
+				// Betreuung ist Tagesschule
+				return Response.ok(getAnmeldungTagesschule(betreuung)).build();
+			} else if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp() == BetreuungsangebotTyp.FERIENINSEL) {
+				// Betreuung ist Ferieninsel
+				return Response.ok(getAnmeldungFerieninsel(betreuung)).build();
+			} else {
+				// Betreuung ist weder Tagesschule noch Ferieninsel
+				return Response.status(Response.Status.BAD_REQUEST).entity(
+					new JaxExternalError(
+						JaxExternalErrorCode.NO_RESULTS,
+						"No Betreuung with id " + bgNummer + " found")).build();
+			}
+		} catch (Exception e) {
+			LOG.error("getAnmeldung()", e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
+				new JaxExternalError(
+					JaxExternalErrorCode.SERVER_ERROR,
+					"Please inform the adminstrator of this application")).build();
 		}
-		return Response.ok(anmeldung).build();
 	}
 
-	@ApiOperation(value = "Gibt eine Anmeldung fuer eine Tagesschule zurueck.",
-		response = JaxExternalAnmeldungTagesschule.class)
-	@ApiResponses({
-		@ApiResponse(code = 204, message = "no data found"),
-		@ApiResponse(code = 401, message = "not authorized")
-	})
-	@RolesAllowed(SUPER_ADMIN)
-	@GET
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/anmeldungTagesschule/{bgNummer}")
-	public Response getAnmeldungTagesschule(@Nonnull @PathParam("bgNummer") String bgNummer) {
-		Validate.notNull(bgNummer);
+	private JaxExternalAnmeldungTagesschule getAnmeldungTagesschule(Betreuung betreuung) {
+		Validate.notNull(betreuung.getBelegungTagesschule());
 
-		if (!bgNummer.endsWith("1")) {
-			List<JaxExternalModul> anmeldungen = new ArrayList<>();
-			anmeldungen.add(new JaxExternalModul(DayOfWeek.MONDAY, JaxExternalModulName.VORMITTAG));
-			anmeldungen.add(new JaxExternalModul(DayOfWeek.MONDAY, JaxExternalModulName.NACHMITTAGS_1));
-			anmeldungen.add(new JaxExternalModul(DayOfWeek.MONDAY, JaxExternalModulName.NACHMITTAGS_2));
-			anmeldungen.add(new JaxExternalModul(DayOfWeek.FRIDAY, JaxExternalModulName.VORMITTAG));
-			JaxExternalAnmeldungTagesschule anmeldung = new JaxExternalAnmeldungTagesschule(bgNummer, JaxBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST,
-				"TODO_eindeutige_ID_Tagesschule", anmeldungen);
-			return Response.ok(anmeldung).build();
-		}
-		LOG.warn("Wrong input data"); //todo improve logging
-		return Response.noContent().build();
+		//todo Kind Vorname und Nachname muessen hinzugefuegt werden
+		List<JaxExternalModul> anmeldungen = new ArrayList<>();
+		betreuung.getBelegungTagesschule().getModuleTagesschule().forEach(modulTagesschule -> {
+				anmeldungen.add(new JaxExternalModul(modulTagesschule.getWochentag(), JaxExternalModulName.valueOf(modulTagesschule.getModulTagesschuleName().name())));
+			}
+		);
+		return new JaxExternalAnmeldungTagesschule(betreuung.getBGNummer(),
+			JaxExternalBetreuungsstatus.valueOf(betreuung.getBetreuungsstatus().name()),
+			betreuung.getInstitutionStammdaten().getInstitution().getName(), anmeldungen);
 	}
 
-	@ApiOperation(value = "Gibt eine Anmeldung fuer eine Ferieninsel zurueck.",
-		response = JaxExternalAnmeldungFerieninsel.class)
-	@ApiResponses({
-		@ApiResponse(code = 204, message = "no data found"),
-		@ApiResponse(code = 401, message = "not authorized")
-	})
-	@RolesAllowed(SUPER_ADMIN)
-	@GET
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/anmeldungFerieninsel/{bgNummer}")
-	public Response getAnmeldungFerieninsel(@Nonnull @PathParam("bgNummer") String bgNummer) {
-		Validate.notNull(bgNummer);
+	private JaxExternalAnmeldungFerieninsel getAnmeldungFerieninsel(Betreuung betreuung) {
+		Validate.notNull(betreuung.getBelegungFerieninsel());
 
-		if (bgNummer.endsWith("1")) {
-			List<LocalDate> datumList = new ArrayList<>();
-			datumList.add(LocalDate.now().plusMonths(2));
-			datumList.add(LocalDate.now().plusMonths(2).plusDays(1));
-			datumList.add(LocalDate.now().plusMonths(2).plusDays(2));
-			JaxExternalFerieninsel ferieninsel = new JaxExternalFerieninsel(JaxExternalFerienName.HERBSTFERIEN, datumList);
-			JaxExternalAnmeldungFerieninsel anmeldung = new JaxExternalAnmeldungFerieninsel(bgNummer, JaxBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST,
-				"TODO_eindeutige_ID_Institution", ferieninsel);
-			return Response.ok(anmeldung).build();
-		}
-		return Response.noContent().build();
+		//todo Kind Vorname und Nachname muessen hinzugefuegt werden
+		List<LocalDate> datumList = new ArrayList<>();
+		betreuung.getBelegungFerieninsel().getTage().forEach(belegungFerieninselTag -> {
+			datumList.add(belegungFerieninselTag.getTag());
+		});
+
+		JaxExternalFerieninsel ferieninsel = new JaxExternalFerieninsel(JaxExternalFerienName.valueOf(betreuung.getBelegungFerieninsel().getFerienname().name()), datumList);
+
+		return new JaxExternalAnmeldungFerieninsel(betreuung.getBGNummer(),
+			JaxExternalBetreuungsstatus.valueOf(betreuung.getBetreuungsstatus().name()),
+			betreuung.getInstitutionStammdaten().getInstitution().getName(), ferieninsel);
 	}
+
 
 	@ApiOperation(value = "Gibt das massgebende Einkommen fuer die uebergebenen Faelle (kommaseparierte Fall-Ids) zurueck (Tagesschule oder Ferieninsel). Falls das massgebende Einkommen noch nicht erfasst wurde, wird 204 zurueckgegeben.", responseContainer = "List",
 		response = JaxExternalFinanzielleSituation.class)
@@ -174,32 +164,64 @@ public class SchulamtBackendResource {
 		@ApiResponse(code = 204, message = "no data found"),
 		@ApiResponse(code = 401, message = "not authorized")
 	})
-	@RolesAllowed(SUPER_ADMIN)
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/finanziellesituation")
-	public Response getFinanzielleSituation(@Nonnull @QueryParam("stichtag") String stichtagParam, @Nonnull @QueryParam("faelle") String csFaelleParam) {
-		Validate.notNull(stichtagParam);
-		Validate.notNull(csFaelleParam);
+	public Response getFinanzielleSituation(
+		@QueryParam("stichtag") String stichtagParam,
+		@QueryParam("faelle") String csFaelleParam) {
 
-		String[] fallNummern = StringUtils.split(csFaelleParam, ',');
-		if (fallNummern.length <= 0) {
-			return Response.noContent().build();
-		}
-		LocalDate stichtag = DateUtil.parseStringToDateOrReturnNow(stichtagParam);
+		try {
+			if (stichtagParam == null || stichtagParam.isEmpty()) {
+				return Response.status(Response.Status.BAD_REQUEST).entity(
+					new JaxExternalError(
+						JaxExternalErrorCode.BAD_PARAMETER,
+						"stichtagParam is null or empty")).build();
+			}
+			if (csFaelleParam == null || csFaelleParam.isEmpty()) {
+				return Response.status(Response.Status.BAD_REQUEST).entity(
+					new JaxExternalError(
+						JaxExternalErrorCode.BAD_PARAMETER,
+						"csFaelleParam is null or empty")).build();
+			}
 
-		List<JaxExternalFinanzielleSituation> result = new ArrayList<>();
-		for (String fallNr : fallNummern) {
-			@SuppressWarnings("ConstantConditions")
-			JaxExternalFinanzielleSituation dto = new JaxExternalFinanzielleSituation(
-				Long.valueOf(fallNr),
-				stichtag,
-				MathUtil.DEFAULT.from(65000),
-				JaxAntragstatus.VERFUEGT,
-				JaxTarifart.DETAILBERECHNUNG);
-			result.add(dto);
+			String[] fallNummern = StringUtils.split(csFaelleParam, ',');
+			if (fallNummern.length <= 0) {
+				return Response.status(Response.Status.BAD_REQUEST).entity(
+					new JaxExternalError(
+						JaxExternalErrorCode.BAD_PARAMETER,
+						"no fallNummern received")).build();
+			}
+			LocalDate stichtag;
+			try {
+				stichtag = DateUtil.parseStringToDateOrReturnNow(stichtagParam);
+			} catch (Exception e) {
+				LOG.info("getAnmeldung()", e);
+				return Response.status(Response.Status.BAD_REQUEST).entity(
+					new JaxExternalError(
+						JaxExternalErrorCode.BAD_PARAMETER,
+						"Can not parse date for stichtagParam")).build();
+			}
+
+			List<JaxExternalFinanzielleSituation> result = new ArrayList<>();
+			for (String fallNr : fallNummern) {
+				@SuppressWarnings("ConstantConditions")
+				JaxExternalFinanzielleSituation dto = new JaxExternalFinanzielleSituation(
+					Long.valueOf(fallNr),
+					stichtag,
+					MathUtil.DEFAULT.from(65000),
+					JaxExternalAntragstatus.VERFUEGT,
+					JaxExternalTarifart.DETAILBERECHNUNG);
+				result.add(dto);
+			}
+			return Response.ok(result).build();
+		} catch (Exception e) {
+			LOG.error("getAnmeldung()", e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
+				new JaxExternalError(
+					JaxExternalErrorCode.SERVER_ERROR,
+					"Please inform the adminstrator of this application")).build();
 		}
-		return Response.ok(result).build();
 	}
 }

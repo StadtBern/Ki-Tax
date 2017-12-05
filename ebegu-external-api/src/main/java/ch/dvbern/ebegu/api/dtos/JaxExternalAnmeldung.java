@@ -14,12 +14,11 @@
  */
 package ch.dvbern.ebegu.api.dtos;
 
-import java.io.Serializable;
+import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsangebotTyp;
+import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsstatus;
 
 import javax.annotation.Nonnull;
-
-import ch.dvbern.ebegu.api.enums.JaxBetreuungsangebotTyp;
-import ch.dvbern.ebegu.api.enums.JaxBetreuungsstatus;
+import java.io.Serializable;
 
 /**
  * Super-DTO für eine Anmeldung eines Schulamt-Angebots (Tagesschule oder Ferieninsel) für die externe Schnittstelle
@@ -32,10 +31,10 @@ public abstract class JaxExternalAnmeldung implements Serializable {
 	private String bgNummer;
 
 	@Nonnull
-	private JaxBetreuungsstatus betreuungsstatus;
+	private JaxExternalBetreuungsstatus betreuungsstatus;
 
 	@Nonnull
-	private JaxBetreuungsangebotTyp betreuungsangebotTyp;
+	private JaxExternalBetreuungsangebotTyp betreuungsangebotTyp;
 
 	@Nonnull
 	private String keyInstitution;
@@ -43,8 +42,8 @@ public abstract class JaxExternalAnmeldung implements Serializable {
 
 	protected JaxExternalAnmeldung(
 		@Nonnull String bgNummer,
-		@Nonnull JaxBetreuungsstatus betreuungsstatus,
-		@Nonnull JaxBetreuungsangebotTyp betreuungsangebotTyp,
+		@Nonnull JaxExternalBetreuungsstatus betreuungsstatus,
+		@Nonnull JaxExternalBetreuungsangebotTyp betreuungsangebotTyp,
 		@Nonnull String keyInstitution) {
 
 		this.bgNummer = bgNummer;
@@ -64,20 +63,20 @@ public abstract class JaxExternalAnmeldung implements Serializable {
 	}
 
 	@Nonnull
-	public JaxBetreuungsstatus getBetreuungsstatus() {
+	public JaxExternalBetreuungsstatus getBetreuungsstatus() {
 		return betreuungsstatus;
 	}
 
-	public void setBetreuungsstatus(@Nonnull JaxBetreuungsstatus betreuungsstatus) {
+	public void setBetreuungsstatus(@Nonnull JaxExternalBetreuungsstatus betreuungsstatus) {
 		this.betreuungsstatus = betreuungsstatus;
 	}
 
 	@Nonnull
-	public JaxBetreuungsangebotTyp getBetreuungsangebotTyp() {
+	public JaxExternalBetreuungsangebotTyp getBetreuungsangebotTyp() {
 		return betreuungsangebotTyp;
 	}
 
-	public void setBetreuungsangebotTyp(@Nonnull JaxBetreuungsangebotTyp betreuungsangebotTyp) {
+	public void setBetreuungsangebotTyp(@Nonnull JaxExternalBetreuungsangebotTyp betreuungsangebotTyp) {
 		this.betreuungsangebotTyp = betreuungsangebotTyp;
 	}
 

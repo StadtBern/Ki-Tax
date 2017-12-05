@@ -15,17 +15,11 @@
 
 package ch.dvbern.ebegu.api.enums;
 
-/**
- * Enum fuer the names of the Modul for Tagesschule.
- */
-public enum JaxExternalModulName {
+public enum JaxExternalBetreuungsstatus {
 
-	VORMITTAG,
-	MITTAG,
-	MITTAG_HALB,
-	NACHMITTAGS_1,
-	NACHMITTAGS_1_HALB,
-	NACHMITTAGS_2,
-	NACHMITTAGS_2_HALB;
-
+	SCHULAMT_ANMELDUNG_ERFASST,
+	SCHULAMT_ANMELDUNG_AUSGELOEST,
+	SCHULAMT_ANMELDUNG_UEBERNOMMEN,
+	SCHULAMT_ANMELDUNG_ABGELEHNT,
+	SCHULAMT_FALSCHE_INSTITUTION;
 }

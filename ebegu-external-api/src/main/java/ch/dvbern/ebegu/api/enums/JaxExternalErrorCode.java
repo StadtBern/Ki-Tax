@@ -15,8 +15,9 @@
 
 package ch.dvbern.ebegu.api.enums;
 
-public enum JaxBetreuungsangebotTyp {
-
-	TAGESSCHULE,
-	FERIENINSEL;
+public enum JaxExternalErrorCode {
+	TOO_MANY_RESULTS,
+	NO_RESULTS,
+	SERVER_ERROR,
+	BAD_PARAMETER,
 }
