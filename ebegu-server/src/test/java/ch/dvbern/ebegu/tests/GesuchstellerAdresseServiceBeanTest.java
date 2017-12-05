@@ -74,12 +74,13 @@ public class GesuchstellerAdresseServiceBeanTest extends AbstractEbeguLoginTest 
 	}
 
 	@Test
-	public void findKorrAddresse() {
+	public void findKorrAndRechnungsAddresse() {
 		Assert.assertNotNull(adresseService);
-		final GesuchstellerContainer gesuchstellerContainer = insertNewEntityWithKorrespondenzadresse();
-		Optional<GesuchstellerAdresseContainer> adresse = adresseService.getKorrespondenzAdr(gesuchstellerContainer.getId());
-		Assert.assertTrue(adresse.isPresent());
-
+		final GesuchstellerContainer gesuchstellerContainer = insertNewEntityWithKorrespondenzAndRechnungsAdresse();
+		Optional<GesuchstellerAdresseContainer> korrespondenzAdr = adresseService.getKorrespondenzAdr(gesuchstellerContainer.getId());
+		Optional<GesuchstellerAdresseContainer> rechnungsAdr = adresseService.getRechnungsAdr(gesuchstellerContainer.getId());
+		Assert.assertTrue(korrespondenzAdr.isPresent());
+		Assert.assertTrue(rechnungsAdr.isPresent());
 	}
 
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
@@ -100,7 +101,7 @@ public class GesuchstellerAdresseServiceBeanTest extends AbstractEbeguLoginTest 
 		return storedPers.getAdressen().stream().findAny().orElseThrow(() -> new IllegalStateException("Testdaten nicht korrekt aufgesetzt"));
 	}
 
-	private GesuchstellerContainer insertNewEntityWithKorrespondenzadresse() {
+	private GesuchstellerContainer insertNewEntityWithKorrespondenzAndRechnungsAdresse() {
 		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		GesuchstellerContainer pers = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		GesuchstellerContainer storedPers = persistence.persist(pers);
@@ -108,9 +109,16 @@ public class GesuchstellerAdresseServiceBeanTest extends AbstractEbeguLoginTest 
 		GesuchstellerAdresseContainer korrAddr = TestDataUtil.createDefaultGesuchstellerAdresseContainer(storedPers);
 		korrAddr.getGesuchstellerAdresseJA().setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
 		storedPers.addAdresse(korrAddr);
-		GesuchstellerAdresse gsAddresse = korrAddr.getGesuchstellerAdresseJA().copyForMutation(new GesuchstellerAdresse());
-		korrAddr.setGesuchstellerAdresseGS(gsAddresse);
+		GesuchstellerAdresse gsKorrAddresse = korrAddr.getGesuchstellerAdresseJA().copyForMutation(new GesuchstellerAdresse());
+		korrAddr.setGesuchstellerAdresseGS(gsKorrAddresse);
 		korrAddr.setGesuchstellerAdresseJA(null);
+
+		GesuchstellerAdresseContainer rechnungsAddr = TestDataUtil.createDefaultGesuchstellerAdresseContainer(storedPers);
+		rechnungsAddr.getGesuchstellerAdresseJA().setAdresseTyp(AdresseTyp.RECHNUNGSADRESSE);
+		storedPers.addAdresse(rechnungsAddr);
+		GesuchstellerAdresse gsRechnungsAddresse = rechnungsAddr.getGesuchstellerAdresseJA().copyForMutation(new GesuchstellerAdresse());
+		rechnungsAddr.setGesuchstellerAdresseGS(gsRechnungsAddresse);
+		rechnungsAddr.setGesuchstellerAdresseJA(null);
 
 		return persistence.merge(storedPers);
 	}

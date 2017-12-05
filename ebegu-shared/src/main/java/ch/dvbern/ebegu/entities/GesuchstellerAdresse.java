@@ -87,6 +87,11 @@ public class GesuchstellerAdresse extends Adresse {
 		return AdresseTyp.KORRESPONDENZADRESSE.equals(this.getAdresseTyp());
 	}
 
+	@Transient
+	public boolean isRechnungsAdresse() {
+		return AdresseTyp.RECHNUNGSADRESSE.equals(this.getAdresseTyp());
+	}
+
 	@Nonnull
 	private GesuchstellerAdresse copyForMutationOrErneuerung(@Nonnull GesuchstellerAdresse mutation) {
 		mutation.setAdresseTyp(this.getAdresseTyp());
