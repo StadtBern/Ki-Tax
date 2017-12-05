@@ -17,8 +17,6 @@ package ch.dvbern.ebegu.api.enums;
 
 public enum JaxExternalAntragstatus {
 
-	//TODO (team) Werden von Scolaris alle Status benötigt?
-
 	IN_BEARBEITUNG_GS,
 	FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
 	NUR_SCHULAMT,

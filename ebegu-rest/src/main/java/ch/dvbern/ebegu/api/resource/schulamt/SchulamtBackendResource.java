@@ -88,8 +88,7 @@ public class SchulamtBackendResource {
 	public Response getAnmeldung(@Nonnull @PathParam("bgNummer") String bgNummer) {
 
 		try {
-			Validate.notNull(bgNummer);
-			final List<Betreuung> betreuungen = betreuungService.findBetreuungByBetreuungId(bgNummer);
+			final List<Betreuung> betreuungen = betreuungService.findBetreuungByBGNummer(bgNummer);
 
 			if (betreuungen == null || betreuungen.isEmpty()) {
 				// Betreuung not found
@@ -106,18 +105,18 @@ public class SchulamtBackendResource {
 			}
 
 			final Betreuung betreuung = betreuungen.get(0);
-			if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().equals(BetreuungsangebotTyp.TAGESSCHULE)) {
+			if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp() == BetreuungsangebotTyp.TAGESSCHULE) {
 				// Betreuung ist Tagesschule
 				return Response.ok(getAnmeldungTagesschule(betreuung)).build();
-			} else if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().equals(BetreuungsangebotTyp.FERIENINSEL)) {
+			} else if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp() == BetreuungsangebotTyp.FERIENINSEL) {
 				// Betreuung ist Ferieninsel
 				return Response.ok(getAnmeldungFerieninsel(betreuung)).build();
 			} else {
 				// Betreuung ist weder Tagesschule noch Ferieninsel
 				return Response.status(Response.Status.BAD_REQUEST).entity(
 					new JaxExternalError(
-						JaxExternalErrorCode.WRONG_TYPE,
-						"Found betreuung has wrong typ " + betreuung.getBetreuungsangebotTyp())).build();
+						JaxExternalErrorCode.NO_RESULTS,
+						"No Betreuung with id " + bgNummer + " found")).build();
 			}
 		} catch (Exception e) {
 			LOG.error("getAnmeldung()", e);
@@ -131,6 +130,7 @@ public class SchulamtBackendResource {
 	private JaxExternalAnmeldungTagesschule getAnmeldungTagesschule(Betreuung betreuung) {
 		Validate.notNull(betreuung.getBelegungTagesschule());
 
+		//todo Kind Vorname und Nachname muessen hinzugefuegt werden
 		List<JaxExternalModul> anmeldungen = new ArrayList<>();
 		betreuung.getBelegungTagesschule().getModuleTagesschule().forEach(modulTagesschule -> {
 				anmeldungen.add(new JaxExternalModul(modulTagesschule.getWochentag(), JaxExternalModulName.valueOf(modulTagesschule.getModulTagesschuleName().name())));
@@ -144,6 +144,7 @@ public class SchulamtBackendResource {
 	private JaxExternalAnmeldungFerieninsel getAnmeldungFerieninsel(Betreuung betreuung) {
 		Validate.notNull(betreuung.getBelegungFerieninsel());
 
+		//todo Kind Vorname und Nachname muessen hinzugefuegt werden
 		List<LocalDate> datumList = new ArrayList<>();
 		betreuung.getBelegungFerieninsel().getTage().forEach(belegungFerieninselTag -> {
 			datumList.add(belegungFerieninselTag.getTag());

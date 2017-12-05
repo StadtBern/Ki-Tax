@@ -229,19 +229,19 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void getYearFromBetreuungsIdTest() {
-		Assert.assertEquals(2018, betreuungService.getYearFromBetreuungsId("18.000108.1.2"));
+		Assert.assertEquals(2018, betreuungService.getYearFromBGNummer("18.000108.1.2"));
 	}
 
 	@Test
 	public void getKindNummerFromBetreuungsIdTest() {
-		Assert.assertEquals(1, betreuungService.getKindNummerFromBetreuungsId("18.000108.1.2"));
-		Assert.assertEquals(2, betreuungService.getKindNummerFromBetreuungsId("18.000108.2.2"));
+		Assert.assertEquals(1, betreuungService.getKindNummerFromBGNummer("18.000108.1.2"));
+		Assert.assertEquals(2, betreuungService.getKindNummerFromBGNummer("18.000108.2.2"));
 	}
 
 	@Test
 	public void getBetreuungNummerFromBetreuungsId() {
-		Assert.assertEquals(2, betreuungService.getBetreuungNummerFromBetreuungsId("18.000108.1.2"));
-		Assert.assertEquals(1, betreuungService.getBetreuungNummerFromBetreuungsId("18.000108.2.1"));
+		Assert.assertEquals(2, betreuungService.getBetreuungNummerFromBGNummer("18.000108.1.2"));
+		Assert.assertEquals(1, betreuungService.getBetreuungNummerFromBGNummer("18.000108.2.1"));
 	}
 
 
