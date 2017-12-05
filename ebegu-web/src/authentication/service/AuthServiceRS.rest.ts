@@ -5,7 +5,6 @@ import HttpBuffer from './HttpBuffer';
 import {TSRole} from '../../models/enums/TSRole';
 import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 import ICookiesService = angular.cookies.ICookiesService;
-import IScope = angular.IScope;
 import IRootScopeService = angular.IRootScopeService;
 
 export default class AuthServiceRS {
