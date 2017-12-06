@@ -23,6 +23,7 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.Benutzer;
@@ -137,6 +138,14 @@ public abstract class AbstractTestfall {
 		}
 	}
 
+	private void setFinSitFieldsOfFamiliensituation(@NotNull Familiensituation familiensituation) {
+		if (gesuchsperiode.hasTagesschulenAnmeldung()) {
+			// by default verguenstigung gewuenscht
+			familiensituation.setSozialhilfeBezueger(false);
+			familiensituation.setVerguenstigungGewuenscht(true);
+		}
+	}
+
 	protected Gesuch createAlleinerziehend() {
 		// Familiensituation
 		Familiensituation familiensituation = new Familiensituation();
@@ -144,6 +153,7 @@ public abstract class AbstractTestfall {
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		FamiliensituationContainer familiensituationContainer = new FamiliensituationContainer();
 		familiensituationContainer.setFamiliensituationJA(familiensituation);
+		setFinSitFieldsOfFamiliensituation(familiensituation);
 		gesuch.setFamiliensituationContainer(familiensituationContainer);
 		return gesuch;
 	}
@@ -156,6 +166,7 @@ public abstract class AbstractTestfall {
 		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
 		FamiliensituationContainer familiensituationContainer = new FamiliensituationContainer();
 		familiensituationContainer.setFamiliensituationJA(familiensituation);
+		setFinSitFieldsOfFamiliensituation(familiensituation);
 		gesuch.setFamiliensituationContainer(familiensituationContainer);
 		return gesuch;
 	}
