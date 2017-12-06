@@ -48,8 +48,11 @@ import ch.dvbern.ebegu.api.enums.JaxExternalModulName;
 import ch.dvbern.ebegu.api.enums.JaxExternalTarifart;
 import ch.dvbern.ebegu.api.util.version.VersionInfoBean;
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
@@ -121,6 +124,14 @@ public class SchulamtBackendResource {
 	public Response getAnmeldung(@Nonnull @PathParam("bgNummer") String bgNummer) {
 
 		try {
+			if (!betreuungService.validateBGNummer(bgNummer)) {
+				// Wrong BGNummer format
+				return Response.status(Response.Status.BAD_REQUEST).entity(
+					new JaxExternalError(
+						JaxExternalErrorCode.BAD_PARAMETER,
+						"Invalid BGNummer format")).build();
+			}
+
 			final List<Betreuung> betreuungen = betreuungService.findBetreuungByBGNummer(bgNummer);
 
 			if (betreuungen == null || betreuungen.isEmpty()) {
@@ -163,37 +174,38 @@ public class SchulamtBackendResource {
 	private JaxExternalAnmeldungTagesschule getAnmeldungTagesschule(Betreuung betreuung) {
 		Validate.notNull(betreuung.getBelegungTagesschule());
 
-		//todo Kind Vorname und Nachname muessen hinzugefuegt werden
 		List<JaxExternalModul> anmeldungen = new ArrayList<>();
-		betreuung.getBelegungTagesschule().getModuleTagesschule().forEach(modulTagesschule -> {
-				anmeldungen.add(new JaxExternalModul(modulTagesschule.getWochentag(), JaxExternalModulName.valueOf(modulTagesschule.getModulTagesschuleName()
-					.name())));
-			}
+		betreuung.getBelegungTagesschule().getModuleTagesschule().forEach(modulTagesschule -> anmeldungen.add(new JaxExternalModul(modulTagesschule
+			.getWochentag(), JaxExternalModulName.valueOf(modulTagesschule.getModulTagesschuleName()
+			.name())))
 		);
 		return new JaxExternalAnmeldungTagesschule(betreuung.getBGNummer(),
 			JaxExternalBetreuungsstatus.valueOf(betreuung.getBetreuungsstatus().name()),
-			betreuung.getInstitutionStammdaten().getInstitution().getName(), anmeldungen);
+			betreuung.getInstitutionStammdaten().getInstitution().getName(),
+			anmeldungen,
+			betreuung.getKind().getKindJA().getVorname(),
+			betreuung.getKind().getKindJA().getNachname());
 	}
 
 	private JaxExternalAnmeldungFerieninsel getAnmeldungFerieninsel(Betreuung betreuung) {
 		Validate.notNull(betreuung.getBelegungFerieninsel());
 
-		//todo Kind Vorname und Nachname muessen hinzugefuegt werden
 		List<LocalDate> datumList = new ArrayList<>();
-		betreuung.getBelegungFerieninsel().getTage().forEach(belegungFerieninselTag -> {
-			datumList.add(belegungFerieninselTag.getTag());
-		});
+		betreuung.getBelegungFerieninsel().getTage().forEach(belegungFerieninselTag -> datumList.add(belegungFerieninselTag.getTag()));
 
 		JaxExternalFerieninsel ferieninsel = new JaxExternalFerieninsel(JaxExternalFerienName.valueOf(betreuung.getBelegungFerieninsel().getFerienname().name
 			()), datumList);
 
 		return new JaxExternalAnmeldungFerieninsel(betreuung.getBGNummer(),
 			JaxExternalBetreuungsstatus.valueOf(betreuung.getBetreuungsstatus().name()),
-			betreuung.getInstitutionStammdaten().getInstitution().getName(), ferieninsel);
+			betreuung.getInstitutionStammdaten().getInstitution().getName(),
+			ferieninsel,
+			betreuung.getKind().getKindJA().getVorname(),
+			betreuung.getKind().getKindJA().getNachname());
 	}
 
-
-	@ApiOperation(value = "Gibt das massgebende Einkommen fuer den uebergebenen Fall zurueck. Falls das massgebende Einkommen noch nicht erfasst wurde, wird 400 zurueckgegeben.",
+	@ApiOperation(value = "Gibt das massgebende Einkommen fuer den uebergebenen Fall zurueck. Falls das massgebende Einkommen noch nicht erfasst wurde, wird "
+		+ "400 zurueckgegeben.",
 		response = JaxExternalFinanzielleSituation.class)
 	@ApiResponses({
 		@ApiResponse(code = 400, message = "no data found"),
@@ -203,7 +215,6 @@ public class SchulamtBackendResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/finanziellesituation")
-	@SuppressWarnings({ "PMD.NcssMethodCount", "PMD.CyclomaticComplexity", "checkstyle:CyclomaticComplexity" })
 	public Response getFinanzielleSituation(
 		@QueryParam("stichtag") String stichtagParam,
 		@QueryParam("fall") String csFallParam) {
@@ -228,7 +239,7 @@ public class SchulamtBackendResource {
 			try {
 				fallNummer = Long.parseLong(csFallParam);
 			} catch (Exception e) {
-				LOG.info("getAnmeldung()", e);
+				LOG.info("getFinanzielleSituation()", e);
 				return Response.status(Response.Status.BAD_REQUEST).entity(
 					new JaxExternalError(
 						JaxExternalErrorCode.BAD_PARAMETER,
@@ -240,7 +251,7 @@ public class SchulamtBackendResource {
 			try {
 				stichtag = DateUtil.parseStringToDateOrReturnNow(stichtagParam);
 			} catch (Exception e) {
-				LOG.info("getAnmeldung()", e);
+				LOG.info("getFinanzielleSituation()", e);
 				return Response.status(Response.Status.BAD_REQUEST).entity(
 					new JaxExternalError(
 						JaxExternalErrorCode.BAD_PARAMETER,
@@ -266,6 +277,35 @@ public class SchulamtBackendResource {
 			}
 			final Gesuch neustesGesuch = neustesGesuchOpt.get();
 
+			return getExternalFinanzielleSituationResponse(fallNummer, stichtag, neustesGesuch);
+
+		} catch (Exception e) {
+			LOG.error("getFinanzielleSituation()", e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
+				new JaxExternalError(
+					JaxExternalErrorCode.SERVER_ERROR,
+					"Please inform the adminstrator of this application")).build();
+		}
+	}
+
+	private Response getExternalFinanzielleSituationResponse(long fallNummer, LocalDate stichtag, Gesuch neustesGesuch) {
+		final Familiensituation familiensituation = neustesGesuch.extractFamiliensituation();
+		Validate.notNull(familiensituation);
+
+		if (familiensituation.getSozialhilfeBezueger() != null && familiensituation.getSozialhilfeBezueger()) {
+			// SozialhilfeBezüger Ja -> Basiszahler (keine finSit!)
+			final JaxExternalFinanzielleSituation dto = convertToJaxExternalFinanzielleSituationWithoutFinDaten(
+				fallNummer, stichtag, neustesGesuch, JaxExternalTarifart.BASISZAHLER);
+			return Response.ok(dto).build();
+		} else if (familiensituation.getSozialhilfeBezueger() != null && !familiensituation.getSozialhilfeBezueger()
+			&& familiensituation.getVerguenstigungGewuenscht() != null && !familiensituation.getVerguenstigungGewuenscht()) {
+			// SozialhilfeBezüger Nein + Vergünstigung gewünscht Nein  -> Vollzahler (keine finSit!)
+			final JaxExternalFinanzielleSituation dto = convertToJaxExternalFinanzielleSituationWithoutFinDaten(
+				fallNummer, stichtag, neustesGesuch, JaxExternalTarifart.VOLLZAHLER);
+			return Response.ok(dto).build();
+		} else {
+			// SozialhilfeBezüger Nein + Vergünstigung gewünscht ja  oder Kita-Betreuung vorhanden -> Detailrechnung (mit finSit!)
+
 			// Calculate Verfuegungszeitabschnitte for Familiensituation
 			final Verfuegung famGroessenVerfuegung = verfuegungService.getEvaluateFamiliensituationVerfuegung(neustesGesuch);
 
@@ -282,39 +322,57 @@ public class SchulamtBackendResource {
 					}
 				}
 			}
-			// If no Finanzdaten found on Verfügungszeitabschnitt from Stichtag, return ErrorObject
-			return Response.status(Response.Status.BAD_REQUEST).entity(
-				new JaxExternalError(
-					JaxExternalErrorCode.NO_RESULTS,
-					"No FinanzielleSituation for Stichtag")).build();
-
-		} catch (Exception e) {
-			LOG.error("getAnmeldung()", e);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
-				new JaxExternalError(
-					JaxExternalErrorCode.SERVER_ERROR,
-					"Please inform the adminstrator of this application")).build();
 		}
+		// If no Finanzdaten found on Verfügungszeitabschnitt from Stichtag, return ErrorObject
+		return Response.status(Response.Status.BAD_REQUEST).entity(
+			new JaxExternalError(
+				JaxExternalErrorCode.NO_RESULTS,
+				"No FinanzielleSituation for Stichtag")).build();
 	}
 
 	private JaxExternalFinanzielleSituation convertToJaxExternalFinanzielleSituation(long fallNummer, LocalDate stichtag, Gesuch neustesGesuch,
 		VerfuegungZeitabschnitt zeitabschnitt) {
+		final GesuchstellerContainer gesuchsteller1 = neustesGesuch.getGesuchsteller1();
+		Validate.notNull(gesuchsteller1);
+		final GesuchstellerAdresse rechnungsAdresse = gesuchsteller1.extractRechnungsAdresse(stichtag);
+		Validate.notNull(rechnungsAdresse);
 		return new JaxExternalFinanzielleSituation(
 			fallNummer,
 			stichtag,
 			zeitabschnitt.getMassgebendesEinkommenVorAbzFamgr(),
 			zeitabschnitt.getAbzugFamGroesse(),
 			JaxExternalAntragstatus.valueOf(neustesGesuch.getStatus().name()),
-			JaxExternalTarifart.DETAILBERECHNUNG, //TODO: Was ist das?
+			JaxExternalTarifart.DETAILBERECHNUNG,
 			new JaxExternalRechnungsAdresse(
-				neustesGesuch.getGesuchsteller1().extractVorname(),
-				neustesGesuch.getGesuchsteller1().extractNachname(),
-				neustesGesuch.getGesuchsteller1().extractRechnungsAdresse(stichtag).getStrasse(),
-				neustesGesuch.getGesuchsteller1().extractRechnungsAdresse(stichtag).getHausnummer(),
-				neustesGesuch.getGesuchsteller1().extractRechnungsAdresse(stichtag).getZusatzzeile(),
-				neustesGesuch.getGesuchsteller1().extractRechnungsAdresse(stichtag).getPlz(),
-				neustesGesuch.getGesuchsteller1().extractRechnungsAdresse(stichtag).getOrt(),
-				neustesGesuch.getGesuchsteller1().extractRechnungsAdresse(stichtag).getLand().name()));
+				gesuchsteller1.extractVorname(),
+				gesuchsteller1.extractNachname(),
+				rechnungsAdresse.getStrasse(),
+				rechnungsAdresse.getHausnummer(),
+				rechnungsAdresse.getZusatzzeile(),
+				rechnungsAdresse.getPlz(),
+				rechnungsAdresse.getOrt(),
+				rechnungsAdresse.getLand().name()));
 	}
 
+	private JaxExternalFinanzielleSituation convertToJaxExternalFinanzielleSituationWithoutFinDaten(long fallNummer, LocalDate stichtag, Gesuch neustesGesuch,
+		JaxExternalTarifart tarifart) {
+		final GesuchstellerContainer gesuchsteller1 = neustesGesuch.getGesuchsteller1();
+		Validate.notNull(gesuchsteller1);
+		final GesuchstellerAdresse rechnungsAdresse = gesuchsteller1.extractRechnungsAdresse(stichtag);
+		Validate.notNull(rechnungsAdresse);
+		return new JaxExternalFinanzielleSituation(
+			fallNummer,
+			stichtag,
+			JaxExternalAntragstatus.valueOf(neustesGesuch.getStatus().name()),
+			tarifart,
+			new JaxExternalRechnungsAdresse(
+				gesuchsteller1.extractVorname(),
+				gesuchsteller1.extractNachname(),
+				rechnungsAdresse.getStrasse(),
+				rechnungsAdresse.getHausnummer(),
+				rechnungsAdresse.getZusatzzeile(),
+				rechnungsAdresse.getPlz(),
+				rechnungsAdresse.getOrt(),
+				rechnungsAdresse.getLand().name()));
+	}
 }

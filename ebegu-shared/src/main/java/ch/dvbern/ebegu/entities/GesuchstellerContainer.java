@@ -149,10 +149,10 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 			if (adresse.extractIsRechnungsAdresse()) {
 				rechnungsadresse = adresse;
 			}
-		}*/
-		if (rechnungsadresse == null) {
-			rechnungsadresse = getWohnadresseAm(stichtag);
 		}
+		if (rechnungsadresse == null) {*/
+		rechnungsadresse = getWohnadresseAm(stichtag);
+		//}
 		return rechnungsadresse;
 	}
 

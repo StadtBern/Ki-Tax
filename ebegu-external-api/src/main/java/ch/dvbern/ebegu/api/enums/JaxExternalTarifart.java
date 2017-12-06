@@ -20,7 +20,7 @@ package ch.dvbern.ebegu.api.enums;
  */
 public enum JaxExternalTarifart {
 
-	VOLLZAHLER,
-	BASISZAHLER,
-	DETAILBERECHNUNG;
+	VOLLZAHLER, // Sozialhilfe -> nein, Vergünstigter Vertreuungsplatz -> nein
+	BASISZAHLER, // Sozialhilfe -> ja
+	DETAILBERECHNUNG; // Sozialhilfe -> nein, Vergünstigter Vertreuungsplatz -> ja
 }
