@@ -80,6 +80,8 @@ public interface WizardStepService {
 	@Nonnull
 	List<WizardStep> createWizardStepList(Gesuch gesuch);
 
+	void gesuchVerfuegen(@NotNull WizardStep verfuegenWizardStep);
+
 	/**
 	 * Sets the Status of the given Step to OK or MUTIERT. In order to be set to MUTIERT the data must have been
 	 * changed in comparisson to the vorgaenger. If not it will be set to OK.

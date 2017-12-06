@@ -81,7 +81,7 @@ export default class TestDataUtil {
     }
 
     static mockDefaultGesuchModelManagerHttpCalls($httpBackend: IHttpBackendService) {
-
+        $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/unclosed').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/0621fb5d-a187-5a91-abaf-8a813c4d263a').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/wizard-steps').respond({});
         $httpBackend.when('POST', '/ebegu/api/v1/wizard-steps').respond({});
@@ -89,6 +89,7 @@ export default class TestDataUtil {
 
     public static mockLazyGesuchModelManagerHttpCalls($httpBackend: IHttpBackendService) {
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/unclosed').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/fachstellen').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/institutionstammdaten/date/active?date=' + DateUtil.momentToLocalDate(DateUtil.today())).respond({});
     }

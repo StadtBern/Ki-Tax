@@ -18,7 +18,6 @@ package ch.dvbern.ebegu.api.enums;
 public enum JaxExternalErrorCode {
 	TOO_MANY_RESULTS,
 	NO_RESULTS,
-	WRONG_TYPE,
 	SERVER_ERROR,
 	BAD_PARAMETER,
 }

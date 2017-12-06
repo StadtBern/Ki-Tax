@@ -17,8 +17,6 @@ package ch.dvbern.ebegu.api.enums;
 
 public enum JaxExternalBetreuungsstatus {
 
-	//TODO (team) werden von Scolaris alle Betreuungsstatus benötigt?
-
 	SCHULAMT_ANMELDUNG_ERFASST,
 	SCHULAMT_ANMELDUNG_AUSGELOEST,
 	SCHULAMT_ANMELDUNG_UEBERNOMMEN,

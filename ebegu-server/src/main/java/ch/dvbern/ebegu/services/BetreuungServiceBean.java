@@ -33,6 +33,7 @@ import javax.persistence.criteria.*;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.*;
 
@@ -45,6 +46,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.*;
 public class BetreuungServiceBean extends AbstractBaseService implements BetreuungService {
 
 	public static final String BETREUUNG_DARF_NICHT_NULL_SEIN = "betreuung darf nicht null sein";
+	private static final Pattern COMPILE = Pattern.compile("^0+(?!$)");
 
 	@Inject
 	private Persistence persistence;
@@ -194,20 +196,20 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	public List<Betreuung> findBetreuungByBetreuungId(@Nonnull String betreuungId) {
+	public List<Betreuung> findBetreuungByBGNummer(@Nonnull String bgNummer) {
 
-		final int betreuungNummer = getBetreuungNummerFromBetreuungsId(betreuungId);
-		final int kindNummer = getKindNummerFromBetreuungsId(betreuungId);
-		final int yearFromBetreuungsId = getYearFromBetreuungsId(betreuungId);
+		final int betreuungNummer = getBetreuungNummerFromBGNummer(bgNummer);
+		final int kindNummer = getKindNummerFromBGNummer(bgNummer);
+		final int yearFromBGNummer = getYearFromBGNummer(bgNummer);
 		// der letzte Tag im Jahr, von der BetreuungsId sollte immer zur richtigen Gesuchsperiode zählen.
-		final Optional<Gesuchsperiode> gesuchsperiodeOptional = gesuchsperiodeService.getGesuchsperiodeAm(LocalDate.ofYearDay(yearFromBetreuungsId, 365));
+		final Optional<Gesuchsperiode> gesuchsperiodeOptional = gesuchsperiodeService.getGesuchsperiodeAm(LocalDate.ofYearDay(yearFromBGNummer, 365));
 		Gesuchsperiode gesuchsperiode;
 		if (gesuchsperiodeOptional.isPresent()) {
 			gesuchsperiode = gesuchsperiodeOptional.get();
 		} else {
 			return new ArrayList<>();
 		}
-		final long fallnummer = getFallnummerFromBetreuungsId(betreuungId);
+		final long fallnummer = getFallnummerFromBetreuungsId(bgNummer);
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
@@ -235,20 +237,24 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		return persistence.getCriteriaResults(query);
 	}
 
-
+	// todo nicht nach position sondern nach Punkten schauen
+	@Override
 	public Long getFallnummerFromBetreuungsId(String betreuungsId) {
-		return Long.valueOf(betreuungsId.substring(3, 9).replaceFirst("^0+(?!$)", ""));
+		return Long.valueOf(COMPILE.matcher(betreuungsId.substring(3, 9)).replaceFirst(""));
 	}
 
-	public int getYearFromBetreuungsId(String betreuungsId) {
+	@Override
+	public int getYearFromBGNummer(String betreuungsId) {
 		return Integer.valueOf(betreuungsId.substring(0, 2)) + 2000;
 	}
 
-	public int getKindNummerFromBetreuungsId(String betreuungsId) {
+	@Override
+	public int getKindNummerFromBGNummer(String betreuungsId) {
 		return Integer.valueOf(betreuungsId.substring(10, 11));
 	}
 
-	public int getBetreuungNummerFromBetreuungsId(String betreuungsId) {
+	@Override
+	public int getBetreuungNummerFromBGNummer(String betreuungsId) {
 		return Integer.valueOf(betreuungsId.substring(12, 13));
 	}
 

@@ -89,7 +89,7 @@ public interface BetreuungService {
 	 * @param betreuungNummer betreuungNummer der Betreuung
 	 * @return Betreuung mit der angegebenen ID (z.B. 18.000116.1.2) oder null falls nicht vorhanden
 	 */
-	List<Betreuung> findBetreuungByBetreuungId(@Nonnull String betreuungId);
+	List<Betreuung> findBetreuungByBGNummer(@Nonnull String betreuungId);
 
 	/**
 	 * Extract Fallnummer form betreuungsId
@@ -102,19 +102,19 @@ public interface BetreuungService {
 	 * Extract Year form betreuungsId
 	 * @return Extracted year
 	 */
-	int getYearFromBetreuungsId(String betreuungsId);
+	int getYearFromBGNummer(String betreuungsId);
 
 	/**
 	 * Extract KindNummer form betreuungsId
 	 * @return Extracted kindNummer
 	 */
-	int getKindNummerFromBetreuungsId(String betreuungsId);
+	int getKindNummerFromBGNummer(String betreuungsId);
 
 	/**
 	 * Extract BetreuungNummer form betreuungsId
 	 * @return Extracted BetreuungNummer
 	 */
-	int getBetreuungNummerFromBetreuungsId(String betreuungsId);
+	int getBetreuungNummerFromBGNummer(String betreuungsId);
 
 	/**
 	 * @param key PK (id) der Betreuung
