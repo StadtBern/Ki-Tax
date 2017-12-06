@@ -50,11 +50,13 @@ import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.FinanzielleSituationService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchstellerService;
+import ch.dvbern.ebegu.services.WizardStepService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -69,7 +71,8 @@ public class FinanzielleSituationResource {
 
 	@Inject
 	private FinanzielleSituationService finanzielleSituationService;
-
+	@Inject
+	private WizardStepService wizardStepService;
 	@Inject
 	private GesuchstellerService gesuchstellerService;
 	@Inject
@@ -116,6 +119,27 @@ public class FinanzielleSituationResource {
 
 		JaxFinanzielleSituationContainer jaxFinanzielleSituation = converter.finanzielleSituationContainerToJAX(persistedFinanzielleSituation);
 		return Response.created(uri).entity(jaxFinanzielleSituation).build();
+	}
+
+	@ApiOperation(value = "Starts al required Data for the finanzielle Situation", response = JaxFinanzielleSituationContainer.class)
+	@Nullable
+	@PUT
+	@Path("/finsitStart")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxGesuch saveFinanzielleSituationStart(
+		@Nonnull @NotNull @Valid JaxGesuch gesuchJAXP,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(gesuchJAXP.getId());
+		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchJAXP.getId());
+		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("saveFinanzielleSituationStart", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId()));
+
+		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
+		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge, false, null);
+		wizardStepService.updateSteps(modifiedGesuch.getId(), null, null, WizardStepName.FINANZIELLE_SITUATION);
+		return converter.gesuchToJAX(modifiedGesuch);
 	}
 
 	@ApiOperation(value = "Berechnet die FinanzielleSituation fuer das Gesuch mit der uebergebenen Id. Die Berechnung " +

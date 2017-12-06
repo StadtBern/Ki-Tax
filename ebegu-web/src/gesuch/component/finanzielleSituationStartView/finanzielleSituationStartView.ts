@@ -81,7 +81,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
 
     private save(): IPromise<TSGesuch> {
         this.errorService.clearAll();
-        return this.gesuchModelManager.updateGesuch()
+        return this.gesuchModelManager.saveFinanzielleSituationStart()
             .then((gesuch: TSGesuch) => {
                 // Noetig, da nur das ganze Gesuch upgedated wird und die Aeenderng bei der FinSit sonst nicht
                 // bemerkt werden
