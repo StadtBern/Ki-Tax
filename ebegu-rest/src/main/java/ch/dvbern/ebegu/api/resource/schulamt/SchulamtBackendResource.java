@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -68,12 +70,14 @@ import io.swagger.annotations.ApiResponses;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Path("/schulamt")
 @Api(description = "Resource für die Schnittstelle zu externen Schulamt-Applikationen")
 @SuppressWarnings({ "EjbInterceptorInspection", "EjbClassBasicInspection" })
 @Stateless
+@PermitAll
 public class SchulamtBackendResource {
 
 	private static final Logger LOG = getLogger(SchulamtBackendResource.class);
@@ -115,12 +119,14 @@ public class SchulamtBackendResource {
 		response = JaxExternalAnmeldung.class)
 	@ApiResponses({
 		@ApiResponse(code = 400, message = "no data found"),
+		@ApiResponse(code = 401, message = "unauthorized"),
 		@ApiResponse(code = 500, message = "server error")
 	})
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/anmeldung/{bgNummer}")
+	@RolesAllowed(SUPER_ADMIN)
 	public Response getAnmeldung(@Nonnull @PathParam("bgNummer") String bgNummer) {
 
 		try {
@@ -209,12 +215,14 @@ public class SchulamtBackendResource {
 		response = JaxExternalFinanzielleSituation.class)
 	@ApiResponses({
 		@ApiResponse(code = 400, message = "no data found"),
+		@ApiResponse(code = 401, message = "unauthorized"),
 		@ApiResponse(code = 500, message = "server error")
 	})
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/finanziellesituation")
+	@RolesAllowed(SUPER_ADMIN)
 	public Response getFinanzielleSituation(
 		@QueryParam("stichtag") String stichtagParam,
 		@QueryParam("fall") String csFallParam) {

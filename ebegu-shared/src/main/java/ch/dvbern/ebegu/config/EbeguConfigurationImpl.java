@@ -61,6 +61,9 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_LOGIN_API_INTERNAL_USER = "ebegu.login.api.internal.user";
 	private static final String EBEGU_LOGIN_API_INTERNAL_PASSWORD = "ebegu.login.api.internal.password";
 	private static final String EBEGU_FORCE_COOKIE_SECURE_FLAG = "ebegu.force.cookie.secure.flag";
+	private static final String EBEGU_LOGIN_API_SCHULAMT_USER = "ebegu.login.api.schulamt.user";
+	private static final String EBEGU_LOGIN_API_SCHULAMT_PASSWORD = "ebegu.login.api.schulamt.password";
+
 
 	public EbeguConfigurationImpl() {
 
@@ -210,6 +213,16 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 				EBEGU_LOGIN_API_INTERNAL_PASSWORD);
 		}
 		return internalUserPW;
+	}
+
+	@Override
+	public String getSchulamtAPIUser() {
+		return getString(EBEGU_LOGIN_API_SCHULAMT_USER);
+	}
+
+	@Override
+	public String getSchulamtAPIPassword() {
+		return getString(EBEGU_LOGIN_API_SCHULAMT_PASSWORD);
 	}
 
 	@Override
