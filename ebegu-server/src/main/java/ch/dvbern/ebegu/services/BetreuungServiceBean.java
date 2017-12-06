@@ -15,51 +15,8 @@
 
 package ch.dvbern.ebegu.services;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.validation.Valid;
-
-import ch.dvbern.ebegu.entities.Abwesenheit;
-import ch.dvbern.ebegu.entities.AbwesenheitContainer;
-import ch.dvbern.ebegu.entities.AbwesenheitContainer_;
-import ch.dvbern.ebegu.entities.Abwesenheit_;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuung_;
-import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuch_;
-import ch.dvbern.ebegu.entities.Gesuchsperiode_;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.entities.KindContainer_;
-import ch.dvbern.ebegu.entities.Mitteilung;
-import ch.dvbern.ebegu.entities.Verfuegung_;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
-import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -67,17 +24,17 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
-import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
-import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
-import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
-import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
-import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
-import static ch.dvbern.ebegu.enums.UserRoleName.STEUERAMT;
-import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+import javax.annotation.Nonnull;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.criteria.*;
+import javax.validation.Valid;
+import java.time.LocalDate;
+import java.util.*;
+
+import static ch.dvbern.ebegu.enums.UserRoleName.*;
 
 /**
  * Service fuer Betreuung
@@ -103,6 +60,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	private Authorizer authorizer;
 	@Inject
 	private MailService mailService;
+	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
 
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungServiceBean.class.getSimpleName());
 
@@ -231,6 +190,66 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 			authorizer.checkReadAuthorization(betr);
 		}
 		return Optional.ofNullable(betr);
+	}
+
+	@Override
+	@Nonnull
+	public List<Betreuung> findBetreuungByBetreuungId(@Nonnull String betreuungId) {
+
+		final int betreuungNummer = getBetreuungNummerFromBetreuungsId(betreuungId);
+		final int kindNummer = getKindNummerFromBetreuungsId(betreuungId);
+		final int yearFromBetreuungsId = getYearFromBetreuungsId(betreuungId);
+		// der letzte Tag im Jahr, von der BetreuungsId sollte immer zur richtigen Gesuchsperiode zählen.
+		final Optional<Gesuchsperiode> gesuchsperiodeOptional = gesuchsperiodeService.getGesuchsperiodeAm(LocalDate.ofYearDay(yearFromBetreuungsId, 365));
+		Gesuchsperiode gesuchsperiode;
+		if (gesuchsperiodeOptional.isPresent()) {
+			gesuchsperiode = gesuchsperiodeOptional.get();
+		} else {
+			return new ArrayList<>();
+		}
+		final long fallnummer = getFallnummerFromBetreuungsId(betreuungId);
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
+
+		Root<Betreuung> root = query.from(Betreuung.class);
+		final Join<Betreuung, KindContainer> kindjoin = root.join(Betreuung_.kind, JoinType.LEFT);
+		final Join<KindContainer, Gesuch> kindContainerGesuchJoin = kindjoin.join(KindContainer_.gesuch, JoinType.LEFT);
+		final Join<Gesuch, Fall> gesuchFallJoin = kindContainerGesuchJoin.join(Gesuch_.fall, JoinType.LEFT);
+
+		Predicate predBetreuungNummer = cb.equal(root.get(Betreuung_.betreuungNummer), betreuungNummer);
+		Predicate predBetreuungAusgeloest = root.get(Betreuung_.betreuungsstatus).in(Betreuungsstatus.betreuungsstatusAusgeloest);
+		Predicate predKindNummer = cb.equal(kindjoin.get(KindContainer_.kindNummer), kindNummer);
+		Predicate predFallNummer = cb.equal(gesuchFallJoin.get(Fall_.fallNummer), fallnummer);
+		Predicate predGesuchsperiode = cb.equal(kindContainerGesuchJoin.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+
+		List<Predicate> predicates = new ArrayList<>();
+		predicates.add(predFallNummer);
+		predicates.add(predGesuchsperiode);
+		predicates.add(predKindNummer);
+		predicates.add(predBetreuungNummer);
+		predicates.add(predBetreuungAusgeloest);
+
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+
+		return persistence.getCriteriaResults(query);
+	}
+
+
+	public Long getFallnummerFromBetreuungsId(String betreuungsId) {
+		return Long.valueOf(betreuungsId.substring(3, 9).replaceFirst("^0+(?!$)", ""));
+	}
+
+	public int getYearFromBetreuungsId(String betreuungsId) {
+		return Integer.valueOf(betreuungsId.substring(0, 2)) + 2000;
+	}
+
+	public int getKindNummerFromBetreuungsId(String betreuungsId) {
+		return Integer.valueOf(betreuungsId.substring(10, 11));
+	}
+
+	public int getBetreuungNummerFromBetreuungsId(String betreuungsId) {
+		return Integer.valueOf(betreuungsId.substring(12, 13));
 	}
 
 	@Override

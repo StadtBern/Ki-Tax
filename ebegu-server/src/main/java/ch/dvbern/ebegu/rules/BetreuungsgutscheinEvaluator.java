@@ -13,7 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.dvbern.ebegu.rules;
+package ch.dvbern.ebegu.services;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +33,10 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.rechner.AbstractBGRechner;
 import ch.dvbern.ebegu.rechner.BGRechnerFactory;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
+import ch.dvbern.ebegu.rules.AbschlussNormalizer;
+import ch.dvbern.ebegu.rules.MonatsRule;
+import ch.dvbern.ebegu.rules.MutationsMerger;
+import ch.dvbern.ebegu.rules.Rule;
 import ch.dvbern.ebegu.rules.initalizer.RestanspruchInitializer;
 import ch.dvbern.ebegu.rules.util.BemerkungsMerger;
 import ch.dvbern.ebegu.util.BetreuungComparator;

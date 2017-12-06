@@ -15,17 +15,25 @@
 
 package ch.dvbern.ebegu.api.enums;
 
-/**
- * Enum fuer the names of the Modul for Tagesschule.
- */
-public enum JaxExternalModulName {
+public enum JaxExternalAntragstatus {
 
-	VORMITTAG,
-	MITTAG,
-	MITTAG_HALB,
-	NACHMITTAGS_1,
-	NACHMITTAGS_1_HALB,
-	NACHMITTAGS_2,
-	NACHMITTAGS_2_HALB;
+	//TODO (team) Werden von Scolaris alle Status benötigt?
 
+	IN_BEARBEITUNG_GS,
+	FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
+	NUR_SCHULAMT,
+	FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
+	IN_BEARBEITUNG_JA,
+	ERSTE_MAHNUNG,
+	ERSTE_MAHNUNG_ABGELAUFEN,
+	ZWEITE_MAHNUNG,
+	ZWEITE_MAHNUNG_ABGELAUFEN,
+	GEPRUEFT,
+	VERFUEGEN,
+	VERFUEGT,
+	KEIN_ANGEBOT,
+	BESCHWERDE_HAENGIG,
+	PRUEFUNG_STV,
+	IN_BEARBEITUNG_STV,
+	GEPRUEFT_STV;
 }
