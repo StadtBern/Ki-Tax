@@ -41,7 +41,10 @@ public class JaxExternalFinanzielleSituation implements Serializable {
 	private LocalDate stichtag;
 
 	@Nonnull
-	private BigDecimal massgebendesEinkommen;
+	private BigDecimal massgebendesEinkommenVorAbzug;
+
+	@Nonnull
+	private BigDecimal abzug;
 
 	@Nonnull
 	private JaxExternalAntragstatus antragStatus;
@@ -49,22 +52,25 @@ public class JaxExternalFinanzielleSituation implements Serializable {
 	@Nonnull
 	private JaxExternalTarifart tarifart;
 
-	//TODO (team) Massgebendes Einkommen VOR Familienabzug?
-	//TODO (team) Müsste hier nicht die Rechnungsadresse noch rein?
-
+	@Nonnull
+	private JaxExternalRechnungsAdresse rechnungsAdresse;
 
 	public JaxExternalFinanzielleSituation(
 		@Nonnull Long fallNummer,
 		@Nonnull LocalDate stichtag,
-		@Nonnull BigDecimal massgebendesEinkommen,
+		@Nonnull BigDecimal massgebendesEinkommenVorAbzug,
+		@Nonnull BigDecimal abzug,
 		@Nonnull JaxExternalAntragstatus antragStatus,
-		@Nonnull JaxExternalTarifart tarifart) {
+		@Nonnull JaxExternalTarifart tarifart,
+		@Nonnull JaxExternalRechnungsAdresse rechnungsAdresse) {
 
 		this.fallNummer = fallNummer;
 		this.stichtag = stichtag;
-		this.massgebendesEinkommen = massgebendesEinkommen;
+		this.massgebendesEinkommenVorAbzug = massgebendesEinkommenVorAbzug;
+		this.abzug = abzug;
 		this.antragStatus = antragStatus;
 		this.tarifart = tarifart;
+		this.rechnungsAdresse = rechnungsAdresse;
 	}
 
 	@Nonnull
@@ -86,15 +92,6 @@ public class JaxExternalFinanzielleSituation implements Serializable {
 	}
 
 	@Nonnull
-	public BigDecimal getMassgebendesEinkommen() {
-		return massgebendesEinkommen;
-	}
-
-	public void setMassgebendesEinkommen(@Nonnull BigDecimal massgebendesEinkommen) {
-		this.massgebendesEinkommen = massgebendesEinkommen;
-	}
-
-	@Nonnull
 	public JaxExternalAntragstatus getAntragStatus() {
 		return antragStatus;
 	}
@@ -110,5 +107,32 @@ public class JaxExternalFinanzielleSituation implements Serializable {
 
 	public void setTarifart(@Nonnull JaxExternalTarifart tarifart) {
 		this.tarifart = tarifart;
+	}
+
+	@Nonnull
+	public BigDecimal getMassgebendesEinkommenVorAbzug() {
+		return massgebendesEinkommenVorAbzug;
+	}
+
+	public void setMassgebendesEinkommenVorAbzug(@Nonnull BigDecimal massgebendesEinkommenVorAbzug) {
+		this.massgebendesEinkommenVorAbzug = massgebendesEinkommenVorAbzug;
+	}
+
+	@Nonnull
+	public BigDecimal getAbzug() {
+		return abzug;
+	}
+
+	public void setAbzug(@Nonnull BigDecimal abzug) {
+		this.abzug = abzug;
+	}
+
+	@Nonnull
+	public JaxExternalRechnungsAdresse getRechnungsAdresse() {
+		return rechnungsAdresse;
+	}
+
+	public void setRechnungsAdresse(@Nonnull JaxExternalRechnungsAdresse rechnungsAdresse) {
+		this.rechnungsAdresse = rechnungsAdresse;
 	}
 }

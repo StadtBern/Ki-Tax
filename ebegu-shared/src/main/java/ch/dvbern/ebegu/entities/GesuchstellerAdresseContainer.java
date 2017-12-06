@@ -147,6 +147,22 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getOrt() : null;
 	}
 
+	/**
+	 * Extracts the Land von gesuchstellerAdresseJA
+	 */
+	public String extractLand() {
+		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getLand().name(): null;
+	}
+
+	/**
+	 * Extracts the Gemeinde von gesuchstellerAdresseJA
+	 */
+	public String extractGemeinde() {
+		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getGemeinde(): null;
+	}
+
+
+
 	public String extractOrganisation() {
 		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getOrganisation() : null;
 	}

@@ -14,11 +14,12 @@
  */
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsangebotTyp;
-import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsstatus;
+import java.io.Serializable;
 
 import javax.annotation.Nonnull;
-import java.io.Serializable;
+
+import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsangebotTyp;
+import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsstatus;
 
 /**
  * Super-DTO für eine Anmeldung eines Schulamt-Angebots (Tagesschule oder Ferieninsel) für die externe Schnittstelle

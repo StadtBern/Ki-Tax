@@ -137,6 +137,25 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 		return null;
 	}
 
+	/**
+	 * Returns the RechnungsAdresse found for this GesuchstellerContainer. If there is no korrespondenzAdresse is set the Wohnadresse should be
+	 * returned.
+	 * TODO: This code must be adjusted after merge with EBEGU-1530
+	 */
+	@Nullable
+	public GesuchstellerAdresse extractRechnungsAdresse(LocalDate stichtag) {
+		GesuchstellerAdresse rechnungsadresse = null;
+		/*for (GesuchstellerAdresseContainer adresse : getAdressen()) {
+			if (adresse.extractIsRechnungsAdresse()) {
+				rechnungsadresse = adresse;
+			}
+		}*/
+		if (rechnungsadresse == null) {
+			rechnungsadresse = getWohnadresseAm(stichtag);
+		}
+		return rechnungsadresse;
+	}
+
 	@Nullable
 	public FinanzielleSituationContainer getFinanzielleSituationContainer() {
 		return finanzielleSituationContainer;
@@ -201,6 +220,16 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 	public String extractNachname() {
 		if (this.gesuchstellerJA != null) {
 			return this.gesuchstellerJA.getNachname();
+		}
+		return "";
+	}
+
+	/**
+	 * Gibt den Vornamen des GesuchstellerJA oder ein Leerzeichen wenn er nicht existiert
+	 */
+	public String extractVorname() {
+		if (this.gesuchstellerJA != null) {
+			return this.gesuchstellerJA.getVorname();
 		}
 		return "";
 	}
