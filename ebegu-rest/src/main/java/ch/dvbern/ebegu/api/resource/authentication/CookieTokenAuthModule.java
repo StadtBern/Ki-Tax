@@ -94,8 +94,8 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 	public CookieTokenAuthModule(@Nullable String schulamtUser, @Nullable String schulamtPassword) {
 		internalApiUser = null;
 		internalApiPassword = null;
-		this.schulamtApiUser = schulamtUser;
-		this.schulamtApiPassword = schulamtPassword;
+		schulamtApiUser = schulamtUser;
+		schulamtApiPassword = schulamtPassword;
 	}
 
 	public CookieTokenAuthModule() {
@@ -228,8 +228,7 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 	private AuthStatus checkAuthorizationForSchulamtApiAccess(HttpServletRequest request, HttpMsgContext httpMsgContext) {
 		if (!isSchulamtApiActive()) {
 			LOG.error("Call to connector API even though the properties for username and password were not defined"
-				+ "in ebegu. Please check that the system properties for username/password for the schulamt api are"
-				+ " set");
+				+ "in ebegu. Please check that the system properties for username/password for the schulamt api are set");
 			return setResponseUnauthorised(httpMsgContext);
 		} else {
 
