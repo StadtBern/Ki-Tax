@@ -220,6 +220,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                 }
             } else {
                 this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
+                this.cleanBelegungen();
             }
         }
     }
@@ -684,5 +685,17 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      */
     public displayModuleTagesschule(): boolean {
         return this.isTagesschule() && this.gesuchModelManager.getGesuch().gesuchsperiode.hasTagesschulenAnmeldung();
+    }
+
+    /**
+     * Based on the type of the Angebot it resets the belegungen.
+     */
+    private cleanBelegungen(): void {
+        if (!this.getBetreuungModel().isAngebotFerieninsel()) {
+            this.getBetreuungModel().belegungFerieninsel = undefined;
+        }
+        if (!this.getBetreuungModel().isAngebotTagesschule()) {
+            this.getBetreuungModel().belegungTagesschule = undefined;
+        }
     }
 }
