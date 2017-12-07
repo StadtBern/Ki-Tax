@@ -14,16 +14,18 @@
  */
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.api.enums.JaxExternalAntragstatus;
-import ch.dvbern.ebegu.api.enums.JaxExternalTarifart;
-import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
-
-import javax.annotation.Nonnull;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import ch.dvbern.ebegu.api.enums.JaxExternalAntragstatus;
+import ch.dvbern.ebegu.api.enums.JaxExternalTarifart;
+import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 
 /**
  * DTO für die Finanzielle Situation für die externe Schnittstelle
@@ -40,8 +42,11 @@ public class JaxExternalFinanzielleSituation implements Serializable {
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate stichtag;
 
-	@Nonnull
-	private BigDecimal massgebendesEinkommen;
+	@Nullable
+	private BigDecimal massgebendesEinkommenVorAbzug;
+
+	@Nullable
+	private BigDecimal abzug;
 
 	@Nonnull
 	private JaxExternalAntragstatus antragStatus;
@@ -49,23 +54,41 @@ public class JaxExternalFinanzielleSituation implements Serializable {
 	@Nonnull
 	private JaxExternalTarifart tarifart;
 
-	//TODO (team) Massgebendes Einkommen VOR Familienabzug?
-	//TODO (team) Müsste hier nicht die Rechnungsadresse noch rein?
-
+	@Nonnull
+	private JaxExternalRechnungsAdresse rechnungsAdresse;
 
 	public JaxExternalFinanzielleSituation(
 		@Nonnull Long fallNummer,
 		@Nonnull LocalDate stichtag,
-		@Nonnull BigDecimal massgebendesEinkommen,
+		@Nonnull BigDecimal massgebendesEinkommenVorAbzug,
+		@Nonnull BigDecimal abzug,
 		@Nonnull JaxExternalAntragstatus antragStatus,
-		@Nonnull JaxExternalTarifart tarifart) {
+		@Nonnull JaxExternalTarifart tarifart,
+		@Nonnull JaxExternalRechnungsAdresse rechnungsAdresse) {
 
 		this.fallNummer = fallNummer;
 		this.stichtag = stichtag;
-		this.massgebendesEinkommen = massgebendesEinkommen;
+		this.massgebendesEinkommenVorAbzug = massgebendesEinkommenVorAbzug;
+		this.abzug = abzug;
 		this.antragStatus = antragStatus;
 		this.tarifart = tarifart;
+		this.rechnungsAdresse = rechnungsAdresse;
 	}
+
+	public JaxExternalFinanzielleSituation(
+		@Nonnull Long fallNummer,
+		@Nonnull LocalDate stichtag,
+		@Nonnull JaxExternalAntragstatus antragStatus,
+		@Nonnull JaxExternalTarifart tarifart,
+		@Nonnull JaxExternalRechnungsAdresse rechnungsAdresse) {
+
+		this.fallNummer = fallNummer;
+		this.stichtag = stichtag;
+		this.antragStatus = antragStatus;
+		this.tarifart = tarifart;
+		this.rechnungsAdresse = rechnungsAdresse;
+	}
+
 
 	@Nonnull
 	public Long getFallNummer() {
@@ -86,15 +109,6 @@ public class JaxExternalFinanzielleSituation implements Serializable {
 	}
 
 	@Nonnull
-	public BigDecimal getMassgebendesEinkommen() {
-		return massgebendesEinkommen;
-	}
-
-	public void setMassgebendesEinkommen(@Nonnull BigDecimal massgebendesEinkommen) {
-		this.massgebendesEinkommen = massgebendesEinkommen;
-	}
-
-	@Nonnull
 	public JaxExternalAntragstatus getAntragStatus() {
 		return antragStatus;
 	}
@@ -110,5 +124,32 @@ public class JaxExternalFinanzielleSituation implements Serializable {
 
 	public void setTarifart(@Nonnull JaxExternalTarifart tarifart) {
 		this.tarifart = tarifart;
+	}
+
+	@Nonnull
+	public JaxExternalRechnungsAdresse getRechnungsAdresse() {
+		return rechnungsAdresse;
+	}
+
+	public void setRechnungsAdresse(@Nonnull JaxExternalRechnungsAdresse rechnungsAdresse) {
+		this.rechnungsAdresse = rechnungsAdresse;
+	}
+
+	@Nullable
+	public BigDecimal getMassgebendesEinkommenVorAbzug() {
+		return massgebendesEinkommenVorAbzug;
+	}
+
+	public void setMassgebendesEinkommenVorAbzug(@Nullable BigDecimal massgebendesEinkommenVorAbzug) {
+		this.massgebendesEinkommenVorAbzug = massgebendesEinkommenVorAbzug;
+	}
+
+	@Nullable
+	public BigDecimal getAbzug() {
+		return abzug;
+	}
+
+	public void setAbzug(@Nullable BigDecimal abzug) {
+		this.abzug = abzug;
 	}
 }

@@ -14,11 +14,12 @@
  */
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsangebotTyp;
-import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsstatus;
+import java.io.Serializable;
 
 import javax.annotation.Nonnull;
-import java.io.Serializable;
+
+import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsangebotTyp;
+import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsstatus;
 
 /**
  * Super-DTO für eine Anmeldung eines Schulamt-Angebots (Tagesschule oder Ferieninsel) für die externe Schnittstelle
@@ -39,17 +40,27 @@ public abstract class JaxExternalAnmeldung implements Serializable {
 	@Nonnull
 	private String keyInstitution;
 
+	@Nonnull
+	private String kindName;
+
+	@Nonnull
+	private String kindVorname;
+
 
 	protected JaxExternalAnmeldung(
 		@Nonnull String bgNummer,
 		@Nonnull JaxExternalBetreuungsstatus betreuungsstatus,
 		@Nonnull JaxExternalBetreuungsangebotTyp betreuungsangebotTyp,
-		@Nonnull String keyInstitution) {
+		@Nonnull String keyInstitution,
+		@Nonnull String kindName,
+		@Nonnull String kindVorname) {
 
 		this.bgNummer = bgNummer;
 		this.betreuungsstatus = betreuungsstatus;
 		this.betreuungsangebotTyp = betreuungsangebotTyp;
 		this.keyInstitution = keyInstitution;
+		this.kindName = kindName;
+		this.kindVorname = kindVorname;
 	}
 
 
@@ -87,5 +98,23 @@ public abstract class JaxExternalAnmeldung implements Serializable {
 
 	public void setKeyInstitution(@Nonnull String keyInstitution) {
 		this.keyInstitution = keyInstitution;
+	}
+
+	@Nonnull
+	public String getKindName() {
+		return kindName;
+	}
+
+	public void setKindName(@Nonnull String kindName) {
+		this.kindName = kindName;
+	}
+
+	@Nonnull
+	public String getKindVorname() {
+		return kindVorname;
+	}
+
+	public void setKindVorname(@Nonnull String kindVorname) {
+		this.kindVorname = kindVorname;
 	}
 }

@@ -15,7 +15,21 @@
 
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.security.auth.login.LoginException;
+
+import ch.dvbern.ebegu.entities.BelegungFerieninsel;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Mitteilung;
+import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
@@ -33,12 +47,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import javax.security.auth.login.LoginException;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Tests fuer die Klasse betreuungService
@@ -223,8 +231,8 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void getFallnummerFromBetreuungsIdTest() {
-		Assert.assertEquals(108L, betreuungService.getFallnummerFromBetreuungsId("18.000108.1.2").longValue());
-		Assert.assertEquals(123456L, betreuungService.getFallnummerFromBetreuungsId("18.123456.1.2").longValue());
+		Assert.assertEquals(108L, betreuungService.getFallnummerFromBGNummer("18.000108.1.2").longValue());
+		Assert.assertEquals(123456L, betreuungService.getFallnummerFromBGNummer("18.123456.1.2").longValue());
 	}
 
 	@Test
@@ -236,12 +244,26 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 	public void getKindNummerFromBetreuungsIdTest() {
 		Assert.assertEquals(1, betreuungService.getKindNummerFromBGNummer("18.000108.1.2"));
 		Assert.assertEquals(2, betreuungService.getKindNummerFromBGNummer("18.000108.2.2"));
+		Assert.assertEquals(88, betreuungService.getKindNummerFromBGNummer("18.000108.88.2"));
 	}
 
 	@Test
 	public void getBetreuungNummerFromBetreuungsId() {
 		Assert.assertEquals(2, betreuungService.getBetreuungNummerFromBGNummer("18.000108.1.2"));
 		Assert.assertEquals(1, betreuungService.getBetreuungNummerFromBGNummer("18.000108.2.1"));
+		Assert.assertEquals(99, betreuungService.getBetreuungNummerFromBGNummer("18.000108.88.99"));
+	}
+
+	@Test
+	public void validateBGNummer() {
+		Assert.assertEquals("18.000108.1.2",true, betreuungService.validateBGNummer("18.000108.1.2"));
+		Assert.assertEquals("88.999999.77.66",true, betreuungService.validateBGNummer("88.999999.77.66"));
+		Assert.assertEquals("88.999999.7.66",true, betreuungService.validateBGNummer("88.999999.7.66"));
+		Assert.assertEquals("88.999999.77.6",true, betreuungService.validateBGNummer("88.999999.77.6"));
+		Assert.assertEquals("1.000108.1.2",false, betreuungService.validateBGNummer("1.000108.1.2"));
+		Assert.assertEquals("88.99999.77.66",false, betreuungService.validateBGNummer("88.99999.77.66"));
+		Assert.assertEquals("88.999999.66",false, betreuungService.validateBGNummer("88.999999.66"));
+		Assert.assertEquals("88.999999.66",false, betreuungService.validateBGNummer("88.999999.66"));
 	}
 
 

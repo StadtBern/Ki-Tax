@@ -15,15 +15,16 @@
 
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Abwesenheit;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Fall;
-
-import javax.annotation.Nonnull;
-import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.validation.Valid;
+
+import ch.dvbern.ebegu.entities.Abwesenheit;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Fall;
 
 /**
  * Service zum Verwalten von Betreuungen
@@ -86,35 +87,40 @@ public interface BetreuungService {
 	Optional<Betreuung> findBetreuung(@Nonnull String key, boolean doAuthCheck);
 
 	/**
-	 * @param betreuungNummer betreuungNummer der Betreuung
+	 * @param bgNummer BGNummer der Betreuung
 	 * @return Betreuung mit der angegebenen ID (z.B. 18.000116.1.2) oder null falls nicht vorhanden
 	 */
-	List<Betreuung> findBetreuungByBGNummer(@Nonnull String betreuungId);
+	List<Betreuung> findBetreuungByBGNummer(@Nonnull String bgNummer);
 
 	/**
-	 * Extract Fallnummer form betreuungsId
+	 * Extract Fallnummer form bgNummer
 	 * @return Extracted Fallnummer
 	 */
-	Long getFallnummerFromBetreuungsId(String betreuungsId);
+	Long getFallnummerFromBGNummer(String bgNummer);
 
 
 	/**
-	 * Extract Year form betreuungsId
+	 * Extract Year form bgNummer
 	 * @return Extracted year
 	 */
-	int getYearFromBGNummer(String betreuungsId);
+	int getYearFromBGNummer(String bgNummer);
 
 	/**
-	 * Extract KindNummer form betreuungsId
+	 * Extract KindNummer form bgNummer
 	 * @return Extracted kindNummer
 	 */
-	int getKindNummerFromBGNummer(String betreuungsId);
+	int getKindNummerFromBGNummer(String bgNummer);
 
 	/**
-	 * Extract BetreuungNummer form betreuungsId
+	 * Extract BetreuungNummer form bgNummer
 	 * @return Extracted BetreuungNummer
 	 */
-	int getBetreuungNummerFromBGNummer(String betreuungsId);
+	int getBetreuungNummerFromBGNummer(String bgNummer);
+
+	/**
+	 * Validate bgNummer
+	 */
+	boolean validateBGNummer(String bgNummer);
 
 	/**
 	 * @param key PK (id) der Betreuung

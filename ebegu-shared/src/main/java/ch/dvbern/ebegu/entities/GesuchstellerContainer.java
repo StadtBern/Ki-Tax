@@ -220,6 +220,16 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 	}
 
 	/**
+	 * Gibt den Vornamen des GesuchstellerJA oder ein Leerzeichen wenn er nicht existiert
+	 */
+	public String extractVorname() {
+		if (this.gesuchstellerJA != null) {
+			return this.gesuchstellerJA.getVorname();
+		}
+		return "";
+	}
+
+	/**
 	 * Gibt den FullNamen des GesuchstellerJA oder ein Leerzeichen wenn er nicht existiert
 	 */
 	public String extractFullName() {
@@ -337,5 +347,18 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 		}
 		final GesuchstellerContainer otherGesuchstellerContainer = (GesuchstellerContainer) other;
 		return EbeguUtil.isSameObject(getGesuchstellerJA(), otherGesuchstellerContainer.getGesuchstellerJA());
+	}
+
+	/**
+	 * Gibt die Rechnungsadresse zurueck. Sollte diese nicht erfasst sein, gibt die Wohnadresse zurueck, die
+	 * am stichtag gilt.
+	 */
+	@Nullable
+	public GesuchstellerAdresse extractEffectiveRechnungsAdresse(LocalDate stichtag) {
+		final GesuchstellerAdresseContainer rechnungsadresse = extractRechnungsAdresse();
+		if (rechnungsadresse != null) {
+			return rechnungsadresse.getGesuchstellerAdresseJA();
+		}
+		return getWohnadresseAm(stichtag);
 	}
 }

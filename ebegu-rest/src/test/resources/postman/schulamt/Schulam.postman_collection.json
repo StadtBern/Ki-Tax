@@ -1,114 +1,108 @@
 {
-	"id": "2b731c46-3a0d-b1f8-e1b7-3433d52a71d1",
-	"name": "Schulam",
-	"description": "",
-	"order": [
-		"924ef8a4-5d4d-01e1-3cef-7795851ff0cf",
-		"438aff58-d163-ff44-1904-8609e4b20e69",
-		"7e1e823b-8e8c-5fbb-ce47-06526fcf079d"
-	],
-	"folders": [],
-	"folders_order": [],
-	"timestamp": 1511955553692,
-	"owner": "1271934",
-	"public": false,
-	"requests": [
+	"info": {
+		"name": "Schulamt",
+		"_postman_id": "2b731c46-3a0d-b1f8-e1b7-3433d52a71d1",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
 		{
-			"id": "438aff58-d163-ff44-1904-8609e4b20e69",
-			"headers": "",
-			"headerData": [],
-			"url": "{{protocol}}://{{host}}:{{port}}/{{endpoint}}/schulamt/anmeldung/{{bgNummer}}",
-			"queryParams": [
-				{
-					"key": "host",
-					"value": "localhost",
-					"equals": true,
-					"description": "",
-					"enabled": false
-				}
-			],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "GET",
-			"data": null,
-			"dataMode": "params",
-			"version": 2,
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1511957025893,
-			"name": "anmeldung",
-			"description": "",
-			"collectionId": "2b731c46-3a0d-b1f8-e1b7-3433d52a71d1",
-			"responses": []
-		},
-		{
-			"id": "7e1e823b-8e8c-5fbb-ce47-06526fcf079d",
-			"headers": "",
-			"headerData": [],
-			"url": "{{protocol}}://{{host}}:{{port}}/{{endpoint}}/schulamt/finanziellesituation?stichtag=2017-01-01&faelle=1,2,3",
-			"queryParams": [
-				{
-					"key": "stichtag",
-					"value": "2017-01-01",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "faelle",
-					"value": "1,2,3",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				}
-			],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "GET",
-			"data": null,
-			"dataMode": "params",
-			"version": 2,
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1511960602717,
-			"name": "finanziellesituation",
-			"description": "",
-			"collectionId": "2b731c46-3a0d-b1f8-e1b7-3433d52a71d1",
-			"responses": []
-		},
-		{
-			"id": "924ef8a4-5d4d-01e1-3cef-7795851ff0cf",
-			"headers": "",
-			"headerData": [],
-			"url": "{{protocol}}://{{host}}:{{port}}/{{endpoint}}/schulamt/heartbeat",
-			"queryParams": [
-				{
-					"key": "host",
-					"value": "localhost",
-					"equals": true,
-					"description": "",
-					"enabled": false
-				}
-			],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "GET",
-			"data": null,
-			"dataMode": "params",
-			"version": 2,
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1511956873706,
 			"name": "heartBeat",
-			"description": "",
-			"collectionId": "2b731c46-3a0d-b1f8-e1b7-3433d52a71d1",
-			"responses": []
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{host}}:{{port}}/{{endpoint}}/schulamt/heartbeat",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{endpoint}}",
+						"schulamt",
+						"heartbeat"
+					],
+					"query": [
+						{
+							"key": "host",
+							"value": "localhost",
+							"equals": true,
+							"disabled": true
+						}
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "anmeldung",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{host}}:{{port}}/{{endpoint}}/schulamt/anmeldung/{{bgNummer}}",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{endpoint}}",
+						"schulamt",
+						"anmeldung",
+						"{{bgNummer}}"
+					],
+					"query": [
+						{
+							"key": "host",
+							"value": "localhost",
+							"equals": true,
+							"disabled": true
+						}
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "finanziellesituation",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{host}}:{{port}}/{{endpoint}}/schulamt/finanziellesituation?stichtag=2018-08-31&fall=123",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{endpoint}}",
+						"schulamt",
+						"finanziellesituation"
+					],
+					"query": [
+						{
+							"key": "stichtag",
+							"value": "2018-08-31",
+							"equals": true
+						},
+						{
+							"key": "fall",
+							"value": "123",
+							"equals": true
+						}
+					]
+				},
+				"description": null
+			},
+			"response": []
 		}
 	]
 }
