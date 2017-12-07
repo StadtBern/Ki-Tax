@@ -186,7 +186,7 @@
                                             text="'KORRESPONDENZADR_HELP' | translate"></dv-tooltip>
                                 <dv-bisher gs="vm.showKorrespondadrGS" class="dv-bisher-break"
                                            ja="vm.showKorrespondadr"
-                                           specific-bisher-text="vm.getTextKorrespondenzaddrKorrekturJA()"></dv-bisher>
+                                           specific-bisher-text="vm.getTextAddrKorrekturJA(vm.getModel().korrespondenzAdresse)"></dv-bisher>
                                 <dv-error-messages for="vm.form.korrespondenzAdr.$error"
                                                    class="error" style=""></dv-error-messages>
                             </div>
@@ -196,6 +196,31 @@
                     <dv-adresse adresse="vm.getModel().korrespondenzAdresse" ng-if="vm.showKorrespondadr"
                                 prefix="korrespondenz" show-if-bisher-none="false"
                                 organisation="true"></dv-adresse>
+
+                    <!--Rechnungsadresse Checkbox-->
+                    <div class="row" ng-if="vm.gesuchModelManager.getGesuchstellerNumber() === 1">
+                        <div class="col-xs-12 dv-input-container-question">
+                            <div class=" checkbox">
+                                <md-checkbox ng-model="vm.showRechnungsadr" name="rechnungsAdr" id="rechnungsAdr"
+                                             aria-label="{{'RECHNUNGSADR'|translate}}" ng-change="vm.rechnungsAdrClicked()"
+                                             dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchReadonly()">
+                                    <span data-translate="RECHNUNGSADR"></span>
+                                </md-checkbox>
+                                <dv-tooltip input-id="rechnungsAdr"
+                                            text="'RECHNUNGSADR_HELP' | translate"></dv-tooltip>
+                                <dv-bisher gs="vm.showRechnungsadrGS" class="dv-bisher-break"
+                                           ja="vm.showRechnungsadr"
+                                           specific-bisher-text="vm.getTextAddrKorrekturJA(vm.getModel().rechnungsAdresse)"></dv-bisher>
+                                <dv-error-messages for="vm.form.rechnungsAdr.$error"
+                                                   class="error" style=""></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+
+                    <dv-adresse adresse="vm.getModel().rechnungsAdresse" ng-if="vm.showRechnungsadr"
+                                prefix="rechnung" show-if-bisher-none="false"></dv-adresse>
                 </fieldset>
                 <fieldset dv-enable-element
                           dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
