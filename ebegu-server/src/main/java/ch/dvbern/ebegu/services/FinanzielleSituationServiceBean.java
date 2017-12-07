@@ -99,7 +99,7 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
 	public Gesuch saveFinanzielleSituationStart(@Nonnull Gesuch gesuch) {
 		Gesuch modifiedGesuch = gesuchService.updateGesuch(gesuch, false, null);
-		wizardStepService.updateSteps(modifiedGesuch.getId(), null, null, WizardStepName.FINANZIELLE_SITUATION);
+		wizardStepService.updateSteps(modifiedGesuch.getId(), null, null, WizardStepName.FINANZIELLE_SITUATION, 1);
 		return modifiedGesuch;
 	}
 

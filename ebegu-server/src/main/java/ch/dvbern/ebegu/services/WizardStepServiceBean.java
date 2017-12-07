@@ -153,10 +153,15 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	}
 
 	@Override
+	public List<WizardStep> updateSteps(String gesuchId, @Nullable AbstractEntity oldEntity, @Nullable AbstractEntity newEntity, WizardStepName stepName) {
+		return updateSteps(gesuchId, oldEntity, newEntity, stepName, null);
+	}
+
+	@Override
 	public List<WizardStep> updateSteps(String gesuchId, @Nullable AbstractEntity oldEntity, @Nullable AbstractEntity newEntity,
-		WizardStepName stepName) {
+		WizardStepName stepName, @Nullable Integer substep) {
 		final List<WizardStep> wizardSteps = findWizardStepsFromGesuch(gesuchId);
-		updateAllStatus(wizardSteps, oldEntity, newEntity, stepName);
+		updateAllStatus(wizardSteps, oldEntity, newEntity, stepName, substep);
 		wizardSteps.forEach(this::saveWizardStep);
 		return wizardSteps;
 	}
@@ -203,7 +208,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * Steps von diesen Aenderungen beeinflusst wurden. Mit dieser Information werden alle betroffenen Status dementsprechend geaendert.
 	 * Dazu werden die Angaben in oldEntity mit denen in newEntity verglichen und dann wird entsprechend reagiert
 	 */
-	private void updateAllStatus(List<WizardStep> wizardSteps, @Nullable AbstractEntity oldEntity, @Nullable AbstractEntity newEntity, WizardStepName stepName) {
+	private void updateAllStatus(List<WizardStep> wizardSteps, @Nullable AbstractEntity oldEntity, @Nullable AbstractEntity newEntity, WizardStepName stepName, @Nullable Integer substep) {
 		if (WizardStepName.FAMILIENSITUATION == stepName && oldEntity instanceof Familiensituation && newEntity instanceof Familiensituation) {
 			updateAllStatusForFamiliensituation(wizardSteps, (Familiensituation) oldEntity, (Familiensituation) newEntity);
 		} else if (WizardStepName.GESUCHSTELLER == stepName) {
@@ -227,7 +232,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		} else if (WizardStepName.VERFUEGEN == stepName) {
 			updateAllStatusForVerfuegen(wizardSteps);
 		} else if (WizardStepName.FINANZIELLE_SITUATION == stepName) {
-			updateAllStatusForFinSit(wizardSteps);
+			updateAllStatusForFinSit(wizardSteps, substep);
 		} else {
 			updateStatusSingleStep(wizardSteps, stepName);
 		}
@@ -397,7 +402,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		}
 	}
 
-	private void updateAllStatusForFinSit(List<WizardStep> wizardSteps) {
+	private void updateAllStatusForFinSit(List<WizardStep> wizardSteps, @Nullable Integer substep) {
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepStatus.UNBESUCHT != wizardStep.getWizardStepStatus()) {
 				final Gesuch gesuch = wizardStep.getGesuch();
@@ -405,11 +410,11 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					if (gesuch.isMutation()) {
 						setWizardStepOkOrMutiert(wizardStep);
 
-					} else {
+					} else if (Objects.equals(1, substep)) { //only for substep 1 (finanziellesituationstart)
 						setStatusDueToFinSitRequired(wizardStep, gesuch);
 					}
 				}
-				if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()) {
+				if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName() && Objects.equals(1, substep)) {
 					setStatusDueToFinSitRequired(wizardStep, gesuch);
 				}
 			}
