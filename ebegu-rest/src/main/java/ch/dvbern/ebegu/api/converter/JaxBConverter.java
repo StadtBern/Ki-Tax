@@ -1164,8 +1164,9 @@ public class JaxBConverter {
 		return jaxInstStammdaten;
 	}
 
-	public InstitutionStammdaten institutionStammdatenToEntity(final JaxInstitutionStammdaten institutionStammdatenJAXP, final InstitutionStammdaten
-		institutionStammdaten) {
+	public InstitutionStammdaten institutionStammdatenToEntity(final JaxInstitutionStammdaten institutionStammdatenJAXP,
+		final InstitutionStammdaten institutionStammdaten) {
+
 		Validate.notNull(institutionStammdatenJAXP);
 		Validate.notNull(institutionStammdatenJAXP.getInstitution());
 		Validate.notNull(institutionStammdaten);
@@ -1245,8 +1246,7 @@ public class JaxBConverter {
 	}
 
 	@Nullable
-	private Set<ModulTagesschule> moduleTagesschuleListToEntity(@Nullable List<JaxModulTagesschule> jaxModuleTagesschule, @Nullable Set<ModulTagesschule>
-		moduleOfInstitution,
+	private Set<ModulTagesschule> moduleTagesschuleListToEntity(@Nullable List<JaxModulTagesschule> jaxModuleTagesschule, @Nullable Set<ModulTagesschule> moduleOfInstitution,
 		@NotNull InstitutionStammdatenTagesschule institutionStammdatenTagesschule) {
 
 		if (moduleOfInstitution != null && jaxModuleTagesschule != null) {
@@ -2945,8 +2945,7 @@ public class JaxBConverter {
 		tagList.addAll(transformedTagList);
 	}
 
-	private BelegungFerieninselTag belegungFerieninselTagToEntity(@Nonnull final JaxBelegungFerieninselTag jaxTag, @Nonnull final BelegungFerieninselTag
-		tag) {
+	private BelegungFerieninselTag belegungFerieninselTagToEntity(@Nonnull final JaxBelegungFerieninselTag jaxTag, @Nonnull final BelegungFerieninselTag tag) {
 		Validate.notNull(jaxTag);
 		Validate.notNull(tag);
 		convertAbstractFieldsToEntity(jaxTag, tag);
@@ -2986,8 +2985,7 @@ public class JaxBConverter {
 	 */
 	public JaxInstitutionStammdaten updateJaxModuleTagesschule(@Nonnull JaxInstitutionStammdaten jaxInstDaten) {
 		Objects.requireNonNull(jaxInstDaten);
-		if (jaxInstDaten.getInstitutionStammdatenTagesschule() != null && !jaxInstDaten.getInstitutionStammdatenTagesschule().getModuleTagesschule().isEmpty
-			()) {
+		if (jaxInstDaten.getInstitutionStammdatenTagesschule() != null && !jaxInstDaten.getInstitutionStammdatenTagesschule().getModuleTagesschule().isEmpty()) {
 
 			List<JaxModulTagesschule> moduleTagesschule = jaxInstDaten.getInstitutionStammdatenTagesschule().getModuleTagesschule();
 			List<JaxModulTagesschule> moduleTagesschuleComplete = new ArrayList<>();

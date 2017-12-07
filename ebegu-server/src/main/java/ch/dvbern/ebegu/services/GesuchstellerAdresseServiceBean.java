@@ -176,7 +176,7 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 	@Nonnull
 	@Override
 	@PermitAll
-	public Optional<GesuchstellerAdresseContainer> getKorrespondenzAdr(String gesuchstellerID) {
+	public Optional<GesuchstellerAdresseContainer> getKorrespondenzAdr(@Nonnull String gesuchstellerID) {
 		List<GesuchstellerAdresseContainer> results = getAdresseQuery(gesuchstellerID, AdresseTyp.KORRESPONDENZADRESSE, null, null).getResultList();
 		if (results.isEmpty()) {
 			return Optional.empty();
@@ -190,7 +190,7 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 	@Nonnull
 	@Override
 	@PermitAll
-	public Optional<GesuchstellerAdresseContainer> getRechnungsAdr(String gesuchstellerID) {
+	public Optional<GesuchstellerAdresseContainer> getRechnungsAdr(@Nonnull String gesuchstellerID) {
 		List<GesuchstellerAdresseContainer> results = getAdresseQuery(gesuchstellerID, AdresseTyp.RECHNUNGSADRESSE, null, null).getResultList();
 		if (results.isEmpty()) {
 			return Optional.empty();
