@@ -42,6 +42,7 @@ import TSInstitution from '../models/TSInstitution';
 import TSInstitutionStammdaten from '../models/TSInstitutionStammdaten';
 import TSInstitutionStammdatenTagesschule from '../models/TSInstitutionStammdatenTagesschule';
 import {TSMandant} from '../models/TSMandant';
+import TSModulTagesschule from '../models/TSModulTagesschule';
 import {TSTraegerschaft} from '../models/TSTraegerschaft';
 import TSVerfuegung from '../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
@@ -51,7 +52,6 @@ import DateUtil from './DateUtil';
 import EbeguRestUtil from './EbeguRestUtil';
 import TestDataUtil from './TestDataUtil';
 import Moment = moment.Moment;
-import TSModulTagesschule from '../models/TSModulTagesschule';
 
 describe('EbeguRestUtil', function () {
 
@@ -501,6 +501,7 @@ describe('EbeguRestUtil', function () {
         myGesuchsteller.mobile = '+41 76 300 12 34';
         myGesuchsteller.mail = 'Til.Testgesuchsteller@example.com';
         myGesuchstellerCont.korrespondenzAdresse = undefined;
+        myGesuchstellerCont.rechnungsAdresse = undefined;
         myGesuchstellerCont.adressen = [];
         myGesuchstellerCont.finanzielleSituationContainer = undefined;
         myGesuchstellerCont.einkommensverschlechterungContainer = undefined;

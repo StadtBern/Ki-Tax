@@ -131,7 +131,7 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 		Predicate gesuchstellerPred = cb.equal(root.get(GesuchstellerAdresseContainer_.gesuchstellerContainer).get(Gesuchsteller_.id), gesuchstellerIdParam);
 
 		Predicate typePredicate;
-		if (AdresseTyp.KORRESPONDENZADRESSE == typ) {
+		if (AdresseTyp.KORRESPONDENZADRESSE == typ || AdresseTyp.RECHNUNGSADRESSE == typ) {
 			final Join<GesuchstellerAdresseContainer, GesuchstellerAdresse> joinGS = root.join(GesuchstellerAdresseContainer_.gesuchstellerAdresseGS, JoinType.LEFT);
 			final Join<GesuchstellerAdresseContainer, GesuchstellerAdresse> joinJA = root.join(GesuchstellerAdresseContainer_.gesuchstellerAdresseJA, JoinType.LEFT);
 			typePredicate = cb.or(cb.equal(joinGS.get(GesuchstellerAdresse_.adresseTyp), typParam),
@@ -176,13 +176,27 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 	@Nonnull
 	@Override
 	@PermitAll
-	public Optional<GesuchstellerAdresseContainer> getKorrespondenzAdr(String gesuchstellerID) {
+	public Optional<GesuchstellerAdresseContainer> getKorrespondenzAdr(@Nonnull String gesuchstellerID) {
 		List<GesuchstellerAdresseContainer> results = getAdresseQuery(gesuchstellerID, AdresseTyp.KORRESPONDENZADRESSE, null, null).getResultList();
 		if (results.isEmpty()) {
 			return Optional.empty();
 		}
 		if (results.size() > 1) {
 			throw new EbeguRuntimeException("getKorrespondenzAdr", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, gesuchstellerID);
+		}
+		return Optional.of(results.get(0));
+	}
+
+	@Nonnull
+	@Override
+	@PermitAll
+	public Optional<GesuchstellerAdresseContainer> getRechnungsAdr(@Nonnull String gesuchstellerID) {
+		List<GesuchstellerAdresseContainer> results = getAdresseQuery(gesuchstellerID, AdresseTyp.RECHNUNGSADRESSE, null, null).getResultList();
+		if (results.isEmpty()) {
+			return Optional.empty();
+		}
+		if (results.size() > 1) {
+			throw new EbeguRuntimeException("getRechnungsAdr", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, gesuchstellerID);
 		}
 		return Optional.of(results.get(0));
 	}

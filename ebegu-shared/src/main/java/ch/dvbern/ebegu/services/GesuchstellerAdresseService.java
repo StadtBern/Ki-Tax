@@ -68,4 +68,10 @@ public interface GesuchstellerAdresseService {
 	 */
 	@Nonnull
 	Optional<GesuchstellerAdresseContainer> getKorrespondenzAdr(@Nonnull String gesuchstellerID);
+
+	/**
+	 * Laedt die Rechnungsadresse fuer den Gesuchsteller
+	 */
+	@Nonnull
+	Optional<GesuchstellerAdresseContainer> getRechnungsAdr(@Nonnull String gesuchstellerID);
 }

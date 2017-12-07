@@ -84,7 +84,12 @@ public class GesuchstellerAdresse extends Adresse {
 
 	@Transient
 	public boolean isKorrespondenzAdresse() {
-		return AdresseTyp.KORRESPONDENZADRESSE.equals(this.getAdresseTyp());
+		return AdresseTyp.KORRESPONDENZADRESSE == this.getAdresseTyp();
+	}
+
+	@Transient
+	public boolean isRechnungsAdresse() {
+		return AdresseTyp.RECHNUNGSADRESSE == this.getAdresseTyp();
 	}
 
 	@Nonnull
