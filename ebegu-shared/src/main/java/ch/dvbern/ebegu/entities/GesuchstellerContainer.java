@@ -137,6 +137,20 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 		return null;
 	}
 
+	/**
+	 * Returns the first rechnungsAdresse found for this GesuchstellerContainer. It should have only one.
+	 * If no rechnungsAdresse is set, null is returned
+	 */
+	@Nullable
+	public GesuchstellerAdresseContainer extractRechnungsAdresse() {
+		for (GesuchstellerAdresseContainer adresse : getAdressen()) {
+			if (adresse.extractIsRechnungsAdresse()) {
+				return adresse;
+			}
+		}
+		return null;
+	}
+
 	@Nullable
 	public FinanzielleSituationContainer getFinanzielleSituationContainer() {
 		return finanzielleSituationContainer;

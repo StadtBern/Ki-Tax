@@ -13,29 +13,29 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import EbeguRestUtil from '../../../utils/EbeguRestUtil';
-import {EnumEx} from '../../../utils/EnumEx';
 import {IComponentOptions} from 'angular';
-import AbstractGesuchViewController from '../abstractGesuchView';
-import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
-import {IStammdatenStateParams} from '../../gesuch.route';
-import './stammdatenView.less';
-import GesuchModelManager from '../../service/gesuchModelManager';
-import BerechnungsManager from '../../service/berechnungsManager';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import EwkRS from '../../../core/service/ewkRS.rest';
+import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
+import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
+import {TSGesuchEvent} from '../../../models/enums/TSGesuchEvent';
 import {TSRole} from '../../../models/enums/TSRole';
-import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
-import TSAdresseContainer from '../../../models/TSAdresseContainer';
 import TSAdresse from '../../../models/TSAdresse';
-import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import {TSGesuchEvent} from '../../../models/enums/TSGesuchEvent';
+import TSAdresseContainer from '../../../models/TSAdresseContainer';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import DateUtil from '../../../utils/DateUtil';
-import EwkRS from '../../../core/service/ewkRS.rest';
+import EbeguRestUtil from '../../../utils/EbeguRestUtil';
+import {EnumEx} from '../../../utils/EnumEx';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import {IStammdatenStateParams} from '../../gesuch.route';
+import BerechnungsManager from '../../service/berechnungsManager';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import WizardStepManager from '../../service/wizardStepManager';
+import AbstractGesuchViewController from '../abstractGesuchView';
+import './stammdatenView.less';
 import IQService = angular.IQService;
 import IPromise = angular.IPromise;
 import IScope = angular.IScope;
@@ -58,6 +58,8 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     geschlechter: Array<string>;
     showKorrespondadr: boolean;
     showKorrespondadrGS: boolean;
+    showRechnungsadr: boolean;
+    showRechnungsadrGS: boolean;
     ebeguRestUtil: EbeguRestUtil;
     allowedRoles: Array<TSRole>;
     gesuchstellerNumber: number;
@@ -88,6 +90,8 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.showKorrespondadr = (this.model.korrespondenzAdresse && this.model.korrespondenzAdresse.adresseJA) ? true : false;
         this.showKorrespondadrGS = (this.model.korrespondenzAdresse && this.model.korrespondenzAdresse.adresseGS) ? true : false;
+        this.showRechnungsadr = (this.model.rechnungsAdresse && this.model.rechnungsAdresse.adresseJA) ? true : false;
+        this.showRechnungsadrGS = (this.model.rechnungsAdresse && this.model.rechnungsAdresse.adresseGS) ? true : false;
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.getModel().showUmzug = this.getModel().showUmzug || this.getModel().isThereAnyUmzug();
         this.setLastVerfuegtesGesuch();
@@ -104,9 +108,19 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     korrespondenzAdrClicked() {
         if (this.showKorrespondadr) {
             if (!this.model.korrespondenzAdresse) {
-                this.model.korrespondenzAdresse = this.initKorrespondenzAdresse();
+                this.model.korrespondenzAdresse = this.initAdresse(TSAdressetyp.KORRESPONDENZADRESSE);
             } else if (!this.model.korrespondenzAdresse.adresseJA) {
                 this.initKorrespondenzAdresseJA();
+            }
+        }
+    }
+
+    rechnungsAdrClicked() {
+        if (this.showRechnungsadr) {
+            if (!this.model.rechnungsAdresse) {
+                this.model.rechnungsAdresse = this.initAdresse(TSAdressetyp.RECHNUNGSADRESSE);
+            } else if (!this.model.rechnungsAdresse.adresseJA) {
+                this.initRechnungsAdresseJA();
             }
         }
     }
@@ -130,8 +144,9 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
 
                 return this.$q.when(this.model);
             }
-            // wenn keine Korrespondenzaddr da ist koennen wir sie wegmachen
+            // wenn keine Korrespondenzaddr oder Rechnungsadr da ist koennen wir sie wegmachen
             this.maybeResetKorrespondadr();
+            this.maybeResetRechnungsadr();
 
             if ((this.gesuchModelManager.getGesuch().gesuchsteller1 && this.gesuchModelManager.getGesuch().gesuchsteller1.showUmzug)
                 || (this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.showUmzug)
@@ -175,7 +190,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     public disableWohnadresseFor2GS(): boolean {
         return this.isMutation() && (this.gesuchstellerNumber === 1
             || (this.model.vorgaengerId !== null
-                && this.model.vorgaengerId !== undefined));
+            && this.model.vorgaengerId !== undefined));
     }
 
     public isThereAnyUmzug(): boolean {
@@ -188,28 +203,42 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         } else if (!this.showKorrespondadr) {
             this.getModel().korrespondenzAdresse.adresseJA = undefined; //nur adresse JA wird zurueckgesetzt die GS kann bleiben
         }
-
     }
 
-    private initKorrespondenzAdresse(): TSAdresseContainer {
-        let korrespAdresseContanier: TSAdresseContainer = new TSAdresseContainer();
-        let korrAdr = new TSAdresse();
-        korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
-        korrespAdresseContanier.showDatumVon = false;
-        korrespAdresseContanier.adresseJA = korrAdr;
-        return korrespAdresseContanier;
+    private maybeResetRechnungsadr(): void {
+        if (!this.showRechnungsadr && !this.showRechnungsadrGS) {
+            this.getModel().rechnungsAdresse = undefined; //keine rechnungsAdresse weder von GS noch von JA -> entfernen
+        } else if (!this.showRechnungsadr) {
+            this.getModel().rechnungsAdresse.adresseJA = undefined; //nur adresse JA wird zurueckgesetzt die GS kann bleiben
+        }
+    }
+
+    private initAdresse(adresstyp: TSAdressetyp) {
+        let adresseContanier: TSAdresseContainer = new TSAdresseContainer();
+        let adresse = new TSAdresse();
+        adresse.adresseTyp = adresstyp;
+        adresseContanier.showDatumVon = false;
+        adresseContanier.adresseJA = adresse;
+        return adresseContanier;
     }
 
     private initKorrespondenzAdresseJA() {
-        let korrAdr = new TSAdresse();
-        korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
-        this.model.korrespondenzAdresse.adresseJA = korrAdr;
+        let addr = new TSAdresse();
+        addr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
+        this.model.korrespondenzAdresse.adresseJA = addr;
         this.model.korrespondenzAdresse.showDatumVon = false;
     }
 
-    public getTextKorrespondenzaddrKorrekturJA(): string {
-        if (this.model.korrespondenzAdresse && this.model.korrespondenzAdresse.adresseGS) {
-            let adr: TSAdresse = this.model.korrespondenzAdresse.adresseGS;
+    private initRechnungsAdresseJA() {
+        let addr = new TSAdresse();
+        addr.adresseTyp = TSAdressetyp.RECHNUNGSADRESSE;
+        this.model.rechnungsAdresse.adresseJA = addr;
+        this.model.rechnungsAdresse.showDatumVon = false;
+    }
+
+    public getTextAddrKorrekturJA(adresseContainer: TSAdresseContainer): string {
+        if (adresseContainer && adresseContainer.adresseGS) {
+            let adr: TSAdresse = adresseContainer.adresseGS;
             let organisation: string = adr.organisation ? adr.organisation : '-';
             let strasse: string = adr.strasse ? adr.strasse : '-';
             let hausnummer: string = adr.hausnummer ? adr.hausnummer : '-';
@@ -217,7 +246,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
             let plz: string = adr.plz ? adr.plz : '-';
             let ort: string = adr.ort ? adr.ort : '-';
             let land: string = this.$translate.instant('Land_' + adr.land);
-            return this.$translate.instant('JA_KORREKTUR_KORRESPONDENZ_ADDR', {
+            return this.$translate.instant('JA_KORREKTUR_ADDR', {
                 organisation: organisation,
                 strasse: strasse,
                 hausnummer: hausnummer,

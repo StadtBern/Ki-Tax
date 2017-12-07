@@ -15,13 +15,184 @@
 
 package ch.dvbern.ebegu.api.converter;
 
-import ch.dvbern.ebegu.api.dtos.*;
+import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+
+import ch.dvbern.ebegu.api.dtos.JaxAbstractDTO;
+import ch.dvbern.ebegu.api.dtos.JaxAbstractDateRangedDTO;
+import ch.dvbern.ebegu.api.dtos.JaxAbstractFinanzielleSituation;
+import ch.dvbern.ebegu.api.dtos.JaxAbstractPensumDTO;
+import ch.dvbern.ebegu.api.dtos.JaxAbstractPersonDTO;
+import ch.dvbern.ebegu.api.dtos.JaxAbwesenheit;
+import ch.dvbern.ebegu.api.dtos.JaxAbwesenheitContainer;
+import ch.dvbern.ebegu.api.dtos.JaxAdresse;
+import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
+import ch.dvbern.ebegu.api.dtos.JaxAntragStatusHistory;
+import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
+import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
+import ch.dvbern.ebegu.api.dtos.JaxBelegungFerieninsel;
+import ch.dvbern.ebegu.api.dtos.JaxBelegungFerieninselTag;
+import ch.dvbern.ebegu.api.dtos.JaxBelegungTagesschule;
+import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
+import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
+import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilungPensum;
+import ch.dvbern.ebegu.api.dtos.JaxBetreuungspensum;
+import ch.dvbern.ebegu.api.dtos.JaxBetreuungspensumContainer;
+import ch.dvbern.ebegu.api.dtos.JaxDokument;
+import ch.dvbern.ebegu.api.dtos.JaxDokumentGrund;
+import ch.dvbern.ebegu.api.dtos.JaxDokumente;
+import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
+import ch.dvbern.ebegu.api.dtos.JaxEbeguParameter;
+import ch.dvbern.ebegu.api.dtos.JaxEbeguVorlage;
+import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterung;
+import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungInfoContainer;
+import ch.dvbern.ebegu.api.dtos.JaxEnversRevision;
+import ch.dvbern.ebegu.api.dtos.JaxErwerbspensum;
+import ch.dvbern.ebegu.api.dtos.JaxErwerbspensumContainer;
+import ch.dvbern.ebegu.api.dtos.JaxFachstelle;
+import ch.dvbern.ebegu.api.dtos.JaxFall;
+import ch.dvbern.ebegu.api.dtos.JaxFamiliensituation;
+import ch.dvbern.ebegu.api.dtos.JaxFamiliensituationContainer;
+import ch.dvbern.ebegu.api.dtos.JaxFerieninselStammdaten;
+import ch.dvbern.ebegu.api.dtos.JaxFerieninselZeitraum;
+import ch.dvbern.ebegu.api.dtos.JaxFile;
+import ch.dvbern.ebegu.api.dtos.JaxFinanzielleSituation;
+import ch.dvbern.ebegu.api.dtos.JaxFinanzielleSituationContainer;
+import ch.dvbern.ebegu.api.dtos.JaxGesuch;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
+import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.JaxInstitution;
+import ch.dvbern.ebegu.api.dtos.JaxInstitutionStammdaten;
+import ch.dvbern.ebegu.api.dtos.JaxInstitutionStammdatenTagesschule;
+import ch.dvbern.ebegu.api.dtos.JaxKind;
+import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.dtos.JaxMahnung;
+import ch.dvbern.ebegu.api.dtos.JaxMandant;
+import ch.dvbern.ebegu.api.dtos.JaxMitteilung;
+import ch.dvbern.ebegu.api.dtos.JaxModulTagesschule;
+import ch.dvbern.ebegu.api.dtos.JaxPensumFachstelle;
+import ch.dvbern.ebegu.api.dtos.JaxTraegerschaft;
+import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
+import ch.dvbern.ebegu.api.dtos.JaxVerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.api.dtos.JaxVorlage;
+import ch.dvbern.ebegu.api.dtos.JaxWizardStep;
+import ch.dvbern.ebegu.api.dtos.JaxZahlung;
+import ch.dvbern.ebegu.api.dtos.JaxZahlungsauftrag;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.entities.AbstractDateRangedEntity;
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
+import ch.dvbern.ebegu.entities.AbstractPensumEntity;
+import ch.dvbern.ebegu.entities.AbstractPersonEntity;
+import ch.dvbern.ebegu.entities.Abwesenheit;
+import ch.dvbern.ebegu.entities.AbwesenheitContainer;
+import ch.dvbern.ebegu.entities.Adresse;
+import ch.dvbern.ebegu.entities.AntragStatusHistory;
+import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.ebegu.entities.BelegungFerieninsel;
+import ch.dvbern.ebegu.entities.BelegungFerieninselTag;
+import ch.dvbern.ebegu.entities.BelegungTagesschule;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
+import ch.dvbern.ebegu.entities.BetreuungsmitteilungPensum;
+import ch.dvbern.ebegu.entities.Betreuungspensum;
+import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.Dokument;
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.DownloadFile;
+import ch.dvbern.ebegu.entities.EbeguParameter;
+import ch.dvbern.ebegu.entities.EbeguVorlage;
+import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
+import ch.dvbern.ebegu.entities.Erwerbspensum;
+import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.Fachstelle;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.FamiliensituationContainer;
+import ch.dvbern.ebegu.entities.FerieninselStammdaten;
+import ch.dvbern.ebegu.entities.FerieninselZeitraum;
+import ch.dvbern.ebegu.entities.FileMetadata;
+import ch.dvbern.ebegu.entities.FinanzielleSituation;
+import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.InstitutionStammdatenTagesschule;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Mahnung;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Mitteilung;
+import ch.dvbern.ebegu.entities.ModulTagesschule;
+import ch.dvbern.ebegu.entities.PensumFachstelle;
+import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.entities.Vorlage;
+import ch.dvbern.ebegu.entities.WizardStep;
+import ch.dvbern.ebegu.entities.Zahlung;
+import ch.dvbern.ebegu.entities.Zahlungsauftrag;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.services.AdresseService;
+import ch.dvbern.ebegu.services.BenutzerService;
+import ch.dvbern.ebegu.services.BetreuungService;
+import ch.dvbern.ebegu.services.EinkommensverschlechterungInfoService;
+import ch.dvbern.ebegu.services.EinkommensverschlechterungService;
+import ch.dvbern.ebegu.services.ErwerbspensumService;
+import ch.dvbern.ebegu.services.FachstelleService;
+import ch.dvbern.ebegu.services.FallService;
+import ch.dvbern.ebegu.services.FamiliensituationService;
+import ch.dvbern.ebegu.services.FinanzielleSituationService;
+import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.GesuchsperiodeService;
+import ch.dvbern.ebegu.services.GesuchstellerAdresseService;
+import ch.dvbern.ebegu.services.GesuchstellerService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.InstitutionStammdatenService;
+import ch.dvbern.ebegu.services.MandantService;
+import ch.dvbern.ebegu.services.PensumFachstelleService;
+import ch.dvbern.ebegu.services.TraegerschaftService;
+import ch.dvbern.ebegu.services.VerfuegungService;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.Constants;
@@ -36,18 +207,6 @@ import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -340,8 +499,8 @@ public class JaxBConverter {
 			GesuchstellerAdresseContainer next = iterator.next();
 			boolean needsToBeRemoved = true;
 			for (JaxAdresseContainer jaxAdresse : gesuchstellerContJAXP.getAdressen()) {
-				if (next.extractIsKorrespondenzAdresse() || next.getId().equals(jaxAdresse.getId())) {
-					needsToBeRemoved = false; // Korrespondezadresse und Adressen die gefunden werden, werden nicht geloescht
+				if (next.extractIsKorrespondenzAdresse() || next.extractIsRechnungsAdresse() || next.getId().equals(jaxAdresse.getId())) {
+					needsToBeRemoved = false; // Korrespondezadresse, Rechnungsadresse und Adressen die gefunden werden, werden nicht geloescht
 				}
 			}
 			if (needsToBeRemoved) {
@@ -353,7 +512,7 @@ public class JaxBConverter {
 
 		// Zuletzt werden alle gueltigen Adressen sortiert und mit dem entsprechenden AB und BIS aktualisiert
 		List<GesuchstellerAdresseContainer> wohnadressen = gesuchstellerCont.getAdressen().stream()
-			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.extractIsKorrespondenzAdresse())
+			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.extractIsKorrespondenzAdresse() && !gesuchstellerAdresse.extractIsRechnungsAdresse())
 			.sorted(Comparator.comparing(o -> o.extractGueltigkeit().getGueltigAb()))
 			.collect(Collectors.toList());
 		for (int i = 0; i < wohnadressen.size(); i++) {
@@ -394,11 +553,13 @@ public class JaxBConverter {
 		if (!persistedGesuchstellerCont.isNew()) {
 			//relationen laden
 			final Optional<GesuchstellerAdresseContainer> alternativeAdr = gesuchstellerAdresseService.getKorrespondenzAdr(persistedGesuchstellerCont.getId());
+			final Optional<GesuchstellerAdresseContainer> rechnungsAdr = gesuchstellerAdresseService.getRechnungsAdr(persistedGesuchstellerCont.getId());
 			alternativeAdr.ifPresent(adresse -> jaxGesuchstellerCont.setAlternativeAdresse(gesuchstellerAdresseContainerToJAX(adresse)));
+			rechnungsAdr.ifPresent(adresse -> jaxGesuchstellerCont.setRechnungsAdresse(gesuchstellerAdresseContainerToJAX(adresse)));
 
 			jaxGesuchstellerCont.setAdressen(gesuchstellerAdresseContainerListToJAX(
 				persistedGesuchstellerCont.getAdressen().stream().filter(gesuchstellerAdresse
-					-> !gesuchstellerAdresse.extractIsKorrespondenzAdresse()).sorted((o1, o2) ->
+					-> !gesuchstellerAdresse.extractIsKorrespondenzAdresse() && !gesuchstellerAdresse.extractIsRechnungsAdresse()).sorted((o1, o2) ->
 				{
 					if (o1.extractGueltigkeit() == null && o2.extractGueltigkeit() == null) {
 						return 0;
@@ -752,7 +913,7 @@ public class JaxBConverter {
 			}
 			adresseCont.setGesuchstellerAdresseGS(gesuchstellerAdresseToEntity(jaxAdresseCont.getAdresseGS(), gesuchstellerAdresseGS));
 		}
-		// ein erstellter AdresseJA Container kann durch das Jugendamt entfernt werden wenn es sich um eine Korrespondenzaddr handelt
+		// ein erstellter AdresseJA Container kann durch das Jugendamt entfernt werden wenn es sich um eine Korrespondenzaddr oder eine Rechnungsaddr handelt
 		if (jaxAdresseCont.getAdresseJA() != null) {
 			GesuchstellerAdresse gesuchstellerAdresseJA = new GesuchstellerAdresse();
 			if (adresseCont.getGesuchstellerAdresseJA() != null) {
@@ -760,7 +921,8 @@ public class JaxBConverter {
 			}
 			adresseCont.setGesuchstellerAdresseJA(gesuchstellerAdresseToEntity(jaxAdresseCont.getAdresseJA(), gesuchstellerAdresseJA));
 		} else {
-			Validate.isTrue(adresseCont.extractIsKorrespondenzAdresse(), "Nur bei der Korrespondenzadresse kann der AdresseJA Container entfernt werden");
+			Validate.isTrue(adresseCont.extractIsKorrespondenzAdresse() || adresseCont.extractIsRechnungsAdresse(), "Nur bei der Korrespondenz- oder "
+				+ "Rechnungsadresse kann der AdresseJA Container entfernt werden");
 			adresseCont.setGesuchstellerAdresseJA(null);
 		}
 
@@ -797,14 +959,17 @@ public class JaxBConverter {
 			final GesuchstellerAdresseContainer altAddrToMerge = gesuchstellerAdresseContainerToEntity(jaxGesuchstellerCont.getAlternativeAdresse(),
 				currentAltAdr);
 			gesuchstellerCont.addAdresse(altAddrToMerge);
-		} //else case: Wenn das haeklein "Zustell / Postadrsse" auf client weggenommen wird muss die Korrespondezadr auf dem Server geloescht werden.
-		else {
-			for (Iterator<GesuchstellerAdresseContainer> iterator = gesuchstellerCont.getAdressen().iterator(); iterator.hasNext(); ) {
-				GesuchstellerAdresseContainer next = iterator.next();
-				if (next.extractIsKorrespondenzAdresse()) {
-					iterator.remove();
-				}
-			}
+		} else { //else case: Wenn das haeklein "Zustell / Postadrsse" auf client weggenommen wird muss die Korrespondezadr auf dem Server geloescht werden.
+			gesuchstellerCont.getAdressen().removeIf(GesuchstellerAdresseContainer::extractIsKorrespondenzAdresse);
+		}
+		if (jaxGesuchstellerCont.getRechnungsAdresse() != null) {
+			final GesuchstellerAdresseContainer currentrechnungsAdr = gesuchstellerAdresseService
+				.getRechnungsAdr(gesuchstellerCont.getId()).orElse(new GesuchstellerAdresseContainer());
+			final GesuchstellerAdresseContainer rechnungsAddrToMerge = gesuchstellerAdresseContainerToEntity(jaxGesuchstellerCont.getRechnungsAdresse(),
+				currentrechnungsAdr);
+			gesuchstellerCont.addAdresse(rechnungsAddrToMerge);
+		} else {//else case: Wenn das haeklein "abweichende Rchnungsadresse" auf client weggenommen wird muss diese adresse auf dem Server geloescht werden.
+			gesuchstellerCont.getAdressen().removeIf(GesuchstellerAdresseContainer::extractIsRechnungsAdresse);
 		}
 		sortAndAddAdressenToGesuchstellerContainer(jaxGesuchstellerCont, gesuchstellerCont);
 
@@ -999,7 +1164,9 @@ public class JaxBConverter {
 		return jaxInstStammdaten;
 	}
 
-	public InstitutionStammdaten institutionStammdatenToEntity(final JaxInstitutionStammdaten institutionStammdatenJAXP, final InstitutionStammdaten institutionStammdaten) {
+	public InstitutionStammdaten institutionStammdatenToEntity(final JaxInstitutionStammdaten institutionStammdatenJAXP,
+		final InstitutionStammdaten institutionStammdaten) {
+
 		Validate.notNull(institutionStammdatenJAXP);
 		Validate.notNull(institutionStammdatenJAXP.getInstitution());
 		Validate.notNull(institutionStammdaten);
@@ -2533,6 +2700,7 @@ public class JaxBConverter {
 		return resultSet;
 	}
 
+	//TODO (team) wieso wird hier null zurueckgegeben? --> anstelle sollte man wohl besser gesuchstellerAdresseContainerToEntity verwenden
 	public GesuchstellerAdresseContainer adresseContainerToEntity(JaxAdresseContainer alternativeAdresse, GesuchstellerAdresseContainer
 		gesuchstellerAdresseContainer) {
 		return null;
@@ -2777,8 +2945,7 @@ public class JaxBConverter {
 		tagList.addAll(transformedTagList);
 	}
 
-	private BelegungFerieninselTag belegungFerieninselTagToEntity(@Nonnull final JaxBelegungFerieninselTag jaxTag, @Nonnull  final BelegungFerieninselTag
-		tag) {
+	private BelegungFerieninselTag belegungFerieninselTagToEntity(@Nonnull final JaxBelegungFerieninselTag jaxTag, @Nonnull final BelegungFerieninselTag tag) {
 		Validate.notNull(jaxTag);
 		Validate.notNull(tag);
 		convertAbstractFieldsToEntity(jaxTag, tag);

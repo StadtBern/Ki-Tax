@@ -91,6 +91,15 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	}
 
 	/**
+	 * Fragt nach dem Wert der AdresseJA, welcher eigentlich der geltende Wert ist
+	 */
+	@Transient
+	public boolean extractIsRechnungsAdresse() {
+		return this.gesuchstellerAdresseJA != null && this.gesuchstellerAdresseJA.isRechnungsAdresse()
+			|| this.gesuchstellerAdresseJA == null && this.gesuchstellerAdresseGS != null && this.gesuchstellerAdresseGS.isRechnungsAdresse();
+	}
+
+	/**
 	 * Extracts the value of nichtInGemeinde von gesuchstellerAdresseJA
 	 */
 	@Transient
