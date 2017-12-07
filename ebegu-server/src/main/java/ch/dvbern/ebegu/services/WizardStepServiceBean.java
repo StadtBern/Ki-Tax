@@ -224,7 +224,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		} else if (WizardStepName.ERWERBSPENSUM == stepName) {
 			updateAllStatusForErwerbspensum(wizardSteps);
 		} else if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG == stepName && newEntity instanceof EinkommensverschlechterungInfoContainer) {
-			updateAllStatusForEinkommensverschlechterungInfo(wizardSteps, (EinkommensverschlechterungInfoContainer) oldEntity, (EinkommensverschlechterungInfoContainer) newEntity);
+			updateAllStatusForEinkommensverschlechterungInfo(wizardSteps, (EinkommensverschlechterungInfoContainer) oldEntity,
+				(EinkommensverschlechterungInfoContainer) newEntity);
 		} else if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG == stepName && newEntity instanceof EinkommensverschlechterungContainer) {
 			updateAllStatusForEinkommensverschlechterung(wizardSteps);
 		} else if (WizardStepName.DOKUMENTE == stepName) {
@@ -251,8 +252,10 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					setWizardStepOkOrMutiert(wizardStep);
 
 				} else if (oldEntity == null || !oldEntity.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()
-					|| (!oldEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus1() && newEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus1())
-					|| (!oldEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2() && newEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2())) {
+					|| (!oldEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus1() && newEntity.getEinkommensverschlechterungInfoJA()
+					.getEkvFuerBasisJahrPlus1())
+					|| (!oldEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2() && newEntity.getEinkommensverschlechterungInfoJA()
+					.getEkvFuerBasisJahrPlus2())) {
 					// beim Wechseln von KEIN_EV auf EV oder von KEIN_EV_FUER_BASISJAHR2 auf EV_FUER_BASISJAHR2
 					wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
 
@@ -307,7 +310,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	}
 
 	/**
-	 * Holt alle Erwerbspensen und Betreuungen von der Datenbank. Nur die Betreuungen vom Typ anders als TAGESSCHULE und TAGESELTERN_SCHULKIND werden beruecksichtigt
+	 * Holt alle Erwerbspensen und Betreuungen von der Datenbank. Nur die Betreuungen vom Typ anders als TAGESSCHULE und TAGESELTERN_SCHULKIND werden
+	 * beruecksichtigt
 	 * Wenn die Anzahl solcher Betreuungen grosser als 0 ist, dann wird es geprueft, ob es Erwerbspensen gibt, wenn nicht der Status aendert auf NOK.
 	 * In allen anderen Faellen wird der Status auf OK gesetzt
 	 */
@@ -522,7 +526,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private void addRelatedObjectsForUmzug(@Nullable GesuchstellerContainer gesuchsteller, List<AbstractEntity> relatedObjects) {
 		if (gesuchsteller != null) {
 			for (GesuchstellerAdresseContainer adresse : gesuchsteller.getAdressen()) {
-				if (!adresse.extractIsKorrespondenzAdresse() && !adresse.getGesuchstellerAdresseJA().getGueltigkeit()
+				if (!adresse.extractIsKorrespondenzAdresse() && !adresse.extractIsRechnungsAdresse() && !adresse.getGesuchstellerAdresseJA().getGueltigkeit()
 					.getGueltigAb().isEqual(Constants.START_OF_TIME)) { // only the first Adresse starts at START_OF_TIME
 					relatedObjects.add(adresse);
 				}
@@ -531,15 +535,15 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	}
 
 	/**
-	 * Adds the Gesuchsteller itself and her korrespondeyAdresse.
+	 * Adds the Gesuchsteller itself and her korrespondez- and rechnungsAdresse.
 	 */
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	private void addRelatedObjectsForGesuchsteller(List<AbstractEntity> relatedObjects, @Nullable GesuchstellerContainer gesuchsteller) {
 		if (gesuchsteller != null) {
 			relatedObjects.add(gesuchsteller.getGesuchstellerJA());
 			for (GesuchstellerAdresseContainer adresse : gesuchsteller.getAdressen()) {
-				// add Korrespondezadresse and first Wohnadresse
-				if (adresse.extractIsKorrespondenzAdresse() || adresse.getGesuchstellerAdresseJA().getGueltigkeit()
+				// add Korrespondez- and Rechnungsadresse and first Wohnadresse
+				if (adresse.extractIsKorrespondenzAdresse() || adresse.extractIsRechnungsAdresse() || adresse.getGesuchstellerAdresseJA().getGueltigkeit()
 					.getGueltigAb().isEqual(Constants.START_OF_TIME)) { // only the first Wohnadresse starts at START_OF_TIME
 					relatedObjects.add(adresse);
 				}
@@ -753,7 +757,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (gesuch.getGesuchsteller1() != null && erwerbspensumService.findErwerbspensenForGesuchsteller(gesuch.getGesuchsteller1()).isEmpty()) {
 				status = WizardStepStatus.NOK;
 			}
-			if (status != WizardStepStatus.NOK && gesuch.getGesuchsteller2() != null && erwerbspensumService.findErwerbspensenForGesuchsteller(gesuch.getGesuchsteller2()).isEmpty()) {
+			if (status != WizardStepStatus.NOK && gesuch.getGesuchsteller2() != null && erwerbspensumService.findErwerbspensenForGesuchsteller(gesuch
+				.getGesuchsteller2()).isEmpty()) {
 				status = WizardStepStatus.NOK;
 			}
 		} else if (changesBecauseOtherStates && wizardStep.getWizardStepStatus() != WizardStepStatus.MUTIERT) {

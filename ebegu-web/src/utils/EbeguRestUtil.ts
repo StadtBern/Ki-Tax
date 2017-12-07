@@ -1977,6 +1977,7 @@ export default class EbeguRestUtil {
             this.abstractEntityToRestObject(restGSCont, gesuchstellerCont);
             restGSCont.adressen = this.adressenContainerListToRestObject(gesuchstellerCont.adressen);
             restGSCont.alternativeAdresse = this.adresseContainerToRestObject({}, gesuchstellerCont.korrespondenzAdresse);
+            restGSCont.rechnungsAdresse = this.adresseContainerToRestObject({}, gesuchstellerCont.rechnungsAdresse);
             if (gesuchstellerCont.gesuchstellerGS) {
                 restGSCont.gesuchstellerGS = this.gesuchstellerToRestObject({}, gesuchstellerCont.gesuchstellerGS);
             }
@@ -2009,6 +2010,8 @@ export default class EbeguRestUtil {
             gesuchstellerContTS.adressen = this.parseAdressenContainerList(gesuchstellerContFromServer.adressen);
             gesuchstellerContTS.korrespondenzAdresse = this.parseAdresseContainer(
                 new TSAdresseContainer(), gesuchstellerContFromServer.alternativeAdresse);
+            gesuchstellerContTS.rechnungsAdresse = this.parseAdresseContainer(
+                new TSAdresseContainer(), gesuchstellerContFromServer.rechnungsAdresse);
             gesuchstellerContTS.finanzielleSituationContainer = this.parseFinanzielleSituationContainer(
                 new TSFinanzielleSituationContainer(), gesuchstellerContFromServer.finanzielleSituationContainer);
             gesuchstellerContTS.einkommensverschlechterungContainer = this.parseEinkommensverschlechterungContainer(

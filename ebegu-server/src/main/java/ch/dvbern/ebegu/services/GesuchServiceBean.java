@@ -888,6 +888,30 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return Optional.of(gesuch);
 	}
 
+	@Override
+	@Nonnull
+	public Optional<Gesuch> getNeustesGesuchFuerFallnumerForSchulamtInterface(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Long fallnummer) {
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+		Predicate predicateFallNummer = cb.equal(root.get(Gesuch_.fall).get(Fall_.fallNummer), fallnummer);
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllStatesSchulamtInterface());
+
+		query.where(predicateGesuchsperiode, predicateFallNummer, predicateStatus);
+		query.select(root);
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
+		if (criteriaResults.isEmpty()) {
+			return Optional.empty();
+		}
+		Gesuch gesuch = criteriaResults.get(0);
+		return Optional.of(gesuch);
+	}
+
+
 	@Nonnull
 	private Optional<Gesuch> getGesuchFuerErneuerungsantrag(@Nonnull Fall fall) {
 		authorizer.checkReadAuthorizationFall(fall);

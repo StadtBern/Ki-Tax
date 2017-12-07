@@ -14,12 +14,13 @@
  */
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsangebotTyp;
-import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsstatus;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
+
+import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsangebotTyp;
+import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsstatus;
 
 /**
  * DTO für die Anmeldung eines Tagesschule-Angebots für die externe Schnittstelle
@@ -40,9 +41,11 @@ public class JaxExternalAnmeldungTagesschule extends JaxExternalAnmeldung {
 		@Nonnull String bgNummer,
 		@Nonnull JaxExternalBetreuungsstatus betreuungsstatus,
 		@Nonnull String institutionName,
-		@Nonnull List<JaxExternalModul> anmeldungen) {
+		@Nonnull List<JaxExternalModul> anmeldungen,
+		@Nonnull String kindName,
+		@Nonnull String kindVorname) {
 
-		super(bgNummer, betreuungsstatus, JaxExternalBetreuungsangebotTyp.TAGESSCHULE, institutionName);
+		super(bgNummer, betreuungsstatus, JaxExternalBetreuungsangebotTyp.TAGESSCHULE, institutionName, kindName, kindVorname);
 		this.anmeldungen = anmeldungen;
 	}
 
