@@ -35,6 +35,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -398,17 +399,19 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 	private void updateAllStatusForFinSit(List<WizardStep> wizardSteps) {
 		for (WizardStep wizardStep : wizardSteps) {
-			final Gesuch gesuch = wizardStep.getGesuch();
-			if (WizardStepName.FINANZIELLE_SITUATION == wizardStep.getWizardStepName()) {
-				if (gesuch.isMutation()) {
-					setWizardStepOkOrMutiert(wizardStep);
+			if (WizardStepStatus.UNBESUCHT != wizardStep.getWizardStepStatus()) {
+				final Gesuch gesuch = wizardStep.getGesuch();
+				if (WizardStepName.FINANZIELLE_SITUATION == wizardStep.getWizardStepName()) {
+					if (gesuch.isMutation()) {
+						setWizardStepOkOrMutiert(wizardStep);
 
-				} else {
+					} else {
+						setStatusDueToFinSitRequired(wizardStep, gesuch);
+					}
+				}
+				if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()) {
 					setStatusDueToFinSitRequired(wizardStep, gesuch);
 				}
-			}
-			if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()) {
-				setStatusDueToFinSitRequired(wizardStep, gesuch);
 			}
 		}
 	}
@@ -565,13 +568,21 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private void updateAllStatusForBetreuung(List<WizardStep> wizardSteps) {
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepStatus.UNBESUCHT != wizardStep.getWizardStepStatus()) {
+
 				if (WizardStepName.BETREUUNG == wizardStep.getWizardStepName()) {
 					checkStepStatusForBetreuung(wizardStep, false);
+
 				} else if (!principalBean.isCallerInAnyOfRole(SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT)
 					&& WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()) {
 					// SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION und SCHULAMT, ADMINISTRATOR_SCHULAMT duerfen beim Aendern einer Betreuung
 					// den Status von ERWERBPENSUM nicht aendern
 					checkStepStatusForErwerbspensum(wizardStep, true);
+
+				} else if (WizardStepName.FINANZIELLE_SITUATION == wizardStep.getWizardStepName()) {
+					checkFinSitStatusForBetreuungen(wizardStep);
+
+				} else if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()) {
+					checkFinSitStatusForBetreuungen(wizardStep);
 				}
 			}
 		}
@@ -582,6 +593,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (WizardStepStatus.UNBESUCHT != wizardStep.getWizardStepStatus()) {
 				if (WizardStepName.BETREUUNG == wizardStep.getWizardStepName()) {
 					checkStepStatusForBetreuung(wizardStep, true);
+
 				} else if (WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()) {
 					checkStepStatusForErwerbspensum(wizardStep, true);
 				} else if (WizardStepName.KINDER == wizardStep.getWizardStepName()) {
@@ -663,7 +675,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	}
 
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
-	private void checkStepStatusForBetreuung(WizardStep wizardStep, boolean changesBecauseOtherStates) {
+	private void checkStepStatusForBetreuung(@NotNull WizardStep wizardStep, boolean changesBecauseOtherStates) {
 		final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
 		WizardStepStatus status;
 		if (changesBecauseOtherStates && wizardStep.getWizardStepStatus() != WizardStepStatus.MUTIERT) {
@@ -686,6 +698,40 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			}
 		}
 		wizardStep.setWizardStepStatus(status);
+	}
+
+	/**
+	 * Updates the Status of the Step FINANZIELLE_SITUATION or EINKOMMENSVERSCHLECHTERUNG depending on the kind of the betreuungen.
+	 * This should be called after removing or adding a Betreuung.
+	 */
+	private void checkFinSitStatusForBetreuungen(@NotNull WizardStep wizardStep) {
+		if (wizardStep.getWizardStepName() == WizardStepName.EINKOMMENSVERSCHLECHTERUNG || wizardStep.getWizardStepName() == WizardStepName.FINANZIELLE_SITUATION) {
+			final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
+
+			BetreuungsangebotTyp dominantType = BetreuungsangebotTyp.FERIENINSEL; // less dominant type
+			for (Betreuung betreuung : betreuungenFromGesuch) {
+				if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp() == BetreuungsangebotTyp.TAGESSCHULE) {
+					dominantType = BetreuungsangebotTyp.TAGESSCHULE;
+				}
+				if (!betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isSchulamt()) {
+					dominantType = BetreuungsangebotTyp.KITA;
+					break;
+				}
+			}
+			if (dominantType == BetreuungsangebotTyp.FERIENINSEL) {
+				setWizardStepOkOrMutiert(wizardStep);
+			}
+			if (dominantType == BetreuungsangebotTyp.KITA && wizardStep.getGesuch().getEinkommensverschlechterungInfoContainer() == null) {
+				wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+			}
+			if (dominantType == BetreuungsangebotTyp.TAGESSCHULE) {
+				if (EbeguUtil.isSozialhilfeBezuegerNull(wizardStep.getGesuch())) {
+					wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+				} else if (!EbeguUtil.isFinanzielleSituationRequired(wizardStep.getGesuch())) {
+					setWizardStepOkOrMutiert(wizardStep);
+				}
+			}
+		}
 	}
 
 	/**

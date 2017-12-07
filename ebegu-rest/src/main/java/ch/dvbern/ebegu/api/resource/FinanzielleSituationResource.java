@@ -137,8 +137,7 @@ public class FinanzielleSituationResource {
 		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("saveFinanzielleSituationStart", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId()));
 
 		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
-		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge, false, null);
-		wizardStepService.updateSteps(modifiedGesuch.getId(), null, null, WizardStepName.FINANZIELLE_SITUATION);
+		Gesuch modifiedGesuch = finanzielleSituationService.saveFinanzielleSituationStart(gesuchToMerge);
 		return converter.gesuchToJAX(modifiedGesuch);
 	}
 

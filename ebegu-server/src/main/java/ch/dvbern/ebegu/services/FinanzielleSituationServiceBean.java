@@ -76,6 +76,10 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	@Inject
 	private EbeguParameterService ebeguParameterService;
 
+	@Inject
+	private GesuchService gesuchService;
+
+
 	@Nonnull
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
@@ -88,6 +92,15 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 				.FINANZIELLE_SITUATION);
 		}
 		return finanzielleSituationPersisted;
+	}
+
+	@Nonnull
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	public Gesuch saveFinanzielleSituationStart(@Nonnull Gesuch gesuch) {
+		Gesuch modifiedGesuch = gesuchService.updateGesuch(gesuch, false, null);
+		wizardStepService.updateSteps(modifiedGesuch.getId(), null, null, WizardStepName.FINANZIELLE_SITUATION);
+		return modifiedGesuch;
 	}
 
 	@Nonnull

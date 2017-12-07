@@ -96,6 +96,11 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
         if (this.isGesuchValid()) {
             this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
             if (!this.form.$dirty) {
+                if (this.updateStepDueToOnlyFerieninsel()) {
+                    return this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.FINANZIELLE_SITUATION, TSWizardStepStatus.OK).then(() => {
+                        return this.gesuchModelManager.getGesuch();
+                    });
+                }
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getGesuch());
@@ -114,6 +119,14 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
             }
         }
         return undefined;
+    }
+
+    /**
+     * Id the Step is still in status IN_BEARBEITUNG and there are only Ferieninsel, the Gesuch must be updated.
+     */
+    private updateStepDueToOnlyFerieninsel() {
+        return this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.FINANZIELLE_SITUATION, TSWizardStepStatus.IN_BEARBEITUNG)
+            && this.gesuchModelManager.getGesuch().areThereOnlyFerieninsel();
     }
 
     public finanzielleSituationTurnedNotRequired(): boolean {

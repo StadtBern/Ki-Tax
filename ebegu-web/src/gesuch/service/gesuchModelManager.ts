@@ -1446,6 +1446,6 @@ export default class GesuchModelManager {
 
     public showFinanzielleSituationStart(): boolean {
         return this.isGesuchsteller2Required() ||
-            (this.getGesuchsperiode().hasTagesschulenAnmeldung() && this.areThereOnlySchulamtAngebote());
+            (this.getGesuchsperiode() && this.getGesuchsperiode().hasTagesschulenAnmeldung() && this.areThereOnlySchulamtAngebote());
     }
 }

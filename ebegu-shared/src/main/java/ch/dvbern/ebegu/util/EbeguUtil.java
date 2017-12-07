@@ -120,4 +120,10 @@ public class EbeguUtil {
 			&& Objects.equals(false, gesuch.getFamiliensituationContainer().getFamiliensituationJA().getSozialhilfeBezueger())
 			&& Objects.equals(true, gesuch.getFamiliensituationContainer().getFamiliensituationJA().getVerguenstigungGewuenscht()));
 	}
+
+	public static boolean isSozialhilfeBezuegerNull(@NotNull Gesuch gesuch) {
+		return gesuch.getGesuchsperiode().hasTagesschulenAnmeldung() &&
+			(gesuch.getFamiliensituationContainer() != null && gesuch.getFamiliensituationContainer().getFamiliensituationJA() != null
+			&& gesuch.getFamiliensituationContainer().getFamiliensituationJA().getSozialhilfeBezueger() == null);
+	}
 }
