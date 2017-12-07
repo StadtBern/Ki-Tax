@@ -176,8 +176,7 @@ public class SchulamtBackendResource {
 
 		List<JaxExternalModul> anmeldungen = new ArrayList<>();
 		betreuung.getBelegungTagesschule().getModuleTagesschule().forEach(modulTagesschule -> anmeldungen.add(new JaxExternalModul(modulTagesschule
-			.getWochentag(), JaxExternalModulName.valueOf(modulTagesschule.getModulTagesschuleName()
-			.name())))
+			.getWochentag(), JaxExternalModulName.valueOf(modulTagesschule.getModulTagesschuleName().name())))
 		);
 		return new JaxExternalAnmeldungTagesschule(betreuung.getBGNummer(),
 			JaxExternalBetreuungsstatus.valueOf(betreuung.getBetreuungsstatus().name()),
@@ -297,12 +296,14 @@ public class SchulamtBackendResource {
 			final JaxExternalFinanzielleSituation dto = convertToJaxExternalFinanzielleSituationWithoutFinDaten(
 				fallNummer, stichtag, neustesGesuch, JaxExternalTarifart.BASISZAHLER);
 			return Response.ok(dto).build();
+
 		} else if (familiensituation.getSozialhilfeBezueger() != null && !familiensituation.getSozialhilfeBezueger()
 			&& familiensituation.getVerguenstigungGewuenscht() != null && !familiensituation.getVerguenstigungGewuenscht()) {
 			// SozialhilfeBezüger Nein + Vergünstigung gewünscht Nein  -> Vollzahler (keine finSit!)
 			final JaxExternalFinanzielleSituation dto = convertToJaxExternalFinanzielleSituationWithoutFinDaten(
 				fallNummer, stichtag, neustesGesuch, JaxExternalTarifart.VOLLZAHLER);
 			return Response.ok(dto).build();
+
 		} else {
 			// SozialhilfeBezüger Nein + Vergünstigung gewünscht ja  oder Kita-Betreuung vorhanden -> Detailrechnung (mit finSit!)
 
@@ -334,7 +335,7 @@ public class SchulamtBackendResource {
 		VerfuegungZeitabschnitt zeitabschnitt) {
 		final GesuchstellerContainer gesuchsteller1 = neustesGesuch.getGesuchsteller1();
 		Validate.notNull(gesuchsteller1);
-		final GesuchstellerAdresse rechnungsAdresse = gesuchsteller1.extractRechnungsAdresse(stichtag);
+		final GesuchstellerAdresse rechnungsAdresse = gesuchsteller1.extractEffectiveRechnungsAdresse(stichtag);
 		Validate.notNull(rechnungsAdresse);
 		return new JaxExternalFinanzielleSituation(
 			fallNummer,
@@ -358,7 +359,7 @@ public class SchulamtBackendResource {
 		JaxExternalTarifart tarifart) {
 		final GesuchstellerContainer gesuchsteller1 = neustesGesuch.getGesuchsteller1();
 		Validate.notNull(gesuchsteller1);
-		final GesuchstellerAdresse rechnungsAdresse = gesuchsteller1.extractRechnungsAdresse(stichtag);
+		final GesuchstellerAdresse rechnungsAdresse = gesuchsteller1.extractEffectiveRechnungsAdresse(stichtag);
 		Validate.notNull(rechnungsAdresse);
 		return new JaxExternalFinanzielleSituation(
 			fallNummer,

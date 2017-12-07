@@ -16,6 +16,7 @@
 package ch.dvbern.ebegu.entities;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -110,6 +111,7 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	/**
 	 * Extracts the Gueltigkeit von gesuchstellerAdresseJA
 	 */
+	@Nullable
 	public DateRange extractGueltigkeit() {
 		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getGueltigkeit() : null;
 	}
@@ -117,6 +119,7 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	/**
 	 * Extracts the AdresseTyp von gesuchstellerAdresseJA
 	 */
+	@Nullable
 	public AdresseTyp extractAdresseTyp() {
 		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getAdresseTyp() : null;
 	}
@@ -124,6 +127,7 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	/**
 	 * Extracts the Hausnummer von gesuchstellerAdresseJA
 	 */
+	@Nullable
 	public String extractHausnummer() {
 		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getHausnummer() : null;
 	}
@@ -131,6 +135,7 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	/**
 	 * Extracts the Strasse von gesuchstellerAdresseJA
 	 */
+	@Nullable
 	public String extractStrasse() {
 		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getStrasse() : null;
 	}
@@ -138,6 +143,7 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	/**
 	 * Extracts the Zusatzzeile von gesuchstellerAdresseJA
 	 */
+	@Nullable
 	public String extractZusatzzeile() {
 		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getZusatzzeile() : null;
 	}
@@ -145,6 +151,7 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	/**
 	 * Extracts the PLZ von gesuchstellerAdresseJA
 	 */
+	@Nullable
 	public String extractPlz() {
 		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getPlz() : null;
 	}
@@ -152,6 +159,7 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	/**
 	 * Extracts the Ort von gesuchstellerAdresseJA
 	 */
+	@Nullable
 	public String extractOrt() {
 		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getOrt() : null;
 	}
@@ -159,6 +167,7 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	/**
 	 * Extracts the Land von gesuchstellerAdresseJA
 	 */
+	@Nullable
 	public String extractLand() {
 		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getLand().name(): null;
 	}
@@ -166,12 +175,13 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	/**
 	 * Extracts the Gemeinde von gesuchstellerAdresseJA
 	 */
+	@Nullable
 	public String extractGemeinde() {
 		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getGemeinde(): null;
 	}
 
 
-
+	@Nullable
 	public String extractOrganisation() {
 		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getOrganisation() : null;
 	}

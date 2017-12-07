@@ -273,7 +273,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	public Verfuegung getEvaluateFamiliensituationVerfuegung(@Nonnull Gesuch gesuch) {
 		this.finanzielleSituationService.calculateFinanzDaten(gesuch);
-		Mandant mandant = mandantService.getFirst();   //gesuch get mandant?
+		Mandant mandant = gesuch.getFall().getMandant();
 		final List<Rule> rules = rulesService.getRulesForGesuchsperiode(mandant, gesuch.getGesuchsperiode());
 		Boolean enableDebugOutput = applicationPropertyService.findApplicationPropertyAsBoolean(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, true);
 		BetreuungsgutscheinEvaluator bgEvaluator = new BetreuungsgutscheinEvaluator(rules, enableDebugOutput);

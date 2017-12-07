@@ -231,6 +231,9 @@ public interface GesuchService {
 	 */
 	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
 
+	/**
+	 * Gibt das Geusch zurueck, das mit dem Fall verknuepft ist und das neueste fuer das SchulamtInterface ist
+	 */
 	Optional<Gesuch> getNeustesGesuchFuerFallnumerForSchulamtInterface(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Long fallnummer);
 
 	/**

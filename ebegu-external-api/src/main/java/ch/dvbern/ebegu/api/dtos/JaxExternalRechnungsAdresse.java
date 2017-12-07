@@ -36,7 +36,8 @@ public class JaxExternalRechnungsAdresse implements Serializable {
 	private String land;
 
 
-	public JaxExternalRechnungsAdresse(@Nonnull String vorname, @Nonnull String nachname, @Nonnull String strasse, String hausnummer, String zusatzzeile, @Nonnull String plz, @Nonnull String ort, @Nonnull String land) {
+	public JaxExternalRechnungsAdresse(@Nonnull String vorname, @Nonnull String nachname, @Nonnull String strasse,
+		@Nullable String hausnummer, @Nullable String zusatzzeile, @Nonnull String plz, @Nonnull String ort, @Nonnull String land) {
 		this.vorname = vorname;
 		this.nachname = nachname;
 		this.strasse = strasse;
