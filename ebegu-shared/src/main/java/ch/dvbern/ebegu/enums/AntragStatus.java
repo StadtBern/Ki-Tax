@@ -58,27 +58,13 @@ public enum AntragStatus {
 		BESCHWERDE_HAENGIG,
 		PRUEFUNG_STV,
 		IN_BEARBEITUNG_STV,
-		GEPRUEFT_STV);
+		GEPRUEFT_STV,
+		NUR_SCHULAMT
+		);
 
 	public static final Set<AntragStatus> FOR_INSTITUTION_ROLE = EnumSet.of(
 		IN_BEARBEITUNG_GS,
 		FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
-		NUR_SCHULAMT,
-		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
-		IN_BEARBEITUNG_JA,
-		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG,
-		ZWEITE_MAHNUNG_ABGELAUFEN,
-		GEPRUEFT,
-		VERFUEGEN,
-		VERFUEGT,
-		BESCHWERDE_HAENGIG,
-		PRUEFUNG_STV,
-		IN_BEARBEITUNG_STV,
-		GEPRUEFT_STV);
-
-	public static final Set<AntragStatus> FOR_SCHULAMT_ROLE = EnumSet.of(
 		NUR_SCHULAMT,
 		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
 		IN_BEARBEITUNG_JA,
@@ -123,7 +109,7 @@ public enum AntragStatus {
 	private static final Set<AntragStatus> forSachbearbeiterInstitutionRole = FOR_INSTITUTION_ROLE;
 	private static final Set<AntragStatus> forSachbearbeiterTraegerschaftRole = FOR_INSTITUTION_ROLE;
 	private static final Set<AntragStatus> forSachbearbeiterJugendamtRole = FOR_ADMIN_ROLE;
-	private static final Set<AntragStatus> forSchulamtRole = FOR_SCHULAMT_ROLE;
+	private static final Set<AntragStatus> forSchulamtRole = FOR_ADMIN_ROLE;
 	private static final Set<AntragStatus> forJuristRole = FOR_JURIST_REVISOR_ROLE;
 	private static final Set<AntragStatus> forRevisorRole = FOR_JURIST_REVISOR_ROLE;
 	private static final Set<AntragStatus> forSteueramt = FOR_STEUERAMT_ROLE;
