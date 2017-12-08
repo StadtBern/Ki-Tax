@@ -683,6 +683,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		}
 	}
 
+	//Nonnull?
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	private void checkStepStatusForBetreuung(@NotNull WizardStep wizardStep, boolean changesBecauseOtherStates) {
 		final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
