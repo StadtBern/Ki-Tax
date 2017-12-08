@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Dokument;
@@ -114,14 +114,14 @@ public class EbeguUtil {
 		return false;
 	}
 
-	public static boolean isFinanzielleSituationRequired(@NotNull Gesuch gesuch) {
+	public static boolean isFinanzielleSituationRequired(@Nonnull Gesuch gesuch) {
 		return !gesuch.getGesuchsperiode().hasTagesschulenAnmeldung() ||
 			(gesuch.getFamiliensituationContainer() != null && gesuch.getFamiliensituationContainer().getFamiliensituationJA() != null
 			&& Objects.equals(false, gesuch.getFamiliensituationContainer().getFamiliensituationJA().getSozialhilfeBezueger())
 			&& Objects.equals(true, gesuch.getFamiliensituationContainer().getFamiliensituationJA().getVerguenstigungGewuenscht()));
 	}
 
-	public static boolean isSozialhilfeBezuegerNull(@NotNull Gesuch gesuch) {
+	public static boolean isSozialhilfeBezuegerNull(@Nonnull Gesuch gesuch) {
 		return gesuch.getGesuchsperiode().hasTagesschulenAnmeldung() &&
 			(gesuch.getFamiliensituationContainer() != null && gesuch.getFamiliensituationContainer().getFamiliensituationJA() != null
 			&& gesuch.getFamiliensituationContainer().getFamiliensituationJA().getSozialhilfeBezueger() == null);

@@ -683,9 +683,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		}
 	}
 
-	//Nonnull?
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
-	private void checkStepStatusForBetreuung(@NotNull WizardStep wizardStep, boolean changesBecauseOtherStates) {
+	private void checkStepStatusForBetreuung(@Nonnull WizardStep wizardStep, boolean changesBecauseOtherStates) {
 		final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
 		WizardStepStatus status;
 		if (changesBecauseOtherStates && wizardStep.getWizardStepStatus() != WizardStepStatus.MUTIERT) {
@@ -714,7 +713,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * Updates the Status of the Step FINANZIELLE_SITUATION or EINKOMMENSVERSCHLECHTERUNG depending on the kind of the betreuungen.
 	 * This should be called after removing or adding a Betreuung.
 	 */
-	private void checkFinSitStatusForBetreuungen(@NotNull WizardStep wizardStep) {
+	private void checkFinSitStatusForBetreuungen(@Nonnull WizardStep wizardStep) {
 		if (wizardStep.getWizardStepName() == WizardStepName.EINKOMMENSVERSCHLECHTERUNG || wizardStep.getWizardStepName() == WizardStepName.FINANZIELLE_SITUATION) {
 			final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
 

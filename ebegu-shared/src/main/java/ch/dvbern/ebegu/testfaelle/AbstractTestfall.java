@@ -23,7 +23,6 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.Benutzer;
@@ -138,7 +137,7 @@ public abstract class AbstractTestfall {
 		}
 	}
 
-	private void setFinSitFieldsOfFamiliensituation(@NotNull Familiensituation familiensituation) {
+	private void setFinSitFieldsOfFamiliensituation(@Nonnull Familiensituation familiensituation) {
 		if (gesuchsperiode.hasTagesschulenAnmeldung()) {
 			// by default verguenstigung gewuenscht
 			familiensituation.setSozialhilfeBezueger(false);

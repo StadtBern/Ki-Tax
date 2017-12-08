@@ -117,8 +117,7 @@ public class FinanzielleSituationResource {
 		return Response.created(uri).entity(jaxFinanzielleSituation).build();
 	}
 
-	//starts??
-	@ApiOperation(value = "Starts all required Data for the finanzielle Situation", response = JaxFinanzielleSituationContainer.class)
+	@ApiOperation(value = "Updates all required Data for the finanzielle Situation in Gesuch", response = JaxFinanzielleSituationContainer.class)
 	@Nullable
 	@PUT
 	@Path("/finsitStart")
