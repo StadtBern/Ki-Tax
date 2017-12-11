@@ -38,6 +38,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -235,6 +237,10 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	@Override
 	public WriteProtectedDokument getFinSitDokumentAccessTokenGeneratedDokument(final Gesuch gesuch,
 		Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
+
+		if (!EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
+			throw new EbeguRuntimeException("getFinSitDokumentAccessTokenGeneratedDokument", ErrorCodeEnum.ERROR_FIN_SIT_IS_NOT_REQUIRED);
+		}
 
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch.getJahrAndFallnummer());
 

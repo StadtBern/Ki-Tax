@@ -61,6 +61,8 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguLoginTest {
 		Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		//positiv value
+		Assert.assertNotNull(gesuch.getGesuchsteller1());
+		Assert.assertNotNull(gesuch.getGesuchsteller1().getFinanzielleSituationContainer());
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahr(BigDecimal.valueOf(100));
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahrMinus1(BigDecimal.valueOf(-100));
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahrMinus2(BigDecimal.valueOf(300));
@@ -76,6 +78,8 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguLoginTest {
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		//negativ value
+		Assert.assertNotNull(gesuch.getGesuchsteller1());
+		Assert.assertNotNull(gesuch.getGesuchsteller1().getFinanzielleSituationContainer());
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahr(BigDecimal.valueOf(-100));
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahrMinus1(BigDecimal.valueOf(-100));
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahrMinus2(BigDecimal.valueOf(-300));
