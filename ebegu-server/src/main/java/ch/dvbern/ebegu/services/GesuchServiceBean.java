@@ -1131,24 +1131,41 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@Nonnull
 	public Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Fall fall, boolean doAuthCheck) {
-		authorizer.checkReadAuthorizationFall(fall);
+
+		if (doAuthCheck) {
+			authorizer.checkReadAuthorizationFall(fall);
+		}
+
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
 		Root<Gesuch> root = query.from(Gesuch.class);
 
+		ParameterExpression<Fall> fallParam = cb.parameter(Fall.class, "fallId");
+		ParameterExpression<Gesuchsperiode> gesuchsperiodeParam = cb.parameter(Gesuchsperiode.class, "gp");
+
 		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates());
-		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
-		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiodeParam);
+		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fallParam);
 		Predicate predicateGueltig = cb.equal(root.get(Gesuch_.gueltig), Boolean.TRUE);
 
 		query.where(predicateStatus, predicateGesuchsperiode, predicateGueltig, predicateFall);
 		query.select(root);
+
+		// TODO: @Reviewer Business Rule ? = There are only 0-1 Gesuch with gleutig = 1 with the same fall_id
+		// If this is the case then we don't need this order by line.  However this Business rule is broken in the DB and not enforced.
 		query.orderBy(cb.desc(root.get(Gesuch_.timestampVerfuegt))); // Das mit dem neuesten Verfuegungsdatum
-		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
+
+		TypedQuery<Gesuch> typedQuery = persistence.getEntityManager().createQuery(query);
+		typedQuery.setParameter(fallParam, fall);
+		typedQuery.setParameter(gesuchsperiodeParam, gesuchsperiode);
+
+		List<Gesuch> criteriaResults = typedQuery.getResultList();
+
 		if (criteriaResults.isEmpty()) {
 			return Optional.empty();
 		}
+
 		Gesuch gesuch = criteriaResults.get(0);
 		if (doAuthCheck) {
 			authorizer.checkReadAuthorization(gesuch);

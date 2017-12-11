@@ -263,7 +263,7 @@
             <dependency>
                 <groupId>net.bull.javamelody</groupId>
                 <artifactId>javamelody-core</artifactId>
-                <version>1.59.0</version>
+                <version>1.70.0</version>
                 <!--<version>1.59.0-jpa21-SNAPSHOT</version>-->
                 <!--<scope>provided</scope>-->
             </dependency>
@@ -345,7 +345,7 @@
             <dependency>
                 <groupId>ch.dvbern.oss.excelmerger</groupId>
                 <artifactId>excelmerger-impl</artifactId>
-                <version>2.0.1</version>
+                <version>2.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
@@ -536,13 +536,6 @@
                 <groupId>javax.enterprise</groupId>
                 <artifactId>cdi-api</artifactId>
                 <version>2.0</version>
-            </dependency>
-            <!-- Fuer DB-Skripts/Statistken (TransactionTimeout) -->
-            <dependency>
-                <groupId>org.jboss.ejb3</groupId>
-                <artifactId>jboss-ejb3-ext-api</artifactId>
-                <version>2.2.0.Final</version>
-                <scope>provided</scope>
             </dependency>
             <!-- Fuer DB-Skripts/Statistken (TransactionTimeout) -->
             <dependency>

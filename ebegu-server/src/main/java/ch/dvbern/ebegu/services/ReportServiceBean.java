@@ -96,6 +96,7 @@ import ch.dvbern.ebegu.reporting.ReportService;
 import ch.dvbern.ebegu.reporting.ReportVorlage;
 import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.GesuchstellerKinderBetreuungDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.GesuchstellerKinderBetreuungExcelConverter;
+import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.GesuchstellerKinderExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GeuschStichtagExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
@@ -115,10 +116,13 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergeException;
 import ch.dvbern.oss.lib.excelmerger.ExcelMerger;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergerDTO;
+import ch.dvbern.oss.lib.excelmerger.RowFiller;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,6 +169,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	private ZahlungAuftragPeriodeExcelConverter zahlungAuftragPeriodeExcelConverter;
 
 	@Inject
+	private GesuchstellerKinderExcelConverter gesuchstellerKinderExcelConverter;
+
+	@Inject
 	private GesuchstellerKinderBetreuungExcelConverter gesuchstellerKinderBetreuungExcelConverter;
 
 	@Inject
@@ -190,6 +197,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
+
+	@Inject
+	private GesuchService gesuchService;
 
 	private static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
 	private static final String TEMP_REPORT_FOLDERNAME = "tempReports";
@@ -552,7 +562,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
-	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
 	public UploadFileInfo generateExcelReportZahlungAuftrag(@Nonnull String auftragId) throws ExcelMergeException {
 
 		Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
@@ -563,7 +573,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
-	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
 	public UploadFileInfo generateExcelReportZahlung(@Nonnull String zahlungId) throws ExcelMergeException {
 
 		List<Zahlung> reportData = new ArrayList<>();
@@ -604,7 +614,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
-	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, REVISOR })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, REVISOR })
 	public UploadFileInfo generateExcelReportZahlungPeriode(@Nonnull String gesuchsperiodeId) throws ExcelMergeException {
 
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId)
@@ -659,7 +669,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@SuppressWarnings("PMD.NcssMethodCount")
-	private List<VerfuegungZeitabschnitt> getReportDataBetreuungen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable Gesuchsperiode gesuchsperiode) throws IOException, URISyntaxException {
+	private List<VerfuegungZeitabschnitt> getReportDataBetreuungen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable Gesuchsperiode gesuchsperiode) {
 		validateDateParams(datumVon, datumBis);
 
 		// Alle Verfuegungszeitabschnitte zwischen datumVon und datumBis. Aber pro Fall immer nur das zuletzt verfuegte.
@@ -703,12 +713,11 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicatesToUse));
-		List<VerfuegungZeitabschnitt> zeitabschnittList = persistence.getCriteriaResults(query);
-		return zeitabschnittList;
+		return persistence.getCriteriaResults(query);
 	}
 
 	@SuppressWarnings("PMD.NcssMethodCount")
-	private List<VerfuegungZeitabschnitt> getReportDataBetreuungen(@Nonnull LocalDate stichtag) throws IOException, URISyntaxException {
+	private List<VerfuegungZeitabschnitt> getReportDataBetreuungen(@Nonnull LocalDate stichtag) {
 		Validate.notNull(stichtag, VALIDIERUNG_STICHTAG);
 
 		// Alle Verfuegungszeitabschnitte zwischen datumVon und datumBis. Aber pro Fall immer nur das zuletzt verfuegte.
@@ -749,8 +758,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		return persistence.getCriteriaResults(query);
 	}
 
-	private void addStammdaten(GesuchstellerKinderBetreuungDataRow row, VerfuegungZeitabschnitt zeitabschnitt) {
-		Gesuch gesuch = zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch();
+	private void addStammdaten(GesuchstellerKinderBetreuungDataRow row, VerfuegungZeitabschnitt zeitabschnitt, Gesuch gesuch) {
 		row.setInstitution(zeitabschnitt.getVerfuegung().getBetreuung().getInstitutionStammdaten().getInstitution().getName());
 		row.setBetreuungsTyp(zeitabschnitt.getVerfuegung().getBetreuung().getBetreuungsangebotTyp());
 		row.setPeriode(gesuch.getGesuchsperiode().getGesuchsperiodeString());
@@ -881,7 +889,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Validate.notNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
-		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
+		XSSFSheet sheet = (XSSFSheet)workbook.getSheet(reportResource.getDataSheetName());
 
 		Gesuchsperiode gesuchsperiode = null;
 		if (gesuchPeriodeId != null) {
@@ -892,12 +900,16 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		}
 
 		List<GesuchstellerKinderBetreuungDataRow> reportData = getReportDataGesuchstellerKinderBetreuung(datumVon, datumBis, gesuchsperiode);
-		ExcelMergerDTO excelMergerDTO = gesuchstellerKinderBetreuungExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), datumVon, datumBis, gesuchsperiode);
 
-		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
+		sheet = gesuchstellerKinderBetreuungExcelConverter.mergeFields(reportData,sheet, datumVon, datumBis, gesuchsperiode);
+
+		RowFiller rowFiller = RowFiller.initRowFiller(sheet, MergeFieldProvider.toMergeFields(reportResource.getMergeFields()), reportData.size());
+		gesuchstellerKinderBetreuungExcelConverter.mergeRows(rowFiller, reportData);
 		gesuchstellerKinderBetreuungExcelConverter.applyAutoSize(sheet);
 
-		byte[] bytes = createWorkbook(workbook);
+		byte[] bytes = createWorkbook(rowFiller.getSheet().getWorkbook());
+
+		rowFiller.getSheet().getWorkbook().dispose();
 
 		return fileSaverService.save(bytes,
 			reportResource.getDefaultExportFilename(),
@@ -921,7 +933,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		// Betreuung
 		addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
 		// Stammdaten
-		addStammdaten(row, zeitabschnitt);
+		addStammdaten(row, zeitabschnitt, gesuch);
 
 		// Gesuchsteller 1: Prozent-Felder initialisieren, damit im Excel das Total sicher berechnet werden kann
 		row.setGs1EwpAngestellt(0);
@@ -992,10 +1004,10 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		}
 
 		List<GesuchstellerKinderBetreuungDataRow> reportData = getReportDataKinder(datumVon, datumBis, gesuchsperiode);
-		ExcelMergerDTO excelMergerDTO = gesuchstellerKinderBetreuungExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), datumVon, datumBis, gesuchsperiode);
 
+		ExcelMergerDTO excelMergerDTO = gesuchstellerKinderExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), datumVon, datumBis, gesuchsperiode);
 		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
-		gesuchstellerKinderBetreuungExcelConverter.applyAutoSize(sheet);
+		gesuchstellerKinderExcelConverter.applyAutoSize(sheet);
 
 		byte[] bytes = createWorkbook(workbook);
 
@@ -1007,18 +1019,25 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	private List<GesuchstellerKinderBetreuungDataRow> convertToKinderDataRow(List<VerfuegungZeitabschnitt> zeitabschnittList) {
 		List<GesuchstellerKinderBetreuungDataRow> dataRowList = new ArrayList<>();
+
 		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnittList) {
 			GesuchstellerKinderBetreuungDataRow row = createRowForKinderReport(zeitabschnitt);
 			dataRowList.add(row);
 		}
+
 		return dataRowList;
 	}
 
 	private GesuchstellerKinderBetreuungDataRow createRowForKinderReport(VerfuegungZeitabschnitt zeitabschnitt) {
 		Gesuch gesuch = zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch();
 
+		if (!gesuch.isGueltig()) {
+			gesuch = gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(), false)
+				.orElse(gesuch);
+		}
+
 		GesuchstellerKinderBetreuungDataRow row = new GesuchstellerKinderBetreuungDataRow();
-		addStammdaten(row, zeitabschnitt);
+		addStammdaten(row, zeitabschnitt, gesuch);
 
 		// Gesuchsteller 1
 		Gesuchsteller gs1 = gesuch.getGesuchsteller1().getGesuchstellerJA();
@@ -1051,10 +1070,10 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
 
 		List<GesuchstellerKinderBetreuungDataRow> reportData = getReportDataGesuchsteller(stichtag);
-		ExcelMergerDTO excelMergerDTO = gesuchstellerKinderBetreuungExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), stichtag);
+		ExcelMergerDTO excelMergerDTO = gesuchstellerKinderExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), stichtag);
 
 		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
-		gesuchstellerKinderBetreuungExcelConverter.applyAutoSize(sheet);
+		gesuchstellerKinderExcelConverter.applyAutoSize(sheet);
 
 		byte[] bytes = createWorkbook(workbook);
 
