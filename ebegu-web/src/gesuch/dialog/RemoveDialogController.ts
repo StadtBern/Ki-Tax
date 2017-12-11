@@ -17,16 +17,19 @@ import {IPromise} from 'angular';
 import {IDVFocusableController} from '../../core/component/IDVFocusableController';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
+import IQService = angular.IQService;
+import ILogService = angular.ILogService;
 
 export class RemoveDialogController {
 
-    static $inject = ['$mdDialog', '$translate', 'title', 'deleteText', 'parentController', 'elementID'];
+    static $inject = ['$mdDialog', '$translate', '$q', '$log', 'title', 'deleteText', 'parentController', 'elementID', 'form'];
 
     deleteText: string;
     title: string;
 
-    constructor(private $mdDialog: IDialogService, $translate: ITranslateService, title: string, deleteText: string,
-                private parentController: IDVFocusableController, private elementID: string) {
+    constructor(private $mdDialog: IDialogService, $translate: ITranslateService, private $q: IQService, private $log: ILogService, title: string,
+                deleteText: string,
+                private parentController: IDVFocusableController, private elementID: string, private form?: any) {
         if (deleteText !== undefined && deleteText !== null) {
             this.deleteText = $translate.instant(deleteText);
         } else {
@@ -49,6 +52,15 @@ export class RemoveDialogController {
         if (this.parentController) {
             this.parentController.setFocusBack(this.elementID);
         }
-        this.$mdDialog.cancel();
+
+        /*Es kann sein, dass die DialogBox durch einen Button mit Type submit ausgelösst wird. Wenn wir in der DialogBox jedoch auf
+         * cancel drücken, müssen wir die form wieder auf dirty setzen, um Randeffekte zu umgehen. See EBEGU-1557*/
+        if (this.form) {
+            this.form.$setDirty();
+        } else {
+            this.$log.info('Cancel DialogController without setting form back to dirty may produce errors');
+        }
+
+        this.$mdDialog.cancel(this.$q.reject());
     }
 }
