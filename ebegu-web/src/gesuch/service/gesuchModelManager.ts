@@ -300,6 +300,17 @@ export default class GesuchModelManager {
     }
 
     /**
+     * Update das Gesuch
+     * @returns {IPromise<TSGesuch>}
+     */
+    public saveFinanzielleSituationStart(): IPromise<TSGesuch> {
+        return this.finanzielleSituationRS.saveFinanzielleSituationStart(this.gesuch).then((gesuchResponse: any) => {
+            this.gesuch = gesuchResponse;
+            return this.gesuch;
+        });
+    }
+
+    /**
      * Update den Fall
      * @returns {IPromise<TSFall>}
      */
@@ -1435,6 +1446,6 @@ export default class GesuchModelManager {
 
     public showFinanzielleSituationStart(): boolean {
         return this.isGesuchsteller2Required() ||
-            (this.getGesuchsperiode().hasTagesschulenAnmeldung() && this.areThereOnlySchulamtAngebote());
+            (this.getGesuchsperiode() && this.getGesuchsperiode().hasTagesschulenAnmeldung() && this.areThereOnlySchulamtAngebote());
     }
 }

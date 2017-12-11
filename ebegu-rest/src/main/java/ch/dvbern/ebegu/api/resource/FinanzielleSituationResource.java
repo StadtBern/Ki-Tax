@@ -69,7 +69,6 @@ public class FinanzielleSituationResource {
 
 	@Inject
 	private FinanzielleSituationService finanzielleSituationService;
-
 	@Inject
 	private GesuchstellerService gesuchstellerService;
 	@Inject
@@ -116,6 +115,26 @@ public class FinanzielleSituationResource {
 
 		JaxFinanzielleSituationContainer jaxFinanzielleSituation = converter.finanzielleSituationContainerToJAX(persistedFinanzielleSituation);
 		return Response.created(uri).entity(jaxFinanzielleSituation).build();
+	}
+
+	@ApiOperation(value = "Updates all required Data for the finanzielle Situation in Gesuch", response = JaxFinanzielleSituationContainer.class)
+	@Nullable
+	@PUT
+	@Path("/finsitStart")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxGesuch saveFinanzielleSituationStart(
+		@Nonnull @NotNull @Valid JaxGesuch gesuchJAXP,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(gesuchJAXP.getId());
+		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchJAXP.getId());
+		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("saveFinanzielleSituationStart", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId()));
+
+		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
+		Gesuch modifiedGesuch = finanzielleSituationService.saveFinanzielleSituationStart(gesuchToMerge);
+		return converter.gesuchToJAX(modifiedGesuch);
 	}
 
 	@ApiOperation(value = "Berechnet die FinanzielleSituation fuer das Gesuch mit der uebergebenen Id. Die Berechnung " +

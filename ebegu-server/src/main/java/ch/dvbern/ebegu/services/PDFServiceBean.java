@@ -223,8 +223,8 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_FINANZIELLE_SITUATION);
 			Objects.requireNonNull(is, "Vorlage fuer Berechnungsgrundlagen nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				ByteStreams.toByteArray(is), new FinanzielleSituationEinkommensverschlechterungPrintMergeSource(new BerechnungsgrundlagenInformationPrintImpl(gesuch, famGroessenVerfuegung)),
-				writeProtected);
+				ByteStreams.toByteArray(is), new FinanzielleSituationEinkommensverschlechterungPrintMergeSource(
+					new BerechnungsgrundlagenInformationPrintImpl(gesuch, famGroessenVerfuegung)), writeProtected);
 
 			is.close();
 			return bytes;
