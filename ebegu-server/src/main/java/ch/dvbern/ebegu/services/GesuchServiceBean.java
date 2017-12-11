@@ -588,7 +588,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 			// Falls es ein NUR_SCHULAMT Gesuch ist, muss hier bereits die Finanzielle Situation erstellt werden,
 			// da das Gesuch mit Einlesen der Freigabequittung als freigegeben gilt.
-			if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			if (gesuch.hasOnlyBetreuungenOfSchulamt() && EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
 				// Das Dokument der Finanziellen Situation erstellen
 				try {
 					generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(gesuch, true);

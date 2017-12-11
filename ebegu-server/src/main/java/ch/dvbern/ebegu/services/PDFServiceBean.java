@@ -72,6 +72,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 	private static final Objects[] OBJECTARRAY = {};
+	public static final byte[] BYTES = new byte[0];
 
 	@Inject
 	private DokumentGrundService dokumentGrundService;
@@ -236,7 +237,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 					"Bei der Generierung der Berechnungsgrundlagen ist ein Fehler aufgetreten", e, OBJECTARRAY);
 			}
 		}
-		return null;
+		return BYTES;
 	}
 
 	@Nonnull
