@@ -110,7 +110,8 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
                     title: 'FINSIT_WARNING',
                     deleteText: 'FINSIT_WARNING_BESCHREIBUNG',
                     parentController: undefined,
-                    elementID: undefined
+                    elementID: undefined,
+                    form: this.form
                 }).then(() => {   //User confirmed changes
                     return this.save();
                 });
