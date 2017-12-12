@@ -115,10 +115,13 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergeException;
 import ch.dvbern.oss.lib.excelmerger.ExcelMerger;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergerDTO;
+import ch.dvbern.oss.lib.excelmerger.RowFiller;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -553,7 +556,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
-	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
 	public UploadFileInfo generateExcelReportZahlungAuftrag(@Nonnull String auftragId) throws ExcelMergeException {
 
 		Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
@@ -564,7 +567,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
-	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
 	public UploadFileInfo generateExcelReportZahlung(@Nonnull String zahlungId) throws ExcelMergeException {
 
 		List<Zahlung> reportData = new ArrayList<>();
@@ -605,7 +608,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
-	@RolesAllowed(value = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, REVISOR })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, REVISOR })
 	public UploadFileInfo generateExcelReportZahlungPeriode(@Nonnull String gesuchsperiodeId) throws ExcelMergeException {
 
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId)
@@ -660,7 +663,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@SuppressWarnings("PMD.NcssMethodCount")
-	private List<VerfuegungZeitabschnitt> getReportDataBetreuungen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable Gesuchsperiode gesuchsperiode) throws IOException, URISyntaxException {
+	private List<VerfuegungZeitabschnitt> getReportDataBetreuungen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable Gesuchsperiode gesuchsperiode) {
 		validateDateParams(datumVon, datumBis);
 
 		// Alle Verfuegungszeitabschnitte zwischen datumVon und datumBis. Aber pro Fall immer nur das zuletzt verfuegte.
@@ -704,12 +707,11 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicatesToUse));
-		List<VerfuegungZeitabschnitt> zeitabschnittList = persistence.getCriteriaResults(query);
-		return zeitabschnittList;
+		return persistence.getCriteriaResults(query);
 	}
 
 	@SuppressWarnings("PMD.NcssMethodCount")
-	private List<VerfuegungZeitabschnitt> getReportDataBetreuungen(@Nonnull LocalDate stichtag) throws IOException, URISyntaxException {
+	private List<VerfuegungZeitabschnitt> getReportDataBetreuungen(@Nonnull LocalDate stichtag) {
 		Validate.notNull(stichtag, VALIDIERUNG_STICHTAG);
 
 		// Alle Verfuegungszeitabschnitte zwischen datumVon und datumBis. Aber pro Fall immer nur das zuletzt verfuegte.
@@ -750,12 +752,11 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		return persistence.getCriteriaResults(query);
 	}
 
-	private void addStammdaten(GesuchstellerKinderBetreuungDataRow row, VerfuegungZeitabschnitt zeitabschnitt) {
-		Gesuch gesuch = zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch();
+	private void addStammdaten(GesuchstellerKinderBetreuungDataRow row, VerfuegungZeitabschnitt zeitabschnitt, Gesuch gesuch) {
 		row.setInstitution(zeitabschnitt.getVerfuegung().getBetreuung().getInstitutionStammdaten().getInstitution().getName());
 		row.setBetreuungsTyp(zeitabschnitt.getVerfuegung().getBetreuung().getBetreuungsangebotTyp());
 		row.setPeriode(gesuch.getGesuchsperiode().getGesuchsperiodeString());
-		row.setGesuchStatus(ServerMessageUtil.getMessage(AntragStatus.class.getSimpleName() + "_" + gesuch.getStatus().name()));
+		row.setGesuchStatus(ServerMessageUtil.getMessage(AntragStatus.class.getSimpleName() + '_' + gesuch.getStatus().name()));
 		row.setEingangsdatum(gesuch.getEingangsdatum());
 		for (AntragStatusHistory antragStatusHistory : gesuch.getAntragStatusHistories()) {
 			if (AntragStatus.getAllVerfuegtStates().contains(antragStatusHistory.getStatus())) {
@@ -860,7 +861,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	private void addBetreuungToGesuchstellerKinderBetreuungDataRow(GesuchstellerKinderBetreuungDataRow row, VerfuegungZeitabschnitt zeitabschnitt) {
 		row.setZeitabschnittVon(zeitabschnitt.getGueltigkeit().getGueltigAb());
 		row.setZeitabschnittBis(zeitabschnitt.getGueltigkeit().getGueltigBis());
-		row.setBetreuungsStatus(ServerMessageUtil.getMessage(Betreuungsstatus.class.getSimpleName() + "_" + zeitabschnitt.getVerfuegung().getBetreuung().getBetreuungsstatus().name()));
+		row.setBetreuungsStatus(ServerMessageUtil.getMessage(Betreuungsstatus.class.getSimpleName() + '_' + zeitabschnitt.getVerfuegung().getBetreuung().getBetreuungsstatus().name()));
 		row.setBetreuungsPensum(MathUtil.DEFAULT.from(zeitabschnitt.getBetreuungspensum()));
 		row.setAnspruchsPensum(MathUtil.DEFAULT.from(zeitabschnitt.getAnspruchberechtigtesPensum()));
 		row.setBgPensum(MathUtil.DEFAULT.from(zeitabschnitt.getBgPensum()));
@@ -893,17 +894,11 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		}
 
 		List<GesuchstellerKinderBetreuungDataRow> reportData = getReportDataGesuchstellerKinderBetreuung(datumVon, datumBis, gesuchsperiode);
-		ExcelMergerDTO excelMergerDTO = gesuchstellerKinderBetreuungExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), datumVon, datumBis, gesuchsperiode);
 
-		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
-		gesuchstellerKinderBetreuungExcelConverter.applyAutoSize(sheet);
+		final XSSFSheet xsslSheet = (XSSFSheet)gesuchstellerKinderBetreuungExcelConverter.mergeHeaderFields(reportData, sheet, datumVon, datumBis, gesuchsperiode);
 
-		byte[] bytes = createWorkbook(workbook);
-
-		return fileSaverService.save(bytes,
-			reportResource.getDefaultExportFilename(),
-			TEMP_REPORT_FOLDERNAME,
-			getContentTypeForExport());
+		final RowFiller rowFiller = fillAndMergeRows(reportResource, xsslSheet, reportData);
+		return saveExcelDokument(reportResource, rowFiller);
 	}
 
 	private List<GesuchstellerKinderBetreuungDataRow> convertToGesuchstellerKinderBetreuungDataRow(List<VerfuegungZeitabschnitt> zeitabschnittList) {
@@ -918,11 +913,19 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	private GesuchstellerKinderBetreuungDataRow createRowForGesuchstellerKinderBetreuungReport(VerfuegungZeitabschnitt zeitabschnitt) {
 		Gesuch gesuch = zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch();
 
+		// todo dies muss in Task EBEGU-1552 aktiviert werden
+		// hier haben wir auch das Problem, dass es nicht das aktuellste Gesuch ist
+//		if (!gesuch.isGueltig()) {
+//			//könnten wir diese Gesuche nicht in einer Liste speichern? sodass wir es nicht fuer jede Zeitabschnitt suchen muessen
+//			gesuch = gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(), false)
+//				.orElse(gesuch);
+//		}
+
 		GesuchstellerKinderBetreuungDataRow row = new GesuchstellerKinderBetreuungDataRow();
 		// Betreuung
 		addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
 		// Stammdaten
-		addStammdaten(row, zeitabschnitt);
+		addStammdaten(row, zeitabschnitt, gesuch);
 
 		// Gesuchsteller 1: Prozent-Felder initialisieren, damit im Excel das Total sicher berechnet werden kann
 		row.setGs1EwpAngestellt(0);
@@ -965,6 +968,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		} else {
 			row.setVeranlagt(Boolean.FALSE);
 		}
+		//todo don't pass the zeitabschnitt but the verfuegung. otherwise we still use the old data
 		// Kind
 		addKindToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
 		return row;
@@ -993,33 +997,35 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		}
 
 		List<GesuchstellerKinderBetreuungDataRow> reportData = getReportDataKinder(datumVon, datumBis, gesuchsperiode);
-		ExcelMergerDTO excelMergerDTO = gesuchstellerKinderBetreuungExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), datumVon, datumBis, gesuchsperiode);
 
-		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
-		gesuchstellerKinderBetreuungExcelConverter.applyAutoSize(sheet);
+		final XSSFSheet xsslSheet = (XSSFSheet)gesuchstellerKinderBetreuungExcelConverter.mergeHeaderFields(reportData,sheet, datumVon, datumBis, gesuchsperiode);
 
-		byte[] bytes = createWorkbook(workbook);
-
-		return fileSaverService.save(bytes,
-			reportResource.getDefaultExportFilename(),
-			TEMP_REPORT_FOLDERNAME,
-			getContentTypeForExport());
+		final RowFiller rowFiller = fillAndMergeRows(reportResource, xsslSheet, reportData);
+		return saveExcelDokument(reportResource, rowFiller);
 	}
 
 	private List<GesuchstellerKinderBetreuungDataRow> convertToKinderDataRow(List<VerfuegungZeitabschnitt> zeitabschnittList) {
 		List<GesuchstellerKinderBetreuungDataRow> dataRowList = new ArrayList<>();
+
 		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnittList) {
 			GesuchstellerKinderBetreuungDataRow row = createRowForKinderReport(zeitabschnitt);
 			dataRowList.add(row);
 		}
+
 		return dataRowList;
 	}
 
 	private GesuchstellerKinderBetreuungDataRow createRowForKinderReport(VerfuegungZeitabschnitt zeitabschnitt) {
 		Gesuch gesuch = zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch();
 
+		// todo dies muss in Task EBEGU-1552 aktiviert werden
+//		if (!gesuch.isGueltig()) {
+//			gesuch = gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(), false)
+//				.orElse(gesuch);
+//		}
+
 		GesuchstellerKinderBetreuungDataRow row = new GesuchstellerKinderBetreuungDataRow();
-		addStammdaten(row, zeitabschnitt);
+		addStammdaten(row, zeitabschnitt, gesuch);
 
 		// Gesuchsteller 1
 		Gesuchsteller gs1 = gesuch.getGesuchsteller1().getGesuchstellerJA();
@@ -1031,6 +1037,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			row.setGs2Name(gs2.getNachname());
 			row.setGs2Vorname(gs2.getVorname());
 		}
+		//todo don't pass the zeitabschnitt but the verfuegung. otherwise we still use the old data
 		// Kind
 		addKindToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
 		// Betreuung
@@ -1052,12 +1059,32 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
 
 		List<GesuchstellerKinderBetreuungDataRow> reportData = getReportDataGesuchsteller(stichtag);
-		ExcelMergerDTO excelMergerDTO = gesuchstellerKinderBetreuungExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), stichtag);
 
-		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
+		final XSSFSheet xsslSheet = (XSSFSheet)gesuchstellerKinderBetreuungExcelConverter.mergeHeaderFields(reportData, sheet, stichtag);
+
+		final RowFiller rowFiller = fillAndMergeRows(reportResource, xsslSheet, reportData);
+		return saveExcelDokument(reportResource, rowFiller);
+	}
+
+	/**
+	 * fuegt die Daten der Excelsheet hinzu und gibt den Rowfiller zurueck
+	 */
+	@Nonnull
+	private RowFiller fillAndMergeRows(ReportVorlage reportResource, XSSFSheet sheet, List<GesuchstellerKinderBetreuungDataRow> reportData) {
+		RowFiller rowFiller = RowFiller.initRowFiller(sheet, MergeFieldProvider.toMergeFields(reportResource.getMergeFields()), reportData.size());
+		gesuchstellerKinderBetreuungExcelConverter.mergeRows(rowFiller, reportData);
 		gesuchstellerKinderBetreuungExcelConverter.applyAutoSize(sheet);
+		return rowFiller;
+	}
 
-		byte[] bytes = createWorkbook(workbook);
+	/**
+	 * Erstellt das Dokument und speichert es im Filesystem
+	 */
+	@Nonnull
+	private UploadFileInfo saveExcelDokument(ReportVorlage reportResource, RowFiller rowFiller) {
+		byte[] bytes = createWorkbook(rowFiller.getSheet().getWorkbook());
+
+		rowFiller.getSheet().getWorkbook().dispose();
 
 		return fileSaverService.save(bytes,
 			reportResource.getDefaultExportFilename(),
