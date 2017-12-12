@@ -81,7 +81,8 @@ export default (env: any): webpack.Configuration => webpackMerge(commonConfig(en
         proxy: {
             '/ebegu': {
                 target: 'http://localhost:8080',
-                secure: false
+                secure: false,
+                proxyTimeout: 240000
             }
         },
         headers: {

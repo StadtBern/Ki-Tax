@@ -1440,8 +1440,8 @@ export default class GesuchModelManager {
      */
     public isFinanzielleSituationRequired(): boolean {
         return !this.getGesuchsperiode().hasTagesschulenAnmeldung() ||
-            (!this.areThereOnlySchulamtAngebote() || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht
-                && !this.getGesuch().extractFamiliensituation().sozialhilfeBezueger));
+            (!this.areThereOnlySchulamtAngebote() || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht === true
+                && this.getGesuch().extractFamiliensituation().sozialhilfeBezueger === false));
     }
 
     public showFinanzielleSituationStart(): boolean {

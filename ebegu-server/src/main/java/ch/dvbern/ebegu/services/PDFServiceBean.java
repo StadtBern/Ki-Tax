@@ -44,6 +44,7 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.DokumenteUtil;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
 import ch.dvbern.ebegu.vorlagen.begleitschreiben.BegleitschreibenPrintImpl;
 import ch.dvbern.ebegu.vorlagen.begleitschreiben.BegleitschreibenPrintMergeSource;
@@ -71,6 +72,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 	private static final Objects[] OBJECTARRAY = {};
+	public static final byte[] BYTES = new byte[0];
 
 	@Inject
 	private DokumentGrundService dokumentGrundService;
@@ -204,7 +206,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 		}
 	}
 
-	@Nonnull
+	@Nullable
 	@Override
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public byte[] generateFinanzielleSituation(@Nonnull Gesuch gesuch, Verfuegung famGroessenVerfuegung,
@@ -212,26 +214,30 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 
-		if (!gesuch.hasOnlyBetreuungenOfSchulamt()) {
-			// Bei nur Schulamt prüfen wir die Berechtigung nicht, damit das JA solche Gesuche schliessen kann. Der UseCase ist, dass zuerst ein zweites
-			// Angebot vorhanden war, dieses aber durch das JA gelöscht wurde.		authorizer.checkReadAuthorizationFinSit(gesuch);
-			authorizer.checkReadAuthorizationFinSit(gesuch);
-		}
-		try {
-			final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();
-			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
-				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_FINANZIELLE_SITUATION);
-			Objects.requireNonNull(is, "Vorlage fuer Berechnungsgrundlagen nicht gefunden");
-			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				ByteStreams.toByteArray(is), new FinanzielleSituationEinkommensverschlechterungPrintMergeSource(
-					new BerechnungsgrundlagenInformationPrintImpl(gesuch, famGroessenVerfuegung)), writeProtected);
+		if (EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
 
-			is.close();
-			return bytes;
-		} catch (IOException e) {
-			throw new MergeDocException("generateFinanzielleSituation()",
-				"Bei der Generierung der Berechnungsgrundlagen ist ein Fehler aufgetreten", e, OBJECTARRAY);
+			if (!gesuch.hasOnlyBetreuungenOfSchulamt()) {
+				// Bei nur Schulamt prüfen wir die Berechtigung nicht, damit das JA solche Gesuche schliessen kann. Der UseCase ist, dass zuerst ein zweites
+				// Angebot vorhanden war, dieses aber durch das JA gelöscht wurde.		authorizer.checkReadAuthorizationFinSit(gesuch);
+				authorizer.checkReadAuthorizationFinSit(gesuch);
+			}
+			try {
+				final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();
+				InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
+					gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_FINANZIELLE_SITUATION);
+				Objects.requireNonNull(is, "Vorlage fuer Berechnungsgrundlagen nicht gefunden");
+				byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
+					ByteStreams.toByteArray(is), new FinanzielleSituationEinkommensverschlechterungPrintMergeSource(
+						new BerechnungsgrundlagenInformationPrintImpl(gesuch, famGroessenVerfuegung)), writeProtected);
+
+				is.close();
+				return bytes;
+			} catch (IOException e) {
+				throw new MergeDocException("generateFinanzielleSituation()",
+					"Bei der Generierung der Berechnungsgrundlagen ist ein Fehler aufgetreten", e, OBJECTARRAY);
+			}
 		}
+		return BYTES;
 	}
 
 	@Nonnull

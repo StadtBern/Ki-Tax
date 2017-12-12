@@ -99,7 +99,8 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
                     title: 'FAMILIENSITUATION_WARNING',
                     deleteText: descriptionText,
                     parentController: undefined,
-                    elementID: undefined
+                    elementID: undefined,
+                    form: this.form
                 }).then(() => {   //User confirmed changes
                     return this.save();
                 });

@@ -183,7 +183,8 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
                     title: 'EINKVERS_WARNING',
                     deleteText: 'EINKVERS_WARNING_BESCHREIBUNG',
                     parentController: undefined,
-                    elementID: undefined
+                    elementID: undefined,
+                    form: this.form
                 }).then(() => {   //User confirmed changes
                     return this.save();
                 });
