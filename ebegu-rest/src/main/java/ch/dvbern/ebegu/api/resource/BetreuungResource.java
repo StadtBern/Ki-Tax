@@ -18,7 +18,9 @@ package ch.dvbern.ebegu.api.resource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,10 +49,12 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.GesuchService;
@@ -97,6 +101,9 @@ public class BetreuungResource {
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
+			if (hasDublicate(betreuungJAXP, kind.get().getBetreuungen())) {
+				throw new EbeguRuntimeException("saveBetreuung", ErrorCodeEnum.ERROR_DUBLICATE_BETREUUNG);
+			}
 			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
 			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch(), convertedBetreuung);
 			convertedBetreuung.setKind(kind.get());
@@ -106,6 +113,7 @@ public class BetreuungResource {
 		}
 		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + kindId.getId());
 	}
+
 
 	@ApiOperation(value = "Speichert eine Abwesenheit in der Datenbank.", responseContainer = "List", response = JaxBetreuung.class)
 	@Nonnull
@@ -349,5 +357,37 @@ public class BetreuungResource {
 		Collection<JaxBetreuung> jaxBetreuungList = converter.betreuungListToJax(betreuungCollection);
 
 		return Response.ok(jaxBetreuungList).build();
+	}
+
+	private boolean hasDublicate(JaxBetreuung betreuungJAXP, Set<Betreuung> betreuungen) {
+		return isNewBetreuung(betreuungJAXP) &&
+			betreuungen.stream().filter(
+				betreuung -> {
+					if (!Objects.equals(betreuungJAXP.getInstitutionStammdaten().getBetreuungsangebotTyp(), BetreuungsangebotTyp.FERIENINSEL)) {
+						return isNotStorniert(betreuung) &&
+							isSameInstitution(betreuungJAXP, betreuung);
+					} else {
+						return isNotStorniert(betreuung) &&
+							isSameInstitution(betreuungJAXP, betreuung) &&
+							isSameFerien(betreuungJAXP, betreuung);
+					}
+				}).count() == 0;
+
+	}
+
+	private boolean isNewBetreuung(JaxBetreuung betreuungJAXP) {
+		return betreuungJAXP.getId() == null;
+	}
+
+	private boolean isSameFerien(JaxBetreuung betreuungJAXP, Betreuung betreuung) {
+		return Objects.equals(betreuung.getBelegungFerieninsel().getFerienname(), betreuungJAXP.getBelegungFerieninsel().getFerienname());
+	}
+
+	private boolean isSameInstitution(JaxBetreuung betreuungJAXP, Betreuung betreuung) {
+		return betreuung.getInstitutionStammdaten().getId().equals(betreuungJAXP.getInstitutionStammdaten().getId());
+	}
+
+	private boolean isNotStorniert(Betreuung betreuung) {
+		return !betreuung.getBetreuungsstatus().equals(Betreuungsstatus.STORNIERT);
 	}
 }

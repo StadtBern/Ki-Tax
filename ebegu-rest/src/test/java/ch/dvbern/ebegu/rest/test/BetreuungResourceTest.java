@@ -201,4 +201,19 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 		final JaxKindContainer updatedKind = kindResource.findKind(kindId);
 		Assert.assertEquals(number, updatedKind.getNextNumberBetreuung());
 	}
+
+
+	@Test
+	public void createBetreuung() throws EbeguException {
+		KindContainer returnedKind = persistKindAndDependingObjects(RESTEASY_URI_INFO);
+		Betreuung testBetreuung = TestDataUtil.createDefaultBetreuung();
+		persistStammdaten(testBetreuung.getInstitutionStammdaten());
+		JaxBetreuung testJaxBetreuung = converter.betreuungToJAX(testBetreuung);
+
+		JaxBetreuung jaxBetreuung = betreuungResource.saveBetreuung(converter.toJaxId(returnedKind), testJaxBetreuung, false, RESTEASY_URI_INFO, null);
+		Assert.assertEquals(new Integer(1), jaxBetreuung.getBetreuungNummer());
+		Assert.assertNotNull(jaxBetreuung);
+	}
+
+
 }
