@@ -32,7 +32,6 @@ import ch.dvbern.oss.lib.excelmerger.ExcelMergerDTO;
 import ch.dvbern.oss.lib.excelmerger.RowFiller;
 import ch.dvbern.oss.lib.excelmerger.mergefields.MergeField;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -44,7 +43,24 @@ public class GesuchstellerKinderBetreuungExcelConverter implements ExcelConverte
 	}
 
 	@Nonnull
-	public XSSFSheet mergeFields(@Nonnull List<GesuchstellerKinderBetreuungDataRow> data, @Nonnull XSSFSheet xssfSheet,
+	public Sheet mergeHeaderFields(@Nonnull List<GesuchstellerKinderBetreuungDataRow> data, @Nonnull Sheet sheet,
+		@Nonnull LocalDate stichtag) throws ExcelMergeException {
+
+		checkNotNull(data);
+
+		ExcelMergerDTO excelMergerDTO = new ExcelMergerDTO();
+		List<MergeField<?>> mergeFields = new ArrayList<>();
+
+		mergeFields.add(MergeFieldGesuchstellerKinderBetreuung.stichtag.getMergeField());
+		excelMergerDTO.addValue(MergeFieldGesuchstellerKinderBetreuung.stichtag.getMergeField(), stichtag);
+
+		ExcelMerger.mergeData(sheet, mergeFields, excelMergerDTO);
+
+		return sheet;
+	}
+
+	@Nonnull
+	public Sheet mergeHeaderFields(@Nonnull List<GesuchstellerKinderBetreuungDataRow> data, @Nonnull Sheet sheet,
 		@Nonnull LocalDate auswertungVon, @Nonnull LocalDate auswertungBis, @Nullable Gesuchsperiode auswertungPeriode) throws ExcelMergeException {
 
 		checkNotNull(data);
@@ -63,9 +79,9 @@ public class GesuchstellerKinderBetreuungExcelConverter implements ExcelConverte
 			excelMergerDTO.addValue(MergeFieldGesuchstellerKinderBetreuung.auswertungPeriode.getMergeField(), auswertungPeriode.getGesuchsperiodeString());
 		}
 
-		ExcelMerger.mergeData(xssfSheet, mergeFields, excelMergerDTO);
+		ExcelMerger.mergeData(sheet, mergeFields, excelMergerDTO);
 
-		return xssfSheet;
+		return sheet;
 	}
 
 	public void mergeRows(RowFiller rowFiller, @Nonnull List<GesuchstellerKinderBetreuungDataRow> data) {

@@ -1152,7 +1152,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		query.where(predicateStatus, predicateGesuchsperiode, predicateGueltig, predicateFall);
 		query.select(root);
 
-		// TODO: @Reviewer Business Rule ? = There are only 0-1 Gesuch with gleutig = 1 with the same fall_id
+		// TODO: (team) Business Rule ? = There are only 0-1 Gesuch with gleutig = 1 with the same fall_id
 		// If this is the case then we don't need this order by line.  However this Business rule is broken in the DB and not enforced.
 		query.orderBy(cb.desc(root.get(Gesuch_.timestampVerfuegt))); // Das mit dem neuesten Verfuegungsdatum
 

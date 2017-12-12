@@ -132,12 +132,12 @@ module.exports = webpackMerge(commonConfig, {
             '/ebegu': {
                 target: 'http://localhost:8080',
                 secure: false,
-                proxyTimeout: 300000
+                proxyTimeout: 240000
             },
             '/connector': {
                 target: 'http://localhost:8080',
                 secure: false,
-                proxyTimeout: 300000
+                proxyTimeout: 240000
             }
         },
         headers: {
