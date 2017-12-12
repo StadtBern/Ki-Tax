@@ -16,6 +16,7 @@
 import {IPromise} from 'angular';
 import IDialogService = angular.material.IDialogService;
 import IDialogOptions = angular.material.IDialogOptions;
+import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 require('./dv-dialog.less');
 
 export class DvDialog {
@@ -33,6 +34,13 @@ export class DvDialog {
      * @returns {angular.IPromise<any>}
      */
     public showDialog(template: string, controller?: any, params?: any): IPromise<any> {
+
+
+        // form parameter is required for injection for RemoveDialogController, so set messing parameter here.
+        if (controller.name === 'RemoveDialogController' && !params.form) {
+            params.form = undefined;
+        }
+
         let confirm: IDialogOptions = {
             template: template,
             controller: controller,
