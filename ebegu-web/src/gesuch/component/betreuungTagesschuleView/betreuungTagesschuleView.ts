@@ -19,6 +19,7 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import MitteilungRS from '../../../core/service/mitteilungRS.rest';
+import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import {getWeekdaysValues, TSDayOfWeek} from '../../../models/enums/TSDayOfWeek';
 import {getTSModulTagesschuleNameValues, TSModulTagesschuleName} from '../../../models/enums/TSModulTagesschuleName';
 import TSBetreuung from '../../../models/TSBetreuung';
@@ -38,7 +39,6 @@ import IPromise = angular.IPromise;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
-import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 
 let template = require('./betreuungTagesschuleView.html');
 require('./betreuungTagesschuleView.less');
@@ -177,8 +177,8 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
      */
     public anmelden(): IPromise<any> {
         if (this.form.$valid) {
-            // Validieren, dass mindestens 1 Modul ausgewählt war
-            if (!this.isThereAnyAnmeldung()) {
+            // Validieren, dass mindestens 1 Modul ausgewählt war --> ausser der Betreuungsstatus ist (noch) SCHULAMT_FALSCHE_INSTITUTION
+            if (!this.betreuung.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION) && !this.isThereAnyAnmeldung()) {
                 this.showErrorMessageNoModule = true;
                 return undefined;
             }
