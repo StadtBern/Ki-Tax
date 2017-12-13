@@ -611,13 +611,6 @@ public class Gesuch extends AbstractEntity implements Searchable {
 	}
 
 	@Transient
-	public boolean hasBetreuungOfSchulamt() {
-		return kindContainers.stream()
-			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
-			.anyMatch(betreuung -> betreuung.getBetreuungsangebotTyp().isSchulamt());
-	}
-
-	@Transient
 	public boolean hasBetreuungOfJugendamt() {
 		return kindContainers.stream()
 			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
