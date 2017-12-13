@@ -499,7 +499,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 	private boolean isAllowedSchulamt(Gesuch entity) {
 		if (principalBean.isCallerInAnyOfRole(SCHULAMT, ADMINISTRATOR_SCHULAMT)) {
-			return entity.hasBetreuungOfSchulamt() && entity.getStatus().isReadableBySchulamtSachbearbeiter();
+			return entity.getStatus().isReadableBySchulamtSachbearbeiter();
 		}
 		return false;
 	}

@@ -24,6 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 
@@ -32,7 +33,7 @@ import org.hibernate.envers.Audited;
  */
 @Audited
 @Entity
-public class InstitutionStammdatenTagesschule extends AbstractEntity {
+public class InstitutionStammdatenTagesschule extends AbstractEntity implements Comparable<InstitutionStammdatenTagesschule> {
 
 	private static final long serialVersionUID = 3991623541799163623L;
 
@@ -67,5 +68,12 @@ public class InstitutionStammdatenTagesschule extends AbstractEntity {
 
 	public void setModuleTagesschule(@Nullable Set<ModulTagesschule> moduleTagesschule) {
 		this.moduleTagesschule = moduleTagesschule;
+	}
+
+	@Override
+	public int compareTo(InstitutionStammdatenTagesschule o) {
+		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(this.getId(), o.getId());
+		return builder.toComparison();
 	}
 }
