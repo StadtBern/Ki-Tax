@@ -359,7 +359,8 @@ public class BetreuungResource {
 		return Response.ok(jaxBetreuungList).build();
 	}
 
-	private boolean hasDublicate(JaxBetreuung betreuungJAXP, Set<Betreuung> betreuungen) {
+	public boolean hasDublicate(JaxBetreuung betreuungJAXP, Set<Betreuung> betreuungen) {
+
 		return isNewBetreuung(betreuungJAXP) &&
 			betreuungen.stream().filter(
 				betreuung -> {
@@ -371,16 +372,17 @@ public class BetreuungResource {
 							isSameInstitution(betreuungJAXP, betreuung) &&
 							isSameFerien(betreuungJAXP, betreuung);
 					}
-				}).count() == 0;
-
+				}).count() != 0;
 	}
 
 	private boolean isNewBetreuung(JaxBetreuung betreuungJAXP) {
-		return betreuungJAXP.getId() == null;
+		return betreuungJAXP.getTimestampErstellt() == null;
 	}
 
+	//TODO: Diese Funktion muss wohl noch angepasst werden, wenn die Ferienangebote über das Schaulamt laufen und nicht über die Institution
 	private boolean isSameFerien(JaxBetreuung betreuungJAXP, Betreuung betreuung) {
-		return Objects.equals(betreuung.getBelegungFerieninsel().getFerienname(), betreuungJAXP.getBelegungFerieninsel().getFerienname());
+		return Objects.equals(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp(), BetreuungsangebotTyp.FERIENINSEL) &&
+			Objects.equals(betreuung.getBelegungFerieninsel().getFerienname(), betreuungJAXP.getBelegungFerieninsel().getFerienname());
 	}
 
 	private boolean isSameInstitution(JaxBetreuung betreuungJAXP, Betreuung betreuung) {
