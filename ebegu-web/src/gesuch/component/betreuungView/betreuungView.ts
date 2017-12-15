@@ -33,6 +33,7 @@ import TSBetreuungspensumContainer from '../../../models/TSBetreuungspensumConta
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import TSKindContainer from '../../../models/TSKindContainer';
+import TSModulTagesschule from '../../../models/TSModulTagesschule';
 import {TSDateRange} from '../../../models/types/TSDateRange';
 import DateUtil from '../../../utils/DateUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
@@ -47,7 +48,6 @@ import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
-import TSModulTagesschule from '../../../models/TSModulTagesschule';
 
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
@@ -75,6 +75,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     isNewestGesuch: boolean;
     dvDialog: DvDialog;
     $translate: ITranslateService;
+    moduleBackup: TSModulTagesschule[] = undefined;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout', '$translate'];
@@ -262,9 +263,17 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         if (this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung() &&
             this.getBetreuungModel().belegungTagesschule && this.getBetreuungModel().belegungTagesschule.moduleTagesschule) {
             // noinspection UnnecessaryLocalVariableJS
-            let angemeldeteModule: TSModulTagesschule[] = this.getBetreuungModel().belegungTagesschule.moduleTagesschule
-                .filter(modul => modul.angemeldet === true);
-            this.getBetreuungModel().belegungTagesschule.moduleTagesschule = angemeldeteModule;
+            if (this.moduleBackup === undefined && this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION)) {
+                this.moduleBackup = this.getBetreuungModel().belegungTagesschule.moduleTagesschule
+                    .filter(modul => modul.angemeldet === true);
+                this.getBetreuungModel().belegungTagesschule.moduleTagesschule = this.moduleBackup;
+            } else if (this.moduleBackup !== undefined && this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION)) {
+                this.getBetreuungModel().belegungTagesschule.moduleTagesschule = this.moduleBackup;
+            } else {
+                let angemeldeteModule: TSModulTagesschule[] = this.getBetreuungModel().belegungTagesschule.moduleTagesschule
+                    .filter(modul => modul.angemeldet === true);
+                this.getBetreuungModel().belegungTagesschule.moduleTagesschule = angemeldeteModule;
+            }
         }
     }
 
@@ -286,7 +295,13 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public showInstitutionenList(): boolean {
-        return this.isEnabled() && (!this.isTagesschule() || this.gesuchModelManager.getGesuchsperiode().isTageschulenAnmeldungAktiv());
+        return (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION) || this.isEnabled())
+            && (!this.isTagesschule() || this.gesuchModelManager.getGesuchsperiode().isTageschulenAnmeldungAktiv());
+    }
+
+    public isFalscheInstitutionAndUserInRole(): boolean {
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())
+            && this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION);
     }
 
     public anmeldungSchulamtUebernehmen(): void {
@@ -302,7 +317,11 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public anmeldungSchulamtAblehnen(): void {
-        this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT, 'pendenzenInstitution', undefined);
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) {
+            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
+        } else {
+            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT, 'pendenzenInstitution', undefined);
+        }
     }
 
     public anmeldungSchulamtFalscheInstitution(): void {

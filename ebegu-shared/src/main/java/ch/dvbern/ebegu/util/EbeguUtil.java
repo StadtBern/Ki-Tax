@@ -127,4 +127,10 @@ public class EbeguUtil {
 			(gesuch.getFamiliensituationContainer() != null && gesuch.getFamiliensituationContainer().getFamiliensituationJA() != null
 			&& gesuch.getFamiliensituationContainer().getFamiliensituationJA().getSozialhilfeBezueger() == null);
 	}
+
+	public static boolean isFinanzielleSituationNotIntroduced(@Nonnull Gesuch gesuch) {
+		return gesuch.getGesuchsteller1() == null
+			|| (gesuch.getGesuchsteller1().getFinanzielleSituationContainer() == null
+			&& gesuch.getEinkommensverschlechterungInfoContainer() == null);
+	}
 }

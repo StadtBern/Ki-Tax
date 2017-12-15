@@ -215,7 +215,8 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 			break;
 		case SCHULAMT:
 		case ADMINISTRATOR_SCHULAMT:
-			predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
+			// Schulamt und AdminSchulamt duerfen alles sehen. Gleich wie JA
+//			predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
 			break;
 		default:
 			LOG.warn("antragSearch can not be performed by users in role {}", role);
