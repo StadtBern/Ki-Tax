@@ -15,9 +15,11 @@
 
 package ch.dvbern.ebegu.enums;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -56,27 +58,13 @@ public enum AntragStatus {
 		BESCHWERDE_HAENGIG,
 		PRUEFUNG_STV,
 		IN_BEARBEITUNG_STV,
-		GEPRUEFT_STV);
+		GEPRUEFT_STV,
+		NUR_SCHULAMT
+		);
 
 	public static final Set<AntragStatus> FOR_INSTITUTION_ROLE = EnumSet.of(
 		IN_BEARBEITUNG_GS,
 		FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
-		NUR_SCHULAMT,
-		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
-		IN_BEARBEITUNG_JA,
-		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG,
-		ZWEITE_MAHNUNG_ABGELAUFEN,
-		GEPRUEFT,
-		VERFUEGEN,
-		VERFUEGT,
-		BESCHWERDE_HAENGIG,
-		PRUEFUNG_STV,
-		IN_BEARBEITUNG_STV,
-		GEPRUEFT_STV);
-
-	public static final Set<AntragStatus> FOR_SCHULAMT_ROLE = EnumSet.of(
 		NUR_SCHULAMT,
 		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
 		IN_BEARBEITUNG_JA,
@@ -121,7 +109,7 @@ public enum AntragStatus {
 	private static final Set<AntragStatus> forSachbearbeiterInstitutionRole = FOR_INSTITUTION_ROLE;
 	private static final Set<AntragStatus> forSachbearbeiterTraegerschaftRole = FOR_INSTITUTION_ROLE;
 	private static final Set<AntragStatus> forSachbearbeiterJugendamtRole = FOR_ADMIN_ROLE;
-	private static final Set<AntragStatus> forSchulamtRole = FOR_SCHULAMT_ROLE;
+	private static final Set<AntragStatus> forSchulamtRole = FOR_ADMIN_ROLE;
 	private static final Set<AntragStatus> forJuristRole = FOR_JURIST_REVISOR_ROLE;
 	private static final Set<AntragStatus> forRevisorRole = FOR_JURIST_REVISOR_ROLE;
 	private static final Set<AntragStatus> forSteueramt = FOR_STEUERAMT_ROLE;
@@ -284,6 +272,14 @@ public enum AntragStatus {
 			PRUEFUNG_STV, IN_BEARBEITUNG_STV, GEPRUEFT_STV, KEIN_ANGEBOT);
 	}
 
+	public static Collection<AntragStatus> getAllStatesSchulamtInterface() {
+		List<AntragStatus> states = new ArrayList<>();
+		states.addAll(getAllVerfuegtStates());
+		states.add(VERFUEGEN);
+		states.add(GEPRUEFT);
+		return states;
+	}
+
 	public static Collection<AntragStatus> getVerfuegtAndSTVStates() {
 		return Arrays.asList(VERFUEGT, PRUEFUNG_STV, IN_BEARBEITUNG_STV, GEPRUEFT_STV);
 	}
@@ -316,18 +312,13 @@ public enum AntragStatus {
 		return this == FREIGABEQUITTUNG || this == IN_BEARBEITUNG_GS;
 	}
 
-	public boolean isAnyOfSchulamtOnly() {
-		return this == NUR_SCHULAMT;
-	}
-
 	/**
 	 * @return true wenn das Jugendamt das Gesuch oeffnen darf (Unsichtbar sind also Gesuch die von Gesuchsteller noch
-	 * nicht eingereichte wurden und solche die NUR_SCHULAMT sind
+	 * nicht eingereichte wurden) die Gesuche vom SCH duerfen auch vom JA gesehen werden.
 	 */
 	public boolean isReadableByJugendamtSteueramt() {
-		//Jugendamt darf keine Gesuche sehen die noch nicht Freigegeben sind, und keine die nur Schulamt sind
-		return !(this.isAnyOfInBearbeitungGS()) &&
-			!(isAnyOfSchulamtOnly());
+		//Jugendamt darf keine Gesuche sehen die noch nicht Freigegeben sind
+		return !(this.isAnyOfInBearbeitungGS());
 	}
 
 	/**

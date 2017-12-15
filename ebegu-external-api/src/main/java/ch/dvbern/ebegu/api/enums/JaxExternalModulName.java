@@ -20,26 +20,12 @@ package ch.dvbern.ebegu.api.enums;
  */
 public enum JaxExternalModulName {
 
-	VORMITTAG(1),
-	MITTAG(2),
-	MITTAG_HALB(3),
-	NACHMITTAGS_1(4),
-	NACHMITTAGS_1_HALB(5),
-	NACHMITTAGS_2(6),
-	NACHMITTAGS_2_HALB(7);
+	VORMITTAG,
+	MITTAG,
+	MITTAG_HALB,
+	NACHMITTAGS_1,
+	NACHMITTAGS_1_HALB,
+	NACHMITTAGS_2,
+	NACHMITTAGS_2_HALB;
 
-	private final int stufe;
-
-	JaxExternalModulName(int stufe) {
-		this.stufe = stufe;
-	}
-
-	public static JaxExternalModulName getByStufe(int stufe) {
-		for (JaxExternalModulName o : values()) {
-			if (o.stufe == stufe) {
-				return o;
-			}
-		}
-		return null;
-	}
 }

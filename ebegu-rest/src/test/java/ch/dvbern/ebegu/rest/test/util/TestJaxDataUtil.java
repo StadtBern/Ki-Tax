@@ -110,6 +110,10 @@ public class TestJaxDataUtil {
 		jaxAltAdresseContainer.getAdresseJA().setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
 		jaxGesuchsteller.setAlternativeAdresse(jaxAltAdresseContainer);
 
+		JaxAdresseContainer jaxRechnungsAdresseContainer = createTestJaxAdr("rechnung");
+		jaxRechnungsAdresseContainer.getAdresseJA().setAdresseTyp(AdresseTyp.RECHNUNGSADRESSE);
+		jaxGesuchsteller.setRechnungsAdresse(jaxRechnungsAdresseContainer);
+
 		return jaxGesuchsteller;
 
 	}

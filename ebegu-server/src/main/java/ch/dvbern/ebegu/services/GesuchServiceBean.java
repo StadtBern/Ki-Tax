@@ -64,10 +64,12 @@ import ch.dvbern.ebegu.entities.Betreuung_;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Fall_;
+import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuch_;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Gesuchsperiode_;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer_;
 import ch.dvbern.ebegu.entities.Gesuchsteller_;
 import ch.dvbern.ebegu.entities.Institution;
@@ -76,6 +78,7 @@ import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
 import ch.dvbern.ebegu.entities.Institution_;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.KindContainer_;
+import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
@@ -87,6 +90,7 @@ import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -95,6 +99,7 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -190,11 +195,39 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			authorizer.checkWriteAuthorization(gesuch);
 		}
 		Objects.requireNonNull(gesuch);
-		final Gesuch merged = persistence.merge(gesuch);
+		final Gesuch gesuchToMerge = removeFinanzieleSituationIfNeeded(gesuch);
+		final Gesuch merged = persistence.merge(gesuchToMerge);
 		if (saveInStatusHistory) {
 			antragStatusHistoryService.saveStatusChange(merged, saveAsUser);
 		}
 		return merged;
+	}
+
+	private Gesuch removeFinanzieleSituationIfNeeded(@NotNull Gesuch gesuch) {
+		if (!EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
+			resetFieldsFamiliensituation(gesuch);
+			removeFinanzielleSituationGS(gesuch.getGesuchsteller1());
+			removeFinanzielleSituationGS(gesuch.getGesuchsteller2());
+			gesuch.setEinkommensverschlechterungInfoContainer(null);
+		}
+		return gesuch;
+	}
+
+	private void removeFinanzielleSituationGS(@Nullable GesuchstellerContainer gesuchsteller) {
+		if (gesuchsteller != null) {
+			gesuchsteller.setFinanzielleSituationContainer(null);
+			gesuchsteller.setEinkommensverschlechterungContainer(null);
+		}
+	}
+
+	private void resetFieldsFamiliensituation(@NotNull Gesuch gesuch) {
+		final Familiensituation familiensituation = gesuch.extractFamiliensituation();
+		if (familiensituation != null) {
+			if (Objects.equals(true, familiensituation.getSozialhilfeBezueger())) {
+				familiensituation.setVerguenstigungGewuenscht(null);
+			}
+			familiensituation.setGemeinsameSteuererklaerung(null);
+		}
 	}
 
 	@Nonnull
@@ -555,7 +588,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 			// Falls es ein NUR_SCHULAMT Gesuch ist, muss hier bereits die Finanzielle Situation erstellt werden,
 			// da das Gesuch mit Einlesen der Freigabequittung als freigegeben gilt.
-			if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			if (gesuch.hasOnlyBetreuungenOfSchulamt() && EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
 				// Das Dokument der Finanziellen Situation erstellen
 				try {
 					generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(gesuch, true);
@@ -787,24 +820,41 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@Nonnull
 	public Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Fall fall, boolean doAuthCheck) {
-		authorizer.checkReadAuthorizationFall(fall);
+
+		if (doAuthCheck) {
+			authorizer.checkReadAuthorizationFall(fall);
+		}
+
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
 		Root<Gesuch> root = query.from(Gesuch.class);
 
+		ParameterExpression<Fall> fallParam = cb.parameter(Fall.class, "fallId");
+		ParameterExpression<Gesuchsperiode> gesuchsperiodeParam = cb.parameter(Gesuchsperiode.class, "gp");
+
 		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates());
-		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
-		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiodeParam);
+		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fallParam);
 		Predicate predicateGueltig = cb.equal(root.get(Gesuch_.gueltig), Boolean.TRUE);
 
 		query.where(predicateStatus, predicateGesuchsperiode, predicateGueltig, predicateFall);
 		query.select(root);
+
+		// TODO: (team) Business Rule ? = There are only 0-1 Gesuch with gleutig = 1 with the same fall_id
+		// If this is the case then we don't need this order by line.  However this Business rule is broken in the DB and not enforced.
 		query.orderBy(cb.desc(root.get(Gesuch_.timestampVerfuegt))); // Das mit dem neuesten Verfuegungsdatum
-		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
+
+		TypedQuery<Gesuch> typedQuery = persistence.getEntityManager().createQuery(query);
+		typedQuery.setParameter(fallParam, fall);
+		typedQuery.setParameter(gesuchsperiodeParam, gesuchsperiode);
+
+		List<Gesuch> criteriaResults = typedQuery.getResultList();
+
 		if (criteriaResults.isEmpty()) {
 			return Optional.empty();
 		}
+
 		Gesuch gesuch = criteriaResults.get(0);
 		if (doAuthCheck) {
 			authorizer.checkReadAuthorization(gesuch);
@@ -854,6 +904,30 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 		return Optional.of(gesuch);
 	}
+
+	@Override
+	@Nonnull
+	public Optional<Gesuch> getNeustesGesuchFuerFallnumerForSchulamtInterface(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Long fallnummer) {
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+		Predicate predicateFallNummer = cb.equal(root.get(Gesuch_.fall).get(Fall_.fallNummer), fallnummer);
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllStatesSchulamtInterface());
+
+		query.where(predicateGesuchsperiode, predicateFallNummer, predicateStatus);
+		query.select(root);
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
+		if (criteriaResults.isEmpty()) {
+			return Optional.empty();
+		}
+		Gesuch gesuch = criteriaResults.get(0);
+		return Optional.of(gesuch);
+	}
+
 
 	@Nonnull
 	private Optional<Gesuch> getGesuchFuerErneuerungsantrag(@Nonnull Fall fall) {
@@ -1243,12 +1317,15 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 
 		Gesuch persistedGesuch = superAdminService.updateGesuch(gesuch, true, principalBean.getBenutzer());
+
 		// Das Dokument der Finanziellen Situation erstellen
-		try {
-			generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(persistedGesuch, true);
-		} catch (MimeTypeParseException | MergeDocException e) {
-			throw new EbeguRuntimeException("verfuegenStarten", "FinSit-Dokument konnte nicht erstellt werden"
-				+ persistedGesuch.getId(), e);
+		if (EbeguUtil.isFinanzielleSituationRequired(persistedGesuch)) {
+			try {
+				generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(persistedGesuch, true);
+			} catch (MimeTypeParseException | MergeDocException e) {
+				throw new EbeguRuntimeException("verfuegenStarten", "FinSit-Dokument konnte nicht erstellt werden"
+					+ persistedGesuch.getId(), e);
+			}
 		}
 		return persistedGesuch;
 	}
@@ -1302,6 +1379,19 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			}
 		}
 		persistence.merge(gesuch);
+	}
+
+	@Override
+	public void gesuchVerfuegen(@NotNull Gesuch gesuch) {
+		if (gesuch.getStatus() != AntragStatus.VERFUEGT) {
+			final WizardStep verfuegenStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.VERFUEGEN);
+			if (verfuegenStep.getWizardStepStatus() == WizardStepStatus.OK) {
+				final List<Betreuung> allBetreuungen = gesuch.extractAllBetreuungen();
+				if (allBetreuungen.stream().allMatch(betreuung -> betreuung.getBetreuungsstatus().isGeschlossen())) {
+					wizardStepService.gesuchVerfuegen(verfuegenStep);
+				}
+			}
+		}
 	}
 
 	@Nonnull

@@ -73,6 +73,14 @@ describe('mitteilungenView', function () {
         spyOn(mitteilungRS, 'getEntwurfForCurrentRolleForFall').and.returnValue($q.when(undefined));
     }));
 
+    let assertMitteilungContent = function () {
+        expect(controller.getCurrentMitteilung().mitteilungStatus).toBe(TSMitteilungStatus.ENTWURF);
+        expect(controller.getCurrentMitteilung().fall).toBe(fall);
+        // diese Parameter muessen im Server gesetzt werden
+        expect(controller.getCurrentMitteilung().empfaenger).toBeUndefined();
+        expect(controller.getCurrentMitteilung().senderTyp).toBeUndefined();
+        expect(controller.getCurrentMitteilung().empfaengerTyp).toBeUndefined();
+    };
     describe('loading initial data', function () {
         it('should create an empty TSMItteilung for GS', function () {
             let gesuchsteller: TSUser = new TSUser();
@@ -81,9 +89,7 @@ describe('mitteilungenView', function () {
 
             createMitteilungForUser(gesuchsteller);
             compareCommonAttributes(gesuchsteller);
-            expect(controller.getCurrentMitteilung().empfaenger).toBe(verantwortlicher);
-            expect(controller.getCurrentMitteilung().senderTyp).toBe(TSMitteilungTeilnehmerTyp.GESUCHSTELLER);
-            expect(controller.getCurrentMitteilung().empfaengerTyp).toBe(TSMitteilungTeilnehmerTyp.JUGENDAMT);
+            assertMitteilungContent();
         });
         it('should create an empty TSMItteilung for JA', function () {
             let sachbearbeiter_ja: TSUser = new TSUser();
@@ -95,9 +101,7 @@ describe('mitteilungenView', function () {
             createMitteilungForUser(sachbearbeiter_ja);
 
             compareCommonAttributes(sachbearbeiter_ja);
-            expect(controller.getCurrentMitteilung().empfaenger).toBe(besitzer);
-            expect(controller.getCurrentMitteilung().empfaengerTyp).toBe(TSMitteilungTeilnehmerTyp.GESUCHSTELLER);
-            expect(controller.getCurrentMitteilung().senderTyp).toBe(TSMitteilungTeilnehmerTyp.JUGENDAMT);
+            assertMitteilungContent();
         });
         it('should create an empty TSMItteilung for Institution', function () {
             let sachbearbeiter_inst: TSUser = new TSUser();
@@ -109,9 +113,7 @@ describe('mitteilungenView', function () {
             createMitteilungForUser(sachbearbeiter_inst);
 
             compareCommonAttributes(sachbearbeiter_inst);
-            expect(controller.getCurrentMitteilung().empfaenger).toBe(verantwortlicher);
-            expect(controller.getCurrentMitteilung().empfaengerTyp).toBe(TSMitteilungTeilnehmerTyp.JUGENDAMT);
-            expect(controller.getCurrentMitteilung().senderTyp).toBe(TSMitteilungTeilnehmerTyp.INSTITUTION);
+            assertMitteilungContent();
         });
     });
     describe('sendMitteilung', function () {

@@ -176,4 +176,11 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     public showButtonsInstitution(): boolean {
         return this.betreuung.betreuungsstatus === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST && !this.gesuchModelManager.isGesuchReadonlyForRole();
     }
+
+    /**
+     * Muss ueberschrieben werden, damit die richtige betreuung zurueckgegeben wird
+     */
+    public getBetreuungModel(): TSBetreuung {
+        return this.betreuung;
+    }
 }

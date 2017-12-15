@@ -1,0 +1,156 @@
+{
+	"info": {
+		"name": "Schulamt",
+		"_postman_id": "2b731c46-3a0d-b1f8-e1b7-3433d52a71d1",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "heartBeat",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{host}}:{{port}}/{{endpoint}}/schulamt/heartbeat",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{endpoint}}",
+						"schulamt",
+						"heartbeat"
+					],
+					"query": [
+						{
+							"key": "host",
+							"value": "localhost",
+							"equals": true,
+							"disabled": true
+						}
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "anmeldung",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "MyUser",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "MyPassword",
+							"type": "string"
+						},
+						{
+							"key": "saveHelperData",
+							"type": "any"
+						},
+						{
+							"key": "showPassword",
+							"value": false,
+							"type": "boolean"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{host}}:{{port}}/{{endpoint}}/schulamt/anmeldung/{{bgNummer}}",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{endpoint}}",
+						"schulamt",
+						"anmeldung",
+						"{{bgNummer}}"
+					],
+					"query": [
+						{
+							"key": "host",
+							"value": "localhost",
+							"equals": true,
+							"disabled": true
+						}
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "finanziellesituation",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "MyUser",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "MyPassword",
+							"type": "string"
+						},
+						{
+							"key": "saveHelperData",
+							"type": "any"
+						},
+						{
+							"key": "showPassword",
+							"value": false,
+							"type": "boolean"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{host}}:{{port}}/{{endpoint}}/schulamt/finanziellesituation?stichtag=2018-08-31&fall=123",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{endpoint}}",
+						"schulamt",
+						"finanziellesituation"
+					],
+					"query": [
+						{
+							"key": "stichtag",
+							"value": "2018-08-31",
+							"equals": true
+						},
+						{
+							"key": "fall",
+							"value": "123",
+							"equals": true
+						}
+					]
+				},
+				"description": null
+			},
+			"response": []
+		}
+	]
+}

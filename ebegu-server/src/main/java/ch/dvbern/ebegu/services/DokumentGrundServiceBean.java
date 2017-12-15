@@ -33,6 +33,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.DokumentGrund_;
@@ -42,8 +45,6 @@ import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
@@ -103,15 +104,28 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 	@Nonnull
 	public Optional<DokumentGrund> findDokumentGrund(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		DokumentGrund a = persistence.find(DokumentGrund.class, key);
-		return Optional.ofNullable(a);
+		DokumentGrund dokGrund = persistence.find(DokumentGrund.class, key);
+		if (dokGrund == null) {
+			return Optional.empty();
+		}
+		authorizer.checkReadAuthorization(dokGrund.getGesuch());
+		return Optional.of(dokGrund);
 	}
 
 	@Override
 	@Nonnull
 	public Collection<DokumentGrund> findAllDokumentGrundByGesuch(@Nonnull Gesuch gesuch) {
+		return this.findAllDokumentGrundByGesuch(gesuch, true);
+
+	}
+
+	@Nonnull
+	@Override
+	public Collection<DokumentGrund> findAllDokumentGrundByGesuch(@Nonnull Gesuch gesuch, boolean doAuthCheck) {
 		Objects.requireNonNull(gesuch);
-		this.authorizer.checkReadAuthorization(gesuch);
+		if (doAuthCheck) {
+			this.authorizer.checkReadAuthorization(gesuch);
+		}
 		Collection<DokumentGrund> dokumentGrunds = criteriaQueryHelper.getEntitiesByAttribute(DokumentGrund.class, gesuch, DokumentGrund_.gesuch);
 		setSonstigeNeededFalse(dokumentGrunds);
 		return dokumentGrunds;

@@ -60,6 +60,10 @@ describe('betreuungView', function () {
         $stateParams = $injector.get('$stateParams');
         $timeout = $injector.get('$timeout');
 
+        // they always need to be mocked
+        TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+        TestDataUtil.mockLazyGesuchModelManagerHttpCalls($httpBackend);
+
         betreuung = new TSBetreuung();
         betreuung.timestampErstellt = DateUtil.today();
         betreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
@@ -306,8 +310,6 @@ describe('betreuungView', function () {
         betreuungView.model.vertrag = true;
         spyOn($state, 'go');
         spyOn(gesuchModelManager, 'saveBetreuung').and.returnValue(promiseResponse);
-        TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
-        TestDataUtil.mockLazyGesuchModelManagerHttpCalls($httpBackend);
         betreuungView.platzAnfordern();
         $rootScope.$apply();
         expect(gesuchModelManager.saveBetreuung).toHaveBeenCalled();

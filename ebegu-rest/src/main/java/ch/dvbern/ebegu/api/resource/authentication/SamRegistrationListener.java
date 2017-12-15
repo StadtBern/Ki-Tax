@@ -38,12 +38,14 @@ public class SamRegistrationListener extends BaseServletContextListener {
 		final CookieTokenAuthModule authModule;
 		String intUsr = configuration.getInternalAPIUser();
 		String intPW = configuration.getInternalAPIPassword();
+		String schulamtUsr = configuration.getSchulamtAPIUser();
+		String schulamtPW = configuration.getSchulamtAPIPassword();
 		//either construct the module with or without password for external login
 		if (intUsr == null && intPW == null) {
-			authModule = new CookieTokenAuthModule();
+			authModule = new CookieTokenAuthModule(schulamtUsr, schulamtPW);
 			LOG.debug("No user or password for internal api configured, the api will be inactive");
 		} else {
-			authModule = new CookieTokenAuthModule(intUsr, intPW);
+			authModule = new CookieTokenAuthModule(intUsr, intPW, schulamtUsr, schulamtPW);
 		}
 
 		Jaspic.registerServerAuthModule(authModule, sce.getServletContext());

@@ -229,4 +229,42 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		persistence.persist(sender);
 	}
 
+	@Test
+	public void getFallnummerFromBetreuungsIdTest() {
+		Assert.assertEquals(108L, betreuungService.getFallnummerFromBGNummer("18.000108.1.2").longValue());
+		Assert.assertEquals(123456L, betreuungService.getFallnummerFromBGNummer("18.123456.1.2").longValue());
+	}
+
+	@Test
+	public void getYearFromBetreuungsIdTest() {
+		Assert.assertEquals(2018, betreuungService.getYearFromBGNummer("18.000108.1.2"));
+	}
+
+	@Test
+	public void getKindNummerFromBetreuungsIdTest() {
+		Assert.assertEquals(1, betreuungService.getKindNummerFromBGNummer("18.000108.1.2"));
+		Assert.assertEquals(2, betreuungService.getKindNummerFromBGNummer("18.000108.2.2"));
+		Assert.assertEquals(88, betreuungService.getKindNummerFromBGNummer("18.000108.88.2"));
+	}
+
+	@Test
+	public void getBetreuungNummerFromBetreuungsId() {
+		Assert.assertEquals(2, betreuungService.getBetreuungNummerFromBGNummer("18.000108.1.2"));
+		Assert.assertEquals(1, betreuungService.getBetreuungNummerFromBGNummer("18.000108.2.1"));
+		Assert.assertEquals(99, betreuungService.getBetreuungNummerFromBGNummer("18.000108.88.99"));
+	}
+
+	@Test
+	public void validateBGNummer() {
+		Assert.assertEquals("18.000108.1.2",true, betreuungService.validateBGNummer("18.000108.1.2"));
+		Assert.assertEquals("88.999999.77.66",true, betreuungService.validateBGNummer("88.999999.77.66"));
+		Assert.assertEquals("88.999999.7.66",true, betreuungService.validateBGNummer("88.999999.7.66"));
+		Assert.assertEquals("88.999999.77.6",true, betreuungService.validateBGNummer("88.999999.77.6"));
+		Assert.assertEquals("1.000108.1.2",false, betreuungService.validateBGNummer("1.000108.1.2"));
+		Assert.assertEquals("88.99999.77.66",false, betreuungService.validateBGNummer("88.99999.77.66"));
+		Assert.assertEquals("88.999999.66",false, betreuungService.validateBGNummer("88.999999.66"));
+		Assert.assertEquals("88.999999.66",false, betreuungService.validateBGNummer("88.999999.66"));
+	}
+
+
 }

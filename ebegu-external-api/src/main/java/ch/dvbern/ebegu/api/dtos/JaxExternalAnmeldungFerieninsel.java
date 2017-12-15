@@ -17,8 +17,8 @@ package ch.dvbern.ebegu.api.dtos;
 import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import ch.dvbern.ebegu.api.enums.JaxBetreuungsangebotTyp;
-import ch.dvbern.ebegu.api.enums.JaxBetreuungsstatus;
+import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsangebotTyp;
+import ch.dvbern.ebegu.api.enums.JaxExternalBetreuungsstatus;
 
 /**
  * DTO für die Anmeldung eines Ferieninsel-Angebots für die externe Schnittstelle
@@ -34,11 +34,13 @@ public class JaxExternalAnmeldungFerieninsel extends JaxExternalAnmeldung {
 
 	public JaxExternalAnmeldungFerieninsel(
 		@Nonnull String bgNummer,
-		@Nonnull JaxBetreuungsstatus betreuungsstatus,
+		@Nonnull JaxExternalBetreuungsstatus betreuungsstatus,
 		@Nonnull String keyInstitution,
-		@Nonnull JaxExternalFerieninsel ferieninsel) {
+		@Nonnull JaxExternalFerieninsel ferieninsel,
+		@Nonnull String kindName,
+		@Nonnull String kindVorname) {
 
-		super(bgNummer, betreuungsstatus, JaxBetreuungsangebotTyp.FERIENINSEL, keyInstitution);
+		super(bgNummer, betreuungsstatus, JaxExternalBetreuungsangebotTyp.FERIENINSEL, keyInstitution, kindName, kindVorname);
 		this.ferieninsel = ferieninsel;
 	}
 

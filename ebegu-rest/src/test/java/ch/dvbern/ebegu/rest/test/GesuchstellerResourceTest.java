@@ -74,6 +74,7 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestLoginTest {
 		JaxGesuchstellerContainer jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, false, testGesuchsteller, null, null);
 		Assert.assertNotNull(jaxGesuchsteller);
 		Assert.assertNotNull(jaxGesuchsteller.getAlternativeAdresse());
+		Assert.assertNotNull(jaxGesuchsteller.getRechnungsAdresse());
 		Assert.assertNotNull(jaxGesuchsteller.getAdressen());
 
 		JaxGesuchstellerContainer foundGesuchsteller = gesuchstellerResource.findGesuchsteller(converter.toJaxId(jaxGesuchsteller));
@@ -101,20 +102,27 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestLoginTest {
 	}
 
 	@Test
-	public void removeKorrespondenzaddr() throws EbeguException {
+	public void removeKorrespondenzAndRechnungsaddr() throws EbeguException {
 		JaxGesuchstellerContainer testJaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
 		JaxGesuchstellerContainer jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, false, testJaxGesuchsteller, null, null);
-		JaxAdresseContainer korrArr = TestJaxDataUtil.createTestJaxAdr("korradr");
-		korrArr.getAdresseJA().setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
+		JaxAdresseContainer korrAdr = TestJaxDataUtil.createTestJaxAdr("korradr");
+		JaxAdresseContainer rechnungsAdr = TestJaxDataUtil.createTestJaxAdr("rechnungsAdr");
+		korrAdr.getAdresseJA().setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
+		rechnungsAdr.getAdresseJA().setAdresseTyp(AdresseTyp.RECHNUNGSADRESSE);
 
-		jaxGesuchsteller.setAlternativeAdresse(korrArr);
+		jaxGesuchsteller.setAlternativeAdresse(korrAdr);
+		jaxGesuchsteller.setRechnungsAdresse(rechnungsAdr);
 		JaxGesuchstellerContainer gesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, false, jaxGesuchsteller, null, null);
 		Assert.assertNotNull(gesuchsteller.getAlternativeAdresse());
+		Assert.assertNotNull(gesuchsteller.getRechnungsAdresse());
 
 		gesuchsteller.setAlternativeAdresse(null);
+		gesuchsteller.setRechnungsAdresse(null);
 		gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, false, jaxGesuchsteller, null, null);
 		//Nun wollen wir testen was passiert wenn man die Korrespondenzadr wieder entfernt
 		Assert.assertNull("Korrespondenzaddr muss geloscht sein", gesuchsteller.getAlternativeAdresse());
+		//Nun wollen wir testen was passiert wenn man die Rechnungsadresse wieder entfernt
+		Assert.assertNull("Rechnungsaddr muss geloscht sein", gesuchsteller.getRechnungsAdresse());
 
 	}
 

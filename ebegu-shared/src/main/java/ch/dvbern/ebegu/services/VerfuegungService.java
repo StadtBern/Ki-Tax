@@ -15,18 +15,17 @@
 
 package ch.dvbern.ebegu.services;
 
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
+
+import javax.annotation.Nonnull;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Service zum berechnen und speichern der Verfuegung
@@ -101,6 +100,8 @@ public interface VerfuegungService {
 	 */
 	@Nonnull
 	Gesuch calculateVerfuegung(@Nonnull Gesuch gesuch);
+
+	Verfuegung getEvaluateFamiliensituationVerfuegung(@Nonnull Gesuch gesuch);
 
 	/**
 	 * gibt die Verfuegung der vorherigen verfuegten Betreuung zurueck.

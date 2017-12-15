@@ -204,6 +204,7 @@ describe('dvNavigation', function () {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.FINANZIELLE_SITUATION);
             spyOn(gesuchModelManager, 'getGesuchstellerNumber').and.returnValue(1);
             spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(true);
+            spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(new TSGesuchsperiode());
             navController.dvSubStep = 1;
             callNextStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.finanzielleSituation', {
@@ -215,6 +216,7 @@ describe('dvNavigation', function () {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.FINANZIELLE_SITUATION);
             spyOn(gesuchModelManager, 'getGesuchstellerNumber').and.returnValue(1);
             spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(false);
+            spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(new TSGesuchsperiode());
             navController.dvSubStep = 1;
             callNextStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.finanzielleSituationResultate', {gesuchId: ''});
@@ -223,6 +225,7 @@ describe('dvNavigation', function () {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.FINANZIELLE_SITUATION);
             navController.dvSubStep = 2;
             spyOn(gesuchModelManager, 'getGesuchstellerNumber').and.returnValue('1');
+            spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(new TSGesuchsperiode());
             callNextStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.finanzielleSituation', {
                 gesuchstellerNumber: '1',
@@ -399,6 +402,7 @@ describe('dvNavigation', function () {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.FINANZIELLE_SITUATION);
             spyOn(gesuchModelManager, 'getGesuchstellerNumber').and.returnValue(2);
             navController.dvSubStep = 1;
+            spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(new TSGesuchsperiode());
             callPreviousStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.finanzielleSituation', {
                 gesuchstellerNumber: '1',
@@ -505,7 +509,9 @@ describe('dvNavigation', function () {
         gesuch.fall.id = '123';
         gesuch.gesuchsperiode = new TSGesuchsperiode();
         gesuch.gesuchsperiode.id = '123';
+        spyOn(gesuch.gesuchsperiode, 'hasTagesschulenAnmeldung').and.returnValue(true);
         spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
+        spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(gesuch.gesuchsperiode);
         return gesuch;
     }
 

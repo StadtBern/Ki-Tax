@@ -13,20 +13,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentOptions, IHttpResponse} from 'angular';
+import {IComponentOptions} from 'angular';
+import * as moment from 'moment';
+import {ApplicationPropertyRS} from '../../admin/service/applicationPropertyRS.rest';
+import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import {DvDialog} from '../../core/directive/dv-dialog/dv-dialog';
+import {DownloadRS} from '../../core/service/downloadRS.rest';
+import {ReportRS} from '../../core/service/reportRS.rest';
+import ZahlungRS from '../../core/service/zahlungRS.rest';
+import {RemoveDialogController} from '../../gesuch/dialog/RemoveDialogController';
+import {TSRole} from '../../models/enums/TSRole';
+import {TSZahlungsauftragsstatus} from '../../models/enums/TSZahlungsauftragstatus';
+import {TSZahlungsstatus} from '../../models/enums/TSZahlungsstatus';
+import TSDownloadFile from '../../models/TSDownloadFile';
 import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
 import EbeguUtil from '../../utils/EbeguUtil';
-import ZahlungRS from '../../core/service/zahlungRS.rest';
-import {DownloadRS} from '../../core/service/downloadRS.rest';
-import TSDownloadFile from '../../models/TSDownloadFile';
-import {ApplicationPropertyRS} from '../../admin/service/applicationPropertyRS.rest';
-import {TSZahlungsauftragsstatus} from '../../models/enums/TSZahlungsauftragstatus';
-import {ReportRS} from '../../core/service/reportRS.rest';
-import {TSRole} from '../../models/enums/TSRole';
-import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import * as moment from 'moment';
-import {DvDialog} from '../../core/directive/dv-dialog/dv-dialog';
-import {RemoveDialogController} from '../../gesuch/dialog/RemoveDialogController';
+import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import IStateService = angular.ui.IStateService;
 import IFormController = angular.IFormController;
 import Moment = moment.Moment;
@@ -35,7 +37,6 @@ let template = require('./zahlungsauftragView.html');
 require('./zahlungsauftragView.less');
 
 let removeDialogTemplate = require('../../gesuch/dialog/removeDialogTemplate.html');
-
 
 export class ZahlungsauftragViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -86,6 +87,7 @@ export class ZahlungsauftragViewController {
             case TSRole.SACHBEARBEITER_TRAEGERSCHAFT: {
                 this.zahlungRS.getAllZahlungsauftraegeInstitution().then((response: any) => {
                     this.zahlungsauftragen = angular.copy(response);
+
                 });
                 break;
             }
@@ -96,6 +98,7 @@ export class ZahlungsauftragViewController {
             case TSRole.REVISOR: {
                 this.zahlungRS.getAllZahlungsauftraege().then((response: any) => {
                     this.zahlungsauftragen = angular.copy(response);
+
                 });
                 break;
             }
@@ -227,5 +230,14 @@ export class ZahlungsauftragViewController {
         this.datumGeneriert = undefined;
         this.form.$setPristine();
         this.form.$setUntouched();
+    }
+
+    public getCalculatedStatus(zahlungsauftrag: TSZahlungsauftrag) {
+        if (zahlungsauftrag.status !== TSZahlungsauftragsstatus.BESTAETIGT && this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
+            if (zahlungsauftrag.zahlungen.every(zahlung => zahlung.status === TSZahlungsstatus.BESTAETIGT)) {
+                return TSZahlungsstatus.BESTAETIGT;
+            }
+        }
+        return zahlungsauftrag.status;
     }
 }

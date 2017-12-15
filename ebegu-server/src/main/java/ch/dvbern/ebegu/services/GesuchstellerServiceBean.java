@@ -49,6 +49,7 @@ import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
@@ -80,23 +81,32 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 		Objects.requireNonNull(gesuch);
 		Objects.requireNonNull(gsNumber);
 
-		if (gesuch.isMutation() && gsNumber == 2 && gesuchsteller.getFinanzielleSituationContainer() == null) {
-			// be Mutationen fuer den GS2 muss eine leere Finanzielle Situation hinzugefuegt werden, wenn sie noch nicht existiert
-			final FinanzielleSituationContainer finanzielleSituationContainer = new FinanzielleSituationContainer();
-			final FinanzielleSituation finanzielleSituationJA = new FinanzielleSituation();
-			finanzielleSituationJA.setSteuerveranlagungErhalten(false); // by default
-			finanzielleSituationJA.setSteuererklaerungAusgefuellt(false); // by default
-			finanzielleSituationContainer.setFinanzielleSituationJA(finanzielleSituationJA); // alle Werte by default auf null -> nichts eingetragen
-			Validate.notNull(gesuch.getGesuchsteller1(), "Gesuchsteller 1 muss zu diesem Zeitpunkt gesetzt sein");
-			Validate.notNull(gesuch.getGesuchsteller1().getFinanzielleSituationContainer(),
-				"Finanzielle Situation GS1 muss zu diesem Zeitpunkt gesetzt sein");
-			finanzielleSituationContainer.setJahr(gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getJahr()); // copy it from GS1
-			finanzielleSituationContainer.setGesuchsteller(gesuchsteller);
-			gesuchsteller.setFinanzielleSituationContainer(finanzielleSituationContainer);
-		}
+		createFinSitInMutationIfNotExisting(gesuchsteller, gesuch, gsNumber);
 
+		createEKVInMutationIfNotExisting(gesuchsteller, gesuch, gsNumber);
+
+		if (!gesuchsteller.isNew()) {
+			// Den Lucene-Index manuell nachführen, da es bei unidirektionalen Relationen nicht automatisch geschieht!
+			updateLuceneIndex(GesuchstellerContainer.class, gesuchsteller.getId());
+		}
+		final GesuchstellerContainer mergedGesuchsteller = persistence.merge(gesuchsteller);
+		if (gsNumber == 1) {
+			gesuch.setGesuchsteller1(mergedGesuchsteller);
+		} else if (gsNumber == 2) {
+			gesuch.setGesuchsteller2(mergedGesuchsteller);
+		}
+		updateWizStepsForGesuchstellerView(gesuch, gsNumber, umzug, mergedGesuchsteller.getGesuchstellerJA());
+		return mergedGesuchsteller;
+	}
+
+	/**
+	 * Bei Mutationen fuer den GS2 muss eine leere Einkommensverschlechterung hinzugefuegt werden, wenn sie noch nicht existiert. Dies aber
+	 * nur wenn die Einkommensverschlechterung required ist.
+	 */
+	private void createEKVInMutationIfNotExisting(@Nonnull GesuchstellerContainer gesuchsteller, Gesuch gesuch, Integer gsNumber) {
 		if (gesuch.isMutation() && gesuch.extractEinkommensverschlechterungInfo() == null
-			&& gsNumber == 2 && gesuchsteller.getEinkommensverschlechterungContainer() == null) {
+			&& gsNumber == 2 && gesuchsteller.getEinkommensverschlechterungContainer() == null
+			&& EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
 
 			EinkommensverschlechterungContainer evContainer = new EinkommensverschlechterungContainer();
 			evContainer.setGesuchsteller(gesuchsteller);
@@ -117,18 +127,28 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 				}
 			}
 		}
-		if (!gesuchsteller.isNew()) {
-			// Den Lucene-Index manuell nachführen, da es bei unidirektionalen Relationen nicht automatisch geschieht!
-			updateLuceneIndex(GesuchstellerContainer.class, gesuchsteller.getId());
+	}
+
+	/**
+	 * Bei Mutationen fuer den GS2 muss eine leere Finanzielle Situation hinzugefuegt werden, wenn sie noch nicht existiert. Dies aber
+	 * nur wenn die FinSit required ist.
+	 */
+	private void createFinSitInMutationIfNotExisting(@Nonnull GesuchstellerContainer gesuchsteller, Gesuch gesuch, Integer gsNumber) {
+		if (gesuch.isMutation() && gsNumber == 2 && gesuchsteller.getFinanzielleSituationContainer() == null
+			&& EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
+
+			final FinanzielleSituationContainer finanzielleSituationContainer = new FinanzielleSituationContainer();
+			final FinanzielleSituation finanzielleSituationJA = new FinanzielleSituation();
+			finanzielleSituationJA.setSteuerveranlagungErhalten(false); // by default
+			finanzielleSituationJA.setSteuererklaerungAusgefuellt(false); // by default
+			finanzielleSituationContainer.setFinanzielleSituationJA(finanzielleSituationJA); // alle Werte by default auf null -> nichts eingetragen
+			Validate.notNull(gesuch.getGesuchsteller1(), "Gesuchsteller 1 muss zu diesem Zeitpunkt gesetzt sein");
+			Validate.notNull(gesuch.getGesuchsteller1().getFinanzielleSituationContainer(),
+				"Finanzielle Situation GS1 muss zu diesem Zeitpunkt gesetzt sein");
+			finanzielleSituationContainer.setJahr(gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getJahr()); // copy it from GS1
+			finanzielleSituationContainer.setGesuchsteller(gesuchsteller);
+			gesuchsteller.setFinanzielleSituationContainer(finanzielleSituationContainer);
 		}
-		final GesuchstellerContainer mergedGesuchsteller = persistence.merge(gesuchsteller);
-		if (gsNumber == 1) {
-			gesuch.setGesuchsteller1(mergedGesuchsteller);
-		} else if (gsNumber == 2) {
-			gesuch.setGesuchsteller2(mergedGesuchsteller);
-		}
-		updateWizStepsForGesuchstellerView(gesuch, gsNumber, umzug, mergedGesuchsteller.getGesuchstellerJA());
-		return mergedGesuchsteller;
 	}
 
 	private void updateWizStepsForGesuchstellerView(Gesuch gesuch, Integer gsNumber, boolean umzug, Gesuchsteller gesuchsteller) {

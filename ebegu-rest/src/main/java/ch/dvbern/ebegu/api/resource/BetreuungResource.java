@@ -238,7 +238,8 @@ public class BetreuungResource {
 		Validate.notNull(betreuungJAXP.getId());
 
 		// Sicherstellen, dass der Status des Server-Objektes genau dem erwarteten Status entspricht
-		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
+		//Anmeldungen ablehnen kann man entweder im Status SCHULAMT_ANMELDUNG_AUSGELOEST oder SCHULAMT_FALSCHE_INSTITUTION
+		resourceHelper.assertBetreuungStatusEqual(betreuungJAXP.getId(), Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST, Betreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION);
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {

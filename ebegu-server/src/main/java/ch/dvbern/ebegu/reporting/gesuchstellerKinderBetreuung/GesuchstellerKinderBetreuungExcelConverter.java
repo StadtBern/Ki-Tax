@@ -16,8 +16,8 @@ package ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,7 +26,11 @@ import javax.enterprise.context.Dependent;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.oss.lib.excelmerger.ExcelConverter;
+import ch.dvbern.oss.lib.excelmerger.ExcelMergeException;
+import ch.dvbern.oss.lib.excelmerger.ExcelMerger;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergerDTO;
+import ch.dvbern.oss.lib.excelmerger.RowFiller;
+import ch.dvbern.oss.lib.excelmerger.mergefields.MergeField;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -38,36 +42,51 @@ public class GesuchstellerKinderBetreuungExcelConverter implements ExcelConverte
 	public void applyAutoSize(@Nonnull Sheet sheet) {
 	}
 
-	public ExcelMergerDTO toExcelMergerDTO(@Nonnull List<GesuchstellerKinderBetreuungDataRow> data, @Nonnull Locale lang,
-		@Nonnull LocalDate stichtag) {
+	@Nonnull
+	public Sheet mergeHeaderFields(@Nonnull List<GesuchstellerKinderBetreuungDataRow> data, @Nonnull Sheet sheet,
+		@Nonnull LocalDate stichtag) throws ExcelMergeException {
+
 		checkNotNull(data);
 
-		ExcelMergerDTO sheet = new ExcelMergerDTO();
+		ExcelMergerDTO excelMergerDTO = new ExcelMergerDTO();
+		List<MergeField<?>> mergeFields = new ArrayList<>();
 
-		sheet.addValue(MergeFieldGesuchstellerKinderBetreuung.stichtag, stichtag);
-		toExcelGroup(sheet, data);
+		mergeFields.add(MergeFieldGesuchstellerKinderBetreuung.stichtag.getMergeField());
+		excelMergerDTO.addValue(MergeFieldGesuchstellerKinderBetreuung.stichtag.getMergeField(), stichtag);
+
+		ExcelMerger.mergeData(sheet, mergeFields, excelMergerDTO);
+
 		return sheet;
 	}
 
 	@Nonnull
-	public ExcelMergerDTO toExcelMergerDTO(@Nonnull List<GesuchstellerKinderBetreuungDataRow> data, @Nonnull Locale lang,
-		@Nonnull LocalDate auswertungVon, @Nonnull LocalDate auswertungBis, @Nullable Gesuchsperiode auswertungPeriode) {
+	public Sheet mergeHeaderFields(@Nonnull List<GesuchstellerKinderBetreuungDataRow> data, @Nonnull Sheet sheet,
+		@Nonnull LocalDate auswertungVon, @Nonnull LocalDate auswertungBis, @Nullable Gesuchsperiode auswertungPeriode) throws ExcelMergeException {
+
 		checkNotNull(data);
 
-		ExcelMergerDTO sheet = new ExcelMergerDTO();
+		ExcelMergerDTO excelMergerDTO = new ExcelMergerDTO();
+		List<MergeField<?>> mergeFields = new ArrayList<>();
 
-		sheet.addValue(MergeFieldGesuchstellerKinderBetreuung.auswertungVon, auswertungVon);
-		sheet.addValue(MergeFieldGesuchstellerKinderBetreuung.auswertungBis, auswertungBis);
+		mergeFields.add(MergeFieldGesuchstellerKinderBetreuung.auswertungVon.getMergeField());
+		excelMergerDTO.addValue(MergeFieldGesuchstellerKinderBetreuung.auswertungVon.getMergeField(), auswertungVon);
+
+		mergeFields.add(MergeFieldGesuchstellerKinderBetreuung.auswertungBis.getMergeField());
+		excelMergerDTO.addValue(MergeFieldGesuchstellerKinderBetreuung.auswertungBis.getMergeField(), auswertungBis);
+
+		mergeFields.add(MergeFieldGesuchstellerKinderBetreuung.auswertungPeriode.getMergeField());
 		if (auswertungPeriode != null) {
-			sheet.addValue(MergeFieldGesuchstellerKinderBetreuung.auswertungPeriode, auswertungPeriode.getGesuchsperiodeString());
+			excelMergerDTO.addValue(MergeFieldGesuchstellerKinderBetreuung.auswertungPeriode.getMergeField(), auswertungPeriode.getGesuchsperiodeString());
 		}
-		toExcelGroup(sheet, data);
+
+		ExcelMerger.mergeData(sheet, mergeFields, excelMergerDTO);
+
 		return sheet;
 	}
 
-	private void toExcelGroup(ExcelMergerDTO sheet, @Nonnull List<GesuchstellerKinderBetreuungDataRow> data) {
+	public void mergeRows(RowFiller rowFiller, @Nonnull List<GesuchstellerKinderBetreuungDataRow> data) {
 		data.forEach(dataRow -> {
-			ExcelMergerDTO excelRowGroup = sheet.createGroup(MergeFieldGesuchstellerKinderBetreuung.repeatRow);
+			ExcelMergerDTO excelRowGroup = new ExcelMergerDTO();
 			excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.bgNummer, dataRow.getBgNummer());
 			excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.institution, dataRow.getInstitution());
 			excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.betreuungsTyp, dataRow.getBetreuungsTyp().name());
@@ -151,6 +170,8 @@ public class GesuchstellerKinderBetreuungExcelConverter implements ExcelConverte
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.elternbeitrag, BigDecimal.ZERO);
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.verguenstigt, BigDecimal.ZERO);
 			}
+
+			rowFiller.fillRow(excelRowGroup);
 		});
 	}
 }

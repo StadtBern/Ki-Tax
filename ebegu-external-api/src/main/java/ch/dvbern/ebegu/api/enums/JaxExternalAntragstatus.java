@@ -15,12 +15,23 @@
 
 package ch.dvbern.ebegu.api.enums;
 
-/**
- * Enum fuer die Tarifart eines Gesuchs
- */
-public enum JaxTarifart {
+public enum JaxExternalAntragstatus {
 
-	VOLLZAHLER,
-	BASISZAHLER,
-	DETAILBERECHNUNG;
+	IN_BEARBEITUNG_GS,
+	FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
+	NUR_SCHULAMT,
+	FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
+	IN_BEARBEITUNG_JA,
+	ERSTE_MAHNUNG,
+	ERSTE_MAHNUNG_ABGELAUFEN,
+	ZWEITE_MAHNUNG,
+	ZWEITE_MAHNUNG_ABGELAUFEN,
+	GEPRUEFT,
+	VERFUEGEN,
+	VERFUEGT,
+	KEIN_ANGEBOT,
+	BESCHWERDE_HAENGIG,
+	PRUEFUNG_STV,
+	IN_BEARBEITUNG_STV,
+	GEPRUEFT_STV;
 }

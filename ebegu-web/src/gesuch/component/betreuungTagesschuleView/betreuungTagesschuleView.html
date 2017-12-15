@@ -94,6 +94,17 @@
             </dv-loading-button>
         </div>
 
+        <div dv-show-element
+             dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtRoles()"
+             dv-show-expression="vm.isFalscheInstitutionAndUserInRole()">
+            <dv-loading-button button-click="vm.anmelden()" type="submit" button-class="save">
+                <span data-translate="{{vm.getButtonTextSpeichern()}}"></span>
+            </dv-loading-button>
+            <dv-loading-button button-click="vm.anmeldungSchulamtAblehnen()" type="button" button-class="save">
+                <span data-translate="SCHULAMT_ANMELDUNG_ABLEHNEN"></span>
+            </dv-loading-button>
+        </div>
+
 		<div dv-show-element
 			 dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
 			 dv-show-expression="vm.showButtonsInstitution()">

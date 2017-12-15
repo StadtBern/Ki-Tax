@@ -499,8 +499,8 @@ public class JaxBConverter {
 			GesuchstellerAdresseContainer next = iterator.next();
 			boolean needsToBeRemoved = true;
 			for (JaxAdresseContainer jaxAdresse : gesuchstellerContJAXP.getAdressen()) {
-				if (next.extractIsKorrespondenzAdresse() || next.getId().equals(jaxAdresse.getId())) {
-					needsToBeRemoved = false; // Korrespondezadresse und Adressen die gefunden werden, werden nicht geloescht
+				if (next.extractIsKorrespondenzAdresse() || next.extractIsRechnungsAdresse() || next.getId().equals(jaxAdresse.getId())) {
+					needsToBeRemoved = false; // Korrespondezadresse, Rechnungsadresse und Adressen die gefunden werden, werden nicht geloescht
 				}
 			}
 			if (needsToBeRemoved) {
@@ -512,7 +512,7 @@ public class JaxBConverter {
 
 		// Zuletzt werden alle gueltigen Adressen sortiert und mit dem entsprechenden AB und BIS aktualisiert
 		List<GesuchstellerAdresseContainer> wohnadressen = gesuchstellerCont.getAdressen().stream()
-			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.extractIsKorrespondenzAdresse())
+			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.extractIsKorrespondenzAdresse() && !gesuchstellerAdresse.extractIsRechnungsAdresse())
 			.sorted(Comparator.comparing(o -> o.extractGueltigkeit().getGueltigAb()))
 			.collect(Collectors.toList());
 		for (int i = 0; i < wohnadressen.size(); i++) {
@@ -553,11 +553,13 @@ public class JaxBConverter {
 		if (!persistedGesuchstellerCont.isNew()) {
 			//relationen laden
 			final Optional<GesuchstellerAdresseContainer> alternativeAdr = gesuchstellerAdresseService.getKorrespondenzAdr(persistedGesuchstellerCont.getId());
+			final Optional<GesuchstellerAdresseContainer> rechnungsAdr = gesuchstellerAdresseService.getRechnungsAdr(persistedGesuchstellerCont.getId());
 			alternativeAdr.ifPresent(adresse -> jaxGesuchstellerCont.setAlternativeAdresse(gesuchstellerAdresseContainerToJAX(adresse)));
+			rechnungsAdr.ifPresent(adresse -> jaxGesuchstellerCont.setRechnungsAdresse(gesuchstellerAdresseContainerToJAX(adresse)));
 
 			jaxGesuchstellerCont.setAdressen(gesuchstellerAdresseContainerListToJAX(
 				persistedGesuchstellerCont.getAdressen().stream().filter(gesuchstellerAdresse
-					-> !gesuchstellerAdresse.extractIsKorrespondenzAdresse()).sorted((o1, o2) ->
+					-> !gesuchstellerAdresse.extractIsKorrespondenzAdresse() && !gesuchstellerAdresse.extractIsRechnungsAdresse()).sorted((o1, o2) ->
 				{
 					if (o1.extractGueltigkeit() == null && o2.extractGueltigkeit() == null) {
 						return 0;
@@ -911,7 +913,7 @@ public class JaxBConverter {
 			}
 			adresseCont.setGesuchstellerAdresseGS(gesuchstellerAdresseToEntity(jaxAdresseCont.getAdresseGS(), gesuchstellerAdresseGS));
 		}
-		// ein erstellter AdresseJA Container kann durch das Jugendamt entfernt werden wenn es sich um eine Korrespondenzaddr handelt
+		// ein erstellter AdresseJA Container kann durch das Jugendamt entfernt werden wenn es sich um eine Korrespondenzaddr oder eine Rechnungsaddr handelt
 		if (jaxAdresseCont.getAdresseJA() != null) {
 			GesuchstellerAdresse gesuchstellerAdresseJA = new GesuchstellerAdresse();
 			if (adresseCont.getGesuchstellerAdresseJA() != null) {
@@ -919,7 +921,8 @@ public class JaxBConverter {
 			}
 			adresseCont.setGesuchstellerAdresseJA(gesuchstellerAdresseToEntity(jaxAdresseCont.getAdresseJA(), gesuchstellerAdresseJA));
 		} else {
-			Validate.isTrue(adresseCont.extractIsKorrespondenzAdresse(), "Nur bei der Korrespondenzadresse kann der AdresseJA Container entfernt werden");
+			Validate.isTrue(adresseCont.extractIsKorrespondenzAdresse() || adresseCont.extractIsRechnungsAdresse(), "Nur bei der Korrespondenz- oder "
+				+ "Rechnungsadresse kann der AdresseJA Container entfernt werden");
 			adresseCont.setGesuchstellerAdresseJA(null);
 		}
 
@@ -956,14 +959,17 @@ public class JaxBConverter {
 			final GesuchstellerAdresseContainer altAddrToMerge = gesuchstellerAdresseContainerToEntity(jaxGesuchstellerCont.getAlternativeAdresse(),
 				currentAltAdr);
 			gesuchstellerCont.addAdresse(altAddrToMerge);
-		} //else case: Wenn das haeklein "Zustell / Postadrsse" auf client weggenommen wird muss die Korrespondezadr auf dem Server geloescht werden.
-		else {
-			for (Iterator<GesuchstellerAdresseContainer> iterator = gesuchstellerCont.getAdressen().iterator(); iterator.hasNext(); ) {
-				GesuchstellerAdresseContainer next = iterator.next();
-				if (next.extractIsKorrespondenzAdresse()) {
-					iterator.remove();
-				}
-			}
+		} else { //else case: Wenn das haeklein "Zustell / Postadrsse" auf client weggenommen wird muss die Korrespondezadr auf dem Server geloescht werden.
+			gesuchstellerCont.getAdressen().removeIf(GesuchstellerAdresseContainer::extractIsKorrespondenzAdresse);
+		}
+		if (jaxGesuchstellerCont.getRechnungsAdresse() != null) {
+			final GesuchstellerAdresseContainer currentrechnungsAdr = gesuchstellerAdresseService
+				.getRechnungsAdr(gesuchstellerCont.getId()).orElse(new GesuchstellerAdresseContainer());
+			final GesuchstellerAdresseContainer rechnungsAddrToMerge = gesuchstellerAdresseContainerToEntity(jaxGesuchstellerCont.getRechnungsAdresse(),
+				currentrechnungsAdr);
+			gesuchstellerCont.addAdresse(rechnungsAddrToMerge);
+		} else {//else case: Wenn das haeklein "abweichende Rchnungsadresse" auf client weggenommen wird muss diese adresse auf dem Server geloescht werden.
+			gesuchstellerCont.getAdressen().removeIf(GesuchstellerAdresseContainer::extractIsRechnungsAdresse);
 		}
 		sortAndAddAdressenToGesuchstellerContainer(jaxGesuchstellerCont, gesuchstellerCont);
 
@@ -1158,7 +1164,9 @@ public class JaxBConverter {
 		return jaxInstStammdaten;
 	}
 
-	public InstitutionStammdaten institutionStammdatenToEntity(final JaxInstitutionStammdaten institutionStammdatenJAXP, final InstitutionStammdaten institutionStammdaten) {
+	public InstitutionStammdaten institutionStammdatenToEntity(final JaxInstitutionStammdaten institutionStammdatenJAXP,
+		final InstitutionStammdaten institutionStammdaten) {
+
 		Validate.notNull(institutionStammdatenJAXP);
 		Validate.notNull(institutionStammdatenJAXP.getInstitution());
 		Validate.notNull(institutionStammdaten);
@@ -2692,6 +2700,7 @@ public class JaxBConverter {
 		return resultSet;
 	}
 
+	//TODO (team) wieso wird hier null zurueckgegeben? --> anstelle sollte man wohl besser gesuchstellerAdresseContainerToEntity verwenden
 	public GesuchstellerAdresseContainer adresseContainerToEntity(JaxAdresseContainer alternativeAdresse, GesuchstellerAdresseContainer
 		gesuchstellerAdresseContainer) {
 		return null;
@@ -2936,8 +2945,7 @@ public class JaxBConverter {
 		tagList.addAll(transformedTagList);
 	}
 
-	private BelegungFerieninselTag belegungFerieninselTagToEntity(@Nonnull final JaxBelegungFerieninselTag jaxTag, @Nonnull  final BelegungFerieninselTag
-		tag) {
+	private BelegungFerieninselTag belegungFerieninselTagToEntity(@Nonnull final JaxBelegungFerieninselTag jaxTag, @Nonnull final BelegungFerieninselTag tag) {
 		Validate.notNull(jaxTag);
 		Validate.notNull(tag);
 		convertAbstractFieldsToEntity(jaxTag, tag);

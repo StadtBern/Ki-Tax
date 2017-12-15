@@ -27,13 +27,11 @@ import javax.ejb.Asynchronous;
 import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.AntragStatus;
-import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Service zum Verwalten von Gesuche
@@ -234,6 +232,11 @@ public interface GesuchService {
 	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
 
 	/**
+	 * Gibt das Geusch zurueck, das mit dem Fall verknuepft ist und das neueste fuer das SchulamtInterface ist
+	 */
+	Optional<Gesuch> getNeustesGesuchFuerFallnumerForSchulamtInterface(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Long fallnummer);
+
+	/**
 	 * Gibt das neueste (zuletzt verfügte) Gesuch für eine Gesuchsperiode und einen Fall zurueck.
 	 */
 	@Nonnull
@@ -350,4 +353,10 @@ public interface GesuchService {
 	 * value.
 	 */
 	void updateBetreuungenStatus(@NotNull Gesuch gesuch);
+
+	/**
+	 * In dieser Methode wird das Gesuch verfuegt. Nur Gesuche bei denen alle Betreuungen bereits verfuegt sind und der WizardStep Verfuegen
+	 * (faelslicherweise) auf OK gesetzt wurde, werden durch diese Methode wieder verfuegt.
+	 */
+	void gesuchVerfuegen(@NotNull Gesuch gesuch);
 }

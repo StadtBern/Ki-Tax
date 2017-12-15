@@ -87,6 +87,42 @@ public interface BetreuungService {
 	Optional<Betreuung> findBetreuung(@Nonnull String key, boolean doAuthCheck);
 
 	/**
+	 * @param bgNummer BGNummer der Betreuung
+	 * @return Betreuung mit der angegebenen ID (z.B. 18.000116.1.2) oder null falls nicht vorhanden
+	 */
+	List<Betreuung> findBetreuungByBGNummer(@Nonnull String bgNummer);
+
+	/**
+	 * Extract Fallnummer form bgNummer
+	 * @return Extracted Fallnummer
+	 */
+	Long getFallnummerFromBGNummer(String bgNummer);
+
+
+	/**
+	 * Extract Year form bgNummer
+	 * @return Extracted year
+	 */
+	int getYearFromBGNummer(String bgNummer);
+
+	/**
+	 * Extract KindNummer form bgNummer
+	 * @return Extracted kindNummer
+	 */
+	int getKindNummerFromBGNummer(String bgNummer);
+
+	/**
+	 * Extract BetreuungNummer form bgNummer
+	 * @return Extracted BetreuungNummer
+	 */
+	int getBetreuungNummerFromBGNummer(String bgNummer);
+
+	/**
+	 * Validate bgNummer
+	 */
+	boolean validateBGNummer(String bgNummer);
+
+	/**
 	 * @param key PK (id) der Betreuung
 	 * @return Betreuung mit dem gegebenen key inkl. Betreuungspensen oder null falls nicht vorhanden
 	 */

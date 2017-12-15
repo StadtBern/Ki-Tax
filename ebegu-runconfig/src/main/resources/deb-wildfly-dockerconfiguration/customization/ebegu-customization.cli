@@ -82,6 +82,8 @@ xa-data-source add \
 #/system-property=ebegu.login.connector.rest.api.password:add(value=myPassword)
 #/system-property=ebegu.login.connector.development.mode:add(value=false)
 #/system-property=ebegu.fedlet.config.path:add(value=fedletConfig/https_test_ebegu_dvbern_ch_connector)
+#/system-property=ebegu.login.api.schulamt.user:add(value=myUsername)
+#/system-property=ebegu.login.api.schulamt.password:add(value=myPassword)
 
 #Helperskripts
 

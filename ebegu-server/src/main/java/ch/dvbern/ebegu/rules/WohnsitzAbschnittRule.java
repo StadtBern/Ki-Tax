@@ -115,7 +115,7 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 		List<VerfuegungZeitabschnitt> adressenZeitabschnitte = new ArrayList<>();
 		List<GesuchstellerAdresseContainer> gesuchstellerAdressen = gesuchsteller.getAdressen();
 		gesuchstellerAdressen.stream()
-			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.extractIsKorrespondenzAdresse())
+			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.extractIsKorrespondenzAdresse() && !gesuchstellerAdresse.extractIsRechnungsAdresse())
 			.forEach(gesuchstellerAdresse -> {
 				if (gs1) {
 					VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(gesuchstellerAdresse.extractGueltigkeit());

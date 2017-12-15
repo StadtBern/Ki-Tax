@@ -188,6 +188,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      * erreicht hat
      */
     public isFinanziellesituationPDFVisible(): boolean {
+        if (!this.gesuchModelManager.isFinanzielleSituationRequired()) {
+            return false;
+        }
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
         if (isGesuchsteller) {
             let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
@@ -195,6 +198,10 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         }
         return this.getGesuch().hasFSDokument;
 
+    }
+
+    public isFinanzielleSituationRequired(): boolean {
+        return this.gesuchModelManager.isFinanzielleSituationRequired();
     }
 
     public isBegleitschreibenVisible(): boolean {
@@ -258,9 +265,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public setGesuchStatusVerfuegen(): IPromise<TSGesuch> {
         let deleteTextValue: string = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN';
-        if (this.gesuchModelManager.areThereOnlySchulamtAngebote()) {
-            deleteTextValue = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN_SCHULAMT';
-        }
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
             deleteText: deleteTextValue,

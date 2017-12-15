@@ -137,6 +137,14 @@ public abstract class AbstractTestfall {
 		}
 	}
 
+	private void setFinSitFieldsOfFamiliensituation(@Nonnull Familiensituation familiensituation) {
+		if (gesuchsperiode.hasTagesschulenAnmeldung()) {
+			// by default verguenstigung gewuenscht
+			familiensituation.setSozialhilfeBezueger(false);
+			familiensituation.setVerguenstigungGewuenscht(true);
+		}
+	}
+
 	protected Gesuch createAlleinerziehend() {
 		// Familiensituation
 		Familiensituation familiensituation = new Familiensituation();
@@ -144,6 +152,7 @@ public abstract class AbstractTestfall {
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		FamiliensituationContainer familiensituationContainer = new FamiliensituationContainer();
 		familiensituationContainer.setFamiliensituationJA(familiensituation);
+		setFinSitFieldsOfFamiliensituation(familiensituation);
 		gesuch.setFamiliensituationContainer(familiensituationContainer);
 		return gesuch;
 	}
@@ -156,6 +165,7 @@ public abstract class AbstractTestfall {
 		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
 		FamiliensituationContainer familiensituationContainer = new FamiliensituationContainer();
 		familiensituationContainer.setFamiliensituationJA(familiensituation);
+		setFinSitFieldsOfFamiliensituation(familiensituation);
 		gesuch.setFamiliensituationContainer(familiensituationContainer);
 		return gesuch;
 	}

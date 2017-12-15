@@ -15,19 +15,7 @@
 
 package ch.dvbern.ebegu.rules;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.rechner.AbstractBGRechner;
@@ -40,6 +28,12 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.VerfuegungUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This is the Evaluator that runs all the rules and calculations for a given Antrag to determine the Betreuungsgutschein
@@ -133,7 +127,7 @@ public class BetreuungsgutscheinEvaluator {
 							// es kann sein dass eine neue Betreuung in der Mutation abgelehnt wird, dann gibts keinen Vorgaenger und keine aktuelle
 							//verfuegung und wir muessen keinenr restanspruch berechnen (vergl EBEGU-890)
 							continue;
-						} else if (betreuung.getBetreuungsstatus().isGeschlossen()) {
+						} else if (betreuung.getBetreuungsstatus().isGeschlossenJA()) {
 							// Verfuegte Betreuungen duerfen nicht neu berechnet werden
 							LOG.info("Betreuung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
 							// Restanspruch muss mit Daten von Verfügung für nächste Betreuung richtig gesetzt werden

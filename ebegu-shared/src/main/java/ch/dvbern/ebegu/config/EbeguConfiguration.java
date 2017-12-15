@@ -171,6 +171,16 @@ public interface EbeguConfiguration {
 	String getInternalAPIPassword();
 
 	/**
+	 * @return den Benutzernamen des Schulamt API users
+	 */
+	String getSchulamtAPIUser();
+
+	/**
+	 * @return das Benutzerpasswort fuer den Schulamt API USER
+	 */
+	String getSchulamtAPIPassword();
+
+	/**
 	 * @return by default the secure flag of cookies will be set based on the incoming request. To force the application
 	 * to only set cookies with the secure flag this property can be set to true (default is false)
 	 */

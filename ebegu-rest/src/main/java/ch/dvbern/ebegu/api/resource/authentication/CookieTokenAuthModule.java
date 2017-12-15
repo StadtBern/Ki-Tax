@@ -68,6 +68,8 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 	private static final String LOG_MDC_AUTHUSERID = "ebeguauthuserid";
 	private final String internalApiUser;
 	private final String internalApiPassword;
+	private final String schulamtApiUser;
+	private final String schulamtApiPassword;
 
 	@SuppressWarnings("PMD.UnusedFormalParameter")
 	public CookieTokenAuthModule(String loginModuleStackName) {
@@ -76,7 +78,8 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 		this();
 	}
 
-	public CookieTokenAuthModule(@Nullable String internalUser, @Nullable String internalPassword) {
+	public CookieTokenAuthModule(@Nullable String internalUser, @Nullable String internalPassword,
+	@Nullable String schulamtUser, @Nullable String schulamtPassword) {
 		//this is unused, just checked if this could be used to declare this module through standalone.xml instead of
 		//SamRegistrationListener
 		this.internalApiUser = internalUser;
@@ -84,11 +87,22 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 		if (internalPassword == null || internalUser == null) {
 			throw new EbeguRuntimeException("CookieTokenAuthModule initialization", "Internal API User must be set");
 		}
+		this.schulamtApiUser = schulamtUser;
+		this.schulamtApiPassword = schulamtPassword;
+	}
+
+	public CookieTokenAuthModule(@Nullable String schulamtUser, @Nullable String schulamtPassword) {
+		internalApiUser = null;
+		internalApiPassword = null;
+		schulamtApiUser = schulamtUser;
+		schulamtApiPassword = schulamtPassword;
 	}
 
 	public CookieTokenAuthModule() {
 		internalApiUser = null;
 		internalApiPassword = null;
+		schulamtApiUser = null;
+		schulamtApiPassword = null;
 	}
 
 	@Override
@@ -203,15 +217,7 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 				final String username = strings[0];
 				final String password = strings[1];
 				boolean validLogin = username.equals(this.internalApiUser) && password.equals(this.internalApiPassword);
-				if (validLogin) {
-					//note: no actual container login is performed currently
-					List<String> roles = new ArrayList<>();
-					roles.add(UserRoleName.SUPER_ADMIN);
-					return httpMsgContext.notifyContainerAboutLogin("LoginConnector", roles);
-				} else {
-					LOG.error("Call to connector api with invalid BasicAuth header credentials");
-					return setResponseUnauthorised(httpMsgContext);
-				}
+				return getAuthStatus(httpMsgContext, validLogin);
 			} else {
 				LOG.error("Call to connector api without BasicAuth header credentials");
 				return setResponseUnauthorised(httpMsgContext);
@@ -220,12 +226,36 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 	}
 
 	private AuthStatus checkAuthorizationForSchulamtApiAccess(HttpServletRequest request, HttpMsgContext httpMsgContext) {
-		//TODO (team) Richtiges Login mit User/Password!
-		request.getHeader("Authorization");
-		LOG.info("Logging in directly as Admin: Schulamt-Schnittstelle. TODO User/Pwd");
-		List<String> roles = new ArrayList<>();
-		roles.add(UserRoleName.SUPER_ADMIN);
-		return httpMsgContext.notifyContainerAboutLogin("SchulamtSchnittstelle", roles);
+		if (!isSchulamtApiActive()) {
+			LOG.error("Call to connector API even though the properties for username and password were not defined"
+				+ "in ebegu. Please check that the system properties for username/password for the schulamt api are set");
+			return setResponseUnauthorised(httpMsgContext);
+		} else {
+
+			String header = request.getHeader("Authorization");
+			final String[] strings = BasicAuthHelper.parseHeader(header);
+			if (strings != null && strings.length == 2) {
+				final String username = strings[0];
+				final String password = strings[1];
+				boolean validLogin = username.equals(this.schulamtApiUser) && password.equals(this.schulamtApiPassword);
+				return getAuthStatus(httpMsgContext, validLogin);
+			} else {
+				LOG.error("Call to connector api without BasicAuth header credentials");
+				return setResponseUnauthorised(httpMsgContext);
+			}
+		}
+	}
+
+	private AuthStatus getAuthStatus(HttpMsgContext httpMsgContext, boolean validLogin) {
+		if (validLogin) {
+			//note: no actual container login is performed currently
+			List<String> roles = new ArrayList<>();
+			roles.add(UserRoleName.SUPER_ADMIN);
+			return httpMsgContext.notifyContainerAboutLogin("LoginConnector", roles);
+		} else {
+			LOG.error("Call to connector api with invalid BasicAuth header credentials");
+			return setResponseUnauthorised(httpMsgContext);
+		}
 	}
 
 	private void prepareLogvars(HttpMsgContext msgContext) {
@@ -270,5 +300,9 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 
 	private boolean isInternalApiActive() {
 		return internalApiPassword != null && internalApiUser != null;
+	}
+
+	private boolean isSchulamtApiActive() {
+		return schulamtApiPassword != null && schulamtApiUser != null;
 	}
 }

@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.ejb.EJBAccessException;
 import javax.inject.Inject;
 import javax.security.auth.login.LoginException;
 
@@ -81,6 +82,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 	@Inject
 	private Persistence persistence;
 
+	private Traegerschaft traegerschaft;
 	private Mandant mandant;
 	private Fall fall;
 	private Benutzer empfaengerJA;
@@ -89,7 +91,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testCreateMitteilung() {
-		prepareDependentObjects();
+		prepareDependentObjects("gesuchst");
 		Mitteilung mitteilung = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
 		final Mitteilung persistedMitteilung = mitteilungService.sendMitteilung(mitteilung);
@@ -100,12 +102,28 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(mitteilung.getMessage(), foundMitteilung.get().getMessage());
 	}
 
-	@Test
-	public void testSetMitteilungGelesen() {
-		prepareDependentObjects();
+	/**
+	 * This must fail with an exception because the user hasn't got the rights to send the Mitteilung of the other user
+	 */
+	@Test(expected = EJBAccessException.class)
+	public void testSendMitteilungAsDifferentGS() {
+		prepareDependentObjects("gesuchst2");
 		Mitteilung mitteilung = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+		loginAsGesuchsteller("gesuchst"); // send as GS a different user gesuchst. (The GS used for the mitteilung is "gsst")
 		final Mitteilung persistedMitteilung = mitteilungService.sendMitteilung(mitteilung);
+	}
+
+	@Test
+	public void testSetMitteilungGelesen() {
+		prepareDependentObjects("gesuchst");
+		Mitteilung mitteilung = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
+			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+		loginAsGesuchsteller("gesuchst"); // send as GS to preserve the defined senderTyp empfaengerTyp
+		final Mitteilung persistedMitteilung = mitteilungService.sendMitteilung(mitteilung);
+
+		// from now on as JA
+		loginAsSachbearbeiterJA();
 
 		final Optional<Mitteilung> foundMitteilung = mitteilungService.findMitteilung(persistedMitteilung.getId());
 		Assert.assertTrue(foundMitteilung.isPresent());
@@ -118,10 +136,14 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testSetMitteilungErledigt() {
-		prepareDependentObjects();
+		prepareDependentObjects("gesuchst");
 		Mitteilung mitteilung = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+		loginAsGesuchsteller("gesuchst"); // send as GS to preserve the defined senderTyp empfaengerTyp
 		final Mitteilung persistedMitteilung = mitteilungService.sendMitteilung(mitteilung);
+
+		// from now on as JA
+		loginAsSachbearbeiterJA();
 
 		final Optional<Mitteilung> foundMitteilung = mitteilungService.findMitteilung(persistedMitteilung.getId());
 		Assert.assertTrue(foundMitteilung.isPresent());
@@ -135,18 +157,20 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testGetMitteilungenForCurrentRole() throws LoginException {
-		prepareDependentObjects();
+		prepareDependentObjects("gesuchst");
+		loginAsGesuchsteller("gesuchst");
 		Mitteilung mitteilung1 = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
 		mitteilungService.sendMitteilung(mitteilung1);
 
-		Mitteilung mitteilung2 = TestDataUtil.createMitteilung(fall, empfaengerINST, MitteilungTeilnehmerTyp.INSTITUTION,
-			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+		loginAsSachbearbeiterTraegerschaft("satraeg", traegerschaft);
+		Mitteilung mitteilung2 = TestDataUtil.createMitteilung(fall, empfaengerINST, MitteilungTeilnehmerTyp.JUGENDAMT,
+			sender, MitteilungTeilnehmerTyp.INSTITUTION);
 		mitteilungService.sendMitteilung(mitteilung2);
 
+		//AS Traegerschaft
 		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForCurrentRolle(mitteilung1.getFall());
 
-		//AS SUPERADMIN
 		Assert.assertNotNull(mitteilungenForCurrentRolle);
 		Assert.assertEquals(1, mitteilungenForCurrentRolle.size());
 		Assert.assertEquals(MitteilungTeilnehmerTyp.JUGENDAMT, mitteilungenForCurrentRolle.iterator().next().getEmpfaengerTyp());
@@ -154,7 +178,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testGetNewMitteilungenForCurrentRolle() throws LoginException {
-		prepareDependentObjects();
+		prepareDependentObjects("gesuchst");
 		Mitteilung mitteilung1 = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
 		mitteilung1.setMitteilungStatus(MitteilungStatus.NEU);
@@ -178,19 +202,21 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testGetMitteilungenForPosteingang() throws LoginException {
-		prepareDependentObjects();
+		prepareDependentObjects("gesuchst");
+		loginAsGesuchsteller("gesuchst"); // send as GS to preserve the defined senderTyp empfaengerTyp
 		Mitteilung mitteilung1 = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
-		mitteilungService.sendMitteilung(mitteilung1);
+		mitteilung1 = mitteilungService.sendMitteilung(mitteilung1);
 
 		Mitteilung mitteilung2 = TestDataUtil.createMitteilung(fall, null, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+		mitteilung2 = mitteilungService.sendMitteilung(mitteilung2);
 
-		mitteilungService.sendMitteilung(mitteilung2);
+		// from now on as JA
+		loginAsSachbearbeiterJA();
 
 		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForPosteingang();
 
-		//AS SUPERADMIN
 		Assert.assertNotNull(mitteilungenForCurrentRolle);
 		Assert.assertEquals(2, mitteilungenForCurrentRolle.size()); // Wir sehen grundsätzliche alle Nachrichten, die ans JA gehen
 		Assert.assertEquals(MitteilungTeilnehmerTyp.JUGENDAMT, mitteilungenForCurrentRolle.iterator().next().getEmpfaengerTyp());
@@ -198,7 +224,9 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testSetAllNewMitteilungenOfFallGelesen() {
-		prepareDependentObjects();
+		prepareDependentObjects("gesuchst");
+		fall.setBesitzer(sender);
+		fall = persistence.merge(fall);
 
 		Mitteilung entwurf = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
@@ -265,7 +293,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testApplyBetreuungsmitteilungMutation() {
-		prepareDependentObjects();
+		prepareDependentObjects("gesuchst");
 
 		// Wir erstellen ein Erstgesuch und mutieren es
 		final Gesuch gesuch1 = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now(), AntragStatus.VERFUEGT);
@@ -303,7 +331,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testFindNewestBetreuungsmitteilung_NoMitteilungExists() {
-		prepareDependentObjects();
+		prepareDependentObjects("gesuchst");
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
 		final Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
 
@@ -314,7 +342,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testFindNewestBetreuungsmitteilung() {
-		prepareDependentObjects();
+		prepareDependentObjects("gesuchst");
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
 		final Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
 
@@ -346,19 +374,19 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	// HELP METHODS
 
-	private void prepareDependentObjects() {
+	private void prepareDependentObjects(String gesuchstellerUserName) {
 		fall = TestDataUtil.createDefaultFall();
-		persistence.persist(fall);
-		mandant = TestDataUtil.createDefaultMandant();
-		persistence.persist(mandant);
+		mandant = getDummySuperadmin().getMandant();
+		fall.setMandant(mandant);
+		fall = persistence.persist(fall);
 		empfaengerJA = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, "saja", null, null, mandant);
 		persistence.persist(empfaengerJA);
 
-		final Traegerschaft traegerschaft = persistence.persist(TestDataUtil.createDefaultTraegerschaft());
+		traegerschaft = persistence.persist(TestDataUtil.createDefaultTraegerschaft());
 		empfaengerINST = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, "insti", traegerschaft, null, mandant);
 		persistence.persist(empfaengerINST);
 
-		sender = TestDataUtil.createBenutzer(UserRole.GESUCHSTELLER, "gsst", null, null, mandant);
+		sender = TestDataUtil.createBenutzer(UserRole.GESUCHSTELLER, gesuchstellerUserName, null, null, mandant);
 		persistence.persist(sender);
 	}
 }

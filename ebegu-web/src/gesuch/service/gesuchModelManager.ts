@@ -300,6 +300,17 @@ export default class GesuchModelManager {
     }
 
     /**
+     * Update das Gesuch
+     * @returns {IPromise<TSGesuch>}
+     */
+    public saveFinanzielleSituationStart(): IPromise<TSGesuch> {
+        return this.finanzielleSituationRS.saveFinanzielleSituationStart(this.gesuch).then((gesuchResponse: any) => {
+            this.gesuch = gesuchResponse;
+            return this.gesuch;
+        });
+    }
+
+    /**
      * Update den Fall
      * @returns {IPromise<TSFall>}
      */
@@ -1417,9 +1428,24 @@ export default class GesuchModelManager {
         return this.erwerbspensumRS.isErwerbspensumRequired(gesuchId);
     }
 
+    /**
+     * Indicates whether the FinSit is available to be filled out or not.
+     */
+    public isFinanzielleSituationEnabled(): boolean {
+        return !this.areThereOnlyFerieninsel();
+    }
+
+    /**
+     * Indicates whether FinSit must be filled out or not. It supposes that it is enabled.
+     */
     public isFinanzielleSituationRequired(): boolean {
-        return !this.areThereOnlyFerieninsel() || !this.areThereOnlySchulamtAngebote()
-            || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht
-                && !this.getGesuch().extractFamiliensituation().sozialhilfeBezueger);
+        return !this.getGesuchsperiode().hasTagesschulenAnmeldung() ||
+            (!this.areThereOnlySchulamtAngebote() || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht === true
+                && this.getGesuch().extractFamiliensituation().sozialhilfeBezueger === false));
+    }
+
+    public showFinanzielleSituationStart(): boolean {
+        return this.isGesuchsteller2Required() ||
+            (this.getGesuchsperiode() && this.getGesuchsperiode().hasTagesschulenAnmeldung() && this.areThereOnlySchulamtAngebote());
     }
 }
