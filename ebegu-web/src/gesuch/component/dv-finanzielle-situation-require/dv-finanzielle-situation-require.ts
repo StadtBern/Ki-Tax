@@ -80,4 +80,8 @@ export class DVFinanzielleSituationRequireController {
     public getMaxMassgebendesEinkommen(): string {
         return this.maxMassgebendesEinkommen;
     }
+
+    public isGesuchReadonly(): boolean {
+        return this.gesuchModelManager.isGesuchReadonly();
+    }
 }
