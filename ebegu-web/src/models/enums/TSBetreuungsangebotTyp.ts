@@ -33,6 +33,19 @@ export function getTSBetreuungsangebotTypValues(): Array<TSBetreuungsangebotTyp>
     ];
 }
 
+/**
+ * These are all BetreuungsangebotTyp for a period without Tagesschuleanmeldungen, normally 17/18
+ */
+export function getTSBetreuungsangebotTypValuesNoTagesschuleanmeldungen(): Array<TSBetreuungsangebotTyp> {
+    return [
+        TSBetreuungsangebotTyp.KITA,
+        TSBetreuungsangebotTyp.TAGI,
+        TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND,
+        TSBetreuungsangebotTyp.TAGESELTERN_SCHULKIND,
+        TSBetreuungsangebotTyp.TAGESSCHULE
+    ];
+}
+
 export function getSchulamtBetreuungsangebotTypValues(): Array<TSBetreuungsangebotTyp> {
     return [
         TSBetreuungsangebotTyp.TAGESSCHULE,
