@@ -99,20 +99,21 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     }
 
     public changedFerien() {
-        // Die Stammdaten und potentiellen Ferientage der gewaehlten Ferieninsel lesen
-        this.ferieninselStammdatenRS.findFerieninselStammdatenByGesuchsperiodeAndFerien(
-            this.gesuchModelManager.getGesuchsperiode().id, this.betreuung.belegungFerieninsel.ferienname).then((response: TSFerieninselStammdaten) => {
-            this.ferieninselStammdaten = response;
-            // Bereits gespeicherte Daten wieder ankreuzen
-            for (let obj of this.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung) {
-                for (let tagAngemeldet of this.betreuung.belegungFerieninsel.tage) {
-                    if (tagAngemeldet.tag.isSame(obj.tag)) {
-                        obj.angemeldet = true;
-                        continue;
+        if (this.betreuung.belegungFerieninsel && this.betreuung.belegungFerieninsel.ferienname) {
+            // Die Stammdaten und potentiellen Ferientage der gewaehlten Ferieninsel lesen
+            this.ferieninselStammdatenRS.findFerieninselStammdatenByGesuchsperiodeAndFerien(
+                this.gesuchModelManager.getGesuchsperiode().id, this.betreuung.belegungFerieninsel.ferienname).then((response: TSFerieninselStammdaten) => {
+                this.ferieninselStammdaten = response;
+                // Bereits gespeicherte Daten wieder ankreuzen
+                for (let obj of this.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung) {
+                    for (let tagAngemeldet of this.betreuung.belegungFerieninsel.tage) {
+                        if (tagAngemeldet.tag.isSame(obj.tag)) {
+                            obj.angemeldet = true;
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     public isAnmeldungNichtFreigegeben(): boolean {
