@@ -34,7 +34,6 @@ import ch.dvbern.ebegu.api.resource.BetreuungResource;
 import ch.dvbern.ebegu.api.resource.FachstelleResource;
 import ch.dvbern.ebegu.api.resource.FallResource;
 import ch.dvbern.ebegu.api.resource.GesuchResource;
-import ch.dvbern.ebegu.api.resource.GesuchsperiodeResource;
 import ch.dvbern.ebegu.api.resource.KindResource;
 import ch.dvbern.ebegu.entities.BelegungFerieninsel;
 import ch.dvbern.ebegu.entities.Benutzer;
@@ -82,8 +81,6 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 	private KindResource kindResource;
 	@Inject
 	private GesuchResource gesuchResource;
-	@Inject
-	private GesuchsperiodeResource gesuchsperiodeResource;
 	@Inject
 	private FallResource fallResource;
 	@Inject
@@ -221,7 +218,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 
 		JaxBetreuung jaxNewBetreuung= converter.betreuungToJAX(newBetreuung);
 
-		Assert.assertTrue(betreuungResource.hasDublicate(jaxNewBetreuung, betreuungen));
+		Assert.assertTrue(betreuungResource.hasDuplicate(jaxNewBetreuung, betreuungen));
 
 	}
 
@@ -239,7 +236,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 
 		JaxBetreuung jaxNewBetreuung= converter.betreuungToJAX(newBetreuung);
 
-		Assert.assertFalse(betreuungResource.hasDublicate(jaxNewBetreuung, betreuungen));
+		Assert.assertFalse(betreuungResource.hasDuplicate(jaxNewBetreuung, betreuungen));
 
 	}
 
@@ -263,7 +260,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 
 		JaxBetreuung jaxNewBetreuung= converter.betreuungToJAX(newBetreuung);
 
-		Assert.assertTrue(betreuungResource.hasDublicate(jaxNewBetreuung, betreuungen));
+		Assert.assertTrue(betreuungResource.hasDuplicate(jaxNewBetreuung, betreuungen));
 
 	}
 
@@ -289,7 +286,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 		jaxNewBetreuung.getBelegungFerieninsel().setFerienname(Ferienname.SOMMERFERIEN);
 
 
-		Assert.assertFalse(betreuungResource.hasDublicate(jaxNewBetreuung, betreuungen));
+		Assert.assertFalse(betreuungResource.hasDuplicate(jaxNewBetreuung, betreuungen));
 
 	}
 
@@ -314,7 +311,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 		JaxBetreuung jaxNewBetreuung= converter.betreuungToJAX(newBetreuung);
 		existingBetreuung1.setBetreuungsstatus(Betreuungsstatus.STORNIERT);
 
-		Assert.assertFalse(betreuungResource.hasDublicate(jaxNewBetreuung, betreuungen));
+		Assert.assertFalse(betreuungResource.hasDuplicate(jaxNewBetreuung, betreuungen));
 
 	}
 

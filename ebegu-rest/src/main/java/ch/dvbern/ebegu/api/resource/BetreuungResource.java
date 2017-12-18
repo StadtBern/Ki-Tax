@@ -101,8 +101,8 @@ public class BetreuungResource {
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
-			if (hasDublicate(betreuungJAXP, kind.get().getBetreuungen())) {
-				throw new EbeguRuntimeException("saveBetreuung", ErrorCodeEnum.ERROR_DUBLICATE_BETREUUNG);
+			if (hasDuplicate(betreuungJAXP, kind.get().getBetreuungen())) {
+				throw new EbeguRuntimeException("saveBetreuung", ErrorCodeEnum.ERROR_DUPLICATE_BETREUUNG);
 			}
 			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
 			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch(), convertedBetreuung);
@@ -360,16 +360,16 @@ public class BetreuungResource {
 		return Response.ok(jaxBetreuungList).build();
 	}
 
-	public boolean hasDublicate(JaxBetreuung betreuungJAXP, Set<Betreuung> betreuungen) {
+	public boolean hasDuplicate(JaxBetreuung betreuungJAXP, Set<Betreuung> betreuungen) {
 
 		return isNewBetreuung(betreuungJAXP) &&
 			betreuungen.stream().filter(
 				betreuung -> {
 					if (!Objects.equals(betreuungJAXP.getInstitutionStammdaten().getBetreuungsangebotTyp(), BetreuungsangebotTyp.FERIENINSEL)) {
-						return isNotStorniert(betreuung) &&
+						return !betreuung.getBetreuungsstatus().isStorniert() &&
 							isSameInstitution(betreuungJAXP, betreuung);
 					} else {
-						return isNotStorniert(betreuung) &&
+						return !betreuung.getBetreuungsstatus().isStorniert() &&
 							isSameInstitution(betreuungJAXP, betreuung) &&
 							isSameFerien(betreuungJAXP, betreuung);
 					}
@@ -380,7 +380,6 @@ public class BetreuungResource {
 		return betreuungJAXP.getTimestampErstellt() == null;
 	}
 
-	//TODO: Diese Funktion muss wohl noch angepasst werden, wenn die Ferienangebote über das Schaulamt laufen und nicht über die Institution
 	private boolean isSameFerien(JaxBetreuung betreuungJAXP, Betreuung betreuung) {
 		return Objects.equals(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp(), BetreuungsangebotTyp.FERIENINSEL) &&
 			Objects.equals(betreuung.getBelegungFerieninsel().getFerienname(), betreuungJAXP.getBelegungFerieninsel().getFerienname());
@@ -388,9 +387,5 @@ public class BetreuungResource {
 
 	private boolean isSameInstitution(JaxBetreuung betreuungJAXP, Betreuung betreuung) {
 		return betreuung.getInstitutionStammdaten().getId().equals(betreuungJAXP.getInstitutionStammdaten().getId());
-	}
-
-	private boolean isNotStorniert(Betreuung betreuung) {
-		return !betreuung.getBetreuungsstatus().equals(Betreuungsstatus.STORNIERT);
 	}
 }
