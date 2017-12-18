@@ -84,7 +84,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     }
 
     public confirmationCallback(): void {
-        if (this.gesuchModelManager.isGesuch() || this.gesuchModelManager.areAllJAAngeboteNew()) {
+        if (this.gesuchModelManager.isGesuch()) {
             this.openFreigabequittungPDF(true);
         } else {
             this.gesuchFreigeben(); //wenn keine freigabequittung noetig direkt freigeben
@@ -179,10 +179,6 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
                 return TSZustelladresse.JUGENDAMT;
             }
 
-        } else {
-            if (this.gesuchModelManager.areAllJAAngeboteNew()) {
-                return TSZustelladresse.JUGENDAMT;
-            }
         }
         return undefined;
     }
@@ -192,7 +188,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
      * Ausserdem nur die Mutationen bei denen alle JA-Angebote neu sind, werden eine Freigabequittung haben
      */
     public isThereFreigabequittung(): boolean {
-        return this.gesuchModelManager.isGesuch() || this.gesuchModelManager.areAllJAAngeboteNew();
+        return this.gesuchModelManager.isGesuch();
     }
 
     $postLink() {

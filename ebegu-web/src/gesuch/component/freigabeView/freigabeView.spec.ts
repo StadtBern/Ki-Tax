@@ -189,8 +189,8 @@ describe('freigabeView', function () {
             expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.SCHULAMT);
         });
         it('should call the service with TSZustelladresse.JUGENDAMT for Mutation of Erstgesuch with SA-Freigabequittung', function () {
-            spyOn(gesuchModelManager, 'isGesuch').and.returnValue(false);
-            spyOn(gesuchModelManager, 'areAllJAAngeboteNew').and.returnValue(true);
+            spyOn(gesuchModelManager, 'isGesuch').and.returnValue(true);
+            spyOn(gesuchModelManager, 'areThereOnlySchulamtAngebote').and.returnValue(false);
 
             controller.openFreigabequittungPDF(false);
             $scope.$apply();
@@ -199,7 +199,6 @@ describe('freigabeView', function () {
         });
         it('should call the service with undefined for Mutation of Erstgesuch with JS-Freigabequittung', function () {
             spyOn(gesuchModelManager, 'isGesuch').and.returnValue(false);
-            spyOn(gesuchModelManager, 'areAllJAAngeboteNew').and.returnValue(false);
 
             controller.openFreigabequittungPDF(false);
             $scope.$apply();
