@@ -18,6 +18,7 @@ import {EbeguParameterRS} from '../../../admin/service/ebeguParameterRS.rest';
 import {TSEbeguParameterKey} from '../../../models/enums/TSEbeguParameterKey';
 import GesuchModelManager from '../../service/gesuchModelManager';
 
+declare let require: any;
 let template = require('./dv-finanzielle-situation-require.html');
 
 export class DvFinanzielleSituationRequire implements IComponentOptions {
@@ -79,5 +80,9 @@ export class DVFinanzielleSituationRequireController {
 
     public getMaxMassgebendesEinkommen(): string {
         return this.maxMassgebendesEinkommen;
+    }
+
+    public isGesuchReadonly(): boolean {
+        return this.gesuchModelManager.isGesuchReadonly();
     }
 }
