@@ -49,6 +49,7 @@ import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
 
+declare let require: any;
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -215,14 +216,12 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                         this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
                         this.setSelectedInstitutionStammdaten();
                     }
-                } else {
-                    // Ferieninsel. Vorerst mal Status SCHULAMT, spaeter kommt dann ein eigener Status
-                    // this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT; // todo entfernen. oben schon gemacht
                 }
             } else {
                 this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
-                this.cleanBelegungen();
             }
+            this.cleanBelegungen();
+            this.cleanInstitutionStammdaten();
         }
     }
 
@@ -279,9 +278,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public anmeldenSchulamt(): void {
         if (this.direktAnmeldenSchulamt()) {
-            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST, 'gesuch.betreuungen', undefined);
+            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
         } else {
-            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST, 'gesuch.betreuungen', undefined);
+            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
         }
     }
 
@@ -710,11 +709,17 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      * Based on the type of the Angebot it resets the belegungen.
      */
     private cleanBelegungen(): void {
-        if (!this.getBetreuungModel().isAngebotFerieninsel()) {
+        if (this.betreuungsangebot.key !== TSBetreuungsangebotTyp.FERIENINSEL) {
             this.getBetreuungModel().belegungFerieninsel = undefined;
         }
-        if (!this.getBetreuungModel().isAngebotTagesschule()) {
+        if (this.betreuungsangebot.key !== TSBetreuungsangebotTyp.TAGESSCHULE) {
             this.getBetreuungModel().belegungTagesschule = undefined;
+        }
+    }
+
+    private cleanInstitutionStammdaten() {
+        if (this.getBetreuungModel()) {
+            this.getBetreuungModel().institutionStammdaten = undefined;
         }
     }
 }
