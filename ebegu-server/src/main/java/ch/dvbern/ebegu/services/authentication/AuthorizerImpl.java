@@ -123,14 +123,6 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	}
 
 	@Override
-	public void checkCreateAuthorizationGesuch() {
-		if (principalBean.isCallerInAnyOfRole(GESUCHSTELLER, SACHBEARBEITER_JA, ADMIN, SUPER_ADMIN)) {
-			return;
-		}
-		throwCreateViolation();
-	}
-
-	@Override
 	public void checkCreateAuthorizationFinSit(@Nonnull FinanzielleSituationContainer finanzielleSituation) {
 		if (principalBean.isCallerInAnyOfRole(ADMIN, SUPER_ADMIN)) {
 			return;

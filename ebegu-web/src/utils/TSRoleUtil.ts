@@ -160,7 +160,7 @@ export class TSRoleUtil {
     }
 
     public static getReadOnlyRoles(): Array<TSRole> {
-        return [TSRole.REVISOR, TSRole.JURIST, TSRole.ADMINISTRATOR_SCHULAMT, TSRole.SCHULAMT, TSRole.STEUERAMT];
+        return [TSRole.REVISOR, TSRole.JURIST, TSRole.STEUERAMT];
     }
 
     public static getAllRolesForKommentarSpalte(): Array<TSRole> {
