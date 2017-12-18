@@ -38,6 +38,7 @@ import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
 
+declare let require: any;
 let template = require('./betreuungFerieninselView.html');
 require('./betreuungFerieninselView.less');
 let dialogTemplate = require('../../dialog/removeDialogTemplate.html');
