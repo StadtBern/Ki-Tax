@@ -222,9 +222,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                 }
             } else {
                 this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
+                this.cleanInstitutionStammdaten();
             }
             this.cleanBelegungen();
-            this.cleanInstitutionStammdaten();
         }
     }
 
@@ -700,8 +700,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public tageschuleSaveDisabled(): boolean {
         if (this.getBetreuungModel().isNew()) {
             let gp: TSGesuchsperiode = this.gesuchModelManager.getGesuch().gesuchsperiode;
-            return (this.getBetreuungModel().isAngebotTagesschule() && gp.hasTagesschulenAnmeldung() && !gp.isTageschulenAnmeldungAktiv()
-                || this.getBetreuungModel().isAngebotFerieninsel() && !this.getBetreuungModel().isEnabled());
+            return (this.isTagesschule() && gp.hasTagesschulenAnmeldung() && !gp.isTageschulenAnmeldungAktiv()
+                || this.isFerieninsel() && !this.getBetreuungModel().isEnabled());
         }
         return true;
     }
