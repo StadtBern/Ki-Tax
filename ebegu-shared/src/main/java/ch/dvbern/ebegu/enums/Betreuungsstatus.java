@@ -71,6 +71,10 @@ public enum Betreuungsstatus {
 			|| SCHULAMT_ANMELDUNG_UEBERNOMMEN == this|| SCHULAMT_ANMELDUNG_ABGELEHNT == this  || SCHULAMT_FALSCHE_INSTITUTION == this;
 	}
 
+	public boolean isStorniert() {
+		return STORNIERT == this;
+	}
+
 	@SuppressWarnings("Duplicates")
 	public static Set<Betreuungsstatus> allowedRoles(UserRole userRole) {
 		switch (userRole) {
