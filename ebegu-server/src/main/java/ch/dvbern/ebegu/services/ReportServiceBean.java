@@ -194,6 +194,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 
+	@Inject
+	private GesuchService gesuchService;
+
 	private static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
 	private static final String TEMP_REPORT_FOLDERNAME = "tempReports";
 
@@ -843,8 +846,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		}
 	}
 
-	private void addKindToGesuchstellerKinderBetreuungDataRow(GesuchstellerKinderBetreuungDataRow row, VerfuegungZeitabschnitt zeitabschnitt) {
-		Kind kind = zeitabschnitt.getVerfuegung().getBetreuung().getKind().getKindJA();
+	private void addKindToGesuchstellerKinderBetreuungDataRow(GesuchstellerKinderBetreuungDataRow row, Betreuung betreuung) {
+		Kind kind = betreuung.getKind().getKindJA();
 		row.setKindName(kind.getNachname());
 		row.setKindVorname(kind.getVorname());
 		row.setKindGeburtsdatum(kind.getGeburtsdatum());
@@ -852,15 +855,15 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			row.setKindGeburtsdatum(MIN_DATE);
 		}
 		row.setKindFachstelle(kind.getPensumFachstelle() != null ? kind.getPensumFachstelle().getFachstelle().getName() : StringUtils.EMPTY);
-		row.setKindErwBeduerfnisse(zeitabschnitt.getVerfuegung().getBetreuung().getErweiterteBeduerfnisse());
+		row.setKindErwBeduerfnisse(betreuung.getErweiterteBeduerfnisse());
 		row.setKindDeutsch(kind.getMutterspracheDeutsch());
 		row.setKindEingeschult(kind.getEinschulung());
 	}
 
-	private void addBetreuungToGesuchstellerKinderBetreuungDataRow(GesuchstellerKinderBetreuungDataRow row, VerfuegungZeitabschnitt zeitabschnitt) {
+	private void addBetreuungToGesuchstellerKinderBetreuungDataRow(GesuchstellerKinderBetreuungDataRow row, VerfuegungZeitabschnitt zeitabschnitt, Betreuung betreuung) {
 		row.setZeitabschnittVon(zeitabschnitt.getGueltigkeit().getGueltigAb());
 		row.setZeitabschnittBis(zeitabschnitt.getGueltigkeit().getGueltigBis());
-		row.setBetreuungsStatus(ServerMessageUtil.getMessage(Betreuungsstatus.class.getSimpleName() + '_' + zeitabschnitt.getVerfuegung().getBetreuung().getBetreuungsstatus().name()));
+		row.setBetreuungsStatus(ServerMessageUtil.getMessage(Betreuungsstatus.class.getSimpleName() + '_' + betreuung.getBetreuungsstatus().name()));
 		row.setBetreuungsPensum(MathUtil.DEFAULT.from(zeitabschnitt.getBetreuungspensum()));
 		row.setAnspruchsPensum(MathUtil.DEFAULT.from(zeitabschnitt.getAnspruchberechtigtesPensum()));
 		row.setBgPensum(MathUtil.DEFAULT.from(zeitabschnitt.getBgPensum()));
@@ -902,29 +905,51 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	private List<GesuchstellerKinderBetreuungDataRow> convertToGesuchstellerKinderBetreuungDataRow(List<VerfuegungZeitabschnitt> zeitabschnittList) {
 		List<GesuchstellerKinderBetreuungDataRow> dataRowList = new ArrayList<>();
+
+		Map<Long, Gesuch> neustesVerfuegtesGesuchCache = new HashMap<>();
+
 		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnittList) {
-			GesuchstellerKinderBetreuungDataRow row = createRowForGesuchstellerKinderBetreuungReport(zeitabschnitt);
+			GesuchstellerKinderBetreuungDataRow row = createRowForGesuchstellerKinderBetreuungReport(zeitabschnitt, neustesVerfuegtesGesuchCache);
 			dataRowList.add(row);
 		}
 		return dataRowList;
 	}
 
-	private GesuchstellerKinderBetreuungDataRow createRowForGesuchstellerKinderBetreuungReport(VerfuegungZeitabschnitt zeitabschnitt) {
+	@SuppressWarnings({"Duplicates", "PMD.NcssMethodCount"})
+	private GesuchstellerKinderBetreuungDataRow createRowForGesuchstellerKinderBetreuungReport(VerfuegungZeitabschnitt zeitabschnitt, Map<Long, Gesuch> neustesVerfuegtesGesuchCache) {
 		Gesuch gesuch = zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch();
+		Gesuch gueltigeGesuch = null;
+		Betreuung gueltigeBetreuung = zeitabschnitt.getVerfuegung().getBetreuung();
 
-		// todo dies muss in Task EBEGU-1552 aktiviert werden
-		// hier haben wir auch das Problem, dass es nicht das aktuellste Gesuch ist
-//		if (!gesuch.isGueltig()) {
-//			//könnten wir diese Gesuche nicht in einer Liste speichern? sodass wir es nicht fuer jede Zeitabschnitt suchen muessen
-//			gesuch = gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(), false)
-//				.orElse(gesuch);
-//		}
+		//prüfen ob Gesuch ist gültig, und via GesuchService oder Cache holen, inkl. Kind & Betreuung
+		if (!gesuch.isGueltig()) {
+
+			gueltigeGesuch = neustesVerfuegtesGesuchCache.getOrDefault(gesuch.getFall().getFallNummer(),
+				gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(),false)
+					.orElse(gesuch));
+
+			Optional<KindContainer> gueltigeKind = gueltigeGesuch.getKindContainers().stream().filter(kindContainer -> kindContainer
+					.getKindNummer().equals(zeitabschnitt.getVerfuegung().getBetreuung().getKind().getKindNummer()))
+				.findFirst();
+
+			if (gueltigeKind.isPresent()) {
+				gueltigeBetreuung = gueltigeKind.get().getBetreuungen().stream().filter(betreuung -> betreuung
+					.getBetreuungNummer()
+					.equals(zeitabschnitt.getVerfuegung().getBetreuung().getBetreuungNummer()))
+					.findFirst()
+					.orElse(zeitabschnitt.getVerfuegung().getBetreuung());
+			}
+
+			neustesVerfuegtesGesuchCache.put(gesuch.getFall().getFallNummer(), gueltigeGesuch);
+		} else {
+			gueltigeGesuch = gesuch;
+		}
 
 		GesuchstellerKinderBetreuungDataRow row = new GesuchstellerKinderBetreuungDataRow();
 		// Betreuung
-		addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
+		addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt, gueltigeBetreuung);
 		// Stammdaten
-		addStammdaten(row, zeitabschnitt, gesuch);
+		addStammdaten(row, zeitabschnitt, gueltigeGesuch);
 
 		// Gesuchsteller 1: Prozent-Felder initialisieren, damit im Excel das Total sicher berechnet werden kann
 		row.setGs1EwpAngestellt(0);
@@ -933,7 +958,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		row.setGs1EwpRav(0);
 		row.setGs1EwpGesundhtl(0);
 		row.setGs1EwpZuschlag(0);
-		addGesuchsteller1ToGesuchstellerKinderBetreuungDataRow(row, gesuch.getGesuchsteller1());
+		addGesuchsteller1ToGesuchstellerKinderBetreuungDataRow(row, gueltigeGesuch.getGesuchsteller1());
 		// Gesuchsteller 2: Prozent-Felder initialisieren, damit im Excel das Total sicher berechnet werden kann
 		row.setGs2EwpAngestellt(0);
 		row.setGs2EwpAusbildung(0);
@@ -941,11 +966,11 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		row.setGs2EwpRav(0);
 		row.setGs2EwpGesundhtl(0);
 		row.setGs2EwpZuschlag(0);
-		if (gesuch.getGesuchsteller2() != null) {
-			addGesuchsteller2ToGesuchstellerKinderBetreuungDataRow(row, gesuch.getGesuchsteller2());
+		if (gueltigeGesuch.getGesuchsteller2() != null) {
+			addGesuchsteller2ToGesuchstellerKinderBetreuungDataRow(row, gueltigeGesuch.getGesuchsteller2());
 		}
 		// Familiensituation / Einkommen
-		Familiensituation familiensituation = gesuch.getFamiliensituationContainer().getFamiliensituationAm(row.getZeitabschnittVon());
+		Familiensituation familiensituation = gueltigeGesuch.getFamiliensituationContainer().getFamiliensituationAm(row.getZeitabschnittVon());
 		row.setFamiliensituation(familiensituation.getFamilienstatus());
 		if (familiensituation.hasSecondGesuchsteller()) {
 			row.setKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
@@ -957,19 +982,19 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		row.setFamilienabzug(zeitabschnitt.getAbzugFamGroesse());
 		row.setMassgEink(zeitabschnitt.getMassgebendesEinkommen());
 		row.setEinkommensjahr(zeitabschnitt.getEinkommensjahr());
-		if (gesuch.getEinkommensverschlechterungInfoContainer() != null) {
-			row.setEkvVorhanden(gesuch.getEinkommensverschlechterungInfoContainer().getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung());
+		if (gueltigeGesuch.getEinkommensverschlechterungInfoContainer() != null) {
+			row.setEkvVorhanden(gueltigeGesuch.getEinkommensverschlechterungInfoContainer().getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung());
 		}
 		row.setStvGeprueft(gesuch.isGeprueftSTV());
-		if (gesuch.getGesuchsteller1() != null &&
-			gesuch.getGesuchsteller1().getFinanzielleSituationContainer() != null) {
-			row.setVeranlagt(gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().getSteuerveranlagungErhalten());
+		if (gueltigeGesuch.getGesuchsteller1() != null &&
+			gueltigeGesuch.getGesuchsteller1().getFinanzielleSituationContainer() != null) {
+			row.setVeranlagt(gueltigeGesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().getSteuerveranlagungErhalten());
 		} else {
 			row.setVeranlagt(Boolean.FALSE);
 		}
-		//todo don't pass the zeitabschnitt but the verfuegung. otherwise we still use the old data
+
 		// Kind
-		addKindToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
+		addKindToGesuchstellerKinderBetreuungDataRow(row, gueltigeBetreuung);
 		return row;
 	}
 
@@ -1006,41 +1031,66 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	private List<GesuchstellerKinderBetreuungDataRow> convertToKinderDataRow(List<VerfuegungZeitabschnitt> zeitabschnittList) {
 		List<GesuchstellerKinderBetreuungDataRow> dataRowList = new ArrayList<>();
 
+		Map<Long, Gesuch> neustesVerfuegtesGesuchCache = new HashMap<>();
+
 		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnittList) {
-			GesuchstellerKinderBetreuungDataRow row = createRowForKinderReport(zeitabschnitt);
+			GesuchstellerKinderBetreuungDataRow row = createRowForKinderReport(zeitabschnitt, neustesVerfuegtesGesuchCache);
 			dataRowList.add(row);
 		}
 
 		return dataRowList;
 	}
 
-	private GesuchstellerKinderBetreuungDataRow createRowForKinderReport(VerfuegungZeitabschnitt zeitabschnitt) {
+	@SuppressWarnings("Duplicates")
+	private GesuchstellerKinderBetreuungDataRow createRowForKinderReport(VerfuegungZeitabschnitt zeitabschnitt, Map<Long, Gesuch> neustesVerfuegtesGesuchCache) {
 		Gesuch gesuch = zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch();
+		Gesuch gueltigeGesuch = null;
+		Betreuung gueltigeBetreuung = zeitabschnitt.getVerfuegung().getBetreuung();
 
-		// todo dies muss in Task EBEGU-1552 aktiviert werden
-//		if (!gesuch.isGueltig()) {
-//			gesuch = gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(), false)
-//				.orElse(gesuch);
-//		}
+		//prüfen ob Gesuch ist gültig, und via GesuchService oder Cache holen, inkl. Kind & Betreuung
+		if (!gesuch.isGueltig()) {
+
+			gueltigeGesuch = neustesVerfuegtesGesuchCache.getOrDefault(gesuch.getFall().getFallNummer(),
+				gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(),false)
+					.orElse(gesuch));
+
+			Optional<KindContainer> gueltigeKind = gueltigeGesuch.getKindContainers().stream().filter(kindContainer -> kindContainer
+				.getKindNummer().equals(zeitabschnitt.getVerfuegung().getBetreuung().getKind().getKindNummer()))
+				.findFirst();
+
+			if (gueltigeKind.isPresent()) {
+				gueltigeBetreuung = gueltigeKind.get().getBetreuungen().stream().filter(betreuung -> betreuung
+					.getBetreuungNummer()
+					.equals(zeitabschnitt.getVerfuegung().getBetreuung().getBetreuungNummer()))
+					.findFirst()
+					.orElse(zeitabschnitt.getVerfuegung().getBetreuung());
+			}
+
+			neustesVerfuegtesGesuchCache.put(gesuch.getFall().getFallNummer(), gueltigeGesuch);
+		} else {
+			gueltigeGesuch = gesuch;
+		}
 
 		GesuchstellerKinderBetreuungDataRow row = new GesuchstellerKinderBetreuungDataRow();
-		addStammdaten(row, zeitabschnitt, gesuch);
+		addStammdaten(row, zeitabschnitt, gueltigeGesuch);
 
 		// Gesuchsteller 1
-		Gesuchsteller gs1 = gesuch.getGesuchsteller1().getGesuchstellerJA();
+		Gesuchsteller gs1 = gueltigeGesuch.getGesuchsteller1().getGesuchstellerJA();
 		row.setGs1Name(gs1.getNachname());
 		row.setGs1Vorname(gs1.getVorname());
 		// Gesuchsteller 2
-		if (gesuch.getGesuchsteller2() != null) {
-			Gesuchsteller gs2 = gesuch.getGesuchsteller2().getGesuchstellerJA();
+		if (gueltigeGesuch.getGesuchsteller2() != null) {
+			Gesuchsteller gs2 = gueltigeGesuch.getGesuchsteller2().getGesuchstellerJA();
 			row.setGs2Name(gs2.getNachname());
 			row.setGs2Vorname(gs2.getVorname());
 		}
-		//todo don't pass the zeitabschnitt but the verfuegung. otherwise we still use the old data
+
 		// Kind
-		addKindToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
+		addKindToGesuchstellerKinderBetreuungDataRow(row, gueltigeBetreuung);
+
 		// Betreuung
-		addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
+		addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt, gueltigeBetreuung);
+
 		return row;
 	}
 
