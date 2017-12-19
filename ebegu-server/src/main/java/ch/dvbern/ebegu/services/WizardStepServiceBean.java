@@ -632,8 +632,9 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
 						wizardStep.setVerfuegbar(true);
 
-					} else if (WizardStepName.FINANZIELLE_SITUATION == wizardStep.getWizardStepName()
-						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName()
+					} else if (((WizardStepName.FINANZIELLE_SITUATION == wizardStep.getWizardStepName()
+						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG == wizardStep.getWizardStepName())
+						&& EbeguUtil.isFinanzielleSituationRequired(wizardStep.getGesuch()))
 						|| (WizardStepName.ERWERBSPENSUM == wizardStep.getWizardStepName()
 						&& erwerbspensumService.isErwerbspensumRequired(wizardStep.getGesuch()))) {
 						wizardStep.setVerfuegbar(false);
