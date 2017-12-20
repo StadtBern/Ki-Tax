@@ -1416,9 +1416,10 @@ export default class GesuchModelManager {
      * Indicates whether FinSit must be filled out or not. It supposes that it is enabled.
      */
     public isFinanzielleSituationRequired(): boolean {
-        return !this.getGesuchsperiode().hasTagesschulenAnmeldung() ||
-            (!this.areThereOnlySchulamtAngebote() || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht === true
-                && this.getGesuch().extractFamiliensituation().sozialhilfeBezueger === false));
+        return !this.getGesuchsperiode().hasTagesschulenAnmeldung()
+            || !this.areThereOnlySchulamtAngebote()
+            || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht === true
+                && this.getGesuch().extractFamiliensituation().sozialhilfeBezueger === false);
     }
 
     public showFinanzielleSituationStart(): boolean {
