@@ -355,7 +355,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     public isFinanzielleSituationRequired(): boolean {
-        return this.gesuchModelManager.isFinanzielleSituationRequired();
+        return this.gesuchModelManager.isFinanzielleSituationEnabled() && this.gesuchModelManager.isFinanzielleSituationRequired();
     }
 }
 
