@@ -53,8 +53,10 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
 import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
@@ -72,7 +74,7 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public GesuchstellerAdresseContainer createAdresse(@Nonnull GesuchstellerAdresseContainer gesuchstellerAdresse) {
 		Objects.requireNonNull(gesuchstellerAdresse);
 		return persistence.persist(gesuchstellerAdresse);
@@ -80,7 +82,7 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public GesuchstellerAdresseContainer updateAdresse(@Nonnull GesuchstellerAdresseContainer gesuchstellerAdresse) {
 		Objects.requireNonNull(gesuchstellerAdresse);
 		return persistence.merge(gesuchstellerAdresse);
@@ -103,7 +105,7 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 	}
 
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public void removeAdresse(@Nonnull GesuchstellerAdresseContainer gesuchstellerAdresse) {
 		Validate.notNull(gesuchstellerAdresse);
 		Optional<GesuchstellerAdresseContainer> adresseToRemove = findAdresse(gesuchstellerAdresse.getId());

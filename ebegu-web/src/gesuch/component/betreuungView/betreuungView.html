@@ -380,7 +380,7 @@
 
                         <!--falsche Angaben-->
                         <div class="row" dv-show-element
-                             dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                             dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles()"
                              dv-show-expression="vm.showFalscheAngaben()">
                             <div class="col-md-12">
                                 <a href="" ng-click="vm.platzAnfordern()"
@@ -390,7 +390,7 @@
 
                         <!--Angabe korrigieren-->
                         <div class="row" dv-show-element
-                             dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                             dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles()"
                              dv-show-expression="vm.showAngabenKorrigieren()">
                             <div class="col-md-12">
                                 <a href="" ng-click="vm.platzAnfordern()"
@@ -437,7 +437,7 @@
                     <!--Die Order der Knoepfe soll im HTML so sein, dass der weiter Knopf als erster im Form ist, dies wird dann fuer die darstelltung
                     mit Flexlayout wieder korrigiert. Grund ist, dass beim druecken von Enter in einem input Feld automaitisch der erste submit button triggered wird-->
                     <div dv-show-element
-                         dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                         dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles()"
                          dv-show-expression="vm.isTagesschule() && !vm.tageschuleSaveDisabled()">
                         <dv-loading-button button-click="vm.saveSchulamt()" type="submit"
                                            button-class="save">
@@ -492,7 +492,7 @@
 
                     <!--Platz anfordern-->
                     <div dv-show-element
-                         dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                         dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles()"
                          dv-show-expression="vm.isBetreuungsstatusAusstehend()">
                         <dv-loading-button button-click="vm.platzAnfordern()">
                             <span data-translate="PLATZBESTAETIGUNG_ANFORDERN"></span>

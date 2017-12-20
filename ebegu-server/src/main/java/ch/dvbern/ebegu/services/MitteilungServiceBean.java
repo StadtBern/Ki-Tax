@@ -126,7 +126,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT, ADMINISTRATOR_SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT,
+		ADMINISTRATOR_SCHULAMT })
 	public Mitteilung sendMitteilung(@Nonnull Mitteilung mitteilung) {
 		Objects.requireNonNull(mitteilung);
 
@@ -182,7 +183,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		Benutzer benutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new IllegalStateException("Benutzer ist nicht eingeloggt!"));
 		Benutzer verantwortlicher = mitteilung.getFall().getVerantwortlicher();
 		if (verantwortlicher == null) {
-			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
+			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey
+				.DEFAULT_VERANTWORTLICHER);
 			if (StringUtils.isNotEmpty(propertyDefaultVerantwortlicher)) {
 				Optional<Benutzer> defaultVerantwortlicherOptional = benutzerService.findBenutzer(propertyDefaultVerantwortlicher);
 				if (defaultVerantwortlicherOptional.isPresent()) {
@@ -192,7 +194,6 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				}
 			}
 		}
-		//TODO (team) Rollen Schulamt einbauen!
 		switch (benutzer.getRole()) {
 		case GESUCHSTELLER: {
 			mitteilung.setEmpfaenger(verantwortlicher);
@@ -211,7 +212,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		}
 		case SACHBEARBEITER_JA:
 		case ADMIN:
-		case SUPER_ADMIN: {
+		case SUPER_ADMIN:
+		case SCHULAMT:
+		case ADMINISTRATOR_SCHULAMT:
 			Benutzer besitzer = mitteilung.getFall().getBesitzer();
 			mitteilung.setEmpfaenger(besitzer);
 			mitteilung.setEmpfaengerTyp(MitteilungTeilnehmerTyp.GESUCHSTELLER);
@@ -219,12 +222,12 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			mitteilung.setSenderTyp(MitteilungTeilnehmerTyp.JUGENDAMT);
 			break;
 		}
-		}
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT, ADMINISTRATOR_SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT,
+		ADMINISTRATOR_SCHULAMT })
 	public Mitteilung saveEntwurf(@Nonnull Mitteilung mitteilung) {
 		Objects.requireNonNull(mitteilung);
 
@@ -240,21 +243,22 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Mitteilung setMitteilungGelesen(@Nonnull String mitteilungsId) {
 		return setMitteilungsStatusIfBerechtigt(mitteilungsId, MitteilungStatus.GELESEN, MitteilungStatus.NEU, MitteilungStatus.ERLEDIGT);
 	}
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Mitteilung setMitteilungErledigt(@Nonnull String mitteilungsId) {
 		return setMitteilungsStatusIfBerechtigt(mitteilungsId, MitteilungStatus.ERLEDIGT, MitteilungStatus.GELESEN);
 	}
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT, ADMINISTRATOR_SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT,
+		ADMINISTRATOR_SCHULAMT })
 	public Optional<Mitteilung> findMitteilung(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Mitteilung mitteilung = persistence.find(Mitteilung.class, key);
@@ -264,7 +268,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR,
+		ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public Optional<Betreuungsmitteilung> findBetreuungsmitteilung(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Betreuungsmitteilung mitteilung = persistence.find(Betreuungsmitteilung.class, key);
@@ -274,7 +279,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR,
+		ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public Collection<Betreuungsmitteilung> findAllBetreuungsmitteilungenForBetreuung(@Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, "betreuung muss gesetzt sein");
 
@@ -307,7 +313,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR,
+		ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public Collection<Mitteilung> findAllMitteilungenForBetreuung(@Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, "betreuung muss gesetzt sein");
 
@@ -335,7 +342,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR,
+		ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall, "fall muss gesetzt sein");
 		authorizer.checkReadAuthorizationFall(fall);
@@ -379,7 +387,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@SuppressWarnings("LocalVariableNamingConvention")
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT, ADMINISTRATOR_SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT,
+		ADMINISTRATOR_SCHULAMT })
 	public Collection<Mitteilung> getMitteilungenForPosteingang() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 
@@ -410,7 +419,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Override
 	@Nullable
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT, ADMINISTRATOR_SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT,
+		ADMINISTRATOR_SCHULAMT })
 	public Mitteilung getEntwurfForCurrentRolle(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall, "fall muss gesetzt sein");
 		return getEntwurfForCurrentRolle(Mitteilung_.fall, fall);
@@ -488,7 +498,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT, ADMINISTRATOR_SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT,
+		ADMINISTRATOR_SCHULAMT })
 	public Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(@Nonnull Fall fall) {
 		Collection<Mitteilung> mitteilungen = getMitteilungenForCurrentRolle(fall);
 		for (Mitteilung mitteilung : mitteilungen) {
@@ -501,7 +512,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR,
+		ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public Collection<Mitteilung> getNewMitteilungenForCurrentRolleAndFall(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall, "fall muss gesetzt sein");
 		authorizer.checkReadAuthorizationFall(fall);
@@ -529,7 +541,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT, ADMINISTRATOR_SCHULAMT})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT,
+		ADMINISTRATOR_SCHULAMT })
 	public Long getAmountNewMitteilungenForCurrentBenutzer() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Long> query = cb.createQuery(Long.class);
@@ -539,7 +552,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		Predicate predicateNew = cb.equal(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.NEU);
 		predicates.add(predicateNew);
 
-		Benutzer loggedInBenutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("getAmountNewMitteilungenForCurrentBenutzer", "No User is logged in"));
+		Benutzer loggedInBenutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException
+			("getAmountNewMitteilungenForCurrentBenutzer", "No User is logged in"));
 		Predicate predicateEmpfaenger = cb.equal(root.get(Mitteilung_.empfaenger), loggedInBenutzer);
 		predicates.add(predicateEmpfaenger);
 
@@ -611,7 +625,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR,
+		ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public Optional<Betreuungsmitteilung> findNewestBetreuungsmitteilung(String betreuungId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuungsmitteilung> query = cb.createQuery(Betreuungsmitteilung.class);
@@ -634,7 +649,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	private Betreuungsmitteilung applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {
 		authorizer.checkWriteAuthorization(gesuch);
 		authorizer.checkReadAuthorizationMitteilung(mitteilung);
-		final Optional<Betreuung> betreuungToChangeOpt = gesuch.extractBetreuungsFromBetreuungNummer(mitteilung.getBetreuung().getKind().getKindNummer(), mitteilung.getBetreuung().getBetreuungNummer());
+		final Optional<Betreuung> betreuungToChangeOpt = gesuch.extractBetreuungsFromBetreuungNummer(mitteilung.getBetreuung().getKind().getKindNummer(),
+			mitteilung.getBetreuung().getBetreuungNummer());
 		if (betreuungToChangeOpt.isPresent()) {
 			Betreuung existingBetreuung = betreuungToChangeOpt.get();
 			existingBetreuung.getBetreuungspensumContainers().clear();//delete all current Betreuungspensen before we add the modified list
@@ -674,7 +690,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		case JURIST:
 		case SCHULAMT:
 		case ADMINISTRATOR_SCHULAMT:
-			case REVISOR: {
+		case REVISOR: {
 			return MitteilungTeilnehmerTyp.JUGENDAMT;
 		}
 		default:
@@ -684,7 +700,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@SuppressWarnings("OverloadedVarargsMethod")
 	private Mitteilung setMitteilungsStatusIfBerechtigt(@Nonnull String mitteilungsId, @Nonnull MitteilungStatus statusRequested,
-			@Nonnull MitteilungStatus... statusRequired) {
+		@Nonnull MitteilungStatus... statusRequired) {
 		Optional<Mitteilung> mitteilungOptional = findMitteilung(mitteilungsId);
 		Mitteilung mitteilung = mitteilungOptional.orElseThrow(() -> new EbeguRuntimeException("setMitteilungsStatusIfBerechtigt", "Mitteilung not found"));
 		return setMitteilungsStatusIfBerechtigt(mitteilung, statusRequested, statusRequired);
@@ -692,10 +708,11 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@SuppressWarnings("OverloadedVarargsMethod")
 	private Mitteilung setMitteilungsStatusIfBerechtigt(@Nonnull Mitteilung mitteilung, @Nonnull MitteilungStatus statusRequested,
-			@Nonnull MitteilungStatus... statusRequired) {
+		@Nonnull MitteilungStatus... statusRequired) {
 		authorizer.checkReadAuthorizationMitteilung(mitteilung);
 		if (!Arrays.asList(statusRequired).contains(mitteilung.getMitteilungStatus())) {
-			throw new IllegalStateException("Mitteilung " + mitteilung.getId() + " ist im falschen Status: " + mitteilung.getMitteilungStatus() + " anstatt " + Arrays.toString(statusRequired));
+			throw new IllegalStateException("Mitteilung " + mitteilung.getId() + " ist im falschen Status: " + mitteilung.getMitteilungStatus() + " anstatt "
+				+ Arrays.toString(statusRequired));
 		}
 		if (mitteilung.getEmpfaengerTyp() == getMitteilungTeilnehmerTypForCurrentUser()) {
 			mitteilung.setMitteilungStatus(statusRequested);
