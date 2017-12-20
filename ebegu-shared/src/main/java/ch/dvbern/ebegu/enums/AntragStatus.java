@@ -167,7 +167,8 @@ public enum AntragStatus {
 		BESCHWERDE_HAENGIG,
 		PRUEFUNG_STV,
 		IN_BEARBEITUNG_STV,
-		GEPRUEFT_STV);
+		GEPRUEFT_STV,
+		NUR_SCHULAMT);
 
 	public static final Set<AntragStatus> FOR_INSTITUTION_ROLE_WRITE = EnumSet.of(
 		IN_BEARBEITUNG_GS,
