@@ -151,7 +151,7 @@ export class GesuchRouteController {
             toTranslate = this.gesuchModelManager.calculateNewStatus(this.gesuchModelManager.getGesuch().status);
         }
         let isUserGesuchsteller: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles());
-        let isUserJA: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getJugendamtRole());
+        let isUserAmt: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getJugendamtAndSchulamtRole());
         let isUserSTV: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getSteueramtOnlyRoles());
 
         if (toTranslate === TSAntragStatus.IN_BEARBEITUNG_GS && isUserGesuchsteller) {
@@ -161,14 +161,14 @@ export class GesuchRouteController {
                 return this.ebeguUtil.translateString(TSAntragStatus[TSAntragStatus.PLATZBESTAETIGUNG_WARTEN]);
             }
         }
-        if (toTranslate === TSAntragStatus.IN_BEARBEITUNG_JA && isUserJA) {
+        if (toTranslate === TSAntragStatus.IN_BEARBEITUNG_JA && isUserAmt) {
             return this.ebeguUtil.translateString(IN_BEARBEITUNG_BASE_NAME);
         }
         switch (toTranslate) {
             case TSAntragStatus.GEPRUEFT_STV:
             case TSAntragStatus.IN_BEARBEITUNG_STV:
             case TSAntragStatus.PRUEFUNG_STV:
-                if (!isUserJA && !isUserSTV) {
+                if (!isUserAmt && !isUserSTV) {
                     return this.ebeguUtil.translateString('VERFUEGT');
                 }
                 break;
