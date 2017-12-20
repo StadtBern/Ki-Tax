@@ -293,7 +293,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public enableBetreuungsangebotsTyp(): boolean {
-        return !this.gesuchModelManager.isGesuchReadonly();
+        return !this.gesuchModelManager.isGesuchReadonly() && !this.gesuchModelManager.isKorrekturModusJugendamt();
     }
 
     public showInstitutionenList(): boolean {
