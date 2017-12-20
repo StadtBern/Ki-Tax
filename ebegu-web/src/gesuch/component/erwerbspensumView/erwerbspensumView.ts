@@ -163,8 +163,8 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
     }
 
     erwerbspensumDisabled(): boolean {
-        // Disabled wenn Mutation, ausser bei Bearbeiter Jugendamt
-        return this.model.erwerbspensumJA.vorgaengerId && !this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+        // Disabled wenn Mutation, ausser bei Bearbeiter Jugendamt oder Schulamt
+        return this.model.erwerbspensumJA.vorgaengerId && !this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorOrAmtRole());
     }
 
     public getTextZuschlagErwerbspensumKorrekturJA(): string {

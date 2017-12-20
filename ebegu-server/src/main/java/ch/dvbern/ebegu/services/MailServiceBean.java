@@ -184,7 +184,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	}
 
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT})
 	public void sendInfoMahnung(@Nonnull Gesuch gesuch) throws MailException {
 		if (doSendMail(gesuch.getFall())) {
 			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
@@ -274,7 +274,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	}
 
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT})
 	public void sendInfoBetreuungGeloescht(@Nonnull List<Betreuung> betreuungen) {
 
 		for (Betreuung betreuung : betreuungen) {
@@ -330,7 +330,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	}
 
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT})
 	public void sendInfoBetreuungVerfuegt(@Nonnull Betreuung betreuung) {
 
 		Institution institution = betreuung.getInstitutionStammdaten().getInstitution();

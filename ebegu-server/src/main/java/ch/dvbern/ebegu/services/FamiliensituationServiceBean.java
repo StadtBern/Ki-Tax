@@ -143,7 +143,7 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 	}
 
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public void removeFamiliensituation(@Nonnull FamiliensituationContainer familiensituation) {
 		Validate.notNull(familiensituation);
 		Optional<FamiliensituationContainer> familiensituationToRemove = findFamiliensituation(familiensituation.getId());

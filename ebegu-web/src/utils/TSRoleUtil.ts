@@ -64,8 +64,16 @@ export class TSRoleUtil {
         return [TSRole.SUPER_ADMIN, TSRole.GESUCHSTELLER, TSRole.SACHBEARBEITER_JA, TSRole.ADMIN];
     }
 
+    public static getGesuchstellerJugendamtSchulamtRoles(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN, TSRole.GESUCHSTELLER, TSRole.SACHBEARBEITER_JA, TSRole.ADMIN, TSRole.SCHULAMT, TSRole.ADMINISTRATOR_SCHULAMT];
+    }
+
     public static getAdministratorJugendamtRole(): Array<TSRole> {
         return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA];
+    }
+
+    public static getAdministratorOrAmtRole(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.ADMINISTRATOR_SCHULAMT, TSRole.SCHULAMT];
     }
 
     public static getAdministratorRevisorRole(): Array<TSRole> {
