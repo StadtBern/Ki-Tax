@@ -16,6 +16,7 @@
 package ch.dvbern.ebegu.rest.test;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -33,8 +34,8 @@ import ch.dvbern.ebegu.api.resource.BetreuungResource;
 import ch.dvbern.ebegu.api.resource.FachstelleResource;
 import ch.dvbern.ebegu.api.resource.FallResource;
 import ch.dvbern.ebegu.api.resource.GesuchResource;
-import ch.dvbern.ebegu.api.resource.GesuchsperiodeResource;
 import ch.dvbern.ebegu.api.resource.KindResource;
+import ch.dvbern.ebegu.entities.BelegungFerieninsel;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -42,6 +43,9 @@ import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.PensumFachstelle;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.Ferienname;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import ch.dvbern.ebegu.services.BenutzerService;
@@ -77,8 +81,6 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 	private KindResource kindResource;
 	@Inject
 	private GesuchResource gesuchResource;
-	@Inject
-	private GesuchsperiodeResource gesuchsperiodeResource;
 	@Inject
 	private FallResource fallResource;
 	@Inject
@@ -201,4 +203,117 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 		final JaxKindContainer updatedKind = kindResource.findKind(kindId);
 		Assert.assertEquals(number, updatedKind.getNextNumberBetreuung());
 	}
+
+	@Test
+	public void testNewBetreuungIsDuplicate() throws EbeguException {
+
+		Betreuung existingBetreuung1 = TestDataUtil.createDefaultBetreuung();
+		Betreuung existingBetreuung2 = TestDataUtil.createDefaultBetreuung();
+		Betreuung newBetreuung = TestDataUtil.createDefaultBetreuung();
+
+		newBetreuung.setInstitutionStammdaten(existingBetreuung1.getInstitutionStammdaten());
+		Set<Betreuung> betreuungen = new HashSet<>();
+		betreuungen.add(existingBetreuung1);
+		betreuungen.add(existingBetreuung2);
+
+		JaxBetreuung jaxNewBetreuung= converter.betreuungToJAX(newBetreuung);
+
+		Assert.assertTrue(betreuungResource.hasDuplicate(jaxNewBetreuung, betreuungen));
+
+	}
+
+
+	@Test
+	public void testNewBetreuungIsNotDuplicate() throws EbeguException {
+
+		Betreuung existingBetreuung1 = TestDataUtil.createDefaultBetreuung();
+		Betreuung existingBetreuung2 = TestDataUtil.createDefaultBetreuung();
+		Betreuung newBetreuung = TestDataUtil.createDefaultBetreuung();
+
+		Set<Betreuung> betreuungen = new HashSet<>();
+		betreuungen.add(existingBetreuung1);
+		betreuungen.add(existingBetreuung2);
+
+		JaxBetreuung jaxNewBetreuung= converter.betreuungToJAX(newBetreuung);
+
+		Assert.assertFalse(betreuungResource.hasDuplicate(jaxNewBetreuung, betreuungen));
+
+	}
+
+	@Test
+	public void testNewBetreuungIsDuplicateFerieninsel() throws EbeguException {
+
+		Betreuung existingBetreuung1 = TestDataUtil.createDefaultBetreuung();
+		Betreuung existingBetreuung2 = TestDataUtil.createDefaultBetreuung();
+		Betreuung newBetreuung = TestDataUtil.createDefaultBetreuung();
+		final InstitutionStammdaten institutionStammdatenFI = existingBetreuung1.getInstitutionStammdaten();
+		institutionStammdatenFI.setBetreuungsangebotTyp(BetreuungsangebotTyp.FERIENINSEL);
+		BelegungFerieninsel belegungFerieninsel = new BelegungFerieninsel();
+		belegungFerieninsel.setFerienname(Ferienname.FRUEHLINGSFERIEN);
+		existingBetreuung1.setBelegungFerieninsel(belegungFerieninsel);
+
+		newBetreuung.setInstitutionStammdaten(existingBetreuung1.getInstitutionStammdaten());
+		newBetreuung.setBelegungFerieninsel(belegungFerieninsel);
+		Set<Betreuung> betreuungen = new HashSet<>();
+		betreuungen.add(existingBetreuung1);
+		betreuungen.add(existingBetreuung2);
+
+		JaxBetreuung jaxNewBetreuung= converter.betreuungToJAX(newBetreuung);
+
+		Assert.assertTrue(betreuungResource.hasDuplicate(jaxNewBetreuung, betreuungen));
+
+	}
+
+	@Test
+	public void testNewBetreuungIsNotDuplicateFerieninsel() throws EbeguException {
+
+		Betreuung existingBetreuung1 = TestDataUtil.createDefaultBetreuung();
+		Betreuung existingBetreuung2 = TestDataUtil.createDefaultBetreuung();
+		Betreuung newBetreuung = TestDataUtil.createDefaultBetreuung();
+		final InstitutionStammdaten institutionStammdatenFI = existingBetreuung1.getInstitutionStammdaten();
+		institutionStammdatenFI.setBetreuungsangebotTyp(BetreuungsangebotTyp.FERIENINSEL);
+		BelegungFerieninsel belegungFerieninsel = new BelegungFerieninsel();
+		belegungFerieninsel.setFerienname(Ferienname.FRUEHLINGSFERIEN);
+		existingBetreuung1.setBelegungFerieninsel(belegungFerieninsel);
+
+		newBetreuung.setInstitutionStammdaten(existingBetreuung1.getInstitutionStammdaten());
+		newBetreuung.setBelegungFerieninsel(belegungFerieninsel);
+		Set<Betreuung> betreuungen = new HashSet<>();
+		betreuungen.add(existingBetreuung1);
+		betreuungen.add(existingBetreuung2);
+
+		JaxBetreuung jaxNewBetreuung= converter.betreuungToJAX(newBetreuung);
+		jaxNewBetreuung.getBelegungFerieninsel().setFerienname(Ferienname.SOMMERFERIEN);
+
+
+		Assert.assertFalse(betreuungResource.hasDuplicate(jaxNewBetreuung, betreuungen));
+
+	}
+
+	@Test
+	public void testNewBetreuungIsDuplicateFerieninselButStorniert() throws EbeguException {
+
+		Betreuung existingBetreuung1 = TestDataUtil.createDefaultBetreuung();
+		Betreuung existingBetreuung2 = TestDataUtil.createDefaultBetreuung();
+		Betreuung newBetreuung = TestDataUtil.createDefaultBetreuung();
+		final InstitutionStammdaten institutionStammdatenFI = existingBetreuung1.getInstitutionStammdaten();
+		institutionStammdatenFI.setBetreuungsangebotTyp(BetreuungsangebotTyp.FERIENINSEL);
+		BelegungFerieninsel belegungFerieninsel = new BelegungFerieninsel();
+		belegungFerieninsel.setFerienname(Ferienname.FRUEHLINGSFERIEN);
+		existingBetreuung1.setBelegungFerieninsel(belegungFerieninsel);
+
+		newBetreuung.setInstitutionStammdaten(existingBetreuung1.getInstitutionStammdaten());
+		newBetreuung.setBelegungFerieninsel(belegungFerieninsel);
+		Set<Betreuung> betreuungen = new HashSet<>();
+		betreuungen.add(existingBetreuung1);
+		betreuungen.add(existingBetreuung2);
+
+		JaxBetreuung jaxNewBetreuung= converter.betreuungToJAX(newBetreuung);
+		existingBetreuung1.setBetreuungsstatus(Betreuungsstatus.STORNIERT);
+
+		Assert.assertFalse(betreuungResource.hasDuplicate(jaxNewBetreuung, betreuungen));
+
+	}
+
+
 }

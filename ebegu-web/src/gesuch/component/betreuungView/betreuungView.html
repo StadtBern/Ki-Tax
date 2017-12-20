@@ -139,7 +139,7 @@
                         </div>
                     </div>
                     <!-- Institiutionen wenn readonly als Textfeld anzeigen-->
-                    <div class="row" ng-if="!vm.showInstitutionenList()">
+                    <div class="row" ng-if="vm.showInstitutionenAsText()">
                         <div class="col-sm-12 dv-input-container-medium form-group">
                             <label class="md-no-float" data-translate="INSTITUTION" for="institution">
                             </label>
@@ -438,7 +438,7 @@
                     mit Flexlayout wieder korrigiert. Grund ist, dass beim druecken von Enter in einem input Feld automaitisch der erste submit button triggered wird-->
                     <div dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles()"
-                         dv-show-expression="vm.getBetreuungModel().isAngebotSchulamt() && !vm.tageschuleSaveDisabled()">
+                         dv-show-expression="vm.isTagesschule() && !vm.tageschuleSaveDisabled()">
                         <dv-loading-button button-click="vm.saveSchulamt()" type="submit"
                                            button-class="save">
                             <span data-translate="SPEICHERN_UPPER"></span>

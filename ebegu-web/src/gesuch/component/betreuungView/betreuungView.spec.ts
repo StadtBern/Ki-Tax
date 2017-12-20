@@ -279,6 +279,48 @@ describe('betreuungView', function () {
                 expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
             });
         });
+        describe('showInstitutionenList', () => {
+            it('should showInstitutionenList and not showInstitutionenAsText for FALSCHE INSTITUTION', () => {
+                // initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.IN_BEARBEITUNG_JA, false);
+                spyOn(betreuungView, 'isTageschulenAnmeldungAktiv').and.returnValue(true);
+                spyOn(betreuungView, 'isEnabled').and.returnValue(true);
+                spyOn(betreuungView, 'isBetreuungsstatus').and.returnValue(true);
+                spyOn(betreuungView, 'isTagesschule').and.returnValue(true);
+
+                expect(betreuungView.showInstitutionenList()).toBe(true);
+                expect(betreuungView.showInstitutionenAsText()).toBe(false);
+            });
+            it('should not showInstitutionenList and not showInstitutionenAsText for TAGESSCHULE alte Gesuchsperiode', () => {
+                // initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.IN_BEARBEITUNG_JA, false);
+                spyOn(betreuungView, 'isTageschulenAnmeldungAktiv').and.returnValue(false);
+                spyOn(betreuungView, 'isEnabled').and.returnValue(true);
+                spyOn(betreuungView, 'isBetreuungsstatus').and.returnValue(false);
+                spyOn(betreuungView, 'isTagesschule').and.returnValue(true);
+
+                expect(betreuungView.showInstitutionenList()).toBe(false);
+                expect(betreuungView.showInstitutionenAsText()).toBe(false);
+            });
+            it('should showInstitutionenList and not showInstitutionenAsText for enabled TAGESSCHULE neue Gesuchsperiode', () => {
+                // initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.IN_BEARBEITUNG_JA, false);
+                spyOn(betreuungView, 'isTageschulenAnmeldungAktiv').and.returnValue(true);
+                spyOn(betreuungView, 'isEnabled').and.returnValue(true);
+                spyOn(betreuungView, 'isBetreuungsstatus').and.returnValue(false);
+                spyOn(betreuungView, 'isTagesschule').and.returnValue(true);
+
+                expect(betreuungView.showInstitutionenList()).toBe(true);
+                expect(betreuungView.showInstitutionenAsText()).toBe(false);
+            });
+            it('should not showInstitutionenList and showInstitutionenAsText for disabled TAGESSCHULE neue Gesuchsperiode', () => {
+                // initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.IN_BEARBEITUNG_JA, false);
+                spyOn(betreuungView, 'isTageschulenAnmeldungAktiv').and.returnValue(true);
+                spyOn(betreuungView, 'isEnabled').and.returnValue(false);
+                spyOn(betreuungView, 'isBetreuungsstatus').and.returnValue(false);
+                spyOn(betreuungView, 'isTagesschule').and.returnValue(true);
+
+                expect(betreuungView.showInstitutionenList()).toBe(false);
+                expect(betreuungView.showInstitutionenAsText()).toBe(true);
+            });
+        });
     });
 
     function initGesuch(typ: TSAntragTyp, status: TSAntragStatus, gesperrtWegenBeschwerde: boolean): TSGesuch {
