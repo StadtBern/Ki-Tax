@@ -55,7 +55,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(FinanzielleSituationService.class)
-@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT })
+@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 public class FinanzielleSituationServiceBean extends AbstractBaseService implements FinanzielleSituationService {
 
 	@Inject
@@ -79,10 +79,9 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	@Inject
 	private GesuchService gesuchService;
 
-
 	@Nonnull
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public FinanzielleSituationContainer saveFinanzielleSituation(@Nonnull FinanzielleSituationContainer finanzielleSituation, String gesuchId) {
 		Objects.requireNonNull(finanzielleSituation);
 		authorizer.checkCreateAuthorizationFinSit(finanzielleSituation);
@@ -96,7 +95,7 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Gesuch saveFinanzielleSituationStart(@Nonnull Gesuch gesuch) {
 		Gesuch modifiedGesuch = gesuchService.updateGesuch(gesuch, false, null);
 		wizardStepService.updateSteps(modifiedGesuch.getId(), null, null, WizardStepName.FINANZIELLE_SITUATION, 1);
@@ -115,7 +114,7 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Collection<FinanzielleSituationContainer> getAllFinanzielleSituationen() {
 		Collection<FinanzielleSituationContainer> finanzielleSituationen = criteriaQueryHelper.getAll(FinanzielleSituationContainer.class);
 		authorizer.checkReadAuthorization(finanzielleSituationen);
@@ -124,13 +123,15 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SACHBEARBEITER_INSTITUTION,
+		SACHBEARBEITER_TRAEGERSCHAFT, ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch) {
 		return finSitRechner.calculateResultateFinanzielleSituation(gesuch, true);
 	}
 
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SACHBEARBEITER_INSTITUTION,
+		SACHBEARBEITER_TRAEGERSCHAFT, ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public void calculateFinanzDaten(@Nonnull Gesuch gesuch) {
 		final BigDecimal minimumEKV = calculateGrenzwertEKV(gesuch);
 		finSitRechner.calculateFinanzDaten(gesuch, minimumEKV);
@@ -143,7 +144,8 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	 * Sollte der Parameter nicht definiert sein, wird 1.00 zurueckgegeben, d.h. keine Grenze fuer EKV
 	 */
 	private BigDecimal calculateGrenzwertEKV(@Nonnull Gesuch gesuch) {
-		final Optional<EbeguParameter> optGrenzwert = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_GRENZWERT_EINKOMMENSVERSCHLECHTERUNG,
+		final Optional<EbeguParameter> optGrenzwert = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey
+				.PARAM_GRENZWERT_EINKOMMENSVERSCHLECHTERUNG,
 			gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
 		if (optGrenzwert.isPresent()) {
 			return MathUtil.ZWEI_NACHKOMMASTELLE.divide(BigDecimal.valueOf(100).subtract(optGrenzwert.get().getValueAsBigDecimal()), BigDecimal.valueOf(100));

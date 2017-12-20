@@ -41,8 +41,10 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
 import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
@@ -66,7 +68,7 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public EinkommensverschlechterungContainer saveEinkommensverschlechterungContainer(
 		@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer, String gesuchId) {
 		Objects.requireNonNull(einkommensverschlechterungContainer);
@@ -94,7 +96,7 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 	}
 
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public void removeEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer) {
 		Validate.notNull(einkommensverschlechterungContainer);
 		einkommensverschlechterungContainer.getGesuchsteller().setEinkommensverschlechterungContainer(null);
@@ -107,7 +109,7 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 	}
 
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public void removeEinkommensverschlechterung(@Nonnull Einkommensverschlechterung einkommensverschlechterung) {
 		Validate.notNull(einkommensverschlechterung);
 		persistence.remove(Einkommensverschlechterung.class, einkommensverschlechterung.getId());
@@ -121,7 +123,7 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 	}
 
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public boolean removeAllEKVOfGesuch(@Nonnull Gesuch gesuch, int yearPlus) {
 		if (yearPlus != 1 && yearPlus != 2) {
 			return false;

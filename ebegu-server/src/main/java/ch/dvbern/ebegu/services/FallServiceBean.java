@@ -104,7 +104,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Fall saveFall(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall);
 		// Den "Besitzer" auf dem Fall ablegen
