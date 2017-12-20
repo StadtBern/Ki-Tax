@@ -49,11 +49,6 @@ public interface Authorizer {
 	void checkWriteAuthorization(@Nullable Gesuch gesuch);
 
 	/**
-	 * prueft ob der aktuelle user berechtigt ist ein gesuch zu erstellen
-	 */
-	void checkCreateAuthorizationGesuch();
-
-	/**
 	 * prueft ob ein Benutzer einen Fall lesen kall
 	 */
 	void checkReadAuthorizationFall(String fallId);

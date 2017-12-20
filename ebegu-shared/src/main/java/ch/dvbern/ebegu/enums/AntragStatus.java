@@ -193,10 +193,6 @@ public enum AntragStatus {
 		VERFUEGT // Damit eine Mutation erstellt werden kann
 	);
 
-	public static final Set<AntragStatus> FOR_SCHULAMT_ROLE_WRITE = EnumSet.of(
-		FREIGABEQUITTUNG,
-		NUR_SCHULAMT); // Wegen Dokumente-Upload Button
-
 	public static final Set<AntragStatus> FOR_STEUERAMT_ROLE_WRITE = EnumSet.of(
 		PRUEFUNG_STV,
 		IN_BEARBEITUNG_STV,
@@ -261,7 +257,8 @@ public enum AntragStatus {
 			case STEUERAMT:
 				return FOR_STEUERAMT_ROLE_WRITE;
 			case SCHULAMT:
-				case ADMINISTRATOR_SCHULAMT:return FOR_SCHULAMT_ROLE_WRITE;
+			case ADMINISTRATOR_SCHULAMT:
+				return FOR_ADMIN_ROLE_WRITE;
 			default:
 				return none;
 		}
@@ -313,11 +310,11 @@ public enum AntragStatus {
 	}
 
 	/**
-	 * @return true wenn das Jugendamt das Gesuch oeffnen darf (Unsichtbar sind also Gesuch die von Gesuchsteller noch
-	 * nicht eingereichte wurden) die Gesuche vom SCH duerfen auch vom JA gesehen werden.
+	 * @return true wenn das JA/SCH das Gesuch oeffnen darf (Unsichtbar sind also Gesuch die von Gesuchsteller noch
+	 * nicht eingereichte wurden)
 	 */
-	public boolean isReadableByJugendamtSteueramt() {
-		//Jugendamt darf keine Gesuche sehen die noch nicht Freigegeben sind
+	public boolean isReadableByJugendamtSchulamtSteueramt() {
+		//JA/SCH darf keine Gesuche sehen die noch nicht Freigegeben sind
 		return !(this.isAnyOfInBearbeitungGS());
 	}
 
