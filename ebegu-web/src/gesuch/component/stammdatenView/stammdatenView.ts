@@ -156,6 +156,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
                 this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);
             }
             this.errorService.clearAll();
+            // todo bei Aenderungen von Kontaktdaten sollte man nicht den ganzen GS updaten sondern nur die Kontakdaten
             return this.gesuchModelManager.updateGesuchsteller(false);
         }
         return undefined;
@@ -267,7 +268,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
      * and the current gesuch is the newest one they may also edit those fields
      */
     public areEmailTelefonEditable(): boolean {
-        if (this.isLastVerfuegtesGesuch && this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerJugendamtRoles())) {
+        if (this.isLastVerfuegtesGesuch && this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles())) {
             return true;
         } else {
             return !this.isGesuchReadonly();

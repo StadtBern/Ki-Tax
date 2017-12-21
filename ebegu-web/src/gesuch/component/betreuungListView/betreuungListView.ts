@@ -78,7 +78,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
     }
 
     public isNotAllowedToRemove(betreuung: TSBetreuung): boolean {
-        if (betreuung.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN && this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getAdministratorJugendamtRole())) {
+        if (betreuung.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN && this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getAdministratorOrAmtRole())) {
             return false;
         } else {
             return this.isKorrekturModusJugendamt();

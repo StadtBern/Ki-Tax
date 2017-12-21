@@ -331,8 +331,8 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         return false;
     }
 
-    public isJugendamt(): boolean {
-        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    public isAmt(): boolean {
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorOrAmtRole());
     }
 
     public isGesuchFreigegeben(): boolean {
@@ -343,15 +343,15 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     public showAblehnungBasisJahrPlus1(): boolean {
-        return (!this.isJugendamt() && this.showEkvi() && this.showJahrPlus1()
+        return (!this.isAmt() && this.showEkvi() && this.showJahrPlus1()
             && this.getEinkommensverschlechterungsInfo().ekvBasisJahrPlus1Annulliert && this.isGesuchFreigegeben())
-            || (this.isJugendamt() && this.showEkvi() && this.showJahrPlus1());
+            || (this.isAmt() && this.showEkvi() && this.showJahrPlus1());
     }
 
     public showAblehnungBasisJahrPlus2(): boolean {
-        return (!this.isJugendamt() && this.showEkvi() && this.showJahrPlus2()
+        return (!this.isAmt() && this.showEkvi() && this.showJahrPlus2()
             && this.getEinkommensverschlechterungsInfo().ekvBasisJahrPlus2Annulliert && this.isGesuchFreigegeben())
-            || (this.isJugendamt() && this.showEkvi() && this.showJahrPlus2());
+            || (this.isAmt() && this.showEkvi() && this.showJahrPlus2());
     }
 
     public isFinanzielleSituationRequired(): boolean {

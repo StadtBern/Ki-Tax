@@ -21,6 +21,7 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import ErrorService from '../../errors/service/ErrorService';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import ITranslateService = angular.translate.ITranslateService;
+declare let require: any;
 let template = require('./dv-navigation.html');
 let style = require('./dv-navigation.less');
 

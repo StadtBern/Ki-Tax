@@ -158,17 +158,18 @@ export class DVDokumenteListController {
         // - Alle anderen Rollen: nichts
         let readonly: boolean = this.isGesuchReadonly();
         let roleLoggedIn: TSRole = this.authServiceRS.getPrincipalRole();
-        let documentUploadedByJA: boolean = true; // by default true in case there is no uploadUser
+        let documentUploadedByAmt: boolean = true; // by default true in case there is no uploadUser
         if (dokument.userUploaded) {
             let roleDocumentUpload: TSRole = dokument.userUploaded.role;
-            documentUploadedByJA = (roleDocumentUpload === TSRole.SACHBEARBEITER_JA || roleDocumentUpload === TSRole.ADMIN || roleDocumentUpload === TSRole.SUPER_ADMIN);
+            documentUploadedByAmt = (roleDocumentUpload === TSRole.SACHBEARBEITER_JA || roleDocumentUpload === TSRole.ADMIN
+                || roleDocumentUpload === TSRole.SCHULAMT || roleDocumentUpload === TSRole.ADMINISTRATOR_SCHULAMT || roleDocumentUpload === TSRole.SUPER_ADMIN);
         }
         if (roleLoggedIn === TSRole.GESUCHSTELLER) {
             return !readonly;
-        } else if (roleLoggedIn === TSRole.SACHBEARBEITER_JA) {
-            return !readonly && documentUploadedByJA;
-        } else if (roleLoggedIn === TSRole.ADMIN || roleLoggedIn === TSRole.SUPER_ADMIN) {
-            return documentUploadedByJA;
+        } else if (roleLoggedIn === TSRole.SACHBEARBEITER_JA || roleLoggedIn === TSRole.SCHULAMT) {
+            return !readonly && documentUploadedByAmt;
+        } else if (roleLoggedIn === TSRole.ADMIN || roleLoggedIn === TSRole.SUPER_ADMIN || roleLoggedIn === TSRole.ADMINISTRATOR_SCHULAMT) {
+            return documentUploadedByAmt;
         }
         return false;
     }
