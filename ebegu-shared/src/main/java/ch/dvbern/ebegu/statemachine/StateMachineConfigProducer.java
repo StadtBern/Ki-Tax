@@ -48,7 +48,8 @@ public class StateMachineConfigProducer {
 
 		gesuchFSMConfig.configure(AntragStatus.IN_BEARBEITUNG_JA)
 			.permit(AntragEvents.MAHNEN, AntragStatus.ERSTE_MAHNUNG)
-			.permit(AntragEvents.GEPRUEFT, AntragStatus.GEPRUEFT);
+			.permit(AntragEvents.GEPRUEFT, AntragStatus.GEPRUEFT)
+			.permit(AntragEvents.ABSCHLIESSEN, AntragStatus.NUR_SCHULAMT);
 
 		gesuchFSMConfig.configure(AntragStatus.GEPRUEFT)
 			.permit(AntragEvents.ZUWEISUNG_SCHULAMT, AntragStatus.NUR_SCHULAMT)

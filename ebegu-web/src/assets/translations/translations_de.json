@@ -491,6 +491,7 @@
     "DOKUMENTE_HOCHGELADEN": "Dokumente hochgeladen",
     "BESCHWERDE_HAENGIG_UPPER": "BESCHWERDE HÄNGIG",
     "BESCHWERDE_ABSCHLIESSEN_UPPER": "BESCHWERDE ABSCHLIESSEN",
+    "ABSCHLIESSEN_UPPER": "ABSCHLIESSEN",
     "MAHNUNG_FEHLENDE_DOKUMENTE": "Fehlende Dokumente",
     "MAHNUNG_FRISTABLAUF": "Fristablauf",
     "PDF_MAHNUNG_ANZEIGEN": "Mahnbrief als PDF anzeigen",
@@ -857,6 +858,8 @@
     "STORNIERT": "Storniert",
     "BESCHWERDE_HAENGIG": "Beschwerde hängig",
     "BESCHWERDE_ABSCHLIESSEN": "Beschwerde abschliessen",
+    "ABSCHLIESSEN": "Gesuch abschliessen",
+    "BESCHREIBUNG_GESUCH_ABSCHLIESSEN": "Möchten Sie das Gesuch wirklich abschliessen? Wenn Sie auf Ja klicken, ändert der Status des Gesuches auf \"Schulamt\" und kann nicht bearbeitet werden.",
     "ABGESCHLOSSEN": "Abgeschlossen",
     "CONFIRM_GESUCH_STATUS_GEPRUEFT": "Möchten Sie das Gesuch wirklich als \"geprüft\" setzen?",
     "CONFIRM_GESUCH_STATUS_VERFUEGEN": "Möchten Sie den Verfügungsprozess wirklich starten?",
@@ -1189,6 +1192,7 @@
     "SCHULAMT_ANMELDUNG_UEBERNEHMEN": "Anmeldung übernehmen",
     "SCHULAMT_ANMELDUNG_ABLEHNEN": "Anmeldung ablehnen",
     "CONFIRM_UEBERNAHME_SCHULAMT": "Anmeldung definitiv übernehmen?",
-    "BESCHREIBUNG_UEBERNAHME_SCHULAMT": "Die BetreuungsId wurde ins Clipboard übernommen, bitte übernehmen Sie die Daten in Scolaris, bevor Sie okay klicken"
-
+    "BESCHREIBUNG_UEBERNAHME_SCHULAMT": "Die BetreuungsId wurde ins Clipboard übernommen, bitte übernehmen Sie die Daten in Scolaris, bevor Sie okay klicken",
+    "AKZEPTIERT": "Finanzielle Situation akzeptiert",
+    "ABGELEHNT": "Finanzielle Situation abgelehnt"
 }

@@ -32,6 +32,7 @@ import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.FinSitStatus;
 
 /**
  * Service zum Verwalten von Gesuche
@@ -218,6 +219,14 @@ public interface GesuchService {
 	Gesuch setBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch);
 
 	/**
+	 * Setz "Nur_Schulamt" Gesuche auf den Status NUR_SCHULAMT
+	 *
+	 * @return Gibt das aktualisierte gegebene Gesuch zurueck
+	 */
+	@Nonnull
+	Gesuch setAbschliessen(@Nonnull Gesuch gesuch);
+
+	/**
 	 * Setzt das gegebene Gesuch als VERFUEGT und bei allen Gescuhen der Periode den Flag
 	 * gesperrtWegenBeschwerde auf false
 	 *
@@ -359,4 +368,6 @@ public interface GesuchService {
 	 * (faelslicherweise) auf OK gesetzt wurde, werden durch diese Methode wieder verfuegt.
 	 */
 	void gesuchVerfuegen(@NotNull Gesuch gesuch);
+
+	int changeFinSitStatus(String antragId, FinSitStatus finSitStatus);
 }

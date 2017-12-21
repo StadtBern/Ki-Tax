@@ -41,6 +41,7 @@ import javax.interceptor.Interceptors;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
@@ -85,6 +86,7 @@ import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
@@ -638,6 +640,23 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			persistence.merge(gesuchLoop);
 		});
 		return gesuch;
+	}
+
+	@Override
+	@Nonnull
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
+	public Gesuch setAbschliessen(@Nonnull Gesuch gesuch) {
+		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			gesuch.setTimestampVerfuegt(LocalDateTime.now());
+			gesuch.setGueltig(true);
+			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
+			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
+
+			return persistence.merge(gesuch);
+
+		}else{
+			throw new EbeguRuntimeException("setAbschliessen", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, "Nur reine Schulamt-Gesuche können abgeschlossen werden");
+		}
 	}
 
 	@Override
@@ -1418,6 +1437,20 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		LOG.info("Gesuchsperiode: " + gesuch.getGesuchsperiode().getGesuchsperiodeString());
 		LOG.info("Gesuch-Id: " + gesuch.getId());
 		LOG.info("****************************************************");
+	}
+
+	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
+	public int changeFinSitStatus(String antragId, FinSitStatus finSitStatus) {
+		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaUpdate<Gesuch> update = cb.createCriteriaUpdate(Gesuch.class);
+		Root<Gesuch> root = update.from(Gesuch.class);
+		update.set(Gesuch_.finSitStatus, finSitStatus);
+
+		Predicate predGesuch = cb.equal(root.get(Gesuch_.id), antragId);
+		update.where(predGesuch);
+
+		return persistence.getEntityManager().createQuery(update).executeUpdate();
 	}
 }
 

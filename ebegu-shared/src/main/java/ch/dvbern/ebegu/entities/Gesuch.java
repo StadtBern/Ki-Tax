@@ -54,6 +54,7 @@ import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
@@ -194,6 +195,11 @@ public class Gesuch extends AbstractEntity implements Searchable {
 
 	@Column(nullable = false)
 	private boolean hasFSDokument = true;
+
+	@Enumerated(value = EnumType.STRING)
+	@Column(nullable = true)
+	@Nullable
+	private FinSitStatus finSitStatus;
 
 	@Column(nullable = false)
 	private boolean gesperrtWegenBeschwerde = false;
@@ -489,6 +495,15 @@ public class Gesuch extends AbstractEntity implements Searchable {
 
 	public void setDokumenteHochgeladen(Boolean dokumenteHochgeladen) {
 		this.dokumenteHochgeladen = dokumenteHochgeladen;
+	}
+
+	@Nullable
+	public FinSitStatus getFinSitStatus() {
+		return finSitStatus;
+	}
+
+	public void setFinSitStatus(@Nullable FinSitStatus finSitStatus) {
+		this.finSitStatus = finSitStatus;
 	}
 
 	@Override
