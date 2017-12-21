@@ -1415,7 +1415,7 @@ export default class GesuchModelManager {
     /**
      * Indicates whether FinSit must be filled out or not. It supposes that it is enabled.
      */
-    public isFinanzielleSituationRequired(): boolean {
+    public isFinanzielleSituationDesired(): boolean {
         return !this.getGesuchsperiode().hasTagesschulenAnmeldung()
             || !this.areThereOnlySchulamtAngebote()
             || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht === true
