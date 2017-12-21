@@ -183,8 +183,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		Benutzer benutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new IllegalStateException("Benutzer ist nicht eingeloggt!"));
 		Benutzer verantwortlicher = mitteilung.getFall().getVerantwortlicher();
 		if (verantwortlicher == null) {
-			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey
-				.DEFAULT_VERANTWORTLICHER);
+			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(
+				ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
 			if (StringUtils.isNotEmpty(propertyDefaultVerantwortlicher)) {
 				Optional<Benutzer> defaultVerantwortlicherOptional = benutzerService.findBenutzer(propertyDefaultVerantwortlicher);
 				if (defaultVerantwortlicherOptional.isPresent()) {

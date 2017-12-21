@@ -205,8 +205,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * Steps von diesen Aenderungen beeinflusst wurden. Mit dieser Information werden alle betroffenen Status dementsprechend geaendert.
 	 * Dazu werden die Angaben in oldEntity mit denen in newEntity verglichen und dann wird entsprechend reagiert
 	 */
-	private void updateAllStatus(List<WizardStep> wizardSteps, @Nullable AbstractEntity oldEntity, @Nullable AbstractEntity newEntity, WizardStepName
-		stepName, @Nullable Integer substep) {
+	private void updateAllStatus(List<WizardStep> wizardSteps, @Nullable AbstractEntity oldEntity, @Nullable AbstractEntity newEntity,
+		WizardStepName stepName, @Nullable Integer substep) {
 		if (WizardStepName.FAMILIENSITUATION == stepName && oldEntity instanceof Familiensituation && newEntity instanceof Familiensituation) {
 			updateAllStatusForFamiliensituation(wizardSteps, (Familiensituation) oldEntity, (Familiensituation) newEntity);
 		} else if (WizardStepName.GESUCHSTELLER == stepName) {
@@ -712,8 +712,9 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * This should be called after removing or adding a Betreuung.
 	 */
 	private void checkFinSitStatusForBetreuungen(@Nonnull WizardStep wizardStep) {
-		if (wizardStep.getWizardStepName() == WizardStepName.EINKOMMENSVERSCHLECHTERUNG || wizardStep.getWizardStepName() == WizardStepName
-			.FINANZIELLE_SITUATION) {
+		if (wizardStep.getWizardStepName() == WizardStepName.EINKOMMENSVERSCHLECHTERUNG
+			|| wizardStep.getWizardStepName() == WizardStepName.FINANZIELLE_SITUATION) {
+
 			final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
 
 			BetreuungsangebotTyp dominantType = getDominantBetruungsangebotTyp(betreuungenFromGesuch);
