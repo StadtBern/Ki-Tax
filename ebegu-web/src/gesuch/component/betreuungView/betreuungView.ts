@@ -302,7 +302,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public showInstitutionenAsText(): boolean {
-        return (this.isTageschulenAnmeldungAktiv() && !this.isEnabled())
+        return (this.isTageschulenAnmeldungAktiv() && !this.isEnabled() && !this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION))
             || (!this.isTageschulenAnmeldungAktiv() && !this.isEnabled() && !this.isTagesschule());
     }
 
