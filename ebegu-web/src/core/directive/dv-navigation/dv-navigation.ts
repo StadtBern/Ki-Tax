@@ -251,7 +251,7 @@ export class NavigatorController {
 
             } else if (this.dvSubStep === 2) {
                 // noinspection NegatedIfStatementJS - the other way makes no sense
-                if (!this.gesuchModelManager.isFinanzielleSituationRequired()) {
+                if (!this.gesuchModelManager.isFinanzielleSituationEnabled() || !this.gesuchModelManager.isFinanzielleSituationRequired()) {
                     this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
                 } else {
                     this.navigateToStepFinanzielleSituation('1');
