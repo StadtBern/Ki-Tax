@@ -638,7 +638,7 @@
     "BETREUUNGSANGEBOT_WAEHLEN_HELP": "Falls Ihr Kind in mehr als einer Institution betreut wird, bspw. Tagesstätte für Schulkinder <i>und</i> Tagesschule, fügen Sie bitte weitere Angebote hinzu.<br/>Wichtig: In dem Moment, in dem Sie das Betreuungsangebot für Ihr Kind wählen, erhält die betreuende Institution (Kita, Tagi, Tageseltern) online eine Aufforderung, Ihre Angaben zu bestätigen und das Betreuungspensum einzugeben. Dies kann bis zu vier Tage dauern. Erst nach dieser Bestätigung können Sie Ihr Gesuch abschliessen und die Freigabequittung ausdrucken.",
     "FAMILIENSITUATION_HELP": "Sie können das Gesuch allein oder gemeinsam mit dem anderen Elternteil stellen, selbst wenn Sie nicht (mehr) in einer Beziehung leben.<br><br>Wenn Sie inzwischen <b>mit einer anderen Person</b>:<br><li>verheiratet sind,</li><li>in eingetragener Partnerschaft,</li><li>seit mehr als 5 Jahren im Konkubinat oder</li><li>im Konkubinat mit gemeinsamem Kind leben,</li><br>müssen Sie das Gesuch zusammen mit dieser Person ausfüllen.",
     "KORRESPONDENZADR_HELP": "Auf Wunsch kann die Korrespondenz an eine andere Adresse geschickt werden, z.B. an einen Vormund oder an den Sozialdienst.",
-    "RECHNUNGSADR_HELP": "Die Rechnungsadresse muss nur angegeben werden, wenn Schulamtangebote (Tagesschule) erfasst werden und wenn die Rechnungsadresse von der Wohnadresse abweicht.",
+    "RECHNUNGSADR_HELP": "Dieses Feld müssen Sie nur ausfüllen, wenn Sie Ihr Kind für die Tagesschule bzw. die Ferieninsel anmelden.",
     "GESUCH": "Gesuch",
     "ERSTGESUCH": "Gesuch",
     "ERNEUERUNGSGESUCH": "Gesuch",
