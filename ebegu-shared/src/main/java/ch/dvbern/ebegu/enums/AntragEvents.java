@@ -19,7 +19,6 @@ package ch.dvbern.ebegu.enums;
  * Enum fuer den Status Events vom Gesuch.
  */
 public enum AntragEvents {
-	FREIGEBEN_SCHULAMT,
 	FREIGABEQUITTUNG_ERSTELLEN,
 	FREIGEBEN,
 	ERSTES_OEFFNEN_JA,

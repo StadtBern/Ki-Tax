@@ -108,7 +108,7 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	public Optional<FinanzielleSituationContainer> findFinanzielleSituation(@Nonnull String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
 		FinanzielleSituationContainer finanzielleSituation = persistence.find(FinanzielleSituationContainer.class, id);
-		authorizer.checkReadAuthorization(finanzielleSituation);
+		authorizer.checkReadAuthorization(finanzielleSituation); //TODO: EBEGU-1610
 		return Optional.ofNullable(finanzielleSituation);
 	}
 
