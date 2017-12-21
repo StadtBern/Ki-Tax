@@ -37,12 +37,10 @@ public class StateMachineConfigProducer {
 	public StateMachineConfig<AntragStatus, AntragEvents> createStateMachineConfig() {
 
 		gesuchFSMConfig.configure(AntragStatus.IN_BEARBEITUNG_GS)
-			.permit(AntragEvents.FREIGEBEN_SCHULAMT, AntragStatus.NUR_SCHULAMT)
 			.permit(AntragEvents.FREIGABEQUITTUNG_ERSTELLEN, AntragStatus.FREIGABEQUITTUNG)
 			.permit(AntragEvents.FREIGEBEN, AntragStatus.FREIGEGEBEN);
 
 		gesuchFSMConfig.configure(AntragStatus.FREIGABEQUITTUNG)
-			.permit(AntragEvents.FREIGEBEN_SCHULAMT, AntragStatus.NUR_SCHULAMT)
 			.permit(AntragEvents.FREIGEBEN, AntragStatus.FREIGEGEBEN);
 
 		gesuchFSMConfig.configure(AntragStatus.FREIGEGEBEN)

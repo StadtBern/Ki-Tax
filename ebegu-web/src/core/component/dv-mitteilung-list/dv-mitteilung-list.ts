@@ -105,7 +105,7 @@ export class DVMitteilungListController {
                 } else {
                     this.loadEntwurf();
                     // Wenn JA oder Institution -> Neue Mitteilungen als gelesen markieren
-                    if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerJugendamtRoles())) {
+                    if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles())) {
                         this.setAllMitteilungenGelesen().then((response) => {
                             this.loadAllMitteilungen();
                             if (this.$rootScope) {
@@ -340,7 +340,7 @@ export class DVMitteilungListController {
     }
 
     public canApplyBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
-        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorOrAmtRole());
     }
 
     $postLink() {
