@@ -601,11 +601,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			// Step Freigabe gruen
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
 
-/*			// Step Verfuegen gruen, falls NUR_SCHULAMT
-			if (AntragStatus.NUR_SCHULAMT == gesuch.getStatus()) {
-				wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
-			}*/
-
 			if (username != null) {
 				Optional<Benutzer> currentUser = benutzerService.findBenutzer(username);
 				if (currentUser.isPresent() && !currentUser.get().getRole().isRolleSchulamt()) {
@@ -675,18 +670,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		});
 		return gesuch;
 	}
-
-	/**
-	 * wenn ein Gesuch nur Schulamt Betreuuungen hat so geht es beim barcode Scannen in den Zustand NUR_SCHULAMTM; sonst Freigegeben
-	 */
-/*	private AntragStatus calculateFreigegebenStatus(@Nonnull Gesuch gesuch) {
-		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
-			gesuch.setTimestampVerfuegt(LocalDateTime.now());
-			gesuch.setGueltig(true);
-			return AntragStatus.NUR_SCHULAMT;
-		}
-		return AntragStatus.FREIGEGEBEN;
-	}*/
 
 	@Override
 	@Nonnull
