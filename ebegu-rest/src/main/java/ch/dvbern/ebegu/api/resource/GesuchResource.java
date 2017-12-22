@@ -509,9 +509,8 @@ public class GesuchResource {
 		final String antragId = converter.toEntityId(antragJaxId);
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragId);
 
-		resourceHelper.assertGesuchStatusEqual(antragId, AntragStatusDTO.IN_BEARBEITUNG_JA, AntragStatusDTO.GEPRUEFT);
-
 		if (gesuch.isPresent()) {
+			resourceHelper.assertGesuchStatusEqual(antragId, AntragStatusDTO.IN_BEARBEITUNG_JA, AntragStatusDTO.GEPRUEFT);
 			Gesuch persistedGesuch = gesuchService.setAbschliessen(gesuch.get());
 			return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 		}
@@ -853,10 +852,9 @@ public class GesuchResource {
 
 		if (gesuchService.changeFinSitStatus(antragId, finSitStatus) == 1) {
 			return Response.ok().build();
-		} else {
-			throw new EbeguEntityNotFoundException("changeFinSitStatus", ErrorCodeEnum
-				.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
 		}
+		throw new EbeguEntityNotFoundException("changeFinSitStatus", ErrorCodeEnum
+			.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
 
 	}
 }

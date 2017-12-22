@@ -369,5 +369,9 @@ public interface GesuchService {
 	 */
 	void gesuchVerfuegen(@NotNull Gesuch gesuch);
 
-	int changeFinSitStatus(String antragId, FinSitStatus finSitStatus);
+	/**
+	 * Setzt den uebergebene FinSitStatus im gegebenen Gesuch
+	 * @return 1 wenn alles ok
+	 */
+	int changeFinSitStatus(@Nonnull String antragId, @Nonnull FinSitStatus finSitStatus);
 }

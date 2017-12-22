@@ -595,7 +595,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				}
 			}
 
-			// Den Gesuchsstatus setzen auf Freigageben setzen (auch bei nur Schulamt-Gesuchen)
+			// Den Gesuchsstatus auf Freigageben setzen (auch bei nur Schulamt-Gesuchen)
 			gesuch.setStatus(AntragStatus.FREIGEGEBEN);
 
 			// Step Freigabe gruen
@@ -647,11 +647,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
 
-			return persistence.merge(gesuch);
+			if (gesuch.getVorgaengerId() != null) {
+				final Optional<Gesuch> vorgaengerOpt = findGesuch(gesuch.getVorgaengerId());
+				vorgaengerOpt.ifPresent(this::setGesuchUngueltig);
+			}
 
-		}else{
-			throw new EbeguRuntimeException("setAbschliessen", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, "Nur reine Schulamt-Gesuche können abgeschlossen werden");
+			return persistence.merge(gesuch);
 		}
+		throw new EbeguRuntimeException("setAbschliessen", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, "Nur reine Schulamt-Gesuche können abgeschlossen werden");
 	}
 
 	@Override
@@ -1337,9 +1340,18 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			gesuch.setTimestampVerfuegt(LocalDateTime.now());
 			gesuch.setGueltig(true);
 			if (neustesVerfuegtesGesuchFuerGesuch.isPresent() && !neustesVerfuegtesGesuchFuerGesuch.get().getId().equals(gesuch.getId())) {
-				neustesVerfuegtesGesuchFuerGesuch.get().setGueltig(false);
-				updateGesuch(neustesVerfuegtesGesuchFuerGesuch.get(), false, null, false);
+				setGesuchUngueltig(neustesVerfuegtesGesuchFuerGesuch.get());
 			}
+		}
+	}
+
+	/**
+	 * Setzt das Gesuch auf ungueltig, falls es gueltig ist
+	 */
+	private void setGesuchUngueltig(@Nonnull Gesuch gesuch) {
+		if (gesuch.isGueltig()) {
+			gesuch.setGueltig(false);
+			updateGesuch(gesuch, false, null, false);
 		}
 	}
 
@@ -1424,7 +1436,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
-	public int changeFinSitStatus(String antragId, FinSitStatus finSitStatus) {
+	public int changeFinSitStatus(@Nonnull String antragId, @Nonnull FinSitStatus finSitStatus) {
 		CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaUpdate<Gesuch> update = cb.createCriteriaUpdate(Gesuch.class);
 		Root<Gesuch> root = update.from(Gesuch.class);

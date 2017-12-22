@@ -196,7 +196,7 @@ public class Gesuch extends AbstractEntity implements Searchable {
 	@Column(nullable = false)
 	private boolean hasFSDokument = true;
 
-	@Enumerated(value = EnumType.STRING)
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = true)
 	@Nullable
 	private FinSitStatus finSitStatus;

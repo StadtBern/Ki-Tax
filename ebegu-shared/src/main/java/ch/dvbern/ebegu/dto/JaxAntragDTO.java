@@ -141,6 +141,7 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 
 	private boolean dokumenteHochgeladen;
 
+	@Nullable
 	private FinSitStatus finSitStatus;
 
 	public String getAntragId() {
@@ -299,11 +300,12 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 		this.dokumenteHochgeladen = dokumenteHochgeladen;
 	}
 
+	@Nullable
 	public FinSitStatus getFinSitStatus() {
 		return finSitStatus;
 	}
 
-	public void setFinSitStatus(FinSitStatus finSitStatus) {
+	public void setFinSitStatus(@Nullable FinSitStatus finSitStatus) {
 		this.finSitStatus = finSitStatus;
 	}
 }
