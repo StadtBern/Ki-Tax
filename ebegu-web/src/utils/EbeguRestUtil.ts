@@ -652,6 +652,7 @@ export default class EbeguRestUtil {
         restGesuch.timestampVerfuegt = DateUtil.momentToLocalDateTime(gesuch.timestampVerfuegt);
         restGesuch.gueltig = gesuch.gueltig;
         restGesuch.dokumenteHochgeladen = gesuch.dokumenteHochgeladen;
+        restGesuch.finSitStatus = gesuch.finSitStatus;
         return restGesuch;
     }
 
@@ -677,6 +678,7 @@ export default class EbeguRestUtil {
             gesuchTS.timestampVerfuegt = DateUtil.localDateTimeToMoment(gesuchFromServer.timestampVerfuegt);
             gesuchTS.gueltig = gesuchFromServer.gueltig;
             gesuchTS.dokumenteHochgeladen = gesuchFromServer.dokumenteHochgeladen;
+            gesuchTS.finSitStatus = gesuchFromServer.finSitStatus;
             return gesuchTS;
         }
         return undefined;

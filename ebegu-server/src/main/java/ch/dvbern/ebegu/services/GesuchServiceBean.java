@@ -41,6 +41,7 @@ import javax.interceptor.Interceptors;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
@@ -85,6 +86,7 @@ import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
@@ -593,16 +595,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				}
 			}
 
-			// Den Gesuchsstatus setzen
-			gesuch.setStatus(calculateFreigegebenStatus(gesuch));
+			// Den Gesuchsstatus auf Freigageben setzen (auch bei nur Schulamt-Gesuchen)
+			gesuch.setStatus(AntragStatus.FREIGEGEBEN);
 
 			// Step Freigabe gruen
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
-
-			// Step Verfuegen gruen, falls NUR_SCHULAMT
-			if (AntragStatus.NUR_SCHULAMT == gesuch.getStatus()) {
-				wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
-			}
 
 			if (username != null) {
 				Optional<Benutzer> currentUser = benutzerService.findBenutzer(username);
@@ -642,6 +639,26 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
+	public Gesuch setAbschliessen(@Nonnull Gesuch gesuch) {
+		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			gesuch.setTimestampVerfuegt(LocalDateTime.now());
+			gesuch.setGueltig(true);
+			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
+			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
+
+			if (gesuch.getVorgaengerId() != null) {
+				final Optional<Gesuch> vorgaengerOpt = findGesuch(gesuch.getVorgaengerId());
+				vorgaengerOpt.ifPresent(this::setGesuchUngueltig);
+			}
+
+			return persistence.merge(gesuch);
+		}
+		throw new EbeguRuntimeException("setAbschliessen", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, "Nur reine Schulamt-Gesuche können abgeschlossen werden");
+	}
+
+	@Override
+	@Nonnull
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
 	public Gesuch removeBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch) {
 		final List<Gesuch> allGesucheForFall = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuch.getGesuchsperiode());
@@ -655,18 +672,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			persistence.merge(gesuchLoop);
 		});
 		return gesuch;
-	}
-
-	/**
-	 * wenn ein Gesuch nur Schulamt Betreuuungen hat so geht es beim barcode Scannen in den Zustand NUR_SCHULAMTM; sonst Freigegeben
-	 */
-	private AntragStatus calculateFreigegebenStatus(@Nonnull Gesuch gesuch) {
-		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
-			gesuch.setTimestampVerfuegt(LocalDateTime.now());
-			gesuch.setGueltig(true);
-			return AntragStatus.NUR_SCHULAMT;
-		}
-		return AntragStatus.FREIGEGEBEN;
 	}
 
 	@Override
@@ -1335,9 +1340,18 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			gesuch.setTimestampVerfuegt(LocalDateTime.now());
 			gesuch.setGueltig(true);
 			if (neustesVerfuegtesGesuchFuerGesuch.isPresent() && !neustesVerfuegtesGesuchFuerGesuch.get().getId().equals(gesuch.getId())) {
-				neustesVerfuegtesGesuchFuerGesuch.get().setGueltig(false);
-				updateGesuch(neustesVerfuegtesGesuchFuerGesuch.get(), false, null, false);
+				setGesuchUngueltig(neustesVerfuegtesGesuchFuerGesuch.get());
 			}
+		}
+	}
+
+	/**
+	 * Setzt das Gesuch auf ungueltig, falls es gueltig ist
+	 */
+	private void setGesuchUngueltig(@Nonnull Gesuch gesuch) {
+		if (gesuch.isGueltig()) {
+			gesuch.setGueltig(false);
+			updateGesuch(gesuch, false, null, false);
 		}
 	}
 
@@ -1418,6 +1432,20 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		LOG.info("Gesuchsperiode: " + gesuch.getGesuchsperiode().getGesuchsperiodeString());
 		LOG.info("Gesuch-Id: " + gesuch.getId());
 		LOG.info("****************************************************");
+	}
+
+	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
+	public int changeFinSitStatus(@Nonnull String antragId, @Nonnull FinSitStatus finSitStatus) {
+		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaUpdate<Gesuch> update = cb.createCriteriaUpdate(Gesuch.class);
+		Root<Gesuch> root = update.from(Gesuch.class);
+		update.set(Gesuch_.finSitStatus, finSitStatus);
+
+		Predicate predGesuch = cb.equal(root.get(Gesuch_.id), antragId);
+		update.where(predGesuch);
+
+		return persistence.getEntityManager().createQuery(update).executeUpdate();
 	}
 }
 

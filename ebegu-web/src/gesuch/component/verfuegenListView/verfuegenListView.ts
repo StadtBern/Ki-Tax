@@ -47,12 +47,13 @@ import GesuchRS from '../../service/gesuchRS.rest';
 import {BemerkungenDialogController} from '../../dialog/BemerkungenDialogController';
 import AuthenticationUtil from '../../../utils/AuthenticationUtil';
 import ITimeoutService = angular.ITimeoutService;
+import {EnumEx} from '../../../utils/EnumEx';
+import {TSFinSitStatus} from '../../../models/enums/TSFinSitStatus';
 
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 let bemerkungDialogTempl = require('../../dialog/bemerkungenDialogTemplate.html');
-
 
 export class VerfuegenListViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -71,6 +72,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     mahnungList: TSMahnung[];
     private mahnung: TSMahnung;
     private tempAntragStatus: TSAntragStatus;
+    finSitStatus: Array<string>;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager',
         'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope', 'GesuchRS', '$timeout'];
@@ -121,6 +123,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
         }
         this.refreshKinderListe();
+        this.finSitStatus = EnumEx.getNames(TSFinSitStatus);
     }
 
     private refreshKinderListe(): IPromise<any> {
@@ -194,9 +197,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
         if (isGesuchsteller) {
             let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-            return isAnyStatusOfVerfuegt(status) && this.getGesuch().hasFSDokument;
+            return isAnyStatusOfVerfuegt(status) && this.getGesuch().hasFSDokument && !this.isFinSitAbglehnt();
         }
-        return this.getGesuch().hasFSDokument;
+        return this.getGesuch().hasFSDokument && !this.isFinSitAbglehnt();
 
     }
 
@@ -279,8 +282,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                     // For this reason we have to navigate directly out of the gesuch once it has been saved. We navigate to the
                     // default start page for the current role.
                     // createNeededPDFs is not being called for the same reason. Anyway, the Gesuch vanishes for the role JA and is only
-                    // available for the role SCHULAMT/ADMINISTRATOR_SCHULAMT, so JA doesn't need the PDFs to be created. When a Schulamt worker opens this Gesuch,
-                    // she can generate the PDFs by clicking on the corresponding links
+                    // available for the role SCHULAMT/ADMINISTRATOR_SCHULAMT, so JA doesn't need the PDFs to be created. When a Schulamt worker opens this
+                    // Gesuch, she can generate the PDFs by clicking on the corresponding links
                     AuthenticationUtil.navigateToStartPageForRole(this.authServiceRs.getPrincipal(), this.$state);
                     return this.gesuchModelManager.getGesuch();
                 } else { // for NUR_SCHULAMT this makes no sense
@@ -430,7 +433,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      */
     public showGeprueft(): boolean {
         return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))
-            && this.wizardStepManager.areAllStepsOK(this.getGesuch()) && this.mahnung === undefined && !this.isGesuchReadonly();
+            && this.wizardStepManager.areAllStepsOK(this.getGesuch()) && this.mahnung === undefined
+            && !this.gesuchModelManager.areThereOnlySchulamtAngebote()
+            && !this.isGesuchReadonly();
     }
 
     /**
@@ -507,6 +512,40 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return TSAntragStatus.BESCHWERDE_HAENGIG === status;
     }
 
+    public showAbschliessen(): boolean {
+        let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
+        return (TSAntragStatus.IN_BEARBEITUNG_JA === status || TSAntragStatus.GEPRUEFT === status)
+            && this.gesuchModelManager.areThereOnlySchulamtAngebote();
+    }
+
+    public isFinSitChoosen(): boolean {
+        if (this.getGesuch() && this.getGesuch().finSitStatus) {
+            return true;
+        }
+        return false;
+    }
+
+    public isFinSitAbglehnt() {
+        if (this.isFinSitChoosen() && this.getGesuch().finSitStatus !== TSFinSitStatus.AKZEPTIERT) {
+            return true;
+        }
+        return false;
+    }
+
+    public setAbschliessen(): IPromise<TSGesuch> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'ABSCHLIESSEN',
+            deleteText: 'BESCHREIBUNG_GESUCH_ABSCHLIESSEN',
+            parentController: undefined,
+            elementID: undefined
+        }).then(() => {
+            return this.gesuchRS.setAbschliessen(this.getGesuch().id).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+                return this.gesuchModelManager.getGesuch();
+            });
+        });
+    }
+
     public setGesuchStatusBeschwerdeHaengig(): IPromise<TSGesuch> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'BESCHWERDE_HAENGIG',
@@ -533,6 +572,22 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                 return this.gesuchModelManager.getGesuch();
             });
         });
+    }
+
+    public changeFinSitStatus() {
+        this.gesuchRS.changeFinSitStatus(this.getGesuch().id, this.getGesuch().finSitStatus).then((response: any) => {
+            this.setHasFSDokumentAccordingToFinSitState();
+            this.gesuchModelManager.setGesuch(this.getGesuch());
+            this.form.$setPristine();
+        });
+    }
+
+    private setHasFSDokumentAccordingToFinSitState() {
+        if (this.isFinSitAbglehnt()) {
+            this.getGesuch().hasFSDokument = false;
+        } else {
+            this.getGesuch().hasFSDokument = true;
+        }
     }
 
     public fsDokumentChanged(): void {
