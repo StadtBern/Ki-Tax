@@ -510,7 +510,7 @@ public class GesuchResource {
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragId);
 
 		if (gesuch.isPresent()) {
-			resourceHelper.assertGesuchStatusEqual(antragId, AntragStatusDTO.IN_BEARBEITUNG_JA, AntragStatusDTO.GEPRUEFT);
+			resourceHelper.assertGesuchStatusEqual(antragId, AntragStatusDTO.IN_BEARBEITUNG_JA);
 			Gesuch persistedGesuch = gesuchService.setAbschliessen(gesuch.get());
 			return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 		}
