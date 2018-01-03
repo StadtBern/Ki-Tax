@@ -924,21 +924,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		//prüfen ob Gesuch ist gültig, und via GesuchService oder Cache holen, inkl. Kind & Betreuung
 		if (!gesuch.isGueltig()) {
 
-			gueltigeGesuch = neustesVerfuegtesGesuchCache.getOrDefault(gesuch.getFall().getFallNummer(),
-				gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(),false)
-					.orElse(gesuch));
-
-			Optional<KindContainer> gueltigeKind = gueltigeGesuch.getKindContainers().stream().filter(kindContainer -> kindContainer
-					.getKindNummer().equals(zeitabschnitt.getVerfuegung().getBetreuung().getKind().getKindNummer()))
-				.findFirst();
-
-			if (gueltigeKind.isPresent()) {
-				gueltigeBetreuung = gueltigeKind.get().getBetreuungen().stream().filter(betreuung -> betreuung
-					.getBetreuungNummer()
-					.equals(zeitabschnitt.getVerfuegung().getBetreuung().getBetreuungNummer()))
-					.findFirst()
-					.orElse(zeitabschnitt.getVerfuegung().getBetreuung());
-			}
+			gueltigeGesuch = getGueltigesGesuch(neustesVerfuegtesGesuchCache, gesuch);
+			Optional<KindContainer> gueltigeKind = getGueltigesKind(zeitabschnitt, gueltigeGesuch);
+			gueltigeBetreuung = getGueltigeBetreuung(zeitabschnitt, gueltigeBetreuung, gueltigeKind);
 
 			neustesVerfuegtesGesuchCache.put(gesuch.getFall().getFallNummer(), gueltigeGesuch);
 		} else {
@@ -1050,21 +1038,11 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		//prüfen ob Gesuch ist gültig, und via GesuchService oder Cache holen, inkl. Kind & Betreuung
 		if (!gesuch.isGueltig()) {
 
-			gueltigeGesuch = neustesVerfuegtesGesuchCache.getOrDefault(gesuch.getFall().getFallNummer(),
-				gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(),false)
-					.orElse(gesuch));
+			gueltigeGesuch = getGueltigesGesuch(neustesVerfuegtesGesuchCache, gesuch);
 
-			Optional<KindContainer> gueltigeKind = gueltigeGesuch.getKindContainers().stream().filter(kindContainer -> kindContainer
-				.getKindNummer().equals(zeitabschnitt.getVerfuegung().getBetreuung().getKind().getKindNummer()))
-				.findFirst();
+			Optional<KindContainer> gueltigeKind = getGueltigesKind(zeitabschnitt, gueltigeGesuch);
 
-			if (gueltigeKind.isPresent()) {
-				gueltigeBetreuung = gueltigeKind.get().getBetreuungen().stream().filter(betreuung -> betreuung
-					.getBetreuungNummer()
-					.equals(zeitabschnitt.getVerfuegung().getBetreuung().getBetreuungNummer()))
-					.findFirst()
-					.orElse(zeitabschnitt.getVerfuegung().getBetreuung());
-			}
+			gueltigeBetreuung = getGueltigeBetreuung(zeitabschnitt, gueltigeBetreuung, gueltigeKind);
 
 			neustesVerfuegtesGesuchCache.put(gesuch.getFall().getFallNummer(), gueltigeGesuch);
 		} else {
@@ -1092,6 +1070,31 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt, gueltigeBetreuung);
 
 		return row;
+	}
+
+	private Gesuch getGueltigesGesuch(Map<Long, Gesuch> neustesVerfuegtesGesuchCache, Gesuch gesuch) {
+		Gesuch gueltigeGesuch;
+		gueltigeGesuch = neustesVerfuegtesGesuchCache.getOrDefault(gesuch.getFall().getFallNummer(),
+			gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(),false)
+				.orElse(gesuch));
+		return gueltigeGesuch;
+	}
+
+	private Betreuung getGueltigeBetreuung(VerfuegungZeitabschnitt zeitabschnitt, Betreuung gueltigeBetreuung, Optional<KindContainer> gueltigeKind) {
+		if (gueltigeKind.isPresent()) {
+			gueltigeBetreuung = gueltigeKind.get().getBetreuungen().stream().filter(betreuung -> betreuung
+				.getBetreuungNummer()
+				.equals(zeitabschnitt.getVerfuegung().getBetreuung().getBetreuungNummer()))
+				.findFirst()
+				.orElse(zeitabschnitt.getVerfuegung().getBetreuung());
+		}
+		return gueltigeBetreuung;
+	}
+
+	private Optional<KindContainer> getGueltigesKind(VerfuegungZeitabschnitt zeitabschnitt, Gesuch gueltigeGesuch) {
+		return gueltigeGesuch.getKindContainers().stream().filter(kindContainer -> kindContainer
+			.getKindNummer().equals(zeitabschnitt.getVerfuegung().getBetreuung().getKind().getKindNummer()))
+			.findFirst();
 	}
 
 	@Override
