@@ -65,7 +65,8 @@ export default class TSGesuchsperiode extends TSAbstractDateRangedEntity {
 
     isTagesschulenAnmeldungKonfiguriert(): boolean {
         return this.hasTagesschulenAnmeldung()
-            && this.datumFreischaltungTagesschule.isBefore(this.gueltigkeit.gueltigAb);
+            && (this.datumFreischaltungTagesschule.isBefore(this.gueltigkeit.gueltigAb)
+            || this.datumFreischaltungTagesschule.isSame(moment([])));
     }
 
     isTageschulenAnmeldungAktiv(): boolean {

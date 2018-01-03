@@ -49,7 +49,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <form ng-submit="form.$valid && vm.submit()" name="vm.form" role="form" novalidate>
+                    <form ng-submit="vm.form.$valid && vm.submit()" name="vm.form" role="form" novalidate>
                         <fieldset ng-disabled="vm.isReadonly()">
 
                             <!-- Gesuchsperiode Detail -->
@@ -73,7 +73,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-8 col-md-offset-4">
-                                                <dv-error-messages for="form.gueltigAb.$error"></dv-error-messages>
+                                                <dv-error-messages for="vm.form.gueltigAb.$error"></dv-error-messages>
                                             </div>
                                         </div>
                                     </div>
@@ -96,7 +96,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-8 col-md-offset-4">
-                                                <dv-error-messages for="form.gueltigBis.$error"></dv-error-messages>
+                                                <dv-error-messages for="vm.form.gueltigBis.$error"></dv-error-messages>
                                             </div>
                                         </div>
                                     </div>
@@ -120,7 +120,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-8 col-md-offset-4">
-                                                <dv-error-messages for="form.gpstatus.$error"></dv-error-messages>
+                                                <dv-error-messages for="vm.form.gpstatus.$error"></dv-error-messages>
                                             </div>
                                         </div>
                                     </div>
@@ -153,7 +153,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-8 col-md-offset-4">
-                                                <dv-error-messages for="form.datumFreischaltungTagesschule.$error"></dv-error-messages>
+                                                <dv-error-messages for="vm.form.datumFreischaltungTagesschule.$error"></dv-error-messages>
                                             </div>
                                         </div>
                                     </div>
@@ -177,7 +177,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-8 col-md-offset-4">
-                                                <dv-error-messages for="form.datumErsterSchultag.$error"></dv-error-messages>
+                                                <dv-error-messages for="vm.form.datumErsterSchultag.$error"></dv-error-messages>
                                             </div>
                                         </div>
                                     </div>
@@ -202,7 +202,7 @@
                                 </div>
                                 <div class="col-md-2" ng-if="vm.gesuchsperiode">
                                     <a href="javascript:;" id="cancelLink" class="dv-btn" unsaved-warning-clear
-                                       ng-click="vm.cancelGesuchsperiode(); form.$setPristine();form.$setUntouched();">
+                                       ng-click="vm.cancelGesuchsperiode(); vm.form.$setPristine();vm.form.$setUntouched();">
                                         <span data-translate="CANCEL"></span>
                                     </a>
                                 </div>
@@ -244,7 +244,7 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-3 col-md-offset-9">
-                                                    <dv-error-messages for="form['propertyName_' + paramgp.name].$error"
+                                                    <dv-error-messages for="vm.form['propertyName_' + paramgp.name].$error"
                                                                        class="error"></dv-error-messages>
                                                 </div>
                                             </div>
@@ -374,7 +374,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-offset-4 col-md-2">
-                                                        <dv-error-messages for="form.propertyName_param.key.$error"
+                                                        <dv-error-messages for="vm.form.propertyName_param.key.$error"
                                                                            class="error"></dv-error-messages>
                                                     </div>
 
@@ -392,7 +392,7 @@
                                             <div class="col-md-2">
                                                 <a href="javascript:;" id="cancelJahresabhLink" class="dv-btn"
                                                    unsaved-warning-clear
-                                                   ng-click="vm.cancelJahresabhaengig(); form.$setPristine();form.$setUntouched();">
+                                                   ng-click="vm.cancelJahresabhaengig(); vm.form.$setPristine(); vm.form.$setUntouched();">
                                                     <span data-translate="CANCEL"></span>
                                                 </a>
                                             </div>

@@ -129,39 +129,39 @@ export class ParameterViewController extends AbstractAdminViewController {
         this.gesuchsperiode.datumFreischaltungTagesschule = this.gesuchsperiode.gueltigkeit.gueltigAb;
     }
 
-    saveGesuchsperiode(): void {
-        // Den Dialog nur aufrufen, wenn der Status geändert wurde (oder die GP neu ist)
-        if (this.gesuchsperiode.isNew() || this.statusChanged === true) {
-            let dialogText = this.getGesuchsperiodeSaveDialogText();
-            this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
-                title: 'GESUCHSPERIODE_DIALOG_TITLE',
-                deleteText: dialogText,
-                parentController: undefined,
-                elementID: undefined
-            }).then(() => {
-                this.saveGesuchsperiodeFreischaltungTagesschule();
-            });
-        } else {
-            this.saveGesuchsperiodeFreischaltungTagesschule();
-        }
-    }
-
-    saveGesuchsperiodeFreischaltungTagesschule(): void {
+    public saveGesuchsperiode(): void {
         if (this.form.$valid) {
-            // Zweite Rückfrage falls neu ein Datum für die Freischaltung der Tagesschulen gesetzt wurde
-            if (!this.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert() && this.datumFreischaltungTagesschule) {
+            // Den Dialog nur aufrufen, wenn der Status geändert wurde (oder die GP neu ist)
+            if (this.gesuchsperiode.isNew() || this.statusChanged === true) {
+                let dialogText = this.getGesuchsperiodeSaveDialogText();
                 this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
-                    title: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TITLE',
-                    deleteText: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TEXT',
+                    title: 'GESUCHSPERIODE_DIALOG_TITLE',
+                    deleteText: dialogText,
                     parentController: undefined,
                     elementID: undefined
                 }).then(() => {
-                    this.gesuchsperiode.datumFreischaltungTagesschule = this.datumFreischaltungTagesschule;
-                    this.doSave();
+                    this.saveGesuchsperiodeFreischaltungTagesschule();
                 });
             } else {
-                this.doSave();
+                this.saveGesuchsperiodeFreischaltungTagesschule();
             }
+        }
+    }
+
+    public saveGesuchsperiodeFreischaltungTagesschule(): void {
+        // Zweite Rückfrage falls neu ein Datum für die Freischaltung der Tagesschulen gesetzt wurde
+        if (!this.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert() && this.datumFreischaltungTagesschule) {
+            this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                title: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TITLE',
+                deleteText: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TEXT',
+                parentController: undefined,
+                elementID: undefined
+            }).then(() => {
+                this.gesuchsperiode.datumFreischaltungTagesschule = this.datumFreischaltungTagesschule;
+                this.doSave();
+            });
+        } else {
+            this.doSave();
         }
     }
 
@@ -171,10 +171,10 @@ export class ParameterViewController extends AbstractAdminViewController {
             this.datumFreischaltungTagesschule = undefined;
 
             let index: number = EbeguUtil.getIndexOfElementwithID(response, this.gesuchsperiodenList);
-            if (index !== -1) {
-                this.gesuchsperiodenList[index] = response;
-            } else {
+            if (index === -1) {
                 this.gesuchsperiodenList.push(response);
+            } else {
+                this.gesuchsperiodenList[index] = response;
             }
             this.globalCacheService.getCache(TSCacheTyp.EBEGU_PARAMETER).removeAll();
             // Die E-BEGU-Parameter für die neue Periode lesen bzw. erstellen, wenn noch nicht vorhanden
