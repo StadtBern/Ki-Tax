@@ -446,6 +446,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
             && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
             && this.gesuchModelManager.getGesuch().isThereAnyBetreuung()
+            && !this.gesuchModelManager.areThereOnlySchulamtAngebote()
             && !this.isGesuchReadonly();
         // && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
     }
