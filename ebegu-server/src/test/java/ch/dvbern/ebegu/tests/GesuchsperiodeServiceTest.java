@@ -15,7 +15,6 @@
 
 package ch.dvbern.ebegu.tests;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -112,7 +111,6 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(Constants.GESUCHSPERIODE_18_19_AB, newestGesuchsperiode.getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(Constants.GESUCHSPERIODE_18_19_BIS, newestGesuchsperiode.getGueltigkeit().getGueltigBis());
 	}
-
 
 	// HELP METHODS
 
