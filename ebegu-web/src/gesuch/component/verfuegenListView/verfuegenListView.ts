@@ -464,7 +464,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      * ausblenden, wenn Gesuch readonly und finSitStatus nicht gesetzt (für alte Gesuche)
      */
     public showFinSitStatus(): boolean {
-        return !(this.isGesuchReadonly() && (this.getGesuch().finSitStatus === undefined || this.getGesuch().finSitStatus === null));
+        return !(this.isGesuchReadonly() && EbeguUtil.isNullOrUndefined(this.getGesuch().finSitStatus));
     }
 
     public openFinanzielleSituationPDF(): void {
