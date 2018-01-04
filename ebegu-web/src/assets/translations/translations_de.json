@@ -1194,5 +1194,7 @@
     "CONFIRM_UEBERNAHME_SCHULAMT": "Anmeldung definitiv übernehmen?",
     "BESCHREIBUNG_UEBERNAHME_SCHULAMT": "Die BetreuungsId wurde ins Clipboard übernommen, bitte übernehmen Sie die Daten in Scolaris, bevor Sie okay klicken",
     "AKZEPTIERT": "Finanzielle Situation akzeptiert",
-    "ABGELEHNT": "Finanzielle Situation abgelehnt"
+    "ABGELEHNT": "Finanzielle Situation abgelehnt",
+    "MAHNUNG_BATCH_EXECUTED_OK": "Die Prüfung der Mahnungen wurde erfolgreich durchgeführt",
+    "MAHNUNG_BATCH_EXECUTED_ERROR": "Ein Fehler ist bei der Prüfung der Mahnungen aufgetreten"
 }

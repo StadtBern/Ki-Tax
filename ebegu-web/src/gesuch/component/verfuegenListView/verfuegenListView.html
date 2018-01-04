@@ -78,11 +78,11 @@
                     </div>
                 </div>
                 <!--FinSitStatus-->
-                <div class="row marginTop30">
+                <div class="row marginTop30" ng-if="vm.showFinSitStatus()">
                     <div class="col-xs-12 dv-input-container-medium">
                         <div class="form-group">
                             <dv-radio-container name="finSitStatus" class="input-element"
-                                                ng-required="true" items="vm.finSitStatus"
+                                                ng-required="vm.isFinSitStatusRequired()" items="vm.finSitStatus"
                                                 ng-model="vm.getGesuch().finSitStatus" dv-enable-element
                                                 dv-enable-allowed-roles="vm.allowedRoles"
                                                 dv-enable-expression="!vm.isGesuchReadonly()"
