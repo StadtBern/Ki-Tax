@@ -48,6 +48,7 @@ import ch.dvbern.ebegu.rules.anlageverzeichnis.FinanzielleSituationDokumente;
 import ch.dvbern.ebegu.rules.anlageverzeichnis.KindDokumente;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,8 +68,8 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		testgesuch = new Gesuch();
 		testgesuch.setGesuchsperiode(TestDataUtil.createDefaultGesuchsperiode());
-		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigAb(LocalDate.of(2017, 8, 1));
-		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigBis(LocalDate.of(2018, 7, 31));
+		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigAb(Constants.GESUCHSPERIODE_17_18_AB);
+		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigBis(Constants.GESUCHSPERIODE_17_18_BIS);
 		testgesuch.setKindContainers(new HashSet<>());
 	}
 
@@ -585,7 +586,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		createEinkommensverschlechterungGS(2, testgesuch, "Alex", false);
 		createEinkommensverschlechterungInfo();
 		final Gesuchsperiode gesuchsperiode = TestDataUtil.createDefaultGesuchsperiode();
-		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(2016, 8, 1), LocalDate.of(2017, 8, 1)));
+		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(2016, 8, 1), Constants.GESUCHSPERIODE_17_18_AB));
 
 		testgesuch.setGesuchsperiode(gesuchsperiode);
 
