@@ -17,9 +17,7 @@ import {IDirective, IDirectiveFactory} from 'angular';
 import TSUser from '../../../models/TSUser';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import UserRS from '../../service/userRS.rest';
-import * as moment from 'moment';
 let template = require('./dv-userselect.html');
-
 
 export class DVUserselect implements IDirective {
     restrict = 'E';

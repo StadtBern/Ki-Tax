@@ -34,6 +34,7 @@ import {TestdatenViewComponentConfig} from './component/testdatenView/testdatenV
 import {FerieninselStammdatenRS} from './service/ferieninselStammdatenRS.rest';
 import {FerieninselViewComponentConfig} from './component/ferieninselView/ferieninselView';
 import {GesuchsperiodeViewComponentConfig} from './component/gesuchsperiodeView/gesuchsperiodeView';
+import {DailyBatchRS} from './service/dailyBatchRS.rest';
 
 export const EbeguWebAdmin = angular.module('ebeguWeb.admin', [EbeguWebCore.name, 'smart-table'])
     .service('ApplicationPropertyRS', ApplicationPropertyRS)
@@ -42,6 +43,7 @@ export const EbeguWebAdmin = angular.module('ebeguWeb.admin', [EbeguWebCore.name
     .service('EbeguVorlageRS', EbeguVorlageRS)
     .service('ReindexRS', ReindexRS)
     .service('TestFaelleRS', TestFaelleRS)
+    .service('DailyBatchRS', DailyBatchRS)
     .service('FerieninselStammdatenRS', FerieninselStammdatenRS)
     .component('dvAdminView', new AdminViewComponentConfig())
     .component('dvInstitutionenListView', new InstitutionenListViewComponentConfig())
