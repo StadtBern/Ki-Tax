@@ -482,6 +482,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Nonnull
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
+
 	private Betreuung closeBetreuung(@Nonnull Betreuung betreuung, @Nonnull Betreuungsstatus status) {
 		betreuung.setBetreuungsstatus(status);
 		final Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
