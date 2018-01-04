@@ -360,6 +360,10 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             && !this.isGesuchReadonly();
     }
 
+    public isFinSitStatusRequired(): boolean {
+        return !this.showErsteMahnungAusloesen() && !this.showZweiteMahnungAusloesen();
+    }
+
     public showMahnlaufBeenden(): boolean {
         return isAnyStatusOfMahnung(this.getGesuch().status) && !this.isGesuchReadonly();
     }
@@ -583,11 +587,13 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public changeFinSitStatus() {
-        this.gesuchRS.changeFinSitStatus(this.getGesuch().id, this.getGesuch().finSitStatus).then((response: any) => {
-            this.setHasFSDokumentAccordingToFinSitState();
-            this.gesuchModelManager.setGesuch(this.getGesuch());
-            this.form.$setPristine();
-        });
+        if (this.getGesuch().finSitStatus) {
+            this.gesuchRS.changeFinSitStatus(this.getGesuch().id, this.getGesuch().finSitStatus).then((response: any) => {
+                this.setHasFSDokumentAccordingToFinSitState();
+                this.gesuchModelManager.setGesuch(this.getGesuch());
+                this.form.$setPristine();
+            });
+        }
     }
 
     private setHasFSDokumentAccordingToFinSitState() {
