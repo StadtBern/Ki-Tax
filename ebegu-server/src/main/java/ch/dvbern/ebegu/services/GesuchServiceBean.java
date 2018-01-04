@@ -1338,10 +1338,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		if (AntragStatus.FIRST_STATUS_OF_VERFUEGT.contains(gesuch.getStatus()) && gesuch.getTimestampVerfuegt() == null) {
 			// Status ist neuerdings verfuegt, aber das Datum noch nicht gesetzt -> dies war der Statuswechsel
 			gesuch.setTimestampVerfuegt(LocalDateTime.now());
-			gesuch.setGueltig(true);
 			if (neustesVerfuegtesGesuchFuerGesuch.isPresent() && !neustesVerfuegtesGesuchFuerGesuch.get().getId().equals(gesuch.getId())) {
 				setGesuchUngueltig(neustesVerfuegtesGesuchFuerGesuch.get());
 			}
+			gesuch.setGueltig(true);
 		}
 	}
 
@@ -1350,8 +1350,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	 */
 	private void setGesuchUngueltig(@Nonnull Gesuch gesuch) {
 		if (gesuch.isGueltig()) {
-			gesuch.setGueltig(false);
+			gesuch.setGueltig(null);
 			updateGesuch(gesuch, false, null, false);
+			// Sicherstellen, dass das Gesuch welches nicht mehr gültig ist zuerst gespeichert wird da sonst unique key Probleme macht!
+			persistence.getEntityManager().flush();
 		}
 	}
 
