@@ -13,22 +13,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {IHttpService, IPromise} from 'angular';
 
 export class DailyBatchRS {
 
     serviceURL: string;
     http: IHttpService;
-    ebeguRestUtil: EbeguRestUtil;
 
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', 'AuthServiceRS'];
+    static $inject = ['$http', 'REST_API'];
     /* @ngInject */
-    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, authServiceRS: AuthServiceRS) {
+    constructor($http: IHttpService, REST_API: string) {
         this.serviceURL = REST_API + 'dailybatch';
         this.http = $http;
-        this.ebeguRestUtil = ebeguRestUtil;
     }
 
     public getServiceName(): string {

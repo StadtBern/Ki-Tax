@@ -19,7 +19,6 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import UserRS from '../../service/userRS.rest';
 let template = require('./dv-userselect.html');
 
-
 export class DVUserselect implements IDirective {
     restrict = 'E';
     require: any = {smartTable: '?^stTable'};
