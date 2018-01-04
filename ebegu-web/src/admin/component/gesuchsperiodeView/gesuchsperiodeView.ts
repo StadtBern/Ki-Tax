@@ -144,7 +144,7 @@ export class GesuchsperiodeViewController extends AbstractAdminViewController {
     public createGesuchsperiode(): void {
         this.gesuchsperiodeRS.getNewestGesuchsperiode().then(newestGeuschsperiode => {
             this.gesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.ENTWURF, new TSDateRange());
-            this.initialStatus = this.gesuchsperiode.status;
+            this.initialStatus = undefined; //initialStatus ist undefined for new created Gesuchsperioden
             this.datumFreischaltungTagesschule = undefined;
             this.gesuchsperiode.gueltigkeit.gueltigAb = newestGeuschsperiode.gueltigkeit.gueltigAb.clone().add(1, 'years');
             this.gesuchsperiode.gueltigkeit.gueltigBis = newestGeuschsperiode.gueltigkeit.gueltigBis.clone().add(1, 'years');

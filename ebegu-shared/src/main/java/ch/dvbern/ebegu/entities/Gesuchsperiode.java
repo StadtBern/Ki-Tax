@@ -23,6 +23,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
@@ -35,6 +37,9 @@ import org.hibernate.envers.Audited;
  */
 @Audited
 @Entity
+@Table(
+	uniqueConstraints = @UniqueConstraint(name = "UK_gesuchsperiode", columnNames = { "gueltigAb", "gueltigBis" })
+)
 public class Gesuchsperiode extends AbstractDateRangedEntity {
 
 	private static final long serialVersionUID = -9132257370971574570L;
