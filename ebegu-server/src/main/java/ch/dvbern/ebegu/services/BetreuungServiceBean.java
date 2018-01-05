@@ -147,7 +147,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
+	@RolesAllowed({ SUPER_ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
 	public Betreuung betreuungPlatzAbweisen(@Valid @Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, BETREUUNG_DARF_NICHT_NULL_SEIN);
 		betreuung.setBetreuungsstatus(Betreuungsstatus.ABGEWIESEN);
@@ -163,7 +163,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
+	@RolesAllowed({ SUPER_ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
 	public Betreuung betreuungPlatzBestaetigen(@Valid @Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, BETREUUNG_DARF_NICHT_NULL_SEIN);
 		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
@@ -182,7 +182,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
+	@RolesAllowed({ SUPER_ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
 	public Betreuung anmeldungSchulamtUebernehmen(@Valid @Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, BETREUUNG_DARF_NICHT_NULL_SEIN);
 		betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN);
@@ -198,7 +198,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, ADMINISTRATOR_SCHULAMT })
+	@RolesAllowed({ SUPER_ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Betreuung anmeldungSchulamtAblehnen(@Valid @Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, BETREUUNG_DARF_NICHT_NULL_SEIN);
 		betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT);
@@ -214,7 +214,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
+	@RolesAllowed({ SUPER_ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION })
 	public Betreuung anmeldungSchulamtFalscheInstitution(@Valid @Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, BETREUUNG_DARF_NICHT_NULL_SEIN);
 		betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION);
