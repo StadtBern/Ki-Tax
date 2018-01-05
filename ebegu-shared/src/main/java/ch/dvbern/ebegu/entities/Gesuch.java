@@ -218,6 +218,7 @@ public class Gesuch extends AbstractEntity implements Searchable {
 	@Column(nullable = true)
 	private LocalDateTime timestampVerfuegt;
 
+	// Es muss nullable sein koennen, damit man ein UNIQUE_KEY machen kann
 	@Column(nullable = true)
 	private Boolean gueltig = null;
 
@@ -486,11 +487,12 @@ public class Gesuch extends AbstractEntity implements Searchable {
 		this.timestampVerfuegt = datumVerfuegt;
 	}
 
+	@Nullable
 	public Boolean getGueltig() {
 		return gueltig;
 	}
 
-	public void setGueltig(Boolean gueltig) {
+	public void setGueltig(@Nullable Boolean gueltig) {
 		this.gueltig = gueltig;
 	}
 
