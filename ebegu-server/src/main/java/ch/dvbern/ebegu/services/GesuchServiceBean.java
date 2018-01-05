@@ -1441,6 +1441,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		final CriteriaUpdate<Gesuch> update = cb.createCriteriaUpdate(Gesuch.class);
 		Root<Gesuch> root = update.from(Gesuch.class);
 		update.set(Gesuch_.finSitStatus, finSitStatus);
+		if (finSitStatus == FinSitStatus.ABGELEHNT) {
+			update.set(Gesuch_.hasFSDokument, false); // immer auf false wenn ABGELEHNT
+		}
 
 		Predicate predGesuch = cb.equal(root.get(Gesuch_.id), antragId);
 		update.where(predGesuch);
