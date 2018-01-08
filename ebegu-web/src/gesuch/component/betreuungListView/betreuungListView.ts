@@ -209,12 +209,13 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
 
     public showButtonAnmeldungSchulamt(): boolean {
         // Anmeldung Schulamt: Solange das Gesuch noch "normal" editiert werden kann, soll der Weg ueber "Betreuung hinzufuegen" verwendet werden
-        // Nachdem readonly: nur fuer Jugendamt, Schulamt und Gesuchsteller verfuegbar sein
+        // Nachdem readonly: nur fuer Jugendamt, Schulamt und Gesuchsteller verfuegbar sein. Nur fuer GP.hasTagesschulenAnmeldung().
         let isStatus: boolean = isStatusVerfuegenVerfuegt(this.gesuchModelManager.getGesuch().status)
             || this.gesuchModelManager.isGesuchReadonlyForRole()
             || this.gesuchModelManager.isKorrekturModusJugendamt()
             || this.gesuchModelManager.getGesuch().gesperrtWegenBeschwerde;
         let isRole: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles());
-        return isStatus && isRole;
+        let isGesuchsperiode: boolean = this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung();
+        return isStatus && isRole && isGesuchsperiode;
     }
 }

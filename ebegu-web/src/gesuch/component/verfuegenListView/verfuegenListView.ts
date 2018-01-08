@@ -588,8 +588,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public changeFinSitStatus() {
         if (this.getGesuch().finSitStatus) {
+            this.setHasFSDokumentAccordingToFinSitState();
             this.gesuchRS.changeFinSitStatus(this.getGesuch().id, this.getGesuch().finSitStatus).then((response: any) => {
-                this.setHasFSDokumentAccordingToFinSitState();
                 this.gesuchModelManager.setGesuch(this.getGesuch());
                 this.form.$setPristine();
             });
