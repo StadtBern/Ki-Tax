@@ -1,6 +1,6 @@
 /*
  * Ki-Tax: System for the management of external childcare subsidies
- * Copyright (C) 2017 City of Bern Switzerland
+ * Copyright (C) 2018 City of Bern Switzerland
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -13,33 +13,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.dvbern.ebegu.enums;
+import {IHttpService, IPromise} from 'angular';
 
-/**
- * Enum fuer den Status Events vom Gesuch.
- */
-public enum AntragEvents {
-	FREIGABEQUITTUNG_ERSTELLEN,
-	FREIGEBEN,
-	ERSTES_OEFFNEN_JA,
-	MAHNEN, GEPRUEFT,
-	ZUWEISUNG_SCHULAMT,
-	VERFUEGUNG_STARTEN,
-	VERFUEGEN_OHNE_ANGEBOT,
-	VERFUEGEN,
-	BESCHWEREN,
-	PRUEFEN_STV,
-	DOKUMENTE_GEPRUEFT,
-	ZURUECK_NUR_SCHULAMT,
-	ZURUECK_VERFUEGT,
-	ZURUECK_KEIN_ANGEBOT,
-	ZURUECK_PRUEFUNG_STV,
-	ZURUECK_IN_BEARBEITUNG_STV,
-	ZURUECK_GEPRUEFT_STV,
-	ERSTES_OEFFNEN_STV,
-	GEPRUEFT_STV,
-	PRUEFUNG_ABGESCHLOSSEN,
-	MAHNUNG_ABGELAUFEN,
-	MAHNLAUF_BEENDEN,
-	ABSCHLIESSEN,
+export class DailyBatchRS {
+
+    serviceURL: string;
+    http: IHttpService;
+
+    static $inject = ['$http', 'REST_API'];
+    /* @ngInject */
+    constructor($http: IHttpService, REST_API: string) {
+        this.serviceURL = REST_API + 'dailybatch';
+        this.http = $http;
+    }
+
+    public getServiceName(): string {
+        return 'DailyBatchRS';
+    }
+
+    public runBatchMahnungFristablauf(): IPromise<Boolean> {
+        return this.http.get(this.serviceURL + '/mahnungFristAblauf')
+            .then((response: any) => {
+                return response;
+            });
+    }
 }

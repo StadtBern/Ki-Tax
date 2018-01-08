@@ -892,6 +892,7 @@ public class JaxBConverter {
 		antrag.setGesuchBetreuungenStatus(antragJAXP.getGesuchBetreuungenStatus());
 		antrag.setGeprueftSTV(antragJAXP.isGeprueftSTV());
 		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
+		antrag.setFinSitStatus(antragJAXP.getFinSitStatus());
 		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
 		antrag.setDatumGewarntNichtFreigegeben(antragJAXP.getDatumGewarntNichtFreigegeben());
 		antrag.setDatumGewarntFehlendeQuittung(antragJAXP.getDatumGewarntFehlendeQuittung());
@@ -1035,6 +1036,7 @@ public class JaxBConverter {
 		jaxGesuch.setTimestampVerfuegt(persistedGesuch.getTimestampVerfuegt());
 		jaxGesuch.setGueltig(persistedGesuch.isGueltig());
 		jaxGesuch.setDokumenteHochgeladen(persistedGesuch.getDokumenteHochgeladen());
+		jaxGesuch.setFinSitStatus(persistedGesuch.getFinSitStatus());
 		return jaxGesuch;
 	}
 
@@ -2594,6 +2596,7 @@ public class JaxBConverter {
 		antrag.setBesitzerUsername(gesuch.getFall().getBesitzer() != null ? gesuch.getFall().getBesitzer().getUsername() : null);
 		antrag.setGesuchBetreuungenStatus(gesuch.getGesuchBetreuungenStatus());
 		antrag.setDokumenteHochgeladen(gesuch.getDokumenteHochgeladen());
+		antrag.setFinSitStatus(gesuch.getFinSitStatus());
 		return antrag;
 	}
 

@@ -131,11 +131,7 @@ public class SchulamtBackendResource {
 
 		try {
 			if (!betreuungService.validateBGNummer(bgNummer)) {
-				// Wrong BGNummer format
-				return Response.status(Response.Status.BAD_REQUEST).entity(
-					new JaxExternalError(
-						JaxExternalErrorCode.BAD_PARAMETER,
-						"Invalid BGNummer format")).build();
+				return createBgNummerFormatError();
 			}
 
 			final List<Betreuung> betreuungen = betreuungService.findBetreuungByBGNummer(bgNummer);
@@ -146,7 +142,8 @@ public class SchulamtBackendResource {
 					new JaxExternalError(
 						JaxExternalErrorCode.NO_RESULTS,
 						"No Betreuung with id " + bgNummer + " found")).build();
-			} else if (betreuungen.size() > 1) {
+			}
+			if (betreuungen.size() > 1) {
 				// More than one betreuung
 				return Response.status(Response.Status.BAD_REQUEST).entity(
 					new JaxExternalError(
@@ -158,16 +155,17 @@ public class SchulamtBackendResource {
 			if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp() == BetreuungsangebotTyp.TAGESSCHULE) {
 				// Betreuung ist Tagesschule
 				return Response.ok(getAnmeldungTagesschule(betreuung)).build();
-			} else if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp() == BetreuungsangebotTyp.FERIENINSEL) {
+			}
+			if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp() == BetreuungsangebotTyp.FERIENINSEL) {
 				// Betreuung ist Ferieninsel
 				return Response.ok(getAnmeldungFerieninsel(betreuung)).build();
-			} else {
-				// Betreuung ist weder Tagesschule noch Ferieninsel
-				return Response.status(Response.Status.BAD_REQUEST).entity(
-					new JaxExternalError(
-						JaxExternalErrorCode.NO_RESULTS,
-						"No Betreuung with id " + bgNummer + " found")).build();
 			}
+			// Betreuung ist weder Tagesschule noch Ferieninsel
+			return Response.status(Response.Status.BAD_REQUEST).entity(
+				new JaxExternalError(
+					JaxExternalErrorCode.NO_RESULTS,
+					"No Betreuung with id " + bgNummer + " found")).build();
+
 		} catch (Exception e) {
 			LOG.error("getAnmeldung()", e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
@@ -209,7 +207,7 @@ public class SchulamtBackendResource {
 			betreuung.getKind().getKindJA().getNachname());
 	}
 
-	@ApiOperation(value = "Gibt das massgebende Einkommen fuer den uebergebenen Fall zurueck. Falls das massgebende Einkommen noch nicht erfasst wurde, wird "
+	@ApiOperation(value = "Gibt das massgebende Einkommen fuer die uebergebene BgNummer zurueck. Falls das massgebende Einkommen noch nicht erfasst wurde, wird "
 		+ "400 zurueckgegeben.",
 		response = JaxExternalFinanzielleSituation.class)
 	@ApiResponses({
@@ -224,7 +222,7 @@ public class SchulamtBackendResource {
 	@RolesAllowed(SUPER_ADMIN)
 	public Response getFinanzielleSituation(
 		@QueryParam("stichtag") String stichtagParam,
-		@QueryParam("fall") String csFallParam) {
+		@QueryParam("bgNummer") String bgNummer) {
 
 		try {
 			// Check parameters
@@ -234,23 +232,26 @@ public class SchulamtBackendResource {
 						JaxExternalErrorCode.BAD_PARAMETER,
 						"stichtagParam is null or empty")).build();
 			}
-			if (csFallParam == null || csFallParam.isEmpty()) {
+			if (bgNummer == null || bgNummer.isEmpty()) {
 				return Response.status(Response.Status.BAD_REQUEST).entity(
 					new JaxExternalError(
 						JaxExternalErrorCode.BAD_PARAMETER,
-						"csFaelleParam is null or empty")).build();
+						"bgNummer is null or empty")).build();
 			}
 
 			// Parse Fallnummer
+			if (!betreuungService.validateBGNummer(bgNummer)) {
+				return createBgNummerFormatError();
+			}
 			long fallNummer;
 			try {
-				fallNummer = Long.parseLong(csFallParam);
+				fallNummer = betreuungService.getFallnummerFromBGNummer(bgNummer);
 			} catch (Exception e) {
 				LOG.info("getFinanzielleSituation()", e);
 				return Response.status(Response.Status.BAD_REQUEST).entity(
 					new JaxExternalError(
 						JaxExternalErrorCode.BAD_PARAMETER,
-						"Can not parse csFallParam")).build();
+						"Can not parse bgNummer")).build();
 			}
 
 			// Parse Stichtag
@@ -383,5 +384,13 @@ public class SchulamtBackendResource {
 				rechnungsAdresse.getPlz(),
 				rechnungsAdresse.getOrt(),
 				rechnungsAdresse.getLand().name()));
+	}
+
+	private Response createBgNummerFormatError() {
+		// Wrong BGNummer format
+		return Response.status(Response.Status.BAD_REQUEST).entity(
+			new JaxExternalError(
+				JaxExternalErrorCode.BAD_PARAMETER,
+				"Invalid BGNummer format")).build();
 	}
 }

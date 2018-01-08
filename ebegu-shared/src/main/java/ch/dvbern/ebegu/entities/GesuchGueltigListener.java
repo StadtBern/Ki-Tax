@@ -13,33 +13,23 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.dvbern.ebegu.enums;
+package ch.dvbern.ebegu.entities;
+
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 
 /**
- * Enum fuer den Status Events vom Gesuch.
+ * For using the unique key "UK_gueltiges_gesuch" we need to use false as null (there can be only one false but more than one null gueltigkeit)
+ * So we set gueltig zu null when we mean guelitgkeit false
  */
-public enum AntragEvents {
-	FREIGABEQUITTUNG_ERSTELLEN,
-	FREIGEBEN,
-	ERSTES_OEFFNEN_JA,
-	MAHNEN, GEPRUEFT,
-	ZUWEISUNG_SCHULAMT,
-	VERFUEGUNG_STARTEN,
-	VERFUEGEN_OHNE_ANGEBOT,
-	VERFUEGEN,
-	BESCHWEREN,
-	PRUEFEN_STV,
-	DOKUMENTE_GEPRUEFT,
-	ZURUECK_NUR_SCHULAMT,
-	ZURUECK_VERFUEGT,
-	ZURUECK_KEIN_ANGEBOT,
-	ZURUECK_PRUEFUNG_STV,
-	ZURUECK_IN_BEARBEITUNG_STV,
-	ZURUECK_GEPRUEFT_STV,
-	ERSTES_OEFFNEN_STV,
-	GEPRUEFT_STV,
-	PRUEFUNG_ABGESCHLOSSEN,
-	MAHNUNG_ABGELAUFEN,
-	MAHNLAUF_BEENDEN,
-	ABSCHLIESSEN,
+public class GesuchGueltigListener {
+
+	@PreUpdate
+	@PrePersist
+	public void preUpdate(Gesuch gesuch) {
+		if (gesuch.getGueltig() != null && !gesuch.getGueltig()) {
+			gesuch.setGueltig(null);
+		}
+	}
+
 }

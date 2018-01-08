@@ -24,6 +24,8 @@ import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -50,7 +52,7 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 	@Test
 	public void createGesuchsperiodeTest() {
 		Assert.assertNotNull(gesuchsperiodeService);
-		insertNewEntity(true);
+		insertNewEntity(true, Constants.GESUCHSPERIODE_17_18);
 
 		Collection<Gesuchsperiode> allGesuchsperioden = gesuchsperiodeService.getAllGesuchsperioden();
 		Assert.assertEquals(1, allGesuchsperioden.size());
@@ -61,8 +63,9 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 	@Test
 	public void updateGesuchsperiodeTest() {
 		Assert.assertNotNull(gesuchsperiodeService);
-		Gesuchsperiode insertedGesuchsperiode = insertNewEntity(true);
+		Gesuchsperiode insertedGesuchsperiode = insertNewEntity(true, Constants.GESUCHSPERIODE_17_18);
 		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(insertedGesuchsperiode.getId());
+		Assert.assertTrue(gesuchsperiode.isPresent());
 		Assert.assertEquals(GesuchsperiodeStatus.AKTIV, gesuchsperiode.get().getStatus());
 
 		gesuchsperiode.get().setStatus(GesuchsperiodeStatus.GESCHLOSSEN);
@@ -76,7 +79,7 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertNotNull(gesuchsperiodeService);
 		Assert.assertEquals(0, gesuchsperiodeService.getAllGesuchsperioden().size());
 
-		Gesuchsperiode insertedGesuchsperiode = insertNewEntity(true);
+		Gesuchsperiode insertedGesuchsperiode = insertNewEntity(true, Constants.GESUCHSPERIODE_17_18);
 		Assert.assertEquals(1, gesuchsperiodeService.getAllGesuchsperioden().size());
 		insertedGesuchsperiode.setStatus(GesuchsperiodeStatus.GESCHLOSSEN);
 		persistence.merge(insertedGesuchsperiode);
@@ -87,8 +90,8 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void getAllActiveGesuchsperiodenTest() {
-		Gesuchsperiode insertedGesuchsperiode = insertNewEntity(true);
-		insertNewEntity(false);
+		Gesuchsperiode insertedGesuchsperiode = insertNewEntity(true, Constants.GESUCHSPERIODE_17_18);
+		insertNewEntity(false, Constants.GESUCHSPERIODE_18_19);
 
 		Collection<Gesuchsperiode> allGesuchsperioden = gesuchsperiodeService.getAllGesuchsperioden();
 		Assert.assertEquals(2, allGesuchsperioden.size());
@@ -98,10 +101,22 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(insertedGesuchsperiode, allActiveGesuchsperioden.iterator().next());
 	}
 
+	@Test
+	public void findNewestGesuchsperiodeTest() {
+		insertNewEntity(true, Constants.GESUCHSPERIODE_17_18);
+		Gesuchsperiode newestGesuchsperiode = insertNewEntity(false, Constants.GESUCHSPERIODE_18_19);
+
+		Optional<Gesuchsperiode> foundGesuchsperiode = gesuchsperiodeService.findNewestGesuchsperiode();
+		Assert.assertTrue(foundGesuchsperiode.isPresent());
+		Assert.assertEquals(Constants.GESUCHSPERIODE_18_19_AB, newestGesuchsperiode.getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(Constants.GESUCHSPERIODE_18_19_BIS, newestGesuchsperiode.getGueltigkeit().getGueltigBis());
+	}
+
 	// HELP METHODS
 
-	private Gesuchsperiode insertNewEntity(boolean active) {
+	private Gesuchsperiode insertNewEntity(boolean active, DateRange gueltigkeit) {
 		Gesuchsperiode gesuchsperiode = TestDataUtil.createDefaultGesuchsperiode();
+		gesuchsperiode.setGueltigkeit(gueltigkeit);
 		if (active) {
 			gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
 		} else {

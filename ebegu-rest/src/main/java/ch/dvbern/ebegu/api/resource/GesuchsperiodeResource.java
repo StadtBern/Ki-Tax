@@ -107,6 +107,18 @@ public class GesuchsperiodeResource {
 		return optional.map(gesuchsperiode -> converter.gesuchsperiodeToJAX(gesuchsperiode)).orElse(null);
 	}
 
+	@ApiOperation(value = "Gibt die neuste Gesuchsperiode zurueck anhand des Datums gueltigBis",
+		response = JaxGesuchsperiode.class)
+	@Nullable
+	@GET
+	@Path("/newestGesuchsperiode/")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxGesuchsperiode findNewestGesuchsperiode() {
+		Optional<Gesuchsperiode> optional = gesuchsperiodeService.findNewestGesuchsperiode();
+		return optional.map(gesuchsperiode -> converter.gesuchsperiodeToJAX(gesuchsperiode)).orElse(null);
+	}
+
 	@ApiOperation(value = "Loescht die Gesuchsperiode mit der uebergebenen Id in der Datenbank",
 		response = Void.class)
 	@Nullable
