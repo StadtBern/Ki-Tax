@@ -63,6 +63,11 @@ export default class TSGesuchsperiode extends TSAbstractDateRangedEntity {
         return undefined;
     }
 
+    /**
+     * Ein datumFreischaltungTagesschule, das nicht vor dem Gesuchsperiodeanfang liegt, wird als "nicht konfiguriert" betrachtet.
+     * Dies ist so, weil ein datumFreischaltungTagesschule immer vor dem Gesuchsperiodeanfang liegen muss, damit die Kinder sich
+     * rechtzeitig anmelden koennen.
+     */
     isTagesschulenAnmeldungKonfiguriert(): boolean {
         return this.hasTagesschulenAnmeldung()
             && (this.datumFreischaltungTagesschule.isBefore(this.gueltigkeit.gueltigAb)

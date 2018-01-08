@@ -105,15 +105,17 @@
                                         <label data-translate="FREISCHALTUNG_TAGESSCHULE" for="datumFreischaltungTagesschule_ID"/>
                                     </div>
                                     <div class="col-md-8 ">
-                                        <div ng-show="!vm.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert()">
+                                        <div ng-if="!vm.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert()">
                                             <dv-datepicker input-id="datumFreischaltungTagesschule_ID" name="datumFreischaltungTagesschule"
                                                            ng-model="vm.datumFreischaltungTagesschule"
+                                                           dv-max-date="vm.gesuchsperiode.gueltigkeit.gueltigAb"
                                                            class="input-element contrast">
                                             </dv-datepicker>
                                         </div>
-                                        <div ng-show="vm.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert()">
+                                        <div ng-if="vm.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert()">
                                             <dv-datepicker input-id="datumFreischaltungTagesschule_ID" name="datumFreischaltungTagesschule"
                                                            ng-model="vm.gesuchsperiode.datumFreischaltungTagesschule"
+                                                           dv-max-date="vm.gesuchsperiode.gueltigkeit.gueltigAb"
                                                            class="input-element contrast"
                                                            ng-disabled="true">
                                             </dv-datepicker>
