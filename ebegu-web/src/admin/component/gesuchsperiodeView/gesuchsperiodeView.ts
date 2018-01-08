@@ -202,4 +202,9 @@ export class GesuchsperiodeViewController extends AbstractAdminViewController {
     private statusHaveChanged() {
         return this.initialStatus !== this.gesuchsperiode.status || this.gesuchsperiode.status === TSGesuchsperiodeStatus.AKTIV;
     }
+
+    public getDatumFreischaltungMax() {
+        let gueltigAb: moment.Moment  = angular.copy(this.gesuchsperiode.gueltigkeit.gueltigAb);
+        return gueltigAb.subtract(1, 'days');
+    }
 }
