@@ -134,7 +134,7 @@ public class GesuchResource {
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(GesuchResource.class)
-			.path("/" + persistedGesuch.getId())
+			.path('/' + persistedGesuch.getId())
 			.build();
 
 		JaxGesuch jaxGesuch = converter.gesuchToJAX(persistedGesuch);
@@ -235,7 +235,7 @@ public class GesuchResource {
 
 		final Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(this.principalBean.getPrincipal().getName());
 		if (optBenutzer.isPresent()) {
-			if (UserRole.SUPER_ADMIN.equals(optBenutzer.get().getRole())) {
+			if (UserRole.SUPER_ADMIN == optBenutzer.get().getRole()) {
 				return completeGesuch;
 			} else {
 				Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
@@ -540,7 +540,7 @@ public class GesuchResource {
 			throw new EbeguEntityNotFoundException("sendGesuchToSTV", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
 		}
 		Gesuch gesuch = gesuchOptional.get();
-		if (!AntragStatus.VERFUEGT.equals(gesuch.getStatus())) {
+		if (AntragStatus.VERFUEGT != gesuch.getStatus()) {
 			// Wir vergewissern uns dass das Gesuch im Status VERFUEGT ist, da sonst kann es nicht zum STV geschickt werden
 			throw new EbeguRuntimeException("sendGesuchToSTV", ErrorCodeEnum.ERROR_ONLY_VERFUEGT_ALLOWED, "Status ist: " + gesuch.getStatus());
 		}
@@ -575,7 +575,7 @@ public class GesuchResource {
 		if (!gesuch.isPresent()) {
 			throw new EbeguEntityNotFoundException("gesuchBySTVFreigeben", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
 		}
-		if (!AntragStatus.IN_BEARBEITUNG_STV.equals(gesuch.get().getStatus())) {
+		if (AntragStatus.IN_BEARBEITUNG_STV != gesuch.get().getStatus()) {
 			// Wir vergewissern uns dass das Gesuch im Status IN_BEARBEITUNG_STV ist, da sonst kann es nicht fuer das JA freigegeben werden
 			throw new EbeguRuntimeException("gesuchBySTVFreigeben", ErrorCodeEnum.ERROR_ONLY_IN_BEARBEITUNG_STV_ALLOWED, "Status ist: " + gesuch.get().getStatus());
 		}
@@ -609,7 +609,7 @@ public class GesuchResource {
 
 		Gesuch gesuch = gesuchOptional.orElseThrow(() -> new EbeguEntityNotFoundException("stvPruefungAbschliessen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId()));
 
-		if (!AntragStatus.GEPRUEFT_STV.equals(gesuch.getStatus())) {
+		if (AntragStatus.GEPRUEFT_STV != gesuch.getStatus()) {
 			// Wir vergewissern uns dass das Gesuch im Status IN_BEARBEITUNG_STV ist, da sonst kann es nicht fuer das JA freigegeben werden
 			throw new EbeguRuntimeException("stvPruefungAbschliessen", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_STV_ALLOWED, "Status ist: " + gesuch.getStatus());
 		}

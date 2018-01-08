@@ -77,14 +77,12 @@
 
                     </div>
                 </div>
-
-                <br>
                 <!--FinSitStatus-->
-                <div class="row">
+                <div class="row marginTop30" ng-if="vm.showFinSitStatus()">
                     <div class="col-xs-12 dv-input-container-medium">
                         <div class="form-group">
                             <dv-radio-container name="finSitStatus" class="input-element"
-                                                ng-required="true" items="vm.finSitStatus"
+                                                ng-required="vm.isFinSitStatusRequired()" items="vm.finSitStatus"
                                                 ng-model="vm.getGesuch().finSitStatus" dv-enable-element
                                                 dv-enable-allowed-roles="vm.allowedRoles"
                                                 dv-enable-expression="!vm.isGesuchReadonly()"
@@ -95,7 +93,6 @@
                         </div>
                     </div>
                 </div>
-                <br>
                 <div class="row" dv-show-element
                      dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
                      dv-show-expression="vm.isFinanzielleSituationRequired()">
@@ -137,7 +134,7 @@
                 </div>
 
                 <!-- Liste der bisherige Mahnungen -->
-                <div class="row text-left" ng-if="vm.getMahnungList().length > 0">
+                <div class="row text-left marginTop20" ng-if="vm.getMahnungList().length > 0">
                     <div class="col-md-12">
                         <h2 data-translate="MAHNUNGEN"></h2>
                         <hr class="header"/>
@@ -159,7 +156,7 @@
                 </div>
 
                 <!-- Mahnungsdetails, neue Mahnung erstellen -->
-                <div class="row text-left" ng-if="vm.showErsteMahnungAusloesen() || vm.showZweiteMahnungAusloesen()">
+                <div class="row text-left marginTop20" ng-if="vm.showErsteMahnungAusloesen() || vm.showZweiteMahnungAusloesen()">
                     <div class="col-md-12">
                         <h3 class="ebeguH2" data-translate="ERSTE_MAHNUNG" ng-if="vm.showErsteMahnungAusloesen()"></h3>
                         <h3 class="ebeguH2" data-translate="ZWEITE_MAHNUNG"
@@ -204,35 +201,7 @@
         <div class="nav-row-verfuegen">
             <dv-navigation dv-previous="true" dv-next="false" dv-sub-step="1">
             </dv-navigation>
-            <div dv-show-element
-                 dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
-                 dv-show-expression="!vm.gesuchModelManager.isGesuchsperiodeReadonly()">
-                <dv-loading-button type="button" button-click="vm.setGesuchStatusGeprueft()"
-                                   aria-label="{{'GEPRUEFT_UPPER' | translate}}" ng-if="vm.showGeprueft()"
-                                   button-disabled="!vm.isFinSitChoosen()">
-                    <span data-translate="GEPRUEFT_UPPER"></span>
-                </dv-loading-button>
-                <dv-loading-button button-click="vm.setGesuchStatusVerfuegen()"
-                                   aria-label="{{'VERFUEGUNG_STARTEN_UPPER' | translate}}"
-                                   ng-if="vm.showVerfuegenStarten()">
-                    <span data-translate="VERFUEGUNG_STARTEN_UPPER"></span>
-                </dv-loading-button>
-                <dv-loading-button button-click="vm.closeWithoutAngebot()"
-                                   aria-label="{{'BEENDEN_OHNE_ANGEBOT_UPPER' | translate}}"
-                                   ng-if="vm.showCloseWithoutAngebot()">
-                    <span data-translate="BEENDEN_OHNE_ANGEBOT_UPPER"></span>
-                </dv-loading-button>
-                <dv-loading-button button-click="vm.sendToSteuerverwaltung()"
-                                   aria-label="{{'SEND_TO_STV_UPPER' | translate}}"
-                                   ng-if="vm.showSendToSteuerverwaltung()">
-                    <span data-translate="SEND_TO_STV_UPPER"></span>
-                </dv-loading-button>
-                <dv-loading-button button-click="vm.stvPruefungAbschliessen()"
-                                   aria-label="{{'STV_PRUEFUNG_ABSCHLIESSEN_UPPER' | translate}}"
-                                   ng-if="vm.showSTVPruefungAbschliessen()">
-                    <span data-translate="STV_PRUEFUNG_ABSCHLIESSEN_UPPER"></span>
-                </dv-loading-button>
-            </div>
+
             <div dv-show-element
                  dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorOrAmtRole()"
                  dv-show-expression="!vm.gesuchModelManager.isGesuchsperiodeReadonly()">
@@ -288,6 +257,35 @@
                     <span data-translate="BESCHWERDE_ABSCHLIESSEN_UPPER"></span>
                 </dv-loading-button>
 
+            </div>
+            <div dv-show-element
+                 dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
+                 dv-show-expression="!vm.gesuchModelManager.isGesuchsperiodeReadonly()">
+                <dv-loading-button type="button" button-click="vm.setGesuchStatusGeprueft()"
+                                   aria-label="{{'GEPRUEFT_UPPER' | translate}}" ng-if="vm.showGeprueft()"
+                                   button-disabled="!vm.isFinSitChoosen()">
+                    <span data-translate="GEPRUEFT_UPPER"></span>
+                </dv-loading-button>
+                <dv-loading-button button-click="vm.setGesuchStatusVerfuegen()"
+                                   aria-label="{{'VERFUEGUNG_STARTEN_UPPER' | translate}}"
+                                   ng-if="vm.showVerfuegenStarten()">
+                    <span data-translate="VERFUEGUNG_STARTEN_UPPER"></span>
+                </dv-loading-button>
+                <dv-loading-button button-click="vm.closeWithoutAngebot()"
+                                   aria-label="{{'BEENDEN_OHNE_ANGEBOT_UPPER' | translate}}"
+                                   ng-if="vm.showCloseWithoutAngebot()">
+                    <span data-translate="BEENDEN_OHNE_ANGEBOT_UPPER"></span>
+                </dv-loading-button>
+                <dv-loading-button button-click="vm.sendToSteuerverwaltung()"
+                                   aria-label="{{'SEND_TO_STV_UPPER' | translate}}"
+                                   ng-if="vm.showSendToSteuerverwaltung()">
+                    <span data-translate="SEND_TO_STV_UPPER"></span>
+                </dv-loading-button>
+                <dv-loading-button button-click="vm.stvPruefungAbschliessen()"
+                                   aria-label="{{'STV_PRUEFUNG_ABSCHLIESSEN_UPPER' | translate}}"
+                                   ng-if="vm.showSTVPruefungAbschliessen()">
+                    <span data-translate="STV_PRUEFUNG_ABSCHLIESSEN_UPPER"></span>
+                </dv-loading-button>
             </div>
         </div>
 
