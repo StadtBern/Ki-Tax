@@ -323,7 +323,11 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             parentController: undefined,
             elementID: undefined
         }).then(() => {
-            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN, 'pendenzenInstitution', undefined);
+            if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) {
+                this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
+            } else {
+                this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN, 'pendenzenInstitution', undefined);
+            }
         });
     }
 
@@ -336,7 +340,11 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public anmeldungSchulamtFalscheInstitution(): void {
-        this.save(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION, 'pendenzenInstitution', undefined);
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) {
+            this.save(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
+        } else {
+            this.save(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION, 'pendenzenInstitution', undefined);
+        }
     }
 
     private copyBGNumberLToClipboard(): void {
