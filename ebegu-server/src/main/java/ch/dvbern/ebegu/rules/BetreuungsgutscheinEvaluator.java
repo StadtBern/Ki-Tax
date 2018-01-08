@@ -115,15 +115,16 @@ public class BetreuungsgutscheinEvaluator {
 
 			// Betreuungen werden einzeln berechnet, reihenfolge ist wichtig (sortiert mit comperator gem regel EBEGU-561)
 			List<Betreuung> betreuungen = new ArrayList<>(kindContainer.getBetreuungen());
-			Collections.sort(betreuungen, new BetreuungComparator());
+			betreuungen.sort(new BetreuungComparator());
 
 			for (Betreuung betreuung : betreuungen) {
 
 				if (!betreuung.getBetreuungsangebotTyp().isSchulamt()) {
 					//initiale Restansprueche vorberechnen
 					if (betreuung.getBetreuungsstatus() != null) {
-						if ((betreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)
-							&& betreuung.getVerfuegungOrVorgaengerVerfuegung() == null) || betreuung.getBetreuungsstatus().equals(Betreuungsstatus.NICHT_EINGETRETEN)) {
+						if ((betreuung.getBetreuungsstatus() == Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG
+							&& betreuung.getVerfuegungOrVorgaengerVerfuegung() == null)
+							|| betreuung.getBetreuungsstatus() == Betreuungsstatus.NICHT_EINGETRETEN) {
 							// es kann sein dass eine neue Betreuung in der Mutation abgelehnt wird, dann gibts keinen Vorgaenger und keine aktuelle
 							//verfuegung und wir muessen keinenr restanspruch berechnen (vergl EBEGU-890)
 							continue;
@@ -139,8 +140,8 @@ public class BetreuungsgutscheinEvaluator {
 					// Die Initialen Zeitabschnitte sind die "Restansprüche" aus der letzten Betreuung
 					List<VerfuegungZeitabschnitt> zeitabschnitte = restanspruchZeitabschnitte;
 					if (isDebug) {
-						LOG.info("BG-Nummer: " + betreuung.getBGNummer());
-						LOG.info(RestanspruchInitializer.class.getSimpleName() + ": ");
+						LOG.info("BG-Nummer: {}", betreuung.getBGNummer());
+						LOG.info("{}: ", RestanspruchInitializer.class.getSimpleName());
 						for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnitte) {
 							LOG.info(verfuegungZeitabschnitt.toString());
 						}
@@ -149,7 +150,7 @@ public class BetreuungsgutscheinEvaluator {
 					for (Rule rule : rulesToRun) {
 						zeitabschnitte = rule.calculate(betreuung, zeitabschnitte);
 						if (isDebug) {
-							LOG.info(rule.getClass().getSimpleName() + " (" + rule.getRuleKey().name() + ": " + rule.getRuleType().name() + ")");
+							LOG.info("{} ({}: {}" + ')', rule.getClass().getSimpleName(), rule.getRuleKey().name(), rule.getRuleType().name());
 							for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnitte) {
 								LOG.info(verfuegungZeitabschnitt.toString());
 							}
@@ -205,7 +206,7 @@ public class BetreuungsgutscheinEvaluator {
 		List<VerfuegungZeitabschnitt> restanspruchZeitabschnitte;
 		Verfuegung verfuegungForRestanspruch = betreuung.getVerfuegungOrVorgaengerVerfuegung();
 		if (verfuegungForRestanspruch == null) {
-			String message = "Ungueltiger Zustand, geschlossene  Betreuung ohne Verfuegung oder Vorgaengerverfuegung (" + betreuung.getId() + ")";
+			String message = "Ungueltiger Zustand, geschlossene  Betreuung ohne Verfuegung oder Vorgaengerverfuegung (" + betreuung.getId() + ')';
 			throw new EbeguRuntimeException("getRestanspruchForVerfuegteBetreung", message, message);
 		}
 		restanspruchZeitabschnitte = restanspruchInitializer.createVerfuegungsZeitabschnitte(
@@ -220,7 +221,7 @@ public class BetreuungsgutscheinEvaluator {
 			if (rule.isValid(gesuchsperiode.getGueltigkeit().getGueltigAb())) {
 				rulesForGesuchsperiode.add(rule);
 			} else {
-				LOG.debug("Rule did not aply to Gesuchsperiode " + rule);
+				LOG.debug("Rule did not aply to Gesuchsperiode {}", rule);
 
 			}
 		}

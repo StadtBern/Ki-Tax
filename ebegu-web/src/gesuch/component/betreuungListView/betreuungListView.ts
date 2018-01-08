@@ -32,7 +32,7 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
-import {isStatusVerfuegenVerfuegt} from '../../../models/enums/TSAntragStatus';
+import {isStatusVerfuegenVerfuegt, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import ITranslateService = angular.translate.ITranslateService;
 import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
@@ -209,12 +209,21 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
 
     public showButtonAnmeldungSchulamt(): boolean {
         // Anmeldung Schulamt: Solange das Gesuch noch "normal" editiert werden kann, soll der Weg ueber "Betreuung hinzufuegen" verwendet werden
-        // Nachdem readonly: nur fuer Jugendamt, Schulamt und Gesuchsteller verfuegbar sein
+        // Nachdem readonly: nur fuer Jugendamt, Schulamt und Gesuchsteller verfuegbar sein. Nur fuer GP.hasTagesschulenAnmeldung().
         let isStatus: boolean = isStatusVerfuegenVerfuegt(this.gesuchModelManager.getGesuch().status)
             || this.gesuchModelManager.isGesuchReadonlyForRole()
             || this.gesuchModelManager.isKorrekturModusJugendamt()
             || this.gesuchModelManager.getGesuch().gesperrtWegenBeschwerde;
         let isRole: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles());
-        return isStatus && isRole;
+        let isGesuchsperiode: boolean = this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung();
+        let istNotStatusFreigabequittung: boolean = this.gesuchModelManager.getGesuch().status !== TSAntragStatus.FREIGABEQUITTUNG;
+        return isStatus && isRole && isGesuchsperiode && istNotStatusFreigabequittung;
+    }
+
+    /**
+     * Betreuungen und auch anmeldungen duerfen in Status FREIGABEQUITTUNG nicht hinzugefuegt werden
+     */
+    public isBetreuungenHinzufuegenDisabled(): boolean {
+        return this.gesuchModelManager.getGesuch().status === TSAntragStatus.FREIGABEQUITTUNG;
     }
 }

@@ -735,9 +735,13 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         }
     }
 
-    private cleanInstitutionStammdaten() {
+    private cleanInstitutionStammdaten(): void {
         if (this.getBetreuungModel()) {
             this.getBetreuungModel().institutionStammdaten = undefined;
         }
+    }
+
+    public enableErweiterteBeduerfnisse(): boolean {
+        return (this.isBetreuungsstatusWarten() && !this.isSavingData) || this.isMutationsmeldungStatus;
     }
 }

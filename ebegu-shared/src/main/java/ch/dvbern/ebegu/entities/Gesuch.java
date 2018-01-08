@@ -41,7 +41,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -54,6 +56,7 @@ import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
@@ -71,7 +74,10 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 @Entity
 @Indexed
 @Analyzer(impl = EBEGUGermanAnalyzer.class)
-@EntityListeners({ GesuchStatusListener.class })
+@EntityListeners({ GesuchStatusListener.class , GesuchGueltigListener.class})
+@Table(
+	uniqueConstraints = @UniqueConstraint(columnNames = { "fall_id", "gesuchsperiode_id", "gueltig" }, name = "UK_gueltiges_gesuch")
+)
 public class Gesuch extends AbstractEntity implements Searchable {
 
 	private static final long serialVersionUID = -8403487439884700618L;
@@ -195,6 +201,11 @@ public class Gesuch extends AbstractEntity implements Searchable {
 	@Column(nullable = false)
 	private boolean hasFSDokument = true;
 
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = true)
+	@Nullable
+	private FinSitStatus finSitStatus;
+
 	@Column(nullable = false)
 	private boolean gesperrtWegenBeschwerde = false;
 
@@ -207,8 +218,9 @@ public class Gesuch extends AbstractEntity implements Searchable {
 	@Column(nullable = true)
 	private LocalDateTime timestampVerfuegt;
 
-	@Column(nullable = false)
-	private boolean gueltig = false;
+	// Es muss nullable sein koennen, damit man ein UNIQUE_KEY machen kann
+	@Column(nullable = true)
+	private Boolean gueltig = null;
 
 	public Gesuch() {
 	}
@@ -475,12 +487,21 @@ public class Gesuch extends AbstractEntity implements Searchable {
 		this.timestampVerfuegt = datumVerfuegt;
 	}
 
-	public boolean isGueltig() {
+	@Nullable
+	public Boolean getGueltig() {
 		return gueltig;
 	}
 
-	public void setGueltig(boolean gueltig) {
+	public void setGueltig(@Nullable Boolean gueltig) {
 		this.gueltig = gueltig;
+	}
+
+	/**
+	 * @return boolean as false or true (if null return false) Use this function instead of getGueltig() for client.
+	 */
+	@Transient
+	public boolean isGueltig() {
+		return this.gueltig != null && this.gueltig;
 	}
 
 	public Boolean getDokumenteHochgeladen() {
@@ -489,6 +510,15 @@ public class Gesuch extends AbstractEntity implements Searchable {
 
 	public void setDokumenteHochgeladen(Boolean dokumenteHochgeladen) {
 		this.dokumenteHochgeladen = dokumenteHochgeladen;
+	}
+
+	@Nullable
+	public FinSitStatus getFinSitStatus() {
+		return finSitStatus;
+	}
+
+	public void setFinSitStatus(@Nullable FinSitStatus finSitStatus) {
+		this.finSitStatus = finSitStatus;
 	}
 
 	@Override
@@ -800,4 +830,6 @@ public class Gesuch extends AbstractEntity implements Searchable {
 	public void setPreStatus(AntragStatus preStatus) {
 		this.preStatus = preStatus;
 	}
+
+
 }

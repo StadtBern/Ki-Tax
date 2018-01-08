@@ -31,6 +31,7 @@ import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.lib.date.converters.LocalDateTimeXMLConverter;
 import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
@@ -139,6 +140,9 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 	private GesuchBetreuungenStatus gesuchBetreuungenStatus;
 
 	private boolean dokumenteHochgeladen;
+
+	@Nullable
+	private FinSitStatus finSitStatus;
 
 	public String getAntragId() {
 		return antragId;
@@ -294,5 +298,14 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 
 	public void setDokumenteHochgeladen(boolean dokumenteHochgeladen) {
 		this.dokumenteHochgeladen = dokumenteHochgeladen;
+	}
+
+	@Nullable
+	public FinSitStatus getFinSitStatus() {
+		return finSitStatus;
+	}
+
+	public void setFinSitStatus(@Nullable FinSitStatus finSitStatus) {
+		this.finSitStatus = finSitStatus;
 	}
 }

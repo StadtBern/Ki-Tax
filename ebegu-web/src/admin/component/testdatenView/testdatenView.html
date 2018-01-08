@@ -357,16 +357,29 @@
                     <h2>Zahlungen</h2>
                 </div>
                 <div>
-                    <button type="button" class=" btn-testfall"
+                    <button type="button" class="btn-testfall"
                             ng-click="vm.zahlungenKontrollieren()">
                         <span>Zahlungen kontrollieren</span>
                     </button>
                 </div>
                 <div ng-if="vm.devMode">
                     <br/>
-                    <button type="button" class=" btn-testfall"
+                    <button type="button" class="btn-testfall"
                             ng-click="vm.deleteAllZahlungsauftraege()">
                         <span>Alle Zahlungen löschen</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Batch Jobs -->
+            <div class="row marginTop10">
+                <div class="viewTitle marginTop10">
+                    <h2>Batch Jobs</h2>
+                </div>
+                <div ng-if="vm.devMode">
+                    <button type="button" class="btn-testfall"
+                            ng-click="vm.runBatchMahnungFristablauf()">
+                        <span>Mahnung Prüfung ausführen</span>
                     </button>
                 </div>
             </div>

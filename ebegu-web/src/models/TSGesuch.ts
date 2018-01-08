@@ -27,6 +27,7 @@ import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
 import {TSAntragStatus} from './enums/TSAntragStatus';
 import * as moment from 'moment';
 import {TSGesuchBetreuungenStatus} from './enums/TSGesuchBetreuungenStatus';
+import {TSFinSitStatus} from './enums/TSFinSitStatus';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 
@@ -41,6 +42,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _laufnummer: number;
     private _geprueftSTV: boolean = false;
     private _hasFSDokument: boolean = true;
+    private _finSitStatus: TSFinSitStatus;
     private _gesperrtWegenBeschwerde: boolean = false;
     private _datumGewarntNichtFreigegeben: moment.Moment;
     private _datumGewarntFehlendeQuittung: moment.Moment;
@@ -216,6 +218,14 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     public isOnlineGesuch(): boolean {
         return TSEingangsart.ONLINE === this.eingangsart;
+    }
+
+    public get finSitStatus(): TSFinSitStatus {
+        return this._finSitStatus;
+    }
+
+    public set finSitStatus(value: TSFinSitStatus) {
+        this._finSitStatus = value;
     }
 
     /**
