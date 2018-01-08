@@ -300,20 +300,21 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	private boolean isStatusUebergangValid(GesuchsperiodeStatus statusBefore, GesuchsperiodeStatus statusAfter) {
 		if (GesuchsperiodeStatus.ENTWURF == statusBefore) {
 			return GesuchsperiodeStatus.AKTIV == statusAfter;
-		} else if (GesuchsperiodeStatus.AKTIV == statusBefore) {
-			return GesuchsperiodeStatus.INAKTIV == statusAfter;
-		} else if (GesuchsperiodeStatus.INAKTIV == statusBefore) {
-			return GesuchsperiodeStatus.GESCHLOSSEN == statusAfter;
-		} else {
-			return false;
 		}
+		if (GesuchsperiodeStatus.AKTIV == statusBefore) {
+			return GesuchsperiodeStatus.INAKTIV == statusAfter;
+		}
+		if (GesuchsperiodeStatus.INAKTIV == statusBefore) {
+			return GesuchsperiodeStatus.GESCHLOSSEN == statusAfter;
+		}
+		return false;
 	}
 
 	private void logStatusChange(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull GesuchsperiodeStatus statusBisher) {
 		LOGGER.info("****************************************************");
 		LOGGER.info("Status Gesuchsperiode wurde geändert:");
 		LOGGER.info("Benutzer: {}", principalBean.getBenutzer().getUsername());
-		LOGGER.info("Gesuchsperiode: {} ({})", gesuchsperiode.getGesuchsperiodeString(), gesuchsperiode.getId());
+		LOGGER.info("Gesuchsperiode: {} ({}" + ')', gesuchsperiode.getGesuchsperiodeString(), gesuchsperiode.getId());
 		LOGGER.info("Neuer Status: {}", gesuchsperiode.getStatus());
 		LOGGER.info("Bisheriger Status: {}", statusBisher);
 		LOGGER.info("****************************************************");
