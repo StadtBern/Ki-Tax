@@ -124,7 +124,7 @@
 				"header": [],
 				"body": {},
 				"url": {
-					"raw": "{{protocol}}://{{host}}:{{port}}/{{endpoint}}/schulamt/finanziellesituation?stichtag=2018-08-31&fall=123",
+					"raw": "{{protocol}}://{{host}}:{{port}}/{{endpoint}}/schulamt/finanziellesituation?stichtag=2018-08-31&bgNummer=18.000123.1.2",
 					"protocol": "{{protocol}}",
 					"host": [
 						"{{host}}"
@@ -142,8 +142,8 @@
 							"equals": true
 						},
 						{
-							"key": "fall",
-							"value": "123",
+							"key": "bgNummer",
+							"value": "18.000123.1.2",
 							"equals": true
 						}
 					]

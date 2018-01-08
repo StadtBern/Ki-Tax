@@ -643,7 +643,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public Gesuch setAbschliessen(@Nonnull Gesuch gesuch) {
 		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
 			gesuch.setTimestampVerfuegt(LocalDateTime.now());
-			gesuch.setGueltig(true);
 			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
 
@@ -651,6 +650,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				final Optional<Gesuch> vorgaengerOpt = findGesuch(gesuch.getVorgaengerId());
 				vorgaengerOpt.ifPresent(this::setGesuchUngueltig);
 			}
+
+			// neues Gesuch erst nachdem das andere auf ungültig gesetzt wurde setzen wegen unique key
+			gesuch.setGueltig(true);
 
 			return persistence.merge(gesuch);
 		}
@@ -832,10 +834,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		query.where(predicateStatus, predicateGesuchsperiode, predicateGueltig, predicateFall);
 		query.select(root);
-
-		// TODO: (team) Business Rule ? = There are only 0-1 Gesuch with gleutig = 1 with the same fall_id
-		// If this is the case then we don't need this order by line.  However this Business rule is broken in the DB and not enforced.
-		query.orderBy(cb.desc(root.get(Gesuch_.timestampVerfuegt))); // Das mit dem neuesten Verfuegungsdatum
 
 		TypedQuery<Gesuch> typedQuery = persistence.getEntityManager().createQuery(query);
 		typedQuery.setParameter(fallParam, fall);
@@ -1338,10 +1336,12 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		if (AntragStatus.FIRST_STATUS_OF_VERFUEGT.contains(gesuch.getStatus()) && gesuch.getTimestampVerfuegt() == null) {
 			// Status ist neuerdings verfuegt, aber das Datum noch nicht gesetzt -> dies war der Statuswechsel
 			gesuch.setTimestampVerfuegt(LocalDateTime.now());
-			gesuch.setGueltig(true);
 			if (neustesVerfuegtesGesuchFuerGesuch.isPresent() && !neustesVerfuegtesGesuchFuerGesuch.get().getId().equals(gesuch.getId())) {
 				setGesuchUngueltig(neustesVerfuegtesGesuchFuerGesuch.get());
 			}
+
+			// neues Gesuch erst nachdem das andere auf ungültig gesetzt wurde setzen wegen unique key
+			gesuch.setGueltig(true);
 		}
 	}
 
@@ -1350,8 +1350,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	 */
 	private void setGesuchUngueltig(@Nonnull Gesuch gesuch) {
 		if (gesuch.isGueltig()) {
-			gesuch.setGueltig(false);
+			gesuch.setGueltig(null);
 			updateGesuch(gesuch, false, null, false);
+			// Sicherstellen, dass das Gesuch welches nicht mehr gültig ist zuerst gespeichert wird da sonst unique key Probleme macht!
+			persistence.getEntityManager().flush();
 		}
 	}
 
@@ -1441,6 +1443,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		final CriteriaUpdate<Gesuch> update = cb.createCriteriaUpdate(Gesuch.class);
 		Root<Gesuch> root = update.from(Gesuch.class);
 		update.set(Gesuch_.finSitStatus, finSitStatus);
+		if (finSitStatus == FinSitStatus.ABGELEHNT) {
+			update.set(Gesuch_.hasFSDokument, false); // immer auf false wenn ABGELEHNT
+		}
 
 		Predicate predGesuch = cb.equal(root.get(Gesuch_.id), antragId);
 		update.where(predGesuch);

@@ -95,4 +95,10 @@ public interface GesuchsperiodeService {
 	 */
 	@Nonnull
 	Collection<Gesuchsperiode> getGesuchsperiodenBetween(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis);
+
+	/**
+	 * Gibt die neuste Gesuchsperiode zurueck anhand des Datums gueltigBis.
+	 */
+	@Nonnull
+	Optional<Gesuchsperiode> findNewestGesuchsperiode();
 }

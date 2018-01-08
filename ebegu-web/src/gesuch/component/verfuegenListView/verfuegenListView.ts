@@ -360,8 +360,12 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             && !this.isGesuchReadonly();
     }
 
+    /**
+     * Nur required in Status VERFUEGEN oder GEPRUEFT und wenn der Benutzer nicht am Erstellen einer Mahnung ist.
+     */
     public isFinSitStatusRequired(): boolean {
-        return !this.showErsteMahnungAusloesen() && !this.showZweiteMahnungAusloesen();
+        return !this.showErsteMahnungAusloesen() && !this.showZweiteMahnungAusloesen()
+            && (this.getGesuch().status === TSAntragStatus.VERFUEGEN || this.getGesuch().status === TSAntragStatus.GEPRUEFT);
     }
 
     public showMahnlaufBeenden(): boolean {
@@ -588,8 +592,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public changeFinSitStatus() {
         if (this.getGesuch().finSitStatus) {
+            this.setHasFSDokumentAccordingToFinSitState();
             this.gesuchRS.changeFinSitStatus(this.getGesuch().id, this.getGesuch().finSitStatus).then((response: any) => {
-                this.setHasFSDokumentAccordingToFinSitState();
                 this.gesuchModelManager.setGesuch(this.getGesuch());
                 this.form.$setPristine();
             });
