@@ -78,7 +78,7 @@
                     </div>
                 </div>
                 <!--FinSitStatus-->
-                <div class="row marginTop30">
+                <div class="row marginTop30" ng-if="vm.showFinSitStatus()">
                     <div class="col-xs-12 dv-input-container-medium">
                         <div class="form-group">
                             <dv-radio-container name="finSitStatus" class="input-element"
@@ -113,7 +113,6 @@
                      dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                      dv-show-expression="vm.isFinanziellesituationPDFVisible()">
                     <div class="col-md-12">
-
                         <button type="button" class=" btn-link link-underline"
                                 ng-click="vm.openFinanzielleSituationPDF()">
                             <i class="fa fa-file-text-o"></i>

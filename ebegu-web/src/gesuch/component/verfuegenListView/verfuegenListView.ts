@@ -450,6 +450,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
             && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
             && this.gesuchModelManager.getGesuch().isThereAnyBetreuung()
+            && !this.gesuchModelManager.areThereOnlySchulamtAngebote()
             && !this.isGesuchReadonly();
         // && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
     }
@@ -461,6 +462,13 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
             && !this.gesuchModelManager.getGesuch().isThereAnyBetreuung()
             && !this.isGesuchReadonly();
+    }
+
+    /**
+     * ausblenden, wenn Gesuch readonly und finSitStatus nicht gesetzt (für alte Gesuche)
+     */
+    public showFinSitStatus(): boolean {
+        return !(this.isGesuchReadonly() && EbeguUtil.isNullOrUndefined(this.getGesuch().finSitStatus));
     }
 
     public openFinanzielleSituationPDF(): void {
@@ -580,8 +588,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public changeFinSitStatus() {
         if (this.getGesuch().finSitStatus) {
+            this.setHasFSDokumentAccordingToFinSitState();
             this.gesuchRS.changeFinSitStatus(this.getGesuch().id, this.getGesuch().finSitStatus).then((response: any) => {
-                this.setHasFSDokumentAccordingToFinSitState();
                 this.gesuchModelManager.setGesuch(this.getGesuch());
                 this.form.$setPristine();
             });
