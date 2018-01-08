@@ -643,7 +643,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public Gesuch setAbschliessen(@Nonnull Gesuch gesuch) {
 		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
 			gesuch.setTimestampVerfuegt(LocalDateTime.now());
-			gesuch.setGueltig(true);
 			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
 
@@ -651,6 +650,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				final Optional<Gesuch> vorgaengerOpt = findGesuch(gesuch.getVorgaengerId());
 				vorgaengerOpt.ifPresent(this::setGesuchUngueltig);
 			}
+
+			// neues Gesuch erst nachdem das andere auf ungültig gesetzt wurde setzen wegen unique key
+			gesuch.setGueltig(true);
 
 			return persistence.merge(gesuch);
 		}
@@ -1341,6 +1343,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			if (neustesVerfuegtesGesuchFuerGesuch.isPresent() && !neustesVerfuegtesGesuchFuerGesuch.get().getId().equals(gesuch.getId())) {
 				setGesuchUngueltig(neustesVerfuegtesGesuchFuerGesuch.get());
 			}
+
+			// neues Gesuch erst nachdem das andere auf ungültig gesetzt wurde setzen wegen unique key
 			gesuch.setGueltig(true);
 		}
 	}
