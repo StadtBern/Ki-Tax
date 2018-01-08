@@ -60,6 +60,7 @@ import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.enums.WizardStepName;
@@ -731,6 +732,20 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuchService.updateBetreuungenStatus(gesuch);
 		Assert.assertEquals(GesuchBetreuungenStatus.ABGEWIESEN, gesuch.getGesuchBetreuungenStatus());
 	}
+
+	@Test
+	public void testChangeFinSitStatusAbgelehnt() {
+		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, null, AntragStatus.VERFUEGT);
+		Assert.assertTrue(gesuch.isHasFSDokument());
+		Assert.assertNull(gesuch.getFinSitStatus());
+
+		gesuchService.changeFinSitStatus(gesuch.getId(), FinSitStatus.ABGELEHNT);
+		final Optional<Gesuch> updatedGesuch = gesuchService.findGesuch(gesuch.getId());
+		Assert.assertTrue(updatedGesuch.isPresent());
+		Assert.assertFalse(updatedGesuch.get().isHasFSDokument());
+		Assert.assertEquals(FinSitStatus.ABGELEHNT, updatedGesuch.get().getFinSitStatus());
+	}
+
 
 	// HELP METHODS
 
