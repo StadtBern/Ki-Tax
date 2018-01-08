@@ -99,30 +99,30 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@RolesAllowed({ SUPER_ADMIN, ADMIN })
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	public Gesuchsperiode saveGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull GesuchsperiodeStatus statusBisher) {
-		if (gesuchsperiode.isNew() && !GesuchsperiodeStatus.ENTWURF.equals(gesuchsperiode.getStatus())) {
+		if (gesuchsperiode.isNew() && GesuchsperiodeStatus.ENTWURF != gesuchsperiode.getStatus()) {
 			// Gesuchsperiode muss im Status ENTWURF erstellt werden
-			throw new EbeguRuntimeException("saveGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_INVALID_STATUSUEBERGANG);
+			throw new EbeguRuntimeException("saveGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_INVALID_STATUSUEBERGANG, "Neu", gesuchsperiode.getStatus());
 		}
 		// Überprüfen, ob der Statusübergang zulässig ist
-		if (!gesuchsperiode.getStatus().equals(statusBisher)) {
+		if (gesuchsperiode.getStatus() != statusBisher) {
 			// Alle Statusuebergaenge werden geloggt
 			logStatusChange(gesuchsperiode, statusBisher);
 			// Superadmin darf alles
 			if (!principalBean.isCallerInRole(UserRole.SUPER_ADMIN)) {
 				if (!isStatusUebergangValid(statusBisher, gesuchsperiode.getStatus())) {
-					throw new EbeguRuntimeException("saveGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_INVALID_STATUSUEBERGANG);
+					throw new EbeguRuntimeException("saveGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_INVALID_STATUSUEBERGANG, statusBisher, gesuchsperiode.getStatus());
 				}
 			}
 			// Falls es ein Statuswechsel war, und der neue Status ist AKTIV -> Mail an alle Gesuchsteller schicken
 			// Nur, wenn die Gesuchsperiode noch nie auf aktiv geschaltet war.
-			if (GesuchsperiodeStatus.AKTIV.equals(gesuchsperiode.getStatus()) && gesuchsperiode.getDatumAktiviert() == null) {
+			if (GesuchsperiodeStatus.AKTIV == gesuchsperiode.getStatus() && gesuchsperiode.getDatumAktiviert() == null) {
 				Optional<Gesuchsperiode> lastGesuchsperiodeOptional = getGesuchsperiodeAm(gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1));
 				if (lastGesuchsperiodeOptional.isPresent()) {
 					gesuchService.sendMailsToAllGesuchstellerOfLastGesuchsperiode(lastGesuchsperiodeOptional.get(), gesuchsperiode);
 					gesuchsperiode.setDatumAktiviert(LocalDate.now());
 				}
 			}
-			if (GesuchsperiodeStatus.GESCHLOSSEN.equals(gesuchsperiode.getStatus())) {
+			if (GesuchsperiodeStatus.GESCHLOSSEN == gesuchsperiode.getStatus()) {
 				// Prüfen, dass ALLE Gesuche dieser Periode im Status "Verfügt" oder "Schulamt" sind. Sind noch
 				// Gesuce in Bearbeitung, oder in Beschwerde etc. darf nicht geschlossen werden!
 				if (!gesuchService.canGesuchsperiodeBeClosed(gesuchsperiode)) {
@@ -166,19 +166,19 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	public void removeGesuchsperiode(@Nonnull String gesuchsPeriodeId) {
 		Optional<Gesuchsperiode> gesuchsperiodeOptional = findGesuchsperiode(gesuchsPeriodeId);
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeOptional.orElseThrow(() -> new EbeguEntityNotFoundException("deleteGesuchsperiodeAndGesuche", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsPeriodeId));
-		LOGGER.info("Handling Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString());
+		LOGGER.info("Handling Gesuchsperiode {}", gesuchsperiode.getGesuchsperiodeString());
 		if (gesuchsperiode.getStatus() == GesuchsperiodeStatus.GESCHLOSSEN) {
 			// Gesuche der Periode loeschen
 			Collection<Gesuch> gesucheOfPeriode = criteriaQueryHelper.getEntitiesByAttribute(Gesuch.class, gesuchsperiode, Gesuch_.gesuchsperiode);
 			for (Gesuch gesuch : gesucheOfPeriode) {
 				Fall fall = gesuch.getFall();
 				// Gesuch, WizardSteps, Mahnungen, Dokumente, AntragstatusHistory, Zahlungspositionen
-				LOGGER.info("Deleting Gesuch of Fall " + gesuch.getFall().getFallNummer());
+				LOGGER.info("Deleting Gesuch of Fall {}", gesuch.getFall().getFallNummer());
 				gesuchService.removeGesuch(gesuch.getId());
 				// Feststellen, ob es das letzte Gesuch dieses Falles war
 				List<String> allGesuchIDsForFall = gesuchService.getAllGesuchIDsForFall(fall.getId());
 				if (allGesuchIDsForFall.isEmpty()) {
-					LOGGER.info("This was the last Gesuch of Fall, deleting Fall " + fall.getFallNummer());
+					LOGGER.info("This was the last Gesuch of Fall, deleting Fall {}", fall.getFallNummer());
 					fallService.removeFall(fall);
 				}
 			}
@@ -188,7 +188,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 				ferieninselStammdatenService.removeFerieninselStammdaten(ferieninselStammdaten.getId());
 			}
 			// Gesuchsperiode
-			LOGGER.info("Deleting Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString());
+			LOGGER.info("Deleting Gesuchsperiode {}", gesuchsperiode.getGesuchsperiodeString());
 			persistence.remove(gesuchsperiode);
 		} else {
 			throw new EbeguRuntimeException("removeGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_CANNOT_BE_REMOVED);
@@ -283,13 +283,27 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 		return persistence.getCriteriaResults(query);
 	}
 
+	@Nonnull
+	@Override
+	public Optional<Gesuchsperiode> findNewestGesuchsperiode() {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuchsperiode> query = cb.createQuery(Gesuchsperiode.class);
+		Root<Gesuchsperiode> root = query.from(Gesuchsperiode.class);
+		query.orderBy(cb.desc(root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis)));
+		final List<Gesuchsperiode> results = persistence.getCriteriaResults(query, 1);
+		if (results.isEmpty()) {
+			return Optional.empty();
+		}
+		return Optional.of(results.get(0));
+	}
+
 	private boolean isStatusUebergangValid(GesuchsperiodeStatus statusBefore, GesuchsperiodeStatus statusAfter) {
-		if (GesuchsperiodeStatus.ENTWURF.equals(statusBefore)) {
-			return GesuchsperiodeStatus.AKTIV.equals(statusAfter);
-		} else if (GesuchsperiodeStatus.AKTIV.equals(statusBefore)) {
-			return GesuchsperiodeStatus.INAKTIV.equals(statusAfter);
-		} else if (GesuchsperiodeStatus.INAKTIV.equals(statusBefore)) {
-			return GesuchsperiodeStatus.GESCHLOSSEN.equals(statusAfter);
+		if (GesuchsperiodeStatus.ENTWURF == statusBefore) {
+			return GesuchsperiodeStatus.AKTIV == statusAfter;
+		} else if (GesuchsperiodeStatus.AKTIV == statusBefore) {
+			return GesuchsperiodeStatus.INAKTIV == statusAfter;
+		} else if (GesuchsperiodeStatus.INAKTIV == statusBefore) {
+			return GesuchsperiodeStatus.GESCHLOSSEN == statusAfter;
 		} else {
 			return false;
 		}
@@ -298,10 +312,10 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	private void logStatusChange(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull GesuchsperiodeStatus statusBisher) {
 		LOGGER.info("****************************************************");
 		LOGGER.info("Status Gesuchsperiode wurde geändert:");
-		LOGGER.info("Benutzer: " + principalBean.getBenutzer().getUsername());
-		LOGGER.info("Gesuchsperiode: " + gesuchsperiode.getGesuchsperiodeString() + " (" + gesuchsperiode.getId() + ")");
-		LOGGER.info("Neuer Status: " + gesuchsperiode.getStatus());
-		LOGGER.info("Bisheriger Status: " + statusBisher);
+		LOGGER.info("Benutzer: {}", principalBean.getBenutzer().getUsername());
+		LOGGER.info("Gesuchsperiode: {} ({})", gesuchsperiode.getGesuchsperiodeString(), gesuchsperiode.getId());
+		LOGGER.info("Neuer Status: {}", gesuchsperiode.getStatus());
+		LOGGER.info("Bisheriger Status: {}", statusBisher);
 		LOGGER.info("****************************************************");
 	}
 }

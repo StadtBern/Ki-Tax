@@ -27,9 +27,14 @@ export function adminRun(routerHelper: RouterHelper) {
     routerHelper.configureStates(getStates());
 }
 
+export class IGesuchsperiodeStateParams implements IStateParamsService {
+    gesuchsperiodeId: string;
+}
+
 export class IInstitutionStateParams implements IStateParamsService {
     institutionId: string;
 }
+
 export class IInstitutionStammdatenStateParams implements IStateParamsService {
     institutionStammdatenId: string;
     institutionId: string;
@@ -81,6 +86,17 @@ function getStates(): IState[] {
             name: 'parameter',
             template: '<dv-parameter-view flex="auto" class="overflow-scroll" ebeguParameter="vm.ebeguParameter"></dv-parameter-view>',
             url: '/parameter',
+        },
+        {
+            name: 'gesuchsperiode',
+            template: '<dv-gesuchsperiode-view flex="auto" class="overflow-scroll"'
+            + ' mandant="$resolve.mandant"></dv-gesuchsperiode-view>',
+            url: '/parameter/gesuchsperiode/:gesuchsperiodeId',
+
+            resolve: {
+                traegerschaften: getTraegerschaften,
+                mandant: getMandant
+            }
         },
         {
             name: 'ferieninsel',
