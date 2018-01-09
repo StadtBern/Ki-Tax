@@ -103,6 +103,7 @@ public interface EbeguParameterService {
 	/**
 	 * searches all parameters that were valid at the first of january of the jahr-1. Then go through those parameters and if
 	 * the parameter is set "per Gesuchsperiode" then copy it from the previous year and set the daterange for the current year
+	 * The JahrParameter must exist for the year of gueltigBis of the newest Gesuchsperiode.
 	 */
 	void createEbeguParameterListForJahr(@Nonnull Integer jahr);
 

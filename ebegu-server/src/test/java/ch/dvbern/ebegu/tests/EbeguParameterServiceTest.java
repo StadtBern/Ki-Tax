@@ -24,7 +24,9 @@ import javax.inject.Inject;
 import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.services.EbeguParameterService;
+import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
@@ -48,6 +50,9 @@ public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private EbeguParameterService parameterService;
+
+	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
 
 	private static final EbeguParameterKey PARAM_KEY = EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA;
 
@@ -150,8 +155,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testCopyEbeguParameterListToNewGesuchsperiode() {
-		Gesuchsperiode gesuchsperiode17 = TestDataUtil.createDefaultGesuchsperiode();
-		gesuchsperiode17.setGueltigkeit(Constants.GESUCHSPERIODE_17_18);
+		final Gesuchsperiode gesuchsperiode17 = createAndPersistPeriode1718();
 
 		createAndPersistParameter(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA, gesuchsperiode17.getGueltigkeit());
 		Collection<EbeguParameter> allParameter = parameterService.getAllEbeguParameter();
@@ -178,8 +182,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 	 */
 	@Test
 	public void testCopyEbeguParameterListToNewGesuchsperiodeDuplicate() {
-		Gesuchsperiode gesuchsperiode17 = TestDataUtil.createDefaultGesuchsperiode();
-		gesuchsperiode17.setGueltigkeit(Constants.GESUCHSPERIODE_17_18);
+		final Gesuchsperiode gesuchsperiode17 = createAndPersistPeriode1718();
 
 		createAndPersistParameter(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA, gesuchsperiode17.getGueltigkeit());
 		Collection<EbeguParameter> allParameter = parameterService.getAllEbeguParameter();
@@ -195,20 +198,22 @@ public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testCreateEbeguParameterListForJahr() {
-		createAndPersistParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, new DateRange(2015));
+		createAndPersistPeriode1718();
+
+		createAndPersistParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, new DateRange(2018));
 		Collection<EbeguParameter> allParameter = parameterService.getAllEbeguParameter();
 		Assert.assertFalse(allParameter.isEmpty());
 		Assert.assertEquals(1, allParameter.size());
 
-		parameterService.createEbeguParameterListForJahr(2016);
+		parameterService.createEbeguParameterListForJahr(2019);
 		Collection<EbeguParameter> allParameter2 = parameterService.getAllEbeguParameter();
 		Assert.assertFalse(allParameter2.isEmpty());
 		Assert.assertEquals(2, allParameter2.size());
 
-		Collection<EbeguParameter> allParameter2016 = parameterService.getEbeguParametersByJahr(2016);
-		Assert.assertFalse(allParameter2016.isEmpty());
-		Assert.assertEquals(1, allParameter2016.size());
-		Assert.assertEquals(2016, allParameter2016.iterator().next().getGueltigkeit().getGueltigAb().getYear());
+		Collection<EbeguParameter> allParameter2018 = parameterService.getEbeguParametersByJahr(2019);
+		Assert.assertFalse(allParameter2018.isEmpty());
+		Assert.assertEquals(1, allParameter2018.size());
+		Assert.assertEquals(2019, allParameter2018.iterator().next().getGueltigkeit().getGueltigAb().getYear());
 	}
 
 	/**
@@ -216,16 +221,18 @@ public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 	 */
 	@Test
 	public void testCreateEbeguParameterListForJahrDuplicate() {
-		createAndPersistParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, new DateRange(2015));
+		createAndPersistPeriode1718();
+
+		createAndPersistParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, new DateRange(2017));
 		Collection<EbeguParameter> allParameter = parameterService.getAllEbeguParameter();
 		Assert.assertFalse(allParameter.isEmpty());
 		Assert.assertEquals(1, allParameter.size());
 
-		parameterService.createEbeguParameterListForJahr(2015);
+		parameterService.createEbeguParameterListForJahr(2017);
 		Collection<EbeguParameter> allParameter2 = parameterService.getAllEbeguParameter();
 		Assert.assertFalse(allParameter2.isEmpty());
 		Assert.assertEquals(1, allParameter2.size());
-		Assert.assertEquals(2015, allParameter2.iterator().next().getGueltigkeit().getGueltigAb().getYear());
+		Assert.assertEquals(2017, allParameter2.iterator().next().getGueltigkeit().getGueltigAb().getYear());
 	}
 
 	@Test
@@ -241,5 +248,12 @@ public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 		EbeguParameter parameter = TestDataUtil.createDefaultEbeguParameter(paramAnzalTageMaxKita);
 		parameter.setGueltigkeit(gueltigkeit);
 		return parameterService.saveEbeguParameter(parameter);
+	}
+
+	private Gesuchsperiode createAndPersistPeriode1718() {
+		Gesuchsperiode gesuchsperiode = TestDataUtil.createDefaultGesuchsperiode();
+		gesuchsperiode.setGueltigkeit(Constants.GESUCHSPERIODE_17_18);
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.ENTWURF);
+		return gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
 	}
 }

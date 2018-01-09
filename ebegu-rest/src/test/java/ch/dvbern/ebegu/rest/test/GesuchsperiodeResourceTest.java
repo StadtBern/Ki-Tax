@@ -37,7 +37,7 @@ import org.junit.runner.RunWith;
  * Testet die Gesuchsperiode Resource
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class GesuchsperiodeResourceTest extends AbstractEbeguRestLoginTest {
 
@@ -97,15 +97,15 @@ public class GesuchsperiodeResourceTest extends AbstractEbeguRestLoginTest {
 
 		List<JaxGesuchsperiode> listAll = gesuchsperiodeResource.getAllGesuchsperioden();
 		Assert.assertNotNull(listAll);
-		Assert.assertEquals(4, listAll.size());
+		Assert.assertEquals(5, listAll.size()); //also the one from mandant-dataset
 
 		List<JaxGesuchsperiode> listActive = gesuchsperiodeResource.getAllActiveGesuchsperioden();
 		Assert.assertNotNull(listActive);
-		Assert.assertEquals(1, listActive.size());
+		Assert.assertEquals(2, listActive.size()); //also the one from mandant-dataset
 
 		List<JaxGesuchsperiode> listActiveAndInaktiv = gesuchsperiodeResource.getAllNichtAbgeschlosseneGesuchsperioden();
 		Assert.assertNotNull(listActiveAndInaktiv);
-		Assert.assertEquals(2, listActiveAndInaktiv.size());
+		Assert.assertEquals(3, listActiveAndInaktiv.size()); //also the one from mandant-dataset
 	}
 
 	// HELP METHODS

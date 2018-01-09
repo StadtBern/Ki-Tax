@@ -82,6 +82,9 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
+	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
+
 	@Override
 	@Nonnull
 	@RolesAllowed({ ADMIN, SUPER_ADMIN })
@@ -226,8 +229,11 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION,
 		ADMINISTRATOR_SCHULAMT, SCHULAMT, STEUERAMT })
 	public void copyEbeguParameterListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
-		// Die Parameter des letzten Jahres suchen (datumAb -1 Tag)
-		Collection<EbeguParameter> paramsOfGesuchsperiode = getAllEbeguParameterByDate(gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1));
+		final Optional<Gesuchsperiode> newestGesuchsperiodeOpt = gesuchsperiodeService.findNewestGesuchsperiode();
+		final Gesuchsperiode newestGesuchsperiode = newestGesuchsperiodeOpt.orElseThrow(() -> new EbeguEntityNotFoundException
+			("copyEbeguParameterListToNewGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_MUST_EXIST));
+
+		Collection<EbeguParameter> paramsOfGesuchsperiode = getAllEbeguParameterByDate(newestGesuchsperiode.getGueltigkeit().getGueltigAb());
 		paramsOfGesuchsperiode.stream().filter(lastYearParameter -> lastYearParameter.getName().isProGesuchsperiode()).forEach(lastYearParameter -> {
 			final Optional<EbeguParameter> existingParameter = findEbeguParameter(lastYearParameter.getName(), gesuchsperiode.getGueltigkeit());
 			if (!existingParameter.isPresent()) {
@@ -241,7 +247,11 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION,
 		ADMINISTRATOR_SCHULAMT, SCHULAMT, STEUERAMT })
 	public void createEbeguParameterListForJahr(@Nonnull Integer jahr) {
-		Collection<EbeguParameter> paramsOfYear = getAllEbeguParameterByDate(LocalDate.of(jahr - 1, Month.JANUARY, 1));
+		final Optional<Gesuchsperiode> newestGesuchsperiodeOpt = gesuchsperiodeService.findNewestGesuchsperiode();
+		final Gesuchsperiode newestGesuchsperiode = newestGesuchsperiodeOpt.orElseThrow(() -> new EbeguEntityNotFoundException
+			("createEbeguParameterListForJahr", ErrorCodeEnum.ERROR_GESUCHSPERIODE_MUST_EXIST));
+
+		Collection<EbeguParameter> paramsOfYear = getAllEbeguParameterByDate(newestGesuchsperiode.getGueltigkeit().getGueltigBis());
 		paramsOfYear.stream()
 			.filter(lastYearParameter -> !lastYearParameter.getName().isProGesuchsperiode())
 			.forEach(lastYearParameter -> {
