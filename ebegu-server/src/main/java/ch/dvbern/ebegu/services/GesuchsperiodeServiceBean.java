@@ -84,6 +84,9 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	private FerieninselStammdatenService ferieninselStammdatenService;
 
 	@Inject
+	private EbeguParameterService ebeguParameterService;
+
+	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Nonnull
@@ -130,9 +133,12 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 				}
 			}
 		}
-		// Wenn die Gesuchsperiode neu ist, muss das Datum Freischaltung Tagesschule gesetzt werden: Defaultmässig
-		// erster Tag der Gesuchsperiode. Kann nach Aktivierung der Periode auf ein beliebiges Datum gesetzt werden
 		if (gesuchsperiode.isNew()) {
+			ebeguParameterService.copyEbeguParameterListToNewGesuchsperiode(gesuchsperiode);
+			ebeguParameterService.createEbeguParameterListForJahr(gesuchsperiode.getGueltigkeit().getGueltigAb().getYear());
+			ebeguParameterService.createEbeguParameterListForJahr(gesuchsperiode.getGueltigkeit().getGueltigBis().getYear());
+			// Wenn die Gesuchsperiode neu ist, muss das Datum Freischaltung Tagesschule gesetzt werden: Defaultmässig
+			// erster Tag der Gesuchsperiode. Kann nach Aktivierung der Periode auf ein beliebiges Datum gesetzt werden
 			gesuchsperiode.setDatumFreischaltungTagesschule(gesuchsperiode.getGueltigkeit().getGueltigAb());
 		}
 		return saveGesuchsperiode(gesuchsperiode);
