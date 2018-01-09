@@ -323,27 +323,27 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             parentController: undefined,
             elementID: undefined
         }).then(() => {
-            if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) {
-                this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
-            } else {
+            if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
                 this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN, 'pendenzenInstitution', undefined);
+            } else {
+                this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
             }
         });
     }
 
     public anmeldungSchulamtAblehnen(): void {
-        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) {
-            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
-        } else {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
             this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT, 'pendenzenInstitution', undefined);
+        } else {
+            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
         }
     }
 
     public anmeldungSchulamtFalscheInstitution(): void {
-        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) {
-            this.save(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
-        } else {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
             this.save(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION, 'pendenzenInstitution', undefined);
+        } else {
+            this.save(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
         }
     }
 
