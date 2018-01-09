@@ -52,6 +52,11 @@ export class TSRoleUtil {
         return [TSRole.SUPER_ADMIN, TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT];
     }
 
+    public static getTraegerschaftInstitutionSchulamtRoles(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN, TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT,
+            TSRole.SCHULAMT, TSRole.ADMINISTRATOR_SCHULAMT];
+    }
+
     public static getTraegerschaftInstitutionOnlyRoles(): Array<TSRole> {
         return [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT];
     }
