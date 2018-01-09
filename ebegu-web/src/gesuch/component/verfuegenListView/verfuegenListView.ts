@@ -191,7 +191,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      * erreicht hat
      */
     public isFinanziellesituationPDFVisible(): boolean {
-        if (!this.gesuchModelManager.isFinanzielleSituationRequired()) {
+        if (!this.gesuchModelManager.isFinanzielleSituationEnabled() || !this.gesuchModelManager.isFinanzielleSituationDesired()) {
             return false;
         }
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
@@ -203,8 +203,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     }
 
-    public isFinanzielleSituationRequired(): boolean {
-        return this.gesuchModelManager.isFinanzielleSituationRequired();
+    public isFinanzielleSituationDesired(): boolean {
+        return this.gesuchModelManager.isFinanzielleSituationDesired();
     }
 
     public isBegleitschreibenVisible(): boolean {
