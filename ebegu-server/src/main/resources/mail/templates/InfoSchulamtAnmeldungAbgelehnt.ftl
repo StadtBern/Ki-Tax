@@ -5,7 +5,7 @@
 <#-- @ftlvariable name="empfaengerMail" type="java.lang.String" -->
 From: ${configuration.senderAddress}
 To: ${gesuchsteller.fullName} <${empfaengerMail}>
-Subject: <@base64Header>Ki-Tax - Betreuungsplatz abgelehnt</@base64Header>
+Subject: <@base64Header>Ki-Tax - Anmeldung abgelehnt</@base64Header>
 Content-Type: text/html;charset=utf-8
 
 <html>
