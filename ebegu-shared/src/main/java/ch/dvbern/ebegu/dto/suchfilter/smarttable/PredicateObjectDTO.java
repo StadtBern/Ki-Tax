@@ -45,6 +45,7 @@ public class PredicateObjectDTO implements Serializable {
 	private String angebote;        //Gesuch.kindContainers.betreuungen.institutionStammdaten.betreuungsangebotTyp
 	private String institutionen;   //Gesuch.kindContainers.betreuungen.institutionStammdaten.institution.name
 	private String verantwortlicher; //Fall.verwantwortlicher.name
+	private String verantwortlicherSCH; //Fall.verwantwortlicher.name
 	private String kinder; //Gesuch.kindContainers.kindJa.vorname
 
 	public String getKinder() {
@@ -151,6 +152,14 @@ public class PredicateObjectDTO implements Serializable {
 		this.verantwortlicher = verantwortlicher;
 	}
 
+	public String getVerantwortlicherSCH() {
+		return verantwortlicherSCH;
+	}
+
+	public void setVerantwortlicherSCH(String verantwortlicherSCH) {
+		this.verantwortlicherSCH = verantwortlicherSCH;
+	}
+
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this)
@@ -164,6 +173,7 @@ public class PredicateObjectDTO implements Serializable {
 			.append("angebote", angebote)
 			.append("institutionen", institutionen)
 			.append("verantwortlicher", verantwortlicher)
+			.append("verantwortlicherSCH", verantwortlicherSCH)
 			.append("kinder", kinder)
 			.toString();
 	}

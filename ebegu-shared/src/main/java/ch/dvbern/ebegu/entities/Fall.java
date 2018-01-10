@@ -57,6 +57,7 @@ import org.hibernate.search.bridge.builtin.LongBridge;
 		@Index(name = "IX_fall_fall_nummer", columnList = "fallNummer"),
 		@Index(name = "IX_fall_besitzer", columnList = "besitzer_id"),
 		@Index(name = "IX_fall_verantwortlicher", columnList = "verantwortlicher_id"),
+		@Index(name = "IX_fall_verantwortlicher_sch", columnList = "verantwortlichersch_id"),
 		@Index(name = "IX_fall_mandant", columnList = "mandant_id")
 	}
 )
@@ -76,6 +77,11 @@ public class Fall extends AbstractEntity implements HasMandant, Searchable {
 	@ManyToOne(optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_fall_verantwortlicher_id"))
 	private Benutzer verantwortlicher = null; // Mitarbeiter des JA
+
+	@Nullable
+	@ManyToOne(optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_fall_verantwortlicher_sch_id"))
+	private Benutzer verantwortlicherSCH = null; // Mitarbeiter des SCH
 
 	@Nullable
 	@ManyToOne(optional = true)
@@ -112,6 +118,15 @@ public class Fall extends AbstractEntity implements HasMandant, Searchable {
 
 	public void setVerantwortlicher(@Nullable Benutzer verantwortlicher) {
 		this.verantwortlicher = verantwortlicher;
+	}
+
+	@Nullable
+	public Benutzer getVerantwortlicherSCH() {
+		return verantwortlicherSCH;
+	}
+
+	public void setVerantwortlicherSCH(@Nullable Benutzer verantwortlicherSCH) {
+		this.verantwortlicherSCH = verantwortlicherSCH;
 	}
 
 	@Nullable
