@@ -142,7 +142,7 @@ public class EbeguDummyParameterServiceBean extends AbstractBaseService implemen
 
 	@Override
 	public void createEbeguParameterListForJahr(@Nonnull Integer jahr) {
-		// nop§
+		// nop
 	}
 
 	@Override
