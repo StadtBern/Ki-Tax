@@ -96,6 +96,19 @@ public interface EbeguParameterService {
 	Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date, final EntityManager em);
 
 	/**
+	 * Copies all ebeguParameters from the last Gesuchperiode into the given one
+	 */
+	void copyEbeguParameterListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
+	 * searches all parameters that were valid at the first of january of the jahr-1. Then go through those parameters and if
+	 * the parameter is set "per Gesuchsperiode" then copy it from the previous year and set the daterange for the current year
+	 * The JahrParameter must exist for the year of gueltigBis of the newest Gesuchsperiode.
+	 */
+	void createEbeguParameterListForJahr(@Nonnull Integer jahr);
+
+
+	/**
 	 * Gleiches resultat wie getEbeguParameterByGesuchsperiode aber als Map
 	 */
 	Map<EbeguParameterKey, EbeguParameter> getEbeguParameterByGesuchsperiodeAsMap(@Nonnull Gesuchsperiode gesuchsperiode);

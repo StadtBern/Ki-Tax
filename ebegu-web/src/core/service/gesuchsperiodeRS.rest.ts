@@ -117,4 +117,12 @@ export default class GesuchsperiodeRS {
             return this.ebeguRestUtil.parseGesuchsperioden(response.data);
         });
     }
+
+    public getNewestGesuchsperiode(): IPromise<TSGesuchsperiode> {
+        return this.http.get(this.serviceURL + '/newestGesuchsperiode/')
+            .then((response: any) => {
+                this.log.debug('PARSING Gesuchsperiode REST object ', response.data);
+                return this.ebeguRestUtil.parseGesuchsperiode(new TSGesuchsperiode(), response.data);
+            });
+    }
 }

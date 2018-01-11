@@ -139,7 +139,7 @@
                         </div>
                     </div>
                     <!-- Institiutionen wenn readonly als Textfeld anzeigen-->
-                    <div class="row" ng-if="!vm.showInstitutionenList()">
+                    <div class="row" ng-if="vm.showInstitutionenAsText()">
                         <div class="col-sm-12 dv-input-container-medium form-group">
                             <label class="md-no-float" data-translate="INSTITUTION" for="institution">
                             </label>
@@ -314,7 +314,7 @@
                                                      name="erweiterteBeduerfnisse"
                                                      aria-label="{{'ERWEITERTE_BEDUERFNISSE'|translate}}" dv-enable-element
                                                      dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                                                     dv-enable-expression="vm.isEnabled() && ((vm.isBetreuungsstatusWarten() && !vm.isSavingData) || vm.isMutationsmeldungStatus)">
+                                                     dv-enable-expression="vm.enableErweiterteBeduerfnisse()">
                                             <span data-translate="ERWEITERTE_BEDUERFNISSE"></span>
                                         </md-checkbox>
                                         <dv-error-messages
@@ -380,7 +380,7 @@
 
                         <!--falsche Angaben-->
                         <div class="row" dv-show-element
-                             dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                             dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles()"
                              dv-show-expression="vm.showFalscheAngaben()">
                             <div class="col-md-12">
                                 <a href="" ng-click="vm.platzAnfordern()"
@@ -390,7 +390,7 @@
 
                         <!--Angabe korrigieren-->
                         <div class="row" dv-show-element
-                             dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                             dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles()"
                              dv-show-expression="vm.showAngabenKorrigieren()">
                             <div class="col-md-12">
                                 <a href="" ng-click="vm.platzAnfordern()"
@@ -437,8 +437,8 @@
                     <!--Die Order der Knoepfe soll im HTML so sein, dass der weiter Knopf als erster im Form ist, dies wird dann fuer die darstelltung
                     mit Flexlayout wieder korrigiert. Grund ist, dass beim druecken von Enter in einem input Feld automaitisch der erste submit button triggered wird-->
                     <div dv-show-element
-                         dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
-                         dv-show-expression="vm.getBetreuungModel().isAngebotSchulamt() && !vm.tageschuleSaveDisabled()">
+                         dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles()"
+                         dv-show-expression="vm.isTagesschule() && !vm.tageschuleSaveDisabled()">
                         <dv-loading-button button-click="vm.saveSchulamt()" type="submit"
                                            button-class="save">
                             <span data-translate="SPEICHERN_UPPER"></span>
@@ -492,7 +492,7 @@
 
                     <!--Platz anfordern-->
                     <div dv-show-element
-                         dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                         dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles()"
                          dv-show-expression="vm.isBetreuungsstatusAusstehend()">
                         <dv-loading-button button-click="vm.platzAnfordern()">
                             <span data-translate="PLATZBESTAETIGUNG_ANFORDERN"></span>

@@ -41,6 +41,7 @@ import javax.interceptor.Interceptors;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
@@ -82,10 +83,10 @@ import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
@@ -169,10 +170,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Gesuch createGesuch(@Nonnull Gesuch gesuch) {
 		Objects.requireNonNull(gesuch);
-		authorizer.checkCreateAuthorizationGesuch();
 		final Gesuch persistedGesuch = persistence.persist(gesuch);
 		// Die WizsrdSteps werden direkt erstellt wenn das Gesuch erstellt wird. So vergewissern wir uns dass es kein Gesuch ohne WizardSteps gibt
 		wizardStepService.createWizardStepList(persistedGesuch);
@@ -456,16 +456,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				predicatesToUse.add(root.get(Gesuch_.status).in(AntragStatus.IN_BEARBEITUNG_GS, AntragStatus.FREIGABEQUITTUNG).not());
 			}
 
-			if (institutionstammdatenJoin != null) {
-				if (benutzer.getRole() == UserRole.ADMIN || benutzer.getRole() == UserRole.SACHBEARBEITER_JA) {
-					final Predicate noSchulamt = cb.notEqual(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
-					final Predicate noAngebote = cb.isNull(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp));
-					predicatesToUse.add(cb.or(noSchulamt, noAngebote));
-				}
-				if (benutzer.getRole().isRolleSchulamt()) {
-					predicatesToUse.add(cb.equal(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
-				}
-			}
 			if (institutionJoin != null) {
 				// only if the institutionJoin was set
 				if (benutzer.getRole() == UserRole.SACHBEARBEITER_TRAEGERSCHAFT) {
@@ -521,7 +511,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public List<Gesuch> getAllGesucheForFallAndPeriod(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		authorizer.checkReadAuthorizationFall(fall);
 
@@ -605,16 +595,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				}
 			}
 
-			// Den Gesuchsstatus setzen
-			gesuch.setStatus(calculateFreigegebenStatus(gesuch));
+			// Den Gesuchsstatus auf Freigageben setzen (auch bei nur Schulamt-Gesuchen)
+			gesuch.setStatus(AntragStatus.FREIGEGEBEN);
 
 			// Step Freigabe gruen
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
-
-			// Step Verfuegen gruen, falls NUR_SCHULAMT
-			if (AntragStatus.NUR_SCHULAMT == gesuch.getStatus()) {
-				wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
-			}
 
 			if (username != null) {
 				Optional<Benutzer> currentUser = benutzerService.findBenutzer(username);
@@ -654,6 +639,28 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
+	public Gesuch setAbschliessen(@Nonnull Gesuch gesuch) {
+		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			gesuch.setTimestampVerfuegt(LocalDateTime.now());
+			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
+			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
+
+			if (gesuch.getVorgaengerId() != null) {
+				final Optional<Gesuch> vorgaengerOpt = findGesuch(gesuch.getVorgaengerId());
+				vorgaengerOpt.ifPresent(this::setGesuchUngueltig);
+			}
+
+			// neues Gesuch erst nachdem das andere auf ungültig gesetzt wurde setzen wegen unique key
+			gesuch.setGueltig(true);
+
+			return persistence.merge(gesuch);
+		}
+		throw new EbeguRuntimeException("setAbschliessen", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, "Nur reine Schulamt-Gesuche können abgeschlossen werden");
+	}
+
+	@Override
+	@Nonnull
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
 	public Gesuch removeBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch) {
 		final List<Gesuch> allGesucheForFall = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuch.getGesuchsperiode());
@@ -669,21 +676,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return gesuch;
 	}
 
-	/**
-	 * wenn ein Gesuch nur Schulamt Betreuuungen hat so geht es beim barcode Scannen in den Zustand NUR_SCHULAMTM; sonst Freigegeben
-	 */
-	private AntragStatus calculateFreigegebenStatus(@Nonnull Gesuch gesuch) {
-		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
-			gesuch.setTimestampVerfuegt(LocalDateTime.now());
-			gesuch.setGueltig(true);
-			return AntragStatus.NUR_SCHULAMT;
-		}
-		return AntragStatus.FREIGEGEBEN;
-	}
-
 	@Override
 	@Nonnull
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Optional<Gesuch> antragMutieren(@Nonnull String antragId, @Nullable LocalDate eingangsdatum) {
 		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
 		Optional<Gesuch> gesuchOptional = findGesuch(antragId);
@@ -791,13 +786,12 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Optional<Gesuch> antragErneuern(@Nonnull String antragId, @Nonnull String gesuchsperiodeId, @Nullable LocalDate eingangsdatum) {
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId).orElseThrow(() -> new EbeguEntityNotFoundException("findGesuchsperiode", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsperiodeId));
 		Gesuch gesuch = findGesuch(antragId).orElseThrow(() -> new EbeguEntityNotFoundException("antragErneuern", "Es existiert kein Antrag mit ID, kann kein Erneuerungsgesuch erstellen " + antragId, antragId));
 		List<Gesuch> allGesucheForFallAndPeriod = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuchsperiode);
 		if (allGesucheForFallAndPeriod.isEmpty()) {
-			authorizer.checkWriteAuthorization(gesuch);
 			Optional<Gesuch> gesuchForErneuerungOpt = getGesuchFuerErneuerungsantrag(gesuch.getFall());
 			Gesuch gesuchForErneuerung = gesuchForErneuerungOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragErneuern", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
 			return getErneuerungsgesuch(eingangsdatum, gesuchForErneuerung, gesuchsperiode);
@@ -840,10 +834,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		query.where(predicateStatus, predicateGesuchsperiode, predicateGueltig, predicateFall);
 		query.select(root);
-
-		// TODO: (team) Business Rule ? = There are only 0-1 Gesuch with gleutig = 1 with the same fall_id
-		// If this is the case then we don't need this order by line.  However this Business rule is broken in the DB and not enforced.
-		query.orderBy(cb.desc(root.get(Gesuch_.timestampVerfuegt))); // Das mit dem neuesten Verfuegungsdatum
 
 		TypedQuery<Gesuch> typedQuery = persistence.getEntityManager().createQuery(query);
 		typedQuery.setParameter(fallParam, fall);
@@ -1346,11 +1336,24 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		if (AntragStatus.FIRST_STATUS_OF_VERFUEGT.contains(gesuch.getStatus()) && gesuch.getTimestampVerfuegt() == null) {
 			// Status ist neuerdings verfuegt, aber das Datum noch nicht gesetzt -> dies war der Statuswechsel
 			gesuch.setTimestampVerfuegt(LocalDateTime.now());
-			gesuch.setGueltig(true);
 			if (neustesVerfuegtesGesuchFuerGesuch.isPresent() && !neustesVerfuegtesGesuchFuerGesuch.get().getId().equals(gesuch.getId())) {
-				neustesVerfuegtesGesuchFuerGesuch.get().setGueltig(false);
-				updateGesuch(neustesVerfuegtesGesuchFuerGesuch.get(), false, null, false);
+				setGesuchUngueltig(neustesVerfuegtesGesuchFuerGesuch.get());
 			}
+
+			// neues Gesuch erst nachdem das andere auf ungültig gesetzt wurde setzen wegen unique key
+			gesuch.setGueltig(true);
+		}
+	}
+
+	/**
+	 * Setzt das Gesuch auf ungueltig, falls es gueltig ist
+	 */
+	private void setGesuchUngueltig(@Nonnull Gesuch gesuch) {
+		if (gesuch.isGueltig()) {
+			gesuch.setGueltig(null);
+			updateGesuch(gesuch, false, null, false);
+			// Sicherstellen, dass das Gesuch welches nicht mehr gültig ist zuerst gespeichert wird da sonst unique key Probleme macht!
+			persistence.getEntityManager().flush();
 		}
 	}
 
@@ -1431,6 +1434,23 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		LOG.info("Gesuchsperiode: " + gesuch.getGesuchsperiode().getGesuchsperiodeString());
 		LOG.info("Gesuch-Id: " + gesuch.getId());
 		LOG.info("****************************************************");
+	}
+
+	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
+	public int changeFinSitStatus(@Nonnull String antragId, @Nonnull FinSitStatus finSitStatus) {
+		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaUpdate<Gesuch> update = cb.createCriteriaUpdate(Gesuch.class);
+		Root<Gesuch> root = update.from(Gesuch.class);
+		update.set(Gesuch_.finSitStatus, finSitStatus);
+		if (finSitStatus == FinSitStatus.ABGELEHNT) {
+			update.set(Gesuch_.hasFSDokument, false); // immer auf false wenn ABGELEHNT
+		}
+
+		Predicate predGesuch = cb.equal(root.get(Gesuch_.id), antragId);
+		update.where(predGesuch);
+
+		return persistence.getEntityManager().createQuery(update).executeUpdate();
 	}
 }
 

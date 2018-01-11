@@ -145,6 +145,10 @@
                             <span data-translate="BETREUUNG_TAGESSCHULE_HINZUFUEGEN"></span>
                         </dv-loading-button>
                     </div>
+                    <!-- Neue Betreuungen hinzufuegen disabled-->
+                    <div class="col-md-12" ng-if="vm.isBetreuungenHinzufuegenDisabled()">
+                        <span data-translate="BETREUUNG_HINZUFUEGEN_FORBIDDEN"></span>
+                    </div>
                 </div>
             </div>
             <div class="row marginTop20" ng-show="vm.hasBetreuungInStatusWarten()" dv-show-element

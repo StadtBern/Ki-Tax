@@ -19,7 +19,6 @@ package ch.dvbern.ebegu.enums;
  * Enum fuer den Status Events vom Gesuch.
  */
 public enum AntragEvents {
-	FREIGEBEN_SCHULAMT,
 	FREIGABEQUITTUNG_ERSTELLEN,
 	FREIGEBEN,
 	ERSTES_OEFFNEN_JA,
@@ -41,5 +40,6 @@ public enum AntragEvents {
 	GEPRUEFT_STV,
 	PRUEFUNG_ABGESCHLOSSEN,
 	MAHNUNG_ABGELAUFEN,
-	MAHNLAUF_BEENDEN
+	MAHNLAUF_BEENDEN,
+	ABSCHLIESSEN,
 }

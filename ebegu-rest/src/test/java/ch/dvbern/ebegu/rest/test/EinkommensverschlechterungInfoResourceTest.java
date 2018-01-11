@@ -25,7 +25,6 @@ import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.resource.EinkommensverschlechterungInfoResource;
 import ch.dvbern.ebegu.api.resource.FallResource;
 import ch.dvbern.ebegu.api.resource.GesuchResource;
-import ch.dvbern.ebegu.api.resource.GesuchsperiodeResource;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
@@ -44,7 +43,7 @@ import org.junit.runner.RunWith;
  * Testet die Gesuchsperiode Resource
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRestLoginTest {
 
@@ -56,9 +55,6 @@ public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRes
 
 	@Inject
 	private FallResource fallResource;
-
-	@Inject
-	private GesuchsperiodeResource gesuchsperiodeResource;
 
 	@Inject
 	private JaxBConverter converter;

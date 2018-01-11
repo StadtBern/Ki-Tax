@@ -88,9 +88,6 @@ export default class WizardStepManager {
         if (TSRoleUtil.getTraegerschaftInstitutionOnlyRoles().indexOf(role) > -1) {
             this.setAllowedStepsForInstitutionTraegerschaft();
 
-        } else if (TSRoleUtil.getSchulamtOnlyRoles().indexOf(role) > -1) {
-            this.setAllowedStepsForSchulamt();
-
         } else if (TSRoleUtil.getSteueramtOnlyRoles().indexOf(role) > -1) {
             this.setAllowedStepsForSteueramt();
 
@@ -117,13 +114,6 @@ export default class WizardStepManager {
         this.allowedSteps.push(TSWizardStepName.KINDER);
         this.allowedSteps.push(TSWizardStepName.FINANZIELLE_SITUATION);
         this.allowedSteps.push(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
-    }
-
-    private setAllowedStepsForSchulamt(): void {
-        this.allowedSteps = getTSWizardStepNameValues().filter(element =>
-            (element !== TSWizardStepName.ERWERBSPENSUM && //schulamt sieht erwerbspensum und abwesenheit nicht
-            element !== TSWizardStepName.ABWESENHEIT)
-        );
     }
 
     private setAllAllowedSteps(): void {
@@ -302,15 +292,8 @@ export default class WizardStepManager {
     public isStepClickableForCurrentRole(step: TSWizardStep, gesuch: TSGesuch) {
         if (step.wizardStepName === TSWizardStepName.VERFUEGEN) {
             //verfuegen fuer admin und jugendamt  immer sichtbar
-            if (!this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
-                // schulamt darf ab geprueft den screen sehen, oder wenn der Status schon NUR_SCHULAMT ist
-                if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles())) {
-                    if (gesuch.status !== TSAntragStatus.GEPRUEFT && gesuch.status !== TSAntragStatus.VERFUEGEN
-                        && !isAnyStatusOfVerfuegt(gesuch.status)) {
-                        return false;
-                    }
-                    //gesuchsteller darf "verfuegen" seite sehen sobald er das gesuch freigegeben hat
-                } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
+            if (!this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorOrAmtRole())) {
+                if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
                     return isAtLeastFreigegeben(gesuch.status);
                 } else {
                     // ... alle anderen ab VERFUEGT

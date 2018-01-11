@@ -23,6 +23,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
@@ -35,6 +37,10 @@ import org.hibernate.envers.Audited;
  */
 @Audited
 @Entity
+@Table(
+	// Dieses Index muss erweitert werden, wenn die Parameter pro Mandant existieren, da sie dann dupliziert werden
+	uniqueConstraints = @UniqueConstraint(columnNames = { "name", "gueltigAb", "gueltigBis" }, name = "UK_ebegu_parameter")
+)
 public class EbeguParameter extends AbstractDateRangedEntity {
 
 	private static final long serialVersionUID = 8704632842261673111L;

@@ -109,7 +109,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		TestDataUtil.prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit(), persistence);
-		Assert.assertEquals(20, ebeguParameterService.getAllEbeguParameter().size()); //es muessen min 20 existieren jetzt
+		Assert.assertEquals(21, ebeguParameterService.getAllEbeguParameter().size()); //es muessen min 20 existieren jetzt +1 from mandant-dataset
 		finanzielleSituationService.calculateFinanzDaten(gesuch);
 		Gesuch berechnetesGesuch = this.verfuegungService.calculateVerfuegung(gesuch);
 		Assert.assertNotNull(berechnetesGesuch);

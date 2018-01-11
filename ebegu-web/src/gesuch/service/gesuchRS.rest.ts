@@ -25,6 +25,7 @@ import DateUtil from '../../utils/DateUtil';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import WizardStepManager from './wizardStepManager';
 import IRootScopeService = angular.IRootScopeService;
+import {TSFinSitStatus} from '../../models/enums/TSFinSitStatus';
 
 export default class GesuchRS implements IEntityRS {
     serviceURL: string;
@@ -152,6 +153,12 @@ export default class GesuchRS implements IEntityRS {
         });
     }
 
+    public setAbschliessen(antragId: string): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/setAbschliessen/' + encodeURIComponent(antragId), null).then((response) => {
+            return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+        });
+    }
+
     public sendGesuchToSTV(antragId: string, bemerkungen: string): IPromise<TSGesuch> {
         return this.http.post(this.serviceURL + '/sendToSTV/' + encodeURIComponent(antragId), bemerkungen, null).then((response) => {
             return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
@@ -236,4 +243,9 @@ export default class GesuchRS implements IEntityRS {
     public gesuchVerfuegen(antragId: string): IHttpPromise<any> {
         return this.http.post(this.serviceURL + '/gesuchVerfuegen/' + encodeURIComponent(antragId), null);
     }
+
+    public changeFinSitStatus(antragId: string, finSitStatus: TSFinSitStatus): IPromise<any> {
+        return this.http.post(this.serviceURL + '/changeFinSitStatus/' + encodeURIComponent(antragId) + '/' + finSitStatus, null);
+    }
+
 }

@@ -21,6 +21,7 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import ErrorService from '../../errors/service/ErrorService';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import ITranslateService = angular.translate.ITranslateService;
+declare let require: any;
 let template = require('./dv-navigation.html');
 let style = require('./dv-navigation.less');
 
@@ -240,7 +241,7 @@ export class NavigatorController {
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName()) {
             if (this.dvSubStep === 1) {
                 // noinspection NegatedIfStatementJS - the other way makes no sense
-                if (!this.gesuchModelManager.isFinanzielleSituationRequired()) {
+                if (!this.gesuchModelManager.isFinanzielleSituationDesired()) {
                     this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
                 } else if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
                     this.navigateToStepFinanzielleSituation('2');
@@ -250,7 +251,7 @@ export class NavigatorController {
 
             } else if (this.dvSubStep === 2) {
                 // noinspection NegatedIfStatementJS - the other way makes no sense
-                if (!this.gesuchModelManager.isFinanzielleSituationRequired()) {
+                if (!this.gesuchModelManager.isFinanzielleSituationEnabled() || !this.gesuchModelManager.isFinanzielleSituationDesired()) {
                     this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
                 } else {
                     this.navigateToStepFinanzielleSituation('1');

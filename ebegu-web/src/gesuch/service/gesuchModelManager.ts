@@ -1140,6 +1140,7 @@ export default class GesuchModelManager {
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
                 if (betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT
@@ -1390,29 +1391,6 @@ export default class GesuchModelManager {
         this.gesuch = undefined;
     }
 
-    /**
-     * Schaut alle Betreuungen durch. Wenn es keine "JAAngebote" gibt, gibt es false zurueck.
-     * Nur wenn alle JA-Angebote neu sind, gibt es true zurueck.
-     */
-    public areAllJAAngeboteNew(): boolean {
-        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
-        if (kinderWithBetreuungList.length <= 0) {
-            return false; // no Kind with bedarf
-        }
-        let jaAngeboteFound: boolean = false; // Wenn kein JA-Angebot gefunden wurde geben wir false zurueck
-        for (let kind of kinderWithBetreuungList) {
-            for (let betreuung of kind.betreuungen) {
-                if (isJugendamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
-                    if (betreuung.vorgaengerId) { // eine mutierte JA-Betreuung existiert
-                        return false;
-                    }
-                    jaAngeboteFound = true;
-                }
-            }
-        }
-        return jaAngeboteFound;
-    }
-
     public getGesuchName(): string {
         return this.ebeguUtil.getGesuchNameFromGesuch(this.gesuch);
     }
@@ -1438,10 +1416,11 @@ export default class GesuchModelManager {
     /**
      * Indicates whether FinSit must be filled out or not. It supposes that it is enabled.
      */
-    public isFinanzielleSituationRequired(): boolean {
-        return !this.getGesuchsperiode().hasTagesschulenAnmeldung() ||
-            (!this.areThereOnlySchulamtAngebote() || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht === true
-                && this.getGesuch().extractFamiliensituation().sozialhilfeBezueger === false));
+    public isFinanzielleSituationDesired(): boolean {
+        return !this.getGesuchsperiode().hasTagesschulenAnmeldung()
+            || !this.areThereOnlySchulamtAngebote()
+            || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht === true
+                && this.getGesuch().extractFamiliensituation().sozialhilfeBezueger === false);
     }
 
     public showFinanzielleSituationStart(): boolean {
