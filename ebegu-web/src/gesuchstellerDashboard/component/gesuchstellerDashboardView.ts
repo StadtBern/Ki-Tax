@@ -228,13 +228,20 @@ export class GesuchstellerDashboardListViewController {
         return this.ebeguUtil.translateString(TSAntragStatus[status]);
     }
 
-    public getVerantwortlicherFullName(antrag: TSAntragDTO): string {
+    /**
+     * JA und Mischgesuche -> verantwortlicher
+     * SCHGesuche -> verantwortlicherSCH (oder "Schulamt" wenn kein Verantwortlicher vorhanden
+     */
+    public getHauptVerantwortlicherFullName(antrag: TSAntragDTO): string {
         if (antrag) {
-            if (antrag.status === TSAntragStatus.NUR_SCHULAMT) {
-                return this.ebeguUtil.translateString('NUR_SCHULAMT');
-            }
             if (antrag.verantwortlicher) {
                 return antrag.verantwortlicher;
+            }
+            if (antrag.verantwortlicherSCH) {
+                return antrag.verantwortlicherSCH;
+            }
+            if (antrag.status === TSAntragStatus.NUR_SCHULAMT) { //legacy for old Faelle where verantwortlicherSCH didn't exist
+                return this.ebeguUtil.translateString('NUR_SCHULAMT');
             }
         }
         return '';
