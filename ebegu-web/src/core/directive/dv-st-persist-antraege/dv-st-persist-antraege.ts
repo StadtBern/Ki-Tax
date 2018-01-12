@@ -20,6 +20,7 @@ import UserRS from '../../service/userRS.rest';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import {DVsTPersistService} from '../../service/dVsTPersistService';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRole} from '../../../models/enums/TSRole';
 
 /**
  * This directive allows a filter and sorting configuration to be saved after leaving the table.
@@ -160,15 +161,27 @@ export default class DVSTPersistAntraege implements IDirective {
         let savedStateToReturn: any = angular.copy(savedState);
         if (antragListController.pendenz) {
             if (!savedStateToReturn) {
-                savedStateToReturn = {search: {predicateObject: {verantwortlicher: this.authServiceRS.getPrincipal().getFullName()}}};
+                savedStateToReturn = {search: {predicateObject: this.extractVerantwortlicherFullName()}};
             }
             if (!savedStateToReturn.search.predicateObject) {
-                savedStateToReturn.search.predicateObject = {verantwortlicher: this.authServiceRS.getPrincipal().getFullName()};
+                savedStateToReturn.search.predicateObject = this.extractVerantwortlicherFullName();
             }
             if (!savedStateToReturn.search.predicateObject.verantwortlicher) {
-                savedStateToReturn.search.predicateObject.verantwortlicher = this.authServiceRS.getPrincipal().getFullName();
+                if (this.authServiceRS.getPrincipal().role === TSRole.ADMINISTRATOR_SCHULAMT || this.authServiceRS.getPrincipal().role === TSRole.SCHULAMT) {
+                    savedStateToReturn.search.predicateObject.verantwortlicherSCH = this.authServiceRS.getPrincipal().getFullName();
+                } else { //JA
+                    savedStateToReturn.search.predicateObject.verantwortlicher = this.authServiceRS.getPrincipal().getFullName();
+                }
             }
         }
         return savedStateToReturn;
+    }
+
+    private extractVerantwortlicherFullName() {
+        if (this.authServiceRS.getPrincipal().role === TSRole.ADMINISTRATOR_SCHULAMT || this.authServiceRS.getPrincipal().role === TSRole.SCHULAMT) {
+            return {verantwortlicherSCH: this.authServiceRS.getPrincipal().getFullName()};
+        } else { //JA
+            return {verantwortlicher: this.authServiceRS.getPrincipal().getFullName()};
+        }
     }
 }
