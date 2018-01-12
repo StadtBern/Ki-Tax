@@ -278,7 +278,7 @@ export default class WizardStepManager {
         if (step !== undefined) {
             return (this.isStepClickableForCurrentRole(step, gesuch)
             || ((gesuch.typ === TSAntragTyp.ERSTGESUCH || gesuch.typ === TSAntragTyp.ERNEUERUNGSGESUCH) && step.wizardStepStatus === TSWizardStepStatus.UNBESUCHT
-            && !(this.authServiceRS.isOneOfRoles(TSRoleUtil.getAllButAdministratorJugendamtRoleAsRoles()) && stepName === TSWizardStepName.VERFUEGEN))
+            && !(this.authServiceRS.isOneOfRoles(TSRoleUtil.getAllButAdministratorJugendamtRole()) && stepName === TSWizardStepName.VERFUEGEN))
             || (gesuch.typ === TSAntragTyp.MUTATION && step.wizardStepName === TSWizardStepName.FAMILIENSITUATION));
         }
         return false;  // wenn der step undefined ist geben wir mal verfuegbar zurueck
