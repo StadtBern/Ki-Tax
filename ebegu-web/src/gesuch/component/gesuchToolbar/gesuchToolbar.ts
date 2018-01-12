@@ -87,7 +87,8 @@ export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOpti
 
 export class GesuchToolbarController implements IDVFocusableController {
 
-    userList: Array<TSUser>;
+    userSCHList: Array<TSUser>;
+    userJAList: Array<TSUser>;
     antragList: Array<TSAntragDTO>;
     gesuchid: string;
     fallid: string;
@@ -230,11 +231,21 @@ export class GesuchToolbarController implements IDVFocusableController {
         return '';
     }
 
+    public getVerantwortlicherSCHFullName(): string {
+        if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall.verantwortlicherSCH) {
+            return this.getGesuch().fall.verantwortlicherSCH.getFullName();
+        }
+        return '';
+    }
+
     public updateUserList(): void {
         //not needed for Gesuchsteller
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAllRolesButGesuchsteller())) {
             this.userRS.getBenutzerJAorAdmin().then((response) => {
-                this.userList = angular.copy(response);
+                this.userJAList = angular.copy(response);
+            });
+            this.userRS.getBenutzerSCHorAdminSCH().then((response) => {
+                this.userSCHList = angular.copy(response);
             });
         }
     }
@@ -351,12 +362,26 @@ export class GesuchToolbarController implements IDVFocusableController {
     }
 
     /**
-     * Change local gesuch to change the current view
-     * @param user
+     * Sets the given user as the verantworlicherSCH fuer den aktuellen Fall
+     * @param verantwortlicher
      */
+    public setVerantwortlicherSCH(verantwortlicher: TSUser): void {
+        if (verantwortlicher) {
+            this.gesuchModelManager.setUserAsFallVerantwortlicherSCH(verantwortlicher);
+            this.gesuchModelManager.updateFall();
+        }
+        this.setUserAsFallVerantwortlicherSCHLocal(verantwortlicher);
+    }
+
     public setUserAsFallVerantwortlicherLocal(user: TSUser) {
         if (user && this.getGesuch() && this.getGesuch().fall) {
             this.getGesuch().fall.verantwortlicher = user;
+        }
+    }
+
+    public setUserAsFallVerantwortlicherSCHLocal(user: TSUser) {
+        if (user && this.getGesuch() && this.getGesuch().fall) {
+            this.getGesuch().fall.verantwortlicherSCH = user;
         }
     }
 
@@ -369,11 +394,21 @@ export class GesuchToolbarController implements IDVFocusableController {
         return (user && this.getFallVerantwortlicher() && this.getFallVerantwortlicher().username === user.username);
     }
 
+    /**
+     *
+     * @param user
+     * @returns {boolean} true if the given user is already the verantwortlicherSCH of the current fall
+     */
+    public isCurrentVerantwortlicherSCH(user: TSUser): boolean {
+        return (user && this.getFallVerantwortlicherSCH() && this.getFallVerantwortlicherSCH().username === user.username);
+    }
+
     public getFallVerantwortlicher(): TSUser {
-        if (this.getGesuch() && this.getGesuch().fall) {
-            return this.getGesuch().fall.verantwortlicher;
-        }
-        return undefined;
+        return this.gesuchModelManager.getFallVerantwortlicher();
+    }
+
+    public getFallVerantwortlicherSCH(): TSUser {
+        return this.gesuchModelManager.getFallVerantwortlicherSCH();
     }
 
     /**

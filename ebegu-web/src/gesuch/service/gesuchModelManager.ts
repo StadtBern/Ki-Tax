@@ -1016,6 +1016,12 @@ export default class GesuchModelManager {
         }
     }
 
+    public setUserAsFallVerantwortlicherSCH(user: TSUser) {
+        if (this.gesuch && this.gesuch.fall) {
+            this.gesuch.fall.verantwortlicherSCH = user;
+        }
+    }
+
     public setUserAsFallVerantwortlicher(user: TSUser) {
         if (this.gesuch && this.gesuch.fall) {
             this.gesuch.fall.verantwortlicher = user;
@@ -1025,6 +1031,13 @@ export default class GesuchModelManager {
     public getFallVerantwortlicher(): TSUser {
         if (this.gesuch && this.gesuch.fall) {
             return this.gesuch.fall.verantwortlicher;
+        }
+        return undefined;
+    }
+
+    public getFallVerantwortlicherSCH(): TSUser {
+        if (this.gesuch && this.gesuch.fall) {
+            return this.gesuch.fall.verantwortlicherSCH;
         }
         return undefined;
     }

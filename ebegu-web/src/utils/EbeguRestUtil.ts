@@ -613,7 +613,7 @@ export default class EbeguRestUtil {
             this.abstractEntityToRestObject(restFall, fall);
             restFall.fallNummer = fall.fallNummer;
             restFall.verantwortlicher = this.userToRestObject({}, fall.verantwortlicher);
-            restFall.verantwortlicherSCH = this.userToRestObject({}, fall.verantwortlicher);
+            restFall.verantwortlicherSCH = this.userToRestObject({}, fall.verantwortlicherSCH);
             restFall.nextNumberKind = fall.nextNumberKind;
             restFall.besitzer = this.userToRestObject({}, fall.besitzer);
             return restFall;

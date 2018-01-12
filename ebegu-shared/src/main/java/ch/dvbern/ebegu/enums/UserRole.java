@@ -15,6 +15,9 @@
 
 package ch.dvbern.ebegu.enums;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum UserRole {
 	SUPER_ADMIN,
 	ADMIN,
@@ -31,5 +34,13 @@ public enum UserRole {
 
 	public boolean isRolleSchulamt() {
 		return ADMINISTRATOR_SCHULAMT == this || SCHULAMT == this;
+	}
+
+	public static List<UserRole> getSchulamtRoles() {
+		return Arrays.asList(ADMINISTRATOR_SCHULAMT, SCHULAMT);
+	}
+
+	public static List<UserRole> getJugendamtRoles() {
+		return Arrays.asList(ADMIN, SACHBEARBEITER_JA);
 	}
 }

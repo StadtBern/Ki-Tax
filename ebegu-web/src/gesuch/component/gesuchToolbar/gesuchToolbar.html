@@ -154,6 +154,41 @@
                 </md-menu-content>
             </md-menu>
 
+            <!-- Verantwortlichen SCH zuteilen -->
+            <span title="{{'VERANTWORTLICHER' | translate:{name: vmx.getVerantwortlicherFullName()} }}"
+                  dv-show-element
+                  dv-show-allowed-roles="vmx.TSRoleUtil.getAllButAdministratorJugendamtRole()"
+                  dv-show-expression="vmx.hasGesuch()">
+                {{vmx.getVerantwortlicherFullName()}}
+            </span>
+
+            <md-menu dv-show-element
+                     dv-show-allowed-roles="vmx.TSRoleUtil.getAdministratorJugendamtRole()"
+                     dv-show-expression="vmx.hasGesuch()">
+                <button ng-click="$mdOpenMenu()" aria-label="{{vmx.getVerantwortlicherSCHFullName()}}">
+                    <i class="fa fa-graduation-cap" aria-hidden="true" style="margin-right: 0.2rem"></i>
+                    <span ng-bind="vmx.getVerantwortlicherSCHFullName()"></span>
+                    <i class="ellipsis-icon fa fa-ellipsis-v"></i>
+                </button>
+                <md-menu-content class="menu-item-container">
+                    <md-menu-item class="menu-item-text">
+                        <span data-translate="VERANTWORTLICH_UPPER"></span>
+                    </md-menu-item>
+                    <md-menu-item class="menu-item-link" ng-repeat="userSCH in vmx.userSCHList | orderBy: 'getFullName()'"
+                                  ng-value="userSCH.username">
+                        <md-button ng-click="vmx.setVerantwortlicherSCH(userSCH)" aria-label="{{userSCH.username}}"
+                                   style="position: relative;">
+                                <span>
+                                    <a href="javascript:void(0)" aria-hidden>{{userSCH.getFullName()}}</a>
+                                    <i ng-if="vmx.isCurrentVerantwortlicherSCH(userSCH)" class="fa fa-graduation-cap" aria-hidden="true"
+                                       style="line-height: 4rem; position:absolute; right:2rem;"></i>
+
+                                </span>
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+
             <!-- Verantwortlichen zuteilen -->
             <span title="{{'VERANTWORTLICHER' | translate:{name: vmx.getVerantwortlicherFullName()} }}"
                   dv-show-element
@@ -174,7 +209,7 @@
                     <md-menu-item class="menu-item-text">
                         <span data-translate="VERANTWORTLICH_UPPER"></span>
                     </md-menu-item>
-                    <md-menu-item class="menu-item-link" ng-repeat="user in vmx.userList | orderBy: 'getFullName()'"
+                    <md-menu-item class="menu-item-link" ng-repeat="user in vmx.userJAList | orderBy: 'getFullName()'"
                                   ng-value="user.username">
                         <md-button ng-click="vmx.setVerantwortlicher(user)" aria-label="{{user.username}}"
                                    style="position: relative;">
