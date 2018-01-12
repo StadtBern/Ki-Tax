@@ -36,6 +36,10 @@ public enum UserRole {
 		return ADMINISTRATOR_SCHULAMT == this || SCHULAMT == this;
 	}
 
+	public boolean isRolleJugendamt() {
+		return ADMIN == this || SACHBEARBEITER_JA == this;
+	}
+
 	public static List<UserRole> getSchulamtRoles() {
 		return Arrays.asList(ADMINISTRATOR_SCHULAMT, SCHULAMT);
 	}
