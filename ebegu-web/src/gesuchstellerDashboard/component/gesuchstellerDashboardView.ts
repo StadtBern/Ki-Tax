@@ -231,7 +231,7 @@ export class GesuchstellerDashboardListViewController {
     public getVerantwortlicherFullName(antrag: TSAntragDTO): string {
         if (antrag) {
             if (antrag.status === TSAntragStatus.NUR_SCHULAMT) {
-                return this.ebeguUtil.translateString('VERANTWORTLICHER_SCHULAMT');
+                return this.ebeguUtil.translateString('NUR_SCHULAMT');
             }
             if (antrag.verantwortlicher) {
                 return antrag.verantwortlicher;
