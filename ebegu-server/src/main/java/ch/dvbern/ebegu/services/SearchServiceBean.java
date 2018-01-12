@@ -163,6 +163,7 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 		// Join all the relevant relations (except gesuchsteller join, which is only done when needed)
 		Join<Gesuch, Fall> fall = root.join(Gesuch_.fall, JoinType.INNER);
 		Join<Fall, Benutzer> verantwortlicher = fall.join(Fall_.verantwortlicher, JoinType.LEFT);
+		Join<Fall, Benutzer> verantwortlicherSCH = fall.join(Fall_.verantwortlicherSCH, JoinType.LEFT);
 		Join<Gesuch, Gesuchsperiode> gesuchsperiode = root.join(Gesuch_.gesuchsperiode, JoinType.INNER);
 
 		SetJoin<Gesuch, KindContainer> kindContainers = root.join(Gesuch_.kindContainers, JoinType.LEFT);
@@ -309,6 +310,14 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 					cb.and(
 						cb.equal(verantwortlicher.get(Benutzer_.vorname), strings[0]),
 						cb.equal(verantwortlicher.get(Benutzer_.nachname), strings[1])
+					));
+			}
+			if (predicateObjectDto.getVerantwortlicherSCH() != null) {
+				String[] strings = predicateObjectDto.getVerantwortlicherSCH().split(" ");
+				predicates.add(
+					cb.and(
+						cb.equal(verantwortlicherSCH.get(Benutzer_.vorname), strings[0]),
+						cb.equal(verantwortlicherSCH.get(Benutzer_.nachname), strings[1])
 					));
 			}
 		}

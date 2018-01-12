@@ -71,7 +71,8 @@ export default class DVSTPersistAntraege implements IDirective {
                     antragListController.selectedEingangsdatum = savedState.search.predicateObject.eingangsdatum;
                     antragListController.selectedDokumenteHochgeladen = savedState.search.predicateObject.dokumenteHochgeladen;
                     antragListController.selectedEingangsdatumSTV = savedState.search.predicateObject.eingangsdatumSTV;
-                    this.setUserFromName(antragListController, savedState.search.predicateObject.verantwortlicher);
+                    this.setVerantwortlicherFromName(antragListController, savedState.search.predicateObject.verantwortlicher);
+                    this.setVerantwortlicherSCHFromName(antragListController, savedState.search.predicateObject.verantwortlicherSCH);
                 }
                 let tableState = stTableCtrl.tableState();
 
@@ -87,7 +88,7 @@ export default class DVSTPersistAntraege implements IDirective {
      * while the dropdownlist is constructed using the object TSUser. So in order to be able to select the right user
      * with need the complete object and not only its Fullname.
      */
-    private setUserFromName(antragListController: DVAntragListController, verantwortlicherFullname: string): void {
+    private setVerantwortlicherFromName(antragListController: DVAntragListController, verantwortlicherFullname: string): void {
         if (verantwortlicherFullname && antragListController) {
             this.userRS.getBenutzerJAorAdmin().then((response: any) => {
                 let userList: TSUser[] = angular.copy(response);
@@ -95,6 +96,27 @@ export default class DVSTPersistAntraege implements IDirective {
                     for (let i = 0; i < userList.length; i++) {
                         if (userList[i] && userList[i].getFullName() === verantwortlicherFullname) {
                             antragListController.selectedVerantwortlicher = userList[i];
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * Extracts the user out of her name. This method is needed because the filter saves the user using its name
+     * while the dropdownlist is constructed using the object TSUser. So in order to be able to select the right user
+     * with need the complete object and not only its Fullname.
+     */
+    private setVerantwortlicherSCHFromName(antragListController: DVAntragListController, verantwortlicherSCHFullname: string): void {
+        if (verantwortlicherSCHFullname && antragListController) {
+            this.userRS.getBenutzerSCHorAdminSCH().then((response: any) => {
+                let userList: TSUser[] = angular.copy(response);
+                if (userList) {
+                    for (let i = 0; i < userList.length; i++) {
+                        if (userList[i] && userList[i].getFullName() === verantwortlicherSCHFullname) {
+                            antragListController.selectedVerantwortlicherSCH = userList[i];
                             break;
                         }
                     }
