@@ -154,97 +154,10 @@
                 </md-menu-content>
             </md-menu>
 
-            <!-- Verantwortlichen SCH zuteilen -->
-            <span title="{{'VERANTWORTLICHER' | translate:{name: vmx.getVerantwortlicherSCHFullName()} }}"
-                  dv-show-element
-                  dv-show-allowed-roles="vmx.TSRoleUtil.getAllButAdministratorAmtRole()"
-                  dv-show-expression="vmx.hasGesuch()">
-                <i class="fa fa-graduation-cap" aria-hidden="true" style="margin-right: 0.2rem"></i>
-                {{vmx.getVerantwortlicherSCHFullName()}}
-            </span>
+            <dv-verantwortlicherselect schulamt="true"></dv-verantwortlicherselect>
 
-            <md-menu dv-show-element
-                     dv-show-allowed-roles="vmx.TSRoleUtil.getAdministratorOrAmtRole()"
-                     dv-show-expression="vmx.hasGesuch()">
-                <button ng-click="$mdOpenMenu()" aria-label="{{vmx.getVerantwortlicherSCHFullName()}}">
-                    <i class="fa fa-graduation-cap" aria-hidden="true" style="margin-right: 0.2rem"></i>
-                    <span ng-bind="vmx.getVerantwortlicherSCHFullName()"></span>
-                    <i class="ellipsis-icon fa fa-ellipsis-v"></i>
-                </button>
-                <md-menu-content class="menu-item-container">
-                    <md-menu-item class="menu-item-text">
-                        <span data-translate="VERANTWORTLICHER_SCHULAMT"></span>
-                    </md-menu-item>
-                    <md-menu-item class="menu-item-link">
-                        <md-button ng-click="vmx.setVerantwortlicherSCH(undefined)" aria-label="keiner"
-                                   style="position: relative;">
-                                <span>
-                                    <a href="javascript:void(0)" aria-hidden>{{'NO_VERANTWORTLICHER_SELECTED' | translate}}</a>
-                                    <i ng-if="!vmx.getFallVerantwortlicherSCH()" class="fa fa-graduation-cap" aria-hidden="true"
-                                       style="line-height: 4rem; position:absolute; right:2rem;"></i>
-                                </span>
-                        </md-button>
-                    </md-menu-item>
-                    <md-menu-item class="menu-item-link" ng-repeat="userSCH in vmx.userSCHList | orderBy: 'getFullName()'"
-                                  ng-value="userSCH.username">
-                        <md-button ng-click="vmx.setVerantwortlicherSCH(userSCH)" aria-label="{{userSCH.username}}"
-                                   style="position: relative;">
-                                <span>
-                                    <a href="javascript:void(0)" aria-hidden>{{userSCH.getFullName()}}</a>
-                                    <i ng-if="vmx.isCurrentVerantwortlicherSCH(userSCH)" class="fa fa-graduation-cap" aria-hidden="true"
-                                       style="line-height: 4rem; position:absolute; right:2rem;"></i>
+            <dv-verantwortlicherselect></dv-verantwortlicherselect>
 
-                                </span>
-                        </md-button>
-                    </md-menu-item>
-                </md-menu-content>
-            </md-menu>
-
-            <!-- Verantwortlichen zuteilen -->
-            <span title="{{'VERANTWORTLICHER' | translate:{name: vmx.getVerantwortlicherFullName()} }}"
-                  dv-show-element
-                  dv-show-allowed-roles="vmx.TSRoleUtil.getAllButAdministratorAmtRole()"
-                  dv-show-expression="vmx.hasGesuch()">
-                <i class="fa fa-user" aria-hidden="true" style="margin-right: 0.2rem"></i>
-                {{vmx.getVerantwortlicherFullName()}}
-            </span>
-
-            <md-menu dv-show-element
-                     dv-show-allowed-roles="vmx.TSRoleUtil.getAdministratorOrAmtRole()"
-                     dv-show-expression="vmx.hasGesuch()">
-                <button ng-click="$mdOpenMenu()" aria-label="{{vmx.getVerantwortlicherFullName()}}">
-                    <i class="fa fa-user" aria-hidden="true" style="margin-right: 0.2rem"></i>
-                    <span ng-bind="vmx.getVerantwortlicherFullName()"></span>
-                    <i class="ellipsis-icon fa fa-ellipsis-v"></i>
-                </button>
-                <md-menu-content class="menu-item-container">
-                    <md-menu-item class="menu-item-text">
-                        <span data-translate="VERANTWORTLICHER_JUGENDAMT"></span>
-                    </md-menu-item>
-                    <md-menu-item class="menu-item-link">
-                        <md-button ng-click="vmx.setVerantwortlicher(undefined)" aria-label="keiner"
-                                   style="position: relative;">
-                                <span>
-                                    <a href="javascript:void(0)" aria-hidden>{{'NO_VERANTWORTLICHER_SELECTED' | translate}}</a>
-                                    <i ng-if="!vmx.getFallVerantwortlicher()" class="fa fa-graduation-cap" aria-hidden="true"
-                                       style="line-height: 4rem; position:absolute; right:2rem;"></i>
-                                </span>
-                        </md-button>
-                    </md-menu-item>
-                    <md-menu-item class="menu-item-link" ng-repeat="user in vmx.userJAList | orderBy: 'getFullName()'"
-                                  ng-value="user.username">
-                        <md-button ng-click="vmx.setVerantwortlicher(user)" aria-label="{{user.username}}"
-                                   style="position: relative;">
-                                <span>
-                                    <a href="javascript:void(0)" aria-hidden>{{user.getFullName()}}</a>
-                                    <i ng-if="vmx.isCurrentVerantwortlicher(user)" class="fa fa-user" aria-hidden="true"
-                                       style="line-height: 4rem; position:absolute; right:2rem;"></i>
-
-                                </span>
-                        </md-button>
-                    </md-menu-item>
-                </md-menu-content>
-            </md-menu>
         </md-menu-bar>
 
     </md-toolbar>

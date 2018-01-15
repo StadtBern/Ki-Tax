@@ -14,17 +14,12 @@
  */
 
 import {IComponentOptions, IFormController, ILogService} from 'angular';
-import ITranslateService = angular.translate.ITranslateService;
-import UserRS from '../../../core/service/userRS.rest';
-import TSUser from '../../../models/TSUser';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import TSGesuch from '../../../models/TSGesuch';
 import GesuchRS from '../../service/gesuchRS.rest';
 import {IStateService} from 'angular-ui-router';
 import TSAntragDTO from '../../../models/TSAntragDTO';
-import {IGesuchStateParams} from '../../gesuch.route';
-import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {
     isAnyStatusOfVerfuegt,
@@ -33,7 +28,6 @@ import {
 } from '../../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import * as moment from 'moment';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
 import {TSRole} from '../../../models/enums/TSRole';
@@ -47,7 +41,6 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {ShowTooltipController} from '../../dialog/ShowTooltipController';
 import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
 import IPromise = angular.IPromise;
-import Moment = moment.Moment;
 import IScope = angular.IScope;
 
 let templateX = require('./gesuchToolbar.html');
@@ -88,8 +81,6 @@ export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOpti
 
 export class GesuchToolbarController implements IDVFocusableController {
 
-    userSCHList: Array<TSUser>;
-    userJAList: Array<TSUser>;
     antragList: Array<TSAntragDTO>;
     gesuchid: string;
     fallid: string;
@@ -106,13 +97,13 @@ export class GesuchToolbarController implements IDVFocusableController {
     erneuernPossibleForCurrentAntrag: boolean = false;
     neuesteGesuchsperiode: TSGesuchsperiode;
 
-    static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS', '$state', '$stateParams',
+    static $inject = ['EbeguUtil', 'GesuchRS', '$state',
         '$scope', 'GesuchModelManager', 'AuthServiceRS', '$mdSidenav', '$log', 'GesuchsperiodeRS',
-        'FallRS', 'DvDialog', 'unsavedWarningSharedService', '$translate'];
+        'FallRS', 'DvDialog', 'unsavedWarningSharedService'];
 
-    constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
-        private CONSTANTS: any, private gesuchRS: GesuchRS,
-        private $state: IStateService, private $stateParams: IGesuchStateParams, private $scope: IScope,
+    constructor(private ebeguUtil: EbeguUtil,
+        private gesuchRS: GesuchRS,
+        private $state: IStateService, private $scope: IScope,
         private gesuchModelManager: GesuchModelManager,
         private authServiceRS: AuthServiceRS,
         private $mdSidenav: ng.material.ISidenavService,
@@ -120,13 +111,11 @@ export class GesuchToolbarController implements IDVFocusableController {
         private gesuchsperiodeRS: GesuchsperiodeRS,
         private fallRS: FallRS,
         private dvDialog: DvDialog,
-        private unsavedWarningSharedService: any,
-        private $translate: ITranslateService) {
+        private unsavedWarningSharedService: any) {
 
     }
 
     $onInit() {
-        this.updateUserList();
         this.updateAntragDTOList();
         //add watchers
         this.addWatchers(this.$scope);
@@ -224,32 +213,6 @@ export class GesuchToolbarController implements IDVFocusableController {
             return true;
         }
         return false;
-    }
-
-    public getVerantwortlicherFullName(): string {
-        if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall.verantwortlicher) {
-            return this.getGesuch().fall.verantwortlicher.getFullName();
-        }
-        return this.$translate.instant('NO_VERANTWORTLICHER_SELECTED');
-    }
-
-    public getVerantwortlicherSCHFullName(): string {
-        if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall.verantwortlicherSCH) {
-            return this.getGesuch().fall.verantwortlicherSCH.getFullName();
-        }
-        return this.$translate.instant('NO_VERANTWORTLICHER_SELECTED');
-    }
-
-    public updateUserList(): void {
-        //not needed for Gesuchsteller
-        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAllRolesButGesuchsteller())) {
-            this.userRS.getBenutzerJAorAdmin().then((response) => {
-                this.userJAList = angular.copy(response);
-            });
-            this.userRS.getBenutzerSCHorAdminSCH().then((response) => {
-                this.userSCHList = angular.copy(response);
-            });
-        }
     }
 
     public updateAntragDTOList(): void {
@@ -352,64 +315,6 @@ export class GesuchToolbarController implements IDVFocusableController {
     }
 
     /**
-     * Sets the given user as the verantworlicher fuer den aktuellen Fall
-     * @param verantwortlicher
-     */
-    public setVerantwortlicher(verantwortlicher: TSUser): void {
-        this.gesuchModelManager.setUserAsFallVerantwortlicher(verantwortlicher);
-        this.gesuchModelManager.updateFall();
-        this.setUserAsFallVerantwortlicherLocal(verantwortlicher);
-    }
-
-    /**
-     * Sets the given user as the verantworlicherSCH fuer den aktuellen Fall
-     * @param verantwortlicher
-     */
-    public setVerantwortlicherSCH(verantwortlicher: TSUser): void {
-        this.gesuchModelManager.setUserAsFallVerantwortlicherSCH(verantwortlicher);
-        this.gesuchModelManager.updateFall();
-        this.setUserAsFallVerantwortlicherSCHLocal(verantwortlicher);
-    }
-
-    public setUserAsFallVerantwortlicherLocal(user: TSUser) {
-        if (user && this.getGesuch() && this.getGesuch().fall) {
-            this.getGesuch().fall.verantwortlicher = user;
-        }
-    }
-
-    public setUserAsFallVerantwortlicherSCHLocal(user: TSUser) {
-        if (user && this.getGesuch() && this.getGesuch().fall) {
-            this.getGesuch().fall.verantwortlicherSCH = user;
-        }
-    }
-
-    /**
-     *
-     * @param user
-     * @returns {boolean} true if the given user is already the verantwortlicher of the current fall
-     */
-    public isCurrentVerantwortlicher(user: TSUser): boolean {
-        return (user && this.getFallVerantwortlicher() && this.getFallVerantwortlicher().username === user.username);
-    }
-
-    /**
-     *
-     * @param user
-     * @returns {boolean} true if the given user is already the verantwortlicherSCH of the current fall
-     */
-    public isCurrentVerantwortlicherSCH(user: TSUser): boolean {
-        return (user && this.getFallVerantwortlicherSCH() && this.getFallVerantwortlicherSCH().username === user.username);
-    }
-
-    public getFallVerantwortlicher(): TSUser {
-        return this.gesuchModelManager.getFallVerantwortlicher();
-    }
-
-    public getFallVerantwortlicherSCH(): TSUser {
-        return this.gesuchModelManager.getFallVerantwortlicherSCH();
-    }
-
-    /**
      * Tries to get the "gesuchName" out of the gesuch contained in the gesuchModelManager. If this doesn't
      * succeed it gets the "gesuchName" out of the fall
      */
@@ -438,14 +343,6 @@ export class GesuchToolbarController implements IDVFocusableController {
             return this.ebeguUtil.getAntragTextDateAsString(this.getGesuch().typ, this.getGesuch().eingangsdatum, this.getGesuch().laufnummer);
         } else {
             return '';
-        }
-    }
-
-    public getAntragDatum(): Moment {
-        if (this.getGesuch() && this.getGesuch().eingangsdatum) {
-            return this.getGesuch().eingangsdatum;
-        } else {
-            return moment();
         }
     }
 
@@ -598,13 +495,6 @@ export class GesuchToolbarController implements IDVFocusableController {
         return undefined;
     }
 
-    private addAntragToList(antrag: TSGesuch): void {
-        let antragDTO = new TSAntragDTO();
-        antragDTO.antragTyp = TSAntragTyp.MUTATION;
-        let txt = this.ebeguUtil.getAntragTextDateAsString(antragDTO.antragTyp, antrag.eingangsdatum, antrag.laufnummer);
-        this.antragTypList[txt] = antragDTO;
-    }
-
     private hasBesitzer(): boolean {
         return this.fall && this.fall.besitzer !== null && this.fall.besitzer !== undefined;
     }
@@ -703,10 +593,6 @@ export class GesuchToolbarController implements IDVFocusableController {
                 }
             });
         }
-    }
-
-    public hasGesuch(): boolean {
-        return this.antragList && this.antragList.length > 0;
     }
 
     public showKontakt(): void {
