@@ -121,7 +121,7 @@ export class FreigabeController {
         return this.errorMessage != null;
     }
 
-    public hide(): IPromise<any> {
+    public freigeben(): IPromise<any> {
         return this.gesuchRS.antragFreigeben(this.docID, this.selectedUserJA, this.selectedUserSCH)
             .then(() => {
                 return this.$mdDialog.hide();

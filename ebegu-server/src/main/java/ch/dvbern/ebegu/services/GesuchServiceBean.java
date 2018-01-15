@@ -602,15 +602,15 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
 
 			if (usernameJA != null) {
-				Optional<Benutzer> currentUser = benutzerService.findBenutzer(usernameJA);
-				if (currentUser.isPresent() && !currentUser.get().getRole().isRoleSchulamt()) {
-					gesuch.getFall().setVerantwortlicher(currentUser.get());
+				Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(usernameJA);
+				if (verantwortlicher.isPresent() && (verantwortlicher.get().getRole().isRoleJugendamt() || verantwortlicher.get().getRole().isSuperadmin())) {
+					gesuch.getFall().setVerantwortlicher(verantwortlicher.get());
 				}
 			}
 			if (usernameSCH != null) {
-				Optional<Benutzer> currentUser = benutzerService.findBenutzer(usernameSCH);
-				if (currentUser.isPresent() && !currentUser.get().getRole().isRoleSchulamt()) {
-					gesuch.getFall().setVerantwortlicherSCH(currentUser.get());
+				Optional<Benutzer> verantwortlicherSCH = benutzerService.findBenutzer(usernameSCH);
+				if (verantwortlicherSCH.isPresent() && (verantwortlicherSCH.get().getRole().isRoleSchulamt() || verantwortlicherSCH.get().getRole().isSuperadmin())) {
+					gesuch.getFall().setVerantwortlicherSCH(verantwortlicherSCH.get());
 				}
 			}
 

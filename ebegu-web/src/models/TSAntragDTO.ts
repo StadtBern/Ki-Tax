@@ -245,19 +245,19 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
     public hasAnySchulamtAngebot(): boolean {
         for (let angebot of this.angebote) {
             if (TSBetreuungsangebotTyp.TAGESSCHULE === angebot || TSBetreuungsangebotTyp.FERIENINSEL === angebot) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public hasAnyJugendamtAngebot(): boolean {
         for (let angebot of this.angebote) {
-            if (TSBetreuungsangebotTyp.TAGESSCHULE !== angebot || TSBetreuungsangebotTyp.FERIENINSEL !== angebot) {
-                return false;
+            if (TSBetreuungsangebotTyp.TAGESSCHULE !== angebot && TSBetreuungsangebotTyp.FERIENINSEL !== angebot) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public get gesuchBetreuungenStatus(): TSGesuchBetreuungenStatus {
