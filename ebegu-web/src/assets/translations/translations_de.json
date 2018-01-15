@@ -94,7 +94,7 @@
     "FINANZIELLE_SITUATION_VERMOEGEN_GEMEINSAM": "Gemeinsames Bruttovermögen",
     "FINANZIELLE_SITUATION_VERMOEGEN_GS_1": "Bruttovermögen {{namegs1}}",
     "FINANZIELLE_SITUATION_VERMOEGEN_GS_2": "Bruttovermögen {{namegs2}}",
-    "FINANZIELLE_SITUATION_VERMOEGEN_HELP": "Ihr gesamtes Vermögen: Ziffern 32, 4.1, 4.2, 7.0 und 8.3 der Steuererklärung (Formulare 3, 4, 7, 8) inklusive Schulden",
+    "FINANZIELLE_SITUATION_VERMOEGEN_HELP": "Ihr gesamtes Vermögen: Ziffern 32, 4.1, 4.2, 7.0 und 8.3 der Steuererklärung (Formulare 3, 4, 7, 8)",
     "FINANZIELLE_SITUATION_SCHULDEN_GEMEINSAM": "Gemeinsame Schulden",
     "FINANZIELLE_SITUATION_SCHULDEN_GS_1": "Schulden {{namegs1}}",
     "FINANZIELLE_SITUATION_SCHULDEN_GS_2": "Schulden {{namegs2}}",
