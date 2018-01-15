@@ -775,6 +775,8 @@ public class JaxBConverter {
 			} else {
 				throw new EbeguEntityNotFoundException("fallToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJAXP.getVerantwortlicher());
 			}
+		} else {
+			fall.setVerantwortlicher(null);
 		}
 		if (fallJAXP.getVerantwortlicherSCH() != null) {
 			Optional<Benutzer> verantwortlicherSCH = benutzerService.findBenutzer(fallJAXP.getVerantwortlicherSCH().getUsername());
@@ -783,6 +785,8 @@ public class JaxBConverter {
 			} else {
 				throw new EbeguEntityNotFoundException("fallToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJAXP.getVerantwortlicherSCH());
 			}
+		} else {
+			fall.setVerantwortlicherSCH(null);
 		}
 		if (fallJAXP.getNextNumberKind() != null) {
 			fall.setNextNumberKind(fallJAXP.getNextNumberKind());

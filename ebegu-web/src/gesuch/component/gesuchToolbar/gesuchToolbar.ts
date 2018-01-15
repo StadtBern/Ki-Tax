@@ -14,6 +14,7 @@
  */
 
 import {IComponentOptions, IFormController, ILogService} from 'angular';
+import ITranslateService = angular.translate.ITranslateService;
 import UserRS from '../../../core/service/userRS.rest';
 import TSUser from '../../../models/TSUser';
 import EbeguUtil from '../../../utils/EbeguUtil';
@@ -105,9 +106,9 @@ export class GesuchToolbarController implements IDVFocusableController {
     erneuernPossibleForCurrentAntrag: boolean = false;
     neuesteGesuchsperiode: TSGesuchsperiode;
 
-    static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
-        '$state', '$stateParams', '$scope', 'GesuchModelManager', 'AuthServiceRS',
-        '$mdSidenav', '$log', 'GesuchsperiodeRS', 'FallRS', 'DvDialog', 'unsavedWarningSharedService'];
+    static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS', '$state', '$stateParams',
+        '$scope', 'GesuchModelManager', 'AuthServiceRS', '$mdSidenav', '$log', 'GesuchsperiodeRS',
+        'FallRS', 'DvDialog', 'unsavedWarningSharedService', '$translate'];
 
     constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
         private CONSTANTS: any, private gesuchRS: GesuchRS,
@@ -119,7 +120,8 @@ export class GesuchToolbarController implements IDVFocusableController {
         private gesuchsperiodeRS: GesuchsperiodeRS,
         private fallRS: FallRS,
         private dvDialog: DvDialog,
-        private unsavedWarningSharedService: any) {
+        private unsavedWarningSharedService: any,
+        private $translate: ITranslateService) {
 
     }
 
@@ -228,14 +230,14 @@ export class GesuchToolbarController implements IDVFocusableController {
         if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall.verantwortlicher) {
             return this.getGesuch().fall.verantwortlicher.getFullName();
         }
-        return '';
+        return this.$translate.instant('NO_VERANTWORTLICHER_SELECTED');
     }
 
     public getVerantwortlicherSCHFullName(): string {
         if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall.verantwortlicherSCH) {
             return this.getGesuch().fall.verantwortlicherSCH.getFullName();
         }
-        return '';
+        return this.$translate.instant('NO_VERANTWORTLICHER_SELECTED');
     }
 
     public updateUserList(): void {
@@ -354,10 +356,8 @@ export class GesuchToolbarController implements IDVFocusableController {
      * @param verantwortlicher
      */
     public setVerantwortlicher(verantwortlicher: TSUser): void {
-        if (verantwortlicher) {
-            this.gesuchModelManager.setUserAsFallVerantwortlicher(verantwortlicher);
-            this.gesuchModelManager.updateFall();
-        }
+        this.gesuchModelManager.setUserAsFallVerantwortlicher(verantwortlicher);
+        this.gesuchModelManager.updateFall();
         this.setUserAsFallVerantwortlicherLocal(verantwortlicher);
     }
 
@@ -366,10 +366,8 @@ export class GesuchToolbarController implements IDVFocusableController {
      * @param verantwortlicher
      */
     public setVerantwortlicherSCH(verantwortlicher: TSUser): void {
-        if (verantwortlicher) {
-            this.gesuchModelManager.setUserAsFallVerantwortlicherSCH(verantwortlicher);
-            this.gesuchModelManager.updateFall();
-        }
+        this.gesuchModelManager.setUserAsFallVerantwortlicherSCH(verantwortlicher);
+        this.gesuchModelManager.updateFall();
         this.setUserAsFallVerantwortlicherSCHLocal(verantwortlicher);
     }
 

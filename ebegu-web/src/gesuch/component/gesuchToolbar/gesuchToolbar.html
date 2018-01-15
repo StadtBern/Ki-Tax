@@ -175,6 +175,16 @@
                     <md-menu-item class="menu-item-text">
                         <span data-translate="VERANTWORTLICHER_SCHULAMT"></span>
                     </md-menu-item>
+                    <md-menu-item class="menu-item-link">
+                        <md-button ng-click="vmx.setVerantwortlicherSCH(undefined)" aria-label="keiner"
+                                   style="position: relative;">
+                                <span>
+                                    <a href="javascript:void(0)" aria-hidden>{{'NO_VERANTWORTLICHER_SELECTED' | translate}}</a>
+                                    <i ng-if="!vmx.getFallVerantwortlicherSCH()" class="fa fa-graduation-cap" aria-hidden="true"
+                                       style="line-height: 4rem; position:absolute; right:2rem;"></i>
+                                </span>
+                        </md-button>
+                    </md-menu-item>
                     <md-menu-item class="menu-item-link" ng-repeat="userSCH in vmx.userSCHList | orderBy: 'getFullName()'"
                                   ng-value="userSCH.username">
                         <md-button ng-click="vmx.setVerantwortlicherSCH(userSCH)" aria-label="{{userSCH.username}}"
@@ -210,6 +220,16 @@
                 <md-menu-content class="menu-item-container">
                     <md-menu-item class="menu-item-text">
                         <span data-translate="VERANTWORTLICHER_JUGENDAMT"></span>
+                    </md-menu-item>
+                    <md-menu-item class="menu-item-link">
+                        <md-button ng-click="vmx.setVerantwortlicher(undefined)" aria-label="keiner"
+                                   style="position: relative;">
+                                <span>
+                                    <a href="javascript:void(0)" aria-hidden>{{'NO_VERANTWORTLICHER_SELECTED' | translate}}</a>
+                                    <i ng-if="!vmx.getFallVerantwortlicher()" class="fa fa-graduation-cap" aria-hidden="true"
+                                       style="line-height: 4rem; position:absolute; right:2rem;"></i>
+                                </span>
+                        </md-button>
                     </md-menu-item>
                     <md-menu-item class="menu-item-link" ng-repeat="user in vmx.userJAList | orderBy: 'getFullName()'"
                                   ng-value="user.username">
