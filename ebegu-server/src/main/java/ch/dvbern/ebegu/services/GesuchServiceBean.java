@@ -603,13 +603,17 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 			if (usernameJA != null) {
 				Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(usernameJA);
-				if (verantwortlicher.isPresent() && (verantwortlicher.get().getRole().isRoleJugendamt() || verantwortlicher.get().getRole().isSuperadmin())) {
+				if (verantwortlicher.isPresent()
+					&& gesuch.hasBetreuungOfJugendamt()
+					&& (verantwortlicher.get().getRole().isRoleJugendamt() || verantwortlicher.get().getRole().isSuperadmin())) {
 					gesuch.getFall().setVerantwortlicher(verantwortlicher.get());
 				}
 			}
 			if (usernameSCH != null) {
 				Optional<Benutzer> verantwortlicherSCH = benutzerService.findBenutzer(usernameSCH);
-				if (verantwortlicherSCH.isPresent() && (verantwortlicherSCH.get().getRole().isRoleSchulamt() || verantwortlicherSCH.get().getRole().isSuperadmin())) {
+				if (verantwortlicherSCH.isPresent()
+					&& gesuch.hasBetreuungOfSchulamt()
+					&& (verantwortlicherSCH.get().getRole().isRoleSchulamt() || verantwortlicherSCH.get().getRole().isSuperadmin())) {
 					gesuch.getFall().setVerantwortlicherSCH(verantwortlicherSCH.get());
 				}
 			}

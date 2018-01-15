@@ -56,6 +56,7 @@
                                         class="form-control"
                                         ng-options="user.username as user.getFullName() for user in vm.userJAList"
                                         ng-model="vm.selectedUserJA">
+                                    <option value="">{{'NO_VERANTWORTLICHER_SELECTED' | translate}}</option>
                                 </select>
                             </div>
                         </div>
@@ -73,6 +74,7 @@
                                         class="form-control"
                                         ng-options="user.username as user.getFullName() for user in vm.userSCHList"
                                         ng-model="vm.selectedUserSCH">
+                                    <option value="">{{'NO_VERANTWORTLICHER_SELECTED' | translate}}</option>
                                 </select>
                             </div>
                         </div>
