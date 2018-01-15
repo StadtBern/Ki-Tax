@@ -16,6 +16,7 @@
 import {IComponentOptions, ILogService, IPromise, IScope} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
+import * as moment from 'moment';
 import {IStateService} from 'angular-ui-router';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSKindContainer from '../../../models/TSKindContainer';
@@ -410,6 +411,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             this.mahnung.gesuch = this.getGesuch();
             this.mahnung.timestampAbgeschlossen = null;
             this.mahnung.bemerkungen = generatedBemerkungen.data;
+            if (this.getGesuchsperiode().hasTagesschulenAnmeldung() && this.getGesuch().areThereOnlySchulamtAngebote()) {
+                this.mahnung.datumFristablauf = moment(moment.now()).add(7, 'days');
+            }
             return;
         });
     }
