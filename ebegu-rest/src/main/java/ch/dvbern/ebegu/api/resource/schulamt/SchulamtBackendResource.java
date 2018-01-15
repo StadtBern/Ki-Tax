@@ -58,6 +58,7 @@ import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
@@ -306,30 +307,31 @@ public class SchulamtBackendResource {
 				fallNummer, stichtag, neustesGesuch, JaxExternalTarifart.BASISZAHLER);
 			return Response.ok(dto).build();
 
-		} else if (familiensituation.getSozialhilfeBezueger() != null && !familiensituation.getSozialhilfeBezueger()
-			&& familiensituation.getVerguenstigungGewuenscht() != null && !familiensituation.getVerguenstigungGewuenscht()) {
+		}
+		if ((familiensituation.getSozialhilfeBezueger() != null && !familiensituation.getSozialhilfeBezueger()
+			&& familiensituation.getVerguenstigungGewuenscht() != null && !familiensituation.getVerguenstigungGewuenscht())
+			|| neustesGesuch.getFinSitStatus() == FinSitStatus.ABGELEHNT) {
 			// SozialhilfeBezüger Nein + Vergünstigung gewünscht Nein  -> Vollzahler (keine finSit!)
 			final JaxExternalFinanzielleSituation dto = convertToJaxExternalFinanzielleSituationWithoutFinDaten(
 				fallNummer, stichtag, neustesGesuch, JaxExternalTarifart.VOLLZAHLER);
 			return Response.ok(dto).build();
 
-		} else {
-			// SozialhilfeBezüger Nein + Vergünstigung gewünscht ja  oder Kita-Betreuung vorhanden -> Detailrechnung (mit finSit!)
+		}
+		// SozialhilfeBezüger Nein + Vergünstigung gewünscht ja  oder Kita-Betreuung vorhanden -> Detailrechnung (mit finSit!)
 
-			// Calculate Verfuegungszeitabschnitte for Familiensituation
-			final Verfuegung famGroessenVerfuegung = verfuegungService.getEvaluateFamiliensituationVerfuegung(neustesGesuch);
+		// Calculate Verfuegungszeitabschnitte for Familiensituation
+		final Verfuegung famGroessenVerfuegung = verfuegungService.getEvaluateFamiliensituationVerfuegung(neustesGesuch);
 
-			// Find and return Finanzdaten on Verfügungszeitabschnitt from Stichtag
-			if (famGroessenVerfuegung != null) {
-				List<VerfuegungZeitabschnitt> zeitabschnitten = famGroessenVerfuegung.getZeitabschnitte();
+		// Find and return Finanzdaten on Verfügungszeitabschnitt from Stichtag
+		if (famGroessenVerfuegung != null) {
+			List<VerfuegungZeitabschnitt> zeitabschnitten = famGroessenVerfuegung.getZeitabschnitte();
 
-				// get finanzielleSituation only for stichtag
-				for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitten) {
-					if (zeitabschnitt.getGueltigkeit().contains(stichtag)) {
-						final JaxExternalFinanzielleSituation dto = convertToJaxExternalFinanzielleSituation(
-							fallNummer, stichtag, neustesGesuch, zeitabschnitt);
-						return Response.ok(dto).build();
-					}
+			// get finanzielleSituation only for stichtag
+			for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitten) {
+				if (zeitabschnitt.getGueltigkeit().contains(stichtag)) {
+					final JaxExternalFinanzielleSituation dto = convertToJaxExternalFinanzielleSituation(
+						fallNummer, stichtag, neustesGesuch, zeitabschnitt);
+					return Response.ok(dto).build();
 				}
 			}
 		}
