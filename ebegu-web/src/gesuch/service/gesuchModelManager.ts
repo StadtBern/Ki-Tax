@@ -1257,8 +1257,8 @@ export default class GesuchModelManager {
     /**
      * Antrag freigeben
      */
-    public antragFreigeben(antragId: string, username: string): IPromise<TSGesuch> {
-        return this.gesuchRS.antragFreigeben(antragId, username).then((response) => {
+    public antragFreigeben(antragId: string, usernameJA: string, usernameSCH: string): IPromise<TSGesuch> {
+        return this.gesuchRS.antragFreigeben(antragId, usernameJA, usernameSCH).then((response) => {
             this.setGesuch(response);
             return response;
         });

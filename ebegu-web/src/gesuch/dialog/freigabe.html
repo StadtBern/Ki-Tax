@@ -44,7 +44,7 @@
                         <span ng-bind="vm.familie"></span>
                     </div>
                 </div>
-                <div class="row marginTop10" ng-hide="vm.isSchulamt()">
+                <div class="row marginTop10" ng-hide="vm.isJugendamt()">
                     <div class="col-xs-12 dv-input-container-medium">
                         <div class="form-group">
                             <label class="md-no-float" data-translate="FREIGEBEN_DIALOG_LABEL_VERANTWORTLICHER"
@@ -54,8 +54,25 @@
                                 <select name="verantwortlicher"
                                         id="verantwortlicher"
                                         class="form-control"
-                                        ng-options="user.username as user.getFullName() for user in vm.userList"
-                                        ng-model="vm.selectedUser">
+                                        ng-options="user.username as user.getFullName() for user in vm.userJAList"
+                                        ng-model="vm.selectedUserJA">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row marginTop10" ng-hide="vm.isSchulamt()">
+                    <div class="col-xs-12 dv-input-container-medium">
+                        <div class="form-group">
+                            <label class="md-no-float" data-translate="FREIGEBEN_DIALOG_LABEL_VERANTWORTLICHER"
+                                   for="verantwortlicher">
+                            </label>
+                            <div class="dv-select-style">
+                                <select name="verantwortlicherSCH"
+                                        id="verantwortlicherSCH"
+                                        class="form-control"
+                                        ng-options="user.username as user.getFullName() for user in vm.userSCHList"
+                                        ng-model="vm.selectedUserSCH">
                                 </select>
                             </div>
                         </div>

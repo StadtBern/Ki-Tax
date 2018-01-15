@@ -32,12 +32,16 @@ public enum UserRole {
 	GESUCHSTELLER;
 
 
-	public boolean isRolleSchulamt() {
+	public boolean isRoleSchulamt() {
 		return ADMINISTRATOR_SCHULAMT == this || SCHULAMT == this;
 	}
 
-	public boolean isRolleJugendamt() {
+	public boolean isRoleJugendamt() {
 		return ADMIN == this || SACHBEARBEITER_JA == this;
+	}
+
+	public boolean isSuperadmin() {
+		return SUPER_ADMIN == this;
 	}
 
 	public static List<UserRole> getSchulamtRoles() {

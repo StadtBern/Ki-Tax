@@ -137,8 +137,9 @@ export default class GesuchRS implements IEntityRS {
         });
     }
 
-    public antragFreigeben(antragId: string, username: string): IPromise<TSGesuch> {
-        return this.http.post(this.serviceURL + '/freigeben/' + encodeURIComponent(antragId), username, {
+    public antragFreigeben(antragId: string, usernameJA: string, usernameSCH: string): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/freigeben/' + encodeURIComponent(antragId) + '/JA/' + usernameJA + '/SCH/' + usernameSCH,
+            null, {
             headers: {
                 'Content-Type': 'text/plain'
             }

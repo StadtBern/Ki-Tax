@@ -448,12 +448,13 @@ public class GesuchResource {
 		response = JaxGesuch.class)
 	@Nullable
 	@POST
-	@Path("/freigeben/{antragId}")
+	@Path("/freigeben/{antragId}/JA/{usernameJA}/SCH/{usernameSCH}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response antragFreigeben(
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
-		@Nullable String username,
+		@Nullable @PathParam("usernameJA") String usernameJA,
+		@Nullable @PathParam("usernameSCH") String usernameSCH,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
@@ -464,7 +465,7 @@ public class GesuchResource {
 
 		final String antragId = converter.toEntityId(antragJaxId);
 
-		Gesuch gesuch = gesuchService.antragFreigeben(antragId, username);
+		Gesuch gesuch = gesuchService.antragFreigeben(antragId, usernameJA, usernameSCH);
 		return Response.ok(converter.gesuchToJAX(gesuch)).build();
 	}
 

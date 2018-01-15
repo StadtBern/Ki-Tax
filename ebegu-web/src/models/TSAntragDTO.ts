@@ -242,9 +242,18 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
         return this.status === TSAntragStatus.FREIGABEQUITTUNG;
     }
 
-    public hasOnlySchulamtAngebote(): boolean {
+    public hasAnySchulamtAngebot(): boolean {
         for (let angebot of this.angebote) {
-            if (TSBetreuungsangebotTyp.TAGESSCHULE !== angebot) {
+            if (TSBetreuungsangebotTyp.TAGESSCHULE === angebot || TSBetreuungsangebotTyp.FERIENINSEL === angebot) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public hasAnyJugendamtAngebot(): boolean {
+        for (let angebot of this.angebote) {
+            if (TSBetreuungsangebotTyp.TAGESSCHULE !== angebot || TSBetreuungsangebotTyp.FERIENINSEL !== angebot) {
                 return false;
             }
         }

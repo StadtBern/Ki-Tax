@@ -920,7 +920,15 @@ public final class TestDataUtil {
 		return benutzer;
 	}
 
-	public static Benutzer createAndPersistBenutzer(Persistence persistence) {
+	public static Benutzer createAndPersistJABenutzer(Persistence persistence) {
+		final Mandant mandant = TestDataUtil.createDefaultMandant();
+		persistence.persist(mandant);
+		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, UUID.randomUUID().toString(), null, null, mandant);
+		persistence.persist(benutzer);
+		return benutzer;
+	}
+
+	public static Benutzer createAndPersistTraegerschaftBenutzer(Persistence persistence) {
 		final Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
 		persistence.persist(traegerschaft);
 		final Mandant mandant = TestDataUtil.createDefaultMandant();
