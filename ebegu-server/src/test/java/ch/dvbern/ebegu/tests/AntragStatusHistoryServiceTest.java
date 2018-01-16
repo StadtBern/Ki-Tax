@@ -132,7 +132,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testFindAllAntragStatusHistoryByGPFall_NoChanges() {
-		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 
 		final Collection<AntragStatusHistory> allStatus = statusHistoryService.findAllAntragStatusHistoryByGPFall(gesuch.getGesuchsperiode(), gesuch.getFall());
 
@@ -142,7 +142,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testFindAllAntragStatusHistoryByGPFall() {
-		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.VERFUEGEN);
+		gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.VERFUEGEN);
 		gesuch.setStatus(AntragStatus.VERFUEGT);
 		gesuchService.updateGesuch(gesuch, true, null);
 
@@ -155,7 +155,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testFindAllAntragStatusHistoryByGPFall_Mutation() {
-		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.VERFUEGEN);
+		gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.VERFUEGEN);
 		gesuch.setStatus(AntragStatus.VERFUEGT);
 		gesuch.setGueltig(true);
 		gesuch.setTimestampVerfuegt(LocalDateTime.now());
@@ -184,7 +184,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testFindLastStatusChangeBeforeBeschwerde_NoBeschwerde() {
-		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.VERFUEGEN);
+		gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.VERFUEGEN);
 		gesuch.setStatus(AntragStatus.VERFUEGT);
 		gesuchService.updateGesuch(gesuch, true, null);
 
@@ -212,7 +212,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testFindLastStatusChangeBeforeBeschwerde() {
-		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.VERFUEGEN);
+		gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.VERFUEGEN);
 		gesuch.setStatus(AntragStatus.VERFUEGT);
 		final Gesuch gesuchVerfuegt = gesuchService.updateGesuch(gesuch, true, null);
 		gesuchService.setBeschwerdeHaengigForPeriode(gesuchVerfuegt);
