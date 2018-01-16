@@ -387,7 +387,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         let result: Array<TSInstitutionStammdaten> = [];
         if (this.betreuungsangebot) {
             this.gesuchModelManager.getActiveInstitutionenList().forEach((instStamm: TSInstitutionStammdaten) => {
-                if (instStamm.betreuungsangebotTyp === this.betreuungsangebot.key) {
+                if (instStamm.betreuungsangebotTyp === this.betreuungsangebot.key && this.isDefaultTagesschuleAllowed(instStamm)) {
                     result.push(instStamm);
                 }
             });
@@ -751,5 +751,20 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public enableErweiterteBeduerfnisse(): boolean {
         return (this.isBetreuungsstatusWarten() && !this.isSavingData) || this.isMutationsmeldungStatus;
+    }
+
+    /**
+     * gibt true zurueck wenn es keine defaultTagesschule ist oder wenn es eine defaultTagesschule ist aber die Gesuchsperiode
+     * noch keine TagesschulenAnmeldung erlaubt.
+     *
+     * Eine DefaultTagesschule ist eine Tagesschule, die fuer die erste Gescuhsperiode erstellt wurde, damit man Betreuungen
+     * der Art TAGESSCHULE erstellen darf. Jede Betreuung muss mit einer Institution verknuepft sein und TagesschuleBetreuungen
+     * wurden mit der defaultTagesschule verknuepft. Die DefaultTagesschule wird anhand der ID erkannt.
+     */
+    private isDefaultTagesschuleAllowed(instStamm: TSInstitutionStammdaten): boolean {
+        if (instStamm.id === '199ac4a1-448f-4d4c-b3a6-5aee21f89613') {
+            return !(this.gesuchModelManager.getGesuchsperiode() && this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung());
+        }
+        return true;
     }
 }
