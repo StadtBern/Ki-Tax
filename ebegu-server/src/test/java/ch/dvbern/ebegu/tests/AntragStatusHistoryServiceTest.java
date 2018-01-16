@@ -162,6 +162,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 		final Gesuch gesuchVerfuegt = gesuchService.updateGesuch(gesuch, true, null);
 		Optional<Gesuch> mutation = gesuchService.antragMutieren(gesuchVerfuegt.getId(), LocalDate.of(1980, Month.MARCH, 25));
 
+		Assert.assertTrue(mutation.isPresent());
 		mutation.get().setStatus(AntragStatus.VERFUEGT);
 		gesuchService.updateGesuch(mutation.get(), true, null);
 
@@ -220,6 +221,32 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 
 		Assert.assertNotNull(previousStatus);
 		Assert.assertEquals(AntragStatus.VERFUEGT, previousStatus.getStatus());
+	}
+
+	@Test
+	public void testFindLastStatusChangeBeforePruefungSTVVERFUEGT() {
+		gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.VERFUEGEN);
+		testFindLastStatusChangeBeforePruefungSTV(AntragStatus.VERFUEGT);
+	}
+
+	@Test
+	public void testFindLastStatusChangeBeforePruefungSTVSCHULAMT() {
+		gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.IN_BEARBEITUNG_JA);
+		testFindLastStatusChangeBeforePruefungSTV(AntragStatus.NUR_SCHULAMT);
+	}
+
+	private void testFindLastStatusChangeBeforePruefungSTV(AntragStatus status) {
+		gesuch.setStatus(status);
+		final Gesuch gesuchVerfuegt = gesuchService.updateGesuch(gesuch, true, null);
+		final Gesuch gesuchToCheck = gesuchService.sendGesuchToSTV(gesuchVerfuegt, "bemerkungen JA");
+		gesuchToCheck.setStatus(AntragStatus.IN_BEARBEITUNG_STV);
+		final Gesuch checkedGesuch = gesuchService.updateGesuch(gesuchToCheck, true, null);
+		final Gesuch readyGesuch = gesuchService.gesuchBySTVFreigeben(checkedGesuch);
+
+		final AntragStatusHistory previousStatus = statusHistoryService.findLastStatusChangeBeforePruefungSTV(readyGesuch);
+
+		Assert.assertNotNull(previousStatus);
+		Assert.assertEquals(status, previousStatus.getStatus());
 	}
 
 }
