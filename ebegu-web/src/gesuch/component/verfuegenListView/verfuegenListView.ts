@@ -27,7 +27,6 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {
     isAnyStatusOfMahnung,
     isAnyStatusOfVerfuegt,
-    isAnyStatusOfVerfuegtButSchulamt,
     isAtLeastFreigegeben,
     TSAntragStatus
 } from '../../../models/enums/TSAntragStatus';
@@ -521,7 +520,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public showBeschwerdeHaengig(): boolean {
         let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
         // Schulamt Status duerfen keine Beschwerde starten
-        return isAnyStatusOfVerfuegtButSchulamt(status) && !this.getGesuch().gesperrtWegenBeschwerde;
+        return isAnyStatusOfVerfuegt(status) && !this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     public showBeschwerdeAbschliessen(): boolean {
