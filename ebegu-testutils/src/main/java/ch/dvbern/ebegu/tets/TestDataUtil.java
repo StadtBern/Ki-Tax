@@ -597,6 +597,12 @@ public final class TestDataUtil {
 		return user;
 	}
 
+	public static Benutzer createBenutzerSCH() {
+		final Benutzer defaultBenutzer = TestDataUtil.createDefaultBenutzer();
+		defaultBenutzer.setRole(UserRole.SCHULAMT);
+		return defaultBenutzer;
+	}
+
 	@SuppressWarnings("ConstantConditions")
 	public static Betreuung createGesuchWithBetreuungspensum(boolean zweiGesuchsteller) {
 		Gesuch gesuch = new Gesuch();
@@ -780,7 +786,8 @@ public final class TestDataUtil {
 	}
 
 	private static Gesuch persistAllEntities(Persistence persistence, @Nullable LocalDate eingangsdatum, AbstractTestfall testfall, AntragStatus status) {
-		testfall.createFall(null);
+		Benutzer verantwortlicher = createAndPersistBenutzer(persistence);
+		testfall.createFall(verantwortlicher);
 		testfall.createGesuch(eingangsdatum, status);
 		persistence.persist(testfall.getGesuch().getFall());
 		persistence.persist(testfall.getGesuch().getGesuchsperiode());
@@ -791,8 +798,17 @@ public final class TestDataUtil {
 		return gesuch;
 	}
 
+	@Nonnull
+	private static Benutzer createAndPersistBenutzer(Persistence persistence) {
+		Benutzer verantwortlicher = TestDataUtil.createDefaultBenutzer();
+		persistence.persist(verantwortlicher.getMandant());
+		persistence.persist(verantwortlicher);
+		return verantwortlicher;
+	}
+
 	private static Gesuch persistAllEntities(Persistence persistence, @Nullable LocalDate eingangsdatum, AbstractTestfall testfall) {
-		testfall.createFall(null);
+		Benutzer verantwortlicher = createAndPersistBenutzer(persistence);
+		testfall.createFall(verantwortlicher);
 		testfall.createGesuch(eingangsdatum);
 		persistence.persist(testfall.getGesuch().getFall());
 		persistence.persist(testfall.getGesuch().getGesuchsperiode());
@@ -804,9 +820,7 @@ public final class TestDataUtil {
 	}
 
 	public static void persistEntities(Gesuch gesuch, Persistence persistence) {
-		Benutzer verantwortlicher = TestDataUtil.createDefaultBenutzer();
-		persistence.persist(verantwortlicher.getMandant());
-		persistence.persist(verantwortlicher);
+		Benutzer verantwortlicher = createAndPersistBenutzer(persistence);
 
 		gesuch.getFall().setVerantwortlicher(verantwortlicher);
 		persistence.persist(gesuch.getFall());
