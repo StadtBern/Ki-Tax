@@ -30,7 +30,8 @@
                         <dv-datepicker input-id="eintrittsdatum_ID" name="eintrittsdatum"
                                        ng-model="vm.betreuung.belegungTagesschule.eintrittsdatum"
                                        ng-required="true"
-                                       class="input-element">
+                                       class="input-element"
+                                       dv-min-date="vm.datumErsterSchultag">
                         </dv-datepicker>
                         <dv-error-messages input-id="eintrittsdatum" for="vm.form.eintrittsdatum.$error"></dv-error-messages>
                     </div>

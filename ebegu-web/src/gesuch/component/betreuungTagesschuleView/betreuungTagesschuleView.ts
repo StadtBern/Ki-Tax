@@ -39,6 +39,7 @@ import IPromise = angular.IPromise;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
+import moment = require('moment');
 
 let template = require('./betreuungTagesschuleView.html');
 require('./betreuungTagesschuleView.less');
@@ -66,6 +67,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     form: IFormController;
     betreuung: TSBetreuung;
     showErrorMessageNoModule: boolean;
+    datumErsterSchultag: moment.Moment;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout', '$translate'];
@@ -91,6 +93,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
 
     $onInit() {
         this.copyModuleToBelegung();
+        this.datumErsterSchultag = this.gesuchModelManager.getGesuch().gesuchsperiode.datumErsterSchultag;
     }
 
     /**
