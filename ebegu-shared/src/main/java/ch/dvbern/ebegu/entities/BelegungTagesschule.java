@@ -87,7 +87,11 @@ public class BelegungTagesschule extends AbstractEntity {
 	public BelegungTagesschule copyForMutation(@Nonnull BelegungTagesschule mutation, @Nonnull Betreuung parentBetreuung) {
 		super.copyForMutation(mutation);
 		mutation.setEintrittsdatum(LocalDate.from(eintrittsdatum));
-		//TODO (team) Implementieren!
+
+		// Don't copy them, because it's a ManyToMany realation
+		mutation.getModuleTagesschule().clear();
+		mutation.getModuleTagesschule().addAll(moduleTagesschule);
+
 		return mutation;
 	}
 }

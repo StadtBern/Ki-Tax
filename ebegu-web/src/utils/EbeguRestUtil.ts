@@ -679,6 +679,7 @@ export default class EbeguRestUtil {
             gesuchTS.gueltig = gesuchFromServer.gueltig;
             gesuchTS.dokumenteHochgeladen = gesuchFromServer.dokumenteHochgeladen;
             gesuchTS.finSitStatus = gesuchFromServer.finSitStatus;
+            gesuchTS.neustesGesuch = gesuchFromServer.neustesGesuch;
             return gesuchTS;
         }
         return undefined;
@@ -1212,6 +1213,7 @@ export default class EbeguRestUtil {
         restBetreuung.gueltig = betreuung.gueltig;
         restBetreuung.belegungTagesschule = this.belegungTagesschuleToRestObject({}, betreuung.belegungTagesschule);
         restBetreuung.belegungFerieninsel = this.belegungFerieninselToRestObject({}, betreuung.belegungFerieninsel);
+        restBetreuung.anmeldungMutationZustand = betreuung.anmeldungMutationZustand;
         return restBetreuung;
     }
 
@@ -1290,6 +1292,7 @@ export default class EbeguRestUtil {
             betreuungTS.gueltig = betreuungFromServer.gueltig;
             betreuungTS.belegungTagesschule = this.parseBelegungTagesschule(new TSBelegungTagesschule(), betreuungFromServer.belegungTagesschule);
             betreuungTS.belegungFerieninsel = this.parseBelegungFerieninsel(new TSBelegungFerieninsel(), betreuungFromServer.belegungFerieninsel);
+            betreuungTS.anmeldungMutationZustand = betreuungFromServer.anmeldungMutationZustand;
             return betreuungTS;
         }
         return undefined;

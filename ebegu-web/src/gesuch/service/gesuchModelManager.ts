@@ -1395,11 +1395,8 @@ export default class GesuchModelManager {
         return this.ebeguUtil.getGesuchNameFromGesuch(this.gesuch);
     }
 
-    public isNeuestesGesuch(): IPromise<boolean> {
-        let gesuchId = this.gesuch.id;
-        return this.gesuchRS.getNeuestesGesuchFromGesuch(gesuchId).then((response: boolean) => {
-               return response;
-        });
+    public isNeuestesGesuch(): boolean {
+        return this.gesuch.neustesGesuch;
     }
 
     public isErwerbspensumRequired(gesuchId: string): IPromise<boolean> {

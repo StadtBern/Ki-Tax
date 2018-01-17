@@ -126,9 +126,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     }
 
     private setLastVerfuegtesGesuch(): void {
-        this.gesuchModelManager.isNeuestesGesuch().then((response: boolean) => {
-            this.isLastVerfuegtesGesuch = response;
-        });
+        this.isLastVerfuegtesGesuch = this.gesuchModelManager.isNeuestesGesuch();
     }
 
     private save(): IPromise<TSGesuchstellerContainer> {

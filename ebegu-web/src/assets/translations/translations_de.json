@@ -1168,6 +1168,8 @@
     "WARN_FERIEN_NICHT_MEHR_BUCHBAR": "Der Anmeldeschluss für diese Ferieninsel ist bereits abgelaufen!",
     "WARN_FERIEN_KEINE_TAGE_GEWAEHLT": "Bitte wählen Sie mindestens einen Tag aus",
     "WARN_TAGESSCHULE_KEIN_MODUL_GEWAEHLT": "Bitte wählen Sie mindestens ein Modul aus",
+    "WARN_ANGEBOT_NOCH_NICHT_FREIGEGEBEN": "Dieses Angebot wurde noch nicht freigegeben. Bitte bearbeiten Sie das aktuell gültige Angebot.",
+    "WARN_ANGEBOT_MUTIERT": "Dieses Angebot wurde mutiert. Bitte bearbeiten Sie das aktuell gültige Angebot.",
     "FERIENINSELTAGE": "An welchen Tagen möchten Sie Ihr Kind für die Ferieninsel anmelden?",
     "ANMELDEN_FERIENINSEL": "Ferieninsel definitiv anmelden",
     "ANMELDEN_TAGESSCHULE": "Tagesschule definitiv anmelden",

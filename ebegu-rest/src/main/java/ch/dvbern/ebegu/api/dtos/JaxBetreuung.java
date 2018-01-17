@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
@@ -105,6 +106,9 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	@Column(nullable = false)
 	private boolean gueltig = false;
+
+	@Nullable
+	private AnmeldungMutationZustand anmeldungMutationZustand;
 
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
 		return institutionStammdaten;
@@ -276,6 +280,15 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setBelegungFerieninsel(@Nullable JaxBelegungFerieninsel belegungFerieninsel) {
 		this.belegungFerieninsel = belegungFerieninsel;
+	}
+
+	@Nullable
+	public AnmeldungMutationZustand getAnmeldungMutationZustand() {
+		return anmeldungMutationZustand;
+	}
+
+	public void setAnmeldungMutationZustand(@Nullable AnmeldungMutationZustand anmeldungMutationZustand) {
+		this.anmeldungMutationZustand = anmeldungMutationZustand;
 	}
 
 	@Override

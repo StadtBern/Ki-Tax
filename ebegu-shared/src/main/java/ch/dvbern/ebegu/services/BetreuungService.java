@@ -25,6 +25,7 @@ import javax.validation.Valid;
 import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 
 /**
  * Service zum Verwalten von Betreuungen
@@ -179,4 +180,7 @@ public interface BetreuungService {
 	 */
 	@Nonnull
 	List<Abwesenheit> getAllAbwesenheitenWithMissingStatistics();
+
+
+	int changeAnmeldungMutationZustand(String vorgaengerId, AnmeldungMutationZustand mutiert);
 }

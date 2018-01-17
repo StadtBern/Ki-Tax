@@ -179,7 +179,9 @@ public class GesuchResource {
 			return null;
 		}
 		Gesuch gesuchToReturn = gesuchOptional.get();
-		return converter.gesuchToJAX(gesuchToReturn);
+		final JaxGesuch jaxGesuch = converter.gesuchToJAX(gesuchToReturn);
+		jaxGesuch.setNeustesGesuch(gesuchService.isNeustesGesuch(gesuchToReturn));
+		return jaxGesuch;
 	}
 
 	/**
@@ -645,20 +647,6 @@ public class GesuchResource {
 			return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 		}
 		throw new EbeguEntityNotFoundException("removeBeschwerdeHaengig", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
-	}
-
-	@ApiOperation(value = "Ueberprueft, ob das Gesuch mit der uebergebenen Id das neueste Gesuch dieses Falls ist",
-		response = Boolean.class)
-	@GET
-	@Path("/neuestesgesuch/{gesuchId}")
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.WILDCARD)
-	public boolean isNeustesGesuch(
-		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) throws EbeguException {
-		Validate.notNull(gesuchJAXPId.getId());
-		String gesuchID = converter.toEntityId(gesuchJAXPId);
-		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
-		return gesuchOptional.map(gesuch -> gesuchService.isNeustesGesuch(gesuch)).orElse(false);
 	}
 
 	@ApiOperation(value = "Loescht eine online Mutation", response = Void.class)
