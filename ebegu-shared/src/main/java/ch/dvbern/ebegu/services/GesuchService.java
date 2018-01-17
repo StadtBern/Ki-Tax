@@ -60,6 +60,8 @@ public interface GesuchService {
 	@Nonnull
 	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory, @Nullable Benutzer saveAsUser);
 
+	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory);
+
 	/**
 	 * Aktualisiert das Gesuch in der DB
 	 *
@@ -375,4 +377,19 @@ public interface GesuchService {
 	 * @return 1 wenn alles ok
 	 */
 	int changeFinSitStatus(@Nonnull String antragId, @Nonnull FinSitStatus finSitStatus);
+
+	/**
+	 * Setzt das Gesuch auf Status PRUEFUNG_STV und aktualisiert die benoetigten Parameter.
+	 */
+	Gesuch sendGesuchToSTV(@Nonnull Gesuch gesuch, @Nullable String bemerkungen);
+
+	/**
+	 * Das Gesuch wird als GEPRUEFT_STV markkiert
+	 */
+	Gesuch gesuchBySTVFreigeben(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Schliesst die Pruefung STV ab und setzt den Status auf den Status, den das Gesuch vor der Pruefung hatte
+	 */
+	Gesuch stvPruefungAbschliessen(@Nonnull Gesuch gesuch);
 }

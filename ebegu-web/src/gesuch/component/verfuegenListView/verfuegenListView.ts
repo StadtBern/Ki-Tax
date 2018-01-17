@@ -319,7 +319,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public showSendToSteuerverwaltung(): boolean {
         //hier wird extra nur "VERFUEGT" gestestet statt alle verfuegten status weil das Schulamt das Gesuch nicht pruefen lassen darf
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT) && !this.getGesuch().gesperrtWegenBeschwerde;
+        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.NUR_SCHULAMT))
+            && !this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     public stvPruefungAbschliessen(): void {
