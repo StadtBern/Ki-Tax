@@ -282,7 +282,7 @@ public class SchulamtBackendResource {
 				return Response.status(Response.Status.BAD_REQUEST).entity(
 					new JaxExternalError(
 						JaxExternalErrorCode.NO_RESULTS,
-						"No gesuch found for fallnummer")).build();
+						"No gesuch found for fallnummer or finSit not yet set")).build();
 			}
 			final Gesuch neustesGesuch = neustesGesuchOpt.get();
 
@@ -301,7 +301,8 @@ public class SchulamtBackendResource {
 		final Familiensituation familiensituation = neustesGesuch.extractFamiliensituation();
 		Validate.notNull(familiensituation);
 
-		if (familiensituation.getSozialhilfeBezueger() != null && familiensituation.getSozialhilfeBezueger()) {
+		if (familiensituation.getSozialhilfeBezueger() != null && familiensituation.getSozialhilfeBezueger()
+			&& neustesGesuch.getFinSitStatus() == FinSitStatus.AKZEPTIERT) {
 			// SozialhilfeBezüger Ja -> Basiszahler (keine finSit!)
 			final JaxExternalFinanzielleSituation dto = convertToJaxExternalFinanzielleSituationWithoutFinDaten(
 				fallNummer, stichtag, neustesGesuch, JaxExternalTarifart.BASISZAHLER);
