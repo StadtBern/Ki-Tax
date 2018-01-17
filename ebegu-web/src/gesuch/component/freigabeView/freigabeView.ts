@@ -122,7 +122,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
 
     public openFreigabequittungPDF(forceCreation: boolean): IPromise<void> {
         let win: Window = this.downloadRS.prepareDownloadWindow();
-        return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, forceCreation, this.getZustelladresse())
+        return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, forceCreation)
             .then((downloadFile: TSDownloadFile) => {
                 // wir laden das Gesuch neu, da die Erstellung des Dokumentes auch Aenderungen im Gesuch verursacht
                 this.gesuchModelManager.openGesuch(this.gesuchModelManager.getGesuch().id)
@@ -169,18 +169,6 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
 
     public isThereAnyAbgewieseneBetreuung(): boolean {
         return this.gesuchModelManager.isThereAnyAbgewieseneBetreuung();
-    }
-
-    private getZustelladresse(): TSZustelladresse {
-        if (this.gesuchModelManager.isGesuch()) {
-            if (this.gesuchModelManager.areThereOnlySchulamtAngebote()) {
-                return TSZustelladresse.SCHULAMT;
-            } else {
-                return TSZustelladresse.JUGENDAMT;
-            }
-
-        }
-        return undefined;
     }
 
     /**

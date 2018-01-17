@@ -183,18 +183,24 @@ public abstract class AbstractEbeguTest {
 		final InstitutionStammdaten institutionStammdatenKitaAaregg = TestDataUtil.createInstitutionStammdatenKitaWeissenstein();
 		final InstitutionStammdaten institutionStammdatenKitaBruennen = TestDataUtil.createInstitutionStammdatenKitaBruennen();
 		final InstitutionStammdaten institutionStammdatenTagiAaregg = TestDataUtil.createInstitutionStammdatenTagiWeissenstein();
+		final InstitutionStammdaten institutionStammdatenTagesschuleBern = TestDataUtil.createInstitutionStammdatenTagesschuleBern();
+		final InstitutionStammdaten institutionStammdatenFerieninselGuarda = TestDataUtil.createInstitutionStammdatenFerieninselGuarda();
 
 		Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
 		traegerschaftService.saveTraegerschaft(traegerschaft);
 		institutionStammdatenKitaAaregg.getInstitution().setTraegerschaft(traegerschaft);
 		institutionStammdatenKitaBruennen.getInstitution().setTraegerschaft(traegerschaft);
 		institutionStammdatenTagiAaregg.getInstitution().setTraegerschaft(traegerschaft);
+		institutionStammdatenTagesschuleBern.getInstitution().setTraegerschaft(traegerschaft);
+		institutionStammdatenFerieninselGuarda.getInstitution().setTraegerschaft(traegerschaft);
 
 		Mandant mandant = TestDataUtil.createDefaultMandant();
 		persistence.persist(mandant);
 		institutionStammdatenKitaAaregg.getInstitution().setMandant(mandant);
 		institutionStammdatenKitaBruennen.getInstitution().setMandant(mandant);
 		institutionStammdatenTagiAaregg.getInstitution().setMandant(mandant);
+		institutionStammdatenTagesschuleBern.getInstitution().setMandant(mandant);
+		institutionStammdatenFerieninselGuarda.getInstitution().setMandant(mandant);
 
 		institutionService.createInstitution(institutionStammdatenKitaAaregg.getInstitution());
 		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenKitaAaregg);
@@ -203,9 +209,17 @@ public abstract class AbstractEbeguTest {
 		institutionService.createInstitution(institutionStammdatenKitaBruennen.getInstitution());
 		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenKitaBruennen);
 
+		institutionService.createInstitution(institutionStammdatenTagesschuleBern.getInstitution());
+		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenTagesschuleBern);
+
+		institutionService.createInstitution(institutionStammdatenFerieninselGuarda.getInstitution());
+		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenFerieninselGuarda);
+
 		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_KITA));
 		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_BRUENNEN_KITA));
 		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_TAGI));
+		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_BERN_TAGESSCULHE));
+		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_GUARDA_FERIENINSEL));
 		return mandant;
 	}
 

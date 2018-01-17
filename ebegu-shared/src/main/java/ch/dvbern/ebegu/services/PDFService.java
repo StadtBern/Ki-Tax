@@ -37,7 +37,7 @@ public interface PDFService {
 	byte[] generateMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung, boolean writeProtected) throws MergeDocException;
 
 	@Nonnull
-	byte[] generateFreigabequittung(Gesuch gesuch, Zustelladresse zustelladresse, boolean writeProtected) throws MergeDocException;
+	byte[] generateFreigabequittung(Gesuch gesuch, boolean writeProtected) throws MergeDocException;
 
 	@Nonnull
 	byte[] generateBegleitschreiben(@Nonnull Gesuch gesuch, boolean writeProtected) throws MergeDocException;

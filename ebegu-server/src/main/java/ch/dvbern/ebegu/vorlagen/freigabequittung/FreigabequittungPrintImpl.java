@@ -40,17 +40,15 @@ import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
 public class FreigabequittungPrintImpl extends BriefPrintImpl implements FreigabequittungPrint {
 
 	private final Gesuch gesuch;
-	private final Zustelladresse zustellAmt;
 	private final List<DokumentGrund> dokumentGrunds;
 	private final List<AufzaehlungPrint> unterlagen;
 
-	public FreigabequittungPrintImpl(Gesuch gesuch, Zustelladresse zustellAmt, List<DokumentGrund> dokumentGrunds) {
+	public FreigabequittungPrintImpl(Gesuch gesuch, List<DokumentGrund> dokumentGrunds) {
 
 		super(gesuch);
 
 		this.dokumentGrunds = dokumentGrunds;
 		this.gesuch = gesuch;
-		this.zustellAmt = zustellAmt;
 		this.unterlagen = buildUnterlagen();
 
 	}
@@ -89,16 +87,6 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 
 		return new DocxImage(bytesOut.toByteArray(), bufferedImage.getWidth(), bufferedImage.getHeight(), DocxImage.Format.PNG);
 
-	}
-
-	@Override
-	public boolean isAdresseJugendamt() {
-		return zustellAmt == Zustelladresse.JUGENDAMT;
-	}
-
-	@Override
-	public boolean isAdresseSchulamt() {
-		return zustellAmt == Zustelladresse.SCHULAMT;
 	}
 
 	@Override

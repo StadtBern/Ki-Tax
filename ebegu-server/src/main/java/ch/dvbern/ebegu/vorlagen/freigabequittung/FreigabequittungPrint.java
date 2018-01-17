@@ -30,10 +30,6 @@ public interface FreigabequittungPrint {
 
 	DocxImage getBarcodeImage() throws IOException;
 
-	boolean isAdresseJugendamt();
-
-	boolean isAdresseSchulamt();
-
 	String getAdresseGS1();
 
 	boolean isAddresseGS2();
