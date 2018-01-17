@@ -191,6 +191,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	@Override
 	@PermitAll
+	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory) {
+		return updateGesuch(gesuch, saveInStatusHistory, null, true);
+	}
+
+
+	@Nonnull
+	@Override
+	@PermitAll
 	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory, @Nullable Benutzer saveAsUser, boolean doAuthCheck) {
 		if (doAuthCheck) {
 			authorizer.checkWriteAuthorization(gesuch);
@@ -655,7 +663,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			// neues Gesuch erst nachdem das andere auf ungültig gesetzt wurde setzen wegen unique key
 			gesuch.setGueltig(true);
 
-			return persistence.merge(gesuch);
+			return updateGesuch(gesuch, true);
 		}
 		throw new EbeguRuntimeException("setAbschliessen", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, "Nur reine Schulamt-Gesuche können abgeschlossen werden");
 	}

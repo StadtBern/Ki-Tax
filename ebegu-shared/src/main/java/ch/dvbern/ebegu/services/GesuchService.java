@@ -60,6 +60,8 @@ public interface GesuchService {
 	@Nonnull
 	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory, @Nullable Benutzer saveAsUser);
 
+	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory);
+
 	/**
 	 * Aktualisiert das Gesuch in der DB
 	 *
