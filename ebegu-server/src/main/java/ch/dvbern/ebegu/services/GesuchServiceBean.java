@@ -905,9 +905,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Root<Gesuch> root = query.from(Gesuch.class);
 		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
 		Predicate predicateFallNummer = cb.equal(root.get(Gesuch_.fall).get(Fall_.fallNummer), fallnummer);
-		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllStatesSchulamtInterface());
+		Predicate predicateFinSit = root.get(Gesuch_.finSitStatus).isNotNull();
 
-		query.where(predicateGesuchsperiode, predicateFallNummer, predicateStatus);
+		query.where(predicateGesuchsperiode, predicateFallNummer, predicateFinSit);
 		query.select(root);
 		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
 		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);

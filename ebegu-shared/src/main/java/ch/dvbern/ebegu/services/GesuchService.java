@@ -241,7 +241,8 @@ public interface GesuchService {
 	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
 
 	/**
-	 * Gibt das Geusch zurueck, das mit dem Fall verknuepft ist und das neueste fuer das SchulamtInterface ist
+	 * Gibt das Geusch zurueck, das mit dem Fall verknuepft ist und das neueste fuer das SchulamtInterface ist. Das Flag FinSitStatus
+	 * muss nicht NULL sein, sonst gilt es als nicht geprueft.
 	 */
 	Optional<Gesuch> getNeustesGesuchFuerFallnumerForSchulamtInterface(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Long fallnummer);
 
