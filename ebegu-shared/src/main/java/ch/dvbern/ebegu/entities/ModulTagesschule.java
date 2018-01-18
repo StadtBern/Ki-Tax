@@ -135,14 +135,4 @@ public class ModulTagesschule extends AbstractEntity implements Comparable<Modul
 		return builder.toComparison();
 	}
 
-	public ModulTagesschule copyForMutation(@Nonnull ModulTagesschule mutation) {
-		super.copyForMutation(mutation);
-		mutation.setInstitutionStammdatenTagesschule(this.getInstitutionStammdatenTagesschule());
-		mutation.setModulTagesschuleName(this.getModulTagesschuleName());
-		mutation.setWochentag(this.getWochentag());
-		mutation.setZeitBis(this.getZeitBis());
-		mutation.setZeitVon(this.getZeitVon());
-		return mutation;
-	}
-
 }

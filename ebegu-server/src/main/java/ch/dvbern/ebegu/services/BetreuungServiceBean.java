@@ -132,7 +132,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		final Betreuung mergedBetreuung = persistence.merge(betreuung);
 
 		// We need to update (copy) all other Betreuungen with same BGNummer (on all other Mutationen and Erstgesuch)
-		final List<Betreuung> betreuungByBGNummer = findBetreuungByBGNummer(betreuung.getBGNummer());
+		final List<Betreuung> betreuungByBGNummer = findBetreuungenByBGNummer(betreuung.getBGNummer());
 		betreuungByBGNummer.stream().filter(b -> b.isAngebotSchulamt() && !Objects.equals(betreuung.getId(), b.getId())).forEach(b -> {
 			b.copyAnmeldung(betreuung);
 			persistence.merge(b);
@@ -255,7 +255,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	public List<Betreuung> findBetreuungByBGNummer(@Nonnull String bgNummer) {
+	public List<Betreuung> findBetreuungenByBGNummer(@Nonnull String bgNummer) {
 
 		final int betreuungNummer = getBetreuungNummerFromBGNummer(bgNummer);
 		final int kindNummer = getKindNummerFromBGNummer(bgNummer);

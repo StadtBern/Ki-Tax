@@ -57,7 +57,7 @@ export default class TSBetreuung extends TSAbstractEntity {
                 grundAblehnung?: string, datumAblehnung?: moment.Moment, datumBestaetigung?: moment.Moment, kindFullname?: string,
                 kindNummer?: number, gesuchId?: string, gesuchsperiode?: TSGesuchsperiode,
                 betreuungMutiert?: boolean, abwesenheitMutiert?: boolean, gueltig?: boolean, belegungTagesschule?: TSBelegungTagesschule,
-                belegungFerieninsel?: TSBelegungFerieninsel) {
+                belegungFerieninsel?: TSBelegungFerieninsel, anmeldungMutationZustand?: TSAnmeldungMutationZustand) {
         super();
         this._institutionStammdaten = institutionStammdaten;
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
@@ -79,6 +79,7 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._gueltig = gueltig;
         this._belegungTagesschule = belegungTagesschule;
         this._belegungFerieninsel = belegungFerieninsel;
+        this._anmeldungMutationZustand = anmeldungMutationZustand;
     }
 
     get institutionStammdaten(): TSInstitutionStammdaten {

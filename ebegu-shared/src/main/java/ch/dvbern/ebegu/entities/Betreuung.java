@@ -166,7 +166,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	private boolean gueltig = false;
 
 	@Nullable
-	@Enumerated(value = EnumType.STRING)
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = true)
 	private AnmeldungMutationZustand anmeldungMutationZustand;
 
@@ -492,7 +492,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		// Original-Betreuung als AKTUELLE_ANMELDUNG gekennzeichnet.
 		// Bei Schulamtangebote Papier Mutationen werden die kopierten Betreuungen mit dem Zustand AKTUELLE_ANMELDUNG gekennzeichnet und die
 		// Original-Betreuung als MUTIERT gekennzeichnet.
-		// Betreuungen mit dem Zustand MUTIERT und NOCH_NICHT_FREIGEGEBEN können nicht weiterverabeitet werden und welchen mit einer
+		// Betreuungen mit dem Zustand MUTIERT und NOCH_NICHT_FREIGEGEBEN können nicht weiterverabeitet werden und werden mit einer
 		// Warnung im Gui als solche gezeigt
 		if (isAngebotSchulamt()) {
 			if (eingangsart == Eingangsart.ONLINE) {

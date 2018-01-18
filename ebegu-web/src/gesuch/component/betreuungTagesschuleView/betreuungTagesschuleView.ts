@@ -95,6 +95,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
 
     $onInit() {
         this.copyModuleToBelegung();
+        //todo dupliziert refactoren
         if (this.getBetreuungModel().anmeldungMutationZustand) {
             if (this.getBetreuungModel().anmeldungMutationZustand === TSAnmeldungMutationZustand.MUTIERT) {
                 this.showMutiert = true;

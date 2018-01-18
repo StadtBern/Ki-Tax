@@ -558,6 +558,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return updateGesuch(gesuch, true, null);
 	}
 
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Nonnull
 	@Override
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
@@ -604,8 +605,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
 				}
 				// Set noch nicht freigegebene Betreuungen to aktuelle Anmeldung bei Freigabe
-				if(betreuung.isAngebotSchulamt()){
-					if(betreuung.getAnmeldungMutationZustand() == AnmeldungMutationZustand.NOCH_NICHT_FREIGEGEBEN){
+				if (betreuung.isAngebotSchulamt()) {
+					if (betreuung.getAnmeldungMutationZustand() == AnmeldungMutationZustand.NOCH_NICHT_FREIGEGEBEN) {
 						betreuung.setAnmeldungMutationZustand(AnmeldungMutationZustand.AKTUELLE_ANMELDUNG);
 						betreuungService.changeAnmeldungMutationZustand(betreuung.getVorgaengerId(), AnmeldungMutationZustand.MUTIERT);
 					}

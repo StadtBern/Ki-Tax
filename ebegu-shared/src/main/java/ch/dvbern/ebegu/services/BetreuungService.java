@@ -91,7 +91,7 @@ public interface BetreuungService {
 	 * @param bgNummer BGNummer der Betreuung
 	 * @return Betreuung mit der angegebenen ID (z.B. 18.000116.1.2) oder null falls nicht vorhanden
 	 */
-	List<Betreuung> findBetreuungByBGNummer(@Nonnull String bgNummer);
+	List<Betreuung> findBetreuungenByBGNummer(@Nonnull String bgNummer);
 
 	/**
 	 * Extract Fallnummer form bgNummer
@@ -182,5 +182,5 @@ public interface BetreuungService {
 	List<Abwesenheit> getAllAbwesenheitenWithMissingStatistics();
 
 
-	int changeAnmeldungMutationZustand(String vorgaengerId, AnmeldungMutationZustand mutiert);
+	int changeAnmeldungMutationZustand(String betreuungsId, AnmeldungMutationZustand anmeldungMutationZustand);
 }
