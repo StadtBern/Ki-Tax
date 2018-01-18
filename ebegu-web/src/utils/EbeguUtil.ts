@@ -126,7 +126,8 @@ export default class EbeguUtil {
         return -1;
     }
 
-    public calculateBetreuungsId(gesuchsperiode: TSGesuchsperiode, fall: TSFall, kindContainerNumber: number, betreuungNumber: number): string {
+    /* bgNummer is also stored on betreuung when Betreuung is loaded from server! (Don't use this function if you load betreuung from server) */
+    public mainTitle(gesuchsperiode: TSGesuchsperiode, fall: TSFall, kindContainerNumber: number, betreuungNumber: number): string {
         let betreuungsId: string = '';
         if (gesuchsperiode && fall) {
             betreuungsId =
@@ -138,6 +139,7 @@ export default class EbeguUtil {
         return betreuungsId;
     }
 
+    /* bgNummer is also stored on betreuung when Betreuung is loaded from server! (Don't use this function if you load betreuung from server) */
     public calculateBetreuungsIdFromBetreuung(fall: TSFall, betreuung: TSBetreuung): string {
         let betreuungsId: string = '';
         if (betreuung && fall) {

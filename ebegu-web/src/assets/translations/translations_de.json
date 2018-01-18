@@ -1200,5 +1200,6 @@
     "AKZEPTIERT": "Finanzielle Situation akzeptiert",
     "ABGELEHNT": "Finanzielle Situation abgelehnt",
     "MAHNUNG_BATCH_EXECUTED_OK": "Die Prüfung der Mahnungen wurde erfolgreich durchgeführt",
-    "MAHNUNG_BATCH_EXECUTED_ERROR": "Ein Fehler ist bei der Prüfung der Mahnungen aufgetreten"
+    "MAHNUNG_BATCH_EXECUTED_ERROR": "Ein Fehler ist bei der Prüfung der Mahnungen aufgetreten",
+    "BGNUMMER": "BG-Nummer"
 }

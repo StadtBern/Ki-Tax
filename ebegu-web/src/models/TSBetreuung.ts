@@ -47,6 +47,7 @@ export default class TSBetreuung extends TSAbstractEntity {
     private _gueltig: boolean;
     private _belegungTagesschule: TSBelegungTagesschule;
     private _belegungFerieninsel: TSBelegungFerieninsel;
+    private _bgNummer: string;
 
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
                 betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, abwesenheitContainers?: Array<TSAbwesenheitContainer>,
@@ -273,5 +274,13 @@ export default class TSBetreuung extends TSAbstractEntity {
 
     public isSchulamtangebotAusgeloest(): boolean {
         return this.isAngebotSchulamt() && isBetreuungsstatusTSAusgeloest(this.betreuungsstatus);
+    }
+
+    public get bgNummer(): string {
+        return this._bgNummer;
+    }
+
+    public set bgNummer(value: string) {
+        this._bgNummer = value;
     }
 }

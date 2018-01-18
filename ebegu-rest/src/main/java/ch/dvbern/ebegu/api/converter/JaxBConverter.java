@@ -1999,6 +1999,7 @@ public class JaxBConverter {
 		jaxBetreuung.setGueltig(betreuungFromServer.isGueltig());
 		jaxBetreuung.setBelegungTagesschule(belegungTagesschuleToJax(betreuungFromServer.getBelegungTagesschule()));
 		jaxBetreuung.setBelegungFerieninsel(belegungFerieninselToJAX(betreuungFromServer.getBelegungFerieninsel()));
+		jaxBetreuung.setBgNummer(betreuungFromServer.getBGNummer());
 		return jaxBetreuung;
 	}
 

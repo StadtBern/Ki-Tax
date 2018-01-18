@@ -106,6 +106,9 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@Column(nullable = false)
 	private boolean gueltig = false;
 
+	// transient (Not stored on server, just an information for client)
+	private String bgNummer;
+
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
 		return institutionStammdaten;
 	}
@@ -285,5 +288,13 @@ public class JaxBetreuung extends JaxAbstractDTO {
 			return getBetreuungNummer().compareTo(other.getBetreuungNummer());
 		}
 		return super.compareTo(o);
+	}
+
+	public String getBgNummer() {
+		return bgNummer;
+	}
+
+	public void setBgNummer(String bgNummer) {
+		this.bgNummer = bgNummer;
 	}
 }
