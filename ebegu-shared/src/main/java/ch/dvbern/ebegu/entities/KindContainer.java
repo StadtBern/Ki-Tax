@@ -37,6 +37,7 @@ import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
+import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.annotations.SortNatural;
@@ -169,14 +170,14 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	}
 
 	@Nonnull
-	public KindContainer copyForMutation(@Nonnull KindContainer mutation, @Nonnull Gesuch gesuchMutation) {
+	public KindContainer copyForMutation(@Nonnull KindContainer mutation, @Nonnull Gesuch gesuchMutation, Eingangsart eingangsart) {
 		super.copyForMutation(mutation);
 		mutation.setKindJA(this.getKindJA().copyForMutation(new Kind()));
 		mutation.setNextNumberBetreuung(this.getNextNumberBetreuung());
 		if (this.getBetreuungen() != null) {
 			mutation.setBetreuungen(new TreeSet<>());
 			for (Betreuung betreuung : this.getBetreuungen()) {
-				mutation.getBetreuungen().add(betreuung.copyForMutation(new Betreuung(), mutation));
+				mutation.getBetreuungen().add(betreuung.copyForMutation(new Betreuung(), mutation, eingangsart));
 			}
 		}
 		return copyForMutationOrErneuerung(mutation, gesuchMutation);

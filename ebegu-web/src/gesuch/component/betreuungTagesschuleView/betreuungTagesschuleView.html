@@ -77,6 +77,20 @@
                 </div>
             </div>
 
+            <div ng-if="vm.showNochNichtFreigegeben === true">
+                <div class="well well-status-warten">
+                    <i class="fa fa-exclamation" aria-hidden="true"></i>
+                    <span data-translate="WARN_ANGEBOT_NOCH_NICHT_FREIGEGEBEN"></span>
+                </div>
+            </div>
+
+            <div ng-if="vm.showMutiert === true">
+                <div class="well well-status-warten">
+                    <i class="fa fa-exclamation" aria-hidden="true"></i>
+                    <span data-translate="WARN_ANGEBOT_MUTIERT"></span>
+                </div>
+            </div>
+
         </div>
 
     </fieldset>
@@ -97,7 +111,7 @@
 
         <div dv-show-element
              dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtRoles()"
-             dv-show-expression="vm.isFalscheInstitutionAndUserInRole()">
+             dv-show-expression="vm.isFalscheInstitutionAndUserInRole() && vm.aktuellGueltig">
             <dv-loading-button button-click="vm.anmelden()" type="submit" button-class="save">
                 <span data-translate="{{vm.getButtonTextSpeichern()}}"></span>
             </dv-loading-button>
@@ -107,8 +121,8 @@
         </div>
 
 		<div dv-show-element
-			 dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-			 dv-show-expression="vm.showButtonsInstitution()">
+             dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+             dv-show-expression="vm.showButtonsInstitution() && vm.aktuellGueltig">
 			<dv-loading-button button-click="vm.anmeldungSchulamtUebernehmen()" type="button" button-class="save">
 				<span data-translate="SCHULAMT_ANMELDUNG_UEBERNEHMEN"></span>
 			</dv-loading-button>
