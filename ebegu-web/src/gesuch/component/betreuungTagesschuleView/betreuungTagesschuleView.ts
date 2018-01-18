@@ -39,6 +39,7 @@ import IPromise = angular.IPromise;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
+import moment = require('moment');
 import {TSAnmeldungMutationZustand} from '../../../models/enums/TSAnmeldungMutationZustand';
 
 let template = require('./betreuungTagesschuleView.html');
@@ -67,6 +68,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     form: IFormController;
     betreuung: TSBetreuung;
     showErrorMessageNoModule: boolean;
+    datumErsterSchultag: moment.Moment;
     showNochNichtFreigegeben: boolean = false;
     showMutiert: boolean = false;
     aktuellGueltig: boolean = true;
@@ -95,6 +97,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
 
     $onInit() {
         this.copyModuleToBelegung();
+        this.datumErsterSchultag = this.gesuchModelManager.getGesuchsperiode().datumErsterSchultag;
         //todo dupliziert refactoren
         if (this.getBetreuungModel().anmeldungMutationZustand) {
             if (this.getBetreuungModel().anmeldungMutationZustand === TSAnmeldungMutationZustand.MUTIERT) {
