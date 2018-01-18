@@ -253,6 +253,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             this.startEmptyListOfBetreuungspensen();
             this.form.$setUntouched();
             this.form.$setPristine();
+            this.model.institutionStammdaten = this.initialBetreuung.institutionStammdaten;
             return undefined;
         });
     }
