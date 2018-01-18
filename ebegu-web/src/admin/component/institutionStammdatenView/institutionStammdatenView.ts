@@ -32,6 +32,7 @@ import AbstractAdminViewController from '../../abstractAdminView';
 import {IInstitutionStammdatenStateParams} from '../../admin.route';
 import IStateService = angular.ui.IStateService;
 import IFormController = angular.IFormController;
+import moment = require('moment');
 
 let template = require('./institutionStammdatenView.html');
 require('./institutionStammdatenView.less');
@@ -206,5 +207,14 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
             }
             this.selectedInstitutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule = definedModulTagesschule;
         }
+    }
+
+    private isModulTagesschuleDisabled(): boolean {
+        let now = moment.now();
+        // Mit welcher "Freischaltung Tagesschule" soll das aktuelle Datum verglichen werden? Es kann mehrere aktive Gesuchsperioden geben!
+        // Die InstitutionStammdaten sind jedoch mit keiner Gesuchsperiode verknüpft. Soll immer die letzte aktive Gesuchsperiode genommen werden?
+        // Was passiert eine neue Gesuchsperiode aktiv wird?
+
+        return false;
     }
 }
