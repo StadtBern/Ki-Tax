@@ -52,6 +52,9 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _timestampVerfuegt: moment.Moment;
     private _gueltig: boolean;
 
+    //transient
+    private _neustesGesuch: boolean;
+
     // Wir müssen uns merken, dass dies nicht das originalGesuch ist sondern eine Mutations- oder Erneuerungskopie
     // (Wichtig für laden des Gesuchs bei Navigation)
     private _emptyCopy: boolean = false;
@@ -226,6 +229,14 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     public set finSitStatus(value: TSFinSitStatus) {
         this._finSitStatus = value;
+    }
+
+    public get neustesGesuch(): boolean {
+        return this._neustesGesuch;
+    }
+
+    public set neustesGesuch(value: boolean) {
+        this._neustesGesuch = value;
     }
 
     /**
