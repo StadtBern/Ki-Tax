@@ -93,7 +93,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
 
     $onInit() {
         this.copyModuleToBelegung();
-        this.datumErsterSchultag = this.gesuchModelManager.getGesuch().gesuchsperiode.datumErsterSchultag;
+        this.datumErsterSchultag = this.gesuchModelManager.getGesuchsperiode().datumErsterSchultag;
     }
 
     /**
