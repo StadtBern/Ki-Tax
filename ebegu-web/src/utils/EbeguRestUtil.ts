@@ -1293,6 +1293,7 @@ export default class EbeguRestUtil {
             betreuungTS.belegungTagesschule = this.parseBelegungTagesschule(new TSBelegungTagesschule(), betreuungFromServer.belegungTagesschule);
             betreuungTS.belegungFerieninsel = this.parseBelegungFerieninsel(new TSBelegungFerieninsel(), betreuungFromServer.belegungFerieninsel);
             betreuungTS.anmeldungMutationZustand = betreuungFromServer.anmeldungMutationZustand;
+            betreuungTS.bgNummer = betreuungFromServer.bgNummer;
             return betreuungTS;
         }
         return undefined;

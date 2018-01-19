@@ -15,7 +15,7 @@
 
 <div class="betreuungFerieninselView">
 
-    <fieldset ng-disabled="!vm.betreuung.isEnabled()">
+    <fieldset ng-disabled="!vm.betreuung.isEnabled() || vm.isFreigabequittungAusstehend()">
 
 		<!-- Ferienname -->
 		<div class="row">
@@ -41,7 +41,7 @@
 				</div>
 			</div>
 			<!-- Noch nicht abgeschickt: Tage auswaehlbar -->
-			<div class="row" ng-if="!vm.isAnmeldeschlussAbgelaufen() && vm.betreuung.isEnabled()">
+			<div class="row" ng-if="!vm.isAnmeldeschlussAbgelaufen() && vm.betreuung.isEnabled() && !vm.isFreigabequittungAusstehend()">
 				<div class="col-xs-12 dv-input-container-question" ng-repeat="tag in vm.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung">
 					<md-checkbox ng-model="tag.angemeldet"
 								 aria-label="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}">
@@ -50,7 +50,7 @@
 				</div>
 			</div>
 			<!-- Abgeschickt: Liste der gewaehlten Tage readonly -->
-			<div class="row" ng-if="!vm.betreuung.isEnabled()">
+			<div class="row" ng-if="!vm.betreuung.isEnabled() || vm.isFreigabequittungAusstehend()">
 				<div class="col-xs-12" ng-repeat="tag in vm.betreuung.belegungFerieninsel.tage">
 					<li data-translate="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}"></li>
 				</div>
@@ -106,7 +106,7 @@
     <div class="nav-row-betreuung">
         <div dv-show-element
              dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles()"
-             dv-show-expression="vm.betreuung.isEnabled() && vm.isAnmeldungMoeglich()">
+             dv-show-expression="vm.betreuung.isEnabled() && vm.isAnmeldungMoeglich() && !vm.isFreigabequittungAusstehend()">
             <dv-loading-button button-click="vm.anmelden()" type="submit" button-class="save">
                 <span data-translate="{{vm.getButtonTextSpeichern()}}"></span>
             </dv-loading-button>

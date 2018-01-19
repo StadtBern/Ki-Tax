@@ -773,7 +773,7 @@
     "TRAEGERSCHAFTEN_NOCH_KEINE": "Noch keine Trägerschaften",
     "TRAEGERSCHAFT_HINZUFUEGEN": "Trägerschaft hinzufügen",
     "GESUCHSPERIODE_HINZUFUEGEN": "Gesuchsperiode hinzufügen",
-    "DOK_HINT_DOKUMENTE": "Bitte reichen Sie die ausstehenden Dokumente online oder per Post an das Jugendamt nach.",
+    "DOK_HINT_DOKUMENTE": "Bitte reichen Sie die ausstehenden Dokumente online oder per Post an das Jugendamt/Schulamt nach.",
     "DOK_FINANZIELLE_SITUATION": "Berechnung der finanziellen Situation für {{basisjahr}}",
     "DOK_KINDER": "Kinder",
     "DOK_FAMILIENSITUATION": "Familiensituation",
@@ -836,7 +836,7 @@
     "FINSIT_WARNING_BESCHREIBUNG": "Die bereits eingetragenen Daten der finanziellen Situation und Einkommensverschlechterung werden damit gelöscht",
     "IN_BEARBEITUNG_GS": "In Bearbeitung Gesuchsteller/in",
     "FREIGABEQUITTUNG": "Freigabequittung ausstehend",
-    "NUR_SCHULAMT": "Schulamt",
+    "NUR_SCHULAMT": "Abgeschlossen",
     "FREIGEGEBEN": "Freigegeben",
     "IN_BEARBEITUNG_JA": "In Bearbeitung Stadt Bern",
     "IN_BEARBEITUNG": "In Bearbeitung",
@@ -1203,5 +1203,6 @@
     "AKZEPTIERT": "Finanzielle Situation akzeptiert",
     "ABGELEHNT": "Finanzielle Situation abgelehnt",
     "MAHNUNG_BATCH_EXECUTED_OK": "Die Prüfung der Mahnungen wurde erfolgreich durchgeführt",
-    "MAHNUNG_BATCH_EXECUTED_ERROR": "Ein Fehler ist bei der Prüfung der Mahnungen aufgetreten"
+    "MAHNUNG_BATCH_EXECUTED_ERROR": "Ein Fehler ist bei der Prüfung der Mahnungen aufgetreten",
+    "BGNUMMER": "BG-Nummer"
 }
