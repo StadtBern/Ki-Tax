@@ -126,9 +126,4 @@ public class MahnungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 		}
 	}
 
-	@Override
-	public String getKontaktStelle() {
-		return "während der Bürozeiten zur Verfügung (Telefonnummer 031 321 51 15 und per E-Mail kinderbetreuung@bern.ch)";
-	}
-
 }

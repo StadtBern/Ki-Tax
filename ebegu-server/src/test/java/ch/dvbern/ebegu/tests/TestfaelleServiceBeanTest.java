@@ -166,6 +166,14 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
+	public void testVerfuegung_SchulamtOnly() {
+		//TODO: @Reviewer, ich kann dieser Testfall nicht als verfügt persisten. verstehe aber nicht wieso.
+		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.SCHULAMT_ONLY, true, false);
+		//ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
+		Assert.assertTrue(gesuch.hasOnlyBetreuungenOfSchulamt());
+	}
+
+	@Test
 	public void testVerfuegung_WaeltiDagmar_mutationHeirat() {
 		//waelti dagmar arbeitet 60% und hat 20% zuschlag zum ewp
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.WAELTI_DAGMAR, true, true);
