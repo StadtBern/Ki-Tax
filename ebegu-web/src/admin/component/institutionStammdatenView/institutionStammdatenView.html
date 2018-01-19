@@ -125,33 +125,31 @@
                         </div>
                     </div>
 
-                    <fieldset ng-disabled="vm.isModulTagesschuleDisabled()">
-                        <div ng-repeat="modul in vm.getModulTagesschuleNamen()">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <dv-input-container>
-                                        <input id="{{modul}}_modulname" type="text" name="{{modul}}_modulname"
-                                               value="{{modul|translate}}" aria-label="{{modul|translate}}"
-                                               class="form-control" disabled>
-                                    </dv-input-container>
-                                </div>
-                                <div class="col-md-2">
-                                    <dv-timepicker input-id="{{modul}}_zeitvon" name="{{modul}}_zeitvon"
-                                                   ng-model="vm.getModulTagesschule(modul).zeitVon"
-                                                   ng-required="vm.getModulTagesschule(modul).zeitBis" class="input-element">
-                                    </dv-timepicker>
-                                    <dv-error-messages input-id="{{modul}}_zeitvon" for="form[modul + '_zeitvon'].$error" class="error"></dv-error-messages>
-                                </div>
-                                <div class="col-md-2">
-                                    <dv-timepicker input-id="{{modul}}_zeitbis" name="{{modul}}_zeitbis"
-                                                   ng-model="vm.getModulTagesschule(modul).zeitBis"
-                                                   ng-required="vm.getModulTagesschule(modul).zeitVon" class="input-element">
-                                    </dv-timepicker>
-                                    <dv-error-messages input-id="{{modul}}_zeitbis" for="form[modul + '_zeitbis'].$error" class="error"></dv-error-messages>
-                                </div>
+                    <div ng-repeat="modul in vm.getModulTagesschuleNamen()">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <dv-input-container>
+                                    <input id="{{modul}}_modulname" type="text" name="{{modul}}_modulname"
+                                           value="{{modul|translate}}" aria-label="{{modul|translate}}"
+                                           class="form-control" disabled>
+                                </dv-input-container>
+                            </div>
+                            <div class="col-md-2">
+                                <dv-timepicker input-id="{{modul}}_zeitvon" name="{{modul}}_zeitvon"
+                                               ng-model="vm.getModulTagesschule(modul).zeitVon"
+                                               ng-required="vm.getModulTagesschule(modul).zeitBis" class="input-element">
+                                </dv-timepicker>
+                                <dv-error-messages input-id="{{modul}}_zeitvon" for="form[modul + '_zeitvon'].$error" class="error"></dv-error-messages>
+                            </div>
+                            <div class="col-md-2">
+                                <dv-timepicker input-id="{{modul}}_zeitbis" name="{{modul}}_zeitbis"
+                                               ng-model="vm.getModulTagesschule(modul).zeitBis"
+                                               ng-required="vm.getModulTagesschule(modul).zeitVon" class="input-element">
+                                </dv-timepicker>
+                                <dv-error-messages input-id="{{modul}}_zeitbis" for="form[modul + '_zeitbis'].$error" class="error"></dv-error-messages>
                             </div>
                         </div>
-                    </fieldset>
+                    </div>
                 </div>
 
                 <h1>
