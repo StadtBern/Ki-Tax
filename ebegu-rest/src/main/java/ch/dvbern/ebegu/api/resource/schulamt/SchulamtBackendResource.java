@@ -135,18 +135,24 @@ public class SchulamtBackendResource {
 				return createBgNummerFormatError();
 			}
 
-			final Optional<Betreuung> betreuungen = betreuungService.findNewestBetreuungByBGNummer(bgNummer);
+			final List<Betreuung> betreuungen = betreuungService.findNewestBetreuungByBGNummer(bgNummer);
 
-			if (!betreuungen.isPresent()) {
+			if (betreuungen == null || betreuungen.isEmpty()) {
 				// Betreuung not found
 				return Response.status(Response.Status.BAD_REQUEST).entity(
 					new JaxExternalError(
 						JaxExternalErrorCode.NO_RESULTS,
 						"No Betreuung with id " + bgNummer + " found")).build();
 			}
+			if (betreuungen.size() > 1) {
+				// More than one betreuung
+				return Response.status(Response.Status.BAD_REQUEST).entity(
+					new JaxExternalError(
+						JaxExternalErrorCode.TOO_MANY_RESULTS,
+						"More than one Betreuung with id " + bgNummer + " found")).build();
+			}
 
-			final Betreuung betreuung = betreuungen.get();
-
+			final Betreuung betreuung = betreuungen.get(0);
 			if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp() == BetreuungsangebotTyp.TAGESSCHULE) {
 				// Betreuung ist Tagesschule
 				return Response.ok(getAnmeldungTagesschule(betreuung)).build();

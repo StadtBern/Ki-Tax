@@ -260,16 +260,12 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	}
 
 	@Override
-	public Optional<Betreuung> findNewestBetreuungByBGNummer(@Nonnull String bgNummer) {
-		final List<Betreuung> betreuungenByBGNummer = findBetreuungenByBGNummer(bgNummer, true);
-		if (betreuungenByBGNummer.isEmpty()) {
-			return Optional.empty();
-		}
-		return Optional.of(betreuungenByBGNummer.get(0));
+	public List<Betreuung> findNewestBetreuungByBGNummer(@Nonnull String bgNummer) {
+		return findBetreuungenByBGNummer(bgNummer, true);
 	}
 
 	@Nonnull
-	private List<Betreuung> findBetreuungenByBGNummer(@Nonnull String bgNummer, boolean orderByTimestampErstellt) {
+	private List<Betreuung> findBetreuungenByBGNummer(@Nonnull String bgNummer, boolean getOnlyAktuelle) {
 		final int betreuungNummer = getBetreuungNummerFromBGNummer(bgNummer);
 		final int kindNummer = getKindNummerFromBGNummer(bgNummer);
 		final int yearFromBGNummer = getYearFromBGNummer(bgNummer);
@@ -304,9 +300,10 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		predicates.add(predBetreuungNummer);
 		predicates.add(predBetreuungAusgeloest);
 
-		if (orderByTimestampErstellt) {
-			// die neueste Betreuung koennen wir anhand des Datums timestampErstellt holen. Es wurde schon nach ausgeloesten gefiltert.
-			query.orderBy(cb.desc(root.get(Betreuung_.timestampErstellt)));
+		if (getOnlyAktuelle) {
+			Predicate predAktuelleBetreuung = cb.equal(root.get(Betreuung_.anmeldungMutationZustand), AnmeldungMutationZustand.AKTUELLE_ANMELDUNG);
+			Predicate predNormaleBetreuung = cb.isNull(root.get(Betreuung_.anmeldungMutationZustand));
+			predicates.add(cb.or(predAktuelleBetreuung, predNormaleBetreuung));
 		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));

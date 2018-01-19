@@ -95,9 +95,9 @@ public interface BetreuungService {
 
 	/**
 	 * @param bgNummer BGNummer der Betreuung
-	 * @return neueste Betreuung mit der angegebenen ID (z.B. 18.000116.1.2) oder empty Optional falls nicht vorhanden
+	 * @return Betreuung mit der angegebenen ID (z.B. 18.000116.1.2) die AKTUELLE oder NULL ist.
 	 */
-	Optional<Betreuung> findNewestBetreuungByBGNummer(@Nonnull String bgNummer);
+	List<Betreuung> findNewestBetreuungByBGNummer(@Nonnull String bgNummer);
 
 	/**
 	 * Extract Fallnummer form bgNummer
