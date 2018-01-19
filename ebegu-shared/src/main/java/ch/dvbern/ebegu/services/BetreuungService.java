@@ -94,6 +94,12 @@ public interface BetreuungService {
 	List<Betreuung> findBetreuungenByBGNummer(@Nonnull String bgNummer);
 
 	/**
+	 * @param bgNummer BGNummer der Betreuung
+	 * @return neueste Betreuung mit der angegebenen ID (z.B. 18.000116.1.2) oder empty Optional falls nicht vorhanden
+	 */
+	Optional<Betreuung> findNewestBetreuungByBGNummer(@Nonnull String bgNummer);
+
+	/**
 	 * Extract Fallnummer form bgNummer
 	 * @return Extracted Fallnummer
 	 */
