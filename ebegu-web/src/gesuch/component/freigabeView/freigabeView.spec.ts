@@ -20,7 +20,6 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import TSGesuch from '../../../models/TSGesuch';
 import TestDataUtil from '../../../utils/TestDataUtil';

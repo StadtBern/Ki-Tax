@@ -18,7 +18,6 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSDownloadFile from '../../models/TSDownloadFile';
 import {TSGeneratedDokumentTyp} from '../../models/enums/TSGeneratedDokumentTyp';
 import TSMahnung from '../../models/TSMahnung';
-import {TSZustelladresse} from '../../models/enums/TSZustelladresse';
 import EbeguUtil from '../../utils/EbeguUtil';
 
 export class DownloadRS {

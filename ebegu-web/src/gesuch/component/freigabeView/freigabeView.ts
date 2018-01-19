@@ -25,7 +25,6 @@ import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import {isAtLeastFreigegeben, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import DateUtil from '../../../utils/DateUtil';
-import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
 import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
 import {FreigabeDialogController} from '../../dialog/FreigabeDialogController';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
