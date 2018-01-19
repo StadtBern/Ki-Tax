@@ -80,6 +80,7 @@ import ch.dvbern.ebegu.entities.Institution_;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.KindContainer_;
 import ch.dvbern.ebegu.entities.WizardStep;
+import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
@@ -104,6 +105,7 @@ import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,6 +188,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory, @Nullable Benutzer saveAsUser) {
 		return updateGesuch(gesuch, saveInStatusHistory, saveAsUser, true);
 	}
+
+	@Nonnull
+	@Override
+	@PermitAll
+	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory) {
+		return updateGesuch(gesuch, saveInStatusHistory, null, true);
+	}
+
 
 	@Nonnull
 	@Override
@@ -548,6 +558,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return updateGesuch(gesuch, true, null);
 	}
 
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Nonnull
 	@Override
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
@@ -593,6 +604,13 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				if (betreuung.getBetreuungsstatus() == Betreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST) {
 					betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
 				}
+				// Set noch nicht freigegebene Betreuungen to aktuelle Anmeldung bei Freigabe
+				if (betreuung.isAngebotSchulamt()) {
+					if (betreuung.getAnmeldungMutationZustand() == AnmeldungMutationZustand.NOCH_NICHT_FREIGEGEBEN) {
+						betreuung.setAnmeldungMutationZustand(AnmeldungMutationZustand.AKTUELLE_ANMELDUNG);
+						betreuungService.changeAnmeldungMutationZustand(betreuung.getVorgaengerId(), AnmeldungMutationZustand.MUTIERT);
+					}
+				}
 			}
 
 			// Den Gesuchsstatus auf Freigageben setzen (auch bei nur Schulamt-Gesuchen)
@@ -623,7 +641,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Gesuch setBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch) {
 		final List<Gesuch> allGesucheForFall = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuch.getGesuchsperiode());
 		allGesucheForFall.iterator().forEachRemaining(gesuchLoop -> {
@@ -654,14 +672,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			// neues Gesuch erst nachdem das andere auf ungültig gesetzt wurde setzen wegen unique key
 			gesuch.setGueltig(true);
 
-			return persistence.merge(gesuch);
+			return updateGesuch(gesuch, true);
 		}
 		throw new EbeguRuntimeException("setAbschliessen", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, "Nur reine Schulamt-Gesuche können abgeschlossen werden");
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Gesuch removeBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch) {
 		final List<Gesuch> allGesucheForFall = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuch.getGesuchsperiode());
 		allGesucheForFall.iterator().forEachRemaining(gesuchLoop -> {
@@ -905,9 +923,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Root<Gesuch> root = query.from(Gesuch.class);
 		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
 		Predicate predicateFallNummer = cb.equal(root.get(Gesuch_.fall).get(Fall_.fallNummer), fallnummer);
-		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllStatesSchulamtInterface());
+		Predicate predicateFinSit = root.get(Gesuch_.finSitStatus).isNotNull();
 
-		query.where(predicateGesuchsperiode, predicateFallNummer, predicateStatus);
+		query.where(predicateGesuchsperiode, predicateFallNummer, predicateFinSit);
 		query.select(root);
 		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
 		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
@@ -1451,6 +1469,42 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		update.where(predGesuch);
 
 		return persistence.getEntityManager().createQuery(update).executeUpdate();
+	}
+
+	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
+	public Gesuch sendGesuchToSTV(@Nonnull Gesuch gesuch, @Nullable String bemerkungen) {
+		if (AntragStatus.VERFUEGT != gesuch.getStatus() && AntragStatus.NUR_SCHULAMT != gesuch.getStatus()) {
+			// Wir vergewissern uns dass das Gesuch im Status VERFUEGT ist, da sonst kann es nicht zum STV geschickt werden
+			throw new EbeguRuntimeException("sendGesuchToSTV", ErrorCodeEnum.ERROR_ONLY_VERFUEGT_OR_SCHULAMT_ALLOWED, "Status ist: " + gesuch.getStatus());
+		}
+		gesuch.setStatus(AntragStatus.PRUEFUNG_STV);
+		gesuch.setEingangsdatumSTV(LocalDate.now());
+		if (StringUtils.isNotEmpty(bemerkungen)) {
+			gesuch.setBemerkungenSTV(bemerkungen);
+		}
+		return updateGesuch(gesuch, true, null);
+	}
+
+	@Override
+	public Gesuch gesuchBySTVFreigeben(@Nonnull Gesuch gesuch) {
+		if (AntragStatus.IN_BEARBEITUNG_STV != gesuch.getStatus()) {
+			// Wir vergewissern uns dass das Gesuch im Status IN_BEARBEITUNG_STV ist, da sonst kann es nicht fuer das JA freigegeben werden
+			throw new EbeguRuntimeException("gesuchBySTVFreigeben", ErrorCodeEnum.ERROR_ONLY_IN_BEARBEITUNG_STV_ALLOWED, "Status ist: " + gesuch.getStatus());
+		}
+
+		gesuch.setStatus(AntragStatus.GEPRUEFT_STV);
+		gesuch.setGeprueftSTV(true);
+
+		return updateGesuch(gesuch, true, null);
+	}
+
+	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
+	public Gesuch stvPruefungAbschliessen(@Nonnull Gesuch gesuch) {
+		final AntragStatusHistory lastStatusChange = antragStatusHistoryService.findLastStatusChangeBeforePruefungSTV(gesuch);
+		gesuch.setStatus(lastStatusChange.getStatus());
+		return updateGesuch(gesuch, true, null);
 	}
 }
 

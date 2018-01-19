@@ -23,7 +23,7 @@ import ch.dvbern.ebegu.enums.AntragStatus;
 import com.github.oxo42.stateless4j.StateMachineConfig;
 
 /**
- * CDI Producer fuer StateMachineConfig die wir in SERf benoetigen
+ * CDI Producer fuer StateMachineConfig die wir in KiTax benoetigen
  * <p>
  * Hier werden zudem saemtliche onEntry Actions getriggered und an die Services weiterdelegiert.
  */
@@ -67,7 +67,8 @@ public class StateMachineConfigProducer {
 			.permit(AntragEvents.BESCHWEREN, AntragStatus.BESCHWERDE_HAENGIG);
 
 		gesuchFSMConfig.configure(AntragStatus.NUR_SCHULAMT)
-			.permit(AntragEvents.BESCHWEREN, AntragStatus.BESCHWERDE_HAENGIG);
+			.permit(AntragEvents.BESCHWEREN, AntragStatus.BESCHWERDE_HAENGIG)
+			.permit(AntragEvents.PRUEFEN_STV, AntragStatus.PRUEFUNG_STV);
 
 		gesuchFSMConfig.configure(AntragStatus.BESCHWERDE_HAENGIG)
 			.permit(AntragEvents.ZURUECK_NUR_SCHULAMT, AntragStatus.NUR_SCHULAMT)
@@ -87,7 +88,8 @@ public class StateMachineConfigProducer {
 
 		gesuchFSMConfig.configure(AntragStatus.GEPRUEFT_STV)
 			.permit(AntragEvents.BESCHWEREN, AntragStatus.BESCHWERDE_HAENGIG)
-			.permit(AntragEvents.PRUEFUNG_ABGESCHLOSSEN, AntragStatus.VERFUEGT);
+			.permit(AntragEvents.PRUEFUNG_STV_JA_ABGESCHLOSSEN, AntragStatus.NUR_SCHULAMT)
+			.permit(AntragEvents.PRUEFUNG_STV_SCH_ABGESCHLOSSEN, AntragStatus.VERFUEGT);
 
 		gesuchFSMConfig.configure(AntragStatus.ERSTE_MAHNUNG)
 			.permit(AntragEvents.MAHNUNG_ABGELAUFEN, AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN)

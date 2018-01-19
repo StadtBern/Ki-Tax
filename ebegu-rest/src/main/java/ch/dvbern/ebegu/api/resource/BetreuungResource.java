@@ -361,10 +361,9 @@ public class BetreuungResource {
 	}
 
 	public boolean hasDuplicate(JaxBetreuung betreuungJAXP, Set<Betreuung> betreuungen) {
-
-		return isNewBetreuung(betreuungJAXP) &&
-			betreuungen.stream().filter(
-				betreuung -> {
+		return betreuungen.stream().filter(
+			betreuung -> {
+				if (!Objects.equals(betreuung.getId(), betreuungJAXP.getId())) {
 					if (!Objects.equals(betreuungJAXP.getInstitutionStammdaten().getBetreuungsangebotTyp(), BetreuungsangebotTyp.FERIENINSEL)) {
 						return !betreuung.getBetreuungsstatus().isStorniert() &&
 							isSameInstitution(betreuungJAXP, betreuung);
@@ -373,11 +372,10 @@ public class BetreuungResource {
 							isSameInstitution(betreuungJAXP, betreuung) &&
 							isSameFerien(betreuungJAXP, betreuung);
 					}
-				}).count() != 0;
-	}
-
-	private boolean isNewBetreuung(JaxBetreuung betreuungJAXP) {
-		return betreuungJAXP.getTimestampErstellt() == null;
+				} else {
+					return false;
+				}
+			}).count() != 0;
 	}
 
 	private boolean isSameFerien(JaxBetreuung betreuungJAXP, Betreuung betreuung) {
