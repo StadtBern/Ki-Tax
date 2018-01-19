@@ -80,6 +80,7 @@ import ch.dvbern.ebegu.entities.Institution_;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.KindContainer_;
 import ch.dvbern.ebegu.entities.WizardStep;
+import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
@@ -557,6 +558,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return updateGesuch(gesuch, true, null);
 	}
 
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Nonnull
 	@Override
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
@@ -601,6 +603,13 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
 				if (betreuung.getBetreuungsstatus() == Betreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST) {
 					betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
+				}
+				// Set noch nicht freigegebene Betreuungen to aktuelle Anmeldung bei Freigabe
+				if (betreuung.isAngebotSchulamt()) {
+					if (betreuung.getAnmeldungMutationZustand() == AnmeldungMutationZustand.NOCH_NICHT_FREIGEGEBEN) {
+						betreuung.setAnmeldungMutationZustand(AnmeldungMutationZustand.AKTUELLE_ANMELDUNG);
+						betreuungService.changeAnmeldungMutationZustand(betreuung.getVorgaengerId(), AnmeldungMutationZustand.MUTIERT);
+					}
 				}
 			}
 
