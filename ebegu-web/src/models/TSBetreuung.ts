@@ -24,6 +24,7 @@ import TSBetreuungspensumContainer from './TSBetreuungspensumContainer';
 import TSGesuchsperiode from './TSGesuchsperiode';
 import TSInstitutionStammdaten from './TSInstitutionStammdaten';
 import TSVerfuegung from './TSVerfuegung';
+import {TSAnmeldungMutationZustand} from './enums/TSAnmeldungMutationZustand';
 
 export default class TSBetreuung extends TSAbstractEntity {
 
@@ -47,6 +48,8 @@ export default class TSBetreuung extends TSAbstractEntity {
     private _gueltig: boolean;
     private _belegungTagesschule: TSBelegungTagesschule;
     private _belegungFerieninsel: TSBelegungFerieninsel;
+    private _anmeldungMutationZustand: TSAnmeldungMutationZustand;
+
 
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
                 betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, abwesenheitContainers?: Array<TSAbwesenheitContainer>,
@@ -54,7 +57,7 @@ export default class TSBetreuung extends TSAbstractEntity {
                 grundAblehnung?: string, datumAblehnung?: moment.Moment, datumBestaetigung?: moment.Moment, kindFullname?: string,
                 kindNummer?: number, gesuchId?: string, gesuchsperiode?: TSGesuchsperiode,
                 betreuungMutiert?: boolean, abwesenheitMutiert?: boolean, gueltig?: boolean, belegungTagesschule?: TSBelegungTagesschule,
-                belegungFerieninsel?: TSBelegungFerieninsel) {
+                belegungFerieninsel?: TSBelegungFerieninsel, anmeldungMutationZustand?: TSAnmeldungMutationZustand) {
         super();
         this._institutionStammdaten = institutionStammdaten;
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
@@ -76,6 +79,7 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._gueltig = gueltig;
         this._belegungTagesschule = belegungTagesschule;
         this._belegungFerieninsel = belegungFerieninsel;
+        this._anmeldungMutationZustand = anmeldungMutationZustand;
     }
 
     get institutionStammdaten(): TSInstitutionStammdaten {
@@ -273,5 +277,13 @@ export default class TSBetreuung extends TSAbstractEntity {
 
     public isSchulamtangebotAusgeloest(): boolean {
         return this.isAngebotSchulamt() && isBetreuungsstatusTSAusgeloest(this.betreuungsstatus);
+    }
+
+    public get anmeldungMutationZustand(): TSAnmeldungMutationZustand {
+        return this._anmeldungMutationZustand;
+    }
+
+    public set anmeldungMutationZustand(value: TSAnmeldungMutationZustand) {
+        this._anmeldungMutationZustand = value;
     }
 }

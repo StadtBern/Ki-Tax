@@ -69,4 +69,11 @@ public interface AntragStatusHistoryService {
 	 */
 	@Nonnull
 	AntragStatusHistory findLastStatusChangeBeforeBeschwerde(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Prueft dass die letzte Statusaenderung auf GEPRUEFT_STV war und dann gibt die Statusänderung die auf PRUEFUNG_STV
+	 * gewechselt hat.
+	 */
+	@Nonnull
+	AntragStatusHistory findLastStatusChangeBeforePruefungSTV(@Nonnull Gesuch gesuch);
 }
