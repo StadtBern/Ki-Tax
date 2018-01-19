@@ -183,13 +183,6 @@ export default class GesuchRS implements IEntityRS {
         });
     }
 
-    public getNeuestesGesuchFromGesuch(gesuchID: string):  IPromise<boolean> {
-        return this.http.get(this.serviceURL + '/neuestesgesuch/' + encodeURIComponent(gesuchID))
-            .then((response: any) => {
-                return response.data;
-            });
-    }
-
     public removeOnlineMutation(fallID: string, gesuchsperiodeId: string): IPromise<boolean> {
         return this.http.delete(this.serviceURL + '/removeOnlineMutation/' + encodeURIComponent(fallID)
             + '/' + encodeURIComponent(gesuchsperiodeId))

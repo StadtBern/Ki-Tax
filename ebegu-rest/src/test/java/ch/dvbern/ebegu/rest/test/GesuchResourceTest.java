@@ -84,7 +84,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 		changeStatusToWarten(gesuch.getKindContainers().iterator().next());
 		persistUser(UserRole.SACHBEARBEITER_INSTITUTION, "sainst",
 			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution(),
-			null, gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getMandant());
+			null);
 		final JaxGesuch gesuchForInstitution = gesuchResource.findGesuchForInstitution(converter.toJaxId(gesuch));
 
 		Assert.assertNull(gesuchForInstitution.getEinkommensverschlechterungInfoContainer());
@@ -112,8 +112,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 		changeStatusToWarten(gesuch.getKindContainers().iterator().next());
 
 		persistUser(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, "satraeg", null,
-			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getTraegerschaft(),
-			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getMandant());
+			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getTraegerschaft());
 
 		final JaxGesuch gesuchForInstitution = gesuchResource.findGesuchForInstitution(converter.toJaxId(gesuch));
 
@@ -138,7 +137,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 
 	@Test
 	public void testFindGesuchForOtherRole() throws EbeguException {
-		persistUser(UserRole.GESUCHSTELLER, "gesuchst", null, null, null);
+		persistUser(UserRole.GESUCHSTELLER, "gesuchst", null, null);
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, null);
 
 		final JaxGesuch gesuchForInstitution = gesuchResource.findGesuchForInstitution(converter.toJaxId(gesuch));
@@ -158,7 +157,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 
 	@Test
 	public void testUpdateStatus() throws EbeguException {
-		persistUser(UserRole.SACHBEARBEITER_JA, "saja", null, null, null);
+		persistUser(UserRole.SACHBEARBEITER_JA, "saja", null, null);
 
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		Response response = gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.ERSTE_MAHNUNG);
@@ -279,18 +278,14 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 
 	// HELP METHODS
 
-	private Benutzer persistUser(final UserRole role, final String username, final Institution institution, final Traegerschaft traegerschaft, final Mandant mandant) {
-		Mandant mandantToStore = mandant;
-		if (mandantToStore == null) {
-			mandantToStore = TestDataUtil.createDefaultMandant();
-			persistence.persist(mandantToStore);
-		}
-		Benutzer benutzer = TestDataUtil.createBenutzer(role, username, traegerschaft, institution, mandantToStore);
+	private Benutzer persistUser(final UserRole role, final String username, final Institution institution, final Traegerschaft traegerschaft) {
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
+		Benutzer benutzer = TestDataUtil.createBenutzer(role, username, traegerschaft, institution, mandant);
 		persistence.persist(benutzer);
 		try {
 			JBossLoginContextFactory.createLoginContext(username, username).login();
 		} catch (LoginException e) {
-			LOG.error("could not log in as user " + username, e);
+			LOG.error("could not log in as user {}", username, e);
 			throw new RuntimeException("could not log in");
 		}
 		return benutzer;

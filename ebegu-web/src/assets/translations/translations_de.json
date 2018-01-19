@@ -1170,6 +1170,8 @@
     "WARN_FERIEN_NICHT_MEHR_BUCHBAR": "Der Anmeldeschluss für diese Ferieninsel ist bereits abgelaufen!",
     "WARN_FERIEN_KEINE_TAGE_GEWAEHLT": "Bitte wählen Sie mindestens einen Tag aus",
     "WARN_TAGESSCHULE_KEIN_MODUL_GEWAEHLT": "Bitte wählen Sie mindestens ein Modul aus",
+    "WARN_ANGEBOT_NOCH_NICHT_FREIGEGEBEN": "Dieses Angebot wurde noch nicht freigegeben. Bitte bearbeiten Sie das aktuell gültige Angebot.",
+    "WARN_ANGEBOT_MUTIERT": "Dieses Angebot wurde mutiert. Bitte bearbeiten Sie das aktuell gültige Angebot.",
     "FERIENINSELTAGE": "An welchen Tagen möchten Sie Ihr Kind für die Ferieninsel anmelden?",
     "ANMELDEN_FERIENINSEL": "Ferieninsel definitiv anmelden",
     "ANMELDEN_TAGESSCHULE": "Tagesschule definitiv anmelden",
@@ -1200,5 +1202,6 @@
     "AKZEPTIERT": "Finanzielle Situation akzeptiert",
     "ABGELEHNT": "Finanzielle Situation abgelehnt",
     "MAHNUNG_BATCH_EXECUTED_OK": "Die Prüfung der Mahnungen wurde erfolgreich durchgeführt",
-    "MAHNUNG_BATCH_EXECUTED_ERROR": "Ein Fehler ist bei der Prüfung der Mahnungen aufgetreten"
+    "MAHNUNG_BATCH_EXECUTED_ERROR": "Ein Fehler ist bei der Prüfung der Mahnungen aufgetreten",
+    "BGNUMMER": "BG-Nummer"
 }

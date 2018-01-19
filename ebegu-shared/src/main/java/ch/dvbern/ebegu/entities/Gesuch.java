@@ -686,7 +686,7 @@ public class Gesuch extends AbstractEntity implements Searchable {
 			mutation.setGesuchsteller2(this.getGesuchsteller2().copyForMutation(new GesuchstellerContainer()));
 		}
 		for (KindContainer kindContainer : this.getKindContainers()) {
-			mutation.addKindContainer(kindContainer.copyForMutation(new KindContainer(), mutation));
+			mutation.addKindContainer(kindContainer.copyForMutation(new KindContainer(), mutation, eingangsart));
 		}
 		mutation.setAntragStatusHistories(new LinkedHashSet<>());
 
