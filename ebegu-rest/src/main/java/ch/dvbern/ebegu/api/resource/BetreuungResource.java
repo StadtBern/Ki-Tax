@@ -378,10 +378,6 @@ public class BetreuungResource {
 			}).count() != 0;
 	}
 
-	private boolean isNewBetreuung(JaxBetreuung betreuungJAXP) {
-		return betreuungJAXP.getTimestampErstellt() == null;
-	}
-
 	private boolean isSameFerien(JaxBetreuung betreuungJAXP, Betreuung betreuung) {
 		return Objects.equals(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp(), BetreuungsangebotTyp.FERIENINSEL) &&
 			Objects.equals(betreuung.getBelegungFerieninsel().getFerienname(), betreuungJAXP.getBelegungFerieninsel().getFerienname());
