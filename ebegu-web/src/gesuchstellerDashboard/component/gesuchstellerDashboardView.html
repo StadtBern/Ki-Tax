@@ -27,29 +27,38 @@
 
         <div class="gdashboard-panel"
              ng-repeat="periode in vm.getActiveGesuchsperiodenList() | orderBy: 'gueltigkeit.gueltigAb'">
-                <span class="gdashboard-panel__gesuchstring">
-                            <span data-translate="GESUCH"></span>
-                            <span>{{periode.gesuchsperiodeString}}</span>
-                </span>
+
+            <span class="gdashboard-panel__gesuchstring">
+                <span data-translate="GESUCH"></span>
+                <span>{{periode.gesuchsperiodeString}}</span>
+            </span>
             <span class="gdashboard-panel__gesuchrange" flex="nogrow">
-                            <span>{{periode.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YY'}} – {{periode.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YY'}}</span>
-                </span>
+                <span>{{periode.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YY'}} – {{periode.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YY'}}</span>
+            </span>
+
             <dv-loading-button ng-if="vm.displayAnsehenButton(periode)" type="button"
                                button-click="vm.openAntrag(periode, true)"
                                button-class="dvb-loading-button gdashboard-panel__button">
                 {{'GS_ANSEHEN' | translate}}
             </dv-loading-button>
+
             <div ng-if="!vm.displayAnsehenButton(periode)" class="gdashboard-panel__seperator"></div>
+
             <dv-loading-button type="button" button-click="vm.openAntrag(periode)"
                                button-class="dvb-loading-button gdashboard-panel__button">
                 {{vm.getButtonText(periode)}}
             </dv-loading-button>
+
             <div class="gdashboard-panel__seperator"></div>
+
+            <!-- todo umsetzen ng-click und ng-if-->
             <dv-loading-button type="button" button-click=""
                                button-class="dvb-loading-button gdashboard-panel__button">
                 Ferieninsel
             </dv-loading-button>
-            <dv-loading-button type="button" button-click="vm.openAntrag(periode)"
+
+            <!-- todo umsetzen ng-click und ng-if-->
+            <dv-loading-button type="button" button-click=""
                                button-class="dvb-loading-button gdashboard-panel__button">
                 tagesschule
             </dv-loading-button>
