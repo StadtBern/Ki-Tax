@@ -103,10 +103,16 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 	private LocalDate gesuchsperiodeGueltigBis = null;
 
 	@NotNull
-	private String verantwortlicher;
+	private String verantwortlicher; 	// Name Vorname
 
 	@Nullable
-	private String verantwortlicherSCH;
+	private String verantwortlicherSCH; // Name Vorname
+
+	@Nullable
+	private String verantwortlicherUsernameJA; 	// Wird fuer Freigabe gebraucht
+
+	@Nullable
+	private String verantwortlicherUsernameSCH; // Wird fuer Freigabe gebraucht
 
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
@@ -194,6 +200,24 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 
 	public void setVerantwortlicherSCH(@Nullable String verantwortlicherSCH) {
 		this.verantwortlicherSCH = verantwortlicherSCH;
+	}
+
+	@Nullable
+	public String getVerantwortlicherUsernameJA() {
+		return verantwortlicherUsernameJA;
+	}
+
+	public void setVerantwortlicherUsernameJA(@Nullable String verantwortlicherUsernameJA) {
+		this.verantwortlicherUsernameJA = verantwortlicherUsernameJA;
+	}
+
+	@Nullable
+	public String getVerantwortlicherUsernameSCH() {
+		return verantwortlicherUsernameSCH;
+	}
+
+	public void setVerantwortlicherUsernameSCH(@Nullable String verantwortlicherUsernameSCH) {
+		this.verantwortlicherUsernameSCH = verantwortlicherUsernameSCH;
 	}
 
 	@Nullable
