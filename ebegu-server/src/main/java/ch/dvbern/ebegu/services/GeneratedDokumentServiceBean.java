@@ -292,7 +292,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Override
 	public WriteProtectedDokument getFreigabequittungAccessTokenGeneratedDokument(final Gesuch gesuch,
-		Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException {
+		Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch.getJahrAndFallnummer());
 
@@ -314,7 +314,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			}
 
 			gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
-			byte[] data = pdfService.generateFreigabequittung(gesuch, zustelladresse, true);
+			byte[] data = pdfService.generateFreigabequittung(gesuch,true);
 
 			// Freigabequittung soll wird nur einmal produziert und soll deswegen immer schreibgeschützt sein!
 			persistedDokument = saveGeneratedDokumentInDB(data, GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch,

@@ -116,14 +116,25 @@ export class GesuchstellerDashboardListViewController {
         return this.antragList;
     }
 
+    public displayAnsehenButton(periode: TSGesuchsperiode): boolean {
+        let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
+        if (antrag) {
+            if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
     public getNumberMitteilungen(): number {
         return this.amountNewMitteilungen;
     }
 
-    public openAntrag(periode: TSGesuchsperiode): void {
+    public openAntrag(periode: TSGesuchsperiode, ansehen: boolean): void {
         let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
         if (antrag) {
-            if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
+            if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status || ansehen) {
                 // Noch nicht freigegeben
                 this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: antrag.antragId});
             } else if (!isAnyStatusOfVerfuegt(antrag.status) || antrag.beschwerdeHaengig) {

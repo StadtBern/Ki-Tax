@@ -20,7 +20,6 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import TSGesuch from '../../../models/TSGesuch';
 import TestDataUtil from '../../../utils/TestDataUtil';
@@ -156,7 +155,7 @@ describe('freigabeView', function () {
             controller.confirmationCallback();
             $scope.$apply();
 
-            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, true, TSZustelladresse.JUGENDAMT);
+            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, true);
             expect(downloadRS.startDownload).toHaveBeenCalledWith(downloadFile.accessToken, downloadFile.filename, false, jasmine.any(Object));
         });
     });
@@ -170,40 +169,13 @@ describe('freigabeView', function () {
             gesuch.id = '123';
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
         });
-        it('should call the service with TSZustelladresse.JUGENDAMT for Erstgesuch', function () {
+        it('should call the service for Erstgesuch', function () {
             spyOn(gesuchModelManager, 'isGesuch').and.returnValue(true);
-            spyOn(gesuchModelManager, 'areThereOnlySchulamtAngebote').and.returnValue(false);
 
             controller.openFreigabequittungPDF(false);
             $scope.$apply();
 
-            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.JUGENDAMT);
-        });
-        it('should call the service with TSZustelladresse.SCHULAMT for Erstgesuch', function () {
-            spyOn(gesuchModelManager, 'isGesuch').and.returnValue(true);
-            spyOn(gesuchModelManager, 'areThereOnlySchulamtAngebote').and.returnValue(true);
-
-            controller.openFreigabequittungPDF(false);
-            $scope.$apply();
-
-            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.SCHULAMT);
-        });
-        it('should call the service with TSZustelladresse.JUGENDAMT for Mutation of Erstgesuch with SA-Freigabequittung', function () {
-            spyOn(gesuchModelManager, 'isGesuch').and.returnValue(true);
-            spyOn(gesuchModelManager, 'areThereOnlySchulamtAngebote').and.returnValue(false);
-
-            controller.openFreigabequittungPDF(false);
-            $scope.$apply();
-
-            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.JUGENDAMT);
-        });
-        it('should call the service with undefined for Mutation of Erstgesuch with JS-Freigabequittung', function () {
-            spyOn(gesuchModelManager, 'isGesuch').and.returnValue(false);
-
-            controller.openFreigabequittungPDF(false);
-            $scope.$apply();
-
-            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, undefined);
+            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false);
         });
     });
 });

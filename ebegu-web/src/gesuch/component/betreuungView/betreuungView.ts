@@ -261,6 +261,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             this.startEmptyListOfBetreuungspensen();
             this.form.$setUntouched();
             this.form.$setPristine();
+            this.model.institutionStammdaten = this.initialBetreuung.institutionStammdaten;
             return undefined;
         });
     }
@@ -513,7 +514,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                 && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)
                     || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST)
                     || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT)
-                        && this.getBetreuungModel().isNew()));
+                && this.getBetreuungModel().isNew()))
+                && !this.isFreigabequittungAusstehend();
         }
         return true;
     }
@@ -760,5 +762,17 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public enableErweiterteBeduerfnisse(): boolean {
         return (this.isBetreuungsstatusWarten() && !this.isSavingData) || this.isMutationsmeldungStatus;
+    }
+
+    /**
+     * Schulamt-Angebote ändern erst beim Einlesen der Freigabequittung den Zustand von SCHULAMT_ANMELDUNG_ERFASST zu
+     * SCHULAMT_ANMELDUNG_AUSGELOEST. Betreuungen in Gesuchen im Zustand FREIGABEQUITTUNG dürfen jedoch nicht editiert werden.
+     * Deshalb braucht es diese Funktion.
+     */
+    public isFreigabequittungAusstehend(): boolean {
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().status) {
+            return this.gesuchModelManager.getGesuch().status === TSAntragStatus.FREIGABEQUITTUNG;
+        }
+        return false;
     }
 }

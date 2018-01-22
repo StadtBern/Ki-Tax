@@ -2016,6 +2016,7 @@ public class JaxBConverter {
 		jaxBetreuung.setAnmeldungMutationZustand(betreuungFromServer.getAnmeldungMutationZustand());
 		jaxBetreuung.setBelegungTagesschule(belegungTagesschuleToJax(betreuungFromServer.getBelegungTagesschule()));
 		jaxBetreuung.setBelegungFerieninsel(belegungFerieninselToJAX(betreuungFromServer.getBelegungFerieninsel()));
+		jaxBetreuung.setBgNummer(betreuungFromServer.getBGNummer());
 		return jaxBetreuung;
 	}
 

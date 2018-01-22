@@ -33,7 +33,7 @@ export default class AbstractAdminViewController {
     }
 
     public isReadonly(): boolean {
-        return !this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorRoles());
+        return !this.authServiceRS.isOneOfRoles(TSRoleUtil.getJAAdministratorRoles());
     }
 
     public periodenParamsEditableForPeriode(gesuchsperiode: TSGesuchsperiode): boolean {

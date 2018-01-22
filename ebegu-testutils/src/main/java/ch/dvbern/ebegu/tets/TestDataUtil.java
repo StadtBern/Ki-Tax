@@ -379,6 +379,36 @@ public final class TestDataUtil {
 		return instStammdaten;
 	}
 
+	public static InstitutionStammdaten createInstitutionStammdatenTagesschuleBern() {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_BERN_TAGESSCULHE);
+		instStammdaten.setIban(new IBAN(iban));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(9));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
+		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESSCHULE);
+		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_BERN);
+		instStammdaten.getInstitution().setName("Tagesschule Bern");
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
+	public static InstitutionStammdaten createInstitutionStammdatenFerieninselGuarda() {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_GUARDA_FERIENINSEL);
+		instStammdaten.setIban(new IBAN(iban));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(9));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(120));
+		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.FERIENINSEL);
+		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_GUARDA);
+		instStammdaten.getInstitution().setName("Ferieninsel Guarda");
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
 	public static Kind createDefaultKind() {
 		Kind kind = new Kind();
 		kind.setNachname("Kind_Mustermann");
