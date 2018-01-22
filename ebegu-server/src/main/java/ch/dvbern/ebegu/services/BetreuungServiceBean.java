@@ -256,7 +256,16 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Override
 	@Nonnull
 	public List<Betreuung> findBetreuungenByBGNummer(@Nonnull String bgNummer) {
+		return findBetreuungenByBGNummer(bgNummer, false);
+	}
 
+	@Override
+	public List<Betreuung> findNewestBetreuungByBGNummer(@Nonnull String bgNummer) {
+		return findBetreuungenByBGNummer(bgNummer, true);
+	}
+
+	@Nonnull
+	private List<Betreuung> findBetreuungenByBGNummer(@Nonnull String bgNummer, boolean getOnlyAktuelle) {
 		final int betreuungNummer = getBetreuungNummerFromBGNummer(bgNummer);
 		final int kindNummer = getKindNummerFromBGNummer(bgNummer);
 		final int yearFromBGNummer = getYearFromBGNummer(bgNummer);
@@ -290,6 +299,12 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		predicates.add(predKindNummer);
 		predicates.add(predBetreuungNummer);
 		predicates.add(predBetreuungAusgeloest);
+
+		if (getOnlyAktuelle) {
+			Predicate predAktuelleBetreuung = cb.equal(root.get(Betreuung_.anmeldungMutationZustand), AnmeldungMutationZustand.AKTUELLE_ANMELDUNG);
+			Predicate predNormaleBetreuung = cb.isNull(root.get(Betreuung_.anmeldungMutationZustand));
+			predicates.add(cb.or(predAktuelleBetreuung, predNormaleBetreuung));
+		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 
