@@ -74,7 +74,11 @@
                         dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                     </th>
-                    <th st-sort="verantwortlicher" class="sortable row-ver" data-translate="VERANTWORTLICH_UPPER"
+                    <th st-sort="verantwortlicherSCH" class="sortable row-ver" data-translate="VERANTWORTLICHER_SCHULAMT"
+                        dv-display-element
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                    </th>
+                    <th st-sort="verantwortlicher" class="sortable row-ver" data-translate="VERANTWORTLICHER_JUGENDAMT"
                         dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                     </th>
@@ -174,6 +178,12 @@
                     </th>
                     <th dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                        <dv-userselect input-id="verantwortlicherSCH" dv-usersearch="verantwortlicherSCH" initial-all="true"
+                                       show-selection-all="true" selected-user="vm.selectedVerantwortlicherSCH"
+                                       schulamt="true"></dv-userselect>
+                    </th>
+                    <th dv-display-element
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                         <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher" initial-all="true"
                                        show-selection-all="true" selected-user="vm.selectedVerantwortlicher"></dv-userselect>
                     </th>
@@ -230,6 +240,10 @@
                     <td class="ellipsis" ellipsis-tooltip="{{row.institutionen | arrayToString }}"
                         ng-bind="row.institutionen | arrayToString"
                         dv-display-element
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                    </td>
+                    <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicherSCH}}"
+                        ng-bind="row.verantwortlicherSCH" dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                     </td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"

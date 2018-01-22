@@ -99,8 +99,8 @@
                     ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                 <td class="ellipsis" ellipsis-tooltip="{{vm.translate(row.status)}}"
                     ng-bind="vm.translateStatus(row)"></td>
-                <td class="ellipsis" ellipsis-tooltip="{{vm.getVerantwortlicherFullName(row)}}"
-                    ng-bind="vm.getVerantwortlicherFullName(row)" hide-sm hide-xs></td>
+                <td class="ellipsis" ellipsis-tooltip="{{vm.getHauptVerantwortlicherFullName(row)}}"
+                    ng-bind="vm.getHauptVerantwortlicherFullName(row)" hide-sm hide-xs></td>
                 <td class="ellipsis" role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%" hide-sm
                     hide-xs>
                     <dv-loading-button type="button" button-click="vm.editAntrag(row)"

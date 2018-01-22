@@ -30,6 +30,7 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
     private _eingangsdatumSTV: moment.Moment;
     private _aenderungsdatum: moment.Moment;
     private _verantwortlicher: string;
+    private _verantwortlicherSCH: string;
     private _besitzerUsername: string;
     private _angebote: Array<TSBetreuungsangebotTyp>;
     private _institutionen: Array<string>;
@@ -45,8 +46,8 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
 
     constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
                 eingangsdatum?: moment.Moment, eingangsdatumSTV?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>,
-                institutionen?: Array<string>,
-                verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
+                institutionen?: Array<string>, verantwortlicher?: string, verantwortlicherSCH?: string, status?: TSAntragStatus,
+                gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
                 verfuegt?: boolean, laufnummer?: number, besitzerUsername?: string, eingangsart?: TSEingangsart, beschwerdeHaengig?: boolean,
                 kinder?: Array<string>, gesuchBetreuungenStatus?: TSGesuchBetreuungenStatus, dokumenteHochgeladen?: boolean) {
 
@@ -59,6 +60,7 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
         this._angebote = angebote;
         this._institutionen = institutionen;
         this._verantwortlicher = verantwortlicher;
+        this._verantwortlicherSCH = verantwortlicherSCH;
         this._status = status;
         this._gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
         this._gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
@@ -134,6 +136,14 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
 
     set verantwortlicher(value: string) {
         this._verantwortlicher = value;
+    }
+
+    public get verantwortlicherSCH(): string {
+        return this._verantwortlicherSCH;
+    }
+
+    public set verantwortlicherSCH(value: string) {
+        this._verantwortlicherSCH = value;
     }
 
     get status(): TSAntragStatus {
@@ -232,13 +242,22 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
         return this.status === TSAntragStatus.FREIGABEQUITTUNG;
     }
 
-    public hasOnlySchulamtAngebote(): boolean {
+    public hasAnySchulamtAngebot(): boolean {
         for (let angebot of this.angebote) {
-            if (TSBetreuungsangebotTyp.TAGESSCHULE !== angebot) {
-                return false;
+            if (TSBetreuungsangebotTyp.TAGESSCHULE === angebot || TSBetreuungsangebotTyp.FERIENINSEL === angebot) {
+                return true;
             }
         }
-        return true;
+        return false;
+    }
+
+    public hasAnyJugendamtAngebot(): boolean {
+        for (let angebot of this.angebote) {
+            if (TSBetreuungsangebotTyp.TAGESSCHULE !== angebot && TSBetreuungsangebotTyp.FERIENINSEL !== angebot) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public get gesuchBetreuungenStatus(): TSGesuchBetreuungenStatus {

@@ -613,6 +613,7 @@ export default class EbeguRestUtil {
             this.abstractEntityToRestObject(restFall, fall);
             restFall.fallNummer = fall.fallNummer;
             restFall.verantwortlicher = this.userToRestObject({}, fall.verantwortlicher);
+            restFall.verantwortlicherSCH = this.userToRestObject({}, fall.verantwortlicherSCH);
             restFall.nextNumberKind = fall.nextNumberKind;
             restFall.besitzer = this.userToRestObject({}, fall.besitzer);
             return restFall;
@@ -626,6 +627,7 @@ export default class EbeguRestUtil {
             this.parseAbstractEntity(fallTS, fallFromServer);
             fallTS.fallNummer = fallFromServer.fallNummer;
             fallTS.verantwortlicher = this.parseUser(new TSUser(), fallFromServer.verantwortlicher);
+            fallTS.verantwortlicherSCH = this.parseUser(new TSUser(), fallFromServer.verantwortlicherSCH);
             fallTS.nextNumberKind = fallFromServer.nextNumberKind;
             fallTS.besitzer = this.parseUser(new TSUser(), fallFromServer.besitzer);
             return fallTS;
@@ -1438,6 +1440,7 @@ export default class EbeguRestUtil {
         restPendenz.institutionen = pendenz.institutionen;
         restPendenz.kinder = pendenz.kinder;
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
+        restPendenz.verantwortlicherSCH = pendenz.verantwortlicherSCH;
         restPendenz.status = pendenz.status;
         restPendenz.verfuegt = pendenz.verfuegt;
         restPendenz.beschwerdeHaengig = pendenz.beschwerdeHaengig;
@@ -1463,6 +1466,7 @@ export default class EbeguRestUtil {
         antragTS.gesuchsperiodeGueltigBis = DateUtil.localDateToMoment(antragFromServer.gesuchsperiodeGueltigBis);
         antragTS.institutionen = antragFromServer.institutionen;
         antragTS.verantwortlicher = antragFromServer.verantwortlicher;
+        antragTS.verantwortlicherSCH = antragFromServer.verantwortlicherSCH;
         antragTS.status = antragFromServer.status;
         antragTS.verfuegt = antragFromServer.verfuegt;
         antragTS.beschwerdeHaengig = antragFromServer.beschwerdeHaengig;

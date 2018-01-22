@@ -39,7 +39,7 @@ describe('searchRS', function () {
 
     beforeEach(() => {
         mockPendenz = new TSAntragDTO('id1', 123, 'name', TSAntragTyp.ERSTGESUCH, undefined, undefined, undefined,
-            [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined, undefined, undefined);
+            [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', 'Juan Arbolado', undefined, undefined, undefined, undefined, undefined);
         mockPendenzRest = ebeguRestUtil.antragDTOToRestObject({}, mockPendenz);
     });
 

@@ -205,11 +205,11 @@ public interface GesuchService {
 	Gesuch antragFreigabequittungErstellen(@Nonnull Gesuch gesuch, AntragStatus statusToChangeTo);
 
 	/**
-	 * Gibt das Gesuch frei für das Jugendamt: Anpassung des Status inkl Kopieren der Daten des GS aus den
+	 * Gibt das Gesuch frei für das Jugendamt/Schulamt: Anpassung des Status inkl Kopieren der Daten des GS aus den
 	 * JA-Containern in die GS-Containern. Wird u.a. beim einlesen per Scanner aufgerufen
 	 */
 	@Nonnull
-	Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username);
+	Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String usernameJA, @Nullable String usernameSCH);
 
 	/**
 	 * Setzt das gegebene Gesuch als Beschwerde hängig und bei allen Gescuhen der Periode den Flag

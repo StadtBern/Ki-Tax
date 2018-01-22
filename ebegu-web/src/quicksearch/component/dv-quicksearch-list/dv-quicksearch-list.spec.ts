@@ -98,7 +98,8 @@ describe('DVQuicksearchList', function () {
 
     function mockGetAntragList(): TSAntragDTO {
         let mockAntrag: TSAntragDTO = new TSAntragDTO('66345345', 123, 'name', TSAntragTyp.ERSTGESUCH,
-            undefined, undefined, undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined);
+            undefined, undefined, undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', 'Juan Arbolado',
+            undefined, undefined, undefined);
         let result: Array<TSAntragDTO> = [mockAntrag];
         spyOn(searchRS, 'getPendenzenList').and.returnValue($q.when(result));
         return mockAntrag;

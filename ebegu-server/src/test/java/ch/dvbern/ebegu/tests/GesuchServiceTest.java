@@ -345,7 +345,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
 
 		Benutzer sachbearbeiterJA = loginAsSachbearbeiterJA();
-		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), sachbearbeiterJA.getUsername());
+		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), sachbearbeiterJA.getUsername(), null);
 		Assert.assertEquals(AntragStatus.FREIGEGEBEN, eingelesenesGesuch.getStatus());
 	}
 
@@ -365,7 +365,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		Benutzer gesuchsteller = loginAsGesuchsteller("gesuchst");
 		try {
-			gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
+			gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null, null);
 			Assert.fail("No Besitzer is present. must fail for Role Gesuchsteller");
 		} catch (EJBAccessException e) {
 			//noop
@@ -373,10 +373,10 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		gesuch.getFall().setBesitzer(gesuchsteller);
 		persistence.merge(gesuch.getFall());
-		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
+		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null, null);
 		Assert.assertEquals(AntragStatus.FREIGEGEBEN, eingelesenesGesuch.getStatus());
 		try {
-			gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
+			gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null, null);
 			Assert.fail("Gesuch is already freigegeben. Wrong state should be detected");
 		} catch (EbeguRuntimeException e) {
 			Assert.assertEquals("Das Gesuch wurde bereits freigegeben", e.getCustomMessage());
@@ -403,7 +403,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		TestDataUtil.prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit(), persistence);
 		Benutzer schulamt = loginAsSchulamt();
-		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), schulamt.getUsername());
+		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), schulamt.getUsername(), null);
 		Assert.assertEquals(AntragStatus.FREIGEGEBEN, eingelesenesGesuch.getStatus());
 
 	}
@@ -760,7 +760,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.IN_BEARBEITUNG_GS);
 		gesuch.setTimestampErstellt(timestampErstellt);
 		gesuch.setEingangsart(Eingangsart.ONLINE);
-		gesuch.getFall().setBesitzer(TestDataUtil.createAndPersistBenutzer(persistence));
+		gesuch.getFall().setBesitzer(TestDataUtil.createAndPersistTraegerschaftBenutzer(persistence));
 		persistence.merge(gesuch.getFall());
 		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer(gesuch));
 		Assert.assertNotNull(gesuch.getGesuchsteller1());
@@ -772,7 +772,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence, AntragStatus.FREIGABEQUITTUNG);
 		gesuch.setFreigabeDatum(datumFreigabe);
 		gesuch.setEingangsart(Eingangsart.ONLINE);
-		gesuch.getFall().setBesitzer(TestDataUtil.createAndPersistBenutzer(persistence));
+		gesuch.getFall().setBesitzer(TestDataUtil.createAndPersistTraegerschaftBenutzer(persistence));
 		persistence.merge(gesuch.getFall());
 		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer(gesuch));
 		Assert.assertNotNull(gesuch.getGesuchsteller1());
