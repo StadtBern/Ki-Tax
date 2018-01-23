@@ -83,6 +83,11 @@ export default (env: any): webpack.Configuration => webpackMerge(commonConfig(en
                 target: 'http://localhost:8080',
                 secure: false,
                 proxyTimeout: 240000
+            },
+            '/connector': {
+                target: 'http://localhost:8080',
+                secure: false,
+                proxyTimeout: 240000
             }
         },
         headers: {
