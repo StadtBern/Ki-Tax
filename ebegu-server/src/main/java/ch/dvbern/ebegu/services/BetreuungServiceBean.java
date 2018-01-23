@@ -44,6 +44,7 @@ import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.AbwesenheitContainer;
 import ch.dvbern.ebegu.entities.AbwesenheitContainer_;
 import ch.dvbern.ebegu.entities.Abwesenheit_;
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuung_;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -62,11 +63,13 @@ import ch.dvbern.ebegu.entities.Verfuegung_;
 import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -112,6 +115,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	private MailService mailService;
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
+	@Inject
+	private BenutzerService benutzerService;
 
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungServiceBean.class.getSimpleName());
 
@@ -416,7 +421,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, ADMINISTRATOR_SCHULAMT,
 		SCHULAMT })
 	public Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser() {
-		Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+		Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer(true);
 		if (!instForCurrBenutzer.isEmpty()) {
 			return getPendenzenForInstitution((Institution[]) instForCurrBenutzer.toArray(new Institution[instForCurrBenutzer.size()]));
 		}
@@ -461,7 +466,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		Predicate verfuegungPredicate = cb.isNotNull(root.get(Betreuung_.verfuegung));
 		predicatesToUse.add(verfuegungPredicate);
 
-		Collection<Institution> institutionen = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+		Collection<Institution> institutionen = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 		Predicate predicateInstitution = root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen));
 		predicatesToUse.add(predicateInstitution);
 
@@ -481,18 +486,42 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Nonnull
 	private Collection<Betreuung> getPendenzenForInstitution(@Nonnull Institution... institutionen) {
 		Objects.requireNonNull(institutionen, "institutionen muss gesetzt sein");
+
+		Optional<Benutzer> benutzerOptional = benutzerService.getCurrentBenutzer();
+		if (!benutzerOptional.isPresent()) {
+			throw new EbeguRuntimeException("getPendenzenForInstitution", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "current user not found");
+		}
+		Benutzer benutzer = benutzerOptional.get();
+
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
 		Root<Betreuung> root = query.from(Betreuung.class);
-		// Status muss WARTEN oder SCHULAMT_ANMELDUNG_AUSGELOEST sein
-		Predicate predicateStatus = root.get(Betreuung_.betreuungsstatus).in(Arrays.asList(Betreuungsstatus.forPendenzInstitution));
-		// Institution
-		Predicate predicateInstitution = root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen));
-		// Gesuchsperiode darf nicht geschlossen sein
-		Predicate predicateGesuchsperiode = root.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.status).in
-			(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV);
 
-		query.where(predicateStatus, predicateInstitution, predicateGesuchsperiode);
+		List<Predicate> predicates = new ArrayList<>();
+
+		if (benutzer.getRole().isRoleSchulamt()) {
+			predicates.add(root.get(Betreuung_.betreuungsstatus).in(Arrays.asList(Betreuungsstatus.forPendenzSchulamt)));
+		} else { // for Institution or Traegerschaft. bz default
+			predicates.add(root.get(Betreuung_.betreuungsstatus).in(Arrays.asList(Betreuungsstatus.forPendenzInstitution)));
+		}
+		// Institution
+		predicates.add(root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen)));
+		// Gesuchsperiode darf nicht geschlossen sein
+		predicates.add(root.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.status).in
+			(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV));
+
+		if (benutzer.getRole().isRoleSchulamt()) {
+			// SCH darf nur Gesuche sehen, die bereits freigegebn wurden
+			predicates.add(root.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.status).in
+				(AntragStatus.FOR_ADMIN_ROLE));
+			// SCH darf nur Schulamt Betreuungen als PEndeny erhalten
+			Predicate predicateTagesschule = cb.equal(root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
+			Predicate predicateFerieninsel = cb.equal(root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.FERIENINSEL);
+			predicates.add(cb.or(predicateTagesschule, predicateFerieninsel));
+		}
+
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+
 		List<Betreuung> betreuungen = persistence.getCriteriaResults(query);
 		authorizer.checkReadAuthorizationForAllBetreuungen(betreuungen);
 		return betreuungen;

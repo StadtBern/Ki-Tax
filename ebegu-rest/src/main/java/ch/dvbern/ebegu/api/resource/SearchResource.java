@@ -215,7 +215,7 @@ public class SearchResource {
 
 	@Nonnull
 	private List<JaxAntragDTO> convertAntraegeToDTO(List<Gesuch> foundAntraege) {
-		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 
 		List<JaxAntragDTO> antragDTOList = new ArrayList<>(foundAntraege.size());
 		foundAntraege.forEach(gesuch -> {

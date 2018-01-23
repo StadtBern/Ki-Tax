@@ -53,6 +53,10 @@
                     <a ui-sref="pendenzen" data-translate="MENU_PENDENZEN"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
+                    dv-show-allowed-roles="['SUPER_ADMIN', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT']">
+                    <a ui-sref="pendenzenInstitution" data-translate="MENU_PENDENZEN_ANMELDUNGEN_SCH"></a>
+                </li>
+                <li ui-sref-active="active" dv-show-element
                     dv-show-allowed-roles="['SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SUPER_ADMIN']">
                     <a ui-sref="pendenzenInstitution" data-translate="MENU_PENDENZEN_INSTITUTION"></a>
                 </li>

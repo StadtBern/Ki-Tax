@@ -77,7 +77,6 @@ import com.google.common.collect.ArrayListMultimap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -240,7 +239,7 @@ public class GesuchResource {
 			if (UserRole.SUPER_ADMIN == optBenutzer.get().getRole()) {
 				return completeGesuch;
 			} else {
-				Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+				Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 				return cleanGesuchForInstitutionTraegerschaft(completeGesuch, instForCurrBenutzer);
 			}
 		}

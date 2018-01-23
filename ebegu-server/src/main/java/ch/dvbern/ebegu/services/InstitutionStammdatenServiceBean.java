@@ -136,7 +136,7 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	@Override
 	@PermitAll
 	public Collection<BetreuungsangebotTyp> getBetreuungsangeboteForInstitutionenOfCurrentBenutzer() {
-		Collection<Institution> institutionenForCurrentBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+		Collection<Institution> institutionenForCurrentBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 		if (institutionenForCurrentBenutzer.isEmpty()) {
 			return new ArrayList<>();
 		}
