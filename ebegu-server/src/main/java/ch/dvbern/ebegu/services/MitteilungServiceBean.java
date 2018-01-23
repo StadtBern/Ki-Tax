@@ -48,6 +48,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Benutzer_;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuung_;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -67,6 +68,7 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -434,7 +436,16 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return getEntwurfForCurrentRolle(Mitteilung_.betreuung, betreuung);
 	}
 
+	@Nullable
 	private <T> Mitteilung getEntwurfForCurrentRolle(SingularAttribute<Mitteilung, T> attribute, @Nonnull T linkedEntity) {
+		if (!benutzerService.getCurrentBenutzer().isPresent()) {
+			// Alle anderen Rollen haben keine Entwürfe
+			return null;
+		}
+		UserRole currentUserRole = benutzerService.getCurrentBenutzer().get().getRole();
+		if (!(currentUserRole.isRolleJugendamtOrSchulamt() || currentUserRole == UserRole.GESUCHSTELLER)) {
+			return null;
+		}
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
@@ -449,6 +460,18 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		MitteilungTeilnehmerTyp mitteilungTeilnehmerTyp = getMitteilungTeilnehmerTypForCurrentUser();
 		Predicate predicateSender = cb.equal(root.get(Mitteilung_.senderTyp), mitteilungTeilnehmerTyp);
 		predicates.add(predicateSender);
+
+
+		if (currentUserRole.isRoleJugendamt()) {
+			Predicate predicateSenderGleichesAmt = root.get(Mitteilung_.sender).get(Benutzer_.role).in(UserRole.getJugendamtRoles());
+			predicates.add(predicateSenderGleichesAmt);
+		} else if (currentUserRole.isRoleSchulamt()) {
+			Predicate predicateSenderGleichesAmt = root.get(Mitteilung_.sender).get(Benutzer_.role).in(UserRole.getSchulamtRoles());
+			predicates.add(predicateSenderGleichesAmt);
+		} else {
+			Predicate predicateSenderGS = cb.equal(root.get(Mitteilung_.sender).get(Benutzer_.role), UserRole.GESUCHSTELLER);
+			predicates.add(predicateSenderGS);
+		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		Mitteilung entwurf = persistence.getCriteriaSingleResult(query);
