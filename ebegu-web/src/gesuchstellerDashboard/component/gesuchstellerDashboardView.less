@@ -12,7 +12,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 @import "../../style/variables.less";
 @import "../../style/mixins.less";
 
@@ -20,7 +19,7 @@
 @buttonHeight: 15rem;
 
 .gesuchstellerDashboardView {
-    .ebeguH3, h2{
+    .ebeguH3, h2 {
         color: @contrast-lightest;
     }
     overflow-y: auto;
@@ -36,89 +35,39 @@
     .dashboardHeader {
         margin-top: 6rem;
         z-index: @z-index-dashboard;
-        & > *
-        {
-            margin:2rem;
+        & > * {
+            margin: 2rem;
         }
     }
-    .dashboardButton {
-        width: @buttonWidth;
-        height: @buttonHeight;
-        padding: 0;
-        border: none;
-        border-radius: 0;
-        position: relative;
-        &:focus,&:focus:hover{
-            border: none;
-            border-radius: 0;
-            outline: 2px solid @contrast-darkest;
-        }
-        &:hover {
-            .labelSmall {
-                background: @primary-dark;
-            }
-        }
-        .ebeguH2 {
+    .gdashboard-panel {
+        display: flex;
+        flex-direction: column;
+        width: 75%;
+        margin: 3rem;
+        &__gesuchstring {
             font-family: "Open Sans", Arial, Helvetica, sans-serif;
-            font-size: 2.2rem;
+            font-size: 2.8rem;
             letter-spacing: 0.15rem;
             color: @contrast-light;
+            .ebeguBold();
             margin: 0;
         }
-        .labelBig {
-            top: 0;
-            left: 0;
-            background-color: @contrast;
-            width: @buttonWidth;
-            height: 11rem;
-            min-width: 0;
-
-            & .ebeguH2 {
-                .ebeguBold();
-                margin: auto;
-                color: @contrast-darkest;
-            }
-            & .ebeguH3 {
-                .ebeguSemi-bold();
-                font-size: 1.4rem;
-                margin-top:0.5rem;
-                margin-bottom:2rem;
-                letter-spacing: 0.1rem;
-                color: @contrast-darkest;
-            }
+        &__gesuchrange {
+            font-family: "Open Sans", Arial, Helvetica, sans-serif;
+            .ebeguSemi-bold();
+            font-size: 1.6rem;
+            margin-top: 0.5rem;
+            margin-bottom: 2rem;
+            letter-spacing: 0.1rem;
         }
-        .labelSmall {
+        &__button {
             text-transform: uppercase;
-            bottom: 0;
-            left: 0;
-            background-color: @primary;
-            width: @buttonWidth;
-            height: 4rem;
-            min-width: 0%;
-            & .ebeguH2 {
-                line-height: 4rem;
-                font-size: 1.4rem;
-            }
+            width: 100%;
+            margin-bottom: 1rem;
+            vertical-align: bottom;
         }
-        .labelNotification {
-            letter-spacing:normal;
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            border-radius: 4rem;
-            background-color: @contrast-lightest;
-            width: 2.4rem;
-            height: 2.4rem;
-            vertical-align: middle;
-            line-height: 2.4rem;
-            text-align: center;
-            color: @primary;
-            font-weight: bold;
+        &__seperator {
+            height: 0;
         }
     }
-    //.dvb-loading-button {
-    //    width: @buttonWidth;
-    //    height: @buttonHeight;
-    //    text-align: center;
-    //}
 }

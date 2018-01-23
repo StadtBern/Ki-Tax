@@ -411,7 +411,8 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@Transient
 	@SuppressFBWarnings("NM_CONFUSING")
 	public String getBGNummer() {
-		if (getKind().getGesuch() != null) {
+		// some users like Institutionen don't have access to the Kind, so it must be proved that getKind() doesn't return null
+		if (getKind() != null && getKind().getGesuch() != null) {
 			String kindNumberAsString = String.valueOf(getKind().getKindNummer());
 			String betreuung = String.valueOf(getBetreuungNummer());
 			return getKind().getGesuch().getJahrAndFallnummer() + '.' + kindNumberAsString + '.' + betreuung;

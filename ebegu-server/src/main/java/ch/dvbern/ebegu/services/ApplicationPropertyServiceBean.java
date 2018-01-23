@@ -48,6 +48,7 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
@@ -121,7 +122,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, REVISOR })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, REVISOR, ADMINISTRATOR_SCHULAMT })
 	public List<ApplicationProperty> getAllApplicationProperties() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(ApplicationProperty.class));
 	}
