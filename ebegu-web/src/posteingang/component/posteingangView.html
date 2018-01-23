@@ -57,7 +57,8 @@
                         <th><input st-search="sentDatum" class="form-control" type="text"/></th>
                         <!-- Verantwortliche Person -->
                         <th>
-                            <dv-userselect input-id="empfaenger" dv-usersearch="empfaenger" initial-all="false" show-selection-all="true"></dv-userselect>
+                            <dv-userselect input-id="empfaenger" dv-usersearch="empfaenger" initial-all="false" show-selection-all="true"
+                                           schulamt="vm.isCurrentUserSchulamt()"></dv-userselect>
                         </th>
                     </tr>
                     </thead>
