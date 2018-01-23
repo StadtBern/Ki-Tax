@@ -150,6 +150,7 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 		Root<InstitutionStammdaten> root = query.from(InstitutionStammdaten.class);
 		query.select(root.get(InstitutionStammdaten_.institution));
 		Join<InstitutionStammdaten, Institution> institutionJoin = root.join(InstitutionStammdaten_.institution, JoinType.LEFT);
+		query.distinct(true);
 
 		Predicate predTS = cb.equal(root.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
 		Predicate predFI = cb.equal(root.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.FERIENINSEL);
