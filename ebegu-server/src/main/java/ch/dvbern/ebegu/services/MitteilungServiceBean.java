@@ -438,8 +438,12 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Nullable
 	private <T> Mitteilung getEntwurfForCurrentRolle(SingularAttribute<Mitteilung, T> attribute, @Nonnull T linkedEntity) {
-		if (!benutzerService.getCurrentBenutzer().isPresent() || !benutzerService.getCurrentBenutzer().get().getRole().isRolleJugendamtOrSchulamt()) {
+		if (!benutzerService.getCurrentBenutzer().isPresent()) {
 			// Alle anderen Rollen haben keine Entwürfe
+			return null;
+		}
+		UserRole currentUserRole = benutzerService.getCurrentBenutzer().get().getRole();
+		if (!(currentUserRole.isRolleJugendamtOrSchulamt() || currentUserRole == UserRole.GESUCHSTELLER)) {
 			return null;
 		}
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -457,13 +461,16 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		Predicate predicateSender = cb.equal(root.get(Mitteilung_.senderTyp), mitteilungTeilnehmerTyp);
 		predicates.add(predicateSender);
 
-		UserRole currentUserRole = benutzerService.getCurrentBenutzer().get().getRole();
+
 		if (currentUserRole.isRoleJugendamt()) {
 			Predicate predicateSenderGleichesAmt = root.get(Mitteilung_.sender).get(Benutzer_.role).in(UserRole.getJugendamtRoles());
 			predicates.add(predicateSenderGleichesAmt);
 		} else if (currentUserRole.isRoleSchulamt()) {
 			Predicate predicateSenderGleichesAmt = root.get(Mitteilung_.sender).get(Benutzer_.role).in(UserRole.getSchulamtRoles());
 			predicates.add(predicateSenderGleichesAmt);
+		} else {
+			Predicate predicateSenderGS = cb.equal(root.get(Mitteilung_.sender).get(Benutzer_.role), UserRole.GESUCHSTELLER);
+			predicates.add(predicateSenderGS);
 		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
