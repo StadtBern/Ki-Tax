@@ -72,7 +72,7 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 		this.eingangsdatumSTV = eingangsdatumSTV;
 		this.antragTyp = antragTyp;
 		this.verfuegt = antragStatus.isAnyStatusOfVerfuegt();
-		this.beschwerdeHaengig = antragStatus.equals(AntragStatus.BESCHWERDE_HAENGIG);
+		this.beschwerdeHaengig = antragStatus == AntragStatus.BESCHWERDE_HAENGIG;
 		this.laufnummer = laufnummer;
 		this.eingangsart = eingangsart;
 		this.besitzerUsername = besitzerUsername;
@@ -104,6 +104,9 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 
 	@NotNull
 	private String verantwortlicher;
+
+	@Nullable
+	private String verantwortlicherSCH;
 
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
@@ -182,6 +185,15 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 
 	public void setVerantwortlicher(String verantwortlicher) {
 		this.verantwortlicher = verantwortlicher;
+	}
+
+	@Nullable
+	public String getVerantwortlicherSCH() {
+		return verantwortlicherSCH;
+	}
+
+	public void setVerantwortlicherSCH(@Nullable String verantwortlicherSCH) {
+		this.verantwortlicherSCH = verantwortlicherSCH;
 	}
 
 	@Nullable

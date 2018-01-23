@@ -30,8 +30,6 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.AuthService;
-import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -54,11 +52,7 @@ public class FallResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private FallResource fallResource;
 	@Inject
-	private AuthService authService;
-	@Inject
 	private InstitutionService institutionService;
-	@Inject
-	private BenutzerService benutzerService;
 	@Inject
 	private Persistence persistence;
 	@Inject
@@ -74,7 +68,6 @@ public class FallResourceTest extends AbstractEbeguRestLoginTest {
 		Assert.assertNull(foundFall.getVerantwortlicher());
 
 		Assert.assertNotNull(foundFall.getId());
-		Assert.assertNotNull(foundFall.getFallNummer());
 		Assert.assertNotNull(foundFall.getNextNumberKind());
 	}
 
@@ -82,7 +75,7 @@ public class FallResourceTest extends AbstractEbeguRestLoginTest {
 	public void testUpdateVerantwortlicherUserForFall() throws EbeguException {
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		changeStatusToWarten(gesuch.getKindContainers().iterator().next());
-		Benutzer sachbearbeiter = TestDataUtil.createAndPersistBenutzer(persistence);
+		Benutzer sachbearbeiter = TestDataUtil.createAndPersistJABenutzer(persistence);
 		final JaxFall foundFall = fallResource.findFall(converter.toJaxId(gesuch.getFall()));
 
 		Assert.assertNotNull(foundFall);

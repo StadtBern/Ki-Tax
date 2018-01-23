@@ -775,6 +775,18 @@ public class JaxBConverter {
 			} else {
 				throw new EbeguEntityNotFoundException("fallToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJAXP.getVerantwortlicher());
 			}
+		} else {
+			fall.setVerantwortlicher(null);
+		}
+		if (fallJAXP.getVerantwortlicherSCH() != null) {
+			Optional<Benutzer> verantwortlicherSCH = benutzerService.findBenutzer(fallJAXP.getVerantwortlicherSCH().getUsername());
+			if (verantwortlicherSCH.isPresent()) {
+				fall.setVerantwortlicherSCH(verantwortlicherSCH.get()); // because the user doesn't come from the client but from the server
+			} else {
+				throw new EbeguEntityNotFoundException("fallToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJAXP.getVerantwortlicherSCH());
+			}
+		} else {
+			fall.setVerantwortlicherSCH(null);
 		}
 		if (fallJAXP.getNextNumberKind() != null) {
 			fall.setNextNumberKind(fallJAXP.getNextNumberKind());
@@ -796,6 +808,9 @@ public class JaxBConverter {
 		jaxFall.setFallNummer(persistedFall.getFallNummer());
 		if (persistedFall.getVerantwortlicher() != null) {
 			jaxFall.setVerantwortlicher(benutzerToAuthLoginElement(persistedFall.getVerantwortlicher()));
+		}
+		if (persistedFall.getVerantwortlicherSCH() != null) {
+			jaxFall.setVerantwortlicherSCH(benutzerToAuthLoginElement(persistedFall.getVerantwortlicherSCH()));
 		}
 		jaxFall.setNextNumberKind(persistedFall.getNextNumberKind());
 		if (persistedFall.getBesitzer() != null) {
@@ -2592,8 +2607,11 @@ public class JaxBConverter {
 		if (gesuch.getFall().getVerantwortlicher() != null) {
 			antrag.setVerantwortlicher(gesuch.getFall().getVerantwortlicher().getFullName());
 		}
+		if (gesuch.getFall().getVerantwortlicherSCH() != null) {
+			antrag.setVerantwortlicherSCH(gesuch.getFall().getVerantwortlicherSCH().getFullName());
+		}
 		antrag.setVerfuegt(gesuch.getStatus().isAnyStatusOfVerfuegt());
-		antrag.setBeschwerdeHaengig(gesuch.getStatus().equals(AntragStatus.BESCHWERDE_HAENGIG));
+		antrag.setBeschwerdeHaengig(gesuch.getStatus() == AntragStatus.BESCHWERDE_HAENGIG);
 		antrag.setLaufnummer(gesuch.getLaufnummer());
 		antrag.setEingangsart(gesuch.getEingangsart());
 		antrag.setBesitzerUsername(gesuch.getFall().getBesitzer() != null ? gesuch.getFall().getBesitzer().getUsername() : null);
@@ -2841,7 +2859,7 @@ public class JaxBConverter {
 		final JaxZahlungsauftrag jaxZahlungsauftrag = getJaxZahlungsauftrag(persistedZahlungsauftrag, true);
 
 		// nur die Zahlungen welche inst sehen darf
-		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) {
+		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == userRole || UserRole.SACHBEARBEITER_INSTITUTION == userRole) {
 			RestUtil.purgeZahlungenOfInstitutionen(jaxZahlungsauftrag, allowedInst);
 			// es muss nochmal das Auftragstotal berechnet werden. Diesmal nur mit den erlaubten Zahlungen
 			// Dies nur fuer Institutionen

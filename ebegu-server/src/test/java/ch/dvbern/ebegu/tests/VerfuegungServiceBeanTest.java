@@ -136,7 +136,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 		gesuch.setGueltig(true);
 		Set<AntragStatusHistory> antragStatusHistories = gesuch.getAntragStatusHistories();
 		AntragStatusHistory antragStatusHistory = new AntragStatusHistory();
-		antragStatusHistory.setBenutzer(TestDataUtil.createAndPersistBenutzer(persistence));
+		antragStatusHistory.setBenutzer(TestDataUtil.createAndPersistTraegerschaftBenutzer(persistence));
 		antragStatusHistory.setStatus(AntragStatus.VERFUEGT);
 		antragStatusHistory.setGesuch(gesuch);
 		antragStatusHistory.setTimestampVon(timestampVerfuegt);

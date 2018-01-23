@@ -562,7 +562,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	@Override
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
-	public Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username) {
+	public Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String usernameJA, @Nullable String usernameSCH) {
 		Optional<Gesuch> gesuchOptional = Optional.ofNullable(persistence.find(Gesuch.class, gesuchId)); //direkt ueber persistence da wir eigentlich noch nicht leseberechtigt sind)
 		if (gesuchOptional.isPresent()) {
 			Gesuch gesuch = gesuchOptional.get();
@@ -619,10 +619,20 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			// Step Freigabe gruen
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
 
-			if (username != null) {
-				Optional<Benutzer> currentUser = benutzerService.findBenutzer(username);
-				if (currentUser.isPresent() && !currentUser.get().getRole().isRolleSchulamt()) {
-					gesuch.getFall().setVerantwortlicher(currentUser.get());
+			if (usernameJA != null) {
+				Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(usernameJA);
+				if (verantwortlicher.isPresent()
+					&& gesuch.hasBetreuungOfJugendamt()
+					&& (verantwortlicher.get().getRole().isRoleJugendamt() || verantwortlicher.get().getRole().isSuperadmin())) {
+					gesuch.getFall().setVerantwortlicher(verantwortlicher.get());
+				}
+			}
+			if (usernameSCH != null) {
+				Optional<Benutzer> verantwortlicherSCH = benutzerService.findBenutzer(usernameSCH);
+				if (verantwortlicherSCH.isPresent()
+					&& gesuch.hasBetreuungOfSchulamt()
+					&& (verantwortlicherSCH.get().getRole().isRoleSchulamt() || verantwortlicherSCH.get().getRole().isSuperadmin())) {
+					gesuch.getFall().setVerantwortlicherSCH(verantwortlicherSCH.get());
 				}
 			}
 

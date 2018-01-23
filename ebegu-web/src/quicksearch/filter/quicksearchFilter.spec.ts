@@ -43,18 +43,18 @@ describe('quicksearchFilter', function () {
 
         quicksearchArray = [];
         antrag1 = new TSAntragDTO('id1', 1, 'Hernandez', TSAntragTyp.ERSTGESUCH, ab, ab, undefined,
-            [TSBetreuungsangebotTyp.KITA], ['Instit1'], 'Juan Arbolado', TSAntragStatus.IN_BEARBEITUNG_JA,
+            [TSBetreuungsangebotTyp.KITA], ['Instit1'], 'Juan Arbolado', 'Juan Arbolado', TSAntragStatus.IN_BEARBEITUNG_JA,
             gesuchsperiode.gueltigkeit.gueltigAb, gesuchsperiode.gueltigkeit.gueltigBis);
         quicksearchArray.push(antrag1);
 
         antrag2 = new TSAntragDTO('id2', 2, 'Perez', TSAntragTyp.ERSTGESUCH, ab, ab, undefined,
-            [TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit2'], 'Antonio Jimenez', TSAntragStatus.IN_BEARBEITUNG_JA,
+            [TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit2'], 'Antonio Jimenez', 'Antonio Jimenez', TSAntragStatus.IN_BEARBEITUNG_JA,
             gesuchsperiode.gueltigkeit.gueltigAb, gesuchsperiode.gueltigkeit.gueltigBis);
         quicksearchArray.push(antrag2);
 
         antrag3 = new TSAntragDTO('id3', 3, 'Dominguez', TSAntragTyp.MUTATION, ab, ab, undefined,
             [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit1', 'Instit2'],
-            'Eustaquio Romualdo', TSAntragStatus.IN_BEARBEITUNG_JA,
+            'Eustaquio Romualdo', 'Eustaquio Romualdo', TSAntragStatus.IN_BEARBEITUNG_JA,
             gesuchsperiode.gueltigkeit.gueltigAb, gesuchsperiode.gueltigkeit.gueltigBis);
         quicksearchArray.push(antrag3);
 

@@ -20,6 +20,7 @@ import UserRS from '../../service/userRS.rest';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import {DVsTPersistService} from '../../service/dVsTPersistService';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRole} from '../../../models/enums/TSRole';
 
 /**
  * This directive allows a filter and sorting configuration to be saved after leaving the table.
@@ -71,7 +72,8 @@ export default class DVSTPersistAntraege implements IDirective {
                     antragListController.selectedEingangsdatum = savedState.search.predicateObject.eingangsdatum;
                     antragListController.selectedDokumenteHochgeladen = savedState.search.predicateObject.dokumenteHochgeladen;
                     antragListController.selectedEingangsdatumSTV = savedState.search.predicateObject.eingangsdatumSTV;
-                    this.setUserFromName(antragListController, savedState.search.predicateObject.verantwortlicher);
+                    this.setVerantwortlicherFromName(antragListController, savedState.search.predicateObject.verantwortlicher);
+                    this.setVerantwortlicherSCHFromName(antragListController, savedState.search.predicateObject.verantwortlicherSCH);
                 }
                 let tableState = stTableCtrl.tableState();
 
@@ -87,7 +89,7 @@ export default class DVSTPersistAntraege implements IDirective {
      * while the dropdownlist is constructed using the object TSUser. So in order to be able to select the right user
      * with need the complete object and not only its Fullname.
      */
-    private setUserFromName(antragListController: DVAntragListController, verantwortlicherFullname: string): void {
+    private setVerantwortlicherFromName(antragListController: DVAntragListController, verantwortlicherFullname: string): void {
         if (verantwortlicherFullname && antragListController) {
             this.userRS.getBenutzerJAorAdmin().then((response: any) => {
                 let userList: TSUser[] = angular.copy(response);
@@ -95,6 +97,27 @@ export default class DVSTPersistAntraege implements IDirective {
                     for (let i = 0; i < userList.length; i++) {
                         if (userList[i] && userList[i].getFullName() === verantwortlicherFullname) {
                             antragListController.selectedVerantwortlicher = userList[i];
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * Extracts the user out of her name. This method is needed because the filter saves the user using its name
+     * while the dropdownlist is constructed using the object TSUser. So in order to be able to select the right user
+     * with need the complete object and not only its Fullname.
+     */
+    private setVerantwortlicherSCHFromName(antragListController: DVAntragListController, verantwortlicherSCHFullname: string): void {
+        if (verantwortlicherSCHFullname && antragListController) {
+            this.userRS.getBenutzerSCHorAdminSCH().then((response: any) => {
+                let userList: TSUser[] = angular.copy(response);
+                if (userList) {
+                    for (let i = 0; i < userList.length; i++) {
+                        if (userList[i] && userList[i].getFullName() === verantwortlicherSCHFullname) {
+                            antragListController.selectedVerantwortlicherSCH = userList[i];
                             break;
                         }
                     }
@@ -138,15 +161,27 @@ export default class DVSTPersistAntraege implements IDirective {
         let savedStateToReturn: any = angular.copy(savedState);
         if (antragListController.pendenz) {
             if (!savedStateToReturn) {
-                savedStateToReturn = {search: {predicateObject: {verantwortlicher: this.authServiceRS.getPrincipal().getFullName()}}};
+                savedStateToReturn = {search: {predicateObject: this.extractVerantwortlicherFullName()}};
             }
             if (!savedStateToReturn.search.predicateObject) {
-                savedStateToReturn.search.predicateObject = {verantwortlicher: this.authServiceRS.getPrincipal().getFullName()};
+                savedStateToReturn.search.predicateObject = this.extractVerantwortlicherFullName();
             }
             if (!savedStateToReturn.search.predicateObject.verantwortlicher) {
-                savedStateToReturn.search.predicateObject.verantwortlicher = this.authServiceRS.getPrincipal().getFullName();
+                if (this.authServiceRS.getPrincipal().role === TSRole.ADMINISTRATOR_SCHULAMT || this.authServiceRS.getPrincipal().role === TSRole.SCHULAMT) {
+                    savedStateToReturn.search.predicateObject.verantwortlicherSCH = this.authServiceRS.getPrincipal().getFullName();
+                } else { //JA
+                    savedStateToReturn.search.predicateObject.verantwortlicher = this.authServiceRS.getPrincipal().getFullName();
+                }
             }
         }
         return savedStateToReturn;
+    }
+
+    private extractVerantwortlicherFullName() {
+        if (this.authServiceRS.getPrincipal().role === TSRole.ADMINISTRATOR_SCHULAMT || this.authServiceRS.getPrincipal().role === TSRole.SCHULAMT) {
+            return {verantwortlicherSCH: this.authServiceRS.getPrincipal().getFullName()};
+        } else { //JA
+            return {verantwortlicher: this.authServiceRS.getPrincipal().getFullName()};
+        }
     }
 }
