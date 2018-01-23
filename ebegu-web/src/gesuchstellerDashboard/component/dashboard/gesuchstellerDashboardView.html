@@ -44,24 +44,31 @@
 
             <div ng-if="!vm.displayAnsehenButton(periode)" class="gdashboard-panel__seperator"></div>
 
-            <dv-loading-button type="button" button-click="vm.openAntrag(periode)"
+            <dv-loading-button ng-if="vm.getButtonText(periode)" type="button" button-click="vm.openAntrag(periode)"
                                button-class="dvb-loading-button gdashboard-panel__button">
                 {{vm.getButtonText(periode)}}
             </dv-loading-button>
 
-            <div class="gdashboard-panel__seperator"></div>
+            <div ng-if="!vm.getButtonText(periode)" class="gdashboard-panel__seperator"></div>
 
-            <!-- todo umsetzen ng-click und ng-if-->
-            <dv-loading-button type="button" button-click=""
+            <dv-loading-button type="button"
+                               ng-if="vm.showAnmeldungCreate(periode)"
+                               button-click="vm.createFerieninsel(periode)"
                                button-class="dvb-loading-button gdashboard-panel__button">
-                Ferieninsel
+
+                {{'FERIENINSEL_ANMELDEN' | translate}}
             </dv-loading-button>
 
-            <!-- todo umsetzen ng-click und ng-if-->
-            <dv-loading-button type="button" button-click=""
+            <dv-loading-button type="button"
+                               ng-if="vm.showAnmeldungCreate(periode)"
+                               button-click="vm.createTagesschule(periode)"
                                button-class="dvb-loading-button gdashboard-panel__button">
-                tagesschule
+                {{'TAGESSCHULE_ANMELDEN' | translate}}
             </dv-loading-button>
+
+            <div ng-if="vm.gesperrtWegenMutation(periode)" >
+                {{'GESPERRT_WEGEN_MUTATION' | translate}}
+            </div>
         </div>
 
     </div>

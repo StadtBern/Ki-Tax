@@ -94,6 +94,7 @@ import {TSDateRange} from '../models/types/TSDateRange';
 import TSLand from '../models/types/TSLand';
 import DateUtil from './DateUtil';
 import EbeguUtil from './EbeguUtil';
+import TSAnmeldungDTO from '../models/TSAnmeldungDTO';
 
 export default class EbeguRestUtil {
     static $inject = ['EbeguUtil'];
@@ -1217,6 +1218,17 @@ export default class EbeguRestUtil {
         return restBetreuung;
     }
 
+    public anmeldungDTOToRestObject(restAngebot: any, angebotDTO: TSAnmeldungDTO): any {
+        restAngebot.betreuung = this.betreuungToRestObject({}, angebotDTO.betreuung);
+        restAngebot.additionalKindQuestions = angebotDTO.additionalKindQuestions;
+        restAngebot.einschulung = angebotDTO.einschulung;
+        restAngebot.kindContainerId = angebotDTO.kindContainerId;
+        restAngebot.mutterspracheDeutsch = angebotDTO.mutterspracheDeutsch;
+        restAngebot.wohnhaftImGleichenHaushalt = angebotDTO.wohnhaftImGleichenHaushalt;
+        return restAngebot;
+
+    }
+
     public betreuungspensumContainerToRestObject(restBetPensCont: any, betPensCont: TSBetreuungspensumContainer): any {
         this.abstractEntityToRestObject(restBetPensCont, betPensCont);
         if (betPensCont.betreuungspensumGS) {
@@ -1471,6 +1483,7 @@ export default class EbeguRestUtil {
         antragTS.eingangsart = antragFromServer.eingangsart;
         antragTS.besitzerUsername = antragFromServer.besitzerUsername;
         antragTS.dokumenteHochgeladen = antragFromServer.dokumenteHochgeladen;
+        antragTS.neustesGesuch = antragFromServer.neustesGesuch;
         return antragTS;
     }
 
