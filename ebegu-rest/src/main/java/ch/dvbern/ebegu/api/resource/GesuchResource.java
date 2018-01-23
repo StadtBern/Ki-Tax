@@ -211,12 +211,6 @@ public class GesuchResource {
 		}
 		Gesuch gesuchToReturn = gesuchOptional.get();
 		JaxAntragDTO jaxAntragDTO = converter.gesuchToAntragDTO(gesuchToReturn, principalBean.discoverMostPrivilegedRole());
-		if (gesuchToReturn.getFall().getVerantwortlicher() != null) {
-			jaxAntragDTO.setVerantwortlicherUsernameJA(gesuchToReturn.getFall().getVerantwortlicher().getUsername());
-		}
-		if (gesuchToReturn.getFall().getVerantwortlicherSCH() != null) {
-			jaxAntragDTO.setVerantwortlicherUsernameSCH(gesuchToReturn.getFall().getVerantwortlicherSCH().getUsername());
-		}
 		jaxAntragDTO.setFamilienName(gesuchToReturn.extractFullnamesString()); //hier volle Namen beider GS
 		return jaxAntragDTO;
 	}

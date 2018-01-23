@@ -20,7 +20,6 @@ import TSAntragDTO from '../../models/TSAntragDTO';
 import TSUser from '../../models/TSUser';
 import EbeguUtil from '../../utils/EbeguUtil';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
-import FallRS from '../service/fallRS.rest';
 import GesuchRS from '../service/gesuchRS.rest';
 import IPromise = angular.IPromise;
 import IDialogService = angular.material.IDialogService;
@@ -32,7 +31,7 @@ import ITranslateService = angular.translate.ITranslateService;
 export class FreigabeController {
 
     static $inject: string[] = ['docID', '$mdDialog', 'GesuchRS', 'UserRS', 'AuthServiceRS',
-        'EbeguUtil', 'CONSTANTS', '$translate', 'ApplicationPropertyRS', 'FallRS'];
+        'EbeguUtil', 'CONSTANTS', '$translate', 'ApplicationPropertyRS'];
 
     private gesuch: TSAntragDTO;
     private selectedUserJA: string;
@@ -46,8 +45,7 @@ export class FreigabeController {
 
     constructor(private docID: string, private $mdDialog: IDialogService, private gesuchRS: GesuchRS,
                 private userRS: UserRS, private authService: AuthServiceRS, private ebeguUtil: EbeguUtil,
-                CONSTANTS: any, private $translate: ITranslateService, private applicationPropertyRS: ApplicationPropertyRS,
-                private fallRS: FallRS) {
+                CONSTANTS: any, private $translate: ITranslateService, private applicationPropertyRS: ApplicationPropertyRS) {
 
         gesuchRS.findGesuchForFreigabe(this.docID).then((response: TSAntragDTO) => {
             this.errorMessage = undefined; // just for safety replace old value
@@ -78,20 +76,20 @@ export class FreigabeController {
         // (3) Defaults aus Properties
 
         // Jugendamt
-        if (this.gesuch.verantwortlicher) {
+        if (this.gesuch.verantwortlicher && this.gesuch.verantwortlicherUsernameJA) {
             this.selectedUserJA = this.gesuch.verantwortlicherUsernameJA;
         } else {
             // Noch kein Verantwortlicher aus Vorjahr vorhanden
-            if (!this.authService.isOneOfRoles(this.TSRoleUtil.getSchulamtOnlyRoles())) {
-                this.selectedUserJA = this.authService.getPrincipal().username;
-            } else {
+            if (this.authService.isOneOfRoles(this.TSRoleUtil.getSchulamtOnlyRoles())) {
                 this.applicationPropertyRS.getByName('DEFAULT_VERANTWORTLICHER').then(username => {
                     this.selectedUserJA = username.value;
                 });
+            } else {
+                this.selectedUserJA = this.authService.getPrincipal().username;
             }
         }
         // Schulamt
-        if (this.gesuch.verantwortlicherSCH) {
+        if (this.gesuch.verantwortlicherSCH && this.gesuch.verantwortlicherUsernameSCH) {
            this.selectedUserSCH = this.gesuch.verantwortlicherUsernameSCH;
         } else {
             // Noch kein Verantwortlicher aus Vorjahr vorhanden
