@@ -274,7 +274,7 @@ export class DVMitteilungListController {
             case TSRole.ADMIN:
             case TSRole.JURIST:
             case TSRole.REVISOR:
-            case TSRole.SACHBEARBEITER_JA: //TODO (Team): Bleibt das so? Evt. eigener Typ?
+            case TSRole.SACHBEARBEITER_JA:
             case TSRole.SCHULAMT:
             case TSRole.ADMINISTRATOR_SCHULAMT: {
                 return TSMitteilungTeilnehmerTyp.JUGENDAMT;
