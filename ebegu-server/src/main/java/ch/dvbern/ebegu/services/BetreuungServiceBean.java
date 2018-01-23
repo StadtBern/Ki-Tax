@@ -420,7 +420,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Nonnull
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, ADMINISTRATOR_SCHULAMT,
 		SCHULAMT })
-	public Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser() {
+	public Collection<Betreuung> getPendenzenBetreuungen() {
 		Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer(true);
 		if (!instForCurrBenutzer.isEmpty()) {
 			return getPendenzenForInstitution((Institution[]) instForCurrBenutzer.toArray(new Institution[instForCurrBenutzer.size()]));
@@ -481,7 +481,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	}
 
 	/**
-	 * Liest alle Betreuungen die zu einer der mitgegebenen Institution gehoeren und die im Status WARTEN sind
+	 * Liest alle Betreuungen die zu einer der mitgegebenen Institution gehoeren und die im Status WARTEN sind. Wenn der Benutzer vom Schulamt
+	 * ist, dann werden nur die Institutionsstammdaten der Art FERIENINSEL oder TAGESSCHULE betrachtet.
 	 */
 	@Nonnull
 	private Collection<Betreuung> getPendenzenForInstitution(@Nonnull Institution... institutionen) {

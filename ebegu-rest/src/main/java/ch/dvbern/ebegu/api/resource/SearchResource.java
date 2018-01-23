@@ -37,7 +37,7 @@ import javax.ws.rs.core.UriInfo;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
-import ch.dvbern.ebegu.api.dtos.JaxPendenzInstitution;
+import ch.dvbern.ebegu.api.dtos.JaxPendenzBetreuungen;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
@@ -130,18 +130,18 @@ public class SearchResource {
 		return pendenzenList;
 	}
 
-	@ApiOperation(value = "Gibt eine Liste mit allen Pendenzen der Institution oder Traegerschaft des eingeloggten " +
-		"Benutzers zurueck.", responseContainer = "List", response = JaxPendenzInstitution.class)
+	@ApiOperation(value = "Gibt eine Liste mit allen Betreuungen die pendent sind und zur Institution oder Traegerschaft des eingeloggten Benutzers " +
+		"gehoeren zurueck. Fuer das Schulamt werden alle SCH-Anmeldungen zurueckgegeben", responseContainer = "List", response = JaxPendenzBetreuungen.class)
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/institution")
-	public List<JaxPendenzInstitution> getAllPendenzenInstitution() {
-		Collection<Betreuung> betreuungenInStatus = betreuungService.getPendenzenForInstitutionsOrTraegerschaftUser();
-		List<JaxPendenzInstitution> pendenzenList = new ArrayList<>();
+	@Path("/pendenzenBetreuungen")
+	public List<JaxPendenzBetreuungen> getAllPendenzenBetreuungen() {
+		Collection<Betreuung> betreuungenInStatus = betreuungService.getPendenzenBetreuungen();
+		List<JaxPendenzBetreuungen> pendenzenList = new ArrayList<>();
 		for (Betreuung betreuung : betreuungenInStatus) {
-			JaxPendenzInstitution pendenz = new JaxPendenzInstitution();
+			JaxPendenzBetreuungen pendenz = new JaxPendenzBetreuungen();
 			pendenz.setBetreuungsNummer(betreuung.getBGNummer());
 			pendenz.setBetreuungsId(betreuung.getId());
 			pendenz.setGesuchId(betreuung.extractGesuch().getId());
