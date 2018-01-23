@@ -181,22 +181,20 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	private void setSenderAndEmpfaenger(@Nonnull Mitteilung mitteilung) {
 		Benutzer benutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new IllegalStateException("Benutzer ist nicht eingeloggt!"));
-		Benutzer verantwortlicher = mitteilung.getFall().getVerantwortlicher();
-		if (verantwortlicher == null) {
-			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(
-				ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
-			if (StringUtils.isNotEmpty(propertyDefaultVerantwortlicher)) {
-				Optional<Benutzer> defaultVerantwortlicherOptional = benutzerService.findBenutzer(propertyDefaultVerantwortlicher);
-				if (defaultVerantwortlicherOptional.isPresent()) {
-					verantwortlicher = defaultVerantwortlicherOptional.get();
-				} else {
-					LOG.warn("Es ist kein gueltiger DEFAULT Verantwortlicher fuer Mitteilungen gesetzt. Bitte Propertys pruefen");
-				}
+		// Logik fuer die Ermittlung des Empfaengers:
+		// (1) Wenn ein JA-Verantwortlicher gesetzt ist, geht die Mitteilung an diesen
+		// (2) Wenn kein JA-Verantwortlicher gesetzt ist, aber ein SCH-Verantwortlicher, geht die Mitteilung an den SCH-Verantwortlichen
+		// (3) Wenn noch gar nichts gesetzt ist (z.B. noch gar kein Gesuch erfasst) geht die Mitteilung an den Default-Verantwortlichen den JA
+		Benutzer empfaengerAmt = mitteilung.getFall().getVerantwortlicher();
+		if (empfaengerAmt == null) {
+			empfaengerAmt = mitteilung.getFall().getVerantwortlicherSCH();
+			if (empfaengerAmt == null) {
+				empfaengerAmt = readDefaultVerantwortlicherFromProperties(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
 			}
 		}
 		switch (benutzer.getRole()) {
 		case GESUCHSTELLER: {
-			mitteilung.setEmpfaenger(verantwortlicher);
+			mitteilung.setEmpfaenger(empfaengerAmt);
 			mitteilung.setEmpfaengerTyp(MitteilungTeilnehmerTyp.JUGENDAMT);
 			mitteilung.setSender(benutzer);
 			mitteilung.setSenderTyp(MitteilungTeilnehmerTyp.GESUCHSTELLER);
@@ -204,7 +202,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		}
 		case SACHBEARBEITER_INSTITUTION:
 		case SACHBEARBEITER_TRAEGERSCHAFT: {
-			mitteilung.setEmpfaenger(verantwortlicher);
+			mitteilung.setEmpfaenger(empfaengerAmt);
 			mitteilung.setEmpfaengerTyp(MitteilungTeilnehmerTyp.JUGENDAMT);
 			mitteilung.setSender(benutzer);
 			mitteilung.setSenderTyp(MitteilungTeilnehmerTyp.INSTITUTION);
@@ -222,6 +220,20 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			mitteilung.setSenderTyp(MitteilungTeilnehmerTyp.JUGENDAMT);
 			break;
 		}
+	}
+
+	@Nullable
+	private Benutzer readDefaultVerantwortlicherFromProperties(ApplicationPropertyKey key) {
+		String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(key);
+		if (StringUtils.isNotEmpty(propertyDefaultVerantwortlicher)) {
+			Optional<Benutzer> defaultVerantwortlicherOptional = benutzerService.findBenutzer(propertyDefaultVerantwortlicher);
+			if (defaultVerantwortlicherOptional.isPresent()) {
+				return defaultVerantwortlicherOptional.get();
+			} else {
+				LOG.warn("Es ist kein gueltiger DEFAULT Verantwortlicher fuer Mitteilungen gesetzt. Bitte Propertys pruefen: " + key);
+			}
+		}
+		return null;
 	}
 
 	@Override
