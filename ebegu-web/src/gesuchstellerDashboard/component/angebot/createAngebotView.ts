@@ -75,7 +75,7 @@ export class CreateAngebotListViewController {
         /*if (this.betreuungsangebot) {*/
         this.gesuchModelManager.getActiveInstitutionenList().forEach((instStamm: TSInstitutionStammdaten) => {
             if (this.ts) {
-                if (instStamm.betreuungsangebotTyp === TSBetreuungsangebotTyp.TAGESSCHULE) {
+                if (instStamm.betreuungsangebotTyp === TSBetreuungsangebotTyp.TAGESSCHULE && this.gesuchModelManager.isDefaultTagesschuleAllowed(instStamm)) {
                     result.push(instStamm);
                 }
             } else if (this.fi) {
