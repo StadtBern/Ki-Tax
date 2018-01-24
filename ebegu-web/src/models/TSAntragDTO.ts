@@ -78,9 +78,9 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
         this._kinder = kinder;
         this._gesuchBetreuungenStatus = gesuchBetreuungenStatus;
         this._dokumenteHochgeladen = dokumenteHochgeladen;
+        this._neustesGesuch = neustesGesuch;
         this._verantwortlicherUsernameJA = verantwortlicherUsernameJA;
         this._verantwortlicherUsernameSCH = verantwortlicherUsernameSCH;
-        this._neustesGesuch = neustesGesuch;
     }
 
     get antragId(): string {

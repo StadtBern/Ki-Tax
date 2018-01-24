@@ -221,7 +221,7 @@ export class GesuchstellerDashboardListViewController {
             // this.$state.go('gesuch.fallcreation', {createNew: true, gesuchId: null});
             return this.$translate.instant('GS_BEANTRAGEN');
         }
-        return null;
+        return undefined;
     }
 
     public editAntrag(antrag: TSAntragDTO): void {

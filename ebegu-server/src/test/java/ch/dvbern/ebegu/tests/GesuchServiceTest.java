@@ -280,8 +280,8 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 			// Die korrekterweise umgehaengten Ids rausnehmen
 			findAbstractEntitiesWithIds(gesuchVerfuegt, intersection);
 		}
-		// Jetzt sollten keine Ids mehr drinn sein.
-		Assert.assertTrue(intersection.isEmpty());
+		// Jetzt sollten keine Ids mehr drinn sein. Nur die ID von verantwortlicher bleibt, da er nicht mutiert wird
+		Assert.assertEquals(1, intersection.size());
 	}
 
 	@Test
@@ -316,7 +316,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		findAllIdsOfAbstractEntities(folgegesuch, idsFolgegesuch, false);
 		int anzahlObjekteMutation = anzahlObjekte;
 
-		Assert.assertEquals(8, anzahlObjekteMutation);
+		Assert.assertEquals(10, anzahlObjekteMutation);
 
 		// Ids, welche in beiden Gesuchen vorkommen ermitteln. Die meisten Objekte muessen kopiert
 		// werden, es gibt aber Ausnahmen, wo eine Referenz kopiert wird.
@@ -326,8 +326,8 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 			// Die korrekterweise umgehaengten Ids rausnehmen
 			findAbstractEntitiesWithIds(erstgesuch, intersection);
 		}
-		// Jetzt sollten keine Ids mehr drinn sein.
-		Assert.assertTrue(intersection.isEmpty());
+		// Jetzt sollten keine Ids mehr drinn sein. Nur die ID von verantwortlicher bleibt, da er nicht mutiert wird
+		Assert.assertEquals(1, intersection.size());
 	}
 
 	@Test
