@@ -61,7 +61,7 @@
             </dv-loading-button>
 
             <dv-loading-button type="button"
-                               ng-if="vm.showAnmeldungCreate(periode)"
+                               ng-if="vm.showAnmeldungCreate(periode) && !vm.hasOnlyFerieninsel(periode)"
                                button-click="vm.createTagesschule(periode)"
                                button-class="dvb-loading-button gdashboard-panel__button">
                 {{'TAGESSCHULE_ANMELDEN' | translate}}
@@ -69,6 +69,10 @@
 
             <div ng-if="vm.gesperrtWegenMutation(periode)" >
                 {{'GESPERRT_WEGEN_MUTATION' | translate}}
+            </div>
+
+            <div ng-if="vm.showAnmeldungCreate(periode) && vm.hasOnlyFerieninsel(periode)" >
+                {{'MUTATION_NOETIG_DB' | translate}}
             </div>
         </div>
 

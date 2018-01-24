@@ -289,6 +289,12 @@ export class GesuchstellerDashboardListViewController {
     public gesperrtWegenMutation(periode: TSGesuchsperiode) {
         let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
         return !!antrag && !antrag.neustesGesuch;
-
     }
+
+    public hasOnlyFerieninsel(periode: TSGesuchsperiode) {
+        let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
+        return !!antrag && antrag.hasOnlyFerieninsel();
+    }
+
+
 }
