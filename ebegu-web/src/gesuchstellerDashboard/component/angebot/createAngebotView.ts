@@ -18,10 +18,7 @@ import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IAngebotStateParams} from '../../gesuchstellerDashboard.route';
 import ILogService = angular.ILogService;
-import IPromise = angular.IPromise;
-import ITranslateService = angular.translate.ITranslateService;
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
-import TSKind from '../../../models/TSKind';
 import TSKindContainer from '../../../models/TSKindContainer';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSBelegungTagesschule from '../../../models/TSBelegungTagesschule';
@@ -52,8 +49,6 @@ export class CreateAngebotListViewController {
     private fi: boolean;
     private kindContainer: TSKindContainer;
     private institution: TSInstitutionStammdaten;
-    /*private betreuung: TSBetreuung;
-     private additionalKindQuestions: boolean = false;*/
     private anmeldungDTO: TSAnmeldungDTO = new TSAnmeldungDTO;
 
     static $inject: string[] = ['$state', '$log', 'GesuchModelManager', '$stateParams', 'BetreuungRS', 'DvDialog'];
@@ -182,12 +177,6 @@ export class CreateAngebotListViewController {
             });
 
         }
-
-        /*        if (this.direktAnmeldenSchulamt()) {
-
-         } else {
-         this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
-         }*/
     }
 
     public backToHome() {
