@@ -104,4 +104,14 @@ public class BriefPrintImpl implements BriefPrint {
 		}
 		return "";
 	}
+
+	@Override
+	public boolean isAdresseJugendamt() {
+		return !gesuch.hasOnlyBetreuungenOfSchulamt();
+	}
+
+	@Override
+	public boolean isAdresseSchulamt() {
+		return gesuch.hasOnlyBetreuungenOfSchulamt();
+	}
 }

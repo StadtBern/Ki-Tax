@@ -46,6 +46,7 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -181,7 +182,17 @@ public class SearchResource {
 	@Path("/gesuchsteller")
 	public List<JaxAntragDTO> getAllAntraegeGesuchsteller() {
 		List<Gesuch> antraege = gesuchService.getAntraegeByCurrentBenutzer();
-		return convertToAntragDTOList(antraege);
+		final List<JaxAntragDTO> jaxAntragDTOS = new ArrayList<>();
+		final UserRole userRole = principalBean.discoverMostPrivilegedRole();
+
+		antraege.forEach(gesuch -> {
+			final JaxAntragDTO jaxAntragDTO = converter.gesuchToAntragDTO(gesuch, userRole);
+			jaxAntragDTO.setNeustesGesuch(gesuchService.isNeustesGesuch(gesuch));
+			jaxAntragDTOS.add(jaxAntragDTO);
+		});
+
+		return jaxAntragDTOS;
+
 	}
 
 	@ApiOperation(value = "Sucht Antraege mit den uebergebenen Suchkriterien/Filtern. Es werden nur Antraege zurueck " +
@@ -204,13 +215,6 @@ public class SearchResource {
 			JaxAntragSearchresultDTO resultDTO = buildResultDTO(antragSearch, searchResultPair, antragDTOList);
 			return Response.ok(resultDTO).build();
 		});
-	}
-
-	@Nonnull
-	private List<JaxAntragDTO> convertToAntragDTOList(List<Gesuch> antraege) {
-		List<JaxAntragDTO> pendenzenList = new ArrayList<>();
-		antraege.forEach(gesuch -> pendenzenList.add(converter.gesuchToAntragDTO(gesuch, principalBean.discoverMostPrivilegedRole())));
-		return pendenzenList;
 	}
 
 	@Nonnull

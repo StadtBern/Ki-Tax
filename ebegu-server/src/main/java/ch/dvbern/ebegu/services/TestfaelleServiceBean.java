@@ -73,6 +73,7 @@ import ch.dvbern.ebegu.testfaelle.Testfall07_MeierMeret;
 import ch.dvbern.ebegu.testfaelle.Testfall08_UmzugAusInAusBern;
 import ch.dvbern.ebegu.testfaelle.Testfall09_Abwesenheit;
 import ch.dvbern.ebegu.testfaelle.Testfall10_UmzugVorGesuchsperiode;
+import ch.dvbern.ebegu.testfaelle.Testfall11_SchulamtOnly;
 import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_01;
 import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_02;
 import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_03;
@@ -192,6 +193,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			} else if (ABWESENHEIT.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Abwesenheit Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
+			} else if (SCHULAMT_ONLY.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveGesuch(new Testfall11_SchulamtOnly(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
+				responseString.append("Fall Schulamt Only Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
 			} else if (ASIV1.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveAsivGesuch(new Testfall_ASIV_01(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
 				responseString.append("Fall ASIV 1 Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
@@ -232,6 +236,8 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 				createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
+				createAndSaveGesuch(new Testfall10_UmzugVorGesuchsperiode(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
+				createAndSaveGesuch(new Testfall11_SchulamtOnly(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				createAndSaveAsivGesuch(new Testfall_ASIV_01(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
 				createAndSaveAsivGesuch(new Testfall_ASIV_02(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
 				createAndSaveAsivGesuch(new Testfall_ASIV_03(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
@@ -242,9 +248,10 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 				createAndSaveAsivGesuch(new Testfall_ASIV_08(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
 				createAndSaveAsivGesuch(new Testfall_ASIV_09(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
 				createAndSaveAsivGesuch(new Testfall_ASIV_10(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
-				responseString.append("Testfaelle 1-9 und ASIV-Testfaelle 1-8 erstellt");
+				responseString.append("Testfaelle 1-11 und ASIV-Testfaelle 1-10 erstellt");
 			} else {
-				responseString.append("Usage: /Nummer des Testfalls an die URL anhaengen. Bisher umgesetzt: 1-9. '/all' erstellt alle Testfaelle");
+				responseString.append("Usage: /Nummer des Testfalls an die URL anhaengen. Bisher umgesetzt: 1-11. "
+					+ "'/all' erstellt alle Testfaelle");
 			}
 		}
 		return responseString;
@@ -298,6 +305,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		}
 		if (UMZUG_VOR_GESUCHSPERIODE.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall10_UmzugVorGesuchsperiode(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
+		}
+		if (SCHULAMT_ONLY.equals(fallid)) {
+			return createAndSaveGesuch(new Testfall11_SchulamtOnly(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
 		if (ASIV1.equals(fallid)) {
 			return createAndSaveAsivGesuch(new Testfall_ASIV_01(gesuchsperiode, institutionStammdatenList, true), verfuegen, null);
@@ -441,10 +451,14 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		Optional<InstitutionStammdaten> optionalAaregg = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_KITA);
 		Optional<InstitutionStammdaten> optionalBruennen = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_BRUENNEN_KITA);
 		Optional<InstitutionStammdaten> optionalTagiAaregg = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_TAGI);
+		Optional<InstitutionStammdaten> optionalTagesschule = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_BERN_TAGESSCULHE);
+		Optional<InstitutionStammdaten> optionalFerieninsel = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_GUARDA_FERIENINSEL);
 
 		optionalAaregg.ifPresent(institutionStammdatenList::add);
 		optionalBruennen.ifPresent(institutionStammdatenList::add);
 		optionalTagiAaregg.ifPresent(institutionStammdatenList::add);
+		optionalTagesschule.ifPresent(institutionStammdatenList::add);
+		optionalFerieninsel.ifPresent(institutionStammdatenList::add);
 		return institutionStammdatenList;
 	}
 

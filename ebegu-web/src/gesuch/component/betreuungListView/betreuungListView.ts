@@ -37,6 +37,7 @@ import ITranslateService = angular.translate.ITranslateService;
 import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
 import ILogService = angular.ILogService;
+import TSGesuch from '../../../models/TSGesuch';
 
 let template = require('./betreuungListView.html');
 require('./betreuungListView.less');
@@ -217,7 +218,8 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         let isRole: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles());
         let isGesuchsperiode: boolean = this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung();
         let istNotStatusFreigabequittung: boolean = this.gesuchModelManager.getGesuch().status !== TSAntragStatus.FREIGABEQUITTUNG;
-        return isStatus && isRole && isGesuchsperiode && istNotStatusFreigabequittung;
+        let isNeustesGesuch: boolean = this.gesuchModelManager.getGesuch().neustesGesuch;
+        return isStatus && isRole && isGesuchsperiode && istNotStatusFreigabequittung && isNeustesGesuch;
     }
 
     /**
@@ -225,5 +227,10 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
      */
     public isBetreuungenHinzufuegenDisabled(): boolean {
         return this.gesuchModelManager.getGesuch().status === TSAntragStatus.FREIGABEQUITTUNG;
+    }
+
+    public hasOnlyFerieninsel() {
+        let gesuch: TSGesuch = this.gesuchModelManager.getGesuch();
+        return !!gesuch && gesuch.areThereOnlyFerieninsel();
     }
 }

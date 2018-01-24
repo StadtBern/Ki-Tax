@@ -50,6 +50,7 @@
                                 <th data-translate="BETREUUNG"></th>
                                 <th data-translate="STATUS"></th>
                                 <th data-translate="DETAIL"></th>
+                                <th data-translate="BGNUMMER"></th>
                                 <th data-translate="MITTEILUNG" ng-if="vm.showMitteilung()"></th>
                                 <th></th>
                                 <th></th>
@@ -68,6 +69,7 @@
                                 <td ng-bind="vm.getBetreuungDetails(betreuung) | translate"
                                     class="betreuung-table-header">
                                 </td>
+                                <td ng-bind="betreuung.bgNummer"></td>
                                 <td ng-if="vm.showMitteilung()" width="5%">
                                     <dv-loading-button type="button" button-click="vm.gotoMitteilung(betreuung)"
                                                        button-class="dv-btn-operation centered-btn">
@@ -138,13 +140,20 @@
 					<!-- Tagesschule Anmeldung hinzufuegen, auch wenn verfuegt -->
                     <div class="col-md-12" dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                         dv-show-expression="vm.showButtonAnmeldungSchulamt()">
+                         dv-show-expression="vm.showButtonAnmeldungSchulamt() && !vm.hasOnlyFerieninsel()">
                         <dv-loading-button type="button" button-click="vm.createAnmeldungTagesschule(kind)"
                                            button-class="dv-btn-operation">
                             <i class="fa fa-lg fa-plus-circle"></i>
                             <span data-translate="BETREUUNG_TAGESSCHULE_HINZUFUEGEN"></span>
                         </dv-loading-button>
                     </div>
+
+                    <div class="col-md-12 marginTop40" dv-show-element
+                         dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                         dv-show-expression="vm.showButtonAnmeldungSchulamt() && vm.hasOnlyFerieninsel()">
+                        <span data-translate="MUTATION_NOETIG"></span>
+                    </div>
+
                     <!-- Neue Betreuungen hinzufuegen disabled-->
                     <div class="col-md-12" ng-if="vm.isBetreuungenHinzufuegenDisabled()">
                         <span data-translate="BETREUUNG_HINZUFUEGEN_FORBIDDEN"></span>

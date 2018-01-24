@@ -369,12 +369,11 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 	private boolean isReadAuthorizedFreigabe(Gesuch gesuch) {
 		if (AntragStatus.FREIGABEQUITTUNG == gesuch.getStatus()) {
-			boolean schulamtOnly = gesuch.hasOnlyBetreuungenOfSchulamt();
 			if (principalBean.isCallerInAnyOfRole(SCHULAMT, ADMINISTRATOR_SCHULAMT)) {
-				if (schulamtOnly) {
-					return true; //schulamt dar nur solche lesen die nur_schulamt sind
+				if (gesuch.hasBetreuungOfSchulamt()) {
+					return true; //schulamt darf nur solche lesen die nur_schulamt sind
 				}
-			} else if (!schulamtOnly) {
+			} else if (!gesuch.hasOnlyBetreuungenOfSchulamt()) {
 				return true;     //nicht schulamtbenutzer duerfen keine lesen die exklusiv schulamt sind
 			}
 		}

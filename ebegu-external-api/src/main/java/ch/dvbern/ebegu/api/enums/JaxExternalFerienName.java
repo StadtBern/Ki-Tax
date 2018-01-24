@@ -17,9 +17,9 @@ package ch.dvbern.ebegu.api.enums;
 
 public enum JaxExternalFerienName {
 
-	SOMMERFERIEN,
 	HERBSTFERIEN,
-	WEIHNACHTSFERIEN,
-	FRUEHLINGSFERIEN;
+	SPORTFERIEN,
+	FRUEHLINGSFERIEN,
+	SOMMERFERIEN
 
 }

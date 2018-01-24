@@ -44,7 +44,7 @@
                         <span ng-bind="vm.familie"></span>
                     </div>
                 </div>
-                <div class="row marginTop10" ng-hide="vm.isSchulamt()">
+                <div class="row marginTop10" ng-hide="!vm.isJugendamt()">
                     <div class="col-xs-12 dv-input-container-medium">
                         <div class="form-group">
                             <label class="md-no-float" data-translate="FREIGEBEN_DIALOG_LABEL_VERANTWORTLICHER"
@@ -54,8 +54,27 @@
                                 <select name="verantwortlicher"
                                         id="verantwortlicher"
                                         class="form-control"
-                                        ng-options="user.username as user.getFullName() for user in vm.userList"
-                                        ng-model="vm.selectedUser">
+                                        ng-options="user.username as user.getFullName() for user in vm.userJAList"
+                                        ng-model="vm.selectedUserJA">
+                                    <option value="">{{'NO_VERANTWORTLICHER_SELECTED' | translate}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row marginTop10" ng-hide="!vm.isSchulamt()">
+                    <div class="col-xs-12 dv-input-container-medium">
+                        <div class="form-group">
+                            <label class="md-no-float" data-translate="FREIGEBEN_DIALOG_LABEL_VERANTWORTLICHER_SCH"
+                                   for="verantwortlicher">
+                            </label>
+                            <div class="dv-select-style">
+                                <select name="verantwortlicherSCH"
+                                        id="verantwortlicherSCH"
+                                        class="form-control"
+                                        ng-options="user.username as user.getFullName() for user in vm.userSCHList"
+                                        ng-model="vm.selectedUserSCH">
+                                    <option value="">{{'NO_VERANTWORTLICHER_SELECTED' | translate}}</option>
                                 </select>
                             </div>
                         </div>
@@ -71,7 +90,7 @@
             <span class="ng-binding ng-scope" data-translate="CANCEL"></span>
         </button>
         <button class="" type="button" ng-if="!vm.hasError()"
-                ng-click="vm.hide()" md-autofocus="dialog.$type==='alert'"
+                ng-click="vm.freigeben()" md-autofocus="dialog.$type==='alert'"
                 aria-label="{{'LABEL_FREIGEBEN' | translate}}">
             <span class="ng-binding ng-scope" data-translate="LABEL_FREIGEBEN"></span>
         </button>

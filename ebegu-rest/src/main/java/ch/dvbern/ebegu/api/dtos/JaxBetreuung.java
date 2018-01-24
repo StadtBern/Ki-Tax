@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
@@ -105,6 +106,12 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	@Column(nullable = false)
 	private boolean gueltig = false;
+
+	@Nullable
+	private AnmeldungMutationZustand anmeldungMutationZustand;
+
+	// transient (Not stored on server, just an information for client)
+	private String bgNummer;
 
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
 		return institutionStammdaten;
@@ -278,6 +285,15 @@ public class JaxBetreuung extends JaxAbstractDTO {
 		this.belegungFerieninsel = belegungFerieninsel;
 	}
 
+	@Nullable
+	public AnmeldungMutationZustand getAnmeldungMutationZustand() {
+		return anmeldungMutationZustand;
+	}
+
+	public void setAnmeldungMutationZustand(@Nullable AnmeldungMutationZustand anmeldungMutationZustand) {
+		this.anmeldungMutationZustand = anmeldungMutationZustand;
+	}
+
 	@Override
 	public int compareTo(@Nonnull JaxAbstractDTO o) {
 		if (o instanceof JaxBetreuung) {
@@ -285,5 +301,13 @@ public class JaxBetreuung extends JaxAbstractDTO {
 			return getBetreuungNummer().compareTo(other.getBetreuungNummer());
 		}
 		return super.compareTo(o);
+	}
+
+	public String getBgNummer() {
+		return bgNummer;
+	}
+
+	public void setBgNummer(String bgNummer) {
+		this.bgNummer = bgNummer;
 	}
 }
