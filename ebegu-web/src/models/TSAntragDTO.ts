@@ -46,13 +46,16 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
     private _gesuchBetreuungenStatus: TSGesuchBetreuungenStatus;
     private _dokumenteHochgeladen: boolean;
 
+    //transient
+    private _neustesGesuch: boolean;
+
     constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
                 eingangsdatum?: moment.Moment, eingangsdatumSTV?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>,
                 institutionen?: Array<string>, verantwortlicher?: string, verantwortlicherSCH?: string, status?: TSAntragStatus,
                 gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
                 verfuegt?: boolean, laufnummer?: number, besitzerUsername?: string, eingangsart?: TSEingangsart, beschwerdeHaengig?: boolean,
                 kinder?: Array<string>, gesuchBetreuungenStatus?: TSGesuchBetreuungenStatus, dokumenteHochgeladen?: boolean,
-                verantwortlicherUsernameJA?: string, verantwortlicherUsernameSCH?: string) {
+                verantwortlicherUsernameJA?: string, verantwortlicherUsernameSCH?: string, neustesGesuch?: boolean) {
 
         super(fallNummer, familienName);
         this._antragId = antragId;
@@ -77,6 +80,7 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
         this._dokumenteHochgeladen = dokumenteHochgeladen;
         this._verantwortlicherUsernameJA = verantwortlicherUsernameJA;
         this._verantwortlicherUsernameSCH = verantwortlicherUsernameSCH;
+        this._neustesGesuch = neustesGesuch;
     }
 
     get antragId(): string {
@@ -287,5 +291,13 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
 
     public set gesuchBetreuungenStatus(value: TSGesuchBetreuungenStatus) {
         this._gesuchBetreuungenStatus = value;
+    }
+
+    public get neustesGesuch(): boolean {
+        return this._neustesGesuch;
+    }
+
+    public set neustesGesuch(value: boolean) {
+        this._neustesGesuch = value;
     }
 }
