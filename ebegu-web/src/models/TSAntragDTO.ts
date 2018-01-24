@@ -31,6 +31,8 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
     private _aenderungsdatum: moment.Moment;
     private _verantwortlicher: string;
     private _verantwortlicherSCH: string;
+    private _verantwortlicherUsernameJA: string;
+    private _verantwortlicherUsernameSCH: string;
     private _besitzerUsername: string;
     private _angebote: Array<TSBetreuungsangebotTyp>;
     private _institutionen: Array<string>;
@@ -49,7 +51,8 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
                 institutionen?: Array<string>, verantwortlicher?: string, verantwortlicherSCH?: string, status?: TSAntragStatus,
                 gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
                 verfuegt?: boolean, laufnummer?: number, besitzerUsername?: string, eingangsart?: TSEingangsart, beschwerdeHaengig?: boolean,
-                kinder?: Array<string>, gesuchBetreuungenStatus?: TSGesuchBetreuungenStatus, dokumenteHochgeladen?: boolean) {
+                kinder?: Array<string>, gesuchBetreuungenStatus?: TSGesuchBetreuungenStatus, dokumenteHochgeladen?: boolean,
+                verantwortlicherUsernameJA?: string, verantwortlicherUsernameSCH?: string) {
 
         super(fallNummer, familienName);
         this._antragId = antragId;
@@ -72,6 +75,8 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
         this._kinder = kinder;
         this._gesuchBetreuungenStatus = gesuchBetreuungenStatus;
         this._dokumenteHochgeladen = dokumenteHochgeladen;
+        this._verantwortlicherUsernameJA = verantwortlicherUsernameJA;
+        this._verantwortlicherUsernameSCH = verantwortlicherUsernameSCH;
     }
 
     get antragId(): string {
@@ -144,6 +149,22 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
 
     public set verantwortlicherSCH(value: string) {
         this._verantwortlicherSCH = value;
+    }
+
+    public get verantwortlicherUsernameJA(): string {
+        return this._verantwortlicherUsernameJA;
+    }
+
+    public set verantwortlicherUsernameJA(value: string) {
+        this._verantwortlicherUsernameJA = value;
+    }
+
+    public get verantwortlicherUsernameSCH(): string {
+        return this._verantwortlicherUsernameSCH;
+    }
+
+    public set verantwortlicherUsernameSCH(value: string) {
+        this._verantwortlicherUsernameSCH = value;
     }
 
     get status(): TSAntragStatus {

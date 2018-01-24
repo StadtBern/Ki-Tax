@@ -60,7 +60,7 @@ public interface GeneratedDokumentService {
 	WriteProtectedDokument getBegleitschreibenDokument(Gesuch gesuch) throws MimeTypeParseException, MergeDocException;
 
 	WriteProtectedDokument getFreigabequittungAccessTokenGeneratedDokument(Gesuch gesuch,
-		Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException;
+		Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
 
 	WriteProtectedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(Gesuch gesuch, Betreuung betreuung, String manuelleBemerkungen,
 		Boolean forceCreation) throws MimeTypeParseException, MergeDocException, IOException;

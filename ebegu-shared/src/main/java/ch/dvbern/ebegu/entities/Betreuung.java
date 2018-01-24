@@ -44,8 +44,10 @@ import javax.validation.constraints.Size;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.BGNummerBridge;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
+import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.validators.CheckAbwesenheitDatesOverlapping;
@@ -162,6 +164,11 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 
 	@Column(nullable = false)
 	private boolean gueltig = false;
+
+	@Nullable
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = true)
+	private AnmeldungMutationZustand anmeldungMutationZustand;
 
 	public Betreuung() {
 	}
@@ -310,6 +317,15 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		this.gueltig = gueltig;
 	}
 
+	@Nullable
+	public AnmeldungMutationZustand getAnmeldungMutationZustand() {
+		return anmeldungMutationZustand;
+	}
+
+	public void setAnmeldungMutationZustand(@Nullable AnmeldungMutationZustand anmeldungMutationZustand) {
+		this.anmeldungMutationZustand = anmeldungMutationZustand;
+	}
+
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//by default just the fields that belong to the Betreuung itself
@@ -395,7 +411,8 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@Transient
 	@SuppressFBWarnings("NM_CONFUSING")
 	public String getBGNummer() {
-		if (getKind().getGesuch() != null) {
+		// some users like Institutionen don't have access to the Kind, so it must be proved that getKind() doesn't return null
+		if (getKind() != null && getKind().getGesuch() != null) {
 			String kindNumberAsString = String.valueOf(getKind().getKindNummer());
 			String betreuung = String.valueOf(getBetreuungNummer());
 			return getKind().getGesuch().getJahrAndFallnummer() + '.' + kindNumberAsString + '.' + betreuung;
@@ -431,20 +448,18 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		this.vorgaengerVerfuegung = vorgaengerVerfuegung;
 	}
 
-	public Betreuung copyForMutation(@Nonnull Betreuung mutation, @Nonnull KindContainer kindContainerMutation) {
+	public Betreuung copyForMutation(@Nonnull Betreuung mutation, @Nonnull KindContainer kindContainerMutation, Eingangsart eingangsart) {
 		super.copyForMutation(mutation);
 		mutation.setKind(kindContainerMutation);
 		mutation.setInstitutionStammdaten(this.getInstitutionStammdaten());
 		// Bereits verfuegte Betreuungen werden als BESTAETIGT kopiert, alle anderen behalten ihren Status
 		if (this.getBetreuungsstatus().isGeschlossenJA()) {
-			if (!isAngebotSchulamt()) {
-				// Falls sämtliche Betreuungspensum-Container dieser Betreuung ein effektives Pensum von 0 haben, handelt es sich um die
-				// Verfügung eines stornierten Platzes. Wir übernehmen diesen als "STORNIERT"
-				if (hasAnyNonZeroPensum()) {
-					mutation.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
-				} else {
-					mutation.setBetreuungsstatus(Betreuungsstatus.STORNIERT);
-				}
+			// Falls sämtliche Betreuungspensum-Container dieser Betreuung ein effektives Pensum von 0 haben, handelt es sich um die
+			// Verfügung eines stornierten Platzes. Wir übernehmen diesen als "STORNIERT"
+			if (hasAnyNonZeroPensum()) {
+				mutation.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
+			} else {
+				mutation.setBetreuungsstatus(Betreuungsstatus.STORNIERT);
 			}
 		} else {
 			mutation.setBetreuungsstatus(this.getBetreuungsstatus());
@@ -471,6 +486,24 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		mutation.setBetreuungMutiert(null);
 		mutation.setAbwesenheitMutiert(null);
 		mutation.setGueltig(false);
+
+		// EBEGU-1559
+		// Beim Mutieren werden alle Betreuungen kopiert.
+		// Bei Schulamtangebote Online Mutationen werden die kopierten Betreuungen mit dem Zustand NOCH_NICHT_FREIGEGEBEN gekennzeichnet und die
+		// Original-Betreuung als AKTUELLE_ANMELDUNG gekennzeichnet.
+		// Bei Schulamtangebote Papier Mutationen werden die kopierten Betreuungen mit dem Zustand AKTUELLE_ANMELDUNG gekennzeichnet und die
+		// Original-Betreuung als MUTIERT gekennzeichnet.
+		// Betreuungen mit dem Zustand MUTIERT und NOCH_NICHT_FREIGEGEBEN können nicht weiterverabeitet werden und werden mit einer
+		// Warnung im Gui als solche gezeigt
+		if (isAngebotSchulamt()) {
+			if (eingangsart == Eingangsart.ONLINE) {
+				mutation.setAnmeldungMutationZustand(AnmeldungMutationZustand.NOCH_NICHT_FREIGEGEBEN);
+				this.setAnmeldungMutationZustand(AnmeldungMutationZustand.AKTUELLE_ANMELDUNG);
+			} else {
+				mutation.setAnmeldungMutationZustand(AnmeldungMutationZustand.AKTUELLE_ANMELDUNG);
+				this.setAnmeldungMutationZustand(AnmeldungMutationZustand.MUTIERT);
+			}
+		}
 		return mutation;
 	}
 
@@ -509,5 +542,19 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@Override
 	public String getOwningFallId() {
 		return extractGesuch().getFall().getId();
+	}
+
+	// Funktion zum Kopieren von Tagesschule und Ferieninsel Angebote
+	public void copyAnmeldung(Betreuung betreuung) {
+		if (this.getBetreuungsstatus() != betreuung.getBetreuungsstatus()) {
+			this.setBetreuungsstatus(betreuung.getBetreuungsstatus());
+			this.setInstitutionStammdaten(betreuung.getInstitutionStammdaten());
+			if (betreuung.getBelegungFerieninsel() != null) {
+				this.setBelegungFerieninsel(betreuung.getBelegungFerieninsel().copyForMutation(new BelegungFerieninsel()));
+			}
+			if (betreuung.getBelegungTagesschule() != null) {
+				this.setBelegungTagesschule(betreuung.getBelegungTagesschule().copyForMutation(new BelegungTagesschule(), this));
+			}
+		}
 	}
 }

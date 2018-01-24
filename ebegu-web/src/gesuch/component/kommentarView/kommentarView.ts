@@ -223,8 +223,8 @@ export class KommentarViewController {
 
     public freigebenSTV(): void {
         this.dvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
-            title: 'FREIGABE_JA',
-            deleteText: 'FREIGABE_JA_BESCHREIBUNG',
+            title: this.getFreigabeTitel(),
+            deleteText: this.getFreigabeBeschreibung(),
             parentController: undefined,
             elementID: undefined
         }).then(() => {
@@ -238,5 +238,23 @@ export class KommentarViewController {
     public showBemerkungenPruefungSTV(): boolean {
         return this.getGesuch().geprueftSTV === true || this.getGesuch().status === TSAntragStatus.PRUEFUNG_STV || this.getGesuch().status === TSAntragStatus.IN_BEARBEITUNG_STV
             || this.getGesuch().status === TSAntragStatus.GEPRUEFT_STV;
+    }
+
+    public getFreigabeName(): string {
+        return this.$translate.instant(this.getFreigabeTitel());
+    }
+
+    public getFreigabeTitel(): string {
+        if (this.getGesuch().areThereOnlySchulamtAngebote()) {
+            return 'FREIGABE_SCH';
+        }
+        return 'FREIGABE_JA';
+    }
+
+    public getFreigabeBeschreibung(): string {
+        if (this.getGesuch().areThereOnlySchulamtAngebote()) {
+            return 'FREIGABE_SCH_BESCHREIBUNG';
+        }
+        return 'FREIGABE_JA_BESCHREIBUNG';
     }
 }

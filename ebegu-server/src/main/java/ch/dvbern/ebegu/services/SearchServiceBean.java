@@ -185,39 +185,28 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 		case ADMIN:
 		case REVISOR:
 		case JURIST:
+			if (searchForPendenzen) {
+				predicates.add(createPredicateJAOrMischGesuche(cb, fall));
+			}
 			break;
 		case STEUERAMT:
 			break;
 		case SACHBEARBEITER_JA:
-			// (deprecated- warten auf Datenschutz) Jugendamt-Mitarbeiter duerfen auch Faelle sehen, die noch gar keine Kinder/Betreuungen haben.
-			// (deprecated- warten auf Datenschutz) Wenn aber solche erfasst sind, dann duerfen sie nur diejenigen sehen, die nicht nur Schulamt haben
-			// (deprecated- warten auf Datenschutz) zudem muss auch der status ensprechend sein
-
-			//todo dieser Predicate macht keinen Sinn mehr, weil es sein kann, dass das JA ein Gesuch bearbeiten muss, das nur Schulamtangebote hat. Dies sollte allerdings
-			// kein Problem mehr sein wenn es erlaubt wird, dass JA und SCH alle Gesuch sehen duerfen. Dies bleibt auskommentiert bis die Entscheidung getroffen ist
-//			Predicate predicateKeineKinder = kindContainers.isNull();
-//			Predicate predicateKeineBetreuungen = betreuungen.isNull();
-//			Predicate predicateKeineInstitutionsstammdaten = institutionstammdaten.isNull();
-//			Predicate predicateKeineInstitution = institution.isNull();
-//			Predicate predicateAngebotstyp = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
-//			Predicate predicateRichtigerAngebotstypOderNichtAusgefuellt = cb.or(predicateKeineKinder, predicateKeineBetreuungen, predicateKeineInstitutionsstammdaten, predicateKeineInstitution, predicateAngebotstyp);
-
-//			Predicate predicateRichtigerAngebotstypOderNichtAusgefuellt = cb.or(predicateKeineKinder, predicateKeineBetreuungen, predicateKeineInstitutionsstammdaten, predicateKeineInstitution, predicateInstitution);
-//			predicates.add(predicateRichtigerAngebotstypOderNichtAusgefuellt);
 			break;
 		case SACHBEARBEITER_TRAEGERSCHAFT:
 			predicates.add(cb.equal(institution.get(Institution_.traegerschaft), user.getTraegerschaft()));
-			predicates.add(createPredicateSchulamtAngebote(cb, betreuungen, institutionstammdaten));
+			predicates.add(createPredicateAusgeloesteSCHJAAngebote(cb, betreuungen, institutionstammdaten));
 			break;
 		case SACHBEARBEITER_INSTITUTION:
 			// es geht hier nicht um die institution des zugewiesenen benutzers sondern um die institution des eingeloggten benutzers
 			predicates.add(cb.equal(institution, user.getInstitution()));
-			predicates.add(createPredicateSchulamtAngebote(cb, betreuungen, institutionstammdaten));
+			predicates.add(createPredicateAusgeloesteSCHJAAngebote(cb, betreuungen, institutionstammdaten));
 			break;
 		case SCHULAMT:
 		case ADMINISTRATOR_SCHULAMT:
-			// Schulamt und AdminSchulamt duerfen alles sehen. Gleich wie JA
-//			predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
+			if (searchForPendenzen) {
+				predicates.add(createPredicateSCHOrMischGesuche(cb, root, fall));
+			}
 			break;
 		default:
 			LOG.warn("antragSearch can not be performed by users in role {}", role);
@@ -225,7 +214,7 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 			break;
 		}
 
-		// Predicates derived from PredicateDTO
+		// Predicates derived from PredicateDTO (Filter coming from client)
 		PredicateObjectDTO predicateObjectDto = antragTableFilterDto.getSearch().getPredicateObject();
 		if (predicateObjectDto != null) {
 			if (predicateObjectDto.getFallNummer() != null) {
@@ -361,24 +350,73 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 	}
 
 	/**
+	 * Ob es ein JA- SCH- oder Mischgesuch ist, wird anhand der Verantwortliche berechnet.
+	 * beide Verantwortliche sind gesetzt  -> Mischgesuch
+	 * nur VerantwortlicherJA ist gesetzt  -> JA-Gesuche
+	 * nur VerantwortlicherSCH ist gesetzt -> SCH-Gesuche
+	 */
+	private Predicate createPredicateJAOrMischGesuche(CriteriaBuilder cb, Join<Gesuch, Fall> fall) {
+		final Predicate predicateIsVerantwortlicherJA = cb.isNotNull(fall.get(Fall_.verantwortlicher));
+		final Predicate predicateIsVerantwortlicherSCH = cb.isNotNull(fall.get(Fall_.verantwortlicherSCH));
+
+		final Predicate predicateIsJAgesuch = cb.and(predicateIsVerantwortlicherJA, predicateIsVerantwortlicherSCH.not());
+		final Predicate predicateIsMischgesuch = cb.and(predicateIsVerantwortlicherJA, predicateIsVerantwortlicherSCH);
+
+		return cb.or(predicateIsJAgesuch, predicateIsMischgesuch);
+	}
+
+	/**
+	 * Ob es ein JA- SCH- oder Mischgesuch ist, wird anhand der Verantwortliche berechnet.
+	 * beide Verantwortliche sind gesetzt  -> Mischgesuch
+	 * nur VerantwortlicherJA ist gesetzt  -> JA-Gesuche
+	 * nur VerantwortlicherSCH ist gesetzt -> SCH-Gesuche
+	 */
+	private Predicate createPredicateSCHOrMischGesuche(CriteriaBuilder cb, Root<Gesuch> root, Join<Gesuch, Fall> fall) {
+		final Predicate predicateIsVerantwortlicherJA = cb.isNotNull(fall.get(Fall_.verantwortlicher));
+		final Predicate predicateIsVerantwortlicherSCH = cb.isNotNull(fall.get(Fall_.verantwortlicherSCH));
+		final Predicate predicateIsFlagFinSitNotSet = cb.isNull(root.get(Gesuch_.finSitStatus));
+
+		final Predicate predicateIsSCHgesuch = cb.and(predicateIsVerantwortlicherJA.not(), predicateIsVerantwortlicherSCH);
+		final Predicate predicateIsMischgesuch = cb.and(predicateIsVerantwortlicherJA, predicateIsVerantwortlicherSCH);
+		final Predicate predicateIsMischgesuchPendenz = cb.and(predicateIsMischgesuch, predicateIsFlagFinSitNotSet);
+
+		return cb.or(predicateIsSCHgesuch, predicateIsMischgesuchPendenz);
+	}
+
+
+	/**
 	 * ((TS or FI) and notAusgeloest) or (otherAngebotTyps)
 	 */
-	private Predicate createPredicateSchulamtAngebote(CriteriaBuilder cb, SetJoin<KindContainer, Betreuung> betreuungen,
+	private Predicate createPredicateAusgeloesteSCHJAAngebote(CriteriaBuilder cb, SetJoin<KindContainer, Betreuung> betreuungen,
+		Join<Betreuung, InstitutionStammdaten> institutionstammdaten) {
+
+		Predicate predicateTSOderFINotAusgelost = createPredicateAusgeloesteSCHAngebote(cb, betreuungen, institutionstammdaten);
+		Predicate predicateNotTSOderFI = createPredicateJAAngebote(cb, institutionstammdaten);
+		return cb.or(predicateTSOderFINotAusgelost, predicateNotTSOderFI);
+	}
+
+	/**
+	 * (TS or FI) and notAusgeloest
+	 */
+	private Predicate createPredicateAusgeloesteSCHAngebote(CriteriaBuilder cb, SetJoin<KindContainer, Betreuung> betreuungen,
 		Join<Betreuung, InstitutionStammdaten> institutionstammdaten) {
 
 		//(TS or FI) and notAusgeloest)
 		Predicate predicateTagesschule = cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
 		Predicate predicateFerieninsel = cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.FERIENINSEL);
 		Predicate predicateTSOderFI = cb.or(predicateTagesschule, predicateFerieninsel);
-		Predicate predicateNotAusgelost = cb.notEqual(betreuungen.get(Betreuung_.betreuungsstatus), Betreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST);
-		Predicate predicateTSOderFINotAusgelost = cb.and(predicateTSOderFI, predicateNotAusgelost);
+		Predicate predicateNotErfasst = cb.notEqual(betreuungen.get(Betreuung_.betreuungsstatus), Betreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST);
+		return cb.and(predicateTSOderFI, predicateNotErfasst);
+	}
 
+	/**
+	 * Alle Angebottypen die nicht Schulamt sind.
+	 */
+	private Predicate createPredicateJAAngebote(CriteriaBuilder cb, Join<Betreuung, InstitutionStammdaten> institutionstammdaten) {
 		//all otherAngebotTyps
 		Predicate predicateNotTagesschule = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
 		Predicate predicateNotFerieninsel = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.FERIENINSEL);
-		Predicate predicateNotTSOderFI = cb.and(predicateNotTagesschule, predicateNotFerieninsel);
-
-		return cb.or(predicateTSOderFINotAusgelost, predicateNotTSOderFI);
+		return cb.and(predicateNotTagesschule, predicateNotFerieninsel);
 	}
 
 	private List<String> determineDistinctGesuchIdsToLoad(List<String> allGesuchIds, int startindex, int maxresults) {

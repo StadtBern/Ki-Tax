@@ -1008,11 +1008,15 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Takes current user and sets it as the verantwortlicher of Fall
+     * Takes current user and sets him as the verantwortlicher of Fall. Depending on the role it sets him as
+     * verantwortlicher or verantworlicherSCH
      */
     private setCurrentUserAsFallVerantwortlicher() {
         if (this.authServiceRS && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
             this.setUserAsFallVerantwortlicher(this.authServiceRS.getPrincipal());
+        }
+        if (this.authServiceRS && this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles())) {
+            this.setUserAsFallVerantwortlicherSCH(this.authServiceRS.getPrincipal());
         }
     }
 
@@ -1408,11 +1412,8 @@ export default class GesuchModelManager {
         return this.ebeguUtil.getGesuchNameFromGesuch(this.gesuch);
     }
 
-    public isNeuestesGesuch(): IPromise<boolean> {
-        let gesuchId = this.gesuch.id;
-        return this.gesuchRS.getNeuestesGesuchFromGesuch(gesuchId).then((response: boolean) => {
-               return response;
-        });
+    public isNeuestesGesuch(): boolean {
+        return this.gesuch.neustesGesuch;
     }
 
     public isErwerbspensumRequired(gesuchId: string): IPromise<boolean> {
