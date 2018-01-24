@@ -14,10 +14,12 @@
  */
 
 import {EbeguWebCore} from '../core/core.module';
-import {GesuchstellerDashboardListViewConfig} from './component/gesuchstellerDashboardView';
+import {GesuchstellerDashboardListViewConfig} from './component/dashboard/gesuchstellerDashboardView';
 import {gesuchstellerDashboardRun} from './gesuchstellerDashboard.route';
+import {CreateAngebotListViewConfig} from './component/angebot/createAngebotView';
 
 export const EbeguWebGesuchstellerDashboard =
     angular.module('ebeguWeb.gesuchstellerDashboard', [EbeguWebCore.name])
         .run(gesuchstellerDashboardRun)
-        .component('gesuchstellerDashboardView', new GesuchstellerDashboardListViewConfig());
+        .component('gesuchstellerDashboardView', new GesuchstellerDashboardListViewConfig())
+        .component('createAngebotView', new CreateAngebotListViewConfig());

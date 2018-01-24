@@ -1208,5 +1208,15 @@
     "ABGELEHNT": "Finanzielle Situation abgelehnt",
     "MAHNUNG_BATCH_EXECUTED_OK": "Die Prüfung der Mahnungen wurde erfolgreich durchgeführt",
     "MAHNUNG_BATCH_EXECUTED_ERROR": "Ein Fehler ist bei der Prüfung der Mahnungen aufgetreten",
-    "BGNUMMER": "BG-Nummer"
+    "BGNUMMER": "BG-Nummer",
+    "KIND_WAEHLEN": "Kind auswählen",
+    "TAGESSCHULE_ERFASSEN": "Neue Tagesschule erfassen",
+    "FERIENINSEL_ERFASSEN": "Neue Ferieninsel erfassen",
+    "TAGESSCHULE_ANMELDUNG_GESPEICHERT": "Die Anmeldung für die Tagesschule wurde gespeichert",
+    "FERIENINSEL_ANMELDUNG_GESPEICHERT": "Die Anmeldung für die Ferieninsel wurde gespeichert",
+    "GESPERRT_WEGEN_MUTATION": "Es gibt bereits eine offene Mutation für dieses Gesuch, Sie können daher derzeit keine Mutation erstellen oder Schulamtangebote erfassen.",
+    "TAGESSCHULE_ANMELDEN": "Tagesschule anmelden",
+    "FERIENINSEL_ANMELDEN": "Ferieninsel anmelden",
+    "MUTATION_NOETIG": "Um Anmeldungen für eine Tagesschule erfassen zu können, müssen sie das Gesuch mutieren. Die Mutation können Sie auf dem Dashboard starten.",
+    "MUTATION_NOETIG_DB": "Um Anmeldungen für eine Tagesschule erfassen zu können, müssen sie das Gesuch mutieren."
 }

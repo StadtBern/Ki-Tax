@@ -65,7 +65,7 @@ public class FallResourceTest extends AbstractEbeguRestLoginTest {
 		final JaxFall foundFall = fallResource.findFall(converter.toJaxId(gesuch.getFall()));
 
 		Assert.assertNotNull(foundFall);
-		Assert.assertNull(foundFall.getVerantwortlicher());
+		Assert.assertNotNull(foundFall.getVerantwortlicher());
 
 		Assert.assertNotNull(foundFall.getId());
 		Assert.assertNotNull(foundFall.getNextNumberKind());
@@ -79,11 +79,13 @@ public class FallResourceTest extends AbstractEbeguRestLoginTest {
 		final JaxFall foundFall = fallResource.findFall(converter.toJaxId(gesuch.getFall()));
 
 		Assert.assertNotNull(foundFall);
-		Assert.assertNull(foundFall.getVerantwortlicher());
+		Assert.assertNotNull(foundFall.getVerantwortlicher());
+		Assert.assertNotEquals(sachbearbeiter.getUsername(), foundFall.getVerantwortlicher().getUsername());
 
 		JaxAuthLoginElement userToSet = converter.benutzerToAuthLoginElement(sachbearbeiter);
 		foundFall.setVerantwortlicher(userToSet);
 		JaxFall updatedFall = fallResource.saveFall(foundFall, null, null);
+		Assert.assertNotNull(updatedFall);
 		Assert.assertNotNull(updatedFall.getVerantwortlicher());
 		Assert.assertEquals(sachbearbeiter.getUsername(), updatedFall.getVerantwortlicher().getUsername());
 	}
