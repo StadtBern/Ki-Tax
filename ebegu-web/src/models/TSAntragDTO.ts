@@ -276,6 +276,15 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
         return false;
     }
 
+    public hasOnlyFerieninsel(): boolean {
+        for (let angebot of this.angebote) {
+            if (TSBetreuungsangebotTyp.FERIENINSEL !== angebot) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public hasAnyJugendamtAngebot(): boolean {
         for (let angebot of this.angebote) {
             if (TSBetreuungsangebotTyp.TAGESSCHULE !== angebot && TSBetreuungsangebotTyp.FERIENINSEL !== angebot) {
