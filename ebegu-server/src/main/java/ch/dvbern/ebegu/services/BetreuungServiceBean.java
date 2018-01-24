@@ -33,6 +33,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
@@ -58,6 +59,7 @@ import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.KindContainer_;
 import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.entities.Verfuegung_;
+import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
@@ -128,6 +130,14 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 			}
 		}
 		final Betreuung mergedBetreuung = persistence.merge(betreuung);
+
+		// We need to update (copy) all other Betreuungen with same BGNummer (on all other Mutationen and Erstgesuch)
+		final List<Betreuung> betreuungByBGNummer = findBetreuungenByBGNummer(mergedBetreuung.getBGNummer());
+		betreuungByBGNummer.stream().filter(b -> b.isAngebotSchulamt() && !Objects.equals(betreuung.getId(), b.getId())).forEach(b -> {
+			b.copyAnmeldung(betreuung);
+			persistence.merge(b);
+		});
+
 		// we need to manually add this new Betreuung to the Kind
 		final Set<Betreuung> betreuungen = mergedBetreuung.getKind().getBetreuungen();
 		betreuungen.add(mergedBetreuung);
@@ -245,8 +255,17 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	public List<Betreuung> findBetreuungByBGNummer(@Nonnull String bgNummer) {
+	public List<Betreuung> findBetreuungenByBGNummer(@Nonnull String bgNummer) {
+		return findBetreuungenByBGNummer(bgNummer, false);
+	}
 
+	@Override
+	public List<Betreuung> findNewestBetreuungByBGNummer(@Nonnull String bgNummer) {
+		return findBetreuungenByBGNummer(bgNummer, true);
+	}
+
+	@Nonnull
+	private List<Betreuung> findBetreuungenByBGNummer(@Nonnull String bgNummer, boolean getOnlyAktuelle) {
 		final int betreuungNummer = getBetreuungNummerFromBGNummer(bgNummer);
 		final int kindNummer = getKindNummerFromBGNummer(bgNummer);
 		final int yearFromBGNummer = getYearFromBGNummer(bgNummer);
@@ -280,6 +299,12 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		predicates.add(predKindNummer);
 		predicates.add(predBetreuungNummer);
 		predicates.add(predBetreuungAusgeloest);
+
+		if (getOnlyAktuelle) {
+			Predicate predAktuelleBetreuung = cb.equal(root.get(Betreuung_.anmeldungMutationZustand), AnmeldungMutationZustand.AKTUELLE_ANMELDUNG);
+			Predicate predNormaleBetreuung = cb.isNull(root.get(Betreuung_.anmeldungMutationZustand));
+			predicates.add(cb.or(predAktuelleBetreuung, predNormaleBetreuung));
+		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 
@@ -530,5 +555,18 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		query.where(predicateMutation, predicateFlag, predicateStatus);
 		query.orderBy(cb.desc(joinGesuch.get(Gesuch_.laufnummer)));
 		return persistence.getCriteriaResults(query);
+	}
+
+	@Override
+	public int changeAnmeldungMutationZustand(String betreuungsId, AnmeldungMutationZustand anmeldungMutationZustand) {
+		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaUpdate<Betreuung> update = cb.createCriteriaUpdate(Betreuung.class);
+		Root<Betreuung> root = update.from(Betreuung.class);
+		update.set(Betreuung_.anmeldungMutationZustand, anmeldungMutationZustand);
+
+		Predicate predBetreuung = cb.equal(root.get(Betreuung_.id), betreuungsId);
+		update.where(predBetreuung);
+
+		return persistence.getEntityManager().createQuery(update).executeUpdate();
 	}
 }

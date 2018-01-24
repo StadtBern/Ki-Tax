@@ -108,6 +108,7 @@ import HttpVersionInterceptor from './service/version/HttpVersionInterceptor';
 import {DVVersionComponentConfig} from './component/dv-version/dv-version';
 import {DvSkiplinksComponentConfig} from './component/dv-skiplinks/dv-skiplinks';
 import SearchRS from '../gesuch/service/searchRS.rest';
+import {DvVerantwortlicherselect} from './directive/dv-verantwortlicherselect/dv-verantwortlicherselect';
 
 let dynamicDependencies = function (): string[] {
 
@@ -199,6 +200,7 @@ export const EbeguWebCore: angular.IModule = angular
     .directive('dvTimepicker', DVTimepicker.factory())
     .directive('dvValueinput', DVValueinput.factory())
     .directive('dvUserselect', DVUserselect.factory())
+    .directive('dvVerantwortlicherselect', DvVerantwortlicherselect.factory())
     .directive('dvNavigation', DVNavigation.factory())
     .directive('dvLoading', DVLoading.factory())
     .directive('dvLoadingButton', DVLoadingButton.factory())

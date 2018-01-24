@@ -65,7 +65,8 @@ export default class DVSTPersistQuicksearch implements IDirective {
                     quicksearchListController.selectedKinder = savedState.search.predicateObject.kinder;
                     quicksearchListController.selectedEingangsdatum = savedState.search.predicateObject.eingangsdatum;
                     quicksearchListController.selectedDokumenteHochgeladen = savedState.search.predicateObject.dokumenteHochgeladen;
-                    this.setUserFromName(quicksearchListController, savedState.search.predicateObject.verantwortlicher);
+                    this.setVerantwortlicherFromName(quicksearchListController, savedState.search.predicateObject.verantwortlicher);
+                    this.setVerantwortlicherSCHFromName(quicksearchListController, savedState.search.predicateObject.verantwortlicherSCH);
                 }
                 let tableState = stTableCtrl.tableState();
 
@@ -81,7 +82,7 @@ export default class DVSTPersistQuicksearch implements IDirective {
      * while the dropdownlist is constructed using the object TSUser. So in order to be able to select the right user
      * with need the complete object and not only its Fullname.
      */
-    private setUserFromName(quicksearchListController: DVQuicksearchListController, verantwortlicherFullname: string): void {
+    private setVerantwortlicherFromName(quicksearchListController: DVQuicksearchListController, verantwortlicherFullname: string): void {
         if (verantwortlicherFullname && quicksearchListController) {
             this.userRS.getBenutzerJAorAdmin().then((response: any) => {
                 let userList: TSUser[] = angular.copy(response);
@@ -90,6 +91,28 @@ export default class DVSTPersistQuicksearch implements IDirective {
                         if (userList[i] && userList[i].getFullName() === verantwortlicherFullname) {
                             quicksearchListController.selectedVerantwortlicher = userList[i];
                             quicksearchListController.userChanged(quicksearchListController.selectedVerantwortlicher);
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * Extracts the user out of her name. This method is needed because the filter saves the user using its name
+     * while the dropdownlist is constructed using the object TSUser. So in order to be able to select the right user
+     * with need the complete object and not only its Fullname.
+     */
+    private setVerantwortlicherSCHFromName(quicksearchListController: DVQuicksearchListController, verantwortlicherSCHFullname: string): void {
+        if (verantwortlicherSCHFullname && quicksearchListController) {
+            this.userRS.getBenutzerSCHorAdminSCH().then((response: any) => {
+                let userList: TSUser[] = angular.copy(response);
+                if (userList) {
+                    for (let i = 0; i < userList.length; i++) {
+                        if (userList[i] && userList[i].getFullName() === verantwortlicherSCHFullname) {
+                            quicksearchListController.selectedVerantwortlicherSCH = userList[i];
+                            quicksearchListController.userChanged(quicksearchListController.selectedVerantwortlicherSCH);
                             break;
                         }
                     }

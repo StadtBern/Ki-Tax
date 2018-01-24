@@ -42,6 +42,7 @@ public interface TestfaelleService {
 	String UMZUG_AUS_IN_AUS_BERN = "8";
 	String ABWESENHEIT = "9";
 	String UMZUG_VOR_GESUCHSPERIODE = "10";
+	String SCHULAMT_ONLY = "11";
 	String ASIV1 = "ASIV1";
 	String ASIV2 = "ASIV2";
 	String ASIV3 = "ASIV3";

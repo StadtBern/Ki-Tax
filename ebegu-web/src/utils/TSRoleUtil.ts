@@ -48,6 +48,10 @@ export class TSRoleUtil {
         return [TSRole.SUPER_ADMIN, TSRole.ADMINISTRATOR_SCHULAMT];
     }
 
+    public static getJAAdministratorRoles(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN];
+    }
+
     public static getTraegerschaftInstitutionRoles(): Array<TSRole> {
         return [TSRole.SUPER_ADMIN, TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT];
     }
@@ -121,10 +125,12 @@ export class TSRoleUtil {
         );
     }
 
-    public static getAllButAdministratorJugendamtRoleAsRoles(): Array<TSRole> {
+    public static getAllButAdministratorAmtRole(): Array<TSRole> {
         return getTSRoleValues().filter(element =>
             element !== TSRole.SACHBEARBEITER_JA &&
             element !== TSRole.ADMIN &&
+            element !== TSRole.SCHULAMT &&
+            element !== TSRole.ADMINISTRATOR_SCHULAMT &&
             element !== TSRole.SUPER_ADMIN
         );
     }

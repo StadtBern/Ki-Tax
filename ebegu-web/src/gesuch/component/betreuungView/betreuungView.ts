@@ -51,6 +51,7 @@ import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
+import {TSAnmeldungMutationZustand} from '../../../models/enums/TSAnmeldungMutationZustand';
 
 declare let require: any;
 let template = require('./betreuungView.html');
@@ -80,6 +81,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     dvDialog: DvDialog;
     $translate: ITranslateService;
     moduleBackup: TSModulTagesschule[] = undefined;
+    aktuellGueltig: boolean = true;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout', '$translate'];
@@ -132,11 +134,17 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         } else {
             this.$log.error('There is no kind available with kind-number:' + this.$stateParams.kindNumber);
         }
-        this.gesuchModelManager.isNeuestesGesuch().then((response: boolean) => {
-            this.isNewestGesuch = response;
-        });
+        this.isNewestGesuch = this.gesuchModelManager.isNeuestesGesuch();
 
         this.findExistingBetreuungsmitteilung();
+
+        if (this.getBetreuungModel().anmeldungMutationZustand) {
+            if (this.getBetreuungModel().anmeldungMutationZustand === TSAnmeldungMutationZustand.MUTIERT) {
+                this.aktuellGueltig = false;
+            } else if (this.getBetreuungModel().anmeldungMutationZustand === TSAnmeldungMutationZustand.NOCH_NICHT_FREIGEGEBEN) {
+                this.aktuellGueltig = false;
+            }
+        }
     }
 
     /**
@@ -253,6 +261,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             this.startEmptyListOfBetreuungspensen();
             this.form.$setUntouched();
             this.form.$setPristine();
+            this.model.institutionStammdaten = this.initialBetreuung.institutionStammdaten;
             return undefined;
         });
     }
@@ -312,7 +321,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public isFalscheInstitutionAndUserInRole(): boolean {
         return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())
-            && this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION);
+            && this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION)
+            && this.aktuellGueltig;
     }
 
     public anmeldungSchulamtUebernehmen(): void {
@@ -504,7 +514,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                 && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)
                     || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST)
                     || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT)
-                        && this.getBetreuungModel().isNew()));
+                && this.getBetreuungModel().isNew()))
+                && !this.isFreigabequittungAusstehend();
         }
         return true;
     }
@@ -751,6 +762,18 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public enableErweiterteBeduerfnisse(): boolean {
         return (this.isBetreuungsstatusWarten() && !this.isSavingData) || this.isMutationsmeldungStatus;
+    }
+
+    /**
+     * Schulamt-Angebote ändern erst beim Einlesen der Freigabequittung den Zustand von SCHULAMT_ANMELDUNG_ERFASST zu
+     * SCHULAMT_ANMELDUNG_AUSGELOEST. Betreuungen in Gesuchen im Zustand FREIGABEQUITTUNG dürfen jedoch nicht editiert werden.
+     * Deshalb braucht es diese Funktion.
+     */
+    public isFreigabequittungAusstehend(): boolean {
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().status) {
+            return this.gesuchModelManager.getGesuch().status === TSAntragStatus.FREIGABEQUITTUNG;
+        }
+        return false;
     }
 
     /**

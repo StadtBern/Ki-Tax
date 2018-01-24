@@ -137,8 +137,9 @@ export default class GesuchRS implements IEntityRS {
         });
     }
 
-    public antragFreigeben(antragId: string, username: string): IPromise<TSGesuch> {
-        return this.http.post(this.serviceURL + '/freigeben/' + encodeURIComponent(antragId), username, {
+    public antragFreigeben(antragId: string, usernameJA: string, usernameSCH: string): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/freigeben/' + encodeURIComponent(antragId) + '/JA/' + usernameJA + '/SCH/' + usernameSCH,
+            null, {
             headers: {
                 'Content-Type': 'text/plain'
             }
@@ -181,13 +182,6 @@ export default class GesuchRS implements IEntityRS {
         return this.http.post(this.serviceURL + '/removeBeschwerde/' + encodeURIComponent(antragId), null).then((response) => {
             return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
         });
-    }
-
-    public getNeuestesGesuchFromGesuch(gesuchID: string):  IPromise<boolean> {
-        return this.http.get(this.serviceURL + '/neuestesgesuch/' + encodeURIComponent(gesuchID))
-            .then((response: any) => {
-                return response.data;
-            });
     }
 
     public removeOnlineMutation(fallID: string, gesuchsperiodeId: string): IPromise<boolean> {

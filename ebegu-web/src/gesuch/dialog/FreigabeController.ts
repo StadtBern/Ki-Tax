@@ -13,12 +13,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import GesuchRS from '../service/gesuchRS.rest';
-import TSUser from '../../models/TSUser';
-import UserRS from '../../core/service/userRS.rest';
-import EbeguUtil from '../../utils/EbeguUtil';
+import {ApplicationPropertyRS} from '../../admin/service/applicationPropertyRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import UserRS from '../../core/service/userRS.rest';
 import TSAntragDTO from '../../models/TSAntragDTO';
+import TSUser from '../../models/TSUser';
+import EbeguUtil from '../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../utils/TSRoleUtil';
+import GesuchRS from '../service/gesuchRS.rest';
 import IPromise = angular.IPromise;
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
@@ -29,18 +31,21 @@ import ITranslateService = angular.translate.ITranslateService;
 export class FreigabeController {
 
     static $inject: string[] = ['docID', '$mdDialog', 'GesuchRS', 'UserRS', 'AuthServiceRS',
-        'EbeguUtil', 'CONSTANTS', '$translate'];
+        'EbeguUtil', 'CONSTANTS', '$translate', 'ApplicationPropertyRS'];
 
     private gesuch: TSAntragDTO;
-    private selectedUser: string;
-    private userList: Array<TSUser>;
+    private selectedUserJA: string;
+    private selectedUserSCH: string;
+    private userJAList: Array<TSUser>;
+    private userSCHList: Array<TSUser>;
     private fallNummer: string;
     private familie: string;
     private errorMessage: string;
+    TSRoleUtil = TSRoleUtil;
 
     constructor(private docID: string, private $mdDialog: IDialogService, private gesuchRS: GesuchRS,
                 private userRS: UserRS, private authService: AuthServiceRS, private ebeguUtil: EbeguUtil,
-                CONSTANTS: any, private $translate: ITranslateService) {
+                CONSTANTS: any, private $translate: ITranslateService, private applicationPropertyRS: ApplicationPropertyRS) {
 
         gesuchRS.findGesuchForFreigabe(this.docID).then((response: TSAntragDTO) => {
             this.errorMessage = undefined; // just for safety replace old value
@@ -49,7 +54,7 @@ export class FreigabeController {
                     this.gesuch = response;
                     this.fallNummer = ebeguUtil.addZerosToNumber(response.fallNummer, CONSTANTS.FALLNUMMER_LENGTH);
                     this.familie = response.familienName;
-                    this.selectedUser = authService.getPrincipal().username;
+                    this.setVerantwortliche();
                 } else {
                     this.errorMessage = this.$translate.instant('FREIGABE_GESUCH_ALREADY_FREIGEGEBEN');
                 }
@@ -64,23 +69,63 @@ export class FreigabeController {
 
     }
 
+    private setVerantwortliche() {
+        // Verantwortlicher wird gemaess folgender Prioritaet festgestellt:
+        // (1) Verantwortlicher des Vorjahresgesuchs
+        // (2) Eingeloggter Benutzer (fuer jeweilige Amt-Verantwortung)
+        // (3) Defaults aus Properties
+
+        // Jugendamt
+        if (this.gesuch.verantwortlicher && this.gesuch.verantwortlicherUsernameJA) {
+            this.selectedUserJA = this.gesuch.verantwortlicherUsernameJA;
+        } else {
+            // Noch kein Verantwortlicher aus Vorjahr vorhanden
+            if (this.authService.isOneOfRoles(this.TSRoleUtil.getSchulamtOnlyRoles())) {
+                this.applicationPropertyRS.getByName('DEFAULT_VERANTWORTLICHER').then(username => {
+                    this.selectedUserJA = username.value;
+                });
+            } else {
+                this.selectedUserJA = this.authService.getPrincipal().username;
+            }
+        }
+        // Schulamt
+        if (this.gesuch.verantwortlicherSCH && this.gesuch.verantwortlicherUsernameSCH) {
+           this.selectedUserSCH = this.gesuch.verantwortlicherUsernameSCH;
+        } else {
+            // Noch kein Verantwortlicher aus Vorjahr vorhanden
+            if (this.authService.isOneOfRoles(this.TSRoleUtil.getSchulamtOnlyRoles())) {
+                this.selectedUserSCH = this.authService.getPrincipal().username;
+            } else {
+                this.applicationPropertyRS.getByName('DEFAULT_VERANTWORTLICHER_SCH').then(username => {
+                    this.selectedUserSCH = username.value;
+                });
+            }
+        }
+    }
 
     private updateUserList() {
         this.userRS.getBenutzerJAorAdmin().then((response: any) => {
-            this.userList = angular.copy(response);
+            this.userJAList = angular.copy(response);
+        });
+        this.userRS.getBenutzerSCHorAdminSCH().then((response: any) => {
+            this.userSCHList = angular.copy(response);
         });
     }
 
     public isSchulamt(): boolean {
-        return this.gesuch ? this.gesuch.hasOnlySchulamtAngebote() : false;
+        return this.gesuch ? this.gesuch.hasAnySchulamtAngebot() : false;
+    }
+
+    public isJugendamt(): boolean {
+        return this.gesuch ? this.gesuch.hasAnyJugendamtAngebot() : false;
     }
 
     public hasError(): boolean {
         return this.errorMessage != null;
     }
 
-    public hide(): IPromise<any> {
-        return this.gesuchRS.antragFreigeben(this.docID, this.selectedUser)
+    public freigeben(): IPromise<any> {
+        return this.gesuchRS.antragFreigeben(this.docID, this.selectedUserJA, this.selectedUserSCH)
             .then(() => {
                 return this.$mdDialog.hide();
             });

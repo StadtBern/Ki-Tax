@@ -1008,11 +1008,21 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Takes current user and sets it as the verantwortlicher of Fall
+     * Takes current user and sets him as the verantwortlicher of Fall. Depending on the role it sets him as
+     * verantwortlicher or verantworlicherSCH
      */
     private setCurrentUserAsFallVerantwortlicher() {
         if (this.authServiceRS && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
             this.setUserAsFallVerantwortlicher(this.authServiceRS.getPrincipal());
+        }
+        if (this.authServiceRS && this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles())) {
+            this.setUserAsFallVerantwortlicherSCH(this.authServiceRS.getPrincipal());
+        }
+    }
+
+    public setUserAsFallVerantwortlicherSCH(user: TSUser) {
+        if (this.gesuch && this.gesuch.fall) {
+            this.gesuch.fall.verantwortlicherSCH = user;
         }
     }
 
@@ -1025,6 +1035,13 @@ export default class GesuchModelManager {
     public getFallVerantwortlicher(): TSUser {
         if (this.gesuch && this.gesuch.fall) {
             return this.gesuch.fall.verantwortlicher;
+        }
+        return undefined;
+    }
+
+    public getFallVerantwortlicherSCH(): TSUser {
+        if (this.gesuch && this.gesuch.fall) {
+            return this.gesuch.fall.verantwortlicherSCH;
         }
         return undefined;
     }
@@ -1244,8 +1261,8 @@ export default class GesuchModelManager {
     /**
      * Antrag freigeben
      */
-    public antragFreigeben(antragId: string, username: string): IPromise<TSGesuch> {
-        return this.gesuchRS.antragFreigeben(antragId, username).then((response) => {
+    public antragFreigeben(antragId: string, usernameJA: string, usernameSCH: string): IPromise<TSGesuch> {
+        return this.gesuchRS.antragFreigeben(antragId, usernameJA, usernameSCH).then((response) => {
             this.setGesuch(response);
             return response;
         });
@@ -1395,11 +1412,8 @@ export default class GesuchModelManager {
         return this.ebeguUtil.getGesuchNameFromGesuch(this.gesuch);
     }
 
-    public isNeuestesGesuch(): IPromise<boolean> {
-        let gesuchId = this.gesuch.id;
-        return this.gesuchRS.getNeuestesGesuchFromGesuch(gesuchId).then((response: boolean) => {
-               return response;
-        });
+    public isNeuestesGesuch(): boolean {
+        return this.gesuch.neustesGesuch;
     }
 
     public isErwerbspensumRequired(gesuchId: string): IPromise<boolean> {

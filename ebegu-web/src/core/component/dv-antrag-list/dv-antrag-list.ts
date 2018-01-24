@@ -73,6 +73,7 @@ export class DVAntragListController {
     selectedEingangsdatum: string;
     selectedEingangsdatumSTV: string;
     selectedVerantwortlicher: TSUser;
+    selectedVerantwortlicherSCH: TSUser;
     selectedDokumenteHochgeladen: string;
     pendenz: boolean;
 

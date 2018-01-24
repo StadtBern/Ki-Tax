@@ -73,6 +73,19 @@ public class BenutzerResource {
 			.collect(Collectors.toList());
 	}
 
+	@ApiOperation(value = "Gibt alle existierenden Benutzer mit Rolle ADMINISTRATOR_SCHULAMT oder SCHULAMT zurueck", responseContainer = "List", response = JaxAuthLoginElement.class)
+	@Nonnull
+	@GET
+	@Path("/SCHorAdmin")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, STEUERAMT, SCHULAMT , ADMINISTRATOR_SCHULAMT})
+	public List<JaxAuthLoginElement> getBenutzerSCHorAdminSCH() {
+		return benutzerService.getBenutzerSCHorAdminSCH().stream()
+			.map(benutzer -> converter.benutzerToAuthLoginElement(benutzer))
+			.collect(Collectors.toList());
+	}
+
 	@ApiOperation(value = "Gibt alle existierenden Benutzer mit Rolle Gesuchsteller zurueck", responseContainer = "List", response = JaxAuthLoginElement.class)
 	@Nonnull
 	@GET

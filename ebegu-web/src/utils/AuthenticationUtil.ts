@@ -31,7 +31,7 @@ export default class AuthenticationUtil {
         } else if (TSRoleUtil.getTraegerschaftInstitutionOnlyRoles().indexOf(user.role) > -1) {
             $state.go('pendenzenInstitution');
         } else if (TSRoleUtil.getSchulamtOnlyRoles().indexOf(user.role) > -1) {
-            $state.go('faelle');
+            $state.go('pendenzen');
         } else if (TSRoleUtil.getSteueramtOnlyRoles().indexOf(user.role) > -1) {
             $state.go('pendenzenSteueramt');
         } else if (TSRoleUtil.getGesuchstellerOnlyRoles().indexOf(user.role) > -1) {

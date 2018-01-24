@@ -42,6 +42,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxAnmeldungDTO;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.resource.util.ResourceHelper;
@@ -360,11 +361,46 @@ public class BetreuungResource {
 		return Response.ok(jaxBetreuungList).build();
 	}
 
-	public boolean hasDuplicate(JaxBetreuung betreuungJAXP, Set<Betreuung> betreuungen) {
+	@ApiOperation(value = "Erstelle eine Schulamt Anmeldung vom GS-Dashboard in der Datenbank", response = JaxBetreuung.class)
+	@Nonnull
+	@PUT
+	@Path("/anmeldung/create/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createAnmeldung(
+		@Nonnull @NotNull @Valid JaxAnmeldungDTO jaxAnmeldungDTO,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
 
-		return isNewBetreuung(betreuungJAXP) &&
-			betreuungen.stream().filter(
-				betreuung -> {
+		Optional<KindContainer> kind = kindService.findKind(jaxAnmeldungDTO.getKindContainerId());
+		if (kind.isPresent()) {
+			if (hasDuplicate(jaxAnmeldungDTO.getBetreuung(), kind.get().getBetreuungen())) {
+				throw new EbeguRuntimeException("createAnmeldung", ErrorCodeEnum.ERROR_DUPLICATE_BETREUUNG);
+			}
+
+			if (jaxAnmeldungDTO.getAdditionalKindQuestions() && !kind.get().getKindJA().getFamilienErgaenzendeBetreuung()) {
+				kind.get().getKindJA().setFamilienErgaenzendeBetreuung(true);
+				kind.get().getKindJA().setEinschulung(jaxAnmeldungDTO.getEinschulung());
+				kind.get().getKindJA().setMutterspracheDeutsch(jaxAnmeldungDTO.getMutterspracheDeutsch());
+				kind.get().getKindJA().setWohnhaftImGleichenHaushalt(jaxAnmeldungDTO.getWohnhaftImGleichenHaushalt());
+				kindService.saveKind(kind.get());
+			}
+
+			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(jaxAnmeldungDTO.getBetreuung());
+			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch(), convertedBetreuung);
+			convertedBetreuung.setKind(kind.get());
+			this.betreuungService.saveBetreuung(convertedBetreuung, false);
+
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("createAnmeldung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, KIND_CONTAINER_ID_INVALID + jaxAnmeldungDTO
+			.getKindContainerId());
+	}
+
+	public boolean hasDuplicate(JaxBetreuung betreuungJAXP, Set<Betreuung> betreuungen) {
+		return betreuungen.stream().filter(
+			betreuung -> {
+				if (!Objects.equals(betreuung.getId(), betreuungJAXP.getId())) {
 					if (!Objects.equals(betreuungJAXP.getInstitutionStammdaten().getBetreuungsangebotTyp(), BetreuungsangebotTyp.FERIENINSEL)) {
 						return !betreuung.getBetreuungsstatus().isStorniert() &&
 							isSameInstitution(betreuungJAXP, betreuung);
@@ -373,11 +409,10 @@ public class BetreuungResource {
 							isSameInstitution(betreuungJAXP, betreuung) &&
 							isSameFerien(betreuungJAXP, betreuung);
 					}
-				}).count() != 0;
-	}
-
-	private boolean isNewBetreuung(JaxBetreuung betreuungJAXP) {
-		return betreuungJAXP.getTimestampErstellt() == null;
+				} else {
+					return false;
+				}
+			}).count() != 0;
 	}
 
 	private boolean isSameFerien(JaxBetreuung betreuungJAXP, Betreuung betreuung) {

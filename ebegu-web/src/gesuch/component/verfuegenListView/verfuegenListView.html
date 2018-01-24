@@ -36,7 +36,7 @@
                                 <th data-translate="KIND" width="20%"></th>
                                 <th data-translate="INSTITUTION" width="20%"></th>
                                 <th data-translate="BETREUUNGSANGEBOT" width="20%"></th>
-                                <th data-translate="ID" width="20%"></th>
+                                <th data-translate="BGNUMMER" width="20%"></th>
                                 <th data-translate="STATUS" width="15%"></th>
                                 <th data-translate="GUELTIGE_BETREUUNG" width="20%" ng-show="vm.isSuperAdmin()"></th>
                                 <th width="5%"></th>
@@ -255,7 +255,16 @@
                                    ng-if="vm.showBeschwerdeAbschliessen()">
                     <span data-translate="BESCHWERDE_ABSCHLIESSEN_UPPER"></span>
                 </dv-loading-button>
-
+                <dv-loading-button button-click="vm.sendToSteuerverwaltung()"
+                                   aria-label="{{'SEND_TO_STV_UPPER' | translate}}"
+                                   ng-if="vm.showSendToSteuerverwaltung()">
+                    <span data-translate="SEND_TO_STV_UPPER"></span>
+                </dv-loading-button>
+                <dv-loading-button button-click="vm.stvPruefungAbschliessen()"
+                                   aria-label="{{'STV_PRUEFUNG_ABSCHLIESSEN_UPPER' | translate}}"
+                                   ng-if="vm.showSTVPruefungAbschliessen()">
+                    <span data-translate="STV_PRUEFUNG_ABSCHLIESSEN_UPPER"></span>
+                </dv-loading-button>
             </div>
             <div dv-show-element
                  dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
@@ -274,16 +283,6 @@
                                    aria-label="{{'BEENDEN_OHNE_ANGEBOT_UPPER' | translate}}"
                                    ng-if="vm.showCloseWithoutAngebot()">
                     <span data-translate="BEENDEN_OHNE_ANGEBOT_UPPER"></span>
-                </dv-loading-button>
-                <dv-loading-button button-click="vm.sendToSteuerverwaltung()"
-                                   aria-label="{{'SEND_TO_STV_UPPER' | translate}}"
-                                   ng-if="vm.showSendToSteuerverwaltung()">
-                    <span data-translate="SEND_TO_STV_UPPER"></span>
-                </dv-loading-button>
-                <dv-loading-button button-click="vm.stvPruefungAbschliessen()"
-                                   aria-label="{{'STV_PRUEFUNG_ABSCHLIESSEN_UPPER' | translate}}"
-                                   ng-if="vm.showSTVPruefungAbschliessen()">
-                    <span data-translate="STV_PRUEFUNG_ABSCHLIESSEN_UPPER"></span>
                 </dv-loading-button>
             </div>
         </div>

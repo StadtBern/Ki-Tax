@@ -13,7 +13,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum TSZustelladresse {
-    JUGENDAMT = <any> 'JUGENDAMT',
-    SCHULAMT = <any> 'SCHULAMT'
+export enum TSAnmeldungMutationZustand {
+    NOCH_NICHT_FREIGEGEBEN = <any> 'NOCH_NICHT_FREIGEGEBEN',
+    MUTIERT = <any> 'MUTIERT',
+    AKTUELLE_ANMELDUNG = <any> 'AKTUELLE_ANMELDUNG'
 }
+

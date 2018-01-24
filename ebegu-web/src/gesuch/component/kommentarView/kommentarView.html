@@ -72,8 +72,8 @@
              dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
             <div class="kommentar-padding">
                 <dv-loading-button button-click="vm.freigebenSTV()" button-class="centered-btn" type="submit"
-                                   aria-label="{{'FREIGABE_JA' | translate}}">
-                    <span data-translate="FREIGABE_JA"></span>
+                                   aria-label="{{vm.getFreigabeName()}}">
+                    <span ng-bind="vm.getFreigabeName()"></span>
                 </dv-loading-button>
             </div>
         </div>

@@ -1,0 +1,73 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+@import "../../../style/variables.less";
+@import "../../../style/mixins.less";
+
+@buttonWidth: 24rem;
+@buttonHeight: 15rem;
+
+.gesuchstellerDashboardView {
+    .ebeguH3, h2 {
+        color: @contrast-lightest;
+    }
+    overflow-y: auto;
+    color: @contrast-lightest;
+    background: url('../../../assets/images/kitax_bg.jpg') no-repeat center center fixed; /* fallback */
+    background: linear-gradient(rgba(40, 40, 40, 0.85), rgba(40, 40, 40, 0.85)),
+    url('../../../assets/images/kitax_bg.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
+    .dashboardHeader {
+        margin-top: 6rem;
+        z-index: @z-index-dashboard;
+        & > * {
+            margin: 2rem;
+        }
+    }
+    .gdashboard-panel {
+        display: flex;
+        flex-direction: column;
+        width: 75%;
+        margin: 3rem;
+        &__gesuchstring {
+            font-family: "Open Sans", Arial, Helvetica, sans-serif;
+            font-size: 2.8rem;
+            letter-spacing: 0.15rem;
+            color: @contrast-light;
+            .ebeguBold();
+            margin: 0;
+        }
+        &__gesuchrange {
+            font-family: "Open Sans", Arial, Helvetica, sans-serif;
+            .ebeguSemi-bold();
+            font-size: 1.6rem;
+            margin-top: 0.5rem;
+            margin-bottom: 2rem;
+            letter-spacing: 0.1rem;
+        }
+        &__button {
+            text-transform: uppercase;
+            width: 100%;
+            margin-bottom: 1rem;
+            vertical-align: bottom;
+        }
+        &__seperator {
+            height: 0;
+        }
+    }
+}

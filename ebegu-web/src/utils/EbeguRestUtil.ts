@@ -94,6 +94,7 @@ import {TSDateRange} from '../models/types/TSDateRange';
 import TSLand from '../models/types/TSLand';
 import DateUtil from './DateUtil';
 import EbeguUtil from './EbeguUtil';
+import TSAnmeldungDTO from '../models/TSAnmeldungDTO';
 
 export default class EbeguRestUtil {
     static $inject = ['EbeguUtil'];
@@ -613,6 +614,7 @@ export default class EbeguRestUtil {
             this.abstractEntityToRestObject(restFall, fall);
             restFall.fallNummer = fall.fallNummer;
             restFall.verantwortlicher = this.userToRestObject({}, fall.verantwortlicher);
+            restFall.verantwortlicherSCH = this.userToRestObject({}, fall.verantwortlicherSCH);
             restFall.nextNumberKind = fall.nextNumberKind;
             restFall.besitzer = this.userToRestObject({}, fall.besitzer);
             return restFall;
@@ -626,6 +628,7 @@ export default class EbeguRestUtil {
             this.parseAbstractEntity(fallTS, fallFromServer);
             fallTS.fallNummer = fallFromServer.fallNummer;
             fallTS.verantwortlicher = this.parseUser(new TSUser(), fallFromServer.verantwortlicher);
+            fallTS.verantwortlicherSCH = this.parseUser(new TSUser(), fallFromServer.verantwortlicherSCH);
             fallTS.nextNumberKind = fallFromServer.nextNumberKind;
             fallTS.besitzer = this.parseUser(new TSUser(), fallFromServer.besitzer);
             return fallTS;
@@ -679,6 +682,7 @@ export default class EbeguRestUtil {
             gesuchTS.gueltig = gesuchFromServer.gueltig;
             gesuchTS.dokumenteHochgeladen = gesuchFromServer.dokumenteHochgeladen;
             gesuchTS.finSitStatus = gesuchFromServer.finSitStatus;
+            gesuchTS.neustesGesuch = gesuchFromServer.neustesGesuch;
             return gesuchTS;
         }
         return undefined;
@@ -1212,7 +1216,19 @@ export default class EbeguRestUtil {
         restBetreuung.gueltig = betreuung.gueltig;
         restBetreuung.belegungTagesschule = this.belegungTagesschuleToRestObject({}, betreuung.belegungTagesschule);
         restBetreuung.belegungFerieninsel = this.belegungFerieninselToRestObject({}, betreuung.belegungFerieninsel);
+        restBetreuung.anmeldungMutationZustand = betreuung.anmeldungMutationZustand;
         return restBetreuung;
+    }
+
+    public anmeldungDTOToRestObject(restAngebot: any, angebotDTO: TSAnmeldungDTO): any {
+        restAngebot.betreuung = this.betreuungToRestObject({}, angebotDTO.betreuung);
+        restAngebot.additionalKindQuestions = angebotDTO.additionalKindQuestions;
+        restAngebot.einschulung = angebotDTO.einschulung;
+        restAngebot.kindContainerId = angebotDTO.kindContainerId;
+        restAngebot.mutterspracheDeutsch = angebotDTO.mutterspracheDeutsch;
+        restAngebot.wohnhaftImGleichenHaushalt = angebotDTO.wohnhaftImGleichenHaushalt;
+        return restAngebot;
+
     }
 
     public betreuungspensumContainerToRestObject(restBetPensCont: any, betPensCont: TSBetreuungspensumContainer): any {
@@ -1290,6 +1306,8 @@ export default class EbeguRestUtil {
             betreuungTS.gueltig = betreuungFromServer.gueltig;
             betreuungTS.belegungTagesschule = this.parseBelegungTagesschule(new TSBelegungTagesschule(), betreuungFromServer.belegungTagesschule);
             betreuungTS.belegungFerieninsel = this.parseBelegungFerieninsel(new TSBelegungFerieninsel(), betreuungFromServer.belegungFerieninsel);
+            betreuungTS.anmeldungMutationZustand = betreuungFromServer.anmeldungMutationZustand;
+            betreuungTS.bgNummer = betreuungFromServer.bgNummer;
             return betreuungTS;
         }
         return undefined;
@@ -1434,6 +1452,9 @@ export default class EbeguRestUtil {
         restPendenz.institutionen = pendenz.institutionen;
         restPendenz.kinder = pendenz.kinder;
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
+        restPendenz.verantwortlicherSCH = pendenz.verantwortlicherSCH;
+        restPendenz.verantwortlicherUsernameJA = pendenz.verantwortlicherUsernameJA;
+        restPendenz.verantwortlicherUsernameSCH = pendenz.verantwortlicherUsernameSCH;
         restPendenz.status = pendenz.status;
         restPendenz.verfuegt = pendenz.verfuegt;
         restPendenz.beschwerdeHaengig = pendenz.beschwerdeHaengig;
@@ -1459,6 +1480,9 @@ export default class EbeguRestUtil {
         antragTS.gesuchsperiodeGueltigBis = DateUtil.localDateToMoment(antragFromServer.gesuchsperiodeGueltigBis);
         antragTS.institutionen = antragFromServer.institutionen;
         antragTS.verantwortlicher = antragFromServer.verantwortlicher;
+        antragTS.verantwortlicherSCH = antragFromServer.verantwortlicherSCH;
+        antragTS.verantwortlicherUsernameJA = antragFromServer.verantwortlicherUsernameJA;
+        antragTS.verantwortlicherUsernameSCH = antragFromServer.verantwortlicherUsernameSCH;
         antragTS.status = antragFromServer.status;
         antragTS.verfuegt = antragFromServer.verfuegt;
         antragTS.beschwerdeHaengig = antragFromServer.beschwerdeHaengig;
@@ -1467,6 +1491,7 @@ export default class EbeguRestUtil {
         antragTS.eingangsart = antragFromServer.eingangsart;
         antragTS.besitzerUsername = antragFromServer.besitzerUsername;
         antragTS.dokumenteHochgeladen = antragFromServer.dokumenteHochgeladen;
+        antragTS.neustesGesuch = antragFromServer.neustesGesuch;
         return antragTS;
     }
 
