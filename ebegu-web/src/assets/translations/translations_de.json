@@ -988,6 +988,8 @@
     "MITTEILUNG_SUBJECT": "Betreff",
     "MITTEILUNG_MESSAGE": "Nachricht",
     "MITTEILUNG_SENDEN": "Senden",
+    "MITTEILUNG_DELEGATION_AN_JA": "Meldung ans Jugendamt delegieren",
+    "MITTEILUNG_DELEGATION_AN_SCH": "Meldung ans Schulamt delegieren",
     "MITTEILUNGEN_ERLEDIGT": "erledigt",
     "SCHULUNG": "Schulung",
     "SCHULUNG_CREATE_DATA": "Schulungsdaten erstellen",

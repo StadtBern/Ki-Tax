@@ -189,6 +189,18 @@ export default class MitteilungRS {
         });
     }
 
+    public mitteilungUebergebenAnJugendamt(mitteilungId: string): IPromise<TSMitteilung> {
+        return this.http.get(this.serviceURL + '/delegation/jugendamt/' + mitteilungId).then((response: any) => {
+            return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
+        });
+    }
+
+    public mitteilungUebergebenAnSchulamt(mitteilungId: string): IPromise<TSMitteilung> {
+        return this.http.get(this.serviceURL + '/delegation/schulamt/' + mitteilungId).then((response: any) => {
+            return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
+        });
+    }
+
 
     private createBetreuungsmitteilung(fall: TSFall, betreuung: TSBetreuung): TSBetreuungsmitteilung {
         let mutationsmeldung: TSBetreuungsmitteilung = new TSBetreuungsmitteilung();

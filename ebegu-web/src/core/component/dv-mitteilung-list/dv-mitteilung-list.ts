@@ -371,7 +371,38 @@ export class DVMitteilungListController {
                     }
                 });
             });
-
         }
+    }
+
+    public mitteilungUebergebenAnJugendamt(mitteilung: TSMitteilung): void {
+        this.mitteilungRS.mitteilungUebergebenAnJugendamt(mitteilung.id).then(msg => {
+            this.ebeguUtil.replaceElementInList(msg, this.allMitteilungen, false);
+        });
+    }
+
+    public mitteilungUebergebenAnSchulamt(mitteilung: TSMitteilung): void {
+        this.mitteilungRS.mitteilungUebergebenAnSchulamt(mitteilung.id).then(msg => {
+            this.ebeguUtil.replaceElementInList(msg, this.allMitteilungen, false);
+        });
+    }
+
+    public isMessageEditableForMyRole(mitteilung: TSMitteilung): boolean {
+        // Ich darf die Mitteilung auf Gelesen setzen oder Delegieren, wenn ich der gleichen Empfängergruppe wie die Meldung selber angehöre
+        return this.hasMessageEmpfaengerSameBenutzergruppe(mitteilung, TSRoleUtil.getAdministratorJugendamtRole()) ||
+            this.hasMessageEmpfaengerSameBenutzergruppe(mitteilung, TSRoleUtil.getSchulamtOnlyRoles());
+    }
+
+    public canUebergebenAnSchulamt(mitteilung: TSMitteilung): boolean {
+        return this.hasMessageEmpfaengerSameBenutzergruppe(mitteilung, TSRoleUtil.getAdministratorJugendamtRole());
+    }
+
+    public canUebergebenAnJugendamt(mitteilung: TSMitteilung): boolean {
+        return this.hasMessageEmpfaengerSameBenutzergruppe(mitteilung, TSRoleUtil.getSchulamtOnlyRoles());
+    }
+
+    private hasMessageEmpfaengerSameBenutzergruppe(mitteilung: TSMitteilung, benutzerRollen: TSRole[]): boolean {
+        let userInGroup: boolean = this.authServiceRS.isOneOfRoles(benutzerRollen);
+        let empfaengerInGroup: boolean = benutzerRollen.indexOf(mitteilung.empfaenger.role) > -1;
+        return userInGroup && empfaengerInGroup;
     }
 }

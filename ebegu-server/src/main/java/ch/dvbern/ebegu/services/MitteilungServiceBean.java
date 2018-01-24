@@ -658,6 +658,60 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return Optional.of(firstResult);
 	}
 
+	@Nonnull
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	public Mitteilung mitteilungUebergebenAnJugendamt(@Nonnull String mitteilungId) {
+		Mitteilung mitteilung = findMitteilung(mitteilungId).orElseThrow(() -> new EbeguRuntimeException("mitteilungUebergebenAnJugendamt", "Mitteilung not found"));
+		authorizer.checkReadAuthorizationMitteilung(mitteilung);
+		// Dass der eingeloggte Benutzer Schulamt ist, ist schon durch die Berechtigungen geprueft. Es muss noch sichergestellt werden, dass die Meldung
+		// auch tatsaechlich dem Schulamt "gehoert"
+		if (mitteilung.getEmpfaenger() != null && mitteilung.getEmpfaenger().getRole().isRoleSchulamt()) {
+			// An wen soll die Meldung delegiert werden?
+			Benutzer verantwortlicherJA = mitteilung.getFall().getVerantwortlicher();
+			if (verantwortlicherJA == null) {
+				// Kein JA-Verantwortlicher definiert. Wir nehmen den Default-Verantwortlichen
+				verantwortlicherJA = readDefaultVerantwortlicherFromProperties(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
+			}
+			if (verantwortlicherJA == null) {
+				throw new IllegalArgumentException("Es konnte kein neuer Empfänger beim Jugendamt ermittelt werden");
+			}
+			// Den VerantwortlichenJA als Empfänger setzen
+			mitteilung.setEmpfaenger(verantwortlicherJA);
+			mitteilung.setMitteilungStatus(MitteilungStatus.NEU);
+			return persistence.merge(mitteilung);
+
+		}
+		throw new IllegalArgumentException("Die Mitteilung hat entweder keinen Empfänger oder dieser ist nicht in Rolle Schulamt");
+	}
+
+	@Nonnull
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	public Mitteilung mitteilungUebergebenAnSchulamt(@Nonnull String mitteilungId) {
+		Mitteilung mitteilung = findMitteilung(mitteilungId).orElseThrow(() -> new EbeguRuntimeException("mitteilungUebergebenAnSchulamt", "Mitteilung not found"));
+		authorizer.checkReadAuthorizationMitteilung(mitteilung);
+		// Dass der eingeloggte Benutzer Jugendamt ist, ist schon durch die Berechtigungen geprueft. Es muss noch sichergestellt werden, dass die Meldung
+		// auch tatsaechlich dem Jugendamt "gehoert"
+		if (mitteilung.getEmpfaenger() != null && mitteilung.getEmpfaenger().getRole().isRoleJugendamt()) {
+			// An wen soll die Meldung delegiert werden?
+			Benutzer verantwortlicherSCH = mitteilung.getFall().getVerantwortlicherSCH();
+			if (verantwortlicherSCH == null) {
+				// Kein SCH-Verantwortlicher definiert. Wir nehmen den Default-Verantwortlichen
+				verantwortlicherSCH = readDefaultVerantwortlicherFromProperties(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER_SCH);
+			}
+			if (verantwortlicherSCH == null) {
+				throw new IllegalArgumentException("Es konnte kein neuer Empfänger beim Schulamt ermittelt werden");
+			}
+			// Den VerantwortlichenJA als Empfänger setzen
+			mitteilung.setEmpfaenger(verantwortlicherSCH);
+			mitteilung.setMitteilungStatus(MitteilungStatus.NEU);
+			return persistence.merge(mitteilung);
+
+		}
+		throw new IllegalArgumentException("Die Mitteilung hat entweder keinen Empfänger oder dieser ist nicht in Rolle Jugendamt");
+	}
+
 	private Betreuungsmitteilung applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {
 		authorizer.checkWriteAuthorization(gesuch);
 		authorizer.checkReadAuthorizationMitteilung(mitteilung);
