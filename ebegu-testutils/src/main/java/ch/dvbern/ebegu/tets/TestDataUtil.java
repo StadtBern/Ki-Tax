@@ -146,6 +146,7 @@ import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_STUNDEN_PRO_TAG_TAGI
 /**
  * comments homa
  */
+@SuppressWarnings("PMD.NcssTypeCount")
 public final class TestDataUtil {
 
 	private static final String iban = "CH39 0900 0000 3066 3817 2";
