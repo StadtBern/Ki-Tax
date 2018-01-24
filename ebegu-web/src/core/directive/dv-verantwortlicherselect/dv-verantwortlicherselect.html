@@ -18,7 +18,8 @@
       dv-show-element
       dv-show-allowed-roles="vm.TSRoleUtil.getAllButAdministratorAmtRole()"
       dv-show-expression="vm.hasGesuch()">
-        <i ng-class="{'fa fa-user': !vm.schulamt, 'fa fa-graduation-cap': vm.schulamt}" aria-hidden="true" style="margin-right: 0.2rem"></i>
+        <i ng-class="{'fa fa-user': !vm.schulamt, 'fa fa-graduation-cap': vm.schulamt}" aria-hidden="true"
+           style="margin-right: 0.2rem"></i>
         {{vm.getVerantwortlicherFullName()}}
 </span>
 
@@ -27,7 +28,8 @@
          dv-show-expression="vm.hasGesuch()">
 
     <button ng-click="$mdOpenMenu()" aria-label="{{vm.getVerantwortlicherFullName()}}">
-        <i ng-class="{'fa fa-user': !vm.schulamt, 'fa fa-graduation-cap': vm.schulamt}" aria-hidden="true" style="margin-right: 0.2rem"></i>
+        <i ng-class="{'fa fa-user': !vm.schulamt, 'fa fa-graduation-cap': vm.schulamt}" aria-hidden="true"
+           style="margin-right: 0.2rem"></i>
         <span ng-bind="vm.getVerantwortlicherFullName()"></span>
         <i class="ellipsis-icon fa fa-chevron-down"></i>
     </button>
@@ -39,12 +41,14 @@
         </md-menu-item>
 
         <md-menu-item class="menu-item-link">
-            <md-button ng-click="vm.setVerantwortlicher(undefined)" aria-label="{{'NO_VERANTWORTLICHER_SELECTED' | translate}}"
+            <md-button ng-click="vm.setVerantwortlicher(undefined)"
+                       aria-label="{{'NO_VERANTWORTLICHER_SELECTED' | translate}}"
                        style="position: relative;">
                 <span>
+                    <i ng-if="!vm.getFallVerantwortlicher()" ng-class="{'fa fa-user': !vm.schulamt, 'fa fa-graduation-cap': vm.schulamt}"
+                       aria-hidden="true"
+                       style="line-height: 4rem; padding-right: 0.5rem;"></i>
                     <a href="javascript:void(0)" aria-hidden>{{'NO_VERANTWORTLICHER_SELECTED' | translate}}</a>
-                    <i ng-if="!vm.getFallVerantwortlicher()" ng-class="{'fa fa-user': !vm.schulamt, 'fa fa-graduation-cap': vm.schulamt}" aria-hidden="true"
-                       style="line-height: 4rem; position:absolute; right:2rem;"></i>
                 </span>
             </md-button>
         </md-menu-item>
@@ -54,10 +58,11 @@
             <md-button ng-click="vm.setVerantwortlicher(user)" aria-label="{{user.username}}"
                        style="position: relative;">
                 <span>
+                                    <i ng-if="vm.isCurrentVerantwortlicher(user)"
+                                       ng-class="{'fa fa-user': !vm.schulamt, 'fa fa-graduation-cap': vm.schulamt}"
+                                       aria-hidden="true"
+                                       style="line-height: 4rem;"></i>
                     <a href="javascript:void(0)" aria-hidden>{{user.getFullName()}}</a>
-                    <i ng-if="vm.isCurrentVerantwortlicher(user)" ng-class="{'fa fa-user': !vm.schulamt, 'fa fa-graduation-cap': vm.schulamt}" aria-hidden="true"
-                       style="line-height: 4rem; position:absolute; right:2rem;"></i>
-
                 </span>
             </md-button>
         </md-menu-item>

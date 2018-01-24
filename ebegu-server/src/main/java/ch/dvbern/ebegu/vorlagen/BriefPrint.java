@@ -38,4 +38,8 @@ public interface BriefPrint {
 
 	String getUnterzeichner();
 
+	boolean isAdresseJugendamt();
+
+	boolean isAdresseSchulamt();
+
 }

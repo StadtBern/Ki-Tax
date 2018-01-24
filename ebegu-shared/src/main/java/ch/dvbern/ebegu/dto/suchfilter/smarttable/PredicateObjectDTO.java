@@ -45,7 +45,7 @@ public class PredicateObjectDTO implements Serializable {
 	private String angebote;        //Gesuch.kindContainers.betreuungen.institutionStammdaten.betreuungsangebotTyp
 	private String institutionen;   //Gesuch.kindContainers.betreuungen.institutionStammdaten.institution.name
 	private String verantwortlicher; //Fall.verwantwortlicher.name
-	private String verantwortlicherSCH; //Fall.verwantwortlicher.name
+	private String verantwortlicherSCH; //Fall.verwantwortlicherSCH.name
 	private String kinder; //Gesuch.kindContainers.kindJa.vorname
 
 	public String getKinder() {

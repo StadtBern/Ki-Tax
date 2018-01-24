@@ -405,8 +405,8 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 		Predicate predicateTagesschule = cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
 		Predicate predicateFerieninsel = cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.FERIENINSEL);
 		Predicate predicateTSOderFI = cb.or(predicateTagesschule, predicateFerieninsel);
-		Predicate predicateNotAusgelost = cb.notEqual(betreuungen.get(Betreuung_.betreuungsstatus), Betreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST);
-		return cb.and(predicateTSOderFI, predicateNotAusgelost);
+		Predicate predicateNotErfasst = cb.notEqual(betreuungen.get(Betreuung_.betreuungsstatus), Betreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST);
+		return cb.and(predicateTSOderFI, predicateNotErfasst);
 	}
 
 	/**

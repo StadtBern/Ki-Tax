@@ -37,6 +37,7 @@ import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
+import {TSAnmeldungMutationZustand} from '../../../models/enums/TSAnmeldungMutationZustand';
 
 declare let require: any;
 let template = require('./betreuungFerieninselView.html');
@@ -67,6 +68,9 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     showErrorMessage: boolean;
 
     ferieninselStammdaten: TSFerieninselStammdaten;
+    showNochNichtFreigegeben: boolean = false;
+    showMutiert: boolean = false;
+    aktuellGueltig: boolean = true;
 
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
@@ -83,6 +87,15 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
 
     $onInit() {
         this.initFerieninselViewModel();
+        if (this.getBetreuungModel().anmeldungMutationZustand) {
+            if (this.getBetreuungModel().anmeldungMutationZustand === TSAnmeldungMutationZustand.MUTIERT) {
+                this.showMutiert = true;
+                this.aktuellGueltig = false;
+            } else if (this.getBetreuungModel().anmeldungMutationZustand === TSAnmeldungMutationZustand.NOCH_NICHT_FREIGEGEBEN) {
+                this.showNochNichtFreigegeben = true;
+                this.aktuellGueltig = false;
+            }
+        }
     }
 
     getFeriennamen(): Array<TSFerienname> {

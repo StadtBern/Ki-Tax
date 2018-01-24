@@ -1766,6 +1766,7 @@ public class JaxBConverter {
 		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
 		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
 		betreuung.setGueltig(betreuungJAXP.isGueltig());
+		betreuung.setAnmeldungMutationZustand(betreuungJAXP.getAnmeldungMutationZustand());
 		if (betreuungJAXP.getBelegungTagesschule() != null) {
 			Objects.requireNonNull(betreuung.getInstitutionStammdaten().getInstitutionStammdatenTagesschule(),
 				"InstitutionsStammdatenTagesschule muessen gesetzt sein");
@@ -2012,8 +2013,10 @@ public class JaxBConverter {
 		jaxBetreuung.setBetreuungMutiert(betreuungFromServer.getBetreuungMutiert());
 		jaxBetreuung.setAbwesenheitMutiert(betreuungFromServer.getAbwesenheitMutiert());
 		jaxBetreuung.setGueltig(betreuungFromServer.isGueltig());
+		jaxBetreuung.setAnmeldungMutationZustand(betreuungFromServer.getAnmeldungMutationZustand());
 		jaxBetreuung.setBelegungTagesschule(belegungTagesschuleToJax(betreuungFromServer.getBelegungTagesschule()));
 		jaxBetreuung.setBelegungFerieninsel(belegungFerieninselToJAX(betreuungFromServer.getBelegungFerieninsel()));
+		jaxBetreuung.setBgNummer(betreuungFromServer.getBGNummer());
 		return jaxBetreuung;
 	}
 
@@ -2579,7 +2582,7 @@ public class JaxBConverter {
 		return antrag;
 	}
 
-	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch, UserRole userRole) {
+	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch, @Nullable UserRole userRole) {
 		JaxAntragDTO antrag = gesuchToAntragDTOBasic(gesuch);
 		antrag.setKinder(createKinderList(gesuch.getKindContainers()));
 		antrag.setAngebote(createAngeboteList(gesuch.getKindContainers()));
@@ -2603,9 +2606,11 @@ public class JaxBConverter {
 		antrag.setGesuchsperiodeGueltigBis(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis());
 		if (gesuch.getFall().getVerantwortlicher() != null) {
 			antrag.setVerantwortlicher(gesuch.getFall().getVerantwortlicher().getFullName());
+			antrag.setVerantwortlicherUsernameJA(gesuch.getFall().getVerantwortlicher().getUsername());
 		}
 		if (gesuch.getFall().getVerantwortlicherSCH() != null) {
 			antrag.setVerantwortlicherSCH(gesuch.getFall().getVerantwortlicherSCH().getFullName());
+			antrag.setVerantwortlicherUsernameSCH(gesuch.getFall().getVerantwortlicherSCH().getUsername());
 		}
 		antrag.setVerfuegt(gesuch.getStatus().isAnyStatusOfVerfuegt());
 		antrag.setBeschwerdeHaengig(gesuch.getStatus() == AntragStatus.BESCHWERDE_HAENGIG);

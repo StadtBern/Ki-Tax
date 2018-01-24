@@ -13,29 +13,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.dvbern.ebegu.vorlagen.mahnung;
+package ch.dvbern.ebegu.enums;
 
-import java.util.List;
+/**
+ * Enum Anmeldung Mutation Zustand
+ */
+public enum AnmeldungMutationZustand {
 
-import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
-
-public interface ManhungPrint {
-
-	// ****************************************************************************************************************
-	// Achtung, die Methodennamen in dieser Klassen duerfen nicht veraendert werden. Sie muessen identisch sein
-	// mit den Platzhaltern im Word-Template!
-	// ****************************************************************************************************************
-
-	String getAngebotFull();
-
-	String getAngebotShort();
-
-	String getEingangsDatum();
-
-	List<AufzaehlungPrint> getFehlendeUnterlagen();
-
-	String getMahnFristDatum();
-
-	String getErsteMahnDatum();
-
+	NOCH_NICHT_FREIGEGEBEN,
+	MUTIERT,
+	AKTUELLE_ANMELDUNG
 }
+
