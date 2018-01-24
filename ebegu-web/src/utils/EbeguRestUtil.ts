@@ -681,6 +681,7 @@ export default class EbeguRestUtil {
             gesuchTS.gueltig = gesuchFromServer.gueltig;
             gesuchTS.dokumenteHochgeladen = gesuchFromServer.dokumenteHochgeladen;
             gesuchTS.finSitStatus = gesuchFromServer.finSitStatus;
+            gesuchTS.neustesGesuch = gesuchFromServer.neustesGesuch;
             return gesuchTS;
         }
         return undefined;
@@ -1214,6 +1215,7 @@ export default class EbeguRestUtil {
         restBetreuung.gueltig = betreuung.gueltig;
         restBetreuung.belegungTagesschule = this.belegungTagesschuleToRestObject({}, betreuung.belegungTagesschule);
         restBetreuung.belegungFerieninsel = this.belegungFerieninselToRestObject({}, betreuung.belegungFerieninsel);
+        restBetreuung.anmeldungMutationZustand = betreuung.anmeldungMutationZustand;
         return restBetreuung;
     }
 
@@ -1292,6 +1294,8 @@ export default class EbeguRestUtil {
             betreuungTS.gueltig = betreuungFromServer.gueltig;
             betreuungTS.belegungTagesschule = this.parseBelegungTagesschule(new TSBelegungTagesschule(), betreuungFromServer.belegungTagesschule);
             betreuungTS.belegungFerieninsel = this.parseBelegungFerieninsel(new TSBelegungFerieninsel(), betreuungFromServer.belegungFerieninsel);
+            betreuungTS.anmeldungMutationZustand = betreuungFromServer.anmeldungMutationZustand;
+            betreuungTS.bgNummer = betreuungFromServer.bgNummer;
             return betreuungTS;
         }
         return undefined;
@@ -1437,6 +1441,8 @@ export default class EbeguRestUtil {
         restPendenz.kinder = pendenz.kinder;
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
         restPendenz.verantwortlicherSCH = pendenz.verantwortlicherSCH;
+        restPendenz.verantwortlicherUsernameJA = pendenz.verantwortlicherUsernameJA;
+        restPendenz.verantwortlicherUsernameSCH = pendenz.verantwortlicherUsernameSCH;
         restPendenz.status = pendenz.status;
         restPendenz.verfuegt = pendenz.verfuegt;
         restPendenz.beschwerdeHaengig = pendenz.beschwerdeHaengig;
@@ -1463,6 +1469,8 @@ export default class EbeguRestUtil {
         antragTS.institutionen = antragFromServer.institutionen;
         antragTS.verantwortlicher = antragFromServer.verantwortlicher;
         antragTS.verantwortlicherSCH = antragFromServer.verantwortlicherSCH;
+        antragTS.verantwortlicherUsernameJA = antragFromServer.verantwortlicherUsernameJA;
+        antragTS.verantwortlicherUsernameSCH = antragFromServer.verantwortlicherUsernameSCH;
         antragTS.status = antragFromServer.status;
         antragTS.verfuegt = antragFromServer.verfuegt;
         antragTS.beschwerdeHaengig = antragFromServer.beschwerdeHaengig;

@@ -32,6 +32,22 @@
         .dashboardHeader {
             margin-top: 20rem !important;
         }
+        .gdashboard-panel {
+            display: flex;
+            flex-direction: column;
+            width: 32rem;
+            margin: 0;
+            &:not(:last-of-type) {
+                padding-right: 6rem;
+                border-right: 1px solid @contrast;
+            }
+            &:last-child {
+                padding-left: 6rem;
+            }
+            &__seperator {
+                height: 5rem;
+            }
+        }
     }
 
     .dv-progressbar {
@@ -195,7 +211,7 @@
             & > div {
                 margin-right: 0;
             }
-            & > div + div,  & > div:only-of-type{
+            & > div + div, & > div:only-of-type {
                 margin-right: auto;
             }
         }
