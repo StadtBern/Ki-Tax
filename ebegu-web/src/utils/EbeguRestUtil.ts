@@ -80,7 +80,7 @@ import TSMahnung from '../models/TSMahnung';
 import {TSMandant} from '../models/TSMandant';
 import TSMitteilung from '../models/TSMitteilung';
 import TSModulTagesschule from '../models/TSModulTagesschule';
-import TSPendenzInstitution from '../models/TSPendenzInstitution';
+import TSPendenzBetreuung from '../models/TSPendenzBetreuung';
 import {TSPensumFachstelle} from '../models/TSPensumFachstelle';
 import {TSTraegerschaft} from '../models/TSTraegerschaft';
 import TSUser from '../models/TSUser';
@@ -1557,7 +1557,7 @@ export default class EbeguRestUtil {
         return false;
     }
 
-    public pendenzInstitutionToRestObject(restPendenz: any, pendenz: TSPendenzInstitution): any {
+    public pendenzBetreuungenToRestObject(restPendenz: any, pendenz: TSPendenzBetreuung): any {
         restPendenz.betreuungsNummer = pendenz.betreuungsNummer;
         restPendenz.betreuungsId = pendenz.betreuungsId;
         restPendenz.gesuchId = pendenz.gesuchId;
@@ -1574,7 +1574,7 @@ export default class EbeguRestUtil {
         return restPendenz;
     }
 
-    public parsePendenzInstitution(pendenzTS: TSPendenzInstitution, pendenzFromServer: any): TSPendenzInstitution {
+    public parsePendenzBetreuungen(pendenzTS: TSPendenzBetreuung, pendenzFromServer: any): TSPendenzBetreuung {
         pendenzTS.betreuungsNummer = pendenzFromServer.betreuungsNummer;
         pendenzTS.betreuungsId = pendenzFromServer.betreuungsId;
         pendenzTS.gesuchId = pendenzFromServer.gesuchId;
@@ -1591,14 +1591,14 @@ export default class EbeguRestUtil {
         return pendenzTS;
     }
 
-    public parsePendenzenInstitution(data: any): TSPendenzInstitution[] {
-        let pendenzen: TSPendenzInstitution[] = [];
+    public parsePendenzBetreuungenList(data: any): TSPendenzBetreuung[] {
+        let pendenzen: TSPendenzBetreuung[] = [];
         if (data && Array.isArray(data)) {
             for (let i = 0; i < data.length; i++) {
-                pendenzen[i] = this.parsePendenzInstitution(new TSPendenzInstitution(), data[i]);
+                pendenzen[i] = this.parsePendenzBetreuungen(new TSPendenzBetreuung(), data[i]);
             }
         } else {
-            pendenzen[0] = this.parsePendenzInstitution(new TSPendenzInstitution(), data);
+            pendenzen[0] = this.parsePendenzBetreuungen(new TSPendenzBetreuung(), data);
         }
         return pendenzen;
     }
