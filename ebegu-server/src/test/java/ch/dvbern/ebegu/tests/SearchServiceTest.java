@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
@@ -29,6 +30,7 @@ import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.GesuchService;
@@ -292,6 +294,72 @@ public class SearchServiceTest extends AbstractEbeguLoginTest {
 		Pair<Long, List<Gesuch>> pendenzen = searchService.searchPendenzen(filterDTO);
 		Assert.assertEquals(Long.valueOf(1), pendenzen.getLeft());
 		Assert.assertSame(AntragStatus.IN_BEARBEITUNG_JA, pendenzen.getValue().get(0).getStatus());
+	}
+
+	/**
+	 * Ein Mischgesuch. Es muss mit Flag null eine Pendez fuers SCH sein und nachdem man dieses Flag setzt ist es keine Pendenz mehr
+	 */
+	@Test
+	public void testSearchPendenzenMischgesuchFlagFinSit() {
+		final Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		addVerantwortlicherSCHToFall(gesuch.getFall());
+
+		loginAsAdminSchulamt();
+
+		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
+
+		Pair<Long, List<Gesuch>> pendenzen = searchService.searchPendenzen(filterDTO);
+		Assert.assertEquals(Long.valueOf(1), pendenzen.getLeft());
+		Assert.assertSame(AntragStatus.IN_BEARBEITUNG_JA, pendenzen.getValue().get(0).getStatus());
+
+		gesuch.setFinSitStatus(FinSitStatus.ABGELEHNT);
+		persistence.merge(gesuch);
+
+		Pair<Long, List<Gesuch>> pendenzenSCH = searchService.searchPendenzen(filterDTO);
+		Assert.assertEquals(Long.valueOf(0), pendenzenSCH.getLeft());
+
+		loginAsSachbearbeiterJA();
+		Pair<Long, List<Gesuch>> pendenzenJA = searchService.searchPendenzen(filterDTO);
+		Assert.assertEquals(Long.valueOf(1), pendenzenJA.getLeft());
+	}
+
+	/**
+	 * Ein SCHgesuch. Es muss eine Pendenz sein, bis es ABGESCHLOSSEN (NUR_SCHULAMT) ist.
+	 */
+	@Test
+	public void testSearchPendenzenSCH() {
+		final Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		convertToSCHGesuch(gesuch);
+
+		loginAsAdminSchulamt();
+
+		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
+
+		Pair<Long, List<Gesuch>> pendenzen = searchService.searchPendenzen(filterDTO);
+		Assert.assertEquals(Long.valueOf(1), pendenzen.getLeft());
+		Assert.assertSame(AntragStatus.IN_BEARBEITUNG_JA, pendenzen.getValue().get(0).getStatus());
+
+		gesuch.setFinSitStatus(FinSitStatus.AKZEPTIERT);
+		gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
+		persistence.merge(gesuch);
+
+		Pair<Long, List<Gesuch>> pendenzenEmpty = searchService.searchPendenzen(filterDTO);
+		Assert.assertEquals(Long.valueOf(0), pendenzenEmpty.getLeft());
+	}
+
+	private void convertToSCHGesuch(Gesuch gesuch) {
+		final Fall fall = addVerantwortlicherSCHToFall(gesuch.getFall());
+		fall.setVerantwortlicher(null);
+		persistence.merge(fall);
+	}
+
+	private Fall addVerantwortlicherSCHToFall(@Nonnull Fall fall) {
+		// mit 2 Verantwortlichen wird zu Mischgesuch
+		Benutzer verantSCH = TestDataUtil.createBenutzerSCH();
+		persistence.persist(verantSCH.getMandant());
+		persistence.persist(verantSCH);
+		fall.setVerantwortlicherSCH(verantSCH);
+		return persistence.merge(fall);
 	}
 
 }

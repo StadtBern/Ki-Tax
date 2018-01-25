@@ -40,10 +40,6 @@ public enum UserRole {
 		return ADMIN == this || SACHBEARBEITER_JA == this;
 	}
 
-	public boolean isRolleJugendamtOrSchulamt() {
-		return isRoleSchulamt() || isRoleJugendamt();
-	}
-
 	public boolean isSuperadmin() {
 		return SUPER_ADMIN == this;
 	}

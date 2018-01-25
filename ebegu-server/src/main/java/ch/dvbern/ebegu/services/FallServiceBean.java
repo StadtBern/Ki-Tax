@@ -102,6 +102,9 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	@Inject
 	private SuperAdminService superAdminService;
 
+	@Inject
+	private ApplicationPropertyService applicationPropertyService;
+
 	@Nonnull
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
@@ -237,6 +240,16 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		final Fall fall = fallOpt.orElseThrow(() -> new EbeguEntityNotFoundException("hasFallAnyMitteilung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallID));
 		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForCurrentRolle(fall);
 		return !mitteilungenForCurrentRolle.isEmpty();
+	}
+
+	@Override
+	@Nonnull
+	public Optional<Benutzer> getHauptOrDefaultVerantwortlicher(@Nonnull Fall fall) {
+		Benutzer verantwortlicher = fall.getHauptVerantwortlicher();
+		if (verantwortlicher == null) {
+			return applicationPropertyService.readDefaultVerantwortlicherFromProperties();
+		}
+		return Optional.of(verantwortlicher);
 	}
 
 	private String readBesitzerEmailForFall(String fallID) {
