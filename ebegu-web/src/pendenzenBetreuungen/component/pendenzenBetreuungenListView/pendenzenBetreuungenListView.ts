@@ -14,7 +14,6 @@
  */
 
 import {IComponentOptions} from 'angular';
-import TSPendenzInstitution from '../../../models/TSPendenzInstitution';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
@@ -24,22 +23,23 @@ import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
-import PendenzInstitutionRS from '../../service/PendenzInstitutionRS.rest';
+import PendenzBetreuungenRS from '../../service/PendenzBetreuungenRS.rest';
 import {InstitutionStammdatenRS} from '../../../core/service/institutionStammdatenRS.rest';
 import TSBetreuungsnummerParts from '../../../models/dto/TSBetreuungsnummerParts';
-let template = require('./pendenzenInstitutionListView.html');
-require('./pendenzenInstitutionListView.less');
+import TSPendenzBetreuung from '../../../models/TSPendenzBetreuung';
+let template = require('./pendenzenBetreuungenListView.html');
+require('./pendenzenBetreuungenListView.less');
 
-export class PendenzenInstitutionListViewComponentConfig implements IComponentOptions {
+export class PendenzenBetreuungenListViewComponentConfig implements IComponentOptions {
     transclude = false;
     template = template;
-    controller = PendenzenInstitutionListViewController;
+    controller = PendenzenBetreuungenListViewController;
     controllerAs = 'vm';
 }
 
-export class PendenzenInstitutionListViewController {
+export class PendenzenBetreuungenListViewController {
 
-    private pendenzenList: Array<TSPendenzInstitution>;
+    private pendenzenList: Array<TSPendenzBetreuung>;
     selectedBetreuungsangebotTyp: string;
     selectedInstitution: string;
     selectedGesuchsperiode: string;
@@ -50,10 +50,10 @@ export class PendenzenInstitutionListViewController {
     numberOfPages: number = 1;
 
 
-    static $inject: string[] = ['PendenzInstitutionRS', 'EbeguUtil', 'InstitutionRS', 'InstitutionStammdatenRS', 'GesuchsperiodeRS',
+    static $inject: string[] = ['PendenzBetreuungenRS', 'EbeguUtil', 'InstitutionRS', 'InstitutionStammdatenRS', 'GesuchsperiodeRS',
         'GesuchModelManager', 'BerechnungsManager', '$state'];
 
-    constructor(public pendenzInstitutionRS: PendenzInstitutionRS, private ebeguUtil: EbeguUtil, private institutionRS: InstitutionRS,
+    constructor(public pendenzBetreuungenRS: PendenzBetreuungenRS, private ebeguUtil: EbeguUtil, private institutionRS: InstitutionRS,
                 private institutionStammdatenRS: InstitutionStammdatenRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
                 private $state: IStateService) {
@@ -74,7 +74,7 @@ export class PendenzenInstitutionListViewController {
     }
 
     private updatePendenzenList() {
-        this.pendenzInstitutionRS.getPendenzenList().then((response: any) => {
+        this.pendenzBetreuungenRS.getPendenzenBetreuungenList().then((response: any) => {
             this.pendenzenList = angular.copy(response);
             this.numberOfPages = this.pendenzenList.length / this.itemsByPage;
         });
@@ -104,18 +104,18 @@ export class PendenzenInstitutionListViewController {
         });
     }
 
-    public getPendenzenList(): Array<TSPendenzInstitution> {
+    public getPendenzenList(): Array<TSPendenzBetreuung> {
         return this.pendenzenList;
     }
 
-    public editPendenzInstitution(pendenz: TSPendenzInstitution, event: any): void {
+    public editPendenzBetreuungen(pendenz: TSPendenzBetreuung, event: any): void {
         if (pendenz) {
             let isCtrlKeyPressed: boolean = (event && event.ctrlKey);
             this.openBetreuung(pendenz, isCtrlKeyPressed);
         }
     }
 
-    private openBetreuung(pendenz: TSPendenzInstitution, isCtrlKeyPressed: boolean): void {
+    private openBetreuung(pendenz: TSPendenzBetreuung, isCtrlKeyPressed: boolean): void {
         let numberParts: TSBetreuungsnummerParts = this.ebeguUtil.splitBetreuungsnummer(pendenz.betreuungsNummer);
         if (numberParts && pendenz) {
             let kindNumber: number = parseInt(numberParts.kindnummer);

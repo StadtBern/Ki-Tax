@@ -18,7 +18,7 @@ import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import TSInstitution from './TSInstitution';
 import * as moment from 'moment';
 
-export default class TSPendenzInstitution {
+export default class TSPendenzBetreuung {
 
     private _betreuungsNummer: string;
     private _betreuungsId: string;

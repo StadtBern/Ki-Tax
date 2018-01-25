@@ -15,6 +15,9 @@
 
 package ch.dvbern.ebegu.enums;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Enum fuers Feld betreuungsangebotTyp in Institution.
  */
@@ -44,5 +47,9 @@ public enum BetreuungsangebotTyp {
 
 	public boolean isJugendamt() {
 		return !isSchulamt();
+	}
+
+	public static List<BetreuungsangebotTyp> getSchulamtTypes() {
+		return Arrays.asList(TAGESSCHULE, FERIENINSEL);
 	}
 }

@@ -13,6 +13,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-.pendenzenInstitutionListView {
-    padding: 3rem;
+import {RouterHelper} from '../dvbModules/router/route-helper-provider';
+import {IState} from 'angular-ui-router';
+
+pendenzRun.$inject = ['RouterHelper'];
+
+/* @ngInject */
+export function pendenzRun(routerHelper: RouterHelper) {
+    routerHelper.configureStates(getStates(), '/start');
+}
+
+function getStates(): IState[] {
+    return [
+        new EbeguPendenzenBetreuungenListState()
+    ];
+}
+
+//STATES
+
+export class EbeguPendenzenBetreuungenListState implements IState {
+    name = 'pendenzenBetreuungen';
+    template = '<pendenzen-betreuungen-list-view flex="auto" class="overflow-scroll">';
+    url = '/pendenzenBetreuungen';
 }

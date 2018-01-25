@@ -129,10 +129,16 @@ public enum AntragStatus {
 		BESCHWERDE_HAENGIG,
 		GEPRUEFT_STV);
 
-	// todo noch zu definieren. Die neuen Status fuer Schulamt muessen hinzugefuegt werden
 	public static final Set<AntragStatus> FOR_SACHBEARBEITER_SCHULAMT_PENDENZEN = EnumSet.of(
 		FREIGEGEBEN,
-		NUR_SCHULAMT);
+		IN_BEARBEITUNG_JA,
+		ERSTE_MAHNUNG,
+		ERSTE_MAHNUNG_ABGELAUFEN,
+		ZWEITE_MAHNUNG,
+		ZWEITE_MAHNUNG_ABGELAUFEN,
+		GEPRUEFT,
+		BESCHWERDE_HAENGIG,
+		GEPRUEFT_STV);
 
 	public static final Set<AntragStatus> FOR_KIND_DUBLETTEN = EnumSet.of(
 		NUR_SCHULAMT,

@@ -75,7 +75,8 @@ public interface InstitutionStammdatenService {
 
 	/**
 	 * Gibt alle Betreuungsangebotstypen zurueck, welche die Institutionen anbieten, fuer welche der
-	 * aktuell eingeloggte Benutzer berechtigt ist
+	 * aktuell eingeloggte Benutzer berechtigt ist. Sollte der Benutzer ein Admin oder Sachbearbeiter vom Schulamt
+	 * sein, wird dann direkt TAGESSCHULE und FERIENINSEL zurueckgegeben.
 	 */
 	Collection<BetreuungsangebotTyp> getBetreuungsangeboteForInstitutionenOfCurrentBenutzer();
 }

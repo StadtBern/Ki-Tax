@@ -14,14 +14,14 @@
  */
 
 import {EbeguWebCore} from '../core/core.module';
-import {PendenzenInstitutionListViewComponentConfig} from './component/pendenzenInstitutionListView/pendenzenInstitutionListView';
-import {pendenzRun} from './pendenzenInstitution.route';
-import PendenzInstitutionRS from './service/PendenzInstitutionRS.rest';
-import {PendenzInstitutionFilter} from './filter/pendenzInstitutionFilter';
+import {PendenzenBetreuungenListViewComponentConfig} from './component/pendenzenBetreuungenListView/pendenzenBetreuungenListView';
+import {pendenzRun} from './pendenzenBetreuungen.route';
+import {PendenzBetreuungenFilter} from './filter/pendenzBetreuungenFilter';
+import PendenzBetreuungenRS from './service/PendenzBetreuungenRS.rest';
 
-export const EbeguWebPendenzenInstitution =
-    angular.module('ebeguWeb.pendenzenInstitution', [EbeguWebCore.name])
+export const EbeguWebPendenzenBetreuungen =
+    angular.module('ebeguWeb.pendenzenBetreuungen', [EbeguWebCore.name])
         .run(pendenzRun)
-        .service('PendenzInstitutionRS', PendenzInstitutionRS)
-        .filter('pendenzInstitutionFilter', PendenzInstitutionFilter)
-        .component('pendenzenInstitutionListView', new PendenzenInstitutionListViewComponentConfig());
+        .service('PendenzBetreuungenRS', PendenzBetreuungenRS)
+        .filter('pendenzBetreuungenFilter', PendenzBetreuungenFilter)
+        .component('pendenzenBetreuungenListView', new PendenzenBetreuungenListViewComponentConfig());

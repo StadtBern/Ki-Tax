@@ -103,10 +103,16 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 	private LocalDate gesuchsperiodeGueltigBis = null;
 
 	@NotNull
-	private String verantwortlicher;
+	private String verantwortlicher; 	// Name Vorname
 
 	@Nullable
-	private String verantwortlicherSCH;
+	private String verantwortlicherSCH; // Name Vorname
+
+	@Nullable
+	private String verantwortlicherUsernameJA; 	// Wird fuer Freigabe gebraucht
+
+	@Nullable
+	private String verantwortlicherUsernameSCH; // Wird fuer Freigabe gebraucht
 
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
@@ -146,6 +152,11 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 
 	@Nullable
 	private FinSitStatus finSitStatus;
+
+	// transient
+	// Flag zum merken, ob dies das neuste Gesuch für diesen Fall in dieser Gesuchsperiode ist.
+	// Momentan nur bei getAllAntraegeGesuchsteller gesetzt.
+	private boolean neustesGesuch;
 
 	public String getAntragId() {
 		return antragId;
@@ -194,6 +205,24 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 
 	public void setVerantwortlicherSCH(@Nullable String verantwortlicherSCH) {
 		this.verantwortlicherSCH = verantwortlicherSCH;
+	}
+
+	@Nullable
+	public String getVerantwortlicherUsernameJA() {
+		return verantwortlicherUsernameJA;
+	}
+
+	public void setVerantwortlicherUsernameJA(@Nullable String verantwortlicherUsernameJA) {
+		this.verantwortlicherUsernameJA = verantwortlicherUsernameJA;
+	}
+
+	@Nullable
+	public String getVerantwortlicherUsernameSCH() {
+		return verantwortlicherUsernameSCH;
+	}
+
+	public void setVerantwortlicherUsernameSCH(@Nullable String verantwortlicherUsernameSCH) {
+		this.verantwortlicherUsernameSCH = verantwortlicherUsernameSCH;
 	}
 
 	@Nullable
@@ -319,5 +348,13 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 
 	public void setFinSitStatus(@Nullable FinSitStatus finSitStatus) {
 		this.finSitStatus = finSitStatus;
+	}
+
+	public boolean isNeustesGesuch() {
+		return neustesGesuch;
+	}
+
+	public void setNeustesGesuch(boolean neustesGesuch) {
+		this.neustesGesuch = neustesGesuch;
 	}
 }
