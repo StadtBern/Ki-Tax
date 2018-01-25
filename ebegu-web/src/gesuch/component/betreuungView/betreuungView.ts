@@ -397,7 +397,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         let result: Array<TSInstitutionStammdaten> = [];
         if (this.betreuungsangebot) {
             this.gesuchModelManager.getActiveInstitutionenList().forEach((instStamm: TSInstitutionStammdaten) => {
-                if (instStamm.betreuungsangebotTyp === this.betreuungsangebot.key) {
+                if (instStamm.betreuungsangebotTyp === this.betreuungsangebot.key && this.gesuchModelManager.isDefaultTagesschuleAllowed(instStamm)) {
                     result.push(instStamm);
                 }
             });
