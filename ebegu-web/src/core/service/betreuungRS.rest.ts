@@ -17,6 +17,7 @@ import {IHttpService, ILogService, IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSBetreuung from '../../models/TSBetreuung';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
+import TSAnmeldungDTO from '../../models/TSAnmeldungDTO';
 
 export default class BetreuungRS {
     serviceURL: string;
@@ -177,5 +178,18 @@ export default class BetreuungRS {
                 return convertedBetreuungen;
             });
         });
+    }
+
+    public createAngebot(anmeldungDTO: TSAnmeldungDTO): IPromise<any> {
+        let restAnmeldung = {};
+        restAnmeldung = this.ebeguRestUtil.anmeldungDTOToRestObject(restAnmeldung, anmeldungDTO);
+        return this.http.put(this.serviceURL + '/anmeldung/create/', restAnmeldung, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            return response;
+        });
+
     }
 }

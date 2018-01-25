@@ -37,6 +37,7 @@ import ITranslateService = angular.translate.ITranslateService;
 import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
 import ILogService = angular.ILogService;
+import TSGesuch from '../../../models/TSGesuch';
 
 let template = require('./betreuungListView.html');
 require('./betreuungListView.less');
@@ -226,5 +227,10 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
      */
     public isBetreuungenHinzufuegenDisabled(): boolean {
         return this.gesuchModelManager.getGesuch().status === TSAntragStatus.FREIGABEQUITTUNG;
+    }
+
+    public hasOnlyFerieninsel() {
+        let gesuch: TSGesuch = this.gesuchModelManager.getGesuch();
+        return !!gesuch && gesuch.areThereOnlyFerieninsel();
     }
 }
