@@ -218,7 +218,7 @@ public class InstitutionResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxInstitution> getAllowedInstitutionenForCurrentBenutzer() {
-		return institutionService.getAllowedInstitutionenForCurrentBenutzer().stream()
+		return institutionService.getAllowedInstitutionenForCurrentBenutzer(true).stream()
 			.map(inst -> converter.institutionToJAX(inst))
 			.collect(Collectors.toList());
 	}
