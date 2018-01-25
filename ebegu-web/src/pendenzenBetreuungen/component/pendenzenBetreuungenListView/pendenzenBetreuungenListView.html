@@ -13,8 +13,8 @@
   ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div class="pendenzenInstitutionListView">
-    <div class="col-md-12" st-table="displayedCollection" st-set-filter="pendenzInstitutionFilter"
+<div class="pendenzenBetreuungenListView">
+    <div class="col-md-12" st-table="displayedCollection" st-set-filter="pendenzBetreuungenFilter"
          st-safe-src="vm.getPendenzenList()"  st-delay="20">
 
         <div class="row">
@@ -87,7 +87,7 @@
                     <!-- Daten -->
                     <tbody>
                     <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                        ng-click="vm.editPendenzInstitution(row, $event)">
+                        ng-click="vm.editPendenzBetreuungen(row, $event)">
 
                         <td ng-bind="row.betreuungsNummer"></td>
                         <td ng-bind="row.name"></td>

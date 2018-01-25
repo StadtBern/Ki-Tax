@@ -114,7 +114,7 @@ public class ZahlungResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxZahlungsauftrag> getAllZahlungsauftraegeInstitution() {
 
-		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 
 		return zahlungService.getAllZahlungsauftraege().stream()
 			.filter(zahlungsauftrag -> !zahlungsauftrag.getStatus().equals(ZahlungauftragStatus.ENTWURF))
@@ -163,7 +163,7 @@ public class ZahlungResource {
 		if (!optional.isPresent()) {
 			return null;
 		}
-		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 
 		return converter.zahlungsauftragToJAX(optional.get(), principalBean.discoverMostPrivilegedRole(), allowedInst);
 	}

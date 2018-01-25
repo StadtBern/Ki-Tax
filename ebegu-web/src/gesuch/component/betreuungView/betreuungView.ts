@@ -334,7 +334,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             elementID: undefined
         }).then(() => {
             if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
-                this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN, 'pendenzenInstitution', undefined);
+                this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN, 'pendenzenBetreuungen', undefined);
             } else {
                 this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
             }
@@ -343,7 +343,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public anmeldungSchulamtAblehnen(): void {
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
-            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT, 'pendenzenInstitution', undefined);
+            this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT, 'pendenzenBetreuungen', undefined);
         } else {
             this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
         }
@@ -351,7 +351,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public anmeldungSchulamtFalscheInstitution(): void {
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
-            this.save(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION, 'pendenzenInstitution', undefined);
+            this.save(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION, 'pendenzenBetreuungen', undefined);
         } else {
             this.save(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
         }
@@ -464,7 +464,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public platzBestaetigen(): void {
         if (this.isGesuchValid()) {
             this.getBetreuungModel().datumBestaetigung = DateUtil.today();
-            this.save(TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution', undefined);
+            this.save(TSBetreuungsstatus.BESTAETIGT, 'pendenzenBetreuungen', undefined);
         }
     }
 
@@ -480,7 +480,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         //restore initialBetreuung
         this.model = angular.copy(this.initialBetreuung);
         this.model.datumAblehnung = DateUtil.today();
-        this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution', undefined);
+        this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenBetreuungen', undefined);
     }
 
     public stornieren(): void {
@@ -493,7 +493,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             }
             this.getBetreuungModel().erweiterteBeduerfnisse = false;
 
-            this.save(TSBetreuungsstatus.STORNIERT, 'pendenzenInstitution', undefined);
+            this.save(TSBetreuungsstatus.STORNIERT, 'pendenzenBetreuungen', undefined);
         }
     }
 

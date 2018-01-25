@@ -477,15 +477,15 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	}
 
 	@Nonnull
-	private Boolean isAllowedAdminOrSachbearbeiter(Gesuch entity) {
+	private Boolean isAllowedAdminOrSachbearbeiter(Gesuch gesuch) {
 		if (principalBean.isCallerInRole(UserRoleName.SUPER_ADMIN)) {
 			return true;
 		}
 		//JA/SCH Benutzer duerfen nur freigegebene Gesuche anschauen
 		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM_OR_SCH)) {
-			return entity.getStatus().isReadableByJugendamtSchulamtSteueramt();
+			return gesuch.getStatus().isReadableByJugendamtSchulamtSteueramt();
 		}
-		return isAllowedJuristOrRevisor(entity);
+		return isAllowedJuristOrRevisor(gesuch);
 	}
 
 	private boolean isAllowedSchulamt(Gesuch entity) {

@@ -338,7 +338,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		// Sichtbarkeit nach eingeloggtem Benutzer
 		boolean isInstitutionsbenutzer = principalBean.isCallerInAnyOfRole(UserRole.SACHBEARBEITER_INSTITUTION, UserRole.SACHBEARBEITER_TRAEGERSCHAFT);
 		if (isInstitutionsbenutzer) {
-			Collection<Institution> allowedInstitutionen = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+			Collection<Institution> allowedInstitutionen = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 			Predicate predicateAllowedInstitutionen = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(allowedInstitutionen);
 			predicatesToUse.add(predicateAllowedInstitutionen);
 		}
@@ -590,7 +590,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportVorlage.getDataSheetName());
 
-		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 
 		ExcelMergerDTO excelMergerDTO = zahlungAuftragExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(),
 			principalBean.discoverMostPrivilegedRole(), allowedInst, "Detailpositionen der Zahlung " + bezeichnung,
@@ -693,7 +693,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		// Sichtbarkeit nach eingeloggtem Benutzer
 		boolean isInstitutionsbenutzer = principalBean.isCallerInAnyOfRole(UserRole.SACHBEARBEITER_INSTITUTION, UserRole.SACHBEARBEITER_TRAEGERSCHAFT);
 		if (isInstitutionsbenutzer) {
-			Collection<Institution> allowedInstitutionen = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+			Collection<Institution> allowedInstitutionen = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 			Predicate predicateAllowedInstitutionen = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(allowedInstitutionen);
 			predicatesToUse.add(predicateAllowedInstitutionen);
 		}
@@ -735,7 +735,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		// Sichtbarkeit nach eingeloggtem Benutzer
 		boolean isInstitutionsbenutzer = principalBean.isCallerInAnyOfRole(UserRole.SACHBEARBEITER_INSTITUTION, UserRole.SACHBEARBEITER_TRAEGERSCHAFT);
 		if (isInstitutionsbenutzer) {
-			Collection<Institution> allowedInstitutionen = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+			Collection<Institution> allowedInstitutionen = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 			Predicate predicateAllowedInstitutionen = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(allowedInstitutionen);
 			predicatesToUse.add(predicateAllowedInstitutionen);
 		}
