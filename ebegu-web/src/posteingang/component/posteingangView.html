@@ -43,6 +43,8 @@
                         <th st-sort="sentDatum" class="sortable row-sentDatum" data-translate="POSTEINGANG_DATUM_UPPER"></th>
                         <!-- Verantwortliche Person -->
                         <th st-sort="empfaenger.getFullName()" class="sortable row-empfaenger" data-translate="POSTEINGANG_VERANTWORTLICH_UPPER"></th>
+                        <!-- Amt -->
+                        <th st-sort="amt" class="sortable row-amt" data-translate="POSTEINGANG_AMT"></th>
                     </tr>
                     <tr>
                         <!-- Von -->
@@ -57,7 +59,18 @@
                         <th><input st-search="sentDatum" class="form-control" type="text"/></th>
                         <!-- Verantwortliche Person -->
                         <th>
-                            <dv-userselect input-id="empfaenger" dv-usersearch="empfaenger" initial-all="false" show-selection-all="true"></dv-userselect>
+                            <dv-userselect input-id="empfaenger" dv-usersearch="empfaenger" initial-all="false" show-selection-all="true"
+                                           schulamt="vm.isCurrentUserSchulamt()"></dv-userselect>
+                        </th>
+                        <!-- Amt -->
+                        <th>
+                            <div class="dv-select-style">
+                                <select st-input-event="change" name="amt" id="amt" st-search="amt" class="form-control" >
+                                    <option value="">{{"ALLE" | translate}}</option>
+                                    <option value="AMT_JUGENDAMT">{{"AMT_JUGENDAMT" | translate}}</option>
+                                    <option value="AMT_SCHULAMT">{{"AMT_SCHULAMT" | translate}}</option>
+                                </select>
+                            </div>
                         </th>
                     </tr>
                     </thead>
@@ -81,6 +94,9 @@
                         <!-- Verantwortliche Person -->
                         <td class="ellipsis" ellipsis-tooltip="{{row.empfaenger}}"
                             ng-bind="row.empfaenger.getFullName()"></td>
+                        <!-- Amt -->
+                        <td class="ellipsis" ellipsis-tooltip="{{row.amt}}"
+                            ng-bind="row.amt | translate"></td>
                     </tr>
                     </tbody>
                     <tfoot>

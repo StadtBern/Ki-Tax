@@ -14,9 +14,11 @@
  */
 
 import {IComponentOptions} from 'angular';
+import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import TSMitteilung from '../../models/TSMitteilung';
 import MitteilungRS from '../../core/service/mitteilungRS.rest';
 import EbeguUtil from '../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import IStateService = angular.ui.IStateService;
 let template = require('./posteingangView.html');
 require('./posteingangView.less');
@@ -35,9 +37,10 @@ export class PosteingangViewController {
     itemsByPage: number = 20;
     numberOfPages: number = 1;
 
-    static $inject: string[] = ['MitteilungRS', 'EbeguUtil', 'CONSTANTS', '$state'];
+    static $inject: string[] = ['MitteilungRS', 'EbeguUtil', 'CONSTANTS', '$state', 'AuthServiceRS'];
 
-    constructor(private mitteilungRS: MitteilungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any, private $state: IStateService) {
+    constructor(private mitteilungRS: MitteilungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any, private $state: IStateService,
+                private authServiceRS: AuthServiceRS) {
         this.initViewModel();
     }
 
@@ -64,5 +67,10 @@ export class PosteingangViewController {
         this.$state.go('mitteilungen', {
             fallId: mitteilung.fall.id
         });
+    }
+
+    isCurrentUserSchulamt(): boolean {
+        let isUserSchulamt: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles());
+        return isUserSchulamt;
     }
 }

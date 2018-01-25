@@ -13,6 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {TSRole} from './enums/TSRole';
 import TSAbstractEntity from './TSAbstractEntity';
 import TSFall from './TSFall';
 import TSUser from './TSUser';
@@ -33,10 +34,11 @@ export default class TSMitteilung extends TSAbstractEntity {
     private _message: string;
     private _mitteilungStatus: TSMitteilungStatus;
     private _sentDatum: moment.Moment;
+    private _amt: string;
 
     constructor(fall?: TSFall, betreuung?: TSBetreuung, senderTyp?: TSMitteilungTeilnehmerTyp, empfaengerTyp?: TSMitteilungTeilnehmerTyp, sender?: TSUser,
                 empfaenger?: TSUser, subject?: string, message?: string, mitteilungStatus?: TSMitteilungStatus,
-                sentDatum?: moment.Moment) {
+                sentDatum?: moment.Moment, amt?: string) {
         super();
         this._fall = fall;
         this._betreuung = betreuung;
@@ -48,6 +50,7 @@ export default class TSMitteilung extends TSAbstractEntity {
         this._message = message;
         this._mitteilungStatus = mitteilungStatus;
         this._sentDatum = sentDatum;
+        this._amt = amt;
     }
 
     get fall(): TSFall {
@@ -153,5 +156,29 @@ export default class TSMitteilung extends TSAbstractEntity {
 
     public isErledigt(): boolean {
         return this.mitteilungStatus === TSMitteilungStatus.ERLEDIGT;
+    }
+
+    public get amt(): string {
+        if (!this._amt) {
+            this._amt = this.ermittleAmt();
+        }
+        return this._amt;
+    }
+
+    public set amt(value: string) {
+        this._amt = value;
+    }
+
+    private ermittleAmt(): string {
+        switch (this.empfaenger.role) {
+            case TSRole.SCHULAMT:
+            case TSRole.ADMINISTRATOR_SCHULAMT:
+                return 'AMT_SCHULAMT';
+            case TSRole.ADMIN:
+            case TSRole.SACHBEARBEITER_JA:
+                return 'AMT_JUGENDAMT';
+            default:
+                return '';
+        }
     }
 }
