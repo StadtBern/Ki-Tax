@@ -86,7 +86,9 @@ public interface InstitutionService {
 
 	/**
 	 * Gibt alle aktiven Institutionen zurueck, fuer welche der aktuell eingeloggte Benutzer berechtigt ist.
+	 * @param restrictedForSCH true wenn nur die Institutionen der Art TAGESSCHULE oder FERIENINSEL geholt werden. Dieses Parameter
+	 * gilt nur fuer die Rolen vom Schulamt
 	 */
-	Collection<Institution> getAllowedInstitutionenForCurrentBenutzer();
+	Collection<Institution> getAllowedInstitutionenForCurrentBenutzer(boolean restrictedForSCH);
 
 }
