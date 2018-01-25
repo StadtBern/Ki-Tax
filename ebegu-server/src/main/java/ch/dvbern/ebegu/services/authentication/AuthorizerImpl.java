@@ -671,7 +671,8 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			}
 			case SACHBEARBEITER_JA:
 			case ADMINISTRATOR_SCHULAMT:
-			case SCHULAMT: {
+			case SCHULAMT:
+			case REVISOR: {
 				if (!isSenderTypOrEmpfaengerTyp(mitteilung, MitteilungTeilnehmerTyp.JUGENDAMT)) {
 					throwViolation(mitteilung);
 				}
