@@ -141,7 +141,7 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	@Override
 	@PermitAll
 	public Collection<BetreuungsangebotTyp> getBetreuungsangeboteForInstitutionenOfCurrentBenutzer() {
-		Benutzer user = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("searchAllAntraege", "No User is logged in"));
+		Benutzer user = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("getBetreuungsangeboteForInstitutionenOfCurrentBenutzer", "No User is logged in"));
 		if (user.getRole().isRoleSchulamt()) { // fuer Schulamt muessen wir nichts machen. Direkt Schulamttypes zurueckgeben
 			return BetreuungsangebotTyp.getSchulamtTypes();
 		}

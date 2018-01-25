@@ -215,7 +215,8 @@ public class GesuchResource {
 	}
 
 	/**
-	 * Methode findGesuch fuer Benutzer mit Rolle SACHBEARBEITER_INSTITUTION oder SACHBEARBEITER_TRAEGERSCHAFT. Das ganze Gesuch wird gefilter
+	 * Methode findGesuch fuer Benutzer mit Rolle SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT oder
+	 * SCHULAMT / SCHULAMT_ADMIN. Das ganze Gesuch wird gefilter
 	 * sodass nur die relevanten Daten zum Client geschickt werden.
 	 *
 	 * @param gesuchJAXPId ID des Gesuchs
