@@ -33,11 +33,13 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import {BetreuungViewController} from '../betreuungView/betreuungView';
+import {TSAnmeldungMutationZustand} from '../../../models/enums/TSAnmeldungMutationZustand';
+import * as moment from 'moment';
+import TSBelegungFerieninselTag from '../../../models/TSBelegungFerieninselTag';
 import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
-import {TSAnmeldungMutationZustand} from '../../../models/enums/TSAnmeldungMutationZustand';
 
 declare let require: any;
 let template = require('./betreuungFerieninselView.html');
@@ -197,5 +199,27 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
      */
     public getBetreuungModel(): TSBetreuung {
         return this.betreuung;
+    }
+
+    public getMomentWeekdays() {
+        let weekdays = moment.weekdays();
+        weekdays.splice(0, 1);
+        weekdays.splice(5, 1);
+        return weekdays;
+    }
+
+    public displayBreak(tag: TSBelegungFerieninselTag, index: number): boolean {
+        if (this.betreuung.belegungFerieninsel.tage[index + 1]) {
+            return tag.tag.week() !== this.betreuung.belegungFerieninsel.tage[index + 1].tag.week();
+        } else {
+            return false;
+        }
+    }
+    public displayBreakBelegung(tag: TSBelegungFerieninselTag, index: number): boolean {
+        if (this.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung[index + 1]) {
+            return tag.tag.week() !== this.betreuung.this.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung[index + 1].tag.week();
+        } else {
+            return false;
+        }
     }
 }

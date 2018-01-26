@@ -67,11 +67,11 @@
                 {{'TAGESSCHULE_ANMELDEN' | translate}}
             </dv-loading-button>
 
-            <div ng-if="vm.gesperrtWegenMutation(periode)" >
+            <div class="gdashboard-panel__text" ng-if="vm.gesperrtWegenMutation(periode)" >
                 {{'GESPERRT_WEGEN_MUTATION' | translate}}
             </div>
 
-            <div ng-if="vm.showAnmeldungCreate(periode) && vm.hasOnlyFerieninsel(periode)" >
+            <div class="gdashboard-panel__text" ng-if="vm.showAnmeldungCreate(periode) && vm.hasOnlyFerieninsel(periode)" >
                 {{'MUTATION_NOETIG_DB' | translate}}
             </div>
         </div>

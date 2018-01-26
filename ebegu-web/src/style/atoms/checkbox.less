@@ -12,7 +12,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 @import '../variables.less';
 @import '../mixins.less';
 
@@ -41,6 +40,126 @@
         margin-top: -3rem;
     }
 }
+
+md-checkbox.ferieninsel-kalender {
+    //float:left;
+    font-size: 0;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: block;
+    margin: 0;
+    &:last-of-type {
+        margin-right: 0;
+    }
+    &[disabled] {
+        color: @contrast-lightest;
+        .md-label {
+            span {
+                color: @contrast-lightest;
+            }
+        }
+        &.md-checked, &:not(.md-checked) {
+            .md-icon {
+                border: 1px solid @contrast-dark;
+            }
+        }
+        &.md-checked {
+            .md-icon {
+                background: @contrast-dark;
+            }
+        }
+    }
+    &.md-focused, &:focus {
+        .md-icon {
+            //-webkit-box-shadow: 0 0 4px 0 #858585;
+            //box-shadow: 0 0 4px 0 #858585;
+            //outline: 2px solid @contrast-darkest;
+            transition: none;
+            box-shadow: 0 0 0 2px @contrast-darkest;
+
+        }
+    }
+    .md-container {
+
+        height: 100%;
+        width: 100%;
+        display: block;
+        background: @contrast-lightest;
+        &:before {
+            content: none !important;
+        }
+    }
+    .md-label {
+        position: relative!important;
+        display: block;
+        margin-left: 0;
+        height: auto;
+        min-height: 1.7rem;
+        line-height: 1.7rem;
+        vertical-align: top;
+        text-align: center;
+        font-size: 0;
+
+        span {
+            .ebeguH3();
+            line-height: 1.7rem;
+            height: auto;
+            min-height: 1.7rem;
+            display: block;
+            margin:0;
+            padding: 1rem;
+            border-bottom: 1px solid @contrast;
+            vertical-align: middle;
+        }
+    }
+    .md-icon, &:not(.md-checked) .md-icon {
+        display: block;
+        border: none;
+        border-radius: 0;
+        width: auto;
+        height: auto;
+        line-height: 1.7rem;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+    }
+    &.md-checked {
+        .md-label{
+            color:@contrast-lightest;
+            span{
+                border-bottom-color: @contrast-lightest;
+            }
+        }
+        .md-icon {
+            background-color: @contrast-dark;
+            top: 0;
+            &:after {
+                line-height:9.3rem;
+                position: absolute;
+                font-family: 'FontAwesome';
+                left: 0;
+                right: 0;
+                top: 3.7rem;
+                bottom: 0;
+                width: auto;
+                height: auto;
+                transform: none;
+                border-width: 0;
+                border-radius: 0;
+                content: "\f00c";
+                text-align: center;
+                vertical-align: middle;
+                color: @contrast-lightest;
+                font-size:2rem;
+                display: block !important;
+            }
+        }
+    }
+}
+
 md-checkbox {
     //float:left;
     font-size: 0;
@@ -111,7 +230,7 @@ md-checkbox {
             vertical-align: middle;
         }
     }
-    .md-icon, &:not(.md-checked) .md-icon{
+    .md-icon, &:not(.md-checked) .md-icon {
         border: 1px solid @contrast-darkest;
         border-radius: 0.2rem;
         width: auto;

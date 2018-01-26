@@ -12,9 +12,76 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 @import '../../../style/variables.less';
+@import '../../../style/mixins.less';
 
 md-checkbox.checkbox-error {
     background: #ffe6e6;
 }
+
+.ferieninsel-kalender {
+    &__break {
+        flex-basis: 100%;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+    }
+
+    &__container {
+        display: flex;
+        flex-wrap: wrap;
+        width: 65rem;
+        margin-top: 2rem;
+        background: @contrast;
+
+    }
+    &__container--flex {
+        // display: flex;
+    }
+    &__weekday {
+        .ebeguH3();
+        flex: 0 1 13rem;
+        width: 13rem;
+        border: 1px solid @contrast;
+        padding: 1rem;
+        background: @contrast-lightest;
+        color: @contrast-darkest;
+        margin: 0;
+        text-align: center;
+
+    }
+    &__day {
+        flex: 0 1 13rem;
+        height: 13rem;
+        width: 13rem;
+        border: 1px solid @contrast;
+        color: @contrast-darkest;
+        &--2 {
+            margin-left: 13rem;
+        }
+
+        &--3 {
+            margin-left: 26rem;
+        }
+
+        &--4 {
+            margin-left: 39rem;
+        }
+
+        &--5 {
+            margin-left: 52rem;
+        }
+
+        &--1 + &--3, &--2 + &--4, &--3 + &--5 {
+            margin-left: 13rem;
+        }
+        &--1 + &--4, &--2 + &--5 {
+            margin-left: 26rem;
+        }
+        &--1 + &--2, &--2 + &--3, &--3 + &--4, &--4 + &--5 {
+            margin-left: 0;
+        }
+
+    }
+}
+
