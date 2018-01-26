@@ -273,6 +273,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(MitteilungStatus.NEU, mitFromJAToGS.getMitteilungStatus());
 
 		// Set Gelesen as JA
+		loginAsSachbearbeiterJA();
 		mitteilungService.setAllNewMitteilungenOfFallGelesen(fall);
 
 		final Optional<Mitteilung> entwurfUpdated1 = mitteilungService.findMitteilung(persistedEntwurf.getId());
