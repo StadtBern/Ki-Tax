@@ -48,6 +48,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Benutzer_;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuung_;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -66,6 +67,7 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -93,7 +95,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 @Local(MitteilungService.class)
 @RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION,
 	SACHBEARBEITER_TRAEGERSCHAFT, ADMINISTRATOR_SCHULAMT, SCHULAMT })
-@SuppressWarnings(value = { "PMD.AvoidDuplicateLiterals" })
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class MitteilungServiceBean extends AbstractBaseService implements MitteilungService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MitteilungServiceBean.class.getSimpleName());
@@ -155,13 +157,14 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			}
 
 		} catch (MailException e) {
-			LOG.error("Mail InfoMitteilungErhalten konnte nicht verschickt werden fuer Mitteilung " + mitteilung.getId(), e);
+			LOG.error(String.format("Mail InfoMitteilungErhalten konnte nicht verschickt werden fuer Mitteilung %s", mitteilung.getId()), e);
 			throw new EbeguRuntimeException("sendMitteilung", ErrorCodeEnum.ERROR_MAIL, e);
 		}
 
 		return persistence.merge(mitteilung);
 	}
 
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	private void checkMitteilungDataConsistency(@Nonnull Mitteilung mitteilung) {
 		if (!mitteilung.isNew()) {
 			Mitteilung persistedMitteilung = findMitteilung(mitteilung.getId()).orElseThrow(() -> new EbeguEntityNotFoundException
@@ -426,6 +429,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	private <T> Mitteilung getEntwurfForCurrentRolle(SingularAttribute<Mitteilung, T> attribute, @Nonnull T linkedEntity) {
+		UserRole currentUserRole = benutzerService.getCurrentBenutzer().get().getRole();
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
@@ -440,6 +444,14 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		MitteilungTeilnehmerTyp mitteilungTeilnehmerTyp = getMitteilungTeilnehmerTypForCurrentUser();
 		Predicate predicateSender = cb.equal(root.get(Mitteilung_.senderTyp), mitteilungTeilnehmerTyp);
 		predicates.add(predicateSender);
+
+		if (currentUserRole.isRoleJugendamt()) {
+			Predicate predicateSenderGleichesAmt = root.get(Mitteilung_.sender).get(Benutzer_.role).in(UserRole.getJugendamtRoles());
+			predicates.add(predicateSenderGleichesAmt);
+		} else if (currentUserRole.isRoleSchulamt()) {
+			Predicate predicateSenderGleichesAmt = root.get(Mitteilung_.sender).get(Benutzer_.role).in(UserRole.getSchulamtRoles());
+			predicates.add(predicateSenderGleichesAmt);
+		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		Mitteilung entwurf = persistence.getCriteriaSingleResult(query);
@@ -553,9 +565,10 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return persistence.getCriteriaSingleResult(query);
 	}
 
+	@Nonnull
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT })
-	public Betreuungsmitteilung sendBetreuungsmitteilung(Betreuungsmitteilung betreuungsmitteilung) {
+	public Betreuungsmitteilung sendBetreuungsmitteilung(@Nonnull Betreuungsmitteilung betreuungsmitteilung) {
 		Objects.requireNonNull(betreuungsmitteilung);
 		if (MitteilungTeilnehmerTyp.INSTITUTION != betreuungsmitteilung.getSenderTyp()) {
 			throw new IllegalArgumentException("Eine Betreuungsmitteilung darf nur bei einer Institution geschickt werden");
@@ -571,6 +584,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return persistence.persist(betreuungsmitteilung); // A Betreuungsmitteilung is created and sent, therefore persist and not merge
 	}
 
+	@Nonnull
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public Gesuch applyBetreuungsmitteilung(@Nonnull Betreuungsmitteilung mitteilung) {
@@ -615,10 +629,11 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return gesuch;
 	}
 
+	@Nonnull
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR,
 		ADMINISTRATOR_SCHULAMT, SCHULAMT })
-	public Optional<Betreuungsmitteilung> findNewestBetreuungsmitteilung(String betreuungId) {
+	public Optional<Betreuungsmitteilung> findNewestBetreuungsmitteilung(@Nonnull String betreuungId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuungsmitteilung> query = cb.createQuery(Betreuungsmitteilung.class);
 		Root<Betreuungsmitteilung> root = query.from(Betreuungsmitteilung.class);
@@ -637,7 +652,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return Optional.of(firstResult);
 	}
 
-	private Betreuungsmitteilung applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {
+	private void applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {
 		authorizer.checkWriteAuthorization(gesuch);
 		authorizer.checkReadAuthorizationMitteilung(mitteilung);
 		final Optional<Betreuung> betreuungToChangeOpt = gesuch.extractBetreuungsFromBetreuungNummer(mitteilung.getBetreuung().getKind().getKindNummer(),
@@ -658,9 +673,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			betreuungService.saveBetreuung(existingBetreuung, false);
 			mitteilung.setApplied(true);
 			mitteilung.setMitteilungStatus(MitteilungStatus.ERLEDIGT);
-			return persistence.merge(mitteilung);
+			persistence.merge(mitteilung);
 		}
-		return mitteilung;
 	}
 
 	@Nullable
