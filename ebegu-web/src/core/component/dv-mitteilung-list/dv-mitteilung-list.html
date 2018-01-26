@@ -132,11 +132,12 @@
                                 <div
                                     dv-show-element
                                     dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtRoles()"
-                                    dv-show-expression="vm.isMessageEditableForMyRole(mitteilung) && vm.isStatusErledigtGelesen(mitteilung)"
+                                    dv-show-expression="!vm.isCurrentUserTypTheSenderTyp(mitteilung) && vm.isStatusErledigtGelesen(mitteilung)"
                                     class="message-checkbox">
                                     <md-checkbox name="erledigt-{{$index}}" aria-label="erledigt"
                                                  ng-checked="mitteilung.mitteilungStatus === 'ERLEDIGT'"
-                                                 ng-click="vm.setErledigt(mitteilung); $event.stopPropagation()">
+                                                 ng-click="vm.setErledigt(mitteilung); $event.stopPropagation()"
+                                                 ng-disabled="!vm.isMessageEditableForMyRole(mitteilung)">
                                         <span data-translate="MITTEILUNGEN_ERLEDIGT"></span>
                                     </md-checkbox>
                                 </div>

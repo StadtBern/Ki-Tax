@@ -274,7 +274,9 @@ export class DVMitteilungListController {
             case TSRole.ADMIN:
             case TSRole.JURIST:
             case TSRole.REVISOR:
-            case TSRole.SACHBEARBEITER_JA: {
+            case TSRole.SACHBEARBEITER_JA:
+            case TSRole.ADMINISTRATOR_SCHULAMT:
+            case TSRole.SCHULAMT: {
                 return TSMitteilungTeilnehmerTyp.JUGENDAMT;
             }
             default:
