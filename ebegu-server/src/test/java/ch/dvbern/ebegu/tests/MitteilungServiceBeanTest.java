@@ -380,6 +380,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		fall.setMandant(mandant);
 		fall = persistence.persist(fall);
 		empfaengerJA = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, "saja", null, null, mandant);
+		fall.setVerantwortlicher(empfaengerJA);
 		persistence.persist(empfaengerJA);
 
 		traegerschaft = persistence.persist(TestDataUtil.createDefaultTraegerschaft());
