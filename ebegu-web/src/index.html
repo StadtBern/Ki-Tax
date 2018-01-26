@@ -53,8 +53,12 @@
                     <a ui-sref="pendenzen" data-translate="MENU_PENDENZEN"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
+                    dv-show-allowed-roles="['SUPER_ADMIN', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT']">
+                    <a ui-sref="pendenzenBetreuungen" data-translate="MENU_PENDENZEN_ANMELDUNGEN_SCH"></a>
+                </li>
+                <li ui-sref-active="active" dv-show-element
                     dv-show-allowed-roles="['SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SUPER_ADMIN']">
-                    <a ui-sref="pendenzenInstitution" data-translate="MENU_PENDENZEN_INSTITUTION"></a>
+                    <a ui-sref="pendenzenBetreuungen" data-translate="MENU_PENDENZEN_INSTITUTION"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
                     dv-show-allowed-roles="['STEUERAMT', 'SUPER_ADMIN']">
@@ -95,6 +99,5 @@
 <footer>
     <dv-version ng-show="false"></dv-version>
 </footer>
-<iframe name="download-helper" style="position:fixed;display:none;top:-1px;left:-1px;"></iframe>
 </body>
 </html>

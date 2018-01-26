@@ -31,21 +31,34 @@
     .gesuchstellerDashboardView {
         .dashboardHeader {
             margin-top: 20rem !important;
+            align-items: stretch;
         }
         .gdashboard-panel {
             display: flex;
             flex-direction: column;
-            width: 32rem;
+            justify-content: flex-start;
+            max-width: 32rem;
             margin: 0;
             &:not(:last-of-type) {
                 padding-right: 6rem;
                 border-right: 1px solid @contrast;
+                &:not(:first-of-type) {
+                    padding-left: 6rem;
+                    max-width: 38rem;
+                }
             }
             &:last-child {
                 padding-left: 6rem;
             }
-            &__seperator {
-                height: 5rem;
+            .gdashboard-panel__button {
+                &--margin {
+                    margin-top: 5rem;
+                    margin-bottom: 5rem;
+
+                }
+                &--ansehen {
+                    margin-bottom: -5rem;
+                }
             }
         }
     }

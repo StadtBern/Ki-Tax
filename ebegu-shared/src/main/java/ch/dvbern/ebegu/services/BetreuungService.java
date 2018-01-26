@@ -154,7 +154,7 @@ public interface BetreuungService {
 	 * und deren Status "WARTEN" ist.
 	 */
 	@Nonnull
-	Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser();
+	Collection<Betreuung> getPendenzenBetreuungen();
 
 	@Nonnull
 	List<Betreuung> findAllBetreuungenFromGesuch(String gesuchId);

@@ -47,7 +47,7 @@ describe('searchRS', function () {
         it('check Service name', function () {
             expect(searchRS.getServiceName()).toBe('SearchRS');
         });
-        it('should include a getPendenzenList() function', function () {
+        it('should include a getPendenzenBetreuungenList() function', function () {
             expect(searchRS.getPendenzenList).toBeDefined();
         });
     });

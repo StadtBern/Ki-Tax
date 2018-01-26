@@ -207,4 +207,18 @@ public class Fall extends AbstractEntity implements HasMandant, Searchable {
 	public String getOwningFallId() {
 		return getId();
 	}
+
+	/**
+	 * wenn der Verantwortlicher gesetzt ist, wir er zurueckgegeben.
+	 * Sonst wenn der VerantwortlicherSCH gesetzt ist, wir er zurueckgegeben.
+	 * Sonst wird null zurueckgegeben
+	 */
+	@Nullable
+	public Benutzer getHauptVerantwortlicher() {
+		Benutzer empfaengerAmt = this.getVerantwortlicher();
+		if (empfaengerAmt == null) {
+			empfaengerAmt = this.getVerantwortlicherSCH();
+		}
+		return empfaengerAmt;
+	}
 }
