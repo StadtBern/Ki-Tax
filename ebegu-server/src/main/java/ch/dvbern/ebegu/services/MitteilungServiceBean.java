@@ -124,6 +124,10 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@Inject
 	private Authorizer authorizer;
 
+	@Inject
+	private ApplicationPropertyService applicationPropertyService;
+
+
 	@Override
 	@Nonnull
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT,
@@ -665,10 +669,10 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			Benutzer verantwortlicherJA = mitteilung.getFall().getVerantwortlicher();
 			if (verantwortlicherJA == null) {
 				// Kein JA-Verantwortlicher definiert. Wir nehmen den Default-Verantwortlichen
-				verantwortlicherJA = readDefaultVerantwortlicherFromProperties(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
-			}
-			if (verantwortlicherJA == null) {
-				throw new IllegalArgumentException("Es konnte kein neuer Empfänger beim Jugendamt ermittelt werden");
+				Optional<Benutzer> optVerantwortlicherJA = applicationPropertyService.readDefaultVerantwortlicherFromProperties();
+				verantwortlicherJA = optVerantwortlicherJA.orElseThrow(() ->
+					new EbeguRuntimeException("mitteilungUebergebenAnJugendamt", ErrorCodeEnum.ERROR_EMPFAENGER_JA_NOT_FOUND, mitteilung.getId())
+				);
 			}
 			// Den VerantwortlichenJA als Empfänger setzen
 			mitteilung.setEmpfaenger(verantwortlicherJA);
@@ -692,10 +696,10 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			Benutzer verantwortlicherSCH = mitteilung.getFall().getVerantwortlicherSCH();
 			if (verantwortlicherSCH == null) {
 				// Kein SCH-Verantwortlicher definiert. Wir nehmen den Default-Verantwortlichen
-				verantwortlicherSCH = readDefaultVerantwortlicherFromProperties(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER_SCH);
-			}
-			if (verantwortlicherSCH == null) {
-				throw new IllegalArgumentException("Es konnte kein neuer Empfänger beim Schulamt ermittelt werden");
+				Optional<Benutzer> optVerantwortlicherSCH = applicationPropertyService.readDefaultVerantwortlicherSCHFromProperties();
+				verantwortlicherSCH = optVerantwortlicherSCH.orElseThrow(() ->
+					new EbeguRuntimeException("mitteilungUebergebenAnSchulamt", ErrorCodeEnum.ERROR_EMPFAENGER_JA_NOT_FOUND, mitteilung.getId())
+				);
 			}
 			// Den VerantwortlichenJA als Empfänger setzen
 			mitteilung.setEmpfaenger(verantwortlicherSCH);

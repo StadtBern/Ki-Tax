@@ -122,11 +122,11 @@
                                 </div>
                                 <div class="message-delegation">
                                     <span ng-click="vm.mitteilungUebergebenAnJugendamt(mitteilung)"
-                                          ng-show="vm.canUebergebenAnJugendamt(mitteilung)"
+                                          ng-if="vm.canUebergebenAnJugendamt(mitteilung)"
                                           data-translate="MITTEILUNG_DELEGATION_AN_JA"></span>
 
                                     <span ng-click="vm.mitteilungUebergebenAnSchulamt(mitteilung)"
-                                          ng-show="vm.canUebergebenAnSchulamt(mitteilung)"
+                                          ng-if="vm.canUebergebenAnSchulamt(mitteilung)"
                                           data-translate="MITTEILUNG_DELEGATION_AN_SCH"></span>
                                 </div>
                                 <div
