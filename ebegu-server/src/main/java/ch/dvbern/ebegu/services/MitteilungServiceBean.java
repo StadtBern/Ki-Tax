@@ -380,7 +380,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT,
 		ADMINISTRATOR_SCHULAMT })
-	public Collection<Mitteilung> getMitteilungenForPosteingang() {
+	public Collection<Mitteilung> getMitteilungenForPosteingang(boolean includeClosed) {
+
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 
 		CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
@@ -397,9 +398,10 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		Predicate predicateEmpfaengerTyp = cb.equal(root.get(Mitteilung_.empfaengerTyp), mitteilungTeilnehmerTyp);
 		predicates.add(predicateEmpfaengerTyp);
 
-		// Aber auf jeden Fall unerledigt
-		Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);
-		predicates.add(predicateNichtErledigt);
+		if (!includeClosed) {
+			Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);
+			predicates.add(predicateNichtErledigt);
+		}
 
 		query.orderBy(cb.desc(root.get(Mitteilung_.sentDatum)));
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));

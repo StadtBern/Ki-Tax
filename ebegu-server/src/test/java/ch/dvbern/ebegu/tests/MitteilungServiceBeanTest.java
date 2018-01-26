@@ -215,7 +215,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		// from now on as JA
 		loginAsSachbearbeiterJA();
 
-		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForPosteingang();
+		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForPosteingang(false);
 
 		Assert.assertNotNull(mitteilungenForCurrentRolle);
 		Assert.assertEquals(2, mitteilungenForCurrentRolle.size()); // Wir sehen grundsätzliche alle Nachrichten, die ans JA gehen

@@ -16,11 +16,19 @@
 <div class="posteingangView">
     <div class="col-md-12">
         <div class="row">
-            <div class="col-md-9 col-md-offset-1">
+            <div class="col-md-8 col-md-offset-1">
                 <h3 data-translate="POSTEINGANG"></h3>
             </div>
-            <div class="col-md-1 text-right">
+            <div class="col-md-2 text-right">
                 <h3 ng-bind="vm.getMitteilungen() ? vm.getMitteilungen().length : 0"></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2 col-md-offset-9 text-right closedMitteilungen">
+                <md-checkbox ng-model="vm.includeClosed" name="includeClosed" id="includeClosed"
+                             aria-label="{{'POSTEINGANG_INCLUDE_CLOSED'|translate}}" ng-change="vm.clickedIncludeClosed()">
+                    <span data-translate="POSTEINGANG_INCLUDE_CLOSED"></span>
+                </md-checkbox>
             </div>
         </div>
         <div class="row">

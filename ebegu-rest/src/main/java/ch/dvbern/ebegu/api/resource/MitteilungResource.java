@@ -283,14 +283,18 @@ public class MitteilungResource {
 		"Benutzer in dessen Posteingang dargestellt werden sollen.", response = JaxMitteilungen.class)
 	@Nullable
 	@GET
-	@Path("/posteingang")
+	@Path("/posteingang/{includeClosed}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxMitteilungen getMitteilungenForPosteingang(
+		@Nonnull @NotNull @PathParam("includeClosed") String includeClosedParam,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		final Collection<Mitteilung> mitteilungen = mitteilungService.getMitteilungenForPosteingang();
+		Validate.notNull(includeClosedParam);
+		boolean includeClosed = Boolean.parseBoolean(includeClosedParam);
+
+		final Collection<Mitteilung> mitteilungen = mitteilungService.getMitteilungenForPosteingang(includeClosed);
 		return new JaxMitteilungen(mitteilungen.stream().map(mitteilung ->
 			converter.mitteilungToJAX(mitteilung, new JaxMitteilung())).collect(Collectors.toList()));
 	}

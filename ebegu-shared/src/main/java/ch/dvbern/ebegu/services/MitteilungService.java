@@ -67,7 +67,7 @@ public interface MitteilungService {
 	Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Betreuung betreuung);
 
 	@Nonnull
-	Collection<Mitteilung> getMitteilungenForPosteingang();
+	Collection<Mitteilung> getMitteilungenForPosteingang(boolean includeClosed);
 
 	@Nullable
 	Mitteilung getEntwurfForCurrentRolle(@Nonnull Fall fall);

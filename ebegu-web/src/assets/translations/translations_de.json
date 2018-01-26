@@ -1009,6 +1009,7 @@
     "POSTEINGANG_AMT": "AMT",
     "AMT_SCHULAMT": "Schulamt",
     "AMT_JUGENDAMT": "Jugendamt",
+    "POSTEINGANG_INCLUDE_CLOSED": "Inkl. erledigte Mitteilungen",
     "MITTEILUNGEN_NOCH_KEINE": "Für diesen Fall wurden noch keine Mitteilungen gesendet",
     "SEARCH_LIST": "Alle Suchresultate",
     "GENERIEREN": "GENERIEREN",
