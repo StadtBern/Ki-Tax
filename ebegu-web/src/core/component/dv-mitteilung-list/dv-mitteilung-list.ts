@@ -20,6 +20,7 @@ import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogControl
 import FallRS from '../../../gesuch/service/fallRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IMitteilungenStateParams} from '../../../mitteilungen/mitteilungen.route';
+import {TSAmt} from '../../../models/enums/TSAmt';
 import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
 import {TSMitteilungStatus} from '../../../models/enums/TSMitteilungStatus';
 import {TSMitteilungTeilnehmerTyp} from '../../../models/enums/TSMitteilungTeilnehmerTyp';
@@ -390,21 +391,21 @@ export class DVMitteilungListController {
 
     public isMessageEditableForMyRole(mitteilung: TSMitteilung): boolean {
         // Ich darf die Mitteilung auf Gelesen setzen oder Delegieren, wenn ich der gleichen Empfängergruppe wie die Meldung selber angehöre
-        return this.hasMessageEmpfaengerSameBenutzergruppe(mitteilung, TSRoleUtil.getAdministratorJugendamtRole()) ||
-            this.hasMessageEmpfaengerSameBenutzergruppe(mitteilung, TSRoleUtil.getSchulamtOnlyRoles());
+        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.JUGENDAMT) ||
+            this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.SCHULAMT);
     }
 
     public canUebergebenAnSchulamt(mitteilung: TSMitteilung): boolean {
-        return this.hasMessageEmpfaengerSameBenutzergruppe(mitteilung, TSRoleUtil.getAdministratorJugendamtRole());
+        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.JUGENDAMT);
     }
 
     public canUebergebenAnJugendamt(mitteilung: TSMitteilung): boolean {
-        return this.hasMessageEmpfaengerSameBenutzergruppe(mitteilung, TSRoleUtil.getSchulamtOnlyRoles());
+        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.SCHULAMT);
     }
 
-    private hasMessageEmpfaengerSameBenutzergruppe(mitteilung: TSMitteilung, benutzerRollen: TSRole[]): boolean {
-        let userInGroup: boolean = this.authServiceRS.isOneOfRoles(benutzerRollen);
-        let empfaengerInGroup: boolean = benutzerRollen.indexOf(mitteilung.empfaenger.role) > -1;
-        return userInGroup && empfaengerInGroup;
+    private isUserAndEmpfaengerSameAmt(mitteilung: TSMitteilung, amt: TSAmt): boolean {
+        let userInAmt: boolean = this.authServiceRS.getPrincipal().amt === amt;
+        let empfaengerInAmt: boolean = mitteilung.getEmpfaengerAmt() === amt;
+        return userInAmt && empfaengerInAmt;
     }
 }

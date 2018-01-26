@@ -62,6 +62,7 @@ import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.KindContainer_;
 import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.entities.Mitteilung_;
+import ch.dvbern.ebegu.enums.Amt;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -664,7 +665,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		authorizer.checkReadAuthorizationMitteilung(mitteilung);
 		// Dass der eingeloggte Benutzer Schulamt ist, ist schon durch die Berechtigungen geprueft. Es muss noch sichergestellt werden, dass die Meldung
 		// auch tatsaechlich dem Schulamt "gehoert"
-		if (mitteilung.getEmpfaenger() != null && mitteilung.getEmpfaenger().getRole().isRoleSchulamt()) {
+		if (mitteilung.getEmpfaengerAmt() == Amt.SCHULAMT) {
 			// An wen soll die Meldung delegiert werden?
 			Benutzer verantwortlicherJA = mitteilung.getFall().getVerantwortlicher();
 			if (verantwortlicherJA == null) {
@@ -691,7 +692,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		authorizer.checkReadAuthorizationMitteilung(mitteilung);
 		// Dass der eingeloggte Benutzer Jugendamt ist, ist schon durch die Berechtigungen geprueft. Es muss noch sichergestellt werden, dass die Meldung
 		// auch tatsaechlich dem Jugendamt "gehoert"
-		if (mitteilung.getEmpfaenger() != null && mitteilung.getEmpfaenger().getRole().isRoleJugendamt()) {
+		if (mitteilung.getEmpfaengerAmt() == Amt.JUGENDAMT) {
 			// An wen soll die Meldung delegiert werden?
 			Benutzer verantwortlicherSCH = mitteilung.getFall().getVerantwortlicherSCH();
 			if (verantwortlicherSCH == null) {

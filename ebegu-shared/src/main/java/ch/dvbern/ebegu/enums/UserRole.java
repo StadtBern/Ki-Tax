@@ -18,6 +18,8 @@ package ch.dvbern.ebegu.enums;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 public enum UserRole {
 	SUPER_ADMIN,
 	ADMIN,
@@ -50,5 +52,21 @@ public enum UserRole {
 
 	public static List<UserRole> getJugendamtRoles() {
 		return Arrays.asList(ADMIN, SACHBEARBEITER_JA);
+	}
+
+	@Nonnull
+	public Amt getAmt() {
+		switch (this) {
+		case ADMIN:
+		case SACHBEARBEITER_JA: {
+			return Amt.JUGENDAMT;
+		}
+		case ADMINISTRATOR_SCHULAMT:
+		case SCHULAMT: {
+			return Amt.SCHULAMT;
+		}
+		default:
+			return Amt.NONE;
+		}
 	}
 }
