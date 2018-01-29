@@ -53,6 +53,8 @@
                         <th st-sort="empfaenger.getFullName()" class="sortable row-empfaenger" data-translate="POSTEINGANG_VERANTWORTLICH_UPPER"></th>
                         <!-- Amt -->
                         <th st-sort="amt" class="sortable row-amt" data-translate="POSTEINGANG_AMT"></th>
+                        <!-- Status -->
+                        <th st-sort="mitteilungStatus" class="sortable row-status" data-translate="POSTEINGANG_STATUS"></th>
                     </tr>
                     <tr>
                         <!-- Von -->
@@ -77,6 +79,17 @@
                                     <option value="">{{"ALLE" | translate}}</option>
                                     <option value="AMT_JUGENDAMT">{{"AMT_JUGENDAMT" | translate}}</option>
                                     <option value="AMT_SCHULAMT">{{"AMT_SCHULAMT" | translate}}</option>
+                                </select>
+                            </div>
+                        </th>
+                        <!-- Status -->
+                        <th>
+                            <div class="dv-select-style">
+                                <select st-input-event="change" name="mitteilungStatus" id="mitteilungStatus"
+                                        st-search="mitteilungStatus" class="form-control"
+                                        ng-options="status | translate for status in vm.getMitteilungsStatus() track by status"
+                                        ng-model="vm.selectedMitteilungsstatus">
+                                    <option value="">{{"ALLE" | translate}}</option>
                                 </select>
                             </div>
                         </th>
@@ -105,6 +118,9 @@
                         <!-- Amt -->
                         <td class="ellipsis" ellipsis-tooltip="{{row.amt}}"
                             ng-bind="row.amt | translate"></td>
+                        <!-- Status -->
+                        <td class="ellipsis" ellipsis-tooltip="{{row.mitteilungStatus}}"
+                            ng-bind="row.mitteilungStatus | translate"></td>
                     </tr>
                     </tbody>
                     <tfoot>

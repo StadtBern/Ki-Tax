@@ -15,8 +15,9 @@
 
 import {IComponentOptions} from 'angular';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import TSMitteilung from '../../models/TSMitteilung';
 import MitteilungRS from '../../core/service/mitteilungRS.rest';
+import {getTSMitteilungsStatusForFilter, TSMitteilungStatus} from '../../models/enums/TSMitteilungStatus';
+import TSMitteilung from '../../models/TSMitteilung';
 import EbeguUtil from '../../utils/EbeguUtil';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import IStateService = angular.ui.IStateService;
@@ -37,6 +38,8 @@ export class PosteingangViewController {
     itemsByPage: number = 20;
     numberOfPages: number = 1;
     includeClosed: boolean;
+
+    selectedMitteilungsstatus: TSMitteilungStatus;
 
     static $inject: string[] = ['MitteilungRS', 'EbeguUtil', 'CONSTANTS', '$state', 'AuthServiceRS'];
 
@@ -77,5 +80,9 @@ export class PosteingangViewController {
 
     public clickedIncludeClosed(): void {
        this.updatePosteingang(this.includeClosed);
+    }
+
+    getMitteilungsStatus(): Array<TSMitteilungStatus> {
+        return getTSMitteilungsStatusForFilter();
     }
 }
