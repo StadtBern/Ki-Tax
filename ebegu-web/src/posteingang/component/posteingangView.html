@@ -52,7 +52,7 @@
                         <!-- Verantwortliche Person -->
                         <th st-sort="empfaenger.getFullName()" class="sortable row-empfaenger" data-translate="POSTEINGANG_VERANTWORTLICH_UPPER"></th>
                         <!-- Amt -->
-                        <th st-sort="amt" class="sortable row-amt" data-translate="POSTEINGANG_AMT"></th>
+                        <th st-sort="empfaenger.amt" class="sortable row-amt" data-translate="POSTEINGANG_AMT"></th>
                         <!-- Status -->
                         <th st-sort="mitteilungStatus" class="sortable row-status" data-translate="POSTEINGANG_STATUS"></th>
                     </tr>
@@ -75,10 +75,9 @@
                         <!-- Amt -->
                         <th>
                             <div class="dv-select-style">
-                                <select st-input-event="change" name="amt" id="amt" st-search="amt" class="form-control" >
+                                <select st-input-event="change" name="empfaenger.amt" id="empfaenger.amt" st-search="empfaenger.amt" class="form-control"
+                                        ng-options="'AMT_' + a | translate for a in vm.getAemter() track by a" ng-model="vm.selectedAmt">
                                     <option value="">{{"ALLE" | translate}}</option>
-                                    <option value="AMT_JUGENDAMT">{{"AMT_JUGENDAMT" | translate}}</option>
-                                    <option value="AMT_SCHULAMT">{{"AMT_SCHULAMT" | translate}}</option>
                                 </select>
                             </div>
                         </th>
@@ -116,8 +115,8 @@
                         <td class="ellipsis" ellipsis-tooltip="{{row.empfaenger}}"
                             ng-bind="row.empfaenger.getFullName()"></td>
                         <!-- Amt -->
-                        <td class="ellipsis" ellipsis-tooltip="{{row.amt}}"
-                            ng-bind="row.amt | translate"></td>
+                        <td class="ellipsis" ellipsis-tooltip="{{row.empfaenger.amt}}"
+                            ng-bind="'AMT_' + row.empfaenger.amt | translate"></td>
                         <!-- Status -->
                         <td class="ellipsis" ellipsis-tooltip="{{row.mitteilungStatus}}"
                             ng-bind="row.mitteilungStatus | translate"></td>
