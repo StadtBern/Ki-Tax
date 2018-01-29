@@ -215,9 +215,10 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
             return false;
         }
     }
+
     public displayBreakBelegung(tag: TSBelegungFerieninselTag, index: number): boolean {
         if (this.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung[index + 1]) {
-            return tag.tag.week() !== this.betreuung.this.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung[index + 1].tag.week();
+            return tag.tag.week() !== this.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung[index + 1].tag.week();
         } else {
             return false;
         }
