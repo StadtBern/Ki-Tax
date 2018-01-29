@@ -38,6 +38,7 @@ export class PosteingangViewController {
     itemsByPage: number = 20;
     numberOfPages: number = 1;
     selectedAmt: string;
+    includeClosed: boolean;
 
     static $inject: string[] = ['MitteilungRS', 'EbeguUtil', 'CONSTANTS', '$state', 'AuthServiceRS'];
 
@@ -55,11 +56,11 @@ export class PosteingangViewController {
     }
 
     private initViewModel() {
-        this.updatePosteingang();
+        this.updatePosteingang(false);
     }
 
-    private updatePosteingang() {
-        this.mitteilungRS.getMitteilungenForPosteingang().then((response: any) => {
+    private updatePosteingang(doIncludeClosed: boolean) {
+        this.mitteilungRS.getMitteilungenForPosteingang(doIncludeClosed).then((response: any) => {
             this.mitteilungen = angular.copy(response);
             this.numberOfPages = this.mitteilungen.length / this.itemsByPage;
         });
@@ -78,5 +79,9 @@ export class PosteingangViewController {
 
     getAemter(): Array<TSAmt> {
         return getAemterForFilter();
+    }
+
+    public clickedIncludeClosed(): void {
+       this.updatePosteingang(this.includeClosed);
     }
 }

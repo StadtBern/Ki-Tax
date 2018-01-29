@@ -96,7 +96,7 @@ public interface MitteilungService {
 	 * Gibt alle Mitteilungen zurueck, welche im Posteingang des eingeloggten Benutzers angezeigt werden sollen.
 	 */
 	@Nonnull
-	Collection<Mitteilung> getMitteilungenForPosteingang();
+	Collection<Mitteilung> getMitteilungenForPosteingang(boolean includeClosed);
 
 	/**
 	 * Gibt den Entwurf einer Mitteilung zurueck, welche zum uebergebenen Fall erfasst wurde. Es gibt einen Entwurf pro Amt, d.h. alle Mitarbeiter
