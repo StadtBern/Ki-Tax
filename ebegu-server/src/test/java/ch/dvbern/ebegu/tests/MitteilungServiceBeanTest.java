@@ -471,7 +471,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	private Mitteilung readFirstAndOnlyMitteilung() {
-		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForPosteingang();
+		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForPosteingang(false);
 		Assert.assertNotNull(mitteilungenForCurrentRolle);
 		Assert.assertEquals(1, mitteilungenForCurrentRolle.size());
 		Mitteilung mitteilung = mitteilungenForCurrentRolle.iterator().next();

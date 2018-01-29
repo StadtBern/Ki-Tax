@@ -74,7 +74,7 @@
                         <th>
                             <div class="dv-select-style">
                                 <select st-input-event="change" name="empfaenger.amt" id="empfaenger.amt" st-search="empfaenger.amt" class="form-control"
-                                        ng-options="a | translate for a in vm.getAemter() track by a" ng-model="vm.selectedAmt">
+                                        ng-options="'AMT_' + a | translate for a in vm.getAemter() track by a" ng-model="vm.selectedAmt">
                                     <option value="">{{"ALLE" | translate}}</option>
                                 </select>
                             </div>
@@ -103,7 +103,7 @@
                             ng-bind="row.empfaenger.getFullName()"></td>
                         <!-- Amt -->
                         <td class="ellipsis" ellipsis-tooltip="{{row.empfaenger.amt}}"
-                            ng-bind="row.empfaenger.amt | translate"></td>
+                            ng-bind="'AMT_' + row.empfaenger.amt | translate"></td>
                     </tr>
                     </tbody>
                     <tfoot>

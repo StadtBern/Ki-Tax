@@ -54,10 +54,14 @@ public enum UserRole {
 		return Arrays.asList(ADMIN, SACHBEARBEITER_JA);
 	}
 
+	/**
+	 * ACHTUNG Diese Logik existiert auch im Client TSUser. Aenderungen muessen in beiden Orten gemacht werden.
+	 */
 	@Nonnull
 	public Amt getAmt() {
 		switch (this) {
 		case ADMIN:
+		case SUPER_ADMIN:
 		case SACHBEARBEITER_JA: {
 			return Amt.JUGENDAMT;
 		}

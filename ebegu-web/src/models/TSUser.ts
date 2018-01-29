@@ -137,10 +137,17 @@ export default class TSUser {
         return rolePrefix() + this.role;
     }
 
+    /**
+     * Diese Methode wird im Client gebraucht, weil das Amt in der Cookie nicht gespeichert wird. Das Amt in der Cookie zu speichern
+     * waere auch keine gute Loesung, da es da nicht hingehoert. Normalerweise wird das Amt aber im Server gesetzt und zum Client geschickt.
+     * Diese Methode wird nur verwendet, wenn der User aus der Cookie geholt wird.
+     * ACHTUNG Diese Logik existiert auch im Server UserRole. Aenderungen muessen in beiden Orten gemacht werden.
+     */
     private analyseAmt(): TSAmt {
         switch (this.role) {
             case TSRole.SACHBEARBEITER_JA:
             case TSRole.ADMIN:
+            case TSRole.SUPER_ADMIN:
                 return TSAmt.JUGENDAMT;
             case TSRole.SCHULAMT:
             case TSRole.ADMINISTRATOR_SCHULAMT:
