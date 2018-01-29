@@ -201,7 +201,18 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 	@PermitAll
 	@Nullable
 	public Optional<Benutzer> readDefaultVerantwortlicherFromProperties() {
-		String propertyDefaultVerantwortlicher = findApplicationPropertyAsString(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
+		return readDefaultVerantwortlicherAmtFromProperties(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
+	}
+
+	@Override
+	@PermitAll
+	@Nullable
+	public Optional<Benutzer> readDefaultVerantwortlicherSCHFromProperties() {
+		return readDefaultVerantwortlicherAmtFromProperties(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER_SCH);
+	}
+
+	private Optional<Benutzer> readDefaultVerantwortlicherAmtFromProperties(ApplicationPropertyKey key) {
+		String propertyDefaultVerantwortlicher = findApplicationPropertyAsString(key);
 		if (org.apache.commons.lang.StringUtils.isNotEmpty(propertyDefaultVerantwortlicher)) {
 			Optional<Benutzer> defaultVerantwortlicherOptional = benutzerService.findBenutzer(propertyDefaultVerantwortlicher);
 			if (defaultVerantwortlicherOptional.isPresent()) {
