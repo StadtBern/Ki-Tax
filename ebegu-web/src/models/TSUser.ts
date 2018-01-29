@@ -13,6 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {TSAmt} from './enums/TSAmt';
 import {rolePrefix, TSRole} from './enums/TSRole';
 import {TSMandant} from './TSMandant';
 import {TSTraegerschaft} from './TSTraegerschaft';
@@ -29,9 +30,10 @@ export default class TSUser {
     private _traegerschaft: TSTraegerschaft;
     private _institution: TSInstitution;
     private _role: TSRole;
+    private _amt: TSAmt;
 
     constructor(vorname?: string, nachname?: string, username?: string, password?: string, email?: string,
-                mandant?: TSMandant, role?: TSRole, traegerschaft?: TSTraegerschaft, institution?: TSInstitution) {
+                mandant?: TSMandant, role?: TSRole, traegerschaft?: TSTraegerschaft, institution?: TSInstitution, amt?: TSAmt) {
         this._vorname = vorname;
         this._nachname = nachname;
         this._username = username;
@@ -41,6 +43,7 @@ export default class TSUser {
         this._role = role;
         this._traegerschaft = traegerschaft;
         this._institution = institution;
+        this._amt = amt;
     }
 
     get nachname(): string {
@@ -115,11 +118,42 @@ export default class TSUser {
         this._institution = value;
     }
 
-    public getFullName(): string {
+    get amt(): TSAmt {
+        if (!this._amt) {
+            this._amt = this.analyseAmt();
+        }
+        return this._amt;
+    }
+
+    set amt(value: TSAmt) {
+        this._amt = value;
+    }
+
+    getFullName(): string {
         return (this.vorname ? this.vorname : '') + ' ' + (this.nachname ? this.nachname : '');
     }
 
     getRoleKey(): string {
         return rolePrefix() + this.role;
+    }
+
+    /**
+     * Diese Methode wird im Client gebraucht, weil das Amt in der Cookie nicht gespeichert wird. Das Amt in der Cookie zu speichern
+     * waere auch keine gute Loesung, da es da nicht hingehoert. Normalerweise wird das Amt aber im Server gesetzt und zum Client geschickt.
+     * Diese Methode wird nur verwendet, wenn der User aus der Cookie geholt wird.
+     * ACHTUNG Diese Logik existiert auch im Server UserRole. Aenderungen muessen in beiden Orten gemacht werden.
+     */
+    private analyseAmt(): TSAmt {
+        switch (this.role) {
+            case TSRole.SACHBEARBEITER_JA:
+            case TSRole.ADMIN:
+            case TSRole.SUPER_ADMIN:
+                return TSAmt.JUGENDAMT;
+            case TSRole.SCHULAMT:
+            case TSRole.ADMINISTRATOR_SCHULAMT:
+                return TSAmt.SCHULAMT;
+            default:
+                return TSAmt.NONE;
+        }
     }
 }

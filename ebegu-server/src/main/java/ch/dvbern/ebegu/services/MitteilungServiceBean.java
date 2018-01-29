@@ -62,6 +62,7 @@ import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.KindContainer_;
 import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.entities.Mitteilung_;
+import ch.dvbern.ebegu.enums.Amt;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -123,6 +124,10 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Inject
 	private Authorizer authorizer;
+
+	@Inject
+	private ApplicationPropertyService applicationPropertyService;
+
 
 	@Override
 	@Nonnull
@@ -383,7 +388,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT,
 		ADMINISTRATOR_SCHULAMT })
-	public Collection<Mitteilung> getMitteilungenForPosteingang() {
+	public Collection<Mitteilung> getMitteilungenForPosteingang(boolean includeClosed) {
+
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 
 		CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
@@ -400,9 +406,10 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		Predicate predicateEmpfaengerTyp = cb.equal(root.get(Mitteilung_.empfaengerTyp), mitteilungTeilnehmerTyp);
 		predicates.add(predicateEmpfaengerTyp);
 
-		// Aber auf jeden Fall unerledigt
-		Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);
-		predicates.add(predicateNichtErledigt);
+		if (!includeClosed) {
+			Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);
+			predicates.add(predicateNichtErledigt);
+		}
 
 		query.orderBy(cb.desc(root.get(Mitteilung_.sentDatum)));
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
@@ -429,7 +436,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	private <T> Mitteilung getEntwurfForCurrentRolle(SingularAttribute<Mitteilung, T> attribute, @Nonnull T linkedEntity) {
-		UserRole currentUserRole = benutzerService.getCurrentBenutzer().get().getRole();
+		Benutzer loggedInBenutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("getEntwurfForCurrentRolle", "No User is logged in"));
+		UserRole currentUserRole = loggedInBenutzer.getRole();
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
@@ -652,6 +660,60 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return Optional.of(firstResult);
 	}
 
+	@Nonnull
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	public Mitteilung mitteilungUebergebenAnJugendamt(@Nonnull String mitteilungId) {
+		Mitteilung mitteilung = findMitteilung(mitteilungId).orElseThrow(() -> new EbeguRuntimeException("mitteilungUebergebenAnJugendamt", "Mitteilung not found"));
+		authorizer.checkReadAuthorizationMitteilung(mitteilung);
+		// Dass der eingeloggte Benutzer Schulamt ist, ist schon durch die Berechtigungen geprueft. Es muss noch sichergestellt werden, dass die Meldung
+		// auch tatsaechlich dem Schulamt "gehoert"
+		if (mitteilung.getEmpfaengerAmt() == Amt.SCHULAMT) {
+			// An wen soll die Meldung delegiert werden?
+			Benutzer verantwortlicherJA = mitteilung.getFall().getVerantwortlicher();
+			if (verantwortlicherJA == null) {
+				// Kein JA-Verantwortlicher definiert. Wir nehmen den Default-Verantwortlichen
+				Optional<Benutzer> optVerantwortlicherJA = applicationPropertyService.readDefaultVerantwortlicherFromProperties();
+				verantwortlicherJA = optVerantwortlicherJA.orElseThrow(() ->
+					new EbeguRuntimeException("mitteilungUebergebenAnJugendamt", ErrorCodeEnum.ERROR_EMPFAENGER_JA_NOT_FOUND, mitteilung.getId())
+				);
+			}
+			// Den VerantwortlichenJA als Empfänger setzen
+			mitteilung.setEmpfaenger(verantwortlicherJA);
+			mitteilung.setMitteilungStatus(MitteilungStatus.NEU);
+			return persistence.merge(mitteilung);
+
+		}
+		throw new IllegalArgumentException("Die Mitteilung hat entweder keinen Empfänger oder dieser ist nicht in Rolle Schulamt");
+	}
+
+	@Nonnull
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	public Mitteilung mitteilungUebergebenAnSchulamt(@Nonnull String mitteilungId) {
+		Mitteilung mitteilung = findMitteilung(mitteilungId).orElseThrow(() -> new EbeguRuntimeException("mitteilungUebergebenAnSchulamt", "Mitteilung not found"));
+		authorizer.checkReadAuthorizationMitteilung(mitteilung);
+		// Dass der eingeloggte Benutzer Jugendamt ist, ist schon durch die Berechtigungen geprueft. Es muss noch sichergestellt werden, dass die Meldung
+		// auch tatsaechlich dem Jugendamt "gehoert"
+		if (mitteilung.getEmpfaengerAmt() == Amt.JUGENDAMT) {
+			// An wen soll die Meldung delegiert werden?
+			Benutzer verantwortlicherSCH = mitteilung.getFall().getVerantwortlicherSCH();
+			if (verantwortlicherSCH == null) {
+				// Kein SCH-Verantwortlicher definiert. Wir nehmen den Default-Verantwortlichen
+				Optional<Benutzer> optVerantwortlicherSCH = applicationPropertyService.readDefaultVerantwortlicherSCHFromProperties();
+				verantwortlicherSCH = optVerantwortlicherSCH.orElseThrow(() ->
+					new EbeguRuntimeException("mitteilungUebergebenAnSchulamt", ErrorCodeEnum.ERROR_EMPFAENGER_JA_NOT_FOUND, mitteilung.getId())
+				);
+			}
+			// Den VerantwortlichenJA als Empfänger setzen
+			mitteilung.setEmpfaenger(verantwortlicherSCH);
+			mitteilung.setMitteilungStatus(MitteilungStatus.NEU);
+			return persistence.merge(mitteilung);
+
+		}
+		throw new IllegalArgumentException("Die Mitteilung hat entweder keinen Empfänger oder dieser ist nicht in Rolle Jugendamt");
+	}
+
 	private void applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {
 		authorizer.checkWriteAuthorization(gesuch);
 		authorizer.checkReadAuthorizationMitteilung(mitteilung);
@@ -719,7 +781,11 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			throw new IllegalStateException("Mitteilung " + mitteilung.getId() + " ist im falschen Status: " + mitteilung.getMitteilungStatus() + " anstatt "
 				+ Arrays.toString(statusRequired));
 		}
-		if (mitteilung.getEmpfaengerTyp() == getMitteilungTeilnehmerTypForCurrentUser()) {
+		// Es muss sowohl der EmpfaengerTyp (bei Institution und GS) wie auch das Amt (bei JA und SCH) uebereinstimmen
+		Benutzer loggedInBenutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("setMitteilungsStatusIfBerechtigt", "No User is logged in"));
+		boolean sameEmpfaengerTyp = mitteilung.getEmpfaengerTyp() == getMitteilungTeilnehmerTypForCurrentUser();
+		boolean sameAmt = mitteilung.getEmpfaengerAmt() == loggedInBenutzer.getAmt();
+		if (sameEmpfaengerTyp && sameAmt) {
 			mitteilung.setMitteilungStatus(statusRequested);
 		}
 		return persistence.merge(mitteilung);

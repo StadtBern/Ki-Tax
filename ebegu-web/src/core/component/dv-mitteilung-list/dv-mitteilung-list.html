@@ -120,14 +120,24 @@
                                         <span> Von: </span><span ng-bind="mitteilung.senderAsString"></span>
                                     </div>
                                 </div>
+                                <div class="message-delegation">
+                                    <span ng-click="vm.mitteilungUebergebenAnJugendamt(mitteilung)"
+                                          ng-if="vm.canUebergebenAnJugendamt(mitteilung)"
+                                          data-translate="MITTEILUNG_DELEGATION_AN_JA"></span>
+
+                                    <span ng-click="vm.mitteilungUebergebenAnSchulamt(mitteilung)"
+                                          ng-if="vm.canUebergebenAnSchulamt(mitteilung)"
+                                          data-translate="MITTEILUNG_DELEGATION_AN_SCH"></span>
+                                </div>
                                 <div
                                     dv-show-element
-                                    dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
-                                    dv-show-expression="!vm.isCurrentUserTypTheSenderTyp(mitteilung) && vm.isStatusErledigtGelesen(mitteilung)"
+                                    dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtRoles()"
+                                    dv-show-expression="!vm.isCurrentUserTypTheSenderTyp(mitteilung)"
                                     class="message-checkbox">
                                     <md-checkbox name="erledigt-{{$index}}" aria-label="erledigt"
                                                  ng-checked="mitteilung.mitteilungStatus === 'ERLEDIGT'"
-                                                 ng-click="vm.setErledigt(mitteilung); $event.stopPropagation()">
+                                                 ng-click="vm.setErledigt(mitteilung); $event.stopPropagation()"
+                                                 ng-disabled="!vm.isMessageEditableForMyRole(mitteilung)">
                                         <span data-translate="MITTEILUNGEN_ERLEDIGT"></span>
                                     </md-checkbox>
                                 </div>
