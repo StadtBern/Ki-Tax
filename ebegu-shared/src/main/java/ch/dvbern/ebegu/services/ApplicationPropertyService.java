@@ -110,4 +110,10 @@ public interface ApplicationPropertyService {
 	 */
 	@Nonnull
 	Optional<Benutzer> readDefaultVerantwortlicherFromProperties();
+
+	/**
+	 * Gibt den DefaultVerantwortlichen SCH zurueck.
+	 */
+	@Nonnull
+	Optional<Benutzer> readDefaultVerantwortlicherSCHFromProperties();
 }

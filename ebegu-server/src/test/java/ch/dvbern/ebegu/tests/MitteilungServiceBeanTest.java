@@ -38,6 +38,7 @@ import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.enums.UserRole;
@@ -55,6 +56,7 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -86,8 +88,32 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 	private Mandant mandant;
 	private Fall fall;
 	private Benutzer empfaengerJA;
+	private Benutzer empfaengerSCH;
 	private Benutzer empfaengerINST;
 	private Benutzer sender;
+
+	@Before
+	public void init() {
+		mandant = getDummySuperadmin().getMandant();
+		empfaengerJA = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, "saja", null, null, mandant);
+		persistence.persist(empfaengerJA);
+		empfaengerSCH = TestDataUtil.createBenutzer(UserRole.SCHULAMT, "scju", null, null, mandant);
+		persistence.persist(empfaengerSCH);
+
+		fall = TestDataUtil.createDefaultFall();
+		fall.setMandant(mandant);
+		fall.setVerantwortlicher(empfaengerJA);
+		fall.setVerantwortlicherSCH(empfaengerSCH);
+		fall = persistence.persist(fall);
+
+		traegerschaft = persistence.persist(TestDataUtil.createDefaultTraegerschaft());
+		empfaengerINST = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, "insti", traegerschaft, null, mandant);
+		persistence.persist(empfaengerINST);
+
+		// Default-Verantwortliche setzen, damit beim Senden der Message automatisch der Empfaenger ermittelt werden kann
+		TestDataUtil.saveParameter(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER, "saja", persistence);
+		TestDataUtil.saveParameter(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER_SCH, "scju", persistence);
+	}
 
 	@Test
 	public void testCreateMitteilung() {
@@ -247,6 +273,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(MitteilungStatus.NEU, mitFromJAToGS.getMitteilungStatus());
 
 		// Set Gelesen as JA
+		loginAsSachbearbeiterJA();
 		mitteilungService.setAllNewMitteilungenOfFallGelesen(fall);
 
 		final Optional<Mitteilung> entwurfUpdated1 = mitteilungService.findMitteilung(persistedEntwurf.getId());
@@ -372,21 +399,88 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertNotEquals(oldSentDatum, optMitteilung.get().getSentDatum());
 	}
 
+	@Test
+	public void testMitteilungUebergebenAnSchulamt() {
+		// Als GS einloggen und eine Meldung schreiben
+		prepareDependentObjects("gesuchst");
+		loginAsGesuchsteller("gesuchst"); // send as GS to preserve the defined senderTyp empfaengerTyp
+		Mitteilung mitteilung1 = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
+			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+		mitteilung1 = mitteilungService.sendMitteilung(mitteilung1);
+		Benutzer empfaengerUrspruenglich = mitteilung1.getEmpfaenger();
+
+		// Als JA einloggen: Die Meldung ist jetzt im Posteingang des JA
+		loginAsSachbearbeiterJA();
+		Mitteilung mitteilung = readFirstAndOnlyMitteilung();
+		Assert.assertEquals(empfaengerUrspruenglich, mitteilung.getEmpfaenger());
+		// Diese Meldung an SCH uebergeben: Es wird ein neuer Empfaenger gesetzt
+		mitteilung = mitteilungService.mitteilungUebergebenAnSchulamt(mitteilung.getId());
+		Assert.assertNotEquals(empfaengerUrspruenglich, mitteilung.getEmpfaenger());
+	}
+
+	@Test (expected = EJBAccessException.class)
+	public void testMitteilungUebergebenAnSchulamtFalscheRolle() {
+		// Als GS einloggen und eine Meldung schreiben
+		prepareDependentObjects("gesuchst");
+		loginAsGesuchsteller("gesuchst"); // send as GS to preserve the defined senderTyp empfaengerTyp
+		Mitteilung mitteilung1 = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
+			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+		mitteilung1 = mitteilungService.sendMitteilung(mitteilung1);
+
+		// Als SCH einloggen: Da ich schon SCH bin, kann ich nicht an SCH uebergeben
+		loginAsSchulamt();
+		Mitteilung mitteilung = readFirstAndOnlyMitteilung();
+		mitteilungService.mitteilungUebergebenAnSchulamt(mitteilung.getId());
+	}
+
+	@Test
+	public void testMitteilungUebergebenAnJugendamt() {
+		// Als GS einloggen und eine Meldung schreiben
+		prepareDependentObjects("gesuchst");
+		// Den Fall auf NUR-SCHULAMT setzen, damit die Meldung ans Schulamt geht
+		fall.setVerantwortlicher(null);
+		persistence.merge(fall);
+		loginAsGesuchsteller("gesuchst"); // send as GS to preserve the defined senderTyp empfaengerTyp
+		Mitteilung mitteilung1 = TestDataUtil.createMitteilung(fall, empfaengerSCH, MitteilungTeilnehmerTyp.JUGENDAMT,
+			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+		mitteilung1 = mitteilungService.sendMitteilung(mitteilung1);
+		Benutzer empfaengerUrspruenglich = mitteilung1.getEmpfaenger();
+
+		// Als SCH einloggen: Die Meldung ist jetzt im Posteingang des SCH
+		loginAsSchulamt();
+		Mitteilung mitteilung = readFirstAndOnlyMitteilung();
+		Assert.assertEquals(empfaengerUrspruenglich, mitteilung.getEmpfaenger());
+		// Diese Meldung an JA uebergeben: Es wird ein neuer Empfaenger gesetzt
+		mitteilung = mitteilungService.mitteilungUebergebenAnJugendamt(mitteilung.getId());
+		Assert.assertNotEquals(empfaengerUrspruenglich, mitteilung.getEmpfaenger());
+	}
+
+	@Test (expected = EJBAccessException.class)
+	public void testMitteilungUebergebenAnJugendamtFalscheRolle() {
+		// Als GS einloggen und eine Meldung schreiben
+		prepareDependentObjects("gesuchst");
+		loginAsGesuchsteller("gesuchst"); // send as GS to preserve the defined senderTyp empfaengerTyp
+		Mitteilung mitteilung1 = TestDataUtil.createMitteilung(fall, empfaengerSCH, MitteilungTeilnehmerTyp.JUGENDAMT,
+			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+		mitteilung1 = mitteilungService.sendMitteilung(mitteilung1);
+
+		// Als JA einloggen: Da ich schon JA bin, kann ich nicht an JA uebergeben
+		loginAsSachbearbeiterJA();
+		Mitteilung mitteilung = readFirstAndOnlyMitteilung();
+		mitteilungService.mitteilungUebergebenAnJugendamt(mitteilung.getId());
+	}
+
+	private Mitteilung readFirstAndOnlyMitteilung() {
+		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForPosteingang();
+		Assert.assertNotNull(mitteilungenForCurrentRolle);
+		Assert.assertEquals(1, mitteilungenForCurrentRolle.size());
+		Mitteilung mitteilung = mitteilungenForCurrentRolle.iterator().next();
+		return mitteilung;
+	}
+
 	// HELP METHODS
 
 	private void prepareDependentObjects(String gesuchstellerUserName) {
-		fall = TestDataUtil.createDefaultFall();
-		mandant = getDummySuperadmin().getMandant();
-		fall.setMandant(mandant);
-		fall = persistence.persist(fall);
-		empfaengerJA = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, "saja", null, null, mandant);
-		fall.setVerantwortlicher(empfaengerJA);
-		persistence.persist(empfaengerJA);
-
-		traegerschaft = persistence.persist(TestDataUtil.createDefaultTraegerschaft());
-		empfaengerINST = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, "insti", traegerschaft, null, mandant);
-		persistence.persist(empfaengerINST);
-
 		sender = TestDataUtil.createBenutzer(UserRole.GESUCHSTELLER, gesuchstellerUserName, null, null, mandant);
 		persistence.persist(sender);
 	}

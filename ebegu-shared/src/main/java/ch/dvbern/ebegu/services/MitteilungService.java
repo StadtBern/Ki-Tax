@@ -166,4 +166,20 @@ public interface MitteilungService {
 	 */
 	@Nonnull
 	Optional<Betreuungsmitteilung> findNewestBetreuungsmitteilung(@Nonnull String betreuungId);
+
+	/**
+	 * Die uebergebene Mitteilung wird ans Jugendamt delegiert. Dabei wird als Empfaenger der VerantwortlicheJA des Falls gesetzt, falls ein
+	 * solcher vorhanden ist, sonst der Default-Verantwortliche des Jugendamtes.
+	 * Die Meldung wird fuer den neuen Empfaenger wieder auf NEU gesetzt.
+	 */
+	@Nonnull
+	Mitteilung mitteilungUebergebenAnJugendamt(@Nonnull String mitteilungId);
+
+	/**
+	 * Die uebergebene Mitteilung wird ans Schulamt delegiert. Dabei wird als Empfaenger der VerantwortlicheSCH des Falls gesetzt, falls ein
+	 * solcher vorhanden ist, sonst der Default-Verantwortliche des Schulamtes
+	 * Die Meldung wird fuer den neuen Empfaenger wieder auf NEU gesetzt.
+	 */
+	@Nonnull
+	Mitteilung mitteilungUebergebenAnSchulamt(@Nonnull String mitteilungId);
 }

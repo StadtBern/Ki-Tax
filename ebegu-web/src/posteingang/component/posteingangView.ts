@@ -15,8 +15,9 @@
 
 import {IComponentOptions} from 'angular';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import TSMitteilung from '../../models/TSMitteilung';
 import MitteilungRS from '../../core/service/mitteilungRS.rest';
+import {getAemterForFilter, TSAmt} from '../../models/enums/TSAmt';
+import TSMitteilung from '../../models/TSMitteilung';
 import EbeguUtil from '../../utils/EbeguUtil';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import IStateService = angular.ui.IStateService;
@@ -36,6 +37,7 @@ export class PosteingangViewController {
 
     itemsByPage: number = 20;
     numberOfPages: number = 1;
+    selectedAmt: string;
 
     static $inject: string[] = ['MitteilungRS', 'EbeguUtil', 'CONSTANTS', '$state', 'AuthServiceRS'];
 
@@ -72,5 +74,9 @@ export class PosteingangViewController {
     isCurrentUserSchulamt(): boolean {
         let isUserSchulamt: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles());
         return isUserSchulamt;
+    }
+
+    getAemter(): Array<TSAmt> {
+        return getAemterForFilter();
     }
 }
