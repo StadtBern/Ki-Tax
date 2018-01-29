@@ -17,6 +17,7 @@ import {IComponentOptions} from 'angular';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import MitteilungRS from '../../core/service/mitteilungRS.rest';
 import {getAemterForFilter, TSAmt} from '../../models/enums/TSAmt';
+import {getTSMitteilungsStatusForFilter, TSMitteilungStatus} from '../../models/enums/TSMitteilungStatus';
 import TSMitteilung from '../../models/TSMitteilung';
 import EbeguUtil from '../../utils/EbeguUtil';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
@@ -38,7 +39,10 @@ export class PosteingangViewController {
     itemsByPage: number = 20;
     numberOfPages: number = 1;
     selectedAmt: string;
+    selectedMitteilungsstatus: TSMitteilungStatus;
     includeClosed: boolean;
+
+
 
     static $inject: string[] = ['MitteilungRS', 'EbeguUtil', 'CONSTANTS', '$state', 'AuthServiceRS'];
 
@@ -79,6 +83,10 @@ export class PosteingangViewController {
 
     getAemter(): Array<TSAmt> {
         return getAemterForFilter();
+    }
+
+    getMitteilungsStatus(): Array<TSMitteilungStatus> {
+        return getTSMitteilungsStatusForFilter();
     }
 
     public clickedIncludeClosed(): void {
