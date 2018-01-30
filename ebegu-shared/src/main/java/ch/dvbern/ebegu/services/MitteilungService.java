@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -33,21 +32,39 @@ import ch.dvbern.ebegu.entities.Mitteilung;
  */
 public interface MitteilungService {
 
+	/**
+	 * Sendet die uebergebene Mitteilung. Der Empfaenger wird automatisch gesetzt
+	 */
 	@Nonnull
 	Mitteilung sendMitteilung(@Nonnull Mitteilung mitteilung);
 
+	/**
+	 * Speichert die uebergebene Mitteilung als Entwurf. Der Empfaenger wird automatisch gesetzt
+	 */
 	@Nonnull
 	Mitteilung saveEntwurf(@Nonnull Mitteilung mitteilung);
 
+	/**
+	 * Setzt die Mitteilung mit der uebergebenen ID als gelesen
+	 */
 	@Nonnull
 	Mitteilung setMitteilungGelesen(@Nonnull String mitteilungsId);
 
+	/**
+	 * Setzt die Mitteilung mit der uebergebenen ID als erledigt
+	 */
 	@Nonnull
 	Mitteilung setMitteilungErledigt(@Nonnull String mitteilungsId);
 
+	/**
+	 * Sucht die Mitteilung mit der uebergebenen ID
+	 */
 	@Nonnull
 	Optional<Mitteilung> findMitteilung(@Nonnull String key);
 
+	/**
+	 * Sucht die Betreuungsmitteilung mit der uebergebenen ID
+	 */
 	@Nonnull
 	Optional<Betreuungsmitteilung> findBetreuungsmitteilung(@Nonnull String key);
 
@@ -57,28 +74,57 @@ public interface MitteilungService {
 	@Nonnull
 	Collection<Betreuungsmitteilung> findAllBetreuungsmitteilungenForBetreuung(@Nonnull Betreuung betreuung);
 
+	/**
+	 * Gibt alle (Betreuungs-) Mitteilungen fuer die uebergebene Betreuung zurueck
+	 */
 	@Nonnull
-	Collection<Mitteilung> findAllMitteilungenForBetreuung(Betreuung betreuung);
+	Collection<Mitteilung> findAllMitteilungenForBetreuung(@Nonnull Betreuung betreuung);
 
+	/**
+	 * Gibt alle Mitteilungen fuer den uebergenen Fall zurueck, welche fuer den eingeloggten Benutzer sichtbar sind.
+	 */
 	@Nonnull
 	Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Fall fall);
 
+	/**
+	 * Gibt alle Mitteilungen fuer die uebergebene Betreuung zurueck, welche fuer den eingeloggten Benutzer sichtbar sind.
+	 */
 	@Nonnull
 	Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Betreuung betreuung);
 
+	/**
+	 * Gibt alle Mitteilungen zurueck, welche im Posteingang des eingeloggten Benutzers angezeigt werden sollen.
+	 */
 	@Nonnull
-	Collection<Mitteilung> getMitteilungenForPosteingang();
+	Collection<Mitteilung> getMitteilungenForPosteingang(boolean includeClosed);
 
+	/**
+	 * Gibt den Entwurf einer Mitteilung zurueck, welche zum uebergebenen Fall erfasst wurde. Es gibt einen Entwurf pro Amt, d.h. alle Mitarbeiter
+	 * des Jugendamtes "teilen" sich einen Entwurf, dasselbe gilt fuer die Mitarbeiter des Schulamtes.
+	 */
 	@Nullable
 	Mitteilung getEntwurfForCurrentRolle(@Nonnull Fall fall);
 
+	/**
+	 * Gibt den Entwurf einer Mitteilung zurueck, welche zur uebergebenen Betreuung erfasst wurde. Es gibt einen Entwurf pro Amt, d.h. alle Mitarbeiter
+	 * des Jugendamtes "teilen" sich einen Entwurf, dasselbe gilt fuer die Mitarbeiter des Schulamtes.
+	 */
 	@Nullable
 	Mitteilung getEntwurfForCurrentRolle(@Nonnull Betreuung betreuung);
 
+	/**
+	 * Loescht die uebergebene Mitteilung
+	 */
 	void removeMitteilung(@Nonnull Mitteilung mitteilung);
 
+	/**
+	 * Loescht alle Mitteilungen des uebergebenen Falles
+	 */
 	void removeAllMitteilungenForFall(@Nonnull Fall fall);
 
+	/**
+	 * Loescht alle Betreuungsmitteilungen des uebergebenen Gesuchs.
+	 */
 	void removeAllBetreuungMitteilungenForGesuch(@Nonnull Gesuch gesuch);
 
 	/**
@@ -88,13 +134,23 @@ public interface MitteilungService {
 	@Nonnull
 	Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(@Nonnull Fall fall);
 
+	/**
+	 * Gibt alle ungelesenen Mitteilungen (Status NEU) fuer den uebergebenen Fall zurueck, welche fuer den eingeloggten Benutzer sichtbar sind
+	 */
 	@Nonnull
 	Collection<Mitteilung> getNewMitteilungenForCurrentRolleAndFall(@Nonnull Fall fall);
 
+	/**
+	 * Gibt die Anzahl aller ungelesenen Mitteilungen (Status NEU), welche fuer den eingeloggten Benutzer sichtbar sind.
+	 */
 	@Nonnull
 	Long getAmountNewMitteilungenForCurrentBenutzer();
 
-	Betreuungsmitteilung sendBetreuungsmitteilung(Betreuungsmitteilung betreuungsmitteilung);
+	/**
+	 * Sendet die uebergebene Betreuungsmitteilung. Der Empfaenger wird automatisch gesetzt
+	 */
+	@Nonnull
+	Betreuungsmitteilung sendBetreuungsmitteilung(@Nonnull Betreuungsmitteilung betreuungsmitteilung);
 
 	/**
 	 * Applies all passed Betreuungspensen from the Betreuungsmitteilung to the existing Betreuung with the same number.
@@ -102,10 +158,28 @@ public interface MitteilungService {
 	 * Returns the Antrag, in which the mitteilung was applied, which is much more useful than the mitteilung itself
 	 * since normally you only need to know where the mitteilung was applied.
 	 */
-	Gesuch applyBetreuungsmitteilung(@NotNull Betreuungsmitteilung mitteilung);
+	@Nonnull
+	Gesuch applyBetreuungsmitteilung(@Nonnull Betreuungsmitteilung mitteilung);
 
 	/**
 	 * Returns the newest Betreuungsmitteilung for the given Betreuung
 	 */
-	Optional<Betreuungsmitteilung> findNewestBetreuungsmitteilung(String betreuungId);
+	@Nonnull
+	Optional<Betreuungsmitteilung> findNewestBetreuungsmitteilung(@Nonnull String betreuungId);
+
+	/**
+	 * Die uebergebene Mitteilung wird ans Jugendamt delegiert. Dabei wird als Empfaenger der VerantwortlicheJA des Falls gesetzt, falls ein
+	 * solcher vorhanden ist, sonst der Default-Verantwortliche des Jugendamtes.
+	 * Die Meldung wird fuer den neuen Empfaenger wieder auf NEU gesetzt.
+	 */
+	@Nonnull
+	Mitteilung mitteilungUebergebenAnJugendamt(@Nonnull String mitteilungId);
+
+	/**
+	 * Die uebergebene Mitteilung wird ans Schulamt delegiert. Dabei wird als Empfaenger der VerantwortlicheSCH des Falls gesetzt, falls ein
+	 * solcher vorhanden ist, sonst der Default-Verantwortliche des Schulamtes
+	 * Die Meldung wird fuer den neuen Empfaenger wieder auf NEU gesetzt.
+	 */
+	@Nonnull
+	Mitteilung mitteilungUebergebenAnSchulamt(@Nonnull String mitteilungId);
 }

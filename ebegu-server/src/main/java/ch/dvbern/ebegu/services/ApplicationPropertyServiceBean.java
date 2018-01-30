@@ -34,6 +34,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import ch.dvbern.ebegu.entities.Benutzer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -64,6 +65,9 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Inject
 	private Persistence persistence;
+
+	@Inject
+	private BenutzerService benutzerService;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
@@ -191,5 +195,31 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 			return defaultValue;
 		}
 		return property;
+	}
+
+	@Override
+	@PermitAll
+	@Nullable
+	public Optional<Benutzer> readDefaultVerantwortlicherFromProperties() {
+		return readDefaultVerantwortlicherAmtFromProperties(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
+	}
+
+	@Override
+	@PermitAll
+	@Nullable
+	public Optional<Benutzer> readDefaultVerantwortlicherSCHFromProperties() {
+		return readDefaultVerantwortlicherAmtFromProperties(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER_SCH);
+	}
+
+	private Optional<Benutzer> readDefaultVerantwortlicherAmtFromProperties(ApplicationPropertyKey key) {
+		String propertyDefaultVerantwortlicher = findApplicationPropertyAsString(key);
+		if (org.apache.commons.lang.StringUtils.isNotEmpty(propertyDefaultVerantwortlicher)) {
+			Optional<Benutzer> defaultVerantwortlicherOptional = benutzerService.findBenutzer(propertyDefaultVerantwortlicher);
+			if (defaultVerantwortlicherOptional.isPresent()) {
+				return defaultVerantwortlicherOptional;
+			}
+			LOG.warn("Es ist kein gueltiger DEFAULT Verantwortlicher fuer Mitteilungen gesetzt. Bitte Propertys pruefen: {}", ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
+		}
+		return Optional.empty();
 	}
 }

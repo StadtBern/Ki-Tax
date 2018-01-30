@@ -13,11 +13,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EbeguWebCore} from '../core/core.module';
-import {faelleRun} from './faelle.route';
-import {FaelleListViewComponentConfig} from './component/faelleListView';
-
-export const EbeguWebFaelle =
-    angular.module('ebeguWeb.faelle', [EbeguWebCore.name])
-        .run(faelleRun)
-        .component('faelleListView', new FaelleListViewComponentConfig());
+.pendenzenBetreuungenListView {
+    padding: 3rem;
+}

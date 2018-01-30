@@ -14,9 +14,12 @@
  */
 
 import {IComponentOptions} from 'angular';
-import TSMitteilung from '../../models/TSMitteilung';
+import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import MitteilungRS from '../../core/service/mitteilungRS.rest';
+import {getAemterForFilter, TSAmt} from '../../models/enums/TSAmt';
+import TSMitteilung from '../../models/TSMitteilung';
 import EbeguUtil from '../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import IStateService = angular.ui.IStateService;
 let template = require('./posteingangView.html');
 require('./posteingangView.less');
@@ -34,10 +37,13 @@ export class PosteingangViewController {
 
     itemsByPage: number = 20;
     numberOfPages: number = 1;
+    selectedAmt: string;
+    includeClosed: boolean;
 
-    static $inject: string[] = ['MitteilungRS', 'EbeguUtil', 'CONSTANTS', '$state'];
+    static $inject: string[] = ['MitteilungRS', 'EbeguUtil', 'CONSTANTS', '$state', 'AuthServiceRS'];
 
-    constructor(private mitteilungRS: MitteilungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any, private $state: IStateService) {
+    constructor(private mitteilungRS: MitteilungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any, private $state: IStateService,
+                private authServiceRS: AuthServiceRS) {
         this.initViewModel();
     }
 
@@ -50,11 +56,11 @@ export class PosteingangViewController {
     }
 
     private initViewModel() {
-        this.updatePosteingang();
+        this.updatePosteingang(false);
     }
 
-    private updatePosteingang() {
-        this.mitteilungRS.getMitteilungenForPosteingang().then((response: any) => {
+    private updatePosteingang(doIncludeClosed: boolean) {
+        this.mitteilungRS.getMitteilungenForPosteingang(doIncludeClosed).then((response: any) => {
             this.mitteilungen = angular.copy(response);
             this.numberOfPages = this.mitteilungen.length / this.itemsByPage;
         });
@@ -64,5 +70,18 @@ export class PosteingangViewController {
         this.$state.go('mitteilungen', {
             fallId: mitteilung.fall.id
         });
+    }
+
+    isCurrentUserSchulamt(): boolean {
+        let isUserSchulamt: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles());
+        return isUserSchulamt;
+    }
+
+    getAemter(): Array<TSAmt> {
+        return getAemterForFilter();
+    }
+
+    public clickedIncludeClosed(): void {
+       this.updatePosteingang(this.includeClosed);
     }
 }

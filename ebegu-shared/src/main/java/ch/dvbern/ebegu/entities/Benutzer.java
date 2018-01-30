@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.entities;
 
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -32,6 +33,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import ch.dvbern.ebegu.enums.Amt;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.validators.CheckBenutzerRoles;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -163,9 +165,18 @@ public class Benutzer extends AbstractEntity {
 		this.traegerschaft = traegerschaft;
 	}
 
+	@Nonnull
 	public String getFullName() {
 		return (this.vorname != null ? this.vorname : "") + " "
 			+ (this.nachname != null ? this.nachname : "");
+	}
+
+	@Nonnull
+	public Amt getAmt() {
+		if (role != null) {
+			return role.getAmt();
+		}
+		return Amt.NONE;
 	}
 
 	@Override
