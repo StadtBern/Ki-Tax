@@ -989,6 +989,8 @@
     "MITTEILUNG_SUBJECT": "Betreff",
     "MITTEILUNG_MESSAGE": "Nachricht",
     "MITTEILUNG_SENDEN": "Senden",
+    "MITTEILUNG_DELEGATION_AN_JA": "Meldung ans Jugendamt delegieren",
+    "MITTEILUNG_DELEGATION_AN_SCH": "Meldung ans Schulamt delegieren",
     "MITTEILUNGEN_ERLEDIGT": "erledigt",
     "SCHULUNG": "Schulung",
     "SCHULUNG_CREATE_DATA": "Schulungsdaten erstellen",
@@ -1007,8 +1009,11 @@
     "POSTEINGANG_DATUM_UPPER": "DATUM",
     "POSTEINGANG_VERANTWORTLICH_UPPER": "VERANTWORTLICH",
     "POSTEINGANG_AMT": "AMT",
+    "POSTEINGANG_STATUS": "STATUS",
+    "AMT_NONE": "",
     "AMT_SCHULAMT": "Schulamt",
     "AMT_JUGENDAMT": "Jugendamt",
+    "POSTEINGANG_INCLUDE_CLOSED": "Inkl. erledigte Mitteilungen",
     "MITTEILUNGEN_NOCH_KEINE": "Für diesen Fall wurden noch keine Mitteilungen gesendet",
     "SEARCH_LIST": "Alle Suchresultate",
     "GENERIEREN": "GENERIEREN",
@@ -1221,5 +1226,9 @@
     "TAGESSCHULE_ANMELDEN": "Tagesschule anmelden",
     "FERIENINSEL_ANMELDEN": "Ferieninsel anmelden",
     "MUTATION_NOETIG": "Um Anmeldungen für eine Tagesschule erfassen zu können, müssen sie das Gesuch mutieren. Die Mutation können Sie auf dem Dashboard starten.",
-    "MUTATION_NOETIG_DB": "Um Anmeldungen für eine Tagesschule erfassen zu können, müssen sie das Gesuch mutieren."
+    "MUTATION_NOETIG_DB": "Um Anmeldungen für eine Tagesschule erfassen zu können, müssen sie das Gesuch mutieren.",
+    "NEU": "neu",
+    "ENTWURF": "Entwurf",
+    "GELESEN": "gelesen",
+    "ERLEDIGT": "erledigt"
 }

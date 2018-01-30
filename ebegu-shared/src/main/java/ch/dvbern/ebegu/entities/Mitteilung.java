@@ -18,6 +18,7 @@ package ch.dvbern.ebegu.entities;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,6 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import ch.dvbern.ebegu.enums.Amt;
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.util.EbeguUtil;
@@ -220,5 +222,13 @@ public class Mitteilung extends AbstractEntity {
 			.append("empfaenger", empfaenger)
 			.append("mitteilungStatus", mitteilungStatus)
 			.toString();
+	}
+
+	@Nonnull
+	public Amt getEmpfaengerAmt() {
+		if (getEmpfaenger() != null) {
+			return getEmpfaenger().getRole().getAmt();
+		}
+		return Amt.NONE;
 	}
 }

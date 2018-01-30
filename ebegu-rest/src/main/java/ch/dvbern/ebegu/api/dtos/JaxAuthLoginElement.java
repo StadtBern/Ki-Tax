@@ -18,6 +18,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import ch.dvbern.ebegu.enums.Amt;
 import ch.dvbern.ebegu.enums.UserRole;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -41,6 +42,10 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 	private String email = "";
 	@Nonnull
 	private UserRole role;
+
+	@Nonnull
+	private Amt amt;
+
 	private JaxMandant mandant;
 	@Nullable
 	private JaxTraegerschaft traegerschaft;
@@ -100,6 +105,15 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 
 	public void setRole(@Nonnull UserRole role) {
 		this.role = role;
+	}
+
+	@Nonnull
+	public Amt getAmt() {
+		return amt;
+	}
+
+	public void setAmt(@Nonnull Amt amt) {
+		this.amt = amt;
 	}
 
 	public JaxMandant getMandant() {

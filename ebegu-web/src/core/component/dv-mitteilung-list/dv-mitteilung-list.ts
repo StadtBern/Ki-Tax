@@ -20,6 +20,7 @@ import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogControl
 import FallRS from '../../../gesuch/service/fallRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IMitteilungenStateParams} from '../../../mitteilungen/mitteilungen.route';
+import {TSAmt} from '../../../models/enums/TSAmt';
 import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
 import {TSMitteilungStatus} from '../../../models/enums/TSMitteilungStatus';
 import {TSMitteilungTeilnehmerTyp} from '../../../models/enums/TSMitteilungTeilnehmerTyp';
@@ -274,7 +275,9 @@ export class DVMitteilungListController {
             case TSRole.ADMIN:
             case TSRole.JURIST:
             case TSRole.REVISOR:
-            case TSRole.SACHBEARBEITER_JA: {
+            case TSRole.SACHBEARBEITER_JA:
+            case TSRole.SCHULAMT:
+            case TSRole.ADMINISTRATOR_SCHULAMT: {
                 return TSMitteilungTeilnehmerTyp.JUGENDAMT;
             }
             default:
@@ -371,7 +374,38 @@ export class DVMitteilungListController {
                     }
                 });
             });
-
         }
+    }
+
+    public mitteilungUebergebenAnJugendamt(mitteilung: TSMitteilung): void {
+        this.mitteilungRS.mitteilungUebergebenAnJugendamt(mitteilung.id).then(msg => {
+            this.ebeguUtil.replaceElementInList(msg, this.allMitteilungen, false);
+        });
+    }
+
+    public mitteilungUebergebenAnSchulamt(mitteilung: TSMitteilung): void {
+        this.mitteilungRS.mitteilungUebergebenAnSchulamt(mitteilung.id).then(msg => {
+            this.ebeguUtil.replaceElementInList(msg, this.allMitteilungen, false);
+        });
+    }
+
+    public isMessageEditableForMyRole(mitteilung: TSMitteilung): boolean {
+        // Ich darf die Mitteilung auf Gelesen setzen oder Delegieren, wenn ich der gleichen Empfängergruppe wie die Meldung selber angehöre
+        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.JUGENDAMT) ||
+            this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.SCHULAMT);
+    }
+
+    public canUebergebenAnSchulamt(mitteilung: TSMitteilung): boolean {
+        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.JUGENDAMT);
+    }
+
+    public canUebergebenAnJugendamt(mitteilung: TSMitteilung): boolean {
+        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.SCHULAMT);
+    }
+
+    private isUserAndEmpfaengerSameAmt(mitteilung: TSMitteilung, amt: TSAmt): boolean {
+        let userInAmt: boolean = this.authServiceRS.getPrincipal().amt === amt;
+        let empfaengerInAmt: boolean = mitteilung.getEmpfaengerAmt() === amt;
+        return userInAmt && empfaengerInAmt;
     }
 }

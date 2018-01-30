@@ -126,8 +126,8 @@ export default class MitteilungRS {
         });
     }
 
-    public getMitteilungenForPosteingang(): IPromise<Array<TSMitteilung>> {
-        return this.http.get(this.serviceURL + '/posteingang').then((response: any) => {
+    public getMitteilungenForPosteingang(includeClosed: boolean): IPromise<Array<TSMitteilung>> {
+        return this.http.get(this.serviceURL + '/posteingang/' + includeClosed).then((response: any) => {
             this.log.debug('PARSING mitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseMitteilungen(response.data.mitteilungen); // The response is a wrapper
         });
@@ -186,6 +186,18 @@ export default class MitteilungRS {
         return this.http.get(this.serviceURL + '/newestBetreuunsmitteilung/' + betreuungId).then((response: any) => {
             this.log.debug('PARSING Betreuungsmitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseBetreuungsmitteilung(new TSBetreuungsmitteilung(), response.data);
+        });
+    }
+
+    public mitteilungUebergebenAnJugendamt(mitteilungId: string): IPromise<TSMitteilung> {
+        return this.http.get(this.serviceURL + '/delegation/jugendamt/' + mitteilungId).then((response: any) => {
+            return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
+        });
+    }
+
+    public mitteilungUebergebenAnSchulamt(mitteilungId: string): IPromise<TSMitteilung> {
+        return this.http.get(this.serviceURL + '/delegation/schulamt/' + mitteilungId).then((response: any) => {
+            return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
         });
     }
 
