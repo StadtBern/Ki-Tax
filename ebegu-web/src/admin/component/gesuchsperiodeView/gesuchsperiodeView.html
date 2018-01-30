@@ -164,8 +164,8 @@
                             </dv-loading-button>
                         </div>
                         <div class="col-md-2" ng-if="vm.gesuchsperiode">
-                            <a href="javascript:;" id="cancelLink" class="dv-btn" unsaved-warning-clear
-                               ng-click="vm.cancelGesuchsperiode(); vm.form.$setPristine();vm.form.$setUntouched();">
+                            <a href="#" id="cancelLink" class="dv-btn" unsaved-warning-clear
+                               ng-click="vm.cancelGesuchsperiode(); vm.form.$setPristine();vm.form.$setUntouched(); $event.preventDefault();">
                                 <span data-translate="CANCEL"></span>
                             </a>
                         </div>
