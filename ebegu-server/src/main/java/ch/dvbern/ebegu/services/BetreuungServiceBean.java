@@ -63,8 +63,10 @@ import ch.dvbern.ebegu.entities.Verfuegung_;
 import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.WizardStepName;
@@ -117,6 +119,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	private GesuchsperiodeService gesuchsperiodeService;
 	@Inject
 	private BenutzerService benutzerService;
+	@Inject
+	private ApplicationPropertyService applicationPropertyService;
 
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungServiceBean.class.getSimpleName());
 
@@ -155,7 +159,20 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 			wizardStepService.updateSteps(mergedBetreuung.getKind().getGesuch().getId(), null, null, WizardStepName.BETREUUNG);
 		}
 
-		gesuchService.updateBetreuungenStatus(mergedBetreuung.extractGesuch());
+		Gesuch mergedGesuch = gesuchService.updateBetreuungenStatus(mergedBetreuung.extractGesuch());
+
+		if (mergedGesuch.getEingangsart() == Eingangsart.PAPIER) {
+			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(
+				ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
+			String propertyDefaultVerantwortlicherSch = applicationPropertyService.findApplicationPropertyAsString(
+				ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER_SCH);
+			final boolean verantwortlicheChanged = gesuchService.setVerantwortliche(propertyDefaultVerantwortlicher, propertyDefaultVerantwortlicherSch,
+				mergedBetreuung.extractGesuch(), true);
+			if (verantwortlicheChanged) {
+				gesuchService.updateGesuch(mergedGesuch, false);
+			}
+		}
+
 
 		return mergedBetreuung;
 	}

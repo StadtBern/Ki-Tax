@@ -211,6 +211,8 @@ public interface GesuchService {
 	@Nonnull
 	Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String usernameJA, @Nullable String usernameSCH);
 
+	boolean setVerantwortliche(@Nullable String usernameJA, @Nullable String usernameSCH, Gesuch gesuch, boolean onlyIfNotSet);
+
 	/**
 	 * Setzt das gegebene Gesuch als Beschwerde hängig und bei allen Gescuhen der Periode den Flag
 	 * gesperrtWegenBeschwerde auf true.
@@ -364,7 +366,7 @@ public interface GesuchService {
 	 * Checks all Betreuungen of the given Gesuch and updates the flag gesuchBetreuungenStatus with the corresponding
 	 * value.
 	 */
-	void updateBetreuungenStatus(@NotNull Gesuch gesuch);
+	Gesuch updateBetreuungenStatus(@NotNull Gesuch gesuch);
 
 	/**
 	 * In dieser Methode wird das Gesuch verfuegt. Nur Gesuche bei denen alle Betreuungen bereits verfuegt sind und der WizardStep Verfuegen

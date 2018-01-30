@@ -619,22 +619,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			// Step Freigabe gruen
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
 
-			if (usernameJA != null) {
-				Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(usernameJA);
-				if (verantwortlicher.isPresent()
-					&& gesuch.hasBetreuungOfJugendamt()
-					&& (verantwortlicher.get().getRole().isRoleJugendamt() || verantwortlicher.get().getRole().isSuperadmin())) {
-					gesuch.getFall().setVerantwortlicher(verantwortlicher.get());
-				}
-			}
-			if (usernameSCH != null) {
-				Optional<Benutzer> verantwortlicherSCH = benutzerService.findBenutzer(usernameSCH);
-				if (verantwortlicherSCH.isPresent()
-					&& gesuch.hasBetreuungOfSchulamt()
-					&& (verantwortlicherSCH.get().getRole().isRoleSchulamt() || verantwortlicherSCH.get().getRole().isSuperadmin())) {
-					gesuch.getFall().setVerantwortlicherSCH(verantwortlicherSCH.get());
-				}
-			}
+			setVerantwortliche(usernameJA, usernameSCH, gesuch, false);
 
 			// Falls es ein OnlineGesuch war: Das Eingangsdatum setzen
 			if (Eingangsart.ONLINE == gesuch.getEingangsart()) {
@@ -647,6 +632,31 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		} else {
 			throw new EbeguEntityNotFoundException("antragFreigeben", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId);
 		}
+	}
+
+	public boolean setVerantwortliche(@Nullable String usernameJA, @Nullable String usernameSCH, Gesuch gesuch, boolean onlyIfNotSet) {
+		boolean hasVerantwortlicheChanged = false;
+		if (usernameJA != null) {
+			Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(usernameJA);
+			if (verantwortlicher.isPresent()
+				&& gesuch.hasBetreuungOfJugendamt()
+				&& (verantwortlicher.get().getRole().isRoleJugendamt() || verantwortlicher.get().getRole().isSuperadmin())
+				&& (gesuch.getFall().getVerantwortlicher() == null || !onlyIfNotSet)) {
+				gesuch.getFall().setVerantwortlicher(verantwortlicher.get());
+				hasVerantwortlicheChanged = true;
+			}
+		}
+		if (usernameSCH != null) {
+			Optional<Benutzer> verantwortlicherSCH = benutzerService.findBenutzer(usernameSCH);
+			if (verantwortlicherSCH.isPresent()
+				&& gesuch.hasBetreuungOfSchulamt()
+				&& (verantwortlicherSCH.get().getRole().isRoleSchulamt() || verantwortlicherSCH.get().getRole().isSuperadmin())
+				&& (gesuch.getFall().getVerantwortlicherSCH() == null || !onlyIfNotSet)) {
+				gesuch.getFall().setVerantwortlicherSCH(verantwortlicherSCH.get());
+				hasVerantwortlicheChanged = true;
+			}
+		}
+		return hasVerantwortlicheChanged;
 	}
 
 	@Override
@@ -1399,7 +1409,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	public void updateBetreuungenStatus(@NotNull Gesuch gesuch) {
+	public Gesuch updateBetreuungenStatus(@NotNull Gesuch gesuch) {
 		gesuch.setGesuchBetreuungenStatus(GesuchBetreuungenStatus.ALLE_BESTAETIGT);
 		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
 			if (Betreuungsstatus.ABGEWIESEN == betreuung.getBetreuungsstatus()) {
@@ -1409,7 +1419,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				gesuch.setGesuchBetreuungenStatus(GesuchBetreuungenStatus.WARTEN);
 			}
 		}
-		persistence.merge(gesuch);
+		return persistence.merge(gesuch);
 	}
 
 	@Override
