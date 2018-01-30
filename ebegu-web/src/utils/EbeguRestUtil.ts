@@ -1630,6 +1630,7 @@ export default class EbeguRestUtil {
             userTS.mandant = this.parseMandant(new TSMandant(), userFromServer.mandant);
             userTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), userFromServer.traegerschaft);
             userTS.institution = this.parseInstitution(new TSInstitution(), userFromServer.institution);
+            userTS.amt = userFromServer.amt;
             return userTS;
         }
         return undefined;

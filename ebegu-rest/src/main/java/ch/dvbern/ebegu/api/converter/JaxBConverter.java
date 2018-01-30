@@ -2308,6 +2308,7 @@ public class JaxBConverter {
 		}
 		loginElement.setUsername(benutzer.getUsername());
 		loginElement.setRole(benutzer.getRole());
+		loginElement.setAmt(benutzer.getRole().getAmt());
 		return loginElement;
 	}
 
