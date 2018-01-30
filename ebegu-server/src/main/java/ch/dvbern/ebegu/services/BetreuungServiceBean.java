@@ -161,7 +161,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 		Gesuch mergedGesuch = gesuchService.updateBetreuungenStatus(mergedBetreuung.extractGesuch());
 
-		if (mergedGesuch.getEingangsart() == Eingangsart.PAPIER) {
+		if (updateVerantwortlicheNeeded(mergedGesuch.getEingangsart(), mergedBetreuung.getBetreuungsstatus())) {
 			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(
 				ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
 			String propertyDefaultVerantwortlicherSch = applicationPropertyService.findApplicationPropertyAsString(
@@ -169,12 +169,25 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 			final boolean verantwortlicheChanged = gesuchService.setVerantwortliche(propertyDefaultVerantwortlicher, propertyDefaultVerantwortlicherSch,
 				mergedBetreuung.extractGesuch(), true);
 			if (verantwortlicheChanged) {
+
+				// TODO: -> keine Rechte da als Gesuchsteller gesuch schreibgeschützt ist!!! Braucht wohl seperater query zum speichern des verantworlicher!
 				gesuchService.updateGesuch(mergedGesuch, false);
 			}
 		}
 
 
 		return mergedBetreuung;
+	}
+
+	private boolean updateVerantwortlicheNeeded(Eingangsart eingangsart, Betreuungsstatus betreuungsstatus) {
+		if (eingangsart == Eingangsart.PAPIER) {
+			// immer bei eingangsart Papier
+			return true;
+		} else if (betreuungsstatus == Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST) {
+			// bei eingangsart Online nur wenn die Anmeldung direkt ausgelöst wurde (über TS oder FI hinzufügen Knöpfe)
+			return true;
+		}
+		return false;
 	}
 
 	@Override

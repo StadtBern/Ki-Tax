@@ -1009,7 +1009,7 @@ public class JaxBConverter {
 		return gesuchstellerCont;
 	}
 
-	public JaxGesuch gesuchToJAX(@Nonnull final Gesuch persistedGesuch) {
+	public JaxGesuch gesuchToJAX(@Nonnull final Gesuch persistedGesuch, boolean isNeuestesGesuch) {
 		final JaxGesuch jaxGesuch = new JaxGesuch();
 		convertAbstractFieldsToJAX(persistedGesuch, jaxGesuch);
 		jaxGesuch.setFall(this.fallToJAX(persistedGesuch.getFall()));
@@ -1052,6 +1052,7 @@ public class JaxBConverter {
 		jaxGesuch.setGueltig(persistedGesuch.isGueltig());
 		jaxGesuch.setDokumenteHochgeladen(persistedGesuch.getDokumenteHochgeladen());
 		jaxGesuch.setFinSitStatus(persistedGesuch.getFinSitStatus());
+		jaxGesuch.setNeustesGesuch(isNeuestesGesuch);
 		return jaxGesuch;
 	}
 
@@ -2308,6 +2309,7 @@ public class JaxBConverter {
 		}
 		loginElement.setUsername(benutzer.getUsername());
 		loginElement.setRole(benutzer.getRole());
+		loginElement.setAmt(benutzer.getRole().getAmt());
 		return loginElement;
 	}
 
@@ -2643,11 +2645,11 @@ public class JaxBConverter {
 		return mahnung;
 	}
 
-	public JaxMahnung mahnungToJAX(@Nonnull final Mahnung persistedMahnung) {
+	public JaxMahnung mahnungToJAX(@Nonnull final Mahnung persistedMahnung, boolean isNeuestesGesuch) {
 		final JaxMahnung jaxMahnung = new JaxMahnung();
 		convertAbstractFieldsToJAX(persistedMahnung, jaxMahnung);
 
-		jaxMahnung.setGesuch(this.gesuchToJAX(persistedMahnung.getGesuch()));
+		jaxMahnung.setGesuch(this.gesuchToJAX(persistedMahnung.getGesuch(), isNeuestesGesuch));
 		jaxMahnung.setMahnungTyp(persistedMahnung.getMahnungTyp());
 		jaxMahnung.setDatumFristablauf(persistedMahnung.getDatumFristablauf());
 		jaxMahnung.setBemerkungen(persistedMahnung.getBemerkungen());

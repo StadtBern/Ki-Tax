@@ -1,6 +1,6 @@
 /*
  * Ki-Tax: System for the management of external childcare subsidies
- * Copyright (C) 2017 City of Bern Switzerland
+ * Copyright (C) 2018 City of Bern Switzerland
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -13,17 +13,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum TSMitteilungStatus {
-    ENTWURF = <any> 'ENTWURF',
-    NEU = <any> 'NEU',
-    GELESEN = <any> 'GELESEN',
-    ERLEDIGT = <any> 'ERLEDIGT'
-}
+package ch.dvbern.ebegu.enums;
 
-export function getTSMitteilungsStatusForFilter(): Array<TSMitteilungStatus> {
-    return [
-        TSMitteilungStatus.NEU,
-        TSMitteilungStatus.GELESEN,
-        TSMitteilungStatus.ERLEDIGT
-    ];
+public enum Amt {
+
+	JUGENDAMT,
+	SCHULAMT,
+	NONE
 }

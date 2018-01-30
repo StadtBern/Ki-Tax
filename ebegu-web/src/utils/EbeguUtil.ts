@@ -268,4 +268,15 @@ export default class EbeguUtil {
         return !EbeguUtil.isNullOrUndefined(data);
     }
 
+    public replaceElementInList(element: TSAbstractEntity, list: TSAbstractEntity[], wasNew: boolean) {
+        if (wasNew) {
+            list.push(element);
+        } else {
+            let index = EbeguUtil.getIndexOfElementwithID(element, list);
+            if (index > -1) {
+                list[index] = element;
+                this.handleSmarttablesUpdateBug(list);
+            }
+        }
+    }
 }
