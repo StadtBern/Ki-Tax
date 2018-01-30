@@ -1009,6 +1009,7 @@
     "POSTEINGANG_DATUM_UPPER": "DATUM",
     "POSTEINGANG_VERANTWORTLICH_UPPER": "VERANTWORTLICH",
     "POSTEINGANG_AMT": "AMT",
+    "POSTEINGANG_STATUS": "STATUS",
     "AMT_NONE": "",
     "AMT_SCHULAMT": "Schulamt",
     "AMT_JUGENDAMT": "Jugendamt",
@@ -1225,5 +1226,8 @@
     "TAGESSCHULE_ANMELDEN": "Tagesschule anmelden",
     "FERIENINSEL_ANMELDEN": "Ferieninsel anmelden",
     "MUTATION_NOETIG": "Um Anmeldungen für eine Tagesschule erfassen zu können, müssen sie das Gesuch mutieren. Die Mutation können Sie auf dem Dashboard starten.",
-    "MUTATION_NOETIG_DB": "Um Anmeldungen für eine Tagesschule erfassen zu können, müssen sie das Gesuch mutieren."
+    "MUTATION_NOETIG_DB": "Um Anmeldungen für eine Tagesschule erfassen zu können, müssen sie das Gesuch mutieren.",
+    "NEU": "neu",
+    "GELESEN": "gelesen",
+    "ERLEDIGT": "erledigt"
 }

@@ -134,7 +134,7 @@ public class FinanzielleSituationResource {
 
 		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
 		Gesuch modifiedGesuch = finanzielleSituationService.saveFinanzielleSituationStart(gesuchToMerge);
-		return converter.gesuchToJAX(modifiedGesuch);
+		return converter.gesuchToJAX(modifiedGesuch, gesuchService.isNeustesGesuch(modifiedGesuch));
 	}
 
 	@ApiOperation(value = "Berechnet die FinanzielleSituation fuer das uebergebene Gesuch. Die Berechnung wird " +
