@@ -42,9 +42,13 @@
 }
 
 md-checkbox.ferieninsel-kalender {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
     //float:left;
     font-size: 0;
-    position: relative;
     height: 100%;
     width: 100%;
     display: block;
@@ -61,7 +65,7 @@ md-checkbox.ferieninsel-kalender {
         }
         &.md-checked, &:not(.md-checked) {
             .md-icon {
-                border: 1px solid @contrast-dark;
+                border: none!important;
             }
         }
         &.md-checked {
@@ -108,7 +112,7 @@ md-checkbox.ferieninsel-kalender {
             min-height: 1.7rem;
             display: block;
             margin:0;
-            padding: 1rem;
+            padding: 1rem 0;
             border-bottom: 1px solid @contrast;
             vertical-align: middle;
         }
@@ -142,11 +146,11 @@ md-checkbox.ferieninsel-kalender {
                 font-family: 'FontAwesome';
                 left: 0;
                 right: 0;
-                top: 3.7rem;
+                top: 50%;
+                transform: translateY(-50%);
                 bottom: 0;
                 width: auto;
                 height: auto;
-                transform: none;
                 border-width: 0;
                 border-radius: 0;
                 content: "\f00c";

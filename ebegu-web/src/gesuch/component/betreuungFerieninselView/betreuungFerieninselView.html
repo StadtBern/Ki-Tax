@@ -41,41 +41,58 @@
                 </div>
             </div>
             <!-- Noch nicht abgeschickt: Tage auswaehlbar -->
-
-            <div class="ferieninsel-kalender__container"
-                 ng-if="!vm.isAnmeldeschlussAbgelaufen() && vm.betreuung.isEnabled() && !vm.isFreigabequittungAusstehend()">
-                <div class="ferieninsel-kalender__weekday"
-                     ng-repeat="day in vm.getMomentWeekdays()">{{ day | translate}}
+            <div class="row">
+                <div class="col-sm-12 dv-input-container-medium form-group">
+                    <div class="ferieninsel-kalender__container"
+                         ng-if="!vm.isAnmeldeschlussAbgelaufen() && vm.betreuung.isEnabled() && !vm.isFreigabequittungAusstehend()">
+                        <div class="ferieninsel-kalender__weekday ferieninsel-kalender__weekday--{{day}}"
+                             ng-repeat="day in vm.getMomentWeekdays()">{{ day | translate}}
+                        </div>
+                        <break class="ferieninsel-kalender__break"
+                               ng-repeat-start="tag in vm.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung"
+                               ng-if="tag.tag.weekday()==1"></break>
+                        <div class="ferieninsel-kalender__day ferieninsel-kalender__day--{{tag.tag.weekday()}}">
+                            <md-checkbox ng-model="tag.angemeldet"
+                                         aria-label="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}"
+                                         class="ferieninsel-kalender">
+                                <span data-translate="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}"></span>
+                            </md-checkbox>
+                        </div>
+                        <div class="ferieninsel-kalender__row--week"
+                             ng-if="vm.displayWeekRow(tag, $index,vm.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung) && !vm.displayMonthRow(tag, $index,vm.betreuung.belegungFerieninsel.tage) "></div>
+                        <div class="ferieninsel-kalender__row--month"
+                             ng-if="vm.displayMonthRow(tag, $index,vm.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung)"></div>
+                        <break class="ferieninsel-kalender__break" ng-repeat-end
+                               ng-if="vm.displayBreak(tag, $index,vm.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung)"></break>
+                    </div>
                 </div>
-                <break class="ferieninsel-kalender__break"
-                       ng-repeat-start="tag in vm.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung"
-                       ng-if="tag.tag.weekday()==1"></break>
-                <div class="ferieninsel-kalender__day ferieninsel-kalender__day--{{tag.tag.weekday()}}">
-                    <md-checkbox ng-model="tag.angemeldet"
-                                 aria-label="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}" class="ferieninsel-kalender">
-                        <span data-translate="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}"></span>
-                    </md-checkbox>
-                </div>
-                <break class="ferieninsel-kalender__break" ng-repeat-end
-                       ng-if="vm.displayBreakBelegung(tag, $index)"></break>
             </div>
-            <!-- Abgeschickt: Liste der gewaehlten Tage readonly -->
-            <div class="ferieninsel-kalender__container"
-                 ng-if="!vm.betreuung.isEnabled() || vm.isFreigabequittungAusstehend()">
-                <div class="ferieninsel-kalender__weekday"
-                     ng-repeat="day in vm.getMomentWeekdays()">{{ day | translate}}
+            <div class="row">
+                <div class="col-sm-12 dv-input-container-medium form-group">
+                    <!-- Abgeschickt: Liste der gewaehlten Tage readonly -->
+                    <div class="ferieninsel-kalender__container"
+                         ng-if="!vm.betreuung.isEnabled() || vm.isFreigabequittungAusstehend()">
+                        <div class="ferieninsel-kalender__weekday"
+                             ng-repeat="day in vm.getMomentWeekdays()">{{ day | translate}}
+                        </div>
+                        <break class="ferieninsel-kalender__break"
+                               ng-repeat-start="tag in vm.betreuung.belegungFerieninsel.tage"
+                               ng-if="tag.tag.weekday()==1"></break>
+                        <div class="ferieninsel-kalender__day ferieninsel-kalender__day--{{tag.tag.weekday()}}">
+                            <md-checkbox ng-model="true" disabled
+                                         aria-label="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}"
+                                         class="ferieninsel-kalender">
+                                <span data-translate="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}"></span>
+                            </md-checkbox>
+                        </div>
+                        <div class="ferieninsel-kalender__row--week"
+                             ng-if="vm.displayWeekRow(tag, $index,vm.betreuung.belegungFerieninsel.tage) && !vm.displayMonthRow(tag, $index,vm.betreuung.belegungFerieninsel.tage)"></div>
+                        <div class="ferieninsel-kalender__row--month"
+                             ng-if="vm.displayMonthRow(tag, $index,vm.betreuung.belegungFerieninsel.tage) "></div>
+                        <break class="ferieninsel-kalender__break" ng-repeat-end
+                               ng-if="vm.displayBreak(tag, $index,vm.betreuung.belegungFerieninsel.tage)"></break>
+                    </div>
                 </div>
-                <break class="ferieninsel-kalender__break"
-                       ng-repeat-start="tag in vm.betreuung.belegungFerieninsel.tage"
-                       ng-if="tag.tag.weekday()==1"></break>
-                <div class="ferieninsel-kalender__day ferieninsel-kalender__day--{{tag.tag.weekday()}}">
-                    <md-checkbox ng-model="true" disabled
-                                 aria-label="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}" class="ferieninsel-kalender">
-                        <span data-translate="{{tag.tag | amDateFormat : 'DD.MM.YYYY'}}"></span>
-                    </md-checkbox>
-                </div>
-                <break class="ferieninsel-kalender__break" ng-repeat-end
-                       ng-if="vm.displayBreak(tag, $index)"></break>
             </div>
 
         </div>

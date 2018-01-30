@@ -208,17 +208,28 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
         return weekdays;
     }
 
-    public displayBreak(tag: TSBelegungFerieninselTag, index: number): boolean {
-        if (this.betreuung.belegungFerieninsel.tage[index + 1]) {
-            return tag.tag.week() !== this.betreuung.belegungFerieninsel.tage[index + 1].tag.week();
+    public displayBreak(tag: TSBelegungFerieninselTag, index: number, dayArray: Array<TSBelegungFerieninselTag>): boolean {
+        if (dayArray[index + 1]) {
+            return tag.tag.week() !== dayArray[index + 1].tag.week();
         } else {
             return false;
         }
     }
 
-    public displayBreakBelegung(tag: TSBelegungFerieninselTag, index: number): boolean {
-        if (this.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung[index + 1]) {
-            return tag.tag.week() !== this.ferieninselStammdaten.potenzielleFerieninselTageFuerBelegung[index + 1].tag.week();
+    public displayWeekRow(tag: TSBelegungFerieninselTag, index: number, dayArray: Array<TSBelegungFerieninselTag>): boolean {
+        if (dayArray[index + 1]) {
+            if (tag.tag.weekday() === 1 && dayArray[index + 1].tag.weekday() === 5 && dayArray[index + 1].tag.diff(tag.tag, 'days') === 11) {
+                return false;
+            }
+            return dayArray[index + 1].tag.diff(tag.tag, 'days') > 7;
+        } else {
+            return false;
+        }
+    }
+
+    public displayMonthRow(tag: TSBelegungFerieninselTag, index: number, dayArray: Array<TSBelegungFerieninselTag>): boolean {
+        if (dayArray[index + 1]) {
+            return !tag.tag.isSame(dayArray[index + 1].tag, 'month');
         } else {
             return false;
         }
