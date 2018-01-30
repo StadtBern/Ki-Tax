@@ -57,7 +57,7 @@
                         <md-button class="menu-item-link" ng-click="vmx.setAntragTypDatum(antragTypDatum)"
                                    aria-label="{{antragTypDatum}}">
                                 <span>
-                                    <a href="#" aria-hidden ng-click=" $event.stopPropagation()">{{antragTypDatum}}</a>
+                                    <a href="#" aria-hidden ng-click="$event.preventDefault()">{{antragTypDatum}}</a>
                                 </span>
                         </md-button>
                     </md-menu-item>
