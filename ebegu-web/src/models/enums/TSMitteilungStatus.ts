@@ -19,3 +19,11 @@ export enum TSMitteilungStatus {
     GELESEN = <any> 'GELESEN',
     ERLEDIGT = <any> 'ERLEDIGT'
 }
+
+export function getTSMitteilungsStatusForFilter(): Array<TSMitteilungStatus> {
+    return [
+        TSMitteilungStatus.NEU,
+        TSMitteilungStatus.GELESEN,
+        TSMitteilungStatus.ERLEDIGT
+    ];
+}
