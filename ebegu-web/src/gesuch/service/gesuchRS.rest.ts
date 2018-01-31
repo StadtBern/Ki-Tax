@@ -242,4 +242,10 @@ export default class GesuchRS implements IEntityRS {
         return this.http.post(this.serviceURL + '/changeFinSitStatus/' + encodeURIComponent(antragId) + '/' + finSitStatus, null);
     }
 
+    public isNeuestesGesuch(gesuchID: string): IPromise<boolean> {
+        return this.http.get(this.serviceURL + '/newest/' + encodeURIComponent(gesuchID))
+            .then((response: any) => {
+                return response.data;
+            });
+    }
 }
