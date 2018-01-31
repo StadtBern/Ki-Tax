@@ -72,6 +72,11 @@
         </dependency>
 
         <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <scope>provided</scope>
@@ -177,10 +182,6 @@
             <artifactId>jboss-ejb3-ext-api</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>ch.dvbern.oss.excelmerger</groupId>
-            <artifactId>excelmerger-impl</artifactId>
-        </dependency>
     </dependencies>
 
     <profiles>

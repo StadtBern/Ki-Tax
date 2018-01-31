@@ -69,6 +69,11 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-api</artifactId>
+                <version>7.0</version>
+            </dependency>
+            <dependency>
                 <groupId>org.jboss.resteasy</groupId>
                 <artifactId>resteasy-bom</artifactId>
                 <version>3.0.14.Final</version>

@@ -21,6 +21,7 @@ import java.util.concurrent.Future;
 import javax.annotation.Nonnull;
 
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Mitteilung;
@@ -105,4 +106,11 @@ public interface MailService {
 	 * Sendet eine Email mit der Information, dass eine Betreuung verfuegt wurde.
 	 */
 	void sendInfoBetreuungVerfuegt(@Nonnull Betreuung betreuung);
+
+	/**
+	 * schickt eine email an den uebergebenen Empfaenger die angibt wie das angehaengte File heruntergeladen werden kann
+	 * @param receiverEmail
+	 * @param downloadFile
+	 */
+	void sendDocumentCreatedEmail(String receiverEmail, DownloadFile downloadFile) throws MailException;
 }

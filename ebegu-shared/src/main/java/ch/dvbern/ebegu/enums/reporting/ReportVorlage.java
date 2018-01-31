@@ -13,17 +13,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.dvbern.ebegu.reporting;
+package ch.dvbern.ebegu.enums.reporting;
 
 import javax.annotation.Nonnull;
 
-import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.MergeFieldGesuchstellerKinderBetreuung;
-import ch.dvbern.ebegu.reporting.gesuchstichtag.MergeFieldGesuchStichtag;
-import ch.dvbern.ebegu.reporting.gesuchzeitraum.MergeFieldGesuchZeitraum;
-import ch.dvbern.ebegu.reporting.kanton.MergeFieldKanton;
-import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MergeFieldMitarbeiterinnen;
-import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftrag;
-import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftragPeriode;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
 

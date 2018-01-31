@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ch.dvbern.ebegu.reporting.zahlungauftrag;
+package ch.dvbern.ebegu.enums.reporting;
 
 import javax.annotation.Nonnull;
 
@@ -22,22 +22,35 @@ import ch.dvbern.oss.lib.excelmerger.mergefields.RepeatRowMergeField;
 import ch.dvbern.oss.lib.excelmerger.mergefields.SimpleMergeField;
 
 import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.BIGDECIMAL_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.BOOLEAN_X_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.DATETIME_CONVERTER;
 import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.DATE_CONVERTER;
 import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.STRING_CONVERTER;
 
-public enum MergeFieldZahlungAuftragPeriode implements MergeFieldProvider {
+public enum MergeFieldZahlungAuftrag implements MergeFieldProvider {
 
 	repeatZahlungAuftragRow(new RepeatRowMergeField("repeatZahlungAuftragRow")),
 
-	periode(new SimpleMergeField<>("periode", STRING_CONVERTER)),
+	beschrieb(new SimpleMergeField<>("beschrieb", STRING_CONVERTER)),
+	generiertAm(new SimpleMergeField<>("generiertAm", DATETIME_CONVERTER)),
+	faelligAm(new SimpleMergeField<>("faelligAm", DATE_CONVERTER)),
+
 	institution(new SimpleMergeField<>("institution", STRING_CONVERTER)),
-	bezahltAm(new SimpleMergeField<>("bezahltAm", DATE_CONVERTER)),
-	betragCHF(new SimpleMergeField<>("betragCHF", BIGDECIMAL_CONVERTER));
+	name(new SimpleMergeField<>("name", STRING_CONVERTER)),
+	vorname(new SimpleMergeField<>("vorname", STRING_CONVERTER)),
+	gebDatum(new SimpleMergeField<>("gebDatum", DATE_CONVERTER)),
+	verfuegung(new SimpleMergeField<>("verfuegung", STRING_CONVERTER)),
+	vonDatum(new SimpleMergeField<>("vonDatum", DATE_CONVERTER)),
+	bisDatum(new SimpleMergeField<>("bisDatum", DATE_CONVERTER)),
+	bgPensum(new SimpleMergeField<>("bgPensum", BIGDECIMAL_CONVERTER)),
+	betragCHF(new SimpleMergeField<>("betragCHF", BIGDECIMAL_CONVERTER)),
+	isKorrektur(new SimpleMergeField<>("isKorrektur", BOOLEAN_X_CONVERTER)),
+	isIgnoriert(new SimpleMergeField<>("isIgnoriert", BOOLEAN_X_CONVERTER));
 
 	@Nonnull
 	private final MergeField<?> mergeField;
 
-	<V> MergeFieldZahlungAuftragPeriode(@Nonnull MergeField<V> mergeField) {
+	<V> MergeFieldZahlungAuftrag(@Nonnull MergeField<V> mergeField) {
 		this.mergeField = mergeField;
 	}
 
