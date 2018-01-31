@@ -108,14 +108,14 @@
                                         <div ng-if="!vm.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert()">
                                             <dv-datepicker input-id="datumFreischaltungTagesschule_ID" name="datumFreischaltungTagesschule"
                                                            ng-model="vm.datumFreischaltungTagesschule"
-                                                           dv-max-date="vm.getDatumFreischaltungMax();"
+                                                           dv-max-date="vm.datumFreischaltungMax"
                                                            class="input-element contrast">
                                             </dv-datepicker>
                                         </div>
                                         <div ng-if="vm.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert()">
                                             <dv-datepicker input-id="datumFreischaltungTagesschule_ID" name="datumFreischaltungTagesschule"
                                                            ng-model="vm.gesuchsperiode.datumFreischaltungTagesschule"
-                                                           dv-max-date="vm.getDatumFreischaltungMax()"
+                                                           dv-max-date="vm.datumFreischaltungMax"
                                                            class="input-element contrast"
                                                            ng-disabled="true">
                                             </dv-datepicker>
