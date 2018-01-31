@@ -1,0 +1,105 @@
+@import '../variables.less';
+@import '../mixins.less';
+
+.row-centered-flex{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+.dv-ebegu-calendar {
+    &__break {
+        flex-basis: 100%;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+    }
+
+    &__container {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-top: 2rem;
+        background: @contrast;
+        &--no-margin{
+            margin:0;
+        }
+
+    }
+    &__weekday {
+        .ebeguH3();
+        flex: 0 1 20%;
+
+        border: 1px solid @contrast;
+        border-top-width: 2px;
+        border-bottom-width:2px;
+        padding: 1rem 0;
+        background: @contrast-lightest;
+        color: @contrast-darkest;
+        margin: 0;
+        text-align: center;
+        &--Monday {
+            border-left-width: 2px;
+        }
+        &--Friday {
+            border-right-width: 2px;
+        }
+
+    }
+    &__row--week, &__row--month {
+        flex: 0 1 100%;
+        background: @contrast-light;
+        border-bottom: 2px solid @contrast;
+        border-top: 0;
+    }
+    &__row--week {
+        padding-top: 5%;
+    }
+    &__row--month {
+        padding-top: 10%;
+    }
+    &__day {
+        flex: 0 1 20%;
+        border: 1px solid @contrast;
+        color: @contrast-darkest;
+        position: relative !important;
+        border-top-width: 0;
+        border-bottom-width: 2px;
+        &:before {
+            content: "";
+            display: block;
+            padding-top: 100%;
+        }
+        &--1 {
+            border-left-width: 2px;
+        }
+        &--2 {
+            margin-left: 20%;
+        }
+
+        &--3 {
+            margin-left: 40%;
+        }
+
+        &--4 {
+            margin-left: 60%;
+        }
+
+        &--5 {
+            margin-left: 80%;
+            border-right-width: 2px;
+        }
+
+        &--1 + &--3, &--2 + &--4, &--3 + &--5 {
+            margin-left: 20%;
+        }
+        &--1 + &--4, &--2 + &--5 {
+            margin-left: 40%;
+        }
+        &--1 + &--2, &--2 + &--3, &--3 + &--4, &--4 + &--5 {
+            margin-left: 0;
+        }
+
+    }
+}
+
