@@ -55,7 +55,7 @@
         <maven-pmd-plugin.version>3.6</maven-pmd-plugin.version>
         <findbugs-maven-plugin.version>3.0.3</findbugs-maven-plugin.version>
 
-        <ebegu-iam-connector-war.version>1.0.3</ebegu-iam-connector-war.version>
+        <ebegu-iam-connector-war.version>1.0.4</ebegu-iam-connector-war.version>
 
     </properties>
 
