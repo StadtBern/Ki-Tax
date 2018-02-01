@@ -89,7 +89,6 @@
                                         <artifactItem>
                                             <groupId>ch.dvbern.ebegu</groupId>
                                             <artifactId>ebegu-iam-connector-war</artifactId>
-                                            <!--todo reviewer, specify version-->
                                             <version>${ebegu-iam-connector-war.version}</version>
                                             <type>war</type>
                                             <destFileName>ebegu-iam-connector-war.war</destFileName>
