@@ -106,4 +106,9 @@ public interface FallService {
 	 */
 	@Nonnull
 	Optional<Benutzer> getHauptOrDefaultVerantwortlicher(@Nonnull Fall fall);
+
+	int setVerantwortlicher(String id, Benutzer benutzer);
+
+	int setVerantwortlicherSCH(String id, Benutzer benutzer);
+
 }

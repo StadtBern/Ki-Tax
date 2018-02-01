@@ -619,7 +619,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			// Step Freigabe gruen
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
 
-			setVerantwortliche(usernameJA, usernameSCH, gesuch, false);
+			setVerantwortliche(usernameJA, usernameSCH, gesuch, false, false);
 
 			// Falls es ein OnlineGesuch war: Das Eingangsdatum setzen
 			if (Eingangsart.ONLINE == gesuch.getEingangsart()) {
@@ -634,7 +634,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 	}
 
-	public boolean setVerantwortliche(@Nullable String usernameJA, @Nullable String usernameSCH, Gesuch gesuch, boolean onlyIfNotSet) {
+	public boolean setVerantwortliche(@Nullable String usernameJA, @Nullable String usernameSCH, Gesuch gesuch, boolean onlyIfNotSet, boolean persist) {
 		boolean hasVerantwortlicheChanged = false;
 		if (usernameJA != null) {
 			Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(usernameJA);
@@ -642,6 +642,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				&& gesuch.hasBetreuungOfJugendamt()
 				&& (verantwortlicher.get().getRole().isRoleJugendamt() || verantwortlicher.get().getRole().isSuperadmin())
 				&& (gesuch.getFall().getVerantwortlicher() == null || !onlyIfNotSet)) {
+				if (persist) {
+					fallService.setVerantwortlicher(gesuch.getFall().getId(), verantwortlicher.get());
+				}
 				gesuch.getFall().setVerantwortlicher(verantwortlicher.get());
 				hasVerantwortlicheChanged = true;
 			}
@@ -652,6 +655,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				&& gesuch.hasBetreuungOfSchulamt()
 				&& (verantwortlicherSCH.get().getRole().isRoleSchulamt() || verantwortlicherSCH.get().getRole().isSuperadmin())
 				&& (gesuch.getFall().getVerantwortlicherSCH() == null || !onlyIfNotSet)) {
+				if (persist) {
+					fallService.setVerantwortlicherSCH(gesuch.getFall().getId(), verantwortlicherSCH.get());
+				}
 				gesuch.getFall().setVerantwortlicherSCH(verantwortlicherSCH.get());
 				hasVerantwortlicheChanged = true;
 			}

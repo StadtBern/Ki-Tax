@@ -166,13 +166,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 				ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
 			String propertyDefaultVerantwortlicherSch = applicationPropertyService.findApplicationPropertyAsString(
 				ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER_SCH);
-			final boolean verantwortlicheChanged = gesuchService.setVerantwortliche(propertyDefaultVerantwortlicher, propertyDefaultVerantwortlicherSch,
-				mergedBetreuung.extractGesuch(), true);
-			if (verantwortlicheChanged) {
-
-				// TODO: -> keine Rechte da als Gesuchsteller gesuch schreibgeschützt ist!!! Braucht wohl seperater query zum speichern des verantworlicher!
-				gesuchService.updateGesuch(mergedGesuch, false);
-			}
+			gesuchService.setVerantwortliche(propertyDefaultVerantwortlicher, propertyDefaultVerantwortlicherSch, mergedBetreuung.extractGesuch(), true, true);
 		}
 
 
