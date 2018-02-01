@@ -1008,11 +1008,21 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Takes current user and sets it as the verantwortlicher of Fall
+     * Takes current user and sets him as the verantwortlicher of Fall. Depending on the role it sets him as
+     * verantwortlicher or verantworlicherSCH
      */
     private setCurrentUserAsFallVerantwortlicher() {
         if (this.authServiceRS && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
             this.setUserAsFallVerantwortlicher(this.authServiceRS.getPrincipal());
+        }
+        if (this.authServiceRS && this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles())) {
+            this.setUserAsFallVerantwortlicherSCH(this.authServiceRS.getPrincipal());
+        }
+    }
+
+    public setUserAsFallVerantwortlicherSCH(user: TSUser) {
+        if (this.gesuch && this.gesuch.fall) {
+            this.gesuch.fall.verantwortlicherSCH = user;
         }
     }
 
@@ -1025,6 +1035,13 @@ export default class GesuchModelManager {
     public getFallVerantwortlicher(): TSUser {
         if (this.gesuch && this.gesuch.fall) {
             return this.gesuch.fall.verantwortlicher;
+        }
+        return undefined;
+    }
+
+    public getFallVerantwortlicherSCH(): TSUser {
+        if (this.gesuch && this.gesuch.fall) {
+            return this.gesuch.fall.verantwortlicherSCH;
         }
         return undefined;
     }
@@ -1244,8 +1261,8 @@ export default class GesuchModelManager {
     /**
      * Antrag freigeben
      */
-    public antragFreigeben(antragId: string, username: string): IPromise<TSGesuch> {
-        return this.gesuchRS.antragFreigeben(antragId, username).then((response) => {
+    public antragFreigeben(antragId: string, usernameJA: string, usernameSCH: string): IPromise<TSGesuch> {
+        return this.gesuchRS.antragFreigeben(antragId, usernameJA, usernameSCH).then((response) => {
             this.setGesuch(response);
             return response;
         });
@@ -1395,11 +1412,8 @@ export default class GesuchModelManager {
         return this.ebeguUtil.getGesuchNameFromGesuch(this.gesuch);
     }
 
-    public isNeuestesGesuch(): IPromise<boolean> {
-        let gesuchId = this.gesuch.id;
-        return this.gesuchRS.getNeuestesGesuchFromGesuch(gesuchId).then((response: boolean) => {
-               return response;
-        });
+    public isNeuestesGesuch(): boolean {
+        return this.gesuch.neustesGesuch;
     }
 
     public isErwerbspensumRequired(gesuchId: string): IPromise<boolean> {
@@ -1426,5 +1440,20 @@ export default class GesuchModelManager {
     public showFinanzielleSituationStart(): boolean {
         return this.isGesuchsteller2Required() ||
             (this.getGesuchsperiode() && this.getGesuchsperiode().hasTagesschulenAnmeldung() && this.areThereOnlySchulamtAngebote());
+    }
+
+    /**
+     * gibt true zurueck wenn es keine defaultTagesschule ist oder wenn es eine defaultTagesschule ist aber die Gesuchsperiode
+     * noch keine TagesschulenAnmeldung erlaubt.
+     *
+     * Eine DefaultTagesschule ist eine Tagesschule, die fuer die erste Gescuhsperiode erstellt wurde, damit man Betreuungen
+     * der Art TAGESSCHULE erstellen darf. Jede Betreuung muss mit einer Institution verknuepft sein und TagesschuleBetreuungen
+     * wurden mit der defaultTagesschule verknuepft. Die DefaultTagesschule wird anhand der ID erkannt.
+     */
+    public isDefaultTagesschuleAllowed(instStamm: TSInstitutionStammdaten): boolean {
+        if (instStamm.id === '199ac4a1-448f-4d4c-b3a6-5aee21f89613') {
+            return !(this.getGesuchsperiode() && this.getGesuchsperiode().hasTagesschulenAnmeldung());
+        }
+        return true;
     }
 }

@@ -25,6 +25,7 @@ import javax.validation.Valid;
 import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 
 /**
  * Service zum Verwalten von Betreuungen
@@ -90,7 +91,13 @@ public interface BetreuungService {
 	 * @param bgNummer BGNummer der Betreuung
 	 * @return Betreuung mit der angegebenen ID (z.B. 18.000116.1.2) oder null falls nicht vorhanden
 	 */
-	List<Betreuung> findBetreuungByBGNummer(@Nonnull String bgNummer);
+	List<Betreuung> findBetreuungenByBGNummer(@Nonnull String bgNummer);
+
+	/**
+	 * @param bgNummer BGNummer der Betreuung
+	 * @return Betreuung mit der angegebenen ID (z.B. 18.000116.1.2) die AKTUELLE oder NULL ist.
+	 */
+	List<Betreuung> findNewestBetreuungByBGNummer(@Nonnull String bgNummer);
 
 	/**
 	 * Extract Fallnummer form bgNummer
@@ -147,7 +154,7 @@ public interface BetreuungService {
 	 * und deren Status "WARTEN" ist.
 	 */
 	@Nonnull
-	Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser();
+	Collection<Betreuung> getPendenzenBetreuungen();
 
 	@Nonnull
 	List<Betreuung> findAllBetreuungenFromGesuch(String gesuchId);
@@ -179,4 +186,7 @@ public interface BetreuungService {
 	 */
 	@Nonnull
 	List<Abwesenheit> getAllAbwesenheitenWithMissingStatistics();
+
+
+	int changeAnmeldungMutationZustand(String betreuungsId, AnmeldungMutationZustand anmeldungMutationZustand);
 }

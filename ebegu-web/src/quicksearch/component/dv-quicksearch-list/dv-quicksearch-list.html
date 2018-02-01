@@ -13,7 +13,7 @@
   ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div class="dv-quicksearch-list">
+<div class="dv-antrag-list">
     <div st-table="displayedCollection" st-safe-src="vm.getQuicksearchList()"
          st-delay="20" st-set-filter="quicksearchFilter" dv-st-persist-quicksearch="{{vm.tableId}}">
 
@@ -51,8 +51,10 @@
                         data-translate="DOKUMENTE_HOCHGELADEN_UPPER"></th>
                     <th st-sort="angebote" class="sortable row-angebot" data-translate="ANGEBOT_UPPER"></th>
                     <th st-sort="institutionen[0]" class="sortable row-inst" data-translate="INSTITUTION_UPPER"></th>
+                    <th st-sort="verantwortlicherSCH" class="sortable row-ver"
+                        data-translate="VERANTWORTLICHER_SCHULAMT"></th>
                     <th st-sort="verantwortlicher" class="sortable row-ver"
-                        data-translate="VERANTWORTLICH_UPPER"></th>
+                        data-translate="VERANTWORTLICHER_JUGENDAMT"></th>
                 </tr>
                 <!--Filterspalten-->
                 <tr>
@@ -126,6 +128,12 @@
                         </div>
                     </th>
                     <th>
+                        <dv-userselect input-id="verantwortlicherSCH" dv-usersearch="verantwortlicherSCH"
+                                       initial-all="vm.initialAll" show-selection-all="vm.showSelectionAll"
+                                       on-user-changed="vm.userChanged(user)" schulamt="true"
+                                       selected-user="vm.selectedVerantwortlicherSCH"></dv-userselect>
+                    </th>
+                    <th>
                         <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher"
                                        initial-all="vm.initialAll" show-selection-all="vm.showSelectionAll"
                                        on-user-changed="vm.userChanged(user)"
@@ -160,13 +168,15 @@
                         ng-bind="vm.translateBetreuungsangebotTypList(row.angebote)">
                     </td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.institutionen | arrayToString}}" ng-bind="row.institutionen | arrayToString"></td>
+                    <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicherSCH}}"
+                        ng-bind="row.verantwortlicherSCH"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"
                         ng-bind="row.verantwortlicher"></td>
                 </tr>
                 </tbody>
                 <tfoot>
                 <tr>
-                    <td colspan="9" class="text-center">
+                    <td colspan="10" class="text-center">
                         <div st-pagination="" st-items-by-page="vm.itemsByPage" st-displayed-pages="5"></div>
                     </td>
                 </tr>

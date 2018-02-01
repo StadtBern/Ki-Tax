@@ -16,6 +16,7 @@
 import {IComponentOptions, ILogService, IPromise, IScope} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
+import * as moment from 'moment';
 import {IStateService} from 'angular-ui-router';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSKindContainer from '../../../models/TSKindContainer';
@@ -27,7 +28,6 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {
     isAnyStatusOfMahnung,
     isAnyStatusOfVerfuegt,
-    isAnyStatusOfVerfuegtButSchulamt,
     isAtLeastFreigegeben,
     TSAntragStatus
 } from '../../../models/enums/TSAntragStatus';
@@ -319,7 +319,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public showSendToSteuerverwaltung(): boolean {
         //hier wird extra nur "VERFUEGT" gestestet statt alle verfuegten status weil das Schulamt das Gesuch nicht pruefen lassen darf
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT) && !this.getGesuch().gesperrtWegenBeschwerde;
+        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.NUR_SCHULAMT))
+            && !this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     public stvPruefungAbschliessen(): void {
@@ -410,6 +411,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             this.mahnung.gesuch = this.getGesuch();
             this.mahnung.timestampAbgeschlossen = null;
             this.mahnung.bemerkungen = generatedBemerkungen.data;
+            if (this.getGesuchsperiode().hasTagesschulenAnmeldung() && this.getGesuch().areThereOnlySchulamtAngebote()) {
+                this.mahnung.datumFristablauf = moment(moment.now()).add(7, 'days');
+            }
             return;
         });
     }
@@ -520,7 +524,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public showBeschwerdeHaengig(): boolean {
         let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
         // Schulamt Status duerfen keine Beschwerde starten
-        return isAnyStatusOfVerfuegtButSchulamt(status) && !this.getGesuch().gesperrtWegenBeschwerde;
+        return isAnyStatusOfVerfuegt(status) && !this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     public showBeschwerdeAbschliessen(): boolean {

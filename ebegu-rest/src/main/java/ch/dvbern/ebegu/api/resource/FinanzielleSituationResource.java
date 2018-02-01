@@ -134,10 +134,10 @@ public class FinanzielleSituationResource {
 
 		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
 		Gesuch modifiedGesuch = finanzielleSituationService.saveFinanzielleSituationStart(gesuchToMerge);
-		return converter.gesuchToJAX(modifiedGesuch);
+		return converter.gesuchToJAX(modifiedGesuch, gesuchService.isNeustesGesuch(modifiedGesuch));
 	}
 
-	@ApiOperation(value = "Berechnet die FinanzielleSituation fuer das Gesuch mit der uebergebenen Id. Die Berechnung " +
+	@ApiOperation(value = "Berechnet die FinanzielleSituation fuer das uebergebene Gesuch. Die Berechnung wird " +
 		"nicht gespeichert.", response = FinanzielleSituationResultateDTO.class)
 	@Nullable
 	@POST
@@ -149,10 +149,9 @@ public class FinanzielleSituationResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Gesuch gesuch = converter.gesuchToStoreableEntity(gesuchJAXP);
+		Gesuch gesuch = converter.gesuchToEntity(gesuchJAXP, new Gesuch()); // nur konvertieren, nicht mergen mit Gesuch von DB!
 		FinanzielleSituationResultateDTO finanzielleSituationResultateDTO = finanzielleSituationService.calculateResultate(gesuch);
-		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
-		context.setRollbackOnly();
+
 		return Response.ok(finanzielleSituationResultateDTO).build();
 	}
 

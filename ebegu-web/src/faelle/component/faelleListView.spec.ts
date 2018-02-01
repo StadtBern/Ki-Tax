@@ -101,7 +101,8 @@ describe('faelleListView', function () {
 
     function mockGetPendenzenList(): TSAntragDTO {
         let mockPendenz: TSAntragDTO = new TSAntragDTO('66345345', 123, 'name', TSAntragTyp.ERSTGESUCH,
-            undefined, undefined, undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined);
+            undefined, undefined, undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', 'Juan Arbolado',
+            undefined, undefined, undefined);
         let dtoList: Array<TSAntragDTO> = [mockPendenz];
         let totalSize: number = 1;
         let searchresult: TSAntragSearchresultDTO = new TSAntragSearchresultDTO(dtoList, totalSize);

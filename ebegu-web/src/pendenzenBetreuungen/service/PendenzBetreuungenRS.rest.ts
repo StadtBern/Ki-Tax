@@ -15,9 +15,9 @@
 
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, ILogService, IPromise} from 'angular';
-import TSPendenzInstitution from '../../models/TSPendenzInstitution';
+import TSPendenzBetreuung from '../../models/TSPendenzBetreuung';
 
-export default class PendenzInstitutionRS {
+export default class PendenzBetreuungenRS {
     serviceURL: string;
     http: IHttpService;
     ebeguRestUtil: EbeguRestUtil;
@@ -26,21 +26,21 @@ export default class PendenzInstitutionRS {
     static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log'];
     /* @ngInject */
     constructor($http: IHttpService, private REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService) {
-        this.serviceURL = REST_API + 'search/institution';
+        this.serviceURL = REST_API + 'search/pendenzenBetreuungen';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
         this.log = $log;
     }
 
     public getServiceName(): string {
-        return 'PendenzInstitutionRS';
+        return 'PendenzBetreuungenRS';
     }
 
-    public getPendenzenList(): IPromise<Array<TSPendenzInstitution>> {
+    public getPendenzenBetreuungenList(): IPromise<Array<TSPendenzBetreuung>> {
         return this.http.get(this.serviceURL)
             .then((response: any) => {
-                this.log.debug('PARSING pendenzenInstitution REST object ', response.data);
-                return this.ebeguRestUtil.parsePendenzenInstitution(response.data);
+                this.log.debug('PARSING pendenzenBetreuungen REST object ', response.data);
+                return this.ebeguRestUtil.parsePendenzBetreuungenList(response.data);
             });
     }
 }

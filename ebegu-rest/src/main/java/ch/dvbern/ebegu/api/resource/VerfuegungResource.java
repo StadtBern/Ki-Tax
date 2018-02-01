@@ -126,7 +126,7 @@ public class VerfuegungResource {
 			// Wir verwenden das Gesuch nur zur Berechnung und wollen nicht speichern, darum das Gesuch detachen
 			loadRelationsAndDetach(gesuchWithCalcVerfuegung);
 
-			JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung);
+			JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung, gesuchService.isNeustesGesuch(gesuchWithCalcVerfuegung));
 
 			Set<JaxKindContainer> kindContainers = gesuchJax.getKindContainers();
 			Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();
@@ -135,7 +135,7 @@ public class VerfuegungResource {
 				// Es wird gecheckt ob der Benutzer zu einer Institution/Traegerschaft gehoert. Wenn ja, werden die Kinder gefilter
 				// damit nur die relevanten Kinder geschickt werden
 				if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == currentUserRole || UserRole.SACHBEARBEITER_INSTITUTION == currentUserRole) {
-					Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+					Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 					RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
 				}
 			}

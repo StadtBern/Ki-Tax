@@ -33,7 +33,7 @@
                         <md-button ng-click="vmgs.setGesuchsperiode(gesuchsperiodeString)"
                                    aria-label="{{ 'TOOLBAR_GESUCHSPERIODE_ITEM' | translate:{gp:gesuchsperiodeString} }}">
                                 <span>
-                                    <a href="javascript:void(0)" aria-hidden>{{gesuchsperiodeString}}</a>
+                                    <a href="#" ng-click="$event.preventDefault()" aria-hidden>{{gesuchsperiodeString}}</a>
                                 </span>
                         </md-button>
                     </md-menu-item>
@@ -56,7 +56,7 @@
                         <md-button ng-click="vmgs.setAntragTypDatum(antragTypDatum)"
                                    aria-label="{{ 'TOOLBAR_GESUCHSTYP_ITEM' | translate:{gt:antragTypDatum, gp:vmgs.getCurrentGesuchsperiode()} }}">
                                 <span>
-                                    <a href="javascript:void(0)" aria-hidden>{{antragTypDatum}}</a>
+                                    <a href="#" ng-click="$event.preventDefault()" aria-hidden>{{antragTypDatum}}</a>
                                 </span>
                         </md-button>
                     </md-menu-item>

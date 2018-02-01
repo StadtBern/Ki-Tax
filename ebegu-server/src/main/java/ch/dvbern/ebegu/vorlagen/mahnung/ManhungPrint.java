@@ -38,6 +38,4 @@ public interface ManhungPrint {
 
 	String getErsteMahnDatum();
 
-	String getKontaktStelle();
-
 }

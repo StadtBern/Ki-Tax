@@ -369,12 +369,11 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 	private boolean isReadAuthorizedFreigabe(Gesuch gesuch) {
 		if (AntragStatus.FREIGABEQUITTUNG == gesuch.getStatus()) {
-			boolean schulamtOnly = gesuch.hasOnlyBetreuungenOfSchulamt();
 			if (principalBean.isCallerInAnyOfRole(SCHULAMT, ADMINISTRATOR_SCHULAMT)) {
-				if (schulamtOnly) {
-					return true; //schulamt dar nur solche lesen die nur_schulamt sind
+				if (gesuch.hasBetreuungOfSchulamt()) {
+					return true; //schulamt darf nur solche lesen die nur_schulamt sind
 				}
-			} else if (!schulamtOnly) {
+			} else if (!gesuch.hasOnlyBetreuungenOfSchulamt()) {
 				return true;     //nicht schulamtbenutzer duerfen keine lesen die exklusiv schulamt sind
 			}
 		}
@@ -478,15 +477,15 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	}
 
 	@Nonnull
-	private Boolean isAllowedAdminOrSachbearbeiter(Gesuch entity) {
+	private Boolean isAllowedAdminOrSachbearbeiter(Gesuch gesuch) {
 		if (principalBean.isCallerInRole(UserRoleName.SUPER_ADMIN)) {
 			return true;
 		}
 		//JA/SCH Benutzer duerfen nur freigegebene Gesuche anschauen
 		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM_OR_SCH)) {
-			return entity.getStatus().isReadableByJugendamtSchulamtSteueramt();
+			return gesuch.getStatus().isReadableByJugendamtSchulamtSteueramt();
 		}
-		return isAllowedJuristOrRevisor(entity);
+		return isAllowedJuristOrRevisor(gesuch);
 	}
 
 	private boolean isAllowedSchulamt(Gesuch entity) {
@@ -672,7 +671,8 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			}
 			case SACHBEARBEITER_JA:
 			case ADMINISTRATOR_SCHULAMT:
-			case SCHULAMT: {
+			case SCHULAMT:
+			case REVISOR: {
 				if (!isSenderTypOrEmpfaengerTyp(mitteilung, MitteilungTeilnehmerTyp.JUGENDAMT)) {
 					throwViolation(mitteilung);
 				}

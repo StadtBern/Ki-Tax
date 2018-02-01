@@ -25,34 +25,56 @@
          layout-xs="column"
          layout-align-xs="space-between center">
 
+        <div class="gdashboard-panel"
+             ng-repeat="periode in vm.getActiveGesuchsperiodenList() | orderBy: 'gueltigkeit.gueltigAb'">
 
-        <div ng-repeat="periode in vm.getActiveGesuchsperiodenList() | orderBy: 'gueltigkeit.gueltigAb'">
-            <dv-loading-button layout="column" flex="nogrow" type="button" button-click="vm.openAntrag(periode)"
-                               button-class="dashboardButton">
-                <div flex="none" class="labelBig" layout="column" layout-align="end center">
-                    <div layout="column">
-                        <span class="ebeguH2" flex="nogrow">
-                            <span data-translate="GESUCH"></span>
-                            <span>{{periode.gesuchsperiodeString}}</span>
-                        </span>
-                        <span class="ebeguH3" flex="nogrow">
-                            <span>{{periode.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YY'}} – {{periode.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YY'}}</span>
-                        </span>
-                    </div>
-                </div>
-                <div flex="none" class="labelSmall">
-                    <span class="ebeguH2">{{vm.getButtonText(periode)}}</span>
-                </div>
+            <span class="gdashboard-panel__gesuchstring">
+                <span data-translate="GESUCH"></span>
+                <span>{{periode.gesuchsperiodeString}}</span>
+            </span>
+            <span class="gdashboard-panel__gesuchrange" flex="nogrow">
+                <span>{{periode.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YY'}} – {{periode.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YY'}}</span>
+            </span>
+
+            <dv-loading-button class="gdashboard-panel__button--ansehen"
+                               ng-if="vm.displayAnsehenButton(periode)"
+                               type="button"
+                               button-click="vm.openAntrag(periode, true)"
+                               button-class="dvb-loading-button gdashboard-panel__button">
+                {{'GS_ANSEHEN' | translate}}
             </dv-loading-button>
-        </div>
 
-        <dv-loading-button layout="column" flex="nogrow" type="button" button-click="vm.goToMitteilungenOeffen()"
-                           button-class="dashboardButton">
-            <div flex="auto" class="labelBig"
-                 layout="column"><span class="ebeguH2" data-translate="GSDASHBOARD_MITTEILUNGEN"></span></div>
-            <div flex="auto" class="labelNotification" ng-bind="vm.getNumberMitteilungen()"></div>
-            <div class="labelSmall"><span class="ebeguH2" data-translate="GSDASHBOARD_OEFFNEN"></span></div>
-        </dv-loading-button>
+            <dv-loading-button class="gdashboard-panel__button--margin"
+                               ng-if="vm.getButtonText(periode)" type="button"
+                               button-click="vm.openAntrag(periode)"
+                               button-class="dvb-loading-button gdashboard-panel__button">
+                {{vm.getButtonText(periode)}}
+            </dv-loading-button>
+
+
+            <dv-loading-button type="button"
+                               ng-if="vm.showAnmeldungCreate(periode)"
+                               button-click="vm.createFerieninsel(periode)"
+                               button-class="dvb-loading-button gdashboard-panel__button">
+
+                {{'FERIENINSEL_ANMELDEN' | translate}}
+            </dv-loading-button>
+
+            <dv-loading-button type="button"
+                               ng-if="vm.showAnmeldungCreate(periode) && !vm.hasOnlyFerieninsel(periode)"
+                               button-click="vm.createTagesschule(periode)"
+                               button-class="dvb-loading-button gdashboard-panel__button">
+                {{'TAGESSCHULE_ANMELDEN' | translate}}
+            </dv-loading-button>
+
+            <div ng-if="vm.gesperrtWegenMutation(periode)" >
+                {{'GESPERRT_WEGEN_MUTATION' | translate}}
+            </div>
+
+            <div ng-if="vm.showAnmeldungCreate(periode) && vm.hasOnlyFerieninsel(periode)" >
+                {{'MUTATION_NOETIG_DB' | translate}}
+            </div>
+        </div>
 
     </div>
 
@@ -89,8 +111,8 @@
                     ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                 <td class="ellipsis" ellipsis-tooltip="{{vm.translate(row.status)}}"
                     ng-bind="vm.translateStatus(row)"></td>
-                <td class="ellipsis" ellipsis-tooltip="{{vm.getVerantwortlicherFullName(row)}}"
-                    ng-bind="vm.getVerantwortlicherFullName(row)" hide-sm hide-xs></td>
+                <td class="ellipsis" ellipsis-tooltip="{{vm.getHauptVerantwortlicherFullName(row)}}"
+                    ng-bind="vm.getHauptVerantwortlicherFullName(row)" hide-sm hide-xs></td>
                 <td class="ellipsis" role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%" hide-sm
                     hide-xs>
                     <dv-loading-button type="button" button-click="vm.editAntrag(row)"

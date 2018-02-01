@@ -14,56 +14,56 @@
  */
 
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
-import TSPendenzInstitution from '../../models/TSPendenzInstitution';
+import TSPendenzBetreuung from '../../models/TSPendenzBetreuung';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {EbeguWebPendenzenInstitution} from '../pendenzenInstitution.module';
-import PendenzInstitutionRS from './PendenzInstitutionRS.rest';
+import {EbeguWebPendenzenBetreuungen} from '../pendenzenBetreuungen.module';
+import PendenzBetreuungenRS from './PendenzBetreuungenRS.rest';
 
-describe('pendenzInstitutionRS', function () {
+describe('pendenzBetreuungenRS', function () {
 
-    let pendenzInstitutionRS: PendenzInstitutionRS;
+    let pendenzBetreuungenRS: PendenzBetreuungenRS;
     let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
-    let mockPendenzInstitution: TSPendenzInstitution;
-    let mockPendenzInstitutionRest: any;
+    let mockPendenzBetreuungen: TSPendenzBetreuung;
+    let mockPendenzBetreuungenRest: any;
 
-    beforeEach(angular.mock.module(EbeguWebPendenzenInstitution.name));
+    beforeEach(angular.mock.module(EbeguWebPendenzenBetreuungen.name));
 
     beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
-        pendenzInstitutionRS = $injector.get('PendenzInstitutionRS');
+        pendenzBetreuungenRS = $injector.get('PendenzBetreuungenRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
     }));
 
     beforeEach(() => {
-        mockPendenzInstitution = new TSPendenzInstitution('123.12.12', '123', '123', '123', 'Kind', 'Kilian', undefined, 'Platzbestaetigung', undefined,
+        mockPendenzBetreuungen = new TSPendenzBetreuung('123.12.12', '123', '123', '123', 'Kind', 'Kilian', undefined, 'Platzbestaetigung', undefined,
             undefined, undefined, TSBetreuungsangebotTyp.KITA, undefined);
-        mockPendenzInstitutionRest = ebeguRestUtil.pendenzInstitutionToRestObject({}, mockPendenzInstitution);
+        mockPendenzBetreuungenRest = ebeguRestUtil.pendenzBetreuungenToRestObject({}, mockPendenzBetreuungen);
     });
 
     describe('Public API', function () {
         it('check Service name', function () {
-            expect(pendenzInstitutionRS.getServiceName()).toBe('PendenzInstitutionRS');
+            expect(pendenzBetreuungenRS.getServiceName()).toBe('PendenzBetreuungenRS');
         });
-        it('should include a getPendenzenList() function', function () {
-            expect(pendenzInstitutionRS.getPendenzenList).toBeDefined();
+        it('should include a getPendenzenBetreuungenList() function', function () {
+            expect(pendenzBetreuungenRS.getPendenzenBetreuungenList).toBeDefined();
         });
     });
 
     describe('API Usage', function () {
         describe('findBetreuung', () => {
             it('should return all pending Antraege', () => {
-                let arrayResult: Array<any> = [mockPendenzInstitutionRest];
-                $httpBackend.expectGET(pendenzInstitutionRS.serviceURL).respond(arrayResult);
+                let arrayResult: Array<any> = [mockPendenzBetreuungenRest];
+                $httpBackend.expectGET(pendenzBetreuungenRS.serviceURL).respond(arrayResult);
 
-                let foundPendenzen: Array<TSPendenzInstitution>;
-                pendenzInstitutionRS.getPendenzenList().then((result) => {
+                let foundPendenzen: Array<TSPendenzBetreuung>;
+                pendenzBetreuungenRS.getPendenzenBetreuungenList().then((result) => {
                     foundPendenzen = result;
                 });
                 $httpBackend.flush();
                 expect(foundPendenzen).toBeDefined();
                 expect(foundPendenzen.length).toBe(1);
-                expect(foundPendenzen[0]).toEqual(mockPendenzInstitution);
+                expect(foundPendenzen[0]).toEqual(mockPendenzBetreuungen);
             });
         });
     });

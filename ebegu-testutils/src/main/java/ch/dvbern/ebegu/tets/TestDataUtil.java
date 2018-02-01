@@ -146,6 +146,7 @@ import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_STUNDEN_PRO_TAG_TAGI
 /**
  * comments homa
  */
+@SuppressWarnings("PMD.NcssTypeCount")
 public final class TestDataUtil {
 
 	private static final String iban = "CH39 0900 0000 3066 3817 2";
@@ -379,6 +380,36 @@ public final class TestDataUtil {
 		return instStammdaten;
 	}
 
+	public static InstitutionStammdaten createInstitutionStammdatenTagesschuleBern() {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_BERN_TAGESSCULHE);
+		instStammdaten.setIban(new IBAN(iban));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(9));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
+		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESSCHULE);
+		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_BERN);
+		instStammdaten.getInstitution().setName("Tagesschule Bern");
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
+	public static InstitutionStammdaten createInstitutionStammdatenFerieninselGuarda() {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_GUARDA_FERIENINSEL);
+		instStammdaten.setIban(new IBAN(iban));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(9));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(120));
+		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.FERIENINSEL);
+		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_GUARDA);
+		instStammdaten.getInstitution().setName("Ferieninsel Guarda");
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
 	public static Kind createDefaultKind() {
 		Kind kind = new Kind();
 		kind.setNachname("Kind_Mustermann");
@@ -597,6 +628,12 @@ public final class TestDataUtil {
 		return user;
 	}
 
+	public static Benutzer createBenutzerSCH() {
+		final Benutzer defaultBenutzer = TestDataUtil.createDefaultBenutzer();
+		defaultBenutzer.setRole(UserRole.SCHULAMT);
+		return defaultBenutzer;
+	}
+
 	@SuppressWarnings("ConstantConditions")
 	public static Betreuung createGesuchWithBetreuungspensum(boolean zweiGesuchsteller) {
 		Gesuch gesuch = new Gesuch();
@@ -780,7 +817,8 @@ public final class TestDataUtil {
 	}
 
 	private static Gesuch persistAllEntities(Persistence persistence, @Nullable LocalDate eingangsdatum, AbstractTestfall testfall, AntragStatus status) {
-		testfall.createFall(null);
+		Benutzer verantwortlicher = createAndPersistBenutzer(persistence);
+		testfall.createFall(verantwortlicher);
 		testfall.createGesuch(eingangsdatum, status);
 		persistence.persist(testfall.getGesuch().getFall());
 		persistence.persist(testfall.getGesuch().getGesuchsperiode());
@@ -791,8 +829,17 @@ public final class TestDataUtil {
 		return gesuch;
 	}
 
+	@Nonnull
+	private static Benutzer createAndPersistBenutzer(Persistence persistence) {
+		Benutzer verantwortlicher = TestDataUtil.createDefaultBenutzer();
+		persistence.persist(verantwortlicher.getMandant());
+		persistence.persist(verantwortlicher);
+		return verantwortlicher;
+	}
+
 	private static Gesuch persistAllEntities(Persistence persistence, @Nullable LocalDate eingangsdatum, AbstractTestfall testfall) {
-		testfall.createFall(null);
+		Benutzer verantwortlicher = createAndPersistBenutzer(persistence);
+		testfall.createFall(verantwortlicher);
 		testfall.createGesuch(eingangsdatum);
 		persistence.persist(testfall.getGesuch().getFall());
 		persistence.persist(testfall.getGesuch().getGesuchsperiode());
@@ -804,9 +851,7 @@ public final class TestDataUtil {
 	}
 
 	public static void persistEntities(Gesuch gesuch, Persistence persistence) {
-		Benutzer verantwortlicher = TestDataUtil.createDefaultBenutzer();
-		persistence.persist(verantwortlicher.getMandant());
-		persistence.persist(verantwortlicher);
+		Benutzer verantwortlicher = createAndPersistBenutzer(persistence);
 
 		gesuch.getFall().setVerantwortlicher(verantwortlicher);
 		persistence.persist(gesuch.getFall());
@@ -920,7 +965,15 @@ public final class TestDataUtil {
 		return benutzer;
 	}
 
-	public static Benutzer createAndPersistBenutzer(Persistence persistence) {
+	public static Benutzer createAndPersistJABenutzer(Persistence persistence) {
+		final Mandant mandant = TestDataUtil.createDefaultMandant();
+		persistence.persist(mandant);
+		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, UUID.randomUUID().toString(), null, null, mandant);
+		persistence.persist(benutzer);
+		return benutzer;
+	}
+
+	public static Benutzer createAndPersistTraegerschaftBenutzer(Persistence persistence) {
 		final Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
 		persistence.persist(traegerschaft);
 		final Mandant mandant = TestDataUtil.createDefaultMandant();

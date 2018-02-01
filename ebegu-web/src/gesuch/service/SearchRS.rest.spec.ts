@@ -39,7 +39,7 @@ describe('searchRS', function () {
 
     beforeEach(() => {
         mockPendenz = new TSAntragDTO('id1', 123, 'name', TSAntragTyp.ERSTGESUCH, undefined, undefined, undefined,
-            [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined, undefined, undefined);
+            [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', 'Juan Arbolado', undefined, undefined, undefined, undefined, undefined);
         mockPendenzRest = ebeguRestUtil.antragDTOToRestObject({}, mockPendenz);
     });
 
@@ -47,7 +47,7 @@ describe('searchRS', function () {
         it('check Service name', function () {
             expect(searchRS.getServiceName()).toBe('SearchRS');
         });
-        it('should include a getPendenzenList() function', function () {
+        it('should include a getPendenzenBetreuungenList() function', function () {
             expect(searchRS.getPendenzenList).toBeDefined();
         });
     });

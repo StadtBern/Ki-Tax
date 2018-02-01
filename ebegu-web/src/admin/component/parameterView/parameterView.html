@@ -166,9 +166,9 @@
                                                 </dv-loading-button>
                                             </div>
                                             <div class="col-md-2">
-                                                <a href="javascript:;" id="cancelJahresabhLink" class="dv-btn"
+                                                <a href="#" id="cancelJahresabhLink" class="dv-btn"
                                                    unsaved-warning-clear
-                                                   ng-click="vm.cancelJahresabhaengig(); vm.form.$setPristine(); vm.form.$setUntouched();">
+                                                   ng-click="vm.cancelJahresabhaengig(); vm.form.$setPristine(); vm.form.$setUntouched(); $event.preventDefault();">
                                                     <span data-translate="CANCEL"></span>
                                                 </a>
                                             </div>

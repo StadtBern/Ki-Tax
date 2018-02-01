@@ -25,7 +25,7 @@
 
     <groupId>ch.dvbern.ebegu</groupId>
     <artifactId>ebegu</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.4</version>
     <packaging>pom</packaging>
 
     <name>eBEGU - Multimodule Project</name>
@@ -55,7 +55,7 @@
         <maven-pmd-plugin.version>3.6</maven-pmd-plugin.version>
         <findbugs-maven-plugin.version>3.0.3</findbugs-maven-plugin.version>
 
-        <ebegu-iam-connector-war.version>1.0.1</ebegu-iam-connector-war.version>
+        <ebegu-iam-connector-war.version>1.0.3</ebegu-iam-connector-war.version>
 
     </properties>
 

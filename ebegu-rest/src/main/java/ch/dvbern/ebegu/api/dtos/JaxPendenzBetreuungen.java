@@ -32,7 +32,7 @@ import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
  */
 @XmlRootElement(name = "pendenz")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxPendenzInstitution {
+public class JaxPendenzBetreuungen {
 
 	private static final long serialVersionUID = -1277026654764135397L;
 

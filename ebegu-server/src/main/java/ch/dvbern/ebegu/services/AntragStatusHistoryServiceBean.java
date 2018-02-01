@@ -185,6 +185,30 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 		return lastTwoChanges.get(1); // returns the previous status before Beschwerde_Haengig
 	}
 
+	@Nonnull
+	@Override
+	public AntragStatusHistory findLastStatusChangeBeforePruefungSTV(@Nonnull Gesuch gesuch) {
+		Objects.requireNonNull(gesuch);
+		authorizer.checkReadAuthorization(gesuch);
+		if (gesuch.getStatus() != AntragStatus.GEPRUEFT_STV) {
+			throw new EbeguRuntimeException("findLastStatusChangeBeforePruefungSTV", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_STV_ALLOWED, gesuch.getId());
+		}
+
+		final CriteriaQuery<AntragStatusHistory> query = createQueryAllAntragStatusHistoryProGesuch(gesuch);
+
+		final List<AntragStatusHistory> allStatusChanges = persistence.getEntityManager().createQuery(query).getResultList();
+		boolean changeToPruefungSTVFound = false;
+		for (final AntragStatusHistory statusChange : allStatusChanges) { //they come DESC ordered from the DB
+			if (changeToPruefungSTVFound) {
+				return statusChange; // return the previous one
+			}
+			if (statusChange.getStatus() == AntragStatus.PRUEFUNG_STV) {
+				changeToPruefungSTVFound = true;
+			}
+		}
+		throw new EbeguRuntimeException("findLastStatusChangeBeforePruefungSTV", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuch.getId());
+	}
+
 	/**
 	 * Gibt alle AntragStatusHistory des gegebenen Gesuchs zurueck. Sortiert nach timestampVon DESC
 	 */

@@ -15,19 +15,19 @@
 
 import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
-import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
-import MitteilungRS from '../../core/service/mitteilungRS.rest';
-import FallRS from '../../gesuch/service/fallRS.rest';
-import SearchRS from '../../gesuch/service/searchRS.rest';
-import {IN_BEARBEITUNG_BASE_NAME, isAnyStatusOfVerfuegt, TSAntragStatus} from '../../models/enums/TSAntragStatus';
-import {TSEingangsart} from '../../models/enums/TSEingangsart';
-import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
-import TSAntragDTO from '../../models/TSAntragDTO';
-import TSFall from '../../models/TSFall';
-import TSGesuchsperiode from '../../models/TSGesuchsperiode';
-import EbeguUtil from '../../utils/EbeguUtil';
-import {TSRoleUtil} from '../../utils/TSRoleUtil';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import MitteilungRS from '../../../core/service/mitteilungRS.rest';
+import FallRS from '../../../gesuch/service/fallRS.rest';
+import SearchRS from '../../../gesuch/service/searchRS.rest';
+import {IN_BEARBEITUNG_BASE_NAME, isAnyStatusOfVerfuegt, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
+import {TSGesuchBetreuungenStatus} from '../../../models/enums/TSGesuchBetreuungenStatus';
+import TSAntragDTO from '../../../models/TSAntragDTO';
+import TSFall from '../../../models/TSFall';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import ILogService = angular.ILogService;
 import IPromise = angular.IPromise;
 import ITranslateService = angular.translate.ITranslateService;
@@ -49,7 +49,6 @@ export class GesuchstellerDashboardListViewController {
     fallId: string;
     totalResultCount: string = '-';
     amountNewMitteilungen: number;
-
 
     static $inject: string[] = ['$state', '$log', 'AuthServiceRS', 'SearchRS', 'EbeguUtil', 'GesuchsperiodeRS',
         'FallRS', '$translate', 'MitteilungRS'];
@@ -116,14 +115,25 @@ export class GesuchstellerDashboardListViewController {
         return this.antragList;
     }
 
+    public displayAnsehenButton(periode: TSGesuchsperiode): boolean {
+        let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
+        if (antrag) {
+            if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
     public getNumberMitteilungen(): number {
         return this.amountNewMitteilungen;
     }
 
-    public openAntrag(periode: TSGesuchsperiode): void {
+    public openAntrag(periode: TSGesuchsperiode, ansehen: boolean): void {
         let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
         if (antrag) {
-            if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
+            if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status || ansehen) {
                 // Noch nicht freigegeben
                 this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: antrag.antragId});
             } else if (!isAnyStatusOfVerfuegt(antrag.status) || antrag.beschwerdeHaengig) {
@@ -164,6 +174,34 @@ export class GesuchstellerDashboardListViewController {
         }
     }
 
+    public createTagesschule(periode: TSGesuchsperiode): void {
+        let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
+
+        if (antrag) {
+            this.$state.go('createAngebot', {type: 'TS', gesuchId: antrag.antragId});
+        } else {
+            console.error('Fehler: kein Gesuch gefunden für Gesuchsperiode in createTagesschule');
+        }
+    }
+
+    public createFerieninsel(periode: TSGesuchsperiode): void {
+        let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
+
+        if (antrag) {
+            this.$state.go('createAngebot', {type: 'FI', gesuchId: antrag.antragId});
+        } else {
+            console.error('Fehler: kein Gesuch gefunden für Gesuchsperiode in createFerieninsel');
+        }
+    }
+
+    public showAnmeldungCreate(periode: TSGesuchsperiode): boolean {
+        let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
+        return periode.isTageschulenAnmeldungAktiv() && !!antrag &&
+            antrag.status !== TSAntragStatus.IN_BEARBEITUNG_GS &&
+            antrag.status !== TSAntragStatus.FREIGABEQUITTUNG
+            && antrag.neustesGesuch;
+    }
+
     public getButtonText(periode: TSGesuchsperiode): string {
         let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
         if (antrag) {
@@ -173,7 +211,7 @@ export class GesuchstellerDashboardListViewController {
             } else if (!isAnyStatusOfVerfuegt(antrag.status) || antrag.beschwerdeHaengig) {
                 // Alles ausser verfuegt und InBearbeitung -> Text DOKUMENTE HOCHLADEN
                 return this.$translate.instant('GS_DOKUMENTE_HOCHLADEN');
-            } else {
+            } else if (antrag.neustesGesuch) {
                 // Im Else-Fall ist das Gesuch nicht mehr ueber den Button verfuegbar
                 // Es kann nur noch eine Mutation gemacht werden -> Text MUTIEREN
                 return this.$translate.instant('GS_MUTIEREN');
@@ -183,6 +221,7 @@ export class GesuchstellerDashboardListViewController {
             // this.$state.go('gesuch.fallcreation', {createNew: true, gesuchId: null});
             return this.$translate.instant('GS_BEANTRAGEN');
         }
+        return undefined;
     }
 
     public editAntrag(antrag: TSAntragDTO): void {
@@ -228,15 +267,34 @@ export class GesuchstellerDashboardListViewController {
         return this.ebeguUtil.translateString(TSAntragStatus[status]);
     }
 
-    public getVerantwortlicherFullName(antrag: TSAntragDTO): string {
+    /**
+     * JA und Mischgesuche -> verantwortlicher
+     * SCHGesuche -> verantwortlicherSCH (oder "Schulamt" wenn kein Verantwortlicher vorhanden
+     */
+    public getHauptVerantwortlicherFullName(antrag: TSAntragDTO): string {
         if (antrag) {
-            if (antrag.status === TSAntragStatus.NUR_SCHULAMT) {
-                return this.ebeguUtil.translateString('VERANTWORTLICHER_SCHULAMT');
-            }
             if (antrag.verantwortlicher) {
                 return antrag.verantwortlicher;
+            }
+            if (antrag.verantwortlicherSCH) {
+                return antrag.verantwortlicherSCH;
+            }
+            if (antrag.status === TSAntragStatus.NUR_SCHULAMT) { //legacy for old Faelle where verantwortlicherSCH didn't exist
+                return this.ebeguUtil.translateString('NUR_SCHULAMT');
             }
         }
         return '';
     }
+
+    public gesperrtWegenMutation(periode: TSGesuchsperiode) {
+        let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
+        return !!antrag && !antrag.neustesGesuch;
+    }
+
+    public hasOnlyFerieninsel(periode: TSGesuchsperiode) {
+        let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
+        return !!antrag && antrag.hasOnlyFerieninsel();
+    }
+
+
 }

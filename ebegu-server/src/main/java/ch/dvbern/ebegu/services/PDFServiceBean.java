@@ -160,8 +160,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 	@Override
 	@Nonnull
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
-	public byte[] generateFreigabequittung(Gesuch gesuch, Zustelladresse zustelladresse,
-		boolean writeProtected) throws MergeDocException {
+	public byte[] generateFreigabequittung(Gesuch gesuch, boolean writeProtected) throws MergeDocException {
 
 		EbeguVorlageKey vorlageKey = EbeguVorlageKey.VORLAGE_FREIGABEQUITTUNG;
 		try {
@@ -173,7 +172,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			final List<DokumentGrund> dokumentGrundsMerged = calculateListOfDokumentGrunds(gesuch);
 
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				ByteStreams.toByteArray(is), new FreigabequittungPrintMergeSource(new FreigabequittungPrintImpl(gesuch, zustelladresse, dokumentGrundsMerged)),
+				ByteStreams.toByteArray(is), new FreigabequittungPrintMergeSource(new FreigabequittungPrintImpl(gesuch, dokumentGrundsMerged)),
 				writeProtected);
 			is.close();
 			return bytes;

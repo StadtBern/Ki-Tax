@@ -13,6 +13,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {TSAmt} from './enums/TSAmt';
+import {TSRole} from './enums/TSRole';
 import TSAbstractEntity from './TSAbstractEntity';
 import TSFall from './TSFall';
 import TSUser from './TSUser';
@@ -153,5 +155,9 @@ export default class TSMitteilung extends TSAbstractEntity {
 
     public isErledigt(): boolean {
         return this.mitteilungStatus === TSMitteilungStatus.ERLEDIGT;
+    }
+
+    public getEmpfaengerAmt(): TSAmt {
+        return this.empfaenger.amt;
     }
 }

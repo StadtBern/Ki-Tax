@@ -126,6 +126,7 @@ export default class EbeguUtil {
         return -1;
     }
 
+    /* bgNummer is also stored on betreuung when Betreuung is loaded from server! (Don't use this function if you load betreuung from server) */
     public calculateBetreuungsId(gesuchsperiode: TSGesuchsperiode, fall: TSFall, kindContainerNumber: number, betreuungNumber: number): string {
         let betreuungsId: string = '';
         if (gesuchsperiode && fall) {
@@ -138,6 +139,7 @@ export default class EbeguUtil {
         return betreuungsId;
     }
 
+    /* bgNummer is also stored on betreuung when Betreuung is loaded from server! (Don't use this function if you load betreuung from server) */
     public calculateBetreuungsIdFromBetreuung(fall: TSFall, betreuung: TSBetreuung): string {
         let betreuungsId: string = '';
         if (betreuung && fall) {
@@ -266,4 +268,15 @@ export default class EbeguUtil {
         return !EbeguUtil.isNullOrUndefined(data);
     }
 
+    public replaceElementInList(element: TSAbstractEntity, list: TSAbstractEntity[], wasNew: boolean) {
+        if (wasNew) {
+            list.push(element);
+        } else {
+            let index = EbeguUtil.getIndexOfElementwithID(element, list);
+            if (index > -1) {
+                list[index] = element;
+                this.handleSmarttablesUpdateBug(list);
+            }
+        }
+    }
 }

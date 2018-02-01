@@ -83,10 +83,15 @@ export default (env: any): webpack.Configuration => webpackMerge(commonConfig(en
                 target: 'http://localhost:8080',
                 secure: false,
                 proxyTimeout: 240000
+            },
+            '/connector': {
+                target: 'http://localhost:8080',
+                secure: false,
+                proxyTimeout: 240000
             }
         },
         headers: {
-            'Content-Security-Policy': "default-src 'none'; object-src 'self'; script-src 'self' 'unsafe-eval' ajax.googleapis.com; connect-src 'self' ws:; img-src 'self'; style-src 'self' 'unsafe-inline'  https://fonts.googleapis.com; font-src 'self'  https://fonts.googleapis.com https://fonts.gstatic.com;",
+            'Content-Security-Policy': "default-src 'none'; object-src 'self'; script-src 'self' 'unsafe-eval' ajax.googleapis.com; connect-src 'self' ws:; img-src 'self' data:; style-src 'self' 'unsafe-inline'  https://fonts.googleapis.com; font-src 'self'  https://fonts.googleapis.com https://fonts.gstatic.com;",
             'X-Frame-Options': 'DENY'
         }
 
