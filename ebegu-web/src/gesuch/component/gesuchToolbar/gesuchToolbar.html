@@ -34,7 +34,7 @@
                         <md-button ng-click="vmx.setGesuchsperiode(gesuchsperiodeString)"
                                    aria-label="{{gesuchsperiodeString}}">
                                 <span>
-                                    <a href="javascript:void(0)" aria-hidden>{{gesuchsperiodeString}}</a>
+                                    <a href="#" ng-click="$event.preventDefault()" aria-hidden>{{gesuchsperiodeString}}</a>
                                 </span>
                         </md-button>
                     </md-menu-item>
@@ -57,7 +57,7 @@
                         <md-button class="menu-item-link" ng-click="vmx.setAntragTypDatum(antragTypDatum)"
                                    aria-label="{{antragTypDatum}}">
                                 <span>
-                                    <a href="javascript:void(0)" aria-hidden>{{antragTypDatum}}</a>
+                                    <a href="#" aria-hidden ng-click="$event.preventDefault()">{{antragTypDatum}}</a>
                                 </span>
                         </md-button>
                     </md-menu-item>

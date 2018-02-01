@@ -46,7 +46,7 @@
                            style="position: relative;">
                 <span>
 
-                    <a href="javascript:void(0)" aria-hidden>{{'NO_VERANTWORTLICHER_SELECTED' | translate}}</a>
+                     <a href="#" ng-click="$event.preventDefault();" aria-hidden>{{'NO_VERANTWORTLICHER_SELECTED' | translate}}</a>
                     <i ng-if="!vm.getFallVerantwortlicher()"
                        ng-class="{'fa fa-user': !vm.schulamt, 'fa fa-graduation-cap': vm.schulamt}"
                        aria-hidden="true"
@@ -61,7 +61,7 @@
                            style="position: relative;">
                 <span>
 
-                    <a href="javascript:void(0)" aria-hidden>{{user.getFullName()}}</a>
+                     <a href="#" ng-click="$event.preventDefault();" aria-hidden>{{user.getFullName()}}</a>
                      <i ng-if="vm.isCurrentVerantwortlicher(user)"
                         ng-class="{'fa fa-user': !vm.schulamt, 'fa fa-graduation-cap': vm.schulamt}"
                         aria-hidden="true"

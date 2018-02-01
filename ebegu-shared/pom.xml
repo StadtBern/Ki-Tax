@@ -221,11 +221,12 @@
                             <physicalNamingStrategy>ch.dvbern.ebegu.persistence.EbeguPhysicalNamingStrategyImpl
                             </physicalNamingStrategy>
                             <!--verhindert, dass das Plugin versucht das schema physisch in eine DB zu schreiben-->
-                            <export>false</export>
+                            <execute>false</execute>
                             <format>true</format>
                             <!--File in welches das Schema exportiert wird (defaultist create.sql)-->
                             <outputFile>${project.build.directory}/ebegu-schema.ddl</outputFile>
                             <!--definiert ob der text fuer das sql-schema in die console geloggt wird-->
+
                             <show>true</show>
                         </configuration>
                     </plugin>
