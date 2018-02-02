@@ -859,11 +859,15 @@ public class GesuchResource {
 		Optional<Fall> fall = fallService.findFall(fallJaxId.getId());
 		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeJaxId.getId());
 
-		if (fall.isPresent() && gesuchsperiode.isPresent()) {
-			Optional<String> idOfNeuestesGesuch = gesuchService.getIdOfNeuestesGesuch(gesuchsperiode.get(), fall.get());
-			if (idOfNeuestesGesuch.isPresent()) {
-				return Response.ok(idOfNeuestesGesuch.get()).build();
-			}
+		if (!fall.isPresent()) {
+			throw new EbeguEntityNotFoundException("getIdOfNewestGesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJaxId.getId());
+		}
+		if (!gesuchsperiode.isPresent()) {
+			throw new EbeguEntityNotFoundException("getIdOfNewestGesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsperiodeJaxId.getId());
+		}
+		Optional<String> idOfNeuestesGesuch = gesuchService.getIdOfNeuestesGesuch(gesuchsperiode.get(), fall.get());
+		if (idOfNeuestesGesuch.isPresent()) {
+			return Response.ok(idOfNeuestesGesuch.get()).build();
 		}
 		return Response.ok().build();
 	}

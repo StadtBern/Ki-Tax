@@ -181,6 +181,7 @@ export default class GesuchModelManager {
      */
     public setGesuch(gesuch: TSGesuch): void {
         this.gesuch = gesuch;
+        this.neustesGesuch = undefined;
         if (this.gesuch) {
             this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
             this.setHiddenSteps();
@@ -196,7 +197,6 @@ export default class GesuchModelManager {
         this.ewkPersonGS2 = undefined;
         this.ewkResultatGS1 = undefined;
         this.ewkResultatGS2 = undefined;
-        this.neustesGesuch = undefined;
     }
 
     public getGesuch(): TSGesuch {
