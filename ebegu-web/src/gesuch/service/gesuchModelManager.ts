@@ -189,9 +189,11 @@ export default class GesuchModelManager {
             this.ewkRS.gesuchsteller1 = this.gesuch.gesuchsteller1;
             this.ewkRS.gesuchsteller2 = this.gesuch.gesuchsteller2;
             // Es soll nur einmalig geprueft werden, ob das aktuelle Gesuch das neueste dieses Falls fuer die gewuenschte Periode ist.
-            this.gesuchRS.isNeuestesGesuch(this.gesuch.id).then((resp: boolean) => {
-                this.neustesGesuch = resp;
-            });
+            if (this.gesuch.id) {
+                this.gesuchRS.isNeuestesGesuch(this.gesuch.id).then((resp: boolean) => {
+                    this.neustesGesuch = resp;
+                });
+            }
         }
         this.ewkPersonGS1 = undefined;
         this.ewkPersonGS2 = undefined;
