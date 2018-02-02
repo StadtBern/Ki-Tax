@@ -181,6 +181,7 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 
 		// Special role based predicates
 		switch (role) {
+		case SACHBEARBEITER_JA:
 		case SUPER_ADMIN:
 		case ADMIN:
 		case REVISOR:
@@ -190,8 +191,6 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 			}
 			break;
 		case STEUERAMT:
-			break;
-		case SACHBEARBEITER_JA:
 			break;
 		case SACHBEARBEITER_TRAEGERSCHAFT:
 			predicates.add(cb.equal(institution.get(Institution_.traegerschaft), user.getTraegerschaft()));

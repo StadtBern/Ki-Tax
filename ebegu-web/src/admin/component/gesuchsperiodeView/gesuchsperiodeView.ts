@@ -50,6 +50,7 @@ export class GesuchsperiodeViewController extends AbstractAdminViewController {
 
     initialStatus: TSGesuchsperiodeStatus;
     datumFreischaltungTagesschule: moment.Moment;
+    datumFreischaltungMax: moment.Moment;
 
 
     static $inject = ['EbeguParameterRS', 'DvDialog', 'GlobalCacheService', 'GesuchsperiodeRS', '$log', '$stateParams',
@@ -80,6 +81,7 @@ export class GesuchsperiodeViewController extends AbstractAdminViewController {
         this.gesuchsperiode = gesuchsperiode;
         this.readEbeguParameterByGesuchsperiode();
         this.datumFreischaltungTagesschule = undefined;
+        this.datumFreischaltungMax = this.getDatumFreischaltungMax();
     }
 
     private readEbeguParameterByGesuchsperiode(): void {
@@ -153,6 +155,7 @@ export class GesuchsperiodeViewController extends AbstractAdminViewController {
             this.gesuchsperiode.gueltigkeit.gueltigAb = newestGeuschsperiode.gueltigkeit.gueltigAb.clone().add(1, 'years');
             this.gesuchsperiode.gueltigkeit.gueltigBis = newestGeuschsperiode.gueltigkeit.gueltigBis.clone().add(1, 'years');
             this.gesuchsperiode.datumFreischaltungTagesschule = this.gesuchsperiode.gueltigkeit.gueltigAb;
+            this.datumFreischaltungMax = this.getDatumFreischaltungMax();
         });
         this.gesuchsperiode = undefined;
     }
