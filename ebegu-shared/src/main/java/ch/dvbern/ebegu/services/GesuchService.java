@@ -243,6 +243,12 @@ public interface GesuchService {
 	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
 
 	/**
+	 * Gibt die ID des neuesten Gesuchs fuer einen Fall und eine Gesuchsperiode zurueck. Dieses kann auch ein
+	 * Gesuch sein, fuer welches ich nicht berechtigt bin!
+	 */
+	Optional<String> getIdOfNeuestesGesuch(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Fall fall);
+
+	/**
 	 * Gibt das Geusch zurueck, das mit dem Fall verknuepft ist und das neueste fuer das SchulamtInterface ist. Das Flag FinSitStatus
 	 * muss nicht NULL sein, sonst gilt es als nicht geprueft.
 	 */

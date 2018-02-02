@@ -1490,7 +1490,6 @@ export default class EbeguRestUtil {
         antragTS.eingangsart = antragFromServer.eingangsart;
         antragTS.besitzerUsername = antragFromServer.besitzerUsername;
         antragTS.dokumenteHochgeladen = antragFromServer.dokumenteHochgeladen;
-        antragTS.neustesGesuch = antragFromServer.neustesGesuch;
         return antragTS;
     }
 

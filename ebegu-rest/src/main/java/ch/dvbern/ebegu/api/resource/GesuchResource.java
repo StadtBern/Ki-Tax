@@ -843,4 +843,28 @@ public class GesuchResource {
 		Boolean neustesGesuch = gesuchService.isNeustesGesuch(gesuch);
 		return Response.ok(neustesGesuch).build();
 	}
+
+	@ApiOperation(value = "Gibt die ID des neuesten Gesuchs dieses Falls und Jahres zurueck. Wenn es noch keinen Fall, kein Gesuch oder keine Gesuchsperiode "
+		+ "gibt, wird null zurueckgegeben", response = String.class)
+	@Nonnull
+	@GET
+	@Path("/newestid/{gesuchsperiodeId}/{fallId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response getIdOfNewestGesuch(@Nonnull @NotNull @PathParam("gesuchsperiodeId") JaxId gesuchsperiodeJaxId,
+		@Nonnull @NotNull @PathParam("fallId") JaxId fallJaxId) {
+		Validate.notNull(fallJaxId.getId());
+		Validate.notNull(gesuchsperiodeJaxId.getId());
+
+		Optional<Fall> fall = fallService.findFall(fallJaxId.getId());
+		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeJaxId.getId());
+
+		if (fall.isPresent() && gesuchsperiode.isPresent()) {
+			Optional<String> idOfNeuestesGesuch = gesuchService.getIdOfNeuestesGesuch(gesuchsperiode.get(), fall.get());
+			if (idOfNeuestesGesuch.isPresent()) {
+				return Response.ok(idOfNeuestesGesuch.get()).build();
+			}
+		}
+		return Response.ok().build();
+	}
 }

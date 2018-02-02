@@ -55,6 +55,7 @@ import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
+import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.AbstractEntity_;
 import ch.dvbern.ebegu.entities.AntragStatusHistory;
 import ch.dvbern.ebegu.entities.AntragStatusHistory_;
@@ -893,6 +894,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public boolean isNeustesGesuch(@Nonnull Gesuch gesuch) {
 		final Optional<Gesuch> neustesGesuchFuerGesuch = getNeustesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(), false);
 		return neustesGesuchFuerGesuch.isPresent() && Objects.equals(neustesGesuchFuerGesuch.get().getId(), gesuch.getId());
+	}
+
+	@Override
+	@PermitAll
+	public Optional<String> getIdOfNeuestesGesuch(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Fall fall) {
+		// Da wir nur die ID zurueckgeben, koennen wir den AuthCheck weglassen
+		Optional<Gesuch> gesuchOptional = getNeustesGesuchFuerGesuch(gesuchsperiode, fall, false);
+		return gesuchOptional.map(AbstractEntity::getId);
 	}
 
 	/**

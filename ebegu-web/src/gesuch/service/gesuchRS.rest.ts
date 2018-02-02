@@ -248,4 +248,11 @@ export default class GesuchRS implements IEntityRS {
                 return response.data;
             });
     }
+
+    public getIdOfNewestGesuch(gesuchsperiodeId: string, fallId: string): IPromise<string> {
+        return this.http.get(this.serviceURL + '/newestid/' + encodeURIComponent(gesuchsperiodeId) + '/' + encodeURIComponent(fallId))
+            .then((response: any) => {
+                return response.data;
+            });
+    }
 }
