@@ -82,13 +82,11 @@ export class PosteingangViewController {
     }
 
     public passFilterToServer = (tableFilterState: any): IPromise<void> => {
-        this.$log.info('passing filter to server');
         this.pagination = tableFilterState.pagination;
         this.myTableFilterState = tableFilterState;
 
         return this.mitteilungRS.searchMitteilungen(tableFilterState, this.includeClosed).then((result: TSMtteilungSearchresultDTO) => {
             this.setResult(result);
-            this.$log.info('read results:', result);
         });
     }
 

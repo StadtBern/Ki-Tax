@@ -397,41 +397,6 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return mitteilungen;
 	}
 
-	@SuppressWarnings("LocalVariableNamingConvention")
-	@Nonnull
-	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT,
-		ADMINISTRATOR_SCHULAMT })
-	public Collection<Mitteilung> getMitteilungenForPosteingang(boolean includeClosed) {
-
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-
-		CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
-		Root<Mitteilung> root = query.from(Mitteilung.class);
-
-		List<Predicate> predicates = new ArrayList<>();
-
-		// Keine Entwuerfe fuer Posteingang
-		Predicate predicateEntwurf = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ENTWURF);
-		predicates.add(predicateEntwurf);
-
-		// Richtiger Empfangs-Typ. Persoenlicher Empfaenger wird nicht beachtet sondern auf Client mit Filter geloest
-		MitteilungTeilnehmerTyp mitteilungTeilnehmerTyp = getMitteilungTeilnehmerTypForCurrentUser();
-		Predicate predicateEmpfaengerTyp = cb.equal(root.get(Mitteilung_.empfaengerTyp), mitteilungTeilnehmerTyp);
-		predicates.add(predicateEmpfaengerTyp);
-
-		if (!includeClosed) {
-			Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);
-			predicates.add(predicateNichtErledigt);
-		}
-
-		query.orderBy(cb.desc(root.get(Mitteilung_.sentDatum)));
-		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-		List<Mitteilung> mitteilungen = persistence.getCriteriaResults(query);
-		authorizer.checkReadAuthorizationMitteilungen(mitteilungen);
-		return mitteilungen;
-	}
-
 	@Override
 	@Nullable
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT,
@@ -742,7 +707,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return result;
 	}
 
-	@SuppressWarnings({"rawtypes", "unchecked"}) // Je nach Abfrage ist es String oder Long
+	@SuppressWarnings({"rawtypes", "unchecked", "PMD.NcssMethodCount"}) // Je nach Abfrage ist es String oder Long
 	private Pair<Long, List<Mitteilung>> searchMitteilungen(@Nonnull MitteilungTableFilterDTO mitteilungTableFilterDto, @Nonnull Boolean includeClosed, @Nonnull SearchMode mode) {
 		CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		CriteriaQuery query = SearchUtil.getQueryForSearchMode(cb, mode);

@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -241,7 +242,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		// from now on as JA
 		loginAsSachbearbeiterJA();
 
-		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForPosteingang(false);
+		List<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.searchMitteilungen(TestDataUtil.createMitteilungTableFilterDTO(), false).getRight();
 
 		Assert.assertNotNull(mitteilungenForCurrentRolle);
 		Assert.assertEquals(2, mitteilungenForCurrentRolle.size()); // Wir sehen grundsätzliche alle Nachrichten, die ans JA gehen
@@ -471,7 +472,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	private Mitteilung readFirstAndOnlyMitteilung() {
-		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForPosteingang(false);
+		List<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.searchMitteilungen(TestDataUtil.createMitteilungTableFilterDTO(), false).getRight();
 		Assert.assertNotNull(mitteilungenForCurrentRolle);
 		Assert.assertEquals(1, mitteilungenForCurrentRolle.size());
 		Mitteilung mitteilung = mitteilungenForCurrentRolle.iterator().next();

@@ -125,13 +125,6 @@ export default class MitteilungRS {
         });
     }
 
-    public getMitteilungenForPosteingang(includeClosed: boolean): IPromise<Array<TSMitteilung>> {
-        return this.http.get(this.serviceURL + '/posteingang/' + includeClosed).then((response: any) => {
-            this.$log.debug('PARSING mitteilung REST object ', response.data);
-            return this.ebeguRestUtil.parseMitteilungen(response.data.mitteilungen); // The response is a wrapper
-        });
-    }
-
     public getAmountMitteilungenForCurrentBenutzer(): IPromise<number> {
         return this.http.get(this.serviceURL + '/amountnewforuser/notokenrefresh').then((response: any) => {
             return response.data;

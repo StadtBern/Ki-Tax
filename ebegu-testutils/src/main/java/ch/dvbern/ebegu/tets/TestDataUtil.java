@@ -30,11 +30,13 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragSearchDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.SortDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragPredicateObjectDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragSearchDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.MitteilungSearchDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.MitteilungTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.SortDTO;
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.AbwesenheitContainer;
@@ -1121,6 +1123,12 @@ public final class TestDataUtil {
 		mitteilung.setEmpfaengerTyp(empfaengerTyp);
 		mitteilung.setSenderTyp(senderTyp);
 		mitteilung.setMessage("Message");
+	}
+
+	public static MitteilungTableFilterDTO createMitteilungTableFilterDTO() {
+		MitteilungTableFilterDTO filterDTO = new MitteilungTableFilterDTO();
+		filterDTO.setSearch(new MitteilungSearchDTO());
+		return filterDTO;
 	}
 
 	public static Betreuung persistBetreuung(BetreuungService betreuungService, Persistence persistence) {

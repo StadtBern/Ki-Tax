@@ -74,7 +74,7 @@ describe('posteingangView', function () {
                 mockRestCalls();
                 posteingangViewController = new PosteingangViewController(mitteilungRS, ebeguUtil, CONSTANTS, undefined, undefined, $log);
                 $rootScope.$apply();
-                expect(mitteilungRS.getMitteilungenForPosteingang).toHaveBeenCalled();
+                expect(mitteilungRS.searchMitteilungen).toHaveBeenCalled();
                 let list: Array<TSMitteilung> = posteingangViewController.displayedCollection;
                 expect(list).toBeDefined();
                 expect(list.length).toBe(1);
@@ -92,7 +92,7 @@ describe('posteingangView', function () {
             gesuchsteller, undefined, 'Frage', 'Warum ist die Banane krumm?', TSMitteilungStatus.NEU, undefined);
         let dtoList: Array<TSMitteilung> = [mockMitteilung];
         let totalSize: number = 1;
-        spyOn(mitteilungRS, 'getMitteilungenForPosteingang').and.returnValue($q.when(dtoList));
+        spyOn(mitteilungRS, 'searchMitteilungen').and.returnValue($q.when(dtoList));
         return mockMitteilung;
     }
 

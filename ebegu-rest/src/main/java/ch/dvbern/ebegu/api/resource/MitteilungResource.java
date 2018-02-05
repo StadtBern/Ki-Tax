@@ -285,26 +285,6 @@ public class MitteilungResource {
 		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolleForBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
 	}
 
-	@ApiOperation(value = "Gibt einen Wrapper mit der Liste aller Mitteilungen zurueck, welche fuer den eingeloggten " +
-		"Benutzer in dessen Posteingang dargestellt werden sollen.", response = JaxMitteilungen.class)
-	@Nullable
-	@GET
-	@Path("/posteingang/{includeClosed}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public JaxMitteilungen getMitteilungenForPosteingang(
-		@Nonnull @NotNull @PathParam("includeClosed") String includeClosedParam,
-		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) {
-
-		Validate.notNull(includeClosedParam);
-		boolean includeClosed = Boolean.parseBoolean(includeClosedParam);
-
-		final Collection<Mitteilung> mitteilungen = mitteilungService.getMitteilungenForPosteingang(includeClosed);
-		return new JaxMitteilungen(mitteilungen.stream().map(mitteilung ->
-			converter.mitteilungToJAX(mitteilung, new JaxMitteilung())).collect(Collectors.toList()));
-	}
-
 	@ApiOperation(value = "Ermittelt die Anzahl neuer Mitteilungen im Posteingang des eingeloggten Benutzers",
 		response = Integer.class)
 	@Nullable
