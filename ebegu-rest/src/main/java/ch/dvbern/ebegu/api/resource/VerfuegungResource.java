@@ -126,7 +126,7 @@ public class VerfuegungResource {
 			// Wir verwenden das Gesuch nur zur Berechnung und wollen nicht speichern, darum das Gesuch detachen
 			loadRelationsAndDetach(gesuchWithCalcVerfuegung);
 
-			JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung, gesuchService.isNeustesGesuch(gesuchWithCalcVerfuegung));
+			JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung);
 
 			Set<JaxKindContainer> kindContainers = gesuchJax.getKindContainers();
 			Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();

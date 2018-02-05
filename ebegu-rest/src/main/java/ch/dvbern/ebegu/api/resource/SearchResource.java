@@ -187,7 +187,6 @@ public class SearchResource {
 
 		antraege.forEach(gesuch -> {
 			final JaxAntragDTO jaxAntragDTO = converter.gesuchToAntragDTO(gesuch, userRole);
-			jaxAntragDTO.setNeustesGesuch(gesuchService.isNeustesGesuch(gesuch));
 			jaxAntragDTOS.add(jaxAntragDTO);
 		});
 
