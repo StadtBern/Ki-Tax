@@ -49,7 +49,13 @@
                     <th st-sort="gesuchsperiode" class="sortable row-periode" data-translate="PERIODE_UPPER"></th>
                     <th st-sort="aenderungsdatum" class="sortable row-geandert"
                         data-translate="GEANDERT_UPPER" dv-display-element
-                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()"
+                        dv-display-expression="!vm.pendenz">
+                    </th>
+                    <th st-sort="eingangsdatumSTV" class="sortable row-geandert"
+                        data-translate="EINGANG_UPPER" dv-display-element
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()"
+                        dv-display-expression="vm.pendenz">
                     </th>
                     <th st-sort="eingangsdatumSTV" class="sortable row-geandert"
                         data-translate="EINGANG_UPPER" dv-display-element
@@ -68,7 +74,11 @@
                         dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                     </th>
-                    <th st-sort="verantwortlicher" class="sortable row-ver" data-translate="VERANTWORTLICH_UPPER"
+                    <th st-sort="verantwortlicherSCH" class="sortable row-ver" data-translate="VERANTWORTLICHER_SCHULAMT"
+                        dv-display-element
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                    </th>
+                    <th st-sort="verantwortlicher" class="sortable row-ver" data-translate="VERANTWORTLICHER_JUGENDAMT"
                         dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                     </th>
@@ -106,9 +116,16 @@
                         </div>
                     </th>
                     <th dv-display-element
-                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()"
+                        dv-display-expression="!vm.pendenz">
                         <input st-search="aenderungsdatum" class="form-control" type="text"
                                ng-model="vm.selectedAenderungsdatum"/>
+                    </th>
+                    <th dv-display-element
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()"
+                        dv-display-expression="vm.pendenz">
+                        <input st-search="eingangsdatum" class="form-control" type="text"
+                               ng-model="vm.selectedEingangsdatum"/>
                     </th>
                     <th dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
@@ -161,6 +178,12 @@
                     </th>
                     <th dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                        <dv-userselect input-id="verantwortlicherSCH" dv-usersearch="verantwortlicherSCH" initial-all="true"
+                                       show-selection-all="true" selected-user="vm.selectedVerantwortlicherSCH"
+                                       schulamt="true"></dv-userselect>
+                    </th>
+                    <th dv-display-element
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                         <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher" initial-all="true"
                                        show-selection-all="true" selected-user="vm.selectedVerantwortlicher"></dv-userselect>
                     </th>
@@ -189,7 +212,13 @@
                     <td class="ellipsis" ellipsis-tooltip="{{row.aenderungsdatum | amDateFormat : 'DD.MM.YYYY'}}"
                         ng-bind="row.aenderungsdatum | amDateFormat : 'DD.MM.YYYY'"
                         dv-display-element
-                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()"
+                        dv-display-expression="!vm.pendenz">
+                    <td class="ellipsis" ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
+                        ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"
+                        dv-display-element
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()"
+                        dv-display-expression="vm.pendenz">
                     <td class="ellipsis" ellipsis-tooltip="{{row.eingangsdatumSTV | amDateFormat : 'DD.MM.YYYY'}}"
                         ng-bind="row.eingangsdatumSTV | amDateFormat : 'DD.MM.YYYY'"
                         dv-display-element
@@ -211,6 +240,10 @@
                     <td class="ellipsis" ellipsis-tooltip="{{row.institutionen | arrayToString }}"
                         ng-bind="row.institutionen | arrayToString"
                         dv-display-element
+                        dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                    </td>
+                    <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicherSCH}}"
+                        ng-bind="row.verantwortlicherSCH" dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                     </td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"

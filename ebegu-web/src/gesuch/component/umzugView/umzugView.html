@@ -25,7 +25,7 @@
                 <p dv-show-element
                    dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()" class="inlineHint" data-translate="UMZUG_HINT"></p>
                 <p dv-show-element
-                   dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                   dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles()"
                    dv-show-expression="vm.gesuchModelManager.getGesuch().isMutation()" class="inlineHint" data-translate="UMZUG_LIST_HINT"></p>
             </div>
         </div>
@@ -45,7 +45,7 @@
                             <div class="col-sm-12 dv-input-container-medium">
                                 <div class="form-group">
                                     <!--suppress XmlInvalidId -->
-                                    <label data-translate="BETROFFENE_WAEHLEN" for="betroffene">
+                                    <label class="required" data-translate="BETROFFENE_WAEHLEN" for="betroffene">
                                     </label>
                                     <div class="dv-select-style">
                                         <select aria-describedby="betroffene-{{$index}}-error"

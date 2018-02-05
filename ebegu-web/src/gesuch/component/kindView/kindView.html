@@ -42,7 +42,7 @@
                                                     ng-required="true" items="vm.geschlechter"
                                                     ng-model="vm.getModel().geschlecht"
                                                     aria-described-by="geschlecht-error"
-                                                    >
+                                >
                                 </dv-radio-container>
                                 <dv-bisher gs="vm.getContainer().kindGS.geschlecht"
                                            ja="vm.getContainer().kindJA.geschlecht"></dv-bisher>
@@ -160,10 +160,10 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
-                                <span class="ebeguH1 required"><span
-                                    data-translate="MUTTERSPRACHE_DEUTSCH"></span>
+                                <span class="ebeguH1 required">
+                                    <span data-translate="MUTTERSPRACHE_DEUTSCH"></span>
                                     <dv-tooltip input-id="mutterspracheDeutsch"
-                                        text="'MUTTERSPRACHE_DEUTSCH_HELP' | translate"></dv-tooltip>
+                                                text="'MUTTERSPRACHE_DEUTSCH_HELP' | translate"></dv-tooltip>
                                 </span>
 
                                 <dv-radio-container name="mutterspracheDeutsch" class="input-element"
@@ -253,7 +253,7 @@
                                 <dv-bisher gs="vm.showFachstelleGS"
                                            ja="vm.showFachstelle"
                                            specific-bisher-text="vm.getTextFachstelleKorrekturJA()"></dv-bisher>
-                                <dv-error-messages for="vm.form.korrespondenzAdr.$error"
+                                <dv-error-messages for="vm.form.showFachstelle.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
@@ -273,12 +273,12 @@
                                                 ng-change="vm.setSelectedFachsstelle()">
                                         </select>
 
-                                    <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.fachstelle.name"
-                                               ja="vm.getContainer().kindJA.pensumFachstelle.fachstelle.name"
-                                               show-if-bisher-none="false"
-                                               block-existed="vm.showFachstelleGS === true"></dv-bisher>
-                                    <dv-error-messages input-id="fachstelle" for="vm.form.fachstelle.$error"
-                                                       class="error"></dv-error-messages>
+                                        <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.fachstelle.name"
+                                                   ja="vm.getContainer().kindJA.pensumFachstelle.fachstelle.name"
+                                                   show-if-bisher-none="false"
+                                                   block-existed="vm.showFachstelleGS === true"></dv-bisher>
+                                        <dv-error-messages input-id="fachstelle" for="vm.form.fachstelle.$error"
+                                                           class="error"></dv-error-messages>
                                     </div>
                                 </div>
                             </div>
@@ -291,7 +291,7 @@
                                     <label class="md-no-float" data-translate="BETREUUNGSPENSUM_FACHSTELLE"
                                            for="betreuungspensumFachstelle"></label>
                                     <input aria-describedby="betreuungspensumFachstelle-error" id="betreuungspensumFachstelle" type="number"
-                                            name="betreuungspensumFachstelle"
+                                           name="betreuungspensumFachstelle"
                                            ng-model="vm.getPensumFachstelle().pensum" max="100"
                                            dv-max-length class="form-control"
                                            ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"

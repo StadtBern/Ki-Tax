@@ -14,11 +14,11 @@
  */
 
 import {IHttpPromise, IHttpService, ILogService, IPromise} from 'angular';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import * as moment from 'moment';
+import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import DateUtil from '../../utils/DateUtil';
-import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
-import * as moment from 'moment';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
 
 export class InstitutionStammdatenRS {
     serviceURL: string;
@@ -112,5 +112,4 @@ export class InstitutionStammdatenRS {
     public getServiceName(): string {
         return 'InstitutionStammdatenRS';
     }
-
 }

@@ -38,7 +38,7 @@ import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.enums.MahnungTyp;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.ebegu.services.EbeguParameterService;
+import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -73,7 +73,7 @@ public class DownloadResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private CriteriaQueryHelper queryHelper;
 	@Inject
-	private EbeguParameterService parameterService;
+	private GesuchService gesuchService;
 	@Inject
 	private JaxBConverter converter;
 
@@ -120,8 +120,10 @@ public class DownloadResourceTest extends AbstractEbeguRestLoginTest {
 		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.FINANZIELLE_SITUATION);
 	}
 
+	@Transactional(TransactionMode.DEFAULT)
 	@Test
 	public void getMahnungDokumentAccessTokenGeneratedDokumentTest() throws MergeDocException, IOException, DocTemplateException, MimeTypeParseException {
+		loginAsSachbearbeiterJA();
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		TestDataUtil.prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit(), persistence);
 
@@ -131,7 +133,7 @@ public class DownloadResourceTest extends AbstractEbeguRestLoginTest {
 		UriInfo uri = new ResteasyUriInfo("uri", "query", "path");
 
 		final Response dokumentResponse = downloadResource
-			.getMahnungDokumentAccessTokenGeneratedDokument(converter.mahnungToJAX(mahnung), request, uri);
+			.getMahnungDokumentAccessTokenGeneratedDokument(converter.mahnungToJAX(mahnung, gesuchService.isNeustesGesuch(mahnung.getGesuch())), request, uri);
 
 		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.MAHNUNG);
 	}

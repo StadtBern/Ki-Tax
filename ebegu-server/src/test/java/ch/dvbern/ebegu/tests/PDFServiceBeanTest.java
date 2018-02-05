@@ -33,7 +33,6 @@ import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 import ch.dvbern.ebegu.enums.MahnungTyp;
-import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
@@ -42,6 +41,7 @@ import ch.dvbern.ebegu.services.EbeguVorlageService;
 import ch.dvbern.ebegu.services.PDFServiceBean;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
+import ch.dvbern.ebegu.testfaelle.Testfall11_SchulamtOnly;
 import ch.dvbern.ebegu.tests.util.UnitTestTempFolder;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import com.lowagie.text.pdf.PdfReader;
@@ -79,7 +79,7 @@ public class PDFServiceBeanTest {
 	@InjectIntoMany
 	DokumentenverzeichnisEvaluator dokumentenverzeichnisEvaluator = new DokumentenverzeichnisEvaluator();
 
-	private Gesuch gesuch_1GS, gesuch_2GS;
+	private Gesuch gesuch_1GS, gesuch_2GS, gesuch_Schulamt;
 
 	private final boolean writeProtectPDF = false;
 
@@ -95,6 +95,8 @@ public class PDFServiceBeanTest {
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagesschuleBern());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenFerieninselGuarda());
 
 		//setup gesuch with one Gesuchsteller
 		Testfall01_WaeltiDagmar testfall_1GS = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1718(), institutionStammdatenList);
@@ -121,23 +123,46 @@ public class PDFServiceBeanTest {
 		gesuch_2GS.addDokumentGrund(new DokumentGrund(DokumentGrundTyp.SONSTIGE_NACHWEISE, DokumentTyp.STEUERERKLAERUNG));
 		gesuch_2GS.addDokumentGrund(new DokumentGrund(DokumentGrundTyp.SONSTIGE_NACHWEISE, DokumentTyp.NACHWEIS_AUSBILDUNG));
 		gesuch_2GS.addDokumentGrund(new DokumentGrund(DokumentGrundTyp.SONSTIGE_NACHWEISE, DokumentTyp.NACHWEIS_FAMILIENZULAGEN));
+
+		//setup Schulamt only gesuch
+		Testfall11_SchulamtOnly testfall_SchulamtOnly = new Testfall11_SchulamtOnly(TestDataUtil.createGesuchsperiode1718(), institutionStammdatenList);
+		testfall_SchulamtOnly.createFall(TestDataUtil.createDefaultBenutzer());
+		testfall_SchulamtOnly.createGesuch(LocalDate.of(2016, Month.DECEMBER, 12));
+
+		gesuch_Schulamt = testfall_SchulamtOnly.fillInGesuch();
+		TestDataUtil.calculateFinanzDaten(gesuch_Schulamt);
+		gesuch_Schulamt.setGesuchsperiode(TestDataUtil.createGesuchsperiode1718());
+
+		gesuch_Schulamt.addDokumentGrund(new DokumentGrund(DokumentGrundTyp.SONSTIGE_NACHWEISE, DokumentTyp.STEUERERKLAERUNG));
+		gesuch_Schulamt.addDokumentGrund(new DokumentGrund(DokumentGrundTyp.SONSTIGE_NACHWEISE, DokumentTyp.NACHWEIS_AUSBILDUNG));
+		gesuch_Schulamt.addDokumentGrund(new DokumentGrund(DokumentGrundTyp.SONSTIGE_NACHWEISE, DokumentTyp.NACHWEIS_FAMILIENZULAGEN));
 	}
 
 	@Test
 	public void testGenerateFreigabequittungJugendamt() throws Exception {
 
-		byte[] bytes = pdfService.generateFreigabequittung(gesuch_2GS, Zustelladresse.JUGENDAMT, writeProtectPDF);
+		byte[] bytes = pdfService.generateFreigabequittung(gesuch_2GS, writeProtectPDF);
 		assertNotNull(bytes);
 		unitTestTempfolder.writeToTempDir(bytes, "Freigabequittung_Jugendamt(" + gesuch_2GS.getJahrAndFallnummer() + ").pdf");
+
+		PdfReader pdfRreader = new PdfReader(bytes);
+		PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(pdfRreader);
+		assertTrue("Zustelladresse ist nicht Jugendamt",
+			pdfTextExtractor.getTextFromPage(1).startsWith("Jugendamt"));
 
 	}
 
 	@Test
 	public void testGenerateFreigabequittungSchulamt() throws Exception {
 
-		byte[] bytes = pdfService.generateFreigabequittung(gesuch_2GS, Zustelladresse.SCHULAMT, writeProtectPDF);
+		byte[] bytes = pdfService.generateFreigabequittung(gesuch_Schulamt, writeProtectPDF);
 		assertNotNull(bytes);
-		unitTestTempfolder.writeToTempDir(bytes, "Freigabequittung_Schulamt(" + gesuch_2GS.getJahrAndFallnummer() + ").pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "Freigabequittung_Schulamt(" + gesuch_Schulamt.getJahrAndFallnummer() + ").pdf");
+
+		PdfReader pdfRreader = new PdfReader(bytes);
+		PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(pdfRreader);
+		assertTrue("Zustelladresse ist nicht Schulamt",
+			pdfTextExtractor.getTextFromPage(1).startsWith("Schulamt"));
 
 	}
 
@@ -176,7 +201,29 @@ public class PDFServiceBeanTest {
 	}
 
 	@Test
-	public void testPrintErsteMahnungSinglePage() throws Exception {
+	public void testPrintErsteMahnungSinglePageSchulamt() throws Exception {
+
+		Mahnung mahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch_Schulamt, LocalDate.now().plusWeeks(2), 3);
+
+		byte[] bytes = pdfService.generateMahnung(mahnung, null, writeProtectPDF);
+
+		assertNotNull(bytes);
+
+		unitTestTempfolder.writeToTempDir(bytes, "1_Mahnung_Single_Page_Schulamt.pdf");
+
+		PdfReader pdfRreader = new PdfReader(bytes);
+		pdfRreader.getNumberOfPages();
+		assertEquals("PDF should be one page long.", 1, pdfRreader.getNumberOfPages());
+
+		PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(pdfRreader);
+		assertTrue("Absenderadresse ist nicht Schulamt",
+			pdfTextExtractor.getTextFromPage(1).startsWith("Schulamt"));
+
+		pdfRreader.close();
+	}
+
+	@Test
+	public void testPrintErsteMahnungSinglePageJugendamt() throws Exception {
 
 		Mahnung mahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch_2GS, LocalDate.now().plusWeeks(2), 3);
 
@@ -184,11 +231,16 @@ public class PDFServiceBeanTest {
 
 		assertNotNull(bytes);
 
-		unitTestTempfolder.writeToTempDir(bytes, "1_Mahnung_Single_Page.pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "1_Mahnung_Single_Page_Jugendamt.pdf");
 
 		PdfReader pdfRreader = new PdfReader(bytes);
 		pdfRreader.getNumberOfPages();
 		assertEquals("PDF should be one page long.", 1, pdfRreader.getNumberOfPages());
+
+		PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(pdfRreader);
+		assertTrue("Absenderadresse ist nicht Jugendamt",
+			pdfTextExtractor.getTextFromPage(1).startsWith("Jugendamt"));
+
 		pdfRreader.close();
 	}
 
@@ -208,6 +260,8 @@ public class PDFServiceBeanTest {
 		assertEquals("PDF should be two pages long.", 2, pdfRreader.getNumberOfPages());
 
 		PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(pdfRreader);
+		assertTrue("Absenderadresse ist nicht Jugendamt",
+			pdfTextExtractor.getTextFromPage(1).startsWith("Jugendamt"));
 		assertTrue("Second page should begin with this text.",
 			pdfTextExtractor.getTextFromPage(2).startsWith("Erst nach Eingang dieser"));
 
@@ -215,7 +269,31 @@ public class PDFServiceBeanTest {
 	}
 
 	@Test
-	public void testPrintZweiteMahnungSinglePage() throws Exception {
+	public void testPrintZweiteMahnungSinglePageSchulamt() throws Exception {
+
+		Mahnung ersteMahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch_Schulamt, LocalDate.now().plusWeeks(2),
+			3);
+		Mahnung zweiteMahnung = TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch_Schulamt, LocalDate.now().plusWeeks(2), 3);
+		zweiteMahnung.setVorgaengerId(ersteMahnung.getId());
+
+		byte[] bytes = pdfService.generateMahnung(zweiteMahnung, Optional.of(ersteMahnung), writeProtectPDF);
+		assertNotNull(bytes);
+
+		unitTestTempfolder.writeToTempDir(bytes, "2_Mahnung_Single_Page_Schulamt.pdf");
+
+		PdfReader pdfRreader = new PdfReader(bytes);
+		pdfRreader.getNumberOfPages();
+		assertEquals(1, pdfRreader.getNumberOfPages());
+
+		PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(pdfRreader);
+		assertTrue("Absenderadresse ist nicht Schulamt",
+			pdfTextExtractor.getTextFromPage(1).startsWith("Schulamt"));
+
+		pdfRreader.close();
+	}
+
+	@Test
+	public void testPrintZweiteMahnungSinglePageJugendamt() throws Exception {
 
 		Mahnung ersteMahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch_2GS, LocalDate.now().plusWeeks(2), 3);
 		Mahnung zweiteMahnung = TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch_2GS, LocalDate.now().plusWeeks(2), 3);
@@ -224,11 +302,15 @@ public class PDFServiceBeanTest {
 		byte[] bytes = pdfService.generateMahnung(zweiteMahnung, Optional.of(ersteMahnung), writeProtectPDF);
 		assertNotNull(bytes);
 
-		unitTestTempfolder.writeToTempDir(bytes, "2_Mahnung_Single_Page.pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "2_Mahnung_Single_Page_Jungendamt.pdf");
 
 		PdfReader pdfRreader = new PdfReader(bytes);
 		pdfRreader.getNumberOfPages();
 		assertEquals(1, pdfRreader.getNumberOfPages());
+
+		PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(pdfRreader);
+		assertTrue("Absenderadresse ist nicht Jugendamt",
+			pdfTextExtractor.getTextFromPage(1).startsWith("Jugendamt"));
 
 		pdfRreader.close();
 	}
@@ -240,7 +322,7 @@ public class PDFServiceBeanTest {
 		Mahnung zweiteMahnung = TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch_2GS, LocalDate.now().plusWeeks(2), 10);
 		zweiteMahnung.setVorgaengerId(ersteMahnung.getId());
 
-		byte[] bytes = pdfService.generateMahnung(zweiteMahnung, Optional.of(ersteMahnung), writeProtectPDF);
+		byte[] bytes = pdfService.generateMahnung(zweiteMahnung,  Optional.of(ersteMahnung), writeProtectPDF);
 		assertNotNull(bytes);
 
 		unitTestTempfolder.writeToTempDir(bytes, "2_Mahnung_Two_Pages.pdf");
@@ -250,6 +332,8 @@ public class PDFServiceBeanTest {
 		assertEquals("PDF should be two pages long.", 2, pdfRreader.getNumberOfPages());
 
 		PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(pdfRreader);
+		assertTrue("Absenderadresse ist nicht Jugendamt",
+			pdfTextExtractor.getTextFromPage(1).startsWith("Jugendamt"));
 		assertTrue("Second page should begin with this text.",
 			pdfTextExtractor.getTextFromPage(2).startsWith("Wenn Sie die geforderten Unterlagen"));
 

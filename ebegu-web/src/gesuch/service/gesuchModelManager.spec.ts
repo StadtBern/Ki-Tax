@@ -13,35 +13,33 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EbeguWebCore} from '../../core/core.module';
-import GesuchModelManager from './gesuchModelManager';
-import {IHttpBackendService, IQService, IScope} from 'angular';
-import BetreuungRS from '../../core/service/betreuungRS.rest';
-import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
-import FallRS from './fallRS.rest';
-import GesuchRS from './gesuchRS.rest';
-import DateUtil from '../../utils/DateUtil';
-import KindRS from '../../core/service/kindRS.rest';
-import TestDataUtil from '../../utils/TestDataUtil';
-import TSKindContainer from '../../models/TSKindContainer';
-import TSGesuch from '../../models/TSGesuch';
-import TSUser from '../../models/TSUser';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import WizardStepManager from './wizardStepManager';
-import TSBetreuung from '../../models/TSBetreuung';
-import TSKind from '../../models/TSKind';
-import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
-import TSVerfuegung from '../../models/TSVerfuegung';
-import VerfuegungRS from '../../core/service/verfuegungRS.rest';
+import {EbeguWebCore} from '../../core/core.module';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
-import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
-import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
+import BetreuungRS from '../../core/service/betreuungRS.rest';
+import KindRS from '../../core/service/kindRS.rest';
+import VerfuegungRS from '../../core/service/verfuegungRS.rest';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
-import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
 import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
-import IPromise = angular.IPromise;
+import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
+import TSBetreuung from '../../models/TSBetreuung';
+import TSGesuch from '../../models/TSGesuch';
+import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
+import TSKind from '../../models/TSKind';
+import TSKindContainer from '../../models/TSKindContainer';
+import TSUser from '../../models/TSUser';
+import TSVerfuegung from '../../models/TSVerfuegung';
+import DateUtil from '../../utils/DateUtil';
+import TestDataUtil from '../../utils/TestDataUtil';
+import FallRS from './fallRS.rest';
+import GesuchModelManager from './gesuchModelManager';
+import GesuchRS from './gesuchRS.rest';
+import WizardStepManager from './wizardStepManager';
 
 describe('gesuchModelManager', function () {
 
@@ -50,9 +48,9 @@ describe('gesuchModelManager', function () {
     let fallRS: FallRS;
     let gesuchRS: GesuchRS;
     let kindRS: KindRS;
-    let scope: IScope;
-    let $httpBackend: IHttpBackendService;
-    let $q: IQService;
+    let scope: angular.IScope;
+    let $httpBackend: angular.IHttpBackendService;
+    let $q: angular.IQService;
     let authServiceRS: AuthServiceRS;
     let wizardStepManager: WizardStepManager;
     let verfuegungRS: VerfuegungRS;
@@ -60,7 +58,7 @@ describe('gesuchModelManager', function () {
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $httpBackend = $injector.get('$httpBackend');
         betreuungRS = $injector.get('BetreuungRS');
@@ -103,7 +101,7 @@ describe('gesuchModelManager', function () {
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
                 spyOn(gesuchRS, 'getGesuchBetreuungenStatus').and.returnValue($q.when(TSGesuchBetreuungenStatus.ALLE_BESTAETIGT));
 
-                gesuchModelManager.saveBetreuung(gesuchModelManager.getKindToWorkWith().betreuungen[0], false);
+                gesuchModelManager.saveBetreuung(gesuchModelManager.getKindToWorkWith().betreuungen[0], TSBetreuungsstatus.WARTEN, false);
                 scope.$apply();
 
                 expect(betreuungRS.saveBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb', undefined, false);
@@ -210,13 +208,13 @@ describe('gesuchModelManager', function () {
             });
         });
         describe('exist at least one Betreuung among all kinder', function () {
-            it('should return false for empty list', function() {
+            it('should return false for empty list', function () {
                 let gesuch: TSGesuch = new TSGesuch();
                 spyOn(gesuch, 'getKinderWithBetreuungList').and.returnValue([]);
                 spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
                 expect(gesuchModelManager.getGesuch().isThereAnyBetreuung()).toBe(false);
             });
-            it('should return false for a list with Kinder but no Betreuung', function() {
+            it('should return false for a list with Kinder but no Betreuung', function () {
                 let kind: TSKindContainer = new TSKindContainer();
                 kind.kindJA = new TSKind();
                 kind.kindJA.familienErgaenzendeBetreuung = false;
@@ -225,7 +223,7 @@ describe('gesuchModelManager', function () {
                 spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
                 expect(gesuchModelManager.getGesuch().isThereAnyBetreuung()).toBe(false);
             });
-            it('should return true for a list with Kinder needing Betreuung', function() {
+            it('should return true for a list with Kinder needing Betreuung', function () {
                 let kind: TSKindContainer = new TSKindContainer();
                 kind.kindJA = new TSKind();
                 kind.kindJA.familienErgaenzendeBetreuung = true;
@@ -239,18 +237,18 @@ describe('gesuchModelManager', function () {
         });
 
         describe('exist kinder with betreuung needed', function () {
-            it('should return false for empty list', function() {
+            it('should return false for empty list', function () {
                 spyOn(gesuchModelManager, 'getKinderList').and.returnValue([]);
                 expect(gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()).toBe(false);
             });
-            it('should return false for a list with no Kind needing Betreuung', function() {
+            it('should return false for a list with no Kind needing Betreuung', function () {
                 let kind: TSKindContainer = new TSKindContainer();
                 kind.kindJA = new TSKind();
                 kind.kindJA.familienErgaenzendeBetreuung = false;
                 spyOn(gesuchModelManager, 'getKinderList').and.returnValue([kind]);
                 expect(gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()).toBe(false);
             });
-            it('should return true for a list with Kinder needing Betreuung', function() {
+            it('should return true for a list with Kinder needing Betreuung', function () {
                 let kind: TSKindContainer = new TSKindContainer();
                 kind.kindJA = new TSKind();
                 kind.kindJA.timestampErstellt = DateUtil.today();
@@ -260,7 +258,7 @@ describe('gesuchModelManager', function () {
             });
         });
         describe('saveGesuchStatus', function () {
-            it('should update the status of the Gesuch im Server und Client', function() {
+            it('should update the status of the Gesuch im Server und Client', function () {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 spyOn(gesuchRS, 'updateGesuchStatus').and.returnValue($q.when({}));
@@ -273,7 +271,7 @@ describe('gesuchModelManager', function () {
             });
         });
         describe('saveVerfuegung', function () {
-            it('should save the current Verfuegung und set the status of the Betreuung to VERFUEGT', function() {
+            it('should save the current Verfuegung und set the status of the Betreuung to VERFUEGT', function () {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 createKindContainer();
@@ -290,8 +288,9 @@ describe('gesuchModelManager', function () {
             });
         });
         describe('calculateNewStatus', function () {
-            it('should be GEPRUEFT if there is no betreuung', function() {
-                spyOn(wizardStepManager, 'hasStepGivenStatus').and.callFake(function(stepName: TSWizardStepName, status: TSWizardStepStatus) {
+            it('should be GEPRUEFT if there is no betreuung', function () {
+                spyOn(wizardStepManager, 'hasStepGivenStatus').and.callFake(function (stepName: TSWizardStepName,
+                                                                                      status: TSWizardStepStatus) {
                     return stepName === TSWizardStepName.BETREUUNG && status === TSWizardStepStatus.NOK;
                 });
                 let gesuch: TSGesuch = new TSGesuch();
@@ -301,8 +300,9 @@ describe('gesuchModelManager', function () {
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN)).toEqual(TSAntragStatus.GEPRUEFT);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN)).toEqual(TSAntragStatus.GEPRUEFT);
             });
-            it('should be PLATZBESTAETIGUNG_ABGEWIESEN if there are betreuungen and status of Betreuung is NOK', function() {
-                spyOn(wizardStepManager, 'hasStepGivenStatus').and.callFake(function(stepName: TSWizardStepName, status: TSWizardStepStatus) {
+            it('should be PLATZBESTAETIGUNG_ABGEWIESEN if there are betreuungen and status of Betreuung is NOK', function () {
+                spyOn(wizardStepManager, 'hasStepGivenStatus').and.callFake(function (stepName: TSWizardStepName,
+                                                                                      status: TSWizardStepStatus) {
                     return stepName === TSWizardStepName.BETREUUNG && status === TSWizardStepStatus.NOK;
                 });
                 let gesuch: TSGesuch = new TSGesuch();
@@ -312,23 +312,25 @@ describe('gesuchModelManager', function () {
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN)).toEqual(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN)).toEqual(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN);
             });
-            it('should be PLATZBESTAETIGUNG_WARTEN if the status of Betreuung is PLATZBESTAETIGUNG', function() {
-                spyOn(wizardStepManager, 'hasStepGivenStatus').and.callFake(function(stepName: TSWizardStepName, status: TSWizardStepStatus) {
+            it('should be PLATZBESTAETIGUNG_WARTEN if the status of Betreuung is PLATZBESTAETIGUNG', function () {
+                spyOn(wizardStepManager, 'hasStepGivenStatus').and.callFake(function (stepName: TSWizardStepName,
+                                                                                      status: TSWizardStepStatus) {
                     return stepName === TSWizardStepName.BETREUUNG && status === TSWizardStepStatus.PLATZBESTAETIGUNG;
                 });
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.GEPRUEFT)).toEqual(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN)).toEqual(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN)).toEqual(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN);
             });
-            it('should be GEPRUEFT if the status of Betreuung is PLATZBESTAETIGUNG', function() {
-                spyOn(wizardStepManager, 'hasStepGivenStatus').and.callFake(function(stepName: TSWizardStepName, status: TSWizardStepStatus) {
+            it('should be GEPRUEFT if the status of Betreuung is PLATZBESTAETIGUNG', function () {
+                spyOn(wizardStepManager, 'hasStepGivenStatus').and.callFake(function (stepName: TSWizardStepName,
+                                                                                      status: TSWizardStepStatus) {
                     return stepName === TSWizardStepName.BETREUUNG && status === TSWizardStepStatus.OK;
                 });
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.GEPRUEFT)).toEqual(TSAntragStatus.GEPRUEFT);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN)).toEqual(TSAntragStatus.GEPRUEFT);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN)).toEqual(TSAntragStatus.GEPRUEFT);
             });
-            it('returns the same TSAntragStatus for all others', function() {
+            it('returns the same TSAntragStatus for all others', function () {
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ERSTE_MAHNUNG)).toEqual(TSAntragStatus.ERSTE_MAHNUNG);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN)).toEqual(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.FREIGEGEBEN)).toEqual(TSAntragStatus.FREIGEGEBEN);
@@ -343,7 +345,7 @@ describe('gesuchModelManager', function () {
             });
         });
         describe('hideSteps', function () {
-            it('should hide the steps ABWESENHEIT and UMZUG for ONLINE Erstgesuch without umzug', function() {
+            it('should hide the steps ABWESENHEIT and UMZUG for ONLINE Erstgesuch without umzug', function () {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
                 spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
@@ -353,7 +355,7 @@ describe('gesuchModelManager', function () {
                 expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
                 expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.FREIGABE);
             });
-            it('should hide the steps ABWESENHEIT and UMZUG and unhide FREIGABE for PAPIER Erstgesuch without umzug', function() {
+            it('should hide the steps ABWESENHEIT and UMZUG and unhide FREIGABE for PAPIER Erstgesuch without umzug', function () {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
                 spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
@@ -363,7 +365,7 @@ describe('gesuchModelManager', function () {
                 expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
                 expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.FREIGABE);
             });
-            it('should unhide the steps ABWESENHEIT and UMZUG for Mutation and hide FREIGABE for ONLINE Gesuch', function() {
+            it('should unhide the steps ABWESENHEIT and UMZUG for Mutation and hide FREIGABE for ONLINE Gesuch', function () {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
                 spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
@@ -375,7 +377,7 @@ describe('gesuchModelManager', function () {
                 expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
                 expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
             });
-            it('should unhide the step UMZUG for Erstgesuch with umzug and hide ABWESENHEIT', function() {
+            it('should unhide the step UMZUG for Erstgesuch with umzug and hide ABWESENHEIT', function () {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
                 spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
@@ -394,8 +396,8 @@ describe('gesuchModelManager', function () {
             });
         });
         describe('updateBetreuungen', function () {
-            it('should return empty Promise for undefined betreuung list', function() {
-                let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen(undefined, true);
+            it('should return empty Promise for undefined betreuung list', function () {
+                let promise: angular.IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen(undefined, true);
                 expect(promise).toBeDefined();
                 let promiseExecuted: Array<TSBetreuung> = null;
                 promise.then((response) => {
@@ -404,8 +406,8 @@ describe('gesuchModelManager', function () {
                 scope.$apply();
                 expect(promiseExecuted).toBe(undefined);
             });
-            it('should return empty Promise for empty betreuung list', function() {
-                let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen([], true);
+            it('should return empty Promise for empty betreuung list', function () {
+                let promise: angular.IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen([], true);
                 expect(promise).toBeDefined();
                 let promiseExecuted: boolean = false;
                 promise.then((response) => {
@@ -414,7 +416,7 @@ describe('gesuchModelManager', function () {
                 scope.$apply();
                 expect(promiseExecuted).toBe(true);
             });
-            it('should return a Promise with the Betreuung that was updated', function() {
+            it('should return a Promise with the Betreuung that was updated', function () {
                 let myGesuch = new TSGesuch();
                 myGesuch.id = 'gesuchID';
                 TestDataUtil.setAbstractFieldsUndefined(myGesuch);
@@ -432,7 +434,7 @@ describe('gesuchModelManager', function () {
 
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
-                let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen(betreuungen, true);
+                let promise: angular.IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen(betreuungen, true);
 
                 expect(promise).toBeDefined();
                 let promiseExecuted: Array<TSBetreuung> = undefined;
@@ -447,7 +449,7 @@ describe('gesuchModelManager', function () {
             });
         });
         describe('openGesuch', function () {
-            it('should call findGesuchForInstitution for role Institution or Traegerschaft', function() {
+            it('should call findGesuchForInstitution for role Institution or Traegerschaft', function () {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
                 let gesuch: TSGesuch = new TSGesuch();
@@ -463,7 +465,7 @@ describe('gesuchModelManager', function () {
                 expect(gesuchRS.findGesuchForInstitution).toHaveBeenCalledWith(gesuch.id);
                 expect(gesuchModelManager.getGesuch()).toEqual(gesuch);
             });
-            it('should call findGesuch for other role but Institution/Traegerschaft', function() {
+            it('should call findGesuch for other role but Institution/Traegerschaft', function () {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
                 let gesuch: TSGesuch = new TSGesuch();
@@ -485,50 +487,23 @@ describe('gesuchModelManager', function () {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
             });
-            it('should be true if only Schulamtangebote', function() {
+            it('should be true if only Schulamtangebote', function () {
                 createKindWithBetreuung();
                 setInstitutionToExistingBetreuung(TSBetreuungsangebotTyp.TAGESSCHULE);
 
                 expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(true);
             });
-            it('should be false if not only Schulamtangebote', function() {
+            it('should be false if not only Schulamtangebote', function () {
                 createKindWithBetreuung();
                 setInstitutionToExistingBetreuung(TSBetreuungsangebotTyp.KITA);
 
                 expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(false);
             });
-            it('should be false if there are no Betreuungen or Kinds', function() {
+            it('should be false if there are no Betreuungen or Kinds', function () {
                 expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(false);
-            });
-        });
-        describe('areAllJAAngeboteNew', function () {
-            beforeEach(() => {
-                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
-                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
-            });
-            it('should be false if there are no Betreuungen or Kinds', function() {
-                expect(gesuchModelManager.areAllJAAngeboteNew()).toBe(false);
-            });
-            it('should be true if all JA-angebote are new', function() {
-                createKindWithBetreuung();
-                setInstitutionToExistingBetreuung(TSBetreuungsangebotTyp.KITA);
-                gesuchModelManager.getBetreuungToWorkWith().vorgaengerId = undefined; // the betreuung is new
-                expect(gesuchModelManager.areAllJAAngeboteNew()).toBe(true);
-            });
-            it('should be false if not all JA-angebote are new', function() {
-                createKindWithBetreuung();
-                setInstitutionToExistingBetreuung(TSBetreuungsangebotTyp.KITA);
-                gesuchModelManager.getBetreuungToWorkWith().vorgaengerId = 'vorgaenger_betreuungID'; // the betreuung existed already
-                expect(gesuchModelManager.areAllJAAngeboteNew()).toBe(false);
-            });
-            it('should be false if all are SA-Angebote', function() {
-                createKindWithBetreuung();
-                setInstitutionToExistingBetreuung(TSBetreuungsangebotTyp.TAGESSCHULE);
-                expect(gesuchModelManager.areAllJAAngeboteNew()).toBe(false);
             });
         });
     });
-
 
     // HELP METHODS
 
@@ -544,7 +519,6 @@ describe('gesuchModelManager', function () {
         gesuchModelManager.setKindIndex(gesuchModelManager.getGesuch().kindContainers.length - 1);
         tsKindContainer.kindNummer = gesuchModelManager.getKindIndex() + 1;
     }
-
 
     function createKindWithBetreuung() {
         createKindContainer();

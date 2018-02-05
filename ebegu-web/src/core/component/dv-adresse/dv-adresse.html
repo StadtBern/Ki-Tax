@@ -145,7 +145,7 @@
         <div class="row">
             <div class="col-sm-12 dv-input-container-medium">
                 <div class="form-group">
-                    <label class="md-no-float" data-translate="ADRESSE_LAND" for="{{vm.prefix}}-land">
+                    <label class="md-no-float required" data-translate="ADRESSE_LAND" for="{{vm.prefix}}-land">
                     </label>
                     <div class="dv-select-style">
                         <select aria-describedby="{{vm.prefix}}-land-error" name="adresseLand" id="{{vm.prefix}}-land"
@@ -174,7 +174,7 @@
                     <md-checkbox ng-model="vm.getModel().adresseJA.nichtInGemeinde" name="nichtInGemeinde"
                                  aria-label="{{'NICHT_IN_BERN_WOHNHAFT'|translate}}"
                                  dv-enable-element
-                                 dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
+                                 dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorOrAmtRole()"
                                  dv-enable-expression="vm.enableNichtInGemeinde()">
                         <span data-translate="NICHT_IN_BERN_WOHNHAFT"></span>
                     </md-checkbox>

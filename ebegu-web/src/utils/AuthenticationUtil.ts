@@ -29,9 +29,9 @@ export default class AuthenticationUtil {
         } else if (TSRoleUtil.getAdministratorJugendamtRole().indexOf(user.role) > -1) {
             $state.go('pendenzen');
         } else if (TSRoleUtil.getTraegerschaftInstitutionOnlyRoles().indexOf(user.role) > -1) {
-            $state.go('pendenzenInstitution');
+            $state.go('pendenzenBetreuungen');
         } else if (TSRoleUtil.getSchulamtOnlyRoles().indexOf(user.role) > -1) {
-            $state.go('faelle');
+            $state.go('pendenzen');
         } else if (TSRoleUtil.getSteueramtOnlyRoles().indexOf(user.role) > -1) {
             $state.go('pendenzenSteueramt');
         } else if (TSRoleUtil.getGesuchstellerOnlyRoles().indexOf(user.role) > -1) {

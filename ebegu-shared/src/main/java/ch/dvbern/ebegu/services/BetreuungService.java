@@ -25,6 +25,7 @@ import javax.validation.Valid;
 import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 
 /**
  * Service zum Verwalten von Betreuungen
@@ -54,6 +55,24 @@ public interface BetreuungService {
 	Betreuung betreuungPlatzBestaetigen(@Valid @Nonnull Betreuung betreuung);
 
 	/**
+	 * Setzt die Schulamt-Anmeldung auf SCHULAMT_ANMELDUNG_UEBERNOMMEN und sendet dem Gesuchsteller eine E-Mail.
+	 */
+	@Nonnull
+	Betreuung anmeldungSchulamtUebernehmen(@Valid @Nonnull Betreuung betreuung);
+
+	/**
+	 * Setzt die Schulamt-Anmeldung auf SCHULAMT_ANMELDUNG_ABGELEHNT und sendet dem Gesuchsteller eine E-Mail
+	 */
+	@Nonnull
+	Betreuung anmeldungSchulamtAblehnen(@Valid @Nonnull Betreuung betreuung);
+
+	/**
+	 * Setzt die Schulamt-Anmeldung auf SCHULAMT_FALSCHE_INSTITUTION.
+	 */
+	@Nonnull
+	Betreuung anmeldungSchulamtFalscheInstitution(@Valid @Nonnull Betreuung betreuung);
+
+	/**
 	 * @param key PK (id) der Betreuung
 	 * @return Betreuung mit dem gegebenen key oder null falls nicht vorhanden
 	 */
@@ -67,6 +86,48 @@ public interface BetreuungService {
 	 */
 	@Nonnull
 	Optional<Betreuung> findBetreuung(@Nonnull String key, boolean doAuthCheck);
+
+	/**
+	 * @param bgNummer BGNummer der Betreuung
+	 * @return Betreuung mit der angegebenen ID (z.B. 18.000116.1.2) oder null falls nicht vorhanden
+	 */
+	List<Betreuung> findBetreuungenByBGNummer(@Nonnull String bgNummer);
+
+	/**
+	 * @param bgNummer BGNummer der Betreuung
+	 * @return Betreuung mit der angegebenen ID (z.B. 18.000116.1.2) die AKTUELLE oder NULL ist.
+	 */
+	List<Betreuung> findNewestBetreuungByBGNummer(@Nonnull String bgNummer);
+
+	/**
+	 * Extract Fallnummer form bgNummer
+	 * @return Extracted Fallnummer
+	 */
+	Long getFallnummerFromBGNummer(String bgNummer);
+
+
+	/**
+	 * Extract Year form bgNummer
+	 * @return Extracted year
+	 */
+	int getYearFromBGNummer(String bgNummer);
+
+	/**
+	 * Extract KindNummer form bgNummer
+	 * @return Extracted kindNummer
+	 */
+	int getKindNummerFromBGNummer(String bgNummer);
+
+	/**
+	 * Extract BetreuungNummer form bgNummer
+	 * @return Extracted BetreuungNummer
+	 */
+	int getBetreuungNummerFromBGNummer(String bgNummer);
+
+	/**
+	 * Validate bgNummer
+	 */
+	boolean validateBGNummer(String bgNummer);
 
 	/**
 	 * @param key PK (id) der Betreuung
@@ -93,7 +154,7 @@ public interface BetreuungService {
 	 * und deren Status "WARTEN" ist.
 	 */
 	@Nonnull
-	Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser();
+	Collection<Betreuung> getPendenzenBetreuungen();
 
 	@Nonnull
 	List<Betreuung> findAllBetreuungenFromGesuch(String gesuchId);
@@ -125,4 +186,7 @@ public interface BetreuungService {
 	 */
 	@Nonnull
 	List<Abwesenheit> getAllAbwesenheitenWithMissingStatistics();
+
+
+	int changeAnmeldungMutationZustand(String betreuungsId, AnmeldungMutationZustand anmeldungMutationZustand);
 }

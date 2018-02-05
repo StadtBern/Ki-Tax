@@ -13,80 +13,88 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import TSApplicationProperty from '../models/TSApplicationProperty';
-import TSAbstractEntity from '../models/TSAbstractEntity';
-import TSAdresse from '../models/TSAdresse';
-import {TSAdressetyp} from '../models/enums/TSAdressetyp';
-import TSGesuchsteller from '../models/TSGesuchsteller';
-import TSGesuch from '../models/TSGesuch';
-import TSFall from '../models/TSFall';
-import DateUtil from './DateUtil';
-import TSLand from '../models/types/TSLand';
-import TSFamiliensituation from '../models/TSFamiliensituation';
-import {TSFachstelle} from '../models/TSFachstelle';
-import TSFinanzielleSituation from '../models/TSFinanzielleSituation';
-import TSFinanzielleSituationContainer from '../models/TSFinanzielleSituationContainer';
-import {TSMandant} from '../models/TSMandant';
-import {TSTraegerschaft} from '../models/TSTraegerschaft';
-import TSInstitution from '../models/TSInstitution';
-import TSInstitutionStammdaten from '../models/TSInstitutionStammdaten';
-import {TSDateRange} from '../models/types/TSDateRange';
-import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
-import TSKind from '../models/TSKind';
-import TSAbstractPersonEntity from '../models/TSAbstractPersonEntity';
-import {TSPensumFachstelle} from '../models/TSPensumFachstelle';
-import TSErwerbspensumContainer from '../models/TSErwerbspensumContainer';
-import TSErwerbspensum from '../models/TSErwerbspensum';
-import {TSAbstractPensumEntity} from '../models/TSAbstractPensumEntity';
-import TSFinanzielleSituationResultateDTO from '../models/dto/TSFinanzielleSituationResultateDTO';
-import TSBetreuung from '../models/TSBetreuung';
-import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
-import TSBetreuungspensum from '../models/TSBetreuungspensum';
-import TSEbeguParameter from '../models/TSEbeguParameter';
-import TSGesuchsperiode from '../models/TSGesuchsperiode';
-import TSAbstractAntragEntity from '../models/TSAbstractAntragEntity';
-import TSAntragDTO from '../models/TSAntragDTO';
-import EbeguUtil from './EbeguUtil';
-import TSKindContainer from '../models/TSKindContainer';
-import TSUser from '../models/TSUser';
-import TSEinkommensverschlechterungInfo from '../models/TSEinkommensverschlechterungInfo';
-import TSEinkommensverschlechterungContainer from '../models/TSEinkommensverschlechterungContainer';
-import TSAbstractFinanzielleSituation from '../models/TSAbstractFinanzielleSituation';
-import TSEinkommensverschlechterung from '../models/TSEinkommensverschlechterung';
 import TSDokumenteDTO from '../models/dto/TSDokumenteDTO';
-import TSDokumentGrund from '../models/TSDokumentGrund';
-import TSDokument from '../models/TSDokument';
-import TSVerfuegung from '../models/TSVerfuegung';
-import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
-import TSDownloadFile from '../models/TSDownloadFile';
-import TSPendenzInstitution from '../models/TSPendenzInstitution';
-import TSWizardStep from '../models/TSWizardStep';
-import TSEbeguVorlage from '../models/TSEbeguVorlage';
-import TSVorlage from '../models/TSVorlage';
-import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
-import TSFile from '../models/TSFile';
-import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
-import TSAbwesenheit from '../models/TSAbwesenheit';
-import TSMahnung from '../models/TSMahnung';
-import TSFinanzModel from '../models/TSFinanzModel';
-import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
-import TSAdresseContainer from '../models/TSAdresseContainer';
-import TSEinkommensverschlechterungInfoContainer from '../models/TSEinkommensverschlechterungInfoContainer';
-import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
-import TSMitteilung from '../models/TSMitteilung';
+import TSFinanzielleSituationResultateDTO from '../models/dto/TSFinanzielleSituationResultateDTO';
 import TSQuickSearchResult from '../models/dto/TSQuickSearchResult';
 import TSSearchResultEntry from '../models/dto/TSSearchResultEntry';
+import {TSAdressetyp} from '../models/enums/TSAdressetyp';
+import TSAbstractAntragEntity from '../models/TSAbstractAntragEntity';
+import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
+import TSAbstractEntity from '../models/TSAbstractEntity';
+import TSAbstractFinanzielleSituation from '../models/TSAbstractFinanzielleSituation';
+import {TSAbstractPensumEntity} from '../models/TSAbstractPensumEntity';
+import TSAbstractPersonEntity from '../models/TSAbstractPersonEntity';
+import TSAbwesenheit from '../models/TSAbwesenheit';
+import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
+import TSAdresse from '../models/TSAdresse';
+import TSAdresseContainer from '../models/TSAdresseContainer';
+import TSAntragDTO from '../models/TSAntragDTO';
+import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
+import TSApplicationProperty from '../models/TSApplicationProperty';
+import TSBelegungFerieninsel from '../models/TSBelegungFerieninsel';
+import TSBelegungFerieninselTag from '../models/TSBelegungFerieninselTag';
+import TSBelegungTagesschule from '../models/TSBelegungTagesschule';
+import TSBetreuung from '../models/TSBetreuung';
 import TSBetreuungsmitteilung from '../models/TSBetreuungsmitteilung';
 import TSBetreuungsmitteilungPensum from '../models/TSBetreuungsmitteilungPensum';
-import TSZahlungsauftrag from '../models/TSZahlungsauftrag';
-import TSZahlung from '../models/TSZahlung';
-import TSKindDublette from '../models/TSKindDublette';
-import TSEWKResultat from '../models/TSEWKResultat';
-import TSEWKPerson from '../models/TSEWKPerson';
-import TSEWKEinwohnercode from '../models/TSEWKEinwohnercode';
+import TSBetreuungspensum from '../models/TSBetreuungspensum';
+import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
+import TSDokument from '../models/TSDokument';
+import TSDokumentGrund from '../models/TSDokumentGrund';
+import TSDownloadFile from '../models/TSDownloadFile';
+import TSEbeguParameter from '../models/TSEbeguParameter';
+import TSEbeguVorlage from '../models/TSEbeguVorlage';
+import TSEinkommensverschlechterung from '../models/TSEinkommensverschlechterung';
+import TSEinkommensverschlechterungContainer from '../models/TSEinkommensverschlechterungContainer';
+import TSEinkommensverschlechterungInfo from '../models/TSEinkommensverschlechterungInfo';
+import TSEinkommensverschlechterungInfoContainer from '../models/TSEinkommensverschlechterungInfoContainer';
+import TSErwerbspensum from '../models/TSErwerbspensum';
+import TSErwerbspensumContainer from '../models/TSErwerbspensumContainer';
 import TSEWKAdresse from '../models/TSEWKAdresse';
 import TSEWKBeziehung from '../models/TSEWKBeziehung';
+import TSEWKEinwohnercode from '../models/TSEWKEinwohnercode';
+import TSEWKPerson from '../models/TSEWKPerson';
+import TSEWKResultat from '../models/TSEWKResultat';
+import {TSFachstelle} from '../models/TSFachstelle';
+import TSFall from '../models/TSFall';
 import TSFallAntragDTO from '../models/TSFallAntragDTO';
+import TSFamiliensituation from '../models/TSFamiliensituation';
+import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
+import TSFerieninselStammdaten from '../models/TSFerieninselStammdaten';
+import TSFerieninselZeitraum from '../models/TSFerieninselZeitraum';
+import TSFile from '../models/TSFile';
+import TSFinanzielleSituation from '../models/TSFinanzielleSituation';
+import TSFinanzielleSituationContainer from '../models/TSFinanzielleSituationContainer';
+import TSFinanzModel from '../models/TSFinanzModel';
+import TSGesuch from '../models/TSGesuch';
+import TSGesuchsperiode from '../models/TSGesuchsperiode';
+import TSGesuchsteller from '../models/TSGesuchsteller';
+import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
+import TSInstitution from '../models/TSInstitution';
+import TSInstitutionStammdaten from '../models/TSInstitutionStammdaten';
+import TSInstitutionStammdatenTagesschule from '../models/TSInstitutionStammdatenTagesschule';
+import TSKind from '../models/TSKind';
+import TSKindContainer from '../models/TSKindContainer';
+import TSKindDublette from '../models/TSKindDublette';
+import TSMahnung from '../models/TSMahnung';
+import {TSMandant} from '../models/TSMandant';
+import TSMitteilung from '../models/TSMitteilung';
+import TSModulTagesschule from '../models/TSModulTagesschule';
+import TSPendenzBetreuung from '../models/TSPendenzBetreuung';
+import {TSPensumFachstelle} from '../models/TSPensumFachstelle';
+import {TSTraegerschaft} from '../models/TSTraegerschaft';
+import TSUser from '../models/TSUser';
+import TSVerfuegung from '../models/TSVerfuegung';
+import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
+import TSVorlage from '../models/TSVorlage';
+import TSWizardStep from '../models/TSWizardStep';
+import TSZahlung from '../models/TSZahlung';
+import TSZahlungsauftrag from '../models/TSZahlungsauftrag';
+import {TSDateRange} from '../models/types/TSDateRange';
+import TSLand from '../models/types/TSLand';
+import DateUtil from './DateUtil';
+import EbeguUtil from './EbeguUtil';
+import TSAnmeldungDTO from '../models/TSAnmeldungDTO';
 
 export default class EbeguRestUtil {
     static $inject = ['EbeguUtil'];
@@ -471,6 +479,8 @@ export default class EbeguRestUtil {
             restFamiliensituation.gesuchstellerKardinalitaet = familiensituation.gesuchstellerKardinalitaet;
             restFamiliensituation.gemeinsameSteuererklaerung = familiensituation.gemeinsameSteuererklaerung;
             restFamiliensituation.aenderungPer = DateUtil.momentToLocalDate(familiensituation.aenderungPer);
+            restFamiliensituation.sozialhilfeBezueger = familiensituation.sozialhilfeBezueger;
+            restFamiliensituation.verguenstigungGewuenscht = familiensituation.verguenstigungGewuenscht;
             return restFamiliensituation;
         }
         return undefined;
@@ -520,6 +530,8 @@ export default class EbeguRestUtil {
             familiensituation.gesuchstellerKardinalitaet = familiensituationFromServer.gesuchstellerKardinalitaet;
             familiensituation.gemeinsameSteuererklaerung = familiensituationFromServer.gemeinsameSteuererklaerung;
             familiensituation.aenderungPer = DateUtil.localDateToMoment(familiensituationFromServer.aenderungPer);
+            familiensituation.sozialhilfeBezueger = familiensituationFromServer.sozialhilfeBezueger;
+            familiensituation.verguenstigungGewuenscht = familiensituationFromServer.verguenstigungGewuenscht;
             return familiensituation;
         }
         return undefined;
@@ -602,6 +614,7 @@ export default class EbeguRestUtil {
             this.abstractEntityToRestObject(restFall, fall);
             restFall.fallNummer = fall.fallNummer;
             restFall.verantwortlicher = this.userToRestObject({}, fall.verantwortlicher);
+            restFall.verantwortlicherSCH = this.userToRestObject({}, fall.verantwortlicherSCH);
             restFall.nextNumberKind = fall.nextNumberKind;
             restFall.besitzer = this.userToRestObject({}, fall.besitzer);
             return restFall;
@@ -615,6 +628,7 @@ export default class EbeguRestUtil {
             this.parseAbstractEntity(fallTS, fallFromServer);
             fallTS.fallNummer = fallFromServer.fallNummer;
             fallTS.verantwortlicher = this.parseUser(new TSUser(), fallFromServer.verantwortlicher);
+            fallTS.verantwortlicherSCH = this.parseUser(new TSUser(), fallFromServer.verantwortlicherSCH);
             fallTS.nextNumberKind = fallFromServer.nextNumberKind;
             fallTS.besitzer = this.parseUser(new TSUser(), fallFromServer.besitzer);
             return fallTS;
@@ -641,6 +655,7 @@ export default class EbeguRestUtil {
         restGesuch.timestampVerfuegt = DateUtil.momentToLocalDateTime(gesuch.timestampVerfuegt);
         restGesuch.gueltig = gesuch.gueltig;
         restGesuch.dokumenteHochgeladen = gesuch.dokumenteHochgeladen;
+        restGesuch.finSitStatus = gesuch.finSitStatus;
         return restGesuch;
     }
 
@@ -666,6 +681,8 @@ export default class EbeguRestUtil {
             gesuchTS.timestampVerfuegt = DateUtil.localDateTimeToMoment(gesuchFromServer.timestampVerfuegt);
             gesuchTS.gueltig = gesuchFromServer.gueltig;
             gesuchTS.dokumenteHochgeladen = gesuchFromServer.dokumenteHochgeladen;
+            gesuchTS.finSitStatus = gesuchFromServer.finSitStatus;
+            gesuchTS.neustesGesuch = gesuchFromServer.neustesGesuch;
             return gesuchTS;
         }
         return undefined;
@@ -800,6 +817,7 @@ export default class EbeguRestUtil {
             restInstitutionStammdaten.adresse = this.adresseToRestObject({}, institutionStammdaten.adresse);
             restInstitutionStammdaten.kontoinhaber = institutionStammdaten.kontoinhaber;
             restInstitutionStammdaten.adresseKontoinhaber = this.adresseToRestObject({}, institutionStammdaten.adresseKontoinhaber);
+            restInstitutionStammdaten.institutionStammdatenTagesschule = this.institutionStammdatenTagesschuleToRestObject({}, institutionStammdaten.institutionStammdatenTagesschule);
             return restInstitutionStammdaten;
         }
         return undefined;
@@ -816,6 +834,8 @@ export default class EbeguRestUtil {
             institutionStammdatenTS.adresse = this.parseAdresse(new TSAdresse(), institutionStammdatenFromServer.adresse);
             institutionStammdatenTS.kontoinhaber = institutionStammdatenFromServer.kontoinhaber;
             institutionStammdatenTS.adresseKontoinhaber = this.parseAdresse(new TSAdresse(), institutionStammdatenFromServer.adresseKontoinhaber);
+            institutionStammdatenTS.institutionStammdatenTagesschule = this.parseInstitutionStammdatenTagesschule(new TSInstitutionStammdatenTagesschule(),
+                institutionStammdatenFromServer.institutionStammdatenTagesschule);
             return institutionStammdatenTS;
         }
         return undefined;
@@ -831,6 +851,26 @@ export default class EbeguRestUtil {
             institutionStammdaten[0] = this.parseInstitutionStammdaten(new TSInstitutionStammdaten(), data);
         }
         return institutionStammdaten;
+    }
+
+    public institutionStammdatenTagesschuleToRestObject(restInstitutionStammdatenTagesschule: any,
+                                                        institutionStammdatenTagesschule: TSInstitutionStammdatenTagesschule): any {
+        if (institutionStammdatenTagesschule) {
+            this.abstractEntityToRestObject(restInstitutionStammdatenTagesschule, institutionStammdatenTagesschule);
+            restInstitutionStammdatenTagesschule.moduleTagesschule = this.moduleTagesschuleArrayToRestObject(institutionStammdatenTagesschule.moduleTagesschule);
+            return restInstitutionStammdatenTagesschule;
+        }
+        return undefined;
+    }
+
+    public parseInstitutionStammdatenTagesschule(institutionStammdatenTagesschuleTS: TSInstitutionStammdatenTagesschule,
+                                                 institutionStammdatenTagesschuleFromServer: any): TSInstitutionStammdatenTagesschule {
+        if (institutionStammdatenTagesschuleFromServer) {
+            this.parseAbstractEntity(institutionStammdatenTagesschuleTS, institutionStammdatenTagesschuleFromServer);
+            institutionStammdatenTagesschuleTS.moduleTagesschule = this.parseModuleTagesschuleArray(institutionStammdatenTagesschuleFromServer.moduleTagesschule);
+            return institutionStammdatenTagesschuleTS;
+        }
+        return undefined;
     }
 
     public finanzielleSituationContainerToRestObject(restFinanzielleSituationContainer: any,
@@ -1174,7 +1214,21 @@ export default class EbeguRestUtil {
         restBetreuung.betreuungMutiert = betreuung.betreuungMutiert;
         restBetreuung.abwesenheitMutiert = betreuung.abwesenheitMutiert;
         restBetreuung.gueltig = betreuung.gueltig;
+        restBetreuung.belegungTagesschule = this.belegungTagesschuleToRestObject({}, betreuung.belegungTagesschule);
+        restBetreuung.belegungFerieninsel = this.belegungFerieninselToRestObject({}, betreuung.belegungFerieninsel);
+        restBetreuung.anmeldungMutationZustand = betreuung.anmeldungMutationZustand;
         return restBetreuung;
+    }
+
+    public anmeldungDTOToRestObject(restAngebot: any, angebotDTO: TSAnmeldungDTO): any {
+        restAngebot.betreuung = this.betreuungToRestObject({}, angebotDTO.betreuung);
+        restAngebot.additionalKindQuestions = angebotDTO.additionalKindQuestions;
+        restAngebot.einschulung = angebotDTO.einschulung;
+        restAngebot.kindContainerId = angebotDTO.kindContainerId;
+        restAngebot.mutterspracheDeutsch = angebotDTO.mutterspracheDeutsch;
+        restAngebot.wohnhaftImGleichenHaushalt = angebotDTO.wohnhaftImGleichenHaushalt;
+        return restAngebot;
+
     }
 
     public betreuungspensumContainerToRestObject(restBetPensCont: any, betPensCont: TSBetreuungspensumContainer): any {
@@ -1250,6 +1304,10 @@ export default class EbeguRestUtil {
             betreuungTS.betreuungMutiert = betreuungFromServer.betreuungMutiert;
             betreuungTS.abwesenheitMutiert = betreuungFromServer.abwesenheitMutiert;
             betreuungTS.gueltig = betreuungFromServer.gueltig;
+            betreuungTS.belegungTagesschule = this.parseBelegungTagesschule(new TSBelegungTagesschule(), betreuungFromServer.belegungTagesschule);
+            betreuungTS.belegungFerieninsel = this.parseBelegungFerieninsel(new TSBelegungFerieninsel(), betreuungFromServer.belegungFerieninsel);
+            betreuungTS.anmeldungMutationZustand = betreuungFromServer.anmeldungMutationZustand;
+            betreuungTS.bgNummer = betreuungFromServer.bgNummer;
             return betreuungTS;
         }
         return undefined;
@@ -1350,6 +1408,8 @@ export default class EbeguRestUtil {
         if (gesuchsperiode) {
             this.abstractDateRangeEntityToRestObject(restGesuchsperiode, gesuchsperiode);
             restGesuchsperiode.status = gesuchsperiode.status;
+            restGesuchsperiode.datumFreischaltungTagesschule = DateUtil.momentToLocalDate(gesuchsperiode.datumFreischaltungTagesschule);
+            restGesuchsperiode.datumErsterSchultag = DateUtil.momentToLocalDate(gesuchsperiode.datumErsterSchultag);
             return restGesuchsperiode;
         }
         return undefined;
@@ -1359,6 +1419,8 @@ export default class EbeguRestUtil {
         if (gesuchsperiodeFromServer) {
             this.parseDateRangeEntity(gesuchsperiodeTS, gesuchsperiodeFromServer);
             gesuchsperiodeTS.status = gesuchsperiodeFromServer.status;
+            gesuchsperiodeTS.datumFreischaltungTagesschule = DateUtil.localDateToMoment(gesuchsperiodeFromServer.datumFreischaltungTagesschule);
+            gesuchsperiodeTS.datumErsterSchultag = DateUtil.localDateToMoment(gesuchsperiodeFromServer.datumErsterSchultag);
             return gesuchsperiodeTS;
         }
         return undefined;
@@ -1390,6 +1452,9 @@ export default class EbeguRestUtil {
         restPendenz.institutionen = pendenz.institutionen;
         restPendenz.kinder = pendenz.kinder;
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
+        restPendenz.verantwortlicherSCH = pendenz.verantwortlicherSCH;
+        restPendenz.verantwortlicherUsernameJA = pendenz.verantwortlicherUsernameJA;
+        restPendenz.verantwortlicherUsernameSCH = pendenz.verantwortlicherUsernameSCH;
         restPendenz.status = pendenz.status;
         restPendenz.verfuegt = pendenz.verfuegt;
         restPendenz.beschwerdeHaengig = pendenz.beschwerdeHaengig;
@@ -1415,6 +1480,9 @@ export default class EbeguRestUtil {
         antragTS.gesuchsperiodeGueltigBis = DateUtil.localDateToMoment(antragFromServer.gesuchsperiodeGueltigBis);
         antragTS.institutionen = antragFromServer.institutionen;
         antragTS.verantwortlicher = antragFromServer.verantwortlicher;
+        antragTS.verantwortlicherSCH = antragFromServer.verantwortlicherSCH;
+        antragTS.verantwortlicherUsernameJA = antragFromServer.verantwortlicherUsernameJA;
+        antragTS.verantwortlicherUsernameSCH = antragFromServer.verantwortlicherUsernameSCH;
         antragTS.status = antragFromServer.status;
         antragTS.verfuegt = antragFromServer.verfuegt;
         antragTS.beschwerdeHaengig = antragFromServer.beschwerdeHaengig;
@@ -1423,6 +1491,7 @@ export default class EbeguRestUtil {
         antragTS.eingangsart = antragFromServer.eingangsart;
         antragTS.besitzerUsername = antragFromServer.besitzerUsername;
         antragTS.dokumenteHochgeladen = antragFromServer.dokumenteHochgeladen;
+        antragTS.neustesGesuch = antragFromServer.neustesGesuch;
         return antragTS;
     }
 
@@ -1488,7 +1557,7 @@ export default class EbeguRestUtil {
         return false;
     }
 
-    public pendenzInstitutionToRestObject(restPendenz: any, pendenz: TSPendenzInstitution): any {
+    public pendenzBetreuungenToRestObject(restPendenz: any, pendenz: TSPendenzBetreuung): any {
         restPendenz.betreuungsNummer = pendenz.betreuungsNummer;
         restPendenz.betreuungsId = pendenz.betreuungsId;
         restPendenz.gesuchId = pendenz.gesuchId;
@@ -1505,7 +1574,7 @@ export default class EbeguRestUtil {
         return restPendenz;
     }
 
-    public parsePendenzInstitution(pendenzTS: TSPendenzInstitution, pendenzFromServer: any): TSPendenzInstitution {
+    public parsePendenzBetreuungen(pendenzTS: TSPendenzBetreuung, pendenzFromServer: any): TSPendenzBetreuung {
         pendenzTS.betreuungsNummer = pendenzFromServer.betreuungsNummer;
         pendenzTS.betreuungsId = pendenzFromServer.betreuungsId;
         pendenzTS.gesuchId = pendenzFromServer.gesuchId;
@@ -1522,14 +1591,14 @@ export default class EbeguRestUtil {
         return pendenzTS;
     }
 
-    public parsePendenzenInstitution(data: any): TSPendenzInstitution[] {
-        let pendenzen: TSPendenzInstitution[] = [];
+    public parsePendenzBetreuungenList(data: any): TSPendenzBetreuung[] {
+        let pendenzen: TSPendenzBetreuung[] = [];
         if (data && Array.isArray(data)) {
             for (let i = 0; i < data.length; i++) {
-                pendenzen[i] = this.parsePendenzInstitution(new TSPendenzInstitution(), data[i]);
+                pendenzen[i] = this.parsePendenzBetreuungen(new TSPendenzBetreuung(), data[i]);
             }
         } else {
-            pendenzen[0] = this.parsePendenzInstitution(new TSPendenzInstitution(), data);
+            pendenzen[0] = this.parsePendenzBetreuungen(new TSPendenzBetreuung(), data);
         }
         return pendenzen;
     }
@@ -1561,6 +1630,7 @@ export default class EbeguRestUtil {
             userTS.mandant = this.parseMandant(new TSMandant(), userFromServer.mandant);
             userTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), userFromServer.traegerschaft);
             userTS.institution = this.parseInstitution(new TSInstitution(), userFromServer.institution);
+            userTS.amt = userFromServer.amt;
             return userTS;
         }
         return undefined;
@@ -1935,6 +2005,7 @@ export default class EbeguRestUtil {
             this.abstractEntityToRestObject(restGSCont, gesuchstellerCont);
             restGSCont.adressen = this.adressenContainerListToRestObject(gesuchstellerCont.adressen);
             restGSCont.alternativeAdresse = this.adresseContainerToRestObject({}, gesuchstellerCont.korrespondenzAdresse);
+            restGSCont.rechnungsAdresse = this.adresseContainerToRestObject({}, gesuchstellerCont.rechnungsAdresse);
             if (gesuchstellerCont.gesuchstellerGS) {
                 restGSCont.gesuchstellerGS = this.gesuchstellerToRestObject({}, gesuchstellerCont.gesuchstellerGS);
             }
@@ -1967,6 +2038,8 @@ export default class EbeguRestUtil {
             gesuchstellerContTS.adressen = this.parseAdressenContainerList(gesuchstellerContFromServer.adressen);
             gesuchstellerContTS.korrespondenzAdresse = this.parseAdresseContainer(
                 new TSAdresseContainer(), gesuchstellerContFromServer.alternativeAdresse);
+            gesuchstellerContTS.rechnungsAdresse = this.parseAdresseContainer(
+                new TSAdresseContainer(), gesuchstellerContFromServer.rechnungsAdresse);
             gesuchstellerContTS.finanzielleSituationContainer = this.parseFinanzielleSituationContainer(
                 new TSFinanzielleSituationContainer(), gesuchstellerContFromServer.finanzielleSituationContainer);
             gesuchstellerContTS.einkommensverschlechterungContainer = this.parseEinkommensverschlechterungContainer(
@@ -2275,6 +2348,194 @@ export default class EbeguRestUtil {
             tsEWKBeziehung.geburtsdatum = DateUtil.localDateToMoment(ewkBeziehungFromServer.geburtsdatum);
             tsEWKBeziehung.adresse = this.parseEWKAdresse(new TSEWKAdresse(), ewkBeziehungFromServer.adresse);
             return tsEWKBeziehung;
+        }
+        return undefined;
+    }
+
+    public parseModuleTagesschuleArray(data: Array<any>): TSModulTagesschule[] {
+        let moduleTagesschule: TSModulTagesschule[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                moduleTagesschule[i] = this.parseModulTagesschule(new TSModulTagesschule(), data[i]);
+            }
+        } else {
+            moduleTagesschule[0] = this.parseModulTagesschule(new TSModulTagesschule(), data);
+        }
+        return moduleTagesschule;
+    }
+
+    private parseModulTagesschule(modulTagesschuleTS: TSModulTagesschule, modulFromServer: any): TSModulTagesschule {
+        if (modulFromServer) {
+            this.parseAbstractEntity(modulTagesschuleTS, modulFromServer);
+            modulTagesschuleTS.modulTagesschuleName = modulFromServer.modulTagesschuleName;
+            modulTagesschuleTS.wochentag = modulFromServer.wochentag;
+            modulTagesschuleTS.zeitVon = DateUtil.localDateTimeToMoment(modulFromServer.zeitVon);
+            modulTagesschuleTS.zeitBis = DateUtil.localDateTimeToMoment(modulFromServer.zeitBis);
+            return modulTagesschuleTS;
+        }
+        return undefined;
+    }
+
+    private moduleTagesschuleArrayToRestObject(moduleTagesschule: Array<TSModulTagesschule>): any[] {
+        let list: any[] = [];
+        if (moduleTagesschule) {
+            for (let i = 0; i < moduleTagesschule.length; i++) {
+                list[i] = this.modulTagesschuleToRestObject({}, moduleTagesschule[i]);
+            }
+        }
+        return list;
+    }
+
+    private modulTagesschuleToRestObject(restModul: any, modulTagesschuleTS: TSModulTagesschule): any {
+        if (modulTagesschuleTS) {
+            this.abstractEntityToRestObject(restModul, modulTagesschuleTS);
+            restModul.modulTagesschuleName = modulTagesschuleTS.modulTagesschuleName;
+            restModul.wochentag = modulTagesschuleTS.wochentag;
+            restModul.zeitVon = DateUtil.momentToLocalDateTime(modulTagesschuleTS.zeitVon);
+            restModul.zeitBis = DateUtil.momentToLocalDateTime(modulTagesschuleTS.zeitBis);
+            return restModul;
+        }
+        return undefined;
+    }
+
+    private parseBelegungTagesschule(belegungTS: TSBelegungTagesschule, belegungFromServer: any): TSBelegungTagesschule {
+        if (belegungFromServer) {
+            this.parseAbstractEntity(belegungTS, belegungFromServer);
+            belegungTS.moduleTagesschule = this.parseModuleTagesschuleArray(belegungFromServer.moduleTagesschule);
+            belegungTS.eintrittsdatum = DateUtil.localDateToMoment(belegungFromServer.eintrittsdatum);
+            return belegungTS;
+        }
+        return undefined;
+    }
+
+    private belegungTagesschuleToRestObject(restBelegung: any, belegungTS: TSBelegungTagesschule): any {
+        if (belegungTS) {
+            this.abstractEntityToRestObject(restBelegung, belegungTS);
+            restBelegung.moduleTagesschule = this.moduleTagesschuleArrayToRestObject(belegungTS.moduleTagesschule);
+            restBelegung.eintrittsdatum = DateUtil.momentToLocalDate(belegungTS.eintrittsdatum);
+            return restBelegung;
+        }
+        return undefined;
+    }
+
+    public parseFerieninselStammdatenList(data: any): TSFerieninselStammdaten[] {
+        let ferieninselStammdatenList: TSFerieninselStammdaten[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                ferieninselStammdatenList[i] = this.parseFerieninselStammdaten(new TSFerieninselStammdaten(), data[i]);
+            }
+        } else {
+            ferieninselStammdatenList[0] = this.parseFerieninselStammdaten(new TSFerieninselStammdaten(), data);
+        }
+        return ferieninselStammdatenList;
+    }
+
+    public parseFerieninselStammdaten(ferieninselStammdatenTS: TSFerieninselStammdaten, receivedFerieninselStammdaten: any): TSFerieninselStammdaten {
+        if (receivedFerieninselStammdaten) {
+            this.parseAbstractEntity(ferieninselStammdatenTS, receivedFerieninselStammdaten);
+            ferieninselStammdatenTS.ferienname = receivedFerieninselStammdaten.ferienname;
+            ferieninselStammdatenTS.anmeldeschluss = DateUtil.localDateToMoment(receivedFerieninselStammdaten.anmeldeschluss);
+            ferieninselStammdatenTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), receivedFerieninselStammdaten.gesuchsperiode);
+            if (receivedFerieninselStammdaten.zeitraumList[0]) {
+                let firstZeitraum: TSFerieninselZeitraum = new TSFerieninselZeitraum();
+                this.parseDateRangeEntity(firstZeitraum, receivedFerieninselStammdaten.zeitraumList[0]);
+                ferieninselStammdatenTS.zeitraum = firstZeitraum;
+            }
+            ferieninselStammdatenTS.zeitraumList = [];
+            for (let i = 1; i < receivedFerieninselStammdaten.zeitraumList.length; i++) {
+                let zeitraum: TSFerieninselZeitraum = new TSFerieninselZeitraum();
+                this.parseDateRangeEntity(zeitraum, receivedFerieninselStammdaten.zeitraumList[i]);
+                ferieninselStammdatenTS.zeitraumList.push(zeitraum);
+            }
+            if (receivedFerieninselStammdaten.potenzielleFerieninselTageFuerBelegung) {
+                ferieninselStammdatenTS.potenzielleFerieninselTageFuerBelegung = this.parseBelegungFerieninselTagList(receivedFerieninselStammdaten.potenzielleFerieninselTageFuerBelegung);
+            }
+            return ferieninselStammdatenTS;
+        }
+        return undefined;
+    }
+
+    public ferieninselStammdatenToRestObject(restFerieninselStammdaten: any, ferieninselStammdatenTS: TSFerieninselStammdaten): any {
+        if (ferieninselStammdatenTS) {
+            this.abstractEntityToRestObject(restFerieninselStammdaten, ferieninselStammdatenTS);
+            restFerieninselStammdaten.ferienname = ferieninselStammdatenTS.ferienname;
+            restFerieninselStammdaten.anmeldeschluss = DateUtil.momentToLocalDate(ferieninselStammdatenTS.anmeldeschluss);
+            restFerieninselStammdaten.gesuchsperiode = this.gesuchsperiodeToRestObject({}, ferieninselStammdatenTS.gesuchsperiode);
+            if (ferieninselStammdatenTS.zeitraum) {
+                let firstZeitraum: any = {};
+                this.abstractDateRangeEntityToRestObject(firstZeitraum, ferieninselStammdatenTS.zeitraum);
+                restFerieninselStammdaten.zeitraumList = [];
+                restFerieninselStammdaten.zeitraumList[0] = firstZeitraum;
+            }
+            if (ferieninselStammdatenTS.zeitraumList) {
+                for (let i = 0; i < ferieninselStammdatenTS.zeitraumList.length; i++) {
+                    let zeitraum: any = {};
+                    this.abstractDateRangeEntityToRestObject(zeitraum, ferieninselStammdatenTS.zeitraumList[i]);
+                    restFerieninselStammdaten.zeitraumList[i + 1] = zeitraum;
+                }
+            }
+            return restFerieninselStammdaten;
+        }
+        return undefined;
+    }
+
+    public parseBelegungFerieninselList(data: any): TSBelegungFerieninsel[] {
+        let belegungFerieninselList: TSBelegungFerieninsel[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                belegungFerieninselList[i] = this.parseBelegungFerieninsel(new TSBelegungFerieninsel(), data[i]);
+            }
+        } else {
+            belegungFerieninselList[0] = this.parseBelegungFerieninsel(new TSBelegungFerieninsel(), data);
+        }
+        return belegungFerieninselList;
+    }
+
+    public parseBelegungFerieninsel(belegungFerieninselTS: TSBelegungFerieninsel, receivedBelegungFerieninsel: any): TSBelegungFerieninsel {
+        if (receivedBelegungFerieninsel) {
+            this.parseAbstractEntity(belegungFerieninselTS, receivedBelegungFerieninsel);
+            belegungFerieninselTS.ferienname = receivedBelegungFerieninsel.ferienname;
+            belegungFerieninselTS.tage = this.parseBelegungFerieninselTagList(receivedBelegungFerieninsel.tage);
+            return belegungFerieninselTS;
+        }
+        return undefined;
+    }
+
+    private parseBelegungFerieninselTagList(data: any): TSBelegungFerieninselTag[] {
+        let belegungFerieninselTagList: TSBelegungFerieninselTag[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                belegungFerieninselTagList[i] = this.parseBelegungFerieninselTag(new TSBelegungFerieninselTag(), data[i]);
+            }
+        } else {
+            belegungFerieninselTagList[0] = this.parseBelegungFerieninselTag(new TSBelegungFerieninselTag(), data);
+        }
+        return belegungFerieninselTagList;
+    }
+
+    private parseBelegungFerieninselTag(belegungFerieninselTagTS: TSBelegungFerieninselTag, receivedBelegungFerieninselTag: any): TSBelegungFerieninselTag {
+        if (receivedBelegungFerieninselTag) {
+            this.parseAbstractEntity(belegungFerieninselTagTS, receivedBelegungFerieninselTag);
+            belegungFerieninselTagTS.tag = DateUtil.localDateToMoment(receivedBelegungFerieninselTag.tag);
+            return belegungFerieninselTagTS;
+        }
+        return undefined;
+    }
+
+    public belegungFerieninselToRestObject(restBelegungFerieninsel: any, belegungFerieninselTS: TSBelegungFerieninsel): any {
+        if (belegungFerieninselTS) {
+            this.abstractEntityToRestObject(restBelegungFerieninsel, belegungFerieninselTS);
+            restBelegungFerieninsel.ferienname = belegungFerieninselTS.ferienname;
+            restBelegungFerieninsel.tage = [];
+            if (belegungFerieninselTS.tage) {
+                for (let i = 0; i < belegungFerieninselTS.tage.length; i++) {
+                    let tagRest: any = {};
+                    this.abstractEntityToRestObject(tagRest, belegungFerieninselTS.tage[i]);
+                    tagRest.tag = DateUtil.momentToLocalDate(belegungFerieninselTS.tage[i].tag);
+                    restBelegungFerieninsel.tage.push(tagRest);
+                }
+            }
+            return restBelegungFerieninsel;
         }
         return undefined;
     }

@@ -13,12 +13,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ILogService, IRootScopeService} from '@types/angular';
 import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
 import ErrorService from '../core/errors/service/ErrorService';
 import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
 import EwkRS from '../core/service/ewkRS.rest';
-import GesuchstellerRS from '../core/service/gesuchstellerRS.rest';
 import {IN_BEARBEITUNG_BASE_NAME, TSAntragStatus} from '../models/enums/TSAntragStatus';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import {TSGesuchBetreuungenStatus} from '../models/enums/TSGesuchBetreuungenStatus';
@@ -27,6 +25,8 @@ import {TSRole} from '../models/enums/TSRole';
 import {TSWizardStepName} from '../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../models/enums/TSWizardStepStatus';
 import TSEWKPerson from '../models/TSEWKPerson';
+import GesuchstellerRS from '../core/service/gesuchstellerRS.rest';
+import {ILogService, IRootScopeService} from 'angular';
 import TSEWKResultat from '../models/TSEWKResultat';
 import TSGesuch from '../models/TSGesuch';
 import TSGesuchsteller from '../models/TSGesuchsteller';
@@ -62,8 +62,8 @@ export class GesuchRouteController {
         this.TSRoleUtil = TSRoleUtil;
     }
 
-    showFinanzsituationStart(): boolean {
-        return this.gesuchModelManager.isGesuchsteller2Required();
+    showFinanzielleSituationStart(): boolean {
+        return this.gesuchModelManager.showFinanzielleSituationStart();
     }
 
     public getDateFromGesuch(): string {
@@ -151,7 +151,7 @@ export class GesuchRouteController {
             toTranslate = this.gesuchModelManager.calculateNewStatus(this.gesuchModelManager.getGesuch().status);
         }
         let isUserGesuchsteller: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles());
-        let isUserJA: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getJugendamtRole());
+        let isUserAmt: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getJugendamtAndSchulamtRole());
         let isUserSTV: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getSteueramtOnlyRoles());
 
         if (toTranslate === TSAntragStatus.IN_BEARBEITUNG_GS && isUserGesuchsteller) {
@@ -161,14 +161,14 @@ export class GesuchRouteController {
                 return this.ebeguUtil.translateString(TSAntragStatus[TSAntragStatus.PLATZBESTAETIGUNG_WARTEN]);
             }
         }
-        if (toTranslate === TSAntragStatus.IN_BEARBEITUNG_JA && isUserJA) {
+        if (toTranslate === TSAntragStatus.IN_BEARBEITUNG_JA && isUserAmt) {
             return this.ebeguUtil.translateString(IN_BEARBEITUNG_BASE_NAME);
         }
         switch (toTranslate) {
             case TSAntragStatus.GEPRUEFT_STV:
             case TSAntragStatus.IN_BEARBEITUNG_STV:
             case TSAntragStatus.PRUEFUNG_STV:
-                if (!isUserJA && !isUserSTV) {
+                if (!isUserAmt && !isUserSTV) {
                     return this.ebeguUtil.translateString('VERFUEGT');
                 }
                 break;

@@ -380,7 +380,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		zahlungsposition.setBetrag(zeitabschnittNeu.getVerguenstigung());
 		zahlungsposition.setZahlung(zahlung);
 		zahlungsposition.setIgnoriert(zeitabschnittNeu.getZahlungsstatus().isIgnoriertIgnorierend());
-		ZahlungspositionStatus status = ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN;
+		ZahlungspositionStatus status = ZahlungspositionStatus.KORREKTUR;
 		zahlungsposition.setStatus(status);
 		if (!zeitabschnittNeu.getZahlungsstatus().isIgnoriertIgnorierend()) {
 			zeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET);
@@ -400,7 +400,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		korrekturPosition.setBetrag(vorgaengerZeitabschnitt.getVerguenstigung().negate());
 		korrekturPosition.setZahlung(zahlung);
 		korrekturPosition.setIgnoriert(ignoriert); // ignoriert kommt vom neuen Zeitabschnitt
-		ZahlungspositionStatus status = ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN;
+		ZahlungspositionStatus status = ZahlungspositionStatus.KORREKTUR;
 		korrekturPosition.setStatus(status);
 		zahlung.getZahlungspositionen().add(korrekturPosition);
 		if (vorgaengerZeitabschnitt.getZahlungsstatus() == VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT) {

@@ -59,6 +59,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
 import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
 import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
@@ -74,7 +75,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(FallService.class)
-@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, SCHULAMT })
+@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, ADMINISTRATOR_SCHULAMT, SCHULAMT })
 public class FallServiceBean extends AbstractBaseService implements FallService {
 
 	@Inject
@@ -101,9 +102,12 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	@Inject
 	private SuperAdminService superAdminService;
 
+	@Inject
+	private ApplicationPropertyService applicationPropertyService;
+
 	@Nonnull
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Fall saveFall(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall);
 		// Den "Besitzer" auf dem Fall ablegen
@@ -236,6 +240,16 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		final Fall fall = fallOpt.orElseThrow(() -> new EbeguEntityNotFoundException("hasFallAnyMitteilung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallID));
 		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForCurrentRolle(fall);
 		return !mitteilungenForCurrentRolle.isEmpty();
+	}
+
+	@Override
+	@Nonnull
+	public Optional<Benutzer> getHauptOrDefaultVerantwortlicher(@Nonnull Fall fall) {
+		Benutzer verantwortlicher = fall.getHauptVerantwortlicher();
+		if (verantwortlicher == null) {
+			return applicationPropertyService.readDefaultVerantwortlicherFromProperties();
+		}
+		return Optional.of(verantwortlicher);
 	}
 
 	private String readBesitzerEmailForFall(String fallID) {

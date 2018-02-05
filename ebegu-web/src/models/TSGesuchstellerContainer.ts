@@ -26,6 +26,7 @@ export default class TSGesuchstellerContainer extends TSAbstractEntity {
     private _gesuchstellerJA: TSGesuchsteller;
     private _adressen: Array<TSAdresseContainer>;
     private _korrespondenzAdresse: TSAdresseContainer;
+    private _rechnungsAdresse: TSAdresseContainer;
     private _finanzielleSituationContainer: TSFinanzielleSituationContainer;
     private _erwerbspensenContainer: Array<TSErwerbspensumContainer>;
     private _einkommensverschlechterungContainer: TSEinkommensverschlechterungContainer;
@@ -77,6 +78,14 @@ export default class TSGesuchstellerContainer extends TSAbstractEntity {
 
     public set korrespondenzAdresse(value: TSAdresseContainer) {
         this._korrespondenzAdresse = value;
+    }
+
+    public get rechnungsAdresse(): TSAdresseContainer {
+        return this._rechnungsAdresse;
+    }
+
+    public set rechnungsAdresse(value: TSAdresseContainer) {
+        this._rechnungsAdresse = value;
     }
 
     public get finanzielleSituationContainer(): TSFinanzielleSituationContainer {

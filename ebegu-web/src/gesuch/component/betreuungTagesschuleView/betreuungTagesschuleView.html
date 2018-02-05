@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="betreuungTagesschuleView">
+
+    <fieldset ng-disabled="!vm.betreuung.isEnabled() || vm.isFreigabequittungAusstehend()">
+
+        <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.hasTagesschulenAnmeldung()">
+
+            <!-- Modulauswahl Tagesschule -->
+            <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">
+
+                <!-- Eintrittsdatum -->
+                <div class="row">
+                    <div class="col-sm-12 dv-input-container-small form-group">
+                        <label class="md-no-float required" data-translate="EINTRITTSDATUM" for="eintrittsdatum_ID"></label>
+                        <dv-datepicker input-id="eintrittsdatum_ID" name="eintrittsdatum"
+                                       ng-model="vm.betreuung.belegungTagesschule.eintrittsdatum"
+                                       ng-required="true"
+                                       class="input-element"
+                                       dv-min-date="vm.datumErsterSchultag">
+                        </dv-datepicker>
+                        <dv-error-messages input-id="eintrittsdatum" for="vm.form.eintrittsdatum.$error"></dv-error-messages>
+                    </div>
+                </div>
+
+                <table ng-if="vm.isTagesschuleAlreadySelected()" class="dv-tagesschule-table">
+                    <tr>
+                        <td></td>
+                        <td class="dv-tagesschule-table__weekdays" ng-repeat="weekDay in vm.getWeekDays()">
+                            <span ng-bind="weekDay | translate"></span>
+                        </td>
+                    </tr>
+                    <tr class="dv-tagesschule-table__tr" ng-repeat="modulName in vm.getModulTagesschuleNameList()">
+                        <td ng-if="vm.isModulDefinedInSelectedTS(modulName, vm.getMonday())" ng-bind="vm.getModulName(modulName)"></td>
+                        <td ng-if="vm.isModulDefinedInSelectedTS(modulName, vm.getMonday())"
+                            ng-repeat="weekDay in vm.getWeekDays()">
+                            <div class="checkbox dv-tagesschule-table__checkbox">
+                                <md-checkbox name="modul_{{modulName}}_{{weekDay}}"
+                                             ng-model="vm.getModul(modulName, weekDay).angemeldet"
+                                             aria-label="Modul {{modulName | translate}} {{weekDay | translate}}"
+                                             ng-disabled="!vm.isModulEnabled(modulName, weekDay) || vm.isFreigabequittungAusstehend()">
+                                </md-checkbox>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+
+            <!-- Hinweis, dass Tageschulanmeldung ncoh nicht freigeschaltet -->
+            <div ng-if="!vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">
+                <div class="well well-status-warten">
+                    <i class="fa fa-exclamation " aria-hidden="true"></i>
+                    <span>{{vm.getTagesschuleAnmeldungNotYetReadyText()}}</span>
+                </div>
+            </div>
+
+            <!-- Hinweis, wenn keine Module ausgewaehlt -->
+            <div ng-if="vm.showErrorMessageNoModule === true">
+                <div class="well well-status-warten">
+                    <i class="fa fa-exclamation" aria-hidden="true"></i>
+                    <span data-translate="WARN_TAGESSCHULE_KEIN_MODUL_GEWAEHLT"></span>
+                </div>
+            </div>
+
+            <div ng-if="vm.showNochNichtFreigegeben === true">
+                <div class="well well-status-warten">
+                    <i class="fa fa-exclamation" aria-hidden="true"></i>
+                    <span data-translate="WARN_ANGEBOT_NOCH_NICHT_FREIGEGEBEN"></span>
+                </div>
+            </div>
+
+            <div ng-if="vm.showMutiert === true">
+                <div class="well well-status-warten">
+                    <i class="fa fa-exclamation" aria-hidden="true"></i>
+                    <span data-translate="WARN_ANGEBOT_MUTIERT"></span>
+                </div>
+            </div>
+
+        </div>
+
+    </fieldset>
+
+    <!--Buttons-->
+    <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
+        wenn wir die Direktive benutzen wollen muessen wir viel anpassen, daher lohnt es sich die Buttons direkt zu erstellen-->
+    <!-- Buttons fuer JA/SCH und Gesuchsteller -->
+    <!--todo verbesserung in eigene Direktive da in betreuungFerieninsel dupliziert-->
+    <div class="nav-row-betreuung">
+        <div dv-show-element
+             dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles()"
+             dv-show-expression="vm.betreuung.isEnabled() && !vm.isFreigabequittungAusstehend()">
+            <dv-loading-button button-click="vm.anmelden()" type="submit" button-class="save">
+                <span data-translate="{{vm.getButtonTextSpeichern()}}"></span>
+            </dv-loading-button>
+        </div>
+
+        <div dv-show-element
+             dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtRoles()"
+             dv-show-expression="vm.isFalscheInstitutionAndUserInRole() && vm.aktuellGueltig">
+            <dv-loading-button button-click="vm.anmelden()" type="submit" button-class="save">
+                <span data-translate="{{vm.getButtonTextSpeichern()}}"></span>
+            </dv-loading-button>
+            <dv-loading-button button-click="vm.anmeldungSchulamtAblehnen()" type="button" button-class="save">
+                <span data-translate="SCHULAMT_ANMELDUNG_ABLEHNEN"></span>
+            </dv-loading-button>
+        </div>
+
+		<div dv-show-element
+             dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+             dv-show-expression="vm.showButtonsInstitution() && vm.aktuellGueltig">
+			<dv-loading-button button-click="vm.anmeldungSchulamtUebernehmen()" type="button" button-class="save">
+				<span data-translate="SCHULAMT_ANMELDUNG_UEBERNEHMEN"></span>
+			</dv-loading-button>
+			<dv-loading-button button-click="vm.anmeldungSchulamtAblehnen()" type="button" button-class="save">
+				<span data-translate="SCHULAMT_ANMELDUNG_ABLEHNEN"></span>
+			</dv-loading-button>
+			<dv-loading-button button-click="vm.anmeldungSchulamtFalscheInstitution()" type="button" button-class="save">
+				<span data-translate="SCHULAMT_FALSCHE_INSTITUTION"></span>
+			</dv-loading-button>
+		</div>
+		<!-- Abbrechen: Immer vorhanden -->
+		<dv-loading-button button-click="vm.cancel()" button-class="cancel" type="reset">
+			<span data-translate="ABBRECHEN_UPPER"></span>
+		</dv-loading-button>
+    </div>
+
+</div>
+

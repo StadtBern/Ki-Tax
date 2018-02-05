@@ -13,14 +13,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import '../../bootstrap.ts';
-import 'angular-mocks';
-import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import {DVRoleElementController} from './DVRoleElementController';
 import {EbeguAuthentication} from '../../authentication/authentication.module';
-import {EbeguWebCore} from '../core.module';
+import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
-import IInjectorService = angular.auto.IInjectorService;
+import {EbeguWebCore} from '../core.module';
+import {DVRoleElementController} from './DVRoleElementController';
 
 describe('DVElementController', function () {
 
@@ -30,14 +27,14 @@ describe('DVElementController', function () {
     beforeEach(angular.mock.module(EbeguAuthentication.name));
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: IInjectorService) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         authServiceRS = <AuthServiceRS>$injector.get('AuthServiceRS');
         spyOn(authServiceRS, 'getPrincipalRole').and.returnValue(TSRole.GESUCHSTELLER);
         cvElementController = new DVRoleElementController(authServiceRS);
 
     }));
 
-    describe('checkRoles', function() {
+    describe('checkRoles', function () {
         it('should return true for the same role as the user and no expression', function () {
             cvElementController.dvAllowedRoles = [TSRole.GESUCHSTELLER];
             cvElementController.dvExpression = undefined;

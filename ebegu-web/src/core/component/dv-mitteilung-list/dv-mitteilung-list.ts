@@ -13,32 +13,35 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentOptions, IPromise, ITimeoutService} from 'angular';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import TSMitteilung from '../../../models/TSMitteilung';
+import {IComponentOptions, IPromise} from 'angular';
+import {IStateService} from 'angular-ui-router';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
+import FallRS from '../../../gesuch/service/fallRS.rest';
+import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
+import {IMitteilungenStateParams} from '../../../mitteilungen/mitteilungen.route';
+import {TSAmt} from '../../../models/enums/TSAmt';
+import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
 import {TSMitteilungStatus} from '../../../models/enums/TSMitteilungStatus';
 import {TSMitteilungTeilnehmerTyp} from '../../../models/enums/TSMitteilungTeilnehmerTyp';
 import {TSRole} from '../../../models/enums/TSRole';
-import TSFall from '../../../models/TSFall';
 import TSBetreuung from '../../../models/TSBetreuung';
-import {IMitteilungenStateParams} from '../../../mitteilungen/mitteilungen.route';
-import MitteilungRS from '../../service/mitteilungRS.rest';
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import BetreuungRS from '../../service/betreuungRS.rest';
-import FallRS from '../../../gesuch/service/fallRS.rest';
-import TSUser from '../../../models/TSUser';
-import {IStateService} from 'angular-ui-router';
-import EbeguUtil from '../../../utils/EbeguUtil';
 import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
+import TSFall from '../../../models/TSFall';
+import TSMitteilung from '../../../models/TSMitteilung';
+import TSUser from '../../../models/TSUser';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
-import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
-import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
-import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
+import BetreuungRS from '../../service/betreuungRS.rest';
+import MitteilungRS from '../../service/mitteilungRS.rest';
 import IFormController = angular.IFormController;
 import IQService = angular.IQService;
-import IWindowService = angular.IWindowService;
 import IRootScopeService = angular.IRootScopeService;
 import IScope = angular.IScope;
+import IWindowService = angular.IWindowService;
+import ITimeoutService = angular.ITimeoutService;
+
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -103,7 +106,7 @@ export class DVMitteilungListController {
                 } else {
                     this.loadEntwurf();
                     // Wenn JA oder Institution -> Neue Mitteilungen als gelesen markieren
-                    if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerJugendamtRoles())) {
+                    if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles())) {
                         this.setAllMitteilungenGelesen().then((response) => {
                             this.loadAllMitteilungen();
                             if (this.$rootScope) {
@@ -135,9 +138,9 @@ export class DVMitteilungListController {
         // Wenn der Fall keinen Besitzer hat, darf auch keine Nachricht geschrieben werden
         // Ausser wir sind Institutionsbenutzer
         let isGesuchsteller: boolean = this.authServiceRS.isRole(TSRole.GESUCHSTELLER);
-        let isJugendamtAndFallHasBesitzer: boolean = this.fall.besitzer && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+        let isJugendamtOrSchulamtAndFallHasBesitzer: boolean = this.fall.besitzer && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles());
         let isInstitutionsUser: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles());
-        if (isGesuchsteller || isJugendamtAndFallHasBesitzer || isInstitutionsUser) {
+        if (isGesuchsteller || isJugendamtOrSchulamtAndFallHasBesitzer || isInstitutionsUser) {
             if (this.betreuung) {
                 this.mitteilungRS.getEntwurfForCurrentRolleForBetreuung(this.betreuung.id).then((entwurf: TSMitteilung) => {
                     if (entwurf) {
@@ -209,7 +212,7 @@ export class DVMitteilungListController {
                 return this.currentMitteilung;
             }).finally(() => {
                 this.form.$setPristine();
-               this.form.$setUntouched();
+                this.form.$setUntouched();
             });
 
         } else if (this.isMitteilungEmpty() && !this.currentMitteilung.isNew() && this.currentMitteilung.id) {
@@ -272,7 +275,9 @@ export class DVMitteilungListController {
             case TSRole.ADMIN:
             case TSRole.JURIST:
             case TSRole.REVISOR:
-            case TSRole.SACHBEARBEITER_JA: {
+            case TSRole.SACHBEARBEITER_JA:
+            case TSRole.SCHULAMT:
+            case TSRole.ADMINISTRATOR_SCHULAMT: {
                 return TSMitteilungTeilnehmerTyp.JUGENDAMT;
             }
             default:
@@ -338,7 +343,7 @@ export class DVMitteilungListController {
     }
 
     public canApplyBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
-        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorOrAmtRole());
     }
 
     $postLink() {
@@ -360,8 +365,8 @@ export class DVMitteilungListController {
                     this.loadAllMitteilungen();
                     if (response.id === this.gesuchModelManager.getGesuch().id) {
                         // Dies wird gebraucht wenn das Gesuch der Mitteilung schon geladen ist, weil die Daten der
-						// Betreuung geaendert wurden und deshalb neugeladen werden müssen. reloadGesuch ist einfacher
-						// als die entsprechende Betreuung neu zu laden
+                        // Betreuung geaendert wurden und deshalb neugeladen werden müssen. reloadGesuch ist einfacher
+                        // als die entsprechende Betreuung neu zu laden
                         this.gesuchModelManager.reloadGesuch();
                     } else if (response.id) { // eine neue Mutation wurde aus der Muttationsmitteilung erstellt
                         // informieren, dass eine neue Mutation erstellt wurde
@@ -369,7 +374,38 @@ export class DVMitteilungListController {
                     }
                 });
             });
-
         }
+    }
+
+    public mitteilungUebergebenAnJugendamt(mitteilung: TSMitteilung): void {
+        this.mitteilungRS.mitteilungUebergebenAnJugendamt(mitteilung.id).then(msg => {
+            this.ebeguUtil.replaceElementInList(msg, this.allMitteilungen, false);
+        });
+    }
+
+    public mitteilungUebergebenAnSchulamt(mitteilung: TSMitteilung): void {
+        this.mitteilungRS.mitteilungUebergebenAnSchulamt(mitteilung.id).then(msg => {
+            this.ebeguUtil.replaceElementInList(msg, this.allMitteilungen, false);
+        });
+    }
+
+    public isMessageEditableForMyRole(mitteilung: TSMitteilung): boolean {
+        // Ich darf die Mitteilung auf Gelesen setzen oder Delegieren, wenn ich der gleichen Empfängergruppe wie die Meldung selber angehöre
+        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.JUGENDAMT) ||
+            this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.SCHULAMT);
+    }
+
+    public canUebergebenAnSchulamt(mitteilung: TSMitteilung): boolean {
+        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.JUGENDAMT);
+    }
+
+    public canUebergebenAnJugendamt(mitteilung: TSMitteilung): boolean {
+        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.SCHULAMT);
+    }
+
+    private isUserAndEmpfaengerSameAmt(mitteilung: TSMitteilung, amt: TSAmt): boolean {
+        let userInAmt: boolean = this.authServiceRS.getPrincipal().amt === amt;
+        let empfaengerInAmt: boolean = mitteilung.getEmpfaengerAmt() === amt;
+        return userInAmt && empfaengerInAmt;
     }
 }

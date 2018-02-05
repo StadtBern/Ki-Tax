@@ -18,7 +18,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>2.2.5-SNAPSHOT</version>
+        <version>3.0.5-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -159,6 +159,41 @@
     </dependencies>
 
     <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgument>-proc:none</compilerArgument>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.bsc.maven</groupId>
+                <artifactId>maven-processor-plugin</artifactId>
+                <version>2.0.5</version>
+                <executions>
+                    <execution>
+                        <id>process</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <processors>
+                                <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+                            </processors>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-jpamodelgen</artifactId>
+                        <version>${version.hibernate}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
     </build>
 
     <!-- Schema Generation-->
@@ -186,11 +221,12 @@
                             <physicalNamingStrategy>ch.dvbern.ebegu.persistence.EbeguPhysicalNamingStrategyImpl
                             </physicalNamingStrategy>
                             <!--verhindert, dass das Plugin versucht das schema physisch in eine DB zu schreiben-->
-                            <export>false</export>
+                            <execute>false</execute>
                             <format>true</format>
                             <!--File in welches das Schema exportiert wird (defaultist create.sql)-->
                             <outputFile>${project.build.directory}/ebegu-schema.ddl</outputFile>
                             <!--definiert ob der text fuer das sql-schema in die console geloggt wird-->
+
                             <show>true</show>
                         </configuration>
                     </plugin>

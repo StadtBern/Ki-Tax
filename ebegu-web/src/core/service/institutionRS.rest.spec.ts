@@ -13,19 +13,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-///<reference path="../../models/TSInstitution.ts"/>
-import {EbeguWebCore} from '../core.module';
-import {IHttpBackendService} from 'angular';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSInstitution from '../../models/TSInstitution';
-import {InstitutionRS} from './institutionRS.rest';
-import {TSTraegerschaft} from '../../models/TSTraegerschaft';
 import {TSMandant} from '../../models/TSMandant';
+import {TSTraegerschaft} from '../../models/TSTraegerschaft';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import {EbeguWebCore} from '../core.module';
+import {InstitutionRS} from './institutionRS.rest';
 
 describe('institutionRS', function () {
 
     let institutionRS: InstitutionRS;
-    let $httpBackend: IHttpBackendService;
+    let $httpBackend: angular.IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockInstitution: TSInstitution;
     let mockInstitutionRest: any;
@@ -34,7 +32,7 @@ describe('institutionRS', function () {
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         institutionRS = $injector.get('InstitutionRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');

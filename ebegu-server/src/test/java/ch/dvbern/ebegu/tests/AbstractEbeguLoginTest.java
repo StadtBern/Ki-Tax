@@ -109,6 +109,18 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		return persistence.merge(schulamt);
 	}
 
+	protected Benutzer loginAsAdminSchulamt() {
+		try {
+			createLoginContext("schulamtadmin", "schulamtadmin").login();
+		} catch (LoginException e) {
+			LOG.error("could not login as admin schulamt for tests");
+		}
+
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
+		Benutzer schulamt = createOrFindBenutzer(UserRole.ADMINISTRATOR_SCHULAMT, "schulamtadmin", null, null, mandant);
+		return persistence.merge(schulamt);
+	}
+
 	protected void loginAsSteueramt() {
 		try {
 			createLoginContext("steueramt", "steueramt").login();

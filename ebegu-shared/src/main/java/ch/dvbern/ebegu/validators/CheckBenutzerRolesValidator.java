@@ -42,10 +42,10 @@ public class CheckBenutzerRolesValidator implements ConstraintValidator<CheckBen
 	 */
 	@Override
 	public boolean isValid(Benutzer instance, ConstraintValidatorContext context) {
-		if (UserRole.SACHBEARBEITER_INSTITUTION.equals(instance.getRole())) {
+		if (UserRole.SACHBEARBEITER_INSTITUTION == instance.getRole()) {
 			return instance.getInstitution() != null;
 		}
-		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(instance.getRole())) {
+		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == instance.getRole()) {
 			return instance.getTraegerschaft() != null;
 		}
 

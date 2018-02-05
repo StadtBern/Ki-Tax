@@ -1,0 +1,2 @@
+ALTER TABLE modul_tagesschule_aud
+	CHANGE modul_tagesschule_name modul_tagesschule_name VARCHAR(255);

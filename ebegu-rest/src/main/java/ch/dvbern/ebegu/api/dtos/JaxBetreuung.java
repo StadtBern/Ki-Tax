@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
@@ -48,6 +49,12 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	@NotNull
 	private Betreuungsstatus betreuungsstatus;
+
+	@Nullable
+	private JaxBelegungTagesschule belegungTagesschule;
+
+	@Nullable
+	private JaxBelegungFerieninsel belegungFerieninsel;
 
 	@NotNull
 	private List<JaxBetreuungspensumContainer> betreuungspensumContainers = new ArrayList<>();
@@ -99,6 +106,12 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	@Column(nullable = false)
 	private boolean gueltig = false;
+
+	@Nullable
+	private AnmeldungMutationZustand anmeldungMutationZustand;
+
+	// transient (Not stored on server, just an information for client)
+	private String bgNummer;
 
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
 		return institutionStammdaten;
@@ -192,6 +205,7 @@ public class JaxBetreuung extends JaxAbstractDTO {
 		this.datumBestaetigung = datumBestaetigung;
 	}
 
+	@Nullable
 	public String getKindFullname() {
 		return kindFullname;
 	}
@@ -227,19 +241,21 @@ public class JaxBetreuung extends JaxAbstractDTO {
 		this.gesuchsperiode = gesuchsperiode;
 	}
 
+	@Nullable
 	public Boolean getBetreuungMutiert() {
 		return betreuungMutiert;
 	}
 
-	public void setBetreuungMutiert(Boolean betreuungMutiert) {
+	public void setBetreuungMutiert(@Nullable Boolean betreuungMutiert) {
 		this.betreuungMutiert = betreuungMutiert;
 	}
 
+	@Nullable
 	public Boolean getAbwesenheitMutiert() {
 		return abwesenheitMutiert;
 	}
 
-	public void setAbwesenheitMutiert(Boolean abwesenheitMutiert) {
+	public void setAbwesenheitMutiert(@Nullable Boolean abwesenheitMutiert) {
 		this.abwesenheitMutiert = abwesenheitMutiert;
 	}
 
@@ -251,6 +267,33 @@ public class JaxBetreuung extends JaxAbstractDTO {
 		this.gueltig = gueltig;
 	}
 
+	@Nullable
+	public JaxBelegungTagesschule getBelegungTagesschule() {
+		return belegungTagesschule;
+	}
+
+	public void setBelegungTagesschule(@Nullable JaxBelegungTagesschule belegungTagesschule) {
+		this.belegungTagesschule = belegungTagesschule;
+	}
+
+	@Nullable
+	public JaxBelegungFerieninsel getBelegungFerieninsel() {
+		return belegungFerieninsel;
+	}
+
+	public void setBelegungFerieninsel(@Nullable JaxBelegungFerieninsel belegungFerieninsel) {
+		this.belegungFerieninsel = belegungFerieninsel;
+	}
+
+	@Nullable
+	public AnmeldungMutationZustand getAnmeldungMutationZustand() {
+		return anmeldungMutationZustand;
+	}
+
+	public void setAnmeldungMutationZustand(@Nullable AnmeldungMutationZustand anmeldungMutationZustand) {
+		this.anmeldungMutationZustand = anmeldungMutationZustand;
+	}
+
 	@Override
 	public int compareTo(@Nonnull JaxAbstractDTO o) {
 		if (o instanceof JaxBetreuung) {
@@ -258,5 +301,13 @@ public class JaxBetreuung extends JaxAbstractDTO {
 			return getBetreuungNummer().compareTo(other.getBetreuungNummer());
 		}
 		return super.compareTo(o);
+	}
+
+	public String getBgNummer() {
+		return bgNummer;
+	}
+
+	public void setBgNummer(String bgNummer) {
+		this.bgNummer = bgNummer;
 	}
 }

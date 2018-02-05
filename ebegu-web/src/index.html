@@ -33,39 +33,43 @@
     <h1 class="access-for-all-title" data-translate="AFA_INDEXBAR"></h1>
     <dv-home-icon></dv-home-icon>
     <dv-quicksearchbox dv-show-element
-                       dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'JURIST', 'REVISOR']"></dv-quicksearchbox>
+                       dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'JURIST', 'REVISOR']"></dv-quicksearchbox>
     <dv-downloadmenu dv-show-element
-                     dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'JURIST', 'REVISOR', 'STEUERAMT']"></dv-downloadmenu>
+                     dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'JURIST', 'REVISOR', 'STEUERAMT']"></dv-downloadmenu>
     <dv-pulldown-user-menu dv-show-element
-                           dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'STEUERAMT', 'JURIST', 'REVISOR']"></dv-pulldown-user-menu>
+                           dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'STEUERAMT', 'JURIST', 'REVISOR']"></dv-pulldown-user-menu>
     <dv-pulldown-user-menu hide-sm hide-xs dv-show-element dv-show-allowed-roles="['GESUCHSTELLER']"></dv-pulldown-user-menu>
     <dv-mobile-navigation-toggle hide-gt-sm dv-show-element dv-show-allowed-roles="['GESUCHSTELLER']"></dv-mobile-navigation-toggle>
 </div>
 
 <nav class="navbar navbar-default" dv-show-element
-     dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT', 'STEUERAMT', 'REVISOR', 'JURIST']">
+     dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'STEUERAMT', 'REVISOR', 'JURIST']">
     <div flex layout="row" layout-align="center center">
 
         <div id="navbar" class="navbar-header">
             <ul class="nav navbar-nav noMargin">
                 <li ui-sref-active="active" dv-show-element
-                    dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'GESUCHSTELLER', 'SUPER_ADMIN']">
+                    dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'GESUCHSTELLER', 'SUPER_ADMIN', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT']">
                     <a ui-sref="pendenzen" data-translate="MENU_PENDENZEN"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
+                    dv-show-allowed-roles="['SUPER_ADMIN', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT']">
+                    <a ui-sref="pendenzenBetreuungen" data-translate="MENU_PENDENZEN_ANMELDUNGEN_SCH"></a>
+                </li>
+                <li ui-sref-active="active" dv-show-element
                     dv-show-allowed-roles="['SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SUPER_ADMIN']">
-                    <a ui-sref="pendenzenInstitution" data-translate="MENU_PENDENZEN_INSTITUTION"></a>
+                    <a ui-sref="pendenzenBetreuungen" data-translate="MENU_PENDENZEN_INSTITUTION"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
                     dv-show-allowed-roles="['STEUERAMT', 'SUPER_ADMIN']">
                     <a ui-sref="pendenzenSteueramt" data-translate="MENU_PENDENZEN_STEUERAMT"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
-                    dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'SCHULAMT', 'REVISOR', 'JURIST']">
+                    dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'REVISOR', 'JURIST']">
                     <a ui-sref="faelle" data-translate="MENU_ALL_FAELLE"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
-                    dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN']">
+                    dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT']">
                     <a ui-sref="gesuch.fallcreation({createNew: true, gesuchId: null, fallId: null, eingangsart: 'PAPIER'})"
                        data-translate="MENU_FALL_EROEFFNEN"></a>
                 </li>
@@ -74,11 +78,11 @@
                     <a ui-sref="zahlungsauftrag" data-translate="MENU_ZAHLUNG"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
-                    dv-show-allowed-roles="[ 'ADMIN', 'SUPER_ADMIN',  'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'SCHULAMT', 'REVISOR']">
+                    dv-show-allowed-roles="[ 'ADMIN', 'SUPER_ADMIN',  'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT', 'REVISOR']">
                     <a ui-sref="statistik" data-translate="MENU_STATISTIK"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
-                    dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA']">
+                    dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT']">
                     <dv-posteingang ui-sref="posteingang"></dv-posteingang>
                 </li>
             </ul>
@@ -95,6 +99,5 @@
 <footer>
     <dv-version ng-show="false"></dv-version>
 </footer>
-<iframe name="download-helper" style="position:fixed;display:none;top:-1px;left:-1px;"></iframe>
 </body>
 </html>

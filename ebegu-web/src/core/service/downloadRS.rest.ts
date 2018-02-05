@@ -18,7 +18,6 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSDownloadFile from '../../models/TSDownloadFile';
 import {TSGeneratedDokumentTyp} from '../../models/enums/TSGeneratedDokumentTyp';
 import TSMahnung from '../../models/TSMahnung';
-import {TSZustelladresse} from '../../models/enums/TSZustelladresse';
 import EbeguUtil from '../../utils/EbeguUtil';
 
 export class DownloadRS {
@@ -69,10 +68,9 @@ export class DownloadRS {
             });
     }
 
-    public getFreigabequittungAccessTokenGeneratedDokument(gesuchId: string, forceCreation: boolean, zustelladresse: TSZustelladresse): IPromise<TSDownloadFile> {
+    public getFreigabequittungAccessTokenGeneratedDokument(gesuchId: string, forceCreation: boolean): IPromise<TSDownloadFile> {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/'
-            + encodeURIComponent(TSGeneratedDokumentTyp[TSGeneratedDokumentTyp.FREIGABEQUITTUNG]) + '/' + forceCreation + '/generated',
-            {params: {zustelladresse: TSZustelladresse[zustelladresse]}})
+            + encodeURIComponent(TSGeneratedDokumentTyp[TSGeneratedDokumentTyp.FREIGABEQUITTUNG]) + '/' + forceCreation + '/generated')
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
@@ -205,7 +203,6 @@ export class DownloadRS {
             buttonElement.style.display = 'block';
             this.addCloseButtonHandler(win);
         }
-
     }
 
     public addCloseButtonHandler(win: Window) {

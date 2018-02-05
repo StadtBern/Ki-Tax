@@ -37,6 +37,9 @@ public interface FinanzielleSituationService {
 	@Nonnull
 	FinanzielleSituationContainer saveFinanzielleSituation(@Nonnull FinanzielleSituationContainer finanzielleSituation, String gesuchId);
 
+	@Nonnull
+	Gesuch saveFinanzielleSituationStart(@Nonnull Gesuch gesuch);
+
 	/**
 	 * @param id PK (id) der FinanzielleSituation
 	 * @return FinanzielleSituation mit dem gegebenen key oder null falls nicht vorhanden

@@ -14,32 +14,31 @@
  */
 
 import {EbeguWebCore} from '../../../core/core.module';
-import {IStateService} from 'angular-ui-router';
-import {EbeguWebGesuch} from '../../gesuch.module';
-import GesuchModelManager from '../../service/gesuchModelManager';
-import {VerfuegenListViewController} from './verfuegenListView';
+import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSKindContainer from '../../../models/TSKindContainer';
-import BerechnungsManager from '../../service/berechnungsManager';
-import {IHttpBackendService, IQService, IScope} from 'angular';
 import TestDataUtil from '../../../utils/TestDataUtil';
-import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
+import {EbeguWebGesuch} from '../../gesuch.module';
+import BerechnungsManager from '../../service/berechnungsManager';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import WizardStepManager from '../../service/wizardStepManager';
+import {VerfuegenListViewController} from './verfuegenListView';
 
 describe('verfuegenListViewTest', function () {
 
     let verfuegenListView: VerfuegenListViewController;
     let gesuchModelManager: GesuchModelManager;
-    let $state: IStateService;
+    let $state: angular.ui.IStateService;
     let tsKindContainer: TSKindContainer;
     let berechnungsManager: BerechnungsManager;
-    let $q: IQService;
-    let $rootScope: IScope;
-    let $httpBackend: IHttpBackendService;
+    let $q: angular.IQService;
+    let $rootScope: angular.IScope;
+    let $httpBackend: angular.IHttpBackendService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $state = $injector.get('$state');
         $q = $injector.get('$q');
@@ -47,7 +46,7 @@ describe('verfuegenListViewTest', function () {
         $httpBackend = $injector.get('$httpBackend');
         tsKindContainer = new TSKindContainer();
         tsKindContainer.kindNummer = 1;
-        let wizardStepManager = $injector.get('WizardStepManager');
+        let wizardStepManager: WizardStepManager = $injector.get('WizardStepManager');
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([tsKindContainer]);
         spyOn(gesuchModelManager, 'calculateVerfuegungen').and.returnValue($q.when({}));
@@ -59,7 +58,7 @@ describe('verfuegenListViewTest', function () {
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
         verfuegenListView = new VerfuegenListViewController($state, gesuchModelManager, berechnungsManager, undefined,
             wizardStepManager, null, $injector.get('DownloadRS'), $injector.get('MahnungRS'), $injector.get('$log'),
-            $injector.get('AuthServiceRS'), $rootScope, $injector.get('GesuchRS'), $injector.get('$window'));
+            $injector.get('AuthServiceRS'), $rootScope, $injector.get('GesuchRS'), $injector.get('$timeout'));
         $rootScope.$apply();
     }));
 
@@ -100,7 +99,7 @@ describe('verfuegenListViewTest', function () {
 
                 expect(gesuchModelManager.convertKindNumberToKindIndex).toHaveBeenCalledWith(tsKindContainer.kindNummer);
                 expect(gesuchModelManager.setKindIndex).not.toHaveBeenCalled();
-                expect($state.go).not.toHaveBeenCalledWith('gesuch.verfuegenView', { gesuchId: ''});
+                expect($state.go).not.toHaveBeenCalledWith('gesuch.verfuegenView', {gesuchId: ''});
             });
             it('does find the Kind but does not find the Betreuung, so it stops loading and does not move to the next page', function () {
                 spyOn(gesuchModelManager, 'convertKindNumberToKindIndex').and.returnValue(0);
@@ -132,7 +131,11 @@ describe('verfuegenListViewTest', function () {
 
                 expect(gesuchModelManager.convertKindNumberToKindIndex).toHaveBeenCalledWith(tsKindContainer.kindNummer);
                 expect(gesuchModelManager.setKindIndex).toHaveBeenCalledWith(0);
-                expect($state.go).toHaveBeenCalledWith('gesuch.verfuegenView', {betreuungNumber: 2, kindNumber: 1, gesuchId: ''});
+                expect($state.go).toHaveBeenCalledWith('gesuch.verfuegenView', {
+                    betreuungNumber: 2,
+                    kindNumber: 1,
+                    gesuchId: ''
+                });
             });
         });
     });

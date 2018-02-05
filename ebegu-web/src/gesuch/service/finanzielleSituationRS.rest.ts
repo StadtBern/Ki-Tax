@@ -54,6 +54,24 @@ export default class FinanzielleSituationRS {
         });
     }
 
+    /**
+     * Sendet zurzeit das komplette Gesuch.
+     */
+    public saveFinanzielleSituationStart(gesuch: TSGesuch): IPromise<TSGesuch> {
+        let sentGesuch = {};
+        sentGesuch = this.ebeguRestUtil.gesuchToRestObject(sentGesuch, gesuch);
+        return this.http.put(this.serviceURL + '/finsitStart/', sentGesuch, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response) => {
+            return this.wizardStepManager.findStepsFromGesuch(gesuch.id).then(() => {
+                this.log.debug('PARSING gesuch REST object ', response.data);
+                return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+            });
+        });
+    }
+
     public calculateFinanzielleSituation(gesuch: TSGesuch): IPromise<TSFinanzielleSituationResultateDTO> {
         let gesuchToSend = {};
         gesuchToSend = this.ebeguRestUtil.gesuchToRestObject(gesuchToSend, gesuch);

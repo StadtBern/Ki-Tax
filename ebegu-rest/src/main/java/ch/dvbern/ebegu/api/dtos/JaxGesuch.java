@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 
@@ -99,6 +100,9 @@ public class JaxGesuch extends JaxAbstractDTO {
 
 	private boolean hasFSDokument;
 
+	@Nullable
+	private FinSitStatus finSitStatus;
+
 	private boolean gesperrtWegenBeschwerde;
 
 	@Nullable
@@ -116,6 +120,10 @@ public class JaxGesuch extends JaxAbstractDTO {
 	private boolean gueltig;
 
 	private boolean dokumenteHochgeladen;
+
+	// transient
+	// Flag zum merken, ob dies das neuste Gesuch für diesen Fall in dieser Gesuchsperiode ist
+	private boolean neustesGesuch;
 
 	@NotNull
 	private GesuchBetreuungenStatus gesuchBetreuungenStatus = GesuchBetreuungenStatus.ALLE_BESTAETIGT;
@@ -344,5 +352,23 @@ public class JaxGesuch extends JaxAbstractDTO {
 	public void setDokumenteHochgeladen(boolean dokumenteHochgeladen) {
 		this.dokumenteHochgeladen = dokumenteHochgeladen;
 	}
+
+	@Nullable
+	public FinSitStatus getFinSitStatus() {
+		return finSitStatus;
+	}
+
+	public void setFinSitStatus(@Nullable FinSitStatus finSitStatus) {
+		this.finSitStatus = finSitStatus;
+	}
+
+	public boolean isNeustesGesuch() {
+		return neustesGesuch;
+	}
+
+	public void setNeustesGesuch(boolean neustesGesuch) {
+		this.neustesGesuch = neustesGesuch;
+	}
+
 }
 

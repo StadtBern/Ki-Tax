@@ -18,6 +18,7 @@ package ch.dvbern.ebegu.entities;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -47,6 +48,15 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 	@Column(nullable = true)
 	private LocalDate datumAktiviert;
 
+	@Nullable
+	@Column(nullable = true)
+	private LocalDate datumFreischaltungTagesschule;
+
+	@Nullable
+	@Column(nullable = true)
+	private LocalDate datumErsterSchultag;
+
+
 	public GesuchsperiodeStatus getStatus() {
 		return status;
 	}
@@ -73,6 +83,24 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 
 	public void setDatumAktiviert(LocalDate datumAktiviert) {
 		this.datumAktiviert = datumAktiviert;
+	}
+
+	@Nullable
+	public LocalDate getDatumFreischaltungTagesschule() {
+		return datumFreischaltungTagesschule;
+	}
+
+	public void setDatumFreischaltungTagesschule(@Nullable LocalDate datumFreischaltungTagesschule) {
+		this.datumFreischaltungTagesschule = datumFreischaltungTagesschule;
+	}
+
+	@Nullable
+	public LocalDate getDatumErsterSchultag() {
+		return datumErsterSchultag;
+	}
+
+	public void setDatumErsterSchultag(@Nullable LocalDate datumErsterSchultag) {
+		this.datumErsterSchultag = datumErsterSchultag;
 	}
 
 	@SuppressWarnings({ "OverlyComplexBooleanExpression" })
@@ -107,5 +135,9 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 		DateRange gueltigkeit = this.getGueltigkeit();
 		return gueltigkeit.getGueltigAb().getYear() + "/"
 			+ gueltigkeit.getGueltigBis().getYear();
+	}
+
+	public boolean hasTagesschulenAnmeldung() {
+		return getDatumFreischaltungTagesschule() != null;
 	}
 }

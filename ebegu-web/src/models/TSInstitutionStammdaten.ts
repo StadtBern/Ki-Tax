@@ -13,14 +13,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import TSInstitution from './TSInstitution';
 import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
-import {TSDateRange} from './types/TSDateRange';
 import {TSAbstractDateRangedEntity} from './TSAbstractDateRangedEntity';
 import TSAdresse from './TSAdresse';
+import TSInstitution from './TSInstitution';
+import TSInstitutionStammdatenTagesschule from './TSInstitutionStammdatenTagesschule';
+import {TSDateRange} from './types/TSDateRange';
 
 export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity {
-
     private _iban: string;
     private _oeffnungstage: number;
     private _oeffnungsstunden: number;
@@ -29,9 +29,11 @@ export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity 
     private _adresse: TSAdresse;
     private _kontoinhaber: string;
     private _adresseKontoinhaber: TSAdresse;
+    private _institutionStammdatenTagesschule: TSInstitutionStammdatenTagesschule;
 
     constructor(iban?: string, oeffnungstage?: number, oeffnungsstunden?: number, betreuungsangebotTyp?: TSBetreuungsangebotTyp,
-                institution?: TSInstitution, adresse?: TSAdresse, gueltigkeit?: TSDateRange, kontoinhaber?: string, adresseKontoinhaber?: TSAdresse) {
+                institution?: TSInstitution, adresse?: TSAdresse, gueltigkeit?: TSDateRange, kontoinhaber?: string,
+                adresseKontoinhaber?: TSAdresse, institutionStammdatenTagesschule?: TSInstitutionStammdatenTagesschule) {
         super(gueltigkeit);
         this._iban = iban;
         this._oeffnungstage = oeffnungstage;
@@ -41,6 +43,7 @@ export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity 
         this._adresse = adresse;
         this._kontoinhaber = kontoinhaber;
         this._adresseKontoinhaber = adresseKontoinhaber;
+        this._institutionStammdatenTagesschule = institutionStammdatenTagesschule;
     }
 
     public get iban(): string {
@@ -106,4 +109,13 @@ export default class TSInstitutionStammdaten extends TSAbstractDateRangedEntity 
     public set adresseKontoinhaber(value: TSAdresse) {
         this._adresseKontoinhaber = value;
     }
+
+    public get institutionStammdatenTagesschule(): TSInstitutionStammdatenTagesschule {
+        return this._institutionStammdatenTagesschule;
+    }
+
+    public set institutionStammdatenTagesschule(value: TSInstitutionStammdatenTagesschule) {
+        this._institutionStammdatenTagesschule = value;
+    }
+
 }

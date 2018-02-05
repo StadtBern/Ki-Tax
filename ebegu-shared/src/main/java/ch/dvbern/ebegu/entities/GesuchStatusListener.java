@@ -52,7 +52,7 @@ public class GesuchStatusListener {
 	@PreUpdate
 	public void preUpdate(Gesuch gesuch) {
 
-		if (gesuch.getPreStatus() != null && !gesuch.getPreStatus().equals(gesuch.getStatus())) {
+		if (gesuch.getPreStatus() != null && gesuch.getPreStatus() != gesuch.getStatus()) {
 
 			final AntragStatus preStatus = gesuch.getPreStatus();
 			final AntragStatus postStatus = gesuch.getStatus();
@@ -64,7 +64,7 @@ public class GesuchStatusListener {
 
 			for (AntragEvents permittedTrigger : permittedTriggers) {
 				stateMachine.fire(getTrigger(permittedTrigger), gesuch);
-				if (stateMachine.getState().equals(postStatus)) {
+				if (stateMachine.getState() == postStatus) {
 					gesuch.setStatus(postStatus);
 					return;
 				}

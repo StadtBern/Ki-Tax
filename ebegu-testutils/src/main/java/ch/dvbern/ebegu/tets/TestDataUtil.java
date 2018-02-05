@@ -34,12 +34,16 @@ import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragSearchDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragSortDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.AbwesenheitContainer;
 import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.ebegu.entities.BelegungFerieninsel;
+import ch.dvbern.ebegu.entities.BelegungFerieninselTag;
+import ch.dvbern.ebegu.entities.BelegungTagesschule;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -59,6 +63,8 @@ import ch.dvbern.ebegu.entities.Fachstelle;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.FamiliensituationContainer;
+import ch.dvbern.ebegu.entities.FerieninselStammdaten;
+import ch.dvbern.ebegu.entities.FerieninselZeitraum;
 import ch.dvbern.ebegu.entities.FinanzielleSituation;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
 import ch.dvbern.ebegu.entities.GeneratedDokument;
@@ -87,8 +93,10 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
+import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
+import ch.dvbern.ebegu.enums.Ferienname;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
@@ -103,6 +111,7 @@ import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.EbeguParameterService;
+import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
@@ -137,6 +146,7 @@ import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_STUNDEN_PRO_TAG_TAGI
 /**
  * comments homa
  */
+@SuppressWarnings("PMD.NcssTypeCount")
 public final class TestDataUtil {
 
 	private static final String iban = "CH39 0900 0000 3066 3817 2";
@@ -370,6 +380,36 @@ public final class TestDataUtil {
 		return instStammdaten;
 	}
 
+	public static InstitutionStammdaten createInstitutionStammdatenTagesschuleBern() {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_BERN_TAGESSCULHE);
+		instStammdaten.setIban(new IBAN(iban));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(9));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
+		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESSCHULE);
+		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_BERN);
+		instStammdaten.getInstitution().setName("Tagesschule Bern");
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
+	public static InstitutionStammdaten createInstitutionStammdatenFerieninselGuarda() {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_GUARDA_FERIENINSEL);
+		instStammdaten.setIban(new IBAN(iban));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(9));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(120));
+		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.FERIENINSEL);
+		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_GUARDA);
+		instStammdaten.getInstitution().setName("Ferieninsel Guarda");
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
 	public static Kind createDefaultKind() {
 		Kind kind = new Kind();
 		kind.setNachname("Kind_Mustermann");
@@ -440,6 +480,12 @@ public final class TestDataUtil {
 		betreuung.setAbwesenheitContainers(new HashSet<>());
 		betreuung.setKind(createDefaultKindContainer());
 		return betreuung;
+	}
+
+	public static BelegungTagesschule createDefaultBelegungTagesschule() {
+		final BelegungTagesschule belegungTagesschule = new BelegungTagesschule();
+		belegungTagesschule.setEintrittsdatum(LocalDate.now());
+		return belegungTagesschule;
 	}
 
 	public static BetreuungspensumContainer createBetPensContainer(Betreuung betreuung) {
@@ -580,6 +626,12 @@ public final class TestDataUtil {
 		user.setMandant(createDefaultMandant());
 		user.setRole(UserRole.ADMIN);
 		return user;
+	}
+
+	public static Benutzer createBenutzerSCH() {
+		final Benutzer defaultBenutzer = TestDataUtil.createDefaultBenutzer();
+		defaultBenutzer.setRole(UserRole.SCHULAMT);
+		return defaultBenutzer;
 	}
 
 	@SuppressWarnings("ConstantConditions")
@@ -738,7 +790,7 @@ public final class TestDataUtil {
 		return persistAllEntities(persistence, eingangsdatum, testfall);
 	}
 
-	public static Gesuch createAndPersistBeckerNoraGesuch(InstitutionService instService, Persistence persistence, LocalDate eingangsdatum, AntragStatus status) {
+	public static Gesuch createAndPersistBeckerNoraGesuch(InstitutionService instService, Persistence persistence, @Nullable LocalDate eingangsdatum, AntragStatus status) {
 		instService.getAllInstitutionen();
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiWeissenstein());
@@ -765,7 +817,8 @@ public final class TestDataUtil {
 	}
 
 	private static Gesuch persistAllEntities(Persistence persistence, @Nullable LocalDate eingangsdatum, AbstractTestfall testfall, AntragStatus status) {
-		testfall.createFall(null);
+		Benutzer verantwortlicher = createAndPersistBenutzer(persistence);
+		testfall.createFall(verantwortlicher);
 		testfall.createGesuch(eingangsdatum, status);
 		persistence.persist(testfall.getGesuch().getFall());
 		persistence.persist(testfall.getGesuch().getGesuchsperiode());
@@ -776,8 +829,17 @@ public final class TestDataUtil {
 		return gesuch;
 	}
 
+	@Nonnull
+	private static Benutzer createAndPersistBenutzer(Persistence persistence) {
+		Benutzer verantwortlicher = TestDataUtil.createDefaultBenutzer();
+		persistence.persist(verantwortlicher.getMandant());
+		persistence.persist(verantwortlicher);
+		return verantwortlicher;
+	}
+
 	private static Gesuch persistAllEntities(Persistence persistence, @Nullable LocalDate eingangsdatum, AbstractTestfall testfall) {
-		testfall.createFall(null);
+		Benutzer verantwortlicher = createAndPersistBenutzer(persistence);
+		testfall.createFall(verantwortlicher);
 		testfall.createGesuch(eingangsdatum);
 		persistence.persist(testfall.getGesuch().getFall());
 		persistence.persist(testfall.getGesuch().getGesuchsperiode());
@@ -789,9 +851,7 @@ public final class TestDataUtil {
 	}
 
 	public static void persistEntities(Gesuch gesuch, Persistence persistence) {
-		Benutzer verantwortlicher = TestDataUtil.createDefaultBenutzer();
-		persistence.persist(verantwortlicher.getMandant());
-		persistence.persist(verantwortlicher);
+		Benutzer verantwortlicher = createAndPersistBenutzer(persistence);
 
 		gesuch.getFall().setVerantwortlicher(verantwortlicher);
 		persistence.persist(gesuch.getFall());
@@ -892,7 +952,7 @@ public final class TestDataUtil {
 
 	}
 
-	public static Benutzer createBenutzer(UserRole role, String userName, Traegerschaft traegerschaft, Institution institution, Mandant mandant) {
+	public static Benutzer createBenutzer(UserRole role, String userName, Traegerschaft traegerschaft, @Nullable Institution institution, Mandant mandant) {
 		final Benutzer benutzer = new Benutzer();
 		benutzer.setUsername(userName);
 		benutzer.setNachname("anonymous");
@@ -905,7 +965,15 @@ public final class TestDataUtil {
 		return benutzer;
 	}
 
-	public static Benutzer createAndPersistBenutzer(Persistence persistence) {
+	public static Benutzer createAndPersistJABenutzer(Persistence persistence) {
+		final Mandant mandant = TestDataUtil.createDefaultMandant();
+		persistence.persist(mandant);
+		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, UUID.randomUUID().toString(), null, null, mandant);
+		persistence.persist(benutzer);
+		return benutzer;
+	}
+
+	public static Benutzer createAndPersistTraegerschaftBenutzer(Persistence persistence) {
 		final Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
 		persistence.persist(traegerschaft);
 		final Mandant mandant = TestDataUtil.createDefaultMandant();
@@ -1075,10 +1143,78 @@ public final class TestDataUtil {
 		persistence.persist(betreuung.getKind());
 
 		betreuung.setBetreuungsstatus(Betreuungsstatus.WARTEN);
-		betreuungService.saveBetreuung(betreuung, false);
+		final Betreuung savedBetreuung = betreuungService.saveBetreuung(betreuung, false);
 
-		return betreuung;
+		return savedBetreuung;
 
+	}
+
+	/**
+	 * Verfuegt das uebergebene Gesuch. Dies muss in Status IN_BEARBEITUNG_JA uebergeben werden.
+	 */
+	public static Gesuch gesuchVerfuegen(@Nonnull Gesuch gesuch, @Nonnull GesuchService gesuchService) {
+		gesuch.setStatus(AntragStatus.GEPRUEFT);
+		final Gesuch gesuchToVerfuegt = gesuchService.updateGesuch(gesuch, true, null);
+		gesuchToVerfuegt.setStatus(AntragStatus.VERFUEGEN);
+		final Gesuch verfuegenGesuch = gesuchService.updateGesuch(gesuchToVerfuegt, true, null);
+		verfuegenGesuch.setStatus(AntragStatus.VERFUEGT);
+		return gesuchService.updateGesuch(verfuegenGesuch, true, null);
+	}
+
+	public static Gesuch persistNewGesuchInStatus(@Nonnull AntragStatus status, @Nonnull Persistence persistence, @Nonnull GesuchService gesuchService) {
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		gesuch.setEingangsart(Eingangsart.PAPIER);
+		gesuch.setStatus(status);
+		gesuch.setGesuchsperiode(persistence.persist(gesuch.getGesuchsperiode()));
+		gesuch.setFall(persistence.persist(gesuch.getFall()));
+		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer(gesuch));
+		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(TestDataUtil.createFinanzielleSituationContainer());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationJA(TestDataUtil.createDefaultFinanzielleSituation());
+		gesuchService.createGesuch(gesuch);
+		return gesuch;
+	}
+
+	@Nonnull
+	public static AntragTableFilterDTO createDefaultAntragTableFilterDTO() {
+		AntragTableFilterDTO antragSearch = new AntragTableFilterDTO();
+		PaginationDTO pagination = new PaginationDTO();
+		pagination.setNumber(20);
+		pagination.setStart(0);
+		pagination.setNumberOfPages(1);
+		antragSearch.setPagination(pagination);
+		AntragSearchDTO searchDTO = new AntragSearchDTO();
+		PredicateObjectDTO predicateObj = new PredicateObjectDTO();
+		searchDTO.setPredicateObject(predicateObj);
+		antragSearch.setSearch(searchDTO);
+		return antragSearch;
+	}
+
+	@Nonnull
+	public static FerieninselStammdaten createDefaultFerieninselStammdaten(@Nonnull Gesuchsperiode gesuchsperiode) {
+		FerieninselStammdaten stammdaten = new FerieninselStammdaten();
+		stammdaten.setFerienname(Ferienname.SOMMERFERIEN);
+		stammdaten.setAnmeldeschluss(LocalDate.now().plusMonths(1));
+		List<FerieninselZeitraum> zeitraumList = new ArrayList<>();
+		FerieninselZeitraum zeitraum = new FerieninselZeitraum();
+		zeitraum.setGueltigkeit(new DateRange(LocalDate.now().plusMonths(2), LocalDate.now().plusMonths(3)));
+		zeitraumList.add(zeitraum);
+		stammdaten.setZeitraumList(zeitraumList);
+		stammdaten.setGesuchsperiode(gesuchsperiode);
+		return stammdaten;
+	}
+
+	public static BelegungFerieninsel createDefaultBelegungFerieninsel() {
+		BelegungFerieninsel belegungFerieninsel = new BelegungFerieninsel();
+		belegungFerieninsel.setFerienname(Ferienname.SOMMERFERIEN);
+		belegungFerieninsel.setTage(new ArrayList<>());
+		belegungFerieninsel.getTage().add(createBelegungFerieninselTag(LocalDate.now().plusMonths(3)));
+		return belegungFerieninsel;
+	}
+
+	public static BelegungFerieninselTag createBelegungFerieninselTag(LocalDate date) {
+		BelegungFerieninselTag tag = new BelegungFerieninselTag();
+		tag.setTag(date);
+		return tag;
 	}
 
 	public static VerfuegungZeitabschnitt createDefaultZeitabschnitt(Verfuegung verfuegung) {

@@ -59,6 +59,14 @@ public interface Constants {
 	LocalDate END_OF_TIME = LocalDate.of(9999, 12, 31);
 	LocalDate START_OF_TIME = LocalDate.of(1000, 1, 1);
 
+	LocalDate GESUCHSPERIODE_17_18_AB = LocalDate.of(2017, 8, 1);
+	LocalDate GESUCHSPERIODE_17_18_BIS = LocalDate.of(2018, 7, 31);
+	DateRange GESUCHSPERIODE_17_18 = new DateRange(Constants.GESUCHSPERIODE_17_18_AB, Constants.GESUCHSPERIODE_17_18_BIS);
+
+	LocalDate GESUCHSPERIODE_18_19_AB = LocalDate.of(2018, 8, 1);
+	LocalDate GESUCHSPERIODE_18_19_BIS = LocalDate.of(2019, 7, 31);
+	DateRange GESUCHSPERIODE_18_19 = new DateRange(Constants.GESUCHSPERIODE_18_19_AB, Constants.GESUCHSPERIODE_18_19_BIS);
+
 	LocalDateTime START_OF_DATETIME = LocalDateTime.of(1000, 1, 1, 0, 0, 0);
 
 	DateRange DEFAULT_GUELTIGKEIT = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);

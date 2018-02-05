@@ -15,8 +15,11 @@
 
 package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 
+import javax.annotation.Nullable;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import org.apache.commons.lang3.Validate;
 
 public final class FinanzSituationPrintGesuchstellerHelper {
@@ -33,17 +36,20 @@ public final class FinanzSituationPrintGesuchstellerHelper {
 	 *
 	 * @return FinanzSituationGesuchsteller
 	 */
+	@Nullable
 	public static FinanzSituationPrintGesuchsteller getFinanzSituationGesuchsteller1(Gesuch gesuch) {
+		if (EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
+			GesuchstellerContainer gesuchsteller1 = gesuch.getGesuchsteller1();
+			Validate.notNull(gesuchsteller1);
+			Validate.notNull(gesuchsteller1.getFinanzielleSituationContainer());
+			FinanzSituationPrintGesuchsteller finanzSituationPrintGesuchsteller = new FinanzSituationPrintGesuchsteller(gesuchsteller1.getFinanzielleSituationContainer().getFinanzielleSituationJA(),
+				gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() : null,
+				gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() : null,
+				gesuch.extractEinkommensverschlechterungInfo());
 
-		GesuchstellerContainer gesuchsteller1 = gesuch.getGesuchsteller1();
-		Validate.notNull(gesuchsteller1);
-		Validate.notNull(gesuchsteller1.getFinanzielleSituationContainer());
-		FinanzSituationPrintGesuchsteller finanzSituationPrintGesuchsteller = new FinanzSituationPrintGesuchsteller(gesuchsteller1.getFinanzielleSituationContainer().getFinanzielleSituationJA(), //
-			gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() : null, //
-			gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() : null, //
-			gesuch.extractEinkommensverschlechterungInfo());
-
-		return finanzSituationPrintGesuchsteller;
+			return finanzSituationPrintGesuchsteller;
+		}
+		return null;
 	}
 
 	/**
@@ -51,10 +57,11 @@ public final class FinanzSituationPrintGesuchstellerHelper {
 	 *
 	 * @return FinanzSituationGesuchsteller
 	 */
+	@Nullable
 	public static FinanzSituationPrintGesuchsteller getFinanzSituationGesuchsteller2(Gesuch gesuch) {
 
 		GesuchstellerContainer gesuchsteller2 = gesuch.getGesuchsteller2();
-		if (gesuchsteller2 != null) {
+		if (gesuchsteller2 != null && EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
 			Validate.notNull(gesuchsteller2.getFinanzielleSituationContainer());
 			FinanzSituationPrintGesuchsteller finanzSituationPrintGesuchsteller2 = new FinanzSituationPrintGesuchsteller(
 				gesuchsteller2.getFinanzielleSituationContainer().getFinanzielleSituationJA(), //

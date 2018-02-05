@@ -1,0 +1,144 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<gesuch-toolbar-gesuchsteller flex="nogrow"
+                              class="gesuch-toolbar-gesuchsteller"
+                              fallid="{{vm.fallId}}"
+                              is-dashboard-screen="{{true}}">
+</gesuch-toolbar-gesuchsteller>
+
+<div class="gesuchstellerDashboardView" flex="auto">
+    <h1 class="access-for-all-title" data-translate="AFA_DASHBOARD"></h1>
+    <div class="dashboardHeader" flex="100" layout="row" layout-align="center center" layout-margin
+         layout-xs="column"
+         layout-align-xs="space-between center">
+
+        <div class="gdashboard-panel"
+             ng-repeat="periode in vm.getActiveGesuchsperiodenList() | orderBy: 'gueltigkeit.gueltigAb'">
+
+            <span class="gdashboard-panel__gesuchstring">
+                <span data-translate="GESUCH"></span>
+                <span>{{periode.gesuchsperiodeString}}</span>
+            </span>
+            <span class="gdashboard-panel__gesuchrange" flex="nogrow">
+                <span>{{periode.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YY'}} – {{periode.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YY'}}</span>
+            </span>
+
+            <dv-loading-button class="gdashboard-panel__button--ansehen"
+                               ng-if="vm.displayAnsehenButton(periode)"
+                               type="button"
+                               button-click="vm.openAntrag(periode, true)"
+                               button-class="dvb-loading-button gdashboard-panel__button">
+                {{'GS_ANSEHEN' | translate}}
+            </dv-loading-button>
+
+            <dv-loading-button class="gdashboard-panel__button--margin"
+                               ng-if="vm.getButtonText(periode)" type="button"
+                               button-click="vm.openAntrag(periode)"
+                               button-class="dvb-loading-button gdashboard-panel__button">
+                {{vm.getButtonText(periode)}}
+            </dv-loading-button>
+
+
+            <dv-loading-button type="button"
+                               ng-if="vm.showAnmeldungCreate(periode)"
+                               button-click="vm.createFerieninsel(periode)"
+                               button-class="dvb-loading-button gdashboard-panel__button">
+
+                {{'FERIENINSEL_ANMELDEN' | translate}}
+            </dv-loading-button>
+
+            <dv-loading-button type="button"
+                               ng-if="vm.showAnmeldungCreate(periode) && !vm.hasOnlyFerieninsel(periode)"
+                               button-click="vm.createTagesschule(periode)"
+                               button-class="dvb-loading-button gdashboard-panel__button">
+                {{'TAGESSCHULE_ANMELDEN' | translate}}
+            </dv-loading-button>
+
+            <div ng-if="vm.gesperrtWegenMutation(periode)" >
+                {{'GESPERRT_WEGEN_MUTATION' | translate}}
+            </div>
+
+            <div ng-if="vm.showAnmeldungCreate(periode) && vm.hasOnlyFerieninsel(periode)" >
+                {{'MUTATION_NOETIG_DB' | translate}}
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-md-8 col-md-offset-2">
+
+        <h2 data-translate="GSDASHBOARD_ANTRAEGE"></h2>
+
+        <table st-table="displayedCollection" st-safe-src="vm.getAntragList()"
+               st-delay="20"
+               class="table fixedtable">
+            <thead>
+            <tr>
+
+                <th st-sort="antragTyp" class="sortable" data-translate="TYP_UPPER"></th>
+                <th st-sort="gesuchsperiodeString" class="sortable" data-translate="PERIODE_UPPER" hide-sm hide-xs></th>
+                <th st-sort="eingangsdatum" st-sort-default="true" class="sortable"
+                    data-translate="EINGANG_UPPER"></th>
+                <th st-sort="status" class="sortable" data-translate="STATUS_UPPER"></th>
+                <th st-sort="verantwortlicher" class="sortable" data-translate="VERANTWORTLICH_UPPER" hide-sm
+                    hide-xs></th>
+                <th hide-sm hide-xs width="5%"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                ng-click="vm.editAntrag(row)" role="row" role="row" tabindex="-1">
+                <td class="ellipsis" ellipsis-tooltip="{{row.antragTyp | translate}}"
+                    ng-bind="row.antragTyp | translate"></td>
+                <td class="ellipsis"
+                    ellipsis-tooltip="{{row.gesuchsperiodeString}}"
+                    ng-bind="row.gesuchsperiodeString" hide-sm hide-xs></td>
+                <td class="ellipsis"
+                    ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
+                    ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
+                <td class="ellipsis" ellipsis-tooltip="{{vm.translate(row.status)}}"
+                    ng-bind="vm.translateStatus(row)"></td>
+                <td class="ellipsis" ellipsis-tooltip="{{vm.getHauptVerantwortlicherFullName(row)}}"
+                    ng-bind="vm.getHauptVerantwortlicherFullName(row)" hide-sm hide-xs></td>
+                <td class="ellipsis" role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%" hide-sm
+                    hide-xs>
+                    <dv-loading-button type="button" button-click="vm.editAntrag(row)"
+                                       button-class="dv-btn-operation dv-btn-operation--white dv-btn-row"
+                                       title="{{'TABLE_EDIT'|translate}}"
+                                       aria-label="{{'TABLE_EDIT'|translate}}">
+                        <i class="fa fa-lg fa-arrow-right" aria-label="{{'TABLE_EDIT'|translate}}">
+                        </i>
+                    </dv-loading-button>
+                </td>
+            </tr>
+            <tr ng-if="vm.getAntragList().length === 0">
+                <td colspan="3" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-gt-sm></td>
+                <td colspan="6" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-sm hide-xs></td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="6" class="text-center" hide-sm hide-xs>
+                    <div st-pagination="" st-items-by-page="10" st-displayed-pages="5"></div>
+                </td>
+                <td colspan="3" class="text-center" hide-gt-sm>
+                    <div st-pagination="" st-items-by-page="10" st-displayed-pages="5"></div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

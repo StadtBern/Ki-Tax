@@ -16,9 +16,12 @@
 package ch.dvbern.ebegu.api.converter;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,6 +36,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.api.dtos.JaxAbstractDTO;
 import ch.dvbern.ebegu.api.dtos.JaxAbstractDateRangedDTO;
@@ -46,6 +50,9 @@ import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
 import ch.dvbern.ebegu.api.dtos.JaxAntragStatusHistory;
 import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
+import ch.dvbern.ebegu.api.dtos.JaxBelegungFerieninsel;
+import ch.dvbern.ebegu.api.dtos.JaxBelegungFerieninselTag;
+import ch.dvbern.ebegu.api.dtos.JaxBelegungTagesschule;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilungPensum;
@@ -68,6 +75,8 @@ import ch.dvbern.ebegu.api.dtos.JaxFachstelle;
 import ch.dvbern.ebegu.api.dtos.JaxFall;
 import ch.dvbern.ebegu.api.dtos.JaxFamiliensituation;
 import ch.dvbern.ebegu.api.dtos.JaxFamiliensituationContainer;
+import ch.dvbern.ebegu.api.dtos.JaxFerieninselStammdaten;
+import ch.dvbern.ebegu.api.dtos.JaxFerieninselZeitraum;
 import ch.dvbern.ebegu.api.dtos.JaxFile;
 import ch.dvbern.ebegu.api.dtos.JaxFinanzielleSituation;
 import ch.dvbern.ebegu.api.dtos.JaxFinanzielleSituationContainer;
@@ -78,11 +87,13 @@ import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxInstitution;
 import ch.dvbern.ebegu.api.dtos.JaxInstitutionStammdaten;
+import ch.dvbern.ebegu.api.dtos.JaxInstitutionStammdatenTagesschule;
 import ch.dvbern.ebegu.api.dtos.JaxKind;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
 import ch.dvbern.ebegu.api.dtos.JaxMahnung;
 import ch.dvbern.ebegu.api.dtos.JaxMandant;
 import ch.dvbern.ebegu.api.dtos.JaxMitteilung;
+import ch.dvbern.ebegu.api.dtos.JaxModulTagesschule;
 import ch.dvbern.ebegu.api.dtos.JaxPensumFachstelle;
 import ch.dvbern.ebegu.api.dtos.JaxTraegerschaft;
 import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
@@ -103,6 +114,9 @@ import ch.dvbern.ebegu.entities.AbwesenheitContainer;
 import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.AntragStatusHistory;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.ebegu.entities.BelegungFerieninsel;
+import ch.dvbern.ebegu.entities.BelegungFerieninselTag;
+import ch.dvbern.ebegu.entities.BelegungTagesschule;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -124,6 +138,8 @@ import ch.dvbern.ebegu.entities.Fachstelle;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.FamiliensituationContainer;
+import ch.dvbern.ebegu.entities.FerieninselStammdaten;
+import ch.dvbern.ebegu.entities.FerieninselZeitraum;
 import ch.dvbern.ebegu.entities.FileMetadata;
 import ch.dvbern.ebegu.entities.FinanzielleSituation;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
@@ -135,11 +151,13 @@ import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.InstitutionStammdatenTagesschule;
 import ch.dvbern.ebegu.entities.Kind;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Mitteilung;
+import ch.dvbern.ebegu.entities.ModulTagesschule;
 import ch.dvbern.ebegu.entities.PensumFachstelle;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.entities.Verfuegung;
@@ -195,6 +213,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Dependent
 @SuppressWarnings({ "PMD.NcssTypeCount", "unused" })
 public class JaxBConverter {
+
+	public static final String DROPPED_DUPLICATE_CONTAINER = "dropped duplicate container ";
 
 	@Inject
 	private GesuchstellerService gesuchstellerService;
@@ -315,18 +335,21 @@ public class JaxBConverter {
 	 * @param dateRangedJAXP AbstractDateRanged jax where to take the date from
 	 * @param dateRangedEntity AbstractDateRanged entity where to store the date into
 	 */
-	private void convertAbstractDateRangedFieldsToEntity(final JaxAbstractDateRangedDTO dateRangedJAXP, final AbstractDateRangedEntity dateRangedEntity) {
+	private AbstractDateRangedEntity convertAbstractDateRangedFieldsToEntity(final JaxAbstractDateRangedDTO dateRangedJAXP, final AbstractDateRangedEntity
+		dateRangedEntity) {
 		convertAbstractFieldsToEntity(dateRangedJAXP, dateRangedEntity);
 		final LocalDate dateAb = dateRangedJAXP.getGueltigAb() == null ? LocalDate.now() : dateRangedJAXP.getGueltigAb();
 		final LocalDate dateBis = dateRangedJAXP.getGueltigBis() == null ? Constants.END_OF_TIME : dateRangedJAXP.getGueltigBis();
 		dateRangedEntity.setGueltigkeit(new DateRange(dateAb, dateBis));
+		return dateRangedEntity;
 	}
 
 	/***
 	 * Konvertiert eine DateRange fuer den Client. Wenn das DatumBis {@link Constants#END_OF_TIME} entspricht wird es NICHT
 	 * konvertiert
 	 */
-	private void convertAbstractDateRangedFieldsToJAX(@Nonnull final AbstractDateRangedEntity dateRangedEntity, @Nonnull final JaxAbstractDateRangedDTO jaxDateRanged) {
+	private void convertAbstractDateRangedFieldsToJAX(@Nonnull final AbstractDateRangedEntity dateRangedEntity, @Nonnull final JaxAbstractDateRangedDTO
+		jaxDateRanged) {
 		Validate.notNull(dateRangedEntity.getGueltigkeit());
 		convertAbstractFieldsToJAX(dateRangedEntity, jaxDateRanged);
 		jaxDateRanged.setGueltigAb(dateRangedEntity.getGueltigkeit().getGueltigAb());
@@ -476,8 +499,8 @@ public class JaxBConverter {
 			GesuchstellerAdresseContainer next = iterator.next();
 			boolean needsToBeRemoved = true;
 			for (JaxAdresseContainer jaxAdresse : gesuchstellerContJAXP.getAdressen()) {
-				if (next.extractIsKorrespondenzAdresse() || next.getId().equals(jaxAdresse.getId())) {
-					needsToBeRemoved = false; // Korrespondezadresse und Adressen die gefunden werden, werden nicht geloescht
+				if (next.extractIsKorrespondenzAdresse() || next.extractIsRechnungsAdresse() || next.getId().equals(jaxAdresse.getId())) {
+					needsToBeRemoved = false; // Korrespondezadresse, Rechnungsadresse und Adressen die gefunden werden, werden nicht geloescht
 				}
 			}
 			if (needsToBeRemoved) {
@@ -489,7 +512,7 @@ public class JaxBConverter {
 
 		// Zuletzt werden alle gueltigen Adressen sortiert und mit dem entsprechenden AB und BIS aktualisiert
 		List<GesuchstellerAdresseContainer> wohnadressen = gesuchstellerCont.getAdressen().stream()
-			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.extractIsKorrespondenzAdresse())
+			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.extractIsKorrespondenzAdresse() && !gesuchstellerAdresse.extractIsRechnungsAdresse())
 			.sorted(Comparator.comparing(o -> o.extractGueltigkeit().getGueltigAb()))
 			.collect(Collectors.toList());
 		for (int i = 0; i < wohnadressen.size(); i++) {
@@ -530,11 +553,13 @@ public class JaxBConverter {
 		if (!persistedGesuchstellerCont.isNew()) {
 			//relationen laden
 			final Optional<GesuchstellerAdresseContainer> alternativeAdr = gesuchstellerAdresseService.getKorrespondenzAdr(persistedGesuchstellerCont.getId());
+			final Optional<GesuchstellerAdresseContainer> rechnungsAdr = gesuchstellerAdresseService.getRechnungsAdr(persistedGesuchstellerCont.getId());
 			alternativeAdr.ifPresent(adresse -> jaxGesuchstellerCont.setAlternativeAdresse(gesuchstellerAdresseContainerToJAX(adresse)));
+			rechnungsAdr.ifPresent(adresse -> jaxGesuchstellerCont.setRechnungsAdresse(gesuchstellerAdresseContainerToJAX(adresse)));
 
 			jaxGesuchstellerCont.setAdressen(gesuchstellerAdresseContainerListToJAX(
 				persistedGesuchstellerCont.getAdressen().stream().filter(gesuchstellerAdresse
-					-> !gesuchstellerAdresse.extractIsKorrespondenzAdresse()).sorted((o1, o2) ->
+					-> !gesuchstellerAdresse.extractIsKorrespondenzAdresse() && !gesuchstellerAdresse.extractIsRechnungsAdresse()).sorted((o1, o2) ->
 				{
 					if (o1.extractGueltigkeit() == null && o2.extractGueltigkeit() == null) {
 						return 0;
@@ -551,7 +576,8 @@ public class JaxBConverter {
 
 		// Finanzielle Situation
 		if (persistedGesuchstellerCont.getFinanzielleSituationContainer() != null) {
-			final JaxFinanzielleSituationContainer jaxFinanzielleSituationContainer = finanzielleSituationContainerToJAX(persistedGesuchstellerCont.getFinanzielleSituationContainer());
+			final JaxFinanzielleSituationContainer jaxFinanzielleSituationContainer = finanzielleSituationContainerToJAX(persistedGesuchstellerCont
+				.getFinanzielleSituationContainer());
 			jaxGesuchstellerCont.setFinanzielleSituationContainer(jaxFinanzielleSituationContainer);
 		}
 		// Erwerbspensen
@@ -561,7 +587,8 @@ public class JaxBConverter {
 
 		// Einkommensverschlechterung
 		if (persistedGesuchstellerCont.getEinkommensverschlechterungContainer() != null) {
-			final JaxEinkommensverschlechterungContainer jaxEinkVerContainer = einkommensverschlechterungContainerToJAX(persistedGesuchstellerCont.getEinkommensverschlechterungContainer());
+			final JaxEinkommensverschlechterungContainer jaxEinkVerContainer = einkommensverschlechterungContainerToJAX(persistedGesuchstellerCont
+				.getEinkommensverschlechterungContainer());
 			jaxGesuchstellerCont.setEinkommensverschlechterungContainer(jaxEinkVerContainer);
 		}
 
@@ -601,7 +628,8 @@ public class JaxBConverter {
 		return jaxGesuchsteller;
 	}
 
-	public Familiensituation familiensituationToEntity(@Nonnull final JaxFamiliensituation familiensituationJAXP, @Nonnull final Familiensituation familiensituation) {
+	public Familiensituation familiensituationToEntity(@Nonnull final JaxFamiliensituation familiensituationJAXP, @Nonnull final Familiensituation
+		familiensituation) {
 		Validate.notNull(familiensituation);
 		Validate.notNull(familiensituationJAXP);
 		convertAbstractFieldsToEntity(familiensituationJAXP, familiensituation);
@@ -609,6 +637,8 @@ public class JaxBConverter {
 		familiensituation.setGesuchstellerKardinalitaet(familiensituationJAXP.getGesuchstellerKardinalitaet());
 		familiensituation.setGemeinsameSteuererklaerung(familiensituationJAXP.getGemeinsameSteuererklaerung());
 		familiensituation.setAenderungPer(familiensituationJAXP.getAenderungPer());
+		familiensituation.setSozialhilfeBezueger(familiensituationJAXP.getSozialhilfeBezueger());
+		familiensituation.setVerguenstigungGewuenscht(familiensituationJAXP.getVerguenstigungGewuenscht());
 		return familiensituation;
 	}
 
@@ -619,6 +649,8 @@ public class JaxBConverter {
 		jaxFamiliensituation.setGesuchstellerKardinalitaet(persistedFamiliensituation.getGesuchstellerKardinalitaet());
 		jaxFamiliensituation.setGemeinsameSteuererklaerung(persistedFamiliensituation.getGemeinsameSteuererklaerung());
 		jaxFamiliensituation.setAenderungPer(persistedFamiliensituation.getAenderungPer());
+		jaxFamiliensituation.setSozialhilfeBezueger(persistedFamiliensituation.getSozialhilfeBezueger());
+		jaxFamiliensituation.setVerguenstigungGewuenscht(persistedFamiliensituation.getVerguenstigungGewuenscht());
 		return jaxFamiliensituation;
 	}
 
@@ -644,17 +676,21 @@ public class JaxBConverter {
 		return container;
 	}
 
-	public JaxEinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainerToJAX(final EinkommensverschlechterungInfoContainer persistedEinkommensverschlechterungInfo) {
+	public JaxEinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainerToJAX(final EinkommensverschlechterungInfoContainer
+		persistedEinkommensverschlechterungInfo) {
 		final JaxEinkommensverschlechterungInfoContainer jaxEkvic = new JaxEinkommensverschlechterungInfoContainer();
 		convertAbstractFieldsToJAX(persistedEinkommensverschlechterungInfo, jaxEkvic);
 		if (persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoGS() != null) {
-			jaxEkvic.setEinkommensverschlechterungInfoGS(einkommensverschlechterungInfoToJAX(persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoGS()));
+			jaxEkvic.setEinkommensverschlechterungInfoGS(einkommensverschlechterungInfoToJAX(persistedEinkommensverschlechterungInfo
+				.getEinkommensverschlechterungInfoGS()));
 		}
-		jaxEkvic.setEinkommensverschlechterungInfoJA(einkommensverschlechterungInfoToJAX(persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoJA()));
+		jaxEkvic.setEinkommensverschlechterungInfoJA(einkommensverschlechterungInfoToJAX(persistedEinkommensverschlechterungInfo
+			.getEinkommensverschlechterungInfoJA()));
 		return jaxEkvic;
 	}
 
-	public EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainerToEntity(@Nonnull final JaxEinkommensverschlechterungInfoContainer containerJAX,
+	public EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainerToEntity(@Nonnull final JaxEinkommensverschlechterungInfoContainer
+		containerJAX,
 		@Nonnull final EinkommensverschlechterungInfoContainer container) {
 		Validate.notNull(container);
 		Validate.notNull(containerJAX);
@@ -663,11 +699,13 @@ public class JaxBConverter {
 		//Im moment kann eine einmal gespeicherte Finanzielle Situation nicht mehr entfernt werden.
 		if (containerJAX.getEinkommensverschlechterungInfoGS() != null) {
 			evkInfoToMergeWith = Optional.ofNullable(container.getEinkommensverschlechterungInfoGS()).orElse(new EinkommensverschlechterungInfo());
-			container.setEinkommensverschlechterungInfoGS(einkommensverschlechterungInfoToEntity(containerJAX.getEinkommensverschlechterungInfoGS(), evkInfoToMergeWith));
+			container.setEinkommensverschlechterungInfoGS(einkommensverschlechterungInfoToEntity(containerJAX.getEinkommensverschlechterungInfoGS(),
+				evkInfoToMergeWith));
 		}
 		if (containerJAX.getEinkommensverschlechterungInfoJA() != null) {
 			evkInfoToMergeWith = Optional.ofNullable(container.getEinkommensverschlechterungInfoJA()).orElse(new EinkommensverschlechterungInfo());
-			container.setEinkommensverschlechterungInfoJA(einkommensverschlechterungInfoToEntity(containerJAX.getEinkommensverschlechterungInfoJA(), evkInfoToMergeWith));
+			container.setEinkommensverschlechterungInfoJA(einkommensverschlechterungInfoToEntity(containerJAX.getEinkommensverschlechterungInfoJA(),
+				evkInfoToMergeWith));
 		}
 		return container;
 	}
@@ -687,7 +725,8 @@ public class JaxBConverter {
 		return jaxfc;
 	}
 
-	public EinkommensverschlechterungInfo einkommensverschlechterungInfoToEntity(@Nonnull final JaxEinkommensverschlechterungInfo einkommensverschlechterungInfoJAXP, @Nonnull final EinkommensverschlechterungInfo einkommensverschlechterungInfo) {
+	public EinkommensverschlechterungInfo einkommensverschlechterungInfoToEntity(@Nonnull final JaxEinkommensverschlechterungInfo
+		einkommensverschlechterungInfoJAXP, @Nonnull final EinkommensverschlechterungInfo einkommensverschlechterungInfo) {
 		Validate.notNull(einkommensverschlechterungInfo);
 		Validate.notNull(einkommensverschlechterungInfoJAXP);
 		convertAbstractFieldsToEntity(einkommensverschlechterungInfoJAXP, einkommensverschlechterungInfo);
@@ -705,7 +744,8 @@ public class JaxBConverter {
 		return einkommensverschlechterungInfo;
 	}
 
-	public JaxEinkommensverschlechterungInfo einkommensverschlechterungInfoToJAX(@Nonnull final EinkommensverschlechterungInfo persistedEinkommensverschlechterungInfo) {
+	public JaxEinkommensverschlechterungInfo einkommensverschlechterungInfoToJAX(@Nonnull final EinkommensverschlechterungInfo
+		persistedEinkommensverschlechterungInfo) {
 		final JaxEinkommensverschlechterungInfo jaxEinkommensverschlechterungInfo = new JaxEinkommensverschlechterungInfo();
 		convertAbstractFieldsToJAX(persistedEinkommensverschlechterungInfo, jaxEinkommensverschlechterungInfo);
 
@@ -735,6 +775,18 @@ public class JaxBConverter {
 			} else {
 				throw new EbeguEntityNotFoundException("fallToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJAXP.getVerantwortlicher());
 			}
+		} else {
+			fall.setVerantwortlicher(null);
+		}
+		if (fallJAXP.getVerantwortlicherSCH() != null) {
+			Optional<Benutzer> verantwortlicherSCH = benutzerService.findBenutzer(fallJAXP.getVerantwortlicherSCH().getUsername());
+			if (verantwortlicherSCH.isPresent()) {
+				fall.setVerantwortlicherSCH(verantwortlicherSCH.get()); // because the user doesn't come from the client but from the server
+			} else {
+				throw new EbeguEntityNotFoundException("fallToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJAXP.getVerantwortlicherSCH());
+			}
+		} else {
+			fall.setVerantwortlicherSCH(null);
 		}
 		if (fallJAXP.getNextNumberKind() != null) {
 			fall.setNextNumberKind(fallJAXP.getNextNumberKind());
@@ -756,6 +808,9 @@ public class JaxBConverter {
 		jaxFall.setFallNummer(persistedFall.getFallNummer());
 		if (persistedFall.getVerantwortlicher() != null) {
 			jaxFall.setVerantwortlicher(benutzerToAuthLoginElement(persistedFall.getVerantwortlicher()));
+		}
+		if (persistedFall.getVerantwortlicherSCH() != null) {
+			jaxFall.setVerantwortlicherSCH(benutzerToAuthLoginElement(persistedFall.getVerantwortlicherSCH()));
 		}
 		jaxFall.setNextNumberKind(persistedFall.getNextNumberKind());
 		if (persistedFall.getBesitzer() != null) {
@@ -813,27 +868,35 @@ public class JaxBConverter {
 		}
 		if (antragJAXP.getFamiliensituationContainer() != null) {
 			if (antragJAXP.getFamiliensituationContainer().getId() != null) {
-				final Optional<FamiliensituationContainer> familiensituationContainer = familiensituationService.findFamiliensituation(antragJAXP.getFamiliensituationContainer().getId());
+				final Optional<FamiliensituationContainer> familiensituationContainer = familiensituationService.findFamiliensituation(antragJAXP
+					.getFamiliensituationContainer().getId());
 				if (familiensituationContainer.isPresent()) {
-					antrag.setFamiliensituationContainer(familiensituationContainerToEntity(antragJAXP.getFamiliensituationContainer(), familiensituationContainer.get()));
+					antrag.setFamiliensituationContainer(familiensituationContainerToEntity(antragJAXP.getFamiliensituationContainer(),
+						familiensituationContainer.get()));
 				} else {
-					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFamiliensituationContainer().getId());
+					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFamiliensituationContainer()
+						.getId());
 				}
 			} else {
-				antrag.setFamiliensituationContainer(familiensituationContainerToEntity(antragJAXP.getFamiliensituationContainer(), new FamiliensituationContainer()));
+				antrag.setFamiliensituationContainer(familiensituationContainerToEntity(antragJAXP.getFamiliensituationContainer(), new
+					FamiliensituationContainer()));
 			}
 		}
 
 		if (antragJAXP.getEinkommensverschlechterungInfoContainer() != null) {
 			if (antragJAXP.getEinkommensverschlechterungInfoContainer().getId() != null) {
-				final Optional<EinkommensverschlechterungInfoContainer> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(antragJAXP.getEinkommensverschlechterungInfoContainer().getId());
+				final Optional<EinkommensverschlechterungInfoContainer> evkiSituation = einkommensverschlechterungInfoService
+					.findEinkommensverschlechterungInfo(antragJAXP.getEinkommensverschlechterungInfoContainer().getId());
 				if (evkiSituation.isPresent()) {
-					antrag.setEinkommensverschlechterungInfoContainer(einkommensverschlechterungInfoContainerToEntity(antragJAXP.getEinkommensverschlechterungInfoContainer(), evkiSituation.get()));
+					antrag.setEinkommensverschlechterungInfoContainer(einkommensverschlechterungInfoContainerToEntity(antragJAXP
+						.getEinkommensverschlechterungInfoContainer(), evkiSituation.get()));
 				} else {
-					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getEinkommensverschlechterungInfoContainer().getId());
+					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP
+						.getEinkommensverschlechterungInfoContainer().getId());
 				}
 			} else {
-				antrag.setEinkommensverschlechterungInfoContainer(einkommensverschlechterungInfoContainerToEntity(antragJAXP.getEinkommensverschlechterungInfoContainer(), new EinkommensverschlechterungInfoContainer()));
+				antrag.setEinkommensverschlechterungInfoContainer(einkommensverschlechterungInfoContainerToEntity(antragJAXP
+					.getEinkommensverschlechterungInfoContainer(), new EinkommensverschlechterungInfoContainer()));
 			}
 		}
 
@@ -844,6 +907,7 @@ public class JaxBConverter {
 		antrag.setGesuchBetreuungenStatus(antragJAXP.getGesuchBetreuungenStatus());
 		antrag.setGeprueftSTV(antragJAXP.isGeprueftSTV());
 		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
+		antrag.setFinSitStatus(antragJAXP.getFinSitStatus());
 		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
 		antrag.setDatumGewarntNichtFreigegeben(antragJAXP.getDatumGewarntNichtFreigegeben());
 		antrag.setDatumGewarntFehlendeQuittung(antragJAXP.getDatumGewarntFehlendeQuittung());
@@ -865,7 +929,7 @@ public class JaxBConverter {
 			}
 			adresseCont.setGesuchstellerAdresseGS(gesuchstellerAdresseToEntity(jaxAdresseCont.getAdresseGS(), gesuchstellerAdresseGS));
 		}
-		// ein erstellter AdresseJA Container kann durch das Jugendamt entfernt werden wenn es sich um eine Korrespondenzaddr handelt
+		// ein erstellter AdresseJA Container kann durch das Jugendamt entfernt werden wenn es sich um eine Korrespondenzaddr oder eine Rechnungsaddr handelt
 		if (jaxAdresseCont.getAdresseJA() != null) {
 			GesuchstellerAdresse gesuchstellerAdresseJA = new GesuchstellerAdresse();
 			if (adresseCont.getGesuchstellerAdresseJA() != null) {
@@ -873,7 +937,8 @@ public class JaxBConverter {
 			}
 			adresseCont.setGesuchstellerAdresseJA(gesuchstellerAdresseToEntity(jaxAdresseCont.getAdresseJA(), gesuchstellerAdresseJA));
 		} else {
-			Validate.isTrue(adresseCont.extractIsKorrespondenzAdresse(), "Nur bei der Korrespondenzadresse kann der AdresseJA Container entfernt werden");
+			Validate.isTrue(adresseCont.extractIsKorrespondenzAdresse() || adresseCont.extractIsRechnungsAdresse(), "Nur bei der Korrespondenz- oder "
+				+ "Rechnungsadresse kann der AdresseJA Container entfernt werden");
 			adresseCont.setGesuchstellerAdresseJA(null);
 		}
 
@@ -907,22 +972,27 @@ public class JaxBConverter {
 		if (jaxGesuchstellerCont.getAlternativeAdresse() != null) {
 			final GesuchstellerAdresseContainer currentAltAdr = gesuchstellerAdresseService
 				.getKorrespondenzAdr(gesuchstellerCont.getId()).orElse(new GesuchstellerAdresseContainer());
-			final GesuchstellerAdresseContainer altAddrToMerge = gesuchstellerAdresseContainerToEntity(jaxGesuchstellerCont.getAlternativeAdresse(), currentAltAdr);
+			final GesuchstellerAdresseContainer altAddrToMerge = gesuchstellerAdresseContainerToEntity(jaxGesuchstellerCont.getAlternativeAdresse(),
+				currentAltAdr);
 			gesuchstellerCont.addAdresse(altAddrToMerge);
-		} //else case: Wenn das haeklein "Zustell / Postadrsse" auf client weggenommen wird muss die Korrespondezadr auf dem Server geloescht werden.
-		else {
-			for (Iterator<GesuchstellerAdresseContainer> iterator = gesuchstellerCont.getAdressen().iterator(); iterator.hasNext(); ) {
-				GesuchstellerAdresseContainer next = iterator.next();
-				if (next.extractIsKorrespondenzAdresse()) {
-					iterator.remove();
-				}
-			}
+		} else { //else case: Wenn das haeklein "Zustell / Postadrsse" auf client weggenommen wird muss die Korrespondezadr auf dem Server geloescht werden.
+			gesuchstellerCont.getAdressen().removeIf(GesuchstellerAdresseContainer::extractIsKorrespondenzAdresse);
+		}
+		if (jaxGesuchstellerCont.getRechnungsAdresse() != null) {
+			final GesuchstellerAdresseContainer currentrechnungsAdr = gesuchstellerAdresseService
+				.getRechnungsAdr(gesuchstellerCont.getId()).orElse(new GesuchstellerAdresseContainer());
+			final GesuchstellerAdresseContainer rechnungsAddrToMerge = gesuchstellerAdresseContainerToEntity(jaxGesuchstellerCont.getRechnungsAdresse(),
+				currentrechnungsAdr);
+			gesuchstellerCont.addAdresse(rechnungsAddrToMerge);
+		} else {//else case: Wenn das haeklein "abweichende Rchnungsadresse" auf client weggenommen wird muss diese adresse auf dem Server geloescht werden.
+			gesuchstellerCont.getAdressen().removeIf(GesuchstellerAdresseContainer::extractIsRechnungsAdresse);
 		}
 		sortAndAddAdressenToGesuchstellerContainer(jaxGesuchstellerCont, gesuchstellerCont);
 
 		// Finanzielle Situation
 		if (jaxGesuchstellerCont.getFinanzielleSituationContainer() != null) {
-			gesuchstellerCont.setFinanzielleSituationContainer(finanzielleSituationContainerToStorableEntity(jaxGesuchstellerCont.getFinanzielleSituationContainer()));
+			gesuchstellerCont.setFinanzielleSituationContainer(finanzielleSituationContainerToStorableEntity(jaxGesuchstellerCont
+				.getFinanzielleSituationContainer()));
 		}
 		//Erwerbspensum
 		jaxGesuchstellerCont.getErwerbspensenContainers()
@@ -939,7 +1009,7 @@ public class JaxBConverter {
 		return gesuchstellerCont;
 	}
 
-	public JaxGesuch gesuchToJAX(@Nonnull final Gesuch persistedGesuch) {
+	public JaxGesuch gesuchToJAX(@Nonnull final Gesuch persistedGesuch, boolean isNeuestesGesuch) {
 		final JaxGesuch jaxGesuch = new JaxGesuch();
 		convertAbstractFieldsToJAX(persistedGesuch, jaxGesuch);
 		jaxGesuch.setFall(this.fallToJAX(persistedGesuch.getFall()));
@@ -965,7 +1035,8 @@ public class JaxBConverter {
 			jaxGesuch.getKindContainers().add(kindContainerToJAX(kind));
 		}
 		if (persistedGesuch.getEinkommensverschlechterungInfoContainer() != null) {
-			jaxGesuch.setEinkommensverschlechterungInfoContainer(this.einkommensverschlechterungInfoContainerToJAX(persistedGesuch.getEinkommensverschlechterungInfoContainer()));
+			jaxGesuch.setEinkommensverschlechterungInfoContainer(this.einkommensverschlechterungInfoContainerToJAX(persistedGesuch
+				.getEinkommensverschlechterungInfoContainer()));
 		}
 		jaxGesuch.setBemerkungen(persistedGesuch.getBemerkungen());
 		jaxGesuch.setBemerkungenSTV(persistedGesuch.getBemerkungenSTV());
@@ -980,6 +1051,8 @@ public class JaxBConverter {
 		jaxGesuch.setTimestampVerfuegt(persistedGesuch.getTimestampVerfuegt());
 		jaxGesuch.setGueltig(persistedGesuch.isGueltig());
 		jaxGesuch.setDokumenteHochgeladen(persistedGesuch.getDokumenteHochgeladen());
+		jaxGesuch.setFinSitStatus(persistedGesuch.getFinSitStatus());
+		jaxGesuch.setNeustesGesuch(isNeuestesGesuch);
 		return jaxGesuch;
 	}
 
@@ -1060,7 +1133,8 @@ public class JaxBConverter {
 			if (mandantFromDB.isPresent()) {
 				institution.setMandant(mandantToEntity(institutionJAXP.getMandant(), mandantFromDB.get()));
 			} else {
-				throw new EbeguEntityNotFoundException("institutionToEntity -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionJAXP.getMandant().getId());
+				throw new EbeguEntityNotFoundException("institutionToEntity -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionJAXP.getMandant()
+					.getId());
 			}
 
 		} else {
@@ -1074,7 +1148,8 @@ public class JaxBConverter {
 				if (traegerschaftFromDB.isPresent()) {
 					institution.setTraegerschaft(traegerschaftToEntity(institutionJAXP.getTraegerschaft(), traegerschaftFromDB.get()));
 				} else {
-					throw new EbeguEntityNotFoundException("institutionToEntity -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionJAXP.getTraegerschaft().getId());
+					throw new EbeguEntityNotFoundException("institutionToEntity -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionJAXP
+						.getTraegerschaft().getId());
 				}
 			} else {
 				throw new EbeguEntityNotFoundException("institutionToEntity -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
@@ -1094,6 +1169,10 @@ public class JaxBConverter {
 			jaxInstStammdaten.setIban(persistedInstStammdaten.getIban().getIban());
 		}
 		jaxInstStammdaten.setBetreuungsangebotTyp(persistedInstStammdaten.getBetreuungsangebotTyp());
+		if (persistedInstStammdaten.getInstitutionStammdatenTagesschule() != null) {
+			jaxInstStammdaten.setInstitutionStammdatenTagesschule(institutionStammdatenTagesschuleToJAX(persistedInstStammdaten
+				.getInstitutionStammdatenTagesschule()));
+		}
 		jaxInstStammdaten.setInstitution(institutionToJAX(persistedInstStammdaten.getInstitution()));
 		jaxInstStammdaten.setAdresse(adresseToJAX(persistedInstStammdaten.getAdresse()));
 		jaxInstStammdaten.setKontoinhaber(persistedInstStammdaten.getKontoinhaber());
@@ -1103,7 +1182,9 @@ public class JaxBConverter {
 		return jaxInstStammdaten;
 	}
 
-	public InstitutionStammdaten institutionStammdatenToEntity(final JaxInstitutionStammdaten institutionStammdatenJAXP, final InstitutionStammdaten institutionStammdaten) {
+	public InstitutionStammdaten institutionStammdatenToEntity(final JaxInstitutionStammdaten institutionStammdatenJAXP,
+		final InstitutionStammdaten institutionStammdaten) {
+
 		Validate.notNull(institutionStammdatenJAXP);
 		Validate.notNull(institutionStammdatenJAXP.getInstitution());
 		Validate.notNull(institutionStammdaten);
@@ -1116,11 +1197,21 @@ public class JaxBConverter {
 			institutionStammdaten.setIban(new IBAN(institutionStammdatenJAXP.getIban()));
 		}
 		institutionStammdaten.setBetreuungsangebotTyp(institutionStammdatenJAXP.getBetreuungsangebotTyp());
-
+		if (institutionStammdatenJAXP.getInstitutionStammdatenTagesschule() != null) {
+			//			wenn InstitutionStammdatenTagesschule vorhanden ist es eine Tagesschule und Objekt muss, wenn noch nicht vorhanden, erzeugt werden
+			if (institutionStammdaten.getInstitutionStammdatenTagesschule() != null) {
+				institutionStammdaten.setInstitutionStammdatenTagesschule(institutionStammdatenTagesschuleToEntity(institutionStammdatenJAXP
+					.getInstitutionStammdatenTagesschule(), institutionStammdaten.getInstitutionStammdatenTagesschule()));
+			} else {
+				institutionStammdaten.setInstitutionStammdatenTagesschule(institutionStammdatenTagesschuleToEntity(institutionStammdatenJAXP
+					.getInstitutionStammdatenTagesschule(), new InstitutionStammdatenTagesschule()));
+			}
+		}
 		institutionStammdaten.setKontoinhaber(institutionStammdatenJAXP.getKontoinhaber());
 		if (institutionStammdatenJAXP.getAdresseKontoinhaber() != null) {
 			if (institutionStammdaten.getAdresseKontoinhaber() != null) {
-				institutionStammdaten.setAdresseKontoinhaber(adresseToEntity(institutionStammdatenJAXP.getAdresseKontoinhaber(), institutionStammdaten.getAdresseKontoinhaber()));
+				institutionStammdaten.setAdresseKontoinhaber(adresseToEntity(institutionStammdatenJAXP.getAdresseKontoinhaber(), institutionStammdaten
+					.getAdresseKontoinhaber()));
 			} else {
 				institutionStammdaten.setAdresseKontoinhaber(adresseToEntity(institutionStammdatenJAXP.getAdresseKontoinhaber(), new Adresse()));
 			}
@@ -1132,11 +1223,82 @@ public class JaxBConverter {
 		if (institutionFromDB.isPresent()) {
 			institutionStammdaten.setInstitution(institutionToEntity(institutionStammdatenJAXP.getInstitution(), institutionFromDB.get()));
 		} else {
-			throw new EbeguEntityNotFoundException("institutionStammdatenToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionStammdatenJAXP.getInstitution().getId());
+			throw new EbeguEntityNotFoundException("institutionStammdatenToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionStammdatenJAXP
+				.getInstitution().getId());
 		}
 
 		return institutionStammdaten;
 
+	}
+
+	public JaxInstitutionStammdatenTagesschule institutionStammdatenTagesschuleToJAX(@Nonnull final InstitutionStammdatenTagesschule
+		persistedInstStammdatenTagesschule) {
+		final JaxInstitutionStammdatenTagesschule jaxInstStammdatenTagesschule = new JaxInstitutionStammdatenTagesschule();
+		convertAbstractFieldsToJAX(persistedInstStammdatenTagesschule, jaxInstStammdatenTagesschule);
+		jaxInstStammdatenTagesschule.setModuleTagesschule(moduleTagesschuleListToJax(persistedInstStammdatenTagesschule.getModuleTagesschule()));
+		return jaxInstStammdatenTagesschule;
+	}
+
+	@Nullable
+	public InstitutionStammdatenTagesschule institutionStammdatenTagesschuleToEntity(final JaxInstitutionStammdatenTagesschule
+		institutionStammdatenTagesschuleJAXP, final InstitutionStammdatenTagesschule institutionStammdatenTagesschule) {
+		Validate.notNull(institutionStammdatenTagesschuleJAXP);
+		Validate.notNull(institutionStammdatenTagesschule);
+		convertAbstractFieldsToEntity(institutionStammdatenTagesschuleJAXP, institutionStammdatenTagesschule);
+
+		final Set<ModulTagesschule> convertedModuleTagesschule = moduleTagesschuleListToEntity(institutionStammdatenTagesschuleJAXP.getModuleTagesschule(),
+			institutionStammdatenTagesschule.getModuleTagesschule(), institutionStammdatenTagesschule);
+		if (convertedModuleTagesschule != null) {
+			//change the existing collection to reflect changes
+			// Already tested: All existing module of the list remain as they were, that means their data are updated
+			// and the objects are not created again. ID and InsertTimeStamp are the same as before
+			institutionStammdatenTagesschule.getModuleTagesschule().clear();
+			institutionStammdatenTagesschule.getModuleTagesschule().addAll(convertedModuleTagesschule);
+		}
+
+		if (institutionStammdatenTagesschule.getModuleTagesschule() != null && !institutionStammdatenTagesschule.getModuleTagesschule().isEmpty()) {
+			return institutionStammdatenTagesschule;
+		}
+		return null;
+
+	}
+
+	@Nullable
+	private Set<ModulTagesschule> moduleTagesschuleListToEntity(@Nullable List<JaxModulTagesschule> jaxModuleTagesschule, @Nullable Set<ModulTagesschule> moduleOfInstitution,
+		@NotNull InstitutionStammdatenTagesschule institutionStammdatenTagesschule) {
+
+		if (moduleOfInstitution != null && jaxModuleTagesschule != null) {
+			final Set<ModulTagesschule> transformedModule = new TreeSet<>();
+			for (final JaxModulTagesschule jaxModulTagesschule : jaxModuleTagesschule) {
+				final ModulTagesschule modulTagesschuleToMergeWith = moduleOfInstitution.stream().filter(existingModul -> existingModul.getId()
+					.equalsIgnoreCase(jaxModulTagesschule.getId()))
+					.reduce(StreamsUtil.toOnlyElement())
+					.orElse(new ModulTagesschule());
+				final ModulTagesschule modulTagesschuleToAdd = modulTagesschuleToEntity(jaxModulTagesschule, modulTagesschuleToMergeWith);
+				if (modulTagesschuleToAdd != null) {
+					modulTagesschuleToAdd.setInstitutionStammdatenTagesschule(institutionStammdatenTagesschule);
+					final boolean added = transformedModule.add(modulTagesschuleToAdd);
+					if (!added) {
+						LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + "{}", modulTagesschuleToAdd);
+					}
+				}
+			}
+			return transformedModule;
+		}
+		return null;
+	}
+
+	@Nullable
+	private ModulTagesschule modulTagesschuleToEntity(@Nullable JaxModulTagesschule jaxModulTagesschule, @NotNull ModulTagesschule modulTagesschule) {
+		if (jaxModulTagesschule != null && jaxModulTagesschule.getZeitVon() != null && jaxModulTagesschule.getZeitBis() != null) {
+			convertAbstractFieldsToEntity(jaxModulTagesschule, modulTagesschule);
+			modulTagesschule.setModulTagesschuleName(jaxModulTagesschule.getModulTagesschuleName());
+			modulTagesschule.setWochentag(jaxModulTagesschule.getWochentag());
+			modulTagesschule.setZeitVon(jaxModulTagesschule.getZeitVon().toLocalTime());
+			modulTagesschule.setZeitBis(jaxModulTagesschule.getZeitBis().toLocalTime());
+			return modulTagesschule;
+		}
+		return null;
 	}
 
 	@Nonnull
@@ -1153,11 +1315,13 @@ public class JaxBConverter {
 		return mergedContainer;
 	}
 
-	public EinkommensverschlechterungContainer einkommensverschlechterungContainerToStorableEntity(@Nonnull final JaxEinkommensverschlechterungContainer containerJAX) {
+	public EinkommensverschlechterungContainer einkommensverschlechterungContainerToStorableEntity(@Nonnull final JaxEinkommensverschlechterungContainer
+		containerJAX) {
 		Validate.notNull(containerJAX);
 		EinkommensverschlechterungContainer containerToMergeWith = new EinkommensverschlechterungContainer();
 		if (containerJAX.getId() != null) {
-			final Optional<EinkommensverschlechterungContainer> existingEkvC = einkommensverschlechterungService.findEinkommensverschlechterungContainer(containerJAX.getId());
+			final Optional<EinkommensverschlechterungContainer> existingEkvC = einkommensverschlechterungService.findEinkommensverschlechterungContainer
+				(containerJAX.getId());
 			if (existingEkvC.isPresent()) {
 				containerToMergeWith = existingEkvC.get();
 			}
@@ -1199,7 +1363,8 @@ public class JaxBConverter {
 		if (fachstelleFromDB.isPresent()) {
 			pensumFachstelle.setFachstelle(fachstelleToEntity(pensumFachstelleJAXP.getFachstelle(), fachstelleFromDB.get()));
 		} else {
-			throw new EbeguEntityNotFoundException("pensumFachstelleToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, pensumFachstelleJAXP.getFachstelle().getId());
+			throw new EbeguEntityNotFoundException("pensumFachstelleToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, pensumFachstelleJAXP.getFachstelle()
+				.getId());
 		}
 
 		return pensumFachstelle;
@@ -1390,7 +1555,8 @@ public class JaxBConverter {
 		return null;
 	}
 
-	private AbstractFinanzielleSituation abstractFinanzielleSituationToEntity(@Nonnull final JaxAbstractFinanzielleSituation abstractFinanzielleSituationJAXP, @Nonnull final AbstractFinanzielleSituation abstractFinanzielleSituation) {
+	private AbstractFinanzielleSituation abstractFinanzielleSituationToEntity(@Nonnull final JaxAbstractFinanzielleSituation abstractFinanzielleSituationJAXP,
+		@Nonnull final AbstractFinanzielleSituation abstractFinanzielleSituation) {
 		Validate.notNull(abstractFinanzielleSituation);
 		Validate.notNull(abstractFinanzielleSituationJAXP);
 		convertAbstractFieldsToEntity(abstractFinanzielleSituationJAXP, abstractFinanzielleSituation);
@@ -1408,7 +1574,8 @@ public class JaxBConverter {
 		return abstractFinanzielleSituation;
 	}
 
-	private void abstractFinanzielleSituationToJAX(@Nullable final AbstractFinanzielleSituation persistedAbstractFinanzielleSituation, JaxAbstractFinanzielleSituation jaxAbstractFinanzielleSituation) {
+	private void abstractFinanzielleSituationToJAX(@Nullable final AbstractFinanzielleSituation persistedAbstractFinanzielleSituation,
+		JaxAbstractFinanzielleSituation jaxAbstractFinanzielleSituation) {
 		if (persistedAbstractFinanzielleSituation != null) {
 			convertAbstractFieldsToJAX(persistedAbstractFinanzielleSituation, jaxAbstractFinanzielleSituation);
 			jaxAbstractFinanzielleSituation.setSteuerveranlagungErhalten(persistedAbstractFinanzielleSituation.getSteuerveranlagungErhalten());
@@ -1423,7 +1590,8 @@ public class JaxBConverter {
 		}
 	}
 
-	private FinanzielleSituation finanzielleSituationToEntity(@Nonnull final JaxFinanzielleSituation finanzielleSituationJAXP, @Nonnull final FinanzielleSituation finanzielleSituation) {
+	private FinanzielleSituation finanzielleSituationToEntity(@Nonnull final JaxFinanzielleSituation finanzielleSituationJAXP, @Nonnull final
+	FinanzielleSituation finanzielleSituation) {
 		Validate.notNull(finanzielleSituation);
 		Validate.notNull(finanzielleSituationJAXP);
 		abstractFinanzielleSituationToEntity(finanzielleSituationJAXP, finanzielleSituation);
@@ -1434,23 +1602,23 @@ public class JaxBConverter {
 		return finanzielleSituation;
 	}
 
+	@Nullable
 	private JaxFinanzielleSituation finanzielleSituationToJAX(@Nullable final FinanzielleSituation persistedFinanzielleSituation) {
 
 		if (persistedFinanzielleSituation != null) {
 			JaxFinanzielleSituation jaxFinanzielleSituation = new JaxFinanzielleSituation();
-
 			abstractFinanzielleSituationToJAX(persistedFinanzielleSituation, jaxFinanzielleSituation);
 			jaxFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(persistedFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2());
 			jaxFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(persistedFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
 			jaxFinanzielleSituation.setNettolohn(persistedFinanzielleSituation.getNettolohn());
-
 			return jaxFinanzielleSituation;
 
 		}
 		return null;
 	}
 
-	private Einkommensverschlechterung einkommensverschlechterungToEntity(@Nonnull final JaxEinkommensverschlechterung einkommensverschlechterungJAXP, @Nonnull final Einkommensverschlechterung einkommensverschlechterung) {
+	private Einkommensverschlechterung einkommensverschlechterungToEntity(@Nonnull final JaxEinkommensverschlechterung einkommensverschlechterungJAXP,
+		@Nonnull final Einkommensverschlechterung einkommensverschlechterung) {
 		Validate.notNull(einkommensverschlechterung);
 		Validate.notNull(einkommensverschlechterungJAXP);
 		abstractFinanzielleSituationToEntity(einkommensverschlechterungJAXP, einkommensverschlechterung);
@@ -1512,7 +1680,8 @@ public class JaxBConverter {
 
 	}
 
-	public ErwerbspensumContainer erwerbspensumContainerToEntity(@Nonnull final JaxErwerbspensumContainer jaxEwpCont, @Nonnull final ErwerbspensumContainer erwerbspensumCont) {
+	public ErwerbspensumContainer erwerbspensumContainerToEntity(@Nonnull final JaxErwerbspensumContainer jaxEwpCont, @Nonnull final ErwerbspensumContainer
+		erwerbspensumCont) {
 		Validate.notNull(jaxEwpCont);
 		Validate.notNull(erwerbspensumCont);
 		convertAbstractFieldsToEntity(jaxEwpCont, erwerbspensumCont);
@@ -1551,6 +1720,7 @@ public class JaxBConverter {
 		return erwerbspensum;
 	}
 
+	@Nullable
 	private JaxErwerbspensum erbwerbspensumToJax(@Nullable final Erwerbspensum pensum) {
 		if (pensum != null) {
 			JaxErwerbspensum jaxErwerbspensum = new JaxErwerbspensum();
@@ -1586,18 +1756,60 @@ public class JaxBConverter {
 		// InstitutionStammdaten muessen bereits existieren
 		if (betreuungJAXP.getInstitutionStammdaten() != null) {
 			final String instStammdatenID = betreuungJAXP.getInstitutionStammdaten().getId();
+			Objects.requireNonNull(instStammdatenID, "Die Institutionsstammdaten muessen gesetzt sein");
 			final Optional<InstitutionStammdaten> optInstStammdaten = institutionStammdatenService.findInstitutionStammdaten(instStammdatenID);
 			final InstitutionStammdaten instStammdatenToMerge =
-				optInstStammdaten.orElseThrow(() -> new EbeguEntityNotFoundException("betreuungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, instStammdatenID));
+				optInstStammdaten.orElseThrow(() -> new EbeguEntityNotFoundException("betreuungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND,
+					instStammdatenID));
 			betreuung.setInstitutionStammdaten(institutionStammdatenToEntity(betreuungJAXP.getInstitutionStammdaten(), instStammdatenToMerge));
 		}
 		betreuung.setBetreuungNummer(betreuungJAXP.getBetreuungNummer());
 		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
 		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
 		betreuung.setGueltig(betreuungJAXP.isGueltig());
+		betreuung.setAnmeldungMutationZustand(betreuungJAXP.getAnmeldungMutationZustand());
+		if (betreuungJAXP.getBelegungTagesschule() != null) {
+			Objects.requireNonNull(betreuung.getInstitutionStammdaten().getInstitutionStammdatenTagesschule(),
+				"InstitutionsStammdatenTagesschule muessen gesetzt sein");
+			if (betreuung.getBelegungTagesschule() != null) {
+				betreuung.setBelegungTagesschule(belegungTagesschuleToEntity(betreuungJAXP.getBelegungTagesschule(), betreuung.getBelegungTagesschule(),
+					betreuung.getInstitutionStammdaten().getInstitutionStammdatenTagesschule()));
+			} else {
+				betreuung.setBelegungTagesschule(belegungTagesschuleToEntity(betreuungJAXP.getBelegungTagesschule(), new BelegungTagesschule(),
+					betreuung.getInstitutionStammdaten().getInstitutionStammdatenTagesschule()));
+			}
+		}
+		if (betreuung.getBelegungFerieninsel() != null) {
+			betreuung.setBelegungFerieninsel(belegungFerieninselToEntity(betreuungJAXP.getBelegungFerieninsel(), betreuung.getBelegungFerieninsel()));
+		} else {
+			betreuung.setBelegungFerieninsel(belegungFerieninselToEntity(betreuungJAXP.getBelegungFerieninsel(), new BelegungFerieninsel()));
+		}
 
 		//ACHTUNG: Verfuegung wird hier nicht synchronisiert aus sicherheitsgruenden
 		return betreuung;
+	}
+
+	@Nullable
+	private BelegungTagesschule belegungTagesschuleToEntity(@Nullable JaxBelegungTagesschule belegungTagesschuleJAXP,
+		@NotNull BelegungTagesschule belegungTagesschule, @NotNull InstitutionStammdatenTagesschule instStammdatenTagesschule) {
+
+		if (belegungTagesschuleJAXP != null && instStammdatenTagesschule != null) {
+			convertAbstractFieldsToEntity(belegungTagesschuleJAXP, belegungTagesschule);
+
+			final Set<ModulTagesschule> convertedModule = moduleTagesschuleListToEntity(belegungTagesschuleJAXP.getModuleTagesschule(),
+				instStammdatenTagesschule.getModuleTagesschule(), instStammdatenTagesschule);
+			if (convertedModule != null) {
+				//change the existing collection to reflect changes
+				// Already tested: All existing module of the list remain as they were, that means their data are updated
+				// and the objects are not created again. ID and InsertTimeStamp are the same as before
+				belegungTagesschule.getModuleTagesschule().clear();
+				belegungTagesschule.getModuleTagesschule().addAll(convertedModule);
+			}
+
+			belegungTagesschule.setEintrittsdatum(belegungTagesschuleJAXP.getEintrittsdatum());
+			return belegungTagesschule;
+		}
+		return null;
 	}
 
 	public Betreuung betreuungToStoreableEntity(@Nonnull final JaxBetreuung betreuungJAXP) {
@@ -1642,7 +1854,7 @@ public class JaxBConverter {
 			final BetreuungspensumContainer contToAdd = betreuungspensumContainerToEntity(jaxBetPensContainer, containerToMergeWith);
 			final boolean added = transformedBetPenContainers.add(contToAdd);
 			if (!added) {
-				LOGGER.warn("dropped duplicate container " + contToAdd);
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + contToAdd);
 			}
 		}
 
@@ -1667,7 +1879,7 @@ public class JaxBConverter {
 			contToAdd.setId(oldID);
 			final boolean added = transformedAbwesenheitContainers.add(contToAdd);
 			if (!added) {
-				LOGGER.warn("dropped duplicate container " + contToAdd);
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + contToAdd);
 			}
 		}
 
@@ -1683,7 +1895,8 @@ public class JaxBConverter {
 		return abwesenheit;
 	}
 
-	private BetreuungspensumContainer betreuungspensumContainerToEntity(final JaxBetreuungspensumContainer jaxBetPenContainers, final BetreuungspensumContainer bpContainer) {
+	private BetreuungspensumContainer betreuungspensumContainerToEntity(final JaxBetreuungspensumContainer jaxBetPenContainers, final
+	BetreuungspensumContainer bpContainer) {
 		Validate.notNull(jaxBetPenContainers);
 		Validate.notNull(bpContainer);
 		convertAbstractFieldsToEntity(jaxBetPenContainers, bpContainer);
@@ -1704,7 +1917,8 @@ public class JaxBConverter {
 		return bpContainer;
 	}
 
-	private AbwesenheitContainer abwesenheitContainerToEntity(final JaxAbwesenheitContainer jaxAbwesenheitContainers, final AbwesenheitContainer abwesenheitContainer) {
+	private AbwesenheitContainer abwesenheitContainerToEntity(final JaxAbwesenheitContainer jaxAbwesenheitContainers, final AbwesenheitContainer
+		abwesenheitContainer) {
 		Validate.notNull(jaxAbwesenheitContainers);
 		Validate.notNull(abwesenheitContainer);
 		convertAbstractFieldsToEntity(jaxAbwesenheitContainers, abwesenheitContainer);
@@ -1713,7 +1927,8 @@ public class JaxBConverter {
 			if (abwesenheitContainer.getAbwesenheitGS() != null) {
 				abwesenheitGS = abwesenheitContainer.getAbwesenheitGS();
 			}
-			// Das Setzen von alten IDs ist noetigt im Fall dass Betreuungsangebot fuer eine existierende Abwesenheit geaendert wird, da sonst doppelte Verknuepfungen gemacht werden
+			// Das Setzen von alten IDs ist noetigt im Fall dass Betreuungsangebot fuer eine existierende Abwesenheit geaendert wird, da sonst doppelte
+			// Verknuepfungen gemacht werden
 			final String oldID = abwesenheitGS.getId();
 			final Abwesenheit convertedAbwesenheitGS = abwesenheitToEntity(jaxAbwesenheitContainers.getAbwesenheitGS(), abwesenheitGS);
 			convertedAbwesenheitGS.setId(oldID);
@@ -1747,7 +1962,8 @@ public class JaxBConverter {
 		return jaxBetreuungen;
 	}
 
-	private BetreuungsmitteilungPensum betreuungsmitteilungpensumToEntity(final JaxBetreuungsmitteilungPensum jaxBetreuungspensum, final BetreuungsmitteilungPensum betreuungspensum) {
+	private BetreuungsmitteilungPensum betreuungsmitteilungpensumToEntity(final JaxBetreuungsmitteilungPensum jaxBetreuungspensum, final
+	BetreuungsmitteilungPensum betreuungspensum) {
 		convertAbstractPensumFieldsToEntity(jaxBetreuungspensum, betreuungspensum);
 		return betreuungspensum;
 	}
@@ -1798,7 +2014,45 @@ public class JaxBConverter {
 		jaxBetreuung.setBetreuungMutiert(betreuungFromServer.getBetreuungMutiert());
 		jaxBetreuung.setAbwesenheitMutiert(betreuungFromServer.getAbwesenheitMutiert());
 		jaxBetreuung.setGueltig(betreuungFromServer.isGueltig());
+		jaxBetreuung.setAnmeldungMutationZustand(betreuungFromServer.getAnmeldungMutationZustand());
+		jaxBetreuung.setBelegungTagesschule(belegungTagesschuleToJax(betreuungFromServer.getBelegungTagesschule()));
+		jaxBetreuung.setBelegungFerieninsel(belegungFerieninselToJAX(betreuungFromServer.getBelegungFerieninsel()));
+		jaxBetreuung.setBgNummer(betreuungFromServer.getBGNummer());
 		return jaxBetreuung;
+	}
+
+	@Nullable
+	private JaxBelegungTagesschule belegungTagesschuleToJax(@Nullable BelegungTagesschule belegungFromServer) {
+		if (belegungFromServer != null) {
+			final JaxBelegungTagesschule jaxBelegungTagesschule = new JaxBelegungTagesschule();
+			convertAbstractFieldsToJAX(belegungFromServer, jaxBelegungTagesschule);
+			jaxBelegungTagesschule.setModuleTagesschule(moduleTagesschuleListToJax(belegungFromServer.getModuleTagesschule()));
+			jaxBelegungTagesschule.setEintrittsdatum(belegungFromServer.getEintrittsdatum());
+			return jaxBelegungTagesschule;
+		}
+		return null;
+	}
+
+	private List<JaxModulTagesschule> moduleTagesschuleListToJax(@Nullable final Set<ModulTagesschule> module) {
+		final List<JaxModulTagesschule> jaxModulTagesschule = new ArrayList<>();
+		if (module != null) {
+			jaxModulTagesschule.addAll(module.stream().map(this::modulTagesschuleToJAX).collect(Collectors.toList()));
+		}
+		return jaxModulTagesschule;
+	}
+
+	@Nullable
+	public JaxModulTagesschule modulTagesschuleToJAX(@Nullable ModulTagesschule modulTagesschule) {
+		if (modulTagesschule != null) {
+			final JaxModulTagesschule jaxModulTagesschule = new JaxModulTagesschule();
+			convertAbstractFieldsToJAX(modulTagesschule, jaxModulTagesschule);
+			jaxModulTagesschule.setModulTagesschuleName(modulTagesschule.getModulTagesschuleName());
+			jaxModulTagesschule.setWochentag(modulTagesschule.getWochentag());
+			jaxModulTagesschule.setZeitVon(LocalDateTime.of(LocalDate.now(), modulTagesschule.getZeitVon()));
+			jaxModulTagesschule.setZeitBis(LocalDateTime.of(LocalDate.now(), modulTagesschule.getZeitBis()));
+			return jaxModulTagesschule;
+		}
+		return null;
 	}
 
 	/**
@@ -1806,6 +2060,7 @@ public class JaxBConverter {
 	 *
 	 * @return dto with the values of the verfuegung
 	 */
+	@Nullable
 	public JaxVerfuegung verfuegungToJax(Verfuegung verfuegung) {
 		if (verfuegung != null) {
 			final JaxVerfuegung jaxVerfuegung = new JaxVerfuegung();
@@ -1874,6 +2129,7 @@ public class JaxBConverter {
 
 	}
 
+	@Nullable
 	private JaxVerfuegungZeitabschnitt verfuegungZeitabschnittToJax(VerfuegungZeitabschnitt zeitabschnitt) {
 		if (zeitabschnitt != null) {
 			final JaxVerfuegungZeitabschnitt jaxZeitabschn = new JaxVerfuegungZeitabschnitt();
@@ -1957,6 +2213,7 @@ public class JaxBConverter {
 		return jaxContainers;
 	}
 
+	@Nullable
 	private JaxAbwesenheit abwesenheitToJax(final Abwesenheit abwesenheit) {
 		if (abwesenheit != null) {
 			final JaxAbwesenheit jaxAbwesenheit = new JaxAbwesenheit();
@@ -1966,6 +2223,7 @@ public class JaxBConverter {
 		return null;
 	}
 
+	@Nullable
 	private JaxAbwesenheitContainer abwesenheitContainerToJax(final AbwesenheitContainer abwesenheitContainer) {
 		if (abwesenheitContainer != null) {
 			final JaxAbwesenheitContainer jaxAbwesenheitContainer = new JaxAbwesenheitContainer();
@@ -1981,6 +2239,7 @@ public class JaxBConverter {
 		return null;
 	}
 
+	@Nullable
 	private JaxBetreuungspensumContainer betreuungsPensumContainerToJax(final BetreuungspensumContainer betreuungspensumContainer) {
 		if (betreuungspensumContainer != null) {
 			final JaxBetreuungspensumContainer jaxBetreuungspensumContainer = new JaxBetreuungspensumContainer();
@@ -2007,12 +2266,16 @@ public class JaxBConverter {
 		final JaxGesuchsperiode jaxGesuchsperiode = new JaxGesuchsperiode();
 		convertAbstractDateRangedFieldsToJAX(persistedGesuchsperiode, jaxGesuchsperiode);
 		jaxGesuchsperiode.setStatus(persistedGesuchsperiode.getStatus());
+		jaxGesuchsperiode.setDatumFreischaltungTagesschule(persistedGesuchsperiode.getDatumFreischaltungTagesschule());
+		jaxGesuchsperiode.setDatumErsterSchultag(persistedGesuchsperiode.getDatumErsterSchultag());
 		return jaxGesuchsperiode;
 	}
 
 	public Gesuchsperiode gesuchsperiodeToEntity(final JaxGesuchsperiode jaxGesuchsperiode, final Gesuchsperiode gesuchsperiode) {
 		convertAbstractDateRangedFieldsToEntity(jaxGesuchsperiode, gesuchsperiode);
 		gesuchsperiode.setStatus(jaxGesuchsperiode.getStatus());
+		gesuchsperiode.setDatumFreischaltungTagesschule(jaxGesuchsperiode.getDatumFreischaltungTagesschule());
+		gesuchsperiode.setDatumErsterSchultag(jaxGesuchsperiode.getDatumErsterSchultag());
 		return gesuchsperiode;
 	}
 
@@ -2025,7 +2288,8 @@ public class JaxBConverter {
 		benutzer.setMandant(mandantToEntity(loginElement.getMandant(), new Mandant()));
 		// wir muessen Traegerschaft und Institution auch updaten wenn sie null sind. Es koennte auch so aus dem IAM kommen
 		benutzer.setInstitution(loginElement.getInstitution() != null ? institutionToEntity(loginElement.getInstitution(), new Institution()) : null);
-		benutzer.setTraegerschaft(loginElement.getTraegerschaft() != null ? traegerschaftToEntity(loginElement.getTraegerschaft(), new Traegerschaft()) : null);
+		benutzer.setTraegerschaft(loginElement.getTraegerschaft() != null ? traegerschaftToEntity(loginElement.getTraegerschaft(), new Traegerschaft()) :
+			null);
 		return benutzer;
 	}
 
@@ -2045,6 +2309,7 @@ public class JaxBConverter {
 		}
 		loginElement.setUsername(benutzer.getUsername());
 		loginElement.setRole(benutzer.getRole());
+		loginElement.setAmt(benutzer.getRole().getAmt());
 		return loginElement;
 	}
 
@@ -2131,7 +2396,7 @@ public class JaxBConverter {
 			final Dokument dokToAdd = dokumentToEntity(jaxDokument, dokumenteToMergeWith, dokumentGrund);
 			final boolean added = transformedDokumente.add(dokToAdd);
 			if (!added) {
-				LOGGER.warn("dropped duplicate container " + dokToAdd);
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + dokToAdd);
 			}
 		}
 
@@ -2261,23 +2526,28 @@ public class JaxBConverter {
 		return jaxContainers;
 	}
 
-	public void disguiseStatus(Gesuch gesuch, JaxAntragDTO antrag, UserRole userRole) {
-		switch (userRole) {
-		case GESUCHSTELLER:
-		case SACHBEARBEITER_INSTITUTION:
-		case SACHBEARBEITER_TRAEGERSCHAFT:
-			switch (gesuch.getStatus()) {
-			case PRUEFUNG_STV:
-			case GEPRUEFT_STV:
-			case IN_BEARBEITUNG_STV:
-				antrag.setStatus(AntragStatusDTO.VERFUEGT);
+	/**
+	 * Using the existing GesuchStatus and the UserRole it will translate the Status into the right one for this role.
+	 */
+	public void disguiseStatus(Gesuch gesuch, JaxAntragDTO antrag, @Nullable UserRole userRole) {
+		if (userRole != null) {
+			switch (userRole) {
+			case GESUCHSTELLER:
+			case SACHBEARBEITER_INSTITUTION:
+			case SACHBEARBEITER_TRAEGERSCHAFT:
+				switch (gesuch.getStatus()) {
+				case PRUEFUNG_STV:
+				case GEPRUEFT_STV:
+				case IN_BEARBEITUNG_STV:
+					antrag.setStatus(AntragStatusDTO.VERFUEGT);
+					break;
+				default:
+					break;
+				}
 				break;
 			default:
 				break;
 			}
-			break;
-		default:
-			break;
 		}
 	}
 
@@ -2286,27 +2556,27 @@ public class JaxBConverter {
 	 * - Fuer die Rolle Steueramt werden saemtlichen Daten von den Kindern nicht geladen
 	 * - Fuer die Rolle Institution/Traegerschaft werden nur die relevanten Institutionen und Angebote geladen
 	 */
-	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch, UserRole userRole, Collection<Institution> allowedInst) {
+	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch, @Nullable UserRole userRole, Collection<Institution> allowedInst) {
 		//wir koennen nicht mit den container auf dem gesuch arbeiten weil das gesuch attached ist. hibernate
 		//wuerde uns dann die kinder wegloeschen, daher besser transformieren
 		Collection<JaxKindContainer> jaxKindContainers = new ArrayList<>(gesuch.getKindContainers().size());
 
 		JaxAntragDTO antrag = gesuchToAntragDTOBasic(gesuch);
 
-		if (!userRole.equals(UserRole.STEUERAMT)) {
+		if (userRole != UserRole.STEUERAMT) {
 			for (final KindContainer kind : gesuch.getKindContainers()) {
 				jaxKindContainers.add(kindContainerToJAX(kind));
 			}
 			antrag.setKinder(createKinderList(jaxKindContainers));
 		}
 
-		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) {
+		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == userRole || UserRole.SACHBEARBEITER_INSTITUTION == userRole) {
 			RestUtil.purgeKinderAndBetreuungenOfInstitutionen(jaxKindContainers, allowedInst);
 		}
 
 		disguiseStatus(gesuch, antrag, userRole);
 
-		if (!userRole.equals(UserRole.STEUERAMT)) {
+		if (userRole != UserRole.STEUERAMT) {
 			antrag.setAngebote(createAngeboteList(jaxKindContainers));
 			antrag.setInstitutionen(createInstitutionenList(jaxKindContainers));
 		}
@@ -2314,7 +2584,7 @@ public class JaxBConverter {
 		return antrag;
 	}
 
-	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch, UserRole userRole) {
+	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch, @Nullable UserRole userRole) {
 		JaxAntragDTO antrag = gesuchToAntragDTOBasic(gesuch);
 		antrag.setKinder(createKinderList(gesuch.getKindContainers()));
 		antrag.setAngebote(createAngeboteList(gesuch.getKindContainers()));
@@ -2338,14 +2608,20 @@ public class JaxBConverter {
 		antrag.setGesuchsperiodeGueltigBis(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis());
 		if (gesuch.getFall().getVerantwortlicher() != null) {
 			antrag.setVerantwortlicher(gesuch.getFall().getVerantwortlicher().getFullName());
+			antrag.setVerantwortlicherUsernameJA(gesuch.getFall().getVerantwortlicher().getUsername());
+		}
+		if (gesuch.getFall().getVerantwortlicherSCH() != null) {
+			antrag.setVerantwortlicherSCH(gesuch.getFall().getVerantwortlicherSCH().getFullName());
+			antrag.setVerantwortlicherUsernameSCH(gesuch.getFall().getVerantwortlicherSCH().getUsername());
 		}
 		antrag.setVerfuegt(gesuch.getStatus().isAnyStatusOfVerfuegt());
-		antrag.setBeschwerdeHaengig(gesuch.getStatus().equals(AntragStatus.BESCHWERDE_HAENGIG));
+		antrag.setBeschwerdeHaengig(gesuch.getStatus() == AntragStatus.BESCHWERDE_HAENGIG);
 		antrag.setLaufnummer(gesuch.getLaufnummer());
 		antrag.setEingangsart(gesuch.getEingangsart());
 		antrag.setBesitzerUsername(gesuch.getFall().getBesitzer() != null ? gesuch.getFall().getBesitzer().getUsername() : null);
 		antrag.setGesuchBetreuungenStatus(gesuch.getGesuchBetreuungenStatus());
 		antrag.setDokumenteHochgeladen(gesuch.getDokumenteHochgeladen());
+		antrag.setFinSitStatus(gesuch.getFinSitStatus());
 		return antrag;
 	}
 
@@ -2369,11 +2645,11 @@ public class JaxBConverter {
 		return mahnung;
 	}
 
-	public JaxMahnung mahnungToJAX(@Nonnull final Mahnung persistedMahnung) {
+	public JaxMahnung mahnungToJAX(@Nonnull final Mahnung persistedMahnung, boolean isNeuestesGesuch) {
 		final JaxMahnung jaxMahnung = new JaxMahnung();
 		convertAbstractFieldsToJAX(persistedMahnung, jaxMahnung);
 
-		jaxMahnung.setGesuch(this.gesuchToJAX(persistedMahnung.getGesuch()));
+		jaxMahnung.setGesuch(this.gesuchToJAX(persistedMahnung.getGesuch(), isNeuestesGesuch));
 		jaxMahnung.setMahnungTyp(persistedMahnung.getMahnungTyp());
 		jaxMahnung.setDatumFristablauf(persistedMahnung.getDatumFristablauf());
 		jaxMahnung.setBemerkungen(persistedMahnung.getBemerkungen());
@@ -2452,7 +2728,9 @@ public class JaxBConverter {
 		return resultSet;
 	}
 
-	public GesuchstellerAdresseContainer adresseContainerToEntity(JaxAdresseContainer alternativeAdresse, GesuchstellerAdresseContainer gesuchstellerAdresseContainer) {
+	//TODO (team) wieso wird hier null zurueckgegeben? --> anstelle sollte man wohl besser gesuchstellerAdresseContainerToEntity verwenden
+	public GesuchstellerAdresseContainer adresseContainerToEntity(JaxAdresseContainer alternativeAdresse, GesuchstellerAdresseContainer
+		gesuchstellerAdresseContainer) {
 		return null;
 	}
 
@@ -2585,7 +2863,7 @@ public class JaxBConverter {
 		final JaxZahlungsauftrag jaxZahlungsauftrag = getJaxZahlungsauftrag(persistedZahlungsauftrag, true);
 
 		// nur die Zahlungen welche inst sehen darf
-		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) {
+		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == userRole || UserRole.SACHBEARBEITER_INSTITUTION == userRole) {
 			RestUtil.purgeZahlungenOfInstitutionen(jaxZahlungsauftrag, allowedInst);
 			// es muss nochmal das Auftragstotal berechnet werden. Diesmal nur mit den erlaubten Zahlungen
 			// Dies nur fuer Institutionen
@@ -2609,5 +2887,152 @@ public class JaxBConverter {
 		jaxZahlungs.setInstitutionsId(persistedZahlung.getInstitutionStammdaten().getInstitution().getId());
 
 		return jaxZahlungs;
+	}
+
+	public FerieninselStammdaten ferieninselStammdatenToEntity(JaxFerieninselStammdaten ferieninselStammdatenJAX, FerieninselStammdaten
+		ferieninselStammdaten) {
+		Validate.notNull(ferieninselStammdatenJAX);
+		Validate.notNull(ferieninselStammdaten);
+
+		convertAbstractFieldsToEntity(ferieninselStammdatenJAX, ferieninselStammdaten);
+		ferieninselStammdaten.setFerienname(ferieninselStammdatenJAX.getFerienname());
+		ferieninselStammdaten.setAnmeldeschluss(ferieninselStammdatenJAX.getAnmeldeschluss());
+		ferieninselStammdaten.setGesuchsperiode(gesuchsperiodeToEntity(ferieninselStammdatenJAX.getGesuchsperiode(), new Gesuchsperiode()));
+		ferieninselZeitraumListToEntity(ferieninselStammdatenJAX.getZeitraumList(), ferieninselStammdaten.getZeitraumList());
+		return ferieninselStammdaten;
+	}
+
+	private void ferieninselZeitraumListToEntity(final List<JaxFerieninselZeitraum> zeitraeumeListJAX, final Collection<FerieninselZeitraum> zeitraeumeList) {
+		final Set<FerieninselZeitraum> transformedZeitraeume = new TreeSet<>();
+		for (final JaxFerieninselZeitraum zeitraumJAX : zeitraeumeListJAX) {
+			final FerieninselZeitraum zeitraumToMergeWith = zeitraeumeList
+				.stream()
+				.filter(existingZeitraum -> existingZeitraum.getId().equals(zeitraumJAX.getId()))
+				.reduce(StreamsUtil.toOnlyElement())
+				.orElse(new FerieninselZeitraum());
+			final FerieninselZeitraum zeitraumToAdd = (FerieninselZeitraum) convertAbstractDateRangedFieldsToEntity(zeitraumJAX, zeitraumToMergeWith);
+			final boolean added = transformedZeitraeume.add(zeitraumToAdd);
+			if (!added) {
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + "{}", zeitraumToAdd);
+			}
+		}
+		zeitraeumeList.clear();
+		zeitraeumeList.addAll(transformedZeitraeume);
+	}
+
+	public JaxFerieninselStammdaten ferieninselStammdatenToJAX(FerieninselStammdaten persistedFerieninselStammdaten) {
+		final JaxFerieninselStammdaten jaxFerieninselStammdaten = new JaxFerieninselStammdaten();
+
+		convertAbstractFieldsToJAX(persistedFerieninselStammdaten, jaxFerieninselStammdaten);
+		jaxFerieninselStammdaten.setFerienname(persistedFerieninselStammdaten.getFerienname());
+		jaxFerieninselStammdaten.setAnmeldeschluss(persistedFerieninselStammdaten.getAnmeldeschluss());
+		jaxFerieninselStammdaten.setGesuchsperiode(gesuchsperiodeToJAX(persistedFerieninselStammdaten.getGesuchsperiode()));
+		Collections.sort(persistedFerieninselStammdaten.getZeitraumList());
+		for (FerieninselZeitraum ferieninselZeitraum : persistedFerieninselStammdaten.getZeitraumList()) {
+			JaxFerieninselZeitraum jaxFerieninselZeitraum = new JaxFerieninselZeitraum();
+			convertAbstractDateRangedFieldsToJAX(ferieninselZeitraum, jaxFerieninselZeitraum);
+			jaxFerieninselStammdaten.getZeitraumList().add(jaxFerieninselZeitraum);
+		}
+		return jaxFerieninselStammdaten;
+	}
+
+	@Nullable
+	public BelegungFerieninsel belegungFerieninselToEntity(@Nullable JaxBelegungFerieninsel belegungFerieninselJAX,
+		@Nonnull BelegungFerieninsel belegungFerieninsel) {
+		if (belegungFerieninselJAX != null) {
+			Validate.notNull(belegungFerieninsel);
+
+			convertAbstractFieldsToEntity(belegungFerieninselJAX, belegungFerieninsel);
+			belegungFerieninsel.setFerienname(belegungFerieninselJAX.getFerienname());
+			belegungFerieninselTageListToEntity(belegungFerieninselJAX.getTage(), belegungFerieninsel.getTage());
+			return belegungFerieninsel;
+		}
+		return null;
+	}
+
+	private void belegungFerieninselTageListToEntity(@Nonnull final List<JaxBelegungFerieninselTag> jaxTagList,
+		@Nonnull final Collection<BelegungFerieninselTag> tagList) {
+		final Set<BelegungFerieninselTag> transformedTagList = new TreeSet<>();
+		for (final JaxBelegungFerieninselTag jaxTag : jaxTagList) {
+			final BelegungFerieninselTag tagToMergeWith = tagList
+				.stream()
+				.filter(existingTagEntity -> existingTagEntity.getId().equals(jaxTag.getId()))
+				.reduce(StreamsUtil.toOnlyElement())
+				.orElse(new BelegungFerieninselTag());
+			final BelegungFerieninselTag tagToAdd = belegungFerieninselTagToEntity(jaxTag, tagToMergeWith);
+			final boolean added = transformedTagList.add(tagToAdd);
+			if (!added) {
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + tagToAdd);
+			}
+		}
+
+		//change the existing collection to reflect changes
+		// Already tested: All existing Betreuungspensen of the list remain as they were, that means their data are updated
+		// and the objects are not created again. ID and InsertTimeStamp are the same as before
+		tagList.clear();
+		tagList.addAll(transformedTagList);
+	}
+
+	private BelegungFerieninselTag belegungFerieninselTagToEntity(@Nonnull final JaxBelegungFerieninselTag jaxTag, @Nonnull final BelegungFerieninselTag tag) {
+		Validate.notNull(jaxTag);
+		Validate.notNull(tag);
+		convertAbstractFieldsToEntity(jaxTag, tag);
+		tag.setTag(jaxTag.getTag());
+		return tag;
+	}
+
+	@Nullable
+	public JaxBelegungFerieninsel belegungFerieninselToJAX(@Nullable BelegungFerieninsel persistedBelegungFerieninsel) {
+		if (persistedBelegungFerieninsel != null) {
+			final JaxBelegungFerieninsel jaxBelegungFerieninsel = new JaxBelegungFerieninsel();
+			convertAbstractFieldsToJAX(persistedBelegungFerieninsel, jaxBelegungFerieninsel);
+			jaxBelegungFerieninsel.setFerienname(persistedBelegungFerieninsel.getFerienname());
+			jaxBelegungFerieninsel.setTage(belegungFerieninselTageListToJAX(persistedBelegungFerieninsel.getTage()));
+			return jaxBelegungFerieninsel;
+		}
+		return null;
+	}
+
+	public List<JaxBelegungFerieninselTag> belegungFerieninselTageListToJAX(Collection<BelegungFerieninselTag> persistedFerieninselTageList) {
+		List<JaxBelegungFerieninselTag> returnList = new ArrayList<>();
+		persistedFerieninselTageList.forEach(ferieninselTag -> {
+			returnList.add(belegungFerieninselTagToJAX(ferieninselTag));
+		});
+		return returnList;
+	}
+
+	public JaxBelegungFerieninselTag belegungFerieninselTagToJAX(BelegungFerieninselTag persistedFerieninselTag) {
+		JaxBelegungFerieninselTag jaxTag = new JaxBelegungFerieninselTag();
+		convertAbstractFieldsToJAX(persistedFerieninselTag, jaxTag);
+		jaxTag.setTag(persistedFerieninselTag.getTag());
+		return jaxTag;
+	}
+
+	/**
+	 * Kopiert die Daten die fuer den Motag eingegeben wurden in alle andere Wochentage
+	 */
+	public JaxInstitutionStammdaten updateJaxModuleTagesschule(@Nonnull JaxInstitutionStammdaten jaxInstDaten) {
+		Objects.requireNonNull(jaxInstDaten);
+		if (jaxInstDaten.getInstitutionStammdatenTagesschule() != null && !jaxInstDaten.getInstitutionStammdatenTagesschule().getModuleTagesschule().isEmpty()) {
+
+			List<JaxModulTagesschule> moduleTagesschule = jaxInstDaten.getInstitutionStammdatenTagesschule().getModuleTagesschule();
+			List<JaxModulTagesschule> moduleTagesschuleComplete = new ArrayList<>();
+			DayOfWeek[] arbeitstageOhneMontag = { DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY };
+			moduleTagesschule.stream()
+				.filter(m -> m.getWochentag() == DayOfWeek.MONDAY)
+				.forEach(res -> {
+					moduleTagesschuleComplete.add(res);
+					for (DayOfWeek dayOfWeek : arbeitstageOhneMontag) {
+						JaxModulTagesschule modulTagesschule = new JaxModulTagesschule();
+						modulTagesschule.setWochentag(dayOfWeek);
+						modulTagesschule.setModulTagesschuleName(res.getModulTagesschuleName());
+						modulTagesschule.setZeitVon(res.getZeitVon());
+						modulTagesschule.setZeitBis(res.getZeitBis());
+						moduleTagesschuleComplete.add(modulTagesschule);
+					}
+				});
+			jaxInstDaten.getInstitutionStammdatenTagesschule().setModuleTagesschule(moduleTagesschuleComplete);
+		}
+		return jaxInstDaten;
 	}
 }

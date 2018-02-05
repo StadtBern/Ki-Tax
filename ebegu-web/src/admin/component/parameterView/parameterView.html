@@ -32,6 +32,7 @@
                             <th data-translate="GESUCHSPERIODE_GUELTIG_AB"></th>
                             <th data-translate="GESUCHSPERIODE_GUELTIG_BIS"></th>
                             <th data-translate="GESUCHSPERIODE_STATUS"></th>
+                            <th data-translate="GESUCHSPERIODE_STATUS_TAGESSCHULEANMELDUNG"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -40,6 +41,7 @@
                             <td ng-bind="row.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
                             <td ng-bind="row.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
                             <td ng-bind="row.status"></td>
+                            <td ng-bind="vm.getStatusTagesschulenFreischaltung(row)"></td>
                         </tr>
                         </tbody>
                     </table>
@@ -47,185 +49,18 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <form ng-submit="form.$valid && vm.submit()" name="form" role="form" novalidate>
+                    <dv-loading-button type="button" button-click="vm.createGesuchsperiode()"
+                                       button-class="">
+                        <i class="glyphicon glyphicon-plus"></i>
+                        <span data-translate="GESUCHSPERIODE_HINZUFUEGEN"></span>
+                    </dv-loading-button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <form ng-submit="vm.form.$valid && vm.submit()" name="vm.form" role="form" novalidate>
                         <fieldset ng-disabled="vm.isReadonly()">
-
-                            <!-- Gesuchsperiode Detail -->
-                            <div ng-if="vm.gesuchsperiode">
-                                <div class="row">
-                                    <div class="col-md-6 form-group">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <!--suppress XmlInvalidId -->
-                                                <label class="md-no-float" data-translate="GESUCHSPERIODE_GUELTIG_AB"
-                                                       for="gueltigAb_ID"></label>
-                                            </div>
-                                            <div class="col-md-8">
-                                                <dv-datepicker input-id="gueltigAb_ID" name="gueltigAb"
-                                                               ng-model="vm.gesuchsperiode.gueltigkeit.gueltigAb"
-                                                               ng-required="true"
-                                                               class="input-element"
-                                                               ng-disabled="!vm.gesuchsperiode.isNew()">
-                                                </dv-datepicker>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-8 col-md-offset-4">
-                                                <dv-error-messages for="form.gueltigAb.$error"></dv-error-messages>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 form-group">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <!--suppress XmlInvalidId -->
-                                                <label class="md-no-float"
-                                                       data-translate="GESUCHSPERIODE_GUELTIG_BIS"
-                                                       for="gueltigBis_ID"></label>
-                                            </div>
-                                            <div class="col-md-8">
-                                                <dv-datepicker input-id="gueltigBis_ID" name="gueltigBis"
-                                                               ng-model="vm.gesuchsperiode.gueltigkeit.gueltigBis"
-                                                               ng-required="true"
-                                                               class="input-element contrast"
-                                                               ng-disabled="!vm.gesuchsperiode.isNew()">
-                                                </dv-datepicker>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-8 col-md-offset-4">
-                                                <dv-error-messages for="form.gueltigBis.$error"></dv-error-messages>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 form-group">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label data-translate="STATUS" for="gpstatus">
-                                                </label>
-                                            </div>
-                                            <div class="col-md-8 dv-select-style">
-                                                <select name="gpstatus" id="gpstatus"
-                                                        ng-model="vm.gesuchsperiode.status"
-                                                        class="form-control"
-                                                        ng-options="gpstatus as gpstatus for gpstatus in vm.getTSGesuchsperiodeStatusValues()"
-                                                        ng-required="true" ng-click="vm.setStatusChanged()">
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-8 col-md-offset-4">
-                                                <dv-error-messages for="form.gpstatus.$error"></dv-error-messages>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Gesuchsperiode Buttons -->
-                            <div class="row" ng-if="!vm.isReadonly()">
-                                <div class="col-md-2" ng-if="!vm.gesuchsperiode">
-                                    <dv-loading-button type="button" button-click="vm.createGesuchsperiode()"
-                                                       button-class="">
-                                        <i class="glyphicon glyphicon-plus">
-                                        </i> Gesuchsperiode hinzufügen
-                                    </dv-loading-button>
-                                </div>
-                                <div class="col-md-2" ng-if="vm.gesuchsperiode">
-                                    <dv-loading-button type="button" button-click="vm.saveGesuchsperiode()"
-                                                       button-class="color-success">
-                        <span
-                            ng-bind="vm.gesuchsperiode.isNew() ? ('SAVE' | translate) : ('UPDATE' | translate)"></span>
-                                    </dv-loading-button>
-                                </div>
-                                <div class="col-md-2" ng-if="vm.gesuchsperiode">
-                                    <a href="javascript:;" id="cancelLink" class="dv-btn" unsaved-warning-clear
-                                       ng-click="vm.cancelGesuchsperiode(); form.$setPristine();form.$setUntouched();">
-                                        <span data-translate="CANCEL"></span>
-                                    </a>
-                                </div>
-                            </div>
-                            <!-- Liste der Parameter der Gesuchsperiode -->
-                            <div ng-if="vm.gesuchsperiode && !vm.gesuchsperiode.isNew()" class="row marginTop20">
-                                <div class="col-md-12">
-                                    <div class="row viewTitle">
-                                        <div class="col-md-12">
-                                            <h1>
-                                                <!--<span data-translate="PARAMETER_PRO_GESUCHSPERIODE"-->
-                                                <!--data-translate-value-periodeVon="vm.gesuchsperiode.gueltigkeit.gueltigAb |  amDateFormat : 'DD.MM.YYYY'">-->
-                                                <!--</span>-->
-                                                <span data-translate="PARAMETER_PRO_GESUCHSPERIODE"></span>
-                                                <span
-                                                    ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigAb | amDateFormat:'DD.MM.YYYY'"></span>
-                                                <span>bis</span>
-                                                <span
-                                                    ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigBis | amDateFormat:'DD.MM.YYYY'"></span>
-                                            </h1>
-                                            <hr class="header"/>
-                                        </div>
-                                    </div>
-                                    <!-- Parameter-Liste (repeater) -->
-                                    <div ng-repeat="paramgp in vm.ebeguParameterListGesuchsperiode" class="row">
-                                        <div class="col-md-12 form-group">
-                                            <div class="row">
-                                                <div class="col-md-9">
-                                                    <label data-translate="{{paramgp.name}}" class="md-no-float"
-                                                           for="propertyName_{{paramgp.name}}"></label>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <input id="propertyName_{{paramgp.name}}" type="text"
-                                                           name="propertyName_{{paramgp.name}}"
-                                                           ng-model="paramgp.value"
-                                                           dv-max-length class="input-element" required
-                                                           ng-disabled="!vm.periodenaParamsEditable()">
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-3 col-md-offset-9">
-                                                    <dv-error-messages for="form['propertyName_' + paramgp.name].$error"
-                                                                       class="error"></dv-error-messages>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Parameter pro Gesuchsperiode Buttons-->
-                                    <div class="row" ng-if="!vm.isReadonly()">
-                                        <div class="col-md-12" ng-if="vm.gesuchsperiode">
-                                            <dv-loading-button type="button"
-                                                               button-click="vm.saveParameterByGesuchsperiode()"
-                                                               button-class="color-success">
-                                            <span ng-bind="(vm.ebeguParameterListGesuchsperiode && vm.ebeguParameterListGesuchsperiode[0].isNew())
-                                                             ? ('SAVE' | translate) : ('UPDATE' | translate)"></span>
-                                            </dv-loading-button>
-                                        </div>
-                                    </div>
-                                    <div class="row marginTop30">
-                                        <div class="col-md-12">
-                                            <h1 class="mainTitle">
-                                                <!--<span data-translate="PARAMETER_PRO_GESUCHSPERIODE"-->
-                                                <!--data-translate-value-periodeVon="vm.gesuchsperiode.gueltigkeit.gueltigAb |  amDateFormat : 'DD.MM.YYYY'">-->
-                                                <!--</span>-->
-                                                <span data-translate="VORLAGE_PRO_GESUCHSPERIODE"></span>
-                                                <span
-                                                    ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigAb | amDateFormat:'DD.MM.YYYY'"></span>
-                                                <span>bis</span>
-                                                <span
-                                                    ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigBis | amDateFormat:'DD.MM.YYYY'"></span>
-                                            </h1>
-                                        </div>
-                                    </div>
-
-                                    <!-- Vorlage-Liste fuer Gesuchsperiode -->
-                                    <dv-vorlage-list is-readonly="vm.isReadonly"
-                                                     gesuchsperiode="vm.gesuchsperiode"
-                                                     pro-gesuchsperiode="true">
-                                    </dv-vorlage-list>
-
-                                </div>
-                            </div>
                             <!-- Parameter pro Jahr -->
                             <div class="row marginTop40">
                                 <div class="col-md-12">
@@ -315,7 +150,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-offset-4 col-md-2">
-                                                        <dv-error-messages for="form.propertyName_param.key.$error"
+                                                        <dv-error-messages for="vm.form.propertyName_param.key.$error"
                                                                            class="error"></dv-error-messages>
                                                     </div>
 
@@ -331,9 +166,9 @@
                                                 </dv-loading-button>
                                             </div>
                                             <div class="col-md-2">
-                                                <a href="javascript:;" id="cancelJahresabhLink" class="dv-btn"
+                                                <a href="#" id="cancelJahresabhLink" class="dv-btn"
                                                    unsaved-warning-clear
-                                                   ng-click="vm.cancelJahresabhaengig(); form.$setPristine();form.$setUntouched();">
+                                                   ng-click="vm.cancelJahresabhaengig(); vm.form.$setPristine(); vm.form.$setUntouched(); $event.preventDefault();">
                                                     <span data-translate="CANCEL"></span>
                                                 </a>
                                             </div>

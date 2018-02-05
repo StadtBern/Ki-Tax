@@ -69,7 +69,6 @@ public class FinanzielleSituationResource {
 
 	@Inject
 	private FinanzielleSituationService finanzielleSituationService;
-
 	@Inject
 	private GesuchstellerService gesuchstellerService;
 	@Inject
@@ -118,7 +117,27 @@ public class FinanzielleSituationResource {
 		return Response.created(uri).entity(jaxFinanzielleSituation).build();
 	}
 
-	@ApiOperation(value = "Berechnet die FinanzielleSituation fuer das Gesuch mit der uebergebenen Id. Die Berechnung " +
+	@ApiOperation(value = "Updates all required Data for the finanzielle Situation in Gesuch", response = JaxFinanzielleSituationContainer.class)
+	@Nullable
+	@PUT
+	@Path("/finsitStart")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxGesuch saveFinanzielleSituationStart(
+		@Nonnull @NotNull @Valid JaxGesuch gesuchJAXP,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(gesuchJAXP.getId());
+		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchJAXP.getId());
+		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("saveFinanzielleSituationStart", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId()));
+
+		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
+		Gesuch modifiedGesuch = finanzielleSituationService.saveFinanzielleSituationStart(gesuchToMerge);
+		return converter.gesuchToJAX(modifiedGesuch, gesuchService.isNeustesGesuch(modifiedGesuch));
+	}
+
+	@ApiOperation(value = "Berechnet die FinanzielleSituation fuer das uebergebene Gesuch. Die Berechnung wird " +
 		"nicht gespeichert.", response = FinanzielleSituationResultateDTO.class)
 	@Nullable
 	@POST
@@ -130,10 +149,9 @@ public class FinanzielleSituationResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Gesuch gesuch = converter.gesuchToStoreableEntity(gesuchJAXP);
+		Gesuch gesuch = converter.gesuchToEntity(gesuchJAXP, new Gesuch()); // nur konvertieren, nicht mergen mit Gesuch von DB!
 		FinanzielleSituationResultateDTO finanzielleSituationResultateDTO = finanzielleSituationService.calculateResultate(gesuch);
-		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
-		context.setRollbackOnly();
+
 		return Response.ok(finanzielleSituationResultateDTO).build();
 	}
 

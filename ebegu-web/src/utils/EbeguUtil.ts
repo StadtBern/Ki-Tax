@@ -24,6 +24,7 @@ import * as moment from 'moment';
 import TSGesuch from '../models/TSGesuch';
 import ITranslateService = angular.translate.ITranslateService;
 import Moment = moment.Moment;
+import TSBetreuung from '../models/TSBetreuung';
 
 /**
  * Klasse die allgemeine utils Methoden implementiert
@@ -125,6 +126,7 @@ export default class EbeguUtil {
         return -1;
     }
 
+    /* bgNummer is also stored on betreuung when Betreuung is loaded from server! (Don't use this function if you load betreuung from server) */
     public calculateBetreuungsId(gesuchsperiode: TSGesuchsperiode, fall: TSFall, kindContainerNumber: number, betreuungNumber: number): string {
         let betreuungsId: string = '';
         if (gesuchsperiode && fall) {
@@ -133,6 +135,19 @@ export default class EbeguUtil {
                 + '.' + this.addZerosToNumber(fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH)
                 + '.' + kindContainerNumber
                 + '.' + betreuungNumber;
+        }
+        return betreuungsId;
+    }
+
+    /* bgNummer is also stored on betreuung when Betreuung is loaded from server! (Don't use this function if you load betreuung from server) */
+    public calculateBetreuungsIdFromBetreuung(fall: TSFall, betreuung: TSBetreuung): string {
+        let betreuungsId: string = '';
+        if (betreuung && fall) {
+            betreuungsId =
+                betreuung.gesuchsperiode.gueltigkeit.gueltigAb.year().toString().substring(2)
+                + '.' + this.addZerosToNumber(fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH)
+                + '.' + betreuung.kindNummer
+                + '.' + betreuung.betreuungNummer;
         }
         return betreuungsId;
     }
@@ -245,4 +260,23 @@ export default class EbeguUtil {
         }
     }
 
+    public static isNullOrUndefined(data: any): boolean {
+        return data === null || data === undefined;
+    }
+
+    public static isNotNullOrUndefined(data: any): boolean {
+        return !EbeguUtil.isNullOrUndefined(data);
+    }
+
+    public replaceElementInList(element: TSAbstractEntity, list: TSAbstractEntity[], wasNew: boolean) {
+        if (wasNew) {
+            list.push(element);
+        } else {
+            let index = EbeguUtil.getIndexOfElementwithID(element, list);
+            if (index > -1) {
+                list[index] = element;
+                this.handleSmarttablesUpdateBug(list);
+            }
+        }
+    }
 }

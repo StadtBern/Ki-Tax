@@ -80,6 +80,12 @@ public abstract class AbstractTestfall {
 	public static final String ID_INSTITUTION_BRUENNEN = "1b6f476f-e0f5-4380-9ef6-836d688853a3";
 	public static final String ID_INSTITUTION_STAMMDATEN_BRUENNEN_KITA = "9a0eb656-b6b7-4613-8f55-4e0e4720455e";
 
+	public static final String ID_INSTITUTION_BERN = "f7abc530-5d1d-4f1c-a198-9039232974a0";
+	public static final String ID_INSTITUTION_STAMMDATEN_BERN_TAGESSCULHE = "199ac4a1-448f-4d4c-b3a6-5aee21f89613";
+
+	public static final String ID_INSTITUTION_GUARDA = "cb248ea4-df29-496e-ad00-1decb180859e";
+	public static final String ID_INSTITUTION_STAMMDATEN_GUARDA_FERIENINSEL = "9d8ff34f-8856-4dd3-ade2-2469aadac0ed";
+
 	protected final Gesuchsperiode gesuchsperiode;
 	protected final Collection<InstitutionStammdaten> institutionStammdatenList;
 
@@ -137,6 +143,14 @@ public abstract class AbstractTestfall {
 		}
 	}
 
+	private void setFinSitFieldsOfFamiliensituation(@Nonnull Familiensituation familiensituation) {
+		if (gesuchsperiode.hasTagesschulenAnmeldung()) {
+			// by default verguenstigung gewuenscht
+			familiensituation.setSozialhilfeBezueger(false);
+			familiensituation.setVerguenstigungGewuenscht(true);
+		}
+	}
+
 	protected Gesuch createAlleinerziehend() {
 		// Familiensituation
 		Familiensituation familiensituation = new Familiensituation();
@@ -144,6 +158,7 @@ public abstract class AbstractTestfall {
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		FamiliensituationContainer familiensituationContainer = new FamiliensituationContainer();
 		familiensituationContainer.setFamiliensituationJA(familiensituation);
+		setFinSitFieldsOfFamiliensituation(familiensituation);
 		gesuch.setFamiliensituationContainer(familiensituationContainer);
 		return gesuch;
 	}
@@ -156,6 +171,7 @@ public abstract class AbstractTestfall {
 		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
 		FamiliensituationContainer familiensituationContainer = new FamiliensituationContainer();
 		familiensituationContainer.setFamiliensituationJA(familiensituation);
+		setFinSitFieldsOfFamiliensituation(familiensituation);
 		gesuch.setFamiliensituationContainer(familiensituationContainer);
 		return gesuch;
 	}

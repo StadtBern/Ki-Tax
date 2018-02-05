@@ -307,7 +307,6 @@ public class DownloadResource {
 	public Response getFreigabequittungAccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
 		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
-		@Nonnull @QueryParam("zustelladresse") String zustelladresse,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, MimeTypeParseException {
 
 		Validate.notNull(jaxGesuchId.getId());
@@ -324,7 +323,7 @@ public class DownloadResource {
 		}
 
 		WriteProtectedDokument generatedDokument = generatedDokumentService
-			.getFreigabequittungAccessTokenGeneratedDokument(gesuch, forceCreation, Zustelladresse.valueOf(zustelladresse));
+			.getFreigabequittungAccessTokenGeneratedDokument(gesuch, forceCreation);
 		if (generatedDokument == null) {
 			return Response.noContent().build();
 		}
