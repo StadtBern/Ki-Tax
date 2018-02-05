@@ -83,6 +83,7 @@ import EwkRS from '../../core/service/ewkRS.rest';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
+    private neustesGesuch: boolean;
     gesuchstellerNumber: number = 1;
     basisJahrPlusNumber: number = 1;
     private kindIndex: number;
@@ -180,12 +181,19 @@ export default class GesuchModelManager {
      */
     public setGesuch(gesuch: TSGesuch): void {
         this.gesuch = gesuch;
+        this.neustesGesuch = undefined;
         if (this.gesuch) {
             this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
             this.setHiddenSteps();
             // EWK Service mit bereits existierenden Daten initialisieren
             this.ewkRS.gesuchsteller1 = this.gesuch.gesuchsteller1;
             this.ewkRS.gesuchsteller2 = this.gesuch.gesuchsteller2;
+            // Es soll nur einmalig geprueft werden, ob das aktuelle Gesuch das neueste dieses Falls fuer die gewuenschte Periode ist.
+            if (this.gesuch.id) {
+                this.gesuchRS.isNeuestesGesuch(this.gesuch.id).then((resp: boolean) => {
+                    this.neustesGesuch = resp;
+                });
+            }
         }
         this.ewkPersonGS1 = undefined;
         this.ewkPersonGS2 = undefined;
@@ -1414,7 +1422,7 @@ export default class GesuchModelManager {
     }
 
     public isNeuestesGesuch(): boolean {
-        return this.gesuch.neustesGesuch;
+        return this.neustesGesuch;
     }
 
     public isErwerbspensumRequired(gesuchId: string): IPromise<boolean> {

@@ -97,7 +97,7 @@ public class MahnungResource {
 		Mahnung mahnung = converter.mahnungToEntity(mahnungJAXP, new Mahnung());
 		Mahnung persistedMahnung = mahnungService.createMahnung(mahnung);
 
-		return converter.mahnungToJAX(persistedMahnung, gesuchService.isNeustesGesuch(persistedMahnung.getGesuch()));
+		return converter.mahnungToJAX(persistedMahnung);
 	}
 
 	@ApiOperation(value = "Gibt alle Mahnungen zum Gesuch mit der uebergebenen Id zurueck",
@@ -119,7 +119,7 @@ public class MahnungResource {
 		Gesuch gesuchToReturn = gesuchOptional.get();
 
 		return mahnungService.findMahnungenForGesuch(gesuchToReturn).stream()
-			.map(mahnung -> converter.mahnungToJAX(mahnung, gesuchService.isNeustesGesuch(mahnung.getGesuch())))
+			.map(mahnung -> converter.mahnungToJAX(mahnung))
 			.collect(Collectors.toList());
 	}
 
@@ -146,7 +146,7 @@ public class MahnungResource {
 
 		final Gesuch gesuchToReturn = mahnungService.mahnlaufBeenden(gesuchOptional.get());
 
-		return Response.ok(converter.gesuchToJAX(gesuchToReturn, gesuchService.isNeustesGesuch(gesuchToReturn))).build();
+		return Response.ok(converter.gesuchToJAX(gesuchToReturn)).build();
 	}
 
 	@ApiOperation(value = "Generiert die Bemerkungen fuer eine zu erstellende Mahnung. Die Bemerkungen werden aus den" +
