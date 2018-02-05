@@ -479,16 +479,17 @@ public class MitteilungResource {
 	@ApiOperation(value = "Sucht Mitteilungen mit den uebergebenen Suchkriterien/Filtern", response = JaxMitteilungSearchresultDTO.class)
 	@Nonnull
 	@POST
-	@Path("/search")
+	@Path("/search/{includeClosed}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response searchMitteilungen(
+		@Nonnull @PathParam("includeClosed") String includeClosed,
 		@Nonnull @NotNull MitteilungTableFilterDTO tableFilterDTO,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) {
 
 		return MonitoringUtil.monitor(GesuchResource.class, "searchMitteilungen", () -> {
-			Pair<Long, List<Mitteilung>> searchResultPair = mitteilungService.searchMitteilungen(tableFilterDTO);
+			Pair<Long, List<Mitteilung>> searchResultPair = mitteilungService.searchMitteilungen(tableFilterDTO, Boolean.valueOf(includeClosed));
 			List<Mitteilung> foundMitteilungen = searchResultPair.getRight();
 
 			List<JaxMitteilung> convertedMitteilungen = foundMitteilungen.stream().map(mitteilung ->

@@ -187,9 +187,10 @@ public interface MitteilungService {
 	Mitteilung mitteilungUebergebenAnSchulamt(@Nonnull String mitteilungId);
 
 	/**
-	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
+	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt. Wenn das Flag includeClosed auf true
+	 * gesetzt ist, werden auch bereits abgeschlossene Mitteilungen geliefert.
 	 * @return Resultatpaar, der erste Wert im Paar ist die Anzahl Resultate, der zweite Wert ist die Resultatliste
 	 */
 	@Nonnull
-	Pair<Long, List<Mitteilung>> searchMitteilungen(@Nonnull MitteilungTableFilterDTO mitteilungTableFilterDto);
+	Pair<Long, List<Mitteilung>> searchMitteilungen(@Nonnull MitteilungTableFilterDTO mitteilungTableFilterDto, @Nonnull Boolean includeClosed);
 }

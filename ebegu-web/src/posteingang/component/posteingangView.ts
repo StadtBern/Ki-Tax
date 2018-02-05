@@ -38,6 +38,7 @@ export class PosteingangViewController {
     displayedCollection: Array<TSMitteilung> = []; //Liste die im Gui angezeigt wird
     pagination: any = {};
     totalResultCount: string = '0';
+    myTableFilterState: any; // Muss hier gespeichert werden, damit es fuer den Aufruf ab "Inkl.Erledigt"-Checkbox vorhanden ist
 
     itemsByPage: number = 20;
     numberOfPages: number = 1;
@@ -51,7 +52,6 @@ export class PosteingangViewController {
 
     constructor(private mitteilungRS: MitteilungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any, private $state: IStateService,
                 private authServiceRS: AuthServiceRS, private $log: ILogService) {
-        this.initViewModel();
     }
 
     public addZerosToFallNummer(fallnummer: number): string {
@@ -77,15 +77,16 @@ export class PosteingangViewController {
         return getTSMitteilungsStatusForFilter();
     }
 
-    // public clickedIncludeClosed(): void {
-    //    this.updatePosteingang(this.includeClosed);
-    // }
+    public clickedIncludeClosed(): void {
+        this.passFilterToServer(this.myTableFilterState);
+    }
 
     public passFilterToServer = (tableFilterState: any): IPromise<void> => {
         this.$log.info('passing filter to server');
         this.pagination = tableFilterState.pagination;
+        this.myTableFilterState = tableFilterState;
 
-        return this.mitteilungRS.searchMitteilungen(tableFilterState).then((result: TSMtteilungSearchresultDTO) => {
+        return this.mitteilungRS.searchMitteilungen(tableFilterState, this.includeClosed).then((result: TSMtteilungSearchresultDTO) => {
             this.setResult(result);
             this.$log.info('read results:', result);
         });

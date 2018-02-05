@@ -23,14 +23,14 @@
                 <h3 ng-bind="vm.displayedCollection ? vm.displayedCollection.length : 0"></h3>
             </div>
         </div>
-        <!--<div class="row">-->
-            <!--<div class="col-md-2 col-md-offset-9 text-right closedMitteilungen">-->
-                <!--<md-checkbox ng-model="vm.includeClosed" name="includeClosed" id="includeClosed"-->
-                             <!--aria-label="{{'POSTEINGANG_INCLUDE_CLOSED'|translate}}" ng-change="vm.clickedIncludeClosed()">-->
-                    <!--<span data-translate="POSTEINGANG_INCLUDE_CLOSED"></span>-->
-                <!--</md-checkbox>-->
-            <!--</div>-->
-        <!--</div>-->
+        <div class="row">
+            <div class="col-md-2 col-md-offset-9 text-right closedMitteilungen">
+                <md-checkbox ng-model="vm.includeClosed" name="includeClosed" id="includeClosed" ng-change="vm.clickedIncludeClosed()"
+                             aria-label="{{'POSTEINGANG_INCLUDE_CLOSED'|translate}}">
+                    <span data-translate="POSTEINGANG_INCLUDE_CLOSED"></span>
+                </md-checkbox>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-10 col-md-offset-1 table-responsive">
 

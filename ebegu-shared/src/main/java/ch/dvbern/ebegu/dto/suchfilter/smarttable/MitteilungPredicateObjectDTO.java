@@ -40,7 +40,6 @@ public class MitteilungPredicateObjectDTO implements Serializable {
 	private String empfaenger; 		// mitteilung.empfaenger.fullName
 	private String empfaengerAmt; 	// mitteilung.empfaengerAmt;
 	private String mitteilungStatus;// mitteilung.status
-	private Boolean includeClosed; 	// mitteilung.status === ERLEDIGT
 
 
 	public String getSender() {
@@ -105,14 +104,6 @@ public class MitteilungPredicateObjectDTO implements Serializable {
 
 	public void setMitteilungStatus(String mitteilungStatus) {
 		this.mitteilungStatus = mitteilungStatus;
-	}
-
-	public Boolean getIncludeClosed() {
-		return includeClosed;
-	}
-
-	public void setIncludeClosed(Boolean includeClosed) {
-		this.includeClosed = includeClosed;
 	}
 
 	@Override

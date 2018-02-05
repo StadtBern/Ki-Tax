@@ -85,6 +85,7 @@ import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.util.SearchUtil;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -729,20 +730,20 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Nonnull
 	@Override
-	public Pair<Long, List<Mitteilung>> searchMitteilungen(@Nonnull MitteilungTableFilterDTO mitteilungTableFilterDto) {
+	public Pair<Long, List<Mitteilung>> searchMitteilungen(@Nonnull MitteilungTableFilterDTO mitteilungTableFilterDto, @Nonnull Boolean includeClosed) {
 		Pair<Long, List<Mitteilung>> result;
-		Long countResult = searchMitteilungen(mitteilungTableFilterDto, SearchMode.COUNT).getLeft();
+		Long countResult = searchMitteilungen(mitteilungTableFilterDto, includeClosed, SearchMode.COUNT).getLeft();
 		if (countResult.equals(0L)) {    // no result found
 			result = new ImmutablePair<>(0L, Collections.emptyList());
 		} else {
-			Pair<Long, List<Mitteilung>> searchResult = searchMitteilungen(mitteilungTableFilterDto, SearchMode.SEARCH);
+			Pair<Long, List<Mitteilung>> searchResult = searchMitteilungen(mitteilungTableFilterDto, includeClosed, SearchMode.SEARCH);
 			result = new ImmutablePair<>(countResult, searchResult.getRight());
 		}
 		return result;
 	}
 
 	@SuppressWarnings({"rawtypes", "unchecked"}) // Je nach Abfrage ist es String oder Long
-	private Pair<Long, List<Mitteilung>> searchMitteilungen(@Nonnull MitteilungTableFilterDTO mitteilungTableFilterDto, @Nonnull SearchMode mode) {
+	private Pair<Long, List<Mitteilung>> searchMitteilungen(@Nonnull MitteilungTableFilterDTO mitteilungTableFilterDto, @Nonnull Boolean includeClosed, @Nonnull SearchMode mode) {
 		CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		CriteriaQuery query = SearchUtil.getQueryForSearchMode(cb, mode);
 
@@ -820,7 +821,15 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			}
 			// empfaengerAmt
 			if (predicateObjectDto.getEmpfaengerAmt() != null) {
-				//TODO (hefr) ???
+				Amt amt = Amt.valueOf(predicateObjectDto.getEmpfaengerAmt());
+				switch (amt) {
+				case JUGENDAMT:
+					predicates.add(joinEmpfaenger.get(Benutzer_.role).in(UserRole.getJugendamtRoles()));
+					break;
+				case SCHULAMT:
+					predicates.add(joinEmpfaenger.get(Benutzer_.role).in(UserRole.getSchulamtRoles()));
+					break;
+				}
 			}
 			// mitteilungStatus
 			if (predicateObjectDto.getMitteilungStatus() != null) {
@@ -828,11 +837,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				predicates.add(cb.equal(root.get(Mitteilung_.mitteilungStatus), mitteilungStatus));
 			}
 			// Inkl. abgeschlossene
-			if (predicateObjectDto.getIncludeClosed() != null) {
-				if (!predicateObjectDto.getIncludeClosed()) {
-					Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);
-					predicates.add(predicateNichtErledigt);
-				}
+			if (!includeClosed) {
+				Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);
+				predicates.add(predicateNichtErledigt);
 			}
 		}
 
@@ -900,7 +907,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				expression = joinEmpfaenger.get(Benutzer_.vorname);
 				break;
 			case "empfaengerAmt":
-				//TODO (hefr) wat nu?
+				String sJugendamt = ServerMessageUtil.getMessage(Amt.class.getSimpleName() + '_' + Amt.JUGENDAMT.name());
+				String sSchulamt = ServerMessageUtil.getMessage(Amt.class.getSimpleName() + '_' + Amt.SCHULAMT.name());
+				expression = cb.selectCase().when(joinEmpfaenger.get(Benutzer_.role).in(UserRole.getJugendamtRoles()), sJugendamt).otherwise(sSchulamt);
 				break;
 			case "mitteilungStatus":
 				expression = root.get(Mitteilung_.mitteilungStatus);

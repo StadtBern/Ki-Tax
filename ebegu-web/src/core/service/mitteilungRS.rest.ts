@@ -200,8 +200,8 @@ export default class MitteilungRS {
         });
     }
 
-    public searchMitteilungen(antragSearch: any): IPromise<TSMtteilungSearchresultDTO> {
-        return this.http.post(this.serviceURL + '/search/', antragSearch, {
+    public searchMitteilungen(antragSearch: any, includeClosed: boolean): IPromise<TSMtteilungSearchresultDTO> {
+        return this.http.post(this.serviceURL + '/search/' + includeClosed, antragSearch, {
             headers: {
                 'Content-Type': 'application/json'
             }
