@@ -218,8 +218,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         let isRole: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles());
         let isGesuchsperiode: boolean = this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung();
         let istNotStatusFreigabequittung: boolean = this.gesuchModelManager.getGesuch().status !== TSAntragStatus.FREIGABEQUITTUNG;
-        let isNeustesGesuch: boolean = this.gesuchModelManager.getGesuch().neustesGesuch;
-        return isStatus && isRole && isGesuchsperiode && istNotStatusFreigabequittung && isNeustesGesuch;
+        return isStatus && isRole && isGesuchsperiode && istNotStatusFreigabequittung && this.gesuchModelManager.isNeuestesGesuch();
     }
 
     /**
