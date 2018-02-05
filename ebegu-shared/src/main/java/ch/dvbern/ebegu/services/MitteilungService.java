@@ -16,16 +16,19 @@
 package ch.dvbern.ebegu.services;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.MitteilungTableFilterDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Mitteilung;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Service zum Verwalten von Mitteilungen
@@ -182,4 +185,11 @@ public interface MitteilungService {
 	 */
 	@Nonnull
 	Mitteilung mitteilungUebergebenAnSchulamt(@Nonnull String mitteilungId);
+
+	/**
+	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
+	 * @return Resultatpaar, der erste Wert im Paar ist die Anzahl Resultate, der zweite Wert ist die Resultatliste
+	 */
+	@Nonnull
+	Pair<Long, List<Mitteilung>> searchMitteilungen(@Nonnull MitteilungTableFilterDTO mitteilungTableFilterDto);
 }

@@ -72,10 +72,10 @@ describe('posteingangView', function () {
         describe('getMitteilungen', function () {
             it('should return the list of Mitteilungen', function () {
                 mockRestCalls();
-                posteingangViewController = new PosteingangViewController(mitteilungRS, ebeguUtil, CONSTANTS, undefined, undefined);
+                posteingangViewController = new PosteingangViewController(mitteilungRS, ebeguUtil, CONSTANTS, undefined, undefined, $log);
                 $rootScope.$apply();
                 expect(mitteilungRS.getMitteilungenForPosteingang).toHaveBeenCalled();
-                let list: Array<TSMitteilung> = posteingangViewController.getMitteilungen();
+                let list: Array<TSMitteilung> = posteingangViewController.displayedCollection;
                 expect(list).toBeDefined();
                 expect(list.length).toBe(1);
                 expect(list[0]).toEqual(mockMitteilung);

@@ -41,7 +41,7 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
 
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragPredicateObjectDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Benutzer_;
 import ch.dvbern.ebegu.entities.Betreuung;
@@ -70,9 +70,11 @@ import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
+import ch.dvbern.ebegu.enums.SearchMode;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.services.util.SearchUtil;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.Constants;
@@ -120,18 +122,18 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 	@Nonnull
 	private Pair<Long, List<Gesuch>> countAndSearchAntraege(@Nonnull AntragTableFilterDTO antragTableFilterDto, boolean searchForPendenzen) {
 		Pair<Long, List<Gesuch>> result;
-		Long countResult = searchAntraege(antragTableFilterDto, Mode.COUNT, searchForPendenzen).getLeft();
+		Long countResult = searchAntraege(antragTableFilterDto, SearchMode.COUNT, searchForPendenzen).getLeft();
 		if (countResult.equals(0L)) {    // no result found
 			result = new ImmutablePair<>(0L, Collections.emptyList());
 		} else {
-			Pair<Long, List<Gesuch>> searchResult = searchAntraege(antragTableFilterDto, Mode.SEARCH, searchForPendenzen);
+			Pair<Long, List<Gesuch>> searchResult = searchAntraege(antragTableFilterDto, SearchMode.SEARCH, searchForPendenzen);
 			result = new ImmutablePair<>(countResult, searchResult.getRight());
 		}
 		return result;
 	}
 
 	@SuppressWarnings("PMD.NcssMethodCount")
-	private Pair<Long, List<Gesuch>> searchAntraege(@Nonnull AntragTableFilterDTO antragTableFilterDto, @Nonnull Mode mode, boolean searchForPendenzen) {
+	private Pair<Long, List<Gesuch>> searchAntraege(@Nonnull AntragTableFilterDTO antragTableFilterDto, @Nonnull SearchMode mode, boolean searchForPendenzen) {
 		Benutzer user = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("searchAllAntraege", "No User is logged in"));
 		UserRole role = user.getRole();
 		Set<AntragStatus> allowedAntragStatus;
@@ -214,12 +216,12 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 		}
 
 		// Predicates derived from PredicateDTO (Filter coming from client)
-		PredicateObjectDTO predicateObjectDto = antragTableFilterDto.getSearch().getPredicateObject();
+		AntragPredicateObjectDTO predicateObjectDto = antragTableFilterDto.getSearch().getPredicateObject();
 		if (predicateObjectDto != null) {
 			if (predicateObjectDto.getFallNummer() != null) {
 				// Die Fallnummer muss als String mit LIKE verglichen werden: Bei Eingabe von "14" soll der Fall "114" kommen
 				Expression<String> fallNummerAsString = fall.get(Fall_.fallNummer).as(String.class);
-				String fallNummerWithWildcards = '%' + predicateObjectDto.getFallNummer() + '%';
+				String fallNummerWithWildcards = SearchUtil.withWildcards(predicateObjectDto.getFallNummer());
 				predicates.add(cb.like(fallNummerAsString, fallNummerWithWildcards));
 			}
 			if (predicateObjectDto.getFamilienName() != null) {
@@ -333,7 +335,7 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 			if (antragTableFilterDto.getPagination() != null) {
 				int firstIndex = antragTableFilterDto.getPagination().getStart();
 				Integer maxresults = antragTableFilterDto.getPagination().getNumber();
-				List<String> orderedIdsToLoad = this.determineDistinctGesuchIdsToLoad(gesuchIds, firstIndex, maxresults);
+				List<String> orderedIdsToLoad = SearchUtil.determineDistinctGesuchIdsToLoad(gesuchIds, firstIndex, maxresults);
 				pagedResult = findGesuche(orderedIdsToLoad);
 			} else {
 				pagedResult = findGesuche(gesuchIds);
@@ -416,12 +418,6 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 		Predicate predicateNotTagesschule = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
 		Predicate predicateNotFerieninsel = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.FERIENINSEL);
 		return cb.and(predicateNotTagesschule, predicateNotFerieninsel);
-	}
-
-	private List<String> determineDistinctGesuchIdsToLoad(List<String> allGesuchIds, int startindex, int maxresults) {
-		List<String> uniqueGesuchIds = new ArrayList<>(new LinkedHashSet<>(allGesuchIds)); //keep order but remove duplicate ids
-		int lastindex = Math.min(startindex + maxresults, (uniqueGesuchIds.size()));
-		return uniqueGesuchIds.subList(startindex, lastindex);
 	}
 
 	/**
@@ -561,10 +557,5 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 			return new ArrayList<>(set);
 		}
 		return Collections.emptyList();
-	}
-
-	private enum Mode {
-		COUNT,
-		SEARCH
 	}
 }

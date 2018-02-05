@@ -17,9 +17,12 @@ package ch.dvbern.ebegu.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,6 +39,7 @@ import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
@@ -47,6 +51,8 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.MitteilungPredicateObjectDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.MitteilungTableFilterDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Benutzer_;
 import ch.dvbern.ebegu.entities.Betreuung;
@@ -57,7 +63,9 @@ import ch.dvbern.ebegu.entities.Betreuungsmitteilung_;
 import ch.dvbern.ebegu.entities.Betreuungspensum;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Fall_;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuch_;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.KindContainer_;
 import ch.dvbern.ebegu.entities.Mitteilung;
@@ -68,13 +76,18 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
+import ch.dvbern.ebegu.enums.SearchMode;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.services.util.SearchUtil;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -712,6 +725,219 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 		}
 		throw new IllegalArgumentException("Die Mitteilung hat entweder keinen Empfänger oder dieser ist nicht in Rolle Jugendamt");
+	}
+
+	@Nonnull
+	@Override
+	public Pair<Long, List<Mitteilung>> searchMitteilungen(@Nonnull MitteilungTableFilterDTO mitteilungTableFilterDto) {
+		Pair<Long, List<Mitteilung>> result;
+		Long countResult = searchMitteilungen(mitteilungTableFilterDto, SearchMode.COUNT).getLeft();
+		if (countResult.equals(0L)) {    // no result found
+			result = new ImmutablePair<>(0L, Collections.emptyList());
+		} else {
+			Pair<Long, List<Mitteilung>> searchResult = searchMitteilungen(mitteilungTableFilterDto, SearchMode.SEARCH);
+			result = new ImmutablePair<>(countResult, searchResult.getRight());
+		}
+		return result;
+	}
+
+	@SuppressWarnings({"rawtypes", "unchecked"}) // Je nach Abfrage ist es String oder Long
+	private Pair<Long, List<Mitteilung>> searchMitteilungen(@Nonnull MitteilungTableFilterDTO mitteilungTableFilterDto, @Nonnull SearchMode mode) {
+		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		CriteriaQuery query = SearchUtil.getQueryForSearchMode(cb, mode);
+
+		// Construct from-clause
+		Root<Mitteilung> root = query.from(Mitteilung.class);
+
+		// Join all the relevant relations
+		Join<Mitteilung, Fall> joinFall = root.join(Mitteilung_.fall, JoinType.INNER);
+		Join<Fall, Benutzer> joinBesitzer = joinFall.join(Fall_.besitzer, JoinType.LEFT);
+		Join<Mitteilung, Benutzer> joinSender = root.join(Mitteilung_.sender, JoinType.LEFT);
+		Join<Mitteilung, Benutzer> joinEmpfaenger = root.join(Mitteilung_.empfaenger, JoinType.LEFT);
+
+		// Predicates derived from PredicateDTO (Filter coming from client)
+		MitteilungPredicateObjectDTO predicateObjectDto = mitteilungTableFilterDto.getSearch().getPredicateObject();
+
+		//prepare predicates
+		List<Predicate> predicates = new ArrayList<>();
+
+		// Keine Entwuerfe fuer Posteingang
+		Predicate predicateEntwurf = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ENTWURF);
+		predicates.add(predicateEntwurf);
+
+		// Richtiger Empfangs-Typ. Persoenlicher Empfaenger wird nicht beachtet sondern auf Client mit Filter geloest
+		MitteilungTeilnehmerTyp mitteilungTeilnehmerTyp = getMitteilungTeilnehmerTypForCurrentUser();
+		Predicate predicateEmpfaengerTyp = cb.equal(root.get(Mitteilung_.empfaengerTyp), mitteilungTeilnehmerTyp);
+		predicates.add(predicateEmpfaengerTyp);
+
+		if (predicateObjectDto != null) {
+
+			// sender
+			if (predicateObjectDto.getSender() != null) {
+				predicates.add(
+					cb.or(
+						cb.like(joinSender.get(Benutzer_.nachname), SearchUtil.withWildcards(predicateObjectDto.getSender())),
+						cb.like(joinSender.get(Benutzer_.vorname), SearchUtil.withWildcards(predicateObjectDto.getSender()))
+					));
+			}
+			// fallNummer
+			if (predicateObjectDto.getFallNummer() != null) {
+				// Die Fallnummer muss als String mit LIKE verglichen werden: Bei Eingabe von "14" soll der Fall "114" kommen
+				Expression<String> fallNummerAsString = joinFall.get(Fall_.fallNummer).as(String.class);
+				String fallNummerWithWildcards = SearchUtil.withWildcards(predicateObjectDto.getFallNummer());
+				predicates.add(cb.like(fallNummerAsString, fallNummerWithWildcards));
+			}
+			// familienName
+			if (predicateObjectDto.getFamilienName() != null) {
+				predicates.add(
+					cb.or(
+						cb.like(joinBesitzer.get(Benutzer_.nachname), SearchUtil.withWildcards(predicateObjectDto.getFamilienName())),
+						cb.like(joinBesitzer.get(Benutzer_.vorname), SearchUtil.withWildcards(predicateObjectDto.getFamilienName()))
+					));
+			}
+			// subject
+			if (predicateObjectDto.getSubject() != null) {
+				predicates.add(cb.like(root.get(Mitteilung_.subject), SearchUtil.withWildcards(predicateObjectDto.getSubject())));
+			}
+			// sentDatum
+			if (predicateObjectDto.getSentDatum() != null) {
+				try {
+					LocalDate searchDate = LocalDate.parse(predicateObjectDto.getSentDatum(), Constants.DATE_FORMATTER);
+					predicates.add(cb.between(root.get(Mitteilung_.sentDatum), searchDate.atStartOfDay(), searchDate.plusDays(1).atStartOfDay()));
+				} catch (DateTimeParseException e) {
+					// Kein gueltiges Datum. Es kann kein Mitteilung geben, welches passt. Wir geben leer zurueck
+					return new ImmutablePair<>(0L, Collections.emptyList());
+				}
+			}
+			// empfaenger
+			if (predicateObjectDto.getEmpfaenger() != null) {
+				String[] strings = predicateObjectDto.getEmpfaenger().split(" ");
+				predicates.add(
+					cb.and(
+						cb.equal(joinEmpfaenger.get(Benutzer_.vorname), strings[0]),
+						cb.equal(joinEmpfaenger.get(Benutzer_.nachname), strings[1])
+					));
+			}
+			// empfaengerAmt
+			if (predicateObjectDto.getEmpfaengerAmt() != null) {
+				//TODO (hefr) ???
+			}
+			// mitteilungStatus
+			if (predicateObjectDto.getMitteilungStatus() != null) {
+				MitteilungStatus mitteilungStatus = MitteilungStatus.valueOf(predicateObjectDto.getMitteilungStatus());
+				predicates.add(cb.equal(root.get(Mitteilung_.mitteilungStatus), mitteilungStatus));
+			}
+			// Inkl. abgeschlossene
+			if (predicateObjectDto.getIncludeClosed() != null) {
+				if (!predicateObjectDto.getIncludeClosed()) {
+					Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);
+					predicates.add(predicateNichtErledigt);
+				}
+			}
+		}
+
+		// Construct the select- and where-clause
+		switch (mode) {
+		case SEARCH:
+			//noinspection unchecked // Je nach Abfrage ist das Query String oder Long
+			query.select(root.get(Mitteilung_.id)).where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+			constructOrderByClause(mitteilungTableFilterDto, cb, query, root, joinFall, joinBesitzer, joinSender, joinEmpfaenger);
+			break;
+		case COUNT:
+			//noinspection unchecked // Je nach Abfrage ist das Query String oder Long
+			query.select(cb.countDistinct(root.get(Gesuch_.id)))
+				.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+			break;
+		}
+
+		// Prepare and execute the query and build the result
+		Pair<Long, List<Mitteilung>> result = null;
+		switch (mode) {
+		case SEARCH:
+			List<String> gesuchIds = persistence.getCriteriaResults(query); //select all ids in order, may contain duplicates
+			List<Mitteilung> pagedResult;
+			if (mitteilungTableFilterDto.getPagination() != null) {
+				int firstIndex = mitteilungTableFilterDto.getPagination().getStart();
+				Integer maxresults = mitteilungTableFilterDto.getPagination().getNumber();
+				List<String> orderedIdsToLoad = SearchUtil.determineDistinctGesuchIdsToLoad(gesuchIds, firstIndex, maxresults);
+				pagedResult = findMitteilungen(orderedIdsToLoad);
+			} else {
+				pagedResult = findMitteilungen(gesuchIds);
+			}
+			result = new ImmutablePair<>(null, pagedResult);
+			break;
+		case COUNT:
+			Long count = (Long) persistence.getCriteriaSingleResult(query);
+			result = new ImmutablePair<>(count, null);
+			break;
+		}
+		return result;
+	}
+
+
+	private void constructOrderByClause(@Nonnull MitteilungTableFilterDTO tableFilterDTO, CriteriaBuilder cb, CriteriaQuery query,
+			Root<Mitteilung> root, Join<Mitteilung, Fall> joinFall, Join<Fall, Benutzer> joinBesitzer,
+			Join<Mitteilung, Benutzer> joinSender, Join<Mitteilung, Benutzer> joinEmpfaenger) {
+		Expression<?> expression = null;
+		if (tableFilterDTO.getSort() != null && tableFilterDTO.getSort().getPredicate() != null) {
+			switch (tableFilterDTO.getSort().getPredicate()) {
+			case "sender":
+				expression = joinSender.get(Benutzer_.vorname);
+				break;
+			case "fallNummer":
+				expression = joinFall.get(Fall_.fallNummer);
+				break;
+			case "familienName":
+				expression = joinBesitzer.get(Benutzer_.vorname);
+				break;
+			case "subject":
+				expression = root.get(Mitteilung_.subject);
+				break;
+			case "sentDatum":
+				expression = root.get(Mitteilung_.sentDatum);
+				break;
+			case "empfaenger":
+				expression = joinEmpfaenger.get(Benutzer_.vorname);
+				break;
+			case "empfaengerAmt":
+				//TODO (hefr) wat nu?
+				break;
+			case "mitteilungStatus":
+				expression = root.get(Mitteilung_.mitteilungStatus);
+				break;
+			default:
+				LOG.warn("Using default sort by SentDatum because there is no specific clause for predicate {}", tableFilterDTO.getSort().getPredicate());
+				expression = root.get(Mitteilung_.sentDatum);
+				break;
+			}
+			query.orderBy(tableFilterDTO.getSort().getReverse() ? cb.asc(expression) : cb.desc(expression));
+		} else {
+			// Default sort when nothing is choosen
+			expression = root.get(Mitteilung_.sentDatum);
+			query.orderBy(cb.desc(expression));
+		}
+	}
+
+	private List<Mitteilung> findMitteilungen(@Nonnull List<String> gesuchIds) {
+		if (!gesuchIds.isEmpty()) {
+			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+			final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
+			Root<Mitteilung> root = query.from(Mitteilung.class);
+			Predicate predicate = root.get(Mitteilung_.id).in(gesuchIds);
+			query.where(predicate);
+			//reduce to unique gesuche
+			List<Mitteilung> listWithDuplicates = persistence.getCriteriaResults(query);
+			LinkedHashSet<Mitteilung> set = new LinkedHashSet<>();
+			//richtige reihenfolge beibehalten
+			for (String gesuchId : gesuchIds) {
+				listWithDuplicates.stream()
+					.filter(gesuch -> gesuch.getId().equals(gesuchId))
+					.findFirst()
+					.ifPresent(set::add);
+			}
+			return new ArrayList<>(set);
+		}
+		return Collections.emptyList();
 	}
 
 	private void applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {

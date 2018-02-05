@@ -1,6 +1,6 @@
 /*
  * Ki-Tax: System for the management of external childcare subsidies
- * Copyright (C) 2017 City of Bern Switzerland
+ * Copyright (C) 2018 City of Bern Switzerland
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -19,54 +19,36 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * Aggregat Klasse zum deserialisieren/serialisieren des gesamten SmartTable-Filterobjekts
+ * Leider generiert SmartTable  ein verschachteltes JSON Objekt fuer die Suchpredicates. Daher muessen wir das hier nachbauen
  */
-@XmlRootElement(name = "fallsucheFilter")
+@XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AntragTableFilterDTO implements Serializable {
+public class MitteilungSearchDTO implements Serializable {
 
-	private static final long serialVersionUID = 404959569485575365L;
-	private PaginationDTO pagination;
+	private static final long serialVersionUID = 4561877549058241575L;
+	private MitteilungPredicateObjectDTO predicateObject;
 
-	private AntragSearchDTO search;
-
-	private SortDTO sort;
-
-	public PaginationDTO getPagination() {
-		return pagination;
+	public MitteilungSearchDTO() {
+		this.predicateObject = new MitteilungPredicateObjectDTO();
 	}
 
-	public void setPagination(PaginationDTO pagination) {
-		this.pagination = pagination;
+	public MitteilungPredicateObjectDTO getPredicateObject() {
+		return predicateObject;
 	}
 
-	public AntragSearchDTO getSearch() {
-		return search;
-	}
-
-	public void setSearch(AntragSearchDTO search) {
-		this.search = search;
-	}
-
-	public SortDTO getSort() {
-		return sort;
-	}
-
-	public void setSort(SortDTO sort) {
-		this.sort = sort;
+	public void setPredicateObject(MitteilungPredicateObjectDTO predicateObject) {
+		this.predicateObject = predicateObject;
 	}
 
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this)
-			.append("pagination", pagination)
-			.append("search", search)
-			.append("sort", sort)
+			.append("predicateObject", predicateObject)
 			.toString();
 	}
 }
