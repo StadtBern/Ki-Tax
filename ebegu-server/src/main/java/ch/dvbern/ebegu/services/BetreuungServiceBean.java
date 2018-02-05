@@ -529,6 +529,12 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		} else { // for Institution or Traegerschaft. bz default
 			predicates.add(root.get(Betreuung_.betreuungsstatus).in(Arrays.asList(Betreuungsstatus.forPendenzInstitution)));
 		}
+
+		// nur Aktuelle Anmeldungen
+		Predicate predAktuelleBetreuung = cb.equal(root.get(Betreuung_.anmeldungMutationZustand), AnmeldungMutationZustand.AKTUELLE_ANMELDUNG);
+		Predicate predNormaleBetreuung = cb.isNull(root.get(Betreuung_.anmeldungMutationZustand));
+		predicates.add(cb.or(predAktuelleBetreuung, predNormaleBetreuung));
+
 		// Institution
 		predicates.add(root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen)));
 		// Gesuchsperiode darf nicht geschlossen sein
