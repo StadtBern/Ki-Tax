@@ -756,6 +756,7 @@ export default class GesuchModelManager {
             this.getKindToWorkWith().betreuungen.push(storedBetreuung);  //neues kind anfuegen
             this.setBetreuungIndex(this.getKindToWorkWith().betreuungen.length - 1);
         }
+        this.getFallFromServer(); // to reload the verantwortliche that may have changed
         return storedBetreuung;
     }
 
