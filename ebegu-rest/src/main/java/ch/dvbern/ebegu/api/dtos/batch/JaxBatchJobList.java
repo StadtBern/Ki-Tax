@@ -22,18 +22,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class JaxBatchJobList {
 
 	@Nonnull
-	private final List<JaxBatchJob> jobs;
+	private final List<JaxWorkJob> jobs;
 
 	public JaxBatchJobList() {
 		this(new ArrayList<>());
 	}
 
-	public JaxBatchJobList(@Nonnull List<JaxBatchJob> jobs) {
+	public JaxBatchJobList(@Nonnull List<JaxWorkJob> jobs) {
 		this.jobs = checkNotNull(jobs);
 	}
 
 	@Nonnull
-	public List<JaxBatchJob> getJobs() {
+	public List<JaxWorkJob> getJobs() {
 		return jobs;
 	}
 }

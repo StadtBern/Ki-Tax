@@ -11,6 +11,7 @@ package ch.dvbern.ebegu.services;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -97,8 +98,12 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 	@Override
 	public Workjob findWorkjobByExecutionId(@Nonnull final Long executionId) {
 
-		final Optional<Workjob> optional = criteriaQueryHelper.getEntityByUniqueAttribute(Workjob.class, executionId, Workjob_.executionId);
-		return optional.orElse(null);
+		final Collection<Workjob> entitiesByAttribute = criteriaQueryHelper.getEntitiesByAttribute(Workjob.class, executionId, Workjob_.executionId);
+		final Optional<Workjob> first = entitiesByAttribute
+			.stream()
+			.filter(workjob -> workjob.getTimestampErstellt() != null)
+			.max(Comparator.comparing(Workjob::getTimestampErstellt));
+		return first.orElse(null);
 
 	}
 
@@ -119,14 +124,16 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 			jobParameters.setProperty(DATE_TO_PARAM, datumBisString);
 		}
 
-		jobParameters.setProperty(REPORT_VORLAGE_TYPE_PARAM, ReportVorlage.VORLAGE_REPORT_GESUCH_STICHTAG.name());
+		jobParameters.setProperty(REPORT_VORLAGE_TYPE_PARAM, vorlage.name());
 
 		setPropertyIfPresent(jobParameters, WorkJobConstants.GESUCH_PERIODE_ID_PARAM, gesuchPeriodIdParam);
 		jobParameters.setProperty(WorkJobConstants.EMAIL_OF_USER, principalBean.getBenutzer().getEmail());
 		jobOperator.getJobNames();
+		workJob.setStatus(BatchJobStatus.REQUESTED);
+		workJob = this.saveWorkjob(workJob);
+		persistence.getEntityManager().flush(); //so we can actually set state to running using an update script in the job-listener
 		long executionId = jobOperator.start("reportbatch", jobParameters);
 		workJob.setExecutionId(executionId);
-		workJob.setStatus(BatchJobStatus.REQUESTED);
 		workJob = this.saveWorkjob(workJob);
 		LOG.debug("Startet GesuchStichttagStatistik with executionId {}", executionId);
 
@@ -145,7 +152,7 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 
 		Set<BatchJobStatus> statesToSearch = Sets.newHashSet(BatchJobStatus.REQUESTED, BatchJobStatus.RUNNING);
 
-		final List<Workjob> openWorkjobs = this.findOpenWorkjobs(principalBean.getPrincipal().getName(), statesToSearch);
+		final List<Workjob> openWorkjobs = this.findWorkjobs(principalBean.getPrincipal().getName(), statesToSearch);
 		final boolean alreadyQueued = openWorkjobs.stream().anyMatch(workJob::isSame);
 		if (alreadyQueued) {
 			LOG.error("An identical Workjob was already queued by this user; {} ", workJob);
@@ -192,7 +199,7 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 	}
 
 	@Override
-	public List<Workjob> findOpenWorkjobs(@Nonnull String startingUserName, @Nonnull Set<BatchJobStatus> statesToSearch) {
+	public List<Workjob> findWorkjobs(@Nonnull String startingUserName, @Nonnull Set<BatchJobStatus> statesToSearch) {
 		Validate.notNull(startingUserName, "username to search must be set");
 		Validate.notNull(statesToSearch, "statesToSearch  must be set");
 
@@ -217,9 +224,10 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 	}
 
 	@Override
-	public void changeStateToFinished(long executionId){
+	public void changeStateOfWorkjob(long executionId, BatchJobStatus status){
 		persistence.getEntityManager().createNamedQuery(Workjob.Q_WORK_JOB_STATE_UPDATE)
 			.setParameter("exId", executionId)
+			.setParameter("status", status)
 			.executeUpdate();
 	}
 }

@@ -19,6 +19,7 @@ import javax.inject.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.dvbern.ebegu.enums.reporting.BatchJobStatus;
 import ch.dvbern.ebegu.services.WorkjobService;
 
 @Named
@@ -36,13 +37,14 @@ public class ReportJobListener extends AbstractJobListener {
 	@Override
 	public void beforeJob() {
 		LOG.debug("ReportJobListener started: {}", ctx.getExecutionId());
+		workjobService.changeStateOfWorkjob(ctx.getExecutionId(), BatchJobStatus.RUNNING);
 	}
 
 	@Override
 	public void afterJob() {
 		LOG.debug("ReportJobListener finished: {}, status: {},{}",
 			ctx.getExecutionId(), ctx.getBatchStatus(), ctx.getExitStatus());
-		workjobService.changeStateToFinished(ctx.getExecutionId());
+		workjobService.changeStateOfWorkjob(ctx.getExecutionId(), BatchJobStatus.FINISHED);
 
 	}
 }

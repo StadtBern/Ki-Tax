@@ -19,7 +19,6 @@ import javax.batch.operations.JobOperator;
 import javax.batch.runtime.BatchRuntime;
 import javax.batch.runtime.BatchStatus;
 import javax.batch.runtime.context.JobContext;
-import javax.batch.runtime.context.StepContext;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,6 +37,7 @@ import ch.dvbern.oss.lib.excelmerger.ExcelMergeException;
 
 import static ch.dvbern.ebegu.enums.WorkJobConstants.REPORT_VORLAGE_TYPE_PARAM;
 
+@SuppressWarnings("ClassNamePrefixedWithPackageName")
 @Named
 @Dependent
 public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
@@ -51,8 +51,12 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 	@Inject
 	private JobContext jobCtx;
 
+//	@Inject
+//	private StepContext stepCtx;
+
 	@Inject
-	private StepContext stepCtx;
+	JobDataContainer jobDataContainer;
+
 
 	@Override
 	public String process() {
@@ -60,23 +64,22 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 		LOG.info("processing report generation job for type " + typeProp);
 		final ReportVorlage reportType = ReportVorlage.valueOf(typeProp);
 		try {
-			final UploadFileInfo uploadFileInfo = triggerReportGeneration(reportType);
-			jobCtx.setTransientUserData(uploadFileInfo);
-			stepCtx.setTransientUserData(uploadFileInfo);
-			return BatchStatus.COMPLETED.toString();
-		} catch (ExcelMergeException e) {
-			e.printStackTrace();
-		} catch (MergeDocException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			final UploadFileInfo uploadFileInfo = triggerReportGeneration(reportType); //gespeichertes file
+			jobDataContainer.setresult(uploadFileInfo);
+			LOG.debug("Report File was successfully generated for workjob ", jobCtx.getExecutionId());
+			return BatchStatus.COMPLETED.toString(); // success
+
+		} catch (ExcelMergeException | MergeDocException e) {
+			LOG.error("ExcelMergeException occured while creating a report in a batch process ", e);
+		} catch (URISyntaxException | IOException e) {
+			LOG.error("IOException occured while creating a report in a batch process, maybe template could not be loaded?", e);
 		}
 		return BatchStatus.FAILED.toString();
 
 	}
 
+
+	@SuppressWarnings("UnnecessaryLocalVariable")
 	private UploadFileInfo triggerReportGeneration(ReportVorlage workJobType) throws ExcelMergeException, MergeDocException, URISyntaxException, IOException {
 
 		final String datumVonOrStichtag = getParameters().getProperty(WorkJobConstants.DATE_FROM_PARAM);
@@ -85,8 +88,12 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 		LocalDate dateTo = DateUtil.parseStringToDateOrReturnNow(datumToStichtag);
 		final String gesuchPeriodeID = getParameters().getProperty(WorkJobConstants.GESUCH_PERIODE_ID_PARAM);
 		final String zahlungsauftragId = getParameters().getProperty(WorkJobConstants.ZAHLUNGSAUFTRAG_ID_PARAM);
-		LOG.debug("Report File was successfully generated");
 
+		return generateReport(workJobType, dateFrom, dateTo, gesuchPeriodeID, zahlungsauftragId);
+
+	}
+
+	private UploadFileInfo generateReport(ReportVorlage workJobType, LocalDate dateFrom, LocalDate dateTo, String gesuchPeriodeID, String zahlungsauftragId) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 		switch (workJobType) {
 
 		case VORLAGE_REPORT_GESUCH_STICHTAG: {
@@ -106,7 +113,7 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 			return uploadFileInfo;
 		}
 		case VORLAGE_REPORT_ZAHLUNG_AUFTRAG: {
-			Validate.notNull(zahlungsauftragId , "Zahlungsauftrag ID must be passed as param");
+			Validate.notNull(zahlungsauftragId, "Zahlungsauftrag ID must be passed as param");
 			final UploadFileInfo uploadFileInfo = this.reportService.generateExcelReportZahlungAuftrag(zahlungsauftragId);
 			return uploadFileInfo;
 		}
@@ -130,7 +137,6 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 
 		LOG.warn("No Report generated ");
 		throw new IllegalArgumentException("Unknown ReportType: " + workJobType);
-
 	}
 
 	private Properties getParameters() {

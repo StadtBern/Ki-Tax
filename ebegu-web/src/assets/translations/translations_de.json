@@ -1229,5 +1229,6 @@
     "MUTATION_NOETIG_DB": "Um Anmeldungen für eine Tagesschule erfassen zu können, müssen sie das Gesuch mutieren.",
     "NEU": "neu",
     "GELESEN": "gelesen",
-    "ERLEDIGT": "erledigt"
+    "ERLEDIGT": "erledigt",
+    "STARTED_GENERATION": "Reportgenerierung gestartet. Wir bitten um etwas Geduld. Sie werden per Email informiert sobald das Dokument für Sie bereitsteht"
 }

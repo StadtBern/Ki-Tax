@@ -111,6 +111,7 @@ public interface MailService {
 	 * schickt eine email an den uebergebenen Empfaenger die angibt wie das angehaengte File heruntergeladen werden kann
 	 * @param receiverEmail
 	 * @param downloadFile
+	 * @param downloadurl
 	 */
-	void sendDocumentCreatedEmail(String receiverEmail, DownloadFile downloadFile) throws MailException;
+	void sendDocumentCreatedEmail(String receiverEmail, DownloadFile attachement, String downloadurl) throws MailException;
 }

@@ -1,22 +1,20 @@
 package ch.dvbern.ebegu.entities;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Lob;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import ch.dvbern.ebegu.enums.WorkJobType;
 import ch.dvbern.ebegu.enums.reporting.BatchJobStatus;
+import ch.dvbern.ebegu.util.Constants;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -25,10 +23,13 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
  * case we use this to create reports
  */
 @Entity
-@NamedQuery(name = Workjob.Q_WORK_JOB_STATE_UPDATE, query = "update Workjob wj set wj.status = 'FINISHED' where executionId = :exId")
+@NamedQuery(name = Workjob.Q_WORK_JOB_STATE_UPDATE, query = "update Workjob wj set wj.status = :status where executionId = :exId")
 public class Workjob extends AbstractEntity {
 
 	public static final String Q_WORK_JOB_STATE_UPDATE = "WORK_JOB_STATE_UPDATE";
+
+	private static final long serialVersionUID = -1964772151498547196L;
+
 	@NotNull
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -37,9 +38,9 @@ public class Workjob extends AbstractEntity {
 	@Lob
 	private String metadata;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "workjob")
-	//workpackes are always createt together with their workjob
-	private List<Workpackage> workpackageList = new ArrayList<Workpackage>();
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	@Column(nullable = true)
+	private String resultData;
 
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	@Column(nullable = false, updatable = false)
@@ -50,6 +51,11 @@ public class Workjob extends AbstractEntity {
 	@Column(nullable = false)
 	@NotNull
 	private String params;
+
+	@Size(min = 1, max = Constants.DB_TEXTAREA_LENGTH)
+	@Column(nullable = false)
+	@NotNull
+	private String requestURI;
 
 	@Column
 	@Min(0)
@@ -71,15 +77,6 @@ public class Workjob extends AbstractEntity {
 	public void setMetadata(String metadata) {
 		this.metadata = metadata;
 	}
-
-	public List<Workpackage> getWorkpackageList() {
-		return workpackageList;
-	}
-
-	public void setWorkpackageList(final List<Workpackage> workpackageList) {
-		this.workpackageList = workpackageList;
-	}
-
 
 	public Long getExecutionId() {
 		return executionId;
@@ -106,6 +103,7 @@ public class Workjob extends AbstractEntity {
 	}
 
 	@SuppressWarnings("ObjectEquality")
+	@SuppressFBWarnings("BC_UNCONFIRMED_CAST")
 	@Override
 	public boolean isSame(AbstractEntity o) {
 		if (this == o) {
@@ -114,13 +112,18 @@ public class Workjob extends AbstractEntity {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		if (!super.equals(o)) {
-			return false;
-		}
 
 		Workjob workjob = (Workjob) o;
 
 		if (workJobType != workjob.getWorkJobType()) {
+			return false;
+		}
+
+		if (!startinguser.equals(workjob.getStartinguser())) {
+			return false;
+		}
+
+		if (!params.equals(workjob.getParams())) {
 			return false;
 		}
 		return metadata != null ? metadata.equals(workjob.getMetadata()) : workjob.getMetadata() == null;
@@ -186,8 +189,24 @@ public class Workjob extends AbstractEntity {
 		this.triggeringIp = triggeringIp;
 	}
 
+	public String getRequestURI() {
+		return requestURI;
+	}
+
+	public void setRequestURI(String requestURI) {
+		this.requestURI = requestURI;
+	}
+
 	public String getTriggeringIp() {
 		return triggeringIp;
+	}
+
+	public String getResultData() {
+		return resultData;
+	}
+
+	public void setResultData(String resultData) {
+		this.resultData = resultData;
 	}
 
 	@Override

@@ -51,7 +51,12 @@ public interface WorkjobService {
 		@Nullable LocalDate datumBis,
 		@Nullable String gesuchPeriodIdParam);
 
-	List<Workjob> findOpenWorkjobs(String startingUserName, Set<BatchJobStatus> statesToSearch);
+	List<Workjob> findWorkjobs(String startingUserName, Set<BatchJobStatus> statesToSearch);
 
-	void changeStateToFinished(long executionId);
+	/**
+	 * update query that changes state
+	 * @param executionId
+	 * @param status
+	 */
+	void changeStateOfWorkjob(long executionId, BatchJobStatus status);
 }

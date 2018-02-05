@@ -10,10 +10,14 @@
 package ch.dvbern.ebegu.api.resource;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.batch.operations.JobOperator;
 import javax.batch.operations.NoSuchJobExecutionException;
 import javax.batch.runtime.BatchRuntime;
@@ -34,23 +38,30 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import ch.dvbern.ebegu.api.converter.BatchJaxBConverter;
-import ch.dvbern.ebegu.api.dtos.batch.JaxBatchJob;
 import ch.dvbern.ebegu.api.dtos.batch.JaxBatchJobInformation;
 import ch.dvbern.ebegu.api.dtos.batch.JaxBatchJobList;
+import ch.dvbern.ebegu.api.dtos.batch.JaxWorkJob;
+import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.entities.Workjob;
+import ch.dvbern.ebegu.enums.UserRoleName;
+import ch.dvbern.ebegu.enums.reporting.BatchJobStatus;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.services.WorkjobService;
 
-@Path("auth/login/admin/batch")
+@Path("admin/batch")
 @Stateless
+@RolesAllowed({ UserRoleName.SUPER_ADMIN })
+
 public class BatchResource {
-//
-//	@Inject
-//	private BatchController batchController;
-//
 	@Inject
 	private BatchJaxBConverter converter;
-//
-//	@Inject
-//	private AuthService authService;
+
+	@Inject
+	private WorkjobService workjobService;
+
+	@Inject
+	private PrincipalBean principalBean;
+
 
 	@Nonnull
 	private URI buildJobUri(@Nonnull UriInfo uriInfo, long executionId) {
@@ -63,19 +74,19 @@ public class BatchResource {
 	@GET
 	@Path("/jobs")
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxBatchJobList getBatchJobInformation(
+	public JaxBatchJobList getAllJobs(
 		@Valid @MatrixParam("start") @DefaultValue("0") int start,
 		@Valid @MatrixParam("count") @DefaultValue("100") int count) {
 
 		JobOperator operator = BatchRuntime.getJobOperator();
-		List<JaxBatchJob> result = operator.getJobNames().stream()
+		List<JaxWorkJob> result = operator.getJobNames().stream()
 			.map(name -> {
 				List<JaxBatchJobInformation> executions = operator.getJobInstances(name, start, count).stream()
 					.flatMap(inst -> operator.getJobExecutions(inst).stream())
-					.map(converter::batchJobInformationToResource)
+					.map(converter::toBatchJobInformation)
 					.collect(Collectors.toList());
 
-				return new JaxBatchJob(name, executions);
+				return new JaxWorkJob(name, executions);
 			})
 			.collect(Collectors.toList());
 
@@ -89,40 +100,27 @@ public class BatchResource {
 	public Response getBatchJobInformation(@Nonnull @NotNull @Valid @PathParam("executionId") long idParam) {
 		try {
 			JobExecution information = BatchRuntime.getJobOperator().getJobExecution(idParam);
-			return Response.ok(converter.batchJobInformationToResource(information)).build();
+			return Response.ok(converter.toBatchJobInformation(information)).build();
 		} catch (NoSuchJobExecutionException ex) {
 			throw new EbeguEntityNotFoundException("getBatchJobInfo", "could not find batch job", ex);
 		}
 	}
-//
-//	@GET
-//	@Path("/leistungsrechnung")
-//	@Produces(MediaType.TEXT_PLAIN)
-//	// Darf von anonymous ausgeführt werden, da via CronJob getriggert (und der hat kein Cookie)
-//	public Response startLeistungsrechnung(@Context UriInfo uriInfo) {
-//
-//		long executionId = authService.runAsSuperAdmin(() -> batchController.startLeistungsrechnung());
-//
-//		URI batchInfoURI = buildJobUri(uriInfo, executionId);
-//		return Response
-//			.seeOther(batchInfoURI)
-//			.entity("Startet den Batch-Job leistungsrechnung mit executionId : " + executionId + " ; "
-//				+ "BatchJobInformation : " + batchInfoURI)
-//			.build();
-//	}
-//
-//	@GET
-//	@Path("/cleanupschulungsmandanten")
-//	@Produces(MediaType.TEXT_PLAIN)
-//	public Response startCleanupSchulungsMandanten(@Context UriInfo uriInfo) {
-//
-//		long executionId = authService.runAsSuperAdmin(() -> batchController.startCleanupSchulungsMandanten());
-//
-//		URI batchInfoURI = buildJobUri(uriInfo, executionId);
-//		return Response
-//			.seeOther(batchInfoURI)
-//			.entity("Startet den Batch-Job leistungsrechnung mit executionId : " + executionId + " ; "
-//				+ "BatchJobInformation : " + batchInfoURI)
-//			.build();
-//	}
+
+
+	@GET
+	@Path("/userjobs") // Vorsicht: die URL hierher wird in buildJobUri dynamisch zusammengebaut!
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
+	public Response getBatchJobsOfUser() {
+
+		Set<BatchJobStatus> all = Arrays.stream(BatchJobStatus.values()).collect(Collectors.toSet());
+		final List<Workjob> jobs = workjobService.findWorkjobs(principalBean.getPrincipal().getName(), all);
+		final List<JaxWorkJob> jobList = jobs.stream()
+			.map(job -> converter.toBatchJobInformation(job))
+			.collect(Collectors.toList());
+		return Response.ok(new JaxBatchJobList(jobList)).build();
+
+	}
+
 }

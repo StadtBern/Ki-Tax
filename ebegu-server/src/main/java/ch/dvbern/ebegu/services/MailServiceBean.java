@@ -46,6 +46,7 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.mail.MailTemplateConfiguration;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
@@ -355,9 +356,11 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	}
 
 	@Override
-	public void sendDocumentCreatedEmail(String receiverEmail, DownloadFile downloadFile) throws MailException {
+	public void sendDocumentCreatedEmail(String receiverEmail, DownloadFile attachement, String downloadurl) throws MailException {
 		try {
-			sendMessage("testmail", "testmail", receiverEmail);
+			final String subj = ServerMessageUtil.getMessage("MAIL_REPORT_SUBJECT");
+			final String body = ServerMessageUtil.getMessage("MAIL_REPORT_BODY");
+			sendMessage(subj, body, receiverEmail,  attachement);
 			LOG.debug("E-Mail mit Report versendet an {}", receiverEmail);
 		} catch (MailException e) {
 			LOG.error("E-Mail mit Report versendet konnte nicht verschickt werden an {}", receiverEmail, e);

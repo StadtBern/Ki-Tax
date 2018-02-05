@@ -408,6 +408,12 @@
                 <artifactId>infinispan-directory-provider</artifactId>
                 <version>8.1.0.Final</version>
             </dependency>
+
+            <dependency>
+              <groupId>org.jberet</groupId>
+              <artifactId>jberet-core</artifactId>
+              <version>1.2.1.Final</version>
+            </dependency>
             <!--um dependency konflikte zu vermeiden fixen wir die versionen von 2 mal angezogenen libs im dep management-->
             <dependency>
                 <groupId>org.dbunit</groupId>
@@ -920,7 +926,7 @@
                 <plugin>
                     <groupId>de.juplo</groupId>
                     <artifactId>hibernate-maven-plugin</artifactId>
-                    <version>2.0.0</version>
+                    <version>2.1.0</version>
                 </plugin>
 
                 <plugin>

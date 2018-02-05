@@ -23,10 +23,11 @@ import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 
-import ch.dvbern.ebegu.enums.UserRoleName;
-import ch.dvbern.ebegu.services.DailyBatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ch.dvbern.ebegu.enums.UserRoleName;
+import ch.dvbern.ebegu.services.DailyBatch;
 
 @Singleton
 @RunAs(UserRoleName.SUPER_ADMIN)

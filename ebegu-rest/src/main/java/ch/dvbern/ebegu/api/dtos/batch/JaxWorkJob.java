@@ -17,23 +17,32 @@ import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import ch.dvbern.ebegu.api.dtos.JaxAbstractDTO;
+import ch.dvbern.ebegu.enums.WorkJobType;
+import ch.dvbern.ebegu.enums.reporting.BatchJobStatus;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @XmlRootElement(name = "batchJob")
-public class JaxBatchJob {
+public class JaxWorkJob extends JaxAbstractDTO {
 	@Nonnull
 	@NotNull
 	private String name = "";
 
 	@Nonnull
 	private List<JaxBatchJobInformation> executions = new ArrayList<>();
+	private WorkJobType workJobType;
+	private String startinguser;
+	private BatchJobStatus batchJobStatus;
+	private String params;
+	private Long executionId;
 
-	public JaxBatchJob(String name, List<JaxBatchJobInformation> executions) {
+	public JaxWorkJob(String name, List<JaxBatchJobInformation> executions) {
 		this.name = checkNotNull(name);
 		this.executions = checkNotNull(executions);
 	}
 
-	public JaxBatchJob() {
+	public JaxWorkJob() {
 		// nop
 	}
 
@@ -54,4 +63,46 @@ public class JaxBatchJob {
 	public void setExecutions(@Nonnull List<JaxBatchJobInformation> executions) {
 		this.executions = checkNotNull(executions);
 	}
+
+	public void setWorkJobType(WorkJobType workJobType) {
+		this.workJobType = workJobType;
+	}
+
+	public WorkJobType getWorkJobType() {
+		return workJobType;
+	}
+
+	public void setStartinguser(String startinguser) {
+		this.startinguser = startinguser;
+	}
+
+	public String getStartinguser() {
+		return startinguser;
+	}
+
+	public void setBatchJobStatus(BatchJobStatus batchJobStatus) {
+		this.batchJobStatus = batchJobStatus;
+	}
+
+	public BatchJobStatus getBatchJobStatus() {
+		return batchJobStatus;
+	}
+
+	public void setParams(String params) {
+		this.params = params;
+	}
+
+	public String getParams() {
+		return params;
+	}
+
+	public void setExecutionId(Long executionId) {
+		this.executionId = executionId;
+	}
+
+	public Long getExecutionId() {
+		return executionId;
+	}
+
+
 }
