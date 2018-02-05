@@ -619,10 +619,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			// Step Freigabe gruen
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
 
-			if(!gesuch.isMutation()) {
+			//VERANTWORTLICHE
+			if (!gesuch.isMutation()) {
 				// in case of erstgesuch: Verantwortliche werden beim einlesen gesetzt und kommen vom client
 				setVerantwortliche(usernameJA, usernameSCH, gesuch, false, false);
-			}else {
+			} else {
 				// in case of mutation, we take default Verantwortliche and set them only if not set...
 				String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(
 					ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
@@ -644,6 +645,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 	}
 
+	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
 	public boolean setVerantwortliche(@Nullable String usernameJA, @Nullable String usernameSCH, Gesuch gesuch, boolean onlyIfNotSet, boolean persist) {
 		boolean hasVerantwortlicheChanged = false;
 		if (usernameJA != null) {
