@@ -204,7 +204,7 @@ export class GesuchstellerDashboardListViewController {
 
     public showAnmeldungCreate(periode: TSGesuchsperiode): boolean {
         let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
-        return periode.isTageschulenAnmeldungAktiv() && !!antrag &&
+        return periode.hasTagesschulenAnmeldung() && !!antrag &&
             antrag.status !== TSAntragStatus.IN_BEARBEITUNG_GS &&
             antrag.status !== TSAntragStatus.FREIGABEQUITTUNG
             && this.isNeuestAntragOfGesuchsperiode(periode, antrag);
