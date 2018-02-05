@@ -130,6 +130,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		ADMINISTRATOR_SCHULAMT })
 	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung, @Nonnull Boolean isAbwesenheit) {
 		Objects.requireNonNull(betreuung);
+		boolean isNew = betreuung.isNew(); // needed hier before it gets saved
 		if (betreuung.getBetreuungsstatus().isSchulamt()) {
 			// Wir setzen auch Schulamt-Betreuungen auf gueltig, for future use
 			betreuung.setGueltig(true);
@@ -161,7 +162,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 		Gesuch mergedGesuch = gesuchService.updateBetreuungenStatus(mergedBetreuung.extractGesuch());
 
-		if (updateVerantwortlicheNeeded(mergedGesuch.getEingangsart(), mergedBetreuung.getBetreuungsstatus())) {
+		if (updateVerantwortlicheNeeded(mergedGesuch.getEingangsart(), mergedBetreuung.getBetreuungsstatus(), isNew)) {
 			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(
 				ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
 			String propertyDefaultVerantwortlicherSch = applicationPropertyService.findApplicationPropertyAsString(
@@ -173,7 +174,11 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		return mergedBetreuung;
 	}
 
-	private boolean updateVerantwortlicheNeeded(Eingangsart eingangsart, Betreuungsstatus betreuungsstatus) {
+	private boolean updateVerantwortlicheNeeded(Eingangsart eingangsart, Betreuungsstatus betreuungsstatus, boolean isNew) {
+		if (!isNew) {
+			// nur neue Betreuungen duerfen den Verantwortlichen setzen
+			return false;
+		}
 		if (eingangsart == Eingangsart.PAPIER) {
 			// immer bei eingangsart Papier
 			return true;
