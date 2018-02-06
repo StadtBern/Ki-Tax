@@ -13,7 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IIntervalService} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import TSStatistikParameter from '../../../models/TSStatistikParameter';
 import {TSStatistikParameterType} from '../../../models/enums/TSStatistikParameterType';
@@ -28,6 +28,7 @@ import {ReportAsyncRS} from '../../../core/service/reportAsyncRS.rest';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import BatchJobRS from '../../../core/service/batchRS.rest';
 import TSWorkJob from '../../../models/TSWorkJob';
+import TSBatchJobInformation from '../../../models/TSBatchJobInformation';
 import IFormController = angular.IFormController;
 import ILogService = angular.ILogService;
 import Moment = moment.Moment;
@@ -52,12 +53,15 @@ export class StatistikViewController {
     // Statistiken sind nur moeglich ab Beginn der fruehesten Periode bis Ende der letzten Periode
     private maxDate: Moment;
     private minDate: Moment;
+    private userjobs: Array<TSWorkJob>;
+    private allJobs: Array<TSBatchJobInformation>;
 
-    static $inject: string[] = ['$state', 'GesuchsperiodeRS', '$log', 'ReportAsyncRS', 'DownloadRS', 'BatchJobRS', 'ErrorService', '$translate'];
+    static $inject: string[] = ['$state', 'GesuchsperiodeRS', '$log', 'ReportAsyncRS', 'DownloadRS', 'BatchJobRS',
+        'ErrorService', '$translate', '$interval'];
 
     constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private $log: ILogService,
         private reportRS: ReportAsyncRS, private downloadRS: DownloadRS, private bachJobRS: BatchJobRS, private errorService: ErrorService,
-        private $translate: ITranslateService) {
+        private $translate: ITranslateService, private $interval: IIntervalService) {
     }
 
     $onInit() {
@@ -71,8 +75,21 @@ export class StatistikViewController {
         });
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
+
+        this.refreshUserJobs();
+        this.initBatchJobPolling();
+
+    }
+
+    private initBatchJobPolling() {
+        //check all 8 seconds for the state
+        this.$interval(() => this.refreshUserJobs(), 8000);
+    }
+
+    private refreshUserJobs() {
         this.bachJobRS.getBatchJobsOfUser().then((response: TSWorkJob[]) => {
-            console.log('found batchjobs', response);
+            this.userjobs = response;
+
         });
     }
 
@@ -211,4 +228,26 @@ export class StatistikViewController {
     get gesuchsperioden(): Array<TSGesuchsperiode> {
         return this._gesuchsperioden;
     }
+
+    public rowClicked(row: TSWorkJob) {
+        let win: Window = this.downloadRS.prepareDownloadWindow();
+        if (row !== null && row !== undefined && row.execution !== undefined && row.execution !== null) {
+            this.$log.debug('accessToken: ' + row.resultData);
+            this.downloadRS.startDownload(row.resultData, 'report.xlsx', false, win);
+        }
+    }
+
+    /**
+     * heler methode die es dem Admin erlaubt alle jobs zu sehen
+     */
+    public showAllJobs() {
+        this.bachJobRS.getAllJobs().then((result: TSWorkJob[]) => {
+            let res: TSBatchJobInformation[] = [];
+            res = res.concat(result.map((value) => {
+                return value.execution || undefined;
+            }));
+            this.allJobs = res;
+        });
+    }
+
 }

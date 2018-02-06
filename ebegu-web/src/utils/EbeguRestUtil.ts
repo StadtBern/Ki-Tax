@@ -96,6 +96,7 @@ import DateUtil from './DateUtil';
 import EbeguUtil from './EbeguUtil';
 import TSAnmeldungDTO from '../models/TSAnmeldungDTO';
 import TSWorkJob from '../models/TSWorkJob';
+import TSBatchJobInformation from '../models/TSBatchJobInformation';
 
 export default class EbeguRestUtil {
     static $inject = ['EbeguUtil'];
@@ -2101,15 +2102,33 @@ export default class EbeguRestUtil {
         return workJobList;
     }
 
-    private parseWorkJob(testWorkJob: TSWorkJob, workjobFromServer: any): TSWorkJob {
+    private parseWorkJob(tsWorkJob: TSWorkJob, workjobFromServer: any): TSWorkJob {
         if (workjobFromServer) {
-            this.parseAbstractEntity(testWorkJob, workjobFromServer);
-            testWorkJob.startinguser = workjobFromServer.startinguser;
-            testWorkJob.batchJobStatus = workjobFromServer.batchJobStatus;
-            testWorkJob.executionId = workjobFromServer.executionId;
-            testWorkJob.params = workjobFromServer.params;
-            testWorkJob.workJobType = workjobFromServer.workJobType;
-            return testWorkJob;
+            this.parseAbstractEntity(tsWorkJob, workjobFromServer);
+            tsWorkJob.startinguser = workjobFromServer.startinguser;
+            tsWorkJob.batchJobStatus = workjobFromServer.batchJobStatus;
+            tsWorkJob.executionId = workjobFromServer.executionId;
+            tsWorkJob.params = workjobFromServer.params;
+            tsWorkJob.workJobType = workjobFromServer.workJobType;
+            tsWorkJob.resultData = workjobFromServer.resultData;
+            tsWorkJob.requestURI = workjobFromServer.requestURI;
+            tsWorkJob.execution =  this.parseBatchJobInformation(new TSBatchJobInformation(), workjobFromServer.execution);
+            return tsWorkJob;
+        }
+        return undefined;
+    }
+
+    private parseBatchJobInformation(testBatchJobInfo: TSBatchJobInformation, batchJobInfoFromServer: any): TSBatchJobInformation {
+        if (batchJobInfoFromServer) {
+            testBatchJobInfo.batchStatus = batchJobInfoFromServer.batchStatus;
+            testBatchJobInfo.createTime = batchJobInfoFromServer.createTime;
+            testBatchJobInfo.endTime = batchJobInfoFromServer.endTime;
+            testBatchJobInfo.executionId = batchJobInfoFromServer.executionId;
+            testBatchJobInfo.executionId = batchJobInfoFromServer.executionId;
+            testBatchJobInfo.jobName = batchJobInfoFromServer.jobName;
+            testBatchJobInfo.lastUpdatedTime = batchJobInfoFromServer.lastUpdatedTime;
+            testBatchJobInfo.startTime = batchJobInfoFromServer.startTime;
+            return testBatchJobInfo;
         }
         return undefined;
     }

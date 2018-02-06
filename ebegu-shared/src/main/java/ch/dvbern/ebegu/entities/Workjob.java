@@ -123,7 +123,7 @@ public class Workjob extends AbstractEntity {
 			return false;
 		}
 
-		if (!params.equals(workjob.getParams())) {
+		if (!requestURI.equals(workjob.getRequestURI())) {
 			return false;
 		}
 		return metadata != null ? metadata.equals(workjob.getMetadata()) : workjob.getMetadata() == null;

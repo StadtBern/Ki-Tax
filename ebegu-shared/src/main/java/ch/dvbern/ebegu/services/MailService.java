@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.DownloadFile;
@@ -109,9 +110,6 @@ public interface MailService {
 
 	/**
 	 * schickt eine email an den uebergebenen Empfaenger die angibt wie das angehaengte File heruntergeladen werden kann
-	 * @param receiverEmail
-	 * @param downloadFile
-	 * @param downloadurl
 	 */
-	void sendDocumentCreatedEmail(String receiverEmail, DownloadFile attachement, String downloadurl) throws MailException;
+	void sendDocumentCreatedEmail(String receiverEmail, @Nullable DownloadFile attachement, String downloadurl) throws MailException;
 }

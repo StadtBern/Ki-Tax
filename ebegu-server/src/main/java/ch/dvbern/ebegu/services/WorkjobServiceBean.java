@@ -10,6 +10,7 @@
 package ch.dvbern.ebegu.services;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -30,6 +31,7 @@ import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -41,15 +43,18 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.Workjob;
 import ch.dvbern.ebegu.entities.Workjob_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.TokenLifespan;
 import ch.dvbern.ebegu.enums.WorkJobConstants;
 import ch.dvbern.ebegu.enums.reporting.BatchJobStatus;
 import ch.dvbern.ebegu.enums.reporting.ReportVorlage;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import static ch.dvbern.ebegu.enums.WorkJobConstants.DATE_FROM_PARAM;
@@ -70,6 +75,10 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 	@Inject
 	private Persistence persistence;
 
+//	EBEGU-1663 Wildfly 10 hack, this can be removed later and download file can be generated when report is finsihed
+	@Inject
+	private DownloadFileService downloadFileService;
+
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
@@ -82,8 +91,9 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 	}
 
 
-	public Workjob saveWorkjob(Workjob workjob) {
-		return persistence.merge(workjob);
+	@Override
+	public Workjob saveWorkjob(Workjob workJob) {
+		return persistence.merge(workJob);
 	}
 
 	@Override
@@ -133,8 +143,18 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 		workJob = this.saveWorkjob(workJob);
 		persistence.getEntityManager().flush(); //so we can actually set state to running using an update script in the job-listener
 		long executionId = jobOperator.start("reportbatch", jobParameters);
-		workJob.setExecutionId(executionId);
+
+		//	EBEGU-1663 Wildfly 10 hack, this can be removed later and download file can be generated when report is finsihed
+		// since there is no Security Context in WF10 in the batchlet we have to store the download file here and update it using a query in the batchlet
+		final UploadFileInfo dummyFile = new UploadFileInfo("dummyname", null);
+		dummyFile.setSize(0l);
+		dummyFile.setPath("/invalid/dummypath");
+		final DownloadFile dummyDownloadFile = downloadFileService.create(dummyFile, TokenLifespan.LONG, workJob.getTriggeringIp());
+		this.persistence.getEntityManager().refresh(workJob); //evtl hat job schon gestartet
+		workJob.setResultData(dummyDownloadFile.getAccessToken());
 		workJob = this.saveWorkjob(workJob);
+		workJob.setExecutionId(executionId);
+
 		LOG.debug("Startet GesuchStichttagStatistik with executionId {}", executionId);
 
 		return workJob;
@@ -156,45 +176,18 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 		final boolean alreadyQueued = openWorkjobs.stream().anyMatch(workJob::isSame);
 		if (alreadyQueued) {
 			LOG.error("An identical Workjob was already queued by this user; {} ", workJob);
-			// todo homa check what actually happens if this is triggered
 			throw new EbeguRuntimeException("checkIfJobCreationAllowed", ErrorCodeEnum.ERROR_JOB_ALREADY_EXISTS);
 		}
 
 	}
 
-	//	@Override
-//	public void updateWorkPackage(@Nonnull  final String workJobId, final int workPackageSeqNumber, @Nonnull  final Object[] row) {
-//		Workpackage workpackage = findWorkPackage(workJobId, workPackageSeqNumber);
-//		Validate.notNull(workpackage, "workpackage fuer workjob " + workJobId + " und sequenznummer "
-//				+ workPackageSeqNumber + " konnte nicht gefunden werde, wir erwarten aber, " +
-//				"dass das paket beim senden der message erstellt wurde");
-//		workpackage.setWorkRowResult(StringUtils.join(row, "$"));
-//		getEntityManager().persist(workpackage);
-//	}
-
-//	@Override
-//	public List<Workpackage> getUnfinishedWorkpackages(@Nonnull  final String workjobIdentifier) {
-//		Query q = this.getEntityManager().createNamedQuery(Workpackage.QUERY_FIND_UNFINISHED_PACKAGE);
-//		q.setParameter("workJobId", workjobIdentifier);
-//		return q.getResultList();
-//	}
 
 	@Override
 	@TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
 	public void removeOldWorkjobs() {
 
-//		Query q = this.getEntityManager().createNamedQuery(Workjob.QUERY_FIND_OLDER_WORKJOBS);
-//		Date dateToDeleteFrom =  DateHelper.addDays(new Date(), -4);
-//		q.setParameter("date",dateToDeleteFrom); //find older than 5 days
-//		List<Workjob> oldWorkjobs = q.getResultList();
-//		try {
-//			for (Workjob workjobToRemove  : oldWorkjobs) {
-//				this.getEntityManager().remove(workjobToRemove); //workpachages get removed by cascade
-//			}
-//		} catch (Exception e) {
-//			Logger.getLogger(WorkjobServiceBean.class).warn(e.getClass().getSimpleName()+ " while trying to remove old Workjobs, Ignoring exception");
-//
-//		}
+		LocalDateTime cutoffDate = LocalDateTime.now().minusMinutes(Constants.MAX_LONGER_TEMP_DOWNLOAD_AGE_MINUTES);
+		this.criteriaQueryHelper.deleteAllBefore(Workjob.class, cutoffDate);
 
 	}
 
@@ -214,20 +207,35 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 		Predicate statusPredicate = root.get(Workjob_.status).in(statusParam);
 
 		query.where(userPredicate, statusPredicate);
+		query.orderBy(cb.desc(root.get(Workjob_.timestampMutiert)));
 		TypedQuery<Workjob> q = persistence.getEntityManager().createQuery(query);
 		q.setParameter(startingUsernameParam, startingUserName);
+		q.setParameter(statusParam, statesToSearch);
 
-		q.setParameter("startingUsernameParam", startingUserName);
-		q.setParameter("statusParam", statesToSearch);
+
 
 		return q.getResultList();
 	}
 
 	@Override
-	public void changeStateOfWorkjob(long executionId, BatchJobStatus status){
+	public void changeStateOfWorkjob(long executionId, BatchJobStatus status) {
 		persistence.getEntityManager().createNamedQuery(Workjob.Q_WORK_JOB_STATE_UPDATE)
 			.setParameter("exId", executionId)
 			.setParameter("status", status)
 			.executeUpdate();
+	}
+
+	@Override
+	public void addResultToWorkjob(@Nonnull String workjobID, String resultData) {
+		Validate.notNull(resultData);
+
+		CriteriaBuilder cb = this.persistence.getCriteriaBuilder();
+		CriteriaUpdate<Workjob> updateQuery = cb.createCriteriaUpdate(Workjob.class);
+
+		Root<Workjob> root = updateQuery.from(Workjob.class);
+		updateQuery.set(root.get(Workjob_.resultData), resultData);
+		updateQuery.where(cb.equal(root.get(Workjob_.id), workjobID));
+		this.persistence.getEntityManager().createQuery(updateQuery).executeUpdate();
+
 	}
 }

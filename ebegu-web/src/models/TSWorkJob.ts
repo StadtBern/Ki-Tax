@@ -14,17 +14,21 @@
  */
 
 import TSAbstractEntity from './TSAbstractEntity';
+import TSBatchJobInformation from './TSBatchJobInformation';
 
 /**
  * DTO für eine Person aus dem EWK
  */
 export default class TSWorkJob extends TSAbstractEntity {
-
     private _workJobType: string;
+
     private _startinguser: string;
     private _batchJobStatus: string;
     private _params: string;
+    private _requestURI: string;
+    private _resultData: string;
     private _executionId: string;
+    private _execution:  TSBatchJobInformation;
 
     public get workJobType(): string {
         return this._workJobType;
@@ -64,5 +68,29 @@ export default class TSWorkJob extends TSAbstractEntity {
 
     public set executionId(value: string) {
         this._executionId = value;
+    }
+
+    public get requestURI(): string {
+        return this._requestURI;
+    }
+
+    public set requestURI(value: string) {
+        this._requestURI = value;
+    }
+
+    public get resultData(): string {
+        return this._resultData;
+    }
+
+    public set resultData(value: string) {
+        this._resultData = value;
+    }
+
+    public get execution(): TSBatchJobInformation {
+        return this._execution;
+    }
+
+    public set execution(value: TSBatchJobInformation) {
+        this._execution = value;
     }
 }

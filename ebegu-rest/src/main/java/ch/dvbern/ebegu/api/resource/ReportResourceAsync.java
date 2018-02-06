@@ -38,6 +38,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.jboss.ejb3.annotation.TransactionTimeout;
 
@@ -108,9 +109,10 @@ public class ReportResourceAsync {
 		workJob.setWorkJobType(WorkJobType.REPORT_GENERATION);
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
 		workJob.setTriggeringIp(ip);
-		//todo hier Logik welche prueft ob es schon einen solchen job offenen fuer diesen Benutzer gibt
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		workJob.setParams(request.getRequestURI());
+
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		workJob.setParams(param);
 
 		String periodeId = gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null;
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCH_STICHTAG, datumVon, null, periodeId);
@@ -150,7 +152,8 @@ public class ReportResourceAsync {
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
 		workJob.setTriggeringIp(ip);
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		workJob.setParams(request.getRequestURI());
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		workJob.setParams(param);
 
 		String periodeId = gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null;
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCH_STICHTAG, dateFrom, dateTo, periodeId);
@@ -188,7 +191,8 @@ public class ReportResourceAsync {
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
 		workJob.setTriggeringIp(ip);
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		workJob.setParams(request.getRequestURI());
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		workJob.setParams(param);
 
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCH_STICHTAG, dateAuswertungVon, dateAuswertungBis, null);
 
@@ -225,61 +229,17 @@ public class ReportResourceAsync {
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
 		workJob.setTriggeringIp(ip);
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		workJob.setParams(request.getRequestURI());
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		workJob.setParams(param);
 
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCH_STICHTAG, dateAuswertungVon, dateAuswertungBis, null);
 
 		return Response.ok(workJob.getId()).build();
 	}
 
-//	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Zahlungsauftrag'", response = JaxDownloadFile.class)
-//	@Nonnull
-//	@GET
-//	@Path("/excel/zahlungsauftrag")
-//	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
-//	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-//	@Consumes(MediaType.WILDCARD)
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Response getZahlungsauftragReportExcel(
-//		@QueryParam("zahlungsauftragID") @Nonnull @Valid JaxId jaxId,
-//		@Context HttpServletRequest request, @Context UriInfo uriInfo)
-//		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
-//
-//		Validate.notNull(jaxId);
-//		String ip = downloadResource.getIP(request);
-//		String id = converter.toEntityId(jaxId);
-//
-//		UploadFileInfo uploadFileInfo = reportService.generateExcelReportZahlungAuftrag(id);
-//
-//		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
-//
-//		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
-//	}
-//
-//	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Zahlung'", response = JaxDownloadFile.class)
-//	@Nonnull
-//	@GET
-//	@Path("/excel/zahlung")
-//	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
-//	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-//	@Consumes(MediaType.WILDCARD)
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Response getZahlungReportExcel(
-//		@QueryParam("zahlungID") @Nonnull @Valid JaxId jaxId,
-//		@Context HttpServletRequest request, @Context UriInfo uriInfo)
-//		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
-//
-//		Validate.notNull(jaxId);
-//		String ip = downloadResource.getIP(request);
-//		String id = converter.toEntityId(jaxId);
-//
-//		UploadFileInfo uploadFileInfo = reportService.generateExcelReportZahlung(id);
-//
-//		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
-//
-//		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
-//	}
-//
+//	not implemented aync getZahlungsauftragReportExcel
+//	not implemented aync  getZahlungReportExcel(
+
 	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Zahlungen pro Periode'", response = JaxDownloadFile.class)
 	@Nonnull
 	@GET
@@ -303,7 +263,8 @@ public class ReportResourceAsync {
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
 		workJob.setTriggeringIp(ip);
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		workJob.setParams(request.getRequestURI());
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		workJob.setParams(param);
 
 		String periodeId = gesuchPeriodIdParam.getId();
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_ZAHLUNG_AUFTRAG_PERIODE, null, null, periodeId);
@@ -343,7 +304,8 @@ public class ReportResourceAsync {
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
 		workJob.setTriggeringIp(ip);
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		workJob.setParams(request.getRequestURI());
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		workJob.setParams(param);
 
 		String periodeId = gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null;
 		workJob =  workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCHSTELLER_KINDER_BETREUUNG, dateFrom, dateTo, periodeId);
@@ -382,7 +344,8 @@ public class ReportResourceAsync {
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
 		workJob.setTriggeringIp(ip);
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		workJob.setParams(request.getRequestURI());
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		workJob.setParams(param);
 
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_KINDER, dateFrom, dateTo, null);
 
@@ -412,7 +375,8 @@ public class ReportResourceAsync {
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
 		workJob.setTriggeringIp(ip);
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		workJob.setParams(request.getRequestURI());
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		workJob.setParams(param);
 
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCHSTELLER, date, null, null);
 

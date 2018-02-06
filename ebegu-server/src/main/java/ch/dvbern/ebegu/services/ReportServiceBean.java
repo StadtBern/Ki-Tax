@@ -230,6 +230,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public UploadFileInfo generateExcelReportGesuchStichtag(@Nonnull LocalDate date, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 
 		Objects.requireNonNull(date, "Das Argument 'date' darf nicht leer sein");
@@ -287,6 +289,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public UploadFileInfo generateExcelReportGesuchZeitraum(@Nonnull LocalDate dateVon, @Nonnull LocalDate dateBis, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 
 		validateDateParams(dateVon, dateBis);
@@ -390,6 +394,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public UploadFileInfo generateExcelReportKanton(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 		validateDateParams(datumVon, datumBis);
 
@@ -528,6 +534,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR })
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public UploadFileInfo generateExcelReportMitarbeiterinnen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 		validateDateParams(datumVon, datumBis);
 
@@ -565,6 +573,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public UploadFileInfo generateExcelReportZahlungAuftrag(@Nonnull String auftragId) throws ExcelMergeException {
 
 		Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
@@ -617,6 +627,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, REVISOR })
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public UploadFileInfo generateExcelReportZahlungPeriode(@Nonnull String gesuchsperiodeId) throws ExcelMergeException {
 
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId)
@@ -881,7 +893,6 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR })
-//	todo homa do timeout for all
 	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public UploadFileInfo generateExcelReportGesuchstellerKinderBetreuung(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable String gesuchPeriodeId) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
@@ -906,7 +917,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		List<GesuchstellerKinderBetreuungDataRow> reportData = getReportDataGesuchstellerKinderBetreuung(datumVon, datumBis, gesuchsperiode);
 
-		final XSSFSheet xsslSheet = (XSSFSheet)gesuchstellerKinderBetreuungExcelConverter.mergeHeaderFields(reportData, sheet, datumVon, datumBis, gesuchsperiode);
+		final XSSFSheet xsslSheet = (XSSFSheet) gesuchstellerKinderBetreuungExcelConverter.mergeHeaderFields(reportData, sheet, datumVon, datumBis, gesuchsperiode);
 
 		final RowFiller rowFiller = fillAndMergeRows(reportResource, xsslSheet, reportData);
 		return saveExcelDokument(reportResource, rowFiller);
@@ -924,7 +935,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		return dataRowList;
 	}
 
-	@SuppressWarnings({"Duplicates", "PMD.NcssMethodCount"})
+	@SuppressWarnings({ "Duplicates", "PMD.NcssMethodCount" })
 	private GesuchstellerKinderBetreuungDataRow createRowForGesuchstellerKinderBetreuungReport(VerfuegungZeitabschnitt zeitabschnitt, Map<Long, Gesuch> neustesVerfuegtesGesuchCache) {
 		Gesuch gesuch = zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch();
 		Gesuch gueltigeGesuch = null;
@@ -997,6 +1008,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public UploadFileInfo generateExcelReportKinder(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable String gesuchPeriodeId) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 		Validate.notNull(datumVon, VALIDIERUNG_DATUM_VON);
 		Validate.notNull(datumBis, VALIDIERUNG_DATUM_BIS);
@@ -1019,7 +1032,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		List<GesuchstellerKinderBetreuungDataRow> reportData = getReportDataKinder(datumVon, datumBis, gesuchsperiode);
 
-		final XSSFSheet xsslSheet = (XSSFSheet)gesuchstellerKinderBetreuungExcelConverter.mergeHeaderFields(reportData,sheet, datumVon, datumBis, gesuchsperiode);
+		final XSSFSheet xsslSheet = (XSSFSheet) gesuchstellerKinderBetreuungExcelConverter.mergeHeaderFields(reportData, sheet, datumVon, datumBis, gesuchsperiode);
 
 		final RowFiller rowFiller = fillAndMergeRows(reportResource, xsslSheet, reportData);
 		return saveExcelDokument(reportResource, rowFiller);
@@ -1084,7 +1097,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	private Gesuch getGueltigesGesuch(Map<Long, Gesuch> neustesVerfuegtesGesuchCache, Gesuch gesuch) {
 		Gesuch gueltigeGesuch;
 		gueltigeGesuch = neustesVerfuegtesGesuchCache.getOrDefault(gesuch.getFall().getFallNummer(),
-			gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(),false)
+			gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(), false)
 				.orElse(gesuch));
 		return gueltigeGesuch;
 	}
@@ -1108,6 +1121,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public UploadFileInfo generateExcelReportGesuchsteller(@Nonnull LocalDate stichtag) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 		Validate.notNull(stichtag, VALIDIERUNG_STICHTAG);
 
@@ -1121,7 +1136,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		List<GesuchstellerKinderBetreuungDataRow> reportData = getReportDataGesuchsteller(stichtag);
 
-		final XSSFSheet xsslSheet = (XSSFSheet)gesuchstellerKinderBetreuungExcelConverter.mergeHeaderFields(reportData, sheet, stichtag);
+		final XSSFSheet xsslSheet = (XSSFSheet) gesuchstellerKinderBetreuungExcelConverter.mergeHeaderFields(reportData, sheet, stichtag);
 
 		final RowFiller rowFiller = fillAndMergeRows(reportResource, xsslSheet, reportData);
 		return saveExcelDokument(reportResource, rowFiller);

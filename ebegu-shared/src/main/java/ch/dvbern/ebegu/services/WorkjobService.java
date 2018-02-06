@@ -31,17 +31,12 @@ import ch.dvbern.ebegu.enums.reporting.ReportVorlage;
  */
 public interface WorkjobService {
 
-//	Workjob saveWorkjob(Workjob workJob);
+	Workjob saveWorkjob(Workjob workJob);
 
 
 	Workjob findWorkjobByWorkjobID(String workJobId);
 
 	Workjob findWorkjobByExecutionId(@Nonnull Long executionId);
-	//
-	//	void updateWorkPackage(@Nonnull String workJobId, int workPackageSeqNumber, @Nonnull Object[] row);
-//
-
-//	List<Workpackage> getUnfinishedWorkpackages(@Nonnull String workjobIdentifier);
 
 	void removeOldWorkjobs();
 
@@ -59,4 +54,6 @@ public interface WorkjobService {
 	 * @param status
 	 */
 	void changeStateOfWorkjob(long executionId, BatchJobStatus status);
+
+	void addResultToWorkjob(@Nonnull String workjobID, String resultData);
 }

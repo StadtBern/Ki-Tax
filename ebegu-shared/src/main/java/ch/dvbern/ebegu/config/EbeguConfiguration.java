@@ -185,4 +185,11 @@ public interface EbeguConfiguration {
 	 * to only set cookies with the secure flag this property can be set to true (default is false)
 	 */
 	boolean forceCookieSecureFlag();
+
+	/**
+	 *
+	 * @return ob die Asynchron generierten Reports als attachments direkt im Infomail an den auftraggebendne Benutzer angehaengt werden
+	 */
+	boolean isSendReportAsAttachement();
+
 }

@@ -20,6 +20,8 @@ import javax.annotation.Nullable;
 
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.FileMetadata;
+import ch.dvbern.ebegu.enums.TokenLifespan;
+import ch.dvbern.ebegu.util.UploadFileInfo;
 
 public interface DownloadFileService {
 
@@ -28,6 +30,18 @@ public interface DownloadFileService {
 	 */
 	@Nonnull
 	DownloadFile create(@Nonnull FileMetadata fileMetadata, String ip);
+
+	/**
+	 * Erstellt ein Downloadfile aus einem Uploadfile, Nuetzlich fuer die Statistik
+	 */
+	@Nonnull
+	DownloadFile create(UploadFileInfo fileInfo, TokenLifespan lifespan, String ip);
+
+	/**
+	 * In Wildfly 10 gibt es in Batch processes kein current-user (fixed in WF11, siehe EBEGU-1663).
+	 * Um dieses Problem zu loesen inserten wir direkt per insert query
+	 */
+	DownloadFile insertDirectly(String fileIdToUpdate, UploadFileInfo fileInfo, TokenLifespan lifespan, String ip);
 
 	/**
 	 * Sucht ein Download File aufgrund eines AccessTokens

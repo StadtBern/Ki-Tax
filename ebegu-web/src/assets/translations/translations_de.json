@@ -1230,5 +1230,10 @@
     "NEU": "neu",
     "GELESEN": "gelesen",
     "ERLEDIGT": "erledigt",
-    "STARTED_GENERATION": "Reportgenerierung gestartet. Wir bitten um etwas Geduld. Sie werden per Email informiert sobald das Dokument für Sie bereitsteht"
+    "STARTED_GENERATION": "Reportgenerierung gestartet. Wir bitten um etwas Geduld. Sie werden per Email informiert sobald das Dokument für Sie bereitsteht",
+    "ERSTELLT":"Erstellt",
+    "BEENDET":"Beendet",
+    "TYP":"Typ",
+    "GESTARTET":"Gestartet",
+    "SHOW_JOBS": "Zeige Alle Batchjobs"
 }

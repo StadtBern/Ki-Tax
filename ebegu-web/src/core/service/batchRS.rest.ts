@@ -39,7 +39,8 @@ export default class BatchJobRS {
     }
 
     public getBatchJobsOfUser(): IPromise<TSWorkJob[]> {
-        return this.http.get(this.serviceURL + '/userjobs').then((response: any) => {
+
+        return this.http.get(this.serviceURL + '/userjobs/notokenrefresh').then((response: any) => {
             return this.ebeguRestUtil.parseWorkJobList(response.data);
         });
     }

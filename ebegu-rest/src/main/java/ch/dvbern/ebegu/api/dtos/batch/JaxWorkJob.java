@@ -10,9 +10,6 @@
 
 package ch.dvbern.ebegu.api.dtos.batch;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -29,17 +26,21 @@ public class JaxWorkJob extends JaxAbstractDTO {
 	@NotNull
 	private String name = "";
 
-	@Nonnull
-	private List<JaxBatchJobInformation> executions = new ArrayList<>();
+
+	private JaxBatchJobInformation execution;
 	private WorkJobType workJobType;
 	private String startinguser;
 	private BatchJobStatus batchJobStatus;
 	private String params;
 	private Long executionId;
+	private String resultData;
+	private String requestURI;
 
-	public JaxWorkJob(String name, List<JaxBatchJobInformation> executions) {
+
+
+	public JaxWorkJob(String name, JaxBatchJobInformation execution) {
 		this.name = checkNotNull(name);
-		this.executions = checkNotNull(executions);
+		this.execution = execution;
 	}
 
 	public JaxWorkJob() {
@@ -55,13 +56,12 @@ public class JaxWorkJob extends JaxAbstractDTO {
 		this.name = checkNotNull(name);
 	}
 
-	@Nonnull
-	public List<JaxBatchJobInformation> getExecutions() {
-		return executions;
+	public JaxBatchJobInformation getExecution() {
+		return execution;
 	}
 
-	public void setExecutions(@Nonnull List<JaxBatchJobInformation> executions) {
-		this.executions = checkNotNull(executions);
+	public void setExecution(JaxBatchJobInformation execution) {
+		this.execution = execution;
 	}
 
 	public void setWorkJobType(WorkJobType workJobType) {
@@ -105,4 +105,19 @@ public class JaxWorkJob extends JaxAbstractDTO {
 	}
 
 
+	public void setResultData(String resultData) {
+		this.resultData = resultData;
+	}
+
+	public String getResultData() {
+		return resultData;
+	}
+
+	public void setRequestURI(String requestURI) {
+		this.requestURI = requestURI;
+	}
+
+	public String getRequestURI() {
+		return requestURI;
+	}
 }

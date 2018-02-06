@@ -25,10 +25,13 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.Workjob;
+import ch.dvbern.ebegu.enums.TokenLifespan;
 import ch.dvbern.ebegu.enums.WorkJobConstants;
 import ch.dvbern.ebegu.errors.MailException;
+import ch.dvbern.ebegu.services.DownloadFileService;
 import ch.dvbern.ebegu.services.MailService;
 import ch.dvbern.ebegu.services.WorkjobService;
 import ch.dvbern.ebegu.util.UploadFileInfo;
@@ -41,6 +44,8 @@ public class SendEmailBatchlet extends AbstractBatchlet {
 
 	@Inject
 	private WorkjobService workJobService;
+	@Inject
+	private DownloadFileService downloadFileService;
 
 	@Inject
 	private MailService mailService;
@@ -51,43 +56,55 @@ public class SendEmailBatchlet extends AbstractBatchlet {
 	@Inject
 	private JobDataContainer jobDataContainer;
 
+	@Inject
+	private EbeguConfiguration configuration;
+
 
 	@Override
 	public String process() {
 		final String receiverEmail = getParameters().getProperty(WorkJobConstants.EMAIL_OF_USER);
-		LOG.info("Sending mail with file for user to {}", receiverEmail);
+		LOG.debug("Sending mail with file for user to {}", receiverEmail);
 		Validate.notNull(receiverEmail, " Email muss gesetzt sein damit der Fertige Report an den Empfaenger geschickt werden kann");
 		final Workjob workJob = readWorkjobFromDatabase();
-		final UploadFileInfo fileMetadata =  jobDataContainer.getResult();
+		final UploadFileInfo fileMetadata = jobDataContainer.getResult();
 		final DownloadFile downloadFile = createDownloadfile(workJob, fileMetadata);
-		//todo homa, das muss wohl noch gespeichert werden
-
-
+		//	EBEGU-1663 Wildfly 10 hack, this can be removed as soon as WF11 runs, right now we create the download file right at the start and
+		// can only change its content
+//		workJobService.addResultToWorkjob(workJob.getId(), downloadFile.getAccessToken());
 		try {
 
-			mailService.sendDocumentCreatedEmail(receiverEmail, downloadFile, constructDownloadURI(workJob, downloadFile));
+			if(configuration.isSendReportAsAttachement()){
+				mailService.sendDocumentCreatedEmail(receiverEmail, downloadFile, createStatistikPageLink());
+			} else{
+				mailService.sendDocumentCreatedEmail(receiverEmail, null, createStatistikPageLink());
+
+			}
 			return BatchStatus.COMPLETED.toString();
 		} catch (MailException e) {
 			return BatchStatus.FAILED.toString();
 		}
 	}
 
-	private String constructDownloadURI(Workjob workjob, DownloadFile downloadFile) {
-		 //file sollte wohl besser mitgesendet werden
-		String resultData = workjob.getResultData();
-		return "http://localhost:8080/ebegu/api/v1/blobs/temp/blobdata/" + downloadFile.getAccessToken();
-		}
+	private String createStatistikPageLink() {
+		return configuration.getHostname() + "/statistik";
+	}
+// Do not send direct downloadlink (because of security)
+//	private String constructDownloadURI(DownloadFile downloadFile) {
+//		//file sollte wohl besser mitgesendet werden
+////		String resultData = workjob.getResultData();
+//		return "http://localhost:8080/ebegu/api/v1/blobs/temp/blobdata/" + downloadFile.getAccessToken();
+//	}
 
 	private DownloadFile createDownloadfile(Workjob workJob, UploadFileInfo uploadFile) {
-
 		if (uploadFile != null) {
-			UploadFileInfo fileInfo = (UploadFileInfo) uploadFile; //passed result
-			return  new DownloadFile(fileInfo, workJob.getTriggeringIp());
-
-		} else{
+			//copy data into pre exsiting dowonload-file
+			//	EBEGU-1663 Wildfly 10 hack, this can be removed as soon as WF11 runs and download file can be generated when report is finsihed
+			return downloadFileService.insertDirectly(workJob.getResultData(), uploadFile, TokenLifespan.LONG, workJob.getTriggeringIp());
+		} else {
 			LOG.error("UploadFileInfo muss uebergeben werden vom vorherigen Step");
 			return null;
 		}
+
 	}
 
 	@Nonnull

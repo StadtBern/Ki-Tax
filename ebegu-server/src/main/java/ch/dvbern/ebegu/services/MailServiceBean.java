@@ -359,8 +359,14 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	public void sendDocumentCreatedEmail(String receiverEmail, DownloadFile attachement, String downloadurl) throws MailException {
 		try {
 			final String subj = ServerMessageUtil.getMessage("MAIL_REPORT_SUBJECT");
-			final String body = ServerMessageUtil.getMessage("MAIL_REPORT_BODY");
-			sendMessage(subj, body, receiverEmail,  attachement);
+			String body = ServerMessageUtil.getMessage("MAIL_REPORT_BODY");
+
+			body = body + "\n" + downloadurl;
+			if (attachement != null) {
+				sendMessage(subj, body, receiverEmail,  attachement);
+			} else{
+				sendMessage(subj, body, receiverEmail);
+			}
 			LOG.debug("E-Mail mit Report versendet an {}", receiverEmail);
 		} catch (MailException e) {
 			LOG.error("E-Mail mit Report versendet konnte nicht verschickt werden an {}", receiverEmail, e);

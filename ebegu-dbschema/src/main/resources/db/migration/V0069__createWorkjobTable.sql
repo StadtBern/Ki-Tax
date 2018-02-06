@@ -1,3 +1,9 @@
+ALTER TABLE download_file ADD lifespan VARCHAR(255) NULL;
+
+update download_file set lifespan = 'SHORT';
+
+ALTER TABLE download_file MODIFY lifespan VARCHAR(255) NOT NULL;
+
 create table workjob (
     id varchar(36) not null,
     timestamp_erstellt datetime not null,
@@ -17,3 +23,4 @@ create table workjob (
     work_job_type varchar(255) not null,
     primary key (id)
 );
+

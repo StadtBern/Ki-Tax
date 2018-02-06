@@ -13,23 +13,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.dvbern.ebegu.services;
+package ch.dvbern.ebegu.enums;
 
-import java.util.concurrent.Future;
-
-public interface DailyBatch {
-
-	void runBatchCleanDownloadFiles();
-
-	Future<Boolean> runBatchMahnungFristablauf();
-
-	void runBatchWarnungGesuchNichtFreigegeben();
-
-	void runBatchWarnungFreigabequittungFehlt();
-
-	void runBatchGesucheLoeschen();
-
-	void runBatchGesuchsperiodeLoeschen();
-
-	void runBatchCleanWorkjobs();
+/**
+ * Enum fuer Geschlecht / Anrede
+ */
+public enum TokenLifespan {
+	SHORT,
+	LONG
 }

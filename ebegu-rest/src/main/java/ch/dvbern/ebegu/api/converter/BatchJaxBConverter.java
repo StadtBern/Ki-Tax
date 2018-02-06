@@ -72,6 +72,8 @@ public class BatchJaxBConverter {
 		jaxWorkJob.setBatchJobStatus(status);
 		jaxWorkJob.setParams(params);
 		jaxWorkJob.setExecutionId(executionId);
+		jaxWorkJob.setResultData(job.getResultData());
+		jaxWorkJob.setRequestURI(job.getRequestURI());
 		return jaxWorkJob;
 	}
 

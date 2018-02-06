@@ -38,7 +38,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import ch.dvbern.ebegu.api.converter.BatchJaxBConverter;
-import ch.dvbern.ebegu.api.dtos.batch.JaxBatchJobInformation;
 import ch.dvbern.ebegu.api.dtos.batch.JaxBatchJobList;
 import ch.dvbern.ebegu.api.dtos.batch.JaxWorkJob;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
@@ -79,22 +78,18 @@ public class BatchResource {
 		@Valid @MatrixParam("count") @DefaultValue("100") int count) {
 
 		JobOperator operator = BatchRuntime.getJobOperator();
-		List<JaxWorkJob> result = operator.getJobNames().stream()
-			.map(name -> {
-				List<JaxBatchJobInformation> executions = operator.getJobInstances(name, start, count).stream()
-					.flatMap(inst -> operator.getJobExecutions(inst).stream())
-					.map(converter::toBatchJobInformation)
-					.collect(Collectors.toList());
-
-				return new JaxWorkJob(name, executions);
-			})
+		final List<JaxWorkJob> resultlist = operator.getJobNames().stream()
+			.flatMap(name -> operator.getJobInstances(name, start, count).stream()
+				.flatMap(inst -> operator.getJobExecutions(inst).stream())
+				.map(converter::toBatchJobInformation)
+				.map((ele) -> new JaxWorkJob(ele.getJobName(), ele)))
 			.collect(Collectors.toList());
 
-		return new JaxBatchJobList(result);
+		return new JaxBatchJobList(resultlist);
 	}
 
 	@GET
-	@Path("/jobs/{executionId}") // Vorsicht: die URL hierher wird in buildJobUri dynamisch zusammengebaut!
+	@Path("/jobs/{executionId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getBatchJobInformation(@Nonnull @NotNull @Valid @PathParam("executionId") long idParam) {
@@ -108,7 +103,7 @@ public class BatchResource {
 
 
 	@GET
-	@Path("/userjobs") // Vorsicht: die URL hierher wird in buildJobUri dynamisch zusammengebaut!
+	@Path("/userjobs/notokenrefresh") //wir pollen diesen endpunkt daher notokenrefresh
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
@@ -116,9 +111,23 @@ public class BatchResource {
 
 		Set<BatchJobStatus> all = Arrays.stream(BatchJobStatus.values()).collect(Collectors.toSet());
 		final List<Workjob> jobs = workjobService.findWorkjobs(principalBean.getPrincipal().getName(), all);
+
+		final JobOperator jobOperator = BatchRuntime.getJobOperator();
+
 		final List<JaxWorkJob> jobList = jobs.stream()
 			.map(job -> converter.toBatchJobInformation(job))
+			.peek((jaxWorkJob) -> {
+				JobExecution jobExecution = null;
+				try {
+					jobExecution = jobOperator.getJobExecution(jaxWorkJob.getExecutionId());
+					jaxWorkJob.setExecution(converter.toBatchJobInformation(jobExecution));
+				} catch (NoSuchJobExecutionException ex) {
+					//ignroe, not a problem
+				}
+			})
 			.collect(Collectors.toList());
+
+
 		return Response.ok(new JaxBatchJobList(jobList)).build();
 
 	}
