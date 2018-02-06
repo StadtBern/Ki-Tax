@@ -342,8 +342,27 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		zahlungService.deleteZahlungspositionenOfGesuch(gesToRemove);
 		mitteilungService.removeAllBetreuungMitteilungenForGesuch(gesToRemove);
 
+		resetMutierteAnmeldungen(gesToRemove);
+
 		//Finally remove the Gesuch when all other objects are really removed
 		persistence.remove(gesToRemove);
+	}
+
+	/**
+	 * Nimmt alle Anmeldungen vom eingegebenen Gesuch und setzt alle vorgaengerAnmeldungen auf AnmeldungMutationZustand.AKTUELLE_ANMELDUNG.
+	 * Wenn eine Mutation geloescht wird, ist das vorgaengerGesuch und deshalb auch die vorgaengerAnmeldungen AKTUELL
+	 * @param currentGesuch das zurzeit neueste Gesuch
+	 */
+	private void resetMutierteAnmeldungen(@Nonnull Gesuch currentGesuch) {
+		currentGesuch.extractAllBetreuungen().stream()
+			.filter(betreuung -> betreuung.isAngebotSchulamt() && betreuung.getVorgaengerId() != null)
+			.forEach(betreuung -> {
+				final Optional<Betreuung> vorgaengerBetreuungOpt = betreuungService.findBetreuung(betreuung.getVorgaengerId());
+				Betreuung vorgaengerBetreuung = vorgaengerBetreuungOpt.orElseThrow(() -> new EbeguEntityNotFoundException("resetMutierteAnmeldungen",
+					ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuung.getVorgaengerId()));
+				vorgaengerBetreuung.setAnmeldungMutationZustand(AnmeldungMutationZustand.AKTUELLE_ANMELDUNG);
+				persistence.merge(vorgaengerBetreuung);
+			});
 	}
 
 	@Nonnull
