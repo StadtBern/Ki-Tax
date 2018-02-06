@@ -230,10 +230,14 @@ export class StatistikViewController {
     }
 
     public rowClicked(row: TSWorkJob) {
-        let win: Window = this.downloadRS.prepareDownloadWindow();
         if (row !== null && row !== undefined && row.execution !== undefined && row.execution !== null) {
-            this.$log.debug('accessToken: ' + row.resultData);
-            this.downloadRS.startDownload(row.resultData, 'report.xlsx', false, win);
+            if (row.execution.endTime !== null || row.execution.endTime !== undefined) {
+                let win: Window = this.downloadRS.prepareDownloadWindow();
+                this.$log.debug('accessToken: ' + row.resultData);
+                this.downloadRS.startDownload(row.resultData, 'report.xlsx', false, win);
+            } else {
+                this.$log.info('batch-job is not yet finnished');
+            }
         }
     }
 
