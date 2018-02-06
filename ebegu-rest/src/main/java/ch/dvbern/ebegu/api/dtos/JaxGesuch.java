@@ -121,9 +121,6 @@ public class JaxGesuch extends JaxAbstractDTO {
 
 	private boolean dokumenteHochgeladen;
 
-	// transient
-	// Flag zum merken, ob dies das neuste Gesuch für diesen Fall in dieser Gesuchsperiode ist
-	private boolean neustesGesuch;
 
 	@NotNull
 	private GesuchBetreuungenStatus gesuchBetreuungenStatus = GesuchBetreuungenStatus.ALLE_BESTAETIGT;
@@ -361,14 +358,5 @@ public class JaxGesuch extends JaxAbstractDTO {
 	public void setFinSitStatus(@Nullable FinSitStatus finSitStatus) {
 		this.finSitStatus = finSitStatus;
 	}
-
-	public boolean isNeustesGesuch() {
-		return neustesGesuch;
-	}
-
-	public void setNeustesGesuch(boolean neustesGesuch) {
-		this.neustesGesuch = neustesGesuch;
-	}
-
 }
 

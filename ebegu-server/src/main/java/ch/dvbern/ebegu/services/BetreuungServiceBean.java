@@ -63,8 +63,10 @@ import ch.dvbern.ebegu.entities.Verfuegung_;
 import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.WizardStepName;
@@ -117,6 +119,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	private GesuchsperiodeService gesuchsperiodeService;
 	@Inject
 	private BenutzerService benutzerService;
+	@Inject
+	private ApplicationPropertyService applicationPropertyService;
 
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungServiceBean.class.getSimpleName());
 
@@ -155,9 +159,29 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 			wizardStepService.updateSteps(mergedBetreuung.getKind().getGesuch().getId(), null, null, WizardStepName.BETREUUNG);
 		}
 
-		gesuchService.updateBetreuungenStatus(mergedBetreuung.extractGesuch());
+		Gesuch mergedGesuch = gesuchService.updateBetreuungenStatus(mergedBetreuung.extractGesuch());
+
+		if (updateVerantwortlicheNeeded(mergedGesuch.getEingangsart(), mergedBetreuung.getBetreuungsstatus())) {
+			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(
+				ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
+			String propertyDefaultVerantwortlicherSch = applicationPropertyService.findApplicationPropertyAsString(
+				ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER_SCH);
+			gesuchService.setVerantwortliche(propertyDefaultVerantwortlicher, propertyDefaultVerantwortlicherSch, mergedBetreuung.extractGesuch(), true, true);
+		}
+
 
 		return mergedBetreuung;
+	}
+
+	private boolean updateVerantwortlicheNeeded(Eingangsart eingangsart, Betreuungsstatus betreuungsstatus) {
+		if (eingangsart == Eingangsart.PAPIER) {
+			// immer bei eingangsart Papier
+			return true;
+		} else if (betreuungsstatus == Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST) {
+			// bei eingangsart Online nur wenn die Anmeldung direkt ausgelöst wurde (über TS oder FI hinzufügen Knöpfe)
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -505,6 +529,12 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		} else { // for Institution or Traegerschaft. bz default
 			predicates.add(root.get(Betreuung_.betreuungsstatus).in(Arrays.asList(Betreuungsstatus.forPendenzInstitution)));
 		}
+
+		// nur Aktuelle Anmeldungen
+		Predicate predAktuelleBetreuung = cb.equal(root.get(Betreuung_.anmeldungMutationZustand), AnmeldungMutationZustand.AKTUELLE_ANMELDUNG);
+		Predicate predNormaleBetreuung = cb.isNull(root.get(Betreuung_.anmeldungMutationZustand));
+		predicates.add(cb.or(predAktuelleBetreuung, predNormaleBetreuung));
+
 		// Institution
 		predicates.add(root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen)));
 		// Gesuchsperiode darf nicht geschlossen sein

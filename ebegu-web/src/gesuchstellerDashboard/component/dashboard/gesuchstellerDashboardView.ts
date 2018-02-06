@@ -19,6 +19,7 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 import FallRS from '../../../gesuch/service/fallRS.rest';
+import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
 import SearchRS from '../../../gesuch/service/searchRS.rest';
 import {IN_BEARBEITUNG_BASE_NAME, isAnyStatusOfVerfuegt, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
@@ -49,14 +50,15 @@ export class GesuchstellerDashboardListViewController {
     fallId: string;
     totalResultCount: string = '-';
     amountNewMitteilungen: number;
+    mapOfNewestAntraege: {[key: string]: string} = {}; // In dieser Map wird pro GP die ID des neuesten Gesuchs gespeichert
 
     static $inject: string[] = ['$state', '$log', 'AuthServiceRS', 'SearchRS', 'EbeguUtil', 'GesuchsperiodeRS',
-        'FallRS', '$translate', 'MitteilungRS'];
+        'FallRS', '$translate', 'MitteilungRS', 'GesuchRS'];
 
     constructor(private $state: IStateService, private $log: ILogService,
                 private authServiceRS: AuthServiceRS, private searchRS: SearchRS, private ebeguUtil: EbeguUtil,
                 private gesuchsperiodeRS: GesuchsperiodeRS, private fallRS: FallRS, private $translate: ITranslateService,
-                private mitteilungRS: MitteilungRS) {
+                private mitteilungRS: MitteilungRS, private gesuchRS: GesuchRS) {
     }
 
     $onInit() {
@@ -66,8 +68,8 @@ export class GesuchstellerDashboardListViewController {
     private initViewModel() {
         this.updateAntragList().then(() => {
             this.getAmountNewMitteilungen();
+            this.updateActiveGesuchsperiodenList();
         });
-        this.updateActiveGesuchsperiodenList();
     }
 
     private updateAntragList(): IPromise<any> {
@@ -98,6 +100,12 @@ export class GesuchstellerDashboardListViewController {
     private updateActiveGesuchsperiodenList(): void {
         this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: TSGesuchsperiode[]) => {
             this._activeGesuchsperiodenList = angular.copy(response);
+            // Jetzt sind sowohl die Gesuchsperioden wie die Gesuche des Falles geladen. Wir merken uns das jeweils neueste Gesuch pro Periode
+            for (let gp of this._activeGesuchsperiodenList) {
+                this.gesuchRS.getIdOfNewestGesuch(gp.id, this.fallId).then(response => {
+                    this.mapOfNewestAntraege[gp.id] = response;
+                });
+            }
         });
     }
 
@@ -196,10 +204,10 @@ export class GesuchstellerDashboardListViewController {
 
     public showAnmeldungCreate(periode: TSGesuchsperiode): boolean {
         let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
-        return periode.isTageschulenAnmeldungAktiv() && !!antrag &&
+        return periode.hasTagesschulenAnmeldung() && !!antrag &&
             antrag.status !== TSAntragStatus.IN_BEARBEITUNG_GS &&
             antrag.status !== TSAntragStatus.FREIGABEQUITTUNG
-            && antrag.neustesGesuch;
+            && this.isNeuestAntragOfGesuchsperiode(periode, antrag);
     }
 
     public getButtonText(periode: TSGesuchsperiode): string {
@@ -211,7 +219,7 @@ export class GesuchstellerDashboardListViewController {
             } else if (!isAnyStatusOfVerfuegt(antrag.status) || antrag.beschwerdeHaengig) {
                 // Alles ausser verfuegt und InBearbeitung -> Text DOKUMENTE HOCHLADEN
                 return this.$translate.instant('GS_DOKUMENTE_HOCHLADEN');
-            } else if (antrag.neustesGesuch) {
+            } else if (this.isNeuestAntragOfGesuchsperiode(periode, antrag)) {
                 // Im Else-Fall ist das Gesuch nicht mehr ueber den Button verfuegbar
                 // Es kann nur noch eine Mutation gemacht werden -> Text MUTIEREN
                 return this.$translate.instant('GS_MUTIEREN');
@@ -288,7 +296,7 @@ export class GesuchstellerDashboardListViewController {
 
     public gesperrtWegenMutation(periode: TSGesuchsperiode) {
         let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
-        return !!antrag && !antrag.neustesGesuch;
+        return !!antrag && !this.isNeuestAntragOfGesuchsperiode(periode, antrag);
     }
 
     public hasOnlyFerieninsel(periode: TSGesuchsperiode) {
@@ -296,5 +304,7 @@ export class GesuchstellerDashboardListViewController {
         return !!antrag && antrag.hasOnlyFerieninsel();
     }
 
-
+    private isNeuestAntragOfGesuchsperiode(periode: TSGesuchsperiode, antrag: TSAntragDTO): boolean {
+        return antrag.antragId === this.mapOfNewestAntraege[periode.id];
+    }
 }

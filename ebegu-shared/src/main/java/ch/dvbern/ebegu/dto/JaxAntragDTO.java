@@ -153,10 +153,6 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 	@Nullable
 	private FinSitStatus finSitStatus;
 
-	// transient
-	// Flag zum merken, ob dies das neuste Gesuch für diesen Fall in dieser Gesuchsperiode ist.
-	// Momentan nur bei getAllAntraegeGesuchsteller gesetzt.
-	private boolean neustesGesuch;
 
 	public String getAntragId() {
 		return antragId;
@@ -348,13 +344,5 @@ public class JaxAntragDTO extends JaxAbstractAntragDTO {
 
 	public void setFinSitStatus(@Nullable FinSitStatus finSitStatus) {
 		this.finSitStatus = finSitStatus;
-	}
-
-	public boolean isNeustesGesuch() {
-		return neustesGesuch;
-	}
-
-	public void setNeustesGesuch(boolean neustesGesuch) {
-		this.neustesGesuch = neustesGesuch;
 	}
 }
