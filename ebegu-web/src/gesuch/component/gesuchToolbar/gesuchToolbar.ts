@@ -596,13 +596,24 @@ export class GesuchToolbarController implements IDVFocusableController {
     }
 
     public showKontakt(): void {
+        let isJA: boolean = !this.fall.verantwortlicherSCH;
+        let text: string;
+        if (isJA) {
+            text = '<span>Jugendamt</span><br>'
+                + '<span>Effingerstrasse 21</span><br>'
+                + '<span>3008 Bern</span><br>'
+                + '<a href="tel:0313215115"><span>031 321 51 15</span></a><br>'
+                + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>';
+        } else {
+            text = '<span>Schulamt</span><br>'
+                + '<span>Effingerstrasse 21</span><br>'
+                + '<span>3008 Bern</span><br>'
+                + '<a href="tel:0313216460"><span>031 321 64 60</span></a><br>'
+                + '<a href="mailto:schulamt@bern.ch"><span>schulamt@bern.ch</span></a>';
+        }
         this.dvDialog.showDialog(showKontaktTemplate, ShowTooltipController, {
             title: '',
-            text: '<span>Jugendamt</span><br>'
-            + '<span>Effingerstrasse 21</span><br>'
-            + '<span>3008 Bern</span><br>'
-            + '<a href="tel:0313215115"><span>031 321 51 15</span></a><br>'
-            + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>',
+            text: text,
             parentController: this
         });
     }
