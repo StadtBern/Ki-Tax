@@ -33,14 +33,14 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import {BetreuungViewController} from '../betreuungView/betreuungView';
-import IFormController = angular.IFormController;
+import {TSAnmeldungMutationZustand} from '../../../models/enums/TSAnmeldungMutationZustand';
+import moment = require('moment');
 import ILogService = angular.ILogService;
 import IPromise = angular.IPromise;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
-import moment = require('moment');
-import {TSAnmeldungMutationZustand} from '../../../models/enums/TSAnmeldungMutationZustand';
+import IFormController = angular.IFormController;
 
 let template = require('./betreuungTagesschuleView.html');
 require('./betreuungTagesschuleView.less');
@@ -98,6 +98,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     $onInit() {
         this.copyModuleToBelegung();
         this.datumErsterSchultag = this.gesuchModelManager.getGesuchsperiode().datumErsterSchultag;
+        this.setErsterSchultag();
         //todo dupliziert refactoren
         if (this.getBetreuungModel().anmeldungMutationZustand) {
             if (this.getBetreuungModel().anmeldungMutationZustand === TSAnmeldungMutationZustand.MUTIERT) {
@@ -223,6 +224,14 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     public getModulName(modulName: TSModulTagesschuleName): string {
         let modul: TSModulTagesschule = this.getModul(modulName, TSDayOfWeek.MONDAY); // monday ist der Vertreter fuer die ganze Woche
         return this.$translate.instant(TSModulTagesschuleName[modulName]) + this.getModulTimeAsString(modul);
+    }
+
+    public getModulTimeAsStringViaName(modulName: TSModulTagesschuleName): string {
+        let modul: TSModulTagesschule = this.getModul(modulName, TSDayOfWeek.MONDAY);
+        if (modul) {
+            return modul.zeitVon.format('HH:mm') + ' - ' + modul.zeitBis.format('HH:mm');
+        }
+        return '';
     }
 
     public getModulTimeAsString(modul: TSModulTagesschule): string {

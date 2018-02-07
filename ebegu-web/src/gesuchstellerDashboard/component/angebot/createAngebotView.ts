@@ -17,7 +17,6 @@ import {IStateService} from 'angular-ui-router';
 import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IAngebotStateParams} from '../../gesuchstellerDashboard.route';
-import ILogService = angular.ILogService;
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import TSKindContainer from '../../../models/TSKindContainer';
 import TSBetreuung from '../../../models/TSBetreuung';
@@ -27,9 +26,10 @@ import DateUtil from '../../../utils/DateUtil';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import TSAnmeldungDTO from '../../../models/TSAnmeldungDTO';
 import BetreuungRS from '../../../core/service/betreuungRS.rest';
-import IFormController = angular.IFormController;
 import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import ILogService = angular.ILogService;
+import IFormController = angular.IFormController;
 
 let template = require('./createAngebotView.html');
 require('./createAngebotView.less');
@@ -68,6 +68,10 @@ export class CreateAngebotListViewController {
             console.error('type must be set!');
             this.backToHome();
         }
+    }
+
+    public getGesuchsperiodeString(): string {
+        return this.gesuchModelManager.getGesuchsperiode().gesuchsperiodeString;
     }
 
     public getInstitutionenSDList(): Array<TSInstitutionStammdaten> {
