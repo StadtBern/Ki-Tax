@@ -54,6 +54,7 @@ import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.entities.Zahlungsposition;
+import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
@@ -69,6 +70,7 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.AntragStatusHistoryService;
 import ch.dvbern.ebegu.services.ApplicationPropertyService;
+import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.GeneratedDokumentService;
@@ -142,6 +144,9 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private TestfaelleService testfaelleService;
+
+	@Inject
+	private BetreuungService betreuungService;
 
 	private int anzahlObjekte = 0;
 	public static final int ANZAHL_TAGE_BIS_WARNUNG_FREIGABE = 60;
@@ -240,10 +245,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	public void testAntragMutieren() throws Exception {
 
 		// Voraussetzung: Ich habe einen verfuegten Antrag
-		Gesuch gesuchVerfuegt = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25), AntragStatus.VERFUEGT);
-		gesuchVerfuegt.setGueltig(true);
-		gesuchVerfuegt.setTimestampVerfuegt(LocalDateTime.now());
-		gesuchVerfuegt = gesuchService.updateGesuch(gesuchVerfuegt, true, null);
+		Gesuch gesuchVerfuegt = createSimpleVerfuegtesGesuch();
 
 		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(gesuchVerfuegt.getId(), LocalDate.of(1980, Month.MARCH, 25));
 
@@ -746,6 +748,39 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(FinSitStatus.ABGELEHNT, updatedGesuch.get().getFinSitStatus());
 	}
 
+	@Test
+	public void testRemoveGesuchResetAnmeldungen() {
+		Gesuch erstgesuch = createSimpleVerfuegtesGesuch();
+
+		//add Anmeldungen
+		Betreuung betreuung = TestDataUtil.createAnmeldungTagesschule(erstgesuch.getKindContainers().iterator().next());
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution());
+		persistence.persist(betreuung.getInstitutionStammdaten());
+		betreuungService.saveBetreuung(betreuung, false);
+
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(erstgesuch.getId(), LocalDate.of(1980, Month.MARCH, 25));
+		Assert.assertTrue(gesuchOptional.isPresent());
+		final Gesuch mutation = gesuchService.createGesuch(gesuchOptional.get());
+
+		final List<Betreuung> allBetreuungenFromErstgesuch = betreuungService.findAllBetreuungenFromGesuch(erstgesuch.getId());
+		allBetreuungenFromErstgesuch.stream().filter(Betreuung::isAngebotSchulamt)
+			.forEach(bet -> Assert.assertEquals(AnmeldungMutationZustand.MUTIERT, bet.getAnmeldungMutationZustand()));
+		mutation.extractAllBetreuungen().stream().filter(Betreuung::isAngebotSchulamt)
+			.forEach(bet -> Assert.assertEquals(AnmeldungMutationZustand.AKTUELLE_ANMELDUNG, bet.getAnmeldungMutationZustand()));
+
+		gesuchService.removeGesuch(mutation.getId());
+
+		final Optional<Gesuch> removedGesuchOpt = gesuchService.findGesuch(mutation.getId());
+		Assert.assertFalse(removedGesuchOpt.isPresent());
+
+		final List<Betreuung> allAktuelleBetreuungenFromErstgesuch = betreuungService.findAllBetreuungenFromGesuch(erstgesuch.getId());
+		allAktuelleBetreuungenFromErstgesuch.stream().filter(Betreuung::isAngebotSchulamt)
+			.forEach(bet -> Assert.assertEquals(AnmeldungMutationZustand.AKTUELLE_ANMELDUNG, bet.getAnmeldungMutationZustand()));
+
+	}
+
 
 	// HELP METHODS
 
@@ -905,6 +940,15 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		}
 
 		return foundGesuche;
+	}
+
+	@Nonnull
+	private Gesuch createSimpleVerfuegtesGesuch() {
+		Gesuch gesuchVerfuegt = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25), AntragStatus.VERFUEGT);
+		gesuchVerfuegt.setGueltig(true);
+		gesuchVerfuegt.setTimestampVerfuegt(LocalDateTime.now());
+		gesuchVerfuegt = gesuchService.updateGesuch(gesuchVerfuegt, true, null);
+		return gesuchVerfuegt;
 	}
 
 }
