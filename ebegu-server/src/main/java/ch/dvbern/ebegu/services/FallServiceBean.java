@@ -222,10 +222,8 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		if (!criteriaResults.isEmpty()) {
 			if (criteriaResults.size() != 1) {
 				throw new EbeguRuntimeException("getEmailAddressForFall", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, criteriaResults.size());
-			} else {
-				String gesuchstellerEmail = criteriaResults.get(0);
-				emailToReturn = gesuchstellerEmail;
 			}
+			emailToReturn = criteriaResults.get(0);
 		}
 		if (emailToReturn == null) {
 			emailToReturn = readBesitzerEmailForFall(fallID);
