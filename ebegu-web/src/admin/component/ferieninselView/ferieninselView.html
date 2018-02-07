@@ -49,8 +49,7 @@
                 <div class="col-md-12">
                     <form ng-submit="form.$valid && vm.submit()" name="vm.form" role="form" novalidate>
                         <fieldset dv-enable-element
-                                  dv-enable-allowed-roles="vm.TSRoleUtil.getSchulamtAdministratorRoles()"
-                                  dv-enable-expression="!vm.isReadonly()">
+                                  dv-enable-allowed-roles="vm.TSRoleUtil.getSchulamtAdministratorRoles()">
 
                             <!-- Gesuchsperiode Detail -->
                             <div ng-if="vm.gesuchsperiode">
