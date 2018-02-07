@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
@@ -250,6 +251,31 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 			return applicationPropertyService.readDefaultVerantwortlicherFromProperties();
 		}
 		return Optional.of(verantwortlicher);
+	}
+
+	@Override
+	public int setVerantwortlicher(String id, Benutzer benutzer){
+		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaUpdate<Fall> update = cb.createCriteriaUpdate(Fall.class);
+		Root<Fall> root = update.from(Fall.class);
+		update.set(Fall_.verantwortlicher, benutzer);
+
+		Predicate predFall = cb.equal(root.get(Fall_.id), id);
+		update.where(predFall);
+
+		return persistence.getEntityManager().createQuery(update).executeUpdate();
+	}
+
+	public int setVerantwortlicherSCH(String id, Benutzer benutzer){
+		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaUpdate<Fall> update = cb.createCriteriaUpdate(Fall.class);
+		Root<Fall> root = update.from(Fall.class);
+		update.set(Fall_.verantwortlicherSCH, benutzer);
+
+		Predicate predFall = cb.equal(root.get(Fall_.id), id);
+		update.where(predFall);
+
+		return persistence.getEntityManager().createQuery(update).executeUpdate();
 	}
 
 	private String readBesitzerEmailForFall(String fallID) {

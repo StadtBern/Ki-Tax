@@ -14,41 +14,36 @@
  */
 
 import {IComponentOptions, ILogService, IPromise, IScope} from 'angular';
-import AbstractGesuchViewController from '../abstractGesuchView';
-import GesuchModelManager from '../../service/gesuchModelManager';
-import * as moment from 'moment';
 import {IStateService} from 'angular-ui-router';
-import TSBetreuung from '../../../models/TSBetreuung';
-import TSKindContainer from '../../../models/TSKindContainer';
-import EbeguUtil from '../../../utils/EbeguUtil';
-import BerechnungsManager from '../../service/berechnungsManager';
-import WizardStepManager from '../../service/wizardStepManager';
+import * as moment from 'moment';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {DownloadRS} from '../../../core/service/downloadRS.rest';
+import {isAnyStatusOfMahnung, isAnyStatusOfVerfuegt, isAtLeastFreigegeben, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
+import {TSFinSitStatus} from '../../../models/enums/TSFinSitStatus';
+import {TSMahnungTyp} from '../../../models/enums/TSMahnungTyp';
+import {TSRole} from '../../../models/enums/TSRole';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {
-    isAnyStatusOfMahnung,
-    isAnyStatusOfVerfuegt,
-    isAtLeastFreigegeben,
-    TSAntragStatus
-} from '../../../models/enums/TSAntragStatus';
-import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
-import {RemoveDialogController} from '../../dialog/RemoveDialogController';
-import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
-import {DownloadRS} from '../../../core/service/downloadRS.rest';
+import TSBetreuung from '../../../models/TSBetreuung';
 import TSDownloadFile from '../../../models/TSDownloadFile';
-import TSMahnung from '../../../models/TSMahnung';
-import {TSMahnungTyp} from '../../../models/enums/TSMahnungTyp';
-import MahnungRS from '../../service/mahnungRS.rest';
 import TSGesuch from '../../../models/TSGesuch';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {TSRole} from '../../../models/enums/TSRole';
-import GesuchRS from '../../service/gesuchRS.rest';
-import {BemerkungenDialogController} from '../../dialog/BemerkungenDialogController';
+import TSKindContainer from '../../../models/TSKindContainer';
+import TSMahnung from '../../../models/TSMahnung';
 import AuthenticationUtil from '../../../utils/AuthenticationUtil';
-import ITimeoutService = angular.ITimeoutService;
+import EbeguUtil from '../../../utils/EbeguUtil';
 import {EnumEx} from '../../../utils/EnumEx';
-import {TSFinSitStatus} from '../../../models/enums/TSFinSitStatus';
+import {BemerkungenDialogController} from '../../dialog/BemerkungenDialogController';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import BerechnungsManager from '../../service/berechnungsManager';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import GesuchRS from '../../service/gesuchRS.rest';
+import MahnungRS from '../../service/mahnungRS.rest';
+import WizardStepManager from '../../service/wizardStepManager';
+import AbstractGesuchViewController from '../abstractGesuchView';
+import ITimeoutService = angular.ITimeoutService;
 
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
@@ -473,10 +468,11 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     /**
-     * ausblenden, wenn Gesuch readonly und finSitStatus nicht gesetzt (für alte Gesuche)
+     * ausblenden, wenn Gesuch readonly und finSitStatus nicht gesetzt (für alte Gesuche). Fuer GS nicht anzeigen.
      */
     public showFinSitStatus(): boolean {
-        return !(this.isGesuchReadonly() && EbeguUtil.isNullOrUndefined(this.getGesuch().finSitStatus));
+        return !(this.isGesuchReadonly() && EbeguUtil.isNullOrUndefined(this.getGesuch().finSitStatus))
+            && this.authServiceRs.isOneOfRoles(this.TSRoleUtil.getJugendamtAndSchulamtRole());
     }
 
     public openFinanzielleSituationPDF(): void {

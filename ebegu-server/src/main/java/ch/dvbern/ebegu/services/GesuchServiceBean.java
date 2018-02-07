@@ -55,6 +55,7 @@ import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
+import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.AbstractEntity_;
 import ch.dvbern.ebegu.entities.AntragStatusHistory;
 import ch.dvbern.ebegu.entities.AntragStatusHistory_;
@@ -341,8 +342,27 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		zahlungService.deleteZahlungspositionenOfGesuch(gesToRemove);
 		mitteilungService.removeAllBetreuungMitteilungenForGesuch(gesToRemove);
 
+		resetMutierteAnmeldungen(gesToRemove);
+
 		//Finally remove the Gesuch when all other objects are really removed
 		persistence.remove(gesToRemove);
+	}
+
+	/**
+	 * Nimmt alle Anmeldungen vom eingegebenen Gesuch und setzt alle vorgaengerAnmeldungen auf AnmeldungMutationZustand.AKTUELLE_ANMELDUNG.
+	 * Wenn eine Mutation geloescht wird, ist das vorgaengerGesuch und deshalb auch die vorgaengerAnmeldungen AKTUELL
+	 * @param currentGesuch das zurzeit neueste Gesuch
+	 */
+	private void resetMutierteAnmeldungen(@Nonnull Gesuch currentGesuch) {
+		currentGesuch.extractAllBetreuungen().stream()
+			.filter(betreuung -> betreuung.isAngebotSchulamt() && betreuung.getVorgaengerId() != null)
+			.forEach(betreuung -> {
+				final Optional<Betreuung> vorgaengerBetreuungOpt = betreuungService.findBetreuung(betreuung.getVorgaengerId());
+				Betreuung vorgaengerBetreuung = vorgaengerBetreuungOpt.orElseThrow(() -> new EbeguEntityNotFoundException("resetMutierteAnmeldungen",
+					ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuung.getVorgaengerId()));
+				vorgaengerBetreuung.setAnmeldungMutationZustand(AnmeldungMutationZustand.AKTUELLE_ANMELDUNG);
+				persistence.merge(vorgaengerBetreuung);
+			});
 	}
 
 	@Nonnull
@@ -619,21 +639,17 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			// Step Freigabe gruen
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
 
-			if (usernameJA != null) {
-				Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(usernameJA);
-				if (verantwortlicher.isPresent()
-					&& gesuch.hasBetreuungOfJugendamt()
-					&& (verantwortlicher.get().getRole().isRoleJugendamt() || verantwortlicher.get().getRole().isSuperadmin())) {
-					gesuch.getFall().setVerantwortlicher(verantwortlicher.get());
-				}
-			}
-			if (usernameSCH != null) {
-				Optional<Benutzer> verantwortlicherSCH = benutzerService.findBenutzer(usernameSCH);
-				if (verantwortlicherSCH.isPresent()
-					&& gesuch.hasBetreuungOfSchulamt()
-					&& (verantwortlicherSCH.get().getRole().isRoleSchulamt() || verantwortlicherSCH.get().getRole().isSuperadmin())) {
-					gesuch.getFall().setVerantwortlicherSCH(verantwortlicherSCH.get());
-				}
+			//VERANTWORTLICHE
+			if (!gesuch.isMutation()) {
+				// in case of erstgesuch: Verantwortliche werden beim einlesen gesetzt und kommen vom client
+				setVerantwortliche(usernameJA, usernameSCH, gesuch, false, false);
+			} else {
+				// in case of mutation, we take default Verantwortliche and set them only if not set...
+				String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(
+					ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
+				String propertyDefaultVerantwortlicherSch = applicationPropertyService.findApplicationPropertyAsString(
+					ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER_SCH);
+				setVerantwortliche(propertyDefaultVerantwortlicher, propertyDefaultVerantwortlicherSch, gesuch, true, false);
 			}
 
 			// Falls es ein OnlineGesuch war: Das Eingangsdatum setzen
@@ -647,6 +663,39 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		} else {
 			throw new EbeguEntityNotFoundException("antragFreigeben", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId);
 		}
+	}
+
+	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
+	public boolean setVerantwortliche(@Nullable String usernameJA, @Nullable String usernameSCH, Gesuch gesuch, boolean onlyIfNotSet, boolean persist) {
+		boolean hasVerantwortlicheChanged = false;
+		if (usernameJA != null) {
+			Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(usernameJA);
+			if (verantwortlicher.isPresent()
+				&& gesuch.hasBetreuungOfJugendamt()
+				&& (verantwortlicher.get().getRole().isRoleJugendamt() || verantwortlicher.get().getRole().isSuperadmin())
+				&& (gesuch.getFall().getVerantwortlicher() == null || !onlyIfNotSet)) {
+				if (persist) {
+					fallService.setVerantwortlicher(gesuch.getFall().getId(), verantwortlicher.get());
+				}
+				gesuch.getFall().setVerantwortlicher(verantwortlicher.get());
+				hasVerantwortlicheChanged = true;
+			}
+		}
+		if (usernameSCH != null) {
+			Optional<Benutzer> verantwortlicherSCH = benutzerService.findBenutzer(usernameSCH);
+			if (verantwortlicherSCH.isPresent()
+				&& gesuch.hasBetreuungOfSchulamt()
+				&& (verantwortlicherSCH.get().getRole().isRoleSchulamt() || verantwortlicherSCH.get().getRole().isSuperadmin())
+				&& (gesuch.getFall().getVerantwortlicherSCH() == null || !onlyIfNotSet)) {
+				if (persist) {
+					fallService.setVerantwortlicherSCH(gesuch.getFall().getId(), verantwortlicherSCH.get());
+				}
+				gesuch.getFall().setVerantwortlicherSCH(verantwortlicherSCH.get());
+				hasVerantwortlicheChanged = true;
+			}
+		}
+		return hasVerantwortlicheChanged;
 	}
 
 	@Override
@@ -893,6 +942,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public boolean isNeustesGesuch(@Nonnull Gesuch gesuch) {
 		final Optional<Gesuch> neustesGesuchFuerGesuch = getNeustesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(), false);
 		return neustesGesuchFuerGesuch.isPresent() && Objects.equals(neustesGesuchFuerGesuch.get().getId(), gesuch.getId());
+	}
+
+	@Override
+	@PermitAll
+	public Optional<String> getIdOfNeuestesGesuch(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Fall fall) {
+		// Da wir nur die ID zurueckgeben, koennen wir den AuthCheck weglassen
+		Optional<Gesuch> gesuchOptional = getNeustesGesuchFuerGesuch(gesuchsperiode, fall, false);
+		return gesuchOptional.map(AbstractEntity::getId);
 	}
 
 	/**
@@ -1399,7 +1456,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	public void updateBetreuungenStatus(@NotNull Gesuch gesuch) {
+	public Gesuch updateBetreuungenStatus(@NotNull Gesuch gesuch) {
 		gesuch.setGesuchBetreuungenStatus(GesuchBetreuungenStatus.ALLE_BESTAETIGT);
 		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
 			if (Betreuungsstatus.ABGEWIESEN == betreuung.getBetreuungsstatus()) {
@@ -1409,7 +1466,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				gesuch.setGesuchBetreuungenStatus(GesuchBetreuungenStatus.WARTEN);
 			}
 		}
-		persistence.merge(gesuch);
+		return persistence.merge(gesuch);
 	}
 
 	@Override
