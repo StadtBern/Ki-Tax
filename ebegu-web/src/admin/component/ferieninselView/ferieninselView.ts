@@ -160,10 +160,6 @@ export class FerieninselViewController extends AbstractAdminViewController {
                && EbeguUtil.isNotNullOrUndefined(ferieninselZeitraum.gueltigkeit.gueltigAb));
     }
 
-    public isReadonly(): boolean {
-        return !this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorRoles());
-    }
-
     /**
      * Alle errors werden zurueckgesetzt. Dies ist notwendig, weil beim Wechseln zwischen Gesuchsperiode, das Form nicht neugemacht wird.
      * Deswegen werden alle alten Daten bzw. Errors beibehalten und deshalb falsche Failures gegeben. Ausserdem wird das Form als Pristine gesetzt
