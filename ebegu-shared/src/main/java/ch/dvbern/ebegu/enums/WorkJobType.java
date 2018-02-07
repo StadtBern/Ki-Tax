@@ -16,11 +16,9 @@ public enum WorkJobType {
 
 	WorkJobType(String... parameters) {
 		paramNames.addAll(Arrays.asList(parameters));
-
 	}
 
 	public List<String> getParamNames() {
 		return paramNames;
 	}
-
 }

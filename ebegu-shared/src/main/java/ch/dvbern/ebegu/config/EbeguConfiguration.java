@@ -187,7 +187,6 @@ public interface EbeguConfiguration {
 	boolean forceCookieSecureFlag();
 
 	/**
-	 *
 	 * @return ob die Asynchron generierten Reports als attachments direkt im Infomail an den auftraggebendne Benutzer angehaengt werden
 	 */
 	boolean isSendReportAsAttachement();

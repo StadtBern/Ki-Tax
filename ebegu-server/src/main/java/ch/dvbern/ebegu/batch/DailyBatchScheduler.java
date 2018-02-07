@@ -42,6 +42,7 @@ public class DailyBatchScheduler {
 	public void runBatchCleanDownloadFiles() {
 		dailyBatch.runBatchCleanDownloadFiles();
 	}
+
 	@Schedule(second = "59", minute = "58", hour = "23", persistent = false)
 	public void runBatchCleanWorkjobs() {
 		dailyBatch.runBatchCleanWorkjobs();

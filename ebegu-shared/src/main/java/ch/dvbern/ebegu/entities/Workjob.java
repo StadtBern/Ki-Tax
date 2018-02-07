@@ -64,11 +64,11 @@ public class Workjob extends AbstractEntity {
 	@Column(length = 45, nullable = true, updatable = false)
 	private String triggeringIp;
 
-
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	@NotNull
 	private BatchJobStatus status;
+
 
 	public String getMetadata() {
 		return metadata;

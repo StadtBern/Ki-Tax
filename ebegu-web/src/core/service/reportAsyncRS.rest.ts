@@ -162,7 +162,6 @@ export class ReportAsyncRS {
             });
     }
 
-
     public getServiceName(): string {
         return 'ReportAsyncRS';
     }

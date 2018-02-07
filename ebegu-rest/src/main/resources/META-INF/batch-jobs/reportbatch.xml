@@ -28,7 +28,5 @@
 			<listener ref="reportJobStepListener"/>
 		</listeners>
 		<batchlet ref="sendEmailBatchlet"/>
-
 	</step>
-
 </job>

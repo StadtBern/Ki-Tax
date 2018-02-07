@@ -26,7 +26,6 @@ public class ReportgeneratorPartitionPlan extends PartitionPlanImpl {
 		this.jobProperties = jobProperties;
 	}
 
-
 	@Override
 	public int getPartitions() {
 		LOG.debug("getPartitions");

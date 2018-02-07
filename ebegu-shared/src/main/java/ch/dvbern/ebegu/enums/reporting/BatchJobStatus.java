@@ -11,6 +11,7 @@
 package ch.dvbern.ebegu.enums.reporting;
 
 public enum BatchJobStatus {
+
 	/**
 	 * Soll von einem Worker abgearbeitet werden
 	 */

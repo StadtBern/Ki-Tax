@@ -169,7 +169,6 @@ export class ReportRS {
             });
     }
 
-
     public getServiceName(): string {
         return 'ReportRS';
     }
