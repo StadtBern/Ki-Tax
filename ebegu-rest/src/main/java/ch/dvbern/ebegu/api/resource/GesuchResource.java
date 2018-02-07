@@ -711,7 +711,9 @@ public class GesuchResource {
 
 		Gesuch gesuch = gesuchService.findGesuch(gesuchJaxId.getId(), true).orElseThrow(()
 			-> new EbeguEntityNotFoundException("removeGesuchstellerAntrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJaxId.getId()));
+
 		gesuchService.removeGesuchstellerAntrag(gesuch);
+
 		return Response.ok().build();
 	}
 
