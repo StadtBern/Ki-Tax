@@ -16,10 +16,10 @@
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import {IState, IStateParamsService} from 'angular-ui-router';
 import GesuchModelManager from '../gesuch/service/gesuchModelManager';
+import TSGesuch from '../models/TSGesuch';
 import IQService = angular.IQService;
 import ILogService = angular.ILogService;
 import IPromise = angular.IPromise;
-import TSGesuch from '../models/TSGesuch';
 
 gesuchstellerDashboardRun.$inject = ['RouterHelper'];
 
@@ -57,7 +57,6 @@ export class IAngebotStateParams implements IStateParamsService {
     gesuchId: string;
     type: string;
 }
-
 
 getGesuchModelManager.$inject = ['GesuchModelManager', '$stateParams', '$q', '$log'];
 

@@ -74,9 +74,9 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     showMutiert: boolean = false;
     aktuellGueltig: boolean = true;
 
-
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout', '$translate', 'FerieninselStammdatenRS'];
+
     /* @ngInject */
     constructor($state: IStateService, gesuchModelManager: GesuchModelManager, ebeguUtil: EbeguUtil, CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, errorService: ErrorService,
@@ -217,6 +217,10 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     }
 
     public displayWeekRow(tag: TSBelegungFerieninselTag, index: number, dayArray: Array<TSBelegungFerieninselTag>): boolean {
+
+        if (this.displayMonthRow(tag, index, dayArray)) {
+            return false;
+        }
         if (dayArray[index + 1]) {
             if (tag.tag.weekday() === 1 && dayArray[index + 1].tag.weekday() === 5 && dayArray[index + 1].tag.diff(tag.tag, 'days') === 11) {
                 return false;

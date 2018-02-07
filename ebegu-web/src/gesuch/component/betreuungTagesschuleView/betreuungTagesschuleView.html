@@ -38,36 +38,39 @@
                                            for="vm.form.eintrittsdatum.$error"></dv-error-messages>
                     </div>
                 </div>
-                <div class="row" ng-if="vm.isTagesschuleAlreadySelected()">
-                    <div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-sm-12 dv-input-container-small"></div>
-                            <div class="col-sm-12 dv-input-container-calendar">
-                                <div class="dv-ebegu-calendar__container">
-                                    <div class="dv-ebegu-calendar__weekday dv-ebegu-calendar__weekday--{{day}}"
-                                         ng-repeat="day in vm.getWeekDays()">{{ day | translate}}
-                                    </div>
+                <div class="dv-ebegu-calendar__wrapper-tagesschule" ng-if="vm.isTagesschuleAlreadySelected()">
+
+                    <div class="dv-ebegu-calendar__row--tagesschule">
+                        <div class="dv-ebegu-calendar__wrapper-small-blank"></div>
+                        <div class="dv-ebegu-calendar__wrapper">
+                            <div class="dv-ebegu-calendar__container-weekdays">
+                                <div class="dv-ebegu-calendar__weekday dv-ebegu-calendar__weekday--{{day}}"
+                                     ng-repeat="day in vm.getWeekDays()">{{ day | translate}}
                                 </div>
                             </div>
                         </div>
-                        <div class="row row-centered-flex" ng-repeat="modulName in vm.getModulTagesschuleNameList()">
-                            <div class="col-sm-12 dv-input-container-small"
-                                 ng-if="vm.isModulDefinedInSelectedTS(modulName, vm.getMonday())"
-                                 ng-bind="vm.getModulName(modulName)">
-                            </div>
-                            <div class="col-sm-12 dv-input-container-calendar">
-                                <div class="dv-ebegu-calendar__container dv-ebegu-calendar__container--no-margin">
-                                    <div class="dv-ebegu-calendar__day dv-ebegu-calendar__day--{{tag.tag.weekday()}}"
-                                         ng-if="vm.isModulDefinedInSelectedTS(modulName, vm.getMonday())"
-                                         ng-repeat="weekDay in vm.getWeekDays()">
-                                        <md-checkbox
-                                            class="dv-ebegu-calendar"
-                                            name="modul_{{modulName}}_{{weekDay}}"
-                                            ng-model="vm.getModul(modulName, weekDay).angemeldet"
-                                            aria-label="Modul {{modulName | translate}} {{weekDay | translate}}"
-                                            ng-disabled="!vm.isModulEnabled(modulName, weekDay) || vm.isFreigabequittungAusstehend()">
-                                        </md-checkbox>
-                                    </div>
+                    </div>
+                    <div class="dv-ebegu-calendar__row--tagesschule"
+                         ng-repeat="modulName in vm.getModulTagesschuleNameList()">
+                        <div class="dv-ebegu-calendar__wrapper-small dv-ebegu-calendar__module"
+                             ng-if="vm.isModulDefinedInSelectedTS(modulName, vm.getMonday())">
+                            <span class="dv-ebegu-calendar__module-name" ng-bind="modulName | translate"></span>
+                            <span class="dv-ebegu-calendar__module-time"
+                                  ng-bind="vm.getModulTimeAsStringViaName(modulName)"></span>
+                        </div>
+                        <div class="dv-ebegu-calendar__wrapper">
+                            <div class="dv-ebegu-calendar__container dv-ebegu-calendar__container--no-margin">
+                                <div
+                                    class="dv-ebegu-calendar__day dv-ebegu-calendar__day--{{$index+1}}"
+                                    ng-if="vm.isModulDefinedInSelectedTS(modulName, vm.getMonday())"
+                                    ng-repeat="weekDay in vm.getWeekDays()">
+                                    <md-checkbox
+                                        class="dv-ebegu-calendar--tagesschule"
+                                        name="modul_{{modulName}}_{{weekDay}}"
+                                        ng-model="vm.getModul(modulName, weekDay).angemeldet"
+                                        aria-label="Modul {{modulName | translate}} {{weekDay | translate}}"
+                                        ng-disabled="!vm.isModulEnabled(modulName, weekDay) || vm.isFreigabequittungAusstehend()">
+                                    </md-checkbox>
                                 </div>
                             </div>
                         </div>
