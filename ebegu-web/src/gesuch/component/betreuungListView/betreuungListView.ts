@@ -225,7 +225,8 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
      * Betreuungen und auch anmeldungen duerfen in Status FREIGABEQUITTUNG nicht hinzugefuegt werden
      */
     public isBetreuungenHinzufuegenDisabled(): boolean {
-        return this.gesuchModelManager.getGesuch().status === TSAntragStatus.FREIGABEQUITTUNG;
+        return this.gesuchModelManager.getGesuch().gesuchsperiode.hasTagesschulenAnmeldung() &&
+                this.gesuchModelManager.getGesuch().status === TSAntragStatus.FREIGABEQUITTUNG;
     }
 
     public hasOnlyFerieninsel() {
