@@ -30,7 +30,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MitteilungSearchDTO implements Serializable {
 
-	private static final long serialVersionUID = 4561877549058241575L;
+	private static final long serialVersionUID = 4561877549058241566L;
 	private MitteilungPredicateObjectDTO predicateObject;
 
 	public MitteilungSearchDTO() {

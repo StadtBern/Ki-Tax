@@ -681,7 +681,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				// Kein SCH-Verantwortlicher definiert. Wir nehmen den Default-Verantwortlichen
 				Optional<Benutzer> optVerantwortlicherSCH = applicationPropertyService.readDefaultVerantwortlicherSCHFromProperties();
 				verantwortlicherSCH = optVerantwortlicherSCH.orElseThrow(() ->
-					new EbeguRuntimeException("mitteilungUebergebenAnSchulamt", ErrorCodeEnum.ERROR_EMPFAENGER_JA_NOT_FOUND, mitteilung.getId())
+					new EbeguRuntimeException("mitteilungUebergebenAnSchulamt", ErrorCodeEnum.ERROR_EMPFAENGER_SCH_NOT_FOUND, mitteilung.getId())
 				);
 			}
 			// Den VerantwortlichenJA als Empfänger setzen
@@ -789,7 +789,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				Amt amt = Amt.valueOf(predicateObjectDto.getEmpfaengerAmt());
 				switch (amt) {
 				case JUGENDAMT:
-					predicates.add(joinEmpfaenger.get(Benutzer_.role).in(UserRole.getJugendamtRoles()));
+					predicates.add(joinEmpfaenger.get(Benutzer_.role).in(UserRole.getJugendamtSuperadminRoles()));
 					break;
 				case SCHULAMT:
 					predicates.add(joinEmpfaenger.get(Benutzer_.role).in(UserRole.getSchulamtRoles()));
@@ -847,6 +847,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 
+	@SuppressWarnings("ReuseOfLocalVariable")
 	private void constructOrderByClause(@Nonnull MitteilungTableFilterDTO tableFilterDTO, CriteriaBuilder cb, CriteriaQuery query,
 			Root<Mitteilung> root, Join<Mitteilung, Fall> joinFall, Join<Fall, Benutzer> joinBesitzer,
 			Join<Mitteilung, Benutzer> joinSender, Join<Mitteilung, Benutzer> joinEmpfaenger) {
