@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.dto.suchfilter.smarttable;
 
 import java.io.Serializable;
 
+import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -29,7 +30,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PredicateObjectDTO implements Serializable {
+public class AntragPredicateObjectDTO implements Serializable {
 
 	private static final long serialVersionUID = -2248051428962150142L;
 
@@ -183,15 +184,15 @@ public class PredicateObjectDTO implements Serializable {
 			return Integer.valueOf(fallNummer);
 		}
 		return -1;
-
 	}
 
+	@Nullable
 	public String getFamilienNameForLike() {
 		return StringUtils.isEmpty(familienName) ? null : familienName + '%';
 	}
 
+	@Nullable
 	public String getKindNameForLike() {
 		return StringUtils.isEmpty(kinder) ? null : '%' + kinder + '%';
 	}
-
 }
