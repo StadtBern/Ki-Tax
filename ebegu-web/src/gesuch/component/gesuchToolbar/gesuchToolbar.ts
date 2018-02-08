@@ -125,7 +125,7 @@ export class GesuchToolbarController implements IDVFocusableController {
         });
     }
 
-    private updateAmountNewMitteilungenGS(fallid: number): void {
+    private updateAmountNewMitteilungenGS(fallid: string): void {
         this.mitteilungRS.getAmountNewMitteilungenForCurrentRolle(fallid).then((response: number) => {
             this.amountNewMitteilungenGS = response;
         });
