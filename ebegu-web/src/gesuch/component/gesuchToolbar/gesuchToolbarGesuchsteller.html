@@ -116,8 +116,8 @@
         <!--close knopf-->
         <i class="fa fa-times" aria-hidden="true"></i>
     </button>
-    <div ng-if="vmgs.showGesuchPeriodeNavigationMenu()" class="gesuchsperioden-container"
-         ng-repeat="(gesuchsperiodeString,antragTypDaten) in vmgs.gesuchNavigationList" layout="column"
+    <div class="gesuchsperioden-container"
+         ng-repeat="gesuchsperiodeString in vmgs.getKeys(vmgs.gesuchNavigationList)"layout="column"
          layout-align="start center">
 
         <button ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.setGesuchsperiode(gesuchsperiodeString)"
@@ -129,7 +129,7 @@
 
         <button ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.setAntragTypDatum(antragTypDatum)"
                 aria-label="{{antragTypDatum}}" ng-if="vmgs.showAntragTypListNavigationMenu()"
-                ng-repeat="antragTypDatum  in antragTypDaten"
+                ng-repeat="antragTypDatum in vmgs.gesuchNavigationList[gesuchsperiodeString]"
                 ng-value="antragTypDatum" class="antrag-typ-datum-button">
                                 <span>
                                     {{antragTypDatum}}
@@ -137,11 +137,6 @@
         </button>
     </div>
 
-
-    <span class="gesuchsperiode-button" ng-if="!vmgs.showGesuchPeriodeNavigationMenu() && vmgs.getGesuch()"
-          ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
-    <span class="antrag-typantrag-typ-datum-button" ng-if="!vmgs.showAntragTypListNavigationMenu() && vmgs.getGesuch()"
-          ng-bind="vmgs.getAntragTyp()"></span>
 
     <span flex=""></span>
     <div dv-show-element
