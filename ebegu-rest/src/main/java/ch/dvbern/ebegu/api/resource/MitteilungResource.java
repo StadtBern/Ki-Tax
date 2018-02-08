@@ -18,6 +18,7 @@ package ch.dvbern.ebegu.api.resource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -44,7 +46,10 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxMitteilung;
+import ch.dvbern.ebegu.api.dtos.JaxMitteilungSearchresultDTO;
 import ch.dvbern.ebegu.api.dtos.JaxMitteilungen;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.MitteilungTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
 import ch.dvbern.ebegu.entities.Fall;
@@ -55,9 +60,11 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.MitteilungService;
+import ch.dvbern.ebegu.util.MonitoringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Resource fuer Mitteilung
@@ -278,26 +285,6 @@ public class MitteilungResource {
 		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolleForBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
 	}
 
-	@ApiOperation(value = "Gibt einen Wrapper mit der Liste aller Mitteilungen zurueck, welche fuer den eingeloggten " +
-		"Benutzer in dessen Posteingang dargestellt werden sollen.", response = JaxMitteilungen.class)
-	@Nullable
-	@GET
-	@Path("/posteingang/{includeClosed}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public JaxMitteilungen getMitteilungenForPosteingang(
-		@Nonnull @NotNull @PathParam("includeClosed") String includeClosedParam,
-		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) {
-
-		Validate.notNull(includeClosedParam);
-		boolean includeClosed = Boolean.parseBoolean(includeClosedParam);
-
-		final Collection<Mitteilung> mitteilungen = mitteilungService.getMitteilungenForPosteingang(includeClosed);
-		return new JaxMitteilungen(mitteilungen.stream().map(mitteilung ->
-			converter.mitteilungToJAX(mitteilung, new JaxMitteilung())).collect(Collectors.toList()));
-	}
-
 	@ApiOperation(value = "Ermittelt die Anzahl neuer Mitteilungen im Posteingang des eingeloggten Benutzers",
 		response = Integer.class)
 	@Nullable
@@ -467,5 +454,34 @@ public class MitteilungResource {
 		String mitteilungId = converter.toEntityId(mitteilungJaxId);
 		Mitteilung mitteilung = mitteilungService.mitteilungUebergebenAnSchulamt(mitteilungId);
 		return converter.mitteilungToJAX(mitteilung, new JaxMitteilung());
+	}
+
+	@ApiOperation(value = "Sucht Mitteilungen mit den uebergebenen Suchkriterien/Filtern", response = JaxMitteilungSearchresultDTO.class)
+	@Nonnull
+	@POST
+	@Path("/search/{includeClosed}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response searchMitteilungen(
+		@Nonnull @PathParam("includeClosed") String includeClosed,
+		@Nonnull @NotNull MitteilungTableFilterDTO tableFilterDTO,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) {
+
+		return MonitoringUtil.monitor(GesuchResource.class, "searchMitteilungen", () -> {
+			Pair<Long, List<Mitteilung>> searchResultPair = mitteilungService.searchMitteilungen(tableFilterDTO, Boolean.valueOf(includeClosed));
+			List<Mitteilung> foundMitteilungen = searchResultPair.getRight();
+
+			List<JaxMitteilung> convertedMitteilungen = foundMitteilungen.stream().map(mitteilung ->
+				converter.mitteilungToJAX(mitteilung, new JaxMitteilung())).collect(Collectors.toList());
+
+			JaxMitteilungSearchresultDTO resultDTO = new JaxMitteilungSearchresultDTO();
+			resultDTO.setMitteilungDTOs(convertedMitteilungen);
+			PaginationDTO pagination = tableFilterDTO.getPagination();
+			pagination.setTotalItemCount(searchResultPair.getLeft());
+			resultDTO.setPaginationDTO(pagination);
+
+			return Response.ok(resultDTO).build();
+		});
 	}
 }

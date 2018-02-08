@@ -25,6 +25,7 @@ import FallRS from '../../service/fallRS.rest';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import GesuchRS from '../../service/gesuchRS.rest';
 import {GesuchToolbarController} from './gesuchToolbar';
+import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 
 describe('gesuchToolbar', function () {
 
@@ -43,6 +44,7 @@ describe('gesuchToolbar', function () {
     let gesuchsperiodeRS: GesuchsperiodeRS;
     let fallRS: FallRS;
     let dvDialog: DvDialog;
+    let mitteilungRS: MitteilungRS;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -63,10 +65,11 @@ describe('gesuchToolbar', function () {
         gesuchsperiodeRS = $injector.get('GesuchsperiodeRS');
         fallRS = $injector.get('FallRS');
         dvDialog = $injector.get('DvDialog');
+        mitteilungRS = $injector.get('MitteilungRS');
 
         gesuchToolbarController = new GesuchToolbarController(ebeguUtil,
             gesuchRS, $state, $scope, gesuchModelManager,
-            authServiceRS, $mdSidenav, undefined, gesuchsperiodeRS, fallRS, dvDialog, undefined);
+            authServiceRS, $mdSidenav, undefined, gesuchsperiodeRS, fallRS, dvDialog, mitteilungRS, undefined);
     }));
 
 });
