@@ -43,7 +43,7 @@
                                 <td ng-bind="row.name" class="ellipsis" ellipsis-tooltip="{{row.name}}"></td>
                                 <td>
                                     <dv-loading-button type="button" button-click="vm.removeInstitution(row)"
-                                                       button-class="pull-right" button-disabled="vm.isReadonly()">
+                                                       button-class="pull-right" button-disabled="!vm.isAnyAdminRole()">
                                         <i class="fa fa-minus">
                                         </i>
                                     </dv-loading-button>
@@ -65,7 +65,7 @@
                 </div>
 
                 <!--Knöpfe unterhalb der Tabelle zum anzeigen aller Institutionen-->
-                <div class="" ng-if="!vm.isReadonly()">
+                <div class="" ng-if="vm.isAnyAdminRole()">
                     <div class="row form-group">
                         <dv-input-container class="form-group row">
                             <!--Knopf zum hinzufügen neuer Institutionen-->
