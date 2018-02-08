@@ -254,6 +254,10 @@ export class DVMitteilungListController {
         return mitteilung && mitteilung.sender && mitteilung.senderTyp === TSMitteilungTeilnehmerTyp.INSTITUTION;
     }
 
+    public isSenderTypSchulamt(mitteilung: TSMitteilung): boolean {
+        return mitteilung && mitteilung.sender && mitteilung.senderTyp === TSMitteilungTeilnehmerTyp.JUGENDAMT && mitteilung.getEmpfaengerAmt() === TSAmt.SCHULAMT;
+    }
+
     public isSenderTypJugendamt(mitteilung: TSMitteilung): boolean {
         return mitteilung && mitteilung.sender && mitteilung.senderTyp === TSMitteilungTeilnehmerTyp.JUGENDAMT;
     }
@@ -396,11 +400,11 @@ export class DVMitteilungListController {
     }
 
     public canUebergebenAnSchulamt(mitteilung: TSMitteilung): boolean {
-        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.JUGENDAMT);
+        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.JUGENDAMT) && !mitteilung.isErledigt();
     }
 
     public canUebergebenAnJugendamt(mitteilung: TSMitteilung): boolean {
-        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.SCHULAMT);
+        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.SCHULAMT) && !mitteilung.isErledigt();
     }
 
     private isUserAndEmpfaengerSameAmt(mitteilung: TSMitteilung, amt: TSAmt): boolean {
