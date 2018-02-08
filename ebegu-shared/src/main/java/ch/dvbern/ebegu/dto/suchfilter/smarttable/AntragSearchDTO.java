@@ -31,17 +31,17 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class AntragSearchDTO implements Serializable {
 
 	private static final long serialVersionUID = 4561877549058241575L;
-	private PredicateObjectDTO predicateObject;
+	private AntragPredicateObjectDTO predicateObject;
 
 	public AntragSearchDTO() {
-		this.predicateObject = new PredicateObjectDTO();
+		this.predicateObject = new AntragPredicateObjectDTO();
 	}
 
-	public PredicateObjectDTO getPredicateObject() {
+	public AntragPredicateObjectDTO getPredicateObject() {
 		return predicateObject;
 	}
 
-	public void setPredicateObject(PredicateObjectDTO predicateObject) {
+	public void setPredicateObject(AntragPredicateObjectDTO predicateObject) {
 		this.predicateObject = predicateObject;
 	}
 

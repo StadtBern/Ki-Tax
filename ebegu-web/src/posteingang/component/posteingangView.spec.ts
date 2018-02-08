@@ -69,16 +69,19 @@ describe('posteingangView', function () {
     }));
 
     describe('API Usage', function () {
-        describe('getMitteilungen', function () {
+        describe('searchMitteilungen', function () {
             it('should return the list of Mitteilungen', function () {
                 mockRestCalls();
-                posteingangViewController = new PosteingangViewController(mitteilungRS, ebeguUtil, CONSTANTS, undefined, undefined);
+                posteingangViewController = new PosteingangViewController(mitteilungRS, ebeguUtil, CONSTANTS, undefined, undefined, $log);
                 $rootScope.$apply();
-                expect(mitteilungRS.getMitteilungenForPosteingang).toHaveBeenCalled();
-                let list: Array<TSMitteilung> = posteingangViewController.getMitteilungen();
-                expect(list).toBeDefined();
-                expect(list.length).toBe(1);
-                expect(list[0]).toEqual(mockMitteilung);
+                let tableFilterState: any = {};
+                posteingangViewController.passFilterToServer(tableFilterState).then(result => {
+                    expect(mitteilungRS.searchMitteilungen).toHaveBeenCalled();
+                    let list: Array<TSMitteilung> = posteingangViewController.displayedCollection;
+                    expect(list).toBeDefined();
+                    expect(list.length).toBe(1);
+                    expect(list[0]).toEqual(mockMitteilung);
+                });
             });
         });
     });
@@ -92,7 +95,7 @@ describe('posteingangView', function () {
             gesuchsteller, undefined, 'Frage', 'Warum ist die Banane krumm?', TSMitteilungStatus.NEU, undefined);
         let dtoList: Array<TSMitteilung> = [mockMitteilung];
         let totalSize: number = 1;
-        spyOn(mitteilungRS, 'getMitteilungenForPosteingang').and.returnValue($q.when(dtoList));
+        spyOn(mitteilungRS, 'searchMitteilungen').and.returnValue($q.when(dtoList));
         return mockMitteilung;
     }
 

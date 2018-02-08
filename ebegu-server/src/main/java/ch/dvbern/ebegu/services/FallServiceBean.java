@@ -211,7 +211,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		Path<String> gsEmail = gesDataJoin.get(Gesuchsteller_.mail);
 		query.select(gsEmail);
 		query.where(gesuchOfFall);
-		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt))); // Das mit dem neuesten Verfuegungsdatum
+		query.orderBy(cb.desc(gesDataJoin.get(Gesuchsteller_.timestampMutiert))); // Das zuletzt geänderte GS-Objekt
 		TypedQuery<String> typedQuery = persistence.getEntityManager().createQuery(query);
 		typedQuery.setParameter(fallIdParam, fallID);
 		typedQuery.setMaxResults(1);
@@ -222,10 +222,8 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		if (!criteriaResults.isEmpty()) {
 			if (criteriaResults.size() != 1) {
 				throw new EbeguRuntimeException("getEmailAddressForFall", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, criteriaResults.size());
-			} else {
-				String gesuchstellerEmail = criteriaResults.get(0);
-				emailToReturn = gesuchstellerEmail;
 			}
+			emailToReturn = criteriaResults.get(0);
 		}
 		if (emailToReturn == null) {
 			emailToReturn = readBesitzerEmailForFall(fallID);

@@ -28,7 +28,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AntragSortDTO implements Serializable {
+public class SortDTO implements Serializable {
 
 	private static final long serialVersionUID = -742377991134129869L;
 	/**

@@ -18,154 +18,185 @@
                               fallid="{{vm.fallId}}"
                               is-dashboard-screen="{{true}}">
 </gesuch-toolbar-gesuchsteller>
+<div layout="row" flex="auto" class="overflow-auto ng-scope layout-row flex-auto">
+    <md-content id="gesuchContainer" class="_md flex">
+        <div>
+            <div>
+                <div class="createAngebotView gesuchModul betreuungView" flex="auto">
+                    <h1 class="access-for-all-title" data-translate="AFA_DASHBOARD"></h1>
+                    <div class="dashboardHeader">
 
-<div class="createAngebotView" flex="auto">
-    <h1 class="access-for-all-title" data-translate="AFA_DASHBOARD"></h1>
-    <div class="dashboardHeader">
+                        <div class="row viewTitle marginTop40">
+                            <div class="col-md-8 col-md-offset-4">
+                                <h2>
 
-        <div class="row viewTitle marginTop40">
-            <div class="col-md-8 col-md-offset-4">
-                <h2>
-                    <span ng-if="vm.ts" data-translate="TAGESSCHULE_ERFASSEN"></span>
-                    <span ng-if="vm.fi" data-translate="FERIENINSEL_ERFASSEN"></span>
-                </h2>
-            </div>
-        </div>
-
-        <div class="row marginTop40">
-            <div class="col-md-8 col-md-offset-4">
-                <form role="form" name="vm.form" class="" novalidate
-                      unsaved-warning-form>
-
-
-                    <!-- Kind -->
-                    <div class="row">
-                        <div class="col-sm-12 dv-input-container-medium form-group">
-                            <label class="ebeguH1 required" data-translate="KIND_WAEHLEN" for="kind">
-                            </label>
-
-                            <div class="dv-select-style">
-                                <select aria-describedby="kind-error" name="kind" id="kind"
-                                        ng-model="vm.kindContainer"
-                                        class="form-control"
-                                        ng-options="kindContainer as kindContainer.kindJA.getFullName() for kindContainer in vm.getKindContainerList()"
-                                        ng-required="true" ng-change="vm.selectedKindChanged()">
-                                </select>
-                                <dv-error-messages input-id="kind" for="vm.form.kind.$error"></dv-error-messages>
+                                    <span ng-if="vm.ts" data-translate="TAGESSCHULE_ERFASSEN"
+                                          data-translate-value-gs="{{vm.getGesuchsperiodeString()}}"></span>
+                                    <span ng-if="vm.fi" data-translate="FERIENINSEL_ERFASSEN"
+                                          data-translate-value-gs="{{vm.getGesuchsperiodeString()}}"></span>
+                                </h2>
                             </div>
                         </div>
-                    </div>
 
-                    <!--mutterspracheDeutsch-->
-                    <div class="row">
-                        <div class="col-xs-12 dv-input-container-question">
-                            <div class="form-group" ng-show="vm.anmeldungDTO.additionalKindQuestions">
+                        <div class="row marginTop40">
+                            <div class="dv-input-container-medium col-md-offset-4 col-md-12">
+                                <form role="form" name="vm.form" class="" novalidate
+                                      unsaved-warning-form>
+
+
+                                    <!-- Kind -->
+                                    <div class="row">
+                                        <div class="col-sm-12 dv-input-container-medium form-group">
+                                            <label class="ebeguH1 required" data-translate="KIND_WAEHLEN" for="kind">
+                                            </label>
+
+                                            <div class="dv-select-style">
+                                                <select aria-describedby="kind-error" name="kind" id="kind"
+                                                        ng-model="vm.kindContainer"
+                                                        class="form-control"
+                                                        ng-options="kindContainer as kindContainer.kindJA.getFullName() for kindContainer in vm.getKindContainerList()"
+                                                        ng-required="true" ng-change="vm.selectedKindChanged()">
+                                                </select>
+                                                <dv-error-messages input-id="kind"
+                                                                   for="vm.form.kind.$error"></dv-error-messages>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--mutterspracheDeutsch-->
+                                    <div class="row">
+                                        <div class="col-xs-12 dv-input-container-question">
+                                            <div class="form-group" ng-show="vm.anmeldungDTO.additionalKindQuestions">
                                 <span class="ebeguH1 required">
                                     <span data-translate="MUTTERSPRACHE_DEUTSCH"></span>
                                     <dv-tooltip input-id="mutterspracheDeutsch"
                                                 text="'MUTTERSPRACHE_DEUTSCH_HELP' | translate"></dv-tooltip>
                                 </span>
 
-                                <dv-radio-container name="mutterspracheDeutsch" class="input-element"
-                                                    ng-required="vm.anmeldungDTO.additionalKindQuestions"
-                                                    ng-model="vm.anmeldungDTO.mutterspracheDeutsch"
-                                                    aria-label="{{ 'MUTTERSPRACHE_DEUTSCH' |translate}}"
-                                                    aria-described-by="mutterspracheDeutsch-error">
-                                </dv-radio-container>
-                                <dv-error-messages input-id="mutterspracheDeutsch" for="vm.form.mutterspracheDeutsch.$error"
-                                                   class="error"></dv-error-messages>
-                            </div>
-                        </div>
-                    </div>
+                                                <dv-radio-container name="mutterspracheDeutsch" class="input-element"
+                                                                    ng-required="vm.anmeldungDTO.additionalKindQuestions"
+                                                                    ng-model="vm.anmeldungDTO.mutterspracheDeutsch"
+                                                                    aria-label="{{ 'MUTTERSPRACHE_DEUTSCH' |translate}}"
+                                                                    aria-described-by="mutterspracheDeutsch-error">
+                                                </dv-radio-container>
+                                                <dv-error-messages input-id="mutterspracheDeutsch"
+                                                                   for="vm.form.mutterspracheDeutsch.$error"
+                                                                   class="error"></dv-error-messages>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                    <!--Das Kind ist per 1.8.XX eingeschult (auch Kindergarten)-->
-                    <div class="row">
-                        <div class="col-xs-12 dv-input-container-question">
-                            <div class="form-group" ng-show="vm.anmeldungDTO.additionalKindQuestions">
+                                    <!--Das Kind ist per 1.8.XX eingeschult (auch Kindergarten)-->
+                                    <div class="row">
+                                        <div class="col-xs-12 dv-input-container-question">
+                                            <div class="form-group" ng-show="vm.anmeldungDTO.additionalKindQuestions">
                                 <span class="ebeguH1 required">
                                     <span data-translate="EINSCHULUNG"
                                           data-translate-value-date="{{vm.getDatumEinschulung() | amDateFormat : 'DD.MM.YYYY'}}"> </span>
-                                    <dv-tooltip input-id="einschulung" text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
+                                    <dv-tooltip input-id="einschulung"
+                                                text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
                                 </span>
-                                <dv-radio-container name="einschulung" class="input-element"
-                                                    ng-required="vm.anmeldungDTO.additionalKindQuestions"
-                                                    ng-model="vm.anmeldungDTO.einschulung"
-                                                    aria-described-by="einschulung-error">
-                                </dv-radio-container>
-                                <dv-error-messages input-id="einschulung" for="vm.form.einschulung.$error"
-                                                   class="error"></dv-error-messages>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!--Wohnhaft im gleichen Haushalt-->
-                    <div class="row">
-                        <div class="col-sm-12 dv-input-container-question">
-                            <div class="form-group" ng-show="vm.anmeldungDTO.additionalKindQuestions">
-                                <dv-input-container class="form-group">
-                                    <label class="md-no-float"
-                                           for="gleichemHaushalt">
-                                        <span data-translate="WOHNHAFT_IM_GLEICHEN_HAUSHALT" class="ebeguH1"> </span>
-                                        <dv-tooltip input-id="gleichemHaushalt"
-                                                    text="'WOHNHAFT_IM_GLEICHEN_HAUSHALT_HELP' | translate"></dv-tooltip>
-                                    </label>
-                                    <div class="dv-input-container-small" style="padding-right:32px;">
-                                        <input aria-describedby="gleichemHaushalt-error" id="gleichemHaushalt"
-                                               type="number" name="gleichemHaushalt"
-                                               ng-model="vm.anmeldungDTO.wohnhaftImGleichenHaushalt" max="100"
-                                               dv-max-length class="form-control"
-                                               ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
-                                               ng-required="vm.anmeldungDTO.additionalKindQuestions"
-                                               ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
-                                        <dv-error-messages input-id="gleichemHaushalt" for="vm.form.gleichemHaushalt.$error"
-                                                           class="error"></dv-error-messages>
+                                                <dv-radio-container name="einschulung" class="input-element"
+                                                                    ng-required="vm.anmeldungDTO.additionalKindQuestions"
+                                                                    ng-model="vm.anmeldungDTO.einschulung"
+                                                                    aria-described-by="einschulung-error">
+                                                </dv-radio-container>
+                                                <dv-error-messages input-id="einschulung"
+                                                                   for="vm.form.einschulung.$error"
+                                                                   class="error"></dv-error-messages>
+                                            </div>
+                                        </div>
                                     </div>
-                                </dv-input-container>
+
+                                    <!--Wohnhaft im gleichen Haushalt-->
+                                    <div class="row">
+                                        <div class="col-sm-12 dv-input-container-question">
+                                            <div class="form-group" ng-show="vm.anmeldungDTO.additionalKindQuestions">
+                                                <dv-input-container class="form-group">
+                                                    <label class="md-no-float"
+                                                           for="gleichemHaushalt">
+                                            <span data-translate="WOHNHAFT_IM_GLEICHEN_HAUSHALT"
+                                                  class="ebeguH1"> </span>
+                                                        <dv-tooltip input-id="gleichemHaushalt"
+                                                                    text="'WOHNHAFT_IM_GLEICHEN_HAUSHALT_HELP' | translate"></dv-tooltip>
+                                                    </label>
+                                                    <div class="dv-input-container-small" style="padding-right:32px;">
+                                                        <input aria-describedby="gleichemHaushalt-error"
+                                                               id="gleichemHaushalt"
+                                                               type="number" name="gleichemHaushalt"
+                                                               ng-model="vm.anmeldungDTO.wohnhaftImGleichenHaushalt"
+                                                               max="100"
+                                                               dv-max-length class="form-control"
+                                                               ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
+                                                               ng-required="vm.anmeldungDTO.additionalKindQuestions"
+                                                               ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
+                                                        <dv-error-messages input-id="gleichemHaushalt"
+                                                                           for="vm.form.gleichemHaushalt.$error"
+                                                                           class="error"></dv-error-messages>
+                                                    </div>
+                                                </dv-input-container>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <!--Institutionen, wenn editable ist oder der status falsche institution ist, als liste anzeigen-->
+                                    <div class="row">
+                                        <div class="col-sm-12 dv-input-container-medium form-group"
+                                             ng-if="vm.showInstitutionSelect()">
+                                            <label class="ebeguH1 required" data-translate="INSTITUTION"
+                                                   for="institution">
+                                            </label>
+                                            <div class="dv-select-style">
+                                                <select aria-describedby="institution-error" name="institution"
+                                                        id="institution"
+                                                        ng-model="vm.institution"
+                                                        class="form-control"
+                                                        ng-options="institutionSD as institutionSD.institution.name for institutionSD in vm.getInstitutionenSDList() | orderBy: 'institution.name'"
+                                                        ng-required="true"
+                                                        ng-change="vm.selectedInstitutionStammdatenChanged()">
+                                                </select>
+                                                <dv-error-messages input-id="institution"
+                                                                   for="vm.form.institution.$error"></dv-error-messages>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <!-- Tagesschule -->
+                                            <div ng-if="vm.displayModuleTagesschule()">
+                                                <betreuung-tagesschule-view betreuung="vm.anmeldungDTO.betreuung"
+                                                                            form="vm.form"
+                                                                            on-save="vm.anmeldenSchulamt()"
+                                                                            cancel="vm.backToHome()">
+                                                </betreuung-tagesschule-view>
+                                            </div>
+
+                                            <!-- Ferieninsel -->
+                                            <div ng-if="vm.displayModuleFerieninsel()">
+                                                <betreuung-ferieninsel-view betreuung="vm.anmeldungDTO.betreuung"
+                                                                            form="vm.form"
+                                                                            on-save="vm.anmeldenSchulamt()"
+                                                                            cancel="vm.backToHome()">
+                                                </betreuung-ferieninsel-view>
+                                            </div>
+                                        </div>
+                                        <div class="nav-row-betreuung">
+                                            <dv-loading-button button-click="vm.backToHome()"
+                                                               ng-if="!vm.institution"
+                                                               button-class="cancel" type="reset">
+                                                <span data-translate="ABBRECHEN_UPPER"></span>
+                                            </dv-loading-button>
+                                        </div>
+                                    </div>
+
+                                </form>
                             </div>
                         </div>
                     </div>
-
-
-                    <!--Institutionen, wenn editable ist oder der status falsche institution ist, als liste anzeigen-->
-                    <div class="row">
-                        <div class="col-sm-12 dv-input-container-medium form-group" ng-if="vm.showInstitutionSelect()">
-                            <label class="ebeguH1 required" data-translate="INSTITUTION" for="institution">
-                            </label>
-                            <div class="dv-select-style">
-                                <select aria-describedby="institution-error" name="institution" id="institution"
-                                        ng-model="vm.institution"
-                                        class="form-control"
-                                        ng-options="institutionSD as institutionSD.institution.name for institutionSD in vm.getInstitutionenSDList() | orderBy: 'institution.name'"
-                                        ng-required="true" ng-change="vm.selectedInstitutionStammdatenChanged()">
-                                </select>
-                                <dv-error-messages input-id="institution" for="vm.form.institution.$error"></dv-error-messages>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <!-- Tagesschule -->
-                            <div ng-if="vm.displayModuleTagesschule()">
-                                <betreuung-tagesschule-view betreuung="vm.anmeldungDTO.betreuung" form="vm.form"
-                                                            on-save="vm.anmeldenSchulamt()"
-                                                            cancel="vm.backToHome()">
-                                </betreuung-tagesschule-view>
-                            </div>
-
-                            <!-- Ferieninsel -->
-                            <div ng-if="vm.displayModuleFerieninsel()">
-                                <betreuung-ferieninsel-view betreuung="vm.anmeldungDTO.betreuung" form="vm.form"
-                                                            on-save="vm.anmeldenSchulamt()"
-                                                            cancel="vm.backToHome()">
-                                </betreuung-ferieninsel-view>
-                            </div>
-                        </div>
-                    </div>
-
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-
+    </md-content>
 </div>
