@@ -215,10 +215,10 @@ public class Fall extends AbstractEntity implements HasMandant, Searchable {
 	 */
 	@Nullable
 	public Benutzer getHauptVerantwortlicher() {
-		Benutzer empfaengerAmt = this.getVerantwortlicher();
-		if (empfaengerAmt == null) {
-			empfaengerAmt = this.getVerantwortlicherSCH();
+		Benutzer hauptverantwortlicher = this.getVerantwortlicher();
+		if (hauptverantwortlicher == null) {
+			hauptverantwortlicher = this.getVerantwortlicherSCH();
 		}
-		return empfaengerAmt;
+		return hauptverantwortlicher;
 	}
 }
