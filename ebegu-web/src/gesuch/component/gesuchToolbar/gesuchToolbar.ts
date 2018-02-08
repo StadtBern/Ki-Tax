@@ -21,11 +21,7 @@ import GesuchRS from '../../service/gesuchRS.rest';
 import {IStateService} from 'angular-ui-router';
 import TSAntragDTO from '../../../models/TSAntragDTO';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {
-    isAnyStatusOfVerfuegt,
-    isAtLeastFreigegebenOrFreigabequittung,
-    isStatusVerfuegenVerfuegt
-} from '../../../models/enums/TSAntragStatus';
+import {isAnyStatusOfVerfuegt, isAtLeastFreigegebenOrFreigabequittung, isStatusVerfuegenVerfuegt} from '../../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
@@ -102,16 +98,16 @@ export class GesuchToolbarController implements IDVFocusableController {
         'FallRS', 'DvDialog', 'unsavedWarningSharedService'];
 
     constructor(private ebeguUtil: EbeguUtil,
-        private gesuchRS: GesuchRS,
-        private $state: IStateService, private $scope: IScope,
-        private gesuchModelManager: GesuchModelManager,
-        private authServiceRS: AuthServiceRS,
-        private $mdSidenav: ng.material.ISidenavService,
-        private $log: ILogService,
-        private gesuchsperiodeRS: GesuchsperiodeRS,
-        private fallRS: FallRS,
-        private dvDialog: DvDialog,
-        private unsavedWarningSharedService: any) {
+                private gesuchRS: GesuchRS,
+                private $state: IStateService, private $scope: IScope,
+                private gesuchModelManager: GesuchModelManager,
+                private authServiceRS: AuthServiceRS,
+                private $mdSidenav: ng.material.ISidenavService,
+                private $log: ILogService,
+                private gesuchsperiodeRS: GesuchsperiodeRS,
+                private fallRS: FallRS,
+                private dvDialog: DvDialog,
+                private unsavedWarningSharedService: any) {
 
     }
 
@@ -390,6 +386,19 @@ export class GesuchToolbarController implements IDVFocusableController {
 
     public setAntragTypDatum(antragTypDatumKey: string) {
         let selectedAntragTypGesuch = this.antragTypList[antragTypDatumKey];
+        this.goToOpenGesuch(selectedAntragTypGesuch.antragId);
+    }
+
+    public setAntragTypDatumMobile(gesuchperiodeKey: string, antragTypDatumKey: string) {
+        let tmpAntragList: { [key: string]: TSAntragDTO } = {};
+        for (let i = 0; i < this.antragList.length; i++) {
+            let antrag: TSAntragDTO = this.antragList[i];
+            if (this.gesuchsperiodeList[gesuchperiodeKey][0].gesuchsperiodeGueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
+                let txt = this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum, antrag.laufnummer);
+                tmpAntragList[txt] = antrag;
+            }
+        }
+        let selectedAntragTypGesuch = tmpAntragList[antragTypDatumKey];
         this.goToOpenGesuch(selectedAntragTypGesuch.antragId);
     }
 

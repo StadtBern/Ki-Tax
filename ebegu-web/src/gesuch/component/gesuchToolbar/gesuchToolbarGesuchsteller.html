@@ -127,7 +127,8 @@
                 </span>
         </button>
 
-        <button ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.setAntragTypDatum(antragTypDatum)"
+        <button
+            ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.setAntragTypDatumMobile(gesuchsperiodeString,antragTypDatum)"
                 aria-label="{{antragTypDatum}}" ng-if="vmgs.showAntragTypListNavigationMenu()"
                 ng-repeat="antragTypDatum in vmgs.gesuchNavigationList[gesuchsperiodeString]"
                 ng-value="antragTypDatum" class="antrag-typ-datum-button">
