@@ -21,11 +21,7 @@ import GesuchRS from '../../service/gesuchRS.rest';
 import {IStateService} from 'angular-ui-router';
 import TSAntragDTO from '../../../models/TSAntragDTO';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {
-    isAnyStatusOfVerfuegt,
-    isAtLeastFreigegebenOrFreigabequittung,
-    isStatusVerfuegenVerfuegt
-} from '../../../models/enums/TSAntragStatus';
+import {isAnyStatusOfVerfuegt, isAtLeastFreigegebenOrFreigabequittung, isStatusVerfuegenVerfuegt} from '../../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
@@ -40,6 +36,7 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 
 import {ShowTooltipController} from '../../dialog/ShowTooltipController';
 import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
+import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 import IPromise = angular.IPromise;
 import IScope = angular.IScope;
 
@@ -96,22 +93,24 @@ export class GesuchToolbarController implements IDVFocusableController {
     mutierenPossibleForCurrentAntrag: boolean = false;
     erneuernPossibleForCurrentAntrag: boolean = false;
     neuesteGesuchsperiode: TSGesuchsperiode;
+    amountNewMitteilungenGS: number = 0;
 
     static $inject = ['EbeguUtil', 'GesuchRS', '$state',
         '$scope', 'GesuchModelManager', 'AuthServiceRS', '$mdSidenav', '$log', 'GesuchsperiodeRS',
-        'FallRS', 'DvDialog', 'unsavedWarningSharedService'];
+        'FallRS', 'DvDialog', 'unsavedWarningSharedService', 'MitteilungRS'];
 
     constructor(private ebeguUtil: EbeguUtil,
-        private gesuchRS: GesuchRS,
-        private $state: IStateService, private $scope: IScope,
-        private gesuchModelManager: GesuchModelManager,
-        private authServiceRS: AuthServiceRS,
-        private $mdSidenav: ng.material.ISidenavService,
-        private $log: ILogService,
-        private gesuchsperiodeRS: GesuchsperiodeRS,
-        private fallRS: FallRS,
-        private dvDialog: DvDialog,
-        private unsavedWarningSharedService: any) {
+                private gesuchRS: GesuchRS,
+                private $state: IStateService, private $scope: IScope,
+                private gesuchModelManager: GesuchModelManager,
+                private authServiceRS: AuthServiceRS,
+                private $mdSidenav: ng.material.ISidenavService,
+                private $log: ILogService,
+                private gesuchsperiodeRS: GesuchsperiodeRS,
+                private fallRS: FallRS,
+                private dvDialog: DvDialog,
+                private unsavedWarningSharedService: any,
+                private mitteilungRS: MitteilungRS) {
 
     }
 
@@ -124,6 +123,17 @@ export class GesuchToolbarController implements IDVFocusableController {
             // Die neueste ist zuoberst
             this.neuesteGesuchsperiode = response[0];
         });
+    }
+
+    private updateAmountNewMitteilungenGS(fallid: string): void {
+        this.mitteilungRS.getAmountNewMitteilungenForCurrentRolle(fallid).then((response: number) => {
+            this.amountNewMitteilungenGS = response;
+        });
+    }
+
+    public getAmountNewMitteilungenGS(): string {
+
+        return '(' + this.amountNewMitteilungenGS + ')';
     }
 
     public toggleSidenav(componentId: string): void {
@@ -226,6 +236,7 @@ export class GesuchToolbarController implements IDVFocusableController {
                 this.antragMutierenPossible();
                 this.antragErneuernPossible();
             });
+            this.updateAmountNewMitteilungenGS(this.getGesuch().fall.id);
         } else if (this.fallid) {
             this.gesuchRS.getAllAntragDTOForFall(this.fallid).then((response) => {
                 this.antragList = angular.copy(response);
@@ -252,6 +263,7 @@ export class GesuchToolbarController implements IDVFocusableController {
                     }
                 }
             });
+            this.updateAmountNewMitteilungenGS(this.fallid);
         } else {
             this.resetNavigationParameters();
         }
