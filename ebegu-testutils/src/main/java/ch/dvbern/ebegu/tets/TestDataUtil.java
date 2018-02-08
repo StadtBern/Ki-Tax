@@ -474,6 +474,17 @@ public final class TestDataUtil {
 		return ep;
 	}
 
+	public static Betreuung createAnmeldungTagesschule(KindContainer kind) {
+		Betreuung betreuung = new Betreuung();
+		betreuung.setInstitutionStammdaten(createInstitutionStammdatenTagesschuleBern());
+		betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
+		betreuung.setBetreuungspensumContainers(new TreeSet<>());
+		betreuung.setAbwesenheitContainers(new HashSet<>());
+		betreuung.setKind(kind);
+		betreuung.setBelegungTagesschule(createDefaultBelegungTagesschule());
+		return betreuung;
+	}
+
 	public static Betreuung createDefaultBetreuung() {
 		Betreuung betreuung = new Betreuung();
 		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
