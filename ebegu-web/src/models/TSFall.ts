@@ -15,6 +15,7 @@
 
 import TSAbstractEntity from './TSAbstractEntity';
 import TSUser from './TSUser';
+import EbeguUtil from '../utils/EbeguUtil';
 
 export default class TSFall extends TSAbstractEntity {
 
@@ -71,5 +72,16 @@ export default class TSFall extends TSAbstractEntity {
 
     set besitzer(value: TSUser) {
         this._besitzer = value;
+    }
+
+    public getHauptverantwortlicher(): TSUser {
+        if (this.verantwortlicher) {
+            return this.verantwortlicher;
+        }
+        return this.verantwortlicherSCH;
+    }
+
+    public isHauptverantwortlicherSchulamt(): boolean {
+        return EbeguUtil.isNotNullOrUndefined(this.verantwortlicherSCH) && EbeguUtil.isNullOrUndefined(this.verantwortlicher);
     }
 }

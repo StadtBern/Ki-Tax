@@ -1,0 +1,1 @@
+Logfiles aus Int-Umgebung der Stadt Bern hier einfügen
