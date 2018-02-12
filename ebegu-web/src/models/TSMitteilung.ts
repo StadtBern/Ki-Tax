@@ -160,4 +160,8 @@ export default class TSMitteilung extends TSAbstractEntity {
     public getEmpfaengerAmt(): TSAmt {
         return this.empfaenger.amt;
     }
+
+    public getSenderAmt(): TSAmt {
+        return this.sender.amt;
+    }
 }

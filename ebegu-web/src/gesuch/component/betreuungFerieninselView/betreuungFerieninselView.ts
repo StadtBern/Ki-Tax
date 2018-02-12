@@ -217,25 +217,11 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     }
 
     public displayWeekRow(tag: TSBelegungFerieninselTag, index: number, dayArray: Array<TSBelegungFerieninselTag>): boolean {
-
-        if (this.displayMonthRow(tag, index, dayArray)) {
-            return false;
-        }
         if (dayArray[index + 1]) {
-            if (tag.tag.weekday() === 1 && dayArray[index + 1].tag.weekday() === 5 && dayArray[index + 1].tag.diff(tag.tag, 'days') === 11) {
-                return false;
-            }
             return dayArray[index + 1].tag.diff(tag.tag, 'days') > 7;
         } else {
             return false;
         }
     }
 
-    public displayMonthRow(tag: TSBelegungFerieninselTag, index: number, dayArray: Array<TSBelegungFerieninselTag>): boolean {
-        if (dayArray[index + 1]) {
-            return !tag.tag.isSame(dayArray[index + 1].tag, 'month');
-        } else {
-            return false;
-        }
-    }
 }

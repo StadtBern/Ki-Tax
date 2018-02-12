@@ -58,7 +58,7 @@ md-checkbox.dv-ebegu-calendar {
     &:last-of-type {
         margin-right: 0;
     }
-    &[disabled] {
+    &[disabled], &:disabled {
         color: @contrast-lightest;
         .md-label {
             span {
@@ -70,10 +70,8 @@ md-checkbox.dv-ebegu-calendar {
                 border: none!important;
             }
         }
-        &.md-checked {
-            .md-icon {
-                background: @contrast-dark;
-            }
+        .md-icon {
+            background: @contrast-dark;
         }
     }
     &.md-focused, &:focus {
@@ -180,7 +178,7 @@ md-checkbox.dv-ebegu-calendar--tagesschule{
     &:last-of-type {
         margin-right: 0;
     }
-    &[disabled] {
+    &[disabled],&:disabled {
         color: @contrast-lightest;
         .md-label {
             span {
@@ -192,10 +190,8 @@ md-checkbox.dv-ebegu-calendar--tagesschule{
                 border: none!important;
             }
         }
-        &.md-checked {
-            .md-icon {
-                background: @contrast-dark;
-            }
+        .md-icon {
+            background: @contrast-dark;
         }
     }
     &.md-focused, &:focus {
