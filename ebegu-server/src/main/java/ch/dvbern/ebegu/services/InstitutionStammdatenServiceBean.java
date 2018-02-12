@@ -44,13 +44,16 @@ import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
 import ch.dvbern.ebegu.entities.Institution_;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
+
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Service fuer InstitutionStammdaten
@@ -74,7 +77,7 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.ADMINISTRATOR_SCHULAMT })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, ADMINISTRATOR_SCHULAMT })
 	public InstitutionStammdaten saveInstitutionStammdaten(@Nonnull InstitutionStammdaten institutionStammdaten) {
 		Objects.requireNonNull(institutionStammdaten);
 		return persistence.merge(institutionStammdaten);
@@ -97,7 +100,7 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	}
 
 	@Override
-	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, ADMINISTRATOR_SCHULAMT })
 	public void removeInstitutionStammdaten(@Nonnull String institutionStammdatenId) {
 		Validate.notNull(institutionStammdatenId);
 		Optional<InstitutionStammdaten> institutionStammdatenToRemove = findInstitutionStammdaten(institutionStammdatenId);

@@ -43,7 +43,7 @@
                                 <td ng-bind="row.name" class="ellipsis" ellipsis-tooltip="{{row.name}}"></td>
                                 <td>
                                     <dv-loading-button type="button" button-click="vm.removeInstitution(row)"
-                                                       button-class="pull-right" button-disabled="!vm.isAnyAdminRole()">
+                                                       button-class="pull-right" button-disabled="vm.isReadonly()">
                                         <i class="fa fa-minus">
                                         </i>
                                     </dv-loading-button>
