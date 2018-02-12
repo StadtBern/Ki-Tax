@@ -15,6 +15,9 @@
 
 package ch.dvbern.ebegu.tests;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,9 +26,16 @@ import javax.inject.Inject;
 
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.WizardStep;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
+import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.services.FallService;
+import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.KindService;
+import ch.dvbern.ebegu.services.WizardStepService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
@@ -53,6 +63,15 @@ public class KindServiceBeanTest extends AbstractEbeguLoginTest {
 	@Inject
 	private FallService fallService;
 
+	@Inject
+	private InstitutionService institutionService;
+
+	@Inject
+	private GesuchService gesuchService;
+
+	@Inject
+	private WizardStepService wizardStepService;
+
 	@Test
 	public void createAndUpdatekindTest() {
 		Assert.assertNotNull(kindService);
@@ -76,18 +95,32 @@ public class KindServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void removekindTest() {
-		Assert.assertNotNull(kindService);
-		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
-		KindContainer persitedKind = persistKind(gesuch);
-		Optional<KindContainer> kind = kindService.findKind(persitedKind.getId());
-		Assert.assertTrue(kind.isPresent());
-		kindService.removeKind(kind.get().getId());
-		Optional<KindContainer> kindAfterRemove = kindService.findKind(persitedKind.getId());
-		Assert.assertFalse(kindAfterRemove.isPresent());
+	public void addKindInMutationTest() {
+		Gesuch erstgesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25), AntragStatus.VERFUEGT);
+		erstgesuch.setGueltig(true);
+		erstgesuch.setTimestampVerfuegt(LocalDateTime.now());
+		erstgesuch = gesuchService.updateGesuch(erstgesuch, true, null);
+		Assert.assertEquals(2, erstgesuch.getKindContainers().size());
 
-		gesuch = persistence.find(Gesuch.class, gesuch.getId());
-		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, gesuch.getGesuchBetreuungenStatus());
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(erstgesuch.getId(), LocalDate.of(1980, Month.MARCH, 25));
+		if (gesuchOptional.isPresent()) {
+			Gesuch mutation = gesuchOptional.get();
+
+			mutation = gesuchService.createGesuch(mutation);
+			Assert.assertEquals(2, mutation.getKindContainers().size());
+
+			WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(mutation.getId(), WizardStepName.KINDER);
+			Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
+
+			KindContainer neuesKindInMutation = TestDataUtil.createKindContainerWithoutFachstelle();
+
+			neuesKindInMutation.setGesuch(mutation);
+			kindService.saveKind(neuesKindInMutation);
+			Assert.assertEquals(3, kindService.findAllKinderFromGesuch(mutation.getId()).size());
+
+			wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(mutation.getId(), WizardStepName.KINDER);
+			Assert.assertEquals(WizardStepStatus.MUTIERT, wizardStepFromGesuch.getWizardStepStatus());
+		}
 	}
 
 	@Test

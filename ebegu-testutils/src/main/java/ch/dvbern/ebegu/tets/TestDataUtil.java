@@ -412,14 +412,16 @@ public final class TestDataUtil {
 		return instStammdaten;
 	}
 
-	public static Kind createDefaultKind() {
+	private static Kind createDefaultKind(boolean addFachstelle) {
 		Kind kind = new Kind();
 		kind.setNachname("Kind_Mustermann");
 		kind.setVorname("Kind_Max");
 		kind.setGeburtsdatum(LocalDate.of(2010, 12, 12));
 		kind.setGeschlecht(Geschlecht.WEIBLICH);
 		kind.setKinderabzug(Kinderabzug.GANZER_ABZUG);
-		kind.setPensumFachstelle(createDefaultPensumFachstelle());
+		if (addFachstelle) {
+			kind.setPensumFachstelle(createDefaultPensumFachstelle());
+		}
 		kind.setFamilienErgaenzendeBetreuung(true);
 		kind.setMutterspracheDeutsch(true);
 		kind.setEinschulung(true);
@@ -436,10 +438,21 @@ public final class TestDataUtil {
 
 	public static KindContainer createDefaultKindContainer() {
 		KindContainer kindContainer = new KindContainer();
-		Kind defaultKindGS = createDefaultKind();
+		Kind defaultKindGS = createDefaultKind(true);
 		defaultKindGS.setNachname("GS_Kind");
 		kindContainer.setKindGS(defaultKindGS);
-		Kind defaultKindJA = createDefaultKind();
+		Kind defaultKindJA = createDefaultKind(true);
+		defaultKindJA.setNachname("JA_Kind");
+		kindContainer.setKindJA(defaultKindJA);
+		return kindContainer;
+	}
+
+	public static KindContainer createKindContainerWithoutFachstelle() {
+		KindContainer kindContainer = new KindContainer();
+		Kind defaultKindGS = createDefaultKind(false);
+		defaultKindGS.setNachname("GS_Kind");
+		kindContainer.setKindGS(defaultKindGS);
+		Kind defaultKindJA = createDefaultKind(false);
 		defaultKindJA.setNachname("JA_Kind");
 		kindContainer.setKindJA(defaultKindJA);
 		return kindContainer;
