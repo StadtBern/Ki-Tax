@@ -185,6 +185,7 @@ export class GesuchToolbarController implements IDVFocusableController {
                 if (newValue !== oldValue) {
                     if (this.fallid) {
                         this.updateAntragDTOList();
+                        this.updateAmountNewMitteilungenGS(this.getGesuch().fall.id);
                     } else {
                         // Fall-ID hat auf undefined gewechselt -> Fall zuruecksetzen
                         this.fall = undefined;
@@ -236,7 +237,6 @@ export class GesuchToolbarController implements IDVFocusableController {
                 this.antragMutierenPossible();
                 this.antragErneuernPossible();
             });
-            this.updateAmountNewMitteilungenGS(this.getGesuch().fall.id);
         } else if (this.fallid) {
             this.gesuchRS.getAllAntragDTOForFall(this.fallid).then((response) => {
                 this.antragList = angular.copy(response);

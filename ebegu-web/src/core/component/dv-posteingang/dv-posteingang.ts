@@ -47,10 +47,10 @@ export class DvPosteingangController {
         });
 
         this.$rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
-            if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerJugendamtRoles())) {
+            if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles())) {
                 this.getAmountNewMitteilungen(); // call it a first time
 
-                if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) { // not for GS
+                if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorOrAmtRole())) { // not for GS
                     // call every 5 minutes (5*60*1000)
                     this.reloadAmountMitteilungenInterval = window.setInterval(() => this.getAmountNewMitteilungen(), 300000);
                 }
