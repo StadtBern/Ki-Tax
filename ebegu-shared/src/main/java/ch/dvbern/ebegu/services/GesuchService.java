@@ -23,7 +23,6 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
-import javax.ejb.Asynchronous;
 import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
@@ -372,7 +371,6 @@ public interface GesuchService {
 	 * Diese Methode wird asynchron ausgefuehrt, da das ermitteln des jeweils letzten Gesuchs pro
 	 * Fall sehr lange geht.
 	 */
-	@Asynchronous
 	void sendMailsToAllGesuchstellerOfLastGesuchsperiode(@Nonnull Gesuchsperiode lastGesuchsperiode, @Nonnull Gesuchsperiode nextGesuchsperiode);
 
 	/**

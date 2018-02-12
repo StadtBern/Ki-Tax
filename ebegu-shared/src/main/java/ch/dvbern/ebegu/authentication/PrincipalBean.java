@@ -26,7 +26,6 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.transaction.TransactionSynchronizationRegistry;
 
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Mandant;
@@ -53,8 +52,6 @@ public class PrincipalBean {
 
 	@Inject
 	private BenutzerService benutzerService;
-	@Resource
-	private TransactionSynchronizationRegistry txReg;
 
 	private Benutzer benutzer = null;
 	private Mandant mandant = null;
@@ -121,7 +118,6 @@ public class PrincipalBean {
 	}
 
 	public boolean isCallerInRole(@Nonnull String roleName) {
-		LOGGER.trace("isCallerInRole: {}/{}", txReg.getTransactionKey(), txReg.getRollbackOnly());
 		checkNotNull(roleName);
 		return sessionContext.isCallerInRole(roleName);
 	}

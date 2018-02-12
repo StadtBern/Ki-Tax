@@ -1444,6 +1444,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Asynchronous
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public void sendMailsToAllGesuchstellerOfLastGesuchsperiode(@Nonnull Gesuchsperiode lastGesuchsperiode, @Nonnull Gesuchsperiode nextGesuchsperiode) {
 		List<Gesuch> antraegeOfLastYear = new ArrayList<>();
