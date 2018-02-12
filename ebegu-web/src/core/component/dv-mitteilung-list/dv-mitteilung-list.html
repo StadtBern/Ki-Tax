@@ -124,12 +124,12 @@
                                 <div class="message-delegation">
                                     <button
                                         ng-click="$event.stopPropagation();vm.mitteilungUebergebenAnJugendamt(mitteilung)"
-                                        ng-if="vm.canUebergebenAnJugendamt(mitteilung)"><span
-                                        data-translate="MITTEILUNG_DELEGATION_AN_JA"></span></button>
+                                        ng-if="vm.canUebergebenAnJugendamt(mitteilung)">
+                                        <span data-translate="MITTEILUNG_DELEGATION_AN_JA"></span>
+                                    </button>
                                     <button
                                         ng-click="$event.stopPropagation();vm.mitteilungUebergebenAnSchulamt(mitteilung)"
-                                        ng-if="vm.canUebergebenAnSchulamt(mitteilung)"
-                                        data-translate="MITTEILUNG_DELEGATION_AN_SCH">
+                                        ng-if="vm.canUebergebenAnSchulamt(mitteilung)">
                                         <span data-translate="MITTEILUNG_DELEGATION_AN_SCH"></span>
                                     </button>
                                 </div>
