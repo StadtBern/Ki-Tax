@@ -12,12 +12,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 @import '../variables.less';
 @import '../mixins.less';
 
 .checkbox {
-    margin: 0 0;
+    margin: 0 0 3rem;
     height: auto;
     font-size: 0;
     dv-error-messages {
@@ -41,6 +40,269 @@
         margin-top: -3rem;
     }
 }
+
+md-checkbox.dv-ebegu-calendar {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    //float:left;
+    font-size: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    margin: 0;
+    &:last-of-type {
+        margin-right: 0;
+    }
+    &[disabled], &:disabled {
+        color: @contrast-lightest;
+        .md-label {
+            span {
+                color: @contrast-lightest;
+            }
+        }
+        &.md-checked, &:not(.md-checked) {
+            .md-icon {
+                border: none!important;
+            }
+        }
+        .md-icon {
+            background: @contrast-dark;
+        }
+    }
+    &.md-focused, &:focus {
+        .md-icon {
+            transition: none;
+            box-shadow: 0 0 0 2px @contrast-darkest;
+
+        }
+    }
+    .md-container {
+        height: 100%;
+        width: 100%;
+        display: block;
+        background: @contrast-lightest;
+        &:before {
+            content: none !important;
+        }
+    }
+    .md-label {
+        position: relative!important;
+        margin-left: 0;
+        flex:1;
+        height:unset;
+        min-height: 1.7rem;
+        line-height: 1.7rem;
+        vertical-align: top;
+        text-align: center;
+        font-size: 0;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        max-height: none;
+        flex-direction: column;
+
+        span {
+            line-height:unset;
+            height: auto;
+            min-height: unset;
+            display: unset;
+            margin:unset;
+            padding: unset;
+            border-bottom: none;
+            vertical-align: unset;
+        }
+    }
+    .md-icon, &:not(.md-checked) .md-icon {
+        display: block;
+        border: none;
+        border-radius: 0;
+        width: auto;
+        height: auto;
+        line-height: 1.7rem;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+    }
+    &.md-checked {
+        .md-label{
+            color:@contrast-lightest;
+            span{
+                border-bottom-color: @contrast-lightest;
+            }
+        }
+        .md-icon {
+            background-color: @contrast-dark;
+            top: 0;
+            &:after {
+                line-height:normal;
+                position: absolute;
+                font-family: 'FontAwesome';
+                left: 0;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+               bottom:unset!important;
+                width: auto;
+                height: auto;
+                border-width: 0;
+                border-radius: 0;
+                content: "";
+                text-align: center;
+                vertical-align: middle;
+                color: @contrast-lightest;
+                font-size:2rem;
+                display: none !important;
+            }
+        }
+    }
+}
+md-checkbox.dv-ebegu-calendar--tagesschule{
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    //float:left;
+    font-size: 0;
+    height: 100%;
+    width: 100%;
+    display: block;
+    margin: 0;
+    &:last-of-type {
+        margin-right: 0;
+    }
+    &[disabled],&:disabled {
+        color: @contrast-lightest;
+        .md-label {
+            span {
+                color: @contrast-lightest;
+            }
+        }
+        &.md-checked, &:not(.md-checked) {
+            .md-icon {
+                border: none!important;
+            }
+        }
+        .md-icon {
+            background: @contrast-dark;
+        }
+    }
+    &.md-focused, &:focus {
+        .md-icon {
+            //-webkit-box-shadow: 0 0 4px 0 #858585;
+            //box-shadow: 0 0 4px 0 #858585;
+            //outline: 2px solid @contrast-darkest;
+            transition: none;
+            box-shadow: 0 0 0 2px @contrast-darkest;
+
+        }
+    }
+    .md-container {
+        height: 100%;
+        width: 100%;
+        display: block;
+        background: @contrast-lightest;
+        &:before {
+            content: none !important;
+        }
+    }
+    .md-label {
+        position: relative!important;
+        display: block;
+        margin-left: 0;
+        height: auto;
+        min-height: 1.7rem;
+        line-height: 1.7rem;
+        vertical-align: top;
+        text-align: center;
+        font-size: 0;
+
+        span {
+            .ebeguH3();
+            line-height: 1.7rem;
+            height: auto;
+            min-height: 1.7rem;
+            display: block;
+            margin:0;
+            padding: 1rem 0;
+            border-bottom: 1px solid @contrast;
+            vertical-align: middle;
+        }
+    }
+    .md-icon, &:not(.md-checked) .md-icon {
+        display: block;
+        border: none;
+        border-radius: 0;
+        width: auto;
+        height: auto;
+        line-height: 1.7rem;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        &:after {
+            line-height:normal;
+            position: absolute;
+            font-family: 'FontAwesome';
+            left: 0;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            bottom:unset!important;
+            width: auto;
+            height: auto;
+            border-width: 0;
+            border-radius: 0;
+            content:"\f05d";
+            text-align: center;
+            vertical-align: middle;
+            color: @contrast-lighter;
+            font-size:3.5rem;
+            display: block !important;
+        }
+    }
+    &.md-checked {
+        .md-label{
+            color:@contrast-lightest;
+            span{
+                border-bottom-color: @contrast-lightest;
+            }
+        }
+        .md-icon {
+            background-color: @contrast-dark;
+            top: 0;
+            &:after {
+                line-height:normal;
+                position: absolute;
+                font-family: 'FontAwesome';
+                left: 0;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                bottom:unset!important;
+                width: auto;
+                height: auto;
+                border-width: 0;
+                border-radius: 0;
+                content: "\f058";
+                text-align: center;
+                vertical-align: middle;
+                color: @contrast-lightest;
+                font-size:3.5rem;
+                display: block !important;
+            }
+        }
+    }
+}
+
 md-checkbox {
     //float:left;
     font-size: 0;
@@ -54,7 +316,7 @@ md-checkbox {
     }
     margin-right: 4rem;
     margin-top: 0;
-    margin-bottom: 3rem;
+    margin-bottom: 0;
     &[disabled] {
         color: @contrast-dark;
         .md-label {
@@ -111,7 +373,7 @@ md-checkbox {
             vertical-align: middle;
         }
     }
-    .md-icon, &:not(.md-checked) .md-icon{
+    .md-icon, &:not(.md-checked) .md-icon {
         border: 1px solid @contrast-darkest;
         border-radius: 0.2rem;
         width: auto;

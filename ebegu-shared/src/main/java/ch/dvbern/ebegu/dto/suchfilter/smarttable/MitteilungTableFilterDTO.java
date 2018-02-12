@@ -1,6 +1,6 @@
 /*
  * Ki-Tax: System for the management of external childcare subsidies
- * Copyright (C) 2017 City of Bern Switzerland
+ * Copyright (C) 2018 City of Bern Switzerland
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -26,14 +26,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * Aggregat Klasse zum deserialisieren/serialisieren des gesamten SmartTable-Filterobjekts
  */
-@XmlRootElement(name = "fallsucheFilter")
+@XmlRootElement(name = "mitteilungSucheFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AntragTableFilterDTO implements Serializable {
+public class MitteilungTableFilterDTO implements Serializable {
 
 	private static final long serialVersionUID = 404959569485575365L;
 	private PaginationDTO pagination;
 
-	private AntragSearchDTO search;
+	private MitteilungSearchDTO search;
 
 	private SortDTO sort;
 
@@ -45,11 +45,11 @@ public class AntragTableFilterDTO implements Serializable {
 		this.pagination = pagination;
 	}
 
-	public AntragSearchDTO getSearch() {
+	public MitteilungSearchDTO getSearch() {
 		return search;
 	}
 
-	public void setSearch(AntragSearchDTO search) {
+	public void setSearch(MitteilungSearchDTO search) {
 		this.search = search;
 	}
 
