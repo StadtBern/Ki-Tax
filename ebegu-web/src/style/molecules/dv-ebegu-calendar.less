@@ -10,7 +10,7 @@
     &__wrapper-small-blank {
         min-height: 1px;
         width: 0;
-        display:none;
+        display: none;
     }
     &__wrapper {
         min-height: 1px;
@@ -99,10 +99,10 @@
         }
         &-name {
             font-weight: bold;
-            margin-right:1rem;
+            margin-right: 1rem;
         }
     }
-    &__row--week, &__row--month {
+    &__row--week {
         flex: 0 1 100%;
         background: @contrast-light;
         border-bottom: 2px solid @contrast;
@@ -110,9 +110,6 @@
     }
     &__row--week {
         padding-top: 5%;
-    }
-    &__row--month {
-        padding-top: 10%;
     }
     &__day {
         flex: 0 1 20%;
@@ -162,7 +159,7 @@
 @media @mq-xs {
     .dv-ebegu-calendar {
 
-        &__wrapper-small, &__wrapper-small-blank{
+        &__wrapper-small, &__wrapper-small-blank {
             min-height: 1px;
             display: block;
             width: 20rem;
