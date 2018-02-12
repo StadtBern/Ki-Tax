@@ -19,7 +19,7 @@ import java.util.List;
 
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
 
-public interface ManhungPrint {
+public interface MahnungPrint {
 
 	// ****************************************************************************************************************
 	// Achtung, die Methodennamen in dieser Klassen duerfen nicht veraendert werden. Sie muessen identisch sein
