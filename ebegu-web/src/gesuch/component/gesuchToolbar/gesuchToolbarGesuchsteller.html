@@ -118,29 +118,29 @@
         <i class="fa fa-times" aria-hidden="true"></i>
     </button>
     <div class="gesuchsperioden-container"
-         ng-repeat="gesuchsperiodeString in vmgs.getKeys(vmgs.gesuchNavigationList)"layout="column"
+         ng-repeat="gesuchsperiodeString in vmgs.getKeys(vmgs.gesuchNavigationList)" layout="column"
          layout-align="start center">
 
         <button ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.setGesuchsperiode(gesuchsperiodeString)"
                 aria-label="{{gesuchsperiodeString}}" class="gesuchsperiode-button">
-                <span>
-                    {{gesuchsperiodeString}}
-                </span>
+			<span>
+				{{gesuchsperiodeString}}
+			</span>
         </button>
 
         <button
-            ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.setAntragTypDatumMobile(gesuchsperiodeString,antragTypDatum)"
-                aria-label="{{antragTypDatum}}" ng-if="vmgs.showAntragTypListNavigationMenu()"
-                ng-repeat="antragTypDatum in vmgs.gesuchNavigationList[gesuchsperiodeString]"
-                ng-value="antragTypDatum" class="antrag-typ-datum-button">
-                                <span>
-                                    {{antragTypDatum}}
-                                </span>
+            ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.setAntragTypDatumMobile(gesuchsperiodeString, antragTypDatum)"
+            aria-label="{{antragTypDatum}}" ng-if="vmgs.showAntragTypListNavigationMenu()"
+            ng-repeat="antragTypDatum in vmgs.gesuchNavigationList[gesuchsperiodeString]"
+            ng-value="antragTypDatum" class="antrag-typ-datum-button">
+			<span>
+				{{antragTypDatum}}
+			</span>
         </button>
     </div>
 
 
-    <span flex=""></span>
+     <span flex=""></span>
     <div dv-show-element
          dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerJugendamtRoles()" class="gesuchsperioden-container">
         <button ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.openMitteilungen()"
