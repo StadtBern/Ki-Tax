@@ -96,7 +96,7 @@
                                     <dv-loading-button type="button"
                                                        button-click="vm.removeInstitutionStammdaten(row)"
                                                        button-class="dv-btn-sm"
-                                                       button-disabled="vm.isReadonly()">
+                                                       button-disabled="!vm.isAnyAdminRole()">
                                         <i class="fa fa-minus">
                                         </i>
                                     </dv-loading-button>
@@ -110,7 +110,7 @@
                         </table>
 
                         <!--Knöpfe unterhalb der Tabelle zum Anzeigen aller Institutions-Stammdaten-->
-                        <div class="row" ng-if="!vm.isReadonly()">
+                        <div class="row" ng-if="vm.isAnyAdminRole()">
                             <div class="col-md-12">
                                 <div class="marginTop20">
                                     <!--Knopf zum hinzufügen einer InstitutionStammdaten zur Institution-->
