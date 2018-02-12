@@ -59,7 +59,7 @@ export class CreateAngebotListViewController {
     }
 
     $onInit() {
-        this.anmeldungDTO = new TSAnmeldungDTO;
+        this.anmeldungDTO = new TSAnmeldungDTO();
         if (this.$stateParams.type === 'TS') {
             this.ts = true;
         } else if (this.$stateParams.type === 'FI') {
@@ -168,6 +168,8 @@ export class CreateAngebotListViewController {
                 }).then(() => {
                     this.backToHome();
                 });
+            }).catch(() => {
+                this.anmeldungDTO.betreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
             });
         } else if (this.fi) {
             this.anmeldungDTO.betreuung.betreuungsstatus = TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST;
@@ -178,6 +180,8 @@ export class CreateAngebotListViewController {
                 }).then(() => {
                     this.backToHome();
                 });
+            }).catch(() => {
+                this.anmeldungDTO.betreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
             });
 
         }
