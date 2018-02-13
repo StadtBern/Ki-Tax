@@ -35,6 +35,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -85,6 +86,9 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 	@Inject
 	private MailService mailService;
 
+	@Inject
+	private EbeguConfiguration ebeguConfiguration;
+
 
 	private Map<String, List<Zahlungsposition>> zahlungenIstMap = null;
 	private final List<String> potentielleFehlerList = new ArrayList<>();
@@ -109,8 +113,10 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 	private void sendeMail() {
 		LOGGER.info("Sende Mail...");
 		try {
+			final String serverName = ebeguConfiguration.getHostname();
 			if (potentielleFehlerList.isEmpty()) {
-				mailService.sendMessage("Zahlungslauf: Keine Fehler gefunden", "Keine Fehler gefunden", "eberhard.gugler@dvbern.ch");
+				mailService.sendMessage("Zahlungslauf: Keine Fehler gefunden (" + serverName + ')',
+					"Keine Fehler gefunden", "eberhard.gugler@dvbern.ch");
 			} else {
 				StringBuilder sb = new StringBuilder();
 				sb.append("Zusammenfassung: \n");
@@ -124,7 +130,8 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 					sb.append(s);
 					sb.append("\n*************************************\n");
 				}
-				mailService.sendMessage("Potentieller Fehler im Zahlungslauf", sb.toString(), "eberhard.gugler@dvbern.ch");
+				mailService.sendMessage("Potentieller Fehler im Zahlungslauf (" + serverName + ')',
+					sb.toString(), "eberhard.gugler@dvbern.ch");
 			}
 		} catch (MailException e) {
 			LOGGER.error("Senden der Mail nicht erfolgreich", e);
