@@ -444,13 +444,14 @@ dv-accordion.ewksubsub {
     &.verfuegenView.NICHT_EINGETRETEN {
         border-bottom: 1px solid @contrast-darkest;
     }
-    &.BESTAETIGT .betreuung-bar {
+
+    &.BESTAETIGT .betreuung-bar ,&.SCHULAMT_ANMELDUNG_UEBERNOMMEN .betreuung-bar {
         border-color: @success;
     }
-    &.WARTEN .betreuung-bar {
+    &.WARTEN .betreuung-bar ,&.SCHULAMT_FALSCHE_INSTITUTION .betreuung-bar ,&.SCHULAMT_ANMELDUNG_ABGELEHNT .betreuung-bar {
         border-color: @warning;
     }
-    &.ABGEWIESEN .betreuung-bar {
+    &.ABGEWIESEN .betreuung-bar{
         border-color: @danger;
     }
     &.VERFUEGT .betreuung-bar {

@@ -74,6 +74,7 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 	public ErwerbspensumContainer saveErwerbspensum(@Valid @Nonnull ErwerbspensumContainer erwerbspensumContainer, Gesuch gesuch) {
 		Objects.requireNonNull(erwerbspensumContainer);
 		final ErwerbspensumContainer mergedErwerbspensum = persistence.merge(erwerbspensumContainer);
+		mergedErwerbspensum.getGesuchsteller().addErwerbspensumContainer(mergedErwerbspensum);
 		wizardStepService.updateSteps(gesuch.getId(), null, mergedErwerbspensum.getErwerbspensumJA(), WizardStepName.ERWERBSPENSUM);
 		return mergedErwerbspensum;
 	}
@@ -125,12 +126,14 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, GESUCHSTELLER, ADMINISTRATOR_SCHULAMT, SCHULAMT })
 	public void removeErwerbspensum(@Nonnull String erwerbspensumContainerID, Gesuch gesuch) {
 		Objects.requireNonNull(erwerbspensumContainerID);
-		Optional<ErwerbspensumContainer> ewpCont = this.findErwerbspensum(erwerbspensumContainerID);
-		persistence.remove(ewpCont
-			.orElseThrow(
-				() -> new EbeguEntityNotFoundException("removeErwerbspensum", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, erwerbspensumContainerID)
-			)
+		ErwerbspensumContainer ewpCont = this.findErwerbspensum(erwerbspensumContainerID).orElseThrow(
+			() -> new EbeguEntityNotFoundException("removeErwerbspensum", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, erwerbspensumContainerID)
 		);
+		GesuchstellerContainer gesuchsteller = ewpCont.getGesuchsteller();
+		persistence.remove(ewpCont);
+
+		// the kind needs to be removed from the object as well
+		gesuchsteller.getErwerbspensenContainersNotEmpty().removeIf(k -> k.getId().equalsIgnoreCase(erwerbspensumContainerID));
 		wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.ERWERBSPENSUM);
 	}
 

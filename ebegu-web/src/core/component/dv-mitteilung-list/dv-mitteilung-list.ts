@@ -255,11 +255,13 @@ export class DVMitteilungListController {
     }
 
     public isSenderTypSchulamt(mitteilung: TSMitteilung): boolean {
-        return mitteilung && mitteilung.sender && mitteilung.senderTyp === TSMitteilungTeilnehmerTyp.JUGENDAMT && mitteilung.getEmpfaengerAmt() === TSAmt.SCHULAMT;
+        return mitteilung && mitteilung.sender && mitteilung.senderTyp === TSMitteilungTeilnehmerTyp.JUGENDAMT
+            && mitteilung.getSenderAmt() === TSAmt.SCHULAMT;
     }
 
     public isSenderTypJugendamt(mitteilung: TSMitteilung): boolean {
-        return mitteilung && mitteilung.sender && mitteilung.senderTyp === TSMitteilungTeilnehmerTyp.JUGENDAMT;
+        return mitteilung && mitteilung.sender && mitteilung.senderTyp === TSMitteilungTeilnehmerTyp.JUGENDAMT
+            && mitteilung.getSenderAmt() === TSAmt.JUGENDAMT;
     }
 
     public isSenderTypGesuchsteller(mitteilung: TSMitteilung): boolean {
