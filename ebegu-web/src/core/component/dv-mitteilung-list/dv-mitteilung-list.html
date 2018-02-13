@@ -142,7 +142,7 @@
                                                  ng-checked="mitteilung.mitteilungStatus === 'ERLEDIGT'"
                                                  ng-click="vm.setErledigt(mitteilung); $event.stopPropagation()"
                                                  ng-disabled="!vm.isMessageEditableForMyRole(mitteilung)">
-                                        <span data-translate="MITTEILUNGEN_ERLEDIGT"></span>
+                                        <span data-translate="MITTEILUNGEN_ERLEDIGT" class="erledigt"></span>
                                     </md-checkbox>
                                 </div>
                                 <div class="arrow"><i class="fa fa-angle-down"></i>
