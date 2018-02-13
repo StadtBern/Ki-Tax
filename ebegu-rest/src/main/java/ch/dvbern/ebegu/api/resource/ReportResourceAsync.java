@@ -15,13 +15,12 @@
 
 package ch.dvbern.ebegu.api.resource;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -38,11 +37,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.jboss.ejb3.annotation.TransactionTimeout;
-
-import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
@@ -50,15 +44,23 @@ import ch.dvbern.ebegu.entities.Workjob;
 import ch.dvbern.ebegu.enums.WorkJobType;
 import ch.dvbern.ebegu.enums.reporting.ReportVorlage;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.services.WorkjobService;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.DateUtil;
-import ch.dvbern.oss.lib.excelmerger.ExcelMergeException;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.jboss.ejb3.annotation.TransactionTimeout;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * REST Resource fuer Reports
@@ -66,25 +68,22 @@ import io.swagger.annotations.ApiOperation;
 @Path("reporting/async")
 @Stateless
 @Api(description = "Resource für Statistiken und Reports")
+@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, SACHBEARBEITER_INSTITUTION,
+	SACHBEARBEITER_TRAEGERSCHAFT, REVISOR })
 public class ReportResourceAsync {
 
 	public static final String DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN = "Das von-Datum muss vor dem bis-Datum sein.";
-
-	@Inject
-	private ReportResource repRes;
+	public static final String URL_PART_EXCEL = "excel/";
 
 	@Inject
 	private DownloadResource downloadResource;
 
 	@Inject
-	private JaxBConverter converter;
-
-	@Inject
 	private PrincipalBean principalBean;
-
 
 	@Inject
 	private WorkjobService workjobService;
+
 
 	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Gesuch-Stichtag'", response = JaxDownloadFile.class)
 	@Nonnull
@@ -97,9 +96,7 @@ public class ReportResourceAsync {
 	public Response getGesuchStichtagReportExcel(
 		@QueryParam("dateTimeStichtag") @Nonnull String dateTimeStichtag,
 		@QueryParam("gesuchPeriodeID") @Nullable @Valid JaxId gesuchPeriodIdParam,
-		@Context HttpServletRequest request, @Context UriInfo uriInfo)
-		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException {
-
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) {
 
 		String ip = downloadResource.getIP(request);
 		Validate.notNull(dateTimeStichtag);
@@ -111,7 +108,7 @@ public class ReportResourceAsync {
 		workJob.setTriggeringIp(ip);
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
 
-		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
 		workJob.setParams(param);
 
 		String periodeId = gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null;
@@ -133,7 +130,7 @@ public class ReportResourceAsync {
 		@QueryParam("dateTimeTo") @Nonnull String dateTimeToParam,
 		@QueryParam("gesuchPeriodeID") @Nullable @Valid JaxId gesuchPeriodIdParam,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
-		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
+		throws EbeguRuntimeException {
 
 		String ip = downloadResource.getIP(request);
 
@@ -152,7 +149,7 @@ public class ReportResourceAsync {
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
 		workJob.setTriggeringIp(ip);
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
 		workJob.setParams(param);
 
 		String periodeId = gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null;
@@ -173,7 +170,7 @@ public class ReportResourceAsync {
 		@QueryParam("auswertungVon") @Nonnull String auswertungVon,
 		@QueryParam("auswertungBis") @Nonnull String auswertungBis,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
-		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
+		throws EbeguRuntimeException {
 
 		String ip = downloadResource.getIP(request);
 
@@ -191,7 +188,7 @@ public class ReportResourceAsync {
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
 		workJob.setTriggeringIp(ip);
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
 		workJob.setParams(param);
 
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCH_STICHTAG, dateAuswertungVon, dateAuswertungBis, null);
@@ -211,7 +208,7 @@ public class ReportResourceAsync {
 		@QueryParam("auswertungVon") @Nonnull String auswertungVon,
 		@QueryParam("auswertungBis") @Nonnull String auswertungBis,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
-		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
+		throws EbeguRuntimeException {
 
 		String ip = downloadResource.getIP(request);
 
@@ -229,7 +226,7 @@ public class ReportResourceAsync {
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
 		workJob.setTriggeringIp(ip);
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
 		workJob.setParams(param);
 
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCH_STICHTAG, dateAuswertungVon, dateAuswertungBis, null);
@@ -251,19 +248,17 @@ public class ReportResourceAsync {
 	public Response getZahlungPeridoReportExcel(
 		@QueryParam("gesuchsperiodeID") @Nonnull @Valid JaxId gesuchPeriodIdParam,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
-		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
+		throws EbeguRuntimeException {
 
 		Validate.notNull(gesuchPeriodIdParam);
 		String ip = downloadResource.getIP(request);
-		String id = converter.toEntityId(gesuchPeriodIdParam);
-
 
 		Workjob workJob = new Workjob();
 		workJob.setWorkJobType(WorkJobType.REPORT_GENERATION);
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
 		workJob.setTriggeringIp(ip);
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
 		workJob.setParams(param);
 
 		String periodeId = gesuchPeriodIdParam.getId();
@@ -285,7 +280,7 @@ public class ReportResourceAsync {
 		@QueryParam("auswertungBis") @Nonnull String auswertungBis,
 		@QueryParam("gesuchPeriodeID") @Nullable @Valid JaxId gesuchPeriodIdParam,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
-		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
+		throws EbeguRuntimeException {
 
 		String ip = downloadResource.getIP(request);
 
@@ -304,7 +299,7 @@ public class ReportResourceAsync {
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
 		workJob.setTriggeringIp(ip);
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
 		workJob.setParams(param);
 
 		String periodeId = gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null;
@@ -326,7 +321,7 @@ public class ReportResourceAsync {
 		@QueryParam("auswertungBis") @Nonnull String auswertungBis,
 		@QueryParam("gesuchPeriodeID") @Nullable @Valid JaxId gesuchPeriodIdParam,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
-		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
+		throws EbeguRuntimeException {
 
 		String ip = downloadResource.getIP(request);
 
@@ -344,7 +339,7 @@ public class ReportResourceAsync {
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
 		workJob.setTriggeringIp(ip);
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
 		workJob.setParams(param);
 
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_KINDER, dateFrom, dateTo, null);
@@ -362,8 +357,7 @@ public class ReportResourceAsync {
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response getGesuchstellerReportExcel(
 		@QueryParam("stichtag") @Nonnull String stichtag,
-		@Context HttpServletRequest request, @Context UriInfo uriInfo)
-		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException {
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) {
 
 		String ip = downloadResource.getIP(request);
 
@@ -375,7 +369,7 @@ public class ReportResourceAsync {
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
 		workJob.setTriggeringIp(ip);
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		String param = StringUtils.substringAfterLast(request.getRequestURI(), "excel/");
+		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
 		workJob.setParams(param);
 
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCHSTELLER, date, null, null);

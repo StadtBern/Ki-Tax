@@ -1,12 +1,18 @@
 /*
- * Copyright (c)  2013. DV Bern AG, Switzerland
- *
- * Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
- * geschuetzt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulaessig. Dies gilt
- * insbesondere fuer Vervielfaeltigungen, die Einspeicherung und Verarbeitung in
- * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
- * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2018 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package ch.dvbern.ebegu.services;
 
 import java.time.LocalDate;
@@ -20,9 +26,10 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.batch.operations.JobOperator;
 import javax.batch.runtime.BatchRuntime;
+import javax.ejb.EJBAccessException;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -36,18 +43,14 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
-
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.Workjob;
 import ch.dvbern.ebegu.entities.Workjob_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.TokenLifespan;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.enums.WorkJobConstants;
 import ch.dvbern.ebegu.enums.reporting.BatchJobStatus;
 import ch.dvbern.ebegu.enums.reporting.ReportVorlage;
@@ -56,7 +59,19 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import com.google.common.collect.Sets;
+import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 import static ch.dvbern.ebegu.enums.WorkJobConstants.DATE_FROM_PARAM;
 import static ch.dvbern.ebegu.enums.WorkJobConstants.DATE_TO_PARAM;
 import static ch.dvbern.ebegu.enums.WorkJobConstants.REPORT_VORLAGE_TYPE_PARAM;
@@ -66,9 +81,8 @@ import static ch.dvbern.ebegu.enums.WorkJobConstants.REPORT_VORLAGE_TYPE_PARAM;
  */
 @Stateless
 @Local(WorkjobService.class)
-@PermitAll
+@RolesAllowed(UserRoleName.SUPER_ADMIN)
 public class WorkjobServiceBean extends AbstractBaseService implements WorkjobService {
-
 
 	private static final Logger LOG = LoggerFactory.getLogger(WorkjobServiceBean.class.getSimpleName());
 
@@ -90,21 +104,22 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 
 	}
 
-
+	@Nonnull
 	@Override
-	public Workjob saveWorkjob(Workjob workJob) {
+	public Workjob saveWorkjob(@Nonnull Workjob workJob) {
 		return persistence.merge(workJob);
 	}
 
+	@Nullable
 	@Override
-	public Workjob findWorkjobByWorkjobID(final String workJobId) {
+	public Workjob findWorkjobByWorkjobID(@Nullable final String workJobId) {
 		if (workJobId == null) {
 			return null;
 		}
 		return persistence.find(Workjob.class, workJobId);
-
 	}
 
+	@Nullable
 	@Override
 	public Workjob findWorkjobByExecutionId(@Nonnull final Long executionId) {
 
@@ -114,12 +129,14 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 			.filter(workjob -> workjob.getTimestampErstellt() != null)
 			.max(Comparator.comparing(Workjob::getTimestampErstellt));
 		return first.orElse(null);
-
 	}
 
+	@Nonnull
 	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, SACHBEARBEITER_INSTITUTION,
+		SACHBEARBEITER_TRAEGERSCHAFT, REVISOR })
 	public Workjob createNewReporting(@Nonnull Workjob workJob, @Nonnull ReportVorlage vorlage, @Nullable LocalDate datumVon, @Nullable LocalDate datumBis, @Nullable String gesuchPeriodIdParam) {
-		checkIfJobCreationAllowed(workJob);
+		checkIfJobCreationAllowed(workJob, vorlage);
 
 		JobOperator jobOperator = BatchRuntime.getJobOperator();
 		final Properties jobParameters = new Properties();
@@ -158,18 +175,24 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 		LOG.debug("Startet GesuchStichttagStatistik with executionId {}", executionId);
 
 		return workJob;
+
 	}
 
-	private void setPropertyIfPresent(Properties jobParameters, String paramName, String paramValue) {
-
+	private void setPropertyIfPresent(@Nonnull Properties jobParameters, @Nonnull String paramName, @Nullable String paramValue) {
 		if (paramValue != null) {
 			jobParameters.setProperty(paramName, paramValue);
 		}
-
 	}
 
-	private void checkIfJobCreationAllowed(@Nonnull Workjob workJob) {
-
+	private void checkIfJobCreationAllowed(@Nonnull Workjob workJob, ReportVorlage vorlage) {
+		UserRole userRole = principalBean.discoverMostPrivilegedRole();
+		if (!ReportVorlage.checkAllowed(userRole, vorlage)) {
+			throw new EJBAccessException(
+				"Access Violation"
+					+ " for Report: " + vorlage
+					+ " for current user: " + principalBean.getPrincipal()
+					+ " in role(s): " + userRole);
+		}
 		Set<BatchJobStatus> statesToSearch = Sets.newHashSet(BatchJobStatus.REQUESTED, BatchJobStatus.RUNNING);
 
 		final List<Workjob> openWorkjobs = this.findWorkjobs(principalBean.getPrincipal().getName(), statesToSearch);
@@ -178,19 +201,17 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 			LOG.error("An identical Workjob was already queued by this user; {} ", workJob);
 			throw new EbeguRuntimeException("checkIfJobCreationAllowed", ErrorCodeEnum.ERROR_JOB_ALREADY_EXISTS);
 		}
-
 	}
 
 
 	@Override
-	@TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void removeOldWorkjobs() {
-
 		LocalDateTime cutoffDate = LocalDateTime.now().minusMinutes(Constants.MAX_LONGER_TEMP_DOWNLOAD_AGE_MINUTES);
 		this.criteriaQueryHelper.deleteAllBefore(Workjob.class, cutoffDate);
-
 	}
 
+	@Nonnull
 	@Override
 	public List<Workjob> findWorkjobs(@Nonnull String startingUserName, @Nonnull Set<BatchJobStatus> statesToSearch) {
 		Validate.notNull(startingUserName, "username to search must be set");
@@ -212,13 +233,11 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 		q.setParameter(startingUsernameParam, startingUserName);
 		q.setParameter(statusParam, statesToSearch);
 
-
-
 		return q.getResultList();
 	}
 
 	@Override
-	public void changeStateOfWorkjob(long executionId, BatchJobStatus status) {
+	public void changeStateOfWorkjob(long executionId, @Nonnull BatchJobStatus status) {
 		persistence.getEntityManager().createNamedQuery(Workjob.Q_WORK_JOB_STATE_UPDATE)
 			.setParameter("exId", executionId)
 			.setParameter("status", status)
@@ -226,7 +245,7 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 	}
 
 	@Override
-	public void addResultToWorkjob(@Nonnull String workjobID, String resultData) {
+	public void addResultToWorkjob(@Nonnull String workjobID, @Nonnull String resultData) {
 		Validate.notNull(resultData);
 
 		CriteriaBuilder cb = this.persistence.getCriteriaBuilder();
@@ -236,6 +255,5 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 		updateQuery.set(root.get(Workjob_.resultData), resultData);
 		updateQuery.where(cb.equal(root.get(Workjob_.id), workjobID));
 		this.persistence.getEntityManager().createQuery(updateQuery).executeUpdate();
-
 	}
 }

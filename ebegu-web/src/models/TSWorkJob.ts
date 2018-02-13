@@ -17,11 +17,11 @@ import TSAbstractEntity from './TSAbstractEntity';
 import TSBatchJobInformation from './TSBatchJobInformation';
 
 /**
- * DTO für eine Person aus dem EWK
+ * DTO fuer einen WorkJob
  */
 export default class TSWorkJob extends TSAbstractEntity {
-    private _workJobType: string;
 
+    private _workJobType: string;
     private _startinguser: string;
     private _batchJobStatus: string;
     private _params: string;

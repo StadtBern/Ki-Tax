@@ -30,12 +30,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @RequestScoped
 public class BatchJaxBConverter {
+
 	@Nullable
 	private LocalDateTime mangleDate(@Nullable Date date) {
 		if (date == null) {
 			return null;
 		}
-
 		return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
 	}
 
@@ -56,8 +56,8 @@ public class BatchJaxBConverter {
 		return jInformation;
 	}
 
-
-	public JaxWorkJob toBatchJobInformation(Workjob job) {
+	@Nonnull
+	public JaxWorkJob toBatchJobInformation(@Nonnull Workjob job) {
 
 		final WorkJobType workJobType = job.getWorkJobType();
 		final String startinguser = job.getStartinguser();
@@ -78,7 +78,7 @@ public class BatchJaxBConverter {
 	}
 
 	@Nonnull
-	private <T extends JaxAbstractDTO> T convertAbstractFieldsToJAX(@Nonnull final AbstractEntity abstEntity, final T jaxDTOToConvertTo) {
+	private <T extends JaxAbstractDTO> T convertAbstractFieldsToJAX(@Nonnull final AbstractEntity abstEntity, @Nonnull final T jaxDTOToConvertTo) {
 		jaxDTOToConvertTo.setTimestampErstellt(abstEntity.getTimestampErstellt());
 		jaxDTOToConvertTo.setTimestampMutiert(abstEntity.getTimestampMutiert());
 		jaxDTOToConvertTo.setId(checkNotNull(abstEntity.getId()));

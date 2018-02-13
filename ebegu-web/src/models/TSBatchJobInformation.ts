@@ -16,7 +16,7 @@
 import * as moment from 'moment';
 
 /**
- * DTO für eine Person aus dem EWK
+ * DTO fuer die Infos zu einem BatchJob
  */
 export default class TSBatchJobInformation {
 

@@ -10,12 +10,8 @@ import ch.dvbern.ebegu.util.UploadFileInfo;
 @JobScoped
 public class JobDataContainer {
 
-
 	private UploadFileInfo result;
 
-	public void setresult(UploadFileInfo result) {
-		this.result = result;
-	}
 
 	public UploadFileInfo getResult() {
 		return result;

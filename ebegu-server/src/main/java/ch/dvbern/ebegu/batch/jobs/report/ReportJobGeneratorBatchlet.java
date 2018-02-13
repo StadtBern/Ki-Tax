@@ -14,6 +14,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.Properties;
 
+import javax.annotation.Nonnull;
 import javax.batch.api.AbstractBatchlet;
 import javax.batch.operations.JobOperator;
 import javax.batch.runtime.BatchRuntime;
@@ -23,10 +24,6 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ch.dvbern.ebegu.enums.WorkJobConstants;
 import ch.dvbern.ebegu.enums.reporting.ReportVorlage;
 import ch.dvbern.ebegu.errors.MergeDocException;
@@ -34,11 +31,14 @@ import ch.dvbern.ebegu.reporting.ReportService;
 import ch.dvbern.ebegu.util.DateUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergeException;
+import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.WorkJobConstants.REPORT_VORLAGE_TYPE_PARAM;
 
 @SuppressWarnings("ClassNamePrefixedWithPackageName")
-@Named
+@Named("reportJobGeneratorBatchlet")
 @Dependent
 public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 
@@ -47,15 +47,11 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 	@Inject
 	private ReportService reportService;
 
-
 	@Inject
 	private JobContext jobCtx;
 
-//	@Inject
-//	private StepContext stepCtx;
-
 	@Inject
-	JobDataContainer jobDataContainer;
+	private JobDataContainer jobDataContainer;
 
 
 	@Override
@@ -65,21 +61,20 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 		final ReportVorlage reportType = ReportVorlage.valueOf(typeProp);
 		try {
 			final UploadFileInfo uploadFileInfo = triggerReportGeneration(reportType); //gespeichertes file
-			jobDataContainer.setresult(uploadFileInfo);
-			LOG.debug("Report File was successfully generated for workjob ", jobCtx.getExecutionId());
+			jobDataContainer.setResult(uploadFileInfo);
+			LOG.debug("Report File was successfully generated for workjob {}", jobCtx.getExecutionId());
 			return BatchStatus.COMPLETED.toString(); // success
 
 		} catch (ExcelMergeException | MergeDocException e) {
 			LOG.error("ExcelMergeException occured while creating a report in a batch process ", e);
 		} catch (URISyntaxException | IOException e) {
-			LOG.error("IOException occured while creating a report in a batch process, maybe template could not be loaded?", e);
+				LOG.error("IOException occured while creating a report in a batch process, maybe template could not be loaded?", e);
 		}
 		return BatchStatus.FAILED.toString();
-
 	}
 
-
 	@SuppressWarnings("UnnecessaryLocalVariable")
+	@Nonnull
 	private UploadFileInfo triggerReportGeneration(ReportVorlage workJobType) throws ExcelMergeException, MergeDocException, URISyntaxException, IOException {
 
 		final String datumVonOrStichtag = getParameters().getProperty(WorkJobConstants.DATE_FROM_PARAM);
@@ -90,9 +85,9 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 		final String zahlungsauftragId = getParameters().getProperty(WorkJobConstants.ZAHLUNGSAUFTRAG_ID_PARAM);
 
 		return generateReport(workJobType, dateFrom, dateTo, gesuchPeriodeID, zahlungsauftragId);
-
 	}
 
+	@Nonnull
 	private UploadFileInfo generateReport(ReportVorlage workJobType, LocalDate dateFrom, LocalDate dateTo, String gesuchPeriodeID, String zahlungsauftragId) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 		switch (workJobType) {
 
@@ -142,6 +137,5 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 	private Properties getParameters() {
 		JobOperator operator = BatchRuntime.getJobOperator();
 		return operator.getParameters(jobCtx.getExecutionId());
-
 	}
 }

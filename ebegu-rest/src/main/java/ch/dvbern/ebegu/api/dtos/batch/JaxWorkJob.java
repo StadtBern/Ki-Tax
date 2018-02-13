@@ -1,13 +1,3 @@
-/*
- * Copyright © 2017 DV Bern AG, Switzerland
- *
- * Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
- * geschützt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulässig. Dies gilt
- * insbesondere für Vervielfältigungen, die Einspeicherung und Verarbeitung in
- * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
- * Ansicht übergeben, ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
- */
-
 package ch.dvbern.ebegu.api.dtos.batch;
 
 import javax.annotation.Nonnull;
@@ -22,10 +12,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @XmlRootElement(name = "batchJob")
 public class JaxWorkJob extends JaxAbstractDTO {
+
+	private static final long serialVersionUID = -9206171424688383096L;
+
 	@Nonnull
 	@NotNull
 	private String name = "";
-
 
 	private JaxBatchJobInformation execution;
 	private WorkJobType workJobType;
@@ -35,7 +27,6 @@ public class JaxWorkJob extends JaxAbstractDTO {
 	private Long executionId;
 	private String resultData;
 	private String requestURI;
-
 
 
 	public JaxWorkJob(String name, JaxBatchJobInformation execution) {
@@ -103,7 +94,6 @@ public class JaxWorkJob extends JaxAbstractDTO {
 	public Long getExecutionId() {
 		return executionId;
 	}
-
 
 	public void setResultData(String resultData) {
 		this.resultData = resultData;

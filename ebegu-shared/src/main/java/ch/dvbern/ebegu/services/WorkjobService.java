@@ -31,29 +31,33 @@ import ch.dvbern.ebegu.enums.reporting.ReportVorlage;
  */
 public interface WorkjobService {
 
-	Workjob saveWorkjob(Workjob workJob);
+	@Nonnull
+	Workjob saveWorkjob(@Nonnull Workjob workJob);
 
+	@Nonnull
+	Workjob findWorkjobByWorkjobID(@Nonnull String workJobId);
 
-	Workjob findWorkjobByWorkjobID(String workJobId);
-
+	@Nonnull
 	Workjob findWorkjobByExecutionId(@Nonnull Long executionId);
 
 	void removeOldWorkjobs();
 
+	@Nonnull
 	Workjob createNewReporting(@Nonnull Workjob workJob,
 		@Nonnull ReportVorlage vorlage,
 		@Nullable LocalDate datumVon,
 		@Nullable LocalDate datumBis,
 		@Nullable String gesuchPeriodIdParam);
 
-	List<Workjob> findWorkjobs(String startingUserName, Set<BatchJobStatus> statesToSearch);
+	@Nonnull
+	List<Workjob> findWorkjobs(@Nonnull String startingUserName, @Nonnull Set<BatchJobStatus> statesToSearch);
 
 	/**
 	 * update query that changes state
 	 * @param executionId
 	 * @param status
 	 */
-	void changeStateOfWorkjob(long executionId, BatchJobStatus status);
+	void changeStateOfWorkjob(long executionId,@Nonnull BatchJobStatus status);
 
-	void addResultToWorkjob(@Nonnull String workjobID, String resultData);
+	void addResultToWorkjob(@Nonnull String workjobID, @Nonnull String resultData);
 }

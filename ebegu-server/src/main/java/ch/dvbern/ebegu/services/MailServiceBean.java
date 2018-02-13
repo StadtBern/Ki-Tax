@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.AsyncResult;
@@ -356,12 +357,12 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	}
 
 	@Override
-	public void sendDocumentCreatedEmail(String receiverEmail, DownloadFile attachement, String downloadurl) throws MailException {
+	public void sendDocumentCreatedEmail(@Nonnull String receiverEmail, @Nullable DownloadFile attachement, @Nonnull String downloadurl) throws MailException {
 		try {
 			final String subj = ServerMessageUtil.getMessage("MAIL_REPORT_SUBJECT");
 			String body = ServerMessageUtil.getMessage("MAIL_REPORT_BODY");
 
-			body = body + "\n" + downloadurl;
+			body = body + '\n' + downloadurl;
 			if (attachement != null) {
 				sendMessage(subj, body, receiverEmail,  attachement);
 			} else{
@@ -372,7 +373,6 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			LOG.error("E-Mail mit Report versendet konnte nicht verschickt werden an {}", receiverEmail, e);
 			throw e;
 		}
-
 	}
 
 	/**
@@ -381,5 +381,4 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	private boolean doSendMail(Fall fall) {
 		return fall.getBesitzer() != null;
 	}
-
 }

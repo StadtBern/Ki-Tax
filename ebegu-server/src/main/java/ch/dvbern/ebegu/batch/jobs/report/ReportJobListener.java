@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import ch.dvbern.ebegu.enums.reporting.BatchJobStatus;
 import ch.dvbern.ebegu.services.WorkjobService;
 
-@Named
+@Named("reportJobListener")
 @Dependent
 public class ReportJobListener extends AbstractJobListener {
 
@@ -45,13 +45,5 @@ public class ReportJobListener extends AbstractJobListener {
 		LOG.debug("ReportJobListener finished: {}, status: {},{}",
 			ctx.getExecutionId(), ctx.getBatchStatus(), ctx.getExitStatus());
 		workjobService.changeStateOfWorkjob(ctx.getExecutionId(), BatchJobStatus.FINISHED);
-//		final Workjob wj = workjobService.findWorkjobByExecutionId(ctx.getExecutionId());
-//		if (wj != null && jobDataContainer.getResult() != null) {
-//
-//			wj.setResultData(jobDataContainer.getResult().getPath());
-//			workjobService.saveWorkjob(wj);
-//
-//		}
-
 	}
 }

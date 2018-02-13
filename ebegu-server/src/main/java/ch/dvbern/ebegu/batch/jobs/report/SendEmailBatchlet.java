@@ -12,6 +12,7 @@ package ch.dvbern.ebegu.batch.jobs.report;
 import java.util.Properties;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.batch.api.AbstractBatchlet;
 import javax.batch.operations.JobOperator;
 import javax.batch.runtime.BatchRuntime;
@@ -20,10 +21,6 @@ import javax.batch.runtime.context.JobContext;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.DownloadFile;
@@ -35,8 +32,11 @@ import ch.dvbern.ebegu.services.DownloadFileService;
 import ch.dvbern.ebegu.services.MailService;
 import ch.dvbern.ebegu.services.WorkjobService;
 import ch.dvbern.ebegu.util.UploadFileInfo;
+import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Named
+@Named("sendEmailBatchlet")
 @Dependent
 public class SendEmailBatchlet extends AbstractBatchlet {
 
@@ -44,6 +44,7 @@ public class SendEmailBatchlet extends AbstractBatchlet {
 
 	@Inject
 	private WorkjobService workJobService;
+
 	@Inject
 	private DownloadFileService downloadFileService;
 
@@ -77,7 +78,6 @@ public class SendEmailBatchlet extends AbstractBatchlet {
 				mailService.sendDocumentCreatedEmail(receiverEmail, downloadFile, createStatistikPageLink());
 			} else{
 				mailService.sendDocumentCreatedEmail(receiverEmail, null, createStatistikPageLink());
-
 			}
 			return BatchStatus.COMPLETED.toString();
 		} catch (MailException e) {
@@ -95,7 +95,8 @@ public class SendEmailBatchlet extends AbstractBatchlet {
 //		return "http://localhost:8080/ebegu/api/v1/blobs/temp/blobdata/" + downloadFile.getAccessToken();
 //	}
 
-	private DownloadFile createDownloadfile(Workjob workJob, UploadFileInfo uploadFile) {
+	@Nullable
+	private DownloadFile createDownloadfile(@Nonnull Workjob workJob, @Nullable UploadFileInfo uploadFile) {
 		if (uploadFile != null) {
 			//copy data into pre exsiting dowonload-file
 			//	EBEGU-1663 Wildfly 10 hack, this can be removed as soon as WF11 runs and download file can be generated when report is finsihed
@@ -104,7 +105,6 @@ public class SendEmailBatchlet extends AbstractBatchlet {
 			LOG.error("UploadFileInfo muss uebergeben werden vom vorherigen Step");
 			return null;
 		}
-
 	}
 
 	@Nonnull
@@ -117,6 +117,5 @@ public class SendEmailBatchlet extends AbstractBatchlet {
 	private Properties getParameters() {
 		JobOperator operator = BatchRuntime.getJobOperator();
 		return operator.getParameters(jobCtx.getExecutionId());
-
 	}
 }

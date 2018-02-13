@@ -16,7 +16,7 @@
 package ch.dvbern.ebegu.enums;
 
 /**
- * Enum fuer Geschlecht / Anrede
+ * Enum fuer Lifespan des Download Accesstokens
  */
 public enum TokenLifespan {
 	SHORT,

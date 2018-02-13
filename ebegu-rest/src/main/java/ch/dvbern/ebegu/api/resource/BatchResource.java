@@ -9,13 +9,11 @@
  */
 package ch.dvbern.ebegu.api.resource;
 
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.batch.operations.JobOperator;
@@ -35,7 +33,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import ch.dvbern.ebegu.api.converter.BatchJaxBConverter;
 import ch.dvbern.ebegu.api.dtos.batch.JaxBatchJobList;
@@ -49,9 +46,9 @@ import ch.dvbern.ebegu.services.WorkjobService;
 
 @Path("admin/batch")
 @Stateless
-@RolesAllowed({ UserRoleName.SUPER_ADMIN })
-
+@RolesAllowed(UserRoleName.SUPER_ADMIN)
 public class BatchResource {
+
 	@Inject
 	private BatchJaxBConverter converter;
 
@@ -61,14 +58,6 @@ public class BatchResource {
 	@Inject
 	private PrincipalBean principalBean;
 
-
-	@Nonnull
-	private URI buildJobUri(@Nonnull UriInfo uriInfo, long executionId) {
-		return uriInfo.getBaseUriBuilder()
-			.path(BatchResource.class)
-			.path("/jobs/{executionId}")
-			.build(String.valueOf(executionId));
-	}
 
 	@GET
 	@Path("/jobs")
@@ -92,7 +81,7 @@ public class BatchResource {
 	@Path("/jobs/{executionId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getBatchJobInformation(@Nonnull @NotNull @Valid @PathParam("executionId") long idParam) {
+	public Response getBatchJobInformation(@NotNull @Valid @PathParam("executionId") long idParam) {
 		try {
 			JobExecution information = BatchRuntime.getJobOperator().getJobExecution(idParam);
 			return Response.ok(converter.toBatchJobInformation(information)).build();
@@ -100,7 +89,6 @@ public class BatchResource {
 			throw new EbeguEntityNotFoundException("getBatchJobInfo", "could not find batch job", ex);
 		}
 	}
-
 
 	@GET
 	@Path("/userjobs/notokenrefresh") //wir pollen diesen endpunkt daher notokenrefresh
@@ -127,9 +115,6 @@ public class BatchResource {
 			})
 			.collect(Collectors.toList());
 
-
 		return Response.ok(new JaxBatchJobList(jobList)).build();
-
 	}
-
 }

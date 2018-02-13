@@ -68,7 +68,8 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 		}
 	}
 
-	public void sendMessage(String subject, String messageBody, String mailadress, DownloadFile attachement) throws MailException {
+	public void sendMessage(@Nonnull String subject, @Nonnull String messageBody, @Nonnull String mailadress, @Nonnull DownloadFile attachement) throws
+		MailException {
 		Validate.notNull(subject);
 		Validate.notNull(messageBody);
 		Validate.notNull(mailadress);

@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
 
-@Named
+@Named("reportJobPartitionMapper")
 @Dependent
 public class ReportJobPartitionMapper implements PartitionMapper {
 

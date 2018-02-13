@@ -78,7 +78,6 @@ export class StatistikViewController {
 
         this.refreshUserJobs();
         this.initBatchJobPolling();
-
     }
 
     private initBatchJobPolling() {
@@ -89,7 +88,6 @@ export class StatistikViewController {
     private refreshUserJobs() {
         this.bachJobRS.getBatchJobsOfUser().then((response: TSWorkJob[]) => {
             this.userjobs = response;
-
         });
     }
 
@@ -168,7 +166,6 @@ export class StatistikViewController {
                 break;
             }
             case TSStatistikParameterType.MITARBEITERINNEN: {
-//                    let win: Window = this.downloadRS.prepareDownloadWindow();
                 this.reportRS.getMitarbeiterinnenReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                     this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
                 .then((batchExecutionId: string) => {
@@ -182,7 +179,6 @@ export class StatistikViewController {
                 break;
             }
             case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG: {
-//                    let win: Window = this.downloadRS.prepareDownloadWindow();
                 this.reportRS.getGesuchstellerKinderBetreuungReportExcel(
                     this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                     this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
@@ -199,7 +195,6 @@ export class StatistikViewController {
             }
             case TSStatistikParameterType.ZAHLUNGEN_PERIODE:
                 if (this._statistikParameter.gesuchsperiode) {
-//                        let win: Window = this.downloadRS.prepareDownloadWindow();
                     this.reportRS.getZahlungPeriodeReportExcel(
                         this._statistikParameter.gesuchsperiode)
                     .then((batchExecutionId: string) => {
@@ -242,7 +237,7 @@ export class StatistikViewController {
     }
 
     /**
-     * heler methode die es dem Admin erlaubt alle jobs zu sehen
+     * helper methode die es dem Admin erlaubt alle jobs zu sehen
      */
     public showAllJobs() {
         this.bachJobRS.getAllJobs().then((result: TSWorkJob[]) => {
@@ -253,5 +248,4 @@ export class StatistikViewController {
             this.allJobs = res;
         });
     }
-
 }

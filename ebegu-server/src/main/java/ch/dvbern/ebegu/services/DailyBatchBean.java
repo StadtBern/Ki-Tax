@@ -48,7 +48,6 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 @Local(DailyBatch.class)
 public class DailyBatchBean implements DailyBatch {
 
-	private static final long serialVersionUID = -4627435482413298843L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(DailyBatchBean.class);
 
 	@Inject

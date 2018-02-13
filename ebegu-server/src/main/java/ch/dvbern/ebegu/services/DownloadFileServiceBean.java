@@ -67,8 +67,9 @@ public class DownloadFileServiceBean implements DownloadFileService {
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
+	@Nonnull
 	@Override
-	public DownloadFile create(@Nonnull FileMetadata fileMetadata, String ip) {
+	public DownloadFile create(@Nonnull FileMetadata fileMetadata, @Nonnull String ip) {
 		Objects.requireNonNull(fileMetadata);
 		Objects.requireNonNull(ip);
 
@@ -77,7 +78,7 @@ public class DownloadFileServiceBean implements DownloadFileService {
 
 	@Nonnull
 	@Override
-	public DownloadFile create(UploadFileInfo fileInfo, TokenLifespan lifespan, String ip) {
+	public DownloadFile create(@Nonnull UploadFileInfo fileInfo, @Nonnull TokenLifespan lifespan, @Nonnull String ip) {
 		Objects.requireNonNull(fileInfo);
 		Objects.requireNonNull(lifespan);
 		Objects.requireNonNull(ip);
@@ -87,9 +88,10 @@ public class DownloadFileServiceBean implements DownloadFileService {
 	}
 
 	//	EBEGU-1663 Wildfly 10 hack, this can be removed as soon as WF11 runs and download file can be generated when report is finsihed
+	@Nonnull
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public DownloadFile insertDirectly(String fileIdToUpdate, UploadFileInfo fileInfo, TokenLifespan lifespan, String ip) {
+	public DownloadFile insertDirectly(@Nonnull String fileIdToUpdate, @Nonnull UploadFileInfo fileInfo, @Nonnull TokenLifespan lifespan, @Nonnull String ip) {
 		Objects.requireNonNull(fileIdToUpdate);
 		Objects.requireNonNull(fileInfo);
 		Objects.requireNonNull(lifespan);
@@ -98,15 +100,12 @@ public class DownloadFileServiceBean implements DownloadFileService {
 		downloadFile.setLifespan(lifespan);
 		final int updatedRows = updateByQuery(fileIdToUpdate, downloadFile);
 		if (updatedRows != 1) {
-
 			LOG.warn("Should have updated exactly one row but updated " + updatedRows);
-
 		}
 		return downloadFile;
-
 	}
 
-	private int updateByQuery(String accessTokenIdToUpdate, DownloadFile downloadFile) {
+	private int updateByQuery(@Nonnull String accessTokenIdToUpdate, @Nonnull DownloadFile downloadFile) {
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		CriteriaUpdate<DownloadFile> query = cb.createCriteriaUpdate(DownloadFile.class);
@@ -186,7 +185,6 @@ public class DownloadFileServiceBean implements DownloadFileService {
 		}
 	}
 
-
 	private <T extends DownloadFile> int deleteAllTokensBefore(@Nonnull Class<T> entityClazz, @Nonnull TokenLifespan lifespan, @Nonnull LocalDateTime before) {
 		checkNotNull(entityClazz);
 		checkNotNull(before);
@@ -208,8 +206,6 @@ public class DownloadFileServiceBean implements DownloadFileService {
 		query.setParameter(lifespanParam, lifespan);
 		return query.executeUpdate();
 	}
-
-
 
 	/**
 	 * Access Token fuer Download ist nur fuer eine bestimmte Zeitspanne (3Min) gueltig

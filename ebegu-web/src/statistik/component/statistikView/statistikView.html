@@ -431,10 +431,10 @@
                               title="{{row.requestURI}}"></span>
                     </td>
                     <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY HH:mm'"></td>
-                    <td ng-if="row.execution.startTime"
-                        ng-bind="row.execution.startTime | amDateFormat : 'DD.MM.YYYY HH:mm'"></td>
-                    <td ng-if="row.execution.endTime"
-                        ng-bind="row.execution.endTime | amDateFormat : 'DD.MM.YYYY HH:mm'"></td>
+                    <td><span ng-if="row.execution.startTime"
+                              ng-bind="row.execution.startTime | amDateFormat : 'DD.MM.YYYY HH:mm'"></span></td>
+                    <td><span ng-if="row.execution.endTime"
+                              ng-bind="row.execution.endTime | amDateFormat : 'DD.MM.YYYY HH:mm'"></span></td>
                     <td ng-bind="row.batchJobStatus | translate"></td>
                     <td class="dateientable-td symbol">
                                 <span ng-if="row.execution && row.execution.batchStatus === 'COMPLETED'"
@@ -445,7 +445,7 @@
                     </td>
 
                 <tr ng-if="vm.userjobs.length === 0">
-                    <td colspan="5" class="empty-table" data-translate="KEIN_EINTRAG">...</td>
+                    <td colspan="6" class="empty-table" data-translate="KEIN_EINTRAG">...</td>
                 </tr>
                 </tbody>
             </table>

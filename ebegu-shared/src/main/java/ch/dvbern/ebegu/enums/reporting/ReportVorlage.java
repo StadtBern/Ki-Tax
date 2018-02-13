@@ -16,7 +16,9 @@
 package ch.dvbern.ebegu.enums.reporting;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
 
@@ -81,5 +83,28 @@ public enum ReportVorlage {
 	@Nonnull
 	public String getDataSheetName() {
 		return dataSheetName;
+	}
+
+	public static boolean checkAllowed(@Nullable UserRole role, ReportVorlage vorlage) {
+		if (role == null) {
+			return false;
+		}
+		if (UserRole.getInstitutionTraegerschaftRoles().contains(role)) {
+			if (vorlage == VORLAGE_REPORT_KINDER || vorlage == VORLAGE_REPORT_KANTON) {
+				return true;
+			}
+			return false;
+		}
+		if (UserRole.getSchulamtRoles().contains(role)) {
+			if (vorlage == VORLAGE_REPORT_GESUCH_STICHTAG || vorlage == VORLAGE_REPORT_GESUCH_ZEITRAUM
+				|| vorlage == VORLAGE_REPORT_KINDER || vorlage == VORLAGE_REPORT_GESUCHSTELLER) {
+				return true;
+			}
+			return false;
+		}
+		if (UserRole.GESUCHSTELLER == role || UserRole.STEUERAMT == role || UserRole.JURIST == role) {
+			return false;
+		}
+		return true;
 	}
 }
