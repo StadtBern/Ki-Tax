@@ -36,6 +36,7 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 
 import {ShowTooltipController} from '../../dialog/ShowTooltipController';
 import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
+import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 import IPromise = angular.IPromise;
 import IScope = angular.IScope;
 
@@ -92,10 +93,11 @@ export class GesuchToolbarController implements IDVFocusableController {
     mutierenPossibleForCurrentAntrag: boolean = false;
     erneuernPossibleForCurrentAntrag: boolean = false;
     neuesteGesuchsperiode: TSGesuchsperiode;
+    amountNewMitteilungenGS: number = 0;
 
     static $inject = ['EbeguUtil', 'GesuchRS', '$state',
         '$scope', 'GesuchModelManager', 'AuthServiceRS', '$mdSidenav', '$log', 'GesuchsperiodeRS',
-        'FallRS', 'DvDialog', 'unsavedWarningSharedService'];
+        'FallRS', 'DvDialog', 'unsavedWarningSharedService', 'MitteilungRS'];
 
     constructor(private ebeguUtil: EbeguUtil,
                 private gesuchRS: GesuchRS,
@@ -107,7 +109,8 @@ export class GesuchToolbarController implements IDVFocusableController {
                 private gesuchsperiodeRS: GesuchsperiodeRS,
                 private fallRS: FallRS,
                 private dvDialog: DvDialog,
-                private unsavedWarningSharedService: any) {
+                private unsavedWarningSharedService: any,
+                private mitteilungRS: MitteilungRS) {
 
     }
 
@@ -120,6 +123,17 @@ export class GesuchToolbarController implements IDVFocusableController {
             // Die neueste ist zuoberst
             this.neuesteGesuchsperiode = response[0];
         });
+    }
+
+    private updateAmountNewMitteilungenGS(fallid: string): void {
+        this.mitteilungRS.getAmountNewMitteilungenForCurrentRolle(fallid).then((response: number) => {
+            this.amountNewMitteilungenGS = response;
+        });
+    }
+
+    public getAmountNewMitteilungenGS(): string {
+
+        return '(' + this.amountNewMitteilungenGS + ')';
     }
 
     public toggleSidenav(componentId: string): void {
@@ -222,6 +236,7 @@ export class GesuchToolbarController implements IDVFocusableController {
                 this.antragMutierenPossible();
                 this.antragErneuernPossible();
             });
+            this.updateAmountNewMitteilungenGS(this.getGesuch().fall.id);
         } else if (this.fallid) {
             this.gesuchRS.getAllAntragDTOForFall(this.fallid).then((response) => {
                 this.antragList = angular.copy(response);
@@ -248,6 +263,7 @@ export class GesuchToolbarController implements IDVFocusableController {
                     }
                 }
             });
+            this.updateAmountNewMitteilungenGS(this.fallid);
         } else {
             this.resetNavigationParameters();
         }
@@ -605,13 +621,23 @@ export class GesuchToolbarController implements IDVFocusableController {
     }
 
     public showKontakt(): void {
+        let text: string;
+        if (this.fall.isHauptverantwortlicherSchulamt()) {
+            text = '<span>Schulamt</span><br>'
+                + '<span>Effingerstrasse 21</span><br>'
+                + '<span>3008 Bern</span><br>'
+                + '<a href="tel:0313216460"><span>031 321 64 60</span></a><br>'
+                + '<a href="mailto:schulamt@bern.ch"><span>schulamt@bern.ch</span></a>';
+        } else {
+            text = '<span>Jugendamt</span><br>'
+                + '<span>Effingerstrasse 21</span><br>'
+                + '<span>3008 Bern</span><br>'
+                + '<a href="tel:0313215115"><span>031 321 51 15</span></a><br>'
+                + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>';
+        }
         this.dvDialog.showDialog(showKontaktTemplate, ShowTooltipController, {
             title: '',
-            text: '<span>Jugendamt</span><br>'
-            + '<span>Effingerstrasse 21</span><br>'
-            + '<span>3008 Bern</span><br>'
-            + '<a href="tel:0313215115"><span>031 321 51 15</span></a><br>'
-            + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>',
+            text: text,
             parentController: this
         });
     }
