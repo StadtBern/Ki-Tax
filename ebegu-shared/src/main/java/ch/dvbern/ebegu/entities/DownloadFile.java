@@ -20,7 +20,11 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.validation.constraints.NotNull;
 
+import ch.dvbern.ebegu.enums.TokenLifespan;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 
 /**
@@ -36,6 +40,11 @@ public class DownloadFile extends FileMetadata {
 
 	@Column(length = 45, nullable = false, updatable = false)
 	private final String ip;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, updatable = false)
+	private TokenLifespan  lifespan = TokenLifespan.SHORT;
 
 	public DownloadFile() {
 		this.accessToken = UUID.randomUUID().toString();
@@ -61,5 +70,13 @@ public class DownloadFile extends FileMetadata {
 
 	public String getIp() {
 		return ip;
+	}
+
+	public TokenLifespan getLifespan() {
+		return lifespan;
+	}
+
+	public void setLifespan(TokenLifespan lifespan) {
+		this.lifespan = lifespan;
 	}
 }

@@ -44,7 +44,7 @@ export class ReportRS {
             gesuchPeriodeID: gesuchPeriodeID
         });
 
-        return this.http.get(this.serviceURL + '/excel/gesuchStichtag?' + reportParams, {timeout: this.reportingTimeout})
+        return this.http.get(this.serviceURL + '/async/excel/gesuchStichtag?' + reportParams, {timeout: this.reportingTimeout})
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
@@ -168,7 +168,6 @@ export class ReportRS {
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
             });
     }
-
 
     public getServiceName(): string {
         return 'ReportRS';

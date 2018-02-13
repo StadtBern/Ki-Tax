@@ -86,7 +86,9 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 			// Den Lucene-Index manuell nachführen, da es bei unidirektionalen Relationen nicht automatisch geschieht!
 			updateLuceneIndex(KindContainer.class, kind.getId());
 		}
+
 		final KindContainer mergedKind = persistence.merge(kind);
+		mergedKind.getGesuch().addKindContainer(mergedKind);
 		wizardStepService.updateSteps(kind.getGesuch().getId(), null, mergedKind.getKindJA(), WizardStepName.KINDER);
 		return mergedKind;
 	}
@@ -112,16 +114,6 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 		query.where(predicateInstitution);
 		return persistence.getCriteriaResults(query);
-	}
-
-	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
-	public void removeKind(@Nonnull String kindId) {
-		Objects.requireNonNull(kindId);
-		Optional<KindContainer> kindToRemoveOpt = findKind(kindId);
-		final KindContainer kindToRemove = kindToRemoveOpt.orElseThrow(() -> new EbeguEntityNotFoundException("removeKind", ErrorCodeEnum
-			.ERROR_ENTITY_NOT_FOUND, kindId));
-		removeKind(kindToRemove);
 	}
 
 	@Override

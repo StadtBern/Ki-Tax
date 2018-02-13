@@ -109,6 +109,8 @@ import {DVVersionComponentConfig} from './component/dv-version/dv-version';
 import {DvSkiplinksComponentConfig} from './component/dv-skiplinks/dv-skiplinks';
 import SearchRS from '../gesuch/service/searchRS.rest';
 import {DvVerantwortlicherselect} from './directive/dv-verantwortlicherselect/dv-verantwortlicherselect';
+import {ReportAsyncRS} from './service/reportAsyncRS.rest';
+import BatchJobRS from './service/batchRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -182,6 +184,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('ErwerbspensumRS', ErwerbspensumRS)
     .service('KindRS', KindRS)
     .service('DvDialog', DvDialog)
+    .service('BatchJobRS', BatchJobRS)
     .service('BetreuungRS', BetreuungRS)
     .service('GesuchsperiodeRS', GesuchsperiodeRS)
     .service('UserRS', UserRS)
@@ -248,6 +251,7 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvVersion', new DVVersionComponentConfig())
     .service('MahnungRS', MahnungRS)
     .service('ReportRS', ReportRS)
+    .service('ReportAsyncRS', ReportAsyncRS)
     .service('EwkRS', EwkRS)
     .service('DatabaseMigrationRS', DatabaseMigrationRS)
     .filter('arrayToString', () => {

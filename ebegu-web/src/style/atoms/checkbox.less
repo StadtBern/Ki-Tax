@@ -16,7 +16,7 @@
 @import '../mixins.less';
 
 .checkbox {
-    margin: 0 0;
+    margin: 0 0 3rem;
     height: auto;
     font-size: 0;
     dv-error-messages {
@@ -58,7 +58,7 @@ md-checkbox.dv-ebegu-calendar {
     &:last-of-type {
         margin-right: 0;
     }
-    &[disabled] {
+    &[disabled], &:disabled {
         color: @contrast-lightest;
         .md-label {
             span {
@@ -70,10 +70,8 @@ md-checkbox.dv-ebegu-calendar {
                 border: none!important;
             }
         }
-        &.md-checked {
-            .md-icon {
-                background: @contrast-dark;
-            }
+        .md-icon {
+            background: @contrast-dark;
         }
     }
     &.md-focused, &:focus {
@@ -180,7 +178,7 @@ md-checkbox.dv-ebegu-calendar--tagesschule{
     &:last-of-type {
         margin-right: 0;
     }
-    &[disabled] {
+    &[disabled],&:disabled {
         color: @contrast-lightest;
         .md-label {
             span {
@@ -192,10 +190,8 @@ md-checkbox.dv-ebegu-calendar--tagesschule{
                 border: none!important;
             }
         }
-        &.md-checked {
-            .md-icon {
-                background: @contrast-dark;
-            }
+        .md-icon {
+            background: @contrast-dark;
         }
     }
     &.md-focused, &:focus {
@@ -320,7 +316,7 @@ md-checkbox {
     }
     margin-right: 4rem;
     margin-top: 0;
-    margin-bottom: 3rem;
+    margin-bottom: 0;
     &[disabled] {
         color: @contrast-dark;
         .md-label {

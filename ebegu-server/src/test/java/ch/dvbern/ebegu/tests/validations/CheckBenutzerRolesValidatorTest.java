@@ -15,15 +15,16 @@
 
 package ch.dvbern.ebegu.tests.validations;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.validators.CheckBenutzerRolesValidator;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Tests fuer {@link CheckBenutzerRolesValidator}

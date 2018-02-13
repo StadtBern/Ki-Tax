@@ -23,10 +23,11 @@ import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 
-import ch.dvbern.ebegu.enums.UserRoleName;
-import ch.dvbern.ebegu.services.DailyBatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ch.dvbern.ebegu.enums.UserRoleName;
+import ch.dvbern.ebegu.services.DailyBatch;
 
 @Singleton
 @RunAs(UserRoleName.SUPER_ADMIN)
@@ -40,6 +41,11 @@ public class DailyBatchScheduler {
 	@Schedule(second = "59", minute = "59", hour = "23", persistent = false)
 	public void runBatchCleanDownloadFiles() {
 		dailyBatch.runBatchCleanDownloadFiles();
+	}
+
+	@Schedule(second = "59", minute = "58", hour = "23", persistent = false)
+	public void runBatchCleanWorkjobs() {
+		dailyBatch.runBatchCleanWorkjobs();
 	}
 
 	@Schedule(second = "59", minute = "00", hour = "01", persistent = false)

@@ -18,6 +18,8 @@ package ch.dvbern.ebegu.util;
 import java.util.Arrays;
 
 import javax.activation.MimeType;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -36,9 +38,7 @@ public class UploadFileInfo {
 
 	private Long size;
 
-	public UploadFileInfo(
-		String filename,
-		MimeType contentType) {
+	public UploadFileInfo(@Nonnull String filename, @Nullable MimeType contentType) {
 		this.filename = filename;
 		this.contentType = contentType;
 	}
@@ -59,6 +59,7 @@ public class UploadFileInfo {
 		this.actualFilename = actualFilename;
 	}
 
+	@Nullable
 	public MimeType getContentType() {
 		return contentType;
 	}
