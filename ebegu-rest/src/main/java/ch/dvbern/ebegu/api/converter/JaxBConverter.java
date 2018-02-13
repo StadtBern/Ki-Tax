@@ -1777,6 +1777,8 @@ public class JaxBConverter {
 				betreuung.setBelegungTagesschule(belegungTagesschuleToEntity(betreuungJAXP.getBelegungTagesschule(), new BelegungTagesschule(),
 					betreuung.getInstitutionStammdaten().getInstitutionStammdatenTagesschule()));
 			}
+		} else {
+			betreuung.setBelegungTagesschule(belegungTagesschuleToEntity(betreuungJAXP.getBelegungTagesschule(), new BelegungTagesschule(), null));
 		}
 		if (betreuung.getBelegungFerieninsel() != null) {
 			betreuung.setBelegungFerieninsel(belegungFerieninselToEntity(betreuungJAXP.getBelegungFerieninsel(), betreuung.getBelegungFerieninsel()));
@@ -1790,7 +1792,7 @@ public class JaxBConverter {
 
 	@Nullable
 	private BelegungTagesschule belegungTagesschuleToEntity(@Nullable JaxBelegungTagesschule belegungTagesschuleJAXP,
-		@NotNull BelegungTagesschule belegungTagesschule, @NotNull InstitutionStammdatenTagesschule instStammdatenTagesschule) {
+		@NotNull BelegungTagesschule belegungTagesschule, @Nullable InstitutionStammdatenTagesschule instStammdatenTagesschule) {
 
 		if (belegungTagesschuleJAXP != null && instStammdatenTagesschule != null) {
 			convertAbstractFieldsToEntity(belegungTagesschuleJAXP, belegungTagesschule);
