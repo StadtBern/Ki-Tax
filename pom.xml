@@ -76,6 +76,11 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-api</artifactId>
+                <version>7.0</version>
+            </dependency>
+            <dependency>
                 <groupId>org.jboss.resteasy</groupId>
                 <artifactId>resteasy-bom</artifactId>
                 <version>3.0.14.Final</version>
@@ -409,6 +414,12 @@
                 <groupId>org.infinispan</groupId>
                 <artifactId>infinispan-directory-provider</artifactId>
                 <version>8.1.0.Final</version>
+            </dependency>
+
+            <dependency>
+              <groupId>org.jberet</groupId>
+              <artifactId>jberet-core</artifactId>
+              <version>1.2.1.Final</version>
             </dependency>
             <!--um dependency konflikte zu vermeiden fixen wir die versionen von 2 mal angezogenen libs im dep management-->
             <dependency>

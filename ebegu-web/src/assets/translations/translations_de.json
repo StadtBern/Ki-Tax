@@ -1237,5 +1237,22 @@
     "MUTATION_NOETIG_DB": "Um Anmeldungen für eine Tagesschule erfassen zu können, müssen sie das Gesuch mutieren.",
     "NEU": "neu",
     "GELESEN": "gelesen",
-    "ERLEDIGT": "erledigt"
+    "ERLEDIGT": "erledigt",
+    "STARTED_GENERATION": "Reportgenerierung gestartet. Wir bitten um etwas Geduld. Sie werden per Email informiert sobald das Dokument für Sie bereitsteht",
+    "ERSTELLT":"Erstellt",
+    "BEENDET":"Beendet",
+    "TYP":"Typ",
+    "GESTARTET":"Gestartet",
+    "SHOW_JOBS": "Zeige Alle Batchjobs",
+    "ReportType_gesuchstellerkinderbetreuung": "Gesuchsteller-Kinder-Betreuung",
+    "ReportType_mitarbeiterinnen": "MitarbeiterInnen",
+    "ReportType_kanton": "Kanton",
+    "ReportType_gesuchsteller": "Gesuchsteller",
+    "ReportType_kinder": "Kinder",
+    "ReportType_gesuchZeitraum": "Verfügte Gesuche und Mutationen nach Zeitraum",
+    "ReportType_gesuchStichtag": "Gesuche nach Stichtag",
+    "ReportType_zahlungperiode": "Zahlungen nach Periode",
+    "BatchJobStatus_REQUESTED": "Statistik angefordert",
+    "BatchJobStatus_RUNNING": "Statistik wird erstellt",
+    "BatchJobStatus_FINISHED": "Bereit zum Download"
 }
