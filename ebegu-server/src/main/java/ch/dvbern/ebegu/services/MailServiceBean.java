@@ -274,7 +274,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 				}
 				i++;
 			} catch (Exception e) {
-				LOG.error("Mail InfoMahnung konnte nicht verschickt werden fuer Gesuch {}", gesuch.getId(), e);
+				LOG.error("Mail InfoFreischaltungGesuchsperiode konnte nicht verschickt werden fuer Gesuch {}", gesuch.getId(), e);
 			}
 		}
 		return new AsyncResult<>(i);

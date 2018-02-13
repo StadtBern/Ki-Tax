@@ -176,6 +176,7 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 	protected void sendMessageWithTemplate(@Nonnull final String messageBody, @Nonnull final String mailadress) throws MailException {
 		Validate.notNull(mailadress);
 		Validate.notNull(messageBody);
+		// wir haben hier nicht zwingend immer eine transaktion
 		final int transactionStatus = txReg.getTransactionStatus();
 		if (Status.STATUS_NO_TRANSACTION != transactionStatus) {
 			// nur wenn eine Transaction existiert, macht ein flush Sinn
