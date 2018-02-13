@@ -12,7 +12,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ch.dvbern.ebegu.reporting.gesuchstichtag;
+
+package ch.dvbern.ebegu.enums.reporting;
 
 import javax.annotation.Nonnull;
 
@@ -21,26 +22,29 @@ import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
 import ch.dvbern.oss.lib.excelmerger.mergefields.RepeatRowMergeField;
 import ch.dvbern.oss.lib.excelmerger.mergefields.SimpleMergeField;
 
-import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.INTEGER_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.BIGDECIMAL_CONVERTER;
+import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.DATE_CONVERTER;
 import static ch.dvbern.oss.lib.excelmerger.converters.StandardConverters.STRING_CONVERTER;
 
-public enum MergeFieldGesuchStichtag implements MergeFieldProvider {
+/**
+ * Merger fuer Statistik fuer MitarbeiterInnen
+ */
+public enum MergeFieldMitarbeiterinnen implements MergeFieldProvider {
 
-	repeatGesuchStichtagRow(new RepeatRowMergeField("repeatGesuchStichtagRow")),
+	auswertungVon(new SimpleMergeField<>("auswertungVon", DATE_CONVERTER)),
+	auswertungBis(new SimpleMergeField<>("auswertungBis", DATE_CONVERTER)),
 
-	bgNummer(new SimpleMergeField<>("bgNummer", STRING_CONVERTER)),
-	gesuchLaufNr(new SimpleMergeField<>("gesuchLaufNr", INTEGER_CONVERTER)),
-	institution(new SimpleMergeField<>("institution", STRING_CONVERTER)),
-	betreuungsTyp(new SimpleMergeField<>("betreuungsTyp", STRING_CONVERTER)),
-	periode(new SimpleMergeField<>("periode", STRING_CONVERTER)),
-	nichtFreigegeben(new SimpleMergeField<>("nichtFreigegeben", INTEGER_CONVERTER)),
-	mahnungen(new SimpleMergeField<>("mahnungen", INTEGER_CONVERTER)),
-	beschwerde(new SimpleMergeField<>("beschwerde", INTEGER_CONVERTER));
+	repeatMitarbeiterinnenRow(new RepeatRowMergeField("repeatMitarbeiterinnenRow")),
+
+	name(new SimpleMergeField<>("name", STRING_CONVERTER)),
+	vorname(new SimpleMergeField<>("vorname", STRING_CONVERTER)),
+	verantwortlicheGesuche(new SimpleMergeField<>("verantwortlicheGesuche", BIGDECIMAL_CONVERTER)),
+	verfuegungenAusgestellt(new SimpleMergeField<>("verfuegungenAusgestellt", BIGDECIMAL_CONVERTER));
 
 	@Nonnull
 	private final MergeField<?> mergeField;
 
-	<V> MergeFieldGesuchStichtag(@Nonnull MergeField<V> mergeField) {
+	<V> MergeFieldMitarbeiterinnen(@Nonnull MergeField<V> mergeField) {
 		this.mergeField = mergeField;
 	}
 

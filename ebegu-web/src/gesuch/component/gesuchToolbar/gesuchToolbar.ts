@@ -405,6 +405,19 @@ export class GesuchToolbarController implements IDVFocusableController {
         this.goToOpenGesuch(selectedAntragTypGesuch.antragId);
     }
 
+    public setAntragTypDatumMobile(gesuchperiodeKey: string, antragTypDatumKey: string) {
+        let tmpAntragList: { [key: string]: TSAntragDTO } = {};
+        for (let i = 0; i < this.antragList.length; i++) {
+            let antrag: TSAntragDTO = this.antragList[i];
+            if (this.gesuchsperiodeList[gesuchperiodeKey][0].gesuchsperiodeGueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
+                let txt = this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum, antrag.laufnummer);
+                tmpAntragList[txt] = antrag;
+            }
+        }
+        let selectedAntragTypGesuch = tmpAntragList[antragTypDatumKey];
+        this.goToOpenGesuch(selectedAntragTypGesuch.antragId);
+    }
+
     public showButtonMutieren(): boolean {
         if (this.hideActionButtons) {
             return false;

@@ -72,6 +72,11 @@
         </dependency>
 
         <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <scope>provided</scope>
@@ -159,6 +164,10 @@
             <artifactId>hibernate-search-orm</artifactId>
         </dependency>
         <dependency>
+          <groupId>org.jberet</groupId>
+          <artifactId>jberet-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>ch.dvbern.ebegu</groupId>
             <artifactId>ebegu-ws</artifactId>
             <version>${project.version}</version>
@@ -177,10 +186,6 @@
             <artifactId>jboss-ejb3-ext-api</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>ch.dvbern.oss.excelmerger</groupId>
-            <artifactId>excelmerger-impl</artifactId>
-        </dependency>
     </dependencies>
 
     <profiles>

@@ -51,13 +51,6 @@ public interface KindService {
 	List<KindContainer> findAllKinderFromGesuch(@Nonnull String gesuchId);
 
 	/**
-	 * entfernt ein Kind aus der Databse
-	 *
-	 * @param kindId Id des Kindes zu entfernen
-	 */
-	void removeKind(@Nonnull String kindId);
-
-	/**
 	 * entfernt ein Kind aus der Databse. Um diese Methode aufzurufen muss man sich vorher vergewissern, dass das Kind existiert
 	 */
 	void removeKind(@Nonnull KindContainer kind);

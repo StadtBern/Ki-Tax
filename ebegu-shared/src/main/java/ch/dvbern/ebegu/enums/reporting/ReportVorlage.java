@@ -13,17 +13,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.dvbern.ebegu.reporting;
+package ch.dvbern.ebegu.enums.reporting;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.MergeFieldGesuchstellerKinderBetreuung;
-import ch.dvbern.ebegu.reporting.gesuchstichtag.MergeFieldGesuchStichtag;
-import ch.dvbern.ebegu.reporting.gesuchzeitraum.MergeFieldGesuchZeitraum;
-import ch.dvbern.ebegu.reporting.kanton.MergeFieldKanton;
-import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MergeFieldMitarbeiterinnen;
-import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftrag;
-import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftragPeriode;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
 
@@ -88,5 +83,28 @@ public enum ReportVorlage {
 	@Nonnull
 	public String getDataSheetName() {
 		return dataSheetName;
+	}
+
+	public static boolean checkAllowed(@Nullable UserRole role, ReportVorlage vorlage) {
+		if (role == null) {
+			return false;
+		}
+		if (UserRole.getInstitutionTraegerschaftRoles().contains(role)) {
+			if (vorlage == VORLAGE_REPORT_KINDER || vorlage == VORLAGE_REPORT_KANTON) {
+				return true;
+			}
+			return false;
+		}
+		if (UserRole.getSchulamtRoles().contains(role)) {
+			if (vorlage == VORLAGE_REPORT_GESUCH_STICHTAG || vorlage == VORLAGE_REPORT_GESUCH_ZEITRAUM
+				|| vorlage == VORLAGE_REPORT_KINDER || vorlage == VORLAGE_REPORT_GESUCHSTELLER) {
+				return true;
+			}
+			return false;
+		}
+		if (UserRole.GESUCHSTELLER == role || UserRole.STEUERAMT == role || UserRole.JURIST == role) {
+			return false;
+		}
+		return true;
 	}
 }
