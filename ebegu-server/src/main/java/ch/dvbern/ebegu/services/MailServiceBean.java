@@ -27,6 +27,8 @@ import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -253,6 +255,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 	@Override
 	@Asynchronous
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	@RolesAllowed({ SUPER_ADMIN, ADMIN })
 	public Future<Integer> sendInfoFreischaltungGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull List<Gesuch> gesucheToSendMail) {
 		int i = 0;
@@ -271,7 +274,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 				}
 				i++;
 			} catch (Exception e) {
-				LOG.error("Mail InfoMahnung konnte nicht verschickt werden fuer Gesuch {}", gesuch.getId(), e);
+				LOG.error("Mail InfoFreischaltungGesuchsperiode konnte nicht verschickt werden fuer Gesuch {}", gesuch.getId(), e);
 			}
 		}
 		return new AsyncResult<>(i);

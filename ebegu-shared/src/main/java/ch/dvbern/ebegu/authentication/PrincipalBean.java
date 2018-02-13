@@ -26,14 +26,14 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.transaction.TransactionSynchronizationRegistry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.BenutzerService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -53,8 +53,6 @@ public class PrincipalBean {
 
 	@Inject
 	private BenutzerService benutzerService;
-	@Resource
-	private TransactionSynchronizationRegistry txReg;
 
 	private Benutzer benutzer = null;
 	private Mandant mandant = null;
@@ -108,6 +106,7 @@ public class PrincipalBean {
 		//reihenfolge wie in UserRole definiert, wir sollten eh immer nur 1 haben
 		for (UserRole userRole : UserRole.values()) {
 			if (isCallerInRole(userRole)) {
+				LOGGER.trace("Determined most privileged role as {}", userRole.name());
 				return userRole;
 			}
 		}
@@ -121,7 +120,6 @@ public class PrincipalBean {
 	}
 
 	public boolean isCallerInRole(@Nonnull String roleName) {
-		LOGGER.trace("isCallerInRole: {}/{}", txReg.getTransactionKey(), txReg.getRollbackOnly());
 		checkNotNull(roleName);
 		return sessionContext.isCallerInRole(roleName);
 	}
