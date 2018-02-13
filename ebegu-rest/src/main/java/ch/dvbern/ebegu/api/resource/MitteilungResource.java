@@ -413,17 +413,17 @@ public class MitteilungResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Integer getAmountNewMitteilungenForCurrentRolle(
-		@Nonnull @NotNull @PathParam("fallId") JaxId fallId,
+		@Nonnull @NotNull @PathParam("fallId") JaxId jaxFallId,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) {
 
-		Validate.notNull(fallId.getId());
-		String mitteilungID = converter.toEntityId(fallId);
-		Optional<Fall> fall = fallService.findFall(mitteilungID);
+		Validate.notNull(jaxFallId.getId());
+		String fallId = converter.toEntityId(jaxFallId);
+		Optional<Fall> fall = fallService.findFall(fallId);
 		if (fall.isPresent()) {
 			return mitteilungService.getNewMitteilungenForCurrentRolleAndFall(fall.get()).size();
 		}
-		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
+		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + jaxFallId.getId());
 	}
 
 	@ApiOperation(value = "Uebergibt die Mitteilung vom Schulamt ans Jugendamt", response = JaxMitteilung.class)

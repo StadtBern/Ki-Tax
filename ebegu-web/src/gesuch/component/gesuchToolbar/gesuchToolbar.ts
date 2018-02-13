@@ -185,6 +185,7 @@ export class GesuchToolbarController implements IDVFocusableController {
                 if (newValue !== oldValue) {
                     if (this.fallid) {
                         this.updateAntragDTOList();
+                        this.updateAmountNewMitteilungenGS(this.getGesuch().fall.id);
                     } else {
                         // Fall-ID hat auf undefined gewechselt -> Fall zuruecksetzen
                         this.fall = undefined;
@@ -236,7 +237,6 @@ export class GesuchToolbarController implements IDVFocusableController {
                 this.antragMutierenPossible();
                 this.antragErneuernPossible();
             });
-            this.updateAmountNewMitteilungenGS(this.getGesuch().fall.id);
         } else if (this.fallid) {
             this.gesuchRS.getAllAntragDTOForFall(this.fallid).then((response) => {
                 this.antragList = angular.copy(response);
@@ -402,6 +402,19 @@ export class GesuchToolbarController implements IDVFocusableController {
 
     public setAntragTypDatum(antragTypDatumKey: string) {
         let selectedAntragTypGesuch = this.antragTypList[antragTypDatumKey];
+        this.goToOpenGesuch(selectedAntragTypGesuch.antragId);
+    }
+
+    public setAntragTypDatumMobile(gesuchperiodeKey: string, antragTypDatumKey: string) {
+        let tmpAntragList: { [key: string]: TSAntragDTO } = {};
+        for (let i = 0; i < this.antragList.length; i++) {
+            let antrag: TSAntragDTO = this.antragList[i];
+            if (this.gesuchsperiodeList[gesuchperiodeKey][0].gesuchsperiodeGueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
+                let txt = this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum, antrag.laufnummer);
+                tmpAntragList[txt] = antrag;
+            }
+        }
+        let selectedAntragTypGesuch = tmpAntragList[antragTypDatumKey];
         this.goToOpenGesuch(selectedAntragTypGesuch.antragId);
     }
 
