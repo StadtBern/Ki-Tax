@@ -19,8 +19,11 @@ import java.io.IOException;
 import java.io.Writer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Resource;
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
+import javax.transaction.Status;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.mail.Email;
@@ -55,6 +58,9 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 
 	@Inject
 	private EbeguConfiguration configuration;
+
+	@Resource
+	private TransactionSynchronizationRegistry txReg;
 
 	@PermitAll
 	public void sendMessage(@Nonnull String subject, @Nonnull String messageBody, @Nonnull String mailadress) throws MailException {
@@ -170,7 +176,12 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 	protected void sendMessageWithTemplate(@Nonnull final String messageBody, @Nonnull final String mailadress) throws MailException {
 		Validate.notNull(mailadress);
 		Validate.notNull(messageBody);
-		persistence.getEntityManager().flush();
+		// wir haben hier nicht zwingend immer eine transaktion
+		final int transactionStatus = txReg.getTransactionStatus();
+		if (Status.STATUS_NO_TRANSACTION != transactionStatus) {
+			// nur wenn eine Transaction existiert, macht ein flush Sinn
+			persistence.getEntityManager().flush();
+		}
 		if (configuration.isSendingOfMailsDisabled()) {
 			pretendToSendMessage(messageBody, mailadress);
 		} else {

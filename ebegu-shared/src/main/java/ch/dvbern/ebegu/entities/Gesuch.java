@@ -36,6 +36,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -76,7 +77,8 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 @Analyzer(impl = EBEGUGermanAnalyzer.class)
 @EntityListeners({ GesuchStatusListener.class , GesuchGueltigListener.class})
 @Table(
-	uniqueConstraints = @UniqueConstraint(columnNames = { "fall_id", "gesuchsperiode_id", "gueltig" }, name = "UK_gueltiges_gesuch")
+	uniqueConstraints = @UniqueConstraint(columnNames = { "fall_id", "gesuchsperiode_id", "gueltig" }, name = "UK_gueltiges_gesuch"),
+	indexes = @Index(name = "IX_gesuch_timestamp_erstellt", columnList = "timestampErstellt")
 )
 public class Gesuch extends AbstractEntity implements Searchable {
 
