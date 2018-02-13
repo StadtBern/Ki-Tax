@@ -121,6 +121,8 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 
 	@Nullable
 	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, SACHBEARBEITER_INSTITUTION,
+		SACHBEARBEITER_TRAEGERSCHAFT, REVISOR })
 	public Workjob findWorkjobByExecutionId(@Nonnull final Long executionId) {
 
 		final Collection<Workjob> entitiesByAttribute = criteriaQueryHelper.getEntitiesByAttribute(Workjob.class, executionId, Workjob_.executionId);
@@ -213,6 +215,8 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 
 	@Nonnull
 	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, SACHBEARBEITER_INSTITUTION,
+		SACHBEARBEITER_TRAEGERSCHAFT, REVISOR })
 	public List<Workjob> findWorkjobs(@Nonnull String startingUserName, @Nonnull Set<BatchJobStatus> statesToSearch) {
 		Validate.notNull(startingUserName, "username to search must be set");
 		Validate.notNull(statesToSearch, "statesToSearch  must be set");
@@ -237,6 +241,8 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 	}
 
 	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, SACHBEARBEITER_INSTITUTION,
+		SACHBEARBEITER_TRAEGERSCHAFT, REVISOR })
 	public void changeStateOfWorkjob(long executionId, @Nonnull BatchJobStatus status) {
 		persistence.getEntityManager().createNamedQuery(Workjob.Q_WORK_JOB_STATE_UPDATE)
 			.setParameter("exId", executionId)

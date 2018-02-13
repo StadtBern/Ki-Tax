@@ -427,7 +427,7 @@
                 <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                     ng-click="vm.rowClicked(row)" role="row" tabindex="-1">
                     <td>
-                        <span ng-if="row.params" ng-bind="row.params | translate"
+                        <span ng-if="row.params" ng-bind="'ReportType_'+row.params | translate"
                               title="{{row.requestURI}}"></span>
                     </td>
                     <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY HH:mm'"></td>
@@ -435,7 +435,7 @@
                               ng-bind="row.execution.startTime | amDateFormat : 'DD.MM.YYYY HH:mm'"></span></td>
                     <td><span ng-if="row.execution.endTime"
                               ng-bind="row.execution.endTime | amDateFormat : 'DD.MM.YYYY HH:mm'"></span></td>
-                    <td ng-bind="row.batchJobStatus | translate"></td>
+                    <td ng-bind="'BatchJobStatus_' + row.batchJobStatus | translate"></td>
                     <td class="dateientable-td symbol">
                                 <span ng-if="row.execution && row.execution.batchStatus === 'COMPLETED'"
                                       class="fa fa-download"
