@@ -185,7 +185,7 @@ export class GesuchToolbarController implements IDVFocusableController {
                 if (newValue !== oldValue) {
                     if (this.fallid) {
                         this.updateAntragDTOList();
-                        this.updateAmountNewMitteilungenGS(this.getGesuch().fall.id);
+                        this.updateAmountNewMitteilungenGS(this.fallid);
                     } else {
                         // Fall-ID hat auf undefined gewechselt -> Fall zuruecksetzen
                         this.fall = undefined;
