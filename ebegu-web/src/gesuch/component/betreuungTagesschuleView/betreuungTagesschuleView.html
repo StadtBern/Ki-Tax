@@ -79,7 +79,7 @@
             </div>
 
             <!-- Hinweis, dass Tageschulanmeldung ncoh nicht freigeschaltet -->
-            <div class=marginTop20" ng-if="!vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">
+            <div class="marginTop30" ng-if="!vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">
                 <div class="well well-status-warten">
                     <i class="fa fa-exclamation " aria-hidden="true"></i>
                     <span>{{vm.getTagesschuleAnmeldungNotYetReadyText()}}</span>
@@ -87,21 +87,21 @@
             </div>
 
             <!-- Hinweis, wenn keine Module ausgewaehlt -->
-            <div class=marginTop20" ng-if="vm.showErrorMessageNoModule === true">
+            <div class="marginTop30" ng-if="vm.showErrorMessageNoModule === true">
                 <div class="well well-status-warten">
                     <i class="fa fa-exclamation" aria-hidden="true"></i>
                     <span data-translate="WARN_TAGESSCHULE_KEIN_MODUL_GEWAEHLT"></span>
                 </div>
             </div>
 
-            <div class=marginTop20" ng-if="vm.showNochNichtFreigegeben === true">
+            <div class="marginTop30" ng-if="vm.showNochNichtFreigegeben === true">
                 <div class="well well-status-warten">
                     <i class="fa fa-exclamation" aria-hidden="true"></i>
                     <span data-translate="WARN_ANGEBOT_NOCH_NICHT_FREIGEGEBEN"></span>
                 </div>
             </div>
 
-            <div class=marginTop20" ng-if="vm.showMutiert === true">
+            <div class="marginTop30" ng-if="vm.showMutiert === true">
                 <div class="well well-status-warten">
                     <i class="fa fa-exclamation" aria-hidden="true"></i>
                     <span data-translate="WARN_ANGEBOT_MUTIERT"></span>
