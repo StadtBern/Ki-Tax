@@ -184,6 +184,14 @@ md-checkbox.dv-ebegu-calendar--tagesschule {
                 color: @contrast-lightest;
             }
         }
+
+        &:not(.md-checked) .md-icon {
+            background: @contrast-dark;
+            &:after {
+                color: @contrast-dark;
+            }
+        }
+
         &.md-checked, &:not(.md-checked) {
             .md-icon {
                 border: none !important;
