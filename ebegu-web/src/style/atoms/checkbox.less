@@ -19,9 +19,6 @@
     margin: 0 0 3rem;
     height: auto;
     font-size: 0;
-    dv-error-messages {
-        display: block;
-    }
     dv-tooltip {
         display: inline-block;
         height: 1.7rem;
@@ -37,7 +34,8 @@
         overflow: visible;
         height: auto;
         min-height: 3rem;
-        margin-top: -3rem;
+        display: block;
+        margin-bottom: -3rem;
     }
 }
 
@@ -179,7 +177,7 @@ md-checkbox.dv-ebegu-calendar--tagesschule {
     &:last-of-type {
         margin-right: 0;
     }
-    &[disabled],&:disabled {
+    &[disabled], &:disabled {
         color: @contrast-lightest;
         .md-label {
             span {
