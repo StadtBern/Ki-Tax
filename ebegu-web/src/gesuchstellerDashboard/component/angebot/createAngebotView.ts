@@ -30,6 +30,7 @@ import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import ILogService = angular.ILogService;
 import IFormController = angular.IFormController;
+import TSBelegungFerieninsel from '../../../models/TSBelegungFerieninsel';
 
 let template = require('./createAngebotView.html');
 require('./createAngebotView.less');
@@ -59,7 +60,7 @@ export class CreateAngebotListViewController {
     }
 
     $onInit() {
-        this.anmeldungDTO = new TSAnmeldungDTO;
+        this.anmeldungDTO = new TSAnmeldungDTO();
         if (this.$stateParams.type === 'TS') {
             this.ts = true;
         } else if (this.$stateParams.type === 'FI') {
@@ -110,9 +111,10 @@ export class CreateAngebotListViewController {
     }
 
     public selectedInstitutionStammdatenChanged(): void {
-        this.anmeldungDTO.betreuung = new TSBetreuung();
+        if (!this.anmeldungDTO.betreuung) {
+            this.anmeldungDTO.betreuung = new TSBetreuung();
+        }
         this.anmeldungDTO.betreuung.institutionStammdaten = this.institution;
-        this.anmeldungDTO.betreuung.belegungTagesschule = new TSBelegungTagesschule();
         // Default Eintrittsdatum ist erster Schultag, wenn noch in Zukunft
 
         if (this.ts) {
@@ -135,6 +137,9 @@ export class CreateAngebotListViewController {
             }
             this.anmeldungDTO.betreuung.belegungFerieninsel = undefined;
         } else {
+            if (!this.anmeldungDTO.betreuung.belegungFerieninsel) {
+                this.anmeldungDTO.betreuung.belegungFerieninsel = new TSBelegungFerieninsel();
+            }
             this.anmeldungDTO.betreuung.belegungTagesschule = undefined;
         }
 
@@ -168,6 +173,8 @@ export class CreateAngebotListViewController {
                 }).then(() => {
                     this.backToHome();
                 });
+            }).catch(() => {
+                this.anmeldungDTO.betreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
             });
         } else if (this.fi) {
             this.anmeldungDTO.betreuung.betreuungsstatus = TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST;
@@ -178,6 +185,8 @@ export class CreateAngebotListViewController {
                 }).then(() => {
                     this.backToHome();
                 });
+            }).catch(() => {
+                this.anmeldungDTO.betreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
             });
 
         }

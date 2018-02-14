@@ -29,11 +29,12 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Service fuer Batch-Jobs.
@@ -47,7 +48,6 @@ import org.slf4j.LoggerFactory;
 @Local(DailyBatch.class)
 public class DailyBatchBean implements DailyBatch {
 
-	private static final long serialVersionUID = -4627435482413298843L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(DailyBatchBean.class);
 
 	@Inject
@@ -65,6 +65,9 @@ public class DailyBatchBean implements DailyBatch {
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 
+	@Inject
+	private WorkjobService workjobService;
+
 	@Override
 	@Asynchronous
 	public void runBatchCleanDownloadFiles() {
@@ -74,6 +77,17 @@ public class DailyBatchBean implements DailyBatch {
 			LOGGER.info("... Job Cleanup Download-Files finished");
 		} catch (RuntimeException e) {
 			LOGGER.error("Batch-Job Cleanup Download-Files konnte nicht durchgefuehrt werden!", e);
+		}
+	}
+
+	@Override
+	public void runBatchCleanWorkjobs() {
+		try {
+			LOGGER.info("Starting Job Cleanup Old Workjobs...");
+			workjobService.removeOldWorkjobs();
+			LOGGER.info("... Job Cleanup Old Workjobs finished");
+		} catch (RuntimeException e) {
+			LOGGER.error("Batch- Job Cleanup Old Workjobs konnte nicht durchgefuehrt werden!", e);
 		}
 	}
 

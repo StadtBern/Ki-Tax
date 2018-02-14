@@ -13,7 +13,8 @@
   ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div class="statistikView" dv-show-element dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT','SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT']">
+<div class="statistikView" dv-show-element
+     dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR', 'ADMINISTRATOR_SCHULAMT', 'SCHULAMT','SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT']">
     <div class="row marginTop50">
         <div class="col-md-10 col-md-offset-1">
             <dv-accordion allow-multiple-sections="false">
@@ -143,8 +144,9 @@
                                                         ng-options="gesuchsperiode.id as gesuchsperiode.gesuchsperiodeString for gesuchsperiode in vm.gesuchsperioden | orderBy: 'name'"
                                                         class="form-control" ng-required="true">
                                                 </select>
-                                                <dv-error-messages for="zahlungen_periode.periode_zahlungen_periode.$error"
-                                                                   class="error"></dv-error-messages>
+                                                <dv-error-messages
+                                                    for="zahlungen_periode.periode_zahlungen_periode.$error"
+                                                    class="error"></dv-error-messages>
                                             </div>
                                         </div>
                                     </div>
@@ -302,7 +304,8 @@
                                 <div class="row">
                                     <div class="col-xs-3">
                                         <dv-input-container class="form-group">
-                                            <label class="md-no-float" for="von_mitarbeiterinnen" data-translate="VON"></label>
+                                            <label class="md-no-float" for="von_mitarbeiterinnen"
+                                                   data-translate="VON"></label>
                                             <dv-datepicker name="von_mitarbeiterinnen" id="von_mitarbeiterinnen"
                                                            ng-model="vm.statistikParameter.von" ng-required="true"
                                                            class="input-element"
@@ -314,7 +317,8 @@
                                     </div>
                                     <div class="col-xs-3">
                                         <dv-input-container class="form-group">
-                                            <label class="md-no-float" for="bis_mitarbeiterinnen" data-translate="BIS"></label>
+                                            <label class="md-no-float" for="bis_mitarbeiterinnen"
+                                                   data-translate="BIS"></label>
                                             <dv-datepicker name="bis_mitarbeiterinnen" id="bis_mitarbeiterinnen"
                                                            ng-model="vm.statistikParameter.bis" ng-required="true"
                                                            class="input-element"
@@ -396,4 +400,73 @@
             </dv-accordion>
         </div>
     </div>
+
+    <!-- BatchJobs -->
+    <div class="row marginTop40">
+
+        <div class="col-md-10 col-md-offset-1">
+            <h2>
+                <span data-translate="Letzte Reports"></span>
+                {{vm.titleValue}}
+            </h2>
+
+            <table st-table="displayedCollection" st-safe-src="vm.userjobs"
+                   class="table table-hover" id="{{vm.tableId}}" title="{{vm.tableTitle}}">
+                <thead>
+                <tr>
+                    <th data-translate="TYP"></th>
+                    <th data-translate="ERSTELLT"></th>
+                    <th data-translate="GESTARTET"></th>
+                    <th data-translate="BEENDET"></th>
+                    <th data-translate="STATUS"></th>
+
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                    ng-click="vm.rowClicked(row)" role="row" tabindex="-1">
+                    <td>
+                        <span ng-if="row.params" ng-bind="'ReportType_'+row.params | translate"
+                              title="{{row.requestURI}}"></span>
+                    </td>
+                    <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY HH:mm'"></td>
+                    <td><span ng-if="row.execution.startTime"
+                              ng-bind="row.execution.startTime | amDateFormat : 'DD.MM.YYYY HH:mm'"></span></td>
+                    <td><span ng-if="row.execution.endTime"
+                              ng-bind="row.execution.endTime | amDateFormat : 'DD.MM.YYYY HH:mm'"></span></td>
+                    <td ng-bind="'BatchJobStatus_' + row.batchJobStatus | translate"></td>
+                    <td class="dateientable-td symbol">
+                                <span ng-if="row.execution && row.execution.batchStatus === 'COMPLETED'"
+                                      class="fa fa-download"
+                                      title="{{'DOKUMENT_DOWNLOAD' | translate}}"
+                                      aria-label="{{'DOKUMENT_DOWNLOAD' | translate}}"
+                                      style="color: black"></span>
+                    </td>
+
+                <tr ng-if="vm.userjobs.length === 0">
+                    <td colspan="6" class="empty-table" data-translate="KEIN_EINTRAG">...</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <div class="col-md-10 col-md-offset-1 marginTop40">
+        <div dv-display-element
+             dv-display-allowed-roles="vm.TSRoleUtil.getSuperAdminRoles()">
+
+            <dv-loading-button button-class="" button-click="vm.showAllJobs()" type="button">
+                <span class="fa fa-refresh"></span>
+                <span  data-translate="SHOW_JOBS"></span>
+            </dv-loading-button>
+            </dv-loading-button>
+            <div ng-if="vm.allJobs">
+                <p>Batch Jobs from Wildfly Batch Module</p>
+            <pre>{{vm.allJobs |json}}</pre>
+            </div>
+        </div>
+    </div>
+
 </div>

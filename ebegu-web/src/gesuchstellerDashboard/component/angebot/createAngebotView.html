@@ -27,7 +27,7 @@
                     <div class="dashboardHeader">
 
                         <div class="row viewTitle marginTop40">
-                            <div class="col-md-8 col-md-offset-4">
+                            <div class="dv-input-container-medium col-md-12 createAngebotView--centered-col">
                                 <h2>
 
                                     <span ng-if="vm.ts" data-translate="TAGESSCHULE_ERFASSEN"
@@ -39,7 +39,7 @@
                         </div>
 
                         <div class="row marginTop40">
-                            <div class="dv-input-container-medium col-md-offset-4 col-md-12">
+                            <div class="dv-input-container-medium col-md-12 createAngebotView--centered-col">
                                 <form role="form" name="vm.form" class="" novalidate
                                       unsaved-warning-form>
 
@@ -67,11 +67,11 @@
                                     <div class="row">
                                         <div class="col-xs-12 dv-input-container-question">
                                             <div class="form-group" ng-show="vm.anmeldungDTO.additionalKindQuestions">
-                                <span class="ebeguH1 required">
-                                    <span data-translate="MUTTERSPRACHE_DEUTSCH"></span>
-                                    <dv-tooltip input-id="mutterspracheDeutsch"
-                                                text="'MUTTERSPRACHE_DEUTSCH_HELP' | translate"></dv-tooltip>
-                                </span>
+                                                <span class="ebeguH1 required">
+                                                    <span data-translate="MUTTERSPRACHE_DEUTSCH"></span>
+                                                    <dv-tooltip input-id="mutterspracheDeutsch"
+                                                                text="'MUTTERSPRACHE_DEUTSCH_HELP' | translate"></dv-tooltip>
+                                                </span>
 
                                                 <dv-radio-container name="mutterspracheDeutsch" class="input-element"
                                                                     ng-required="vm.anmeldungDTO.additionalKindQuestions"
@@ -90,12 +90,12 @@
                                     <div class="row">
                                         <div class="col-xs-12 dv-input-container-question">
                                             <div class="form-group" ng-show="vm.anmeldungDTO.additionalKindQuestions">
-                                <span class="ebeguH1 required">
-                                    <span data-translate="EINSCHULUNG"
-                                          data-translate-value-date="{{vm.getDatumEinschulung() | amDateFormat : 'DD.MM.YYYY'}}"> </span>
-                                    <dv-tooltip input-id="einschulung"
-                                                text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
-                                </span>
+                                                <span class="ebeguH1 required">
+                                                    <span data-translate="EINSCHULUNG"
+                                                          data-translate-value-date="{{vm.getDatumEinschulung() | amDateFormat : 'DD.MM.YYYY'}}"> </span>
+                                                    <dv-tooltip input-id="einschulung"
+                                                                text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
+                                                </span>
                                                 <dv-radio-container name="einschulung" class="input-element"
                                                                     ng-required="vm.anmeldungDTO.additionalKindQuestions"
                                                                     ng-model="vm.anmeldungDTO.einschulung"
@@ -115,8 +115,9 @@
                                                 <dv-input-container class="form-group">
                                                     <label class="md-no-float"
                                                            for="gleichemHaushalt">
-                                            <span data-translate="WOHNHAFT_IM_GLEICHEN_HAUSHALT"
-                                                  class="ebeguH1"> </span>
+                                                        <span data-translate="WOHNHAFT_IM_GLEICHEN_HAUSHALT"
+                                                              class="ebeguH1">
+                                                        </span>
                                                         <dv-tooltip input-id="gleichemHaushalt"
                                                                     text="'WOHNHAFT_IM_GLEICHEN_HAUSHALT_HELP' | translate"></dv-tooltip>
                                                     </label>

@@ -36,6 +36,10 @@ export default class AbstractAdminViewController {
         return !this.authServiceRS.isOneOfRoles(TSRoleUtil.getJAAdministratorRoles());
     }
 
+    public isAnyAdminRole(): boolean {
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorRoles());
+    }
+
     public periodenParamsEditableForPeriode(gesuchsperiode: TSGesuchsperiode): boolean {
         if (gesuchsperiode && gesuchsperiode.status) {
             // Fuer SuperAdmin immer auch editierbar, wenn AKTIV oder INAKTIV, sonst nur ENTWURF
