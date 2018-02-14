@@ -68,7 +68,7 @@ public final class VerfuegungUtil {
 		for (VerfuegungZeitabschnitt zeitabschnittGSM : vorgaengerZeitabschnittList) {
 			if (zeitabschnittGSM.getGueltigkeit().equals(newZeitabschnitt.getGueltigkeit())
 				&& zeitabschnittGSM.getVerguenstigung().compareTo(newZeitabschnitt.getVerguenstigung()) == 0
-				&& zeitabschnittGSM.getAnspruchberechtigtesPensum() == newZeitabschnitt.getAnspruchberechtigtesPensum()) {
+				&& zeitabschnittGSM.getBgPensum() == newZeitabschnitt.getBgPensum()) {
 				return Optional.of(zeitabschnittGSM);
 			}
 		}

@@ -149,8 +149,24 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 						(zeitabschnitteOnVorgaengerVerfuegung, verfuegungZeitabschnittNeu);
 
 					if (!zeitabschnittSameGueltigkeitSameBetrag.isPresent()) { // we only check the status if there has been any verrechnete zeitabschnitt. Otherwise NEU
-						if (ignorieren) {
-							verfuegungZeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND);
+						// Wenn der alte Abschnitt VERRECHNET war und das Flag ignoriert -> IGNORIEREND
+						if (areAllZeitabschnitteVerrechnet(zeitabschnitteOnVorgaengerVerfuegung)) {
+							// Es war schon verrechnet: Die neuen Zeitabschnitte muessen entweder ignoriert oder korrigiert werden
+							if (ignorieren) {
+								verfuegungZeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND);
+							} else {
+								verfuegungZeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
+							}
+						} else {
+							// Es war noch nicht verrechnet: Wir muessen es *auf jeden Fall* verrechnen. Das ignorieren bezieht sich nur auf
+							// bereits vergangene Auszahlungen. Wir ignorieren die *Korrekturen* und nicht die Daten an sich.
+							verfuegungZeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
+						}
+					} else {
+						// Es hat ueberhaupt nichts geaendert seit dem letztem Gesuch. Falls es schon verrechnet war, bleibt
+						// es somit verrechnet. Sonst neu
+						if (areAllZeitabschnitteVerrechnet(zeitabschnitteOnVorgaengerVerfuegung)) {
+							verfuegungZeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET);
 						} else {
 							verfuegungZeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
 						}
@@ -158,6 +174,15 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 				}
 			}
 		}
+	}
+
+	private boolean areAllZeitabschnitteVerrechnet(List<VerfuegungZeitabschnitt> zeitabschnitte) {
+		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnitte) {
+			if (!verfuegungZeitabschnitt.getZahlungsstatus().isBereitsBehandeltInZahlungslauf()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private void setVerfuegungsKategorien(Verfuegung verfuegung) {
