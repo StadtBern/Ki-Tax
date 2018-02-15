@@ -33,11 +33,13 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import {BetreuungViewController} from '../betreuungView/betreuungView';
+import {TSAnmeldungMutationZustand} from '../../../models/enums/TSAnmeldungMutationZustand';
+import * as moment from 'moment';
+import TSBelegungFerieninselTag from '../../../models/TSBelegungFerieninselTag';
 import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
 import ITranslateService = angular.translate.ITranslateService;
-import {TSAnmeldungMutationZustand} from '../../../models/enums/TSAnmeldungMutationZustand';
 
 declare let require: any;
 let template = require('./betreuungFerieninselView.html');
@@ -72,9 +74,9 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     showMutiert: boolean = false;
     aktuellGueltig: boolean = true;
 
-
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout', '$translate', 'FerieninselStammdatenRS'];
+
     /* @ngInject */
     constructor($state: IStateService, gesuchModelManager: GesuchModelManager, ebeguUtil: EbeguUtil, CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, errorService: ErrorService,
@@ -198,4 +200,28 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     public getBetreuungModel(): TSBetreuung {
         return this.betreuung;
     }
+
+    public getMomentWeekdays() {
+        let weekdays = moment.weekdays();
+        weekdays.splice(0, 1);
+        weekdays.splice(5, 1);
+        return weekdays;
+    }
+
+    public displayBreak(tag: TSBelegungFerieninselTag, index: number, dayArray: Array<TSBelegungFerieninselTag>): boolean {
+        if (dayArray[index + 1]) {
+            return tag.tag.week() !== dayArray[index + 1].tag.week();
+        } else {
+            return false;
+        }
+    }
+
+    public displayWeekRow(tag: TSBelegungFerieninselTag, index: number, dayArray: Array<TSBelegungFerieninselTag>): boolean {
+        if (dayArray[index + 1]) {
+            return dayArray[index + 1].tag.diff(tag.tag, 'days') > 7;
+        } else {
+            return false;
+        }
+    }
+
 }

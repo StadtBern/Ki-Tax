@@ -33,7 +33,8 @@
                         <md-button ng-click="vmgs.setGesuchsperiode(gesuchsperiodeString)"
                                    aria-label="{{ 'TOOLBAR_GESUCHSPERIODE_ITEM' | translate:{gp:gesuchsperiodeString} }}">
                                 <span>
-                                    <a href="#" ng-click="$event.preventDefault()" aria-hidden>{{gesuchsperiodeString}}</a>
+                                    <a href="#" ng-click="$event.preventDefault()"
+                                       aria-hidden>{{gesuchsperiodeString}}</a>
                                 </span>
                         </md-button>
                     </md-menu-item>
@@ -45,7 +46,8 @@
 
             <!--Gesuchstyp-->
             <md-menu ng-if="vmgs.showAntragTypListNavigationMenu()">
-                <button ng-click="$mdOpenMenu()" aria-label="{{ 'TOOLBAR_GESUCHSTYP' | translate:{gt:vmgs.getAntragTyp(), gp:vmgs.getCurrentGesuchsperiode()} }}">
+                <button ng-click="$mdOpenMenu()"
+                        aria-label="{{ 'TOOLBAR_GESUCHSTYP' | translate:{gt:vmgs.getAntragTyp(), gp:vmgs.getCurrentGesuchsperiode()} }}">
                     <span ng-bind="vmgs.getAntragTyp()"></span>
                     <i class="ellipsis-icon fa fa-chevron-down"></i>
                 </button>
@@ -70,7 +72,8 @@
 
             <!-- Gesuch loeschen -->
             <div dv-show-element
-                 dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerOnlyRoles()" dv-show-expression="vmgs.showGesuchLoeschen()">
+                 dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerOnlyRoles()"
+                 dv-show-expression="vmgs.showGesuchLoeschen()">
                 <button ng-click="vmgs.gesuchLoeschen()"
                         aria-label="{{'TOOLBAR_LOESCHEN' | translate}}" style="text-align: center;"
                         input-id="{{'gesuchLoeschenButton'}}">
@@ -93,6 +96,7 @@
                 <button ng-click="vmgs.openMitteilungen()"
                         aria-label="{{'TOOLBAR_MITTEILUNGEN' | translate}}" style="text-align: center;">
                     <span data-translate="TOOLBAR_MITTEILUNGEN"></span>
+                    <span ng-bind="vmgs.getAmountNewMitteilungenGS()"></span>
                 </button>
             </div>
             <!--Kontakt-->
@@ -116,32 +120,32 @@
         <!--close knopf-->
         <i class="fa fa-times" aria-hidden="true"></i>
     </button>
-    <div ng-if="vmgs.showGesuchPeriodeNavigationMenu()" class="gesuchsperioden-container"
-         ng-repeat="(gesuchsperiodeString,antragTypDaten) in vmgs.gesuchNavigationList" layout="column"
+    <div class="gesuchsperiode-gesuchname">
+			<span ng-bind="vmgs.getGesuchName()">
+			</span>
+    </div>
+    <div class="gesuchsperioden-container"
+         ng-repeat="gesuchsperiodeString in vmgs.getKeys(vmgs.gesuchNavigationList)" layout="column"
          layout-align="start center">
 
         <button ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.setGesuchsperiode(gesuchsperiodeString)"
                 aria-label="{{gesuchsperiodeString}}" class="gesuchsperiode-button">
-                <span>
-                    {{gesuchsperiodeString}}
-                </span>
+			<span>
+				{{gesuchsperiodeString}}
+			</span>
         </button>
 
-        <button ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.setAntragTypDatum(antragTypDatum)"
-                aria-label="{{antragTypDatum}}" ng-if="vmgs.showAntragTypListNavigationMenu()"
-                ng-repeat="antragTypDatum  in antragTypDaten"
-                ng-value="antragTypDatum" class="antrag-typ-datum-button">
-                                <span>
-                                    {{antragTypDatum}}
-                                </span>
+        <button
+            ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.setAntragTypDatumMobile(gesuchsperiodeString, antragTypDatum)"
+            aria-label="{{antragTypDatum}}" ng-if="vmgs.showAntragTypListNavigationMenu()"
+            ng-repeat="antragTypDatum in vmgs.gesuchNavigationList[gesuchsperiodeString]"
+            ng-value="antragTypDatum" class="antrag-typ-datum-button">
+			<span>
+				{{antragTypDatum}}
+			</span>
         </button>
     </div>
 
-
-    <span class="gesuchsperiode-button" ng-if="!vmgs.showGesuchPeriodeNavigationMenu() && vmgs.getGesuch()"
-          ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
-    <span class="antrag-typantrag-typ-datum-button" ng-if="!vmgs.showAntragTypListNavigationMenu() && vmgs.getGesuch()"
-          ng-bind="vmgs.getAntragTyp()"></span>
 
     <span flex=""></span>
     <div dv-show-element

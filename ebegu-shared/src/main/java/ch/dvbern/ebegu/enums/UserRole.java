@@ -54,6 +54,14 @@ public enum UserRole {
 		return Arrays.asList(ADMIN, SACHBEARBEITER_JA);
 	}
 
+	public static List<UserRole> getJugendamtSuperadminRoles() {
+		return Arrays.asList(ADMIN, SACHBEARBEITER_JA, SUPER_ADMIN);
+	}
+
+	public static List<UserRole> getInstitutionTraegerschaftRoles() {
+		return Arrays.asList(SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION);
+	}
+
 	/**
 	 * ACHTUNG Diese Logik existiert auch im Client TSUser. Aenderungen muessen in beiden Orten gemacht werden.
 	 */

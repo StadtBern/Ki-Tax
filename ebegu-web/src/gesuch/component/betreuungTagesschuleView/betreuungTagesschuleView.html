@@ -26,43 +26,60 @@
                 <!-- Eintrittsdatum -->
                 <div class="row">
                     <div class="col-sm-12 dv-input-container-small form-group">
-                        <label class="md-no-float required" data-translate="EINTRITTSDATUM" for="eintrittsdatum_ID"></label>
+                        <label class="md-no-float required" data-translate="EINTRITTSDATUM"
+                               for="eintrittsdatum_ID"></label>
                         <dv-datepicker input-id="eintrittsdatum_ID" name="eintrittsdatum"
                                        ng-model="vm.betreuung.belegungTagesschule.eintrittsdatum"
                                        ng-required="true"
                                        class="input-element"
                                        dv-min-date="vm.datumErsterSchultag">
                         </dv-datepicker>
-                        <dv-error-messages input-id="eintrittsdatum" for="vm.form.eintrittsdatum.$error"></dv-error-messages>
+                        <dv-error-messages input-id="eintrittsdatum"
+                                           for="vm.form.eintrittsdatum.$error"></dv-error-messages>
                     </div>
                 </div>
+                <div class="dv-ebegu-calendar__wrapper-tagesschule" ng-if="vm.isTagesschuleAlreadySelected()">
 
-                <table ng-if="vm.isTagesschuleAlreadySelected()" class="dv-tagesschule-table">
-                    <tr>
-                        <td></td>
-                        <td class="dv-tagesschule-table__weekdays" ng-repeat="weekDay in vm.getWeekDays()">
-                            <span ng-bind="weekDay | translate"></span>
-                        </td>
-                    </tr>
-                    <tr class="dv-tagesschule-table__tr" ng-repeat="modulName in vm.getModulTagesschuleNameList()">
-                        <td ng-if="vm.isModulDefinedInSelectedTS(modulName, vm.getMonday())" ng-bind="vm.getModulName(modulName)"></td>
-                        <td ng-if="vm.isModulDefinedInSelectedTS(modulName, vm.getMonday())"
-                            ng-repeat="weekDay in vm.getWeekDays()">
-                            <div class="checkbox dv-tagesschule-table__checkbox">
-                                <md-checkbox name="modul_{{modulName}}_{{weekDay}}"
-                                             ng-model="vm.getModul(modulName, weekDay).angemeldet"
-                                             aria-label="Modul {{modulName | translate}} {{weekDay | translate}}"
-                                             ng-disabled="!vm.isModulEnabled(modulName, weekDay) || vm.isFreigabequittungAusstehend()">
-                                </md-checkbox>
+                    <div class="dv-ebegu-calendar__row--tagesschule">
+                        <div class="dv-ebegu-calendar__wrapper-small-blank"></div>
+                        <div class="dv-ebegu-calendar__wrapper">
+                            <div class="dv-ebegu-calendar__container-weekdays">
+                                <div class="dv-ebegu-calendar__weekday dv-ebegu-calendar__weekday--{{day}}"
+                                     ng-repeat="day in vm.getWeekDays()">{{ day | translate}}
+                                </div>
                             </div>
-                        </td>
-                    </tr>
-                </table>
-
+                        </div>
+                    </div>
+                    <div class="dv-ebegu-calendar__row--tagesschule"
+                         ng-repeat="modulName in vm.getModulTagesschuleNameList()">
+                        <div class="dv-ebegu-calendar__wrapper-small dv-ebegu-calendar__module"
+                             ng-if="vm.isModulDefinedInSelectedTS(modulName, vm.getMonday())">
+                            <span class="dv-ebegu-calendar__module-name" ng-bind="modulName | translate"></span>
+                            <span class="dv-ebegu-calendar__module-time"
+                                  ng-bind="vm.getModulTimeAsStringViaName(modulName)"></span>
+                        </div>
+                        <div class="dv-ebegu-calendar__wrapper">
+                            <div class="dv-ebegu-calendar__container dv-ebegu-calendar__container--no-margin">
+                                <div
+                                    class="dv-ebegu-calendar__day dv-ebegu-calendar__day--{{$index+1}}"
+                                    ng-if="vm.isModulDefinedInSelectedTS(modulName, vm.getMonday())"
+                                    ng-repeat="weekDay in vm.getWeekDays()">
+                                    <md-checkbox
+                                        class="dv-ebegu-calendar--tagesschule"
+                                        name="modul_{{modulName}}_{{weekDay}}"
+                                        ng-model="vm.getModul(modulName, weekDay).angemeldet"
+                                        aria-label="Modul {{modulName | translate}} {{weekDay | translate}}"
+                                        ng-disabled="!vm.isModulEnabled(modulName, weekDay) || vm.isFreigabequittungAusstehend()">
+                                    </md-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Hinweis, dass Tageschulanmeldung ncoh nicht freigeschaltet -->
-            <div ng-if="!vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">
+            <div class="marginTop30" ng-if="!vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">
                 <div class="well well-status-warten">
                     <i class="fa fa-exclamation " aria-hidden="true"></i>
                     <span>{{vm.getTagesschuleAnmeldungNotYetReadyText()}}</span>
@@ -70,21 +87,21 @@
             </div>
 
             <!-- Hinweis, wenn keine Module ausgewaehlt -->
-            <div ng-if="vm.showErrorMessageNoModule === true">
+            <div class="marginTop30" ng-if="vm.showErrorMessageNoModule === true">
                 <div class="well well-status-warten">
                     <i class="fa fa-exclamation" aria-hidden="true"></i>
                     <span data-translate="WARN_TAGESSCHULE_KEIN_MODUL_GEWAEHLT"></span>
                 </div>
             </div>
 
-            <div ng-if="vm.showNochNichtFreigegeben === true">
+            <div class="marginTop30" ng-if="vm.showNochNichtFreigegeben === true">
                 <div class="well well-status-warten">
                     <i class="fa fa-exclamation" aria-hidden="true"></i>
                     <span data-translate="WARN_ANGEBOT_NOCH_NICHT_FREIGEGEBEN"></span>
                 </div>
             </div>
 
-            <div ng-if="vm.showMutiert === true">
+            <div class="marginTop30" ng-if="vm.showMutiert === true">
                 <div class="well well-status-warten">
                     <i class="fa fa-exclamation" aria-hidden="true"></i>
                     <span data-translate="WARN_ANGEBOT_MUTIERT"></span>
@@ -120,23 +137,24 @@
             </dv-loading-button>
         </div>
 
-		<div dv-show-element
+        <div dv-show-element
              dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
              dv-show-expression="vm.showButtonsInstitution() && vm.aktuellGueltig">
-			<dv-loading-button button-click="vm.anmeldungSchulamtUebernehmen()" type="button" button-class="save">
-				<span data-translate="SCHULAMT_ANMELDUNG_UEBERNEHMEN"></span>
-			</dv-loading-button>
-			<dv-loading-button button-click="vm.anmeldungSchulamtAblehnen()" type="button" button-class="save">
-				<span data-translate="SCHULAMT_ANMELDUNG_ABLEHNEN"></span>
-			</dv-loading-button>
-			<dv-loading-button button-click="vm.anmeldungSchulamtFalscheInstitution()" type="button" button-class="save">
-				<span data-translate="SCHULAMT_FALSCHE_INSTITUTION"></span>
-			</dv-loading-button>
-		</div>
-		<!-- Abbrechen: Immer vorhanden -->
-		<dv-loading-button button-click="vm.cancel()" button-class="cancel" type="reset">
-			<span data-translate="ABBRECHEN_UPPER"></span>
-		</dv-loading-button>
+            <dv-loading-button button-click="vm.anmeldungSchulamtUebernehmen()" type="button" button-class="save">
+                <span data-translate="SCHULAMT_ANMELDUNG_UEBERNEHMEN"></span>
+            </dv-loading-button>
+            <dv-loading-button button-click="vm.anmeldungSchulamtAblehnen()" type="button" button-class="save">
+                <span data-translate="SCHULAMT_ANMELDUNG_ABLEHNEN"></span>
+            </dv-loading-button>
+            <dv-loading-button button-click="vm.anmeldungSchulamtFalscheInstitution()" type="button"
+                               button-class="save">
+                <span data-translate="AKTION_SCHULAMT_FALSCHE_INSTITUTION"></span>
+            </dv-loading-button>
+        </div>
+        <!-- Abbrechen: Immer vorhanden -->
+        <dv-loading-button button-click="vm.cancel()" button-class="cancel" type="reset">
+            <span data-translate="ABBRECHEN_UPPER"></span>
+        </dv-loading-button>
     </div>
 
 </div>

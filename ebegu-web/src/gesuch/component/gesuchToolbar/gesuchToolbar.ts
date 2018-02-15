@@ -21,11 +21,7 @@ import GesuchRS from '../../service/gesuchRS.rest';
 import {IStateService} from 'angular-ui-router';
 import TSAntragDTO from '../../../models/TSAntragDTO';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {
-    isAnyStatusOfVerfuegt,
-    isAtLeastFreigegebenOrFreigabequittung,
-    isStatusVerfuegenVerfuegt
-} from '../../../models/enums/TSAntragStatus';
+import {isAnyStatusOfVerfuegt, isAtLeastFreigegebenOrFreigabequittung, isStatusVerfuegenVerfuegt} from '../../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
@@ -40,6 +36,7 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 
 import {ShowTooltipController} from '../../dialog/ShowTooltipController';
 import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
+import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 import IPromise = angular.IPromise;
 import IScope = angular.IScope;
 
@@ -96,22 +93,24 @@ export class GesuchToolbarController implements IDVFocusableController {
     mutierenPossibleForCurrentAntrag: boolean = false;
     erneuernPossibleForCurrentAntrag: boolean = false;
     neuesteGesuchsperiode: TSGesuchsperiode;
+    amountNewMitteilungenGS: number = 0;
 
     static $inject = ['EbeguUtil', 'GesuchRS', '$state',
         '$scope', 'GesuchModelManager', 'AuthServiceRS', '$mdSidenav', '$log', 'GesuchsperiodeRS',
-        'FallRS', 'DvDialog', 'unsavedWarningSharedService'];
+        'FallRS', 'DvDialog', 'unsavedWarningSharedService', 'MitteilungRS'];
 
     constructor(private ebeguUtil: EbeguUtil,
-        private gesuchRS: GesuchRS,
-        private $state: IStateService, private $scope: IScope,
-        private gesuchModelManager: GesuchModelManager,
-        private authServiceRS: AuthServiceRS,
-        private $mdSidenav: ng.material.ISidenavService,
-        private $log: ILogService,
-        private gesuchsperiodeRS: GesuchsperiodeRS,
-        private fallRS: FallRS,
-        private dvDialog: DvDialog,
-        private unsavedWarningSharedService: any) {
+                private gesuchRS: GesuchRS,
+                private $state: IStateService, private $scope: IScope,
+                private gesuchModelManager: GesuchModelManager,
+                private authServiceRS: AuthServiceRS,
+                private $mdSidenav: ng.material.ISidenavService,
+                private $log: ILogService,
+                private gesuchsperiodeRS: GesuchsperiodeRS,
+                private fallRS: FallRS,
+                private dvDialog: DvDialog,
+                private unsavedWarningSharedService: any,
+                private mitteilungRS: MitteilungRS) {
 
     }
 
@@ -124,6 +123,17 @@ export class GesuchToolbarController implements IDVFocusableController {
             // Die neueste ist zuoberst
             this.neuesteGesuchsperiode = response[0];
         });
+    }
+
+    private updateAmountNewMitteilungenGS(fallid: string): void {
+        this.mitteilungRS.getAmountNewMitteilungenForCurrentRolle(fallid).then((response: number) => {
+            this.amountNewMitteilungenGS = response;
+        });
+    }
+
+    public getAmountNewMitteilungenGS(): string {
+
+        return '(' + this.amountNewMitteilungenGS + ')';
     }
 
     public toggleSidenav(componentId: string): void {
@@ -175,6 +185,7 @@ export class GesuchToolbarController implements IDVFocusableController {
                 if (newValue !== oldValue) {
                     if (this.fallid) {
                         this.updateAntragDTOList();
+                        this.updateAmountNewMitteilungenGS(this.fallid);
                     } else {
                         // Fall-ID hat auf undefined gewechselt -> Fall zuruecksetzen
                         this.fall = undefined;
@@ -252,6 +263,7 @@ export class GesuchToolbarController implements IDVFocusableController {
                     }
                 }
             });
+            this.updateAmountNewMitteilungenGS(this.fallid);
         } else {
             this.resetNavigationParameters();
         }
@@ -390,6 +402,19 @@ export class GesuchToolbarController implements IDVFocusableController {
 
     public setAntragTypDatum(antragTypDatumKey: string) {
         let selectedAntragTypGesuch = this.antragTypList[antragTypDatumKey];
+        this.goToOpenGesuch(selectedAntragTypGesuch.antragId);
+    }
+
+    public setAntragTypDatumMobile(gesuchperiodeKey: string, antragTypDatumKey: string) {
+        let tmpAntragList: { [key: string]: TSAntragDTO } = {};
+        for (let i = 0; i < this.antragList.length; i++) {
+            let antrag: TSAntragDTO = this.antragList[i];
+            if (this.gesuchsperiodeList[gesuchperiodeKey][0].gesuchsperiodeGueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
+                let txt = this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum, antrag.laufnummer);
+                tmpAntragList[txt] = antrag;
+            }
+        }
+        let selectedAntragTypGesuch = tmpAntragList[antragTypDatumKey];
         this.goToOpenGesuch(selectedAntragTypGesuch.antragId);
     }
 
@@ -596,13 +621,23 @@ export class GesuchToolbarController implements IDVFocusableController {
     }
 
     public showKontakt(): void {
+        let text: string;
+        if (this.fall.isHauptverantwortlicherSchulamt()) {
+            text = '<span>Schulamt</span><br>'
+                + '<span>Effingerstrasse 21</span><br>'
+                + '<span>3008 Bern</span><br>'
+                + '<a href="tel:0313216460"><span>031 321 64 60</span></a><br>'
+                + '<a href="mailto:schulamt@bern.ch"><span>schulamt@bern.ch</span></a>';
+        } else {
+            text = '<span>Jugendamt</span><br>'
+                + '<span>Effingerstrasse 21</span><br>'
+                + '<span>3008 Bern</span><br>'
+                + '<a href="tel:0313215115"><span>031 321 51 15</span></a><br>'
+                + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>';
+        }
         this.dvDialog.showDialog(showKontaktTemplate, ShowTooltipController, {
             title: '',
-            text: '<span>Jugendamt</span><br>'
-            + '<span>Effingerstrasse 21</span><br>'
-            + '<span>3008 Bern</span><br>'
-            + '<a href="tel:0313215115"><span>031 321 51 15</span></a><br>'
-            + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>',
+            text: text,
             parentController: this
         });
     }

@@ -50,6 +50,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
@@ -71,7 +72,7 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 
 	@Nonnull
 	@Override
-	@RolesAllowed(value = { ADMIN, SUPER_ADMIN })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, ADMINISTRATOR_SCHULAMT })
 	public Institution updateInstitution(@Nonnull Institution institution) {
 		Objects.requireNonNull(institution);
 		return persistence.merge(institution);
@@ -79,7 +80,7 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 
 	@Nonnull
 	@Override
-	@RolesAllowed(value = { ADMIN, SUPER_ADMIN })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, ADMINISTRATOR_SCHULAMT })
 	public Institution createInstitution(@Nonnull Institution institution) {
 		Objects.requireNonNull(institution);
 		return persistence.persist(institution);
@@ -95,7 +96,7 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 	}
 
 	@Override
-	@RolesAllowed(value = { ADMIN, SUPER_ADMIN })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public Institution setInstitutionInactive(@Nonnull String institutionId) {
 		Validate.notNull(institutionId);
 		Optional<Institution> institutionToRemove = findInstitution(institutionId);
@@ -106,12 +107,13 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 	}
 
 	@Override
-	@RolesAllowed(value = { ADMIN, SUPER_ADMIN })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public void deleteInstitution(@Nonnull String institutionId) {
 		Validate.notNull(institutionId);
 		Optional<Institution> institutionToRemove = findInstitution(institutionId);
-		institutionToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeInstitution", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionId));
-		persistence.remove(institutionToRemove.get());
+		Institution institution = institutionToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeInstitution",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionId));
+		persistence.remove(institution);
 	}
 
 	@Override

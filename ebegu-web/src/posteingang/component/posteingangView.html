@@ -19,40 +19,34 @@
             <div class="col-md-8 col-md-offset-1">
                 <h3 data-translate="POSTEINGANG"></h3>
             </div>
-            <div class="col-md-2 text-right">
-                <h3 ng-bind="vm.getMitteilungen() ? vm.getMitteilungen().length : 0"></h3>
+            <div class="col-md-2 text-right closedMitteilungen posteingangView__resultCombo">
+                <md-checkbox ng-model="vm.includeClosed" name="includeClosed" id="includeClosed" ng-change="vm.clickedIncludeClosed()"
+                             aria-label="{{'POSTEINGANG_INCLUDE_CLOSED'|translate}}">
+                    <span data-translate="POSTEINGANG_INCLUDE_CLOSED"></span>
+                </md-checkbox>
+                <h3 ng-bind="vm.totalResultCount" class="posteingangView__resultcount"></h3>
             </div>
         </div>
-        <!--<div class="row">-->
-            <!--<div class="col-md-2 col-md-offset-9 text-right closedMitteilungen">-->
-                <!--<md-checkbox ng-model="vm.includeClosed" name="includeClosed" id="includeClosed"-->
-                             <!--aria-label="{{'POSTEINGANG_INCLUDE_CLOSED'|translate}}" ng-change="vm.clickedIncludeClosed()">-->
-                    <!--<span data-translate="POSTEINGANG_INCLUDE_CLOSED"></span>-->
-                <!--</md-checkbox>-->
-            <!--</div>-->
-        <!--</div>-->
         <div class="row">
             <div class="col-md-10 col-md-offset-1 table-responsive">
 
-                <table st-table="displayedCollection" st-set-filter="posteingangFilter" st-safe-src="vm.getMitteilungen()"
-                       st-delay="20"
-                       class="table fixedtable table-striped">
+                <table st-table="vm.displayedCollection" st-delay="20" st-pipe="vm.passFilterToServer" class="table fixedtable table-striped">
                     <thead>
                     <tr>
                         <!-- Von -->
-                        <th st-sort="sender.getFullName()" class="sortable row-sender" data-translate="POSTEINGANG_VON_UPPER"></th>
+                        <th st-sort="sender" class="sortable row-sender" data-translate="POSTEINGANG_VON_UPPER"></th>
                         <!-- Fall-Nummer -->
-                        <th st-sort="fall.fallNummer" class="sortable row-fallNummer" data-translate="POSTEINGANG_FALL_UPPER"></th>
+                        <th st-sort="fallNummer" class="sortable row-fallNummer" data-translate="POSTEINGANG_FALL_UPPER"></th>
                         <!-- Familie -->
-                        <th st-sort="fall.besitzer.getFullName()" class="sortable row-besitzer" data-translate="POSTEINGANG_FAMILIE_UPPER"></th>
+                        <th st-sort="familienName" class="sortable row-besitzer" data-translate="POSTEINGANG_FAMILIE_UPPER"></th>
                         <!-- Betreff -->
                         <th st-sort="subject" class="sortable row-subject" data-translate="POSTEINGANG_BETREFF_UPPER"></th>
                         <!-- Datum -->
                         <th st-sort="sentDatum" class="sortable row-sentDatum" data-translate="POSTEINGANG_DATUM_UPPER"></th>
                         <!-- Verantwortliche Person -->
-                        <th st-sort="empfaenger.getFullName()" class="sortable row-empfaenger" data-translate="POSTEINGANG_VERANTWORTLICH_UPPER"></th>
+                        <th st-sort="empfaenger" class="sortable row-empfaenger" data-translate="POSTEINGANG_VERANTWORTLICH_UPPER"></th>
                         <!-- Amt -->
-                        <th st-sort="empfaenger.amt" class="sortable row-amt" data-translate="POSTEINGANG_AMT"></th>
+                        <th st-sort="empfaengerAmt" class="sortable row-amt" data-translate="POSTEINGANG_AMT"></th>
                         <!-- Status -->
                         <th st-sort="mitteilungStatus" class="sortable row-status" data-translate="POSTEINGANG_STATUS"></th>
                     </tr>
@@ -60,9 +54,9 @@
                         <!-- Von -->
                         <th><input st-search="sender" class="form-control" type="text"/></th>
                         <!-- Fall-Nummer -->
-                        <th><input st-search="fall.fallNummer" class="form-control" type="text"/></th>
+                        <th><input st-search="fallNummer" class="form-control" type="text"/></th>
                         <!-- Familie -->
-                        <th><input st-search="fall.besitzer" class="form-control" type="text"/></th>
+                        <th><input st-search="familienName" class="form-control" type="text"/></th>
                         <!-- Betreff -->
                         <th><input st-search="subject" class="form-control" type="text"/></th>
                         <!-- Datum -->
@@ -75,7 +69,7 @@
                         <!-- Amt -->
                         <th>
                             <div class="dv-select-style">
-                                <select st-input-event="change" name="empfaenger.amt" id="empfaenger.amt" st-search="empfaenger.amt" class="form-control"
+                                <select st-input-event="change" name="empfaengerAmt" id="empfaengerAmt" st-search="empfaengerAmt" class="form-control"
                                         ng-options="'AMT_' + a | translate for a in vm.getAemter() track by a" ng-model="vm.selectedAmt">
                                     <option value="">{{"ALLE" | translate}}</option>
                                 </select>
@@ -95,7 +89,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single" ng-click="vm.gotoMitteilung(row)" ng-class="{'mitteilung_neu': ('NEU' === row.mitteilungStatus.toString()),'mitteilung_alt': ('NEU' !== row.mitteilungStatus.toString())}">
+                    <tr ng-repeat="row in vm.displayedCollection" st-select-row="row" st-select-mode="single" ng-click="vm.gotoMitteilung(row)"
+                        ng-class="{'mitteilung_neu': ('NEU' === row.mitteilungStatus.toString()),'mitteilung_alt': ('NEU' !== row.mitteilungStatus.toString())}">
                         <!-- Von -->
                         <td ellipsis-tooltip="{{row.sender.getFullName()}}"
                             ng-bind="row.sender.getFullName()"></td>
@@ -125,7 +120,7 @@
                     <tfoot>
                     <tr>
                         <td colspan="6" class="text-center">
-                            <div st-pagination="" st-items-by-page="vm.itemsByPage" st-displayed-pages="5"></div>
+                            <div st-pagination="" st-items-by-page="20" st-displayed-pages="10"></div>
                         </td>
                     </tr>
                     </tfoot>

@@ -13,7 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IIntervalService} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import TSStatistikParameter from '../../../models/TSStatistikParameter';
 import {TSStatistikParameterType} from '../../../models/enums/TSStatistikParameterType';
@@ -21,14 +21,18 @@ import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import {ReportRS} from '../../../core/service/reportRS.rest';
-import TSDownloadFile from '../../../models/TSDownloadFile';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import * as moment from 'moment';
 import DateUtil from '../../../utils/DateUtil';
+import {ReportAsyncRS} from '../../../core/service/reportAsyncRS.rest';
+import ErrorService from '../../../core/errors/service/ErrorService';
+import BatchJobRS from '../../../core/service/batchRS.rest';
+import TSWorkJob from '../../../models/TSWorkJob';
+import TSBatchJobInformation from '../../../models/TSBatchJobInformation';
 import IFormController = angular.IFormController;
 import ILogService = angular.ILogService;
 import Moment = moment.Moment;
+import ITranslateService = angular.translate.ITranslateService;
 
 let template = require('./statistikView.html');
 require('./statistikView.less');
@@ -49,10 +53,15 @@ export class StatistikViewController {
     // Statistiken sind nur moeglich ab Beginn der fruehesten Periode bis Ende der letzten Periode
     private maxDate: Moment;
     private minDate: Moment;
+    private userjobs: Array<TSWorkJob>;
+    private allJobs: Array<TSBatchJobInformation>;
 
-    static $inject: string[] = ['$state', 'GesuchsperiodeRS', '$log', 'ReportRS', 'DownloadRS'];
+    static $inject: string[] = ['$state', 'GesuchsperiodeRS', '$log', 'ReportAsyncRS', 'DownloadRS', 'BatchJobRS',
+        'ErrorService', '$translate', '$interval'];
 
-    constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private $log: ILogService, private reportRS: ReportRS, private downloadRS: DownloadRS) {
+    constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private $log: ILogService,
+        private reportRS: ReportAsyncRS, private downloadRS: DownloadRS, private bachJobRS: BatchJobRS, private errorService: ErrorService,
+        private $translate: ITranslateService, private $interval: IIntervalService) {
     }
 
     $onInit() {
@@ -66,6 +75,20 @@ export class StatistikViewController {
         });
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
+
+        this.refreshUserJobs();
+        this.initBatchJobPolling();
+    }
+
+    private initBatchJobPolling() {
+        //check all 8 seconds for the state
+        this.$interval(() => this.refreshUserJobs(), 8000);
+    }
+
+    private refreshUserJobs() {
+        this.bachJobRS.getBatchJobsOfUser().then((response: TSWorkJob[]) => {
+            this.userjobs = response;
+        });
     }
 
     public generateStatistik(form: IFormController, type?: TSStatistikParameterType): void {
@@ -75,128 +98,120 @@ export class StatistikViewController {
             this.$log.debug('Validated Form: ' + form.$name);
 
             switch (tmpType) {
-                case TSStatistikParameterType.GESUCH_STICHTAG: {
-                    let win: Window = this.downloadRS.prepareDownloadWindow();
-                    this.reportRS.getGesuchStichtagReportExcel(this._statistikParameter.stichtag.format(this.DATE_PARAM_FORMAT),
-                        this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
-                        .then((downloadFile: TSDownloadFile) => {
-                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
-                        })
-                        .catch((ex) => {
-                            win.close();
-                            this.$log.error('An error occurred downloading the document, closing download window.');
-                        });
-                    break;
+            case TSStatistikParameterType.GESUCH_STICHTAG: {
+                this.reportRS.getGesuchStichtagReportExcel(this._statistikParameter.stichtag.format(this.DATE_PARAM_FORMAT),
+                    this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
+                .then((batchExecutionId: string) => {
+                    this.$log.debug('executionID: ' + batchExecutionId);
+                    let startmsg = this.$translate.instant('STARTED_GENERATION');
+                    this.errorService.addMesageAsInfo(startmsg);
+                })
+                .catch((ex: any) => {
+                    this.$log.error('An error occurred downloading the document, closing download window.');
+                });
+                break;
+            }
+            case TSStatistikParameterType.GESUCH_ZEITRAUM: {
+                this.reportRS.getGesuchZeitraumReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                    this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
+                    this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
+                .then((batchExecutionId: string) => {
+                    this.$log.debug('executionID: ' + batchExecutionId);
+                    let startmsg = this.$translate.instant('STARTED_GENERATION');
+                    this.errorService.addMesageAsInfo(startmsg);
+                })
+                .catch((ex) => {
+                    this.$log.error('An error occurred downloading the document, closing download window.');
+                });
+                break;
+            }
+            case TSStatistikParameterType.KINDER: {
+                this.reportRS.getKinderReportExcel(
+                    this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                    this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
+                    this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
+                .then((batchExecutionId: string) => {
+                    this.$log.debug('executionID: ' + batchExecutionId);
+                    let startmsg = this.$translate.instant('STARTED_GENERATION');
+                    this.errorService.addMesageAsInfo(startmsg);
+                })
+                .catch((ex) => {
+                    this.$log.error('An error occurred downloading the document, closing download window.');
+                });
+                break;
+            }
+            case TSStatistikParameterType.GESUCHSTELLER: {
+                this.reportRS.getGesuchstellerReportExcel(this._statistikParameter.stichtag.format(this.DATE_PARAM_FORMAT))
+                .then((batchExecutionId: string) => {
+                    this.$log.debug('executionID: ' + batchExecutionId);
+                    let startmsg = this.$translate.instant('STARTED_GENERATION');
+                    this.errorService.addMesageAsInfo(startmsg);
+                })
+                .catch((ex) => {
+                    this.$log.error('An error occurred downloading the document, closing download window.');
+                });
+                break;
+            }
+            case TSStatistikParameterType.KANTON: {
+                this.reportRS.getKantonReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                    this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
+                .then((batchExecutionId: string) => {
+                    this.$log.debug('executionID: ' + batchExecutionId);
+                    let startmsg = this.$translate.instant('STARTED_GENERATION');
+                    this.errorService.addMesageAsInfo(startmsg);
+                })
+                .catch((ex) => {
+                    this.$log.error('An error occurred downloading the document, closing download window.');
+                });
+                break;
+            }
+            case TSStatistikParameterType.MITARBEITERINNEN: {
+                this.reportRS.getMitarbeiterinnenReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                    this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
+                .then((batchExecutionId: string) => {
+                    this.$log.debug('executionID: ' + batchExecutionId);
+                    let startmsg = this.$translate.instant('STARTED_GENERATION');
+                    this.errorService.addMesageAsInfo(startmsg);
+                })
+                .catch((ex) => {
+                    this.$log.error('An error occurred downloading the document, closing download window.');
+                });
+                break;
+            }
+            case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG: {
+                this.reportRS.getGesuchstellerKinderBetreuungReportExcel(
+                    this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                    this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
+                    this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
+                .then((batchExecutionId: string) => {
+                    this.$log.debug('executionID: ' + batchExecutionId);
+                    let startmsg = this.$translate.instant('STARTED_GENERATION');
+                    this.errorService.addMesageAsInfo(startmsg);
+                })
+                .catch((ex) => {
+                    this.$log.error('An error occurred downloading the document, closing download window.');
+                });
+                break;
+            }
+            case TSStatistikParameterType.ZAHLUNGEN_PERIODE:
+                if (this._statistikParameter.gesuchsperiode) {
+                    this.reportRS.getZahlungPeriodeReportExcel(
+                        this._statistikParameter.gesuchsperiode)
+                    .then((batchExecutionId: string) => {
+                        this.$log.debug('executionID: ' + batchExecutionId);
+                        let startmsg = this.$translate.instant('STARTED_GENERATION');
+                        this.errorService.addMesageAsInfo(startmsg);
+                    })
+                    .catch((ex) => {
+                        this.$log.error('An error occurred downloading the document, closing download window.');
+                    });
+                } else {
+                    this.$log.warn('gesuchsperiode muss gewählt sein');
                 }
-                case TSStatistikParameterType.GESUCH_ZEITRAUM: {
-                    let win: Window = this.downloadRS.prepareDownloadWindow();
-                    this.reportRS.getGesuchZeitraumReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
-                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
-                        this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
-                        .then((downloadFile: TSDownloadFile) => {
-                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
-                        })
-                        .catch((ex) => {
-                            win.close();
-                            this.$log.error('An error occurred downloading the document, closing download window.');
-                        });
-                    break;
-                }
-                case TSStatistikParameterType.KINDER: {
-                    let win: Window = this.downloadRS.prepareDownloadWindow();
-                    this.reportRS.getKinderReportExcel(
-                        this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
-                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
-                        this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
-                        .then((downloadFile: TSDownloadFile) => {
-                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
-                        })
-                        .catch((ex) => {
-                            win.close();
-                            this.$log.error('An error occurred downloading the document, closing download window.');
-                        });
-                    break;
-                }
-                case TSStatistikParameterType.GESUCHSTELLER: {
-                    let win: Window = this.downloadRS.prepareDownloadWindow();
-                    this.reportRS.getGesuchstellerReportExcel(this._statistikParameter.stichtag.format(this.DATE_PARAM_FORMAT))
-                        .then((downloadFile: TSDownloadFile) => {
-                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
-                        })
-                        .catch((ex) => {
-                            win.close();
-                            this.$log.error('An error occurred downloading the document, closing download window.');
-                        });
-                    break;
-                }
-                case TSStatistikParameterType.KANTON: {
-                    let win: Window = this.downloadRS.prepareDownloadWindow();
-                    this.reportRS.getKantonReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
-                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
-                        .then((downloadFile: TSDownloadFile) => {
-                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
-                        })
-                        .catch((ex) => {
-                            win.close();
-                            this.$log.error('An error occurred downloading the document, closing download window.');
-                        });
-                    break;
-                }
-                case TSStatistikParameterType.MITARBEITERINNEN: {
-                    let win: Window = this.downloadRS.prepareDownloadWindow();
-                    this.reportRS.getMitarbeiterinnenReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
-                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
-                        .then((downloadFile: TSDownloadFile) => {
-                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
-                        })
-                        .catch((ex) => {
-                            win.close();
-                            this.$log.error('An error occurred downloading the document, closing download window.');
-                        });
-                    break;
-                }
-                case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG: {
-                    let win: Window = this.downloadRS.prepareDownloadWindow();
-                    this.reportRS.getGesuchstellerKinderBetreuungReportExcel(
-                        this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
-                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
-                        this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
-                        .then((downloadFile: TSDownloadFile) => {
-                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
-                        })
-                        .catch((ex) => {
-                            win.close();
-                            this.$log.error('An error occurred downloading the document, closing download window.');
-                        });
-                    break;
-                }
-                case TSStatistikParameterType.ZAHLUNGEN_PERIODE:
-                    if (this._statistikParameter.gesuchsperiode) {
-                        let win: Window = this.downloadRS.prepareDownloadWindow();
-                        this.reportRS.getZahlungPeriodeReportExcel(
-                            this._statistikParameter.gesuchsperiode)
-                            .then((downloadFile: TSDownloadFile) => {
-                                this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
-                            })
-                            .catch((ex) => {
-                                win.close();
-                                this.$log.error('An error occurred downloading the document, closing download window.');
-                            });
-                    } else {
-                        this.$log.warn('gesuchsperiode muss gewählt sein');
-                    }
-                    break;
-                default:
-                    this.$log.debug('default, Type not recognized');
-                    break;
+                break;
+            default:
+                this.$log.debug('default, Type not recognized');
+                break;
             }
         }
     }
@@ -207,5 +222,30 @@ export class StatistikViewController {
 
     get gesuchsperioden(): Array<TSGesuchsperiode> {
         return this._gesuchsperioden;
+    }
+
+    public rowClicked(row: TSWorkJob) {
+        if (row !== null && row !== undefined && row.execution !== undefined && row.execution !== null) {
+            if (row.execution.endTime !== null || row.execution.endTime !== undefined) {
+                let win: Window = this.downloadRS.prepareDownloadWindow();
+                this.$log.debug('accessToken: ' + row.resultData);
+                this.downloadRS.startDownload(row.resultData, 'report.xlsx', false, win);
+            } else {
+                this.$log.info('batch-job is not yet finnished');
+            }
+        }
+    }
+
+    /**
+     * helper methode die es dem Admin erlaubt alle jobs zu sehen
+     */
+    public showAllJobs() {
+        this.bachJobRS.getAllJobs().then((result: TSWorkJob[]) => {
+            let res: TSBatchJobInformation[] = [];
+            res = res.concat(result.map((value) => {
+                return value.execution || undefined;
+            }));
+            this.allJobs = res;
+        });
     }
 }

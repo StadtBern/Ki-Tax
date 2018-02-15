@@ -14,35 +14,17 @@
  */
 @import "../../../style/variables.less";
 @import "../../../style/mixins.less";
+@import "../../../style/atoms/input.less";
 
 @buttonWidth: 24rem;
 @buttonHeight: 15rem;
 
 .createAngebotView {
-    .ebeguH3, h2, dv-tooltip, .ebeguH1, md-radio-button, md-radio-button.md-checked .md-off,
-    md-radio-button .md-off, md-radio-button.md-checked .md-on, label.md-required:after, .form-group label,
-    div.md-controller, md-checkbox .md-icon, md-checkbox:not(.md-checked) .md-icon {
-        color: @contrast-lightest !important;
-        border-color: @contrast-lightest !important;
+    padding-left: 2.5rem !important;
+    &--centered-col{
+        margin:auto;
+        float:unset;
     }
-    md-radio-button.md-checked .md-on, md-radio-button .md-on {
-        background-color: @contrast-lightest !important;
-    }
-
-    md-radio-group.ng-invalid.ng-touched, form.ng-submitted input.ng-invalid, form.ng-submitted textarea.ng-invalid, form.ng-submitted md-radio-group.ng-invalid {
-        background-color: #63242f;
-    }
-
-    overflow-y: auto;
-    color: @contrast-lightest;
-    background: url('../../../assets/images/kitax_bg.jpg') no-repeat center center fixed; /* fallback */
-    background: linear-gradient(rgba(40, 40, 40, 0.85), rgba(40, 40, 40, 0.85)),
-    url('../../../assets/images/kitax_bg.jpg') no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-
     .nav-row-betreuung {
         -ms-box-orient: horizontal;
         display: -ms-flexbox;

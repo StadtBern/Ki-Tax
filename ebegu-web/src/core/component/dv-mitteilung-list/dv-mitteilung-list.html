@@ -103,6 +103,7 @@
                             'sadf': !vm.isCurrentUserTypTheSenderTyp(mitteilung),
                             'institution': vm.isSenderTypInstitution(mitteilung),
                             'jugendamt': vm.isSenderTypJugendamt(mitteilung),
+                            'schulamt': vm.isSenderTypSchulamt(mitteilung),
                             'gesuchsteller': vm.isSenderTypGesuchsteller(mitteilung)}"
                             ng-value="mitteilung.username"
                             tabid="{{mitteilung.id}}">
@@ -121,19 +122,22 @@
                                     </div>
                                 </div>
                                 <div class="message-delegation">
-                                    <span ng-click="vm.mitteilungUebergebenAnJugendamt(mitteilung)"
-                                          ng-if="vm.canUebergebenAnJugendamt(mitteilung)"
-                                          data-translate="MITTEILUNG_DELEGATION_AN_JA"></span>
-
-                                    <span ng-click="vm.mitteilungUebergebenAnSchulamt(mitteilung)"
-                                          ng-if="vm.canUebergebenAnSchulamt(mitteilung)"
-                                          data-translate="MITTEILUNG_DELEGATION_AN_SCH"></span>
+                                    <button
+                                        ng-click="$event.stopPropagation();vm.mitteilungUebergebenAnJugendamt(mitteilung)"
+                                        ng-if="vm.canUebergebenAnJugendamt(mitteilung)">
+                                        <span data-translate="MITTEILUNG_DELEGATION_AN_JA"></span>
+                                    </button>
+                                    <button
+                                        ng-click="$event.stopPropagation();vm.mitteilungUebergebenAnSchulamt(mitteilung)"
+                                        ng-if="vm.canUebergebenAnSchulamt(mitteilung)">
+                                        <span data-translate="MITTEILUNG_DELEGATION_AN_SCH"></span>
+                                    </button>
                                 </div>
                                 <div
                                     dv-show-element
                                     dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtRoles()"
                                     dv-show-expression="!vm.isCurrentUserTypTheSenderTyp(mitteilung)"
-                                    class="message-checkbox">
+                                    class="message-checkbox erledigt">
                                     <md-checkbox name="erledigt-{{$index}}" aria-label="erledigt"
                                                  ng-checked="mitteilung.mitteilungStatus === 'ERLEDIGT'"
                                                  ng-click="vm.setErledigt(mitteilung); $event.stopPropagation()"

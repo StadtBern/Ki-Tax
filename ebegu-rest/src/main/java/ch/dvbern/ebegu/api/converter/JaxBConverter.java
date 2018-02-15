@@ -1009,7 +1009,7 @@ public class JaxBConverter {
 		return gesuchstellerCont;
 	}
 
-	public JaxGesuch gesuchToJAX(@Nonnull final Gesuch persistedGesuch, boolean isNeuestesGesuch) {
+	public JaxGesuch gesuchToJAX(@Nonnull final Gesuch persistedGesuch) {
 		final JaxGesuch jaxGesuch = new JaxGesuch();
 		convertAbstractFieldsToJAX(persistedGesuch, jaxGesuch);
 		jaxGesuch.setFall(this.fallToJAX(persistedGesuch.getFall()));
@@ -1052,7 +1052,6 @@ public class JaxBConverter {
 		jaxGesuch.setGueltig(persistedGesuch.isGueltig());
 		jaxGesuch.setDokumenteHochgeladen(persistedGesuch.getDokumenteHochgeladen());
 		jaxGesuch.setFinSitStatus(persistedGesuch.getFinSitStatus());
-		jaxGesuch.setNeustesGesuch(isNeuestesGesuch);
 		return jaxGesuch;
 	}
 
@@ -1778,6 +1777,8 @@ public class JaxBConverter {
 				betreuung.setBelegungTagesschule(belegungTagesschuleToEntity(betreuungJAXP.getBelegungTagesschule(), new BelegungTagesschule(),
 					betreuung.getInstitutionStammdaten().getInstitutionStammdatenTagesschule()));
 			}
+		} else {
+			betreuung.setBelegungTagesschule(belegungTagesschuleToEntity(betreuungJAXP.getBelegungTagesschule(), new BelegungTagesschule(), null));
 		}
 		if (betreuung.getBelegungFerieninsel() != null) {
 			betreuung.setBelegungFerieninsel(belegungFerieninselToEntity(betreuungJAXP.getBelegungFerieninsel(), betreuung.getBelegungFerieninsel()));
@@ -1791,7 +1792,7 @@ public class JaxBConverter {
 
 	@Nullable
 	private BelegungTagesschule belegungTagesschuleToEntity(@Nullable JaxBelegungTagesschule belegungTagesschuleJAXP,
-		@NotNull BelegungTagesschule belegungTagesschule, @NotNull InstitutionStammdatenTagesschule instStammdatenTagesschule) {
+		@NotNull BelegungTagesschule belegungTagesschule, @Nullable InstitutionStammdatenTagesschule instStammdatenTagesschule) {
 
 		if (belegungTagesschuleJAXP != null && instStammdatenTagesschule != null) {
 			convertAbstractFieldsToEntity(belegungTagesschuleJAXP, belegungTagesschule);
@@ -2645,11 +2646,11 @@ public class JaxBConverter {
 		return mahnung;
 	}
 
-	public JaxMahnung mahnungToJAX(@Nonnull final Mahnung persistedMahnung, boolean isNeuestesGesuch) {
+	public JaxMahnung mahnungToJAX(@Nonnull final Mahnung persistedMahnung) {
 		final JaxMahnung jaxMahnung = new JaxMahnung();
 		convertAbstractFieldsToJAX(persistedMahnung, jaxMahnung);
 
-		jaxMahnung.setGesuch(this.gesuchToJAX(persistedMahnung.getGesuch(), isNeuestesGesuch));
+		jaxMahnung.setGesuch(this.gesuchToJAX(persistedMahnung.getGesuch()));
 		jaxMahnung.setMahnungTyp(persistedMahnung.getMahnungTyp());
 		jaxMahnung.setDatumFristablauf(persistedMahnung.getDatumFristablauf());
 		jaxMahnung.setBemerkungen(persistedMahnung.getBemerkungen());

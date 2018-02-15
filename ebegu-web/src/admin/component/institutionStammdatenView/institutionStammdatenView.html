@@ -14,7 +14,7 @@
   -->
 <div class="institutionStammdatenView adminModul row col-md-8 col-md-offset-2">
     <form role="form" name="form" class="" unsaved-warning-form novalidate>
-        <fieldset ng-disabled="vm.isReadonly()">
+        <fieldset ng-disabled="!vm.isAnyAdminRole()">
             <!--Anzeigen der gewählten InstitutionStammdaten -->
             <div class="row col-md-12">
                 <div class="row">

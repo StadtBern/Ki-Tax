@@ -23,7 +23,6 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
-import javax.ejb.Asynchronous;
 import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
@@ -212,6 +211,15 @@ public interface GesuchService {
 	Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String usernameJA, @Nullable String usernameSCH);
 
 	/**
+	 * Verantwortliche müssen gesetzt werden wenn in einem Papiergesuch oder Papiermutation eine Betreuung hinzugefügt wird
+	 * oder eine Online-Mutation freigegeben wird (direkte Freigabe). Beim Einlesen eines Papiergesuchs werden die Veratnwortliche mittels Dialogfenster
+	 * durch den Benutzer gesetzt
+	 * @param persist speichert die Verantwortliche direkt auf der DB in Update-Query
+	 * @return true if Verantwortliche changed
+	 */
+	boolean setVerantwortliche(@Nullable String usernameJA, @Nullable String usernameSCH, Gesuch gesuch, boolean onlyIfNotSet, boolean persist);
+
+	/**
 	 * Setzt das gegebene Gesuch als Beschwerde hängig und bei allen Gescuhen der Periode den Flag
 	 * gesperrtWegenBeschwerde auf true.
 	 *
@@ -241,6 +249,12 @@ public interface GesuchService {
 	 * Gibt zurueck, ob es sich um das neueste Gesuch (egal welcher Status) handelt
 	 */
 	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Gibt die ID des neuesten Gesuchs fuer einen Fall und eine Gesuchsperiode zurueck. Dieses kann auch ein
+	 * Gesuch sein, fuer welches ich nicht berechtigt bin!
+	 */
+	Optional<String> getIdOfNeuestesGesuch(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Fall fall);
 
 	/**
 	 * Gibt das Geusch zurueck, das mit dem Fall verknuepft ist und das neueste fuer das SchulamtInterface ist. Das Flag FinSitStatus
@@ -357,14 +371,13 @@ public interface GesuchService {
 	 * Diese Methode wird asynchron ausgefuehrt, da das ermitteln des jeweils letzten Gesuchs pro
 	 * Fall sehr lange geht.
 	 */
-	@Asynchronous
 	void sendMailsToAllGesuchstellerOfLastGesuchsperiode(@Nonnull Gesuchsperiode lastGesuchsperiode, @Nonnull Gesuchsperiode nextGesuchsperiode);
 
 	/**
 	 * Checks all Betreuungen of the given Gesuch and updates the flag gesuchBetreuungenStatus with the corresponding
 	 * value.
 	 */
-	void updateBetreuungenStatus(@NotNull Gesuch gesuch);
+	Gesuch updateBetreuungenStatus(@NotNull Gesuch gesuch);
 
 	/**
 	 * In dieser Methode wird das Gesuch verfuegt. Nur Gesuche bei denen alle Betreuungen bereits verfuegt sind und der WizardStep Verfuegen

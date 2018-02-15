@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
@@ -210,7 +211,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		Path<String> gsEmail = gesDataJoin.get(Gesuchsteller_.mail);
 		query.select(gsEmail);
 		query.where(gesuchOfFall);
-		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt))); // Das mit dem neuesten Verfuegungsdatum
+		query.orderBy(cb.desc(gesDataJoin.get(Gesuchsteller_.timestampMutiert))); // Das zuletzt geänderte GS-Objekt
 		TypedQuery<String> typedQuery = persistence.getEntityManager().createQuery(query);
 		typedQuery.setParameter(fallIdParam, fallID);
 		typedQuery.setMaxResults(1);
@@ -221,10 +222,8 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		if (!criteriaResults.isEmpty()) {
 			if (criteriaResults.size() != 1) {
 				throw new EbeguRuntimeException("getEmailAddressForFall", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, criteriaResults.size());
-			} else {
-				String gesuchstellerEmail = criteriaResults.get(0);
-				emailToReturn = gesuchstellerEmail;
 			}
+			emailToReturn = criteriaResults.get(0);
 		}
 		if (emailToReturn == null) {
 			emailToReturn = readBesitzerEmailForFall(fallID);
@@ -250,6 +249,31 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 			return applicationPropertyService.readDefaultVerantwortlicherFromProperties();
 		}
 		return Optional.of(verantwortlicher);
+	}
+
+	@Override
+	public int setVerantwortlicher(String id, Benutzer benutzer){
+		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaUpdate<Fall> update = cb.createCriteriaUpdate(Fall.class);
+		Root<Fall> root = update.from(Fall.class);
+		update.set(Fall_.verantwortlicher, benutzer);
+
+		Predicate predFall = cb.equal(root.get(Fall_.id), id);
+		update.where(predFall);
+
+		return persistence.getEntityManager().createQuery(update).executeUpdate();
+	}
+
+	public int setVerantwortlicherSCH(String id, Benutzer benutzer){
+		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaUpdate<Fall> update = cb.createCriteriaUpdate(Fall.class);
+		Root<Fall> root = update.from(Fall.class);
+		update.set(Fall_.verantwortlicherSCH, benutzer);
+
+		Predicate predFall = cb.equal(root.get(Fall_.id), id);
+		update.where(predFall);
+
+		return persistence.getEntityManager().createQuery(update).executeUpdate();
 	}
 
 	private String readBesitzerEmailForFall(String fallID) {

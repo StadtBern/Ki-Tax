@@ -30,11 +30,13 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragPredicateObjectDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragSearchDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragSortDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.MitteilungSearchDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.MitteilungTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.SortDTO;
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.AbwesenheitContainer;
@@ -410,14 +412,16 @@ public final class TestDataUtil {
 		return instStammdaten;
 	}
 
-	public static Kind createDefaultKind() {
+	private static Kind createDefaultKind(boolean addFachstelle) {
 		Kind kind = new Kind();
 		kind.setNachname("Kind_Mustermann");
 		kind.setVorname("Kind_Max");
 		kind.setGeburtsdatum(LocalDate.of(2010, 12, 12));
 		kind.setGeschlecht(Geschlecht.WEIBLICH);
 		kind.setKinderabzug(Kinderabzug.GANZER_ABZUG);
-		kind.setPensumFachstelle(createDefaultPensumFachstelle());
+		if (addFachstelle) {
+			kind.setPensumFachstelle(createDefaultPensumFachstelle());
+		}
 		kind.setFamilienErgaenzendeBetreuung(true);
 		kind.setMutterspracheDeutsch(true);
 		kind.setEinschulung(true);
@@ -434,10 +438,21 @@ public final class TestDataUtil {
 
 	public static KindContainer createDefaultKindContainer() {
 		KindContainer kindContainer = new KindContainer();
-		Kind defaultKindGS = createDefaultKind();
+		Kind defaultKindGS = createDefaultKind(true);
 		defaultKindGS.setNachname("GS_Kind");
 		kindContainer.setKindGS(defaultKindGS);
-		Kind defaultKindJA = createDefaultKind();
+		Kind defaultKindJA = createDefaultKind(true);
+		defaultKindJA.setNachname("JA_Kind");
+		kindContainer.setKindJA(defaultKindJA);
+		return kindContainer;
+	}
+
+	public static KindContainer createKindContainerWithoutFachstelle() {
+		KindContainer kindContainer = new KindContainer();
+		Kind defaultKindGS = createDefaultKind(false);
+		defaultKindGS.setNachname("GS_Kind");
+		kindContainer.setKindGS(defaultKindGS);
+		Kind defaultKindJA = createDefaultKind(false);
 		defaultKindJA.setNachname("JA_Kind");
 		kindContainer.setKindJA(defaultKindJA);
 		return kindContainer;
@@ -470,6 +485,17 @@ public final class TestDataUtil {
 		ep.setZuschlagsgrund(Zuschlagsgrund.LANGER_ARBWEITSWEG);
 		ep.setZuschlagsprozent(10);
 		return ep;
+	}
+
+	public static Betreuung createAnmeldungTagesschule(KindContainer kind) {
+		Betreuung betreuung = new Betreuung();
+		betreuung.setInstitutionStammdaten(createInstitutionStammdatenTagesschuleBern());
+		betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
+		betreuung.setBetreuungspensumContainers(new TreeSet<>());
+		betreuung.setAbwesenheitContainers(new HashSet<>());
+		betreuung.setKind(kind);
+		betreuung.setBelegungTagesschule(createDefaultBelegungTagesschule());
+		return betreuung;
 	}
 
 	public static Betreuung createDefaultBetreuung() {
@@ -1006,7 +1032,7 @@ public final class TestDataUtil {
 
 	public static AntragTableFilterDTO createAntragTableFilterDTO() {
 		AntragTableFilterDTO filterDTO = new AntragTableFilterDTO();
-		filterDTO.setSort(new AntragSortDTO());
+		filterDTO.setSort(new SortDTO());
 		filterDTO.setSearch(new AntragSearchDTO());
 		filterDTO.setPagination(new PaginationDTO());
 		filterDTO.getPagination().setStart(0);
@@ -1123,6 +1149,12 @@ public final class TestDataUtil {
 		mitteilung.setMessage("Message");
 	}
 
+	public static MitteilungTableFilterDTO createMitteilungTableFilterDTO() {
+		MitteilungTableFilterDTO filterDTO = new MitteilungTableFilterDTO();
+		filterDTO.setSearch(new MitteilungSearchDTO());
+		return filterDTO;
+	}
+
 	public static Betreuung persistBetreuung(BetreuungService betreuungService, Persistence persistence) {
 		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
 		for (BetreuungspensumContainer container : betreuung.getBetreuungspensumContainers()) {
@@ -1183,7 +1215,7 @@ public final class TestDataUtil {
 		pagination.setNumberOfPages(1);
 		antragSearch.setPagination(pagination);
 		AntragSearchDTO searchDTO = new AntragSearchDTO();
-		PredicateObjectDTO predicateObj = new PredicateObjectDTO();
+		AntragPredicateObjectDTO predicateObj = new AntragPredicateObjectDTO();
 		searchDTO.setPredicateObject(predicateObj);
 		antragSearch.setSearch(searchDTO);
 		return antragSearch;

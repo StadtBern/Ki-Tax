@@ -29,7 +29,7 @@ import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
 
-public class MahnungPrintImpl extends BriefPrintImpl implements ManhungPrint {
+public class MahnungPrintImpl extends BriefPrintImpl implements MahnungPrint {
 
 	private final Mahnung mahnung;
 	private Mahnung vorgaengerMahnung;

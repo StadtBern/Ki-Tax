@@ -48,16 +48,6 @@
                 & > * {
                     color: @institution-color;
                 }
-                md-checkbox {
-                    .md-icon {
-                        border: 1px solid @institution-color;
-                    }
-                    &.md-checked {
-                        .md-icon {
-                            background-color: @institution-color;
-                        }
-                    }
-                }
             }
 
             &.gesuchsteller {
@@ -70,6 +60,15 @@
                 & > * {
                     color: @primary;
                 }
+            }
+
+            &.schulamt {
+                & > * {
+                    color:#4879b5;
+                }
+            }
+            .erledigt{
+                color:black;
             }
             .dv-accordion-tab-title {
                 md-checkbox {
@@ -109,7 +108,7 @@
                     }
                 }
                 .message-delegation {
-                    margin: auto 10px auto 10px;
+                    margin: auto 3rem;
                     display: flex;
                     flex-direction: column;
                 }
