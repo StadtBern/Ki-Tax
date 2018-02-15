@@ -90,7 +90,7 @@ export class StatistikViewController {
 
     private initBatchJobPolling() {
         //check all 8 seconds for the state
-        this.polling = this.$interval(() => this.refreshUserJobs(), 8000);
+        this.polling = this.$interval(() => this.refreshUserJobs(), 12000);
 
     }
 
