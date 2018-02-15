@@ -41,6 +41,9 @@ export class EbeguGesuchstellerDashboardState implements IState {
     name = 'gesuchstellerDashboard';
     template = '<gesuchsteller-dashboard-view class="layout-column flex-100">';
     url = '/gesuchstellerDashboard';
+    params = {
+        gesuchstellerDashboardStateParams: IGesuchstellerDashboardStateParams
+    };
 }
 
 export class EbeguCreateAngebotState implements IState {
@@ -56,6 +59,10 @@ export class EbeguCreateAngebotState implements IState {
 export class IAngebotStateParams implements IStateParamsService {
     gesuchId: string;
     type: string;
+}
+
+export class IGesuchstellerDashboardStateParams implements IStateParamsService {
+    infoMessage: string;
 }
 
 getGesuchModelManager.$inject = ['GesuchModelManager', '$stateParams', '$q', '$log'];
