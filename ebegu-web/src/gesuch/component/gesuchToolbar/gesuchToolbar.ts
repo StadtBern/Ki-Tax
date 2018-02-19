@@ -623,17 +623,9 @@ export class GesuchToolbarController implements IDVFocusableController {
     public showKontakt(): void {
         let text: string;
         if (this.fall.isHauptverantwortlicherSchulamt()) {
-            text = '<span>Schulamt</span><br>'
-                + '<span>Effingerstrasse 21</span><br>'
-                + '<span>3008 Bern</span><br>'
-                + '<a href="tel:0313216460"><span>031 321 64 60</span></a><br>'
-                + '<a href="mailto:schulamt@bern.ch"><span>schulamt@bern.ch</span></a>';
+            text = this.ebeguUtil.getKontaktSchulamt();
         } else {
-            text = '<span>Jugendamt</span><br>'
-                + '<span>Effingerstrasse 21</span><br>'
-                + '<span>3008 Bern</span><br>'
-                + '<a href="tel:0313215115"><span>031 321 51 15</span></a><br>'
-                + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>';
+            text = this.ebeguUtil.getKontaktJugendamt();
         }
         this.dvDialog.showDialog(showKontaktTemplate, ShowTooltipController, {
             title: '',
