@@ -196,7 +196,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 			LOGGER.info("Ermittle normale Zahlungen im Zeitraum {}", zahlungsauftrag.getGueltigkeit().toRangeString());
 			Collection<VerfuegungZeitabschnitt> gueltigeVerfuegungZeitabschnitte = getGueltigeVerfuegungZeitabschnitte(zeitabschnittVon, zeitabschnittBis);
 			for (VerfuegungZeitabschnitt zeitabschnitt : gueltigeVerfuegungZeitabschnitte) {
-				if (zeitabschnitt.getZahlungsstatus().isIgnorierend() || zeitabschnitt.getZahlungsstatus().isNeu()) {
+				if (zeitabschnitt.getZahlungsstatus().isNeu()) {
 					createZahlungsposition(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
 				}
 			}
@@ -341,11 +341,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Zahlung zahlung = findZahlungForInstitution(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
 		zahlungsposition.setZahlung(zahlung);
 		zahlung.getZahlungspositionen().add(zahlungsposition);
-		if (!zeitabschnitt.getZahlungsstatus().isIgnoriertIgnorierend()) {
-			zeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET);
-		} else if (zeitabschnitt.getZahlungsstatus().isIgnorierend()) {
-			zeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT);
-		}
+		zeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET);
 		return zahlungsposition;
 	}
 
