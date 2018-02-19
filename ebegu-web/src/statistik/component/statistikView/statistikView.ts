@@ -45,6 +45,7 @@ export class StatistikViewComponentConfig implements IComponentOptions {
 }
 
 export class StatistikViewController {
+    private polling: angular.IPromise<any>;
     private _statistikParameter: TSStatistikParameter;
     private _gesuchsperioden: Array<TSGesuchsperiode>;
     TSRole: any;
@@ -60,7 +61,7 @@ export class StatistikViewController {
         'ErrorService', '$translate', '$interval'];
 
     constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private $log: ILogService,
-        private reportRS: ReportAsyncRS, private downloadRS: DownloadRS, private bachJobRS: BatchJobRS, private errorService: ErrorService,
+        private reportAsyncRS: ReportAsyncRS, private downloadRS: DownloadRS, private bachJobRS: BatchJobRS, private errorService: ErrorService,
         private $translate: ITranslateService, private $interval: IIntervalService) {
     }
 
@@ -80,9 +81,17 @@ export class StatistikViewController {
         this.initBatchJobPolling();
     }
 
+    $onDestroy() {
+        if (this.polling) {
+            this.$interval.cancel(this.polling);
+            this.$log.debug('canceld job polling');
+        }
+    }
+
     private initBatchJobPolling() {
         //check all 8 seconds for the state
-        this.$interval(() => this.refreshUserJobs(), 8000);
+        this.polling = this.$interval(() => this.refreshUserJobs(), 12000);
+
     }
 
     private refreshUserJobs() {
@@ -99,12 +108,10 @@ export class StatistikViewController {
 
             switch (tmpType) {
             case TSStatistikParameterType.GESUCH_STICHTAG: {
-                this.reportRS.getGesuchStichtagReportExcel(this._statistikParameter.stichtag.format(this.DATE_PARAM_FORMAT),
+                this.reportAsyncRS.getGesuchStichtagReportExcel(this._statistikParameter.stichtag.format(this.DATE_PARAM_FORMAT),
                     this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
                 .then((batchExecutionId: string) => {
-                    this.$log.debug('executionID: ' + batchExecutionId);
-                    let startmsg = this.$translate.instant('STARTED_GENERATION');
-                    this.errorService.addMesageAsInfo(startmsg);
+                    this.informReportGenerationStarted(batchExecutionId);
                 })
                 .catch((ex: any) => {
                     this.$log.error('An error occurred downloading the document, closing download window.');
@@ -112,13 +119,11 @@ export class StatistikViewController {
                 break;
             }
             case TSStatistikParameterType.GESUCH_ZEITRAUM: {
-                this.reportRS.getGesuchZeitraumReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                this.reportAsyncRS.getGesuchZeitraumReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                     this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
                     this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
                 .then((batchExecutionId: string) => {
-                    this.$log.debug('executionID: ' + batchExecutionId);
-                    let startmsg = this.$translate.instant('STARTED_GENERATION');
-                    this.errorService.addMesageAsInfo(startmsg);
+                    this.informReportGenerationStarted(batchExecutionId);
                 })
                 .catch((ex) => {
                     this.$log.error('An error occurred downloading the document, closing download window.');
@@ -126,14 +131,12 @@ export class StatistikViewController {
                 break;
             }
             case TSStatistikParameterType.KINDER: {
-                this.reportRS.getKinderReportExcel(
+                this.reportAsyncRS.getKinderReportExcel(
                     this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                     this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
                     this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
                 .then((batchExecutionId: string) => {
-                    this.$log.debug('executionID: ' + batchExecutionId);
-                    let startmsg = this.$translate.instant('STARTED_GENERATION');
-                    this.errorService.addMesageAsInfo(startmsg);
+                    this.informReportGenerationStarted(batchExecutionId);
                 })
                 .catch((ex) => {
                     this.$log.error('An error occurred downloading the document, closing download window.');
@@ -141,11 +144,9 @@ export class StatistikViewController {
                 break;
             }
             case TSStatistikParameterType.GESUCHSTELLER: {
-                this.reportRS.getGesuchstellerReportExcel(this._statistikParameter.stichtag.format(this.DATE_PARAM_FORMAT))
+                this.reportAsyncRS.getGesuchstellerReportExcel(this._statistikParameter.stichtag.format(this.DATE_PARAM_FORMAT))
                 .then((batchExecutionId: string) => {
-                    this.$log.debug('executionID: ' + batchExecutionId);
-                    let startmsg = this.$translate.instant('STARTED_GENERATION');
-                    this.errorService.addMesageAsInfo(startmsg);
+                    this.informReportGenerationStarted(batchExecutionId);
                 })
                 .catch((ex) => {
                     this.$log.error('An error occurred downloading the document, closing download window.');
@@ -153,12 +154,10 @@ export class StatistikViewController {
                 break;
             }
             case TSStatistikParameterType.KANTON: {
-                this.reportRS.getKantonReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                this.reportAsyncRS.getKantonReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                     this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
                 .then((batchExecutionId: string) => {
-                    this.$log.debug('executionID: ' + batchExecutionId);
-                    let startmsg = this.$translate.instant('STARTED_GENERATION');
-                    this.errorService.addMesageAsInfo(startmsg);
+                    this.informReportGenerationStarted(batchExecutionId);
                 })
                 .catch((ex) => {
                     this.$log.error('An error occurred downloading the document, closing download window.');
@@ -166,12 +165,10 @@ export class StatistikViewController {
                 break;
             }
             case TSStatistikParameterType.MITARBEITERINNEN: {
-                this.reportRS.getMitarbeiterinnenReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                this.reportAsyncRS.getMitarbeiterinnenReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                     this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
                 .then((batchExecutionId: string) => {
-                    this.$log.debug('executionID: ' + batchExecutionId);
-                    let startmsg = this.$translate.instant('STARTED_GENERATION');
-                    this.errorService.addMesageAsInfo(startmsg);
+                    this.informReportGenerationStarted(batchExecutionId);
                 })
                 .catch((ex) => {
                     this.$log.error('An error occurred downloading the document, closing download window.');
@@ -179,14 +176,12 @@ export class StatistikViewController {
                 break;
             }
             case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG: {
-                this.reportRS.getGesuchstellerKinderBetreuungReportExcel(
+                this.reportAsyncRS.getGesuchstellerKinderBetreuungReportExcel(
                     this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                     this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
                     this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
                 .then((batchExecutionId: string) => {
-                    this.$log.debug('executionID: ' + batchExecutionId);
-                    let startmsg = this.$translate.instant('STARTED_GENERATION');
-                    this.errorService.addMesageAsInfo(startmsg);
+                    this.informReportGenerationStarted(batchExecutionId);
                 })
                 .catch((ex) => {
                     this.$log.error('An error occurred downloading the document, closing download window.');
@@ -195,7 +190,7 @@ export class StatistikViewController {
             }
             case TSStatistikParameterType.ZAHLUNGEN_PERIODE:
                 if (this._statistikParameter.gesuchsperiode) {
-                    this.reportRS.getZahlungPeriodeReportExcel(
+                    this.reportAsyncRS.getZahlungPeriodeReportExcel(
                         this._statistikParameter.gesuchsperiode)
                     .then((batchExecutionId: string) => {
                         this.$log.debug('executionID: ' + batchExecutionId);
@@ -214,6 +209,13 @@ export class StatistikViewController {
                 break;
             }
         }
+    }
+
+    private informReportGenerationStarted(batchExecutionId: string) {
+        this.$log.debug('executionID: ' + batchExecutionId);
+        let startmsg = this.$translate.instant('STARTED_GENERATION');
+        this.errorService.addMesageAsInfo(startmsg);
+        this.refreshUserJobs();
     }
 
     get statistikParameter(): TSStatistikParameter {
