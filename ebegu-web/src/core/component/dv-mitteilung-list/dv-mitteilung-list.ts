@@ -349,7 +349,7 @@ export class DVMitteilungListController {
     }
 
     public canApplyBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
-        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorOrAmtRole());
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
     }
 
     $postLink() {
@@ -402,16 +402,22 @@ export class DVMitteilungListController {
     }
 
     public canUebergebenAnSchulamt(mitteilung: TSMitteilung): boolean {
-        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.JUGENDAMT) && !mitteilung.isErledigt();
+        return !this.isBetreuungsmitteilung(mitteilung) &&
+            this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.JUGENDAMT) && !mitteilung.isErledigt();
     }
 
     public canUebergebenAnJugendamt(mitteilung: TSMitteilung): boolean {
-        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.SCHULAMT) && !mitteilung.isErledigt();
+        return !this.isBetreuungsmitteilung(mitteilung) &&
+            this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.SCHULAMT) && !mitteilung.isErledigt();
     }
 
     private isUserAndEmpfaengerSameAmt(mitteilung: TSMitteilung, amt: TSAmt): boolean {
         let userInAmt: boolean = this.authServiceRS.getPrincipal().amt === amt;
         let empfaengerInAmt: boolean = mitteilung.getEmpfaengerAmt() === amt;
         return userInAmt && empfaengerInAmt;
+    }
+
+    private isBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
+        return mitteilung instanceof TSBetreuungsmitteilung;
     }
 }
