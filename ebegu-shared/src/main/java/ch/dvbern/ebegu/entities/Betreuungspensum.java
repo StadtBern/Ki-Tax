@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.entities;
 
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -53,11 +54,12 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 		this.setGueltigkeit(gueltigkeit);
 	}
 
+	@Nonnull
 	public Boolean getNichtEingetreten() {
 		return nichtEingetreten;
 	}
 
-	public void setNichtEingetreten(Boolean nichtEingetreten) {
+	public void setNichtEingetreten(@Nonnull Boolean nichtEingetreten) {
 		this.nichtEingetreten = nichtEingetreten;
 	}
 
