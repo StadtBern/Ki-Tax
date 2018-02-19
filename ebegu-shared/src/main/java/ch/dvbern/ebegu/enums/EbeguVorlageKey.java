@@ -61,6 +61,7 @@ public enum EbeguVorlageKey {
 	VORLAGE_BENUTZERHANDBUCH_JURIST("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Jurist.pdf"),
 	VORLAGE_BENUTZERHANDBUCH_REVISOR("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Revisor.pdf"),
 	VORLAGE_BENUTZERHANDBUCH_SCHULAMT("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Schulamt.pdf"),
+	VORLAGE_BENUTZERHANDBUCH_ADMINISTRATOR_SCHULAMT("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Administrator Schulamt.pdf"),
 	VORLAGE_BENUTZERHANDBUCH_STV("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Steuerverwaltung.pdf"),
 	VORLAGE_BENUTZERHANDBUCH_TRAEGERSCHAFT("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Trägerschaft.pdf");
 
@@ -122,8 +123,9 @@ public enum EbeguVorlageKey {
 				case STEUERAMT:
 					return VORLAGE_BENUTZERHANDBUCH_STV;
 				case SCHULAMT:
-				case ADMINISTRATOR_SCHULAMT:
 					return VORLAGE_BENUTZERHANDBUCH_SCHULAMT;
+				case ADMINISTRATOR_SCHULAMT:
+					return VORLAGE_BENUTZERHANDBUCH_ADMINISTRATOR_SCHULAMT;
 				default:
 					return null;
 			}
