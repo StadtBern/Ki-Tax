@@ -26,11 +26,10 @@ import DateUtil from '../../../utils/DateUtil';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import TSAnmeldungDTO from '../../../models/TSAnmeldungDTO';
 import BetreuungRS from '../../../core/service/betreuungRS.rest';
-import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import TSBelegungFerieninsel from '../../../models/TSBelegungFerieninsel';
 import ILogService = angular.ILogService;
 import IFormController = angular.IFormController;
-import TSBelegungFerieninsel from '../../../models/TSBelegungFerieninsel';
 
 let template = require('./createAngebotView.html');
 require('./createAngebotView.less');
@@ -168,11 +167,7 @@ export class CreateAngebotListViewController {
                 .filter(modul => modul.angemeldet === true);
 
             this.betreuungRS.createAngebot(this.anmeldungDTO).then((response: any) => {
-                this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
-                    title: 'TAGESSCHULE_ANMELDUNG_GESPEICHERT'
-                }).then(() => {
-                    this.backToHome();
-                });
+                this.backToHome('TAGESSCHULE_ANMELDUNG_GESPEICHERT');
             }).catch(() => {
                 this.anmeldungDTO.betreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
             });
@@ -180,11 +175,7 @@ export class CreateAngebotListViewController {
             this.anmeldungDTO.betreuung.betreuungsstatus = TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST;
             this.betreuungRS.createAngebot(this.anmeldungDTO).then((response: any) => {
                 this.kindContainer.kindJA.familienErgaenzendeBetreuung = true;
-                this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
-                    title: 'FERIENINSEL_ANMELDUNG_GESPEICHERT'
-                }).then(() => {
-                    this.backToHome();
-                });
+                this.backToHome('FERIENINSEL_ANMELDUNG_GESPEICHERT');
             }).catch(() => {
                 this.anmeldungDTO.betreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
             });
@@ -192,9 +183,11 @@ export class CreateAngebotListViewController {
         }
     }
 
-    public backToHome() {
+    public backToHome(infoMessage: string | undefined = undefined) {
         this.form.$setPristine();
-        this.$state.go('gesuchstellerDashboard');
+        this.$state.go('gesuchstellerDashboard', {
+            gesuchstellerDashboardStateParams: {infoMessage: infoMessage}
+        });
     }
 
 }
