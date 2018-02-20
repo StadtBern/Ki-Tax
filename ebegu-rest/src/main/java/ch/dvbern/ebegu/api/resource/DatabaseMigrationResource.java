@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.api.resource;
 
 import java.util.Objects;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -28,8 +29,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import ch.dvbern.ebegu.services.DatabaseMigrationService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Resource zum Ausfuehren von manuellen DB-Migrationen
@@ -47,6 +51,7 @@ public class DatabaseMigrationResource {
 	@Path("/{scriptNr}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
+	@RolesAllowed({ SUPER_ADMIN})
 	public Response processScript(@PathParam("scriptNr") String scriptNr) {
 		Objects.requireNonNull(scriptNr, "scriptNr muss gesetzt sein");
 		databaseMigrationService.processScript(scriptNr);
