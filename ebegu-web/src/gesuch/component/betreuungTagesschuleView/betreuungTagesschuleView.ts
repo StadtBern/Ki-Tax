@@ -156,7 +156,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     }
 
     public isTagesschuleAlreadySelected(): boolean {
-        return EbeguUtil.isNotNullOrUndefined(this.getBetreuungModel().institutionStammdaten);
+        return EbeguUtil.isNotNullOrUndefined(this.getBetreuungModel().institutionStammdaten) && !this.getBetreuungModel().keineDetailinformationen;
     }
 
     public isModulEnabled(modulName: TSModulTagesschuleName, weekday: TSDayOfWeek): boolean {

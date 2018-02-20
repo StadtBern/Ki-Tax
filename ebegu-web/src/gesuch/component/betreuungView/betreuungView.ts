@@ -786,6 +786,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
         } else {
             this.instStammId = undefined;
+            this.getBetreuungModel().institutionStammdaten = undefined;
         }
         this.setSelectedInstitutionStammdaten();
     }
