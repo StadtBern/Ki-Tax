@@ -196,9 +196,13 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     public anmelden(): IPromise<any> {
         if (this.form.$valid) {
             // Validieren, dass mindestens 1 Modul ausgewählt war --> ausser der Betreuungsstatus ist (noch) SCHULAMT_FALSCHE_INSTITUTION
-            if (!this.betreuung.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION) && !this.isThereAnyAnmeldung()) {
+            if (!(this.betreuung.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION) || this.betreuung.keineDetailinformationen) && !this.isThereAnyAnmeldung()) {
                 this.showErrorMessageNoModule = true;
                 return undefined;
+            }
+            // Falls es "ohne Details" ist, muessen die Module entfernt werden
+            if (this.betreuung.keineDetailinformationen) {
+                this.getBetreuungModel().belegungTagesschule = undefined;
             }
             if (this.direktAnmeldenSchulamt()) {
                 return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {

@@ -170,6 +170,10 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@Column(nullable = true)
 	private AnmeldungMutationZustand anmeldungMutationZustand;
 
+	@Column(nullable = false)
+	private boolean keineDetailinformationen = false;
+
+
 	public Betreuung() {
 	}
 
@@ -324,6 +328,14 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 
 	public void setAnmeldungMutationZustand(@Nullable AnmeldungMutationZustand anmeldungMutationZustand) {
 		this.anmeldungMutationZustand = anmeldungMutationZustand;
+	}
+
+	public boolean isKeineDetailinformationen() {
+		return keineDetailinformationen;
+	}
+
+	public void setKeineDetailinformationen(boolean keineDetailinformationen) {
+		this.keineDetailinformationen = keineDetailinformationen;
 	}
 
 	@Override

@@ -129,6 +129,22 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Keine Detailangaben zur Anmeldung -->
+                    <div class="row marginBottom20 marginTop20" dv-show-element
+                         dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorOrAmtRole()"
+                         dv-show-expression="vm.isTagesschule() && vm.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung()">
+                        <div class="col-xs-12 dv-input-container-question">
+                            <div class="checkbox">
+                                <md-checkbox ng-model="vm.getBetreuungModel().keineDetailinformationen" name="keineDetailinformationen"
+                                             ng-change="vm.keineDetailAnmeldungClicked()"
+                                             aria-label="{{'ANMELDUNG_KEINE_DETAILINFORMATIONEN'|translate}}" ng-disabled="!vm.isEnabled()">
+                                    <span data-translate="ANMELDUNG_KEINE_DETAILINFORMATIONEN"></span>
+                                </md-checkbox>
+                            </div>
+                        </div>
+                    </div>
+
                     <!--Institutionen-->
                     <!--Institutionen, wenn editable ist oder der status falsche institution ist, als liste anzeigen-->
                     <div class="row"
