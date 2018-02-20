@@ -18,7 +18,6 @@ package ch.dvbern.ebegu.api.resource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,6 +25,7 @@ import java.util.stream.Collectors;
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -40,6 +40,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.Validate;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxZahlung;
@@ -48,6 +50,7 @@ import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
+import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -55,15 +58,9 @@ import ch.dvbern.ebegu.services.GeneratedDokumentService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.ZahlungService;
 import ch.dvbern.ebegu.util.DateUtil;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.Validate;
-
-import static ch.dvbern.ebegu.enums.UserRole.ADMIN;
-import static ch.dvbern.ebegu.enums.UserRole.JURIST;
-import static ch.dvbern.ebegu.enums.UserRole.REVISOR;
-import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_JA;
-import static ch.dvbern.ebegu.enums.UserRole.SUPER_ADMIN;
 
 /**
  * Resource fuer Zahlungen
@@ -95,13 +92,11 @@ public class ZahlungResource {
 	@Path("/all")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed({ UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.JURIST, UserRoleName.REVISOR })
 	public List<JaxZahlungsauftrag> getAllZahlungsauftraege() {
-		if (principalBean.isCallerInAnyOfRole(ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR)) {
-			return zahlungService.getAllZahlungsauftraege().stream()
-				.map(zahlungsauftrag -> converter.zahlungsauftragToJAX(zahlungsauftrag, false))
-				.collect(Collectors.toList());
-		}
-		return Collections.emptyList();
+		return zahlungService.getAllZahlungsauftraege().stream()
+			.map(zahlungsauftrag -> converter.zahlungsauftragToJAX(zahlungsauftrag, false))
+			.collect(Collectors.toList());
 	}
 
 	@ApiOperation(value = "Gibt alle Zahlungsauftraege aller Institutionen zurueck, fuer welche der eingeloggte " +
@@ -129,20 +124,18 @@ public class ZahlungResource {
 	@Path("/zahlungsauftrag/{zahlungsauftragId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed({ UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.JURIST, UserRoleName.REVISOR })
 	public JaxZahlungsauftrag findZahlungsauftrag(
 		@Nonnull @NotNull @PathParam("zahlungsauftragId") JaxId zahlungsauftragJAXPId) throws EbeguException {
 
-		if (principalBean.isCallerInAnyOfRole(ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR)) {
-			Validate.notNull(zahlungsauftragJAXPId.getId());
-			String zahlungsauftragId = converter.toEntityId(zahlungsauftragJAXPId);
-			Optional<Zahlungsauftrag> optional = zahlungService.findZahlungsauftrag(zahlungsauftragId);
+		Validate.notNull(zahlungsauftragJAXPId.getId());
+		String zahlungsauftragId = converter.toEntityId(zahlungsauftragJAXPId);
+		Optional<Zahlungsauftrag> optional = zahlungService.findZahlungsauftrag(zahlungsauftragId);
 
-			if (!optional.isPresent()) {
-				return null;
-			}
-			return converter.zahlungsauftragToJAX(optional.get(), true);
+		if (!optional.isPresent()) {
+			return null;
 		}
-		return new JaxZahlungsauftrag();
+		return converter.zahlungsauftragToJAX(optional.get(), true);
 	}
 
 	@ApiOperation(value = "Gibt den Zahlungsauftrag mit der uebebergebenen Id zurueck, jedoch nur mit den Eintraegen " +
