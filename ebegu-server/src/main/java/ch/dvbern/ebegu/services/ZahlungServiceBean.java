@@ -565,6 +565,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	}
 
 	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
 	public Collection<Zahlungsauftrag> getZahlungsauftraegeInPeriode(LocalDate von, @Nonnull LocalDate bis) {
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -657,6 +658,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	}
 
 	@Override
+	@RolesAllowed(SUPER_ADMIN)
 	public void zahlungenKontrollieren() {
 		Optional<Zahlungsauftrag> lastZahlungsauftrag = findLastZahlungsauftrag();
 		lastZahlungsauftrag.ifPresent(zahlungsauftrag -> zahlungUeberpruefungServiceBean.pruefungZahlungen(zahlungsauftrag.getDatumGeneriert()));
