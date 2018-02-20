@@ -76,7 +76,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 @Path("/schulamt")
 @Api(description = "Resource für die Schnittstelle zu externen Schulamt-Applikationen")
-@SuppressWarnings({ "EjbInterceptorInspection", "EjbClassBasicInspection" })
+@SuppressWarnings({ "EjbInterceptorInspection", "EjbClassBasicInspection", "PMD.AvoidDuplicateLiterals"})
 @Stateless
 @PermitAll
 public class SchulamtBackendResource {
