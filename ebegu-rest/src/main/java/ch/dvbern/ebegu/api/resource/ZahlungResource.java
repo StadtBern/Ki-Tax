@@ -62,6 +62,12 @@ import ch.dvbern.ebegu.util.DateUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+
 /**
  * Resource fuer Zahlungen
  */
@@ -168,6 +174,7 @@ public class ZahlungResource {
 	@Path("/ausloesen/{zahlungsauftragId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed({ SUPER_ADMIN, ADMIN })
 	public JaxZahlungsauftrag zahlungsauftragAusloesen(
 		@Nonnull @NotNull @PathParam("zahlungsauftragId") JaxId zahlungsauftragJAXPId) throws EbeguException, MimeTypeParseException {
 
@@ -188,6 +195,7 @@ public class ZahlungResource {
 	@Path("/create")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public JaxZahlungsauftrag createZahlung(
 		@QueryParam("faelligkeitsdatum") String stringFaelligkeitsdatum,
 		@QueryParam("beschrieb") String beschrieb,
@@ -228,6 +236,7 @@ public class ZahlungResource {
 	@Path("/bestaetigen/{zahlungId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed({ SUPER_ADMIN, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT })
 	public JaxZahlung zahlungBestaetigen(
 		@Nonnull @NotNull @PathParam("zahlungId") JaxId zahlungJAXPId) throws EbeguException, MimeTypeParseException {
 
@@ -244,6 +253,7 @@ public class ZahlungResource {
 	@Path("/delete")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(SUPER_ADMIN)
 	public Response deleteAllZahlungsauftraege() throws EbeguException, MimeTypeParseException {
 
 		zahlungService.deleteAllZahlungsauftraege();
@@ -253,6 +263,7 @@ public class ZahlungResource {
 	@ApiOperation(value = "Zahlungsauftrag kontrollieren", response = Void.class)
 	@GET
 	@Path("/kontrollieren")
+	@RolesAllowed(SUPER_ADMIN)
 	public Response zahlungenKontrollieren() {
 		zahlungService.zahlungenKontrollieren();
 		return Response.ok().build();
