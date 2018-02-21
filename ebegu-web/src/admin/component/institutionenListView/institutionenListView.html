@@ -40,7 +40,7 @@
                             <tbody>
                             <tr ng-repeat="row in displayedCollection" ng-click="vm.editInstitution(row)"
                                 ng-class="vm.rowClass(row.id)">
-                                <td ng-bind="row.name" class="ellipsis" ellipsis-tooltip="{{row.name}}"></td>
+                                <td ng-bind="row.name" class="ellipsis" title="{{row.name}}"></td>
                                 <td>
                                     <dv-loading-button type="button" button-click="vm.removeInstitution(row)"
                                                        button-class="pull-right" button-disabled="vm.isReadonly()">

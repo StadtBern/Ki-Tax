@@ -117,10 +117,10 @@
                         </td>
                         <!-- datumFaellig -->
                         <td ng-if="!vm.isEditMode(row.id)"
-                            ellipsis-tooltip="{{row.datumFaellig | amDateFormat : 'DD.MM.YYYY'}}"
+                            title="{{row.datumFaellig | amDateFormat : 'DD.MM.YYYY'}}"
                             ng-bind="row.datumFaellig | amDateFormat : 'DD.MM.YYYY'"></td>
                         <!-- datumGeneriert -->
-                        <td ellipsis-tooltip="{{row.datumGeneriert | amDateFormat : 'DD.MM.YYYY'}}"
+                        <td title="{{row.datumGeneriert | amDateFormat : 'DD.MM.YYYY'}}"
                             ng-bind="row.datumGeneriert | amDateFormat : 'DD.MM.YYYY'"></td>
                         <!-- downloadPain -->
                         <td class="symbol" dv-show-element
@@ -138,10 +138,10 @@
                             </dv-loading-button>
                         </td>
                         <!-- BetragTotalAuftrag -->
-                        <td class="ellipsis numeric-column" ellipsis-tooltip="{{row.betragTotalAuftrag}}"
+                        <td class="ellipsis numeric-column" title="{{row.betragTotalAuftrag}}"
                             ng-bind="row.betragTotalAuftrag | currency : '' : 2"></td>
                         <!-- beschrieb -->
-                        <td ng-if="!vm.isEditMode(row.id)" class="ellipsis" ellipsis-tooltip="{{row.beschrieb}}"
+                        <td ng-if="!vm.isEditMode(row.id)" class="ellipsis" title="{{row.beschrieb}}"
                             ng-bind="row.beschrieb"></td>
                         <!-- beschrieb edit -->
                         <td ng-if="vm.isEditMode(row.id)" ng-click="$event.stopPropagation()">
@@ -153,7 +153,7 @@
                             </div>
                         </td>
                         <!-- status -->
-                        <td class="ellipsis" ellipsis-tooltip="{{vm.calculatetStatus(row)}}">
+                        <td class="ellipsis" title="{{vm.calculatetStatus(row)}}">
                             <span ng-bind="'ZAHLUNGSAUFTRAG_' + vm.getCalculatedStatus(row) | translate"></span>
                         </td>
                         <!-- edit / save button -->
