@@ -569,9 +569,15 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		if (verfuegen) {
 			FreigabeCopyUtil.copyForFreigabe(gesuch);
 			verfuegungService.calculateVerfuegung(gesuch);
-			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.setZahlungsstatus(betreuung.getVerfuegung(), betreuung.getId(), ignorierenInZahlungslauf)));
-			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId(), Betreuungsstatus.VERFUEGT)));
-			gesuch.getKindContainers().forEach(kindContainer -> kindContainer.getBetreuungen().forEach(betreuung -> verfuegungService.generateVerfuegungDokument(betreuung)));
+			gesuch.getKindContainers().stream().flatMap(kindContainer -> kindContainer.getBetreuungen().stream()).filter(betreuung -> !betreuung
+				.isAngebotSchulamt()).forEach(betreuung -> verfuegungService.setZahlungsstatus(betreuung.getVerfuegung(), betreuung.getId(), ignorierenInZahlungslauf)
+			);
+			gesuch.getKindContainers().stream().flatMap(kindContainer -> kindContainer.getBetreuungen().stream()).filter(betreuung -> !betreuung
+				.isAngebotSchulamt()).forEach(betreuung -> verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId(), Betreuungsstatus.VERFUEGT)
+			);
+			gesuch.getKindContainers().stream().flatMap(kindContainer -> kindContainer.getBetreuungen().stream()).filter(betreuung -> !betreuung
+				.isAngebotSchulamt()).forEach(betreuung -> verfuegungService.generateVerfuegungDokument(betreuung)
+			);
 			generateDokFinSituation(gesuch); // the finSit document must be explicitly generated
 			gesuchService.postGesuchVerfuegen(gesuch);
 		}

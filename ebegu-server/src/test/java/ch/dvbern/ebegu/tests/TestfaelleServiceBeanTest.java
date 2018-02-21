@@ -75,22 +75,7 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	private GesuchsperiodeService gesuchsperiodeService;
 
 	@Inject
-	private InstitutionService institutionService;
-
-	@Inject
-	private InstitutionStammdatenService institutionStammdatenService;
-
-	@Inject
-	private TraegerschaftService traegerschaftService;
-
-	@Inject
 	private Persistence persistence;
-
-	@Inject
-	private EbeguParameterService ebeguParameterService;
-
-	@Inject
-	private GesuchService gesuchService;
 
 	/**
 	 * Wenn true werden die Testergebnisse neu in die Testfiles geschrieben. Muss für testen immer false sein!
