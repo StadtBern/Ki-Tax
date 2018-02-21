@@ -73,7 +73,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 @Local(DatabaseMigrationService.class)
 @PermitAll
 @RunAs(UserRoleName.SUPER_ADMIN)
-@RolesAllowed({ SUPER_ADMIN})
+@RolesAllowed(SUPER_ADMIN)
 @SuppressWarnings(value = { "PMD.AvoidDuplicateLiterals", "LocalVariableNamingConvention", "PMD.NcssTypeCount", "InstanceMethodNamingConvention" })
 public class DatabaseMigrationServiceBean extends AbstractBaseService implements DatabaseMigrationService {
 

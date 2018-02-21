@@ -51,7 +51,7 @@ public class DatabaseMigrationResource {
 	@Path("/{scriptNr}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
-	@RolesAllowed({ SUPER_ADMIN})
+	@RolesAllowed(SUPER_ADMIN)
 	public Response processScript(@PathParam("scriptNr") String scriptNr) {
 		Objects.requireNonNull(scriptNr, "scriptNr muss gesetzt sein");
 		databaseMigrationService.processScript(scriptNr);
