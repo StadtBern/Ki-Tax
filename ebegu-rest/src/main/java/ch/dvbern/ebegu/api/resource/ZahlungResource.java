@@ -113,6 +113,7 @@ public class ZahlungResource {
 	@Path("/institution")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed({ UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
 	public List<JaxZahlungsauftrag> getAllZahlungsauftraegeInstitution() {
 
 		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
@@ -152,6 +153,7 @@ public class ZahlungResource {
 	@Path("/zahlungsauftraginstitution/{zahlungsauftragId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed({ UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
 	public JaxZahlungsauftrag findZahlungsauftraginstitution(
 		@Nonnull @NotNull @PathParam("zahlungsauftragId") JaxId zahlungsauftragJAXPId) throws EbeguException {
 
