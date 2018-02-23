@@ -44,6 +44,7 @@ export class DummyAuthenticationListViewController {
     private traegerschaftStadtBern: TSTraegerschaft;
     private traegerschaftLeoLea: TSTraegerschaft;
     private traegerschaftSGF: TSTraegerschaft;
+    private traegerschaftFamex: TSTraegerschaft;
     private devMode: boolean;
 
     static $inject: string[] = ['$state', 'AuthServiceRS', '$timeout', 'ApplicationPropertyRS'];
@@ -55,6 +56,7 @@ export class DummyAuthenticationListViewController {
         this.traegerschaftStadtBern = this.getTraegerschaftStadtBern();
         this.traegerschaftLeoLea = this.getTraegerschaftLeoLea();
         this.traegerschaftSGF = this.getTraegerschaftSGF();
+        this.traegerschaftFamex = this.getTraegerschaftFamex();
         this.institution = this.getInsitution();
         applicationPropertyRS.isDevMode().then((response) => {
             this.devMode = response;
@@ -137,6 +139,17 @@ export class DummyAuthenticationListViewController {
         traegerschaft.name = 'SGF';
         traegerschaft.mail = 'info@sgfbern.ch';
         traegerschaft.id = 'bb5d4bd8-84c9-4cb6-8134-a97312dead67';
+        return traegerschaft;
+    }
+
+    /**
+     * Die Traegerschaft wird direkt gegeben. Diese Daten und die Daten der DB muessen uebereinstimmen
+     */
+    private getTraegerschaftFamex(): TSTraegerschaft {
+        let traegerschaft = new TSTraegerschaft();
+        traegerschaft.name = 'FAMEX';
+        traegerschaft.mail = 'info@famex';
+        traegerschaft.id = '4a552145-5ccd-4bf8-b827-c77c930daaa8';
         return traegerschaft;
     }
 
