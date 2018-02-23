@@ -29,6 +29,7 @@ import TSFall from '../../../models/TSFall';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import ErrorService from '../../../core/errors/service/ErrorService';
 import ILogService = angular.ILogService;
 import IPromise = angular.IPromise;
 import ITranslateService = angular.translate.ITranslateService;
@@ -50,18 +51,21 @@ export class GesuchstellerDashboardListViewController {
     fallId: string;
     totalResultCount: string = '-';
     amountNewMitteilungen: number;
-    mapOfNewestAntraege: {[key: string]: string} = {}; // In dieser Map wird pro GP die ID des neuesten Gesuchs gespeichert
+    mapOfNewestAntraege: { [key: string]: string } = {}; // In dieser Map wird pro GP die ID des neuesten Gesuchs gespeichert
 
     static $inject: string[] = ['$state', '$log', 'AuthServiceRS', 'SearchRS', 'EbeguUtil', 'GesuchsperiodeRS',
-        'FallRS', '$translate', 'MitteilungRS', 'GesuchRS'];
+        'FallRS', '$translate', 'MitteilungRS', 'GesuchRS', 'ErrorService'];
 
     constructor(private $state: IStateService, private $log: ILogService,
                 private authServiceRS: AuthServiceRS, private searchRS: SearchRS, private ebeguUtil: EbeguUtil,
                 private gesuchsperiodeRS: GesuchsperiodeRS, private fallRS: FallRS, private $translate: ITranslateService,
-                private mitteilungRS: MitteilungRS, private gesuchRS: GesuchRS) {
+                private mitteilungRS: MitteilungRS, private gesuchRS: GesuchRS, private errorService: ErrorService) {
     }
 
     $onInit() {
+        if (this.$state.params.gesuchstellerDashboardStateParams && this.$state.params.gesuchstellerDashboardStateParams.infoMessage) {
+            this.errorService.addMesageAsInfo(this.$translate.instant(this.$state.params.gesuchstellerDashboardStateParams.infoMessage));
+        }
         this.initViewModel();
     }
 
