@@ -113,11 +113,12 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
 
     removeKind(kind: any, index: any): void {
         let remTitleText = this.$translate.instant('KIND_LOESCHEN', {kindname: kind.kindJA.getFullName()});
-        this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+        this.DvDialog.showRemoveDialog(removeDialogTempl, RemoveDialogController, {
             title: remTitleText,
             deleteText: 'KIND_LOESCHEN_BESCHREIBUNG',
             parentController: this,
-            elementID: 'removeKindButton_' + index
+            elementID: 'removeKindButton_' + index,
+            form: this.form
         })
             .then(() => {   //User confirmed removal
                 let kindIndex: number = this.gesuchModelManager.findKind(kind);

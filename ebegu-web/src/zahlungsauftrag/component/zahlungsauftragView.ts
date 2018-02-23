@@ -115,11 +115,12 @@ export class ZahlungsauftragViewController {
 
     public createZahlungsauftrag() {
         if (this.form.$valid) {
-            this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            this.dvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
                 title: this.$translate.instant('ZAHLUNG_ERSTELLEN_CONFIRM'),
                 deleteText: this.$translate.instant('ZAHLUNG_ERSTELLEN_INFO'),
                 parentController: undefined,
-                elementID: undefined
+                elementID: undefined,
+                form: this.form
             }).then(() => {   //User confirmed removal
                 this.zahlungRS.createZahlungsauftrag(this.beschrieb, this.faelligkeitsdatum, this.datumGeneriert).then((response: TSZahlungsauftrag) => {
                     this.zahlungsauftragen.push(response);
@@ -153,11 +154,12 @@ export class ZahlungsauftragViewController {
     }
 
     public ausloesen(zahlungsauftragId: string) {
-        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+        this.dvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
             title: this.$translate.instant('ZAHLUNG_AUSLOESEN_CONFIRM'),
             deleteText: this.$translate.instant('ZAHLUNG_AUSLOESEN_INFO'),
             parentController: undefined,
-            elementID: undefined
+            elementID: undefined,
+            form: this.form
         }).then(() => {   //User confirmed removal
             this.zahlungRS.zahlungsauftragAusloesen(zahlungsauftragId).then((response: TSZahlungsauftrag) => {
                 let index = EbeguUtil.getIndexOfElementwithID(response, this.zahlungsauftragen);

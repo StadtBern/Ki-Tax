@@ -174,11 +174,12 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
 
     public removeUmzugAdresse(adresse: TSUmzugAdresse): void {
         let remTitleText = this.$translate.instant('UMZUG_LOESCHEN');
-        this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+        this.DvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
             title: remTitleText,
             deleteText: '',
             parentController: undefined,
-            elementID: undefined
+            elementID: undefined,
+            form: this.form
         }).then(() => {   //User confirmed removal
             this.dirty = true;
             let indexOf = this.model.lastIndexOf(adresse);

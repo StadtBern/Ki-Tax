@@ -13,7 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IFormController} from 'angular';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {InstitutionRS} from '../../../core/service/institutionRS.rest';
@@ -42,6 +42,7 @@ export class InstitutionenListViewComponentConfig implements IComponentOptions {
 
 export class InstitutionenListViewController extends AbstractAdminViewController {
 
+    form: IFormController;
     institutionen: TSInstitution[];
     selectedInstitution: TSInstitution = undefined;
 
@@ -56,11 +57,12 @@ export class InstitutionenListViewController extends AbstractAdminViewController
     }
 
     removeInstitution(institution: any): void {
-        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+        this.dvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: '',
             title: 'LOESCHEN_DIALOG_TITLE',
             parentController: undefined,
-            elementID: undefined
+            elementID: undefined,
+            form: undefined
         }).then(() => {   //User confirmed removal
             this.selectedInstitution = undefined;
             this.institutionRS.removeInstitution(institution.id).then((response) => {

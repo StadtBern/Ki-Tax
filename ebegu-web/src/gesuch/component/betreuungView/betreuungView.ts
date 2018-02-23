@@ -329,11 +329,12 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public anmeldungSchulamtUebernehmen(): void {
         this.copyBGNumberLToClipboard();
-        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+        this.dvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
             title: 'CONFIRM_UEBERNAHME_SCHULAMT',
             deleteText: 'BESCHREIBUNG_UEBERNAHME_SCHULAMT',
             parentController: undefined,
-            elementID: undefined
+            elementID: undefined,
+            form: this.form
         }).then(() => {
             if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
                 this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN, 'pendenzenBetreuungen', undefined);
@@ -652,11 +653,12 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public mutationsmeldungSenden(): void {
         // send mutationsmeldung (dummy copy)
         if (this.isGesuchValid() && this.mutationsmeldungModel) {
-            this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            this.dvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
                 title: 'MUTATIONSMELDUNG_CONFIRMATION',
                 deleteText: 'MUTATIONSMELDUNG_BESCHREIBUNG',
                 parentController: undefined,
-                elementID: undefined
+                elementID: undefined,
+                form: this.form
             }).then(() => {   //User confirmed removal
                 this.mitteilungRS.sendbetreuungsmitteilung(this.gesuchModelManager.getGesuch().fall,
                     this.mutationsmeldungModel).then((response) => {

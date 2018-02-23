@@ -45,6 +45,7 @@ export class TraegerschaftViewComponentConfig implements IComponentOptions {
 
 export class TraegerschaftViewController extends AbstractAdminViewController {
 
+    form: IFormController;
     traegerschaftRS: TraegerschaftRS;
     traegerschaften: TSTraegerschaft[];
     traegerschaft: TSTraegerschaft = undefined;
@@ -62,11 +63,12 @@ export class TraegerschaftViewController extends AbstractAdminViewController {
     }
 
     removeTraegerschaft(traegerschaft: any): void {
-        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+        this.dvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: '',
             title: 'LOESCHEN_DIALOG_TITLE',
             parentController: undefined,
-            elementID: undefined
+            elementID: undefined,
+            form: this.form
         })
             .then(() => {   //User confirmed removal
                 this.traegerschaft = undefined;
@@ -84,8 +86,8 @@ export class TraegerschaftViewController extends AbstractAdminViewController {
         this.traegerschaft.active = true;
     }
 
-    saveTraegerschaft(form: IFormController): void {
-        if (form.$valid) {
+    saveTraegerschaft(): void {
+        if (this.form.$valid) {
             this.errorService.clearAll();
             let newTraegerschaft: boolean = this.traegerschaft.isNew();
             this.traegerschaftRS.createTraegerschaft(this.traegerschaft).then((traegerschaft: TSTraegerschaft) => {

@@ -131,11 +131,12 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
             kindname: this.gesuchModelManager.getKindToWorkWith().kindJA.getFullName(),
             betreuungsangebottyp: this.ebeguUtil.translateString(TSBetreuungsangebotTyp[betreuung.institutionStammdaten.betreuungsangebotTyp])
         });
-        this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+        this.DvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
             title: remTitleText,
             deleteText: 'BETREUUNG_LOESCHEN_BESCHREIBUNG',
             parentController: this,
-            elementID: 'removeBetreuungButton' + kind.kindNummer + '_' + index
+            elementID: 'removeBetreuungButton' + kind.kindNummer + '_' + index,
+            form: this.form
         }).then(() => {   //User confirmed removal
             this.errorService.clearAll();
             let betreuungIndex: number = this.gesuchModelManager.findBetreuung(betreuung);

@@ -18,7 +18,7 @@
         <div class="viewTitle">
             <h1 data-translate="TRAEGERSCHAFT"></h1>
         </div>
-        <form role="form" name="form" class="" unsaved-warning-form novalidate>
+        <form role="form" name="vm.form" class="" unsaved-warning-form novalidate>
             <fieldset ng-disabled="vm.isReadonly()">
 
                 <div class="row">
@@ -90,7 +90,7 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <dv-loading-button type="submit"
-                                                               button-click="vm.saveTraegerschaft(form)"
+                                                               button-click="vm.saveTraegerschaft()"
                                                                button-class="color-success" button-disabled="vm.isReadonly()">
                                                 <span data-translate="SAVE"></span>
                                             </dv-loading-button>

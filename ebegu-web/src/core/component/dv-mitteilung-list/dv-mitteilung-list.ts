@@ -360,11 +360,12 @@ export class DVMitteilungListController {
 
     public applyBetreuungsmitteilung(mitteilung: TSMitteilung): void {
         if (mitteilung instanceof TSBetreuungsmitteilung) {
-            this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            this.DvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
                 title: 'MUTATIONSMELDUNG_UEBERNEHMEN',
                 deleteText: 'MUTATIONSMELDUNG_UEBERNEHMEN_BESCHREIBUNG',
                 parentController: this,
-                elementID: 'Intro'
+                elementID: 'Intro',
+                form: this.form
             }).then(() => {   //User confirmed message
                 let betreuungsmitteilung: TSBetreuungsmitteilung = <TSBetreuungsmitteilung>mitteilung;
                 this.mitteilungRS.applyBetreuungsmitteilung(betreuungsmitteilung.id).then((response: any) => { // JaxID kommt als response

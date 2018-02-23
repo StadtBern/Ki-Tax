@@ -172,11 +172,12 @@ export class AbwesenheitViewController extends AbstractGesuchViewController<Arra
     public removeAbwesenheitConfirm(abwesenheit: AbwesenheitUI): void {
         if (abwesenheit.abwesenheit.id) {
             let remTitleText = this.$translate.instant('ABWESENHEIT_LOESCHEN');
-            this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            this.DvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
                 title: remTitleText,
                 deleteText: '',
                 parentController: undefined,
-                elementID: undefined
+                elementID: undefined,
+                form: this.form
             }).then(() => {   //User confirmed removal
                 this.removeAbwesenheit(abwesenheit);
             });
