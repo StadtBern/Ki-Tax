@@ -85,8 +85,8 @@ export class InstitutionStammdatenRS {
             });
     }
 
-    public getAllActiveInstitutionStammdatenByDate(dateParam: moment.Moment): IPromise<TSInstitutionStammdaten[]> {
-        return this.http.get(this.serviceURL + '/date/active', {params: {date: DateUtil.momentToLocalDate(dateParam)}})
+    public getAllActiveInstitutionStammdatenByGesuchsperiode(gesuchsperiodeId: string): IPromise<TSInstitutionStammdaten[]> {
+        return this.http.get(this.serviceURL + '/gesuchsperiode/active', {params: {gesuchsperiodeId: gesuchsperiodeId}})
             .then((response: any) => {
                 this.log.debug('PARSING institutionStammdaten REST array object', response.data);
                 return this.ebeguRestUtil.parseInstitutionStammdatenArray(response.data);

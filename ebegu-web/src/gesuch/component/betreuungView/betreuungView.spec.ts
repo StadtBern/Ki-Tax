@@ -80,6 +80,7 @@ describe('betreuungView', function () {
              // wenn betreuung view ihr model schon kopiert hat geben wir das zurueck, sonst sind wir noch im constructor der view und geben betreuung zurueck
             return betreuungView ?  betreuungView.model : betreuung;
         });
+        spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(TestDataUtil.createGesuchsperiode20162017());
         $rootScope = $injector.get('$rootScope');
         authServiceRS = $injector.get('AuthServiceRS');
         spyOn(authServiceRS, 'isRole').and.returnValue(true);

@@ -191,6 +191,7 @@ export default class GesuchModelManager {
         this.ewkPersonGS2 = undefined;
         this.ewkResultatGS1 = undefined;
         this.ewkResultatGS2 = undefined;
+        this.activInstitutionenList = undefined; // Liste zuruecksetzen, da u.U. im Folgegesuch andere Stammdaten gelten!
     }
 
     public getGesuch(): TSGesuch {
@@ -248,7 +249,7 @@ export default class GesuchModelManager {
      * Retrieves the list of InstitutionStammdaten for the date of today.
      */
     public updateActiveInstitutionenList(): void {
-        this.instStamRS.getAllActiveInstitutionStammdatenByDate(DateUtil.today()).then((response: TSInstitutionStammdaten[]) => {
+        this.instStamRS.getAllActiveInstitutionStammdatenByGesuchsperiode(this.getGesuchsperiode().id).then((response: TSInstitutionStammdaten[]) => {
             this.activInstitutionenList = response;
         });
     }
@@ -646,7 +647,7 @@ export default class GesuchModelManager {
      */
     public getGesuchsperiodeBegin(): moment.Moment {
         if (this.getGesuchsperiode() && this.getGesuchsperiode().gueltigkeit) {
-            return this.gesuch.gesuchsperiode.gueltigkeit.gueltigAb;
+            return this.getGesuchsperiode().gueltigkeit.gueltigAb;
         }
         return undefined;
     }
