@@ -144,7 +144,7 @@ export class InstitutionViewController extends AbstractAdminViewController {
     }
 
     removeInstitutionStammdaten(institutionStammdaten: TSInstitutionStammdaten): void {
-        this.dvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
+        this.dvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
             deleteText: '',
             title: 'LOESCHEN_DIALOG_TITLE',
             parentController: undefined,

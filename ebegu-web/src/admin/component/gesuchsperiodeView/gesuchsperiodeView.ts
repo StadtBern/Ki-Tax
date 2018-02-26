@@ -99,7 +99,7 @@ export class GesuchsperiodeViewController extends AbstractAdminViewController {
             // Den Dialog nur aufrufen, wenn der Status geändert wurde (oder die GP neu ist) oder wenn es AKTIV ist
             if (this.gesuchsperiode.isNew() || this.initialStatus !== this.gesuchsperiode.status || this.gesuchsperiode.status === TSGesuchsperiodeStatus.AKTIV) {
                 let dialogText = this.getGesuchsperiodeSaveDialogText();
-                this.dvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
+                this.dvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
                     title: 'GESUCHSPERIODE_DIALOG_TITLE',
                     deleteText: dialogText,
                     parentController: undefined,
@@ -117,7 +117,7 @@ export class GesuchsperiodeViewController extends AbstractAdminViewController {
     public saveGesuchsperiodeFreischaltungTagesschule(): void {
         // Zweite Rückfrage falls neu ein Datum für die Freischaltung der Tagesschulen gesetzt wurde
         if (!this.gesuchsperiode.isTagesschulenAnmeldungKonfiguriert() && this.isDatumFreischaltungTagesschuleValid()) {
-            this.dvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
+            this.dvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
                 title: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TITLE',
                 deleteText: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TEXT',
                 parentController: undefined,

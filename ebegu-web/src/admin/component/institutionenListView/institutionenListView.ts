@@ -57,12 +57,12 @@ export class InstitutionenListViewController extends AbstractAdminViewController
     }
 
     removeInstitution(institution: any): void {
-        this.dvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
+        this.dvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
             deleteText: '',
             title: 'LOESCHEN_DIALOG_TITLE',
             parentController: undefined,
             elementID: undefined,
-            form: undefined
+            form: this.form
         }).then(() => {   //User confirmed removal
             this.selectedInstitution = undefined;
             this.institutionRS.removeInstitution(institution.id).then((response) => {

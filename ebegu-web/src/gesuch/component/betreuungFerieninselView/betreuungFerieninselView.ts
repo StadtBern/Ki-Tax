@@ -166,7 +166,7 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
                 return undefined;
             }
             if (this.direktAnmeldenSchulamt()) {
-                return this.dvDialog.showRemoveDialog(dialogTemplate, RemoveDialogController, {
+                return this.dvDialog.showRemoveDialog(dialogTemplate, this.form, RemoveDialogController, {
                     title: 'CONFIRM_SAVE_FERIENINSEL',
                     deleteText: 'BESCHREIBUNG_SAVE_FERIENINSEL',
                     parentController: undefined,

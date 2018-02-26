@@ -115,7 +115,7 @@ export class ZahlungsauftragViewController {
 
     public createZahlungsauftrag() {
         if (this.form.$valid) {
-            this.dvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
+            this.dvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
                 title: this.$translate.instant('ZAHLUNG_ERSTELLEN_CONFIRM'),
                 deleteText: this.$translate.instant('ZAHLUNG_ERSTELLEN_INFO'),
                 parentController: undefined,
@@ -154,7 +154,7 @@ export class ZahlungsauftragViewController {
     }
 
     public ausloesen(zahlungsauftragId: string) {
-        this.dvDialog.showRemoveDialog(removeDialogTemplate, RemoveDialogController, {
+        this.dvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
             title: this.$translate.instant('ZAHLUNG_AUSLOESEN_CONFIRM'),
             deleteText: this.$translate.instant('ZAHLUNG_AUSLOESEN_INFO'),
             parentController: undefined,

@@ -223,7 +223,7 @@ export class KommentarViewController {
     }
 
     public freigebenSTV(): void {
-        this.dvDialog.showRemoveDialog(removeDialogTempl, RemoveDialogController, {
+        this.dvDialog.showRemoveDialog(removeDialogTempl, this.form, RemoveDialogController, {
             title: this.getFreigabeTitel(),
             deleteText: this.getFreigabeBeschreibung(),
             parentController: undefined,
