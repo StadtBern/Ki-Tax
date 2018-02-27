@@ -37,6 +37,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.jboss.ejb3.annotation.TransactionTimeout;
+
 import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
@@ -47,11 +51,9 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.WorkjobService;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.DateUtil;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.jboss.ejb3.annotation.TransactionTimeout;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
@@ -153,7 +155,7 @@ public class ReportResourceAsync {
 		workJob.setParams(param);
 
 		String periodeId = gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null;
-		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCH_STICHTAG, dateFrom, dateTo, periodeId);
+		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCH_ZEITRAUM, dateFrom, dateTo, periodeId);
 
 		return Response.ok(workJob.getId()).build();
 	}
@@ -191,7 +193,7 @@ public class ReportResourceAsync {
 		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
 		workJob.setParams(param);
 
-		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCH_STICHTAG, dateAuswertungVon, dateAuswertungBis, null);
+		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_KANTON, dateAuswertungVon, dateAuswertungBis, null);
 
 		return Response.ok(workJob.getId()).build();
 	}
@@ -229,7 +231,7 @@ public class ReportResourceAsync {
 		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
 		workJob.setParams(param);
 
-		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCH_STICHTAG, dateAuswertungVon, dateAuswertungBis, null);
+		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_MITARBEITERINNEN, dateAuswertungVon, dateAuswertungBis, null);
 
 		return Response.ok(workJob.getId()).build();
 	}
@@ -329,6 +331,7 @@ public class ReportResourceAsync {
 		Validate.notNull(auswertungBis);
 		LocalDate dateFrom = DateUtil.parseStringToDateOrReturnNow(auswertungVon);
 		LocalDate dateTo = DateUtil.parseStringToDateOrReturnNow(auswertungBis);
+		String periodeId = gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null;
 
 		if (!dateTo.isAfter(dateFrom)) {
 			throw new EbeguRuntimeException("getKinderReportExcel", "Fehler beim erstellen Report Kinder"
@@ -342,7 +345,7 @@ public class ReportResourceAsync {
 		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
 		workJob.setParams(param);
 
-		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_KINDER, dateFrom, dateTo, null);
+		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_KINDER, dateFrom, dateTo, periodeId);
 
 		return Response.ok(workJob.getId()).build();
 	}
