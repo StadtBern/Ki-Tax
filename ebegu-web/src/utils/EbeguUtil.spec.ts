@@ -13,14 +13,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as moment from 'moment';
+import {EbeguWebCore} from '../core/core.module';
+import {TSGesuchsperiodeStatus} from '../models/enums/TSGesuchsperiodeStatus';
+import TSFall from '../models/TSFall';
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import {TSDateRange} from '../models/types/TSDateRange';
-import {EbeguWebCore} from '../core/core.module';
 import EbeguUtil from './EbeguUtil';
-import * as moment from 'moment';
-import TSFall from '../models/TSFall';
 import TestDataUtil from './TestDataUtil';
-import {TSGesuchsperiodeStatus} from '../models/enums/TSGesuchsperiodeStatus';
 
 describe('EbeguUtil', function () {
 
@@ -30,7 +30,7 @@ describe('EbeguUtil', function () {
 
     // Das wird nur fuer tests gebraucht in denen etwas uebersetzt wird. Leider muss man dieses erstellen
     // bevor man den Injector erstellt hat. Deshalb muss es fuer alle Tests definiert werden
-    beforeEach(angular.mock.module(function ($provide: any) {
+    beforeEach(angular.mock.module(function ($provide: angular.auto.IProvideService) {
         let mockTranslateFilter = function (value: any) {
             if (value === 'FIRST') {
                 return 'Erster';
@@ -43,7 +43,7 @@ describe('EbeguUtil', function () {
         $provide.value('translateFilter', mockTranslateFilter);
     }));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         ebeguUtil = $injector.get('EbeguUtil');
     }));
 

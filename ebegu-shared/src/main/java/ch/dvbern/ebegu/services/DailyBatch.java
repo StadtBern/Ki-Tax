@@ -30,4 +30,6 @@ public interface DailyBatch {
 	void runBatchGesucheLoeschen();
 
 	void runBatchGesuchsperiodeLoeschen();
+
+	void runBatchCleanWorkjobs();
 }

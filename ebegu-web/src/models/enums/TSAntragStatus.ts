@@ -62,6 +62,10 @@ export function getTSAntragStatusValues(): Array<TSAntragStatus> {
         TSAntragStatus.GEPRUEFT_STV
     ];
 }
+
+/**
+ * Alle Status die eine gewisse Rolle sehen darf
+ */
 export function getTSAntragStatusValuesByRole(userrole: TSRole): Array<TSAntragStatus> {
     switch (userrole) {
         case TSRole.STEUERAMT:
@@ -69,10 +73,10 @@ export function getTSAntragStatusValuesByRole(userrole: TSRole): Array<TSAntragS
                 TSAntragStatus.PRUEFUNG_STV,
                 TSAntragStatus.IN_BEARBEITUNG_STV
             ];
+        case TSRole.SCHULAMT:
+        case TSRole.ADMINISTRATOR_SCHULAMT:
         case TSRole.SACHBEARBEITER_JA:
         case TSRole.ADMIN:
-            return getTSAntragStatusValues().filter(element => (element !== TSAntragStatus.IN_BEARBEITUNG_GS
-                && element !== TSAntragStatus.FREIGABEQUITTUNG && element !== TSAntragStatus.NUR_SCHULAMT));
         case TSRole.REVISOR:
         case TSRole.JURIST:
             return getTSAntragStatusValues().filter(element => (element !== TSAntragStatus.IN_BEARBEITUNG_GS
@@ -92,7 +96,25 @@ export function getTSAntragStatusValuesByRole(userrole: TSRole): Array<TSAntragS
  * @returns {TSAntragStatus[]}
  */
 export function getTSAntragStatusPendenzValues(userrole: TSRole): Array<TSAntragStatus> {
-    return getTSAntragStatusValuesByRole(userrole).filter(element => (element !== TSAntragStatus.VERFUEGT && element !== TSAntragStatus.KEIN_ANGEBOT));
+    let allVisibleValuesByRole = getTSAntragStatusValuesByRole(userrole);
+    switch (userrole) {
+        case TSRole.SACHBEARBEITER_JA:
+        case TSRole.ADMIN:
+        case TSRole.REVISOR:
+        case TSRole.JURIST:
+            return allVisibleValuesByRole.filter(element => (element !== TSAntragStatus.VERFUEGT
+                && element !== TSAntragStatus.KEIN_ANGEBOT && element !== TSAntragStatus.NUR_SCHULAMT
+                && element !== TSAntragStatus.IN_BEARBEITUNG_STV && element !== TSAntragStatus.PRUEFUNG_STV));
+        case TSRole.SCHULAMT:
+        case TSRole.ADMINISTRATOR_SCHULAMT:
+            return allVisibleValuesByRole.filter(element => (element !== TSAntragStatus.VERFUEGT
+                && element !== TSAntragStatus.KEIN_ANGEBOT && element !== TSAntragStatus.NUR_SCHULAMT
+                && element !== TSAntragStatus.VERFUEGEN && element !== TSAntragStatus.IN_BEARBEITUNG_STV
+                && element !== TSAntragStatus.PRUEFUNG_STV));
+        default:
+            return allVisibleValuesByRole.filter(element => (element !== TSAntragStatus.VERFUEGT
+                && element !== TSAntragStatus.KEIN_ANGEBOT && element !== TSAntragStatus.NUR_SCHULAMT));
+    }
 }
 
 export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {

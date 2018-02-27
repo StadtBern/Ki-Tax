@@ -97,4 +97,24 @@ public interface FallService {
 	 * Checks whether the given Fall has at least one Mitteilung or not. Will throw an exception if the fall is not found.
 	 */
 	boolean hasFallAnyMitteilung(@NotNull String fallID);
+
+	/**
+	 * Logik fuer die Ermittlung des Hauptverantwortlichen:
+	 * (1) Wenn ein JA-Verantwortlicher gesetzt ist, ist dieser der Hauptverantwortlicher
+	 * (2) Wenn kein JA-Verantwortlicher gesetzt ist, aber ein SCH-Verantwortlicher, ist dieser der Hauptverantwortlicher
+	 * (3) Wenn noch gar nichts gesetzt ist (z.B. noch gar kein Gesuch erfasst) wird der DefaultVerantwortlicherJA zurueckgegeben
+	 */
+	@Nonnull
+	Optional<Benutzer> getHauptOrDefaultVerantwortlicher(@Nonnull Fall fall);
+
+	/**
+	 * Update-Querry to store verantwortlicher direct on fall
+	 */
+	int setVerantwortlicher(String id, Benutzer benutzer);
+
+	/**
+	 * Update-Querry to store verantwortlicherSCH direct on fall
+	 */
+	int setVerantwortlicherSCH(String id, Benutzer benutzer);
+
 }

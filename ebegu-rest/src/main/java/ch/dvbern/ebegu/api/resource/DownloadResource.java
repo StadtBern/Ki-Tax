@@ -35,7 +35,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -60,7 +59,6 @@ import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.entities.WriteProtectedDokument;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MergeDocException;
@@ -307,7 +305,6 @@ public class DownloadResource {
 	public Response getFreigabequittungAccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
 		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
-		@Nonnull @QueryParam("zustelladresse") String zustelladresse,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, MimeTypeParseException {
 
 		Validate.notNull(jaxGesuchId.getId());
@@ -324,7 +321,7 @@ public class DownloadResource {
 		}
 
 		WriteProtectedDokument generatedDokument = generatedDokumentService
-			.getFreigabequittungAccessTokenGeneratedDokument(gesuch, forceCreation, Zustelladresse.valueOf(zustelladresse));
+			.getFreigabequittungAccessTokenGeneratedDokument(gesuch, forceCreation);
 		if (generatedDokument == null) {
 			return Response.noContent().build();
 		}
@@ -473,14 +470,19 @@ public class DownloadResource {
 	public Response getFileDownloadResponse(UriInfo uriInfo, String ip, FileMetadata fileMetadata) {
 		final DownloadFile downloadFile = downloadFileService.create(fileMetadata, ip);
 
-		URI uri = uriInfo.getBaseUriBuilder()
-			.path(DownloadResource.class)
-			.path('/' + downloadFile.getId())
-			.build();
+		URI uri = createDownloadURIForDownloadFile(uriInfo, downloadFile);
 
 		JaxDownloadFile jaxDownloadFile = converter.downloadFileToJAX(downloadFile);
 
 		return Response.created(uri).entity(jaxDownloadFile).build();
+	}
+
+	private URI createDownloadURIForDownloadFile(UriInfo uriInfo, DownloadFile downloadFile) {
+		return uriInfo.getBaseUriBuilder()
+				.path(DownloadResource.class)
+				.path("/blobdata")
+				.path('/' + downloadFile.getAccessToken())
+				.build();
 	}
 
 	public String getIP(HttpServletRequest request) {

@@ -32,6 +32,7 @@ import FinanzielleSituationRS from '../gesuch/service/finanzielleSituationRS.res
 import EinkommensverschlechterungContainerRS from '../gesuch/service/einkommensverschlechterungContainerRS.rest';
 import DVMaxLength from './directive/dv-max-length';
 import {DVDatepicker} from './directive/dv-datepicker/dv-datepicker';
+import {DVTimepicker} from './directive/dv-timepicker/dv-timepicker';
 import {FachstelleRS} from './service/fachstelleRS.rest';
 import {DvInputContainerComponentConfig} from './component/dv-input-container/dv-input-container';
 import {DvRadioContainerComponentConfig} from './component/dv-radio-container/dv-radio-container';
@@ -74,7 +75,6 @@ import WizardStepRS from '../gesuch/service/WizardStepRS.rest';
 import EinkommensverschlechterungInfoRS from '../gesuch/service/einkommensverschlechterungInfoRS.rest';
 import {DVNavigation} from './directive/dv-navigation/dv-navigation';
 import {DVAntragListConfig} from './component/dv-antrag-list/dv-antrag-list';
-import {DVPendenzenListConfig} from './component/dv-pendenzen-list/dv-pendenzen-list';
 import AntragStatusHistoryRS from './service/antragStatusHistoryRS.rest';
 import {NavigationLogger} from './service/NavigationLogger';
 import GlobalCacheService from '../gesuch/service/globalCacheService';
@@ -100,13 +100,17 @@ import {DVDisplayElement} from './directive/dv-display-element/dv-display-elemen
 import {DVsTPersistService} from './service/dVsTPersistService';
 import DVSTResetSearch from './directive/dv-st-reset-search/dv-st-reset-search';
 import DVSTPersistAntraege from './directive/dv-st-persist-antraege/dv-st-persist-antraege';
-import DVSTPersistPendenzen from './directive/dv-st-persist-pendenzen/dv-st-persist-pendenzen';
+import DVSTPersistPendenzen from './directive/dv-st-persist-quicksearch/dv-st-persist-quicksearch';
 import {DvDownloadmenuComponentConfig} from './component/dv-downloadmenu/dv-downloadmenu';
 import {DVVorlageListConfig} from './component/dv-vorlage-list/dv-vorlage-list';
 import {DatabaseMigrationRS} from '../admin/service/databaseMigrationRS.rest';
 import HttpVersionInterceptor from './service/version/HttpVersionInterceptor';
 import {DVVersionComponentConfig} from './component/dv-version/dv-version';
 import {DvSkiplinksComponentConfig} from './component/dv-skiplinks/dv-skiplinks';
+import SearchRS from '../gesuch/service/searchRS.rest';
+import {DvVerantwortlicherselect} from './directive/dv-verantwortlicherselect/dv-verantwortlicherselect';
+import {ReportAsyncRS} from './service/reportAsyncRS.rest';
+import BatchJobRS from './service/batchRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -169,6 +173,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('FamiliensituationRS', FamiliensituationRS)
     .service('GesuchModelManager', GesuchModelManager)
     .service('GesuchRS', GesuchRS)
+    .service('SearchRS', SearchRS)
     .service('FinanzielleSituationRS', FinanzielleSituationRS)
     .service('EinkommensverschlechterungContainerRS', EinkommensverschlechterungContainerRS)
     .service('EinkommensverschlechterungInfoRS', EinkommensverschlechterungInfoRS)
@@ -179,6 +184,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('ErwerbspensumRS', ErwerbspensumRS)
     .service('KindRS', KindRS)
     .service('DvDialog', DvDialog)
+    .service('BatchJobRS', BatchJobRS)
     .service('BetreuungRS', BetreuungRS)
     .service('GesuchsperiodeRS', GesuchsperiodeRS)
     .service('UserRS', UserRS)
@@ -194,8 +200,10 @@ export const EbeguWebCore: angular.IModule = angular
     .service('ExportRS', ExportRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
+    .directive('dvTimepicker', DVTimepicker.factory())
     .directive('dvValueinput', DVValueinput.factory())
     .directive('dvUserselect', DVUserselect.factory())
+    .directive('dvVerantwortlicherselect', DvVerantwortlicherselect.factory())
     .directive('dvNavigation', DVNavigation.factory())
     .directive('dvLoading', DVLoading.factory())
     .directive('dvLoadingButton', DVLoadingButton.factory())
@@ -235,7 +243,6 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvDokumenteList', new DVDokumenteListConfig())
     .component('dvAntragList', new DVAntragListConfig())
     .component('dvVorlageList', new DVVorlageListConfig())
-    .component('dvPendenzenList', new DVPendenzenListConfig())
     .component('dvQuicksearchbox', new DvQuicksearchboxComponentConfig())
     .component('dvSearchResultIcon', new DvSearchResultIconComponentConfig())
     .component('dvMitteilungList', new DVMitteilungListConfig())
@@ -244,6 +251,7 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvVersion', new DVVersionComponentConfig())
     .service('MahnungRS', MahnungRS)
     .service('ReportRS', ReportRS)
+    .service('ReportAsyncRS', ReportAsyncRS)
     .service('EwkRS', EwkRS)
     .service('DatabaseMigrationRS', DatabaseMigrationRS)
     .filter('arrayToString', () => {

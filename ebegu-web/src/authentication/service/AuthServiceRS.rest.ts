@@ -13,24 +13,30 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IHttpService, IPromise, IQService, IRequestConfig, ITimeoutService} from 'angular';
+import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
+import {TSRole} from '../../models/enums/TSRole';
 import TSUser from '../../models/TSUser';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import HttpBuffer from './HttpBuffer';
-import {TSRole} from '../../models/enums/TSRole';
-import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 import ICookiesService = angular.cookies.ICookiesService;
+import IHttpService = angular.IHttpService;
+import IPromise = angular.IPromise;
+import IQService = angular.IQService;
+import IRequestConfig = angular.IRequestConfig;
 import IRootScopeService = angular.IRootScopeService;
+import ITimeoutService = angular.ITimeoutService;
 
 export default class AuthServiceRS {
 
     private principal: TSUser;
 
-
     static $inject = ['$http', 'CONSTANTS', '$q', '$timeout', '$cookies', 'base64', 'EbeguRestUtil', 'httpBuffer', '$rootScope'];
+
     /* @ngInject */
-    constructor(private $http: IHttpService, private CONSTANTS: any, private $q: IQService, private $timeout: ITimeoutService,
-                private $cookies: ICookiesService, private base64: any, private ebeguRestUtil: EbeguRestUtil, private httpBuffer: HttpBuffer,
+    constructor(private $http: IHttpService, private CONSTANTS: any, private $q: IQService,
+                private $timeout: ITimeoutService,
+                private $cookies: ICookiesService, private base64: any, private ebeguRestUtil: EbeguRestUtil,
+                private httpBuffer: HttpBuffer,
                 private $rootScope: IRootScopeService) {
     }
 
@@ -54,7 +60,8 @@ export default class AuthServiceRS {
                     this.httpBuffer.retryAll((config: IRequestConfig) => {
                         return config;
                     });
-                    //ensure that there is ALWAYS a logout-event before the login-event by throwing it right before login
+                    //ensure that there is ALWAYS a logout-event before the login-event by throwing it right before
+                    // login
                     this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], 'logged out before logging in in');
                     return this.$timeout((): any => { // Response cookies are not immediately accessible, so lets wait for a bit
                         try {
@@ -70,7 +77,7 @@ export default class AuthServiceRS {
 
         }
         return undefined;
-    };
+    }
 
     public initWithCookie(): boolean {
         let authIdbase64 = this.$cookies.get('authId');
@@ -89,7 +96,7 @@ export default class AuthServiceRS {
         }
 
         return false;
-    };
+    }
 
     public logoutRequest() {
         return this.$http.post(this.CONSTANTS.REST_API + 'auth/logout', null).then((res: any) => {
@@ -97,7 +104,7 @@ export default class AuthServiceRS {
             this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], 'logged out');
             return res;
         });
-    };
+    }
 
     public initSSOLogin(relayPath: string): IPromise<string> {
         return this.$http.get(this.CONSTANTS.REST_API + 'auth/singleSignOn', {params: {relayPath: relayPath}}).then((res: any) => {
@@ -112,7 +119,8 @@ export default class AuthServiceRS {
     }
 
     /**
-     * Gibt true zurueck, wenn der eingelogte Benutzer die gegebene Role hat. Fuer undefined Werte wird immer false zurueckgegeben.
+     * Gibt true zurueck, wenn der eingelogte Benutzer die gegebene Role hat. Fuer undefined Werte wird immer false
+     * zurueckgegeben.
      */
     public isRole(role: TSRole) {
         if (role && this.principal) {

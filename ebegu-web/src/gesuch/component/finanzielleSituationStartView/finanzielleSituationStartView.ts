@@ -13,24 +13,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentOptions, IPromise} from 'angular';
-import AbstractGesuchViewController from '../abstractGesuchView';
+import {IComponentOptions} from 'angular';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSFinanzielleSituation from '../../../models/TSFinanzielleSituation';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import TSGesuch from '../../../models/TSGesuch';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import TSFinanzModel from '../../../models/TSFinanzModel';
 import IQService = angular.IQService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
+import IPromise = angular.IPromise;
+import AbstractGesuchViewController from '../abstractGesuchView';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import TSFinanzModel from '../../../models/TSFinanzModel';
+import TSGesuch from '../../../models/TSGesuch';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 
 let template = require('./finanzielleSituationStartView.html');
 require('./finanzielleSituationStartView.less');
+let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 
 export class FinanzielleSituationStartViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -41,22 +45,30 @@ export class FinanzielleSituationStartViewComponentConfig implements IComponentO
 
 export class FinanzielleSituationStartViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
+    finanzielleSituationRequired: boolean;
+    areThereOnlySchulamtangebote: boolean;
+    areThereOnlyFerieninsel: boolean;
     allowedRoles: Array<TSRoleUtil>;
     private initialModel: TSFinanzModel;
 
+
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService',
-        'WizardStepManager', '$q', '$scope', '$timeout'];
+        'WizardStepManager', '$q', '$scope', '$timeout', 'DvDialog'];
 
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, $timeout: ITimeoutService) {
+                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, $timeout: ITimeoutService,
+                private dvDialog: DvDialog) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FINANZIELLE_SITUATION, $timeout);
 
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
         this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
+        this.initialModel = angular.copy(this.model);
 
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
+        this.areThereOnlySchulamtangebote = this.gesuchModelManager.areThereOnlySchulamtAngebote(); // so we load it just once
+        this.areThereOnlyFerieninsel = this.gesuchModelManager.areThereOnlyFerieninsel(); // so we load it just once
     }
 
     showSteuerveranlagung(): boolean {
@@ -68,26 +80,58 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     private save(): IPromise<TSGesuch> {
+        this.errorService.clearAll();
+        return this.gesuchModelManager.saveFinanzielleSituationStart()
+            .then((gesuch: TSGesuch) => {
+                // Noetig, da nur das ganze Gesuch upgedated wird und die Aeenderng bei der FinSit sonst nicht
+                // bemerkt werden
+                if (this.gesuchModelManager.getGesuch().isMutation()) {
+                    this.wizardStepManager.updateCurrentWizardStepStatusMutiert();
+                }
+                return gesuch;
+            });
+    }
+
+    private confirmAndSave(): IPromise<TSGesuch> {
         if (this.isGesuchValid()) {
             this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
-            this.initialModel = angular.copy(this.model);
             if (!this.form.$dirty) {
+                if (this.updateStepDueToOnlyFerieninsel()) {
+                    return this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.FINANZIELLE_SITUATION, TSWizardStepStatus.OK).then(() => {
+                        return this.gesuchModelManager.getGesuch();
+                    });
+                }
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getGesuch());
             }
-            this.errorService.clearAll();
-            return this.gesuchModelManager.updateGesuch()
-                .then((gesuch: TSGesuch) => {
-                    // Noetig, da nur das ganze Gesuch upgedated wird und die Aeenderng bei der FinSit sonst nicht
-                    // bemerkt werden
-                    if (this.gesuchModelManager.getGesuch().isMutation()) {
-                        this.wizardStepManager.updateCurrentWizardStepStatusMutiert();
-                    }
-                    return gesuch;
+            if (this.finanzielleSituationTurnedNotRequired()) {
+                return this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                    title: 'FINSIT_WARNING',
+                    deleteText: 'FINSIT_WARNING_BESCHREIBUNG',
+                    parentController: undefined,
+                    elementID: undefined,
+                    form: this.form
+                }).then(() => {   //User confirmed changes
+                    return this.save();
                 });
+            } else {
+                return this.save();
+            }
         }
         return undefined;
+    }
+
+    /**
+     * Id the Step is still in status IN_BEARBEITUNG and there are only Ferieninsel, the Gesuch must be updated.
+     */
+    private updateStepDueToOnlyFerieninsel() {
+        return this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.FINANZIELLE_SITUATION, TSWizardStepStatus.IN_BEARBEITUNG)
+            && this.gesuchModelManager.getGesuch().areThereOnlyFerieninsel();
+    }
+
+    public finanzielleSituationTurnedNotRequired(): boolean {
+        return this.initialModel.isFinanzielleSituationDesired() && !this.model.isFinanzielleSituationDesired();
     }
 
     public getFinanzielleSituationGS1(): TSFinanzielleSituation {
@@ -96,6 +140,14 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
 
     private getFinanzielleSituationGS2(): TSFinanzielleSituation {
         return this.model.finanzielleSituationContainerGS2.finanzielleSituationJA;
+    }
+
+    public isFinanziellesituationRequired(): boolean {
+        return this.finanzielleSituationRequired;
+    }
+
+    private hasTagesschulenAnmeldung(): boolean {
+        return this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung();
     }
 
     public gemeinsameStekClicked(): void {
@@ -154,5 +206,9 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
             this.model.finanzielleSituationContainerGS2.finanzielleSituationJA.steuererklaerungAusgefuellt =
                 this.model.finanzielleSituationContainerGS1.finanzielleSituationJA.steuererklaerungAusgefuellt;
         }
+    }
+
+    public is2GSRequired(): boolean {
+        return this.gesuchModelManager.isGesuchsteller2Required();
     }
 }

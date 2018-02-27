@@ -19,21 +19,29 @@ import java.io.IOException;
 import java.io.Writer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Resource;
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
+import javax.transaction.Status;
+import javax.transaction.TransactionSynchronizationRegistry;
 
-import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.errors.MailException;
-import ch.dvbern.lib.cdipersistence.Persistence;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.mail.Email;
+import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.MultiPartEmail;
 import org.apache.commons.mail.SimpleEmail;
 import org.apache.commons.net.smtp.SMTPClient;
 import org.apache.commons.net.smtp.SMTPReply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.entities.DownloadFile;
+import ch.dvbern.ebegu.errors.MailException;
+import ch.dvbern.lib.cdipersistence.Persistence;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Allgemeine Mailing-Funktionalität
@@ -51,6 +59,9 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 	@Inject
 	private EbeguConfiguration configuration;
 
+	@Resource
+	private TransactionSynchronizationRegistry txReg;
+
 	@PermitAll
 	public void sendMessage(@Nonnull String subject, @Nonnull String messageBody, @Nonnull String mailadress) throws MailException {
 		Validate.notNull(subject);
@@ -60,6 +71,18 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 			pretendToSendMessage(messageBody, mailadress);
 		} else {
 			doSendMessage(subject, messageBody, mailadress);
+		}
+	}
+
+	public void sendMessage(@Nonnull String subject, @Nonnull String messageBody, @Nonnull String mailadress, @Nonnull DownloadFile attachement) throws
+		MailException {
+		Validate.notNull(subject);
+		Validate.notNull(messageBody);
+		Validate.notNull(mailadress);
+		if (configuration.isSendingOfMailsDisabled()) {
+			pretendToSendMessage(messageBody, mailadress);
+		} else {
+			doSendMessage(subject, messageBody, mailadress, attachement);
 		}
 	}
 
@@ -79,6 +102,39 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 			throw new MailException("Error while sending Mail to: '" + mailadress + '\'', e);
 		}
 	}
+
+	private void doSendMessage(@Nonnull String subject, @Nonnull String messageBody, @Nonnull String mailadress, @Nonnull DownloadFile file) throws MailException {
+
+		try {
+			// Create the attachment
+			EmailAttachment attachment = new EmailAttachment();
+			attachment.setPath(file.getFilepfad());
+			attachment.setDisposition(EmailAttachment.ATTACHMENT);
+			attachment.setDescription("Statistik");
+			attachment.setName(file.getFilename());
+
+			// Create the email message
+			MultiPartEmail email = new MultiPartEmail();
+			email.setHostName(configuration.getSMTPHost());
+			email.setSmtpPort(configuration.getSMTPPort());
+			email.setSSLOnConnect(false);
+			email.setFrom(configuration.getSenderAddress());
+			email.setSubject(subject);
+			email.setMsg(messageBody);
+			email.addTo(mailadress);
+
+			// add the attachment
+			email.attach(attachment);
+
+			// send the email
+			email.send();
+
+		} catch (final EmailException e) {
+			LOG.error("Error while sending Mail to: '" + mailadress + '\'', e);
+			throw new MailException("Error while sending Mail to: '" + mailadress + '\'', e);
+		}
+	}
+
 
 	@SuppressFBWarnings("REC_CATCH_EXCEPTION")
 	private void doSendMessage(@Nonnull String messageBody, @Nonnull String mailadress) throws MailException {
@@ -120,7 +176,12 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 	protected void sendMessageWithTemplate(@Nonnull final String messageBody, @Nonnull final String mailadress) throws MailException {
 		Validate.notNull(mailadress);
 		Validate.notNull(messageBody);
-		persistence.getEntityManager().flush();
+		// wir haben hier nicht zwingend immer eine transaktion
+		final int transactionStatus = txReg.getTransactionStatus();
+		if (Status.STATUS_NO_TRANSACTION != transactionStatus) {
+			// nur wenn eine Transaction existiert, macht ein flush Sinn
+			persistence.getEntityManager().flush();
+		}
 		if (configuration.isSendingOfMailsDisabled()) {
 			pretendToSendMessage(messageBody, mailadress);
 		} else {

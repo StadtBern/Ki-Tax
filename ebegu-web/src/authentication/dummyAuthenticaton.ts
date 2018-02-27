@@ -59,9 +59,9 @@ export class DummyAuthenticationListViewController {
         applicationPropertyRS.isDevMode().then((response) => {
             this.devMode = response;
         });
-        this.usersList.push(new TSUser('Kurt', 'Blaser', 'blku', 'password5', 'kurt.blaser@bern.ch', this.mandant, TSRole.ADMIN));
+        this.usersList.push(new TSUser('Kurt', 'Blaser', 'blku', 'password5', 'markus.hofstetter@dvbern.ch', this.mandant, TSRole.ADMIN));
         this.usersList.push(new TSUser('Jörg', 'Becker', 'jobe', 'password1', 'joerg.becker@bern.ch', this.mandant, TSRole.SACHBEARBEITER_JA));
-        this.usersList.push(new TSUser('Jennifer', 'Müller', 'jemu', 'password2', 'jenniver.mueller@bern.ch', this.mandant, TSRole.SACHBEARBEITER_JA));
+        this.usersList.push(new TSUser('Jennifer', 'Müller', 'jemu', 'password2', 'franziska.herger@dvbern.ch', this.mandant, TSRole.SACHBEARBEITER_JA));
         this.usersList.push(new TSUser('Sophie', 'Bergmann', 'beso', 'password3', 'sophie.bergmann@gugus.ch',
             this.mandant, TSRole.SACHBEARBEITER_INSTITUTION, undefined, this.institution));
         this.usersList.push(new TSUser('Agnes', 'Krause', 'krad', 'password4', 'agnes.krause@gugus.ch',
@@ -77,6 +77,7 @@ export class DummyAuthenticationListViewController {
 
         this.usersList.push(new TSUser('Rodolfo', 'Geldmacher', 'gero', 'password11', 'rodolfo.geldmacher@myemail.ch', this.mandant, TSRole.STEUERAMT));
         this.usersList.push(new TSUser('Julien', 'Schuler', 'scju', 'password9', 'julien.schuler@myemail.ch', this.mandant, TSRole.SCHULAMT));
+        this.usersList.push(new TSUser('Adrian', 'Schuler', 'scad', 'password9', 'adrian.schuler@myemail.ch', this.mandant, TSRole.ADMINISTRATOR_SCHULAMT));
         this.usersList.push(new TSUser('Julia', 'Jurist', 'juju', 'password9', 'julia.jurist@myemail.ch', this.mandant, TSRole.JURIST));
         this.usersList.push(new TSUser('Reto', 'Revisor', 'rere', 'password9', 'reto.revisor@myemail.ch', this.mandant, TSRole.REVISOR));
         this.superadmin = new TSUser('E-BEGU', 'Superuser', 'ebegu', 'password10', 'hallo@dvbern.ch', this.mandant, TSRole.SUPER_ADMIN);

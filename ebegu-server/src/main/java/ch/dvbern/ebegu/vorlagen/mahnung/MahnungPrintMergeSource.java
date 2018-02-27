@@ -25,10 +25,10 @@ import ch.dvbern.lib.doctemplate.common.MergeSource;
 
 public class MahnungPrintMergeSource implements EBEGUMergeSource {
 
-	private final ManhungPrint mahnung;
+	private final MahnungPrint mahnung;
 	private boolean isPDFLongerThanExpected = false;
 
-	public MahnungPrintMergeSource(ManhungPrint mahnung) {
+	public MahnungPrintMergeSource(MahnungPrint mahnung) {
 		this.mahnung = mahnung;
 	}
 

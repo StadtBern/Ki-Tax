@@ -37,6 +37,12 @@ public enum ApplicationPropertyKey {
 	DEFAULT_VERANTWORTLICHER,
 
 	/**
+	 * Wenn eine Nachricht zu einem Fall eintrifft, welcher noch keinen Verantwortlichen_SCH hat, so soll diese an den
+	 * Default-Verantwortlichen_SCH geschickt werden.
+	 */
+	DEFAULT_VERANTWORTLICHER_SCH,
+
+	/**
 	 * <Dbtr><Nm> Name des Zahlungspflichtigen
 	 */
 	DEBTOR_NAME,

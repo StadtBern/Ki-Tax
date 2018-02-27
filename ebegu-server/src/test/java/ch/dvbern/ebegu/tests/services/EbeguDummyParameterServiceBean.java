@@ -136,6 +136,16 @@ public class EbeguDummyParameterServiceBean extends AbstractBaseService implemen
 	}
 
 	@Override
+	public void copyEbeguParameterListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
+		// nop
+	}
+
+	@Override
+	public void createEbeguParameterListForJahr(@Nonnull Integer jahr) {
+		// nop
+	}
+
+	@Override
 	public Map<EbeguParameterKey, EbeguParameter> getEbeguParameterByGesuchsperiodeAsMap(@Nonnull Gesuchsperiode gesuchsperiode) {
 		Map<EbeguParameterKey, EbeguParameter> result = new HashMap<>();
 		Collection<EbeguParameter> paramsForGesuchsperiode = getEbeguParameterByGesuchsperiode(gesuchsperiode);

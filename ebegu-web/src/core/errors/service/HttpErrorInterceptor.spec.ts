@@ -13,25 +13,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import '../../../bootstrap.ts';
-import 'angular-mocks';
-import HttpErrorInterceptor from './HttpErrorInterceptor';
 import TSExceptionReport from '../../../models/TSExceptionReport';
 import TestDataUtil from '../../../utils/TestDataUtil';
-import IRootScopeService = angular.IRootScopeService;
-import IQService = angular.IQService;
-import IDeferred = angular.IDeferred;
+import HttpErrorInterceptor from './HttpErrorInterceptor';
 
 describe('httpErrorInterceptor', function () {
 
-    let httpErrorInterceptor: HttpErrorInterceptor, $rootScope: IRootScopeService, $q: IQService;
-
-
+    let httpErrorInterceptor: HttpErrorInterceptor, $rootScope: angular.IRootScopeService, $q: angular.IQService;
 
     beforeEach(angular.mock.module('dvbAngular.errors'));
 
-
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         httpErrorInterceptor = $injector.get('HttpErrorInterceptor');
         $rootScope = $injector.get('$rootScope');
         $q = $injector.get('$q');
@@ -44,7 +36,7 @@ describe('httpErrorInterceptor', function () {
     });
 
     describe('API usage', function () {
-        let deferred: IDeferred<any>, successHandler: any, errorHandler: any;
+        let deferred: angular.IDeferred<any>, successHandler: any, errorHandler: any;
         beforeEach(function () {
             deferred = $q.defer();
             successHandler = jasmine.createSpy('successHandler');
@@ -59,7 +51,6 @@ describe('httpErrorInterceptor', function () {
             }, function (errors) {
                 deferred.reject(errors);
             });
-
 
             let errors: Array<TSExceptionReport> = [(TSExceptionReport.createFromViolation('PARAMETER',
                 'Die Länge des Feldes muss zwischen 36 und 36 sein', 'markAsRead.arg1', '8a146418-ab12-456f-9b17-aad6990f51'))];

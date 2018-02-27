@@ -16,6 +16,8 @@
 import {TSRole} from '../models/enums/TSRole';
 import {TSRoleUtil} from '../utils/TSRoleUtil';
 import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
+import TSGesuchsperiode from '../models/TSGesuchsperiode';
+import {TSGesuchsperiodeStatus} from '../models/enums/TSGesuchsperiodeStatus';
 
 export default class AbstractAdminViewController {
 
@@ -31,6 +33,24 @@ export default class AbstractAdminViewController {
     }
 
     public isReadonly(): boolean {
-        return !this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorRoles());
+        return !this.authServiceRS.isOneOfRoles(TSRoleUtil.getJAAdministratorRoles());
+    }
+
+    public isAnyAdminRole(): boolean {
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorRoles());
+    }
+
+    public periodenParamsEditableForPeriode(gesuchsperiode: TSGesuchsperiode): boolean {
+        if (gesuchsperiode && gesuchsperiode.status) {
+            // Fuer SuperAdmin immer auch editierbar, wenn AKTIV oder INAKTIV, sonst nur ENTWURF
+            if (TSGesuchsperiodeStatus.GESCHLOSSEN === gesuchsperiode.status) {
+                return false;
+            } else if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getSuperAdminRoles())) {
+                return true;
+            } else {
+                return TSGesuchsperiodeStatus.ENTWURF === gesuchsperiode.status;
+            }
+        }
+        return false;
     }
 }

@@ -21,6 +21,7 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import ErrorService from '../../errors/service/ErrorService';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import ITranslateService = angular.translate.ITranslateService;
+declare let require: any;
 let template = require('./dv-navigation.html');
 let style = require('./dv-navigation.less');
 
@@ -239,14 +240,22 @@ export class NavigatorController {
 
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName()) {
             if (this.dvSubStep === 1) {
-                if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
+                // noinspection NegatedIfStatementJS - the other way makes no sense
+                if (!this.gesuchModelManager.isFinanzielleSituationDesired()) {
+                    this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
+                } else if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
                     this.navigateToStepFinanzielleSituation('2');
                 } else {
                     this.navigateToFinanziellSituationResultate();
                 }
 
             } else if (this.dvSubStep === 2) {
-                this.navigateToStepFinanzielleSituation('1');
+                // noinspection NegatedIfStatementJS - the other way makes no sense
+                if (!this.gesuchModelManager.isFinanzielleSituationEnabled() || !this.gesuchModelManager.isFinanzielleSituationDesired()) {
+                    this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
+                } else {
+                    this.navigateToStepFinanzielleSituation('1');
+                }
 
             } else if (this.dvSubStep === 3) {
                 this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
@@ -322,7 +331,8 @@ export class NavigatorController {
                 if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
                     this.navigateToStepFinanzielleSituation('1');
 
-                } else if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && this.gesuchModelManager.isGesuchsteller2Required()) {
+                } else if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && (this.gesuchModelManager.isGesuchsteller2Required()
+                    || (this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung() && this.gesuchModelManager.areThereOnlySchulamtAngebote()))) {
                     this.navigateToStep(TSWizardStepName.FINANZIELLE_SITUATION);
                 } else {
                     this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch()));
@@ -408,10 +418,12 @@ export class NavigatorController {
             });
 
         } else if (stepName === TSWizardStepName.FINANZIELLE_SITUATION) {
-            if (this.gesuchModelManager.isGesuchsteller2Required()) {
+            if (this.gesuchModelManager.showFinanzielleSituationStart()) {
+
                 this.state.go('gesuch.finanzielleSituationStart', {
                     gesuchId: this.getGesuchId()
                 });
+
             } else {
                 this.state.go('gesuch.finanzielleSituation', {
                     gesuchstellerNumber: '1',
@@ -612,7 +624,7 @@ export class NavigatorController {
                 }
             }
         }
-    };
+    }
 
     private navigatePreviousEVSubStep4(): void {
         if (this.gesuchModelManager.getBasisJahrPlusNumber() === 2) {
@@ -640,7 +652,7 @@ export class NavigatorController {
                 this.navigateToStepEinkommensverschlechterung('1', '1'); // gehe ekv 1/1
             }
         }
-    };
+    }
 
     private navigateNextEVSubStep4(): void {
         if (this.gesuchModelManager.getBasisJahrPlusNumber() === 1
@@ -651,6 +663,6 @@ export class NavigatorController {
                 this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
             });
         }
-    };
+    }
 
 }

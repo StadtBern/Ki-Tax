@@ -13,12 +13,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import '../../../bootstrap.ts';
-import 'angular-mocks';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import {EbeguWebGesuch} from '../../gesuch.module';
 import GesuchModelManager from '../../service/gesuchModelManager';
+import WizardStepManager from '../../service/wizardStepManager';
 import {KinderListViewController} from './kinderListView';
-import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 
 describe('kinderListView', function () {
 
@@ -28,8 +27,8 @@ describe('kinderListView', function () {
 
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
-        let wizardStepManager = $injector.get('WizardStepManager');
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
+        let wizardStepManager: WizardStepManager = $injector.get('WizardStepManager');
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         gesuchModelManager = $injector.get('GesuchModelManager');
         spyOn(gesuchModelManager, 'initKinder').and.returnValue({});

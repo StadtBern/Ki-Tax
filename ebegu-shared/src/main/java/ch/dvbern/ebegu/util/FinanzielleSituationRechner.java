@@ -439,6 +439,7 @@ public class FinanzielleSituationRechner {
 	/**
 	 * Berechnet die NettoJahresLohn fuer eine Finanzielle Situation
 	 */
+	@Nullable
 	private BigDecimal calculateNettoJahresLohn(FinanzielleSituation finanzielleSituation) {
 		if (finanzielleSituation != null) {
 			return finanzielleSituation.getNettolohn();
@@ -446,6 +447,7 @@ public class FinanzielleSituationRechner {
 		return BigDecimal.ZERO;
 	}
 
+	@Nullable
 	private Einkommensverschlechterung getEinkommensverschlechterungGS(GesuchstellerContainer gesuchsteller, int basisJahrPlus) {
 		if (gesuchsteller != null && gesuchsteller.getEinkommensverschlechterungContainer() != null) {
 			if (basisJahrPlus == 2) {
@@ -457,6 +459,7 @@ public class FinanzielleSituationRechner {
 		return null;
 	}
 
+	@Nullable
 	private FinanzielleSituation getFinanzielleSituationGS(GesuchstellerContainer gesuchsteller) {
 		if (gesuchsteller != null && gesuchsteller.getFinanzielleSituationContainer() != null) {
 			return gesuchsteller.getFinanzielleSituationContainer().getFinanzielleSituationJA();

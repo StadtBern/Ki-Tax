@@ -96,8 +96,8 @@
                                             </dv-loading-button>
                                         </div>
                                         <div class="col-md-4">
-                                            <a href="javascript:;" id="cancelLink" class="dv-btn" unsaved-warning-clear
-                                               ng-click="vm.cancelTraegerschaft(); form.$setPristine();form.$setUntouched();">
+                                            <a href="#"  id="cancelLink" class="dv-btn" unsaved-warning-clear
+                                               ng-click="vm.cancelTraegerschaft(); form.$setPristine();form.$setUntouched(); $event.preventDefault();">
                                                 <span data-translate="CANCEL"></span>
                                             </a>
                                         </div>

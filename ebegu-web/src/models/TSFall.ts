@@ -15,18 +15,21 @@
 
 import TSAbstractEntity from './TSAbstractEntity';
 import TSUser from './TSUser';
+import EbeguUtil from '../utils/EbeguUtil';
 
 export default class TSFall extends TSAbstractEntity {
 
     private _fallNummer: number;
     private _nextNumberKind: number;
     private _verantwortlicher: TSUser;
+    private _verantwortlicherSCH: TSUser;
     private _besitzer: TSUser;
 
-    constructor(fallNummer?: number, verantwortlicher?: TSUser, nextNumberKind?: number, besitzer?: TSUser) {
+    constructor(fallNummer?: number, verantwortlicher?: TSUser, verantwortlicherSCH?: TSUser, nextNumberKind?: number, besitzer?: TSUser) {
         super();
         this._fallNummer = fallNummer;
         this._verantwortlicher = verantwortlicher;
+        this._verantwortlicherSCH = verantwortlicherSCH;
         this._nextNumberKind = nextNumberKind;
         this._besitzer = besitzer;
     }
@@ -47,6 +50,14 @@ export default class TSFall extends TSAbstractEntity {
         this._verantwortlicher = value;
     }
 
+    public get verantwortlicherSCH(): TSUser {
+        return this._verantwortlicherSCH;
+    }
+
+    public set verantwortlicherSCH(value: TSUser) {
+        this._verantwortlicherSCH = value;
+    }
+
     get nextNumberKind(): number {
         return this._nextNumberKind;
     }
@@ -61,5 +72,16 @@ export default class TSFall extends TSAbstractEntity {
 
     set besitzer(value: TSUser) {
         this._besitzer = value;
+    }
+
+    public getHauptverantwortlicher(): TSUser {
+        if (this.verantwortlicher) {
+            return this.verantwortlicher;
+        }
+        return this.verantwortlicherSCH;
+    }
+
+    public isHauptverantwortlicherSchulamt(): boolean {
+        return EbeguUtil.isNotNullOrUndefined(this.verantwortlicherSCH) && EbeguUtil.isNullOrUndefined(this.verantwortlicher);
     }
 }

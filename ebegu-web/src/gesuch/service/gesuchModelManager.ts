@@ -83,6 +83,7 @@ import EwkRS from '../../core/service/ewkRS.rest';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
+    private neustesGesuch: boolean;
     gesuchstellerNumber: number = 1;
     basisJahrPlusNumber: number = 1;
     private kindIndex: number;
@@ -180,12 +181,19 @@ export default class GesuchModelManager {
      */
     public setGesuch(gesuch: TSGesuch): void {
         this.gesuch = gesuch;
+        this.neustesGesuch = undefined;
         if (this.gesuch) {
             this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
             this.setHiddenSteps();
             // EWK Service mit bereits existierenden Daten initialisieren
             this.ewkRS.gesuchsteller1 = this.gesuch.gesuchsteller1;
             this.ewkRS.gesuchsteller2 = this.gesuch.gesuchsteller2;
+            // Es soll nur einmalig geprueft werden, ob das aktuelle Gesuch das neueste dieses Falls fuer die gewuenschte Periode ist.
+            if (this.gesuch.id) {
+                this.gesuchRS.isNeuestesGesuch(this.gesuch.id).then((resp: boolean) => {
+                    this.neustesGesuch = resp;
+                });
+            }
         }
         this.ewkPersonGS1 = undefined;
         this.ewkPersonGS2 = undefined;
@@ -296,6 +304,17 @@ export default class GesuchModelManager {
         return this.gesuchRS.updateGesuch(this.gesuch).then((gesuchResponse: any) => {
             this.gesuch = gesuchResponse;
             this.calculateNewStatus(this.gesuch.status); // just to be sure that the status has been correctly updated
+            return this.gesuch;
+        });
+    }
+
+    /**
+     * Update das Gesuch
+     * @returns {IPromise<TSGesuch>}
+     */
+    public saveFinanzielleSituationStart(): IPromise<TSGesuch> {
+        return this.finanzielleSituationRS.saveFinanzielleSituationStart(this.gesuch).then((gesuchResponse: any) => {
+            this.gesuch = gesuchResponse;
             return this.gesuch;
         });
     }
@@ -681,8 +700,8 @@ export default class GesuchModelManager {
     }
 
 
-    public saveBetreuung(betreuungToSave: TSBetreuung, abwesenheit: boolean): IPromise<TSBetreuung> {
-        if (betreuungToSave.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN) {
+    public saveBetreuung(betreuungToSave: TSBetreuung, betreuungsstatusNeu: TSBetreuungsstatus, abwesenheit: boolean): IPromise<TSBetreuung> {
+        if (betreuungsstatusNeu === TSBetreuungsstatus.ABGEWIESEN) {
             return this.betreuungRS.betreuungsPlatzAbweisen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
                 .then((storedBetreuung: any) => {
                     return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
@@ -690,7 +709,7 @@ export default class GesuchModelManager {
                         return this.handleSavedBetreuung(storedBetreuung);
                     });
                 });
-        } else  if (betreuungToSave.betreuungsstatus === TSBetreuungsstatus.BESTAETIGT) {
+        } else  if (betreuungsstatusNeu === TSBetreuungsstatus.BESTAETIGT) {
             return this.betreuungRS.betreuungsPlatzBestaetigen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
                 .then((storedBetreuung: any) => {
                     return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
@@ -698,7 +717,32 @@ export default class GesuchModelManager {
                         return this.handleSavedBetreuung(storedBetreuung);
                     });
                 });
+        } else  if (betreuungsstatusNeu === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN) {
+            return this.betreuungRS.anmeldungSchulamtUebernehmen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
+                .then((storedBetreuung: any) => {
+                    return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
+                        this.gesuch.gesuchBetreuungenStatus = betreuungenStatus;
+                        return this.handleSavedBetreuung(storedBetreuung);
+                    });
+                });
+        } else  if (betreuungsstatusNeu === TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT) {
+            return this.betreuungRS.anmeldungSchulamtAblehnen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
+                .then((storedBetreuung: any) => {
+                    return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
+                        this.gesuch.gesuchBetreuungenStatus = betreuungenStatus;
+                        return this.handleSavedBetreuung(storedBetreuung);
+                    });
+                });
+        } else  if (betreuungsstatusNeu === TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION) {
+            return this.betreuungRS.anmeldungSchulamtFalscheInstitution(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
+                .then((storedBetreuung: any) => {
+                    return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
+                        this.gesuch.gesuchBetreuungenStatus = betreuungenStatus;
+                        return this.handleSavedBetreuung(storedBetreuung);
+                    });
+                });
         } else {
+            betreuungToSave.betreuungsstatus = betreuungsstatusNeu;
             return this.betreuungRS.saveBetreuung(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id, abwesenheit)
                 .then((storedBetreuung: any) => {
                     return this.gesuchRS.getGesuchBetreuungenStatus(this.gesuch.id).then((betreuungenStatus) => {
@@ -721,6 +765,7 @@ export default class GesuchModelManager {
             this.getKindToWorkWith().betreuungen.push(storedBetreuung);  //neues kind anfuegen
             this.setBetreuungIndex(this.getKindToWorkWith().betreuungen.length - 1);
         }
+        this.getFallFromServer(); // to reload the verantwortliche that may have changed
         return storedBetreuung;
     }
 
@@ -973,11 +1018,21 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Takes current user and sets it as the verantwortlicher of Fall
+     * Takes current user and sets him as the verantwortlicher of Fall. Depending on the role it sets him as
+     * verantwortlicher or verantworlicherSCH
      */
     private setCurrentUserAsFallVerantwortlicher() {
         if (this.authServiceRS && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
             this.setUserAsFallVerantwortlicher(this.authServiceRS.getPrincipal());
+        }
+        if (this.authServiceRS && this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles())) {
+            this.setUserAsFallVerantwortlicherSCH(this.authServiceRS.getPrincipal());
+        }
+    }
+
+    public setUserAsFallVerantwortlicherSCH(user: TSUser) {
+        if (this.gesuch && this.gesuch.fall) {
+            this.gesuch.fall.verantwortlicherSCH = user;
         }
     }
 
@@ -990,6 +1045,13 @@ export default class GesuchModelManager {
     public getFallVerantwortlicher(): TSUser {
         if (this.gesuch && this.gesuch.fall) {
             return this.gesuch.fall.verantwortlicher;
+        }
+        return undefined;
+    }
+
+    public getFallVerantwortlicherSCH(): TSUser {
+        if (this.gesuch && this.gesuch.fall) {
+            return this.gesuch.fall.verantwortlicherSCH;
         }
         return undefined;
     }
@@ -1105,6 +1167,10 @@ export default class GesuchModelManager {
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
                 if (betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT_ANMELDUNG_ABGELEHNT
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.VERFUEGT
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.NICHT_EINGETRETEN
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
@@ -1136,10 +1202,21 @@ export default class GesuchModelManager {
      * Returns false also if there are no Kinder with betreuungsbedarf
      */
     public areThereOnlySchulamtAngebote(): boolean {
-        if (!this.gesuch) {
+        if (!this.getGesuch()) {
             return false;
         }
-        return this.gesuch.areThereOnlySchulamtAngebote();
+        return this.getGesuch().areThereOnlySchulamtAngebote();
+    }
+
+    /**
+     * Returns true when all Betreuungen are of kind FERIENINSEL.
+     * Returns false also if there are no Kinder with betreuungsbedarf
+     */
+    public areThereOnlyFerieninsel(): boolean {
+        if (!this.getGesuch()) {
+            return false;
+        }
+        return this.getGesuch().areThereOnlyFerieninsel();
     }
 
     /**
@@ -1194,8 +1271,8 @@ export default class GesuchModelManager {
     /**
      * Antrag freigeben
      */
-    public antragFreigeben(antragId: string, username: string): IPromise<TSGesuch> {
-        return this.gesuchRS.antragFreigeben(antragId, username).then((response) => {
+    public antragFreigeben(antragId: string, usernameJA: string, usernameSCH: string): IPromise<TSGesuch> {
+        return this.gesuchRS.antragFreigeben(antragId, usernameJA, usernameSCH).then((response) => {
             this.setGesuch(response);
             return response;
         });
@@ -1224,7 +1301,7 @@ export default class GesuchModelManager {
     /**
      * checks if the gesuch is readonly for a given role based on its state
      */
-    private isGesuchReadonlyForRole(): boolean {
+    public isGesuchReadonlyForRole(): boolean {
         let periodeReadonly: boolean = this.isGesuchsperiodeReadonly();
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getReadOnlyRoles())) {
             return true;  // schulamt hat immer nur readonly zugriff
@@ -1341,41 +1418,52 @@ export default class GesuchModelManager {
         this.gesuch = undefined;
     }
 
-    /**
-     * Schaut alle Betreuungen durch. Wenn es keine "JAAngebote" gibt, gibt es false zurueck.
-     * Nur wenn alle JA-Angebote neu sind, gibt es true zurueck.
-     */
-    public areAllJAAngeboteNew(): boolean {
-        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
-        if (kinderWithBetreuungList.length <= 0) {
-            return false; // no Kind with bedarf
-        }
-        let jaAngeboteFound: boolean = false; // Wenn kein JA-Angebot gefunden wurde geben wir false zurueck
-        for (let kind of kinderWithBetreuungList) {
-            for (let betreuung of kind.betreuungen) {
-                if (isJugendamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
-                    if (betreuung.vorgaengerId) { // eine mutierte JA-Betreuung existiert
-                        return false;
-                    }
-                    jaAngeboteFound = true;
-                }
-            }
-        }
-        return jaAngeboteFound;
-    }
-
     public getGesuchName(): string {
         return this.ebeguUtil.getGesuchNameFromGesuch(this.gesuch);
     }
 
-    public isNeuestesGesuch(): IPromise<boolean> {
-        let gesuchId = this.gesuch.id;
-        return this.gesuchRS.getNeuestesGesuchFromGesuch(gesuchId).then((response: boolean) => {
-               return response;
-        });
+    public isNeuestesGesuch(): boolean {
+        return this.neustesGesuch;
     }
 
     public isErwerbspensumRequired(gesuchId: string): IPromise<boolean> {
         return this.erwerbspensumRS.isErwerbspensumRequired(gesuchId);
+    }
+
+    /**
+     * Indicates whether the FinSit is available to be filled out or not.
+     */
+    public isFinanzielleSituationEnabled(): boolean {
+        return !this.areThereOnlyFerieninsel();
+    }
+
+    /**
+     * Indicates whether FinSit must be filled out or not. It supposes that it is enabled.
+     */
+    public isFinanzielleSituationDesired(): boolean {
+        return !this.getGesuchsperiode().hasTagesschulenAnmeldung()
+            || !this.areThereOnlySchulamtAngebote()
+            || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht === true
+                && this.getGesuch().extractFamiliensituation().sozialhilfeBezueger === false);
+    }
+
+    public showFinanzielleSituationStart(): boolean {
+        return this.isGesuchsteller2Required() ||
+            (this.getGesuchsperiode() && this.getGesuchsperiode().hasTagesschulenAnmeldung() && this.areThereOnlySchulamtAngebote());
+    }
+
+    /**
+     * gibt true zurueck wenn es keine defaultTagesschule ist oder wenn es eine defaultTagesschule ist aber die Gesuchsperiode
+     * noch keine TagesschulenAnmeldung erlaubt.
+     *
+     * Eine DefaultTagesschule ist eine Tagesschule, die fuer die erste Gescuhsperiode erstellt wurde, damit man Betreuungen
+     * der Art TAGESSCHULE erstellen darf. Jede Betreuung muss mit einer Institution verknuepft sein und TagesschuleBetreuungen
+     * wurden mit der defaultTagesschule verknuepft. Die DefaultTagesschule wird anhand der ID erkannt.
+     */
+    public isDefaultTagesschuleAllowed(instStamm: TSInstitutionStammdaten): boolean {
+        if (instStamm.id === '199ac4a1-448f-4d4c-b3a6-5aee21f89613') {
+            return !(this.getGesuchsperiode() && this.getGesuchsperiode().hasTagesschulenAnmeldung());
+        }
+        return true;
     }
 }

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
@@ -111,5 +112,25 @@ public class EbeguUtil {
 			return dokumente.size() == otherDokumente.size();
 		}
 		return false;
+	}
+
+	public static boolean isFinanzielleSituationRequired(@Nonnull Gesuch gesuch) {
+		return !gesuch.getGesuchsperiode().hasTagesschulenAnmeldung() ||
+			((gesuch.getGesuchsperiode().hasTagesschulenAnmeldung() && gesuch.hasBetreuungOfJugendamt()) ||
+				gesuch.getFamiliensituationContainer() != null && gesuch.getFamiliensituationContainer().getFamiliensituationJA() != null
+					&& Objects.equals(false, gesuch.getFamiliensituationContainer().getFamiliensituationJA().getSozialhilfeBezueger())
+					&& Objects.equals(true, gesuch.getFamiliensituationContainer().getFamiliensituationJA().getVerguenstigungGewuenscht()));
+	}
+
+	public static boolean isSozialhilfeBezuegerNull(@Nonnull Gesuch gesuch) {
+		return gesuch.getGesuchsperiode().hasTagesschulenAnmeldung() &&
+			(gesuch.getFamiliensituationContainer() != null && gesuch.getFamiliensituationContainer().getFamiliensituationJA() != null
+			&& gesuch.getFamiliensituationContainer().getFamiliensituationJA().getSozialhilfeBezueger() == null);
+	}
+
+	public static boolean isFinanzielleSituationNotIntroduced(@Nonnull Gesuch gesuch) {
+		return gesuch.getGesuchsteller1() == null
+			|| (gesuch.getGesuchsteller1().getFinanzielleSituationContainer() == null
+			&& gesuch.getEinkommensverschlechterungInfoContainer() == null);
 	}
 }

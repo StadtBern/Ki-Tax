@@ -68,7 +68,7 @@ public final class StateMachineFactory {
 		try {
 			OutputStream outputStream = Files.newOutputStream(out);
 			config.generateDotFileInto(outputStream);
-			LOG.info("Printed State Machine documentation to " + out.toAbsolutePath().toUri());
+			LOG.info("Printed State Machine documentation to {}", out.toAbsolutePath().toUri());
 
 		} catch (IOException e) {
 			LOG.error("Could not print state machine ", e);

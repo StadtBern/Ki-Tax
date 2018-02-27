@@ -136,12 +136,21 @@ public final class RestUtil {
 		kind.getBetreuungen()
 			.removeIf(betreuung ->
 				!RestUtil.isInstitutionInList(userInstitutionen, betreuung.getInstitutionStammdaten().getInstitution())
-					|| !isVisibleForInstOrTraegerschaft(betreuung));
+					|| !isVisibleForInstOrTraegerschaft(betreuung)
+					|| isSchulamtAngebotNichtAusgeloest(betreuung));
 	}
 
 	private static boolean isVisibleForInstOrTraegerschaft(JaxBetreuung betreuung) {
 		return Betreuungsstatus.allowedRoles(UserRole.SACHBEARBEITER_INSTITUTION).contains(betreuung.getBetreuungsstatus()) ||
 			Betreuungsstatus.allowedRoles(UserRole.SACHBEARBEITER_TRAEGERSCHAFT).contains(betreuung.getBetreuungsstatus());
+	}
+
+	/**
+	 * returns true if it is a Schulamangebot but the status is still ERFASST
+	 */
+	private static boolean isSchulamtAngebotNichtAusgeloest(JaxBetreuung betreuung) {
+		return betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isSchulamt() &&
+		Betreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST == betreuung.getBetreuungsstatus();
 	}
 
 	private static boolean isInstitutionInList(Collection<Institution> userInstitutionen, JaxInstitution institutionToLookFor) {

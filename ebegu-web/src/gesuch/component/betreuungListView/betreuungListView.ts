@@ -32,10 +32,12 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import {IDVFocusableController} from '../../../core/component/IDVFocusableController';
+import {isStatusVerfuegenVerfuegt, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import ITranslateService = angular.translate.ITranslateService;
 import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
 import ILogService = angular.ILogService;
+import TSGesuch from '../../../models/TSGesuch';
 
 let template = require('./betreuungListView.html');
 require('./betreuungListView.less');
@@ -77,7 +79,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
     }
 
     public isNotAllowedToRemove(betreuung: TSBetreuung): boolean {
-        if (betreuung.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN && this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getAdministratorJugendamtRole())) {
+        if (betreuung.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN && this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getAdministratorOrAmtRole())) {
             return false;
         } else {
             return this.isKorrekturModusJugendamt();
@@ -100,6 +102,24 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         if (kindIndex >= 0) {
             this.gesuchModelManager.setKindIndex(kindIndex);
             this.openBetreuungView(undefined, kind.kindNummer);
+        } else {
+            this.$log.error('kind nicht gefunden ', kind);
+        }
+    }
+
+    public createAnmeldungFerieninsel(kind: TSKindContainer): void {
+       this.createAnmeldungSchulamt(TSBetreuungsangebotTyp.FERIENINSEL, kind);
+    }
+
+    public createAnmeldungTagesschule(kind: TSKindContainer): void {
+        this.createAnmeldungSchulamt(TSBetreuungsangebotTyp.TAGESSCHULE, kind);
+    }
+
+    private createAnmeldungSchulamt(betreuungstyp: TSBetreuungsangebotTyp, kind: TSKindContainer): void {
+        let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
+        if (kindIndex >= 0) {
+            this.gesuchModelManager.setKindIndex(kindIndex);
+            this.openAnmeldungView(kind.kindNummer, betreuungstyp);
         } else {
             this.$log.error('kind nicht gefunden ', kind);
         }
@@ -136,6 +156,15 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         });
     }
 
+    private openAnmeldungView(kindNumber: number, betreuungsangebotTyp: TSBetreuungsangebotTyp): void {
+        this.$state.go('gesuch.betreuung', {
+            betreuungNumber: undefined,
+            kindNumber: kindNumber,
+            gesuchId: this.getGesuchId(),
+            betreuungsangebotTyp: betreuungsangebotTyp.toString()
+        });
+    }
+
     /**
      * Gibt den Betreuungsangebottyp der Institution, die mit der gegebenen Betreuung verknuepft ist zurueck.
      * By default wird ein Leerzeichen zurueckgeliefert.
@@ -149,8 +178,17 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         return '';
     }
 
+    public getBetreuungDetails(betreuung: TSBetreuung): string {
+        let detail: string = betreuung.institutionStammdaten.institution.name;
+        if (betreuung.isAngebotFerieninsel()) {
+            let ferien: string = this.$translate.instant(betreuung.belegungFerieninsel.ferienname.toLocaleString());
+            detail = detail + ' (' + ferien + ')';
+        }
+        return detail;
+    }
+
     public canRemoveBetreuung(betreuung: TSBetreuung): boolean {
-        return !this.isGesuchReadonly() && !betreuung.vorgaengerId;
+        return !this.isGesuchReadonly() && !betreuung.vorgaengerId && !betreuung.isSchulamtangebotAusgeloest();
     }
 
     private showMitteilung(): boolean {
@@ -168,5 +206,31 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
 
     public setFocusBack(elementID: string): void {
         angular.element('#' + elementID).first().focus();
+    }
+
+    public showButtonAnmeldungSchulamt(): boolean {
+        // Anmeldung Schulamt: Solange das Gesuch noch "normal" editiert werden kann, soll der Weg ueber "Betreuung hinzufuegen" verwendet werden
+        // Nachdem readonly: nur fuer Jugendamt, Schulamt und Gesuchsteller verfuegbar sein. Nur fuer GP.hasTagesschulenAnmeldung().
+        let isStatus: boolean = isStatusVerfuegenVerfuegt(this.gesuchModelManager.getGesuch().status)
+            || this.gesuchModelManager.isGesuchReadonlyForRole()
+            || this.gesuchModelManager.isKorrekturModusJugendamt()
+            || this.gesuchModelManager.getGesuch().gesperrtWegenBeschwerde;
+        let isRole: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtGesuchstellerRoles());
+        let isGesuchsperiode: boolean = this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung();
+        let istNotStatusFreigabequittung: boolean = this.gesuchModelManager.getGesuch().status !== TSAntragStatus.FREIGABEQUITTUNG;
+        return isStatus && isRole && isGesuchsperiode && istNotStatusFreigabequittung && this.gesuchModelManager.isNeuestesGesuch();
+    }
+
+    /**
+     * Betreuungen und auch anmeldungen duerfen in Status FREIGABEQUITTUNG nicht hinzugefuegt werden
+     */
+    public isBetreuungenHinzufuegenDisabled(): boolean {
+        return this.gesuchModelManager.getGesuch().gesuchsperiode.hasTagesschulenAnmeldung() &&
+                this.gesuchModelManager.getGesuch().status === TSAntragStatus.FREIGABEQUITTUNG;
+    }
+
+    public hasOnlyFerieninsel() {
+        let gesuch: TSGesuch = this.gesuchModelManager.getGesuch();
+        return !!gesuch && gesuch.areThereOnlyFerieninsel();
     }
 }

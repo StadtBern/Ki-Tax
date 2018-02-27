@@ -12,7 +12,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 @import 'variables.less';
 
 @media @mq-xs {
@@ -31,7 +30,42 @@
 
     .gesuchstellerDashboardView {
         .dashboardHeader {
-            margin-top: 20rem;
+            margin-top: 20rem !important;
+            align-items: stretch;
+        }
+        .gdashboard-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            max-width: 32rem;
+            margin: 0;
+            &:not(:last-of-type) {
+                padding-right: 6rem;
+                border-right: 1px solid @contrast;
+                &:not(:first-of-type) {
+                    padding-left: 6rem;
+                    max-width: 38rem;
+                }
+            }
+            &:last-child {
+                padding-left: 6rem;
+            }
+            .gdashboard-panel__button {
+                &--margin {
+                    margin-top: 5rem;
+                    margin-bottom: 5rem;
+
+                }
+                &--ansehen {
+                    margin-bottom: -5rem;
+                }
+                &--margin + .gdashboard-panel__text {
+                    margin-top: -5rem;
+                }
+                &--ansehen + .gdashboard-panel__text {
+                    margin-top: 5rem;
+                }
+            }
         }
     }
 
@@ -194,6 +228,9 @@
 
             }
             & > div {
+                margin-right: 0;
+            }
+            & > div + div, & > div:only-of-type {
                 margin-right: auto;
             }
         }
@@ -248,6 +285,10 @@ and (max-width: 480px) {
         width: 100%;
     }
 
+    .dv-input-container-calendar {
+        width: 100%;
+    }
+
     .dv-input-container-medium-label {
         width: 100%;
 
@@ -262,10 +303,37 @@ and (max-width: 480px) {
     }
 
     .gesuchModul {
-        padding: 5rem 3rem 10rem;
+        padding: 5rem 3rem 13rem;
     }
 
     html {
         font-size: @base-font-size;
+    }
+
+    .dv-ebegu-calendar {
+        &__module {
+            padding: 1rem;
+        }
+        &__weekday {
+            padding: 0;
+            //  font-size: 1rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+        }
+        &__container-weekdays {
+            flex-wrap: nowrap;
+
+        }
+        &__date {
+            &--day {
+                font-size: 1.3rem !important;
+                margin-top: auto !important;
+            }
+            &--year {
+                font-size: 0.9rem !important;
+                margin-bottom: auto !important;
+            }
+        }
     }
 }

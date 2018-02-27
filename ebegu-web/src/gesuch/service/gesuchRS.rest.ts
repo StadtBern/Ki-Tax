@@ -13,19 +13,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IEntityRS} from '../../core/service/iEntityRS.rest';
 import {IHttpPromise, IHttpService, ILogService, IPromise} from 'angular';
+import * as moment from 'moment';
+import {IEntityRS} from '../../core/service/iEntityRS.rest';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
+import {TSMitteilungEvent} from '../../models/enums/TSMitteilungEvent';
+import TSAntragDTO from '../../models/TSAntragDTO';
 import TSGesuch from '../../models/TSGesuch';
+import DateUtil from '../../utils/DateUtil';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import WizardStepManager from './wizardStepManager';
-import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
-import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
-import TSAntragDTO from '../../models/TSAntragDTO';
-import DateUtil from '../../utils/DateUtil';
-import * as moment from 'moment';
-import {TSMitteilungEvent} from '../../models/enums/TSMitteilungEvent';
-import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
 import IRootScopeService = angular.IRootScopeService;
+import {TSFinSitStatus} from '../../models/enums/TSFinSitStatus';
 
 export default class GesuchRS implements IEntityRS {
     serviceURL: string;
@@ -97,17 +97,6 @@ export default class GesuchRS implements IEntityRS {
             });
     }
 
-    public searchAntraege(antragSearch: any): IPromise<TSAntragSearchresultDTO> {
-        return this.http.post(this.serviceURL + '/search/', antragSearch, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then((response: any) => {
-            this.$log.debug('PARSING antraege REST array object', response.data);
-            return new TSAntragSearchresultDTO(this.ebeguRestUtil.parseAntragDTOs(response.data.antragDTOs), response.data.paginationDTO.totalItemCount);
-        });
-    }
-
     public updateBemerkung(gesuchID: string, bemerkung: string): IHttpPromise<any> {
         return this.http.put(this.serviceURL + '/bemerkung/' + encodeURIComponent(gesuchID), bemerkung, {
             headers: {
@@ -148,8 +137,9 @@ export default class GesuchRS implements IEntityRS {
         });
     }
 
-    public antragFreigeben(antragId: string, username: string): IPromise<TSGesuch> {
-        return this.http.post(this.serviceURL + '/freigeben/' + encodeURIComponent(antragId), username, {
+    public antragFreigeben(antragId: string, usernameJA: string, usernameSCH: string): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/freigeben/' + encodeURIComponent(antragId) + '/JA/' + usernameJA + '/SCH/' + usernameSCH,
+            null, {
             headers: {
                 'Content-Type': 'text/plain'
             }
@@ -160,6 +150,12 @@ export default class GesuchRS implements IEntityRS {
 
     public setBeschwerdeHaengig(antragId: string): IPromise<TSGesuch> {
         return this.http.post(this.serviceURL + '/setBeschwerde/' + encodeURIComponent(antragId), null).then((response) => {
+            return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+        });
+    }
+
+    public setAbschliessen(antragId: string): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/setAbschliessen/' + encodeURIComponent(antragId), null).then((response) => {
             return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
         });
     }
@@ -186,13 +182,6 @@ export default class GesuchRS implements IEntityRS {
         return this.http.post(this.serviceURL + '/removeBeschwerde/' + encodeURIComponent(antragId), null).then((response) => {
             return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
         });
-    }
-
-    public getNeuestesGesuchFromGesuch(gesuchID: string):  IPromise<boolean> {
-        return this.http.get(this.serviceURL + '/neuestesgesuch/' + encodeURIComponent(gesuchID))
-            .then((response: any) => {
-                return response.data;
-            });
     }
 
     public removeOnlineMutation(fallID: string, gesuchsperiodeId: string): IPromise<boolean> {
@@ -247,5 +236,23 @@ export default class GesuchRS implements IEntityRS {
 
     public gesuchVerfuegen(antragId: string): IHttpPromise<any> {
         return this.http.post(this.serviceURL + '/gesuchVerfuegen/' + encodeURIComponent(antragId), null);
+    }
+
+    public changeFinSitStatus(antragId: string, finSitStatus: TSFinSitStatus): IPromise<any> {
+        return this.http.post(this.serviceURL + '/changeFinSitStatus/' + encodeURIComponent(antragId) + '/' + finSitStatus, null);
+    }
+
+    public isNeuestesGesuch(gesuchID: string): IPromise<boolean> {
+        return this.http.get(this.serviceURL + '/newest/' + encodeURIComponent(gesuchID))
+            .then((response: any) => {
+                return response.data;
+            });
+    }
+
+    public getIdOfNewestGesuch(gesuchsperiodeId: string, fallId: string): IPromise<string> {
+        return this.http.get(this.serviceURL + '/newestid/' + encodeURIComponent(gesuchsperiodeId) + '/' + encodeURIComponent(fallId))
+            .then((response: any) => {
+                return response.data;
+            });
     }
 }

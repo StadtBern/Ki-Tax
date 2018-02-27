@@ -18,6 +18,7 @@ package ch.dvbern.ebegu.services;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -89,14 +90,23 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	@Override
 	@PermitAll
 	public Collection<Benutzer> getBenutzerJAorAdmin() {
+		return getBenutzersOfRoles(UserRole.getJugendamtRoles());
+	}
+
+	@Nonnull
+	@Override
+	@PermitAll
+	public Collection<Benutzer> getBenutzerSCHorAdminSCH() {
+		return getBenutzersOfRoles(UserRole.getSchulamtRoles());
+	}
+
+	private Collection<Benutzer> getBenutzersOfRoles(List<UserRole> roles) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Benutzer> query = cb.createQuery(Benutzer.class);
 		Root<Benutzer> root = query.from(Benutzer.class);
 		query.select(root);
-		Predicate isAdmin = cb.equal(root.get(Benutzer_.role), UserRole.ADMIN);
-		Predicate isSachbearbeiterJA = cb.equal(root.get(Benutzer_.role), UserRole.SACHBEARBEITER_JA);
-		Predicate orRoles = cb.or(isAdmin, isSachbearbeiterJA);
-		query.where(orRoles);
+		final Predicate role = root.get(Benutzer_.role).in(roles);
+		query.where(role);
 		return persistence.getCriteriaResults(query);
 	}
 

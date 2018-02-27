@@ -17,7 +17,6 @@ package ch.dvbern.ebegu.api.resource;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -53,8 +52,6 @@ import ch.dvbern.ebegu.api.resource.util.ResourceHelper;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -63,6 +60,7 @@ import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -75,14 +73,11 @@ import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.DateUtil;
-import ch.dvbern.ebegu.util.MonitoringUtil;
 import com.google.common.collect.ArrayListMultimap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,7 +133,7 @@ public class GesuchResource {
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(GesuchResource.class)
-			.path("/" + persistedGesuch.getId())
+			.path('/' + persistedGesuch.getId())
 			.build();
 
 		JaxGesuch jaxGesuch = converter.gesuchToJAX(persistedGesuch);
@@ -183,7 +178,8 @@ public class GesuchResource {
 			return null;
 		}
 		Gesuch gesuchToReturn = gesuchOptional.get();
-		return converter.gesuchToJAX(gesuchToReturn);
+		final JaxGesuch jaxGesuch = converter.gesuchToJAX(gesuchToReturn);
+		return jaxGesuch;
 	}
 
 	/**
@@ -218,7 +214,8 @@ public class GesuchResource {
 	}
 
 	/**
-	 * Methode findGesuch fuer Benutzer mit Rolle SACHBEARBEITER_INSTITUTION oder SACHBEARBEITER_TRAEGERSCHAFT. Das ganze Gesuch wird gefilter
+	 * Methode findGesuch fuer Benutzer mit Rolle SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT oder
+	 * SCHULAMT / SCHULAMT_ADMIN. Das ganze Gesuch wird gefilter
 	 * sodass nur die relevanten Daten zum Client geschickt werden.
 	 *
 	 * @param gesuchJAXPId ID des Gesuchs
@@ -239,10 +236,10 @@ public class GesuchResource {
 
 		final Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(this.principalBean.getPrincipal().getName());
 		if (optBenutzer.isPresent()) {
-			if (UserRole.SUPER_ADMIN.equals(optBenutzer.get().getRole())) {
+			if (UserRole.SUPER_ADMIN == optBenutzer.get().getRole()) {
 				return completeGesuch;
 			} else {
-				Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+				Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 				return cleanGesuchForInstitutionTraegerschaft(completeGesuch, instForCurrBenutzer);
 			}
 		}
@@ -349,39 +346,6 @@ public class GesuchResource {
 		throw new EbeguEntityNotFoundException("updateStatus", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + gesuchJAXPId.getId());
 	}
 
-	@ApiOperation(value = "Sucht Antraege mit den uebergebenen Suchkriterien/Filtern. Es werden nur Antraege zurueck " +
-		"gegeben, fuer die der eingeloggte Benutzer berechtigt ist.", response = JaxAntragSearchresultDTO.class)
-	@Nonnull
-	@POST
-	@Path("/search")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response searchAntraege(
-		@Nonnull @NotNull AntragTableFilterDTO antragSearch,
-		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) {
-
-		return MonitoringUtil.monitor(GesuchResource.class, "searchAntraege", () -> {
-			Pair<Long, List<Gesuch>> searchResultPair = gesuchService.searchAntraege(antragSearch);
-			List<Gesuch> foundAntraege = searchResultPair.getRight();
-
-			Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
-
-			List<JaxAntragDTO> antragDTOList = new ArrayList<>(foundAntraege.size());
-			foundAntraege.forEach(gesuch -> {
-				JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch, principalBean.discoverMostPrivilegedRole(), allowedInst);
-				antragDTO.setFamilienName(gesuch.extractFamiliennamenString());
-				antragDTOList.add(antragDTO);
-			});
-			JaxAntragSearchresultDTO resultDTO = new JaxAntragSearchresultDTO();
-			resultDTO.setAntragDTOs(antragDTOList);
-			PaginationDTO pagination = antragSearch.getPagination();
-			pagination.setTotalItemCount(searchResultPair.getLeft());
-			resultDTO.setPaginationDTO(pagination);
-			return Response.ok(resultDTO).build();
-		});
-	}
-
 	/**
 	 * iteriert durch eine Liste von Antragen und gibt jeweils pro Fall nur den Antrag mit dem neusten Eingangsdatum zurueck
 	 *
@@ -485,12 +449,13 @@ public class GesuchResource {
 		response = JaxGesuch.class)
 	@Nullable
 	@POST
-	@Path("/freigeben/{antragId}")
+	@Path("/freigeben/{antragId}/JA/{usernameJA}/SCH/{usernameSCH}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response antragFreigeben(
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
-		@Nullable String username,
+		@Nullable @PathParam("usernameJA") String usernameJA,
+		@Nullable @PathParam("usernameSCH") String usernameSCH,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
@@ -501,7 +466,7 @@ public class GesuchResource {
 
 		final String antragId = converter.toEntityId(antragJaxId);
 
-		Gesuch gesuch = gesuchService.antragFreigeben(antragId, username);
+		Gesuch gesuch = gesuchService.antragFreigeben(antragId, usernameJA, usernameSCH);
 		return Response.ok(converter.gesuchToJAX(gesuch)).build();
 	}
 
@@ -522,13 +487,37 @@ public class GesuchResource {
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragId);
 
 		resourceHelper.assertGesuchStatusEqual(antragId, AntragStatusDTO.VERFUEGT, AntragStatusDTO.PRUEFUNG_STV,
-			AntragStatusDTO.IN_BEARBEITUNG_STV, AntragStatusDTO.GEPRUEFT_STV, AntragStatusDTO.KEIN_ANGEBOT);
+			AntragStatusDTO.IN_BEARBEITUNG_STV, AntragStatusDTO.GEPRUEFT_STV, AntragStatusDTO.KEIN_ANGEBOT, AntragStatusDTO.NUR_SCHULAMT);
 
 		if (gesuch.isPresent()) {
 			Gesuch persistedGesuch = gesuchService.setBeschwerdeHaengigForPeriode(gesuch.get());
 			return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 		}
 		throw new EbeguEntityNotFoundException("setBeschwerdeHaengig", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
+	}
+
+	@ApiOperation(value = "Setzt das gegebene Gesuch als Abgeschossen (Status NUR_SCHULAMT)", response = JaxGesuch.class)
+	@Nullable
+	@POST
+	@Path("/setAbschliessen/{antragId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response setAbschliessen(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(antragJaxId.getId());
+		final String antragId = converter.toEntityId(antragJaxId);
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragId);
+
+		if (gesuch.isPresent()) {
+			resourceHelper.assertGesuchStatusEqual(antragId, AntragStatusDTO.IN_BEARBEITUNG_JA, AntragStatusDTO.GEPRUEFT);
+			Gesuch persistedGesuch = gesuchService.setAbschliessen(gesuch.get());
+			final JaxGesuch jaxGesuch = converter.gesuchToJAX(persistedGesuch);
+			return Response.ok(jaxGesuch).build();
+		}
+		throw new EbeguEntityNotFoundException("setAbschliessen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
 	}
 
 	@ApiOperation(value = "Setzt das gegebene Gesuch als PRUEFUNG_STV", response = JaxGesuch.class)
@@ -544,7 +533,7 @@ public class GesuchResource {
 		@Context HttpServletResponse response) {
 
 		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
-		resourceHelper.assertGesuchStatusEqual(antragJaxId.getId(), AntragStatusDTO.VERFUEGT);
+		resourceHelper.assertGesuchStatusEqual(antragJaxId.getId(), AntragStatusDTO.VERFUEGT, AntragStatusDTO.NUR_SCHULAMT);
 
 		Validate.notNull(antragJaxId.getId());
 		final String antragId = converter.toEntityId(antragJaxId);
@@ -554,16 +543,7 @@ public class GesuchResource {
 			throw new EbeguEntityNotFoundException("sendGesuchToSTV", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
 		}
 		Gesuch gesuch = gesuchOptional.get();
-		if (!AntragStatus.VERFUEGT.equals(gesuch.getStatus())) {
-			// Wir vergewissern uns dass das Gesuch im Status VERFUEGT ist, da sonst kann es nicht zum STV geschickt werden
-			throw new EbeguRuntimeException("sendGesuchToSTV", ErrorCodeEnum.ERROR_ONLY_VERFUEGT_ALLOWED, "Status ist: " + gesuch.getStatus());
-		}
-		gesuch.setStatus(AntragStatus.PRUEFUNG_STV);
-		gesuch.setEingangsdatumSTV(LocalDate.now());
-		if (StringUtils.isNotEmpty(bemerkungen)) {
-			gesuch.setBemerkungenSTV(bemerkungen);
-		}
-		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch, true, null);
+		Gesuch persistedGesuch = gesuchService.sendGesuchToSTV(gesuch, bemerkungen);
 		return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 	}
 
@@ -589,15 +569,8 @@ public class GesuchResource {
 		if (!gesuch.isPresent()) {
 			throw new EbeguEntityNotFoundException("gesuchBySTVFreigeben", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
 		}
-		if (!AntragStatus.IN_BEARBEITUNG_STV.equals(gesuch.get().getStatus())) {
-			// Wir vergewissern uns dass das Gesuch im Status IN_BEARBEITUNG_STV ist, da sonst kann es nicht fuer das JA freigegeben werden
-			throw new EbeguRuntimeException("gesuchBySTVFreigeben", ErrorCodeEnum.ERROR_ONLY_IN_BEARBEITUNG_STV_ALLOWED, "Status ist: " + gesuch.get().getStatus());
-		}
 
-		gesuch.get().setStatus(AntragStatus.GEPRUEFT_STV);
-		gesuch.get().setGeprueftSTV(true);
-
-		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch.get(), true, null);
+		Gesuch persistedGesuch = gesuchService.gesuchBySTVFreigeben(gesuch.get());
 		return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 
 	}
@@ -623,13 +596,12 @@ public class GesuchResource {
 
 		Gesuch gesuch = gesuchOptional.orElseThrow(() -> new EbeguEntityNotFoundException("stvPruefungAbschliessen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId()));
 
-		if (!AntragStatus.GEPRUEFT_STV.equals(gesuch.getStatus())) {
+		if (AntragStatus.GEPRUEFT_STV != gesuch.getStatus()) {
 			// Wir vergewissern uns dass das Gesuch im Status IN_BEARBEITUNG_STV ist, da sonst kann es nicht fuer das JA freigegeben werden
 			throw new EbeguRuntimeException("stvPruefungAbschliessen", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_STV_ALLOWED, "Status ist: " + gesuch.getStatus());
 		}
 
-		gesuch.setStatus(AntragStatus.VERFUEGT);
-		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch, true, null);
+		Gesuch persistedGesuch = gesuchService.stvPruefungAbschliessen(gesuch);
 		return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 
 	}
@@ -659,20 +631,6 @@ public class GesuchResource {
 			return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 		}
 		throw new EbeguEntityNotFoundException("removeBeschwerdeHaengig", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
-	}
-
-	@ApiOperation(value = "Ueberprueft, ob das Gesuch mit der uebergebenen Id das neueste Gesuch dieses Falls ist",
-		response = Boolean.class)
-	@GET
-	@Path("/neuestesgesuch/{gesuchId}")
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.WILDCARD)
-	public boolean isNeustesGesuch(
-		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) throws EbeguException {
-		Validate.notNull(gesuchJAXPId.getId());
-		String gesuchID = converter.toEntityId(gesuchJAXPId);
-		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
-		return gesuchOptional.map(gesuch -> gesuchService.isNeustesGesuch(gesuch)).orElse(false);
 	}
 
 	@ApiOperation(value = "Loescht eine online Mutation", response = Void.class)
@@ -753,7 +711,9 @@ public class GesuchResource {
 
 		Gesuch gesuch = gesuchService.findGesuch(gesuchJaxId.getId(), true).orElseThrow(()
 			-> new EbeguEntityNotFoundException("removeGesuchstellerAntrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJaxId.getId()));
+
 		gesuchService.removeGesuchstellerAntrag(gesuch);
+
 		return Response.ok().build();
 	}
 
@@ -846,6 +806,71 @@ public class GesuchResource {
 				.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + gesuchJAXPId.getId());
 		}
 		gesuchService.gesuchVerfuegen(gesuchOptional.get());
+		return Response.ok().build();
+	}
+
+	@ApiOperation(value = "Aendert den FinSitStatus im Gesuch", response = JaxGesuch.class)
+	@Nonnull
+	@POST
+	@Path("/changeFinSitStatus/{antragId}/{finSitStatus}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response changeFinSitStatus(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Nonnull @NotNull @PathParam("finSitStatus") FinSitStatus finSitStatus,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(antragJaxId.getId());
+		final String antragId = converter.toEntityId(antragJaxId);
+
+		if (gesuchService.changeFinSitStatus(antragId, finSitStatus) == 1) {
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("changeFinSitStatus", ErrorCodeEnum
+			.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
+
+	}
+
+	@ApiOperation(value = "Ermittelt ob das uebergebene Gesuch das neuestes dieses Falls und Jahres ist.", response = Boolean.class)
+	@Nullable
+	@GET
+	@Path("/newest/{gesuchId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response isNeuestesGesuch(@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) {
+		Validate.notNull(gesuchJAXPId.getId());
+		Gesuch gesuch = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId))
+			.orElseThrow(() -> new EbeguEntityNotFoundException("isNeuestesGesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXPId.getId()));
+		Boolean neustesGesuch = gesuchService.isNeustesGesuch(gesuch);
+		return Response.ok(neustesGesuch).build();
+	}
+
+	@ApiOperation(value = "Gibt die ID des neuesten Gesuchs dieses Falls und Jahres zurueck. Wenn es noch keinen Fall, kein Gesuch oder keine Gesuchsperiode "
+		+ "gibt, wird null zurueckgegeben", response = String.class)
+	@Nonnull
+	@GET
+	@Path("/newestid/{gesuchsperiodeId}/{fallId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response getIdOfNewestGesuch(@Nonnull @NotNull @PathParam("gesuchsperiodeId") JaxId gesuchsperiodeJaxId,
+		@Nonnull @NotNull @PathParam("fallId") JaxId fallJaxId) {
+		Validate.notNull(fallJaxId.getId());
+		Validate.notNull(gesuchsperiodeJaxId.getId());
+
+		Optional<Fall> fall = fallService.findFall(fallJaxId.getId());
+		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeJaxId.getId());
+
+		if (!fall.isPresent()) {
+			throw new EbeguEntityNotFoundException("getIdOfNewestGesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJaxId.getId());
+		}
+		if (!gesuchsperiode.isPresent()) {
+			throw new EbeguEntityNotFoundException("getIdOfNewestGesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsperiodeJaxId.getId());
+		}
+		Optional<String> idOfNeuestesGesuch = gesuchService.getIdOfNeuestesGesuch(gesuchsperiode.get(), fall.get());
+		if (idOfNeuestesGesuch.isPresent()) {
+			return Response.ok(idOfNeuestesGesuch.get()).build();
+		}
 		return Response.ok().build();
 	}
 }

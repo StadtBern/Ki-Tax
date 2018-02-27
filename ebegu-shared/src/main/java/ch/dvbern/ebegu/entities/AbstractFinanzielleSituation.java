@@ -18,6 +18,7 @@ package ch.dvbern.ebegu.entities;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -72,6 +73,7 @@ public abstract class AbstractFinanzielleSituation extends AbstractEntity {
 	public AbstractFinanzielleSituation() {
 	}
 
+	@Nullable
 	public abstract BigDecimal getNettolohn();
 
 	public Boolean getSteuerveranlagungErhalten() {

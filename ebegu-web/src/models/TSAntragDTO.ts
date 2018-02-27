@@ -30,6 +30,9 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
     private _eingangsdatumSTV: moment.Moment;
     private _aenderungsdatum: moment.Moment;
     private _verantwortlicher: string;
+    private _verantwortlicherSCH: string;
+    private _verantwortlicherUsernameJA: string;
+    private _verantwortlicherUsernameSCH: string;
     private _besitzerUsername: string;
     private _angebote: Array<TSBetreuungsangebotTyp>;
     private _institutionen: Array<string>;
@@ -43,12 +46,14 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
     private _gesuchBetreuungenStatus: TSGesuchBetreuungenStatus;
     private _dokumenteHochgeladen: boolean;
 
+
     constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
                 eingangsdatum?: moment.Moment, eingangsdatumSTV?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>,
-                institutionen?: Array<string>,
-                verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
+                institutionen?: Array<string>, verantwortlicher?: string, verantwortlicherSCH?: string, status?: TSAntragStatus,
+                gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
                 verfuegt?: boolean, laufnummer?: number, besitzerUsername?: string, eingangsart?: TSEingangsart, beschwerdeHaengig?: boolean,
-                kinder?: Array<string>, gesuchBetreuungenStatus?: TSGesuchBetreuungenStatus, dokumenteHochgeladen?: boolean) {
+                kinder?: Array<string>, gesuchBetreuungenStatus?: TSGesuchBetreuungenStatus, dokumenteHochgeladen?: boolean,
+                verantwortlicherUsernameJA?: string, verantwortlicherUsernameSCH?: string) {
 
         super(fallNummer, familienName);
         this._antragId = antragId;
@@ -59,6 +64,7 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
         this._angebote = angebote;
         this._institutionen = institutionen;
         this._verantwortlicher = verantwortlicher;
+        this._verantwortlicherSCH = verantwortlicherSCH;
         this._status = status;
         this._gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
         this._gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
@@ -70,6 +76,8 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
         this._kinder = kinder;
         this._gesuchBetreuungenStatus = gesuchBetreuungenStatus;
         this._dokumenteHochgeladen = dokumenteHochgeladen;
+        this._verantwortlicherUsernameJA = verantwortlicherUsernameJA;
+        this._verantwortlicherUsernameSCH = verantwortlicherUsernameSCH;
     }
 
     get antragId(): string {
@@ -134,6 +142,30 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
 
     set verantwortlicher(value: string) {
         this._verantwortlicher = value;
+    }
+
+    public get verantwortlicherSCH(): string {
+        return this._verantwortlicherSCH;
+    }
+
+    public set verantwortlicherSCH(value: string) {
+        this._verantwortlicherSCH = value;
+    }
+
+    public get verantwortlicherUsernameJA(): string {
+        return this._verantwortlicherUsernameJA;
+    }
+
+    public set verantwortlicherUsernameJA(value: string) {
+        this._verantwortlicherUsernameJA = value;
+    }
+
+    public get verantwortlicherUsernameSCH(): string {
+        return this._verantwortlicherUsernameSCH;
+    }
+
+    public set verantwortlicherUsernameSCH(value: string) {
+        this._verantwortlicherUsernameSCH = value;
     }
 
     get status(): TSAntragStatus {
@@ -232,13 +264,31 @@ export default class TSAntragDTO extends TSAbstractAntragDTO {
         return this.status === TSAntragStatus.FREIGABEQUITTUNG;
     }
 
-    public hasOnlySchulamtAngebote(): boolean {
+    public hasAnySchulamtAngebot(): boolean {
         for (let angebot of this.angebote) {
-            if (TSBetreuungsangebotTyp.TAGESSCHULE !== angebot) {
+            if (TSBetreuungsangebotTyp.TAGESSCHULE === angebot || TSBetreuungsangebotTyp.FERIENINSEL === angebot) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public hasOnlyFerieninsel(): boolean {
+        for (let angebot of this.angebote) {
+            if (TSBetreuungsangebotTyp.FERIENINSEL !== angebot) {
                 return false;
             }
         }
         return true;
+    }
+
+    public hasAnyJugendamtAngebot(): boolean {
+        for (let angebot of this.angebote) {
+            if (TSBetreuungsangebotTyp.TAGESSCHULE !== angebot && TSBetreuungsangebotTyp.FERIENINSEL !== angebot) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public get gesuchBetreuungenStatus(): TSGesuchBetreuungenStatus {

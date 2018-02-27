@@ -46,6 +46,7 @@
 			<url-pattern>/api/v1/login</url-pattern>
 			<url-pattern>/api/v1/auth/login</url-pattern>
 			<url-pattern>/api/v1/connector/heartbeat</url-pattern>
+			<url-pattern>/api/v1/schulamt/heartbeat</url-pattern>
 			<url-pattern>/api/v1/auth/logout</url-pattern>
 			<url-pattern>/api/v1/auth/singleSignOn</url-pattern>
 			<url-pattern>/api/v1/auth/singleLogout</url-pattern>
@@ -84,6 +85,9 @@
 	</security-role>
 	<security-role>
 		<role-name>STEUERAMT</role-name>
+	</security-role>
+	<security-role>
+		<role-name>ADMINISTRATOR_SCHULAMT</role-name>
 	</security-role>
 	<security-role>
 		<role-name>SCHULAMT</role-name>

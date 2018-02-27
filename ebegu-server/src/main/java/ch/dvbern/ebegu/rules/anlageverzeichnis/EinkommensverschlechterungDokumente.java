@@ -55,9 +55,6 @@ import ch.dvbern.ebegu.enums.DokumentTyp;
  * <p>
  * Erfolgsrechnungen der letzten drei Jahre (Jahr der Einkommensverschlechterung: x, x-1, x-2)
  * Notwendig, wenn Erfolgsrechnungen des Jahres nicht null
- * <p>
- * Unterstützungsnachweis / Bestätigung Sozialdienst (Ersatzeinkommen)
- * Notwendig, wenn Nettolohn > 0 => nicht mehr nötig!
  **/
 public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSituationDokumente {
 

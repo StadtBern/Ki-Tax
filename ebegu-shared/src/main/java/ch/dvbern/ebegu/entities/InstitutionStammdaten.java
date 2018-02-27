@@ -106,6 +106,10 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_stammdaten_adressekontoinhaber_id"), nullable = true)
 	private Adresse adresseKontoinhaber;
 
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_inst_stammdaten_inst_stammdaten_tagesschule_id"), nullable = true)
+	private InstitutionStammdatenTagesschule institutionStammdatenTagesschule;
+
 	public InstitutionStammdaten() {
 	}
 
@@ -198,5 +202,14 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 			MathUtil.isSame(getOeffnungsstunden(), otherInstStammdaten.getOeffnungsstunden()) &&
 			MathUtil.isSame(getOeffnungstage(), otherInstStammdaten.getOeffnungstage()) &&
 			EbeguUtil.isSameObject(getAdresse(), otherInstStammdaten.getAdresse());
+	}
+
+	@Nullable
+	public InstitutionStammdatenTagesschule getInstitutionStammdatenTagesschule() {
+		return institutionStammdatenTagesschule;
+	}
+
+	public void setInstitutionStammdatenTagesschule(@Nullable InstitutionStammdatenTagesschule institutionStammdatenTagesschule) {
+		this.institutionStammdatenTagesschule = institutionStammdatenTagesschule;
 	}
 }

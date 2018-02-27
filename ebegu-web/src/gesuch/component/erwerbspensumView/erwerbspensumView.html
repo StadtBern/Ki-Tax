@@ -154,7 +154,7 @@
                     <div class="row" ng-if="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum">
                         <div class="col-sm-12 dv-input-container-medium">
                             <div class="form-group">
-                                <label class="md-no-float" data-translate="ZUSCHLAGSGRUND_WAEHLEN" for="zuschlagsgrund">
+                                <label class="md-no-float required" data-translate="ZUSCHLAGSGRUND_WAEHLEN" for="zuschlagsgrund">
                                 </label>
                                 <!--im readonly modus wird das select durch ein div ersetzt weil werte gesetzt sein koennen die nicht in der selectbox sind-->
                                 <div class="dv-select-style" ng-if="!vm.isGesuchReadonly()">
@@ -165,6 +165,12 @@
                                             ng-required="true"
                                             ng-disabled="vm.erwerbspensumDisabled()">
                                     </select>
+                                    <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsgrund"
+                                               ja="vm.model.erwerbspensumJA.zuschlagsgrund"
+                                               show-if-bisher-none="false"
+                                               block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
+                                    <dv-error-messages input-id="zuschlagsgrund_dvi" for="vm.form.zuschlagsgrund.$error"
+                                                       class="error"></dv-error-messages>
                                 </div>
                                 <div class="dv-select-style" ng-if="vm.isGesuchReadonly()">
                                     <input aria-describedby="zuschlagsgrund_dvi-error" id="zuschlagsgrund_dvi"
@@ -173,13 +179,14 @@
                                            class="form-control"
                                            ng-disabled="true"
                                            ng-if="vm.isGesuchReadonly()">
+                                    <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsgrund"
+                                               ja="vm.model.erwerbspensumJA.zuschlagsgrund"
+                                               show-if-bisher-none="false"
+                                               block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
+                                    <dv-error-messages input-id="zuschlagsgrund_dvi" for="vm.form.zuschlagsgrund.$error"
+                                                       class="error"></dv-error-messages>
                                 </div>
-                                <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsgrund"
-                                           ja="vm.model.erwerbspensumJA.zuschlagsgrund"
-                                           show-if-bisher-none="false"
-                                           block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
-                                <dv-error-messages input-id="zuschlagsgrund_dvi" for="vm.form.zuschlagsgrund.$error"
-                                                   class="error"></dv-error-messages>
+
                             </div>
                         </div>
                     </div>

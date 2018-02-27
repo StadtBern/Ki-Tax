@@ -111,12 +111,36 @@ public class ResourceHelper {
 		}
 	}
 
-	public void assertBetreuungStatusEqual(@Nonnull String betreuungId, @Nonnull Betreuungsstatus betreuungsstatusFromClient) {
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
+	public void assertGesuchStatusForBenutzerRole(@Nonnull Gesuch gesuch, @Nonnull Betreuung betreuung) {
+		UserRole userRole = principalBean.discoverMostPrivilegedRole();
+		if (userRole == UserRole.SUPER_ADMIN) {
+			// Superadmin darf alles
+			return;
+		}
+		String msg = "Cannot update entity containing Gesuch " + gesuch.getId() + " in Status " + gesuch.getStatus() + " in UserRole " + userRole;
+		if (userRole == UserRole.GESUCHSTELLER && gesuch.getStatus() != AntragStatus.IN_BEARBEITUNG_GS) {
+			// Schulamt-Anmeldungen duerfen auch nach der Freigabe hinzugefügt werden!
+			if (betreuung.getBetreuungsangebotTyp() == null || !betreuung.getBetreuungsangebotTyp().isSchulamt()) {
+				LOGGER.error(msg);
+				throw new EbeguRuntimeException("assertGesuchStatusForBenutzerRole", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, gesuch.getId(), msg);
+			}
+		}
+		if (gesuch.getStatus().ordinal() >= AntragStatus.VERFUEGEN.ordinal()) {
+			// Schulamt-Anmeldungen duerfen auch nach der Freigabe hinzugefügt werden!
+			if (betreuung.getBetreuungsangebotTyp() == null || !betreuung.getBetreuungsangebotTyp().isSchulamt()) {
+				LOGGER.error(msg);
+				throw new EbeguRuntimeException("assertGesuchStatusForBenutzerRole", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, gesuch.getId(), msg);
+			}
+		}
+	}
+
+	public void assertBetreuungStatusEqual(@Nonnull String betreuungId, @Nonnull Betreuungsstatus... betreuungsstatusFromClient) {
 		Validate.notNull(betreuungId);
 		Optional<Betreuung> optBetreuung = betreuungService.findBetreuung(betreuungId);
 		Betreuung betreuungFromDB = optBetreuung.orElseThrow(() -> new EbeguEntityNotFoundException(ASSERT_BETREUUNG_STATUS_EQUAL, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuungId));
 		// Der Status des Client-Objektes darf nicht weniger weit sein als der des Server-Objektes
-		if (betreuungFromDB.getBetreuungsstatus() != betreuungsstatusFromClient) {
+		if (Arrays.stream(betreuungsstatusFromClient).noneMatch(status -> betreuungFromDB.getBetreuungsstatus() == status)) {
 			String msg = "Expected BetreuungStatus to be " + betreuungsstatusFromClient + " but was " + betreuungFromDB.getBetreuungsstatus();
 			LOGGER.error(msg);
 			throw new EbeguRuntimeException(ASSERT_BETREUUNG_STATUS_EQUAL, ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, betreuungId, msg);

@@ -23,7 +23,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 
+import org.apache.poi.ss.usermodel.Sheet;
+
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.enums.reporting.MergeFieldGesuchstellerKinderBetreuung;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.oss.lib.excelmerger.ExcelConverter;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergeException;
@@ -31,7 +34,6 @@ import ch.dvbern.oss.lib.excelmerger.ExcelMerger;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergerDTO;
 import ch.dvbern.oss.lib.excelmerger.RowFiller;
 import ch.dvbern.oss.lib.excelmerger.mergefields.MergeField;
-import org.apache.poi.ss.usermodel.Sheet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

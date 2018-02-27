@@ -75,19 +75,22 @@ public class NeedleTest {
 	 */
 	@Test
 	public void convertJaxGesuchstellerWithUmzgTest() {
-		JaxGesuchstellerContainer gesuchstellerWith3Adr = TestJaxDataUtil.createTestJaxGesuchstellerWithUmzug();
-		GesuchstellerContainer gesuchsteller = converter.gesuchstellerContainerToEntity(gesuchstellerWith3Adr, new GesuchstellerContainer());
-		Assert.assertEquals(gesuchstellerWith3Adr.getGesuchstellerJA().getGeburtsdatum(), gesuchsteller.getGesuchstellerJA().getGeburtsdatum());
-		Assert.assertEquals(gesuchstellerWith3Adr.getGesuchstellerJA().getVorname(), gesuchsteller.getGesuchstellerJA().getVorname());
-		Assert.assertEquals(gesuchstellerWith3Adr.getGesuchstellerJA().getNachname(), gesuchsteller.getGesuchstellerJA().getNachname());
+		JaxGesuchstellerContainer gesuchstellerWith4Adr = TestJaxDataUtil.createTestJaxGesuchstellerWithUmzug();
+		GesuchstellerContainer gesuchsteller = converter.gesuchstellerContainerToEntity(gesuchstellerWith4Adr, new GesuchstellerContainer());
+		Assert.assertEquals(gesuchstellerWith4Adr.getGesuchstellerJA().getGeburtsdatum(), gesuchsteller.getGesuchstellerJA().getGeburtsdatum());
+		Assert.assertEquals(gesuchstellerWith4Adr.getGesuchstellerJA().getVorname(), gesuchsteller.getGesuchstellerJA().getVorname());
+		Assert.assertEquals(gesuchstellerWith4Adr.getGesuchstellerJA().getNachname(), gesuchsteller.getGesuchstellerJA().getNachname());
 		//id wird serverseitig gesetzt
-		Assert.assertNull(gesuchstellerWith3Adr.getId());
+		Assert.assertNull(gesuchstellerWith4Adr.getId());
 		Assert.assertNotNull(gesuchsteller.getId());
-		Assert.assertEquals(3, gesuchsteller.getAdressen().size());
+		Assert.assertEquals(4, gesuchsteller.getAdressen().size());
 		ImmutableListMultimap<AdresseTyp, GesuchstellerAdresseContainer> adrByTyp = Multimaps
 			.index(gesuchsteller.getAdressen(), GesuchstellerAdresseContainer::extractAdresseTyp);
 		GesuchstellerAdresseContainer altAdr = adrByTyp.get(AdresseTyp.KORRESPONDENZADRESSE).get(0);
 		Assert.assertTrue(altAdr.getGesuchstellerAdresseJA().isSame(converter
-			.adresseContainerToEntity(gesuchstellerWith3Adr.getAlternativeAdresse(), new GesuchstellerAdresseContainer()).getGesuchstellerAdresseJA()));
+			.gesuchstellerAdresseContainerToEntity(gesuchstellerWith4Adr.getAlternativeAdresse(), new GesuchstellerAdresseContainer()).getGesuchstellerAdresseJA()));
+		GesuchstellerAdresseContainer rechnungsAdr = adrByTyp.get(AdresseTyp.RECHNUNGSADRESSE).get(0);
+		Assert.assertTrue(rechnungsAdr.getGesuchstellerAdresseJA().isSame(converter
+			.gesuchstellerAdresseContainerToEntity(gesuchstellerWith4Adr.getRechnungsAdresse(), new GesuchstellerAdresseContainer()).getGesuchstellerAdresseJA()));
 	}
 }

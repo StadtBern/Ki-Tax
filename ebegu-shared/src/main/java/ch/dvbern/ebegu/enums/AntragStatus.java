@@ -15,9 +15,11 @@
 
 package ch.dvbern.ebegu.enums;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -56,27 +58,13 @@ public enum AntragStatus {
 		BESCHWERDE_HAENGIG,
 		PRUEFUNG_STV,
 		IN_BEARBEITUNG_STV,
-		GEPRUEFT_STV);
+		GEPRUEFT_STV,
+		NUR_SCHULAMT
+		);
 
 	public static final Set<AntragStatus> FOR_INSTITUTION_ROLE = EnumSet.of(
 		IN_BEARBEITUNG_GS,
 		FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
-		NUR_SCHULAMT,
-		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
-		IN_BEARBEITUNG_JA,
-		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG,
-		ZWEITE_MAHNUNG_ABGELAUFEN,
-		GEPRUEFT,
-		VERFUEGEN,
-		VERFUEGT,
-		BESCHWERDE_HAENGIG,
-		PRUEFUNG_STV,
-		IN_BEARBEITUNG_STV,
-		GEPRUEFT_STV);
-
-	public static final Set<AntragStatus> FOR_SCHULAMT_ROLE = EnumSet.of(
 		NUR_SCHULAMT,
 		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
 		IN_BEARBEITUNG_JA,
@@ -121,7 +109,7 @@ public enum AntragStatus {
 	private static final Set<AntragStatus> forSachbearbeiterInstitutionRole = FOR_INSTITUTION_ROLE;
 	private static final Set<AntragStatus> forSachbearbeiterTraegerschaftRole = FOR_INSTITUTION_ROLE;
 	private static final Set<AntragStatus> forSachbearbeiterJugendamtRole = FOR_ADMIN_ROLE;
-	private static final Set<AntragStatus> forSchulamtRole = FOR_SCHULAMT_ROLE;
+	private static final Set<AntragStatus> forSchulamtRole = FOR_ADMIN_ROLE;
 	private static final Set<AntragStatus> forJuristRole = FOR_JURIST_REVISOR_ROLE;
 	private static final Set<AntragStatus> forRevisorRole = FOR_JURIST_REVISOR_ROLE;
 	private static final Set<AntragStatus> forSteueramt = FOR_STEUERAMT_ROLE;
@@ -138,6 +126,17 @@ public enum AntragStatus {
 		ZWEITE_MAHNUNG_ABGELAUFEN,
 		GEPRUEFT,
 		VERFUEGEN,
+		BESCHWERDE_HAENGIG,
+		GEPRUEFT_STV);
+
+	public static final Set<AntragStatus> FOR_SACHBEARBEITER_SCHULAMT_PENDENZEN = EnumSet.of(
+		FREIGEGEBEN,
+		IN_BEARBEITUNG_JA,
+		ERSTE_MAHNUNG,
+		ERSTE_MAHNUNG_ABGELAUFEN,
+		ZWEITE_MAHNUNG,
+		ZWEITE_MAHNUNG_ABGELAUFEN,
+		GEPRUEFT,
 		BESCHWERDE_HAENGIG,
 		GEPRUEFT_STV);
 
@@ -159,6 +158,54 @@ public enum AntragStatus {
 
 	private static final Set<AntragStatus> inBearbeitung = EnumSet.range(IN_BEARBEITUNG_GS, IN_BEARBEITUNG_JA);
 
+	public static final Set<AntragStatus> FOR_ADMIN_ROLE_WRITE = EnumSet.of(
+		FREIGABEQUITTUNG,
+		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
+		IN_BEARBEITUNG_JA,
+		ERSTE_MAHNUNG,
+		ERSTE_MAHNUNG_ABGELAUFEN,
+		ZWEITE_MAHNUNG,
+		ZWEITE_MAHNUNG_ABGELAUFEN,
+		GEPRUEFT,
+		VERFUEGEN,
+		VERFUEGT,
+		KEIN_ANGEBOT,
+		BESCHWERDE_HAENGIG,
+		PRUEFUNG_STV,
+		IN_BEARBEITUNG_STV,
+		GEPRUEFT_STV,
+		NUR_SCHULAMT);
+
+	public static final Set<AntragStatus> FOR_INSTITUTION_ROLE_WRITE = EnumSet.of(
+		IN_BEARBEITUNG_GS,
+		FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
+		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
+		IN_BEARBEITUNG_JA,
+		ERSTE_MAHNUNG,
+		ERSTE_MAHNUNG_ABGELAUFEN,
+		ZWEITE_MAHNUNG,
+		ZWEITE_MAHNUNG_ABGELAUFEN,
+		GEPRUEFT,
+		VERFUEGEN);
+
+	public static final Set<AntragStatus> FOR_GESUCHSTELLER_ROLE_WRITE = EnumSet.of(
+		IN_BEARBEITUNG_GS,
+		NUR_SCHULAMT, // Damit eine Mutation erstellt werden kann
+		FREIGABEQUITTUNG,
+		NUR_SCHULAMT, // damit eine Mutation erstellt werden kann
+		ERSTE_MAHNUNG,
+		ERSTE_MAHNUNG_ABGELAUFEN,
+		ZWEITE_MAHNUNG,
+		ZWEITE_MAHNUNG_ABGELAUFEN,
+		VERFUEGT // Damit eine Mutation erstellt werden kann
+	);
+
+	public static final Set<AntragStatus> FOR_STEUERAMT_ROLE_WRITE = EnumSet.of(
+		PRUEFUNG_STV,
+		IN_BEARBEITUNG_STV,
+		GEPRUEFT_STV // Der Status wird schon vor dem Speichern gesetzt. Falls dies mal in eine separate Methode kommt, kann dieser Status entfernt werden
+	);
+
 	/**
 	 * Implementierung eines Berechtigungskonzepts fuer die Antragssuche.
 	 *
@@ -167,56 +214,74 @@ public enum AntragStatus {
 	 */
 	@SuppressWarnings("Duplicates")
 	public static Set<AntragStatus> allowedforRole(UserRole userRole) {
-		switch (userRole) {
-		case SUPER_ADMIN:
-			return all;
-		case ADMIN:
-			return forAdminRole;
-		case GESUCHSTELLER:
-			return none;
-		case JURIST:
-			return forJuristRole;
-		case REVISOR:
-			return forRevisorRole;
-		case SACHBEARBEITER_INSTITUTION:
-			return forSachbearbeiterInstitutionRole;
-		case SACHBEARBEITER_JA:
-			return forSachbearbeiterJugendamtRole;
-		case SACHBEARBEITER_TRAEGERSCHAFT:
-			return forSachbearbeiterTraegerschaftRole;
-		case SCHULAMT:
-			return forSchulamtRole;
-		case STEUERAMT:
-			return forSteueramt;
-		default:
-			return none;
-		}
-	}
+        switch (userRole) {
+			case SUPER_ADMIN: return  all;
+			case ADMIN: return forAdminRole;
+            case GESUCHSTELLER: return none;
+            case JURIST: return forJuristRole;
+            case REVISOR: return forRevisorRole;
+            case SACHBEARBEITER_INSTITUTION: return forSachbearbeiterInstitutionRole;
+            case SACHBEARBEITER_JA: return forSachbearbeiterJugendamtRole;
+            case SACHBEARBEITER_TRAEGERSCHAFT: return forSachbearbeiterTraegerschaftRole;
+            case SCHULAMT: return forSchulamtRole;
+            case ADMINISTRATOR_SCHULAMT: return forSchulamtRole;
+            case STEUERAMT: return forSteueramt;
+            default: return none;
+        }
+    }
+
+
+	public static Set<AntragStatus> pendenzenForRole(UserRole userRole) {
+        switch (userRole) {
+			case SUPER_ADMIN:
+			case ADMIN:
+            case JURIST:
+            case REVISOR:
+            case SACHBEARBEITER_JA:
+            	return FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN;
+            case SCHULAMT:
+            case ADMINISTRATOR_SCHULAMT:
+            	return FOR_SACHBEARBEITER_SCHULAMT_PENDENZEN;
+            case STEUERAMT:
+            case GESUCHSTELLER:
+            default:
+            	return none;
+        }
+    }
 
 	public static Set<AntragStatus> writeAllowedForRole(UserRole userRole) {
 		switch (userRole) {
-		case SUPER_ADMIN:
-			return all;
-		case ADMIN:
-		case SACHBEARBEITER_JA:
-			return FOR_ADMIN_ROLE_WRITE;
-		case GESUCHSTELLER:
-			return FOR_GESUCHSTELLER_ROLE_WRITE;
-		case SACHBEARBEITER_INSTITUTION:
-		case SACHBEARBEITER_TRAEGERSCHAFT:
-			return FOR_INSTITUTION_ROLE_WRITE;
-		case STEUERAMT:
-			return FOR_STEUERAMT_ROLE_WRITE;
-		case SCHULAMT:
-			return FOR_SCHULAMT_ROLE_WRITE;
-		default:
-			return none;
+			case SUPER_ADMIN:
+				return  all;
+			case ADMIN:
+			case SACHBEARBEITER_JA:
+				return FOR_ADMIN_ROLE_WRITE;
+			case GESUCHSTELLER:
+				return FOR_GESUCHSTELLER_ROLE_WRITE;
+			case SACHBEARBEITER_INSTITUTION:
+			case SACHBEARBEITER_TRAEGERSCHAFT:
+				return FOR_INSTITUTION_ROLE_WRITE;
+			case STEUERAMT:
+				return FOR_STEUERAMT_ROLE_WRITE;
+			case SCHULAMT:
+			case ADMINISTRATOR_SCHULAMT:
+				return FOR_ADMIN_ROLE_WRITE;
+			default:
+				return none;
 		}
 	}
 
 	public static Collection<AntragStatus> getAllVerfuegtStates() {
 		return Arrays.asList(VERFUEGT, NUR_SCHULAMT, BESCHWERDE_HAENGIG,
 			PRUEFUNG_STV, IN_BEARBEITUNG_STV, GEPRUEFT_STV, KEIN_ANGEBOT);
+	}
+
+	public static Collection<AntragStatus> getAllStatesSchulamtInterface() {
+		List<AntragStatus> states = new ArrayList<>();
+		states.addAll(getAllVerfuegtStates());
+		states.add(VERFUEGEN);
+		states.add(GEPRUEFT);
+		return states;
 	}
 
 	public static Collection<AntragStatus> getVerfuegtAndSTVStates() {
@@ -251,18 +316,13 @@ public enum AntragStatus {
 		return this == FREIGABEQUITTUNG || this == IN_BEARBEITUNG_GS;
 	}
 
-	public boolean isAnyOfSchulamtOnly() {
-		return this == NUR_SCHULAMT;
-	}
-
 	/**
-	 * @return true wenn das Jugendamt das Gesuch oeffnen darf (Unsichtbar sind also Gesuch die von Gesuchsteller noch
-	 * nicht eingereichte wurden und solche die NUR_SCHULAMT sind
+	 * @return true wenn das JA/SCH das Gesuch oeffnen darf (Unsichtbar sind also Gesuch die von Gesuchsteller noch
+	 * nicht eingereichte wurden)
 	 */
-	public boolean isReadableByJugendamtSteueramt() {
-		//Jugendamt darf keine Gesuche sehen die noch nicht Freigegeben sind, und keine die nur Schulamt sind
-		return !(this.isAnyOfInBearbeitungGS()) &&
-			!(isAnyOfSchulamtOnly());
+	public boolean isReadableByJugendamtSchulamtSteueramt() {
+		//JA/SCH darf keine Gesuche sehen die noch nicht Freigegeben sind
+		return !(this.isAnyOfInBearbeitungGS());
 	}
 
 	/**
@@ -288,54 +348,4 @@ public enum AntragStatus {
 		return forRevisorRole.contains(this);
 	}
 
-	public static final Set<AntragStatus> FOR_ADMIN_ROLE_WRITE = EnumSet.of(
-		FREIGABEQUITTUNG,
-		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
-		IN_BEARBEITUNG_JA,
-		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG,
-		ZWEITE_MAHNUNG_ABGELAUFEN,
-		GEPRUEFT,
-		VERFUEGEN,
-		VERFUEGT,
-		KEIN_ANGEBOT,
-		BESCHWERDE_HAENGIG,
-		PRUEFUNG_STV,
-		IN_BEARBEITUNG_STV,
-		GEPRUEFT_STV);
-
-	public static final Set<AntragStatus> FOR_INSTITUTION_ROLE_WRITE = EnumSet.of(
-		IN_BEARBEITUNG_GS,
-		FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
-		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
-		IN_BEARBEITUNG_JA,
-		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG,
-		ZWEITE_MAHNUNG_ABGELAUFEN,
-		GEPRUEFT,
-		VERFUEGEN);
-
-	public static final Set<AntragStatus> FOR_GESUCHSTELLER_ROLE_WRITE = EnumSet.of(
-		IN_BEARBEITUNG_GS,
-		NUR_SCHULAMT, // Damit eine Mutation erstellt werden kann
-		FREIGABEQUITTUNG,
-		NUR_SCHULAMT, // damit eine Mutation erstellt werden kann
-		ERSTE_MAHNUNG,
-		ERSTE_MAHNUNG_ABGELAUFEN,
-		ZWEITE_MAHNUNG,
-		ZWEITE_MAHNUNG_ABGELAUFEN,
-		VERFUEGT // Damit eine Mutation erstellt werden kann
-	);
-
-	public static final Set<AntragStatus> FOR_SCHULAMT_ROLE_WRITE = EnumSet.of(
-		FREIGABEQUITTUNG,
-		NUR_SCHULAMT); // Wegen Dokumente-Upload Button
-
-	public static final Set<AntragStatus> FOR_STEUERAMT_ROLE_WRITE = EnumSet.of(
-		PRUEFUNG_STV,
-		IN_BEARBEITUNG_STV,
-		GEPRUEFT_STV // Der Status wird schon vor dem Speichern gesetzt. Falls dies mal in eine separate Methode kommt, kann dieser Status entfernt werden
-	);
 }

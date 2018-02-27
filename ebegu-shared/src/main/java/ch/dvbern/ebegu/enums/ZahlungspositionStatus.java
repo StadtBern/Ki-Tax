@@ -21,7 +21,6 @@ package ch.dvbern.ebegu.enums;
 public enum ZahlungspositionStatus {
 
 	NORMAL,
-	KORREKTUR_VOLLKOSTEN,
-	KORREKTUR_ELTERNBEITRAG
+	KORREKTUR
 
 }
