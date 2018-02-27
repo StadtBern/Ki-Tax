@@ -147,8 +147,7 @@ export class DVVorlageListController {
             deleteText: '',
             title: 'FILE_LOESCHEN',
             parentController: undefined,
-            elementID: undefined,
-            form: undefined
+            elementID: undefined
         })
             .then(() => {   //User confirmed removal
 

@@ -70,7 +70,7 @@
                         <dv-input-container class="form-group row">
                             <!--Knopf zum hinzufügen neuer Institutionen-->
                             <dv-loading-button type="button"
-                                               button-click="vm.createInstitution(); form.$setPristine(); form.$setUntouched()"
+                                               button-click="vm.createInstitution(); vm.form.$setPristine(); vm.form.$setUntouched()"
                                                button-class="">
                                 <i class="glyphicon glyphicon-plus"></i>
                                 <span data-translate="INSTITUTION_HINZUFUEGEN"></span>

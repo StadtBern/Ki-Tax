@@ -237,8 +237,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             title: 'CONFIRM_GESUCH_STATUS_GEPRUEFT',
             deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN',
             parentController: undefined,
-            elementID: undefined,
-            form: this.form
+            elementID: undefined
         }).then(() => {
             return this.setGesuchStatus(TSAntragStatus.GEPRUEFT);
         });
@@ -249,8 +248,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             title: 'CONFIRM_GESUCH_STATUS_KEIN_ANGEBOT',
             deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN',
             parentController: undefined,
-            elementID: undefined,
-            form: this.form
+            elementID: undefined
 
         }).then(() => {
             return this.gesuchRS.closeWithoutAngebot(this.gesuchModelManager.getGesuch().id).then((response) => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
@@ -269,8 +267,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
             deleteText: deleteTextValue,
             parentController: undefined,
-            elementID: undefined,
-            form: this.form
+            elementID: undefined
         }).then(() => {
 
             return this.gesuchRS.verfuegenStarten(
@@ -326,8 +323,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             title: 'STV_PRUEFUNG_ABSCHLIESSEN_CONFIRMATION',
             deleteText: '',
             parentController: undefined,
-            elementID: undefined,
-            form: this.form
+            elementID: undefined
         }).then((bemerkung: string) => {
             this.gesuchRS.stvPruefungAbschliessen(this.getGesuch().id).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);
@@ -557,8 +553,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             title: 'ABSCHLIESSEN',
             deleteText: 'BESCHREIBUNG_GESUCH_ABSCHLIESSEN',
             parentController: undefined,
-            elementID: undefined,
-            form: this.form
+            elementID: undefined
         }).then(() => {
             return this.gesuchRS.setAbschliessen(this.getGesuch().id).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);
@@ -572,8 +567,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             title: 'BESCHWERDE_HAENGIG',
             deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_HAENGIG',
             parentController: undefined,
-            elementID: undefined,
-            form: this.form
+            elementID: undefined
         }).then(() => {
             return this.gesuchRS.setBeschwerdeHaengig(this.getGesuch().id).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);
@@ -587,8 +581,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             title: 'BESCHWERDE_ABSCHLIESSEN',
             deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_ABSCHLIESSEN',
             parentController: undefined,
-            elementID: undefined,
-            form: this.form
+            elementID: undefined
         }).then(() => {
             return this.gesuchRS.removeBeschwerdeHaengig(this.getGesuch().id).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);

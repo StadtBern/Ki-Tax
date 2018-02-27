@@ -103,8 +103,7 @@ export class GesuchsperiodeViewController extends AbstractAdminViewController {
                     title: 'GESUCHSPERIODE_DIALOG_TITLE',
                     deleteText: dialogText,
                     parentController: undefined,
-                    elementID: undefined,
-                    form: this.form
+                    elementID: undefined
                 }).then(() => {
                     this.saveGesuchsperiodeFreischaltungTagesschule();
                 });
@@ -121,8 +120,7 @@ export class GesuchsperiodeViewController extends AbstractAdminViewController {
                 title: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TITLE',
                 deleteText: 'FREISCHALTUNG_TAGESSCHULE_DIALOG_TEXT',
                 parentController: undefined,
-                elementID: undefined,
-                form: this.form
+                elementID: undefined
             }).then(() => {
                 this.gesuchsperiode.datumFreischaltungTagesschule = this.datumFreischaltungTagesschule;
                 this.doSave();

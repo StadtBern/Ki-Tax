@@ -135,8 +135,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
             title: remTitleText,
             deleteText: 'BETREUUNG_LOESCHEN_BESCHREIBUNG',
             parentController: this,
-            elementID: 'removeBetreuungButton' + kind.kindNummer + '_' + index,
-            form: this.form
+            elementID: 'removeBetreuungButton' + kind.kindNummer + '_' + index
         }).then(() => {   //User confirmed removal
             this.errorService.clearAll();
             let betreuungIndex: number = this.gesuchModelManager.findBetreuung(betreuung);

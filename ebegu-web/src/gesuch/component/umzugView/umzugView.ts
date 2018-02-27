@@ -178,8 +178,7 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
             title: remTitleText,
             deleteText: '',
             parentController: undefined,
-            elementID: undefined,
-            form: this.form
+            elementID: undefined
         }).then(() => {   //User confirmed removal
             this.dirty = true;
             let indexOf = this.model.lastIndexOf(adresse);

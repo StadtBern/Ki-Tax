@@ -227,8 +227,7 @@ export class KommentarViewController {
             title: this.getFreigabeTitel(),
             deleteText: this.getFreigabeBeschreibung(),
             parentController: undefined,
-            elementID: undefined,
-            form: this.form
+            elementID: undefined
         }).then(() => {
             return this.gesuchRS.gesuchBySTVFreigeben(this.getGesuch().id).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);

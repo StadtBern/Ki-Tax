@@ -60,6 +60,7 @@ export class DvDialog {
      * @returns {angular.IPromise<any>}
      */
     public showRemoveDialog(template: string, form: any, controller?: any, params?: any): IPromise<any> {
+        params.form = form;
         let confirm: IDialogOptions = {
             template: template,
             controller: controller,

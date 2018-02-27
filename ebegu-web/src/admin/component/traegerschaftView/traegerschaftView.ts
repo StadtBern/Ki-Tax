@@ -67,8 +67,7 @@ export class TraegerschaftViewController extends AbstractAdminViewController {
             deleteText: '',
             title: 'LOESCHEN_DIALOG_TITLE',
             parentController: undefined,
-            elementID: undefined,
-            form: this.form
+            elementID: undefined
         })
             .then(() => {   //User confirmed removal
                 this.traegerschaft = undefined;

@@ -579,8 +579,7 @@ export class GesuchToolbarController implements IDVFocusableController {
             title: 'CONFIRM_GESUCH_LOESCHEN',
             deleteText: 'BESCHREIBUNG_GESUCH_LOESCHEN',
             parentController: this,
-            elementID: 'gesuchLoeschenButton',
-            form: undefined
+            elementID: 'gesuchLoeschenButton'
         }).then(() => {
             this.setAllFormsPristine();
             if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {

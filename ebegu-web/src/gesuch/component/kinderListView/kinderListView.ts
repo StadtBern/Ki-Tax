@@ -117,8 +117,7 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
             title: remTitleText,
             deleteText: 'KIND_LOESCHEN_BESCHREIBUNG',
             parentController: this,
-            elementID: 'removeKindButton_' + index,
-            form: this.form
+            elementID: 'removeKindButton_' + index
         })
             .then(() => {   //User confirmed removal
                 let kindIndex: number = this.gesuchModelManager.findKind(kind);

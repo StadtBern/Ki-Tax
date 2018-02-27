@@ -333,8 +333,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             title: 'CONFIRM_UEBERNAHME_SCHULAMT',
             deleteText: 'BESCHREIBUNG_UEBERNAHME_SCHULAMT',
             parentController: undefined,
-            elementID: undefined,
-            form: this.form
+            elementID: undefined
         }).then(() => {
             if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
                 this.save(TSBetreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN, 'pendenzenBetreuungen', undefined);
@@ -657,8 +656,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                 title: 'MUTATIONSMELDUNG_CONFIRMATION',
                 deleteText: 'MUTATIONSMELDUNG_BESCHREIBUNG',
                 parentController: undefined,
-                elementID: undefined,
-                form: this.form
+                elementID: undefined
             }).then(() => {   //User confirmed removal
                 this.mitteilungRS.sendbetreuungsmitteilung(this.gesuchModelManager.getGesuch().fall,
                     this.mutationsmeldungModel).then((response) => {

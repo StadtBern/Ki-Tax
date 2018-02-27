@@ -364,8 +364,7 @@ export class DVMitteilungListController {
                 title: 'MUTATIONSMELDUNG_UEBERNEHMEN',
                 deleteText: 'MUTATIONSMELDUNG_UEBERNEHMEN_BESCHREIBUNG',
                 parentController: this,
-                elementID: 'Intro',
-                form: this.form
+                elementID: 'Intro'
             }).then(() => {   //User confirmed message
                 let betreuungsmitteilung: TSBetreuungsmitteilung = <TSBetreuungsmitteilung>mitteilung;
                 this.mitteilungRS.applyBetreuungsmitteilung(betreuungsmitteilung.id).then((response: any) => { // JaxID kommt als response

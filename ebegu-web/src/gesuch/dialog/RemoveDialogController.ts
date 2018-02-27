@@ -38,7 +38,6 @@ export class RemoveDialogController {
 
         if (title !== undefined && title !== null) {
             this.title = $translate.instant(title);
-
         } else {
             this.title = $translate.instant('LOESCHEN_DIALOG_TITLE');
         }

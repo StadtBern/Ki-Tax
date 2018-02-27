@@ -61,8 +61,7 @@ export class InstitutionenListViewController extends AbstractAdminViewController
             deleteText: '',
             title: 'LOESCHEN_DIALOG_TITLE',
             parentController: undefined,
-            elementID: undefined,
-            form: this.form
+            elementID: undefined
         }).then(() => {   //User confirmed removal
             this.selectedInstitution = undefined;
             this.institutionRS.removeInstitution(institution.id).then((response) => {

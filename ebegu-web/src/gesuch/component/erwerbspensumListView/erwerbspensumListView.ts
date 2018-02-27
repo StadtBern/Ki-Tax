@@ -124,8 +124,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
             deleteText: (gsInMutation && pensumLaufendOderVergangen) ? 'ERWERBSPENSUM_LOESCHEN_GS_MUTATION' : '',
             title: 'ERWERBSPENSUM_LOESCHEN',
             parentController: this,
-            elementID: element_id + index,
-            form: this.form
+            elementID: element_id + index
         })
             .then(() => {   //User confirmed removal
                 this.gesuchModelManager.setGesuchstellerNumber(gesuchstellerNumber);

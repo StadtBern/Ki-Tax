@@ -170,8 +170,7 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
                     title: 'CONFIRM_SAVE_FERIENINSEL',
                     deleteText: 'BESCHREIBUNG_SAVE_FERIENINSEL',
                     parentController: undefined,
-                    elementID: undefined,
-                    form: this.form
+                    elementID: undefined
                 }).then(() => {
                     this.onSave();
                 });

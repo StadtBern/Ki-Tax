@@ -83,8 +83,7 @@ export class DvErrorMessagesPanelComponent {
             title: 'REMOVE_ONLINE_MUTATION_CONFIRMATION',
             deleteText: 'REMOVE_ONLINE_MUTATION_BESCHREIBUNG',
             parentController: undefined,
-            elementID: undefined,
-            form: undefined
+            elementID: undefined
         }).then(() => {   //User confirmed removal
             this.gesuchRS.removeOnlineMutation(objectId, gesuchsperiodeId).then((response) => {});
         });
@@ -95,8 +94,7 @@ export class DvErrorMessagesPanelComponent {
             title: 'REMOVE_ONLINE_ERNEUERUNGSGESUCH_CONFIRMATION',
             deleteText: 'REMOVE_ONLINE_ERNEUERUNGSGESUCH_BESCHREIBUNG',
             parentController: undefined,
-            elementID: undefined,
-            form: undefined
+            elementID: undefined
         }).then(() => {   //User confirmed removal
             this.gesuchRS.removeOnlineFolgegesuch(objectId, gesuchsperiodeId).then((response) => {});
         });
