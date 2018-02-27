@@ -86,7 +86,7 @@ export class InstitutionStammdatenRS {
     }
 
     public getAllActiveInstitutionStammdatenByGesuchsperiode(gesuchsperiodeId: string): IPromise<TSInstitutionStammdaten[]> {
-        return this.http.get(this.serviceURL + '/gesuchsperiode/active', {params: {gesuchsperiodeId: gesuchsperiodeId}})
+        return this.http.get(this.serviceURL + '/gesuchsperiode/active', {params: {gesuchsperiodeId: gesuchsperiodeId}, cache: true})
             .then((response: any) => {
                 this.log.debug('PARSING institutionStammdaten REST array object', response.data);
                 return this.ebeguRestUtil.parseInstitutionStammdatenArray(response.data);
