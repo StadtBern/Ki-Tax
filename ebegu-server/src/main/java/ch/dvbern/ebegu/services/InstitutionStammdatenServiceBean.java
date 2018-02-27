@@ -131,16 +131,12 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 		ParameterExpression<LocalDate> startParam = cb.parameter(LocalDate.class, "gpStart");
 		ParameterExpression<LocalDate> endParam = cb.parameter(LocalDate.class, "gpEnd");
 
-		Predicate intervalStartPredicate = cb.between(startParam,
-			root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigAb),
-			root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigBis));
+		// IS Ende muss NACH GP Start sein
+		// IS Start muss VOR GP Ende sein
+		Predicate startPredicate = cb.lessThanOrEqualTo(root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigBis), startParam);
+		Predicate endPredicate = cb.greaterThanOrEqualTo(root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigAb), endParam);
 
-		Predicate intervalEndPredicate = cb.between(endParam,
-			root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigAb),
-			root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigBis));
-		Predicate somewhereInBetweenPredicate = cb.or(intervalStartPredicate, intervalEndPredicate);
-
-		query.where(somewhereInBetweenPredicate, isActivePredicate);
+		query.where(startPredicate, endPredicate, isActivePredicate);
 
 		TypedQuery<InstitutionStammdaten> typedQuery = persistence.getEntityManager().createQuery(query);
 		typedQuery.setParameter("gpStart", gesuchsperiode.getGueltigkeit().getGueltigAb());
