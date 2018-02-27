@@ -37,6 +37,8 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.Validate;
+
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Institution;
@@ -50,7 +52,6 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang3.Validate;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
@@ -131,10 +132,10 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 		ParameterExpression<LocalDate> startParam = cb.parameter(LocalDate.class, "gpStart");
 		ParameterExpression<LocalDate> endParam = cb.parameter(LocalDate.class, "gpEnd");
 
-		// IS Ende muss NACH GP Start sein
-		// IS Start muss VOR GP Ende sein
-		Predicate startPredicate = cb.lessThanOrEqualTo(root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigBis), startParam);
-		Predicate endPredicate = cb.greaterThanOrEqualTo(root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigAb), endParam);
+		// InstStammdaten Ende muss NACH GP Start sein
+		// InstStammdaten Start muss VOR GP Ende sein
+		Predicate startPredicate = cb.greaterThanOrEqualTo(root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigBis), startParam);
+		Predicate endPredicate = cb.lessThanOrEqualTo(root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigAb), endParam);
 
 		query.where(startPredicate, endPredicate, isActivePredicate);
 
