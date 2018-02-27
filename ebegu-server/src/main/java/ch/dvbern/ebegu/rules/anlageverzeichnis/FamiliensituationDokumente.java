@@ -22,6 +22,7 @@ import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
+import ch.dvbern.ebegu.util.EbeguUtil;
 
 /**
  * Dokumente für Familiensituation:
@@ -31,6 +32,9 @@ import ch.dvbern.ebegu.enums.DokumentTyp;
  * Wird nur bei Mutation der Familiensituation verlangt, nicht bei Erstgesuch.
  * Notwendig beim Wechsel von zwei Gesuchsteller auf einen.
  * Nur eines der drei Dokumente ist notwendig. Die Dokumente werden im Anlageverzeichnis als 1 Punkt geführt
+ * <p>
+ * Unterstützungsnachweis / Bestätigung Sozialdienst
+ * Notwendig, wenn die GS Sozialhilfe bekommen
  **/
 public class FamiliensituationDokumente extends AbstractDokumente<Familiensituation, Familiensituation> {
 
@@ -38,13 +42,26 @@ public class FamiliensituationDokumente extends AbstractDokumente<Familiensituat
 	public void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis) {
 		add(getDokument(DokumentTyp.NACHWEIS_TRENNUNG, gesuch.extractFamiliensituationErstgesuch(), gesuch.extractFamiliensituation(),
 			null, null, null, DokumentGrundTyp.FAMILIENSITUATION), anlageVerzeichnis);
+
+		// dieses Dokument gehoert eigentlich zur FinSit aber muss hier hinzugefuegt werden, da es Daten aus der Familiensituation benoetigt
+		add(getDokument(DokumentTyp.UNTERSTUETZUNGSBESTAETIGUNG, gesuch.extractFamiliensituation(),
+			null, null, null, DokumentGrundTyp.FINANZIELLESITUATION), anlageVerzeichnis);
 	}
 
 	@Override
-	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Familiensituation dataForDocument) {
-		return false;
+	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Familiensituation familiensituation) {
+		if (familiensituation == null) {
+			return false;
+		}
+		switch (dokumentTyp) {
+		case UNTERSTUETZUNGSBESTAETIGUNG:
+			return !EbeguUtil.isNullOrFalse(familiensituation.getSozialhilfeBezueger());
+		default:
+			return false;
+		}
 	}
 
+	@SuppressWarnings("ParameterNameDiffersFromOverriddenParameter")
 	@Override
 	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Familiensituation familiensituationErstgesuch, Familiensituation familiensituationMutation) {
 		if (familiensituationErstgesuch == null || familiensituationMutation == null) {

@@ -20,3 +20,9 @@ ebegu-runconfig/wildfly_10.0.0.Final/build.properties
 /ebegu-server/ch.dvbern.ebegu.entities.*/segments_*
 /ebegu-server/ch.dvbern.ebegu.entities.*/write.lock
 /ebegu-server/jboss.server.data.dir/*
+/logstash/input/dvb-dev/server.log**
+/logstash/input/dvb-int/server.log**
+/logstash/input/id-test/server.log**
+/logstash/input/id-int/server.log**
+/logstash/input/id-test2/server.log**
+/logstash/input/id-prod/server.log**

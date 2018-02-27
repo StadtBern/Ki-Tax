@@ -29,6 +29,7 @@ import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import ZahlungRS from '../../../core/service/zahlungRS.rest';
 import {ApplicationPropertyRS} from '../../service/applicationPropertyRS.rest';
 import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
+import {DailyBatchRS} from '../../service/dailyBatchRS.rest';
 
 require('./testdatenView.less');
 let template = require('./testdatenView.html');
@@ -44,7 +45,7 @@ export class TestdatenViewComponentConfig implements IComponentOptions {
 
 export class TestdatenViewController {
     static $inject = ['TestFaelleRS', 'DvDialog', 'UserRS', 'ErrorService', 'ReindexRS', 'GesuchsperiodeRS',
-        'DatabaseMigrationRS', 'ZahlungRS', 'ApplicationPropertyRS', 'GesuchRS'];
+        'DatabaseMigrationRS', 'ZahlungRS', 'ApplicationPropertyRS', 'GesuchRS', 'DailyBatchRS'];
 
     testFaelleRS: TestFaelleRS;
     fallId: number;
@@ -67,7 +68,7 @@ export class TestdatenViewController {
                 private errorService: ErrorService, private reindexRS: ReindexRS,
                 private gesuchsperiodeRS: GesuchsperiodeRS, private databaseMigrationRS: DatabaseMigrationRS,
                 private zahlungRS: ZahlungRS, private applicationPropertyRS: ApplicationPropertyRS,
-                private gesuchRS: GesuchRS) {
+                private gesuchRS: GesuchRS, private dailyBatchRS: DailyBatchRS) {
         this.testFaelleRS = testFaelleRS;
     }
 
@@ -196,7 +197,6 @@ export class TestdatenViewController {
     public zahlungenKontrollieren(): void {
         this.zahlungRS.zahlungenKontrollieren();
     }
-
     public deleteAllZahlungsauftraege(): void {
         this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
             deleteText: 'ZAHLUNG_LOESCHEN_DIALOG_TEXT',
@@ -219,6 +219,22 @@ export class TestdatenViewController {
             .then(() => {   //User confirmed removal
                 this.gesuchRS.gesuchVerfuegen(this.verfuegenGesuchid);
             });
+    }
+
+    public runBatchMahnungFristablauf(): void {
+        this.dailyBatchRS.runBatchMahnungFristablauf().then((response) => {
+            let text: string = '';
+            if (response) {
+                text = 'MAHNUNG_BATCH_EXECUTED_OK';
+            } else {
+                text = 'MAHNUNG_BATCH_EXECUTED_ERROR';
+            }
+            this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                title: text
+            }).then(() => {
+                //do nothing
+            });
+        });
     }
 
 }

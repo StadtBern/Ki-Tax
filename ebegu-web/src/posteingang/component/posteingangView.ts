@@ -13,10 +13,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentOptions} from 'angular';
-import TSMitteilung from '../../models/TSMitteilung';
+import {IComponentOptions, ILogService, IPromise} from 'angular';
+import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import MitteilungRS from '../../core/service/mitteilungRS.rest';
+import {getAemterForFilter, TSAmt} from '../../models/enums/TSAmt';
+import {getTSMitteilungsStatusForFilter, TSMitteilungStatus} from '../../models/enums/TSMitteilungStatus';
+import TSMitteilung from '../../models/TSMitteilung';
+import TSMtteilungSearchresultDTO from '../../models/TSMitteilungSearchresultDTO';
 import EbeguUtil from '../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import IStateService = angular.ui.IStateService;
 let template = require('./posteingangView.html');
 require('./posteingangView.less');
@@ -30,39 +35,67 @@ export class PosteingangViewComponentConfig implements IComponentOptions {
 
 export class PosteingangViewController {
 
-    private mitteilungen: Array<TSMitteilung>;
+    displayedCollection: Array<TSMitteilung> = []; //Liste die im Gui angezeigt wird
+    pagination: any = {};
+    totalResultCount: string = '0';
+    myTableFilterState: any; // Muss hier gespeichert werden, damit es fuer den Aufruf ab "Inkl.Erledigt"-Checkbox vorhanden ist
 
     itemsByPage: number = 20;
     numberOfPages: number = 1;
+    selectedAmt: string;
+    selectedMitteilungsstatus: TSMitteilungStatus;
+    includeClosed: boolean;
 
-    static $inject: string[] = ['MitteilungRS', 'EbeguUtil', 'CONSTANTS', '$state'];
 
-    constructor(private mitteilungRS: MitteilungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any, private $state: IStateService) {
-        this.initViewModel();
-    }
 
-    public getMitteilungen() {
-        return this.mitteilungen;
+    static $inject: string[] = ['MitteilungRS', 'EbeguUtil', 'CONSTANTS', '$state', 'AuthServiceRS', '$log'];
+
+    constructor(private mitteilungRS: MitteilungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any, private $state: IStateService,
+                private authServiceRS: AuthServiceRS, private $log: ILogService) {
     }
 
     public addZerosToFallNummer(fallnummer: number): string {
         return this.ebeguUtil.addZerosToNumber(fallnummer, this.CONSTANTS.FALLNUMMER_LENGTH);
     }
 
-    private initViewModel() {
-        this.updatePosteingang();
-    }
-
-    private updatePosteingang() {
-        this.mitteilungRS.getMitteilungenForPosteingang().then((response: any) => {
-            this.mitteilungen = angular.copy(response);
-            this.numberOfPages = this.mitteilungen.length / this.itemsByPage;
-        });
-    }
-
     private gotoMitteilung(mitteilung: TSMitteilung) {
         this.$state.go('mitteilungen', {
             fallId: mitteilung.fall.id
         });
+    }
+
+    isCurrentUserSchulamt(): boolean {
+        let isUserSchulamt: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles());
+        return isUserSchulamt;
+    }
+
+    getAemter(): Array<TSAmt> {
+        return getAemterForFilter();
+    }
+
+    getMitteilungsStatus(): Array<TSMitteilungStatus> {
+        return getTSMitteilungsStatusForFilter();
+    }
+
+    public clickedIncludeClosed(): void {
+        this.passFilterToServer(this.myTableFilterState);
+    }
+
+    public passFilterToServer = (tableFilterState: any): IPromise<void> => {
+        this.pagination = tableFilterState.pagination;
+        this.myTableFilterState = tableFilterState;
+
+        return this.mitteilungRS.searchMitteilungen(tableFilterState, this.includeClosed).then((result: TSMtteilungSearchresultDTO) => {
+            this.setResult(result);
+        });
+    }
+
+    private setResult(result: TSMtteilungSearchresultDTO): void {
+        if (result) {
+            this.pagination.totalItemCount = result.totalResultSize;
+            this.pagination.numberOfPages = Math.ceil(result.totalResultSize / this.pagination.number);
+            this.displayedCollection = [].concat(result.mitteilungen);
+            this.totalResultCount = result.totalResultSize ? result.totalResultSize.toString() : '0';
+        }
     }
 }

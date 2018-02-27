@@ -33,6 +33,8 @@ public class JaxFall extends JaxAbstractDTO {
 
 	private JaxAuthLoginElement verantwortlicher;
 
+	private JaxAuthLoginElement verantwortlicherSCH;
+
 	@Min(1)
 	private Integer nextNumberKind = 1;
 
@@ -52,6 +54,14 @@ public class JaxFall extends JaxAbstractDTO {
 
 	public void setVerantwortlicher(JaxAuthLoginElement verantwortlicher) {
 		this.verantwortlicher = verantwortlicher;
+	}
+
+	public JaxAuthLoginElement getVerantwortlicherSCH() {
+		return verantwortlicherSCH;
+	}
+
+	public void setVerantwortlicherSCH(JaxAuthLoginElement verantwortlicherSCH) {
+		this.verantwortlicherSCH = verantwortlicherSCH;
 	}
 
 	public Integer getNextNumberKind() {

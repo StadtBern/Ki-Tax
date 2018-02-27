@@ -17,6 +17,7 @@ import {IHttpService, ILogService, IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSBetreuung from '../../models/TSBetreuung';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
+import TSAnmeldungDTO from '../../models/TSAnmeldungDTO';
 
 export default class BetreuungRS {
     serviceURL: string;
@@ -99,6 +100,51 @@ export default class BetreuungRS {
         });
     }
 
+    public anmeldungSchulamtUebernehmen(betreuung: TSBetreuung, kindId: string, gesuchId: string): IPromise<TSBetreuung> {
+        let restBetreuung = {};
+        restBetreuung = this.ebeguRestUtil.betreuungToRestObject(restBetreuung, betreuung);
+        return this.http.put(this.serviceURL + '/schulamt/uebernehmen/' + encodeURIComponent(kindId) + '/', restBetreuung, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
+                this.log.debug('PARSING Betreuung REST object ', response.data);
+                return this.ebeguRestUtil.parseBetreuung(new TSBetreuung(), response.data);
+            });
+        });
+    }
+
+    public anmeldungSchulamtAblehnen(betreuung: TSBetreuung, kindId: string, gesuchId: string): IPromise<TSBetreuung> {
+        let restBetreuung = {};
+        restBetreuung = this.ebeguRestUtil.betreuungToRestObject(restBetreuung, betreuung);
+        return this.http.put(this.serviceURL + '/schulamt/ablehnen/' + encodeURIComponent(kindId) + '/', restBetreuung, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
+                this.log.debug('PARSING Betreuung REST object ', response.data);
+                return this.ebeguRestUtil.parseBetreuung(new TSBetreuung(), response.data);
+            });
+        });
+    }
+
+    public anmeldungSchulamtFalscheInstitution(betreuung: TSBetreuung, kindId: string, gesuchId: string): IPromise<TSBetreuung> {
+        let restBetreuung = {};
+        restBetreuung = this.ebeguRestUtil.betreuungToRestObject(restBetreuung, betreuung);
+        return this.http.put(this.serviceURL + '/schulamt/falscheInstitution/' + encodeURIComponent(kindId) + '/', restBetreuung, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
+                this.log.debug('PARSING Betreuung REST object ', response.data);
+                return this.ebeguRestUtil.parseBetreuung(new TSBetreuung(), response.data);
+            });
+        });
+    }
+
     public removeBetreuung(betreuungId: string, gesuchId: string): IPromise<any> {
         return this.http.delete(this.serviceURL + '/' + encodeURIComponent(betreuungId))
             .then((responseDeletion) => {
@@ -132,5 +178,18 @@ export default class BetreuungRS {
                 return convertedBetreuungen;
             });
         });
+    }
+
+    public createAngebot(anmeldungDTO: TSAnmeldungDTO): IPromise<any> {
+        let restAnmeldung = {};
+        restAnmeldung = this.ebeguRestUtil.anmeldungDTOToRestObject(restAnmeldung, anmeldungDTO);
+        return this.http.put(this.serviceURL + '/anmeldung/create/', restAnmeldung, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            return response;
+        });
+
     }
 }

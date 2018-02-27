@@ -13,37 +13,36 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, ILogService, IPromise} from 'angular';
-import WizardStepManager from '../../gesuch/service/wizardStepManager';
-import TSMitteilung from '../../models/TSMitteilung';
-import TSBetreuung from '../../models/TSBetreuung';
-import {TSMitteilungTeilnehmerTyp} from '../../models/enums/TSMitteilungTeilnehmerTyp';
-import {TSMitteilungStatus} from '../../models/enums/TSMitteilungStatus';
-import TSFall from '../../models/TSFall';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import WizardStepManager from '../../gesuch/service/wizardStepManager';
+import {TSMitteilungStatus} from '../../models/enums/TSMitteilungStatus';
+import {TSMitteilungTeilnehmerTyp} from '../../models/enums/TSMitteilungTeilnehmerTyp';
+import TSBetreuung from '../../models/TSBetreuung';
 import TSBetreuungsmitteilung from '../../models/TSBetreuungsmitteilung';
 import TSBetreuungspensum from '../../models/TSBetreuungspensum';
-import DateUtil from '../../utils/DateUtil';
 import TSBetreuungspensumContainer from '../../models/TSBetreuungspensumContainer';
+import TSFall from '../../models/TSFall';
+import TSMitteilung from '../../models/TSMitteilung';
+import TSMtteilungSearchresultDTO from '../../models/TSMitteilungSearchresultDTO';
+import DateUtil from '../../utils/DateUtil';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import ITranslateService = angular.translate.ITranslateService;
 
 export default class MitteilungRS {
     serviceURL: string;
     http: IHttpService;
     ebeguRestUtil: EbeguRestUtil;
-    log: ILogService;
 
     static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', 'WizardStepManager',
         'AuthServiceRS', '$translate'];
     /* @ngInject */
-    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService,
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, private $log: ILogService,
                 private wizardStepManager: WizardStepManager, private authServiceRS: AuthServiceRS,
                 private $translate: ITranslateService) {
         this.serviceURL = REST_API + 'mitteilungen';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
-        this.log = $log;
     }
 
     public getServiceName(): string {
@@ -53,7 +52,7 @@ export default class MitteilungRS {
     public findMitteilung(mitteilungID: string): IPromise<TSMitteilung> {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(mitteilungID))
             .then((response: any) => {
-                this.log.debug('PARSING Mitteilung REST object ', response.data);
+                this.$log.debug('PARSING Mitteilung REST object ', response.data);
                 return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
             });
     }
@@ -66,7 +65,7 @@ export default class MitteilungRS {
                 'Content-Type': 'application/json'
             }
         }).then((response: any) => {
-            this.log.debug('PARSING mitteilung REST object ', response.data);
+            this.$log.debug('PARSING mitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
         });
     }
@@ -79,56 +78,49 @@ export default class MitteilungRS {
                 'Content-Type': 'application/json'
             }
         }).then((response: any) => {
-            this.log.debug('PARSING mitteilung REST object ', response.data);
+            this.$log.debug('PARSING mitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
         });
     }
 
     public setMitteilungGelesen(mitteilungId: string): IPromise<TSMitteilung> {
         return this.http.put(this.serviceURL + '/setgelesen/' + mitteilungId, null).then((response: any) => {
-            this.log.debug('PARSING mitteilung REST object ', response.data);
+            this.$log.debug('PARSING mitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
         });
     }
 
     public setMitteilungErledigt(mitteilungId: string): IPromise<TSMitteilung> {
         return this.http.put(this.serviceURL + '/seterledigt/' + mitteilungId, null).then((response: any) => {
-            this.log.debug('PARSING mitteilung REST object ', response.data);
+            this.$log.debug('PARSING mitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
         });
     }
 
     public getEntwurfForCurrentRolleForFall(fallId: string): IPromise<TSMitteilung> {
         return this.http.get(this.serviceURL + '/entwurf/fall/' + fallId).then((response: any) => {
-            this.log.debug('PARSING mitteilung REST object ', response.data);
+            this.$log.debug('PARSING mitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
         });
     }
 
     public getEntwurfForCurrentRolleForBetreuung(betreuungId: string): IPromise<TSMitteilung> {
         return this.http.get(this.serviceURL + '/entwurf/betreuung/' + betreuungId).then((response: any) => {
-            this.log.debug('PARSING mitteilung REST object ', response.data);
+            this.$log.debug('PARSING mitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
         });
     }
 
     public getMitteilungenForCurrentRolleForFall(fallId: string): IPromise<Array<TSMitteilung>> {
         return this.http.get(this.serviceURL + '/forrole/fall/' + fallId).then((response: any) => {
-            this.log.debug('PARSING mitteilung REST object ', response.data);
+            this.$log.debug('PARSING mitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseMitteilungen(response.data.mitteilungen); // The response is a wrapper
         });
     }
 
     public getMitteilungenForCurrentRolleForBetreuung(betreuungId: string): IPromise<Array<TSMitteilung>> {
         return this.http.get(this.serviceURL + '/forrole/betreuung/' + betreuungId).then((response: any) => {
-            this.log.debug('PARSING mitteilung REST object ', response.data);
-            return this.ebeguRestUtil.parseMitteilungen(response.data.mitteilungen); // The response is a wrapper
-        });
-    }
-
-    public getMitteilungenForPosteingang(): IPromise<Array<TSMitteilung>> {
-        return this.http.get(this.serviceURL + '/posteingang').then((response: any) => {
-            this.log.debug('PARSING mitteilung REST object ', response.data);
+            this.$log.debug('PARSING mitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseMitteilungen(response.data.mitteilungen); // The response is a wrapper
         });
     }
@@ -148,7 +140,7 @@ export default class MitteilungRS {
 
     public setAllNewMitteilungenOfFallGelesen(fallId: string): IPromise<Array<TSMitteilung>> {
         return this.http.put(this.serviceURL + '/setallgelesen/' + fallId, null).then((response: any) => {
-            this.log.debug('PARSING mitteilungen REST objects ', response.data);
+            this.$log.debug('PARSING mitteilungen REST objects ', response.data);
             return this.ebeguRestUtil.parseMitteilungen(response.data.mitteilungen); // The response is a wrapper
         });
     }
@@ -167,7 +159,7 @@ export default class MitteilungRS {
                 'Content-Type': 'application/json'
             }
         }).then((response: any) => {
-            this.log.debug('PARSING Betreuungsmitteilung REST object ', response.data);
+            this.$log.debug('PARSING Betreuungsmitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseBetreuungsmitteilung(new TSBetreuungsmitteilung(), response.data);
         });
     }
@@ -184,11 +176,33 @@ export default class MitteilungRS {
 
     public getNewestBetreuungsmitteilung(betreuungId: string): IPromise<TSBetreuungsmitteilung> {
         return this.http.get(this.serviceURL + '/newestBetreuunsmitteilung/' + betreuungId).then((response: any) => {
-            this.log.debug('PARSING Betreuungsmitteilung REST object ', response.data);
+            this.$log.debug('PARSING Betreuungsmitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseBetreuungsmitteilung(new TSBetreuungsmitteilung(), response.data);
         });
     }
 
+    public mitteilungUebergebenAnJugendamt(mitteilungId: string): IPromise<TSMitteilung> {
+        return this.http.get(this.serviceURL + '/delegation/jugendamt/' + mitteilungId).then((response: any) => {
+            return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
+        });
+    }
+
+    public mitteilungUebergebenAnSchulamt(mitteilungId: string): IPromise<TSMitteilung> {
+        return this.http.get(this.serviceURL + '/delegation/schulamt/' + mitteilungId).then((response: any) => {
+            return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
+        });
+    }
+
+    public searchMitteilungen(antragSearch: any, includeClosed: boolean): IPromise<TSMtteilungSearchresultDTO> {
+        return this.http.post(this.serviceURL + '/search/' + includeClosed, antragSearch, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            this.$log.debug('PARSING antraege REST array object', response);
+            return new TSMtteilungSearchresultDTO(this.ebeguRestUtil.parseMitteilungen(response.data.mitteilungDTOs), response.data.paginationDTO.totalItemCount);
+        });
+    }
 
     private createBetreuungsmitteilung(fall: TSFall, betreuung: TSBetreuung): TSBetreuungsmitteilung {
         let mutationsmeldung: TSBetreuungsmitteilung = new TSBetreuungsmitteilung();

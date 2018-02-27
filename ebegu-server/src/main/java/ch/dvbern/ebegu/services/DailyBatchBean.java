@@ -29,11 +29,12 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Service fuer Batch-Jobs.
@@ -47,7 +48,6 @@ import org.slf4j.LoggerFactory;
 @Local(DailyBatch.class)
 public class DailyBatchBean implements DailyBatch {
 
-	private static final long serialVersionUID = -4627435482413298843L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(DailyBatchBean.class);
 
 	@Inject
@@ -65,6 +65,9 @@ public class DailyBatchBean implements DailyBatch {
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 
+	@Inject
+	private WorkjobService workjobService;
+
 	@Override
 	@Asynchronous
 	public void runBatchCleanDownloadFiles() {
@@ -74,6 +77,17 @@ public class DailyBatchBean implements DailyBatch {
 			LOGGER.info("... Job Cleanup Download-Files finished");
 		} catch (RuntimeException e) {
 			LOGGER.error("Batch-Job Cleanup Download-Files konnte nicht durchgefuehrt werden!", e);
+		}
+	}
+
+	@Override
+	public void runBatchCleanWorkjobs() {
+		try {
+			LOGGER.info("Starting Job Cleanup Old Workjobs...");
+			workjobService.removeOldWorkjobs();
+			LOGGER.info("... Job Cleanup Old Workjobs finished");
+		} catch (RuntimeException e) {
+			LOGGER.error("Batch- Job Cleanup Old Workjobs konnte nicht durchgefuehrt werden!", e);
 		}
 	}
 
@@ -104,7 +118,7 @@ public class DailyBatchBean implements DailyBatch {
 		try {
 			LOGGER.info("Starting Job WarnungGesuchNichtFreigegeben...");
 			final int anzahl = gesuchService.warnGesuchNichtFreigegeben();
-			LOGGER.info("Es wurden " + anzahl + " Gesuche gefunden, die noch nicht freigegeben wurden");
+			LOGGER.info("Es wurden {} Gesuche gefunden, die noch nicht freigegeben wurden", anzahl);
 			LOGGER.info("... Job WarnungGesuchNichtFreigegeben finished");
 		} catch (RuntimeException e) {
 			LOGGER.error("Batch-Job WarnungGesuchNichtFreigegeben konnte nicht durchgefuehrt werden!", e);
@@ -117,7 +131,7 @@ public class DailyBatchBean implements DailyBatch {
 		try {
 			LOGGER.info("Starting Job WarnungFreigabequittungFehlt...");
 			final int anzahl = gesuchService.warnFreigabequittungFehlt();
-			LOGGER.info("Es wurden " + anzahl + " Gesuche gefunden, bei denen die Freigabequittung fehlt");
+			LOGGER.info("Es wurden {} Gesuche gefunden, bei denen die Freigabequittung fehlt", anzahl);
 			LOGGER.info("... Job WarnungFreigabequittungFehlt finished");
 		} catch (RuntimeException e) {
 			LOGGER.error("Batch-Job WarnungFreigabequittungFehlt konnte nicht durchgefuehrt werden!", e);
@@ -132,7 +146,7 @@ public class DailyBatchBean implements DailyBatch {
 
 			final int anzahl = gesuchService.deleteGesucheOhneFreigabeOderQuittung();
 
-			LOGGER.info("Es wurden " + anzahl + " Gesuche ohne Freigabe oder Quittung gefunden, die geloescht werden muessen");
+			LOGGER.info("Es wurden {} Gesuche ohne Freigabe oder Quittung gefunden, die geloescht werden muessen", anzahl);
 			LOGGER.info("... Job GesucheLoeschen finished");
 		} catch (RuntimeException e) {
 			LOGGER.error("Batch-Job GesucheLoeschen konnte nicht durchgefuehrt werden!", e);
@@ -144,7 +158,7 @@ public class DailyBatchBean implements DailyBatch {
 		try {
 			LOGGER.info("Starting Job GesuchsperiodeLoeschen...");
 			LocalDate stichtag = LocalDate.now().minusYears(10);
-			LOGGER.info("Deleting Gesuchsperioden older than " + Constants.DATE_FORMATTER.format(stichtag));
+			LOGGER.info("Deleting Gesuchsperioden older than {}", Constants.DATE_FORMATTER.format(stichtag));
 			Collection<Gesuchsperiode> gesuchsperiodenBetween = gesuchsperiodeService.getGesuchsperiodenBetween(LocalDate.of(1900, Month.JANUARY, 1), stichtag);
 			for (Gesuchsperiode gesuchsperiode : gesuchsperiodenBetween) {
 				gesuchsperiodeService.removeGesuchsperiode(gesuchsperiode.getId());

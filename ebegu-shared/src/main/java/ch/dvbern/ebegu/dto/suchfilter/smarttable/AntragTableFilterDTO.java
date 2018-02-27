@@ -35,7 +35,7 @@ public class AntragTableFilterDTO implements Serializable {
 
 	private AntragSearchDTO search;
 
-	private AntragSortDTO sort;
+	private SortDTO sort;
 
 	public PaginationDTO getPagination() {
 		return pagination;
@@ -53,11 +53,11 @@ public class AntragTableFilterDTO implements Serializable {
 		this.search = search;
 	}
 
-	public AntragSortDTO getSort() {
+	public SortDTO getSort() {
 		return sort;
 	}
 
-	public void setSort(AntragSortDTO sort) {
+	public void setSort(SortDTO sort) {
 		this.sort = sort;
 	}
 

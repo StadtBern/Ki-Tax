@@ -16,6 +16,7 @@
 package ch.dvbern.ebegu.vorlagen.freigabequittung;
 
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 
 public class BetreuungsTabellePrintImpl implements BetreuungsTabellePrint {
 
@@ -32,7 +33,9 @@ public class BetreuungsTabellePrintImpl implements BetreuungsTabellePrint {
 
 	@Override
 	public String getBetreuung() {
-		return betreuungen.getInstitutionStammdaten().getInstitution().getName();
+		return new StringBuilder(betreuungen.getInstitutionStammdaten().getInstitution().getName())
+			.append(" (").append(ServerMessageUtil.translateEnumValue(betreuungen.getInstitutionStammdaten().getBetreuungsangebotTyp()))
+			.append(")").toString();
 	}
 
 	@Override

@@ -81,27 +81,32 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestLogin
 	 */
 	@Test
 	public void convertJaxGesuchstellerWithUmzgTest() {
-		JaxGesuchstellerContainer gesuchstellerWith3Adr = TestJaxDataUtil.createTestJaxGesuchstellerWithUmzug();
-		GesuchstellerContainer gesuchsteller = converter.gesuchstellerContainerToEntity(gesuchstellerWith3Adr, new GesuchstellerContainer());
-		Assert.assertEquals(gesuchstellerWith3Adr.getGesuchstellerJA().getGeburtsdatum(), gesuchsteller.getGesuchstellerJA().getGeburtsdatum());
-		Assert.assertEquals(gesuchstellerWith3Adr.getGesuchstellerJA().getVorname(), gesuchsteller.getGesuchstellerJA().getVorname());
-		Assert.assertEquals(gesuchstellerWith3Adr.getGesuchstellerJA().getNachname(), gesuchsteller.getGesuchstellerJA().getNachname());
+		JaxGesuchstellerContainer gesuchstellerWith4Adr = TestJaxDataUtil.createTestJaxGesuchstellerWithUmzug();
+		GesuchstellerContainer gesuchsteller = converter.gesuchstellerContainerToEntity(gesuchstellerWith4Adr, new GesuchstellerContainer());
+		Assert.assertEquals(gesuchstellerWith4Adr.getGesuchstellerJA().getGeburtsdatum(), gesuchsteller.getGesuchstellerJA().getGeburtsdatum());
+		Assert.assertEquals(gesuchstellerWith4Adr.getGesuchstellerJA().getVorname(), gesuchsteller.getGesuchstellerJA().getVorname());
+		Assert.assertEquals(gesuchstellerWith4Adr.getGesuchstellerJA().getNachname(), gesuchsteller.getGesuchstellerJA().getNachname());
 		//id wird serverseitig gesetzt
-		Assert.assertNull(gesuchstellerWith3Adr.getId());
+		Assert.assertNull(gesuchstellerWith4Adr.getId());
 		Assert.assertNotNull(gesuchsteller.getId());
-		Assert.assertEquals(3, gesuchsteller.getAdressen().size());
+		Assert.assertEquals(4, gesuchsteller.getAdressen().size());
 		ImmutableListMultimap<AdresseTyp, GesuchstellerAdresseContainer> adrByTyp =
 			Multimaps.index(gesuchsteller.getAdressen(), GesuchstellerAdresseContainer::extractAdresseTyp);
 
 		GesuchstellerAdresseContainer altAdr = adrByTyp.get(AdresseTyp.KORRESPONDENZADRESSE).get(0);
 		Assert.assertNotNull("Korrespondenzadresse muss vorhanden sein", altAdr);
-		Assert.assertTrue(altAdr.getGesuchstellerAdresseJA().isSame(converter.gesuchstellerAdresseContainerToEntity(gesuchstellerWith3Adr.getAlternativeAdresse(),
+		Assert.assertTrue(altAdr.getGesuchstellerAdresseJA().isSame(converter.gesuchstellerAdresseContainerToEntity(gesuchstellerWith4Adr.getAlternativeAdresse(),
+			new GesuchstellerAdresseContainer()).getGesuchstellerAdresseJA()));
+
+		GesuchstellerAdresseContainer rechnungsAdr = adrByTyp.get(AdresseTyp.RECHNUNGSADRESSE).get(0);
+		Assert.assertNotNull("Rechnungsadresse muss vorhanden sein", rechnungsAdr);
+		Assert.assertTrue(rechnungsAdr.getGesuchstellerAdresseJA().isSame(converter.gesuchstellerAdresseContainerToEntity(gesuchstellerWith4Adr.getRechnungsAdresse(),
 			new GesuchstellerAdresseContainer()).getGesuchstellerAdresseJA()));
 
 		ImmutableList<GesuchstellerAdresseContainer> wohnAdressen = adrByTyp.get(AdresseTyp.WOHNADRESSE);
 		Assert.assertEquals(LocalDate.of(1000, 1, 1), wohnAdressen.get(0).getGesuchstellerAdresseJA().getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(gesuchstellerWith3Adr.getAdressen().get(1).getAdresseJA().getGueltigAb().minusDays(1), wohnAdressen.get(0).getGesuchstellerAdresseJA().getGueltigkeit().getGueltigBis());
-		Assert.assertEquals(gesuchstellerWith3Adr.getAdressen().get(1).getAdresseJA().getGueltigAb(), wohnAdressen.get(1).getGesuchstellerAdresseJA().getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(gesuchstellerWith4Adr.getAdressen().get(1).getAdresseJA().getGueltigAb().minusDays(1), wohnAdressen.get(0).getGesuchstellerAdresseJA().getGueltigkeit().getGueltigBis());
+		Assert.assertEquals(gesuchstellerWith4Adr.getAdressen().get(1).getAdresseJA().getGueltigAb(), wohnAdressen.get(1).getGesuchstellerAdresseJA().getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(LocalDate.of(9999, 12, 31), wohnAdressen.get(1).getGesuchstellerAdresseJA().getGueltigkeit().getGueltigBis());
 	}
 

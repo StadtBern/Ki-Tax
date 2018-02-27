@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 
 /**
@@ -103,4 +104,16 @@ public interface ApplicationPropertyService {
 	 */
 	@Nonnull
 	Boolean findApplicationPropertyAsBoolean(@Nonnull ApplicationPropertyKey name, boolean defaultValue);
+
+	/**
+	 * Gibt den DefaultVerantwortlichen JA zurueck.
+	 */
+	@Nonnull
+	Optional<Benutzer> readDefaultVerantwortlicherFromProperties();
+
+	/**
+	 * Gibt den DefaultVerantwortlichen SCH zurueck.
+	 */
+	@Nonnull
+	Optional<Benutzer> readDefaultVerantwortlicherSCHFromProperties();
 }

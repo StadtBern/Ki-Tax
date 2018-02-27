@@ -43,10 +43,9 @@ public class CheckGesuchstellerContainerCompleteValidator implements
 			LOG.error("GesuchstellerJA is empty for GesuchstellerContainer {}", gsContainer.getId());
 			valid = false;
 		}
-		if (gsContainer.getFinanzielleSituationContainer() == null) {
-			LOG.error("FinanzielleSituationContainer is empty for GesuchstellerContainer {}", gsContainer.getId());
-			valid = false;
-		}
+		// The check if the finanzielleSitutionContaier is empty can not be done here any more since it can now be empty for a given set of Angebote
+		// it should be checked that FinSit is not empty according to the values of sozialhilfe and verguenstigungGewuenscht
+		// but this cannot be checked here since we have no access to the Gesuch
 		return valid;
 	}
 }

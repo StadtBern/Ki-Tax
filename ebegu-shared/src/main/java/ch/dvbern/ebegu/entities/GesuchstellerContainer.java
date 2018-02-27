@@ -137,6 +137,20 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 		return null;
 	}
 
+	/**
+	 * Returns the first rechnungsAdresse found for this GesuchstellerContainer. It should have only one.
+	 * If no rechnungsAdresse is set, null is returned
+	 */
+	@Nullable
+	public GesuchstellerAdresseContainer extractRechnungsAdresse() {
+		for (GesuchstellerAdresseContainer adresse : getAdressen()) {
+			if (adresse.extractIsRechnungsAdresse()) {
+				return adresse;
+			}
+		}
+		return null;
+	}
+
 	@Nullable
 	public FinanzielleSituationContainer getFinanzielleSituationContainer() {
 		return finanzielleSituationContainer;
@@ -201,6 +215,16 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 	public String extractNachname() {
 		if (this.gesuchstellerJA != null) {
 			return this.gesuchstellerJA.getNachname();
+		}
+		return "";
+	}
+
+	/**
+	 * Gibt den Vornamen des GesuchstellerJA oder ein Leerzeichen wenn er nicht existiert
+	 */
+	public String extractVorname() {
+		if (this.gesuchstellerJA != null) {
+			return this.gesuchstellerJA.getVorname();
 		}
 		return "";
 	}
@@ -323,5 +347,18 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 		}
 		final GesuchstellerContainer otherGesuchstellerContainer = (GesuchstellerContainer) other;
 		return EbeguUtil.isSameObject(getGesuchstellerJA(), otherGesuchstellerContainer.getGesuchstellerJA());
+	}
+
+	/**
+	 * Gibt die Rechnungsadresse zurueck. Sollte diese nicht erfasst sein, gibt die Wohnadresse zurueck, die
+	 * am stichtag gilt.
+	 */
+	@Nullable
+	public GesuchstellerAdresse extractEffectiveRechnungsAdresse(LocalDate stichtag) {
+		final GesuchstellerAdresseContainer rechnungsadresse = extractRechnungsAdresse();
+		if (rechnungsadresse != null) {
+			return rechnungsadresse.getGesuchstellerAdresseJA();
+		}
+		return getWohnadresseAm(stichtag);
 	}
 }

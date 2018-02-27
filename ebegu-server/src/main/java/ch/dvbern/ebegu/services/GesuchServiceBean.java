@@ -17,11 +17,9 @@ package ch.dvbern.ebegu.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,8 +41,7 @@ import javax.interceptor.Interceptors;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Fetch;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
@@ -56,10 +53,14 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
+import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.AbstractEntity_;
 import ch.dvbern.ebegu.entities.AntragStatusHistory;
 import ch.dvbern.ebegu.entities.AntragStatusHistory_;
@@ -70,11 +71,11 @@ import ch.dvbern.ebegu.entities.Betreuung_;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Fall_;
+import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuch_;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Gesuchsperiode_;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer_;
 import ch.dvbern.ebegu.entities.Gesuchsteller_;
@@ -82,19 +83,17 @@ import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
 import ch.dvbern.ebegu.entities.Institution_;
-import ch.dvbern.ebegu.entities.Kind;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.KindContainer_;
-import ch.dvbern.ebegu.entities.Kind_;
 import ch.dvbern.ebegu.entities.WizardStep;
+import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
@@ -108,18 +107,13 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
-import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
-import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
 import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
 import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
@@ -180,10 +174,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Gesuch createGesuch(@Nonnull Gesuch gesuch) {
 		Objects.requireNonNull(gesuch);
-		authorizer.checkCreateAuthorizationGesuch();
 		final Gesuch persistedGesuch = persistence.persist(gesuch);
 		// Die WizsrdSteps werden direkt erstellt wenn das Gesuch erstellt wird. So vergewissern wir uns dass es kein Gesuch ohne WizardSteps gibt
 		wizardStepService.createWizardStepList(persistedGesuch);
@@ -201,16 +194,52 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	@Override
 	@PermitAll
+	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory) {
+		return updateGesuch(gesuch, saveInStatusHistory, null, true);
+	}
+
+
+	@Nonnull
+	@Override
+	@PermitAll
 	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory, @Nullable Benutzer saveAsUser, boolean doAuthCheck) {
 		if (doAuthCheck) {
 			authorizer.checkWriteAuthorization(gesuch);
 		}
 		Objects.requireNonNull(gesuch);
-		final Gesuch merged = persistence.merge(gesuch);
+		final Gesuch gesuchToMerge = removeFinanzieleSituationIfNeeded(gesuch);
+		final Gesuch merged = persistence.merge(gesuchToMerge);
 		if (saveInStatusHistory) {
 			antragStatusHistoryService.saveStatusChange(merged, saveAsUser);
 		}
 		return merged;
+	}
+
+	private Gesuch removeFinanzieleSituationIfNeeded(@NotNull Gesuch gesuch) {
+		if (!EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
+			resetFieldsFamiliensituation(gesuch);
+			removeFinanzielleSituationGS(gesuch.getGesuchsteller1());
+			removeFinanzielleSituationGS(gesuch.getGesuchsteller2());
+			gesuch.setEinkommensverschlechterungInfoContainer(null);
+		}
+		return gesuch;
+	}
+
+	private void removeFinanzielleSituationGS(@Nullable GesuchstellerContainer gesuchsteller) {
+		if (gesuchsteller != null) {
+			gesuchsteller.setFinanzielleSituationContainer(null);
+			gesuchsteller.setEinkommensverschlechterungContainer(null);
+		}
+	}
+
+	private void resetFieldsFamiliensituation(@NotNull Gesuch gesuch) {
+		final Familiensituation familiensituation = gesuch.extractFamiliensituation();
+		if (familiensituation != null) {
+			if (Objects.equals(true, familiensituation.getSozialhilfeBezueger())) {
+				familiensituation.setVerguenstigungGewuenscht(null);
+			}
+			familiensituation.setGemeinsameSteuererklaerung(null);
+		}
 	}
 
 	@Nonnull
@@ -236,7 +265,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
 	public Optional<Gesuch> findGesuchForFreigabe(@Nonnull String gesuchId) {
 		Objects.requireNonNull(gesuchId, "gesuchId muss gesetzt sein");
 		Gesuch gesuch = persistence.find(Gesuch.class, gesuchId);
@@ -272,25 +301,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@RolesAllowed({ ADMIN, SUPER_ADMIN })
 	public Collection<Gesuch> getAllGesuche() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(Gesuch.class));
-	}
-
-	@Nonnull
-	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
-	// TODO (team) evt. umbenennen: getGesuchePendenzenJugendamt
-	public Collection<Gesuch> getAllActiveGesuche() {
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
-
-		Root<Gesuch> root = query.from(Gesuch.class);
-
-		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN);
-		// Gesuchsperiode darf nicht geschlossen sein
-		Predicate predicateGesuchsperiode = root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.status).in(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV);
-
-		query.where(predicateStatus, predicateGesuchsperiode);
-		query.orderBy(cb.asc(root.get(Gesuch_.fall).get(Fall_.fallNummer)));
-		return persistence.getCriteriaResults(query);
 	}
 
 	@Nonnull
@@ -333,8 +343,27 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		zahlungService.deleteZahlungspositionenOfGesuch(gesToRemove);
 		mitteilungService.removeAllBetreuungMitteilungenForGesuch(gesToRemove);
 
+		resetMutierteAnmeldungen(gesToRemove);
+
 		//Finally remove the Gesuch when all other objects are really removed
 		persistence.remove(gesToRemove);
+	}
+
+	/**
+	 * Nimmt alle Anmeldungen vom eingegebenen Gesuch und setzt alle vorgaengerAnmeldungen auf AnmeldungMutationZustand.AKTUELLE_ANMELDUNG.
+	 * Wenn eine Mutation geloescht wird, ist das vorgaengerGesuch und deshalb auch die vorgaengerAnmeldungen AKTUELL
+	 * @param currentGesuch das zurzeit neueste Gesuch
+	 */
+	private void resetMutierteAnmeldungen(@Nonnull Gesuch currentGesuch) {
+		currentGesuch.extractAllBetreuungen().stream()
+			.filter(betreuung -> betreuung.isAngebotSchulamt() && betreuung.getVorgaengerId() != null)
+			.forEach(betreuung -> {
+				final Optional<Betreuung> vorgaengerBetreuungOpt = betreuungService.findBetreuung(betreuung.getVorgaengerId());
+				Betreuung vorgaengerBetreuung = vorgaengerBetreuungOpt.orElseThrow(() -> new EbeguEntityNotFoundException("resetMutierteAnmeldungen",
+					ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuung.getVorgaengerId()));
+				vorgaengerBetreuung.setAnmeldungMutationZustand(AnmeldungMutationZustand.AKTUELLE_ANMELDUNG);
+				persistence.merge(vorgaengerBetreuung);
+			});
 	}
 
 	@Nonnull
@@ -389,329 +418,12 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return Collections.emptyList();
 	}
 
-	@Override
-	@PermitAll
-	public Pair<Long, List<Gesuch>> searchAntraege(@Nonnull AntragTableFilterDTO antragTableFilterDto) {
-		Pair<Long, List<Gesuch>> result;
-		Long countResult = searchAntraege(antragTableFilterDto, Mode.COUNT).getLeft();
-		if (countResult.equals(0L)) {    // no result found
-			result = new ImmutablePair<>(0L, Collections.emptyList());
-		} else {
-			Pair<Long, List<Gesuch>> searchResult = searchAntraege(antragTableFilterDto, Mode.SEARCH);
-			result = new ImmutablePair<>(countResult, searchResult.getRight());
-		}
-		return result;
-	}
-
-	@SuppressWarnings("PMD.NcssMethodCount")
-	private Pair<Long, List<Gesuch>> searchAntraege(@Nonnull AntragTableFilterDTO antragTableFilterDto, @Nonnull Mode mode) {
-		Benutzer user = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("searchAntraege", "No User is logged in"));
-		UserRole role = user.getRole();
-		Set<AntragStatus> allowedAntragStatus = AntragStatus.allowedforRole(role);
-		if (allowedAntragStatus.isEmpty()) {
-			return new ImmutablePair<>(0L, Collections.emptyList());
-		}
-
-		CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		@SuppressWarnings("rawtypes") // Je nach Abfrage ist es String oder Long
-			CriteriaQuery query;
-		switch (mode) {
-		case SEARCH:
-			query = cb.createQuery(String.class);
-			break;
-		case COUNT:
-			query = cb.createQuery(Long.class);
-			break;
-		default:
-			throw new IllegalStateException("Undefined Mode for searchAntraege Query: " + mode);
-		}
-		// Construct from-clause
-		@SuppressWarnings("unchecked") // Je nach Abfrage ist das Query String oder Long
-			Root<Gesuch> root = query.from(Gesuch.class);
-		// Join all the relevant relations (except gesuchsteller join, which is only done when needed)
-		Join<Gesuch, Fall> fall = root.join(Gesuch_.fall, JoinType.INNER);
-		Join<Fall, Benutzer> verantwortlicher = fall.join(Fall_.verantwortlicher, JoinType.LEFT);
-		Join<Gesuch, Gesuchsperiode> gesuchsperiode = root.join(Gesuch_.gesuchsperiode, JoinType.INNER);
-
-		SetJoin<Gesuch, KindContainer> kindContainers = root.join(Gesuch_.kindContainers, JoinType.LEFT);
-		SetJoin<KindContainer, Betreuung> betreuungen = kindContainers.join(KindContainer_.betreuungen, JoinType.LEFT);
-		Join<KindContainer, Kind> kinder = kindContainers.join(KindContainer_.kindJA, JoinType.LEFT);
-		Join<Betreuung, InstitutionStammdaten> institutionstammdaten = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.LEFT);
-		Join<InstitutionStammdaten, Institution> institution = institutionstammdaten.join(InstitutionStammdaten_.institution, JoinType.LEFT);
-
-		//prepare predicates
-		List<Predicate> predicates = new ArrayList<>();
-
-		// General role based predicates
-		Predicate inClauseStatus = root.get(Gesuch_.status).in(allowedAntragStatus);
-		predicates.add(inClauseStatus);
-
-		// Special role based predicates
-		switch (role) {
-		case SUPER_ADMIN:
-		case ADMIN:
-		case REVISOR:
-		case JURIST:
-			break;
-		case STEUERAMT:
-			break;
-		case SACHBEARBEITER_JA:
-			// Jugendamt-Mitarbeiter duerfen auch Faelle sehen, die noch gar keine Kinder/Betreuungen haben.
-			// Wenn aber solche erfasst sind, dann duerfen sie nur diejenigen sehen, die nicht nur Schulamt haben
-			// zudem muss auch der status ensprechend sein
-			Predicate predicateKeineKinder = kindContainers.isNull();
-			Predicate predicateKeineBetreuungen = betreuungen.isNull();
-			Predicate predicateKeineInstitutionsstammdaten = institutionstammdaten.isNull();
-			Predicate predicateKeineInstitution = institution.isNull();
-			Predicate predicateAngebotstyp = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
-			Predicate predicateRichtigerAngebotstypOderNichtAusgefuellt = cb.or(predicateKeineKinder, predicateKeineBetreuungen, predicateKeineInstitutionsstammdaten, predicateKeineInstitution, predicateAngebotstyp);
-			predicates.add(predicateRichtigerAngebotstypOderNichtAusgefuellt);
-			break;
-		case SACHBEARBEITER_TRAEGERSCHAFT:
-			predicates.add(cb.equal(institution.get(Institution_.traegerschaft), user.getTraegerschaft()));
-			break;
-		case SACHBEARBEITER_INSTITUTION:
-			// es geht hier nicht um die institution des zugewiesenen benutzers sondern um die institution des eingeloggten benutzers
-			predicates.add(cb.equal(institution, user.getInstitution()));
-			break;
-		case SCHULAMT:
-			predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
-			break;
-		default:
-			LOG.warn("antragSearch can not be performed by users in role " + role);
-			predicates.add(cb.isFalse(cb.literal(Boolean.TRUE))); // impossible predicate
-			break;
-		}
-
-		// Predicates derived from PredicateDTO
-		PredicateObjectDTO predicateObjectDto = antragTableFilterDto.getSearch().getPredicateObject();
-		if (predicateObjectDto != null) {
-			if (predicateObjectDto.getFallNummer() != null) {
-				// Die Fallnummer muss als String mit LIKE verglichen werden: Bei Eingabe von "14" soll der Fall "114" kommen
-				Expression<String> fallNummerAsString = fall.get(Fall_.fallNummer).as(String.class);
-				String fallNummerWithWildcards = '%' + predicateObjectDto.getFallNummer() + '%';
-				predicates.add(cb.like(fallNummerAsString, fallNummerWithWildcards));
-			}
-			if (predicateObjectDto.getFamilienName() != null) {
-				Join<Gesuch, GesuchstellerContainer> gesuchsteller1 = root.join(Gesuch_.gesuchsteller1, JoinType.LEFT);
-				Join<Gesuch, GesuchstellerContainer> gesuchsteller2 = root.join(Gesuch_.gesuchsteller2, JoinType.LEFT);
-				Join<GesuchstellerContainer, Gesuchsteller> gesuchsteller1JA = gesuchsteller1.join(GesuchstellerContainer_.gesuchstellerJA, JoinType.LEFT);
-				Join<GesuchstellerContainer, Gesuchsteller> gesuchsteller2JA = gesuchsteller2.join(GesuchstellerContainer_.gesuchstellerJA, JoinType.LEFT);
-				predicates.add(
-					cb.or(
-						cb.like(gesuchsteller1JA.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienNameForLike()),
-						cb.like(gesuchsteller2JA.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienNameForLike())
-					));
-			}
-			if (predicateObjectDto.getAntragTyp() != null) {
-				List<AntragTyp> values = AntragTyp.getValuesForFilter(predicateObjectDto.getAntragTyp());
-				predicates.add(root.get(Gesuch_.typ).in(values));
-			}
-			if (predicateObjectDto.getGesuchsperiodeString() != null) {
-				String[] years = ensureYearFormat(predicateObjectDto.getGesuchsperiodeString());
-				predicates.add(
-					cb.and(
-						cb.equal(cb.function("year", Integer.class, gesuchsperiode.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb)), years[0]),
-						cb.equal(cb.function("year", Integer.class, gesuchsperiode.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigBis)), years[1]))
-				);
-			}
-			if (predicateObjectDto.getEingangsdatum() != null) {
-				try {
-					LocalDate searchDate = LocalDate.parse(predicateObjectDto.getEingangsdatum(), Constants.DATE_FORMATTER);
-					predicates.add(cb.equal(root.get(Gesuch_.eingangsdatum), searchDate));
-				} catch (DateTimeParseException e) {
-					// Kein gueltiges Datum. Es kann kein Gesuch geben, welches passt. Wir geben leer zurueck
-					return new ImmutablePair<>(0L, Collections.emptyList());
-				}
-			}
-			if (predicateObjectDto.getEingangsdatumSTV() != null) {
-				try {
-					LocalDate searchDate = LocalDate.parse(predicateObjectDto.getEingangsdatumSTV(), Constants.DATE_FORMATTER);
-					predicates.add(cb.equal(root.get(Gesuch_.eingangsdatumSTV), searchDate));
-				} catch (DateTimeParseException e) {
-					// Kein gueltiges Datum. Es kann kein Gesuch geben, welches passt. Wir geben leer zurueck
-					return new ImmutablePair<>(0L, Collections.emptyList());
-				}
-			}
-			if (predicateObjectDto.getAenderungsdatum() != null) {
-				try {
-					// Wir wollen ohne Zeit vergleichen
-					Expression<LocalDate> timestampAsLocalDate = root.get(Gesuch_.timestampMutiert).as(LocalDate.class);
-					LocalDate searchDate = LocalDate.parse(predicateObjectDto.getAenderungsdatum(), Constants.DATE_FORMATTER);
-					predicates.add(cb.equal(timestampAsLocalDate, searchDate));
-				} catch (DateTimeParseException e) {
-					// Kein gueltiges Datum. Es kann kein Gesuch geben, welches passt. Wir geben leer zurueck
-					return new ImmutablePair<>(0L, Collections.emptyList());
-				}
-			}
-			if (predicateObjectDto.getStatus() != null) {
-				createPredicateGesuchBetreuungenStatus(cb, root, predicates, predicateObjectDto.getStatus());
-				// Achtung, hier muss von Client zu Server Status konvertiert werden!
-				Collection<AntragStatus> antragStatus = AntragStatusConverterUtil.convertStatusToEntityForRole(AntragStatusDTO.valueOf(predicateObjectDto.getStatus()), role);
-				predicates.add(root.get(Gesuch_.status).in(antragStatus));
-			}
-			if (predicateObjectDto.getDokumenteHochgeladen() != null) {
-				predicates.add(cb.equal(root.get(Gesuch_.dokumenteHochgeladen), predicateObjectDto.getDokumenteHochgeladen()));
-			}
-			if (predicateObjectDto.getAngebote() != null) {
-				predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.valueOf(predicateObjectDto.getAngebote())));
-			}
-			if (predicateObjectDto.getInstitutionen() != null) {
-				predicates.add(cb.equal(institution.get(Institution_.name), predicateObjectDto.getInstitutionen()));
-			}
-			if (predicateObjectDto.getKinder() != null) {
-				predicates.add(cb.like(kinder.get(Kind_.vorname), predicateObjectDto.getKindNameForLike()));
-			}
-			if (predicateObjectDto.getVerantwortlicher() != null) {
-				String[] strings = predicateObjectDto.getVerantwortlicher().split(" ");
-				predicates.add(
-					cb.and(
-						cb.equal(verantwortlicher.get(Benutzer_.vorname), strings[0]),
-						cb.equal(verantwortlicher.get(Benutzer_.nachname), strings[1])
-					));
-			}
-		}
-		// Construct the select- and where-clause
-		switch (mode) {
-		case SEARCH:
-			//noinspection unchecked // Je nach Abfrage ist das Query String oder Long
-			query.select(root.get(Gesuch_.id))
-				.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-			constructOrderByClause(antragTableFilterDto, cb, query, root, kinder, gesuchsperiode, institutionstammdaten, institution);
-			break;
-		case COUNT:
-			//noinspection unchecked // Je nach Abfrage ist das Query String oder Long
-			query.select(cb.countDistinct(root.get(Gesuch_.id)))
-				.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-			break;
-		}
-
-		// Prepare and execute the query and build the result
-		Pair<Long, List<Gesuch>> result = null;
-		switch (mode) {
-		case SEARCH:
-			List<String> gesuchIds = persistence.getCriteriaResults(query); //select all ids in order, may contain duplicates
-			List<Gesuch> pagedResult;
-			if (antragTableFilterDto.getPagination() != null) {
-				int firstIndex = antragTableFilterDto.getPagination().getStart();
-				Integer maxresults = antragTableFilterDto.getPagination().getNumber();
-				List<String> orderedIdsToLoad = this.determineDistinctGesuchIdsToLoad(gesuchIds, firstIndex, maxresults);
-				pagedResult = findGesuche(orderedIdsToLoad);
-			} else {
-				pagedResult = findGesuche(gesuchIds);
-			}
-			result = new ImmutablePair<>(null, pagedResult);
-			break;
-		case COUNT:
-			Long count = (Long) persistence.getCriteriaSingleResult(query);
-			result = new ImmutablePair<>(count, null);
-			break;
-		}
-		return result;
-	}
-
-	/**
-	 * Adds a predicate to the predicates list if it is needed to filter by gesuchBetreuungenStatus. This will be
-	 * needed just when the Status is GEPRUEFT, PLATZBESTAETIGUNG_WARTEN or PLATZBESTAETIGUNG_ABGEWIESEN
-	 */
-	private void createPredicateGesuchBetreuungenStatus(CriteriaBuilder cb, Root<Gesuch> root, List<Predicate> predicates, String status) {
-		if (AntragStatusDTO.PLATZBESTAETIGUNG_WARTEN.toString().equalsIgnoreCase(status)) {
-			predicates.add(cb.equal(root.get(Gesuch_.gesuchBetreuungenStatus), GesuchBetreuungenStatus.WARTEN));
-		} else if (AntragStatusDTO.PLATZBESTAETIGUNG_ABGEWIESEN.toString().equalsIgnoreCase(status)) {
-			predicates.add(cb.equal(root.get(Gesuch_.gesuchBetreuungenStatus), GesuchBetreuungenStatus.ABGEWIESEN));
-		} else if (AntragStatusDTO.GEPRUEFT.toString().equalsIgnoreCase(status)) {
-			predicates.add(cb.equal(root.get(Gesuch_.gesuchBetreuungenStatus), GesuchBetreuungenStatus.ALLE_BESTAETIGT));
-		}
-	}
-
-	@SuppressWarnings("PMD.NcssMethodCount")
-	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query,
-		Root<Gesuch> root, Join<KindContainer, Kind> kinder,
-		Join<Gesuch, Gesuchsperiode> gesuchsperiode,
-		Join<Betreuung, InstitutionStammdaten> institutionstammdaten,
-		Join<InstitutionStammdaten, Institution> institution) {
-		Expression<?> expression;
-		if (antragTableFilterDto.getSort() != null && antragTableFilterDto.getSort().getPredicate() != null) {
-			switch (antragTableFilterDto.getSort().getPredicate()) {
-			case "fallNummer":
-				expression = root.get(Gesuch_.fall).get(Fall_.fallNummer);
-				break;
-			case "familienName":
-				expression = root.get(Gesuch_.gesuchsteller1).get(GesuchstellerContainer_.gesuchstellerJA).get(Gesuchsteller_.nachname);
-				break;
-			case "antragTyp":
-				expression = root.get(Gesuch_.typ);
-				break;
-			case "gesuchsperiode":
-				expression = gesuchsperiode.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb);
-				break;
-			case "aenderungsdatum":
-				expression = root.get(Gesuch_.timestampMutiert);
-				break;
-			case "eingangsdatum":
-				expression = root.get(Gesuch_.eingangsdatum);
-				break;
-			case "eingangsdatumSTV":
-				expression = root.get(Gesuch_.eingangsdatumSTV);
-				break;
-			case "status":
-				expression = root.get(Gesuch_.status);
-				break;
-			case "angebote":
-				// Die Angebote sind eigentlich eine Liste innerhalb der Liste (also des Tabelleneintrages).
-				// Kinder ohne Angebot sollen egal wie sortiert ist am Schluss kommen!
-				if (antragTableFilterDto.getSort().getReverse()) {
-					expression = cb.selectCase().when(institutionstammdaten.isNull(), "ZZZZ")
-						.otherwise(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp));
-				} else {
-					expression = cb.selectCase().when(institutionstammdaten.isNull(), "0000")
-						.otherwise(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp));
-				}
-				break;
-			case "institutionen":
-				// Die Institutionen sind eigentlich eine Liste innerhalb der Liste (also des Tabelleneintrages).
-				// Kinder ohne Angebot sollen egal wie sortiert ist am Schluss kommen!
-				if (antragTableFilterDto.getSort().getReverse()) {
-					expression = cb.selectCase().when(institution.isNull(), "ZZZZ")
-						.otherwise(institution.get(Institution_.name));
-				} else {
-					expression = cb.selectCase().when(institution.isNull(), "0000")
-						.otherwise(institution.get(Institution_.name));
-				}
-				break;
-			case "verantwortlicher":
-				expression = root.get(Gesuch_.fall).get(Fall_.verantwortlicher).get(Benutzer_.nachname);
-				break;
-			case "kinder":
-				expression = kinder.get(Kind_.vorname);
-				break;
-			case "dokumenteHochgeladen":
-				expression = root.get(Gesuch_.dokumenteHochgeladen);
-				break;
-			default:
-				LOG.warn("Using default sort by FallNummer because there is no specific clause for predicate " + antragTableFilterDto.getSort().getPredicate());
-				expression = root.get(Gesuch_.fall).get(Fall_.fallNummer);
-				break;
-			}
-			query.orderBy(antragTableFilterDto.getSort().getReverse() ? cb.asc(expression) : cb.desc(expression));
-		} else {
-			// Default sort when nothing is choosen
-			expression = root.get(Gesuch_.timestampMutiert);
-			query.orderBy(cb.desc(expression));
-		}
-	}
-
-	private enum Mode {
-		COUNT,
-		SEARCH
-	}
-
 	/**
 	 * Diese Methode sucht alle Antraege die zu dem gegebenen Fall gehoeren.
 	 * Die Antraege werden aber je nach Benutzerrolle gefiltert.
 	 * - SACHBEARBEITER_TRAEGERSCHAFT oder SACHBEARBEITER_INSTITUTION - werden nur diejenige Antraege zurueckgegeben,
 	 * die mindestens ein Angebot fuer die InstituionEn des Benutzers haben
-	 * - SCHULAMT - werden nur diejenige Antraege zurueckgegeben, die mindestens ein Angebot von Typ Schulamt haben
+	 * - SCHULAMT/ADMINISTRATOR_SCHULAMT - werden nur diejenige Antraege zurueckgegeben, die mindestens ein Angebot von Typ Schulamt haben
 	 * - SACHBEARBEITER_JA oder ADMIN - werden nur diejenige Antraege zurueckgegeben, die ein Angebot von einem anderen
 	 * Typ als Schulamt haben oder ueberhaupt kein Angebot
 	 */
@@ -735,6 +447,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			if (benutzer.getRole() == UserRole.SACHBEARBEITER_TRAEGERSCHAFT
 				|| benutzer.getRole() == UserRole.SACHBEARBEITER_INSTITUTION
 				|| benutzer.getRole() == UserRole.SCHULAMT
+				|| benutzer.getRole() == UserRole.ADMINISTRATOR_SCHULAMT
 				|| benutzer.getRole() == UserRole.ADMIN
 				|| benutzer.getRole() == UserRole.SACHBEARBEITER_JA) {
 				// Join all the relevant relations only when the User belongs to Admin, JA, Schulamt, Institution or Traegerschaft
@@ -774,16 +487,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				predicatesToUse.add(root.get(Gesuch_.status).in(AntragStatus.IN_BEARBEITUNG_GS, AntragStatus.FREIGABEQUITTUNG).not());
 			}
 
-			if (institutionstammdatenJoin != null) {
-				if (benutzer.getRole() == UserRole.ADMIN || benutzer.getRole() == UserRole.SACHBEARBEITER_JA) {
-					final Predicate noSchulamt = cb.notEqual(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
-					final Predicate noAngebote = cb.isNull(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp));
-					predicatesToUse.add(cb.or(noSchulamt, noAngebote));
-				}
-				if (benutzer.getRole() == UserRole.SCHULAMT) {
-					predicatesToUse.add(cb.equal(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
-				}
-			}
 			if (institutionJoin != null) {
 				// only if the institutionJoin was set
 				if (benutzer.getRole() == UserRole.SACHBEARBEITER_TRAEGERSCHAFT) {
@@ -839,7 +542,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public List<Gesuch> getAllGesucheForFallAndPeriod(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		authorizer.checkReadAuthorizationFall(fall);
 
@@ -855,7 +558,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
 	public Gesuch antragFreigabequittungErstellen(@Nonnull Gesuch gesuch, AntragStatus statusToChangeTo) {
 		authorizer.checkWriteAuthorization(gesuch);
 
@@ -876,10 +579,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return updateGesuch(gesuch, true, null);
 	}
 
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Nonnull
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, GESUCHSTELLER })
-	public Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username) {
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
+	public Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String usernameJA, @Nullable String usernameSCH) {
 		Optional<Gesuch> gesuchOptional = Optional.ofNullable(persistence.find(Gesuch.class, gesuchId)); //direkt ueber persistence da wir eigentlich noch nicht leseberechtigt sind)
 		if (gesuchOptional.isPresent()) {
 			Gesuch gesuch = gesuchOptional.get();
@@ -906,7 +610,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 			// Falls es ein NUR_SCHULAMT Gesuch ist, muss hier bereits die Finanzielle Situation erstellt werden,
 			// da das Gesuch mit Einlesen der Freigabequittung als freigegeben gilt.
-			if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			if (gesuch.hasOnlyBetreuungenOfSchulamt() && EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
 				// Das Dokument der Finanziellen Situation erstellen
 				try {
 					generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(gesuch, true);
@@ -916,22 +620,37 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				}
 			}
 
-			// Den Gesuchsstatus setzen
-			gesuch.setStatus(calculateFreigegebenStatus(gesuch));
+			// Eventuelle Schulamt-Anmeldungen auf AUSGELOEST setzen
+			for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
+				if (betreuung.getBetreuungsstatus() == Betreuungsstatus.SCHULAMT_ANMELDUNG_ERFASST) {
+					betreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_ANMELDUNG_AUSGELOEST);
+				}
+				// Set noch nicht freigegebene Betreuungen to aktuelle Anmeldung bei Freigabe
+				if (betreuung.isAngebotSchulamt()) {
+					if (betreuung.getAnmeldungMutationZustand() == AnmeldungMutationZustand.NOCH_NICHT_FREIGEGEBEN) {
+						betreuung.setAnmeldungMutationZustand(AnmeldungMutationZustand.AKTUELLE_ANMELDUNG);
+						betreuungService.changeAnmeldungMutationZustand(betreuung.getVorgaengerId(), AnmeldungMutationZustand.MUTIERT);
+					}
+				}
+			}
+
+			// Den Gesuchsstatus auf Freigageben setzen (auch bei nur Schulamt-Gesuchen)
+			gesuch.setStatus(AntragStatus.FREIGEGEBEN);
 
 			// Step Freigabe gruen
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
 
-			// Step Verfuegen gruen, falls NUR_SCHULAMT
-			if (AntragStatus.NUR_SCHULAMT == gesuch.getStatus()) {
-				wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
-			}
-
-			if (username != null) {
-				Optional<Benutzer> currentUser = benutzerService.findBenutzer(username);
-				if (currentUser.isPresent() && currentUser.get().getRole() != UserRole.SCHULAMT) {
-					gesuch.getFall().setVerantwortlicher(currentUser.get());
-				}
+			//VERANTWORTLICHE
+			if (!gesuch.isMutation()) {
+				// in case of erstgesuch: Verantwortliche werden beim einlesen gesetzt und kommen vom client
+				setVerantwortliche(usernameJA, usernameSCH, gesuch, false, false);
+			} else {
+				// in case of mutation, we take default Verantwortliche and set them only if not set...
+				String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(
+					ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
+				String propertyDefaultVerantwortlicherSch = applicationPropertyService.findApplicationPropertyAsString(
+					ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER_SCH);
+				setVerantwortliche(propertyDefaultVerantwortlicher, propertyDefaultVerantwortlicherSch, gesuch, true, false);
 			}
 
 			// Falls es ein OnlineGesuch war: Das Eingangsdatum setzen
@@ -948,8 +667,41 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, ADMINISTRATOR_SCHULAMT, SCHULAMT, GESUCHSTELLER })
+	public boolean setVerantwortliche(@Nullable String usernameJA, @Nullable String usernameSCH, Gesuch gesuch, boolean onlyIfNotSet, boolean persist) {
+		boolean hasVerantwortlicheChanged = false;
+		if (usernameJA != null) {
+			Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(usernameJA);
+			if (verantwortlicher.isPresent()
+				&& gesuch.hasBetreuungOfJugendamt()
+				&& (verantwortlicher.get().getRole().isRoleJugendamt() || verantwortlicher.get().getRole().isSuperadmin())
+				&& (gesuch.getFall().getVerantwortlicher() == null || !onlyIfNotSet)) {
+				if (persist) {
+					fallService.setVerantwortlicher(gesuch.getFall().getId(), verantwortlicher.get());
+				}
+				gesuch.getFall().setVerantwortlicher(verantwortlicher.get());
+				hasVerantwortlicheChanged = true;
+			}
+		}
+		if (usernameSCH != null) {
+			Optional<Benutzer> verantwortlicherSCH = benutzerService.findBenutzer(usernameSCH);
+			if (verantwortlicherSCH.isPresent()
+				&& gesuch.hasBetreuungOfSchulamt()
+				&& (verantwortlicherSCH.get().getRole().isRoleSchulamt() || verantwortlicherSCH.get().getRole().isSuperadmin())
+				&& (gesuch.getFall().getVerantwortlicherSCH() == null || !onlyIfNotSet)) {
+				if (persist) {
+					fallService.setVerantwortlicherSCH(gesuch.getFall().getId(), verantwortlicherSCH.get());
+				}
+				gesuch.getFall().setVerantwortlicherSCH(verantwortlicherSCH.get());
+				hasVerantwortlicheChanged = true;
+			}
+		}
+		return hasVerantwortlicheChanged;
+	}
+
+	@Override
 	@Nonnull
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Gesuch setBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch) {
 		final List<Gesuch> allGesucheForFall = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuch.getGesuchsperiode());
 		allGesucheForFall.iterator().forEachRemaining(gesuchLoop -> {
@@ -965,7 +717,29 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
+	public Gesuch setAbschliessen(@Nonnull Gesuch gesuch) {
+		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			gesuch.setTimestampVerfuegt(LocalDateTime.now());
+			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
+			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
+
+			if (gesuch.getVorgaengerId() != null) {
+				final Optional<Gesuch> vorgaengerOpt = findGesuch(gesuch.getVorgaengerId());
+				vorgaengerOpt.ifPresent(this::setGesuchUngueltig);
+			}
+
+			// neues Gesuch erst nachdem das andere auf ungültig gesetzt wurde setzen wegen unique key
+			gesuch.setGueltig(true);
+
+			return updateGesuch(gesuch, true);
+		}
+		throw new EbeguRuntimeException("setAbschliessen", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, "Nur reine Schulamt-Gesuche können abgeschlossen werden");
+	}
+
+	@Override
+	@Nonnull
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Gesuch removeBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch) {
 		final List<Gesuch> allGesucheForFall = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuch.getGesuchsperiode());
 		allGesucheForFall.iterator().forEachRemaining(gesuchLoop -> {
@@ -980,21 +754,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return gesuch;
 	}
 
-	/**
-	 * wenn ein Gesuch nur Schulamt Betreuuungen hat so geht es beim barcode Scannen in den Zustand NUR_SCHULAMTM; sonst Freigegeben
-	 */
-	private AntragStatus calculateFreigegebenStatus(@Nonnull Gesuch gesuch) {
-		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
-			gesuch.setTimestampVerfuegt(LocalDateTime.now());
-			gesuch.setGueltig(true);
-			return AntragStatus.NUR_SCHULAMT;
-		}
-		return AntragStatus.FREIGEGEBEN;
-	}
-
 	@Override
 	@Nonnull
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Optional<Gesuch> antragMutieren(@Nonnull String antragId, @Nullable LocalDate eingangsdatum) {
 		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
 		Optional<Gesuch> gesuchOptional = findGesuch(antragId);
@@ -1102,7 +864,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER })
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 	public Optional<Gesuch> antragErneuern(@Nonnull String antragId, @Nonnull String gesuchsperiodeId, @Nullable LocalDate eingangsdatum) {
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId).orElseThrow(() -> new EbeguEntityNotFoundException("findGesuchsperiode", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsperiodeId));
 		Gesuch gesuch = findGesuch(antragId).orElseThrow(() -> new EbeguEntityNotFoundException("antragErneuern", "Es existiert kein Antrag mit ID, kann kein Erneuerungsgesuch erstellen " + antragId, antragId));
@@ -1151,10 +913,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		query.where(predicateStatus, predicateGesuchsperiode, predicateGueltig, predicateFall);
 		query.select(root);
 
-		// TODO: (team) Business Rule ? = There are only 0-1 Gesuch with gleutig = 1 with the same fall_id
-		// If this is the case then we don't need this order by line.  However this Business rule is broken in the DB and not enforced.
-		query.orderBy(cb.desc(root.get(Gesuch_.timestampVerfuegt))); // Das mit dem neuesten Verfuegungsdatum
-
 		TypedQuery<Gesuch> typedQuery = persistence.getEntityManager().createQuery(query);
 		typedQuery.setParameter(fallParam, fall);
 		typedQuery.setParameter(gesuchsperiodeParam, gesuchsperiode);
@@ -1187,6 +945,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return neustesGesuchFuerGesuch.isPresent() && Objects.equals(neustesGesuchFuerGesuch.get().getId(), gesuch.getId());
 	}
 
+	@Override
+	@PermitAll
+	public Optional<String> getIdOfNeuestesGesuch(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Fall fall) {
+		// Da wir nur die ID zurueckgeben, koennen wir den AuthCheck weglassen
+		Optional<Gesuch> gesuchOptional = getNeustesGesuchFuerGesuch(gesuchsperiode, fall, false);
+		return gesuchOptional.map(AbstractEntity::getId);
+	}
+
 	/**
 	 * Da es eine private Methode ist, ist es sicher, als Parameter zu fragen, ob man nach ReadAuthorization pruefen muss.
 	 * Das Interface sollte aber diese Moeglichkeit nur versteckt durch bestimmte Methoden anbieten.
@@ -1215,6 +981,30 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return Optional.of(gesuch);
 	}
 
+	@Override
+	@Nonnull
+	public Optional<Gesuch> getNeustesGesuchFuerFallnumerForSchulamtInterface(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Long fallnummer) {
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+		Predicate predicateFallNummer = cb.equal(root.get(Gesuch_.fall).get(Fall_.fallNummer), fallnummer);
+		Predicate predicateFinSit = root.get(Gesuch_.finSitStatus).isNotNull();
+
+		query.where(predicateGesuchsperiode, predicateFallNummer, predicateFinSit);
+		query.select(root);
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
+		if (criteriaResults.isEmpty()) {
+			return Optional.empty();
+		}
+		Gesuch gesuch = criteriaResults.get(0);
+		return Optional.of(gesuch);
+	}
+
+
 	@Nonnull
 	private Optional<Gesuch> getGesuchFuerErneuerungsantrag(@Nonnull Fall fall) {
 		authorizer.checkReadAuthorizationFall(fall);
@@ -1233,60 +1023,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 		Gesuch gesuch = criteriaResults.get(0);
 		return Optional.of(gesuch);
-	}
-
-	private List<String> determineDistinctGesuchIdsToLoad(List<String> allGesuchIds, int startindex, int maxresults) {
-		List<String> uniqueGesuchIds = new ArrayList<>(new LinkedHashSet<>(allGesuchIds)); //keep order but remove duplicate ids
-		int lastindex = Math.min(startindex + maxresults, (uniqueGesuchIds.size()));
-		return uniqueGesuchIds.subList(startindex, lastindex);
-	}
-
-	private List<Gesuch> findGesuche(@Nonnull List<String> gesuchIds) {
-		if (!gesuchIds.isEmpty()) {
-			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-			final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
-			Root<Gesuch> root = query.from(Gesuch.class);
-			Predicate predicate = root.get(Gesuch_.id).in(gesuchIds);
-			Fetch<Gesuch, KindContainer> kindContainers = root.fetch(Gesuch_.kindContainers, JoinType.LEFT);
-			kindContainers.fetch(KindContainer_.betreuungen, JoinType.LEFT);
-			query.where(predicate);
-			//reduce to unique gesuche
-			List<Gesuch> listWithDuplicates = persistence.getCriteriaResults(query);
-			LinkedHashSet<Gesuch> set = new LinkedHashSet<>();
-			//richtige reihenfolge beibehalten
-			for (String gesuchId : gesuchIds) {
-				listWithDuplicates.stream()
-					.filter(gesuch -> gesuch.getId().equals(gesuchId))
-					.findFirst()
-					.ifPresent(set::add);
-			}
-			return new ArrayList<>(set);
-		} else {
-			return Collections.emptyList();
-		}
-	}
-
-	private String[] ensureYearFormat(String gesuchsperiodeString) {
-		String[] years = gesuchsperiodeString.split("/");
-		if (years.length != 2) {
-			throw new EbeguRuntimeException("searchAntraege", "Der Gesuchsperioden string war nicht im erwarteten Format x/y sondern " + gesuchsperiodeString);
-		}
-		String[] result = new String[2];
-		result[0] = changeTwoDigitYearToFourDigit(years[0]);
-		result[1] = changeTwoDigitYearToFourDigit(years[1]);
-		return result;
-	}
-
-	private String changeTwoDigitYearToFourDigit(String year) {
-		//im folgenden wandeln wir z.B 16  in 2016 um. Funktioniert bis ins jahr 2099, da die Periode 2099/2100 mit dieser Methode nicht geht
-		String currentYearAsString = String.valueOf(LocalDate.now().getYear());
-		if (year.length() == currentYearAsString.length()) {
-			return year;
-		} else if (year.length() < currentYearAsString.length()) { // jahr ist im kurzformat
-			return currentYearAsString.substring(0, currentYearAsString.length() - year.length()) + year;
-		} else {
-			throw new EbeguRuntimeException("searchAntraege", "Der Gesuchsperioden string war nicht im erwarteten Format yy oder yyyy sondern " + year);
-		}
 	}
 
 	@Override
@@ -1310,7 +1046,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		query.orderBy(cb.desc(join.get(AntragStatusHistory_.timestampVon))); // Das mit dem neuesten Verfuegungsdatum
 		List<String> criteriaResults = persistence.getCriteriaResults(query, 1);
 		if (criteriaResults.isEmpty()) {
-			return Optional.<String>empty();
+			return Optional.empty();
 		}
 		String gesuchId = criteriaResults.get(0);
 
@@ -1657,12 +1393,15 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 
 		Gesuch persistedGesuch = superAdminService.updateGesuch(gesuch, true, principalBean.getBenutzer());
+
 		// Das Dokument der Finanziellen Situation erstellen
-		try {
-			generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(persistedGesuch, true);
-		} catch (MimeTypeParseException | MergeDocException e) {
-			throw new EbeguRuntimeException("verfuegenStarten", "FinSit-Dokument konnte nicht erstellt werden"
-				+ persistedGesuch.getId(), e);
+		if (EbeguUtil.isFinanzielleSituationRequired(persistedGesuch)) {
+			try {
+				generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(persistedGesuch, true);
+			} catch (MimeTypeParseException | MergeDocException e) {
+				throw new EbeguRuntimeException("verfuegenStarten", "FinSit-Dokument konnte nicht erstellt werden"
+					+ persistedGesuch.getId(), e);
+			}
 		}
 		return persistedGesuch;
 	}
@@ -1683,16 +1422,30 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		if (AntragStatus.FIRST_STATUS_OF_VERFUEGT.contains(gesuch.getStatus()) && gesuch.getTimestampVerfuegt() == null) {
 			// Status ist neuerdings verfuegt, aber das Datum noch nicht gesetzt -> dies war der Statuswechsel
 			gesuch.setTimestampVerfuegt(LocalDateTime.now());
-			gesuch.setGueltig(true);
 			if (neustesVerfuegtesGesuchFuerGesuch.isPresent() && !neustesVerfuegtesGesuchFuerGesuch.get().getId().equals(gesuch.getId())) {
-				neustesVerfuegtesGesuchFuerGesuch.get().setGueltig(false);
-				updateGesuch(neustesVerfuegtesGesuchFuerGesuch.get(), false, null, false);
+				setGesuchUngueltig(neustesVerfuegtesGesuchFuerGesuch.get());
 			}
+
+			// neues Gesuch erst nachdem das andere auf ungültig gesetzt wurde setzen wegen unique key
+			gesuch.setGueltig(true);
+		}
+	}
+
+	/**
+	 * Setzt das Gesuch auf ungueltig, falls es gueltig ist
+	 */
+	private void setGesuchUngueltig(@Nonnull Gesuch gesuch) {
+		if (gesuch.isGueltig()) {
+			gesuch.setGueltig(null);
+			updateGesuch(gesuch, false, null, false);
+			// Sicherstellen, dass das Gesuch welches nicht mehr gültig ist zuerst gespeichert wird da sonst unique key Probleme macht!
+			persistence.getEntityManager().flush();
 		}
 	}
 
 	@Override
 	@Asynchronous
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // wir brauchen keine transaktion fuer das mailen
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public void sendMailsToAllGesuchstellerOfLastGesuchsperiode(@Nonnull Gesuchsperiode lastGesuchsperiode, @Nonnull Gesuchsperiode nextGesuchsperiode) {
 		List<Gesuch> antraegeOfLastYear = new ArrayList<>();
@@ -1705,7 +1458,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	public void updateBetreuungenStatus(@NotNull Gesuch gesuch) {
+	public Gesuch updateBetreuungenStatus(@NotNull Gesuch gesuch) {
 		gesuch.setGesuchBetreuungenStatus(GesuchBetreuungenStatus.ALLE_BESTAETIGT);
 		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
 			if (Betreuungsstatus.ABGEWIESEN == betreuung.getBetreuungsstatus()) {
@@ -1715,7 +1468,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				gesuch.setGesuchBetreuungenStatus(GesuchBetreuungenStatus.WARTEN);
 			}
 		}
-		persistence.merge(gesuch);
+		return persistence.merge(gesuch);
 	}
 
 	@Override
@@ -1768,6 +1521,59 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		LOG.info("Gesuchsperiode: " + gesuch.getGesuchsperiode().getGesuchsperiodeString());
 		LOG.info("Gesuch-Id: " + gesuch.getId());
 		LOG.info("****************************************************");
+	}
+
+	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
+	public int changeFinSitStatus(@Nonnull String antragId, @Nonnull FinSitStatus finSitStatus) {
+		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaUpdate<Gesuch> update = cb.createCriteriaUpdate(Gesuch.class);
+		Root<Gesuch> root = update.from(Gesuch.class);
+		update.set(Gesuch_.finSitStatus, finSitStatus);
+		if (finSitStatus == FinSitStatus.ABGELEHNT) {
+			update.set(Gesuch_.hasFSDokument, false); // immer auf false wenn ABGELEHNT
+		}
+
+		Predicate predGesuch = cb.equal(root.get(Gesuch_.id), antragId);
+		update.where(predGesuch);
+
+		return persistence.getEntityManager().createQuery(update).executeUpdate();
+	}
+
+	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
+	public Gesuch sendGesuchToSTV(@Nonnull Gesuch gesuch, @Nullable String bemerkungen) {
+		if (AntragStatus.VERFUEGT != gesuch.getStatus() && AntragStatus.NUR_SCHULAMT != gesuch.getStatus()) {
+			// Wir vergewissern uns dass das Gesuch im Status VERFUEGT ist, da sonst kann es nicht zum STV geschickt werden
+			throw new EbeguRuntimeException("sendGesuchToSTV", ErrorCodeEnum.ERROR_ONLY_VERFUEGT_OR_SCHULAMT_ALLOWED, "Status ist: " + gesuch.getStatus());
+		}
+		gesuch.setStatus(AntragStatus.PRUEFUNG_STV);
+		gesuch.setEingangsdatumSTV(LocalDate.now());
+		if (StringUtils.isNotEmpty(bemerkungen)) {
+			gesuch.setBemerkungenSTV(bemerkungen);
+		}
+		return updateGesuch(gesuch, true, null);
+	}
+
+	@Override
+	public Gesuch gesuchBySTVFreigeben(@Nonnull Gesuch gesuch) {
+		if (AntragStatus.IN_BEARBEITUNG_STV != gesuch.getStatus()) {
+			// Wir vergewissern uns dass das Gesuch im Status IN_BEARBEITUNG_STV ist, da sonst kann es nicht fuer das JA freigegeben werden
+			throw new EbeguRuntimeException("gesuchBySTVFreigeben", ErrorCodeEnum.ERROR_ONLY_IN_BEARBEITUNG_STV_ALLOWED, "Status ist: " + gesuch.getStatus());
+		}
+
+		gesuch.setStatus(AntragStatus.GEPRUEFT_STV);
+		gesuch.setGeprueftSTV(true);
+
+		return updateGesuch(gesuch, true, null);
+	}
+
+	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
+	public Gesuch stvPruefungAbschliessen(@Nonnull Gesuch gesuch) {
+		final AntragStatusHistory lastStatusChange = antragStatusHistoryService.findLastStatusChangeBeforePruefungSTV(gesuch);
+		gesuch.setStatus(lastStatusChange.getStatus());
+		return updateGesuch(gesuch, true, null);
 	}
 }
 

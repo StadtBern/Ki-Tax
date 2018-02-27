@@ -34,13 +34,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Implementierung des REST Services zum synchronisieren mit OpenIdm, erzeugt einen Proxy fuer {@link IOpenIdmRESTProxService}
  */
 @Stateless
-@RolesAllowed(value = { ADMIN, SUPER_ADMIN })
+@RolesAllowed({ ADMIN, SUPER_ADMIN, ADMINISTRATOR_SCHULAMT })
 public class OpenIdmRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OpenIdmRestService.class.getSimpleName());
@@ -150,21 +151,20 @@ public class OpenIdmRestService {
 		String user = configuration.getOpenIdmUser();
 		String pass = configuration.getOpenIdmPassword();
 
-		Response response = getOpenAmRESTProxClient().login(user, pass, CONTENT_TYPE);
+			Response response = getOpenAmRESTProxClient().login(user, pass, CONTENT_TYPE);
+			if (response == null) {
+				LOG.error("No response from OpenAm Server ");
+				return "";
+			}
 
-		if (response == null) {
-			LOG.error("No response from OpenAm Server ");
-			return "";
-		}
+			JaxOpenAmResponse jaxOpenAmResponse = response.readEntity(JaxOpenAmResponse.class);
 
-		JaxOpenAmResponse jaxOpenAmResponse = response.readEntity(JaxOpenAmResponse.class);
+			if (jaxOpenAmResponse == null || jaxOpenAmResponse.getTokenId() == null) {
+				LOG.error("No token received from OpenAm Server: " + jaxOpenAmResponse);
+				return "";
+			}
 
-		if (jaxOpenAmResponse == null || jaxOpenAmResponse.getTokenId() == null) {
-			LOG.error("No token received from OpenAm Server: " + jaxOpenAmResponse);
-			return "";
-		}
-
-		return jaxOpenAmResponse.getTokenId();
+			return jaxOpenAmResponse.getTokenId();
 	}
 
 	/**

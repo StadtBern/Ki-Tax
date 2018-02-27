@@ -17,9 +17,7 @@ import {IDirective, IDirectiveFactory} from 'angular';
 import TSUser from '../../../models/TSUser';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import UserRS from '../../service/userRS.rest';
-import * as moment from 'moment';
 let template = require('./dv-userselect.html');
-
 
 export class DVUserselect implements IDirective {
     restrict = 'E';
@@ -32,7 +30,8 @@ export class DVUserselect implements IDirective {
         initialAll: '=',
         showSelectionAll: '=',
         onUserChanged: '&',
-        selectedUser: '=?'
+        selectedUser: '=?',
+        schulamt: '<'
         //initialAll -> tritt nur ein, wenn explizit  { initial-all="true" } geschrieben ist
     };
     controller = UserselectController;
@@ -58,6 +57,7 @@ export class UserselectController {
     showSelectionAll: boolean;
     valueChanged: () => void;           // Methode, die beim Klick auf die Combobox aufgerufen wird
     onUserChanged: (user: any) => void; // Callback, welche aus obiger Methode aufgerufen werden soll
+    schulamt: string;
 
     static $inject: string[] = ['UserRS', 'AuthServiceRS'];
     /* @ngInject */
@@ -81,8 +81,14 @@ export class UserselectController {
     }
 
     private updateUserList(): void {
-        this.userRS.getBenutzerJAorAdmin().then((response: any) => {
-            this.userList = angular.copy(response);
-        });
+        if (this.schulamt) {
+            this.userRS.getBenutzerSCHorAdminSCH().then((response: any) => {
+                this.userList = angular.copy(response);
+            });
+        } else {
+            this.userRS.getBenutzerJAorAdmin().then((response: any) => {
+                this.userList = angular.copy(response);
+            });
+        }
     }
 }

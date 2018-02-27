@@ -50,12 +50,14 @@ import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
 import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
 import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
@@ -80,6 +82,9 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
+	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
+
 	@Override
 	@Nonnull
 	@RolesAllowed({ ADMIN, SUPER_ADMIN })
@@ -90,7 +95,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT, STEUERAMT })
 	public Optional<EbeguParameter> findEbeguParameter(@Nonnull String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
 		EbeguParameter a = persistence.find(EbeguParameter.class, id);
@@ -108,51 +113,45 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT, STEUERAMT })
 	public Collection<EbeguParameter> getAllEbeguParameter() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(EbeguParameter.class));
 	}
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT, STEUERAMT })
 	public Collection<EbeguParameter> getAllEbeguParameterByDate(@Nonnull LocalDate date) {
 		return new ArrayList<>(criteriaQueryHelper.getAllInInterval(EbeguParameter.class, date));
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT, STEUERAMT })
 	public Collection<EbeguParameter> getEbeguParameterByGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
 		Collection<EbeguParameter> ebeguParameters = getAllEbeguParameterByDate(gesuchsperiode.getGueltigkeit().getGueltigAb());
-		List<EbeguParameter> collect = ebeguParameters.stream().filter(ebeguParameter -> ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
-		if (collect.isEmpty()) {
-			copyEbeguParameterListToNewGesuchsperiode(gesuchsperiode);
-			ebeguParameters = getAllEbeguParameterByDate(gesuchsperiode.getGueltigkeit().getGueltigAb());
-			collect = ebeguParameters.stream().filter(ebeguParameter -> ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
-		}
+		List<EbeguParameter> collect = ebeguParameters.stream()
+			.filter(ebeguParameter -> ebeguParameter.getName().isProGesuchsperiode())
+			.collect(Collectors.toCollection(ArrayList::new));
 		collect.sort(Comparator.comparing(EbeguParameter::getName));
 		return collect;
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT, STEUERAMT })
 	public Collection<EbeguParameter> getEbeguParametersByJahr(@Nonnull Integer jahr) {
 		Collection<EbeguParameter> ebeguParameters = getAllEbeguParameterByDate(LocalDate.of(jahr, Month.JANUARY, 1));
-		List<EbeguParameter> collect = ebeguParameters.stream().filter(ebeguParameter -> !ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
-		if (collect.isEmpty()) {
-			createEbeguParameterListForJahr(jahr);
-			ebeguParameters = getAllEbeguParameterByDate(LocalDate.of(jahr, Month.JANUARY, 1));
-			collect = ebeguParameters.stream().filter(ebeguParameter -> !ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
-		}
+		List<EbeguParameter> collect = ebeguParameters.stream()
+			.filter(ebeguParameter -> !ebeguParameter.getName().isProGesuchsperiode())
+			.collect(Collectors.toCollection(ArrayList::new));
 		collect.sort(Comparator.comparing(EbeguParameter::getName));
 		return collect;
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, ADMINISTRATOR_SCHULAMT })
 	public Collection<EbeguParameter> getJahresabhParameter() {
 		List<EbeguParameterKey> jahresabhParamsKey = Arrays.stream(EbeguParameterKey.values()).filter(ebeguParameterKey -> !ebeguParameterKey.isProGesuchsperiode()).collect(Collectors.toList());
 		return getEbeguParameterByKey(jahresabhParamsKey);
@@ -161,7 +160,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT, STEUERAMT })
 	public Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date) {
 		return getEbeguParameterByKeyAndDate(key, date, persistence.getEntityManager());
 	}
@@ -179,7 +178,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	 */
 	@Override
 	@Nonnull
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT, STEUERAMT })
 	public Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date, final EntityManager em) {
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
 		final CriteriaQuery<EbeguParameter> query = cb.createQuery(EbeguParameter.class);
@@ -226,29 +225,73 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 
 	}
 
-	private void copyEbeguParameterListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
-		// Die Parameter des letzten Jahres suchen (datumAb -1 Tag)
-		Collection<EbeguParameter> paramsOfGesuchsperiode = getAllEbeguParameterByDate(gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1));
-		paramsOfGesuchsperiode.stream().filter(lastYearParameter -> lastYearParameter.getName().isProGesuchsperiode()).forEach(lastYearParameter -> {
-			EbeguParameter newParameter = lastYearParameter.copy(gesuchsperiode.getGueltigkeit());
-			saveEbeguParameter(newParameter);
-		});
-	}
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION,
+		ADMINISTRATOR_SCHULAMT, SCHULAMT, STEUERAMT })
+	public void copyEbeguParameterListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
+		final Optional<Gesuchsperiode> newestGesuchsperiodeOpt = gesuchsperiodeService.findNewestGesuchsperiode();
+		final Gesuchsperiode newestGesuchsperiode = newestGesuchsperiodeOpt.orElseThrow(() -> new EbeguEntityNotFoundException
+			("copyEbeguParameterListToNewGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_MUST_EXIST));
 
-	/**
-	 * searches all parameters that were valid at the first of january of the jahr-1. Then go through those parameters and if
-	 * the parameter is set "per Gesuchsperiode" then copy it from the previous year and set the daterange for the current year
-	 */
-	private void createEbeguParameterListForJahr(@Nonnull Integer jahr) {
-		Collection<EbeguParameter> paramsOfYear = getAllEbeguParameterByDate(LocalDate.of(jahr - 1, Month.JANUARY, 1));
-		paramsOfYear.stream().filter(lastYearParameter -> !lastYearParameter.getName().isProGesuchsperiode()).forEach(lastYearParameter -> {
-			EbeguParameter newParameter = lastYearParameter.copy(new DateRange(jahr));
-			saveEbeguParameter(newParameter);
+		Collection<EbeguParameter> paramsOfGesuchsperiode = getAllEbeguParameterByDate(newestGesuchsperiode.getGueltigkeit().getGueltigAb());
+		paramsOfGesuchsperiode.stream().filter(lastYearParameter -> lastYearParameter.getName().isProGesuchsperiode()).forEach(lastYearParameter -> {
+			final Optional<EbeguParameter> existingParameter = findEbeguParameter(lastYearParameter.getName(), gesuchsperiode.getGueltigkeit());
+			if (!existingParameter.isPresent()) {
+				EbeguParameter newParameter = lastYearParameter.copy(gesuchsperiode.getGueltigkeit());
+				saveEbeguParameter(newParameter);
+			}
 		});
 	}
 
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION,
+		ADMINISTRATOR_SCHULAMT, SCHULAMT, STEUERAMT })
+	public void createEbeguParameterListForJahr(@Nonnull Integer jahr) {
+		final Optional<Gesuchsperiode> newestGesuchsperiodeOpt = gesuchsperiodeService.findNewestGesuchsperiode();
+		final Gesuchsperiode newestGesuchsperiode = newestGesuchsperiodeOpt.orElseThrow(() -> new EbeguEntityNotFoundException
+			("createEbeguParameterListForJahr", ErrorCodeEnum.ERROR_GESUCHSPERIODE_MUST_EXIST));
+
+		Collection<EbeguParameter> paramsOfYear = getAllEbeguParameterByDate(newestGesuchsperiode.getGueltigkeit().getGueltigBis());
+		paramsOfYear.stream()
+			.filter(lastYearParameter -> !lastYearParameter.getName().isProGesuchsperiode())
+			.forEach(lastYearParameter -> {
+				final DateRange newGueltigkeit = new DateRange(jahr);
+				final Optional<EbeguParameter> existingParameter = findEbeguParameter(lastYearParameter.getName(), newGueltigkeit);
+				if (!existingParameter.isPresent()) {
+					EbeguParameter newParameter = lastYearParameter.copy(newGueltigkeit);
+					saveEbeguParameter(newParameter);
+				}
+			});
+	}
+
+	/**
+	 * Sucht das Parameter mit Name und Gueltigkeit. Vorausgesehen Name und Gueltigkeit sind unique.
+	 * Wenn mehrere Rows gefunden EbeguRuntimeException wird geworfen
+	 */
+	private Optional<EbeguParameter> findEbeguParameter(@Nonnull EbeguParameterKey name, @Nonnull DateRange gueltigkeit) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<EbeguParameter> query = cb.createQuery(EbeguParameter.class);
+		Root<EbeguParameter> root = query.from(EbeguParameter.class);
+		query.select(root);
+
+		// This could only throw one row <- Unique Key
+		Predicate namePredicate = cb.equal(root.get(EbeguParameter_.name), name);
+		Predicate gueltigkeitPredicate = cb.equal(root.get(EbeguParameter_.gueltigkeit), gueltigkeit);
+
+		query.where(namePredicate, gueltigkeitPredicate);
+
+		final List<EbeguParameter> criteriaResults = persistence.getCriteriaResults(query);
+		if (criteriaResults.isEmpty()){
+			return Optional.empty();
+		}
+		if (criteriaResults.size() > 1) {
+			throw new EbeguRuntimeException("findEbeguParameter", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, name);
+		}
+		return Optional.of(criteriaResults.get(0));
+	}
+
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT, STEUERAMT })
 	public Map<EbeguParameterKey, EbeguParameter> getEbeguParameterByGesuchsperiodeAsMap(@Nonnull Gesuchsperiode gesuchsperiode) {
 		Map<EbeguParameterKey, EbeguParameter> result = new HashMap<>();
 		Collection<EbeguParameter> paramsForPeriode = getEbeguParameterByGesuchsperiode(gesuchsperiode);

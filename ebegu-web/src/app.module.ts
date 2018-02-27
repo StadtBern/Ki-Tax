@@ -19,7 +19,7 @@ import {EbeguWebCore} from './core/core.module';
 import {EbeguWebAdmin} from './admin/admin.module';
 import {EbeguWebGesuch} from './gesuch/gesuch.module';
 import {EbeguWebPendenzen} from './pendenzen/pendenzen.module';
-import {EbeguWebPendenzenInstitution} from './pendenzenInstitution/pendenzenInstitution.module';
+import {EbeguWebPendenzenBetreuungen} from './pendenzenBetreuungen/pendenzenBetreuungen.module';
 import {EbeguWebFaelle} from './faelle/faelle.module';
 import {EbeguWebStatistik} from './statistik/statistik.module';
 import {EbeguWebGesuchstellerDashboard} from './gesuchstellerDashboard/gesuchstellerDashboard.module';
@@ -31,8 +31,10 @@ import {EbeguWebZahlung} from './zahlung/zahlung.module';
 import {EbeguWebZahlungsauftrag} from './zahlungsauftrag/zahlungsauftrag.module';
 import {EbeguWebAlleVerfuegungen} from './alleVerfuegungen/alleVerfuegungen.module';
 import {EbeguWebPendenzenSteueramt} from './pendenzenSteueramt/pendenzenSteueramt.module';
+import {EbeguWebQuicksearch} from './quicksearch/quicksearch.module';
+import './style/mediaqueries.less';
 
 export default angular.module('ebeguWeb', [EbeguWebCore.name, EbeguWebAdmin.name, EbeguWebGesuch.name, EbeguWebPendenzen.name,
-    EbeguWebPendenzenInstitution.name, EbeguWebPendenzenSteueramt.name, EbeguWebFaelle.name, EbeguWebGesuchstellerDashboard.name,
+    EbeguWebPendenzenBetreuungen.name, EbeguWebPendenzenSteueramt.name, EbeguWebFaelle.name, EbeguWebGesuchstellerDashboard.name,
     EbeguWebMitteilungen.name, EbeguWebPosteingang.name, EbeguWebSearch.name, EbeguWebStatistik.name, EbeguWebZahlung.name,
-    EbeguWebZahlungsauftrag.name, EbeguWebAlleVerfuegungen.name, EbeguWebVerlauf.name]);
+    EbeguWebZahlungsauftrag.name, EbeguWebAlleVerfuegungen.name, EbeguWebVerlauf.name, EbeguWebQuicksearch.name]);

@@ -61,6 +61,10 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_LOGIN_API_INTERNAL_USER = "ebegu.login.api.internal.user";
 	private static final String EBEGU_LOGIN_API_INTERNAL_PASSWORD = "ebegu.login.api.internal.password";
 	private static final String EBEGU_FORCE_COOKIE_SECURE_FLAG = "ebegu.force.cookie.secure.flag";
+	private static final String EBEGU_LOGIN_API_SCHULAMT_USER = "ebegu.login.api.schulamt.user";
+	private static final String EBEGU_LOGIN_API_SCHULAMT_PASSWORD = "ebegu.login.api.schulamt.password";
+	private static final String EBEGU_SEND_REPORTS_AS_ATTACHEMENT = "ebegu.send.reports.as.attachement";
+
 
 	public EbeguConfigurationImpl() {
 
@@ -213,7 +217,22 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	}
 
 	@Override
+	public String getSchulamtAPIUser() {
+		return getString(EBEGU_LOGIN_API_SCHULAMT_USER);
+	}
+
+	@Override
+	public String getSchulamtAPIPassword() {
+		return getString(EBEGU_LOGIN_API_SCHULAMT_PASSWORD);
+	}
+
+	@Override
 	public boolean forceCookieSecureFlag() {
 		return getBoolean(EBEGU_FORCE_COOKIE_SECURE_FLAG, false);
+	}
+
+	@Override
+	public boolean isSendReportAsAttachement() {
+		return getBoolean(EBEGU_SEND_REPORTS_AS_ATTACHEMENT, false);
 	}
 }

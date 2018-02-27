@@ -110,6 +110,7 @@ public class MitteilungResourceTest extends AbstractEbeguRestLoginTest {
 		Assert.assertEquals(mitteilung.getId(), mitteilungen.getMitteilungen().iterator().next().getId());
 	}
 
+	@Transactional(TransactionMode.DEFAULT)
 	@Test
 	public void testGetMitteilungenForCurrentRolleForFallBetreuungMitteilungen() throws EbeguException, JAXBException, JsonProcessingException {
 		final Benutzer empfaengerJA = loginAsSachbearbeiterJA();

@@ -31,7 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRole.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRole.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRole.SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRole.STEUERAMT;
 import static ch.dvbern.ebegu.enums.UserRole.SUPER_ADMIN;
 
@@ -44,9 +46,9 @@ import static ch.dvbern.ebegu.enums.UserRole.SUPER_ADMIN;
  */
 public class UpdateStatusInterceptor {
 
-	private final Logger LOG = LoggerFactory.getLogger(UpdateStatusInterceptor.class.getSimpleName());
+	private static final Logger LOG = LoggerFactory.getLogger(UpdateStatusInterceptor.class.getSimpleName());
 
-	private static final UserRole[] JA_OR_ADM = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA };
+	private static final UserRole[] JA_OR_SCH_OR_ADM = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT };
 
 	@Inject
 	private PrincipalBean principalBean;
@@ -71,10 +73,10 @@ public class UpdateStatusInterceptor {
 				if (gesuch == null) {
 					LOG.info("Gesuch mit ID " + gesuchID + " wurde nicht in der DB gefunden");
 				} else {
-					if (principalBean.isCallerInAnyOfRole(JA_OR_ADM) && Eingangsart.ONLINE.equals(gesuch.getEingangsart())
-						&& AntragStatus.FREIGEGEBEN.equals(gesuch.getStatus())) {
+					if (principalBean.isCallerInAnyOfRole(JA_OR_SCH_OR_ADM) && Eingangsart.ONLINE == gesuch.getEingangsart()
+						&& AntragStatus.FREIGEGEBEN == gesuch.getStatus()) {
 						changeGesuchStatus(gesuch, AntragStatus.IN_BEARBEITUNG_JA);
-					} else if (principalBean.isCallerInRole(STEUERAMT) && AntragStatus.PRUEFUNG_STV.equals(gesuch.getStatus())) {
+					} else if (principalBean.isCallerInRole(STEUERAMT) && AntragStatus.PRUEFUNG_STV == gesuch.getStatus()) {
 						changeGesuchStatus(gesuch, AntragStatus.IN_BEARBEITUNG_STV);
 					}
 				}

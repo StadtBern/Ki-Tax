@@ -63,6 +63,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRole.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRole.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRole.GESUCHSTELLER;
 import static ch.dvbern.ebegu.enums.UserRole.JURIST;
 import static ch.dvbern.ebegu.enums.UserRole.REVISOR;
@@ -82,7 +83,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizerImpl.class);
 
-	private static final UserRole[] JA_OR_ADM = { ADMIN, SACHBEARBEITER_JA };
+	private static final UserRole[] JA_OR_ADM_OR_SCH = { ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT };
 	private static final UserRole[] OTHER_AMT_ROLES = { REVISOR, JURIST, STEUERAMT };
 
 	@Inject
@@ -119,14 +120,6 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		if (gesuche != null) {
 			gesuche.forEach(this::checkReadAuthorization);
 		}
-	}
-
-	@Override
-	public void checkCreateAuthorizationGesuch() {
-		if (principalBean.isCallerInAnyOfRole(GESUCHSTELLER, SACHBEARBEITER_JA, ADMIN, SUPER_ADMIN)) {
-			return;
-		}
-		throwCreateViolation();
 	}
 
 	@Override
@@ -176,7 +169,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		validateMandantMatches(fall);
 		//berechtigte Rollen pruefen
 		UserRole[] allowedRoles = { SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,
-			SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT, JURIST, REVISOR };
+			SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, ADMINISTRATOR_SCHULAMT, SCHULAMT, STEUERAMT, JURIST, REVISOR };
 		if (principalBean.isCallerInAnyOfRole(allowedRoles)) {
 			return true;
 		}
@@ -221,16 +214,16 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 		//Wir pruefen schulamt separat (schulamt darf schulamt-only Gesuche vom Status FREIGABEQUITTUNG zum Status SCHULAMT schieben)
 		boolean allowedSchulamt = false;
-		if (!allowedJAORGS && principalBean.isCallerInRole(SCHULAMT)
-			&& AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus())) {
+		if (!allowedJAORGS && principalBean.isCallerInAnyOfRole(SCHULAMT, ADMINISTRATOR_SCHULAMT)
+			&& AntragStatus.FREIGABEQUITTUNG == gesuch.getStatus()) {
 			allowedSchulamt = true;
 		}
 
 		//Wir pruefen steueramt separat (steueramt darf nur das Gesuch speichern wenn es im Status PRUEFUNG_STV oder IN_BEARBEITUNG_STV ist)
 		boolean allowedSteueramt = false;
 		if (!allowedJAORGS && !allowedSchulamt && principalBean.isCallerInRole(STEUERAMT)
-			&& (AntragStatus.PRUEFUNG_STV.equals(gesuch.getStatus()) || AntragStatus.IN_BEARBEITUNG_STV.equals(gesuch.getStatus())
-			|| AntragStatus.GEPRUEFT_STV.equals(gesuch.getStatus()))) {
+			&& (AntragStatus.PRUEFUNG_STV == gesuch.getStatus() || AntragStatus.IN_BEARBEITUNG_STV == gesuch.getStatus()
+			|| AntragStatus.GEPRUEFT_STV == gesuch.getStatus())) {
 			allowedSteueramt = true;
 		}
 
@@ -331,7 +324,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	public void checkReadAuthorization(@Nullable ErwerbspensumContainer ewpCnt) {
 		if (ewpCnt != null) {
 			//Wenn wir hier 100% korrekt sein wollen muessten wir auch noch das Gesuch laden und den status pruefen.
-			UserRole[] allowedRoles = { SACHBEARBEITER_JA, SUPER_ADMIN, ADMIN, REVISOR, JURIST, SCHULAMT };
+			UserRole[] allowedRoles = { SACHBEARBEITER_JA, SUPER_ADMIN, ADMIN, REVISOR, JURIST, ADMINISTRATOR_SCHULAMT, SCHULAMT };
 			boolean allowed = isInRoleOrGSOwner(allowedRoles, () -> extractGesuch(ewpCnt), principalBean.getPrincipal().getName());
 			if (!allowed) {
 				throwViolation(ewpCnt);
@@ -353,7 +346,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			Boolean allowedSchulamt = isAllowedSchulamt(owningGesuch);
 
 			Boolean allowedOthers = false;
-			if (principalBean.isCallerInAnyOfRole(OTHER_AMT_ROLES) && (owningGesuch.getStatus().isReadableByJugendamtSteueramt())) {
+			if (principalBean.isCallerInAnyOfRole(OTHER_AMT_ROLES) && (owningGesuch.getStatus().isReadableByJugendamtSchulamtSteueramt())) {
 				allowedOthers = true;
 			}
 			Boolean allowedOwner = isGSOwner(owningGesuch::getFall, name);
@@ -375,13 +368,12 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	}
 
 	private boolean isReadAuthorizedFreigabe(Gesuch gesuch) {
-		if (AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus())) {
-			boolean schulamtOnly = gesuch.hasOnlyBetreuungenOfSchulamt();
-			if (principalBean.isCallerInRole(SCHULAMT)) {
-				if (schulamtOnly) {
-					return true; //schulamt dar nur solche lesen die nur_schulamt sind
+		if (AntragStatus.FREIGABEQUITTUNG == gesuch.getStatus()) {
+			if (principalBean.isCallerInAnyOfRole(SCHULAMT, ADMINISTRATOR_SCHULAMT)) {
+				if (gesuch.hasBetreuungOfSchulamt()) {
+					return true; //schulamt darf nur solche lesen die nur_schulamt sind
 				}
-			} else if (!schulamtOnly) {
+			} else if (!gesuch.hasOnlyBetreuungenOfSchulamt()) {
 				return true;     //nicht schulamtbenutzer duerfen keine lesen die exklusiv schulamt sind
 			}
 		}
@@ -437,7 +429,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			Institution instToMatch = betreuung.getInstitutionStammdaten().getInstitution();
 			return institutions.stream().anyMatch(instToMatch::equals);
 		}
-		if (principalBean.isCallerInRole(SCHULAMT)) {
+		if (principalBean.isCallerInAnyOfRole(SCHULAMT, ADMINISTRATOR_SCHULAMT)) {
 			return betreuung.getBetreuungsangebotTyp().isSchulamt();
 		}
 		return false;
@@ -485,20 +477,20 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	}
 
 	@Nonnull
-	private Boolean isAllowedAdminOrSachbearbeiter(Gesuch entity) {
+	private Boolean isAllowedAdminOrSachbearbeiter(Gesuch gesuch) {
 		if (principalBean.isCallerInRole(UserRoleName.SUPER_ADMIN)) {
 			return true;
 		}
-		//JA Benutzer duerfen nur freigegebene Gesuche anschauen, zudem muessen die gesuche ein Jugendamtbetreung haben (also nicht im Status NUR_SCHULAMT sein)
-		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM)) {
-			return entity.getStatus().isReadableByJugendamtSteueramt();
+		//JA/SCH Benutzer duerfen nur freigegebene Gesuche anschauen
+		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM_OR_SCH)) {
+			return gesuch.getStatus().isReadableByJugendamtSchulamtSteueramt();
 		}
-		return isAllowedJuristOrRevisor(entity);
+		return isAllowedJuristOrRevisor(gesuch);
 	}
 
 	private boolean isAllowedSchulamt(Gesuch entity) {
-		if (principalBean.isCallerInRole(SCHULAMT)) {
-			return entity.hasBetreuungOfSchulamt() && entity.getStatus().isReadableBySchulamtSachbearbeiter();
+		if (principalBean.isCallerInAnyOfRole(SCHULAMT, ADMINISTRATOR_SCHULAMT)) {
+			return entity.getStatus().isReadableBySchulamtSachbearbeiter();
 		}
 		return false;
 	}
@@ -532,12 +524,8 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			LOGGER.error(msg);
 			throw new EbeguRuntimeException("isWriteAuthorized", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, gesuch.getId(), msg);
 		}
-		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM)) {
-			return gesuch.getStatus().isReadableByJugendamtSteueramt() || AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus());
-		}
-
-		if (principalBean.isCallerInRole(SCHULAMT) && gesuch.hasOnlyBetreuungenOfSchulamt()) {
-			return AntragStatus.writeAllowedForRole(userRole).contains(gesuch.getStatus()); //Schulamt darf Freigabequittung scannen und Dokumente-Button setzen
+		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM_OR_SCH)) {
+			return gesuch.getStatus().isReadableByJugendamtSchulamtSteueramt() || AntragStatus.FREIGABEQUITTUNG == gesuch.getStatus();
 		}
 
 		if (isGSOwner(gesuch::getFall, principalName)) {
@@ -619,35 +607,36 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			UserRole userRole = principalBean.discoverMostPrivilegedRole();
 			Objects.requireNonNull(userRole);
 			switch (userRole) {
-				case GESUCHSTELLER: {
-					// Beim schreiben (Entwurf speichern oder Mitteilung senden) muss der eingeloggte GS der Absender sein
-					if (!isCurrentUserMitteilungsSender(mitteilung)) {
-						throwViolation(mitteilung);
-					}
-					break;
-				}
-				case SACHBEARBEITER_INSTITUTION:
-				case SACHBEARBEITER_TRAEGERSCHAFT:
-					if (!isSenderTyp(mitteilung, MitteilungTeilnehmerTyp.INSTITUTION)) {
-						throwViolation(mitteilung);
-					}
-					break;
-				case SACHBEARBEITER_JA:
-				case ADMIN: {
-					if (!isSenderTyp(mitteilung, MitteilungTeilnehmerTyp.JUGENDAMT)) {
-						throwViolation(mitteilung);
-					}
-					break;
-				}
-				case SUPER_ADMIN: {
-					// Superadmin darf alles!
-					break;
-				}
-				default: {
-					//TODO (team) Rollen Schulamt beruecksichtigen!
-					// Alle anderen Rollen sind nicht berechtigt
+			case GESUCHSTELLER: {
+				// Beim schreiben (Entwurf speichern oder Mitteilung senden) muss der eingeloggte GS der Absender sein
+				if (!isCurrentUserMitteilungsSender(mitteilung)) {
 					throwViolation(mitteilung);
 				}
+				break;
+			}
+			case SACHBEARBEITER_INSTITUTION:
+			case SACHBEARBEITER_TRAEGERSCHAFT:
+				if (!isSenderTyp(mitteilung, MitteilungTeilnehmerTyp.INSTITUTION)) {
+					throwViolation(mitteilung);
+				}
+				break;
+			case SACHBEARBEITER_JA:
+			case ADMIN:
+			case SCHULAMT:
+			case ADMINISTRATOR_SCHULAMT:
+				if (!isSenderTyp(mitteilung, MitteilungTeilnehmerTyp.JUGENDAMT)) {
+					throwViolation(mitteilung);
+				}
+				break;
+			case SUPER_ADMIN: {
+				// Superadmin darf alles!
+				break;
+			}
+			default: {
+				//TODO (team) Rollen Schulamt beruecksichtigen!
+				// Alle anderen Rollen sind nicht berechtigt
+				throwViolation(mitteilung);
+			}
 			}
 		}
 	}
@@ -667,33 +656,35 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			// - der Sender sein (INSTITUTIONEN)
 			// - SenderTyp oder EmpfaengerTyp muss JUGENDAMT sein (SACHBEARBEITER_JA)
 			switch (userRole) {
-				case GESUCHSTELLER: {
-					if (!(isCurrentUserMitteilungsSender(mitteilung) || isCurrentUserMitteilungsEmpfaenger(mitteilung))) {
-						throwViolation(mitteilung);
-					}
-					break;
-				}
-				case SACHBEARBEITER_INSTITUTION:
-				case SACHBEARBEITER_TRAEGERSCHAFT: {
-					if (!isSenderTypOrEmpfaengerTyp(mitteilung, MitteilungTeilnehmerTyp.INSTITUTION)) {
-						throwViolation(mitteilung);
-					}
-					break;
-				}
-				case SACHBEARBEITER_JA: {
-					if (!isSenderTypOrEmpfaengerTyp(mitteilung, MitteilungTeilnehmerTyp.JUGENDAMT)) {
-						throwViolation(mitteilung);
-					}
-					break;
-				}
-				case SUPER_ADMIN:
-				case ADMIN: {
-					break;
-				}
-				default: {
-					//TODO (team) Rollen Schulamt beruecksichtigen!
+			case GESUCHSTELLER: {
+				if (!(isCurrentUserMitteilungsSender(mitteilung) || isCurrentUserMitteilungsEmpfaenger(mitteilung))) {
 					throwViolation(mitteilung);
 				}
+				break;
+			}
+			case SACHBEARBEITER_INSTITUTION:
+			case SACHBEARBEITER_TRAEGERSCHAFT: {
+				if (!isSenderTypOrEmpfaengerTyp(mitteilung, MitteilungTeilnehmerTyp.INSTITUTION)) {
+					throwViolation(mitteilung);
+				}
+				break;
+			}
+			case SACHBEARBEITER_JA:
+			case ADMINISTRATOR_SCHULAMT:
+			case SCHULAMT:
+			case REVISOR: {
+				if (!isSenderTypOrEmpfaengerTyp(mitteilung, MitteilungTeilnehmerTyp.JUGENDAMT)) {
+					throwViolation(mitteilung);
+				}
+				break;
+			}
+			case SUPER_ADMIN:
+			case ADMIN: {
+				break;
+			}
+			default: {
+				throwViolation(mitteilung);
+			}
 			}
 		}
 	}

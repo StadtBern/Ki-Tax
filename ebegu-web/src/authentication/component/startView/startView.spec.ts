@@ -13,18 +13,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import '../../../bootstrap.ts';
-import 'angular-mocks';
-import {EbeguAuthentication} from '../../authentication.module';
-import {TSAuthEvent} from '../../../models/enums/TSAuthEvent';
-import {StartViewController} from './startView';
 import {EbeguWebCore} from '../../../core/core.module';
-import AuthServiceRS from '../../service/AuthServiceRS.rest';
-import TSUser from '../../../models/TSUser';
+import {TSAuthEvent} from '../../../models/enums/TSAuthEvent';
 import {TSRole} from '../../../models/enums/TSRole';
-import {IStateService} from 'angular-ui-router';
-import IRootScopeService = angular.IRootScopeService;
-import IScope = angular.IScope;
+import TSUser from '../../../models/TSUser';
+import {EbeguAuthentication} from '../../authentication.module';
+import AuthServiceRS from '../../service/AuthServiceRS.rest';
+import {StartViewController} from './startView';
 
 describe('startView', function () {
 
@@ -32,15 +27,15 @@ describe('startView', function () {
     beforeEach(angular.mock.module(EbeguWebCore.name));
     beforeEach(angular.mock.module(EbeguAuthentication.name));
 
-    let $rootScope: IRootScopeService;
-    let scope: IScope;
-    let $componentController: any;
+    let $rootScope: angular.IRootScopeService;
+    let scope: angular.IScope;
+    let $componentController: angular.IComponentControllerService;
     let startViewController: StartViewController;
     let authService: AuthServiceRS;
     let mockPrincipal: TSUser;
-    let state: IStateService;
+    let state: angular.ui.IStateService;
 
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         $componentController = $injector.get('$componentController');
         $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
@@ -79,10 +74,10 @@ describe('startView', function () {
         });
         it('should go to pendenzen if role is sachbearbeiter ja', function () {
             mockPrincipal.role = TSRole.SACHBEARBEITER_JA;
-               spyOn(authService, 'getPrincipal').and.returnValue(mockPrincipal);
-               spyOn(state, 'go');
-               startViewController.$onInit();
-               expect(state.go).toHaveBeenCalledWith('pendenzen');
-           });
+            spyOn(authService, 'getPrincipal').and.returnValue(mockPrincipal);
+            spyOn(state, 'go');
+            startViewController.$onInit();
+            expect(state.go).toHaveBeenCalledWith('pendenzen');
+        });
     });
 });

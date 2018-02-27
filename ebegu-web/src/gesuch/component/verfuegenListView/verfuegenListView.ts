@@ -14,45 +14,41 @@
  */
 
 import {IComponentOptions, ILogService, IPromise, IScope} from 'angular';
-import AbstractGesuchViewController from '../abstractGesuchView';
-import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
-import TSBetreuung from '../../../models/TSBetreuung';
-import TSKindContainer from '../../../models/TSKindContainer';
-import EbeguUtil from '../../../utils/EbeguUtil';
-import BerechnungsManager from '../../service/berechnungsManager';
-import WizardStepManager from '../../service/wizardStepManager';
+import * as moment from 'moment';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {DownloadRS} from '../../../core/service/downloadRS.rest';
+import {isAnyStatusOfMahnung, isAnyStatusOfVerfuegt, isAtLeastFreigegeben, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
+import {TSFinSitStatus} from '../../../models/enums/TSFinSitStatus';
+import {TSMahnungTyp} from '../../../models/enums/TSMahnungTyp';
+import {TSRole} from '../../../models/enums/TSRole';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {
-    isAnyStatusOfMahnung,
-    isAnyStatusOfVerfuegt,
-    isAnyStatusOfVerfuegtButSchulamt,
-    isAtLeastFreigegeben,
-    TSAntragStatus
-} from '../../../models/enums/TSAntragStatus';
-import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
-import {RemoveDialogController} from '../../dialog/RemoveDialogController';
-import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
-import {DownloadRS} from '../../../core/service/downloadRS.rest';
+import TSBetreuung from '../../../models/TSBetreuung';
 import TSDownloadFile from '../../../models/TSDownloadFile';
-import TSMahnung from '../../../models/TSMahnung';
-import {TSMahnungTyp} from '../../../models/enums/TSMahnungTyp';
-import MahnungRS from '../../service/mahnungRS.rest';
 import TSGesuch from '../../../models/TSGesuch';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {TSRole} from '../../../models/enums/TSRole';
-import GesuchRS from '../../service/gesuchRS.rest';
-import {BemerkungenDialogController} from '../../dialog/BemerkungenDialogController';
+import TSKindContainer from '../../../models/TSKindContainer';
+import TSMahnung from '../../../models/TSMahnung';
 import AuthenticationUtil from '../../../utils/AuthenticationUtil';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import {EnumEx} from '../../../utils/EnumEx';
+import {BemerkungenDialogController} from '../../dialog/BemerkungenDialogController';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import BerechnungsManager from '../../service/berechnungsManager';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import GesuchRS from '../../service/gesuchRS.rest';
+import MahnungRS from '../../service/mahnungRS.rest';
+import WizardStepManager from '../../service/wizardStepManager';
+import AbstractGesuchViewController from '../abstractGesuchView';
 import ITimeoutService = angular.ITimeoutService;
 
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 let bemerkungDialogTempl = require('../../dialog/bemerkungenDialogTemplate.html');
-
 
 export class VerfuegenListViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -71,6 +67,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     mahnungList: TSMahnung[];
     private mahnung: TSMahnung;
     private tempAntragStatus: TSAntragStatus;
+    finSitStatus: Array<string>;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager',
         'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope', 'GesuchRS', '$timeout'];
@@ -121,6 +118,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
         }
         this.refreshKinderListe();
+        this.finSitStatus = EnumEx.getNames(TSFinSitStatus);
     }
 
     private refreshKinderListe(): IPromise<any> {
@@ -188,13 +186,20 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      * erreicht hat
      */
     public isFinanziellesituationPDFVisible(): boolean {
+        if (!this.gesuchModelManager.isFinanzielleSituationEnabled() || !this.gesuchModelManager.isFinanzielleSituationDesired()) {
+            return false;
+        }
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
         if (isGesuchsteller) {
             let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-            return isAnyStatusOfVerfuegt(status) && this.getGesuch().hasFSDokument;
+            return isAnyStatusOfVerfuegt(status) && this.getGesuch().hasFSDokument && !this.isFinSitAbglehnt();
         }
-        return this.getGesuch().hasFSDokument;
+        return this.getGesuch().hasFSDokument && !this.isFinSitAbglehnt();
 
+    }
+
+    public isFinanzielleSituationDesired(): boolean {
+        return this.gesuchModelManager.isFinanzielleSituationDesired();
     }
 
     public isBegleitschreibenVisible(): boolean {
@@ -258,9 +263,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public setGesuchStatusVerfuegen(): IPromise<TSGesuch> {
         let deleteTextValue: string = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN';
-        if (this.gesuchModelManager.areThereOnlySchulamtAngebote()) {
-            deleteTextValue = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN_SCHULAMT';
-        }
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
             deleteText: deleteTextValue,
@@ -275,8 +277,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                     // For this reason we have to navigate directly out of the gesuch once it has been saved. We navigate to the
                     // default start page for the current role.
                     // createNeededPDFs is not being called for the same reason. Anyway, the Gesuch vanishes for the role JA and is only
-                    // available for the role SCHULAMT, so JA doesn't need the PDFs to be created. When a Schulamt worker opens this Gesuch,
-                    // she can generate the PDFs by clicking on the corresponding links
+                    // available for the role SCHULAMT/ADMINISTRATOR_SCHULAMT, so JA doesn't need the PDFs to be created. When a Schulamt worker opens this
+                    // Gesuch, she can generate the PDFs by clicking on the corresponding links
                     AuthenticationUtil.navigateToStartPageForRole(this.authServiceRs.getPrincipal(), this.$state);
                     return this.gesuchModelManager.getGesuch();
                 } else { // for NUR_SCHULAMT this makes no sense
@@ -312,7 +314,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public showSendToSteuerverwaltung(): boolean {
         //hier wird extra nur "VERFUEGT" gestestet statt alle verfuegten status weil das Schulamt das Gesuch nicht pruefen lassen darf
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT) && !this.getGesuch().gesperrtWegenBeschwerde;
+        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.NUR_SCHULAMT))
+            && !this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     public stvPruefungAbschliessen(): void {
@@ -351,6 +354,14 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public showZweiteMahnungAusloesen(): boolean {
         return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ZWEITE_MAHNUNG
             && !this.isGesuchReadonly();
+    }
+
+    /**
+     * Nur required in Status VERFUEGEN oder GEPRUEFT und wenn der Benutzer nicht am Erstellen einer Mahnung ist.
+     */
+    public isFinSitStatusRequired(): boolean {
+        return !this.showErsteMahnungAusloesen() && !this.showZweiteMahnungAusloesen()
+            && (this.getGesuch().status === TSAntragStatus.VERFUEGEN || this.getGesuch().status === TSAntragStatus.GEPRUEFT);
     }
 
     public showMahnlaufBeenden(): boolean {
@@ -395,6 +406,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             this.mahnung.gesuch = this.getGesuch();
             this.mahnung.timestampAbgeschlossen = null;
             this.mahnung.bemerkungen = generatedBemerkungen.data;
+            if (this.getGesuchsperiode().hasTagesschulenAnmeldung() && this.getGesuch().areThereOnlySchulamtAngebote()) {
+                this.mahnung.datumFristablauf = moment(moment.now()).add(7, 'days');
+            }
             return;
         });
     }
@@ -426,7 +440,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      */
     public showGeprueft(): boolean {
         return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))
-            && this.wizardStepManager.areAllStepsOK(this.getGesuch()) && this.mahnung === undefined && !this.isGesuchReadonly();
+            && this.wizardStepManager.areAllStepsOK(this.getGesuch()) && this.mahnung === undefined
+            && !this.gesuchModelManager.areThereOnlySchulamtAngebote()
+            && !this.isGesuchReadonly();
     }
 
     /**
@@ -437,6 +453,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
             && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
             && this.gesuchModelManager.getGesuch().isThereAnyBetreuung()
+            && !this.gesuchModelManager.areThereOnlySchulamtAngebote()
             && !this.isGesuchReadonly();
         // && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
     }
@@ -448,6 +465,14 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
             && !this.gesuchModelManager.getGesuch().isThereAnyBetreuung()
             && !this.isGesuchReadonly();
+    }
+
+    /**
+     * ausblenden, wenn Gesuch readonly und finSitStatus nicht gesetzt (für alte Gesuche). Fuer GS nicht anzeigen.
+     */
+    public showFinSitStatus(): boolean {
+        return !(this.isGesuchReadonly() && EbeguUtil.isNullOrUndefined(this.getGesuch().finSitStatus))
+            && this.authServiceRs.isOneOfRoles(this.TSRoleUtil.getJugendamtAndSchulamtRole());
     }
 
     public openFinanzielleSituationPDF(): void {
@@ -495,12 +520,46 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public showBeschwerdeHaengig(): boolean {
         let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
         // Schulamt Status duerfen keine Beschwerde starten
-        return isAnyStatusOfVerfuegtButSchulamt(status) && !this.getGesuch().gesperrtWegenBeschwerde;
+        return isAnyStatusOfVerfuegt(status) && !this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     public showBeschwerdeAbschliessen(): boolean {
         let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
         return TSAntragStatus.BESCHWERDE_HAENGIG === status;
+    }
+
+    public showAbschliessen(): boolean {
+        let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
+        return (TSAntragStatus.IN_BEARBEITUNG_JA === status || TSAntragStatus.GEPRUEFT === status)
+            && this.gesuchModelManager.areThereOnlySchulamtAngebote();
+    }
+
+    public isFinSitChoosen(): boolean {
+        if (this.getGesuch() && this.getGesuch().finSitStatus) {
+            return true;
+        }
+        return false;
+    }
+
+    public isFinSitAbglehnt() {
+        if (this.isFinSitChoosen() && this.getGesuch().finSitStatus !== TSFinSitStatus.AKZEPTIERT) {
+            return true;
+        }
+        return false;
+    }
+
+    public setAbschliessen(): IPromise<TSGesuch> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'ABSCHLIESSEN',
+            deleteText: 'BESCHREIBUNG_GESUCH_ABSCHLIESSEN',
+            parentController: undefined,
+            elementID: undefined
+        }).then(() => {
+            return this.gesuchRS.setAbschliessen(this.getGesuch().id).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+                return this.gesuchModelManager.getGesuch();
+            });
+        });
     }
 
     public setGesuchStatusBeschwerdeHaengig(): IPromise<TSGesuch> {
@@ -529,6 +588,24 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                 return this.gesuchModelManager.getGesuch();
             });
         });
+    }
+
+    public changeFinSitStatus() {
+        if (this.getGesuch().finSitStatus) {
+            this.setHasFSDokumentAccordingToFinSitState();
+            this.gesuchRS.changeFinSitStatus(this.getGesuch().id, this.getGesuch().finSitStatus).then((response: any) => {
+                this.gesuchModelManager.setGesuch(this.getGesuch());
+                this.form.$setPristine();
+            });
+        }
+    }
+
+    private setHasFSDokumentAccordingToFinSitState() {
+        if (this.isFinSitAbglehnt()) {
+            this.getGesuch().hasFSDokument = false;
+        } else {
+            this.getGesuch().hasFSDokument = true;
+        }
     }
 
     public fsDokumentChanged(): void {

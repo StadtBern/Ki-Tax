@@ -18,6 +18,7 @@ package ch.dvbern.ebegu.tests.rules.Anlageverzeichnis;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import ch.dvbern.ebegu.entities.DokumentGrund;
@@ -47,6 +48,7 @@ import ch.dvbern.ebegu.rules.anlageverzeichnis.FinanzielleSituationDokumente;
 import ch.dvbern.ebegu.rules.anlageverzeichnis.KindDokumente;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +61,6 @@ public class DokumentenverzeichnisEvaluatorTest {
 	private final DokumentenverzeichnisEvaluator evaluator = new DokumentenverzeichnisEvaluator();
 	private final KindDokumente kindDokumente = new KindDokumente();
 	private final ErwerbspensumDokumente erwerbspensumDokumente = new ErwerbspensumDokumente();
-	private final FinanzielleSituationDokumente finanzielleSituationDokumente = new FinanzielleSituationDokumente();
 	private Gesuch testgesuch;
 
 	@Before
@@ -67,8 +68,8 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		testgesuch = new Gesuch();
 		testgesuch.setGesuchsperiode(TestDataUtil.createDefaultGesuchsperiode());
-		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigAb(LocalDate.of(2017, 8, 1));
-		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigBis(LocalDate.of(2018, 7, 31));
+		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigAb(Constants.GESUCHSPERIODE_17_18_AB);
+		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigBis(Constants.GESUCHSPERIODE_17_18_BIS);
 		testgesuch.setKindContainers(new HashSet<>());
 	}
 
@@ -160,10 +161,11 @@ public class DokumentenverzeichnisEvaluatorTest {
 		}
 	}
 
-	private void createFamilienSituation(Gesuch gesuch, boolean gemeinsam) {
-
+	private void createFamilienSituation(Gesuch gesuch, boolean gemeinsam, boolean sozialhilfe) {
 		final FamiliensituationContainer familiensituation = TestDataUtil.createDefaultFamiliensituationContainer();
+		Assert.assertNotNull(familiensituation.extractFamiliensituation());
 		familiensituation.extractFamiliensituation().setGemeinsameSteuererklaerung(gemeinsam);
+		familiensituation.extractFamiliensituation().setSozialhilfeBezueger(sozialhilfe);
 		gesuch.setFamiliensituationContainer(familiensituation);
 	}
 
@@ -203,7 +205,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Assert.assertEquals(DokumentGrundTyp.KINDER, dokumentGrund.getDokumentGrundTyp());
 		Assert.assertNull(dokumentGrund.getFullName());
 		Assert.assertEquals(DokumentGrundPersonType.KIND, dokumentGrund.getPersonType());
-		Assert.assertEquals(new Integer(1), dokumentGrund.getPersonNumber());
+		Assert.assertEquals(Integer.valueOf(1), dokumentGrund.getPersonNumber());
 		return dokumentGrund;
 	}
 
@@ -214,7 +216,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Assert.assertEquals(DokumentGrundTyp.ERWERBSPENSUM, dokumentGrund.getDokumentGrundTyp());
 		Assert.assertNull(dokumentGrund.getFullName());
 		Assert.assertEquals(DokumentGrundPersonType.GESUCHSTELLER, dokumentGrund.getPersonType());
-		Assert.assertEquals(new Integer(1), dokumentGrund.getPersonNumber());
+		Assert.assertEquals(Integer.valueOf(1), dokumentGrund.getPersonNumber());
 		Assert.assertEquals(erwerbspensum.getName(), dokumentGrund.getTag());
 		return dokumentGrund;
 	}
@@ -383,8 +385,8 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Set<DokumentGrund> grunds = new HashSet<>();
 
 		for (DokumentGrund dokumentGrund : dokumentGrunds) {
-			if (dokumentGrund.getPersonType().equals(DokumentGrundPersonType.GESUCHSTELLER)
-				&& dokumentGrund.getPersonNumber() == gesuchstellerNumber) {
+			if (dokumentGrund.getPersonType() == DokumentGrundPersonType.GESUCHSTELLER
+				&& Objects.equals(dokumentGrund.getPersonNumber(), gesuchstellerNumber)) {
 				grunds.add(dokumentGrund);
 			}
 		}
@@ -392,30 +394,30 @@ public class DokumentenverzeichnisEvaluatorTest {
 	}
 
 	private Set<DokumentGrund> getDokumentGrundsForType(DokumentTyp dokumentTyp, Set<DokumentGrund> dokumentGrunds,
-		DokumentGrundPersonType personType, int personNumber, String year) {
+		DokumentGrundPersonType personType, Integer personNumber, String year) {
 		Set<DokumentGrund> grunds = new HashSet<>();
 
 		for (DokumentGrund dokumentGrund : dokumentGrunds) {
 
 			if (personType != null) {
 				if (year != null) {
-					if (!personType.equals(dokumentGrund.getPersonType()) || personNumber != dokumentGrund.getPersonNumber()
+					if (personType != dokumentGrund.getPersonType() || !Objects.equals(personNumber, dokumentGrund.getPersonNumber())
 						|| !year.equals(dokumentGrund.getTag())) {
 						continue;
 					}
 				} else {
-					if (!personType.equals(dokumentGrund.getPersonType()) || personNumber != dokumentGrund.getPersonNumber()
-						|| !(dokumentGrund.getTag() == null)) {
+					if (personType != dokumentGrund.getPersonType() || !Objects.equals(personNumber, dokumentGrund.getPersonNumber())
+						|| dokumentGrund.getTag() != null) {
 						continue;
 					}
 				}
 			} else {
-				if (!(dokumentGrund.getPersonType() == null) || !(dokumentGrund.getPersonNumber() == null) || !(dokumentGrund.getTag() == null)) {
+				if (dokumentGrund.getPersonType() != null || dokumentGrund.getPersonNumber() != null || dokumentGrund.getTag() != null) {
 					continue;
 				}
 			}
 
-			if (dokumentGrund.getDokumentTyp().equals(dokumentTyp)) {
+			if (dokumentGrund.getDokumentTyp() == dokumentTyp) {
 				grunds.add(dokumentGrund);
 				break;
 			}
@@ -430,7 +432,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		createFinanzielleSituationGS(1, testgesuch, "Sämi", true);
 		createFinanzielleSituationGS(2, testgesuch, "Alex", true);
 
-		createFamilienSituation(testgesuch, true);
+		createFamilienSituation(testgesuch, true, false);
 		final Set<DokumentGrund> dokumentGrunds = evaluator.calculate(testgesuch);
 		Assert.assertEquals(1, dokumentGrunds.size());
 
@@ -446,7 +448,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		createFinanzielleSituationGS(1, testgesuch, "Sämi", true);
 		createFinanzielleSituationGS(2, testgesuch, "Alex", true);
 
-		createFamilienSituation(testgesuch, false);
+		createFamilienSituation(testgesuch, false, false);
 		final Set<DokumentGrund> dokumentGrunds = evaluator.calculate(testgesuch);
 		Assert.assertEquals(2, dokumentGrunds.size());
 
@@ -470,7 +472,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		createFinanzielleSituationGS(1, testgesuch, "Sämi", false);
 		createFinanzielleSituationGS(2, testgesuch, "Alex", false);
 
-		createFamilienSituation(testgesuch, false);
+		createFamilienSituation(testgesuch, false, false);
 		final Set<DokumentGrund> dokumentGrunds = evaluator.calculate(testgesuch);
 		Assert.assertEquals(4, dokumentGrunds.size());
 
@@ -492,14 +494,14 @@ public class DokumentenverzeichnisEvaluatorTest {
 	}
 
 	private void checkType(Set<DokumentGrund> dokumentGrundGS1, DokumentTyp dokumentTyp, String fullname, String year,
-		DokumentGrundPersonType personType, int personNumber, DokumentGrundTyp dokumentGrundTyp) {
-		final Set<DokumentGrund> dokumentGrundsForType = getDokumentGrundsForType(dokumentTyp, dokumentGrundGS1, DokumentGrundPersonType.GESUCHSTELLER, personNumber, year);
+		DokumentGrundPersonType personType, Integer personNumber, DokumentGrundTyp dokumentGrundTyp) {
+		final Set<DokumentGrund> dokumentGrundsForType = getDokumentGrundsForType(dokumentTyp, dokumentGrundGS1, personType, personNumber, year);
 		Assert.assertEquals("No document with dokumentGrundTyp: " + dokumentGrundTyp + "; dokumentTyp: " + dokumentTyp + "; fullname: " + fullname + "; year: " + year,
 			1, dokumentGrundsForType.size());
 		final DokumentGrund dokumentGrund = dokumentGrundsForType.iterator().next();
 		Assert.assertNull(dokumentGrund.getFullName());
 		Assert.assertEquals(personType, dokumentGrund.getPersonType());
-		Assert.assertEquals(new Integer(personNumber), dokumentGrund.getPersonNumber());
+		Assert.assertEquals(personNumber, dokumentGrund.getPersonNumber());
 		Assert.assertEquals(dokumentTyp, dokumentGrund.getDokumentTyp());
 
 	}
@@ -584,7 +586,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		createEinkommensverschlechterungGS(2, testgesuch, "Alex", false);
 		createEinkommensverschlechterungInfo();
 		final Gesuchsperiode gesuchsperiode = TestDataUtil.createDefaultGesuchsperiode();
-		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(2016, 8, 1), LocalDate.of(2017, 8, 1)));
+		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(2016, 8, 1), Constants.GESUCHSPERIODE_17_18_AB));
 
 		testgesuch.setGesuchsperiode(gesuchsperiode);
 
@@ -628,6 +630,16 @@ public class DokumentenverzeichnisEvaluatorTest {
 		checkType(dokumentGrundGS2, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller2().extractFullName(), "2017",
 			DokumentGrundPersonType.GESUCHSTELLER, 2, DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
 
+	}
+
+	@Test
+	public void familiensituationDokumenteTest() {
+		createFamilienSituation(testgesuch, true, true);
+
+		Set<DokumentGrund> dokumentGrunds = evaluator.calculate(testgesuch);
+
+		checkType(dokumentGrunds, DokumentTyp.UNTERSTUETZUNGSBESTAETIGUNG, null, null,
+			null, null, DokumentGrundTyp.FINANZIELLESITUATION);
 	}
 
 	private void createEinkommensverschlechterungInfo() {

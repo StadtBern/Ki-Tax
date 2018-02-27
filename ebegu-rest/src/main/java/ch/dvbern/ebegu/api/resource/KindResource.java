@@ -51,7 +51,6 @@ import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -91,7 +90,7 @@ public class KindResource {
 		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchId,
 		@Nonnull @NotNull @Valid JaxKindContainer kindContainerJAXP,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Gesuch gesuch = gesuchService.findGesuch(gesuchId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("saveKind", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId()));
 
@@ -117,7 +116,7 @@ public class KindResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxKindContainer findKind(
-		@Nonnull @NotNull @PathParam("kindContainerId") JaxId kindJAXPId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("kindContainerId") JaxId kindJAXPId) {
 
 		Validate.notNull(kindJAXPId.getId());
 		String kindID = converter.toEntityId(kindJAXPId);
@@ -134,14 +133,14 @@ public class KindResource {
 			// Es wird gecheckt ob der Benutzer zu einer Institution/Traegerschaft gehoert. Wenn ja, werden die Kinder gefilter
 			// damit nur die relevanten Kinder geschickt werden
 			if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == currentUserRole || UserRole.SACHBEARBEITER_INSTITUTION == currentUserRole) {
-				Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+				Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 				RestUtil.purgeSingleKindAndBetreuungenOfInstitutionen(jaxKindContainer, instForCurrBenutzer);
 			}
 		}
 		return jaxKindContainer;
 	}
 
-	@ApiOperation(value = "Loescht das Kind mit der uebergebenen Id aus der Datenbank", response = Void.class)
+	@ApiOperation("Loescht das Kind mit der uebergebenen Id aus der Datenbank")
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@Nullable
 	@DELETE
@@ -169,8 +168,7 @@ public class KindResource {
 	@Path("/dubletten/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Set<KindDubletteDTO> getKindDubletten(@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJaxId) throws
-		EbeguException {
+	public Set<KindDubletteDTO> getKindDubletten(@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJaxId) {
 		Validate.notNull(gesuchJaxId.getId());
 		String gesuchId = converter.toEntityId(gesuchJaxId);
 		return kindService.getKindDubletten(gesuchId);

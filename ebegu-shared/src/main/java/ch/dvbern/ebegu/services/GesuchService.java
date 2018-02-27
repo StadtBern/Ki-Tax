@@ -23,17 +23,15 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
-import javax.ejb.Asynchronous;
 import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.AntragStatus;
-import org.apache.commons.lang3.tuple.Pair;
+import ch.dvbern.ebegu.enums.FinSitStatus;
 
 /**
  * Service zum Verwalten von Gesuche
@@ -60,6 +58,8 @@ public interface GesuchService {
 	 */
 	@Nonnull
 	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory, @Nullable Benutzer saveAsUser);
+
+	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory);
 
 	/**
 	 * Aktualisiert das Gesuch in der DB
@@ -118,14 +118,6 @@ public interface GesuchService {
 
 	/**
 	 * Gibt alle existierenden Gesuche zurueck, deren Status nicht VERFUEGT ist
-	 *
-	 * @return Liste aller Gesuche aus der DB
-	 */
-	@Nonnull
-	Collection<Gesuch> getAllActiveGesuche();
-
-	/**
-	 * Gibt alle existierenden Gesuche zurueck, deren Status nicht VERFUEGT ist
 	 * und die dem übergebenen Benutzer als "Verantwortliche Person" zugeteilt sind.
 	 *
 	 * @return Liste aller Gesuche aus der DB
@@ -153,13 +145,6 @@ public interface GesuchService {
 	 */
 	@Nonnull
 	List<Gesuch> getAntraegeByCurrentBenutzer();
-
-	/**
-	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
-	 *
-	 * @return Resultatpaar, der erste Wert im Paar ist die Anzahl Resultate, der zweite Wert ist die Resultatliste
-	 */
-	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragTableFilterDto);
 
 	/**
 	 * Gibt ein DTO mit saemtlichen Antragen eins bestimmten Falls zurueck
@@ -219,11 +204,20 @@ public interface GesuchService {
 	Gesuch antragFreigabequittungErstellen(@Nonnull Gesuch gesuch, AntragStatus statusToChangeTo);
 
 	/**
-	 * Gibt das Gesuch frei für das Jugendamt: Anpassung des Status inkl Kopieren der Daten des GS aus den
+	 * Gibt das Gesuch frei für das Jugendamt/Schulamt: Anpassung des Status inkl Kopieren der Daten des GS aus den
 	 * JA-Containern in die GS-Containern. Wird u.a. beim einlesen per Scanner aufgerufen
 	 */
 	@Nonnull
-	Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username);
+	Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String usernameJA, @Nullable String usernameSCH);
+
+	/**
+	 * Verantwortliche müssen gesetzt werden wenn in einem Papiergesuch oder Papiermutation eine Betreuung hinzugefügt wird
+	 * oder eine Online-Mutation freigegeben wird (direkte Freigabe). Beim Einlesen eines Papiergesuchs werden die Veratnwortliche mittels Dialogfenster
+	 * durch den Benutzer gesetzt
+	 * @param persist speichert die Verantwortliche direkt auf der DB in Update-Query
+	 * @return true if Verantwortliche changed
+	 */
+	boolean setVerantwortliche(@Nullable String usernameJA, @Nullable String usernameSCH, Gesuch gesuch, boolean onlyIfNotSet, boolean persist);
 
 	/**
 	 * Setzt das gegebene Gesuch als Beschwerde hängig und bei allen Gescuhen der Periode den Flag
@@ -233,6 +227,14 @@ public interface GesuchService {
 	 */
 	@Nonnull
 	Gesuch setBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Setz "Nur_Schulamt" Gesuche auf den Status NUR_SCHULAMT
+	 *
+	 * @return Gibt das aktualisierte gegebene Gesuch zurueck
+	 */
+	@Nonnull
+	Gesuch setAbschliessen(@Nonnull Gesuch gesuch);
 
 	/**
 	 * Setzt das gegebene Gesuch als VERFUEGT und bei allen Gescuhen der Periode den Flag
@@ -247,6 +249,18 @@ public interface GesuchService {
 	 * Gibt zurueck, ob es sich um das neueste Gesuch (egal welcher Status) handelt
 	 */
 	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Gibt die ID des neuesten Gesuchs fuer einen Fall und eine Gesuchsperiode zurueck. Dieses kann auch ein
+	 * Gesuch sein, fuer welches ich nicht berechtigt bin!
+	 */
+	Optional<String> getIdOfNeuestesGesuch(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Fall fall);
+
+	/**
+	 * Gibt das Geusch zurueck, das mit dem Fall verknuepft ist und das neueste fuer das SchulamtInterface ist. Das Flag FinSitStatus
+	 * muss nicht NULL sein, sonst gilt es als nicht geprueft.
+	 */
+	Optional<Gesuch> getNeustesGesuchFuerFallnumerForSchulamtInterface(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Long fallnummer);
 
 	/**
 	 * Gibt das neueste (zuletzt verfügte) Gesuch für eine Gesuchsperiode und einen Fall zurueck.
@@ -357,18 +371,38 @@ public interface GesuchService {
 	 * Diese Methode wird asynchron ausgefuehrt, da das ermitteln des jeweils letzten Gesuchs pro
 	 * Fall sehr lange geht.
 	 */
-	@Asynchronous
 	void sendMailsToAllGesuchstellerOfLastGesuchsperiode(@Nonnull Gesuchsperiode lastGesuchsperiode, @Nonnull Gesuchsperiode nextGesuchsperiode);
 
 	/**
 	 * Checks all Betreuungen of the given Gesuch and updates the flag gesuchBetreuungenStatus with the corresponding
 	 * value.
 	 */
-	void updateBetreuungenStatus(@NotNull Gesuch gesuch);
+	Gesuch updateBetreuungenStatus(@NotNull Gesuch gesuch);
 
 	/**
 	 * In dieser Methode wird das Gesuch verfuegt. Nur Gesuche bei denen alle Betreuungen bereits verfuegt sind und der WizardStep Verfuegen
 	 * (faelslicherweise) auf OK gesetzt wurde, werden durch diese Methode wieder verfuegt.
 	 */
 	void gesuchVerfuegen(@NotNull Gesuch gesuch);
+
+	/**
+	 * Setzt den uebergebene FinSitStatus im gegebenen Gesuch
+	 * @return 1 wenn alles ok
+	 */
+	int changeFinSitStatus(@Nonnull String antragId, @Nonnull FinSitStatus finSitStatus);
+
+	/**
+	 * Setzt das Gesuch auf Status PRUEFUNG_STV und aktualisiert die benoetigten Parameter.
+	 */
+	Gesuch sendGesuchToSTV(@Nonnull Gesuch gesuch, @Nullable String bemerkungen);
+
+	/**
+	 * Das Gesuch wird als GEPRUEFT_STV markkiert
+	 */
+	Gesuch gesuchBySTVFreigeben(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Schliesst die Pruefung STV ab und setzt den Status auf den Status, den das Gesuch vor der Pruefung hatte
+	 */
+	Gesuch stvPruefungAbschliessen(@Nonnull Gesuch gesuch);
 }

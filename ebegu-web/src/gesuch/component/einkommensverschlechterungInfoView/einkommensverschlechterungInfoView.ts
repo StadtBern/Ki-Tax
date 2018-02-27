@@ -216,37 +216,43 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
 
     private save(): IPromise<TSEinkommensverschlechterungInfoContainer> {
         this.errorService.clearAll();
-        if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) {
-            if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === undefined) {
+        if (this.isFinanzielleSituationRequired()) {
+            if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) {
+                if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === undefined) {
+                    this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
+                }
+                if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 === undefined) {
+                    this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
+                }
+                this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, 1);
+                this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, 2);
+
+                this.initializeEKVContainers();
+            } else {
+                //wenn keine EV eingetragen wird, setzen wir alles auf undefined, da keine Daten gespeichert werden sollen
                 this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
-            }
-            if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 === undefined) {
                 this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
+                this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 = undefined;
+                this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 = undefined;
+                this.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus1 = undefined;
+                this.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus2 = undefined;
+                this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = undefined;
+                this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = undefined;
             }
-            this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, 1);
-            this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, 2);
 
-            this.initializeEKVContainers();
-        } else {
-            //wenn keine EV eingetragen wird, setzen wir alles auf undefined, da keine Daten gespeichert werden sollen
-            this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
-            this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
-            this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 = undefined;
-            this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 = undefined;
-            this.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus1 = undefined;
-            this.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus2 = undefined;
-            this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = undefined;
-            this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = undefined;
-        }
-
-        return this.einkommensverschlechterungInfoRS.saveEinkommensverschlechterungInfo(
-            this.getEinkommensverschlechterungsInfoContainer(), this.gesuchModelManager.getGesuch().id)
-            .then((ekvInfoRespo: TSEinkommensverschlechterungInfoContainer) => {
-                this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer = ekvInfoRespo;
-                return this.loadEKVContainersFromServer().then(() => {
-                    return ekvInfoRespo;
+            return this.einkommensverschlechterungInfoRS.saveEinkommensverschlechterungInfo(
+                this.getEinkommensverschlechterungsInfoContainer(), this.gesuchModelManager.getGesuch().id)
+                .then((ekvInfoRespo: TSEinkommensverschlechterungInfoContainer) => {
+                    this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer = ekvInfoRespo;
+                    return this.loadEKVContainersFromServer().then(() => {
+                        return ekvInfoRespo;
+                    });
                 });
-            });
+
+        } else {
+            // just return the existing one
+            return this.$q.when(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer);
+        }
 
     }
 
@@ -325,8 +331,8 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         return false;
     }
 
-    public isJugendamt(): boolean {
-        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    public isAmt(): boolean {
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorOrAmtRole());
     }
 
     public isGesuchFreigegeben(): boolean {
@@ -337,16 +343,19 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     public showAblehnungBasisJahrPlus1(): boolean {
-        return (!this.isJugendamt() && this.showEkvi() && this.showJahrPlus1()
+        return (!this.isAmt() && this.showEkvi() && this.showJahrPlus1()
             && this.getEinkommensverschlechterungsInfo().ekvBasisJahrPlus1Annulliert && this.isGesuchFreigegeben())
-            || (this.isJugendamt() && this.showEkvi() && this.showJahrPlus1());
+            || (this.isAmt() && this.showEkvi() && this.showJahrPlus1());
     }
 
     public showAblehnungBasisJahrPlus2(): boolean {
-        return (!this.isJugendamt() && this.showEkvi() && this.showJahrPlus2()
+        return (!this.isAmt() && this.showEkvi() && this.showJahrPlus2()
             && this.getEinkommensverschlechterungsInfo().ekvBasisJahrPlus2Annulliert && this.isGesuchFreigegeben())
-            || (this.isJugendamt() && this.showEkvi() && this.showJahrPlus2());
+            || (this.isAmt() && this.showEkvi() && this.showJahrPlus2());
     }
 
+    public isFinanzielleSituationRequired(): boolean {
+        return this.gesuchModelManager.isFinanzielleSituationEnabled() && this.gesuchModelManager.isFinanzielleSituationDesired();
+    }
 }
 

@@ -25,7 +25,6 @@ import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import {isAtLeastFreigegeben, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import DateUtil from '../../../utils/DateUtil';
-import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
 import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
 import {FreigabeDialogController} from '../../dialog/FreigabeDialogController';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
@@ -84,7 +83,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     }
 
     public confirmationCallback(): void {
-        if (this.gesuchModelManager.isGesuch() || this.gesuchModelManager.areAllJAAngeboteNew()) {
+        if (this.gesuchModelManager.isGesuch()) {
             this.openFreigabequittungPDF(true);
         } else {
             this.gesuchFreigeben(); //wenn keine freigabequittung noetig direkt freigeben
@@ -93,7 +92,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
 
     public gesuchFreigeben(): void {
         let gesuchID = this.gesuchModelManager.getGesuch().id;
-        this.gesuchModelManager.antragFreigeben(gesuchID, null);
+        this.gesuchModelManager.antragFreigeben(gesuchID, null, null);
     }
 
     private initDevModeParameter() {
@@ -122,7 +121,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
 
     public openFreigabequittungPDF(forceCreation: boolean): IPromise<void> {
         let win: Window = this.downloadRS.prepareDownloadWindow();
-        return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, forceCreation, this.getZustelladresse())
+        return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, forceCreation)
             .then((downloadFile: TSDownloadFile) => {
                 // wir laden das Gesuch neu, da die Erstellung des Dokumentes auch Aenderungen im Gesuch verursacht
                 this.gesuchModelManager.openGesuch(this.gesuchModelManager.getGesuch().id)
@@ -171,28 +170,12 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         return this.gesuchModelManager.isThereAnyAbgewieseneBetreuung();
     }
 
-    private getZustelladresse(): TSZustelladresse {
-        if (this.gesuchModelManager.isGesuch()) {
-            if (this.gesuchModelManager.areThereOnlySchulamtAngebote()) {
-                return TSZustelladresse.SCHULAMT;
-            } else {
-                return TSZustelladresse.JUGENDAMT;
-            }
-
-        } else {
-            if (this.gesuchModelManager.areAllJAAngeboteNew()) {
-                return TSZustelladresse.JUGENDAMT;
-            }
-        }
-        return undefined;
-    }
-
     /**
      * Wir koennen auf jeden Fall sicher sein, dass alle Erstgesuche eine Freigabequittung haben.
      * Ausserdem nur die Mutationen bei denen alle JA-Angebote neu sind, werden eine Freigabequittung haben
      */
     public isThereFreigabequittung(): boolean {
-        return this.gesuchModelManager.isGesuch() || this.gesuchModelManager.areAllJAAngeboteNew();
+        return this.gesuchModelManager.isGesuch();
     }
 
     $postLink() {

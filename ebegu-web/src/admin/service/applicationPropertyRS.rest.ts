@@ -49,13 +49,13 @@ export class ApplicationPropertyRS {
 
     isDevMode(): IPromise<boolean> {
         return this.http.get(this.serviceURL + '/public/devmode', {cache: true}).then((response) => {
-            return response.data;
+            return response.data as boolean;
         });
     }
 
     isDummyMode(): IPromise<boolean> {
         return this.http.get(this.serviceURL + '/public/dummy').then((response) => {
-            return response.data;
+            return response.data as boolean;
         });
     }
 
@@ -93,7 +93,7 @@ export class ApplicationPropertyRS {
 
     isZahlungenTestMode(): IPromise<boolean> {
         return this.http.get(this.serviceURL + '/public/zahlungentestmode', {cache: true}).then((response) => {
-            return response.data;
+            return response.data as boolean;
         });
     }
 }

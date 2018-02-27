@@ -134,8 +134,8 @@ public class VerfuegungResource {
 				UserRole currentUserRole = currentBenutzer.get().getRole();
 				// Es wird gecheckt ob der Benutzer zu einer Institution/Traegerschaft gehoert. Wenn ja, werden die Kinder gefilter
 				// damit nur die relevanten Kinder geschickt werden
-				if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(currentUserRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(currentUserRole)) {
-					Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+				if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == currentUserRole || UserRole.SACHBEARBEITER_INSTITUTION == currentUserRole) {
+					Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 					RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
 				}
 			}
@@ -244,6 +244,14 @@ public class VerfuegungResource {
 			gesuch.getGesuchsteller2().getAdressen().size();
 			gesuch.getGesuchsteller2().getErwerbspensenContainers().size();
 		}
+		gesuch.extractAllBetreuungen().forEach(betreuung -> {
+			if (betreuung.getBelegungTagesschule() != null && betreuung.getBelegungTagesschule().getModuleTagesschule() != null) {
+				betreuung.getBelegungTagesschule().getModuleTagesschule().size();
+			}
+			if (betreuung.getBelegungFerieninsel() != null) {
+				betreuung.getBelegungFerieninsel().getTage().size();
+			}
+		});
 		persistence.getEntityManager().detach(gesuch);
 	}
 }

@@ -38,7 +38,7 @@ public interface ReportService {
 	List<GesuchStichtagDataRow> getReportDataGesuchStichtag(@Nonnull LocalDate date, @Nullable String gesuchPeriodeID)
 		throws IOException, URISyntaxException;
 
-	@Nullable
+	@Nonnull
 	UploadFileInfo generateExcelReportGesuchStichtag(@Nonnull LocalDate date, @Nullable String gesuchPeriodeID)
 		throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
 
@@ -48,7 +48,7 @@ public interface ReportService {
 	List<GesuchZeitraumDataRow> getReportDataGesuchZeitraum(@Nonnull LocalDate dateVon, @Nonnull LocalDate dateBis, @Nullable String gesuchPeriodeID)
 		throws IOException, URISyntaxException;
 
-	@Nullable
+	@Nonnull
 	UploadFileInfo generateExcelReportGesuchZeitraum(@Nonnull LocalDate dateVon, @Nonnull LocalDate dateBis, @Nullable String gesuchPeriodeID)
 		throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
 
@@ -57,7 +57,7 @@ public interface ReportService {
 	List<KantonDataRow> getReportDataKanton(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis)
 		throws IOException, URISyntaxException;
 
-	@Nullable
+	@Nonnull
 	UploadFileInfo generateExcelReportKanton(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis)
 		throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
 
@@ -66,28 +66,28 @@ public interface ReportService {
 	List<MitarbeiterinnenDataRow> getReportMitarbeiterinnen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis)
 		throws IOException, URISyntaxException;
 
-	@Nullable
+	@Nonnull
 	UploadFileInfo generateExcelReportMitarbeiterinnen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis)
 		throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
 
 	// Zahlungen
 
-	@Nullable
+	@Nonnull
 	UploadFileInfo generateExcelReportZahlungAuftrag(@Nonnull String auftragId) throws ExcelMergeException;
 
-	@Nullable
+	@Nonnull
 	UploadFileInfo generateExcelReportZahlung(@Nonnull String zahlungId) throws ExcelMergeException;
 
-	@Nullable
+	@Nonnull
 	UploadFileInfo generateExcelReportZahlungPeriode(@Nonnull String gesuchsperiodeId) throws ExcelMergeException;
 
 	// Gesuchsteller / Kinder / Betreuung
-	@Nullable
+	@Nonnull
 	UploadFileInfo generateExcelReportGesuchstellerKinderBetreuung(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable String gesuchPeriodeId) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
 
-	@Nullable
+	@Nonnull
 	UploadFileInfo generateExcelReportKinder(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable String gesuchPeriodeId) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
 
-	@Nullable
+	@Nonnull
 	UploadFileInfo generateExcelReportGesuchsteller(@Nonnull LocalDate stichtag) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
 }

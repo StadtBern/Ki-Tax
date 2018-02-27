@@ -13,8 +13,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import '../../bootstrap.ts';
-import 'angular-mocks';
 import ListResourceRS from './listResourceRS.rest';
 
 describe('ListResourceRS', function () {
@@ -23,8 +21,7 @@ describe('ListResourceRS', function () {
 
     beforeEach(angular.mock.module('ebeguWeb.core'));
 
-
-    beforeEach(angular.mock.inject(function ($injector: any) {
+    beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         listResourceRS = $injector.get('ListResourceRS');
 
     }));
@@ -33,7 +30,6 @@ describe('ListResourceRS', function () {
         it('should include a getLaenderList() function', function () {
             expect(listResourceRS.getLaenderList).toBeDefined();
         });
-
 
     });
 

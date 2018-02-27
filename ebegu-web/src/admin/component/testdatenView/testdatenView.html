@@ -117,6 +117,28 @@
                     </li>
                     <li>
                         <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('9')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Abwesenheit"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('10')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Umzug vor Gesuchperiode"></span>
+                        </button>
+                    </li>
+                    <!-- TODO: When an Instiution with (Tagesschule/Ferien insel) for the 18/19 period
+                    can be included in the flyway DB scripts, this test case can be enabled client side. NOTE: The
+                    exisiting test UUIDS for Tagesschule and Ferien insel will also have to be updated.
+                     -->
+                    <!-- <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('11')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Schulamt Only"></span>
+                        </button>
+                    </li>-->
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
                                 ng-click="vm.createTestFallType('ASIV1')">
                             <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 1"></span>
                         </button>
@@ -357,16 +379,29 @@
                     <h2>Zahlungen</h2>
                 </div>
                 <div>
-                    <button type="button" class=" btn-testfall"
+                    <button type="button" class="btn-testfall"
                             ng-click="vm.zahlungenKontrollieren()">
                         <span>Zahlungen kontrollieren</span>
                     </button>
                 </div>
                 <div ng-if="vm.devMode">
                     <br/>
-                    <button type="button" class=" btn-testfall"
+                    <button type="button" class="btn-testfall"
                             ng-click="vm.deleteAllZahlungsauftraege()">
                         <span>Alle Zahlungen löschen</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Batch Jobs -->
+            <div class="row marginTop10">
+                <div class="viewTitle marginTop10">
+                    <h2>Batch Jobs</h2>
+                </div>
+                <div ng-if="vm.devMode">
+                    <button type="button" class="btn-testfall"
+                            ng-click="vm.runBatchMahnungFristablauf()">
+                        <span>Mahnung Prüfung ausführen</span>
                     </button>
                 </div>
             </div>

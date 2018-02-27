@@ -51,6 +51,9 @@ public class JaxGesuchstellerContainer extends JaxAbstractDTO {
 	private JaxAdresseContainer alternativeAdresse;
 
 	@Valid
+	private JaxAdresseContainer rechnungsAdresse;
+
+	@Valid
 	private JaxFinanzielleSituationContainer finanzielleSituationContainer;
 
 	@Valid
@@ -89,6 +92,14 @@ public class JaxGesuchstellerContainer extends JaxAbstractDTO {
 
 	public void setAlternativeAdresse(final JaxAdresseContainer alternativeAdresse) {
 		this.alternativeAdresse = alternativeAdresse;
+	}
+
+	public JaxAdresseContainer getRechnungsAdresse() {
+		return rechnungsAdresse;
+	}
+
+	public void setRechnungsAdresse(JaxAdresseContainer rechnungsAdresse) {
+		this.rechnungsAdresse = rechnungsAdresse;
 	}
 
 	public JaxFinanzielleSituationContainer getFinanzielleSituationContainer() {

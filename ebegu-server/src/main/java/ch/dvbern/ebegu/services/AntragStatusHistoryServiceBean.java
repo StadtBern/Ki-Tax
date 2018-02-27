@@ -53,6 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
 import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
 import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
@@ -66,7 +67,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(AntragStatusHistoryService.class)
-@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SCHULAMT, STEUERAMT, GESUCHSTELLER })
+@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, ADMINISTRATOR_SCHULAMT, SCHULAMT,  STEUERAMT, GESUCHSTELLER})
 public class AntragStatusHistoryServiceBean extends AbstractBaseService implements AntragStatusHistoryService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AntragStatusHistoryServiceBean.class.getSimpleName());
@@ -182,6 +183,30 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 			throw new EbeguRuntimeException("findLastStatusChangeBeforeBeschwerde", ErrorCodeEnum.ERROR_NOT_FROM_STATUS_BESCHWERDE, gesuch.getId());
 		}
 		return lastTwoChanges.get(1); // returns the previous status before Beschwerde_Haengig
+	}
+
+	@Nonnull
+	@Override
+	public AntragStatusHistory findLastStatusChangeBeforePruefungSTV(@Nonnull Gesuch gesuch) {
+		Objects.requireNonNull(gesuch);
+		authorizer.checkReadAuthorization(gesuch);
+		if (gesuch.getStatus() != AntragStatus.GEPRUEFT_STV) {
+			throw new EbeguRuntimeException("findLastStatusChangeBeforePruefungSTV", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_STV_ALLOWED, gesuch.getId());
+		}
+
+		final CriteriaQuery<AntragStatusHistory> query = createQueryAllAntragStatusHistoryProGesuch(gesuch);
+
+		final List<AntragStatusHistory> allStatusChanges = persistence.getEntityManager().createQuery(query).getResultList();
+		boolean changeToPruefungSTVFound = false;
+		for (final AntragStatusHistory statusChange : allStatusChanges) { //they come DESC ordered from the DB
+			if (changeToPruefungSTVFound) {
+				return statusChange; // return the previous one
+			}
+			if (statusChange.getStatus() == AntragStatus.PRUEFUNG_STV) {
+				changeToPruefungSTVFound = true;
+			}
+		}
+		throw new EbeguRuntimeException("findLastStatusChangeBeforePruefungSTV", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuch.getId());
 	}
 
 	/**

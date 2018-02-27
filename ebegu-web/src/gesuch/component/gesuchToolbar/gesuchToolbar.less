@@ -12,7 +12,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 @import '../../../style/variables.less';
 @import '../../../style/mixins.less';
 
@@ -28,14 +27,16 @@
     }
     margin-bottom: 1rem;
     padding: 0 1.5rem 0;
-    *{
+    * {
         padding: 0 !important;
     }
 }
-.md-dense :not(.md-dense-disabled) .md-button:not(.md-dense-disabled){
+
+.md-dense :not(.md-dense-disabled) .md-button:not(.md-dense-disabled) {
     min-height: 4rem !important;
     line-height: 4rem !important;
 }
+
 .menu-item-link {
     .menu-item-link();
     background: @secondary;
@@ -193,6 +194,7 @@
         md-menu {
             line-height: 0;
             background: @secondary;
+            display: block;
             &:hover {
                 background: @secondary;
             }
@@ -307,6 +309,7 @@
     font-size: 1.8rem;
     line-height: @navbar-height;
     height: @navbar-height;
+    flex-shrink: 0;
     &.active, &:active, &:hover, &:focus {
         background-color: transparent;
         color: @contrast-darkest;
@@ -334,7 +337,7 @@
         width: 100%;
         display: block;
     }
-    button.gesuchsperiode-button, button.antrag-typ-datum-button {
+    button.gesuchsperiode-button, button.antrag-typ-datum-button, .gesuchsperiode-gesuchname {
         & > span {
             .ebeguBold();
             letter-spacing: 0.15rem;
@@ -354,7 +357,7 @@
         &.active, &:active, &:hover, &:focus {
             background-color: transparent;
             color: @contrast-lightest;
-            outline: none ;
+            outline: none;
             text-decoration: none !important;
             outline: 0;
             -webkit-box-shadow: none;
@@ -367,6 +370,11 @@
     }
     button.antrag-typ-datum-button {
         padding: 0 0 0 5rem;
+    }
+    .gesuchsperiode-gesuchname {
+        span {
+            font-weight: normal;
+        }
     }
     & > span {
         &.antrag-typ-datum-button, &.gesuchsperiode-button {
@@ -436,7 +444,7 @@
         &.active, &:active, &:hover, &:focus {
             background-color: transparent;
             color: @contrast-lightest;
-            outline: none ;
+            outline: none;
             text-decoration: none !important;
             outline: 0;
             -webkit-box-shadow: none;

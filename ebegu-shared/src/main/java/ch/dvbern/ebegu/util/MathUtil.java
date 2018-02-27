@@ -264,7 +264,7 @@ public enum MathUtil {
 	 *
 	 * @return TRUE, wenn beide Werte NULL sind, oder wenn beide BigDecimal (via compareTo) identisch sind. Sonst FALSE
 	 */
-	public static boolean isSame(BigDecimal a, BigDecimal b) {
+	public static boolean isSame(@Nullable BigDecimal a, @Nullable BigDecimal b) {
 		return (a == null && b == null) || (a != null && b != null && (a.compareTo(b) == 0));
 	}
 

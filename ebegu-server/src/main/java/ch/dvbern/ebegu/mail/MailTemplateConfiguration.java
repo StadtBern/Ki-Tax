@@ -76,6 +76,14 @@ public class MailTemplateConfiguration {
 		return processTemplateGesuch("InfoBetreuungenBestaetigt.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
 	}
 
+	public String getInfoSchulamtAnmeldungUebernommen(@Nonnull Betreuung betreuung, @Nonnull Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
+		return processTemplateBetreuung("InfoSchulamtAnmeldungUebernommen.ftl", betreuung, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
+	}
+
+	public String getInfoSchulamtAnmeldungAbgelehnt(@Nonnull Betreuung betreuung, @Nonnull Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
+		return processTemplateBetreuung("InfoSchulamtAnmeldungAbgelehnt.ftl", betreuung, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
+	}
+
 	public String getInfoBetreuungGeloescht(@Nonnull Betreuung betreuung, @Nonnull Fall fall, @Nonnull Gesuchsteller gesuchsteller1, @Nonnull Kind kind,
 		@Nonnull Institution institution, @Nonnull String empfaengerMail, @Nonnull LocalDate datumErstellung, @Nonnull LocalDate birthdayKind) {
 
