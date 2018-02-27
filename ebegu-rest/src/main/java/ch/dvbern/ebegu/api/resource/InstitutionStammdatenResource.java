@@ -41,6 +41,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang3.Validate;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxInstitutionStammdaten;
@@ -50,9 +52,9 @@ import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.InstitutionStammdatenService;
 import ch.dvbern.ebegu.util.DateUtil;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.Validate;
 
 /**
  * REST Resource fuer InstitutionStammdaten
@@ -168,9 +170,10 @@ public class InstitutionStammdatenResource {
 	}
 
 	/**
-	 * Sucht in der DB alle aktiven InstitutionStammdaten, deren Gueltigkeit zwischen DatumVon und DatumBis liegt
+	 * Sucht in der DB alle aktiven InstitutionStammdaten, deren Gueltigkeit zwischen DatumVon und DatumBis
+	 * der Gesuchsperiode liegt
 	 *
-	 * @param stringDate Date als String mit Format "yyyy-MM-dd". Wenn null, heutiges Datum gesetzt
+	 * @param gesuchsperiodeId id der Gesuchsperiode fuer die Stammdaten gesucht werden sollen
 	 * @return Liste mit allen InstitutionStammdaten die den Bedingungen folgen
 	 */
 	@ApiOperation(value = "Gibt alle Institutionsstammdaten zurueck, welche am angegebenen Datum existieren und aktiv sind",
