@@ -92,28 +92,28 @@
                     <tr ng-repeat="row in vm.displayedCollection" st-select-row="row" st-select-mode="single" ng-click="vm.gotoMitteilung(row)"
                         ng-class="{'mitteilung_neu': ('NEU' === row.mitteilungStatus.toString()),'mitteilung_alt': ('NEU' !== row.mitteilungStatus.toString())}">
                         <!-- Von -->
-                        <td ellipsis-tooltip="{{row.sender.getFullName()}}"
+                        <td title="{{row.sender.getFullName()}}"
                             ng-bind="row.sender.getFullName()"></td>
                         <!-- Fall-Nummer -->
-                        <td class="ellipsis" ellipsis-tooltip="{{vm.addZerosToFallNummer(row.fall.fallNummer)}}"
+                        <td class="ellipsis" title="{{vm.addZerosToFallNummer(row.fall.fallNummer)}}"
                             ng-bind="vm.addZerosToFallNummer(row.fall.fallNummer)"></td>
                         <!-- Familie -->
-                        <td class="ellipsis" ellipsis-tooltip="{{row.fall.besitzer.getFullName()}}"
+                        <td class="ellipsis" title="{{row.fall.besitzer.getFullName()}}"
                             ng-bind="row.fall.besitzer.getFullName()"></td>
                         <!-- Betreff -->
-                        <td class="ellipsis" ellipsis-tooltip="{{row.subject}}"
+                        <td class="ellipsis" title="{{row.subject}}"
                             ng-bind="row.subject"></td>
                         <!-- Datum -->
-                        <td class="ellipsis" ellipsis-tooltip="{{row.sentDatum | amDateFormat : 'DD.MM.YYYY'}}"
+                        <td class="ellipsis" title="{{row.sentDatum | amDateFormat : 'DD.MM.YYYY'}}"
                             ng-bind="row.sentDatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <!-- Verantwortliche Person -->
-                        <td class="ellipsis" ellipsis-tooltip="{{row.empfaenger}}"
+                        <td class="ellipsis" title="{{row.empfaenger}}"
                             ng-bind="row.empfaenger.getFullName()"></td>
                         <!-- Amt -->
-                        <td class="ellipsis" ellipsis-tooltip="{{row.empfaenger.amt}}"
+                        <td class="ellipsis" title="{{row.empfaenger.amt}}"
                             ng-bind="'AMT_' + row.empfaenger.amt | translate"></td>
                         <!-- Status -->
-                        <td class="ellipsis" ellipsis-tooltip="{{row.mitteilungStatus}}"
+                        <td class="ellipsis" title="{{row.mitteilungStatus}}"
                             ng-bind="row.mitteilungStatus | translate"></td>
                     </tr>
                     </tbody>

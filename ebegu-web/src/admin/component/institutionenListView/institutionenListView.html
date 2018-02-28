@@ -20,7 +20,7 @@
                 <h1 data-translate="INSTITUTIONEN"></h1>
             </div>
 
-            <form role="form" name="form" class="" unsaved-warning-form novalidate>
+            <form role="form" name="vm.form" class="" unsaved-warning-form novalidate>
                 <!--Tabelle zum anzeigen aller Institutionen-->
                 <div class="row">
                     <div class="col-md-12 table-responsive">
@@ -40,7 +40,7 @@
                             <tbody>
                             <tr ng-repeat="row in displayedCollection" ng-click="vm.editInstitution(row)"
                                 ng-class="vm.rowClass(row.id)">
-                                <td ng-bind="row.name" class="ellipsis" ellipsis-tooltip="{{row.name}}"></td>
+                                <td ng-bind="row.name" class="ellipsis" title="{{row.name}}"></td>
                                 <td>
                                     <dv-loading-button type="button" button-click="vm.removeInstitution(row)"
                                                        button-class="pull-right" button-disabled="vm.isReadonly()">
@@ -70,7 +70,7 @@
                         <dv-input-container class="form-group row">
                             <!--Knopf zum hinzufügen neuer Institutionen-->
                             <dv-loading-button type="button"
-                                               button-click="vm.createInstitution(); form.$setPristine(); form.$setUntouched()"
+                                               button-click="vm.createInstitution(); vm.form.$setPristine(); vm.form.$setUntouched()"
                                                button-class="">
                                 <i class="glyphicon glyphicon-plus"></i>
                                 <span data-translate="INSTITUTION_HINZUFUEGEN"></span>

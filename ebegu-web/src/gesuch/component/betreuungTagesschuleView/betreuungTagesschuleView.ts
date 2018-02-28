@@ -201,7 +201,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
                 return undefined;
             }
             if (this.direktAnmeldenSchulamt()) {
-                return this.dvDialog.showDialog(dialogTemplate, RemoveDialogController, {
+                return this.dvDialog.showRemoveDialog(dialogTemplate, this.form, RemoveDialogController, {
                     title: 'CONFIRM_SAVE_TAGESSCHULE',
                     deleteText: 'BESCHREIBUNG_SAVE_TAGESSCHULE',
                     parentController: undefined,
