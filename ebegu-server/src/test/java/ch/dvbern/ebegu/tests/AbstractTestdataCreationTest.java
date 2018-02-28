@@ -1,0 +1,52 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2018 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package ch.dvbern.ebegu.tests;
+
+import javax.inject.Inject;
+
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.services.TestdataCreationService;
+import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.util.testdata.TestdataSetupConfig;
+import org.jboss.arquillian.junit.Arquillian;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+
+/**
+ * Tests fuer den Zahlungsservice
+ */
+@RunWith(Arquillian.class)
+public class AbstractTestdataCreationTest extends AbstractEbeguLoginTest {
+
+	@Inject
+	private TestdataCreationService testdataCreationService;
+
+	protected Gesuchsperiode gesuchsperiode;
+
+	@Before
+	public void init() {
+		// Tests initialisieren
+		gesuchsperiode = createGesuchsperiode(true);
+		final InstitutionStammdaten kitaAaregg = TestDataUtil.createInstitutionStammdatenKitaWeissenstein();
+		final InstitutionStammdaten kitaBruennen = TestDataUtil.createInstitutionStammdatenKitaBruennen();
+		final InstitutionStammdaten tagiAaregg = TestDataUtil.createInstitutionStammdatenTagiWeissenstein();
+		Mandant mandant = TestDataUtil.createDefaultMandant();
+		TestdataSetupConfig setupConfig = new TestdataSetupConfig(mandant, kitaBruennen, kitaAaregg, tagiAaregg, gesuchsperiode);
+		testdataCreationService.setupTestdata(setupConfig);
+	}
+}
