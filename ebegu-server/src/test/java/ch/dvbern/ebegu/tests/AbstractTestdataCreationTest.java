@@ -23,15 +23,12 @@ import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.services.TestdataCreationService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.testdata.TestdataSetupConfig;
-import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Before;
-import org.junit.runner.RunWith;
 
 /**
  * Tests fuer den Zahlungsservice
  */
-@RunWith(Arquillian.class)
-public class AbstractTestdataCreationTest extends AbstractEbeguLoginTest {
+public abstract class AbstractTestdataCreationTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private TestdataCreationService testdataCreationService;
