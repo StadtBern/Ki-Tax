@@ -56,6 +56,7 @@ export class ZahlungsauftragViewController {
     datumGeneriert: Moment;
     itemsByPage: number = 12;
     testMode: boolean = false;
+    minDateForTestlauf: Moment;
 
     static $inject: string[] = ['ZahlungRS', 'CONSTANTS', '$state', 'DownloadRS', 'ApplicationPropertyRS', 'ReportRS',
         'AuthServiceRS', 'EbeguUtil', 'DvDialog', '$translate'];
@@ -73,6 +74,7 @@ export class ZahlungsauftragViewController {
     }
 
     private initViewModel() {
+        this.minDateForTestlauf = moment(moment.now()).subtract(1, 'days'); // Testlauf darf auch nur in die Zukunft gemacht werden!
         this.updateZahlungsauftrag();
         this.applicationPropertyRS.isZahlungenTestMode().then((response: any) => {
             this.testMode = response;
