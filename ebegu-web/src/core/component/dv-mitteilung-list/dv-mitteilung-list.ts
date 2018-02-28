@@ -360,7 +360,7 @@ export class DVMitteilungListController {
 
     public applyBetreuungsmitteilung(mitteilung: TSMitteilung): void {
         if (mitteilung instanceof TSBetreuungsmitteilung) {
-            this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            this.DvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
                 title: 'MUTATIONSMELDUNG_UEBERNEHMEN',
                 deleteText: 'MUTATIONSMELDUNG_UEBERNEHMEN_BESCHREIBUNG',
                 parentController: this,
