@@ -14,9 +14,10 @@
  */
 
 import {ILogService, IPromise} from 'angular';
+import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import IDialogService = angular.material.IDialogService;
 import IDialogOptions = angular.material.IDialogOptions;
-import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
+
 require('./dv-dialog.less');
 
 export class DvDialog {
@@ -34,7 +35,7 @@ export class DvDialog {
      * @returns {angular.IPromise<any>}
      */
     public showDialog(template: string, controller?: any, params?: any): IPromise<any> {
-        // form parameter is required for injection for RemoveDialogController, so set messing parameter here.
+        // form parameter is required for injection for RemoveDialogController, so set missing parameter here.
         // Im IE11 ist controller.name undefined!
         if (controller.name === 'RemoveDialogController' && !params.form) {
             this.$log.error('You should not use showDialog() for a RemoveDialogController. Use showRemoveDialog() instead!');
@@ -50,9 +51,10 @@ export class DvDialog {
     }
 
     /**
-     * Erstellt einen neuen confim Dialog mit den uebergegebenen Parametern.
+     * Erstellt einen neuen remove Dialog mit den uebergegebenen Parametern.
      * Diese Methode soll fuer den RemoveDialog verwendet werden, da sie zwingend ein Form verlangt. Das
-     * Form wird benoetigt um das Form beim clicken von CANCEL wieder dirty zu setzen.
+     * Form wird benoetigt um das Form beim clicken von CANCEL wieder dirty zu setzen. Falls man kein form hat kann auc
+     * undefined uebergeben werden
      * @param template Man kann ein belibiges Template eingeben in dem man das Layout des ganzen Dialogs gestaltet.
      * @param form Fuer den RemoveDialog muss zwingend ein Form mitgegeben werden, damit beim Abbrechen das Form wieder dirty gesetzt werden kann.
      * @param controller Hier implementiert man die verschiedenen Funktionen, die benoetigt sind
