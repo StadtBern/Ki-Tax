@@ -27,6 +27,7 @@ import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.entities.Traegerschaft;
@@ -266,5 +267,43 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals("88.999999.66",false, betreuungService.validateBGNummer("88.999999.66"));
 	}
 
+	@Test
+	public void validateBetreuungszeitraumInnerhalbInstitutionsGueltigkeit() {
+		prepareDependentObjects();
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.now());
+		Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
 
+		LocalDate kitaFrom = LocalDate.now().minusMonths(1);
+		LocalDate kitaUntil = LocalDate.now().plusMonths(1);
+		InstitutionStammdaten institutionStammdaten = TestDataUtil.createDefaultInstitutionStammdaten();
+		institutionStammdaten.getInstitution().setMandant(mandant);
+		institutionStammdaten.getInstitution().setTraegerschaft(null);
+		institutionStammdaten.getGueltigkeit().setGueltigAb(kitaFrom);
+		institutionStammdaten.getGueltigkeit().setGueltigBis(kitaUntil);
+		persistence.persist(institutionStammdaten.getInstitution());
+		institutionStammdaten = persistence.persist(institutionStammdaten);
+		betreuung.setInstitutionStammdaten(institutionStammdaten);
+
+		// (1) Pensum exakt gleich wie Kita-Zeitraum
+		betreuung.getBetreuungspensumContainers().iterator().next().getBetreuungspensumJA().getGueltigkeit().setGueltigAb(kitaFrom);
+		betreuung.getBetreuungspensumContainers().iterator().next().getBetreuungspensumJA().getGueltigkeit().setGueltigBis(kitaUntil);
+		betreuung = betreuungService.betreuungPlatzBestaetigen(betreuung);
+		Assert.assertNotNull(betreuung);
+
+		// (2) Pensum innerhalb Kita-Zeitraum
+		betreuung.getBetreuungspensumContainers().iterator().next().getBetreuungspensumJA().getGueltigkeit().setGueltigAb(kitaFrom.plusDays(1));
+		betreuung.getBetreuungspensumContainers().iterator().next().getBetreuungspensumJA().getGueltigkeit().setGueltigBis(kitaUntil.minusDays(1));
+		betreuung = betreuungService.betreuungPlatzBestaetigen(betreuung);
+		Assert.assertNotNull(betreuung);
+
+		// (3) Pensum ausserhalb Kita-Zeitraum
+		betreuung.getBetreuungspensumContainers().iterator().next().getBetreuungspensumJA().getGueltigkeit().setGueltigAb(kitaFrom.minusDays(1));
+		betreuung.getBetreuungspensumContainers().iterator().next().getBetreuungspensumJA().getGueltigkeit().setGueltigBis(kitaUntil.plusDays(1));
+		try {
+			betreuungService.betreuungPlatzBestaetigen(betreuung);
+			Assert.fail("Exception expected");
+		} catch (Exception e) {
+			// Expected
+		}
+	}
 }

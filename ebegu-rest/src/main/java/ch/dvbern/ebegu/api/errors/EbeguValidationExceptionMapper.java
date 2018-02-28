@@ -15,8 +15,13 @@
 
 package ch.dvbern.ebegu.api.errors;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
 import javax.validation.ConstraintDeclarationException;
 import javax.validation.ConstraintDefinitionException;
+import javax.validation.ConstraintViolationException;
 import javax.validation.GroupDefinitionException;
 import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
@@ -37,7 +42,7 @@ import org.slf4j.LoggerFactory;
 @Provider
 public class EbeguValidationExceptionMapper extends AbstractEbeguExceptionMapper<ValidationException> {
 
-	private final Logger LOG = LoggerFactory.getLogger(EbeguValidationExceptionMapper.class.getSimpleName());
+	private static final Logger LOG = LoggerFactory.getLogger(EbeguValidationExceptionMapper.class.getSimpleName());
 
 	@Override
 	public Response toResponse(ValidationException exception) {
@@ -63,9 +68,16 @@ public class EbeguValidationExceptionMapper extends AbstractEbeguExceptionMapper
 				return ViolationReportCreator.buildViolationReportResponse(resteasyViolationException, Status.BAD_REQUEST, getAcceptMediaType(resteasyViolationException.getAccept()));
 			}
 		}
+		if (exception instanceof ConstraintViolationException) {
+			ResteasyViolationException resteasyViolationException = new ResteasyViolationException(((ConstraintViolationException) exception).getConstraintViolations());
+			List<MediaType> acceptedTypes = new ArrayList<>(resteasyViolationException.getAccept());
+			acceptedTypes.add(MediaType.APPLICATION_JSON_TYPE);
+			return ViolationReportCreator.buildViolationReportResponse(resteasyViolationException, Status.BAD_REQUEST, getAcceptMediaType(acceptedTypes));
+		}
 		return buildResponse(unwrapException(exception), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
 	}
 
+	@Nullable
 	@Override
 	protected Response buildViolationReportResponse(ValidationException exception, Status status) {
 		return null;
