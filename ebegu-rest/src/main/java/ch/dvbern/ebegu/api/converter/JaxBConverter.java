@@ -219,8 +219,6 @@ public class JaxBConverter {
 	@Inject
 	private GesuchstellerService gesuchstellerService;
 	@Inject
-	private AdresseService adresseService;
-	@Inject
 	private GesuchstellerAdresseService gesuchstellerAdresseService;
 	@Inject
 	private PensumFachstelleService pensumFachstelleService;
@@ -254,8 +252,6 @@ public class JaxBConverter {
 	private InstitutionStammdatenService institutionStammdatenService;
 	@Inject
 	private BetreuungService betreuungService;
-	@Inject
-	private VerfuegungService verfuegungService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JaxBConverter.class);
 
@@ -836,7 +832,8 @@ public class JaxBConverter {
 		if (antragJAXP.getGesuchsperiode() != null && antragJAXP.getGesuchsperiode().getId() != null) {
 			final Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(antragJAXP.getGesuchsperiode().getId());
 			if (gesuchsperiode.isPresent()) {
-				antrag.setGesuchsperiode(gesuchsperiodeToEntity(antragJAXP.getGesuchsperiode(), gesuchsperiode.get()));
+				// Gesuchsperiode darf nicht vom Client ueberschrieben werden
+				antrag.setGesuchsperiode(gesuchsperiode.get());
 			} else {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsperiode().getId());
 			}
@@ -1130,7 +1127,8 @@ public class JaxBConverter {
 		if (institutionJAXP.getMandant() != null && institutionJAXP.getMandant().getId() != null) {
 			final Optional<Mandant> mandantFromDB = mandantService.findMandant(institutionJAXP.getMandant().getId());
 			if (mandantFromDB.isPresent()) {
-				institution.setMandant(mandantToEntity(institutionJAXP.getMandant(), mandantFromDB.get()));
+				// Mandant darf nicht vom Client ueberschrieben werden
+				institution.setMandant(mandantFromDB.get());
 			} else {
 				throw new EbeguEntityNotFoundException("institutionToEntity -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionJAXP.getMandant()
 					.getId());
@@ -1145,7 +1143,8 @@ public class JaxBConverter {
 			if (institutionJAXP.getTraegerschaft().getId() != null) {
 				final Optional<Traegerschaft> traegerschaftFromDB = traegerschaftService.findTraegerschaft(institutionJAXP.getTraegerschaft().getId());
 				if (traegerschaftFromDB.isPresent()) {
-					institution.setTraegerschaft(traegerschaftToEntity(institutionJAXP.getTraegerschaft(), traegerschaftFromDB.get()));
+					// Traegerschaft darf nicht vom Client ueberschrieben werden
+					institution.setTraegerschaft(traegerschaftFromDB.get());
 				} else {
 					throw new EbeguEntityNotFoundException("institutionToEntity -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionJAXP
 						.getTraegerschaft().getId());
@@ -1220,7 +1219,8 @@ public class JaxBConverter {
 
 		final Optional<Institution> institutionFromDB = institutionService.findInstitution(institutionStammdatenJAXP.getInstitution().getId());
 		if (institutionFromDB.isPresent()) {
-			institutionStammdaten.setInstitution(institutionToEntity(institutionStammdatenJAXP.getInstitution(), institutionFromDB.get()));
+			// Institution darf nicht vom Client ueberschrieben werden
+			institutionStammdaten.setInstitution(institutionFromDB.get());
 		} else {
 			throw new EbeguEntityNotFoundException("institutionStammdatenToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionStammdatenJAXP
 				.getInstitution().getId());
@@ -1360,7 +1360,8 @@ public class JaxBConverter {
 
 		final Optional<Fachstelle> fachstelleFromDB = fachstelleService.findFachstelle(pensumFachstelleJAXP.getFachstelle().getId());
 		if (fachstelleFromDB.isPresent()) {
-			pensumFachstelle.setFachstelle(fachstelleToEntity(pensumFachstelleJAXP.getFachstelle(), fachstelleFromDB.get()));
+			// Fachstelle darf nicht vom Client ueberschrieben werden
+			pensumFachstelle.setFachstelle(fachstelleFromDB.get());
 		} else {
 			throw new EbeguEntityNotFoundException("pensumFachstelleToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, pensumFachstelleJAXP.getFachstelle()
 				.getId());
@@ -1440,26 +1441,6 @@ public class JaxBConverter {
 			kindContainer.setNextNumberBetreuung(kindContainerJAXP.getNextNumberBetreuung());
 		}
 		return kindContainer;
-	}
-
-	/**
-	 * Sucht die Fachstelle in der DB und fuegt sie mit der als Parameter gegebenen Fachstelle zusammen.
-	 * Sollte sie in der DB nicht existieren, gibt die Methode eine neue Fachstelle mit den gegebenen Daten zurueck
-	 *
-	 * @param fachstelleToFind die Fachstelle als JAX
-	 * @return die Fachstelle als Entity
-	 */
-	@Nonnull
-	public Fachstelle fachstelleToStoreableEntity(@Nonnull final JaxFachstelle fachstelleToFind) {
-		Validate.notNull(fachstelleToFind);
-		Fachstelle fachstelleToMergeWith = new Fachstelle();
-		if (fachstelleToFind.getId() != null) {
-			final Optional<Fachstelle> altFachstelle = fachstelleService.findFachstelle(fachstelleToFind.getId());
-			if (altFachstelle.isPresent()) {
-				fachstelleToMergeWith = altFachstelle.get();
-			}
-		}
-		return fachstelleToEntity(fachstelleToFind, fachstelleToMergeWith);
 	}
 
 	/**
@@ -1760,7 +1741,8 @@ public class JaxBConverter {
 			final InstitutionStammdaten instStammdatenToMerge =
 				optInstStammdaten.orElseThrow(() -> new EbeguEntityNotFoundException("betreuungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND,
 					instStammdatenID));
-			betreuung.setInstitutionStammdaten(institutionStammdatenToEntity(betreuungJAXP.getInstitutionStammdaten(), instStammdatenToMerge));
+			// InstitutionsStammdaten darf nicht vom Client ueberschrieben werden
+			betreuung.setInstitutionStammdaten(instStammdatenToMerge);
 		}
 		betreuung.setBetreuungNummer(betreuungJAXP.getBetreuungNummer());
 		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
