@@ -148,7 +148,15 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 					Optional<VerfuegungZeitabschnitt> zeitabschnittSameGueltigkeitSameBetrag = VerfuegungUtil.findZeitabschnittSameGueltigkeitSameBetrag
 						(zeitabschnitteOnVorgaengerVerfuegung, verfuegungZeitabschnittNeu);
 
-					if (!zeitabschnittSameGueltigkeitSameBetrag.isPresent()) { // we only check the status if there has been any verrechnete zeitabschnitt. Otherwise NEU
+					if (zeitabschnittSameGueltigkeitSameBetrag.isPresent()) {
+						// Es hat ueberhaupt nichts geaendert seit dem letztem Gesuch. Falls es schon verrechnet war, bleibt
+						// es somit verrechnet. Sonst neu
+						if (areAllZeitabschnitteVerrechnet(zeitabschnitteOnVorgaengerVerfuegung)) {
+							verfuegungZeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET);
+						} else {
+							verfuegungZeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
+						}
+					} else { // we only check the status if there has been any verrechnete zeitabschnitt. Otherwise NEU
 						// Wenn der alte Abschnitt VERRECHNET war und das Flag ignoriert -> IGNORIEREND
 						if (areAllZeitabschnitteVerrechnet(zeitabschnitteOnVorgaengerVerfuegung)) {
 							// Es war schon verrechnet: Die neuen Zeitabschnitte muessen entweder ignoriert oder korrigiert werden
@@ -160,14 +168,6 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 						} else {
 							// Es war noch nicht verrechnet: Wir muessen es *auf jeden Fall* verrechnen. Das ignorieren bezieht sich nur auf
 							// bereits vergangene Auszahlungen. Wir ignorieren die *Korrekturen* und nicht die Daten an sich.
-							verfuegungZeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
-						}
-					} else {
-						// Es hat ueberhaupt nichts geaendert seit dem letztem Gesuch. Falls es schon verrechnet war, bleibt
-						// es somit verrechnet. Sonst neu
-						if (areAllZeitabschnitteVerrechnet(zeitabschnitteOnVorgaengerVerfuegung)) {
-							verfuegungZeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET);
-						} else {
 							verfuegungZeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
 						}
 					}
