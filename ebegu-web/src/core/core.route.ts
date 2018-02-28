@@ -13,34 +13,36 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import {IState, IStateService} from 'angular-ui-router';
-import ListResourceRS from './service/listResourceRS.rest';
-import {MandantRS} from './service/mandantRS.rest';
-import {TSAuthEvent} from '../models/enums/TSAuthEvent';
+import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest';
 import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
+import {RouterHelper} from '../dvbModules/router/route-helper-provider';
+import GesuchModelManager from '../gesuch/service/gesuchModelManager';
+import {TSAuthEvent} from '../models/enums/TSAuthEvent';
+import TSApplicationProperty from '../models/TSApplicationProperty';
 import TSUser from '../models/TSUser';
 import {TSRoleUtil} from '../utils/TSRoleUtil';
 import ErrorService from './errors/service/ErrorService';
-import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest';
-import TSApplicationProperty from '../models/TSApplicationProperty';
-import GesuchModelManager from '../gesuch/service/gesuchModelManager';
 import GesuchsperiodeRS from './service/gesuchsperiodeRS.rest';
-import IRootScopeService = angular.IRootScopeService;
-import ITimeoutService = angular.ITimeoutService;
+import {InstitutionStammdatenRS} from './service/institutionStammdatenRS.rest';
+import ListResourceRS from './service/listResourceRS.rest';
+import {MandantRS} from './service/mandantRS.rest';
+import IInjectorService = angular.auto.IInjectorService;
 import ILocationService = angular.ILocationService;
 import ILogService = angular.ILogService;
-import IInjectorService = angular.auto.IInjectorService;
+import IRootScopeService = angular.IRootScopeService;
+import ITimeoutService = angular.ITimeoutService;
 
 appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'MandantRS', '$injector', '$rootScope', 'hotkeys',
-    '$timeout', 'AuthServiceRS', '$state', '$location', '$window', '$log', 'ErrorService', 'GesuchModelManager', 'GesuchsperiodeRS'];
+    '$timeout', 'AuthServiceRS', '$state', '$location', '$window', '$log', 'ErrorService', 'GesuchModelManager', 'GesuchsperiodeRS',
+    'InstitutionStammdatenRS'];
 
 /* @ngInject */
 export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS,
                        mandantRS: MandantRS, $injector: IInjectorService, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService,
                        authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService, $window: ng.IWindowService,
                        $log: ILogService, errorService: ErrorService, gesuchModelManager: GesuchModelManager,
-                       gesuchsperiodeRS: GesuchsperiodeRS) {
+                       gesuchsperiodeRS: GesuchsperiodeRS, institutionsStammdatenRS: InstitutionStammdatenRS) {
     // navigationLogger.toggle();
 
     // Fehler beim Navigieren ueber ui-route ins Log schreiben
@@ -77,10 +79,14 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
             mandantRS.getFirst();
         }
         //since we will need these lists anyway we already load on login
-        gesuchsperiodeRS.updateActiveGesuchsperiodenList();
+        gesuchsperiodeRS.updateActiveGesuchsperiodenList() .then((gesuchsperioden) => {
+            if (gesuchsperioden.length > 0) {
+                let newestGP = gesuchsperioden[0];
+                institutionsStammdatenRS.getAllActiveInstitutionStammdatenByGesuchsperiode(newestGP.id);
+            }
+        });
         gesuchsperiodeRS.updateNichtAbgeschlosseneGesuchsperiodenList();
         gesuchModelManager.updateFachstellenList();
-        gesuchModelManager.updateActiveInstitutionenList();
     });
 
     $rootScope.$on(TSAuthEvent[TSAuthEvent.NOT_AUTHENTICATED], () => {
