@@ -19,7 +19,7 @@
        ng-model="vm.date"
        ng-model-options="{debounce: 100}"
        ng-change="vm.updateModelValue()"
-       placeholder="{{vm.placeholder}}"
+       ng-attr-placeholder="{{vm.placeholder}}"
        class="form-control dvDatepicker"
        ng-blur="vm.onBlur()"
        ng-required="vm.dateRequired"
