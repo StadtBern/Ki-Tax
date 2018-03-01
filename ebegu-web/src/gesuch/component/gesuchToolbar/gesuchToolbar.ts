@@ -575,7 +575,7 @@ export class GesuchToolbarController implements IDVFocusableController {
     }
 
     public gesuchLoeschen(): IPromise<void> {
-        return this.dvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+        return this.dvDialog.showRemoveDialog(removeDialogTempl, undefined, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_LOESCHEN',
             deleteText: 'BESCHREIBUNG_GESUCH_LOESCHEN',
             parentController: this,

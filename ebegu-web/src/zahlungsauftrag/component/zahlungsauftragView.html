@@ -39,7 +39,8 @@
                                        data-translate="ZAHLUNG_GENERIERT"></label>
                                 <dv-datepicker name="datumGeneriert" id="datumGeneriert"
                                                ng-model="vm.datumGeneriert"
-                                               class="input-element">
+                                               class="input-element"
+                                               dv-min-date="vm.minDateForTestlauf">
                                 </dv-datepicker>
                                 <dv-error-messages for="vm.form.datumGeneriert.$error"
                                                    class="error"></dv-error-messages>

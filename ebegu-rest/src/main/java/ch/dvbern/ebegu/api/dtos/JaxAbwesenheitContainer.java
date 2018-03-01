@@ -15,6 +15,7 @@
 
 package ch.dvbern.ebegu.api.dtos;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -35,19 +36,21 @@ public class JaxAbwesenheitContainer extends JaxAbstractDTO {
 	@Valid
 	private JaxAbwesenheit abwesenheitJA;
 
+	@Nullable
 	public JaxAbwesenheit getAbwesenheitGS() {
 		return abwesenheitGS;
 	}
 
-	public void setAbwesenheitGS(JaxAbwesenheit abwesenheitGS) {
+	public void setAbwesenheitGS(@Nullable JaxAbwesenheit abwesenheitGS) {
 		this.abwesenheitGS = abwesenheitGS;
 	}
 
+	@Nullable
 	public JaxAbwesenheit getAbwesenheitJA() {
 		return abwesenheitJA;
 	}
 
-	public void setAbwesenheitJA(JaxAbwesenheit abwesenheitJA) {
+	public void setAbwesenheitJA(@Nullable JaxAbwesenheit abwesenheitJA) {
 		this.abwesenheitJA = abwesenheitJA;
 	}
 }

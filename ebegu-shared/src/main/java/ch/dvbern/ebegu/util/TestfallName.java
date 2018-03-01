@@ -1,6 +1,6 @@
 /*
  * Ki-Tax: System for the management of external childcare subsidies
- * Copyright (C) 2017 City of Bern Switzerland
+ * Copyright (C) 2018 City of Bern Switzerland
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -13,16 +13,31 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum TSCacheTyp {
-    EBEGU_DOCUMENT = <any> 'ebeguDocument',
-    EBEGU_PARAMETER = <any> 'ebeguParameter',
-    EBEGU_INSTITUTIONSSTAMMDATEN = <any> 'ebeguInstitutionsStammdaten'
-}
+package ch.dvbern.ebegu.util;
 
-export function getTSCacheTypValues(): Array<TSCacheTyp> {
-    return [
-        TSCacheTyp.EBEGU_DOCUMENT,
-        TSCacheTyp.EBEGU_PARAMETER,
-        TSCacheTyp.EBEGU_INSTITUTIONSSTAMMDATEN
-    ];
+/**
+ * Enum fuer die Testfaelle
+ */
+public enum TestfallName {
+
+	WAELTI_DAGMAR,
+	FEUTZ_IVONNE,
+	PERREIRA_MARCIA,
+	WALTHER_LAURA,
+	LUETHI_MERET,
+	BECKER_NORA,
+	MEIER_MERET,
+	UMZUG_AUS,
+	ABWESENHEIT,
+	UMZUG_VOR,
+	ASIV1,
+	ASIV2,
+	ASIV3,
+	ASIV4,
+	ASIV5,
+	ASIV6,
+	ASIV7,
+	ASIV8,
+	ASIV9,
+	ASIV10
 }

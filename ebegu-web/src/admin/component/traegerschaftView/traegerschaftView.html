@@ -18,7 +18,7 @@
         <div class="viewTitle">
             <h1 data-translate="TRAEGERSCHAFT"></h1>
         </div>
-        <form role="form" name="form" class="" unsaved-warning-form novalidate>
+        <form role="form" name="vm.form" class="" unsaved-warning-form novalidate>
             <fieldset ng-disabled="vm.isReadonly()">
 
                 <div class="row">
@@ -35,11 +35,12 @@
                             </thead>
                             <tbody>
                             <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                                    ng-click="vm.setSelectedTraegerschaft(row)">
+                                ng-click="vm.setSelectedTraegerschaft(row)">
                                 <td ng-bind="row.name"></td>
                                 <td></td>
                                 <td>
-                                    <dv-loading-button type="button" button-click="vm.removeTraegerschaft(row)" button-class=" btn-sm"
+                                    <dv-loading-button type="button" button-click="vm.removeTraegerschaft(row)"
+                                                       button-class=" btn-sm"
                                                        button-disabled="vm.isReadonly()">
                                         <i class="fa fa-minus"> </i>
                                     </dv-loading-button>
@@ -62,12 +63,12 @@
                                             <input id="name_ID" type="text" name="name"
                                                    ng-model="vm.traegerschaft.name"
                                                    dv-max-length class="form-control" required>
+											   <dv-error-messages for="vm.form.name.$error"
+																  class="error"></dv-error-messages>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-8 col-md-offset-4">
-                                            <dv-error-messages for="form.name_ID.$error"></dv-error-messages>
-                                        </div>
+
                                     </div>
 
                                     <div class="row">
@@ -75,14 +76,15 @@
                                             <label class="md-no-float" data-translate="EMAIL" for="mail_ID"></label>
                                         </div>
                                         <div class="col-md-8">
-                                            <input id="mail_ID" type="text" name="name"
+                                            <input id="mail_ID" type="text" name="mail"
                                                    ng-model="vm.traegerschaft.mail"
                                                    dv-max-length class="form-control" required>
+                                            <dv-error-messages for="vm.form.mail.$error" class="error"></dv-error-messages>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-8 col-md-offset-4">
-                                            <dv-error-messages for="form.mail_ID.$error" class="error"></dv-error-messages>
+
                                         </div>
                                     </div>
 
@@ -90,14 +92,15 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <dv-loading-button type="submit"
-                                                               button-click="vm.saveTraegerschaft(form)"
-                                                               button-class="color-success" button-disabled="vm.isReadonly()">
+                                                               button-click="vm.saveTraegerschaft()"
+                                                               button-class="color-success"
+                                                               button-disabled="vm.isReadonly()">
                                                 <span data-translate="SAVE"></span>
                                             </dv-loading-button>
                                         </div>
                                         <div class="col-md-4">
-                                            <a href="#"  id="cancelLink" class="dv-btn" unsaved-warning-clear
-                                               ng-click="vm.cancelTraegerschaft(); form.$setPristine();form.$setUntouched(); $event.preventDefault();">
+                                            <a href="#" id="cancelLink" class="dv-btn" unsaved-warning-clear
+                                               ng-click="vm.cancelTraegerschaft(); vm.form.$setPristine();vm.form.$setUntouched(); $event.preventDefault();">
                                                 <span data-translate="CANCEL"></span>
                                             </a>
                                         </div>
@@ -113,8 +116,9 @@
                                         <div class="col-md-6">
                                             <dv-input-container class="form-group">
                                                 <dv-loading-button type="button"
-                                                                   button-click="vm.createTraegerschaft(); form.$setPristine(); form.$setUntouched()"
-                                                                   button-class="dv-btn-sm color-success" button-disabled="vm.traegerschaft">
+                                                                   button-click="vm.createTraegerschaft(); vm.form.$setPristine(); vm.form.$setUntouched()"
+                                                                   button-class="dv-btn-sm color-success"
+                                                                   button-disabled="vm.traegerschaft">
                                                     <i class="glyphicon glyphicon-plus"></i>
                                                     <span data-translate="TRAEGERSCHAFT_HINZUFUEGEN"></span>
                                                 </dv-loading-button>
@@ -141,9 +145,4 @@
             </fieldset>
         </form>
     </div>
-</div>
-
-</fieldset>
-</form>
-</div>
 </div>
