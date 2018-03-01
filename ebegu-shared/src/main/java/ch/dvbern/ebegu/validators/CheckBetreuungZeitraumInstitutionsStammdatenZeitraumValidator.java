@@ -15,17 +15,15 @@
 
 package ch.dvbern.ebegu.validators;
 
-import java.text.MessageFormat;
-import java.util.ResourceBundle;
+import java.time.LocalDate;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.DateUtil;
 
 /**
  * Die Betreuungspensen einer Betreuung müssen innerhalb der Verfügbarkeit der Institution liegen (Zeitraum der Institutionsstammdaten)
@@ -40,44 +38,25 @@ public class CheckBetreuungZeitraumInstitutionsStammdatenZeitraumValidator imple
 	@Override
 	public boolean isValid(Betreuung betreuung, ConstraintValidatorContext context) {
 		DateRange institutionStammdatenDateRange = betreuung.getInstitutionStammdaten().getGueltigkeit();
+		// Uns interessiert grundsaetzlich nur der Bereich innerhalb der Gesuchsperiode
+		DateRange stammdatenWithinGP = limitToDateRange(institutionStammdatenDateRange, betreuung.extractGesuchsperiode().getGueltigkeit());
+
 		for (BetreuungspensumContainer betreuungspensumContainer : betreuung.getBetreuungspensumContainers()) {
 			DateRange pensumDateRange = betreuungspensumContainer.getBetreuungspensumJA().getGueltigkeit();
-			// Wenn Stammdaten <= GP.Ende -> muss contains
-			// sonst -> nur VON datum pruefen
-
-			// Falls die Institution bis mindestens ende GP existiert, dann interessiert uns das Ende der Betreuung nicht, da es sowieso innerhalb des
-			// Institutions-Zeitraums liegt (da uns nur die GP interessiert)
-			// todo dies muss noch verbessert werden -> institutionDateRange und pensumDateRange auf gesuchsperiode reduzieren und erst dann vergleichen
-//			boolean institutionIstBisEndeGP = !institutionStammdatenDateRange.getGueltigBis().isBefore(betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
-//			if (institutionIstBisEndeGP) {
-//				// Wir muessen nur das VON Datum pruefen
-//				if (!institutionStammdatenDateRange.contains(pensumDateRange.getGueltigAb())) {
-//					return false;
-//				}
-//			} else if (!institutionStammdatenDateRange.contains(pensumDateRange)) {
-//					return false;
-//			}
-
-
-			if (!institutionStammdatenDateRange.contains(pensumDateRange.getGueltigAb())
-				|| (!institutionStammdatenDateRange.contains(pensumDateRange.getGueltigBis()) && !pensumDateRange.getGueltigBis().isEqual(Constants.END_OF_TIME))) {
-				setConstraintViolationMessage(institutionStammdatenDateRange, context);
+			// Uns interessiert grundsaetzlich nur der Bereich innerhalb der Gesuchsperiode
+			DateRange betreuungWithinGP = limitToDateRange(pensumDateRange, betreuung.extractGesuchsperiode().getGueltigkeit());
+			// Da wir jetzt nur noch die Gesuchsperiode betrachten, darf die Betreuung NIE ausserhalb der Stammdaten sein
+			if (!stammdatenWithinGP.contains(betreuungWithinGP)) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-
-
-	private void setConstraintViolationMessage(@NotNull DateRange institutionStammdatenDateRange, @NotNull ConstraintValidatorContext context) {
-		ResourceBundle rb = ResourceBundle.getBundle("ValidationMessages");
-		String message = rb.getString("invalid_betreuungszeitraum_for_institutionsstammdaten");
-		message = MessageFormat.format(message, Constants.DATE_FORMATTER.format(institutionStammdatenDateRange.getGueltigAb()),
-			Constants.DATE_FORMATTER.format(institutionStammdatenDateRange.getGueltigBis()));
-
-		context.disableDefaultConstraintViolation();
-		context.buildConstraintViolationWithTemplate(message)
-			.addConstraintViolation();
+	private DateRange limitToDateRange(DateRange range, DateRange gesuchsperiode) {
+		// Wir nehmen das spätere VON und das frühere BIS
+		LocalDate von = DateUtil.getMax(range.getGueltigAb(), gesuchsperiode.getGueltigAb());
+		LocalDate bis = DateUtil.getMin(range.getGueltigBis(), gesuchsperiode.getGueltigBis());
+		return new DateRange(von, bis);
 	}
 }
