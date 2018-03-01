@@ -2875,7 +2875,7 @@ public class JaxBConverter {
 		return jaxZahlungsauftrag;
 	}
 
-	public JaxZahlungsauftrag zahlungsauftragToJAX(final Zahlungsauftrag persistedZahlungsauftrag, UserRole userRole, Collection<Institution> allowedInst) {
+	public JaxZahlungsauftrag zahlungsauftragToJAX(final Zahlungsauftrag persistedZahlungsauftrag, @Nullable UserRole userRole, Collection<Institution> allowedInst) {
 		final JaxZahlungsauftrag jaxZahlungsauftrag = getJaxZahlungsauftrag(persistedZahlungsauftrag, true);
 
 		// nur die Zahlungen welche inst sehen darf
