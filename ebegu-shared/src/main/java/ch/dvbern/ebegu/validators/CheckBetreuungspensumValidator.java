@@ -27,7 +27,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import javax.validation.constraints.Null;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungspensum;
@@ -78,24 +77,24 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 		}
 
 		final EntityManager em = createEntityManager();
-			int index = 0;
-			for (BetreuungspensumContainer betPenContainer : betreuung.getBetreuungspensumContainers()) {
-				LocalDate betreuungAb = betPenContainer.getBetreuungspensumJA().getGueltigkeit().getGueltigAb();
-				LocalDate gesuchsperiodeStart = betPenContainer.extractGesuchsperiode().getGueltigkeit().getGueltigAb();
-				//Wir laden  die Parameter von Start-Gesuchsperiode falls Betreuung schon laenger als Gesuchsperiode besteht
-				LocalDate stichtagParameter = betreuungAb.isAfter(gesuchsperiodeStart) ? betreuungAb : gesuchsperiodeStart;
-				int betreuungsangebotTypMinValue = BetreuungUtil.getMinValueFromBetreuungsangebotTyp(
-					stichtagParameter, betreuung.getBetreuungsangebotTyp(), ebeguParameterService, em);
+		int index = 0;
+		for (BetreuungspensumContainer betPenContainer : betreuung.getBetreuungspensumContainers()) {
+			LocalDate betreuungAb = betPenContainer.getBetreuungspensumJA().getGueltigkeit().getGueltigAb();
+			LocalDate gesuchsperiodeStart = betPenContainer.extractGesuchsperiode().getGueltigkeit().getGueltigAb();
+			//Wir laden  die Parameter von Start-Gesuchsperiode falls Betreuung schon laenger als Gesuchsperiode besteht
+			LocalDate stichtagParameter = betreuungAb.isAfter(gesuchsperiodeStart) ? betreuungAb : gesuchsperiodeStart;
+			int betreuungsangebotTypMinValue = BetreuungUtil.getMinValueFromBetreuungsangebotTyp(
+				stichtagParameter, betreuung.getBetreuungsangebotTyp(), ebeguParameterService, em);
 
-				if (!validateBetreuungspensum(betPenContainer.getBetreuungspensumGS(), betreuungsangebotTypMinValue, index, "GS", context)
-					|| !validateBetreuungspensum(betPenContainer.getBetreuungspensumJA(), betreuungsangebotTypMinValue, index, "JA", context)) {
+			if (!validateBetreuungspensum(betPenContainer.getBetreuungspensumGS(), betreuungsangebotTypMinValue, index, "GS", context)
+				|| !validateBetreuungspensum(betPenContainer.getBetreuungspensumJA(), betreuungsangebotTypMinValue, index, "JA", context)) {
 
-					closeEntityManager(em);
-					return false;
-				}
-				index++;
+				closeEntityManager(em);
+				return false;
 			}
-			closeEntityManager(em);
+			index++;
+		}
+		closeEntityManager(em);
 		return true;
 	}
 
@@ -107,7 +106,7 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 		return null;
 	}
 
-	private void closeEntityManager(EntityManager em) {
+	private void closeEntityManager(@Nullable EntityManager em) {
 		if (em != null) {
 			em.close();
 		}

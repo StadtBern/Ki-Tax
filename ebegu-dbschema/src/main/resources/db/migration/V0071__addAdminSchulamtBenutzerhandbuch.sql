@@ -1,0 +1,2 @@
+INSERT INTO ebegu_vorlage (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, vorgaenger_id, gueltig_ab, gueltig_bis, name, vorlage_id, pro_gesuchsperiode)
+  VALUES ('1ad1111d-5078-420d-a10c-61d4c0586a89', '2017-06-01 00:00:00', '2017-06-01 00:00:00', 'flyway', 'flyway', 0, NULL, '1000-01-01', '9999-12-31', 'VORLAGE_BENUTZERHANDBUCH_ADMINISTRATOR_SCHULAMT', NULL, false);

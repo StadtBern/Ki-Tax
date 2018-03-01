@@ -91,7 +91,7 @@ export default class TestDataUtil {
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/unclosed').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/fachstellen').respond({});
-        $httpBackend.when('GET', '/ebegu/api/v1/institutionstammdaten/date/active?date=' + DateUtil.momentToLocalDate(DateUtil.today())).respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/institutionstammdaten/gesuchsperiode/active?gesuchsperiodeId=0621fb5d-a187-5a91-abaf-8a813c4d263a').respond({});
     }
 
     public static createWizardStep(gesuchId: string): TSWizardStep {

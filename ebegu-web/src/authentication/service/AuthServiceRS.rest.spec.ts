@@ -14,6 +14,7 @@
  */
 
 import {EbeguWebCore} from '../../core/core.module';
+import GesuchModelManager from '../../gesuch/service/gesuchModelManager';
 import {TSRole} from '../../models/enums/TSRole';
 import TSUser from '../../models/TSUser';
 import TestDataUtil from '../../utils/TestDataUtil';
@@ -30,6 +31,7 @@ describe('AuthServiceRS', function () {
     let $timeout: angular.ITimeoutService;
     let $cookies: angular.cookies.ICookiesService;
     let base64: any;
+    let gesuchModelManager: GesuchModelManager;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
     beforeEach(angular.mock.module(EbeguAuthentication.name));
@@ -43,6 +45,8 @@ describe('AuthServiceRS', function () {
         $timeout = $injector.get('$timeout');
         $cookies = $injector.get('$cookies');
         base64 = $injector.get('base64');
+        gesuchModelManager = $injector.get('GesuchModelManager');
+        spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(TestDataUtil.createGesuchsperiode20162017());
     }));
 
     describe('API usage', function () {

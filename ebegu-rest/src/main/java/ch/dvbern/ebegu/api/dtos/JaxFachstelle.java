@@ -15,6 +15,7 @@
 
 package ch.dvbern.ebegu.api.dtos;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -50,11 +51,12 @@ public class JaxFachstelle extends JaxAbstractDTO {
 		this.name = name;
 	}
 
+	@Nullable
 	public String getBeschreibung() {
 		return beschreibung;
 	}
 
-	public void setBeschreibung(String beschreibung) {
+	public void setBeschreibung(@Nullable String beschreibung) {
 		this.beschreibung = beschreibung;
 	}
 
