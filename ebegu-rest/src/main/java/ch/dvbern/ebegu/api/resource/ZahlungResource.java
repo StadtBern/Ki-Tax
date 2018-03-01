@@ -119,7 +119,7 @@ public class ZahlungResource {
 		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 
 		return zahlungService.getAllZahlungsauftraege().stream()
-			.filter(zahlungsauftrag -> !zahlungsauftrag.getStatus().equals(ZahlungauftragStatus.ENTWURF))
+			.filter(zahlungsauftrag -> zahlungsauftrag.getStatus() != ZahlungauftragStatus.ENTWURF)
 			.map(zahlungsauftrag -> converter.zahlungsauftragToJAX(zahlungsauftrag, principalBean.discoverMostPrivilegedRole(), allowedInst))
 			.collect(Collectors.toList());
 	}
@@ -249,7 +249,7 @@ public class ZahlungResource {
 		return converter.zahlungToJAX(zahlung);
 	}
 
-	@ApiOperation(value = "Loescht einen Zahlungsauftrag", response = Void.class)
+	@ApiOperation("Loescht einen Zahlungsauftrag")
 	@Nullable
 	@DELETE
 	@Path("/delete")
@@ -262,7 +262,7 @@ public class ZahlungResource {
 		return Response.ok().build();
 	}
 
-	@ApiOperation(value = "Zahlungsauftrag kontrollieren", response = Void.class)
+	@ApiOperation("Zahlungsauftrag kontrollieren")
 	@GET
 	@Path("/kontrollieren")
 	@RolesAllowed(SUPER_ADMIN)
