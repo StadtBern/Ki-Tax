@@ -87,11 +87,12 @@ public class Institution extends AbstractEntity implements HasMandant {
 	}
 
 	@Override
+	@NotNull
 	public Mandant getMandant() {
 		return mandant;
 	}
 
-	public void setMandant(Mandant mandant) {
+	public void setMandant(@NotNull Mandant mandant) {
 		this.mandant = mandant;
 	}
 

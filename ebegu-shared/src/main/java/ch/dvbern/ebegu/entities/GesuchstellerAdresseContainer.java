@@ -74,11 +74,12 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 		this.gesuchstellerAdresseGS = gesuchstellerAdresseGS;
 	}
 
+	@Nullable
 	public GesuchstellerAdresse getGesuchstellerAdresseJA() {
 		return gesuchstellerAdresseJA;
 	}
 
-	public void setGesuchstellerAdresseJA(GesuchstellerAdresse gesuchstellerAdresseJA) {
+	public void setGesuchstellerAdresseJA(@Nullable GesuchstellerAdresse gesuchstellerAdresseJA) {
 		this.gesuchstellerAdresseJA = gesuchstellerAdresseJA;
 	}
 
