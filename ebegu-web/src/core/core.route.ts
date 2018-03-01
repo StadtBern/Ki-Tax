@@ -80,10 +80,10 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
             listResourceRS.getLaenderList();  //initial aufruefen damit cache populiert wird
             mandantRS.getFirst();
         }
+        globalCacheService.getCache(TSCacheTyp.EBEGU_INSTITUTIONSSTAMMDATEN).removeAll(); // muss immer geleert werden
         //since we will need these lists anyway we already load on login
         gesuchsperiodeRS.updateActiveGesuchsperiodenList().then((gesuchsperioden) => {
             if (gesuchsperioden.length > 0) {
-                globalCacheService.getCache(TSCacheTyp.EBEGU_INSTITUTIONSSTAMMDATEN).removeAll();
                 let newestGP = gesuchsperioden[0];
                 institutionsStammdatenRS.getAllActiveInstitutionStammdatenByGesuchsperiode(newestGP.id);
             }
