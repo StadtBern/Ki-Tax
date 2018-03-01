@@ -18,7 +18,9 @@ import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest
 import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import GesuchModelManager from '../gesuch/service/gesuchModelManager';
+import GlobalCacheService from '../gesuch/service/globalCacheService';
 import {TSAuthEvent} from '../models/enums/TSAuthEvent';
+import {TSCacheTyp} from '../models/enums/TSCacheTyp';
 import TSApplicationProperty from '../models/TSApplicationProperty';
 import TSUser from '../models/TSUser';
 import {TSRoleUtil} from '../utils/TSRoleUtil';
@@ -35,14 +37,14 @@ import ITimeoutService = angular.ITimeoutService;
 
 appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'MandantRS', '$injector', '$rootScope', 'hotkeys',
     '$timeout', 'AuthServiceRS', '$state', '$location', '$window', '$log', 'ErrorService', 'GesuchModelManager', 'GesuchsperiodeRS',
-    'InstitutionStammdatenRS'];
+    'InstitutionStammdatenRS', 'GlobalCacheService'];
 
 /* @ngInject */
 export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS,
                        mandantRS: MandantRS, $injector: IInjectorService, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService,
                        authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService, $window: ng.IWindowService,
                        $log: ILogService, errorService: ErrorService, gesuchModelManager: GesuchModelManager,
-                       gesuchsperiodeRS: GesuchsperiodeRS, institutionsStammdatenRS: InstitutionStammdatenRS) {
+                       gesuchsperiodeRS: GesuchsperiodeRS, institutionsStammdatenRS: InstitutionStammdatenRS, globalCacheService: GlobalCacheService) {
     // navigationLogger.toggle();
 
     // Fehler beim Navigieren ueber ui-route ins Log schreiben
@@ -78,8 +80,9 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
             listResourceRS.getLaenderList();  //initial aufruefen damit cache populiert wird
             mandantRS.getFirst();
         }
+        globalCacheService.getCache(TSCacheTyp.EBEGU_INSTITUTIONSSTAMMDATEN).removeAll(); // muss immer geleert werden
         //since we will need these lists anyway we already load on login
-        gesuchsperiodeRS.updateActiveGesuchsperiodenList() .then((gesuchsperioden) => {
+        gesuchsperiodeRS.updateActiveGesuchsperiodenList().then((gesuchsperioden) => {
             if (gesuchsperioden.length > 0) {
                 let newestGP = gesuchsperioden[0];
                 institutionsStammdatenRS.getAllActiveInstitutionStammdatenByGesuchsperiode(newestGP.id);
