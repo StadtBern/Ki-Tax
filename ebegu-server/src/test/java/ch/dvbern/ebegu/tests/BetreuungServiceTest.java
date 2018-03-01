@@ -270,6 +270,9 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertFalse("88.999999.66", betreuungService.validateBGNummer("88.999999.66"));
 	}
 
+	/**
+	 * Kita-Zeitraum = Gesuchsperiode (mindestens)
+	 */
 	@Test
 	public void validateBetreuungszeitraumInnerhalbInstitutionsGueltigkeit() {
 		prepareDependentObjects();
@@ -317,15 +320,21 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		betreuung.getBetreuungspensumContainers().iterator().next().getBetreuungspensumJA().getGueltigkeit().setGueltigBis(Constants.END_OF_TIME);
 		betreuung = betreuungService.betreuungPlatzBestaetigen(betreuung);
 		Assert.assertNotNull(betreuung);
+	}
 
+	/**
+	 * Kita hat innerhalb GP neu geöffnet
+	 */
+	@Test
+	public void validateBetreuungszeitraumInstitutionsGueltigkeitInGesuchsperiodeOpen() {
+		prepareDependentObjects();
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.now());
+		Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
 
 		// *** Kita hat innerhalb GP neu geöffnet
-		kitaFrom = betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigAb().plusWeeks(1);
-		kitaUntil = betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis();
-		institutionStammdaten.getGueltigkeit().setGueltigAb(kitaFrom);
-		institutionStammdaten.getGueltigkeit().setGueltigBis(kitaUntil);
-		institutionStammdaten = persistence.merge(institutionStammdaten);
-		betreuung.setInstitutionStammdaten(institutionStammdaten);
+		LocalDate kitaFrom = betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigAb().plusWeeks(1);
+		LocalDate kitaUntil = betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis();
+		prepareInstitutionsstammdaten(betreuung, kitaFrom, kitaUntil);
 
 		// (1) Pensum exakt gleich wie Kita-Zeitraum
 		betreuung.getBetreuungspensumContainers().iterator().next().getBetreuungspensumJA().getGueltigkeit().setGueltigAb(kitaFrom);
@@ -364,15 +373,21 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		} catch (Exception e) {
 			// Expected
 		}
+	}
 
+	/**
+	 * Kita hat innerhalb GP geschlossen
+	 */
+	@Test
+	public void validateBetreuungszeitraumInstitutionsGueltigkeitInGesuchsperiodeClosed() {
+		prepareDependentObjects();
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.now());
+		Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
 
 		// *** Kita wird innerhalb GP geschlossen
-		kitaFrom = betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigAb();
-		kitaUntil = betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis().minusWeeks(1);
-		institutionStammdaten.getGueltigkeit().setGueltigAb(kitaFrom);
-		institutionStammdaten.getGueltigkeit().setGueltigBis(kitaUntil);
-		institutionStammdaten = persistence.merge(institutionStammdaten);
-		betreuung.setInstitutionStammdaten(institutionStammdaten);
+		LocalDate kitaFrom = betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigAb();
+		LocalDate kitaUntil = betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis().minusWeeks(1);
+		prepareInstitutionsstammdaten(betreuung, kitaFrom, kitaUntil);
 
 		// (1) Pensum exakt gleich wie Kita-Zeitraum
 		betreuung.getBetreuungspensumContainers().iterator().next().getBetreuungspensumJA().getGueltigkeit().setGueltigAb(kitaFrom);
@@ -415,5 +430,16 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		} catch (Exception e) {
 			// Expected
 		}
+	}
+
+	private void prepareInstitutionsstammdaten(Betreuung betreuung, LocalDate kitaFrom, LocalDate kitaUntil) {
+		InstitutionStammdaten institutionStammdaten = TestDataUtil.createDefaultInstitutionStammdaten();
+		institutionStammdaten.getGueltigkeit().setGueltigAb(kitaFrom);
+		institutionStammdaten.getGueltigkeit().setGueltigBis(kitaUntil);
+		persistence.merge(institutionStammdaten.getInstitution().getMandant());
+		persistence.merge(institutionStammdaten.getInstitution().getTraegerschaft());
+		persistence.merge(institutionStammdaten.getInstitution());
+		institutionStammdaten = persistence.merge(institutionStammdaten);
+		betreuung.setInstitutionStammdaten(institutionStammdaten);
 	}
 }

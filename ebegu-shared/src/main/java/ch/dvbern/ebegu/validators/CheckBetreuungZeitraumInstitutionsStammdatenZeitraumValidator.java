@@ -15,14 +15,18 @@
 
 package ch.dvbern.ebegu.validators;
 
+import java.text.MessageFormat;
 import java.time.LocalDate;
+import java.util.ResourceBundle;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.DateUtil;
 
 /**
@@ -47,6 +51,7 @@ public class CheckBetreuungZeitraumInstitutionsStammdatenZeitraumValidator imple
 			DateRange betreuungWithinGP = limitToDateRange(pensumDateRange, betreuung.extractGesuchsperiode().getGueltigkeit());
 			// Da wir jetzt nur noch die Gesuchsperiode betrachten, darf die Betreuung NIE ausserhalb der Stammdaten sein
 			if (!stammdatenWithinGP.contains(betreuungWithinGP)) {
+				setConstraintViolationMessage(institutionStammdatenDateRange, context);
 				return false;
 			}
 		}
@@ -58,5 +63,16 @@ public class CheckBetreuungZeitraumInstitutionsStammdatenZeitraumValidator imple
 		LocalDate von = DateUtil.getMax(range.getGueltigAb(), gesuchsperiode.getGueltigAb());
 		LocalDate bis = DateUtil.getMin(range.getGueltigBis(), gesuchsperiode.getGueltigBis());
 		return new DateRange(von, bis);
+	}
+
+	private void setConstraintViolationMessage(@NotNull DateRange institutionStammdatenDateRange, @NotNull ConstraintValidatorContext context) {
+		ResourceBundle rb = ResourceBundle.getBundle("ValidationMessages");
+		String message = rb.getString("invalid_betreuungszeitraum_for_institutionsstammdaten");
+		message = MessageFormat.format(message, Constants.DATE_FORMATTER.format(institutionStammdatenDateRange.getGueltigAb()),
+			Constants.DATE_FORMATTER.format(institutionStammdatenDateRange.getGueltigBis()));
+
+		context.disableDefaultConstraintViolation();
+		context.buildConstraintViolationWithTemplate(message)
+			.addConstraintViolation();
 	}
 }
