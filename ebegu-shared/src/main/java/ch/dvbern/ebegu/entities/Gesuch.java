@@ -359,11 +359,12 @@ public class Gesuch extends AbstractEntity implements Searchable {
 		this.eingangsdatumSTV = eingangsdatumSTV;
 	}
 
+	@Nullable
 	public LocalDate getFreigabeDatum() {
 		return freigabeDatum;
 	}
 
-	public void setFreigabeDatum(LocalDate freigabeDatum) {
+	public void setFreigabeDatum(@Nullable LocalDate freigabeDatum) {
 		this.freigabeDatum = freigabeDatum;
 	}
 

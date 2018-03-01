@@ -15,6 +15,7 @@
 
 package ch.dvbern.ebegu.api.errors;
 
+import javax.annotation.Nonnull;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
@@ -35,11 +36,11 @@ public class EbeguExceptionMapper extends AbstractEbeguExceptionMapper<EbeguExce
 		return buildViolationReportResponse(exception, Status.BAD_REQUEST);
 	}
 
+	@Nonnull
 	@Override
 	protected Response buildViolationReportResponse(EbeguException exception, Response.Status status) {
 		return EbeguExceptionReport.buildResponse(status, exception, getLocaleFromHeader(), configuration.getIsDevmode());
 
 	}
-
 }
 

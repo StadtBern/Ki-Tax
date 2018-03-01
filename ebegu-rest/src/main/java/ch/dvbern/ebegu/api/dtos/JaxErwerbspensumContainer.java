@@ -15,6 +15,7 @@
 
 package ch.dvbern.ebegu.api.dtos;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -35,19 +36,21 @@ public class JaxErwerbspensumContainer extends JaxAbstractDTO {
 	@Valid
 	private JaxErwerbspensum erwerbspensumJA;
 
+	@Nullable
 	public JaxErwerbspensum getErwerbspensumJA() {
 		return erwerbspensumJA;
 	}
 
-	public void setErwerbspensumJA(JaxErwerbspensum erwerbspensumJA) {
+	public void setErwerbspensumJA(@Nullable JaxErwerbspensum erwerbspensumJA) {
 		this.erwerbspensumJA = erwerbspensumJA;
 	}
 
+	@Nullable
 	public JaxErwerbspensum getErwerbspensumGS() {
 		return erwerbspensumGS;
 	}
 
-	public void setErwerbspensumGS(JaxErwerbspensum erwerbspensumGS) {
+	public void setErwerbspensumGS(@Nullable JaxErwerbspensum erwerbspensumGS) {
 		this.erwerbspensumGS = erwerbspensumGS;
 	}
 }

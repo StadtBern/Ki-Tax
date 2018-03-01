@@ -101,12 +101,12 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ACCEPT_MSG,
 					String.valueOf(basisjahrPlus2));
 			} else {
-				if (verfuegungZeitabschnitt.isEkv1NotExisting() || finanzDatenDTO.isEkv1Annulliert()) {
-					verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjVorAbzFamGr());
-					verfuegungZeitabschnitt.setEinkommensjahr(basisjahr);
-				} else {
+				if (finanzDatenDTO.isEkv1AcceptedAndNotAnnuliert()) {
 					verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP1VorAbzFamGr());
 					verfuegungZeitabschnitt.setEinkommensjahr(basisjahrPlus1);
+				} else {
+					verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjVorAbzFamGr());
+					verfuegungZeitabschnitt.setEinkommensjahr(basisjahr);
 				}
 				if (finanzDatenDTO.isEkv2Annulliert()) {
 					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey

@@ -13,7 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IComponentOptions, ILogService} from 'angular';
+import {IComponentOptions, IFormController, ILogService} from 'angular';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSGesuch from '../../../models/TSGesuch';
 import GesuchRS from '../../service/gesuchRS.rest';
@@ -57,6 +57,7 @@ export class KommentarViewComponentConfig implements IComponentOptions {
  */
 export class KommentarViewController {
 
+    form: IFormController;
     dokumentePapiergesuch: TSDokumentGrund;
     TSRoleUtil: any;
 
@@ -222,7 +223,7 @@ export class KommentarViewController {
     }
 
     public freigebenSTV(): void {
-        this.dvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+        this.dvDialog.showRemoveDialog(removeDialogTempl, this.form, RemoveDialogController, {
             title: this.getFreigabeTitel(),
             deleteText: this.getFreigabeBeschreibung(),
             parentController: undefined,
