@@ -28,6 +28,7 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.entities.Traegerschaft;
@@ -40,6 +41,7 @@ import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.KindService;
 import ch.dvbern.ebegu.services.MitteilungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -70,10 +72,9 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private InstitutionService institutionService;
 
-	private Mandant mandant;
-	private Benutzer empfaengerJA;
-	private Benutzer empfaengerINST;
-	private Benutzer sender;
+	private Mandant mandant = null;
+	private Benutzer empfaengerJA = null;
+	private Benutzer sender = null;
 
 	@Test
 	public void createAndUpdateBetreuungTest() {
@@ -93,8 +94,10 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 
 		Assert.assertEquals(GesuchBetreuungenStatus.ABGEWIESEN, updatedBetreuung.get().extractGesuch()
 			.getGesuchBetreuungenStatus());
-		Assert.assertEquals(new Integer(1), updatedBetreuung.get().getBetreuungNummer());
-		Assert.assertEquals(new Integer(2), kindService.findKind(betreuung.getKind().getId()).get().getNextNumberBetreuung());
+		Assert.assertEquals(Integer.valueOf(1), updatedBetreuung.get().getBetreuungNummer());
+		final Optional<KindContainer> kind = kindService.findKind(betreuung.getKind().getId());
+		Assert.assertTrue(kind.isPresent());
+		Assert.assertEquals(Integer.valueOf(2), kind.get().getNextNumberBetreuung());
 	}
 
 	@Test
@@ -223,7 +226,7 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		persistence.persist(empfaengerJA);
 
 		final Traegerschaft traegerschaft = persistence.persist(TestDataUtil.createDefaultTraegerschaft());
-		empfaengerINST = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, "insti", traegerschaft, null, mandant);
+		Benutzer empfaengerINST = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, "insti", traegerschaft, null, mandant);
 		persistence.persist(empfaengerINST);
 
 		sender = TestDataUtil.createBenutzer(UserRole.GESUCHSTELLER, "gsst", null, null, mandant);
@@ -257,14 +260,14 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void validateBGNummer() {
-		Assert.assertEquals("18.000108.1.2",true, betreuungService.validateBGNummer("18.000108.1.2"));
-		Assert.assertEquals("88.999999.77.66",true, betreuungService.validateBGNummer("88.999999.77.66"));
-		Assert.assertEquals("88.999999.7.66",true, betreuungService.validateBGNummer("88.999999.7.66"));
-		Assert.assertEquals("88.999999.77.6",true, betreuungService.validateBGNummer("88.999999.77.6"));
-		Assert.assertEquals("1.000108.1.2",false, betreuungService.validateBGNummer("1.000108.1.2"));
-		Assert.assertEquals("88.99999.77.66",false, betreuungService.validateBGNummer("88.99999.77.66"));
-		Assert.assertEquals("88.999999.66",false, betreuungService.validateBGNummer("88.999999.66"));
-		Assert.assertEquals("88.999999.66",false, betreuungService.validateBGNummer("88.999999.66"));
+		Assert.assertTrue("18.000108.1.2", betreuungService.validateBGNummer("18.000108.1.2"));
+		Assert.assertTrue("88.999999.77.66", betreuungService.validateBGNummer("88.999999.77.66"));
+		Assert.assertTrue("88.999999.7.66", betreuungService.validateBGNummer("88.999999.7.66"));
+		Assert.assertTrue("88.999999.77.6", betreuungService.validateBGNummer("88.999999.77.6"));
+		Assert.assertFalse("1.000108.1.2", betreuungService.validateBGNummer("1.000108.1.2"));
+		Assert.assertFalse("88.99999.77.66", betreuungService.validateBGNummer("88.99999.77.66"));
+		Assert.assertFalse("88.999999.66", betreuungService.validateBGNummer("88.999999.66"));
+		Assert.assertFalse("88.999999.66", betreuungService.validateBGNummer("88.999999.66"));
 	}
 
 	@Test
@@ -305,5 +308,21 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		} catch (Exception e) {
 			// Expected
 		}
+
+		// (4) Pensum innerhalb Kita-Zeitraum mit bis=END_OF_TIME
+		betreuung.getBetreuungspensumContainers().iterator().next().getBetreuungspensumJA().getGueltigkeit().setGueltigAb(kitaFrom.plusDays(1));
+		betreuung.getBetreuungspensumContainers().iterator().next().getBetreuungspensumJA().getGueltigkeit().setGueltigBis(Constants.END_OF_TIME);
+		betreuung = betreuungService.betreuungPlatzBestaetigen(betreuung);
+		Assert.assertNotNull(betreuung);
+
+		// (5) Pensum ausserhalb Kita-Zeitraum mit bis=END_OF_TIME
+		betreuung.getBetreuungspensumContainers().iterator().next().getBetreuungspensumJA().getGueltigkeit().setGueltigAb(kitaFrom.minusDays(1));
+		betreuung.getBetreuungspensumContainers().iterator().next().getBetreuungspensumJA().getGueltigkeit().setGueltigBis(Constants.END_OF_TIME);
+		try {
+			betreuungService.betreuungPlatzBestaetigen(betreuung);
+			Assert.fail("Exception expected");
+		} catch (Exception e) {
+			// Expected
+		};
 	}
 }

@@ -15,12 +15,17 @@
 
 package ch.dvbern.ebegu.validators;
 
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
 
 /**
  * Die Betreuungspensen einer Betreuung müssen innerhalb der Verfügbarkeit der Institution liegen (Zeitraum der Institutionsstammdaten)
@@ -34,13 +39,45 @@ public class CheckBetreuungZeitraumInstitutionsStammdatenZeitraumValidator imple
 
 	@Override
 	public boolean isValid(Betreuung betreuung, ConstraintValidatorContext context) {
-		DateRange institutionStammdaten = betreuung.getInstitutionStammdaten().getGueltigkeit();
+		DateRange institutionStammdatenDateRange = betreuung.getInstitutionStammdaten().getGueltigkeit();
 		for (BetreuungspensumContainer betreuungspensumContainer : betreuung.getBetreuungspensumContainers()) {
-			DateRange pensum = betreuungspensumContainer.getBetreuungspensumJA().getGueltigkeit();
-			if (!institutionStammdaten.contains(pensum)) {
+			DateRange pensumDateRange = betreuungspensumContainer.getBetreuungspensumJA().getGueltigkeit();
+			// Wenn Stammdaten <= GP.Ende -> muss contains
+			// sonst -> nur VON datum pruefen
+
+			// Falls die Institution bis mindestens ende GP existiert, dann interessiert uns das Ende der Betreuung nicht, da es sowieso innerhalb des
+			// Institutions-Zeitraums liegt (da uns nur die GP interessiert)
+			// todo dies muss noch verbessert werden -> institutionDateRange und pensumDateRange auf gesuchsperiode reduzieren und erst dann vergleichen
+//			boolean institutionIstBisEndeGP = !institutionStammdatenDateRange.getGueltigBis().isBefore(betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
+//			if (institutionIstBisEndeGP) {
+//				// Wir muessen nur das VON Datum pruefen
+//				if (!institutionStammdatenDateRange.contains(pensumDateRange.getGueltigAb())) {
+//					return false;
+//				}
+//			} else if (!institutionStammdatenDateRange.contains(pensumDateRange)) {
+//					return false;
+//			}
+
+
+			if (!institutionStammdatenDateRange.contains(pensumDateRange.getGueltigAb())
+				|| (!institutionStammdatenDateRange.contains(pensumDateRange.getGueltigBis()) && !pensumDateRange.getGueltigBis().isEqual(Constants.END_OF_TIME))) {
+				setConstraintViolationMessage(institutionStammdatenDateRange, context);
 				return false;
 			}
 		}
 		return true;
+	}
+
+
+
+	private void setConstraintViolationMessage(@NotNull DateRange institutionStammdatenDateRange, @NotNull ConstraintValidatorContext context) {
+		ResourceBundle rb = ResourceBundle.getBundle("ValidationMessages");
+		String message = rb.getString("invalid_betreuungszeitraum_for_institutionsstammdaten");
+		message = MessageFormat.format(message, Constants.DATE_FORMATTER.format(institutionStammdatenDateRange.getGueltigAb()),
+			Constants.DATE_FORMATTER.format(institutionStammdatenDateRange.getGueltigBis()));
+
+		context.disableDefaultConstraintViolation();
+		context.buildConstraintViolationWithTemplate(message)
+			.addConstraintViolation();
 	}
 }
