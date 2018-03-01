@@ -173,7 +173,6 @@ import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.services.AdresseService;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.EinkommensverschlechterungInfoService;
@@ -192,7 +191,6 @@ import ch.dvbern.ebegu.services.InstitutionStammdatenService;
 import ch.dvbern.ebegu.services.MandantService;
 import ch.dvbern.ebegu.services.PensumFachstelleService;
 import ch.dvbern.ebegu.services.TraegerschaftService;
-import ch.dvbern.ebegu.services.VerfuegungService;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.Constants;
@@ -1130,10 +1128,9 @@ public class JaxBConverter {
 				// Mandant darf nicht vom Client ueberschrieben werden
 				institution.setMandant(mandantFromDB.get());
 			} else {
-				throw new EbeguEntityNotFoundException("institutionToEntity -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionJAXP.getMandant()
-					.getId());
+				throw new EbeguEntityNotFoundException("institutionToEntity -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND,
+					institutionJAXP.getMandant().getId());
 			}
-
 		} else {
 			throw new EbeguEntityNotFoundException("institutionToEntity -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
 		}
@@ -1837,7 +1834,7 @@ public class JaxBConverter {
 			final BetreuungspensumContainer contToAdd = betreuungspensumContainerToEntity(jaxBetPensContainer, containerToMergeWith);
 			final boolean added = transformedBetPenContainers.add(contToAdd);
 			if (!added) {
-				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + contToAdd);
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + "{}", contToAdd);
 			}
 		}
 
@@ -1862,7 +1859,7 @@ public class JaxBConverter {
 			contToAdd.setId(oldID);
 			final boolean added = transformedAbwesenheitContainers.add(contToAdd);
 			if (!added) {
-				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + contToAdd);
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + "{}", contToAdd);
 			}
 		}
 
@@ -2102,7 +2099,7 @@ public class JaxBConverter {
 			final VerfuegungZeitabschnitt abschnittToAdd = verfuegungZeitabschnittToEntity(jaxZeitabschnitt, containerToMergeWith);
 			final boolean added = convertedZeitabschnitte.add(abschnittToAdd);
 			if (!added) {
-				LOGGER.warn("dropped duplicate zeitabschnitt " + abschnittToAdd);
+				LOGGER.warn("dropped duplicate zeitabschnitt {}", abschnittToAdd);
 			}
 		}
 
@@ -2262,38 +2259,74 @@ public class JaxBConverter {
 		return gesuchsperiode;
 	}
 
-	public Benutzer authLoginElementToBenutzer(JaxAuthLoginElement loginElement, Benutzer benutzer) {
-		benutzer.setUsername(loginElement.getUsername());
-		benutzer.setEmail(loginElement.getEmail());
-		benutzer.setNachname(loginElement.getNachname());
-		benutzer.setVorname(loginElement.getVorname());
-		benutzer.setRole(loginElement.getRole());
-		benutzer.setMandant(mandantToEntity(loginElement.getMandant(), new Mandant()));
+	public Benutzer authLoginElementToBenutzer(JaxAuthLoginElement jaxLoginElement, Benutzer benutzer) {
+		benutzer.setUsername(jaxLoginElement.getUsername());
+		benutzer.setEmail(jaxLoginElement.getEmail());
+		benutzer.setNachname(jaxLoginElement.getNachname());
+		benutzer.setVorname(jaxLoginElement.getVorname());
+		benutzer.setRole(jaxLoginElement.getRole());
+
+		if (jaxLoginElement.getMandant() != null && jaxLoginElement.getMandant().getId() != null) {
+			final Optional<Mandant> mandantFromDB = mandantService.findMandant(jaxLoginElement.getMandant().getId());
+			if (mandantFromDB.isPresent()) {
+				// Mandant darf nicht vom Client ueberschrieben werden
+				benutzer.setMandant(mandantFromDB.get());
+			} else {
+				throw new EbeguEntityNotFoundException("authLoginElementToBenutzer -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND,
+					benutzer.getMandant().getId());
+			}
+		} else {
+			throw new EbeguEntityNotFoundException("authLoginElementToBenutzer -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
+		}
+
+
 		// wir muessen Traegerschaft und Institution auch updaten wenn sie null sind. Es koennte auch so aus dem IAM kommen
-		benutzer.setInstitution(loginElement.getInstitution() != null ? institutionToEntity(loginElement.getInstitution(), new Institution()) : null);
-		benutzer.setTraegerschaft(loginElement.getTraegerschaft() != null ? traegerschaftToEntity(loginElement.getTraegerschaft(), new Traegerschaft()) :
-			null);
+		if (jaxLoginElement.getInstitution() != null && jaxLoginElement.getInstitution().getId() != null) {
+			final Optional<Institution> institutionFromDB = institutionService.findInstitution(jaxLoginElement.getInstitution().getId());
+			if (institutionFromDB.isPresent()) {
+				// Institution darf nicht vom Client ueberschrieben werden
+				benutzer.setInstitution(institutionFromDB.get());
+			} else {
+				throw new EbeguEntityNotFoundException("authLoginElementToBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxLoginElement
+					.getInstitution().getId());
+			}
+		} else {
+			benutzer.setInstitution(null);
+		}
+
+		if (jaxLoginElement.getTraegerschaft() != null && jaxLoginElement.getTraegerschaft().getId() != null) {
+			final Optional<Traegerschaft> traegerschaftFromDB = traegerschaftService.findTraegerschaft(jaxLoginElement.getTraegerschaft().getId());
+			if (traegerschaftFromDB.isPresent()) {
+				// Traegerschaft darf nicht vom Client ueberschrieben werden
+				benutzer.setTraegerschaft(traegerschaftFromDB.get());
+			} else {
+				throw new EbeguEntityNotFoundException("authLoginElementToBenutzer -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxLoginElement
+					.getTraegerschaft().getId());
+			}
+		} else {
+			benutzer.setTraegerschaft(null);
+		}
 		return benutzer;
 	}
 
 	public JaxAuthLoginElement benutzerToAuthLoginElement(Benutzer benutzer) {
-		JaxAuthLoginElement loginElement = new JaxAuthLoginElement();
-		loginElement.setVorname(benutzer.getVorname());
-		loginElement.setNachname(benutzer.getNachname());
-		loginElement.setEmail(benutzer.getEmail());
+		JaxAuthLoginElement jaxLoginElement = new JaxAuthLoginElement();
+		jaxLoginElement.setVorname(benutzer.getVorname());
+		jaxLoginElement.setNachname(benutzer.getNachname());
+		jaxLoginElement.setEmail(benutzer.getEmail());
 		if (benutzer.getMandant() != null) {
-			loginElement.setMandant(mandantToJAX(benutzer.getMandant()));
+			jaxLoginElement.setMandant(mandantToJAX(benutzer.getMandant()));
 		}
 		if (benutzer.getInstitution() != null) {
-			loginElement.setInstitution(institutionToJAX(benutzer.getInstitution()));
+			jaxLoginElement.setInstitution(institutionToJAX(benutzer.getInstitution()));
 		}
 		if (benutzer.getTraegerschaft() != null) {
-			loginElement.setTraegerschaft(traegerschaftToJAX(benutzer.getTraegerschaft()));
+			jaxLoginElement.setTraegerschaft(traegerschaftToJAX(benutzer.getTraegerschaft()));
 		}
-		loginElement.setUsername(benutzer.getUsername());
-		loginElement.setRole(benutzer.getRole());
-		loginElement.setAmt(benutzer.getRole().getAmt());
-		return loginElement;
+		jaxLoginElement.setUsername(benutzer.getUsername());
+		jaxLoginElement.setRole(benutzer.getRole());
+		jaxLoginElement.setAmt(benutzer.getRole().getAmt());
+		return jaxLoginElement;
 	}
 
 	public JaxDokumente dokumentGruendeToJAX(Set<DokumentGrund> dokumentGrunds) {
@@ -2379,7 +2412,7 @@ public class JaxBConverter {
 			final Dokument dokToAdd = dokumentToEntity(jaxDokument, dokumenteToMergeWith, dokumentGrund);
 			final boolean added = transformedDokumente.add(dokToAdd);
 			if (!added) {
-				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + dokToAdd);
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + "{}", dokToAdd);
 			}
 		}
 
@@ -2880,8 +2913,19 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(ferieninselStammdatenJAX, ferieninselStammdaten);
 		ferieninselStammdaten.setFerienname(ferieninselStammdatenJAX.getFerienname());
 		ferieninselStammdaten.setAnmeldeschluss(ferieninselStammdatenJAX.getAnmeldeschluss());
-		ferieninselStammdaten.setGesuchsperiode(gesuchsperiodeToEntity(ferieninselStammdatenJAX.getGesuchsperiode(), new Gesuchsperiode()));
+
+		if (ferieninselStammdatenJAX.getGesuchsperiode() != null && ferieninselStammdatenJAX.getGesuchsperiode().getId() != null) {
+			final Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(ferieninselStammdatenJAX.getGesuchsperiode().getId());
+			if (gesuchsperiode.isPresent()) {
+				// Gesuchsperiode darf nicht vom Client ueberschrieben werden
+				ferieninselStammdaten.setGesuchsperiode(gesuchsperiode.get());
+			} else {
+				throw new EbeguEntityNotFoundException("ferieninselStammdatenToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND,
+					ferieninselStammdatenJAX.getGesuchsperiode().getId());
+			}
+		}
 		ferieninselZeitraumListToEntity(ferieninselStammdatenJAX.getZeitraumList(), ferieninselStammdaten.getZeitraumList());
+
 		return ferieninselStammdaten;
 	}
 
@@ -2945,7 +2989,7 @@ public class JaxBConverter {
 			final BelegungFerieninselTag tagToAdd = belegungFerieninselTagToEntity(jaxTag, tagToMergeWith);
 			final boolean added = transformedTagList.add(tagToAdd);
 			if (!added) {
-				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + tagToAdd);
+				LOGGER.warn(DROPPED_DUPLICATE_CONTAINER + "{}", tagToAdd);
 			}
 		}
 
