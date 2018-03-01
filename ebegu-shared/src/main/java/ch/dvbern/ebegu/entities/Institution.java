@@ -46,6 +46,7 @@ public class Institution extends AbstractEntity implements HasMandant {
 	@NotNull
 	private String name;
 
+	@Nullable
 	@ManyToOne(optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_traegerschaft_id"))
 	private Traegerschaft traegerschaft;
@@ -85,6 +86,7 @@ public class Institution extends AbstractEntity implements HasMandant {
 		this.traegerschaft = traegerschaft;
 	}
 
+	@Override
 	@NotNull
 	public Mandant getMandant() {
 		return mandant;
