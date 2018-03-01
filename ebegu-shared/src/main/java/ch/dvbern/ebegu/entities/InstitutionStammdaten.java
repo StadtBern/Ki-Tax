@@ -164,11 +164,12 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 		this.adresse = adresse;
 	}
 
+	@Nullable
 	public String getKontoinhaber() {
 		return kontoinhaber;
 	}
 
-	public void setKontoinhaber(String kontoinhaber) {
+	public void setKontoinhaber(@Nullable String kontoinhaber) {
 		this.kontoinhaber = kontoinhaber;
 	}
 
