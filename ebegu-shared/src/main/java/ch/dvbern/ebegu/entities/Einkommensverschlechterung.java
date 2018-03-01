@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.entities;
 
 import java.math.BigDecimal;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
@@ -80,117 +81,129 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 	public Einkommensverschlechterung() {
 	}
 
+	@Nullable
 	public BigDecimal getNettolohnJan() {
 		return nettolohnJan;
 	}
 
-	public void setNettolohnJan(final BigDecimal nettolohnJan) {
+	public void setNettolohnJan(@Nullable final BigDecimal nettolohnJan) {
 		this.nettolohnJan = nettolohnJan;
 	}
 
+	@Nullable
 	public BigDecimal getNettolohnFeb() {
 		return nettolohnFeb;
 	}
 
-	public void setNettolohnFeb(final BigDecimal nettolohnFeb) {
+	public void setNettolohnFeb(@Nullable final BigDecimal nettolohnFeb) {
 		this.nettolohnFeb = nettolohnFeb;
 	}
 
+	@Nullable
 	public BigDecimal getNettolohnMrz() {
 		return nettolohnMrz;
 	}
 
-	public void setNettolohnMrz(final BigDecimal nettolohnMrz) {
+	public void setNettolohnMrz(@Nullable final BigDecimal nettolohnMrz) {
 		this.nettolohnMrz = nettolohnMrz;
 	}
 
+	@Nullable
 	public BigDecimal getNettolohnApr() {
 		return nettolohnApr;
 	}
 
-	public void setNettolohnApr(final BigDecimal nettolohnApr) {
+	public void setNettolohnApr(@Nullable final BigDecimal nettolohnApr) {
 		this.nettolohnApr = nettolohnApr;
 	}
 
+	@Nullable
 	public BigDecimal getNettolohnMai() {
 		return nettolohnMai;
 	}
 
-	public void setNettolohnMai(final BigDecimal nettolohnMai) {
+	public void setNettolohnMai(@Nullable final BigDecimal nettolohnMai) {
 		this.nettolohnMai = nettolohnMai;
 	}
 
+	@Nullable
 	public BigDecimal getNettolohnJun() {
 		return nettolohnJun;
 	}
 
-	public void setNettolohnJun(final BigDecimal nettolohnJun) {
+	public void setNettolohnJun(@Nullable final BigDecimal nettolohnJun) {
 		this.nettolohnJun = nettolohnJun;
 	}
 
+	@Nullable
 	public BigDecimal getNettolohnJul() {
 		return nettolohnJul;
 	}
 
-	public void setNettolohnJul(final BigDecimal nettolohnJul) {
+	public void setNettolohnJul(@Nullable final BigDecimal nettolohnJul) {
 		this.nettolohnJul = nettolohnJul;
 	}
 
+	@Nullable
 	public BigDecimal getNettolohnAug() {
 		return nettolohnAug;
 	}
 
-	public void setNettolohnAug(final BigDecimal nettolohnAug) {
+	public void setNettolohnAug(@Nullable final BigDecimal nettolohnAug) {
 		this.nettolohnAug = nettolohnAug;
 	}
 
+	@Nullable
 	public BigDecimal getNettolohnSep() {
 		return nettolohnSep;
 	}
 
-	public void setNettolohnSep(final BigDecimal nettolohnSep) {
+	public void setNettolohnSep(@Nullable final BigDecimal nettolohnSep) {
 		this.nettolohnSep = nettolohnSep;
 	}
 
+	@Nullable
 	public BigDecimal getNettolohnOkt() {
 		return nettolohnOkt;
 	}
 
-	public void setNettolohnOkt(final BigDecimal nettolohnOkt) {
+	public void setNettolohnOkt(@Nullable final BigDecimal nettolohnOkt) {
 		this.nettolohnOkt = nettolohnOkt;
 	}
 
+	@Nullable
 	public BigDecimal getNettolohnNov() {
 		return nettolohnNov;
 	}
 
-	public void setNettolohnNov(final BigDecimal nettolohnNov) {
+	public void setNettolohnNov(@Nullable final BigDecimal nettolohnNov) {
 		this.nettolohnNov = nettolohnNov;
 	}
 
+	@Nullable
 	public BigDecimal getNettolohnDez() {
 		return nettolohnDez;
 	}
 
-	public void setNettolohnDez(final BigDecimal nettolohnDez) {
+	public void setNettolohnDez(@Nullable final BigDecimal nettolohnDez) {
 		this.nettolohnDez = nettolohnDez;
 	}
 
+	@Nullable
 	public BigDecimal getGeschaeftsgewinnBasisjahrMinus1() {
 		return geschaeftsgewinnBasisjahrMinus1;
 	}
 
-	public void setGeschaeftsgewinnBasisjahrMinus1(BigDecimal geschaeftsgewinnBasisjahrMinus1) {
+	public void setGeschaeftsgewinnBasisjahrMinus1(@Nullable BigDecimal geschaeftsgewinnBasisjahrMinus1) {
 		this.geschaeftsgewinnBasisjahrMinus1 = geschaeftsgewinnBasisjahrMinus1;
 	}
 
+	@Nullable
 	public BigDecimal getNettolohnZus() {
-
 		return nettolohnZus;
 	}
 
-	public void setNettolohnZus(BigDecimal nettolohnZus) {
-
+	public void setNettolohnZus(@Nullable BigDecimal nettolohnZus) {
 		this.nettolohnZus = nettolohnZus;
 	}
 

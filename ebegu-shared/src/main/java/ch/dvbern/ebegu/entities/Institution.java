@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.entities;
 
 import java.util.Objects;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -75,19 +76,21 @@ public class Institution extends AbstractEntity implements HasMandant {
 		this.name = name;
 	}
 
+	@Nullable
 	public Traegerschaft getTraegerschaft() {
 		return traegerschaft;
 	}
 
-	public void setTraegerschaft(Traegerschaft traegerschaft) {
+	public void setTraegerschaft(@Nullable Traegerschaft traegerschaft) {
 		this.traegerschaft = traegerschaft;
 	}
 
+	@NotNull
 	public Mandant getMandant() {
 		return mandant;
 	}
 
-	public void setMandant(Mandant mandant) {
+	public void setMandant(@NotNull Mandant mandant) {
 		this.mandant = mandant;
 	}
 
