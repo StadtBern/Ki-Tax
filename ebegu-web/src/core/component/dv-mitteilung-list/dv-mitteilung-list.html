@@ -158,7 +158,7 @@
                                                        type="button"
                                                        button-class="dv-btn-mutation-hinzufuegen"
                                                        button-disabled="!vm.canApplyBetreuungsmitteilung(mitteilung)"
-                                                       ng-if="vm.isBetreuungsmitteilungNotApplied(mitteilung)">
+                                                       ng-if="vm.showBetreuungsmitteilungApply(mitteilung)">
                                         <span data-translate="MUTATIONSMELDUNG_APPLY"></span>
                                     </dv-loading-button>
                                     <span ng-if="vm.isBetreuungsmitteilungApplied(mitteilung)"

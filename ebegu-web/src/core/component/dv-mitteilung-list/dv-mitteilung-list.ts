@@ -341,15 +341,19 @@ export class DVMitteilungListController {
     }
 
     public isBetreuungsmitteilungApplied(mitteilung: TSMitteilung): boolean {
-        return (mitteilung instanceof TSBetreuungsmitteilung) && (<TSBetreuungsmitteilung>mitteilung).applied === true;
+        return this.isBetreuungsmitteilung(mitteilung) && (<TSBetreuungsmitteilung>mitteilung).applied === true;
     }
 
     public isBetreuungsmitteilungNotApplied(mitteilung: TSMitteilung): boolean {
-        return (mitteilung instanceof TSBetreuungsmitteilung) && (<TSBetreuungsmitteilung>mitteilung).applied !== true;
+        return this.isBetreuungsmitteilung(mitteilung) && (<TSBetreuungsmitteilung>mitteilung).applied !== true;
     }
 
     public canApplyBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
-        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorOrAmtRole());
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    }
+
+    public showBetreuungsmitteilungApply(mitteilung: TSMitteilung): boolean {
+        return this.canApplyBetreuungsmitteilung(mitteilung) && this.isBetreuungsmitteilungNotApplied(mitteilung);
     }
 
     $postLink() {
@@ -359,7 +363,7 @@ export class DVMitteilungListController {
     }
 
     public applyBetreuungsmitteilung(mitteilung: TSMitteilung): void {
-        if (mitteilung instanceof TSBetreuungsmitteilung) {
+        if (this.isBetreuungsmitteilung(mitteilung)) {
             this.DvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
                 title: 'MUTATIONSMELDUNG_UEBERNEHMEN',
                 deleteText: 'MUTATIONSMELDUNG_UEBERNEHMEN_BESCHREIBUNG',
@@ -402,16 +406,22 @@ export class DVMitteilungListController {
     }
 
     public canUebergebenAnSchulamt(mitteilung: TSMitteilung): boolean {
-        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.JUGENDAMT) && !mitteilung.isErledigt();
+        return !this.isBetreuungsmitteilung(mitteilung) &&
+            this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.JUGENDAMT) && !mitteilung.isErledigt();
     }
 
     public canUebergebenAnJugendamt(mitteilung: TSMitteilung): boolean {
-        return this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.SCHULAMT) && !mitteilung.isErledigt();
+        return !this.isBetreuungsmitteilung(mitteilung) &&
+            this.isUserAndEmpfaengerSameAmt(mitteilung, TSAmt.SCHULAMT) && !mitteilung.isErledigt();
     }
 
     private isUserAndEmpfaengerSameAmt(mitteilung: TSMitteilung, amt: TSAmt): boolean {
         let userInAmt: boolean = this.authServiceRS.getPrincipal().amt === amt;
         let empfaengerInAmt: boolean = mitteilung.getEmpfaengerAmt() === amt;
         return userInAmt && empfaengerInAmt;
+    }
+
+    private isBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
+        return mitteilung instanceof TSBetreuungsmitteilung;
     }
 }
