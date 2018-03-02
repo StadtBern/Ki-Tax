@@ -71,15 +71,20 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
 
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, ebeguRestUtil: EbeguRestUtil, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService, $scope: IScope,
-                private $translate: ITranslateService, private authServiceRS: AuthServiceRS, private $rootScope: IRootScopeService,
-                private ewkRS: EwkRS, $timeout: ITimeoutService) {
+        berechnungsManager: BerechnungsManager, private errorService: ErrorService,
+        wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService, $scope: IScope,
+        private $translate: ITranslateService, private authServiceRS: AuthServiceRS, private $rootScope: IRootScopeService,
+        private ewkRS: EwkRS, $timeout: ITimeoutService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.GESUCHSTELLER, $timeout);
         this.ebeguRestUtil = ebeguRestUtil;
         this.gesuchstellerNumber = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(this.gesuchstellerNumber);
+
+    }
+
+    $onInit() {
         this.initViewmodel();
+
     }
 
     private initViewmodel() {
@@ -189,7 +194,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     public disableWohnadresseFor2GS(): boolean {
         return this.isMutation() && (this.gesuchstellerNumber === 1
             || (this.model.vorgaengerId !== null
-            && this.model.vorgaengerId !== undefined));
+                && this.model.vorgaengerId !== undefined));
     }
 
     public isThereAnyUmzug(): boolean {

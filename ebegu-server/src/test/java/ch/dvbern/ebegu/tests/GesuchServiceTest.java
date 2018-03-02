@@ -675,10 +675,10 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		mitteilungService.sendBetreuungsmitteilung(mitteilung);
 
 		// mitteilung belongs to the Mutation and not to the Erstgesuch
+		loginAsAdmin();
 		Assert.assertEquals(0, mitteilungService.findAllBetreuungsmitteilungenForBetreuung(betreuungErstGesuch).size());
 		Assert.assertEquals(1, mitteilungService.findAllBetreuungsmitteilungenForBetreuung(betreuungMutation).size());
 
-		loginAsAdmin();
 		gesuchService.removeOnlineMutation(mutation.getFall(), mutation.getGesuchsperiode());
 
 		final Optional<Gesuch> removedMutation = gesuchService.findGesuch(mutationID);

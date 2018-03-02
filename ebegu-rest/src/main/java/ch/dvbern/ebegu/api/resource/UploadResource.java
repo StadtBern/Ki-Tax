@@ -40,6 +40,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.apache.tika.Tika;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxDokument;
 import ch.dvbern.ebegu.api.dtos.JaxDokumentGrund;
@@ -54,18 +66,9 @@ import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.FileSaverService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.util.UploadFileInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.apache.tika.Tika;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * REST Resource zum Upload von Dokumenten
@@ -206,11 +209,11 @@ public class UploadResource {
 				fileInfo.setFilename(decodedFilenamesJson);
 			}
 
-			try (InputStream file = input.getFormDataPart(partrileName, InputStream.class, null)) {
-				fileInfo.setBytes(IOUtils.toByteArray(file));
+			try (InputStream fileInputStream = input.getFormDataPart(partrileName, InputStream.class, null)) {
+				fileInfo.setBytes(IOUtils.toByteArray(fileInputStream));
 			}
 
-			// safe File to Filesystem
+			// safe File to Filesystem, if we just analyze the input stream tika classifies all files as octet streams
 			fileSaverService.save(fileInfo, gesuchId);
 			checkFiletypeAllowed(fileInfo);
 

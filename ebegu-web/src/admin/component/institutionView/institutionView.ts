@@ -144,11 +144,11 @@ export class InstitutionViewController extends AbstractAdminViewController {
     }
 
     removeInstitutionStammdaten(institutionStammdaten: TSInstitutionStammdaten): void {
-        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+        this.dvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
             deleteText: '',
             title: 'LOESCHEN_DIALOG_TITLE',
             parentController: undefined,
-            elementID: undefined
+            elementID: undefined,
         }).then(() => {   //User confirmed removal
             this.institutionStammdatenRS.removeInstitutionStammdaten(institutionStammdaten.id).then((result) => {
                 let index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
