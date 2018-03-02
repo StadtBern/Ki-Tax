@@ -533,6 +533,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		Predicate fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
 		query.where(fallPredicate);
+		query.orderBy(cb.desc(root.get(Gesuch_.laufnummer)));
 		TypedQuery<String> q = persistence.getEntityManager().createQuery(query);
 		q.setParameter(fallIdParam, fallId);
 

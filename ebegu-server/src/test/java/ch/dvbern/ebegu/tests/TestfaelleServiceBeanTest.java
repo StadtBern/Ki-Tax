@@ -21,6 +21,7 @@ import java.time.Month;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -32,13 +33,8 @@ import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
-import ch.dvbern.ebegu.services.EbeguParameterService;
-import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
-import ch.dvbern.ebegu.services.InstitutionService;
-import ch.dvbern.ebegu.services.InstitutionStammdatenService;
 import ch.dvbern.ebegu.services.TestfaelleService;
-import ch.dvbern.ebegu.services.TraegerschaftService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.tets.data.VerfuegungZeitabschnittData;
 import ch.dvbern.ebegu.tets.data.VerfuegungszeitabschnitteData;
@@ -75,22 +71,7 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	private GesuchsperiodeService gesuchsperiodeService;
 
 	@Inject
-	private InstitutionService institutionService;
-
-	@Inject
-	private InstitutionStammdatenService institutionStammdatenService;
-
-	@Inject
-	private TraegerschaftService traegerschaftService;
-
-	@Inject
 	private Persistence persistence;
-
-	@Inject
-	private EbeguParameterService ebeguParameterService;
-
-	@Inject
-	private GesuchService gesuchService;
 
 	/**
 	 * Wenn true werden die Testergebnisse neu in die Testfiles geschrieben. Muss für testen immer false sein!
@@ -170,6 +151,7 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 		//TODO: @Reviewer, ich kann dieser Testfall nicht als verfügt persisten. verstehe aber nicht wieso.
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.SCHULAMT_ONLY, true, false);
 		//ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
+		Assert.assertNotNull(gesuch);
 		Assert.assertTrue(gesuch.hasOnlyBetreuungenOfSchulamt());
 	}
 
@@ -216,11 +198,11 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	/**
 	 * Ueberprüfen der Verfügungszeitabschnitte
 	 */
-	private void ueberpruefeVerfuegungszeitabschnitte(Gesuch gesuch, String addText) {
+	private void ueberpruefeVerfuegungszeitabschnitte(@Nullable Gesuch gesuch, @Nullable String addText) {
 		Assert.assertNotNull(gesuch);
 
-		gesuch.getKindContainers().stream().forEach(kindContainer -> {
-				kindContainer.getBetreuungen().stream().forEach(betreuung -> {
+		gesuch.getKindContainers().forEach(kindContainer -> {
+				kindContainer.getBetreuungen().forEach(betreuung -> {
 					writeResultsToFile(betreuung.getVerfuegung().getZeitabschnitte(), kindContainer.getKindJA().getFullName(),
 						betreuung.getInstitutionStammdaten().getInstitution().getName(), betreuung.getBetreuungNummer(), addText);
 					compareWithDataInFile(betreuung.getVerfuegung().getZeitabschnitte(),
@@ -266,6 +248,7 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	/**
 	 * Holt die gespeicherten Werte aus den Files
 	 */
+	@Nullable
 	public VerfuegungszeitabschnitteData getExpectedVerfuegungszeitabschnitt(String fullName, String betreuung, Integer betreuungNummer, String addText) {
 
 		final String fileNamePath = getFileNamePath(fullName, betreuung, betreuungNummer, addText);
@@ -284,7 +267,9 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	/**
 	 * Schreibt die berechneten Werte in die Files wenn writeToFile true ist
 	 */
-	public void writeResultsToFile(final List<VerfuegungZeitabschnitt> verfuegungZeitabschnitts, String fullName, String betreuung, Integer betreuungNummer, String addText) {
+	public void writeResultsToFile(final List<VerfuegungZeitabschnitt> verfuegungZeitabschnitts, String fullName, String betreuung, Integer betreuungNummer,
+		@Nullable String addText) {
+
 		if (writeToFile) {
 			VerfuegungszeitabschnitteData eventResults = generateVzd(verfuegungZeitabschnitts, fullName, betreuung, betreuungNummer);
 
