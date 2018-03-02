@@ -67,4 +67,12 @@ public final class DateUtil {
 	public static boolean isHoliday(@Nonnull LocalDate date) {
 		return FeiertageHelper.isFeiertag_CH(Date.valueOf(date));
 	}
+
+	public static LocalDate getMax(@Nonnull LocalDate date1, @Nonnull LocalDate date2) {
+		return date1.isAfter(date2) ? date1 : date2;
+	}
+
+	public static LocalDate getMin(@Nonnull LocalDate date1, @Nonnull LocalDate date2) {
+		return date1.isBefore(date2) ? date1 : date2;
+	}
 }

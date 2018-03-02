@@ -143,7 +143,7 @@ export class DVVorlageListController {
 
     public remove(ebeguVorlage: TSEbeguVorlage) {
         this.$log.debug('component -> remove dokument ' + ebeguVorlage.vorlage.filename);
-        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+        this.dvDialog.showRemoveDialog(removeDialogTemplate, undefined, RemoveDialogController, {
             deleteText: '',
             title: 'FILE_LOESCHEN',
             parentController: undefined,

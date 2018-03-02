@@ -337,6 +337,30 @@ public final class TestDataUtil {
 		return instStammdaten;
 	}
 
+	public static InstitutionStammdaten createInstitutionStammdatenTagesschuleForInstitution(@Nonnull Institution institution) {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setIban(new IBAN(iban));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
+		instStammdaten.setGueltigkeit(new DateRange());
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESSCHULE);
+		instStammdaten.setInstitution(institution);
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
+	public static InstitutionStammdaten createInstitutionStammdatenFerieninselForInstitution(@Nonnull Institution institution) {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setIban(new IBAN(iban));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
+		instStammdaten.setGueltigkeit(new DateRange());
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.FERIENINSEL);
+		instStammdaten.setInstitution(institution);
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
 	public static InstitutionStammdaten createInstitutionStammdatenKitaWeissenstein() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
 		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_KITA);
@@ -978,7 +1002,7 @@ public final class TestDataUtil {
 
 	}
 
-	public static Benutzer createBenutzer(UserRole role, String userName, Traegerschaft traegerschaft, @Nullable Institution institution, Mandant mandant) {
+	public static Benutzer createBenutzer(UserRole role, String userName, @Nullable Traegerschaft traegerschaft, @Nullable Institution institution, Mandant mandant) {
 		final Benutzer benutzer = new Benutzer();
 		benutzer.setUsername(userName);
 		benutzer.setNachname("anonymous");

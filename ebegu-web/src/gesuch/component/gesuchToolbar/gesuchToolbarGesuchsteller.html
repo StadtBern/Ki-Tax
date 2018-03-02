@@ -21,7 +21,7 @@
             <span class="gesuchName"><span ng-bind="vmgs.getGesuchName()" title="{{vmgs.getBesitzer()}}"></span></span>
             <span flex="40"></span>
             <md-menu ng-if="vmgs.showGesuchPeriodeNavigationMenu()">
-                <button ng-click="$mdOpenMenu()"
+                <button ng-click="$mdMenu.open()"
                         aria-label="{{ 'TOOLBAR_GESUCHSPERIODE' | translate:{gp:vmgs.getCurrentGesuchsperiode()} }}">
                     <span ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
                     <i class="ellipsis-icon fa fa-chevron-down"></i>
@@ -46,7 +46,7 @@
 
             <!--Gesuchstyp-->
             <md-menu ng-if="vmgs.showAntragTypListNavigationMenu()">
-                <button ng-click="$mdOpenMenu()"
+                <button ng-click="$mdMenu.open()"
                         aria-label="{{ 'TOOLBAR_GESUCHSTYP' | translate:{gt:vmgs.getAntragTyp(), gp:vmgs.getCurrentGesuchsperiode()} }}">
                     <span ng-bind="vmgs.getAntragTyp()"></span>
                     <i class="ellipsis-icon fa fa-chevron-down"></i>

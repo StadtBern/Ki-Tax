@@ -304,12 +304,13 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR,
-		ADMINISTRATOR_SCHULAMT, SCHULAMT })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN })
 	public Collection<Betreuungsmitteilung> findAllBetreuungsmitteilungenForBetreuung(@Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, "betreuung muss gesetzt sein");
 
-		authorizer.checkReadAuthorization(betreuung);
+		// Diese Methode wird nur beim Loeschen einer Online-Mutation durch den Admin beim Erstellen einer Papier-Mutation verwendet.
+		// Wir koennen in diesem Fall die normale AuthCheck verwenden, da niemand vom JA fuer die vorhandene Online-Mutation des GS nach
+		// herkoemmlichem Schema berechtigt ist. Wir duerfen hier aber trotzdem loeschen. Methode ist aber nur fuer ADMIN und SUPER_ADMIN verfuegbar.
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuungsmitteilung> query = cb.createQuery(Betreuungsmitteilung.class);

@@ -113,12 +113,13 @@ public class ZahlungResource {
 	@Path("/institution")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed({ UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
 	public List<JaxZahlungsauftrag> getAllZahlungsauftraegeInstitution() {
 
 		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
 
 		return zahlungService.getAllZahlungsauftraege().stream()
-			.filter(zahlungsauftrag -> !zahlungsauftrag.getStatus().equals(ZahlungauftragStatus.ENTWURF))
+			.filter(zahlungsauftrag -> zahlungsauftrag.getStatus() != ZahlungauftragStatus.ENTWURF)
 			.map(zahlungsauftrag -> converter.zahlungsauftragToJAX(zahlungsauftrag, principalBean.discoverMostPrivilegedRole(), allowedInst))
 			.collect(Collectors.toList());
 	}
@@ -152,6 +153,7 @@ public class ZahlungResource {
 	@Path("/zahlungsauftraginstitution/{zahlungsauftragId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed({ UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
 	public JaxZahlungsauftrag findZahlungsauftraginstitution(
 		@Nonnull @NotNull @PathParam("zahlungsauftragId") JaxId zahlungsauftragJAXPId) throws EbeguException {
 
@@ -247,7 +249,7 @@ public class ZahlungResource {
 		return converter.zahlungToJAX(zahlung);
 	}
 
-	@ApiOperation(value = "Loescht einen Zahlungsauftrag", response = Void.class)
+	@ApiOperation("Loescht einen Zahlungsauftrag")
 	@Nullable
 	@DELETE
 	@Path("/delete")
@@ -260,7 +262,7 @@ public class ZahlungResource {
 		return Response.ok().build();
 	}
 
-	@ApiOperation(value = "Zahlungsauftrag kontrollieren", response = Void.class)
+	@ApiOperation("Zahlungsauftrag kontrollieren")
 	@GET
 	@Path("/kontrollieren")
 	@RolesAllowed(SUPER_ADMIN)
