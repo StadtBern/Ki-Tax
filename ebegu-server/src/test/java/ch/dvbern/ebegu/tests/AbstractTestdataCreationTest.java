@@ -26,7 +26,8 @@ import ch.dvbern.ebegu.util.testdata.TestdataSetupConfig;
 import org.junit.Before;
 
 /**
- * Tests fuer den Zahlungsservice
+ * Superklasse fuer Tests, welche den TestdataCreationService verwenden.
+ * Initialisiert diesen mit Mandant, Gesuchsperiode und Institutionen
  */
 public abstract class AbstractTestdataCreationTest extends AbstractEbeguLoginTest {
 
@@ -42,8 +43,11 @@ public abstract class AbstractTestdataCreationTest extends AbstractEbeguLoginTes
 		final InstitutionStammdaten kitaAaregg = TestDataUtil.createInstitutionStammdatenKitaWeissenstein();
 		final InstitutionStammdaten kitaBruennen = TestDataUtil.createInstitutionStammdatenKitaBruennen();
 		final InstitutionStammdaten tagiAaregg = TestDataUtil.createInstitutionStammdatenTagiWeissenstein();
+		// Die Institution Brünnen erhaelt auch Tagesschule und Ferieninsel-Stammdaten
+		InstitutionStammdaten tagesschule = TestDataUtil.createInstitutionStammdatenTagesschuleForInstitution(kitaBruennen.getInstitution());
+		InstitutionStammdaten ferieninsel = TestDataUtil.createInstitutionStammdatenFerieninselForInstitution(kitaBruennen.getInstitution());
 		Mandant mandant = TestDataUtil.createDefaultMandant();
-		TestdataSetupConfig setupConfig = new TestdataSetupConfig(mandant, kitaBruennen, kitaAaregg, tagiAaregg, gesuchsperiode);
+		TestdataSetupConfig setupConfig = new TestdataSetupConfig(mandant, kitaBruennen, kitaAaregg, tagiAaregg, tagesschule, ferieninsel, gesuchsperiode);
 		testdataCreationService.setupTestdata(setupConfig);
 	}
 }

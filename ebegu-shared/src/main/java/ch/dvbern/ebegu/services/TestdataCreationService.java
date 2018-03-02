@@ -18,6 +18,7 @@ package ch.dvbern.ebegu.services;
 import javax.annotation.Nonnull;
 
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.util.testdata.AnmeldungConfig;
 import ch.dvbern.ebegu.util.testdata.ErstgesuchConfig;
 import ch.dvbern.ebegu.util.testdata.MutationConfig;
 import ch.dvbern.ebegu.util.testdata.TestdataSetupConfig;
@@ -32,4 +33,6 @@ public interface TestdataCreationService {
 	Gesuch createErstgesuch(@Nonnull ErstgesuchConfig config);
 
 	Gesuch createMutation(@Nonnull MutationConfig config, @Nonnull Gesuch vorgaengerAntrag);
+
+	Gesuch addAnmeldung(@Nonnull AnmeldungConfig config, @Nonnull Gesuch gesuchToAdd);
 }

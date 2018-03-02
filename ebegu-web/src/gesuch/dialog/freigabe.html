@@ -89,11 +89,11 @@
                 ng-if="vm.hasError() || vm.gesuch" ng-click="vm.cancel()" aria-label="{{'CANCEL' | translate}}">
             <span class="ng-binding ng-scope" data-translate="CANCEL"></span>
         </button>
-        <button class="" type="button" ng-if="!vm.hasError()"
-                ng-click="vm.freigeben()" md-autofocus="dialog.$type==='alert'"
+        <dv-loading-button button-class="" type="button" ng-if="!vm.hasError()"
+                button-click="vm.freigeben()" md-autofocus="dialog.$type==='alert'"
                 aria-label="{{'LABEL_FREIGEBEN' | translate}}">
             <span class="ng-binding ng-scope" data-translate="LABEL_FREIGEBEN"></span>
-        </button>
+        </dv-loading-button>
     </md-dialog-actions>
 
 </md-dialog>

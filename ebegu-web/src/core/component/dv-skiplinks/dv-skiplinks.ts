@@ -14,6 +14,7 @@
  */
 
 import {IComponentOptions} from 'angular';
+import EbeguUtil from '../../../utils/EbeguUtil';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {IStateService} from 'angular-ui-router';
 import {ShowTooltipController} from '../../../gesuch/dialog/ShowTooltipController';
@@ -35,9 +36,9 @@ export class DvSkiplinksController implements IDVFocusableController {
 
     TSRoleUtil: any;
 
-    static $inject: any[] = ['$state', 'DvDialog'];
+    static $inject: any[] = ['$state', 'DvDialog', 'EbeguUtil'];
 
-    constructor(private $state: IStateService, private DvDialog: DvDialog) {
+    constructor(private $state: IStateService, private DvDialog: DvDialog, private ebeguUtil: EbeguUtil) {
         this.TSRoleUtil = TSRoleUtil;
     }
 
@@ -68,11 +69,7 @@ export class DvSkiplinksController implements IDVFocusableController {
     public showKontakt(): void {
         this.DvDialog.showDialog(showKontaktTemplate, ShowTooltipController, {
             title: '',
-            text: '<span>Jugendamt</span><br>'
-            + '<span>Effingerstrasse 21</span><br>'
-            + '<span>3008 Bern</span><br>'
-            + '<a href="tel:0313215115"><span>031 321 51 15</span></a><br>'
-            + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>',
+            text: this.ebeguUtil.getKontaktJugendamt(),
             parentController: this
         });
     }

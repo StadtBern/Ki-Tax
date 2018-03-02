@@ -49,14 +49,10 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
 import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
@@ -111,6 +107,10 @@ import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
@@ -533,6 +533,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		Predicate fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
 		query.where(fallPredicate);
+		query.orderBy(cb.desc(root.get(Gesuch_.laufnummer)));
 		TypedQuery<String> q = persistence.getEntityManager().createQuery(query);
 		q.setParameter(fallIdParam, fallId);
 
@@ -1411,7 +1412,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Validator validator = Validation.byDefaultProvider().configure().buildValidatorFactory().getValidator();
 		Set<ConstraintViolation<Gesuch>> constraintViolations = validator.validate(gesuch, AntragCompleteValidationGroup.class);
 		if (!constraintViolations.isEmpty()) {
-			throw new EbeguRuntimeException("verfuegenStarten", ErrorCodeEnum.ERROR_ANTRAG_NOT_COMPLETE);
+			throw new ConstraintViolationException(constraintViolations);
 		}
 	}
 
