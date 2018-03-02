@@ -63,6 +63,7 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
+import ch.dvbern.ebegu.enums.GesuchDeletionCause;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
@@ -208,8 +209,8 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Collection<Zahlungsposition> zahlungspositionen = criteriaQueryHelper.getAll(Zahlungsposition.class);
 		Assert.assertEquals(2, zahlungspositionen.size());
 
-		gesuchService.removeGesuch(gesuch.getId());
-		gesuchService.removeGesuch(gesuch2.getId());
+		gesuchService.removeGesuch(gesuch.getId(), GesuchDeletionCause.UNBEKANNT);
+		gesuchService.removeGesuch(gesuch2.getId(), GesuchDeletionCause.UNBEKANNT);
 
 		//check all objects don't exist anymore
 		final Collection<Gesuch> gesuche = readGesucheAsAdmin();
@@ -770,7 +771,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		mutation.extractAllBetreuungen().stream().filter(Betreuung::isAngebotSchulamt)
 			.forEach(bet -> Assert.assertEquals(AnmeldungMutationZustand.AKTUELLE_ANMELDUNG, bet.getAnmeldungMutationZustand()));
 
-		gesuchService.removeGesuch(mutation.getId());
+		gesuchService.removeGesuch(mutation.getId(), GesuchDeletionCause.UNBEKANNT);
 
 		final Optional<Gesuch> removedGesuchOpt = gesuchService.findGesuch(mutation.getId());
 		Assert.assertFalse(removedGesuchOpt.isPresent());

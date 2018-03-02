@@ -26,8 +26,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import ch.dvbern.ebegu.entities.PensumFachstelle;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
@@ -62,14 +60,5 @@ public class PensumFachstelleServiceBean extends AbstractBaseService implements 
 		Objects.requireNonNull(pensumFachstelleId, "id muss gesetzt sein");
 		PensumFachstelle a = persistence.find(PensumFachstelle.class, pensumFachstelleId);
 		return Optional.ofNullable(a);
-	}
-
-	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
-	public void removePensumFachstelle(@Nonnull String pensumFachstelleId) {
-		Objects.requireNonNull(pensumFachstelleId);
-		Optional<PensumFachstelle> pensumFachstelleToRemove = findPensumFachstelle(pensumFachstelleId);
-		pensumFachstelleToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removePensumFachstelle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, pensumFachstelleId));
-		pensumFachstelleToRemove.ifPresent(pensumFachstelle -> persistence.remove(pensumFachstelle));
 	}
 }
