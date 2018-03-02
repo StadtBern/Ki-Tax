@@ -537,7 +537,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		TypedQuery<String> q = persistence.getEntityManager().createQuery(query);
 		q.setParameter(fallIdParam, fallId);
 
-
 		return q.getResultList();
 
 	}

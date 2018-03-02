@@ -319,13 +319,19 @@ public class TestdataCreationServiceBean extends AbstractBaseService implements 
 		institutionStammdatenTagiAaregg.getInstitution().setTraegerschaft(traegerschaftAaregg);
 
 		institutionService.createInstitution(institutionStammdatenKitaAaregg.getInstitution());
-		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenKitaAaregg);
-		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenTagiAaregg);
+		saveInstitutionStammdaten(institutionStammdatenKitaAaregg);
+		saveInstitutionStammdaten(institutionStammdatenTagiAaregg);
 
 		institutionService.createInstitution(institutionStammdatenKitaBruennen.getInstitution());
-		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenKitaBruennen);
-		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenTagesschuleBruennen);
-		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenFerieninselBruennen);
+		saveInstitutionStammdaten(institutionStammdatenKitaBruennen);
+		saveInstitutionStammdaten(institutionStammdatenTagesschuleBruennen);
+		saveInstitutionStammdaten(institutionStammdatenFerieninselBruennen);
+	}
+
+	private void saveInstitutionStammdaten(@Nullable InstitutionStammdaten institutionStammdaten) {
+		if (institutionStammdaten != null) {
+			institutionStammdatenService.saveInstitutionStammdaten(institutionStammdaten);
+		}
 	}
 
 	private void insertParametersForTestfaelle(@Nonnull Gesuchsperiode gesuchsperiode) {
