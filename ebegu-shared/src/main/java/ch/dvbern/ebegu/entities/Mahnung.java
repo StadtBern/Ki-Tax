@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -81,35 +82,39 @@ public class Mahnung extends AbstractEntity {
 		this.gesuch = gesuch;
 	}
 
+	@Nullable
 	public MahnungTyp getMahnungTyp() {
 		return mahnungTyp;
 	}
 
-	public void setMahnungTyp(MahnungTyp mahnungTyp) {
+	public void setMahnungTyp(@Nullable MahnungTyp mahnungTyp) {
 		this.mahnungTyp = mahnungTyp;
 	}
 
+	@Nullable
 	public LocalDate getDatumFristablauf() {
 		return datumFristablauf;
 	}
 
-	public void setDatumFristablauf(LocalDate datumFristablauf) {
+	public void setDatumFristablauf(@Nullable LocalDate datumFristablauf) {
 		this.datumFristablauf = datumFristablauf;
 	}
 
+	@Nullable
 	public String getBemerkungen() {
 		return bemerkungen;
 	}
 
-	public void setBemerkungen(String bemerkungen) {
+	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
 	}
 
+	@Nullable
 	public LocalDateTime getTimestampAbgeschlossen() {
 		return timestampAbgeschlossen;
 	}
 
-	public void setTimestampAbgeschlossen(LocalDateTime timestampBeendet) {
+	public void setTimestampAbgeschlossen(@Nullable LocalDateTime timestampBeendet) {
 		this.timestampAbgeschlossen = timestampBeendet;
 	}
 
