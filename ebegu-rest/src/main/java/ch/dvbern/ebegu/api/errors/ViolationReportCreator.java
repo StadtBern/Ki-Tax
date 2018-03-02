@@ -15,6 +15,7 @@
 
 package ch.dvbern.ebegu.api.errors;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -26,9 +27,12 @@ import org.jboss.resteasy.api.validation.ViolationReport;
  * Created by imanol on 25.05.16.
  * Helper to create a ViolationReport Object from a ResteasyViolationException. Returns the created Report in the Response
  */
-public class ViolationReportCreator {
+public final class ViolationReportCreator {
 
-	public static Response buildViolationReportResponse(ResteasyViolationException exception, Response.Status status, MediaType acceptedMedia) {
+	private ViolationReportCreator() {
+	}
+
+	public static Response buildViolationReportResponse(ResteasyViolationException exception, Response.Status status, @Nullable MediaType acceptedMedia) {
 		Response.ResponseBuilder builder = Response.status(status);
 		builder.header(Validation.VALIDATION_HEADER, "true");
 

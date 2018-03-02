@@ -15,7 +15,9 @@
 
 import {IHttpPromise, IHttpService, ILogService, IPromise} from 'angular';
 import * as moment from 'moment';
+import GlobalCacheService from '../../gesuch/service/globalCacheService';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import {TSCacheTyp} from '../../models/enums/TSCacheTyp';
 import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import DateUtil from '../../utils/DateUtil';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
@@ -26,9 +28,10 @@ export class InstitutionStammdatenRS {
     ebeguRestUtil: EbeguRestUtil;
     log: ILogService;
 
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log'];
+
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', 'GlobalCacheService'];
     /* @ngInject */
-    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService) {
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService, private globalCacheService: GlobalCacheService) {
         this.serviceURL = REST_API + 'institutionstammdaten';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
@@ -85,8 +88,9 @@ export class InstitutionStammdatenRS {
             });
     }
 
-    public getAllActiveInstitutionStammdatenByDate(dateParam: moment.Moment): IPromise<TSInstitutionStammdaten[]> {
-        return this.http.get(this.serviceURL + '/date/active', {params: {date: DateUtil.momentToLocalDate(dateParam)}})
+    public getAllActiveInstitutionStammdatenByGesuchsperiode(gesuchsperiodeId: string): IPromise<TSInstitutionStammdaten[]> {
+        let cache = this.globalCacheService.getCache(TSCacheTyp.EBEGU_INSTITUTIONSSTAMMDATEN);
+        return this.http.get(this.serviceURL + '/gesuchsperiode/active', {params: {gesuchsperiodeId: gesuchsperiodeId}, cache: cache})
             .then((response: any) => {
                 this.log.debug('PARSING institutionStammdaten REST array object', response.data);
                 return this.ebeguRestUtil.parseInstitutionStammdatenArray(response.data);

@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -194,17 +195,19 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 			(betragIst).append('\n').append(" Differenz: ").append(differenz);
 		sb.append("Aktuell gueltige Betreuung: ").append(betreuung.getId()).append('\n');
 		sb.append("Vergangene Zeitabschnitte").append('\n');
+		ausbezahlteAbschnitte.sort(Comparator.comparing(o -> o.getGueltigkeit().getGueltigAb()));
 		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : ausbezahlteAbschnitte) {
-			sb.append(verfuegungZeitabschnitt.getVerguenstigung()).append(", ");
 			sb.append(verfuegungZeitabschnitt.getGueltigkeit().toRangeString()).append(", ");
+			sb.append(verfuegungZeitabschnitt.getVerguenstigung()).append(", ");
 			sb.append(verfuegungZeitabschnitt.getZahlungsstatus()).append('\n');
 		}
 		sb.append("Zahlungspositionen: \n");
 		List<Zahlungsposition> zahlungspositions = zahlungenIstMap.get(betreuung.getBGNummer());
 		if (zahlungspositions != null) {
+			zahlungspositions.sort(Comparator.comparing(o -> o.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb()));
 			for (Zahlungsposition zahlungsposition : zahlungspositions) {
-				sb.append(zahlungsposition.getBetrag()).append(", ");
 				sb.append(zahlungsposition.getVerfuegungZeitabschnitt().getGueltigkeit().toRangeString()).append(", ");
+				sb.append(zahlungsposition.getBetrag()).append(", ");
 				sb.append(zahlungsposition.getStatus()).append(", ");
 				sb.append("Ausbezahlt am: ").append(zahlungsposition.getZahlung().getZahlungsauftrag().getDatumGeneriert()).append(", ");
 				sb.append(zahlungsposition.isIgnoriert()).append('\n');

@@ -47,7 +47,8 @@
                     </table>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" dv-show-element
+                 dv-show-allowed-roles="vm.TSRoleUtil.getJAAdministratorRoles()">
                 <div class="col-md-12">
                     <dv-loading-button type="button" button-click="vm.createGesuchsperiode()"
                                        button-class="">
