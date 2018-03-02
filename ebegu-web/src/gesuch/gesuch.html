@@ -276,13 +276,13 @@
             <div ng-repeat=" n in [1,2]" ng-if="vm.showAbfrageForGesuchsteller(n)">
 
                 <h3 ng-bind="vm.getGesuchstellerTitle(n)"></h3>
-                <button type="button" class="dv-btn-operation"
-                        ng-click="vm.searchGesuchsteller(n)">
+                <dv-loading-button type="button" button-class="dv-btn-operation"
+                        button-click="vm.searchGesuchsteller(n)">
                     <i class="fa fa-search"></i>
                     <span data-translate="EWK_ABFRAGE_BUTTON"
                           data-translate-value-name="{{vm.ewkRS.getGesuchsteller(n).gesuchstellerJA.getFullName()}}"></span>
 
-                </button>
+                </dv-loading-button>
                 <!-- Anzahl Resultate -->
                 <h3 ng-if="vm.getEWKResultat(n)"
                     data-translate="EWK_ANZAHL_ERGEBNISSE"
@@ -498,11 +498,10 @@
                                 </dv-accordion-tab>
                             </dv-accordion>
                             <div class="ewk-button" layout="row" layout-align="center center">
-                                <button ng-if="!vm.checkEWKPerson(person,n)"
-                                        ng-click="vm.selectPerson(person,n)">
-
+                                <dv-loading-button ng-if="!vm.checkEWKPerson(person,n)"
+                                        button-click="vm.selectPerson(person,n)">
                                     <span data-translate="EWK_LINK"></span>
-                                </button>
+                                </dv-loading-button>
                             </div>
                         </tab-body>
                     </dv-accordion-tab>

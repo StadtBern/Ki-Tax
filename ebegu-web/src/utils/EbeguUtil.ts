@@ -279,4 +279,20 @@ export default class EbeguUtil {
             }
         }
     }
+
+    public getKontaktJugendamt(): string {
+         return '<span>Jugendamt</span><br>'
+             + '<span>Effingerstrasse 21</span><br>'
+             + '<span>3008 Bern</span><br>'
+             + '<a href="tel:0313215115"><span>031 321 51 15</span></a><br>'
+             + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>';
+    }
+
+    public getKontaktSchulamt(): string {
+        return '<span>Schulamt</span><br>'
+            + '<span>Effingerstrasse 21</span><br>'
+            + '<span>3008 Bern</span><br>'
+            + '<a href="tel:0313216469"><span>031 321 64 69</span></a><br>'
+            + '<a href="mailto:tagesschulen@bern.ch"><span>tagesschulen@bern.ch</span></a>';
+    }
 }

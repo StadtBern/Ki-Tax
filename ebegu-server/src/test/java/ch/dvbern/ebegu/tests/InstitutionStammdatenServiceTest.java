@@ -21,7 +21,10 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.services.InstitutionStammdatenService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
@@ -101,6 +104,41 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguLoginTest {
 
 	}
 
+	@Test
+	public void getAllActiveInstitutionStammdatenByGesuchsperiode() {
+		Mandant mandant = TestDataUtil.createDefaultMandant();
+		mandant = persistence.persist(mandant);
+		Gesuchsperiode gesuchsperiode1718 = TestDataUtil.createGesuchsperiode1718();
+		gesuchsperiode1718 = persistence.persist(gesuchsperiode1718);
+		Institution institution = TestDataUtil.createDefaultInstitution();
+		institution.setTraegerschaft(null);
+		institution.setMandant(mandant);
+		institution = persistence.persist(institution);
+		LocalDate gpStart = gesuchsperiode1718.getGueltigkeit().getGueltigAb();
+		LocalDate gpEnde = gesuchsperiode1718.getGueltigkeit().getGueltigBis();
+
+		InstitutionStammdaten isIdentisch = addInstitutionsstammdaten(institution, gpStart, gpEnde);
+		InstitutionStammdaten schnittAnfang = addInstitutionsstammdaten(institution, gpStart.minusWeeks(1), gpStart.plusWeeks(1));
+		InstitutionStammdaten schnittEnde = addInstitutionsstammdaten(institution, gpEnde.minusWeeks(1), gpEnde.plusWeeks(1));
+		InstitutionStammdaten schnittMitte = addInstitutionsstammdaten(institution, gpStart.plusWeeks(1), gpEnde.minusWeeks(1));
+		InstitutionStammdaten ueberlappendTotal = addInstitutionsstammdaten(institution, gpStart.minusWeeks(1), gpEnde.plusWeeks(1));
+		InstitutionStammdaten completelyBefore = addInstitutionsstammdaten(institution, gpStart.minusWeeks(2), gpStart.minusWeeks(1));
+		InstitutionStammdaten completelyAfter = addInstitutionsstammdaten(institution, gpEnde.plusWeeks(1), gpEnde.plusWeeks(2));
+
+		Collection<InstitutionStammdaten> all = institutionStammdatenService.getAllActiveInstitutionStammdatenByGesuchsperiode(gesuchsperiode1718.getId());
+		Assert.assertNotNull(all);
+		Assert.assertEquals(5, all.size());
+
+		Assert.assertTrue(all.contains(isIdentisch));
+		Assert.assertTrue(all.contains(schnittAnfang));
+		Assert.assertTrue(all.contains(schnittEnde));
+		Assert.assertTrue(all.contains(schnittMitte));
+		Assert.assertTrue(all.contains(ueberlappendTotal));
+
+		Assert.assertFalse(all.contains(completelyBefore));
+		Assert.assertFalse(all.contains(completelyAfter));
+	}
+
 	// HELP METHODS
 
 	private InstitutionStammdaten insertInstitutionStammdaten() {
@@ -109,6 +147,14 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguLoginTest {
 		persistence.persist(institutionStammdaten.getInstitution().getTraegerschaft());
 		persistence.persist(institutionStammdaten.getInstitution());
 		persistence.persist(institutionStammdaten.getAdresse());
+		return institutionStammdatenService.saveInstitutionStammdaten(institutionStammdaten);
+	}
+
+	private InstitutionStammdaten addInstitutionsstammdaten(Institution institution, LocalDate start, LocalDate end) {
+		InstitutionStammdaten institutionStammdaten = TestDataUtil.createDefaultInstitutionStammdaten();
+		institutionStammdaten.setInstitution(institution);
+		institutionStammdaten.getGueltigkeit().setGueltigAb(start);
+		institutionStammdaten.getGueltigkeit().setGueltigBis(end);
 		return institutionStammdatenService.saveInstitutionStammdaten(institutionStammdaten);
 	}
 

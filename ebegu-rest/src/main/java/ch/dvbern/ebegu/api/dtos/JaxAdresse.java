@@ -65,11 +65,12 @@ public class JaxAdresse extends JaxAbstractDateRangedDTO {
 		this.strasse = strasse;
 	}
 
+	@Nullable
 	public String getHausnummer() {
 		return hausnummer;
 	}
 
-	public void setHausnummer(String hausnummer) {
+	public void setHausnummer(@Nullable String hausnummer) {
 		this.hausnummer = hausnummer;
 	}
 
@@ -85,11 +86,12 @@ public class JaxAdresse extends JaxAbstractDateRangedDTO {
 		return ort;
 	}
 
+	@Nullable
 	public String getGemeinde() {
 		return gemeinde;
 	}
 
-	public void setGemeinde(String gemeinde) {
+	public void setGemeinde(@Nullable String gemeinde) {
 		this.gemeinde = gemeinde;
 	}
 
@@ -97,11 +99,12 @@ public class JaxAdresse extends JaxAbstractDateRangedDTO {
 		this.ort = ort;
 	}
 
+	@Nullable
 	public String getZusatzzeile() {
 		return zusatzzeile;
 	}
 
-	public void setZusatzzeile(String zusatzzeile) {
+	public void setZusatzzeile(@Nullable String zusatzzeile) {
 		this.zusatzzeile = zusatzzeile;
 	}
 

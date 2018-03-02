@@ -154,7 +154,7 @@ public class Mitteilung extends AbstractEntity {
 		return subject;
 	}
 
-	public void setSubject(String subject) {
+	public void setSubject(@Nullable String subject) {
 		this.subject = subject;
 	}
 
@@ -163,7 +163,7 @@ public class Mitteilung extends AbstractEntity {
 		return message;
 	}
 
-	public void setMessage(String message) {
+	public void setMessage(@Nullable String message) {
 		this.message = message;
 	}
 

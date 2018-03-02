@@ -168,7 +168,7 @@ describe('umzugView', function () {
 
     describe('createAndRemoveUmzugAdresse', function () {
         it('should create and remove adressen for GS1 and GS2', function () {
-            spyOn(dialog, 'showDialog').and.returnValue($q.when({}));
+            spyOn(dialog, 'showRemoveDialog').and.returnValue($q.when({}));
             TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
             let gesuch: TSGesuch = new TSGesuch();

@@ -78,6 +78,7 @@ describe('betreuungView', function () {
             // constructor der view und geben betreuung zurueck
             return betreuungView ? betreuungView.model : betreuung;
         });
+        spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(TestDataUtil.createGesuchsperiode20162017());
         $rootScope = $injector.get('$rootScope');
         authServiceRS = $injector.get('AuthServiceRS');
         spyOn(authServiceRS, 'isRole').and.returnValue(true);

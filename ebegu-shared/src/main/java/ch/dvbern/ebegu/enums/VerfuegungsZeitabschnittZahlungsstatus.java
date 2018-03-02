@@ -23,7 +23,7 @@ public enum VerfuegungsZeitabschnittZahlungsstatus {
 	NEU,
 	VERRECHNET,
 	VERRECHNET_KORRIGIERT, // Die Zahlung war schon ausbezahlt, wurde aber in einem späteren Zahlungslauf korrigiert
-	IGNORIEREND, // Zahlung ist markiert zum Ignorieren aber es wurde noch nicht "ausbezahlt"
+	IGNORIEREND, // Zahlung ist markiert zum Ignorieren aber es wurde noch nicht "ausbezahlt" (d.h. im Excel mit ignoriert exportiert)
 	IGNORIERT, // Zahlung wurde mal als IGNORIEREND markiert und ist auch "ausbezahlt"
 	IGNORIERT_KORRIGIERT; // Die Zahlung war schon ignoriert, wurde aber in einem späteren Zahlungslauf korrigiert
 
@@ -45,5 +45,9 @@ public enum VerfuegungsZeitabschnittZahlungsstatus {
 
 	public boolean isIgnoriertIgnorierend() {
 		return isIgnorierend() || isIgnoriert();
+	}
+
+	public boolean isBereitsBehandeltInZahlungslauf() {
+		return  !(isNeu() || isIgnorierend());
 	}
 }
