@@ -341,15 +341,19 @@ export class DVMitteilungListController {
     }
 
     public isBetreuungsmitteilungApplied(mitteilung: TSMitteilung): boolean {
-        return (mitteilung instanceof TSBetreuungsmitteilung) && (<TSBetreuungsmitteilung>mitteilung).applied === true;
+        return this.isBetreuungsmitteilung(mitteilung) && (<TSBetreuungsmitteilung>mitteilung).applied === true;
     }
 
     public isBetreuungsmitteilungNotApplied(mitteilung: TSMitteilung): boolean {
-        return (mitteilung instanceof TSBetreuungsmitteilung) && (<TSBetreuungsmitteilung>mitteilung).applied !== true;
+        return this.isBetreuungsmitteilung(mitteilung) && (<TSBetreuungsmitteilung>mitteilung).applied !== true;
     }
 
     public canApplyBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
         return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    }
+
+    public showBetreuungsmitteilungApply(mitteilung: TSMitteilung): boolean {
+        return this.canApplyBetreuungsmitteilung(mitteilung) && this.isBetreuungsmitteilungNotApplied(mitteilung);
     }
 
     $postLink() {
@@ -359,7 +363,7 @@ export class DVMitteilungListController {
     }
 
     public applyBetreuungsmitteilung(mitteilung: TSMitteilung): void {
-        if (mitteilung instanceof TSBetreuungsmitteilung) {
+        if (this.isBetreuungsmitteilung(mitteilung)) {
             this.DvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
                 title: 'MUTATIONSMELDUNG_UEBERNEHMEN',
                 deleteText: 'MUTATIONSMELDUNG_UEBERNEHMEN_BESCHREIBUNG',
