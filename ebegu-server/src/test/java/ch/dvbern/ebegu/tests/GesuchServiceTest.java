@@ -48,6 +48,7 @@ import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.GeneratedDokument;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchDeletionLog;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
@@ -225,6 +226,11 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(0, allGenDokRemoved.size());
 		Collection<Zahlungsposition> zahlungspositionenRemoved = criteriaQueryHelper.getAll(Zahlungsposition.class);
 		Assert.assertEquals(0, zahlungspositionenRemoved.size());
+
+		// Check Logeintrag
+		Collection<GesuchDeletionLog> logEintraege = criteriaQueryHelper.getAll(GesuchDeletionLog.class);
+		Assert.assertNotNull(logEintraege);
+		Assert.assertEquals(2, logEintraege.size());
 	}
 
 	@Test
