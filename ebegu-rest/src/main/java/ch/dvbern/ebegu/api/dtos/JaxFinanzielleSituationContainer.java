@@ -15,6 +15,7 @@
 
 package ch.dvbern.ebegu.api.dtos;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -47,19 +48,21 @@ public class JaxFinanzielleSituationContainer extends JaxAbstractDTO {
 		this.jahr = jahr;
 	}
 
+	@Nullable
 	public JaxFinanzielleSituation getFinanzielleSituationGS() {
 		return finanzielleSituationGS;
 	}
 
-	public void setFinanzielleSituationGS(JaxFinanzielleSituation finanzielleSituationGS) {
+	public void setFinanzielleSituationGS(@Nullable JaxFinanzielleSituation finanzielleSituationGS) {
 		this.finanzielleSituationGS = finanzielleSituationGS;
 	}
 
+	@Nullable
 	public JaxFinanzielleSituation getFinanzielleSituationJA() {
 		return finanzielleSituationJA;
 	}
 
-	public void setFinanzielleSituationJA(JaxFinanzielleSituation finanzielleSituationJA) {
+	public void setFinanzielleSituationJA(@Nullable JaxFinanzielleSituation finanzielleSituationJA) {
 		this.finanzielleSituationJA = finanzielleSituationJA;
 	}
 }

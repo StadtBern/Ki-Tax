@@ -66,7 +66,7 @@ export class PendenzenBetreuungenListViewController {
         this.updateActiveGesuchsperiodenList();
     }
 
-    private getTotalResultCount(): number {
+    public getTotalResultCount(): number {
         if (this.pendenzenList && this.pendenzenList.length) {
             return this.pendenzenList.length;
         }

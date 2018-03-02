@@ -29,7 +29,7 @@ import org.junit.Before;
  * Superklasse fuer Tests, welche den TestdataCreationService verwenden.
  * Initialisiert diesen mit Mandant, Gesuchsperiode und Institutionen
  */
-public class AbstractTestdataCreationTest extends AbstractEbeguLoginTest {
+public abstract class AbstractTestdataCreationTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private TestdataCreationService testdataCreationService;

@@ -18,6 +18,7 @@ package ch.dvbern.ebegu.util;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 
 import ch.dvbern.ebegu.entities.EbeguParameter;
@@ -42,8 +43,8 @@ public final class BetreuungUtil {
 	 * @return The minimum value for the betreuungsangebotTyp. Default value is -1: This means if the given betreuungsangebotTyp doesn't match any
 	 * recorded type, the min value will be 0 and any positive value will be then accepted
 	 */
-	public static int getMinValueFromBetreuungsangebotTyp(LocalDate stichtag, BetreuungsangebotTyp betreuungsangebotTyp,
-		EbeguParameterService ebeguParameterService, final EntityManager em) {
+	public static int getMinValueFromBetreuungsangebotTyp(LocalDate stichtag, @Nullable BetreuungsangebotTyp betreuungsangebotTyp,
+		EbeguParameterService ebeguParameterService, @Nullable final EntityManager em) {
 		EbeguParameterKey key = null;
 		if (betreuungsangebotTyp == BetreuungsangebotTyp.KITA) {
 			key = EbeguParameterKey.PARAM_PENSUM_KITA_MIN;
@@ -60,7 +61,7 @@ public final class BetreuungUtil {
 			if (parameter.isPresent()) {
 				return parameter.get().getValueAsInteger();
 			} else {
-				LoggerFactory.getLogger(BetreuungUtil.class).warn("No Value available for Validation of key " + key);
+				LoggerFactory.getLogger(BetreuungUtil.class).warn("No Value available for Validation of key {}", key);
 			}
 		}
 		return 0;

@@ -14,6 +14,7 @@
  */
 
 import {IComponentOptions, IFormController, ILogService} from 'angular';
+import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import TSGesuch from '../../../models/TSGesuch';
@@ -482,6 +483,14 @@ export class GesuchToolbarController implements IDVFocusableController {
                     erneuernGesperrt = true;
                     break;
                 }
+                // Wenn das Erstgesuch der Periode ein Online Gesuch war, darf dieser *nur* durch den GS selber erneuert werden. JA/SCH muss
+                // einen neuen Fall eröffnen, da Papier und Online Gesuche nie vermischt werden duerfen!
+                if (antragItem.eingangsart === TSEingangsart.ONLINE && antragItem.antragTyp !== TSAntragTyp.MUTATION) {
+                    if (!this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
+                        erneuernGesperrt = true;
+                        break;
+                    }
+                }
             }
             this.erneuernPossibleForCurrentAntrag = !erneuernGesperrt;
         } else {
@@ -566,7 +575,7 @@ export class GesuchToolbarController implements IDVFocusableController {
     }
 
     public gesuchLoeschen(): IPromise<void> {
-        return this.dvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+        return this.dvDialog.showRemoveDialog(removeDialogTempl, undefined, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_LOESCHEN',
             deleteText: 'BESCHREIBUNG_GESUCH_LOESCHEN',
             parentController: this,
@@ -623,17 +632,9 @@ export class GesuchToolbarController implements IDVFocusableController {
     public showKontakt(): void {
         let text: string;
         if (this.fall.isHauptverantwortlicherSchulamt()) {
-            text = '<span>Schulamt</span><br>'
-                + '<span>Effingerstrasse 21</span><br>'
-                + '<span>3008 Bern</span><br>'
-                + '<a href="tel:0313216460"><span>031 321 64 60</span></a><br>'
-                + '<a href="mailto:schulamt@bern.ch"><span>schulamt@bern.ch</span></a>';
+            text = this.ebeguUtil.getKontaktSchulamt();
         } else {
-            text = '<span>Jugendamt</span><br>'
-                + '<span>Effingerstrasse 21</span><br>'
-                + '<span>3008 Bern</span><br>'
-                + '<a href="tel:0313215115"><span>031 321 51 15</span></a><br>'
-                + '<a href="mailto:kinderbetreuung@bern.ch"><span>kinderbetreuung@bern.ch</span></a>';
+            text = this.ebeguUtil.getKontaktJugendamt();
         }
         this.dvDialog.showDialog(showKontaktTemplate, ShowTooltipController, {
             title: '',

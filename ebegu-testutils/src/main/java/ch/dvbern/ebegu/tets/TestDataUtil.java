@@ -1002,7 +1002,7 @@ public final class TestDataUtil {
 
 	}
 
-	public static Benutzer createBenutzer(UserRole role, String userName, Traegerschaft traegerschaft, @Nullable Institution institution, Mandant mandant) {
+	public static Benutzer createBenutzer(UserRole role, String userName, @Nullable Traegerschaft traegerschaft, @Nullable Institution institution, Mandant mandant) {
 		final Benutzer benutzer = new Benutzer();
 		benutzer.setUsername(userName);
 		benutzer.setNachname("anonymous");

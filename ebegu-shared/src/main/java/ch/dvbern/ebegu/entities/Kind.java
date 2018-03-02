@@ -116,11 +116,12 @@ public class Kind extends AbstractPersonEntity {
 		this.mutterspracheDeutsch = mutterspracheDeutsch;
 	}
 
+	@Nullable
 	public PensumFachstelle getPensumFachstelle() {
 		return pensumFachstelle;
 	}
 
-	public void setPensumFachstelle(PensumFachstelle pensumFachstelle) {
+	public void setPensumFachstelle(@Nullable PensumFachstelle pensumFachstelle) {
 		this.pensumFachstelle = pensumFachstelle;
 	}
 

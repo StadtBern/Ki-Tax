@@ -15,6 +15,7 @@
 
 package ch.dvbern.ebegu.api.dtos;
 
+import javax.annotation.Nonnull;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -36,11 +37,12 @@ public class JaxAbstractPensumDTO extends JaxAbstractDateRangedDTO {
 	@NotNull
 	private Integer pensum;
 
+	@Nonnull
 	public Integer getPensum() {
 		return pensum;
 	}
 
-	public void setPensum(Integer pensum) {
+	public void setPensum(@Nonnull Integer pensum) {
 		this.pensum = pensum;
 	}
 }

@@ -16,6 +16,7 @@
 package ch.dvbern.ebegu.entities;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -64,19 +65,21 @@ public class ErwerbspensumContainer extends AbstractEntity {
 		this.gesuchstellerContainer = gesuchstellerContainer;
 	}
 
+	@Nullable
 	public Erwerbspensum getErwerbspensumGS() {
 		return erwerbspensumGS;
 	}
 
-	public void setErwerbspensumGS(Erwerbspensum erwerbspensumGS) {
+	public void setErwerbspensumGS(@Nullable Erwerbspensum erwerbspensumGS) {
 		this.erwerbspensumGS = erwerbspensumGS;
 	}
 
+	@Nullable
 	public Erwerbspensum getErwerbspensumJA() {
 		return erwerbspensumJA;
 	}
 
-	public void setErwerbspensumJA(Erwerbspensum erwerbspensumJA) {
+	public void setErwerbspensumJA(@Nullable Erwerbspensum erwerbspensumJA) {
 		this.erwerbspensumJA = erwerbspensumJA;
 	}
 

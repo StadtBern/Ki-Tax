@@ -37,7 +37,10 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.Validate;
+
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
@@ -49,7 +52,6 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang3.Validate;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
@@ -116,7 +118,10 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	}
 
 	@Override
-	public Collection<InstitutionStammdaten> getAllActiveInstitutionStammdatenByDate(@Nonnull LocalDate date) {
+	public Collection<InstitutionStammdaten> getAllActiveInstitutionStammdatenByGesuchsperiode(@Nonnull String gesuchsperiodeId) {
+
+		Gesuchsperiode gesuchsperiode = persistence.find(Gesuchsperiode.class, gesuchsperiodeId);
+
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<InstitutionStammdaten> query = cb.createQuery(InstitutionStammdaten.class);
 		Root<InstitutionStammdaten> root = query.from(InstitutionStammdaten.class);
@@ -124,13 +129,20 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 		Join<InstitutionStammdaten, Institution> institution = root.join(InstitutionStammdaten_.institution, JoinType.INNER);
 		Predicate isActivePredicate = cb.equal(institution.get(Institution_.active), Boolean.TRUE);
 
-		ParameterExpression<LocalDate> dateParam = cb.parameter(LocalDate.class, "date");
-		Predicate intervalPredicate = cb.between(dateParam,
-			root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigAb),
-			root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigBis));
+		ParameterExpression<LocalDate> startParam = cb.parameter(LocalDate.class, "gpStart");
+		ParameterExpression<LocalDate> endParam = cb.parameter(LocalDate.class, "gpEnd");
 
-		query.where(intervalPredicate, isActivePredicate);
-		return persistence.getEntityManager().createQuery(query).setParameter(dateParam, date).getResultList();
+		// InstStammdaten Ende muss NACH GP Start sein
+		// InstStammdaten Start muss VOR GP Ende sein
+		Predicate startPredicate = cb.greaterThanOrEqualTo(root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigBis), startParam);
+		Predicate endPredicate = cb.lessThanOrEqualTo(root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigAb), endParam);
+
+		query.where(startPredicate, endPredicate, isActivePredicate);
+
+		TypedQuery<InstitutionStammdaten> typedQuery = persistence.getEntityManager().createQuery(query);
+		typedQuery.setParameter("gpStart", gesuchsperiode.getGueltigkeit().getGueltigAb());
+		typedQuery.setParameter("gpEnd", gesuchsperiode.getGueltigkeit().getGueltigBis());
+		return typedQuery.getResultList();
 	}
 
 	@Override
