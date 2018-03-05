@@ -240,6 +240,26 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 		return q.getResultList();
 	}
 
+	@Nonnull
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN})
+	public List<Workjob> findUnfinishedWorkjobs() {
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Workjob> query = cb.createQuery(Workjob.class);
+		Root<Workjob> root = query.from(Workjob.class);
+
+		ParameterExpression<Collection> statusParam = cb.parameter(Collection.class, "statusParam");
+		Predicate statusPredicate = root.get(Workjob_.status).in(statusParam);
+
+		query.where(statusPredicate);
+		TypedQuery<Workjob> q = persistence.getEntityManager().createQuery(query);
+		Collection<BatchJobStatus> statesToSearch =  Sets.newHashSet(BatchJobStatus.RUNNING, BatchJobStatus.REQUESTED);
+		q.setParameter(statusParam, statesToSearch);
+
+		return q.getResultList();
+	}
+
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, SACHBEARBEITER_INSTITUTION,
 		SACHBEARBEITER_TRAEGERSCHAFT, REVISOR })
@@ -261,5 +281,11 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 		updateQuery.set(root.get(Workjob_.resultData), resultData);
 		updateQuery.where(cb.equal(root.get(Workjob_.id), workjobID));
 		this.persistence.getEntityManager().createQuery(updateQuery).executeUpdate();
+	}
+
+	@Override
+	public void removeWorkjob(Workjob workjob) {
+		this.persistence.remove(workjob);
+
 	}
 }
