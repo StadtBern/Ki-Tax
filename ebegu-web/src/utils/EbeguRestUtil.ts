@@ -1218,6 +1218,7 @@ export default class EbeguRestUtil {
         restBetreuung.belegungTagesschule = this.belegungTagesschuleToRestObject({}, betreuung.belegungTagesschule);
         restBetreuung.belegungFerieninsel = this.belegungFerieninselToRestObject({}, betreuung.belegungFerieninsel);
         restBetreuung.anmeldungMutationZustand = betreuung.anmeldungMutationZustand;
+        restBetreuung.keineDetailinformationen = betreuung.keineDetailinformationen;
         return restBetreuung;
     }
 
@@ -1308,6 +1309,7 @@ export default class EbeguRestUtil {
             betreuungTS.belegungTagesschule = this.parseBelegungTagesschule(new TSBelegungTagesschule(), betreuungFromServer.belegungTagesschule);
             betreuungTS.belegungFerieninsel = this.parseBelegungFerieninsel(new TSBelegungFerieninsel(), betreuungFromServer.belegungFerieninsel);
             betreuungTS.anmeldungMutationZustand = betreuungFromServer.anmeldungMutationZustand;
+            betreuungTS.keineDetailinformationen = betreuungFromServer.keineDetailinformationen;
             betreuungTS.bgNummer = betreuungFromServer.bgNummer;
             return betreuungTS;
         }

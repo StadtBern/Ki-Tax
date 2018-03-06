@@ -233,7 +233,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public setErsterSchultag(): void {
         // Default Eintrittsdatum ist erster Schultag, wenn noch in Zukunft
         let ersterSchultag: moment.Moment = this.gesuchModelManager.getGesuchsperiode().datumErsterSchultag;
-        if (DateUtil.today().isBefore(ersterSchultag)) {
+        if (!this.getBetreuungModel().keineDetailinformationen && DateUtil.today().isBefore(ersterSchultag)) {
             this.getBetreuungModel().belegungTagesschule.eintrittsdatum = ersterSchultag;
         }
     }
@@ -308,13 +308,15 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public showInstitutionenList(): boolean {
-        return this.isTageschulenAnmeldungAktiv() && (this.isEnabled() || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION))
-            || !this.isTageschulenAnmeldungAktiv() && (this.isEnabled() && !this.isTagesschule());
+        return (this.isTageschulenAnmeldungAktiv() && (this.isEnabled() || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION))
+            || !this.isTageschulenAnmeldungAktiv() && (this.isEnabled() && !this.isTagesschule()))
+            && !this.getBetreuungModel().keineDetailinformationen;
     }
 
     public showInstitutionenAsText(): boolean {
-        return (this.isTageschulenAnmeldungAktiv() && !this.isEnabled() && !this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION))
-            || (!this.isTageschulenAnmeldungAktiv() && !this.isEnabled() && !this.isTagesschule());
+        return ((this.isTageschulenAnmeldungAktiv() && !this.isEnabled() && !this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION))
+            || (!this.isTageschulenAnmeldungAktiv() && !this.isEnabled() && !this.isTagesschule()))
+            && !this.getBetreuungModel().keineDetailinformationen;
     }
 
     public isTageschulenAnmeldungAktiv() {
@@ -776,5 +778,16 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             return this.gesuchModelManager.getGesuch().status === TSAntragStatus.FREIGABEQUITTUNG;
         }
         return false;
+    }
+
+    public keineDetailAnmeldungClicked(): void {
+        if (this.getBetreuungModel().keineDetailinformationen) {
+            // Fuer Tagesschule setzen wir eine Dummy-Tagesschule als Institution
+            this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
+        } else {
+            this.instStammId = undefined;
+            this.getBetreuungModel().institutionStammdaten = undefined;
+        }
+        this.setSelectedInstitutionStammdaten();
     }
 }

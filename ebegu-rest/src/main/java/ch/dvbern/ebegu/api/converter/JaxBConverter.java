@@ -1746,6 +1746,7 @@ public class JaxBConverter {
 		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
 		betreuung.setGueltig(betreuungJAXP.isGueltig());
 		betreuung.setAnmeldungMutationZustand(betreuungJAXP.getAnmeldungMutationZustand());
+		betreuung.setKeineDetailinformationen(betreuungJAXP.isKeineDetailinformationen());
 		if (betreuungJAXP.getBelegungTagesschule() != null) {
 			Objects.requireNonNull(betreuung.getInstitutionStammdaten().getInstitutionStammdatenTagesschule(),
 				"InstitutionsStammdatenTagesschule muessen gesetzt sein");
@@ -1995,6 +1996,7 @@ public class JaxBConverter {
 		jaxBetreuung.setAbwesenheitMutiert(betreuungFromServer.getAbwesenheitMutiert());
 		jaxBetreuung.setGueltig(betreuungFromServer.isGueltig());
 		jaxBetreuung.setAnmeldungMutationZustand(betreuungFromServer.getAnmeldungMutationZustand());
+		jaxBetreuung.setKeineDetailinformationen(betreuungFromServer.isKeineDetailinformationen());
 		jaxBetreuung.setBelegungTagesschule(belegungTagesschuleToJax(betreuungFromServer.getBelegungTagesschule()));
 		jaxBetreuung.setBelegungFerieninsel(belegungFerieninselToJAX(betreuungFromServer.getBelegungFerieninsel()));
 		jaxBetreuung.setBgNummer(betreuungFromServer.getBGNummer());

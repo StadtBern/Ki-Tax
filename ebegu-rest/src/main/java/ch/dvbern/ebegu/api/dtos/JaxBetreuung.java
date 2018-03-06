@@ -110,6 +110,8 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@Nullable
 	private AnmeldungMutationZustand anmeldungMutationZustand;
 
+	private boolean keineDetailinformationen = false;
+
 	// transient (Not stored on server, just an information for client)
 	private String bgNummer;
 
@@ -294,6 +296,22 @@ public class JaxBetreuung extends JaxAbstractDTO {
 		this.anmeldungMutationZustand = anmeldungMutationZustand;
 	}
 
+	public String getBgNummer() {
+		return bgNummer;
+	}
+
+	public void setBgNummer(String bgNummer) {
+		this.bgNummer = bgNummer;
+	}
+
+	public boolean isKeineDetailinformationen() {
+		return keineDetailinformationen;
+	}
+
+	public void setKeineDetailinformationen(boolean keineDetailinformationen) {
+		this.keineDetailinformationen = keineDetailinformationen;
+	}
+
 	@Override
 	public int compareTo(@Nonnull JaxAbstractDTO o) {
 		if (o instanceof JaxBetreuung) {
@@ -301,13 +319,5 @@ public class JaxBetreuung extends JaxAbstractDTO {
 			return getBetreuungNummer().compareTo(other.getBetreuungNummer());
 		}
 		return super.compareTo(o);
-	}
-
-	public String getBgNummer() {
-		return bgNummer;
-	}
-
-	public void setBgNummer(String bgNummer) {
-		this.bgNummer = bgNummer;
 	}
 }
