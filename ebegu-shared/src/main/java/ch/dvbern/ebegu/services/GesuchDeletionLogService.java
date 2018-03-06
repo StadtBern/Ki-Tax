@@ -1,6 +1,6 @@
 /*
  * Ki-Tax: System for the management of external childcare subsidies
- * Copyright (C) 2017 City of Bern Switzerland
+ * Copyright (C) 2018 City of Bern Switzerland
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -19,27 +19,23 @@ import java.util.Optional;
 
 import javax.annotation.Nonnull;
 
-import ch.dvbern.ebegu.entities.PensumFachstelle;
+import ch.dvbern.ebegu.entities.GesuchDeletionLog;
 
 /**
- * Service zum Verwalten von PensumFachstellen
+ * Service zum Verwalten von GesuchDeletionLogs
  */
-public interface PensumFachstelleService {
+public interface GesuchDeletionLogService {
 
 	/**
-	 * Aktualisiert die PensumFachstelle in der DB
-	 *
-	 * @param pensumFachstelle die PensumFachstelle als DTO
-	 * @return Die aktualisierte PensumFachstelle
+	 * Speichert ein GesuchDeletionLog in der DB
 	 */
 	@Nonnull
-	PensumFachstelle savePensumFachstelle(@Nonnull PensumFachstelle pensumFachstelle);
+	GesuchDeletionLog saveGesuchDeletionLog(@Nonnull GesuchDeletionLog logEintrag);
 
 	/**
-	 * @param pensumFachstelleId PK (id) der PensumFachstelle
-	 * @return PensumFachstelle mit dem gegebenen key oder null falls nicht vorhanden
+	 * Sucht den Loeschen-Logeintrag fuer das uebergebene Gesuch-
 	 */
 	@Nonnull
-	Optional<PensumFachstelle> findPensumFachstelle(@Nonnull String pensumFachstelleId);
+	Optional<GesuchDeletionLog> findGesuchDeletionLogByGesuch(@Nonnull String gesuchId);
 
 }

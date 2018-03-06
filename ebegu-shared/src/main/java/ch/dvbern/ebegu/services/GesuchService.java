@@ -32,6 +32,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.FinSitStatus;
+import ch.dvbern.ebegu.enums.GesuchDeletionCause;
 
 /**
  * Service zum Verwalten von Gesuche
@@ -126,12 +127,10 @@ public interface GesuchService {
 	Collection<Gesuch> getAllActiveGesucheOfVerantwortlichePerson(@Nonnull String benutzername);
 
 	/**
-	 * entfernt ein Gesuch aus der Database
-	 *
-	 * @param gesuchId der Gesuch zu entfernen
+	 * entfernt ein Gesuch aus der Database. Es wird ein LogEintrag erstellt mit dem Grund des Löschens-
 	 */
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
-	void removeGesuch(@Nonnull String gesuchId);
+	void removeGesuch(@Nonnull String gesuchId, GesuchDeletionCause deletionCause);
 
 	/**
 	 * Gibt eine Liste von Gesuchen zureck, deren Gesuchsteller 1 den angegebenen Namen und Vornamen hat.

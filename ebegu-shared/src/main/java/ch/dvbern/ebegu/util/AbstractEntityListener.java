@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.inject.spi.CDI;
 import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
@@ -29,15 +30,19 @@ import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchDeletionLog;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.GesuchDeletionCause;
 import ch.dvbern.ebegu.enums.SequenceType;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.FallService;
+import ch.dvbern.ebegu.services.GesuchDeletionLogService;
 import ch.dvbern.ebegu.services.KindService;
 import ch.dvbern.ebegu.services.SequenceService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -52,6 +57,7 @@ public class AbstractEntityListener {
 	private FallService fallService;
 	private KindService kindService;
 	private SequenceService sequenceService;
+	private GesuchDeletionLogService deletionLogService;
 
 	private BenutzerService benutzerService;
 
@@ -122,6 +128,20 @@ public class AbstractEntityListener {
 		}
 	}
 
+	@PreRemove
+	public void preRemove(@Nonnull AbstractEntity entity) {
+		if (entity instanceof Gesuch) {
+			// Ueberpruefen, ob ein DeletionLog-Eintrag erstellt wurde
+			Optional<GesuchDeletionLog> gesuchDeletionLogByGesuch = getGesuchDeletionLogService().findGesuchDeletionLogByGesuch(entity.getId());
+			if (!gesuchDeletionLogByGesuch.isPresent()) {
+				GesuchDeletionLog gesuchDeletionLog = getGesuchDeletionLogService().saveGesuchDeletionLog(
+					new GesuchDeletionLog((Gesuch) entity, GesuchDeletionCause.UNBEKANNT));
+				LOGGER.error("Achtung, es wurde ein Gesuch geloescht, welches noch keinen GesuchDeletionLog-Eintrag hat! Erstelle diesen. ID=" +
+					gesuchDeletionLog.getId());
+			}
+		}
+	}
+
 	private FallService getFallService() {
 		if (fallService == null) {
 			//FIXME: das ist nur ein Ugly Workaround, weil CDI-Injection in Wildfly 10 nicht funktioniert.
@@ -156,6 +176,15 @@ public class AbstractEntityListener {
 			sequenceService = CDI.current().select(SequenceService.class).get();
 		}
 		return sequenceService;
+	}
+
+	private GesuchDeletionLogService getGesuchDeletionLogService() {
+		if (deletionLogService == null) {
+			//FIXME: das ist nur ein Ugly Workaround, weil CDI-Injection in Wildfly 10 nicht funktioniert.
+			//noinspection NonThreadSafeLazyInitialization
+			deletionLogService = CDI.current().select(GesuchDeletionLogService.class).get();
+		}
+		return deletionLogService;
 	}
 
 	private String getPrincipalName() {
