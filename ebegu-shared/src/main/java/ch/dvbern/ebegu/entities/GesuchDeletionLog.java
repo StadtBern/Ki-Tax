@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -50,10 +51,12 @@ public class GesuchDeletionLog extends AbstractSimpleEntity {
 	private GesuchDeletionCause cause;
 
 	// Wert darf nicht leer sein, aber kein @NotNull, da Wert erst im @PrePersist gesetzt
+	@NotNull
 	@Column(nullable = false)
 	private LocalDateTime timestampDeleted;
 
 	// Wert darf nicht leer sein, aber kein @NotNull, da Wert erst im @PrePersist gesetzt
+	@NotNull
 	@Column(nullable = false, length = Constants.UUID_LENGTH)
 	private String userDeleted;
 
@@ -66,14 +69,17 @@ public class GesuchDeletionLog extends AbstractSimpleEntity {
 	@Column(nullable = false, length = Constants.UUID_LENGTH)
 	private String gesuchId;
 
+	@Nullable
 	@Column(nullable = true)
-	@Field()
+	@Field
 	private String vorname;
 
+	@Nullable
 	@Column(nullable = true)
-	@Field()
+	@Field
 	private String nachname;
 
+	@Nullable
 	@Column(nullable = true)
 	@FieldBridge(impl = EbeguLocalDateBridge.class)   //wir indizieren dates als string
 	@Field(analyze = Analyze.NO) //datumsfelder nicht tokenizen etc
@@ -119,6 +125,7 @@ public class GesuchDeletionLog extends AbstractSimpleEntity {
 		this.fallNummer = fallNummer;
 	}
 
+	@Nullable
 	public String getVorname() {
 		return vorname;
 	}
@@ -127,6 +134,7 @@ public class GesuchDeletionLog extends AbstractSimpleEntity {
 		this.vorname = vorname;
 	}
 
+	@Nullable
 	public String getNachname() {
 		return nachname;
 	}
@@ -135,6 +143,7 @@ public class GesuchDeletionLog extends AbstractSimpleEntity {
 		this.nachname = nachname;
 	}
 
+	@Nullable
 	public LocalDate getGeburtsdatum() {
 		return geburtsdatum;
 	}
