@@ -29,11 +29,14 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
+import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
@@ -62,6 +65,7 @@ import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_08;
 import ch.dvbern.ebegu.testfaelle.Testfall_ASIV_09;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.TestfallName;
+import ch.dvbern.ebegu.util.testdata.AnmeldungConfig;
 import ch.dvbern.ebegu.util.testdata.ErstgesuchConfig;
 import ch.dvbern.ebegu.util.testdata.MutationConfig;
 import ch.dvbern.ebegu.util.testdata.TestdataSetupConfig;
@@ -108,6 +112,8 @@ public class TestdataCreationServiceBean extends AbstractBaseService implements 
 	@Inject
 	private EbeguParameterService parameterService;
 	@Inject
+	private BetreuungService betreuungService;
+	@Inject
 	private Persistence persistence;
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
@@ -151,6 +157,19 @@ public class TestdataCreationServiceBean extends AbstractBaseService implements 
 			mutation.setTimestampVerfuegt(config.getTimestampVerfuegt());
 		}
 		return mutation;
+	}
+
+	@Override
+	public Gesuch addAnmeldung(@Nonnull AnmeldungConfig config, @Nonnull Gesuch gesuchToAdd) {
+		List<Betreuung> betreuungs = gesuchToAdd.extractAllBetreuungen();
+		KindContainer firstKind = betreuungs.iterator().next().getKind();
+		InstitutionStammdaten institutionStammdaten = getInstitutionStammdaten(config);
+		Betreuung betreuung = new Betreuung();
+		betreuung.setKind(firstKind);
+		betreuung.setInstitutionStammdaten(institutionStammdaten);
+		betreuung.setBetreuungsstatus(config.getBetreuungsstatus());
+		betreuungService.saveBetreuung(betreuung, false);
+		return persistence.find(Gesuch.class, gesuchToAdd.getId());
 	}
 
 	@Nonnull
@@ -283,6 +302,8 @@ public class TestdataCreationServiceBean extends AbstractBaseService implements 
 		final InstitutionStammdaten institutionStammdatenKitaAaregg = config.getKitaWeissenstein();
 		final InstitutionStammdaten institutionStammdatenKitaBruennen = config.getKitaBruennen();
 		final InstitutionStammdaten institutionStammdatenTagiAaregg = config.getTagiWeissenstein();
+		final InstitutionStammdaten institutionStammdatenTagesschuleBruennen = config.getTagesschuleBruennen();
+		final InstitutionStammdaten institutionStammdatenFerieninselBruennen = config.getFerieninselBruennen();
 
 		Traegerschaft traegerschaftAaregg = institutionStammdatenKitaAaregg.getInstitution().getTraegerschaft();
 		traegerschaftAaregg = persistence.persist(traegerschaftAaregg);
@@ -298,11 +319,19 @@ public class TestdataCreationServiceBean extends AbstractBaseService implements 
 		institutionStammdatenTagiAaregg.getInstitution().setTraegerschaft(traegerschaftAaregg);
 
 		institutionService.createInstitution(institutionStammdatenKitaAaregg.getInstitution());
-		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenKitaAaregg);
-		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenTagiAaregg);
+		saveInstitutionStammdaten(institutionStammdatenKitaAaregg);
+		saveInstitutionStammdaten(institutionStammdatenTagiAaregg);
 
 		institutionService.createInstitution(institutionStammdatenKitaBruennen.getInstitution());
-		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenKitaBruennen);
+		saveInstitutionStammdaten(institutionStammdatenKitaBruennen);
+		saveInstitutionStammdaten(institutionStammdatenTagesschuleBruennen);
+		saveInstitutionStammdaten(institutionStammdatenFerieninselBruennen);
+	}
+
+	private void saveInstitutionStammdaten(@Nullable InstitutionStammdaten institutionStammdaten) {
+		if (institutionStammdaten != null) {
+			institutionStammdatenService.saveInstitutionStammdaten(institutionStammdaten);
+		}
 	}
 
 	private void insertParametersForTestfaelle(@Nonnull Gesuchsperiode gesuchsperiode) {
@@ -336,5 +365,17 @@ public class TestdataCreationServiceBean extends AbstractBaseService implements 
 		if (!ebeguParameterByKeyAndDate.isPresent()) {
 			persistence.persist(ebeguParameter);
 		}
+	}
+
+	private InstitutionStammdaten getInstitutionStammdaten(@Nonnull AnmeldungConfig config) {
+		if (config.getInstitutionStammdaten() != null) {
+			return persistence.merge(config.getInstitutionStammdaten());
+		}
+		Collection<InstitutionStammdaten> institutionen = criteriaQueryHelper.getEntitiesByAttribute(InstitutionStammdaten.class,
+			config.getBetreuungsangebotTyp(), InstitutionStammdaten_.betreuungsangebotTyp);
+		if (institutionen.isEmpty()) {
+			throw new IllegalStateException("Keine Institution mit Typ " + config.getBetreuungsangebotTyp() + " gefunden");
+		}
+		return institutionen.iterator().next();
 	}
 }

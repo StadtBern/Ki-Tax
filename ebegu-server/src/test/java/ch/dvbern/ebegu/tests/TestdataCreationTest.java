@@ -31,6 +31,7 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.TestdataCreationService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.TestfallName;
+import ch.dvbern.ebegu.util.testdata.AnmeldungConfig;
 import ch.dvbern.ebegu.util.testdata.ErstgesuchConfig;
 import ch.dvbern.ebegu.util.testdata.MutationConfig;
 import org.jboss.arquillian.junit.Arquillian;
@@ -70,7 +71,7 @@ public class TestdataCreationTest extends AbstractTestdataCreationTest {
 	public void institutionsStammdatenPresentAfterSetup() {
 		Collection<InstitutionStammdaten> institutionsStammdaten = criteriaQueryHelper.getAll(InstitutionStammdaten.class);
 		Assert.assertNotNull(institutionsStammdaten);
-		Assert.assertEquals("Es wurden 3 Institutionen erstellt", 3, institutionsStammdaten.size());
+		Assert.assertEquals("Es wurden 5 Institutionen erstellt", 5, institutionsStammdaten.size());
 	}
 
 	@Test
@@ -119,5 +120,14 @@ public class TestdataCreationTest extends AbstractTestdataCreationTest {
 		Assert.assertEquals(AntragStatus.VERFUEGT, mutation.getStatus());
 		Assert.assertTrue(mutation.isMutation());
 		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, mutation.getGesuchBetreuungenStatus());
+	}
+
+	@Test
+	public void createAnmeldungTagesschule() {
+		ErstgesuchConfig config = ErstgesuchConfig.createErstgesuchVerfuegt(TestfallName.LUETHI_MERET, LocalDate.now(), LocalDateTime.now());
+		Gesuch erstgesuch = testdataCreationService.createErstgesuch(config);
+		int anzahlBetreuungenBefore = erstgesuch.extractAllBetreuungen().size();
+		erstgesuch = testdataCreationService.addAnmeldung(AnmeldungConfig.createAnmeldungTagesschule(), erstgesuch);
+		Assert.assertEquals(anzahlBetreuungenBefore + 1, erstgesuch.extractAllBetreuungen().size());
 	}
 }
