@@ -27,7 +27,7 @@
              dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorOrAmtRole()"
              dv-show-expression="vm.hasGesuch()">
 
-        <button ng-click="$mdOpenMenu()" aria-label="{{vm.getVerantwortlicherFullName()}}">
+        <button ng-click="$mdMenu.open()" aria-label="{{vm.getVerantwortlicherFullName()}}">
             <i ng-class="{'fa fa-user': !vm.schulamt, 'fa fa-graduation-cap': vm.schulamt}" aria-hidden="true"
                style="margin-right: 0.2rem"></i>
             <span ng-bind="vm.getVerantwortlicherFullName()"></span>

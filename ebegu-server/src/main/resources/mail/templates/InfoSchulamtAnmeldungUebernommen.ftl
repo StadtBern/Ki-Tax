@@ -28,7 +28,7 @@ ${templateConfiguration.mailCss}
 		definitive Bestätigung der Anmeldung von der gewählten Institution. <br/>
 		Die Betreuungsangebote können
 		<a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/betreuungen/${betreuung.extractGesuch().id}">hier</a>
-		bearbeitet werden.
+		eingesehen werden.
 	</p>
 	<p>
 		Freundliche Grüsse <br/>

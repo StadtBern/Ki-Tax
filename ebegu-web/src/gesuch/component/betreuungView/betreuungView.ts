@@ -331,7 +331,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public anmeldungSchulamtUebernehmen(): void {
         this.copyBGNumberLToClipboard();
-        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+        this.dvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
             title: 'CONFIRM_UEBERNAHME_SCHULAMT',
             deleteText: 'BESCHREIBUNG_UEBERNAHME_SCHULAMT',
             parentController: undefined,
@@ -654,7 +654,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public mutationsmeldungSenden(): void {
         // send mutationsmeldung (dummy copy)
         if (this.isGesuchValid() && this.mutationsmeldungModel) {
-            this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            this.dvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
                 title: 'MUTATIONSMELDUNG_CONFIRMATION',
                 deleteText: 'MUTATIONSMELDUNG_BESCHREIBUNG',
                 parentController: undefined,

@@ -131,7 +131,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
             kindname: this.gesuchModelManager.getKindToWorkWith().kindJA.getFullName(),
             betreuungsangebottyp: this.ebeguUtil.translateString(TSBetreuungsangebotTyp[betreuung.institutionStammdaten.betreuungsangebotTyp])
         });
-        this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+        this.DvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
             title: remTitleText,
             deleteText: 'BETREUUNG_LOESCHEN_BESCHREIBUNG',
             parentController: this,

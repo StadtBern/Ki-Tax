@@ -17,8 +17,8 @@
 	xmlns="http://java.sun.com/xml/ns/javaee"
 	version="3.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
->
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd">
+
 	<interceptors>
 		<interceptor>
 			<interceptor-class>net.bull.javamelody.MonitoringInterceptor</interceptor-class>
@@ -30,5 +30,12 @@
 			<ejb-name>*</ejb-name>
 			<interceptor-class>net.bull.javamelody.MonitoringInterceptor</interceptor-class>
 		</interceptor-binding>
+		<!-- Wir behandeln die ConstraintViolationException neu als Rollback-ApplicationException, damit sie nicht mehr in eine EJBTransactionRolledbackException
+		gewrappt wird. Siehe auch EbeguConstraintValidationUnwrappedExceptionMapper -->
+		<application-exception>
+			<exception-class>javax.validation.ConstraintViolationException</exception-class>
+			<rollback>true</rollback>
+		</application-exception>
 	</assembly-descriptor>
+
 </ejb-jar>

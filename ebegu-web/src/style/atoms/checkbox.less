@@ -38,6 +38,114 @@
         margin-bottom: -3rem;
     }
 }
+md-checkbox {
+    //float:left;
+    font-size: 0;
+    position: relative;
+    min-height: 1.7rem;
+    min-width: 0;
+    height: auto;
+    width: auto;
+    &:last-of-type {
+        margin-right: 4rem;
+    }
+    margin-right: 4rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    &[disabled] {
+        color: @contrast-dark;
+        .md-label {
+            span {
+                color: @contrast-dark;
+            }
+        }
+        &.md-checked, &:not(.md-checked) {
+            .md-icon {
+                border: 1px solid @contrast-dark;
+            }
+        }
+        &.md-checked {
+            .md-icon {
+                background: @contrast-dark;
+            }
+        }
+    }
+    &.md-focused, &:focus {
+        .md-icon {
+            //-webkit-box-shadow: 0 0 4px 0 #858585;
+            //box-shadow: 0 0 4px 0 #858585;
+            //outline: 2px solid @contrast-darkest;
+            transition: none;
+            box-shadow: 0 0 0 2px @contrast-darkest;
+
+        }
+    }
+    .md-container {
+        width: 1.7rem;
+        height: 1.7rem;
+        display: block;
+        &:before {
+            content: none !important;
+        }
+    }
+    .md-label {
+        display: inline-block;
+        margin-left: 3rem;
+        height: auto;
+        min-height: 1.7rem;
+        line-height: 1.7rem;
+        vertical-align: middle;
+        font-size: 0;
+
+        span {
+            .ebeguH3();
+            margin: 0;
+            line-height: 1.7rem;
+            height: auto;
+            min-height: 1.7rem;
+            display: block;
+            margin-right: 1rem;
+            vertical-align: middle;
+        }
+    }
+    .md-icon, &:not(.md-checked) .md-icon {
+        border: 1px solid @contrast-darkest;
+        border-radius: 0.2rem;
+        width: auto;
+        height: auto;
+        line-height: 1.7rem;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+    }
+    &.md-checked {
+        .md-icon {
+            background-color: @contrast-darkest;
+            &:after {
+                line-height: 175%;
+                position: absolute;
+                font-size: 0.8rem;
+                font-family: 'FontAwesome';
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: auto;
+                height: auto;
+                transform: none;
+                border-width: 0;
+                border-radius: 0.2rem;
+                content: "\f00c";
+                text-align: center;
+                vertical-align: middle;
+                color: @contrast-lightest;
+                display: block !important;
+            }
+        }
+    }
+}
 
 md-checkbox.dv-ebegu-calendar {
     position: absolute !important;
@@ -91,28 +199,28 @@ md-checkbox.dv-ebegu-calendar {
     .md-label {
         position: relative !important;
         margin-left: 0;
-        flex: 1;
-        height: unset;
+        flex: 1 0 auto !important;
+        height: unset!important;
         min-height: 1.7rem;
         line-height: 1.7rem;
-        vertical-align: top;
-        text-align: center;
+        vertical-align: top!important;
+        text-align: center!important;
         font-size: 0;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
+        display: flex!important;
+        align-items: center!important;
+        justify-content: flex-start!important;
         max-height: none;
         flex-direction: column;
 
         span {
-            line-height: unset;
+            line-height: initial!important;
             height: auto;
-            min-height: unset;
-            display: unset;
-            margin: unset;
-            padding: unset;
+            min-height: initial!important;
+            display: initial!important;
+            margin: 0;
+            padding: 0;
             border-bottom: none;
-            vertical-align: unset;
+            vertical-align: initial!important;
         }
     }
     .md-icon, &:not(.md-checked) .md-icon {
@@ -310,112 +418,5 @@ md-checkbox.dv-ebegu-calendar--tagesschule {
     }
 }
 
-md-checkbox {
-    //float:left;
-    font-size: 0;
-    position: relative;
-    min-height: 1.7rem;
-    min-width: 0;
-    height: auto;
-    width: auto;
-    &:last-of-type {
-        margin-right: 4rem;
-    }
-    margin-right: 4rem;
-    margin-top: 0;
-    margin-bottom: 0;
-    &[disabled] {
-        color: @contrast-dark;
-        .md-label {
-            span {
-                color: @contrast-dark;
-            }
-        }
-        &.md-checked, &:not(.md-checked) {
-            .md-icon {
-                border: 1px solid @contrast-dark;
-            }
-        }
-        &.md-checked {
-            .md-icon {
-                background: @contrast-dark;
-            }
-        }
-    }
-    &.md-focused, &:focus {
-        .md-icon {
-            //-webkit-box-shadow: 0 0 4px 0 #858585;
-            //box-shadow: 0 0 4px 0 #858585;
-            //outline: 2px solid @contrast-darkest;
-            transition: none;
-            box-shadow: 0 0 0 2px @contrast-darkest;
 
-        }
-    }
-    .md-container {
-        width: 1.7rem;
-        height: 1.7rem;
-        display: block;
-        &:before {
-            content: none !important;
-        }
-    }
-    .md-label {
-        display: inline-block;
-        margin-left: 3rem;
-        height: auto;
-        min-height: 1.7rem;
-        line-height: 1.7rem;
-        vertical-align: middle;
-        font-size: 0;
-
-        span {
-            .ebeguH3();
-            margin: 0;
-            line-height: 1.7rem;
-            height: auto;
-            min-height: 1.7rem;
-            display: block;
-            margin-right: 1rem;
-            vertical-align: middle;
-        }
-    }
-    .md-icon, &:not(.md-checked) .md-icon {
-        border: 1px solid @contrast-darkest;
-        border-radius: 0.2rem;
-        width: auto;
-        height: auto;
-        line-height: 1.7rem;
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        top: 0;
-    }
-    &.md-checked {
-        .md-icon {
-            background-color: @contrast-darkest;
-            &:after {
-                line-height: 175%;
-                position: absolute;
-                font-size: 0.8rem;
-                font-family: 'FontAwesome';
-                left: 0;
-                right: 0;
-                top: 0;
-                bottom: 0;
-                width: auto;
-                height: auto;
-                transform: none;
-                border-width: 0;
-                border-radius: 0.2rem;
-                content: "\f00c";
-                text-align: center;
-                vertical-align: middle;
-                color: @contrast-lightest;
-                display: block !important;
-            }
-        }
-    }
-}
 

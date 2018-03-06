@@ -27,7 +27,7 @@ ${templateConfiguration.mailCss}
 		Ihr Betreuungsangebot für ${betreuung.kind.kindJA.fullName} / ${betreuung.institutionStammdaten.institution.name} wurde abgelehnt.
 		Die Betreuungsangebote können
 		<a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/betreuungen/${betreuung.extractGesuch().id}">hier</a>
-		bearbeitet werden.
+		eingesehen werden.
 	</p>
 	<p>
 		Freundliche Grüsse <br/>
