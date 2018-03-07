@@ -45,6 +45,7 @@ import ch.dvbern.ebegu.entities.Gesuchsperiode_;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt_;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.GesuchDeletionCause;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -180,7 +181,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 				Fall fall = gesuch.getFall();
 				// Gesuch, WizardSteps, Mahnungen, Dokumente, AntragstatusHistory, Zahlungspositionen
 				LOGGER.info("Deleting Gesuch of Fall {}", gesuch.getFall().getFallNummer());
-				gesuchService.removeGesuch(gesuch.getId());
+				gesuchService.removeGesuch(gesuch.getId(), GesuchDeletionCause.BATCHJOB_DATENSCHUTZVERORDNUNG);
 				// Feststellen, ob es das letzte Gesuch dieses Falles war
 				List<String> allGesuchIDsForFall = gesuchService.getAllGesuchIDsForFall(fall.getId());
 				if (allGesuchIDsForFall.isEmpty()) {

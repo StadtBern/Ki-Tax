@@ -1256,5 +1256,6 @@
     "BatchJobStatus_REQUESTED": "Statistik angefordert",
     "BatchJobStatus_RUNNING": "Statistik wird erstellt",
     "BatchJobStatus_FINISHED": "Bereit zum Download",
-    "BatchJobStatus_FAILED": "Nicht erfolgreich abgeschlossen"
+    "BatchJobStatus_FAILED": "Nicht erfolgreich abgeschlossen",
+    "ANMELDUNG_KEINE_DETAILINFORMATIONEN": "Keine Detailinformationen, Anmeldung bereits erfolgt"
 }

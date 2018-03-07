@@ -69,6 +69,7 @@ import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Fall_;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchDeletionLog;
 import ch.dvbern.ebegu.entities.Gesuch_;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Gesuchsperiode_;
@@ -91,6 +92,7 @@ import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
+import ch.dvbern.ebegu.enums.GesuchDeletionCause;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.enums.WizardStepName;
@@ -171,6 +173,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private MitteilungService mitteilungService;
 	@Inject
 	private BetreuungService betreuungService;
+	@Inject
+	private GesuchDeletionLogService gesuchDeletionLogService;
 
 	@Nonnull
 	@Override
@@ -328,7 +332,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN })
-	public void removeGesuch(@Nonnull String gesuchId) {
+	public void removeGesuch(@Nonnull String gesuchId, GesuchDeletionCause deletionCause) {
 		Validate.notNull(gesuchId);
 		Optional<Gesuch> gesuchOptional = findGesuch(gesuchId);
 		Gesuch gesToRemove = gesuchOptional.orElseThrow(() -> new EbeguEntityNotFoundException("removeGesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId));
@@ -344,6 +348,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		mitteilungService.removeAllBetreuungMitteilungenForGesuch(gesToRemove);
 
 		resetMutierteAnmeldungen(gesToRemove);
+
+		// Jedes Loeschen eines Gesuchs muss protokolliert werden
+		GesuchDeletionLog gesuchDeletionLog = new GesuchDeletionLog(gesToRemove, deletionCause);
+		gesuchDeletionLogService.saveGesuchDeletionLog(gesuchDeletionLog);
 
 		//Finally remove the Gesuch when all other objects are really removed
 		persistence.remove(gesToRemove);
@@ -1156,7 +1164,13 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			try {
 				mailService.sendInfoGesuchGeloescht(gesuch);
 				betreuungen.addAll(gesuch.extractAllBetreuungen());
-				removeGesuch(gesuch.getId());
+				GesuchDeletionCause typ;
+				if (gesuch.getStatus() == AntragStatus.IN_BEARBEITUNG_GS) {
+					typ = GesuchDeletionCause.BATCHJOB_NICHT_FREIGEGEBEN;
+				} else {
+					typ = GesuchDeletionCause.BATCHJOB_KEINE_QUITTUNG;
+				}
+				removeGesuch(gesuch.getId(), typ);
 			} catch (MailException e) {
 				LOG.error("Mail InfoGesuchGeloescht konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
 				anzahl--;

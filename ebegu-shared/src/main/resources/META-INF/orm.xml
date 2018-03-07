@@ -336,5 +336,6 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
 	<entity class="ch.dvbern.ebegu.entities.BelegungFerieninsel"/>
 	<entity class="ch.dvbern.ebegu.entities.BelegungFerieninselTag"/>
 	<entity class="ch.dvbern.ebegu.entities.Workjob"/>
+	<entity class="ch.dvbern.ebegu.entities.GesuchDeletionLog"/>
 
 </entity-mappings>
