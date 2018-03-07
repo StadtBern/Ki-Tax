@@ -16,6 +16,7 @@
 package ch.dvbern.ebegu.batch.jobs.report;
 
 import javax.batch.api.listener.AbstractJobListener;
+import javax.batch.runtime.BatchStatus;
 import javax.batch.runtime.context.JobContext;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -49,6 +50,11 @@ public class ReportJobListener extends AbstractJobListener {
 	public void afterJob() {
 		LOG.debug("ReportJobListener finished: {}, status: {},{}",
 			ctx.getExecutionId(), ctx.getBatchStatus(), ctx.getExitStatus());
-		workjobService.changeStateOfWorkjob(ctx.getExecutionId(), BatchJobStatus.FINISHED);
+		//wenn interner job completed ist sehen wir das auch als erfolgreich an, alles andere sehen wir als fehlschlag
+		if (ctx.getExitStatus().equals(BatchStatus.COMPLETED.name())) {
+			workjobService.changeStateOfWorkjob(ctx.getExecutionId(), BatchJobStatus.FINISHED);
+		} else {
+			workjobService.changeStateOfWorkjob(ctx.getExecutionId(), BatchJobStatus.FAILED);
+		}
 	}
 }

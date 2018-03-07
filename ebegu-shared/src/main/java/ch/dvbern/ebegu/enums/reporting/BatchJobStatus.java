@@ -26,7 +26,11 @@ public enum BatchJobStatus {
 	 */
 	RUNNING,
 	/**
-	 * Fertig/abgebrochen
+	 * abgebrochen
+	 */
+	FAILED,
+	/**
+	 * Fertig
 	 */
 	FINISHED
 }
