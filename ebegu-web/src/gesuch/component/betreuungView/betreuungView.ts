@@ -283,9 +283,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             } else if (this.moduleBackup !== undefined && this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT_FALSCHE_INSTITUTION)) {
                 this.getBetreuungModel().belegungTagesschule.moduleTagesschule = this.moduleBackup;
             } else {
-                let angemeldeteModule: TSModulTagesschule[] = this.getBetreuungModel().belegungTagesschule.moduleTagesschule
+                this.getBetreuungModel().belegungTagesschule.moduleTagesschule = this.getBetreuungModel().belegungTagesschule.moduleTagesschule
                     .filter(modul => modul.angemeldet === true);
-                this.getBetreuungModel().belegungTagesschule.moduleTagesschule = angemeldeteModule;
             }
         }
     }
