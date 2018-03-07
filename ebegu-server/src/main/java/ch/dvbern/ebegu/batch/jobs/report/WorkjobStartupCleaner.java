@@ -31,6 +31,12 @@ import ch.dvbern.ebegu.entities.Workjob;
 import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.services.WorkjobService;
 
+/**
+ * Wenn ein Job Fehlgeschlagen in der Tabelle steht beim Startup so kann dieser nie mehr erfolgreich finnished
+ * werden da wir den JBoss die internen Jobs nicht ueber einen Neustart speichern lassen. Damit diese den
+ * Benutzer nicht blockieren beim generieren von Statistiken, loeschen wir die mal alle
+ * siehe auch EBEGU-1775
+ */
 @Startup
 @Singleton
 @RunAs(UserRoleName.SUPER_ADMIN)
@@ -42,10 +48,12 @@ public class WorkjobStartupCleaner {
 	@Resource
 	private TimerService timerService;
 
-
+	/**
+	 * damit wir injection benutzten koennen, machen wir hier einen Timer der die Timeout Methode ausfuehrt
+	 */
 	@PostConstruct
 	public void startControlBeans() {
-		timerService.createTimer(5 * 1000, "Wir muessen warten bis alle Services verfuegbar sind");
+		timerService.createTimer(7 * 1000, "Wir muessen warten bis alle Services verfuegbar sind");
 	}
 
 

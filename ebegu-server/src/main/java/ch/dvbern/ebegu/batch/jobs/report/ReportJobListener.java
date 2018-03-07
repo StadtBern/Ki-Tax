@@ -50,6 +50,7 @@ public class ReportJobListener extends AbstractJobListener {
 	public void afterJob() {
 		LOG.debug("ReportJobListener finished: {}, status: {},{}",
 			ctx.getExecutionId(), ctx.getBatchStatus(), ctx.getExitStatus());
+		//wenn interner job completed ist sehen wir das auch als erfolgreich an, alles andere sehen wir als fehlschlag
 		if (ctx.getExitStatus().equals(BatchStatus.COMPLETED.name())) {
 			workjobService.changeStateOfWorkjob(ctx.getExecutionId(), BatchJobStatus.FINISHED);
 		} else {
