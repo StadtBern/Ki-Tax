@@ -58,10 +58,8 @@ public class EbeguConstraintValidationExceptionMapper extends AbstractEbeguExcep
 			LOG.warn("Constraint Violation occured ", exception);
 			ConstraintViolationException constViolationEx = (ConstraintViolationException) rootCause;
 			ResteasyViolationException resteasyViolationException = new ResteasyViolationException(constViolationEx.getConstraintViolations());
-			List<MediaType> acceptedTypes = new ArrayList<>(resteasyViolationException.getAccept());
-			acceptedTypes.add(MediaType.APPLICATION_JSON_TYPE);
-			return ViolationReportCreator.
-				buildViolationReportResponse(resteasyViolationException, Status.CONFLICT, getAcceptMediaType(acceptedTypes));
+			final MediaType acceptMediaType = getAcceptMediaType(resteasyViolationException.getAccept());
+			return ViolationReportCreator.buildViolationReportResponse(resteasyViolationException, Status.CONFLICT, acceptMediaType);
 		}
 		if (rootCause instanceof EJBAccessException) {
 			return RestUtil.sendErrorNotAuthorized();    // nackte 403 status antwort
