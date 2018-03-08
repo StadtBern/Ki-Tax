@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implements ExceptionMapper<E> {
 
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractEbeguExceptionMapper.class.getSimpleName());
 
 	@Context
 	private HttpHeaders headers;
@@ -55,6 +55,7 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 		return builder.build();
 	}
 
+	@Nullable
 	protected abstract Response buildViolationReportResponse(E exception, Response.Status status);
 
 	protected String unwrapException(Throwable t) {

@@ -79,7 +79,7 @@ export class DvErrorMessagesPanelComponent {
     }
 
     private removeOnlineMutation(objectId: string, gesuchsperiodeId: string): void {
-        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+        this.dvDialog.showRemoveDialog(removeDialogTemplate, undefined, RemoveDialogController, {
             title: 'REMOVE_ONLINE_MUTATION_CONFIRMATION',
             deleteText: 'REMOVE_ONLINE_MUTATION_BESCHREIBUNG',
             parentController: undefined,
@@ -90,7 +90,7 @@ export class DvErrorMessagesPanelComponent {
     }
 
     private removeOnlineErneuerungsgesuch(objectId: string, gesuchsperiodeId: string): void {
-        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+        this.dvDialog.showRemoveDialog(removeDialogTemplate, undefined, RemoveDialogController, {
             title: 'REMOVE_ONLINE_ERNEUERUNGSGESUCH_CONFIRMATION',
             deleteText: 'REMOVE_ONLINE_ERNEUERUNGSGESUCH_BESCHREIBUNG',
             parentController: undefined,

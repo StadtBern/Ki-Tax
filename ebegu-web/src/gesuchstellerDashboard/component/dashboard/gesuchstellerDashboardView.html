@@ -101,17 +101,17 @@
             <tbody>
             <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                 ng-click="vm.editAntrag(row)" role="row" role="row" tabindex="-1">
-                <td class="ellipsis" ellipsis-tooltip="{{row.antragTyp | translate}}"
+                <td class="ellipsis" title="{{row.antragTyp | translate}}"
                     ng-bind="row.antragTyp | translate"></td>
                 <td class="ellipsis"
-                    ellipsis-tooltip="{{row.gesuchsperiodeString}}"
+                    title="{{row.gesuchsperiodeString}}"
                     ng-bind="row.gesuchsperiodeString" hide-sm hide-xs></td>
                 <td class="ellipsis"
-                    ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
+                    title="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
                     ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
-                <td class="ellipsis" ellipsis-tooltip="{{vm.translate(row.status)}}"
+                <td class="ellipsis" title="{{vm.translate(row.status)}}"
                     ng-bind="vm.translateStatus(row)"></td>
-                <td class="ellipsis" ellipsis-tooltip="{{vm.getHauptVerantwortlicherFullName(row)}}"
+                <td class="ellipsis" title="{{vm.getHauptVerantwortlicherFullName(row)}}"
                     ng-bind="vm.getHauptVerantwortlicherFullName(row)" hide-sm hide-xs></td>
                 <td class="ellipsis" role="cell" tabindex="-1" ng-click="$event.stopPropagation()" width="5%" hide-sm
                     hide-xs>
