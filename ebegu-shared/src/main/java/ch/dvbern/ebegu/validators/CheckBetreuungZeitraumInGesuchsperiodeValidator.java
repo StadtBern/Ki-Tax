@@ -37,10 +37,9 @@ public class CheckBetreuungZeitraumInGesuchsperiodeValidator implements Constrai
 
 	@Override
 	public boolean isValid(Betreuung betreuung, ConstraintValidatorContext context) {
+		final DateRange gueltigkeitGesuchsperiode = betreuung.extractGesuchsperiode().getGueltigkeit();
 		for (BetreuungspensumContainer betreuungspensumContainer : betreuung.getBetreuungspensumContainers()) {
 			final DateRange pensumDateRange = betreuungspensumContainer.getBetreuungspensumJA().getGueltigkeit();
-			final DateRange gueltigkeitGesuchsperiode = betreuung.extractGesuchsperiode().getGueltigkeit();
-
 			if (!gueltigkeitGesuchsperiode.getOverlap(pensumDateRange).isPresent()) {
 				setConstraintViolationMessage(context);
 				return false;
