@@ -44,14 +44,15 @@ public final class ViolationReportCreator {
 		if (acceptedMedia != null) {
 			return constructResponse(exception, builder, acceptedMedia);
 		}
-		// Default media type. Es muss JSON sein, da der Client sonst mit der Nachricht nicht umgehen kann und die Fehlermeldung als
-		// unerwarteter Fehler angezeit wird
+		// If the client did not specify a specific type (or rather no specific type was passed here)
+		// then we return application/json since that is what our client can understand. Returning text/plain
+		// to our client will produce unerwarteter fehler.
 		return constructResponse(exception, builder, MediaType.APPLICATION_JSON_TYPE);
 	}
 
 	/**
-	 * Setzt den Typ und die Exception als ValidationReport. acceptedMedia sollte deshalb ein Typ sein, der ein Objekt
-	 * als entity akzeptiert: JSON, XML
+	 * sets the accepted media type and the wraps the Exception in a ValidationReport.
+	 * acceptedMedia should therefore be able to serialize an object (Json, XML)
 	 */
 	private static Response constructResponse(ResteasyViolationException exception, ResponseBuilder builder, @Nonnull MediaType acceptedMedia) {
 		builder.type(acceptedMedia);
