@@ -15,9 +15,6 @@
 
 package ch.dvbern.ebegu.api.errors;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Nullable;
 import javax.validation.ConstraintDeclarationException;
 import javax.validation.ConstraintDefinitionException;

@@ -17,8 +17,6 @@ package ch.dvbern.ebegu.api.errors;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.ejb.EJBAccessException;
@@ -29,12 +27,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
+import ch.dvbern.ebegu.api.util.RestUtil;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jboss.resteasy.api.validation.ResteasyViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.dvbern.ebegu.api.util.RestUtil;
 
 /**
  * Created by imanol on 01.03.16.
