@@ -52,6 +52,9 @@ public interface WorkjobService {
 	@Nonnull
 	List<Workjob> findWorkjobs(@Nonnull String startingUserName, @Nonnull Set<BatchJobStatus> statesToSearch);
 
+	@Nonnull
+	List<Workjob> findUnfinishedWorkjobs();
+
 	/**
 	 * update query that changes state
 	 * @param executionId
@@ -60,4 +63,6 @@ public interface WorkjobService {
 	void changeStateOfWorkjob(long executionId,@Nonnull BatchJobStatus status);
 
 	void addResultToWorkjob(@Nonnull String workjobID, @Nonnull String resultData);
+
+	void removeWorkjob(Workjob workjob);
 }
