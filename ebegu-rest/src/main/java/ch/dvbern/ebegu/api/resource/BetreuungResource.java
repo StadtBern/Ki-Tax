@@ -98,7 +98,7 @@ public class BetreuungResource {
 		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
 		@Nonnull @NotNull @PathParam("abwesenheit") Boolean abwesenheit,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
@@ -107,7 +107,13 @@ public class BetreuungResource {
 			}
 			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
 			resourceHelper.assertGesuchStatusForBenutzerRole(kind.get().getGesuch(), convertedBetreuung);
+
 			convertedBetreuung.setKind(kind.get());
+			if (convertedBetreuung.isKeineDetailinformationen()) {
+				// eine Anmeldung ohne Detailinformationen muss immer als Uebernommen gespeichert werden
+				convertedBetreuung.setBetreuungsstatus(Betreuungsstatus.SCHULAMT_ANMELDUNG_UEBERNOMMEN);
+			}
+
 			Betreuung persistedBetreuung = this.betreuungService.saveBetreuung(convertedBetreuung, abwesenheit);
 
 			return converter.betreuungToJAX(persistedBetreuung);
@@ -126,7 +132,7 @@ public class BetreuungResource {
 		@Nonnull @NotNull @Valid List<JaxBetreuung> betreuungenJAXP,
 		@Nonnull @NotNull @PathParam("abwesenheit") Boolean abwesenheit,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		if (!betreuungenJAXP.isEmpty() && betreuungenJAXP.get(0).getGesuchId() != null) {
 			final Optional<Gesuch> gesuch = gesuchService.findGesuch(betreuungenJAXP.get(0).getGesuchId());
@@ -153,7 +159,7 @@ public class BetreuungResource {
 		@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
 		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Validate.notNull(betreuungJAXP.getId());
 		// Sicherstellen, dass der Status des Server-Objektes genau dem erwarteten Status entspricht
@@ -183,7 +189,7 @@ public class BetreuungResource {
 		@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
 		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Validate.notNull(betreuungJAXP.getId());
 
@@ -213,7 +219,7 @@ public class BetreuungResource {
 	public JaxBetreuung anmeldungSchulamtUebernehmen(@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
 		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Validate.notNull(betreuungJAXP.getId());
 
@@ -242,7 +248,7 @@ public class BetreuungResource {
 	public JaxBetreuung anmeldungSchulamtAblehnen(@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
 		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Validate.notNull(betreuungJAXP.getId());
 
@@ -272,7 +278,7 @@ public class BetreuungResource {
 	public JaxBetreuung anmeldungSchulamtFalscheInstitution(@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
 		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Validate.notNull(betreuungJAXP.getId());
 
@@ -300,7 +306,7 @@ public class BetreuungResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxBetreuung findBetreuung(
-		@Nonnull @NotNull @PathParam("betreuungId") JaxId betreuungJAXPId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("betreuungId") JaxId betreuungJAXPId) {
 		Validate.notNull(betreuungJAXPId.getId());
 		String id = converter.toEntityId(betreuungJAXPId);
 		Optional<Betreuung> fallOptional = betreuungService.findBetreuung(id);
@@ -346,7 +352,7 @@ public class BetreuungResource {
 	public Response findAllBetreuungenWithVerfuegungFromFall(
 		@Nonnull @NotNull @PathParam("fallId") JaxId fallId,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Optional<Fall> fallOptional = fallService.findFall(converter.toEntityId(fallId));
 
@@ -370,7 +376,7 @@ public class BetreuungResource {
 	public Response createAnmeldung(
 		@Nonnull @NotNull @Valid JaxAnmeldungDTO jaxAnmeldungDTO,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Optional<KindContainer> kind = kindService.findKind(jaxAnmeldungDTO.getKindContainerId());
 		if (kind.isPresent()) {
@@ -397,9 +403,9 @@ public class BetreuungResource {
 			.getKindContainerId());
 	}
 
-	public boolean hasDuplicate(JaxBetreuung betreuungJAXP, Set<Betreuung> betreuungen) {
-		return betreuungen.stream().filter(
-			betreuung -> {
+	public boolean hasDuplicate(JaxBetreuung betreuungJAXP, @Nullable Set<Betreuung> betreuungen) {
+		if (betreuungen != null) {
+			return betreuungen.stream().anyMatch(betreuung -> {
 				if (!Objects.equals(betreuung.getId(), betreuungJAXP.getId())) {
 					if (!Objects.equals(betreuungJAXP.getInstitutionStammdaten().getBetreuungsangebotTyp(), BetreuungsangebotTyp.FERIENINSEL)) {
 						return !betreuung.getBetreuungsstatus().isStorniert() &&
@@ -409,10 +415,11 @@ public class BetreuungResource {
 							isSameInstitution(betreuungJAXP, betreuung) &&
 							isSameFerien(betreuungJAXP, betreuung);
 					}
-				} else {
-					return false;
 				}
-			}).count() != 0;
+				return false;
+			});
+		}
+		return false;
 	}
 
 	private boolean isSameFerien(JaxBetreuung betreuungJAXP, Betreuung betreuung) {
