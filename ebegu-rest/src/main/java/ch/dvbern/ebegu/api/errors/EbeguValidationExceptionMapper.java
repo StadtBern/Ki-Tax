@@ -62,17 +62,15 @@ public class EbeguValidationExceptionMapper extends AbstractEbeguExceptionMapper
 			Exception e = resteasyViolationException.getException();
 			if (e != null) {
 				return buildResponse(unwrapException(e), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
-			} else if (resteasyViolationException.getReturnValueViolations().isEmpty()) {
-				return ViolationReportCreator.buildViolationReportResponse(resteasyViolationException, Status.BAD_REQUEST, getAcceptMediaType(resteasyViolationException.getAccept()));
 			} else {
-				return ViolationReportCreator.buildViolationReportResponse(resteasyViolationException, Status.BAD_REQUEST, getAcceptMediaType(resteasyViolationException.getAccept()));
+				final MediaType acceptMediaType = getAcceptMediaType(resteasyViolationException.getAccept());
+				return ViolationReportCreator.buildViolationReportResponse(resteasyViolationException, Status.BAD_REQUEST, acceptMediaType);
 			}
 		}
 		if (exception instanceof ConstraintViolationException) {
 			ResteasyViolationException resteasyViolationException = new ResteasyViolationException(((ConstraintViolationException) exception).getConstraintViolations());
-			List<MediaType> acceptedTypes = new ArrayList<>(resteasyViolationException.getAccept());
-			acceptedTypes.add(MediaType.APPLICATION_JSON_TYPE);
-			return ViolationReportCreator.buildViolationReportResponse(resteasyViolationException, Status.BAD_REQUEST, getAcceptMediaType(acceptedTypes));
+			final MediaType acceptMediaType = getAcceptMediaType(resteasyViolationException.getAccept());
+			return ViolationReportCreator.buildViolationReportResponse(resteasyViolationException, Status.BAD_REQUEST, acceptMediaType);
 		}
 		return buildResponse(unwrapException(exception), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
 	}
