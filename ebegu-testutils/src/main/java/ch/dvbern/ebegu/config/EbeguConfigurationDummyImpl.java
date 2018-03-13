@@ -41,7 +41,7 @@ public class EbeguConfigurationDummyImpl extends EbeguConfigurationImpl {
 
 	@Override
 	public String getSenderAddress() {
-		return "hallo@dvbern.ch";
+		return "dummyconfig@example.com";
 	}
 
 	@Override
