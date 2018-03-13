@@ -104,12 +104,12 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 
 	@Override
 	public String getOpenIdmUser() {
-		return getString(EBEGU_OPENIDM_USER, "SRVC_eBEGU");
+		return getString(EBEGU_OPENIDM_USER);
 	}
 
 	@Override
 	public String getOpenIdmPassword() {
-		return getString(EBEGU_OPENIDM_PASSWD, "EBEGUADMINTZZ0");
+		return getString(EBEGU_OPENIDM_PASSWD);
 	}
 
 	@Override
