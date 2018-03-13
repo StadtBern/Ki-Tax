@@ -191,4 +191,9 @@ public interface EbeguConfiguration {
 	 */
 	boolean isSendReportAsAttachement();
 
+	/**
+	 * Property, welches festlegt, ob die vordefinierten Testfaelle fuer diese Umgebung verwendet werden duerfen.
+	 * Achtung, dieses Property wird vom Dummy-Login Property übersteuert, d.h. es müssen beide gesetzt sein!
+	 */
+	boolean isTestfaelleEnabled();
 }
