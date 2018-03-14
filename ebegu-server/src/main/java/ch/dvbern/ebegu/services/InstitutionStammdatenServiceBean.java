@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
@@ -36,8 +37,10 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import org.apache.commons.lang3.Validate;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
+import javax.validation.Validator;
 
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
@@ -51,7 +54,9 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.ebegu.validationgroups.InstitutionsStammdatenInsertValidationGroup;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang3.Validate;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
@@ -64,6 +69,11 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 @Local(InstitutionStammdatenService.class)
 @PermitAll
 public class InstitutionStammdatenServiceBean extends AbstractBaseService implements InstitutionStammdatenService {
+
+	private static final String INSTITUTION_ID = "institutionId";
+	private static final String GP_START = "gpStart";
+	private static final String GP_END = "gpEnd";
+	private static final String ANGEBOTSTYP = "angebotstyp";
 
 	@Inject
 	private BenutzerService benutzerService;
@@ -82,6 +92,11 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	@RolesAllowed({ ADMIN, SUPER_ADMIN, ADMINISTRATOR_SCHULAMT })
 	public InstitutionStammdaten saveInstitutionStammdaten(@Nonnull InstitutionStammdaten institutionStammdaten) {
 		Objects.requireNonNull(institutionStammdaten);
+		Validator validator = Validation.byDefaultProvider().configure().buildValidatorFactory().getValidator();
+		Set<ConstraintViolation<InstitutionStammdaten>> violations = validator.validate(institutionStammdaten, InstitutionsStammdatenInsertValidationGroup.class);
+		if (!violations.isEmpty()) {
+			throw new ConstraintViolationException(violations);
+		}
 		return persistence.merge(institutionStammdaten);
 	}
 
@@ -129,8 +144,8 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 		Join<InstitutionStammdaten, Institution> institution = root.join(InstitutionStammdaten_.institution, JoinType.INNER);
 		Predicate isActivePredicate = cb.equal(institution.get(Institution_.active), Boolean.TRUE);
 
-		ParameterExpression<LocalDate> startParam = cb.parameter(LocalDate.class, "gpStart");
-		ParameterExpression<LocalDate> endParam = cb.parameter(LocalDate.class, "gpEnd");
+		ParameterExpression<LocalDate> startParam = cb.parameter(LocalDate.class, GP_START);
+		ParameterExpression<LocalDate> endParam = cb.parameter(LocalDate.class, GP_END);
 
 		// InstStammdaten Ende muss NACH GP Start sein
 		// InstStammdaten Start muss VOR GP Ende sein
@@ -140,8 +155,8 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 		query.where(startPredicate, endPredicate, isActivePredicate);
 
 		TypedQuery<InstitutionStammdaten> typedQuery = persistence.getEntityManager().createQuery(query);
-		typedQuery.setParameter("gpStart", gesuchsperiode.getGueltigkeit().getGueltigAb());
-		typedQuery.setParameter("gpEnd", gesuchsperiode.getGueltigkeit().getGueltigBis());
+		typedQuery.setParameter(GP_START, gesuchsperiode.getGueltigkeit().getGueltigAb());
+		typedQuery.setParameter(GP_END, gesuchsperiode.getGueltigkeit().getGueltigBis());
 		return typedQuery.getResultList();
 	}
 
@@ -149,8 +164,44 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	@Nonnull
 	@PermitAll
 	public Collection<InstitutionStammdaten> getAllInstitutionStammdatenByInstitution(String institutionId) {
-		List<InstitutionStammdaten> resultList = getQueryAllInstitutionStammdatenByInstitution(institutionId).getResultList();
-		return resultList;
+		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		ParameterExpression<String> institutionIdParam = cb.parameter(String.class, INSTITUTION_ID);
+
+		CriteriaQuery<InstitutionStammdaten> query = cb.createQuery(InstitutionStammdaten.class);
+		Root<InstitutionStammdaten> root = query.from(InstitutionStammdaten.class);
+		Predicate gesuchstellerPred = cb.equal(root.get(InstitutionStammdaten_.institution).get(Institution_.id), institutionIdParam);
+		query.where(gesuchstellerPred);
+		TypedQuery<InstitutionStammdaten> typedQuery = persistence.getEntityManager().createQuery(query);
+		typedQuery.setParameter(INSTITUTION_ID, institutionId);
+		return typedQuery.getResultList();
+	}
+
+	@Override
+	@Nonnull
+	@PermitAll
+	public Collection<InstitutionStammdaten> getAllInstitutionStammdatenByInstitutionAndGesuchsperiode(@Nonnull String institutionId,
+		@Nonnull BetreuungsangebotTyp betreuungsangebotTyp, @Nonnull Gesuchsperiode gesuchsperiode) {
+
+		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		ParameterExpression<String> institutionIdParam = cb.parameter(String.class, INSTITUTION_ID);
+		ParameterExpression<LocalDate> gueltigAbParam = cb.parameter(LocalDate.class, GP_START);
+		ParameterExpression<LocalDate> gueltigBisParam = cb.parameter(LocalDate.class, GP_END);
+		ParameterExpression<BetreuungsangebotTyp> angebotstypParam = cb.parameter(BetreuungsangebotTyp.class, ANGEBOTSTYP);
+
+		CriteriaQuery<InstitutionStammdaten> query = cb.createQuery(InstitutionStammdaten.class);
+		Root<InstitutionStammdaten> root = query.from(InstitutionStammdaten.class);
+		Predicate institutionPredicate = cb.equal(root.get(InstitutionStammdaten_.institution).get(Institution_.id), institutionIdParam);
+		Predicate startPredicate = cb.greaterThanOrEqualTo(root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigBis), gueltigAbParam);
+		Predicate endPredicate = cb.lessThanOrEqualTo(root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigAb), gueltigBisParam);
+		Predicate angebotstypPredicate = cb.equal(root.get(InstitutionStammdaten_.betreuungsangebotTyp), angebotstypParam);
+
+		query.where(institutionPredicate, startPredicate, endPredicate, angebotstypPredicate);
+		TypedQuery<InstitutionStammdaten> typedQuery = persistence.getEntityManager().createQuery(query);
+		typedQuery.setParameter(INSTITUTION_ID, institutionId);
+		typedQuery.setParameter(GP_START, gesuchsperiode.getGueltigkeit().getGueltigAb());
+		typedQuery.setParameter(GP_END, gesuchsperiode.getGueltigkeit().getGueltigBis());
+		typedQuery.setParameter(ANGEBOTSTYP, betreuungsangebotTyp);
+		return typedQuery.getResultList();
 	}
 
 	@Override
@@ -184,16 +235,5 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 		return resultList;
 	}
 
-	private TypedQuery<InstitutionStammdaten> getQueryAllInstitutionStammdatenByInstitution(@Nonnull String institutionId) {
-		CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		ParameterExpression<String> institutionIdParam = cb.parameter(String.class, "institutionId");
 
-		CriteriaQuery<InstitutionStammdaten> query = cb.createQuery(InstitutionStammdaten.class);
-		Root<InstitutionStammdaten> root = query.from(InstitutionStammdaten.class);
-		Predicate gesuchstellerPred = cb.equal(root.get(InstitutionStammdaten_.institution).get(Institution_.id), institutionIdParam);
-		query.where(gesuchstellerPred);
-		TypedQuery<InstitutionStammdaten> typedQuery = persistence.getEntityManager().createQuery(query);
-		typedQuery.setParameter("institutionId", institutionId);
-		return typedQuery;
-	}
 }

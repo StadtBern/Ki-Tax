@@ -105,7 +105,7 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void getAllActiveInstitutionStammdatenByGesuchsperiode() {
+	public void getAllActiveInstitutionStammdatenByGesuchsperiodeIdentisch() {
 		Mandant mandant = TestDataUtil.createDefaultMandant();
 		mandant = persistence.persist(mandant);
 		Gesuchsperiode gesuchsperiode1718 = TestDataUtil.createGesuchsperiode1718();
@@ -118,24 +118,132 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguLoginTest {
 		LocalDate gpEnde = gesuchsperiode1718.getGueltigkeit().getGueltigBis();
 
 		InstitutionStammdaten isIdentisch = addInstitutionsstammdaten(institution, gpStart, gpEnde);
+
+		Collection<InstitutionStammdaten> all = institutionStammdatenService.getAllActiveInstitutionStammdatenByGesuchsperiode(gesuchsperiode1718.getId());
+		Assert.assertNotNull(all);
+		Assert.assertEquals(1, all.size());
+		Assert.assertTrue(all.contains(isIdentisch));
+	}
+
+	@Test
+	public void getAllActiveInstitutionStammdatenByGesuchsperiodeSchnittAnfang() {
+		Mandant mandant = TestDataUtil.createDefaultMandant();
+		mandant = persistence.persist(mandant);
+		Gesuchsperiode gesuchsperiode1718 = TestDataUtil.createGesuchsperiode1718();
+		gesuchsperiode1718 = persistence.persist(gesuchsperiode1718);
+		Institution institution = TestDataUtil.createDefaultInstitution();
+		institution.setTraegerschaft(null);
+		institution.setMandant(mandant);
+		institution = persistence.persist(institution);
+		LocalDate gpStart = gesuchsperiode1718.getGueltigkeit().getGueltigAb();
+
 		InstitutionStammdaten schnittAnfang = addInstitutionsstammdaten(institution, gpStart.minusWeeks(1), gpStart.plusWeeks(1));
+
+		Collection<InstitutionStammdaten> all = institutionStammdatenService.getAllActiveInstitutionStammdatenByGesuchsperiode(gesuchsperiode1718.getId());
+		Assert.assertNotNull(all);
+		Assert.assertEquals(1, all.size());
+		Assert.assertTrue(all.contains(schnittAnfang));
+	}
+
+	@Test
+	public void getAllActiveInstitutionStammdatenByGesuchsperiodeSchnittEnde() {
+		Mandant mandant = TestDataUtil.createDefaultMandant();
+		mandant = persistence.persist(mandant);
+		Gesuchsperiode gesuchsperiode1718 = TestDataUtil.createGesuchsperiode1718();
+		gesuchsperiode1718 = persistence.persist(gesuchsperiode1718);
+		Institution institution = TestDataUtil.createDefaultInstitution();
+		institution.setTraegerschaft(null);
+		institution.setMandant(mandant);
+		institution = persistence.persist(institution);
+		LocalDate gpEnde = gesuchsperiode1718.getGueltigkeit().getGueltigBis();
+
 		InstitutionStammdaten schnittEnde = addInstitutionsstammdaten(institution, gpEnde.minusWeeks(1), gpEnde.plusWeeks(1));
+
+		Collection<InstitutionStammdaten> all = institutionStammdatenService.getAllActiveInstitutionStammdatenByGesuchsperiode(gesuchsperiode1718.getId());
+		Assert.assertNotNull(all);
+		Assert.assertEquals(1, all.size());
+		Assert.assertTrue(all.contains(schnittEnde));
+	}
+
+	@Test
+	public void getAllActiveInstitutionStammdatenByGesuchsperiodeSchnittMitte() {
+		Mandant mandant = TestDataUtil.createDefaultMandant();
+		mandant = persistence.persist(mandant);
+		Gesuchsperiode gesuchsperiode1718 = TestDataUtil.createGesuchsperiode1718();
+		gesuchsperiode1718 = persistence.persist(gesuchsperiode1718);
+		Institution institution = TestDataUtil.createDefaultInstitution();
+		institution.setTraegerschaft(null);
+		institution.setMandant(mandant);
+		institution = persistence.persist(institution);
+		LocalDate gpStart = gesuchsperiode1718.getGueltigkeit().getGueltigAb();
+		LocalDate gpEnde = gesuchsperiode1718.getGueltigkeit().getGueltigBis();
+
 		InstitutionStammdaten schnittMitte = addInstitutionsstammdaten(institution, gpStart.plusWeeks(1), gpEnde.minusWeeks(1));
+
+		Collection<InstitutionStammdaten> all = institutionStammdatenService.getAllActiveInstitutionStammdatenByGesuchsperiode(gesuchsperiode1718.getId());
+		Assert.assertNotNull(all);
+		Assert.assertEquals(1, all.size());
+		Assert.assertTrue(all.contains(schnittMitte));
+	}
+
+	@Test
+	public void getAllActiveInstitutionStammdatenByGesuchsperiodeUeberlappendTotal() {
+		Mandant mandant = TestDataUtil.createDefaultMandant();
+		mandant = persistence.persist(mandant);
+		Gesuchsperiode gesuchsperiode1718 = TestDataUtil.createGesuchsperiode1718();
+		gesuchsperiode1718 = persistence.persist(gesuchsperiode1718);
+		Institution institution = TestDataUtil.createDefaultInstitution();
+		institution.setTraegerschaft(null);
+		institution.setMandant(mandant);
+		institution = persistence.persist(institution);
+		LocalDate gpStart = gesuchsperiode1718.getGueltigkeit().getGueltigAb();
+		LocalDate gpEnde = gesuchsperiode1718.getGueltigkeit().getGueltigBis();
+
 		InstitutionStammdaten ueberlappendTotal = addInstitutionsstammdaten(institution, gpStart.minusWeeks(1), gpEnde.plusWeeks(1));
+
+		Collection<InstitutionStammdaten> all = institutionStammdatenService.getAllActiveInstitutionStammdatenByGesuchsperiode(gesuchsperiode1718.getId());
+		Assert.assertNotNull(all);
+		Assert.assertEquals(1, all.size());
+		Assert.assertTrue(all.contains(ueberlappendTotal));
+	}
+
+	@Test
+	public void getAllActiveInstitutionStammdatenByGesuchsperiodeCompletelyBefore() {
+		Mandant mandant = TestDataUtil.createDefaultMandant();
+		mandant = persistence.persist(mandant);
+		Gesuchsperiode gesuchsperiode1718 = TestDataUtil.createGesuchsperiode1718();
+		gesuchsperiode1718 = persistence.persist(gesuchsperiode1718);
+		Institution institution = TestDataUtil.createDefaultInstitution();
+		institution.setTraegerschaft(null);
+		institution.setMandant(mandant);
+		institution = persistence.persist(institution);
+		LocalDate gpStart = gesuchsperiode1718.getGueltigkeit().getGueltigAb();
+
 		InstitutionStammdaten completelyBefore = addInstitutionsstammdaten(institution, gpStart.minusWeeks(2), gpStart.minusWeeks(1));
+
+		Collection<InstitutionStammdaten> all = institutionStammdatenService.getAllActiveInstitutionStammdatenByGesuchsperiode(gesuchsperiode1718.getId());
+		Assert.assertNotNull(all);
+		Assert.assertEquals(0, all.size());
+		Assert.assertFalse(all.contains(completelyBefore));
+	}
+
+	@Test
+	public void getAllActiveInstitutionStammdatenByGesuchsperiodeCompletelyAfter() {
+		Mandant mandant = TestDataUtil.createDefaultMandant();
+		mandant = persistence.persist(mandant);
+		Gesuchsperiode gesuchsperiode1718 = TestDataUtil.createGesuchsperiode1718();
+		gesuchsperiode1718 = persistence.persist(gesuchsperiode1718);
+		Institution institution = TestDataUtil.createDefaultInstitution();
+		institution.setTraegerschaft(null);
+		institution.setMandant(mandant);
+		institution = persistence.persist(institution);
+		LocalDate gpEnde = gesuchsperiode1718.getGueltigkeit().getGueltigBis();
+
 		InstitutionStammdaten completelyAfter = addInstitutionsstammdaten(institution, gpEnde.plusWeeks(1), gpEnde.plusWeeks(2));
 
 		Collection<InstitutionStammdaten> all = institutionStammdatenService.getAllActiveInstitutionStammdatenByGesuchsperiode(gesuchsperiode1718.getId());
 		Assert.assertNotNull(all);
-		Assert.assertEquals(5, all.size());
-
-		Assert.assertTrue(all.contains(isIdentisch));
-		Assert.assertTrue(all.contains(schnittAnfang));
-		Assert.assertTrue(all.contains(schnittEnde));
-		Assert.assertTrue(all.contains(schnittMitte));
-		Assert.assertTrue(all.contains(ueberlappendTotal));
-
-		Assert.assertFalse(all.contains(completelyBefore));
+		Assert.assertEquals(0, all.size());
 		Assert.assertFalse(all.contains(completelyAfter));
 	}
 
@@ -157,5 +265,4 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguLoginTest {
 		institutionStammdaten.getGueltigkeit().setGueltigBis(end);
 		return institutionStammdatenService.saveInstitutionStammdaten(institutionStammdaten);
 	}
-
 }
