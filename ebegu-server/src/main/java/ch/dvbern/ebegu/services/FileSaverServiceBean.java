@@ -180,12 +180,12 @@ public class FileSaverServiceBean implements FileSaverService {
 	@RolesAllowed(SUPER_ADMIN)
 	public void deleteAllFilesInTempReportsFolder() {
 		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + '/' + Constants.TEMP_REPORT_FOLDERNAME;
-		Path file = Paths.get(absoluteFilePath);
+		Path tempFolder = Paths.get(absoluteFilePath);
 		try {
-			if (Files.exists(file) && Files.isDirectory(file)) {
-				Files.walk(file)
+			if (Files.exists(tempFolder) && Files.isDirectory(tempFolder)) {
+				Files.walk(tempFolder)
 					.filter(Files::isRegularFile)
-					.forEach(g -> deleteFileIfTokenExpired(g));
+					.forEach(file -> deleteFileIfTokenExpired(file));
 			}
 		} catch (IOException e) {
 			LOG.error("Can't save file in FileSystem: {}", absoluteFilePath, e);
