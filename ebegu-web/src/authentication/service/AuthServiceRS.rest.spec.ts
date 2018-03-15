@@ -58,7 +58,7 @@ describe('AuthServiceRS', function () {
             expect($http.post).not.toHaveBeenCalled();
         });
         it('receives a loginRequest and handles the incoming cookie', function () {
-            let user: TSUser = new TSUser('Emma', 'Gerber', 'geem', 'password5', 'emma.gerber@myemail.ch', undefined, TSRole.GESUCHSTELLER);
+            let user: TSUser = new TSUser('Emma', 'Gerber', 'geem', 'password5', 'emma.gerber@example.com', undefined, TSRole.GESUCHSTELLER);
             let encodedUser = base64.encode(JSON.stringify(user).split('_').join(''));
             spyOn($cookies, 'get').and.returnValue(encodedUser);
 

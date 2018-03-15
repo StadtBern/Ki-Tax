@@ -58,12 +58,12 @@ export class SchulungViewController {
             for (let i = 0; i < this.gesuchstellerList.length; i++) {
                 let name = this.gesuchstellerList[i];
                 let username = 'sch' + (((i + 1) < 10) ? '0' + (i + 1).toString() : (i + 1).toString());
-                this.usersList.push(new TSUser('Sandra', name, username, 'password1', 'sandra.' + name.toLocaleLowerCase() + '@mailinator.com', this.mandant, TSRole.GESUCHSTELLER));
+                this.usersList.push(new TSUser('Sandra', name, username, 'password1', 'sandra.' + name.toLocaleLowerCase() + '@example.com', this.mandant, TSRole.GESUCHSTELLER));
             }
 
-            this.institutionsuserList.push(new TSUser('Fritz', 'Fisch', 'sch20', 'password1', 'fritz.fisch@mailinator.com',
+            this.institutionsuserList.push(new TSUser('Fritz', 'Fisch', 'sch20', 'password1', 'fritz.fisch@example.com',
                 this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftFisch, undefined));
-            this.institutionsuserList.push(new TSUser('Franz', 'Forelle', 'sch21', 'password1', 'franz.forelle@mailinator.com',
+            this.institutionsuserList.push(new TSUser('Franz', 'Forelle', 'sch21', 'password1', 'franz.forelle@example.com',
                 this.mandant, TSRole.SACHBEARBEITER_INSTITUTION, undefined, this.institutionForelle));
         });
     }
@@ -85,7 +85,7 @@ export class SchulungViewController {
     private getTraegerschaftFisch(): TSTraegerschaft {
         let traegerschaft = new TSTraegerschaft();
         traegerschaft.name = 'Fisch';
-        traegerschaft.mail = 'fisch@mailinator.com';
+        traegerschaft.mail = 'fisch@example.com';
         traegerschaft.id = '11111111-1111-1111-1111-111111111111';
         return traegerschaft;
     }
@@ -97,7 +97,7 @@ export class SchulungViewController {
         let institution = new TSInstitution();
         institution.name = 'Forelle';
         institution.id = '22222222-1111-1111-1111-111111111111';
-        institution.mail = 'forelle@mailinator.com';
+        institution.mail = 'forelle@example.com';
         institution.traegerschaft = this.traegerschaftFisch;
         institution.mandant = this.mandant;
         return institution;

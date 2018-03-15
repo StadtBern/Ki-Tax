@@ -43,22 +43,22 @@ public enum ApplicationPropertyKey {
 	DEFAULT_VERANTWORTLICHER_SCH,
 
 	/**
-	 * <Dbtr><Nm> Name des Zahlungspflichtigen
+	 * {Dbtr}{Nm} Name des Zahlungspflichtigen
 	 */
 	DEBTOR_NAME,
 
 	/**
-	 * <IBAN> IBAN des Zahlungspflichtigen?
+	 * {IBAN} IBAN des Zahlungspflichtigen?
 	 */
 	DEBTOR_IBAN,
 
 	/**
-	 * <BIC> BIC des Zahlungspflichtigen?
+	 * {BIC} BIC des Zahlungspflichtigen?
 	 */
 	DEBTOR_BIC,
 
 	/**
-	 * <ChrgsAcct> <IBAN> IBAN Belastungskonto Gebühren?
+	 * {ChrgsAcct} {IBAN} IBAN Belastungskonto Gebühren?
 	 */
 	DEBTOR_IBAN_GEBUEHREN,
 
@@ -87,5 +87,11 @@ public enum ApplicationPropertyKey {
 	 *
 	 */
 	UPLOAD_FILETYPES_WHITELIST,
+
+	/**
+	 * Flag, ob das Dummy Login eingeschaltet ist. Aus Sicherheitsgruenden muss sowohl dieses wie auch das entsprechende
+	 * System-Property eingeschaltet sein, damit das Dummy Login funktioniert.
+	 */
+	DUMMY_LOGIN_ENABLED
 
 }
