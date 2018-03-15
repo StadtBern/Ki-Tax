@@ -265,7 +265,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		Traegerschaft traegerschaft = new Traegerschaft();
 		traegerschaft.setId(id);
 		traegerschaft.setName(name);
-		traegerschaft.setMail(name+EXAMPLE_COM);
+		traegerschaft.setMail(name + EXAMPLE_COM);
 		return traegerschaftService.saveTraegerschaft(traegerschaft);
 	}
 
