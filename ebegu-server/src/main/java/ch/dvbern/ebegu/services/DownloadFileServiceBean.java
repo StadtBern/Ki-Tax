@@ -36,9 +36,6 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.DownloadFile_;
@@ -48,6 +45,8 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -66,6 +65,10 @@ public class DownloadFileServiceBean implements DownloadFileService {
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+
+	@Inject
+	private FileSaverService fileSaverService;
+
 
 	@Nonnull
 	@Override
@@ -155,6 +158,8 @@ public class DownloadFileServiceBean implements DownloadFileService {
 	public void cleanUp() {
 		deleteShortTermAccessTokens();
 		deleteLongTermAccessTokens();
+		// Auch die physischen Files loeschen
+		fileSaverService.deleteAllFilesInTempReportsFolder();
 	}
 
 	private void deleteShortTermAccessTokens() {
