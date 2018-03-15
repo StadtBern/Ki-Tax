@@ -30,18 +30,17 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.entities.FileMetadata;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.UploadFileInfo;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.entities.FileMetadata;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.util.UploadFileInfo;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
@@ -174,6 +173,36 @@ public class FileSaverServiceBean implements FileSaverService {
 		} catch (IOException e) {
 			LOG.error("Can't delete directory: {}", absoluteFilePath, e);
 			return false;
+		}
+	}
+
+	@Override
+	@RolesAllowed(SUPER_ADMIN)
+	public void deleteAllFilesInTempReportsFolder() {
+		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + '/' + Constants.TEMP_REPORT_FOLDERNAME;
+		Path tempFolder = Paths.get(absoluteFilePath);
+		try {
+			if (Files.exists(tempFolder) && Files.isDirectory(tempFolder)) {
+				Files.walk(tempFolder)
+					.filter(Files::isRegularFile)
+					.forEach(file -> deleteFileIfTokenExpired(file));
+			}
+		} catch (IOException e) {
+			LOG.error("Can't save file in FileSystem: {}", absoluteFilePath, e);
+			throw new EbeguRuntimeException("save", "Could not save file in filesystem {0}", e, absoluteFilePath);
+		}
+	}
+
+	private void deleteFileIfTokenExpired(Path path) {
+		long l = path.toFile().lastModified();
+		long now = System.currentTimeMillis();
+		if (Constants.MAX_LONGER_TEMP_DOWNLOAD_AGE_MINUTES < now-l) {
+			LOG.info("Deleting File {}",  path.getFileName());
+			try {
+				Files.delete(path);
+			} catch (IOException e) {
+				LOG.error("Can't delete file in FileSystem: {}", path.getFileName(), e);
+			}
 		}
 	}
 }

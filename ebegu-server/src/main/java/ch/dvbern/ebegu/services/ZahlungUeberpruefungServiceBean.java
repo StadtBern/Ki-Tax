@@ -47,6 +47,7 @@ import ch.dvbern.ebegu.entities.Zahlungsposition;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.ejb3.annotation.TransactionTimeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,11 +114,16 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 
 	private void sendeMail() {
 		LOGGER.info("Sende Mail...");
+		String administratorMail = ebeguConfiguration.getAdministratorMail();
+		if (StringUtils.isEmpty(administratorMail)) {
+			LOGGER.warn("Es ist keine Administrator-Email konfiguriert. Sende keine E-Mail ueber den Zahlungspruefungs-Status");
+			return;
+		}
 		try {
 			final String serverName = ebeguConfiguration.getHostname();
 			if (potentielleFehlerList.isEmpty()) {
-				mailService.sendMessage("Zahlungslauf: Keine Fehler gefunden (" + serverName + ')',
-					"Keine Fehler gefunden", "eberhard.gugler@dvbern.ch");
+					mailService.sendMessage("Zahlungslauf: Keine Fehler gefunden (" + serverName + ')',
+						"Keine Fehler gefunden", administratorMail);
 			} else {
 				StringBuilder sb = new StringBuilder();
 				sb.append("Zusammenfassung: \n");
@@ -132,7 +138,7 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 					sb.append("\n*************************************\n");
 				}
 				mailService.sendMessage("Potentieller Fehler im Zahlungslauf (" + serverName + ')',
-					sb.toString(), "eberhard.gugler@dvbern.ch");
+					sb.toString(), administratorMail);
 			}
 		} catch (MailException e) {
 			LOGGER.error("Senden der Mail nicht erfolgreich", e);

@@ -41,4 +41,6 @@ public interface FileSaverService {
 	boolean copy(FileMetadata fileToCopy, String folderName);
 
 	boolean removeAllFromSubfolder(@Nonnull String subfolder);
+
+	void deleteAllFilesInTempReportsFolder();
 }

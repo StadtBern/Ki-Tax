@@ -190,7 +190,7 @@ public class TestJaxDataUtil {
 		jaxBenutzer.setRole(UserRole.ADMIN);
 		jaxBenutzer.setUsername("TestUser");
 		jaxBenutzer.setPassword("1234");
-		jaxBenutzer.setEmail("e@e.ch");
+		jaxBenutzer.setEmail("testuser@example.com");
 		jaxBenutzer.setNachname("NachnameTest");
 		jaxBenutzer.setVorname("VornameTest");
 		return jaxBenutzer;
@@ -370,7 +370,7 @@ public class TestJaxDataUtil {
 		JaxOpenIdmResult jaxOpenIdmResult = new JaxOpenIdmResult();
 		jaxOpenIdmResult.set_id(name);
 		jaxOpenIdmResult.setName(name);
-		jaxOpenIdmResult.setMail(name + "@" + name + ".ch");
+		jaxOpenIdmResult.setMail(name + "@example.com");
 		jaxOpenIdmResult.setType("sponsor");
 		return jaxOpenIdmResult;
 	}
@@ -379,7 +379,7 @@ public class TestJaxDataUtil {
 		JaxOpenIdmResult jaxOpenIdmResult = new JaxOpenIdmResult();
 		jaxOpenIdmResult.set_id(name);
 		jaxOpenIdmResult.setName(name);
-		jaxOpenIdmResult.setMail(name + "@" + name + ".ch");
+		jaxOpenIdmResult.setMail(name + "@example.com");
 		jaxOpenIdmResult.setType("institution");
 		return jaxOpenIdmResult;
 	}
