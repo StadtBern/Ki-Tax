@@ -75,10 +75,10 @@ public class EBEGUGermanAnalyzerTest {
 
 	@Test
 	public void testTokenizationOfSpecialChars() throws Exception {
-		String testquery = "test@löwenfels.ch 123-3456 123.456 mueller-meier 'test' \"test\"";
+		String testquery = "test@äöü.example.com 123-3456 123.456 mueller-meier 'test' \"test\"";
 		List<String> strings = LuceneUtil.tokenizeString(analyzer, testquery);
 		List<String> expectedTokens = new ArrayList<>();
-		Collections.addAll(expectedTokens, "test", "lowenfels.ch", "123", "3456", "123.456", "muller", "meier", "test", "test");
+		Collections.addAll(expectedTokens, "test", "aou.example.com", "123", "3456", "123.456", "muller", "meier", "test", "test");
 		Assert.assertEquals(expectedTokens, strings);
 
 	}
