@@ -52,6 +52,7 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.validationgroups.BetreuungBestaetigenValidationGroup;
 import ch.dvbern.ebegu.validators.CheckAbwesenheitDatesOverlapping;
+import ch.dvbern.ebegu.validators.CheckBetreuungZeitraumInGesuchsperiode;
 import ch.dvbern.ebegu.validators.CheckBetreuungZeitraumInstitutionsStammdatenZeitraum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
@@ -74,14 +75,15 @@ import org.hibernate.search.annotations.Indexed;
 @CheckBetreuungspensum
 @CheckBetreuungspensumDatesOverlapping
 @CheckAbwesenheitDatesOverlapping
+@CheckBetreuungZeitraumInGesuchsperiode (groups = BetreuungBestaetigenValidationGroup.class)
 @CheckBetreuungZeitraumInstitutionsStammdatenZeitraum (groups = BetreuungBestaetigenValidationGroup.class)
 @Table(
 	uniqueConstraints = {
 		@UniqueConstraint(columnNames = { "betreuungNummer", "kind_id" }, name = "UK_betreuung_kind_betreuung_nummer"),
-		@UniqueConstraint(columnNames = { "verfuegung_id" }, name = "UK_betreuung_verfuegung_id")    //hibernate ignoriert den namen leider
+		@UniqueConstraint(columnNames = "verfuegung_id", name = "UK_betreuung_verfuegung_id")    //hibernate ignoriert den namen leider
 	}
 )
-@Indexed()
+@Indexed
 @Analyzer(impl = EBEGUGermanAnalyzer.class)
 @ClassBridge(name = "bGNummer", impl = BGNummerBridge.class, analyze = Analyze.NO)
 public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, Searchable {
@@ -101,7 +103,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_institution_stammdaten_id"), nullable = false)
 	private InstitutionStammdaten institutionStammdaten;
 
-	@Enumerated(value = EnumType.STRING)
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	@NotNull
 	private Betreuungsstatus betreuungsstatus;

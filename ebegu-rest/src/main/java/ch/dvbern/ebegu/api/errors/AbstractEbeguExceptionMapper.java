@@ -50,7 +50,7 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 
 	protected Response buildResponse(Object entity, String mediaType, Response.Status status) {
 		Response.ResponseBuilder builder = Response.status(status).entity(entity);
-		builder.type(MediaType.TEXT_PLAIN);
+		builder.type(mediaType);
 		builder.header(Validation.VALIDATION_HEADER, "true");
 		return builder.build();
 	}
