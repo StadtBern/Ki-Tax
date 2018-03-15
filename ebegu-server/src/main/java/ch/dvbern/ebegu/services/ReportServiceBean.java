@@ -204,7 +204,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	private GesuchService gesuchService;
 
 	private static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
-	private static final String TEMP_REPORT_FOLDERNAME = "tempReports";
+
 
 	@Nonnull
 	@Override
@@ -255,7 +255,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		return fileSaverService.save(bytes,
 			reportVorlage.getDefaultExportFilename(),
-			TEMP_REPORT_FOLDERNAME,
+			Constants.TEMP_REPORT_FOLDERNAME,
 			getContentTypeForExport());
 	}
 
@@ -316,7 +316,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		return fileSaverService.save(bytes,
 			reportVorlage.getDefaultExportFilename(),
-			TEMP_REPORT_FOLDERNAME,
+			Constants.TEMP_REPORT_FOLDERNAME,
 			getContentTypeForExport());
 	}
 
@@ -421,7 +421,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		return fileSaverService.save(bytes,
 			reportVorlage.getDefaultExportFilename(),
-			TEMP_REPORT_FOLDERNAME,
+			Constants.TEMP_REPORT_FOLDERNAME,
 			getContentTypeForExport());
 	}
 
@@ -565,7 +565,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		return fileSaverService.save(bytes,
 			reportVorlage.getDefaultExportFilename(),
-			TEMP_REPORT_FOLDERNAME,
+			Constants.TEMP_REPORT_FOLDERNAME,
 			getContentTypeForExport());
 	}
 
@@ -634,7 +634,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		return fileSaverService.save(bytes,
 			excelFileName + ".xlsx",
-			TEMP_REPORT_FOLDERNAME,
+			Constants.TEMP_REPORT_FOLDERNAME,
 			getContentTypeForExport());
 	}
 
@@ -671,7 +671,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		return fileSaverService.save(bytes,
 			reportVorlage.getDefaultExportFilename(),
-			TEMP_REPORT_FOLDERNAME,
+			Constants.TEMP_REPORT_FOLDERNAME,
 			getContentTypeForExport());
 	}
 
@@ -1183,7 +1183,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		return fileSaverService.save(bytes,
 			reportResource.getDefaultExportFilename(),
-			TEMP_REPORT_FOLDERNAME,
+			Constants.TEMP_REPORT_FOLDERNAME,
 			getContentTypeForExport());
 	}
 
