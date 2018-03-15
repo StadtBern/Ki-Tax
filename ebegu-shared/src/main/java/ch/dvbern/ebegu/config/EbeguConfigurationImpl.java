@@ -18,7 +18,10 @@ package ch.dvbern.ebegu.config;
 import java.io.Serializable;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.services.ApplicationPropertyService;
 import org.apache.commons.configuration.SystemConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -64,6 +67,9 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_LOGIN_API_SCHULAMT_USER = "ebegu.login.api.schulamt.user";
 	private static final String EBEGU_LOGIN_API_SCHULAMT_PASSWORD = "ebegu.login.api.schulamt.password";
 	private static final String EBEGU_SEND_REPORTS_AS_ATTACHEMENT = "ebegu.send.reports.as.attachement";
+
+	@Inject
+	private ApplicationPropertyService applicationPropertyService;
 
 
 	public EbeguConfigurationImpl() {
@@ -147,7 +153,12 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 
 	@Override
 	public boolean isDummyLoginEnabled() {
-		return getBoolean(EBEGU_DUMMY_LOGIN_ENABLED, false);
+		// Um das Dummy Login einzuschalten, muss sowohl das DB Property wie auch das System Property gesetzt sein. Damit
+		// ist eine zusätzliche Sicherheit eingebaut, dass nicht aus Versehen z.B. mit einem Produktionsdump das Dummy Login
+		// automatisch ausgeschaltet ist.
+		Boolean flagFromDB = applicationPropertyService.findApplicationPropertyAsBoolean(ApplicationPropertyKey.DUMMY_LOGIN_ENABLED, false);
+		Boolean flagFromServerConfig = getBoolean(EBEGU_DUMMY_LOGIN_ENABLED, false);
+		return flagFromDB && flagFromServerConfig;
 	}
 
 	@Override
