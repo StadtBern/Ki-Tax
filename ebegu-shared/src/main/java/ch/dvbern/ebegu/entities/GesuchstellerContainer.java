@@ -99,11 +99,12 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 		return !adressen.contains(gesuchstellerAdresseContainer) && adressen.add(gesuchstellerAdresseContainer);
 	}
 
+	@Nullable
 	public Gesuchsteller getGesuchstellerGS() {
 		return gesuchstellerGS;
 	}
 
-	public void setGesuchstellerGS(Gesuchsteller gesuchstellerGS) {
+	public void setGesuchstellerGS(@Nullable Gesuchsteller gesuchstellerGS) {
 		this.gesuchstellerGS = gesuchstellerGS;
 	}
 
@@ -289,7 +290,7 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 	@Nullable
 	public GesuchstellerAdresse getWohnadresseAm(LocalDate stichtag) {
 		for (GesuchstellerAdresseContainer adresse : getAdressen()) {
-			if (AdresseTyp.WOHNADRESSE.equals(adresse.extractAdresseTyp()) && adresse.extractGueltigkeit().contains(stichtag)) {
+			if (AdresseTyp.WOHNADRESSE == adresse.extractAdresseTyp() && adresse.extractGueltigkeit().contains(stichtag)) {
 				return adresse.getGesuchstellerAdresseJA();
 			}
 		}
