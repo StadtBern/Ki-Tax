@@ -312,7 +312,7 @@ public final class TestDataUtil {
 	public static Traegerschaft createDefaultTraegerschaft() {
 		Traegerschaft traegerschaft = new Traegerschaft();
 		traegerschaft.setName("Traegerschaft1");
-		traegerschaft.setMail("hallo@dvbern.ch");
+		traegerschaft.setMail("traegerschaft@example.com");
 		return traegerschaft;
 	}
 
@@ -321,7 +321,7 @@ public final class TestDataUtil {
 		institution.setName("Institution1");
 		institution.setMandant(createDefaultMandant());
 		institution.setTraegerschaft(createDefaultTraegerschaft());
-		institution.setMail("hallo@dvbern.ch");
+		institution.setMail("institution@example.com");
 		return institution;
 	}
 
@@ -672,7 +672,7 @@ public final class TestDataUtil {
 		user.setUsername("jula_" + UUID.randomUUID());
 		user.setNachname("Iglesias");
 		user.setVorname("Julio");
-		user.setEmail("email@server.ch");
+		user.setEmail("julio.iglesias@example.com");
 		user.setMandant(createDefaultMandant());
 		user.setRole(UserRole.ADMIN);
 		return user;

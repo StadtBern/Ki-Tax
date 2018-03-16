@@ -169,7 +169,7 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 		Optional<String> emailAddressForFall = fallService.getCurrentEmailAddress(gesuch.getFall().getId());
 		Assert.assertTrue(emailAddressForFall.isPresent());
 		String email = emailAddressForFall.get();
-		Assert.assertEquals("test@email.com", email);
+		Assert.assertEquals("test@example.com", email);
 
 	}
 

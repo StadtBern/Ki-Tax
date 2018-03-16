@@ -61,11 +61,11 @@ export class DummyAuthenticationListViewController {
         applicationPropertyRS.isDevMode().then((response) => {
             this.devMode = response;
         });
-        this.usersList.push(new TSUser('Kurt', 'Blaser', 'blku', 'password5', 'markus.hofstetter@dvbern.ch',
+        this.usersList.push(new TSUser('Kurt', 'Blaser', 'blku', 'password5', 'kurt.blaser@example.com',
             this.mandant, TSRole.ADMIN));
         this.usersList.push(new TSUser('Jörg', 'Becker', 'jobe', 'password1', 'joerg.becker@example.com',
             this.mandant, TSRole.SACHBEARBEITER_JA));
-        this.usersList.push(new TSUser('Jennifer', 'Müller', 'jemu', 'password2', 'franziska.herger@dvbern.ch',
+        this.usersList.push(new TSUser('Jennifer', 'Müller', 'jemu', 'password2', 'jennifer.mueller@example.com',
             this.mandant, TSRole.SACHBEARBEITER_JA));
         this.usersList.push(new TSUser('Sophie', 'Bergmann', 'beso', 'password3', 'sophie.bergmann@example.com',
             this.mandant, TSRole.SACHBEARBEITER_INSTITUTION, undefined, this.institution));
@@ -93,7 +93,7 @@ export class DummyAuthenticationListViewController {
             this.mandant, TSRole.JURIST));
         this.usersList.push(new TSUser('Reto', 'Revisor', 'rere', 'password9', 'reto.revisor@example.com',
             this.mandant, TSRole.REVISOR));
-        this.superadmin = new TSUser('E-BEGU', 'Superuser', 'ebegu', 'password10', 'hallo@dvbern.ch',
+        this.superadmin = new TSUser('E-BEGU', 'Superuser', 'ebegu', 'password10', 'superuser@example.com',
             this.mandant, TSRole.SUPER_ADMIN);
     }
 
@@ -115,7 +115,7 @@ export class DummyAuthenticationListViewController {
         let institution = new TSInstitution();
         institution.name = 'Kita Brünnen';
         institution.id = '1b6f476f-e0f5-4380-9ef6-836d688853a3';
-        institution.mail = 'kita.bruennen@bern.ch';
+        institution.mail = 'kita.bruennen@example.com';
         institution.traegerschaft = this.traegerschaftStadtBern;
         institution.mandant = this.mandant;
         return institution;
@@ -127,7 +127,7 @@ export class DummyAuthenticationListViewController {
     private getTraegerschaftStadtBern(): TSTraegerschaft {
         let traegerschaft = new TSTraegerschaft();
         traegerschaft.name = 'Kitas & Tagis Stadt Bern';
-        traegerschaft.mail = 'kitasundtagis@bern.ch';
+        traegerschaft.mail = 'kitasundtagis@example.com';
         traegerschaft.id = 'f9ddee82-81a1-4cda-b273-fb24e9299308';
         return traegerschaft;
     }
@@ -138,7 +138,7 @@ export class DummyAuthenticationListViewController {
     private getTraegerschaftLeoLea(): TSTraegerschaft {
         let traegerschaft = new TSTraegerschaft();
         traegerschaft.name = 'LeoLea';
-        traegerschaft.mail = 'info@leolea.ch';
+        traegerschaft.mail = 'leolea@example.com';
         traegerschaft.id = 'd667e2d0-3702-4933-8fb7-be7a39755232';
         return traegerschaft;
     }
@@ -149,7 +149,7 @@ export class DummyAuthenticationListViewController {
     private getTraegerschaftSGF(): TSTraegerschaft {
         let traegerschaft = new TSTraegerschaft();
         traegerschaft.name = 'SGF';
-        traegerschaft.mail = 'info@sgfbern.ch';
+        traegerschaft.mail = 'sgf@example.com';
         traegerschaft.id = 'bb5d4bd8-84c9-4cb6-8134-a97312dead67';
         return traegerschaft;
     }
@@ -160,7 +160,7 @@ export class DummyAuthenticationListViewController {
     private getTraegerschaftFamex(): TSTraegerschaft {
         let traegerschaft = new TSTraegerschaft();
         traegerschaft.name = 'FAMEX';
-        traegerschaft.mail = 'info@famex';
+        traegerschaft.mail = 'famex@example.com';
         traegerschaft.id = '4a552145-5ccd-4bf8-b827-c77c930daaa8';
         return traegerschaft;
     }
