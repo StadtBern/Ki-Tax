@@ -699,31 +699,31 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigAb())).append(" - ").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigBis())).append("] ")
-			.append(" EP GS1: ").append(erwerbspensumGS1).append("\t")
-			.append(" EP GS2: ").append(erwerbspensumGS2).append("\t")
-			.append(" EP-Zuschlag GS1: ").append(zuschlagErwerbspensumGS1).append("\t")
-			.append(" EP-Zuschlag GS2: ").append(zuschlagErwerbspensumGS2).append("\t")
-			.append(" BetrPensum: ").append(betreuungspensum).append("\t")
-			.append(" Anspruch: ").append(anspruchberechtigtesPensum).append("\t")
-			.append(" Restanspruch: ").append(anspruchspensumRest).append("\t")
-			.append(" BG-Pensum: ").append(getBgPensum()).append("\t")
-			.append(" Vollkosten: ").append(vollkosten).append("\t")
-			.append(" Elternbeitrag: ").append(elternbeitrag).append("\t")
-			.append(" Bemerkungen: ").append(bemerkungen).append("\t")
-			.append(" Einkommen: ").append(massgebendesEinkommenVorAbzugFamgr).append("\t")
+		sb.append('[').append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigAb())).append(" - ").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigBis())).append("] ")
+			.append(" EP GS1: ").append(erwerbspensumGS1).append('\t')
+			.append(" EP GS2: ").append(erwerbspensumGS2).append('\t')
+			.append(" EP-Zuschlag GS1: ").append(zuschlagErwerbspensumGS1).append('\t')
+			.append(" EP-Zuschlag GS2: ").append(zuschlagErwerbspensumGS2).append('\t')
+			.append(" BetrPensum: ").append(betreuungspensum).append('\t')
+			.append(" Anspruch: ").append(anspruchberechtigtesPensum).append('\t')
+			.append(" Restanspruch: ").append(anspruchspensumRest).append('\t')
+			.append(" BG-Pensum: ").append(getBgPensum()).append('\t')
+			.append(" Vollkosten: ").append(vollkosten).append('\t')
+			.append(" Elternbeitrag: ").append(elternbeitrag).append('\t')
+			.append(" Bemerkungen: ").append(bemerkungen).append('\t')
+			.append(" Einkommen: ").append(massgebendesEinkommenVorAbzugFamgr).append('\t')
 			.append(" Abzug Fam: ").append(abzugFamGroesse);
 		return sb.toString();
 	}
 
 	public String toStringFinanzielleSituation() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigAb())).append(" - ").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigBis())).append("] ")
-			.append(" MassgebendesEinkommenVorAbzugFamiliengroesse: ").append(massgebendesEinkommenVorAbzugFamgr).append("\t")
-			.append(" AbzugFamiliengroesse: ").append(abzugFamGroesse).append("\t")
-			.append(" MassgebendesEinkommen: ").append(getMassgebendesEinkommen()).append("\t")
-			.append(" Einkommensjahr: ").append(einkommensjahr).append("\t")
-			.append(" Familiengroesse: ").append(famGroesse).append("\t")
+		sb.append('[').append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigAb())).append(" - ").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigBis())).append("] ")
+			.append(" MassgebendesEinkommenVorAbzugFamiliengroesse: ").append(massgebendesEinkommenVorAbzugFamgr).append('\t')
+			.append(" AbzugFamiliengroesse: ").append(abzugFamGroesse).append('\t')
+			.append(" MassgebendesEinkommen: ").append(getMassgebendesEinkommen()).append('\t')
+			.append(" Einkommensjahr: ").append(einkommensjahr).append('\t')
+			.append(" Familiengroesse: ").append(famGroesse).append('\t')
 			.append(" Bemerkungen: ").append(bemerkungen);
 		return sb.toString();
 	}
@@ -774,13 +774,11 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		if (this == that) {
 			return true;
 		}
-		return
-			betreuungspensum == that.betreuungspensum &&
-
-				anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
-				Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
-				Objects.equals(famGroesse, that.famGroesse) &&
-				Objects.equals(bemerkungen, that.bemerkungen);
+		return betreuungspensum == that.betreuungspensum &&
+			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
+			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
+			Objects.equals(famGroesse, that.famGroesse) &&
+			Objects.equals(bemerkungen, that.bemerkungen);
 	}
 
 	private boolean isSameErwerbspensum(Integer thisErwerbspensumGS, Integer thatErwerbspensumGS) {
@@ -806,6 +804,18 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			(massgebendesEinkommenVorAbzugFamgr.compareTo(that.massgebendesEinkommenVorAbzugFamgr) == 0) &&
 			getGueltigkeit().compareTo(that.getGueltigkeit()) == 0 &&
 			Objects.equals(this.einkommensjahr, that.einkommensjahr);
+	}
+
+	/**
+	 * Vergleich nur die relevanten Daten fuer die Berechnung einer Verfuegung.
+	 */
+	public boolean isSameBerechnung(VerfuegungZeitabschnitt that) {
+		return betreuungspensum == that.betreuungspensum &&
+			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
+			(betreuungsstunden.compareTo(that.betreuungsstunden) == 0) &&
+			(vollkosten.compareTo(that.vollkosten) == 0) &&
+			(elternbeitrag.compareTo(that.elternbeitrag) == 0) &&
+			(getGueltigkeit().compareTo(that.getGueltigkeit()) == 0);
 	}
 
 	/**

@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -98,11 +99,12 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 		return !adressen.contains(gesuchstellerAdresseContainer) && adressen.add(gesuchstellerAdresseContainer);
 	}
 
+	@Nullable
 	public Gesuchsteller getGesuchstellerGS() {
 		return gesuchstellerGS;
 	}
 
-	public void setGesuchstellerGS(Gesuchsteller gesuchstellerGS) {
+	public void setGesuchstellerGS(@Nullable Gesuchsteller gesuchstellerGS) {
 		this.gesuchstellerGS = gesuchstellerGS;
 	}
 
@@ -274,8 +276,9 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 		}
 		for (GesuchstellerAdresseContainer gesuchstellerAdresse : this.getAdressen()) {
 			if (gesuchstellerAdresse.getGesuchstellerAdresseJA() != null) {
-				// Nur aktuelle und zukuenftige Adressen kopieren
-				if (!gesuchstellerAdresse.extractGueltigkeit().endsBefore(gesuchsperiodeFolgegesuch.getGueltigkeit().getGueltigAb())) {
+				// Nur aktuelle und zukuenftige Adressen kopieren. Aus Sicht HEUTE und nicht per Anfang Gesuchsperiode, da schon vorher Briefe
+				// geschickt werden muessen
+				if (!Objects.requireNonNull(gesuchstellerAdresse.extractGueltigkeit()).endsBefore(LocalDate.now())) {
 					GesuchstellerAdresseContainer adresseContainer = gesuchstellerAdresse.copyForErneuerung(new GesuchstellerAdresseContainer(), this);
 					folgegesuch.addAdresse(adresseContainer);
 				}
@@ -287,7 +290,7 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 	@Nullable
 	public GesuchstellerAdresse getWohnadresseAm(LocalDate stichtag) {
 		for (GesuchstellerAdresseContainer adresse : getAdressen()) {
-			if (AdresseTyp.WOHNADRESSE.equals(adresse.extractAdresseTyp()) && adresse.extractGueltigkeit().contains(stichtag)) {
+			if (AdresseTyp.WOHNADRESSE == adresse.extractAdresseTyp() && adresse.extractGueltigkeit().contains(stichtag)) {
 				return adresse.getGesuchstellerAdresseJA();
 			}
 		}
