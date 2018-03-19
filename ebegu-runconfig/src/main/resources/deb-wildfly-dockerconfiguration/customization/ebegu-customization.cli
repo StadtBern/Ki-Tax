@@ -71,6 +71,8 @@ xa-data-source add \
 #/system-property=ebegu.mail.disabled:add(value=false)
 #/system-property=ebegu.hostname:add(value=ebegu.dvbern.ch/web/#)
 #/system-property=ebegu.personensuche.disabled:add(value=true)
+#/system-property=ebegu.testfaelle.enabled:add(value=true)
+#/system-property=ebegu.superuser.mail:add(value=eberhard.gugler@dvbern.ch)
 ## Login Provider
 #/system-property=ebegu.login.provider.api.url:add(value=http://localhost:8080/connector/api/v1)
 #/system-property=ebegu.login.api.allow.remote:add(value=false)
