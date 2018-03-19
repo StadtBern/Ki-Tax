@@ -110,14 +110,6 @@ public interface EbeguConfiguration {
 	boolean isDummyLoginEnabled();
 
 	/**
-	 * Wir definieren einen Benutzernamen dem wir IMMER die Rolle UserRole#SUPER_ADMIN zuweisen wenn er sich ueber IAM einloggt.
-	 * Der Zweck dieses Users ist, dass wir ihn verwenden koennen um Supportrequests zu reproduzieren etc
-	 *
-	 * @return Name des SuperUsers
-	 */
-	String getEmailOfSuperUser();
-
-	/**
 	 * @return true wenn sich die Applikation im Testmodus fuer Zahlungen befindet, false sonst
 	 */
 	boolean getIsZahlungenTestMode();
@@ -191,4 +183,14 @@ public interface EbeguConfiguration {
 	 */
 	boolean isSendReportAsAttachement();
 
+	/**
+	 * Property, welches festlegt, ob die vordefinierten Testfaelle fuer diese Umgebung verwendet werden duerfen.
+	 * Achtung, dieses Property wird vom Dummy-Login Property übersteuert, d.h. es müssen beide gesetzt sein!
+	 */
+	boolean isTestfaelleEnabled();
+
+	/**
+	 * Admin-Email: An diese Adresse wird z.B. die Zahlungskontrolle gesendet.
+	 */
+	String getAdministratorMail();
 }

@@ -28,6 +28,9 @@ public class TestdataSetupConfig {
 	private InstitutionStammdaten kitaBruennen;
 	private InstitutionStammdaten kitaWeissenstein;
 	private InstitutionStammdaten tagiWeissenstein;
+	private InstitutionStammdaten tagesschuleBruennen;
+	private InstitutionStammdaten ferieninselBruennen;
+
 	private Gesuchsperiode gesuchsperiode;
 
 	private TestdataSetupConfig() {
@@ -47,6 +50,18 @@ public class TestdataSetupConfig {
 		this.kitaBruennen = kitaBruennen;
 		this.kitaWeissenstein = kitaWeissenstein;
 		this.tagiWeissenstein = tagiWeissenstein;
+		this.gesuchsperiode = gesuchsperiode;
+	}
+
+	public TestdataSetupConfig(Mandant mandant, InstitutionStammdaten kitaBruennen, InstitutionStammdaten kitaWeissenstein,
+		InstitutionStammdaten tagiWeissenstein, InstitutionStammdaten tagesschuleBruennen, InstitutionStammdaten ferieninselBruennen,
+		Gesuchsperiode gesuchsperiode) {
+		this.mandant = mandant;
+		this.kitaBruennen = kitaBruennen;
+		this.kitaWeissenstein = kitaWeissenstein;
+		this.tagiWeissenstein = tagiWeissenstein;
+		this.tagesschuleBruennen = tagesschuleBruennen;
+		this.ferieninselBruennen = ferieninselBruennen;
 		this.gesuchsperiode = gesuchsperiode;
 	}
 
@@ -88,5 +103,21 @@ public class TestdataSetupConfig {
 
 	public void setGesuchsperiode(Gesuchsperiode gesuchsperiode) {
 		this.gesuchsperiode = gesuchsperiode;
+	}
+
+	public InstitutionStammdaten getTagesschuleBruennen() {
+		return tagesschuleBruennen;
+	}
+
+	public void setTagesschuleBruennen(InstitutionStammdaten tagesschuleBruennen) {
+		this.tagesschuleBruennen = tagesschuleBruennen;
+	}
+
+	public InstitutionStammdaten getFerieninselBruennen() {
+		return ferieninselBruennen;
+	}
+
+	public void setFerieninselBruennen(InstitutionStammdaten ferieninselBruennen) {
+		this.ferieninselBruennen = ferieninselBruennen;
 	}
 }

@@ -20,6 +20,7 @@ import {TSStatistikParameterType} from '../../../models/enums/TSStatistikParamet
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
+import EbeguUtil from '../../../utils/EbeguUtil';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import * as moment from 'moment';
@@ -227,8 +228,8 @@ export class StatistikViewController {
     }
 
     public rowClicked(row: TSWorkJob) {
-        if (row !== null && row !== undefined && row.execution !== undefined && row.execution !== null) {
-            if (row.execution.endTime !== null || row.execution.endTime !== undefined) {
+        if (EbeguUtil.isNotNullOrUndefined(row) && EbeguUtil.isNotNullOrUndefined(row.execution)) {
+            if (EbeguUtil.isNotNullOrUndefined(row.execution.batchStatus) && row.execution.batchStatus === 'COMPLETED') {
                 let win: Window = this.downloadRS.prepareDownloadWindow();
                 this.$log.debug('accessToken: ' + row.resultData);
                 this.downloadRS.startDownload(row.resultData, 'report.xlsx', false, win);

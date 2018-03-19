@@ -18,7 +18,7 @@
 
     <fieldset ng-disabled="!vm.betreuung.isEnabled() || vm.isFreigabequittungAusstehend()">
 
-        <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.hasTagesschulenAnmeldung()">
+        <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.hasTagesschulenAnmeldung() && !vm.getBetreuungModel().keineDetailinformationen">
 
             <!-- Modulauswahl Tagesschule -->
             <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">

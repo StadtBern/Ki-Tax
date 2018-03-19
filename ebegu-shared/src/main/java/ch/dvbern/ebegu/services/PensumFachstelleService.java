@@ -42,11 +42,4 @@ public interface PensumFachstelleService {
 	@Nonnull
 	Optional<PensumFachstelle> findPensumFachstelle(@Nonnull String pensumFachstelleId);
 
-	/**
-	 * entfernt die PensumFachstelle aus der Database
-	 *
-	 * @param pensumFachstelleId die Fachstelle als DTO
-	 */
-	void removePensumFachstelle(@Nonnull String pensumFachstelleId);
-
 }

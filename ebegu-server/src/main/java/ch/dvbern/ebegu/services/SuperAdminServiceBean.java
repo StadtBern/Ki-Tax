@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.GesuchDeletionCause;
 import ch.dvbern.ebegu.enums.UserRoleName;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
@@ -49,7 +50,7 @@ public class SuperAdminServiceBean implements SuperAdminService {
 	@Override
 	@RolesAllowed({ GESUCHSTELLER, SUPER_ADMIN, ADMIN })
 	public void removeGesuch(@Nonnull String gesuchId) {
-		gesuchService.removeGesuch(gesuchId);
+		gesuchService.removeGesuch(gesuchId, GesuchDeletionCause.USER);
 	}
 
 	@Override

@@ -81,4 +81,6 @@ public interface Constants {
 	String DEFAULT_MANDANT_ID = "e3736eb8-6eef-40ef-9e52-96ab48d8f220";
 	String AUTH_TOKEN_SUFFIX_FOR_NO_TOKEN_REFRESH_REQUESTS = "NO_REFRESH";
 	String PATH_DESIGNATOR_NO_TOKEN_REFRESH = "notokenrefresh";
+
+	String TEMP_REPORT_FOLDERNAME = "tempReports";
 }

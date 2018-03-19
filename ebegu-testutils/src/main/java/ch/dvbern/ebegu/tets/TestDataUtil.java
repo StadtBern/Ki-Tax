@@ -312,7 +312,7 @@ public final class TestDataUtil {
 	public static Traegerschaft createDefaultTraegerschaft() {
 		Traegerschaft traegerschaft = new Traegerschaft();
 		traegerschaft.setName("Traegerschaft1");
-		traegerschaft.setMail("hallo@dvbern.ch");
+		traegerschaft.setMail("traegerschaft@example.com");
 		return traegerschaft;
 	}
 
@@ -321,7 +321,7 @@ public final class TestDataUtil {
 		institution.setName("Institution1");
 		institution.setMandant(createDefaultMandant());
 		institution.setTraegerschaft(createDefaultTraegerschaft());
-		institution.setMail("hallo@dvbern.ch");
+		institution.setMail("institution@example.com");
 		return institution;
 	}
 
@@ -333,6 +333,30 @@ public final class TestDataUtil {
 		instStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2010, 12, 31)));
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
+	public static InstitutionStammdaten createInstitutionStammdatenTagesschuleForInstitution(@Nonnull Institution institution) {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setIban(new IBAN(iban));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
+		instStammdaten.setGueltigkeit(new DateRange());
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESSCHULE);
+		instStammdaten.setInstitution(institution);
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
+	public static InstitutionStammdaten createInstitutionStammdatenFerieninselForInstitution(@Nonnull Institution institution) {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setIban(new IBAN(iban));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
+		instStammdaten.setGueltigkeit(new DateRange());
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.FERIENINSEL);
+		instStammdaten.setInstitution(institution);
 		instStammdaten.setAdresse(createDefaultAdresse());
 		return instStammdaten;
 	}
@@ -648,7 +672,7 @@ public final class TestDataUtil {
 		user.setUsername("jula_" + UUID.randomUUID());
 		user.setNachname("Iglesias");
 		user.setVorname("Julio");
-		user.setEmail("email@server.ch");
+		user.setEmail("julio.iglesias@example.com");
 		user.setMandant(createDefaultMandant());
 		user.setRole(UserRole.ADMIN);
 		return user;

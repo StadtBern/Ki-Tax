@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.entities.Benutzer;
@@ -61,7 +62,7 @@ public interface FallService {
 	 * Gibt den Fall zurueck der zum eingeloggten Benutzer gehoert oder ein leeres optional wenn keiner vorhanden
 	 */
 	@Nonnull
-	Optional<Fall> findFallByBesitzer(Benutzer benutzer);
+	Optional<Fall> findFallByBesitzer(@Nullable Benutzer benutzer);
 
 	/**
 	 * Gibt alle existierenden Faelle zurueck.

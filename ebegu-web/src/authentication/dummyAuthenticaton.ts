@@ -44,6 +44,7 @@ export class DummyAuthenticationListViewController {
     private traegerschaftStadtBern: TSTraegerschaft;
     private traegerschaftLeoLea: TSTraegerschaft;
     private traegerschaftSGF: TSTraegerschaft;
+    private traegerschaftFamex: TSTraegerschaft;
     private devMode: boolean;
 
     static $inject: string[] = ['$state', 'AuthServiceRS', '$timeout', 'ApplicationPropertyRS'];
@@ -55,32 +56,45 @@ export class DummyAuthenticationListViewController {
         this.traegerschaftStadtBern = this.getTraegerschaftStadtBern();
         this.traegerschaftLeoLea = this.getTraegerschaftLeoLea();
         this.traegerschaftSGF = this.getTraegerschaftSGF();
+        this.traegerschaftFamex = this.getTraegerschaftFamex();
         this.institution = this.getInsitution();
         applicationPropertyRS.isDevMode().then((response) => {
             this.devMode = response;
         });
-        this.usersList.push(new TSUser('Kurt', 'Blaser', 'blku', 'password5', 'markus.hofstetter@dvbern.ch', this.mandant, TSRole.ADMIN));
-        this.usersList.push(new TSUser('Jörg', 'Becker', 'jobe', 'password1', 'joerg.becker@bern.ch', this.mandant, TSRole.SACHBEARBEITER_JA));
-        this.usersList.push(new TSUser('Jennifer', 'Müller', 'jemu', 'password2', 'franziska.herger@dvbern.ch', this.mandant, TSRole.SACHBEARBEITER_JA));
-        this.usersList.push(new TSUser('Sophie', 'Bergmann', 'beso', 'password3', 'sophie.bergmann@gugus.ch',
+        this.usersList.push(new TSUser('Kurt', 'Blaser', 'blku', 'password5', 'kurt.blaser@example.com',
+            this.mandant, TSRole.ADMIN));
+        this.usersList.push(new TSUser('Jörg', 'Becker', 'jobe', 'password1', 'joerg.becker@example.com',
+            this.mandant, TSRole.SACHBEARBEITER_JA));
+        this.usersList.push(new TSUser('Jennifer', 'Müller', 'jemu', 'password2', 'jennifer.mueller@example.com',
+            this.mandant, TSRole.SACHBEARBEITER_JA));
+        this.usersList.push(new TSUser('Sophie', 'Bergmann', 'beso', 'password3', 'sophie.bergmann@example.com',
             this.mandant, TSRole.SACHBEARBEITER_INSTITUTION, undefined, this.institution));
-        this.usersList.push(new TSUser('Agnes', 'Krause', 'krad', 'password4', 'agnes.krause@gugus.ch',
+        this.usersList.push(new TSUser('Agnes', 'Krause', 'krad', 'password4', 'agnes.krause@example.com',
             this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftStadtBern));
-        this.usersList.push(new TSUser('Lea', 'Lehmann', 'lele', 'password7', 'lea.lehmann@gugus.ch',
+        this.usersList.push(new TSUser('Lea', 'Lehmann', 'lele', 'password7', 'lea.lehmann@gexample.com',
             this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftLeoLea));
-        this.usersList.push(new TSUser('Simon', 'Gfeller', 'gfsi', 'password8', 'simon.gfeller@gugus.ch',
+        this.usersList.push(new TSUser('Simon', 'Gfeller', 'gfsi', 'password8', 'simon.gfeller@example.com',
             this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftSGF));
-        this.usersList.push(new TSUser('Emma', 'Gerber', 'geem', 'password6', 'emma.gerber@myemail.ch', this.mandant, TSRole.GESUCHSTELLER));
-        this.usersList.push(new TSUser('Heinrich', 'Mueller', 'muhe', 'password6', 'heinrich.mueller@myemail.ch', this.mandant, TSRole.GESUCHSTELLER));
-        this.usersList.push(new TSUser('Michael', 'Berger', 'bemi', 'password6', 'michael.berger@myemail.ch', this.mandant, TSRole.GESUCHSTELLER));
-        this.usersList.push(new TSUser('Hans', 'Zimmermann', 'ziha', 'password6', 'hans.zimmermann@myemail.ch', this.mandant, TSRole.GESUCHSTELLER));
-
-        this.usersList.push(new TSUser('Rodolfo', 'Geldmacher', 'gero', 'password11', 'rodolfo.geldmacher@myemail.ch', this.mandant, TSRole.STEUERAMT));
-        this.usersList.push(new TSUser('Julien', 'Schuler', 'scju', 'password9', 'julien.schuler@myemail.ch', this.mandant, TSRole.SCHULAMT));
-        this.usersList.push(new TSUser('Adrian', 'Schuler', 'scad', 'password9', 'adrian.schuler@myemail.ch', this.mandant, TSRole.ADMINISTRATOR_SCHULAMT));
-        this.usersList.push(new TSUser('Julia', 'Jurist', 'juju', 'password9', 'julia.jurist@myemail.ch', this.mandant, TSRole.JURIST));
-        this.usersList.push(new TSUser('Reto', 'Revisor', 'rere', 'password9', 'reto.revisor@myemail.ch', this.mandant, TSRole.REVISOR));
-        this.superadmin = new TSUser('E-BEGU', 'Superuser', 'ebegu', 'password10', 'hallo@dvbern.ch', this.mandant, TSRole.SUPER_ADMIN);
+        this.usersList.push(new TSUser('Emma', 'Gerber', 'geem', 'password6', 'emma.gerber@example.com',
+            this.mandant, TSRole.GESUCHSTELLER));
+        this.usersList.push(new TSUser('Heinrich', 'Mueller', 'muhe', 'password6', 'heinrich.mueller@example.com',
+            this.mandant, TSRole.GESUCHSTELLER));
+        this.usersList.push(new TSUser('Michael', 'Berger', 'bemi', 'password6', 'michael.berger@example.com',
+            this.mandant, TSRole.GESUCHSTELLER));
+        this.usersList.push(new TSUser('Hans', 'Zimmermann', 'ziha', 'password6', 'hans.zimmermann@example.com',
+            this.mandant, TSRole.GESUCHSTELLER));
+        this.usersList.push(new TSUser('Rodolfo', 'Geldmacher', 'gero', 'password11', 'rodolfo.geldmacher@example.com',
+            this.mandant, TSRole.STEUERAMT));
+        this.usersList.push(new TSUser('Julien', 'Schuler', 'scju', 'password9', 'julien.schuler@example.com',
+            this.mandant, TSRole.SCHULAMT));
+        this.usersList.push(new TSUser('Adrian', 'Schuler', 'scad', 'password9', 'adrian.schuler@example.com',
+            this.mandant, TSRole.ADMINISTRATOR_SCHULAMT));
+        this.usersList.push(new TSUser('Julia', 'Jurist', 'juju', 'password9', 'julia.jurist@example.com',
+            this.mandant, TSRole.JURIST));
+        this.usersList.push(new TSUser('Reto', 'Revisor', 'rere', 'password9', 'reto.revisor@example.com',
+            this.mandant, TSRole.REVISOR));
+        this.superadmin = new TSUser('E-BEGU', 'Superuser', 'ebegu', 'password10', 'superuser@example.com',
+            this.mandant, TSRole.SUPER_ADMIN);
     }
 
     /**
@@ -101,7 +115,7 @@ export class DummyAuthenticationListViewController {
         let institution = new TSInstitution();
         institution.name = 'Kita Brünnen';
         institution.id = '1b6f476f-e0f5-4380-9ef6-836d688853a3';
-        institution.mail = 'kita.bruennen@bern.ch';
+        institution.mail = 'kita.bruennen@example.com';
         institution.traegerschaft = this.traegerschaftStadtBern;
         institution.mandant = this.mandant;
         return institution;
@@ -113,7 +127,7 @@ export class DummyAuthenticationListViewController {
     private getTraegerschaftStadtBern(): TSTraegerschaft {
         let traegerschaft = new TSTraegerschaft();
         traegerschaft.name = 'Kitas & Tagis Stadt Bern';
-        traegerschaft.mail = 'kitasundtagis@bern.ch';
+        traegerschaft.mail = 'kitasundtagis@example.com';
         traegerschaft.id = 'f9ddee82-81a1-4cda-b273-fb24e9299308';
         return traegerschaft;
     }
@@ -124,7 +138,7 @@ export class DummyAuthenticationListViewController {
     private getTraegerschaftLeoLea(): TSTraegerschaft {
         let traegerschaft = new TSTraegerschaft();
         traegerschaft.name = 'LeoLea';
-        traegerschaft.mail = 'info@leolea.ch';
+        traegerschaft.mail = 'leolea@example.com';
         traegerschaft.id = 'd667e2d0-3702-4933-8fb7-be7a39755232';
         return traegerschaft;
     }
@@ -135,8 +149,19 @@ export class DummyAuthenticationListViewController {
     private getTraegerschaftSGF(): TSTraegerschaft {
         let traegerschaft = new TSTraegerschaft();
         traegerschaft.name = 'SGF';
-        traegerschaft.mail = 'info@sgfbern.ch';
+        traegerschaft.mail = 'sgf@example.com';
         traegerschaft.id = 'bb5d4bd8-84c9-4cb6-8134-a97312dead67';
+        return traegerschaft;
+    }
+
+    /**
+     * Die Traegerschaft wird direkt gegeben. Diese Daten und die Daten der DB muessen uebereinstimmen
+     */
+    private getTraegerschaftFamex(): TSTraegerschaft {
+        let traegerschaft = new TSTraegerschaft();
+        traegerschaft.name = 'FAMEX';
+        traegerschaft.mail = 'famex@example.com';
+        traegerschaft.id = '4a552145-5ccd-4bf8-b827-c77c930daaa8';
         return traegerschaft;
     }
 

@@ -1164,8 +1164,8 @@
     "FREISCHALTUNG_TAGESSCHULE_NONE": "Keine Anmeldungen für Tagesschule möglich",
     "FREISCHALTUNG_TAGESSCHULE_DIALOG_TITLE": "Wollen Sie die Anmeldung für Tagesschulen wirklich freischalten?",
     "FREISCHALTUNG_TAGESSCHULE_DIALOG_TEXT": "Ab diesem Zeitpunkt können Gesuchsteller sich für Tagesschulen anmelden.",
-    "FREISCHALTUNG_TAGESSCHULE_INFO": "Die Anmeldung ist im Moment noch nicht möglich. Die Funktionalität wird erst mit dem Versand der Stundenpläne aufgeschaltet.",
-    "FREISCHALTUNG_TAGESSCHULE_AB_INFO": "Die Anmeldung ist im Moment noch nicht möglich. Die Funktionalität wird erst mit dem Versand der Stundenpläne am {{termin}} aufgeschaltet.",
+    "FREISCHALTUNG_TAGESSCHULE_INFO": "Die Anmeldung ist im Moment noch nicht möglich. Sie kann frühestens Anfang Mai erfolgen.",
+    "FREISCHALTUNG_TAGESSCHULE_AB_INFO": "Die Anmeldung ist im Moment noch nicht möglich. Sie kann frühestens am {{termin}} erfolgen.",
     "ERSTER_SCHULTAG_TAGESSCHULE": "Erster Schultag",
     "SOMMERFERIEN": "Sommerferien",
     "HERBSTFERIEN": "Herbstferien",
@@ -1255,5 +1255,7 @@
     "ReportType_zahlungperiode": "Zahlungen nach Periode",
     "BatchJobStatus_REQUESTED": "Statistik angefordert",
     "BatchJobStatus_RUNNING": "Statistik wird erstellt",
-    "BatchJobStatus_FINISHED": "Bereit zum Download"
+    "BatchJobStatus_FINISHED": "Bereit zum Download",
+    "BatchJobStatus_FAILED": "Nicht erfolgreich abgeschlossen",
+    "ANMELDUNG_KEINE_DETAILINFORMATIONEN": "Keine Detailinformationen, Anmeldung bereits erfolgt"
 }

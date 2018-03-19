@@ -59,10 +59,10 @@
                         </div>
                         <div ng-class="{'col-md-4': !vm.testMode,'col-md-3': vm.testMode}" flex layout="row"
                              layout-align="center center">
-                            <button ng-click="vm.createZahlungsauftrag()"
+                            <dv-loading-button button-click="vm.createZahlungsauftrag()"
                                     aria-label="{{ZAHLUNG_ERSTELLEN | translate}}">
                                 <span data-translate="ZAHLUNG_ERSTELLEN"></span>
-                            </button>
+                            </dv-loading-button>
                         </div>
                     </div>
                 </div>

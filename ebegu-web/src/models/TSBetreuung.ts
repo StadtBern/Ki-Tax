@@ -50,6 +50,7 @@ export default class TSBetreuung extends TSAbstractEntity {
     private _belegungFerieninsel: TSBelegungFerieninsel;
     private _anmeldungMutationZustand: TSAnmeldungMutationZustand;
     private _bgNummer: string;
+    private _keineDetailinformationen: boolean = false;
 
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
                 betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, abwesenheitContainers?: Array<TSAbwesenheitContainer>,
@@ -58,7 +59,7 @@ export default class TSBetreuung extends TSAbstractEntity {
                 kindNummer?: number, gesuchId?: string, gesuchsperiode?: TSGesuchsperiode,
                 betreuungMutiert?: boolean, abwesenheitMutiert?: boolean, gueltig?: boolean, belegungTagesschule?: TSBelegungTagesschule,
                 belegungFerieninsel?: TSBelegungFerieninsel, anmeldungMutationZustand?: TSAnmeldungMutationZustand,
-                bgNummer?: string) {
+                bgNummer?: string, keineDetailinformationen?: boolean) {
         super();
         this._institutionStammdaten = institutionStammdaten;
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
@@ -82,6 +83,7 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._belegungFerieninsel = belegungFerieninsel;
         this._anmeldungMutationZustand = anmeldungMutationZustand;
         this._bgNummer = bgNummer;
+        this._keineDetailinformationen = keineDetailinformationen;
     }
 
     get institutionStammdaten(): TSInstitutionStammdaten {
@@ -242,6 +244,14 @@ export default class TSBetreuung extends TSAbstractEntity {
 
     public set belegungFerieninsel(value: TSBelegungFerieninsel) {
         this._belegungFerieninsel = value;
+    }
+
+    public get keineDetailinformationen(): boolean {
+        return this._keineDetailinformationen;
+    }
+
+    public set keineDetailinformationen(value: boolean) {
+        this._keineDetailinformationen = value;
     }
 
     public isAngebotKITA(): boolean {

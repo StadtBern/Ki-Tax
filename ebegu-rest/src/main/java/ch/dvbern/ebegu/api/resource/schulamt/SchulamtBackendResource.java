@@ -76,7 +76,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 @Path("/schulamt")
 @Api(description = "Resource für die Schnittstelle zu externen Schulamt-Applikationen")
-@SuppressWarnings({ "EjbInterceptorInspection", "EjbClassBasicInspection" })
+@SuppressWarnings({ "EjbInterceptorInspection", "EjbClassBasicInspection", "PMD.AvoidDuplicateLiterals"})
 @Stateless
 @PermitAll
 public class SchulamtBackendResource {
@@ -139,20 +139,18 @@ public class SchulamtBackendResource {
 
 			if (betreuungen == null || betreuungen.isEmpty()) {
 				// Betreuung not found
-				return Response.status(Response.Status.BAD_REQUEST).entity(
-					new JaxExternalError(
-						JaxExternalErrorCode.NO_RESULTS,
-						"No Betreuung with id " + bgNummer + " found")).build();
+				return createNoResultsResponse("No Betreuung with id " + bgNummer + " found");
 			}
 			if (betreuungen.size() > 1) {
 				// More than one betreuung
-				return Response.status(Response.Status.BAD_REQUEST).entity(
-					new JaxExternalError(
-						JaxExternalErrorCode.TOO_MANY_RESULTS,
-						"More than one Betreuung with id " + bgNummer + " found")).build();
+				return createTooManyResultsResponse("More than one Betreuung with id " + bgNummer + " found");
 			}
 
 			final Betreuung betreuung = betreuungen.get(0);
+			// Falls die Anmeldung ohne Detailangaben erfolgt ist, geben wir hier NO_RESULT zurueck
+			if (betreuung.isKeineDetailinformationen()) {
+				return createNoResultsResponse("No Betreuung with id " + bgNummer + " found");
+			}
 			if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp() == BetreuungsangebotTyp.TAGESSCHULE) {
 				// Betreuung ist Tagesschule
 				return Response.ok(getAnmeldungTagesschule(betreuung)).build();
@@ -162,17 +160,11 @@ public class SchulamtBackendResource {
 				return Response.ok(getAnmeldungFerieninsel(betreuung)).build();
 			}
 			// Betreuung ist weder Tagesschule noch Ferieninsel
-			return Response.status(Response.Status.BAD_REQUEST).entity(
-				new JaxExternalError(
-					JaxExternalErrorCode.NO_RESULTS,
-					"No Betreuung with id " + bgNummer + " found")).build();
+			return createNoResultsResponse("No Betreuung with id " + bgNummer + " found");
 
 		} catch (Exception e) {
 			LOG.error("getAnmeldung()", e);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
-				new JaxExternalError(
-					JaxExternalErrorCode.SERVER_ERROR,
-					"Please inform the adminstrator of this application")).build();
+			return createInternalServerErrorResponse("Please inform the adminstrator of this application");
 		}
 	}
 
@@ -228,16 +220,10 @@ public class SchulamtBackendResource {
 		try {
 			// Check parameters
 			if (stichtagParam == null || stichtagParam.isEmpty()) {
-				return Response.status(Response.Status.BAD_REQUEST).entity(
-					new JaxExternalError(
-						JaxExternalErrorCode.BAD_PARAMETER,
-						"stichtagParam is null or empty")).build();
+				return createBadParameterResponse("stichtagParam is null or empty");
 			}
 			if (bgNummer == null || bgNummer.isEmpty()) {
-				return Response.status(Response.Status.BAD_REQUEST).entity(
-					new JaxExternalError(
-						JaxExternalErrorCode.BAD_PARAMETER,
-						"bgNummer is null or empty")).build();
+				return createBadParameterResponse("bgNummer is null or empty");
 			}
 
 			// Parse Fallnummer
@@ -249,10 +235,7 @@ public class SchulamtBackendResource {
 				fallNummer = betreuungService.getFallnummerFromBGNummer(bgNummer);
 			} catch (Exception e) {
 				LOG.info("getFinanzielleSituation()", e);
-				return Response.status(Response.Status.BAD_REQUEST).entity(
-					new JaxExternalError(
-						JaxExternalErrorCode.BAD_PARAMETER,
-						"Can not parse bgNummer")).build();
+				return createBadParameterResponse("Can not parse bgNummer");
 			}
 
 			// Parse Stichtag
@@ -261,28 +244,19 @@ public class SchulamtBackendResource {
 				stichtag = DateUtil.parseStringToDateOrReturnNow(stichtagParam);
 			} catch (Exception e) {
 				LOG.info("getFinanzielleSituation()", e);
-				return Response.status(Response.Status.BAD_REQUEST).entity(
-					new JaxExternalError(
-						JaxExternalErrorCode.BAD_PARAMETER,
-						"Can not parse date for stichtagParam")).build();
+				return createBadParameterResponse("Can not parse date for stichtagParam");
 			}
 
 			//Get Gesuchsperiode am Stichtag
 			final Optional<Gesuchsperiode> gesuchsperiodeAm = gesuchsperiodeService.getGesuchsperiodeAm(stichtag);
 			if (!gesuchsperiodeAm.isPresent()) {
-				return Response.status(Response.Status.BAD_REQUEST).entity(
-					new JaxExternalError(
-						JaxExternalErrorCode.BAD_PARAMETER,
-						"No gesuchsperiode found for stichtag")).build();
+				return createBadParameterResponse("No gesuchsperiode found for stichtag");
 			}
 
 			//Get "neustes" Gesuch on Stichtag an fallnummer
 			Optional<Gesuch> neustesGesuchOpt = gesuchService.getNeustesGesuchFuerFallnumerForSchulamtInterface(gesuchsperiodeAm.get(), fallNummer);
 			if (!neustesGesuchOpt.isPresent()) {
-				return Response.status(Response.Status.BAD_REQUEST).entity(
-					new JaxExternalError(
-						JaxExternalErrorCode.NO_RESULTS,
-						"No gesuch found for fallnummer or finSit not yet set")).build();
+				return createNoResultsResponse("No gesuch found for fallnummer or finSit not yet set");
 			}
 			final Gesuch neustesGesuch = neustesGesuchOpt.get();
 
@@ -290,10 +264,7 @@ public class SchulamtBackendResource {
 
 		} catch (Exception e) {
 			LOG.error("getFinanzielleSituation()", e);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
-				new JaxExternalError(
-					JaxExternalErrorCode.SERVER_ERROR,
-					"Please inform the adminstrator of this application")).build();
+			return createInternalServerErrorResponse("Please inform the adminstrator of this application");
 		}
 	}
 
@@ -337,10 +308,7 @@ public class SchulamtBackendResource {
 			}
 		}
 		// If no Finanzdaten found on Verfügungszeitabschnitt from Stichtag, return ErrorObject
-		return Response.status(Response.Status.BAD_REQUEST).entity(
-			new JaxExternalError(
-				JaxExternalErrorCode.NO_RESULTS,
-				"No FinanzielleSituation for Stichtag")).build();
+		return createNoResultsResponse("No FinanzielleSituation for Stichtag");
 	}
 
 	private JaxExternalFinanzielleSituation convertToJaxExternalFinanzielleSituation(long fallNummer, LocalDate stichtag, Gesuch neustesGesuch,
@@ -395,5 +363,33 @@ public class SchulamtBackendResource {
 			new JaxExternalError(
 				JaxExternalErrorCode.BAD_PARAMETER,
 				"Invalid BGNummer format")).build();
+	}
+
+	private Response createNoResultsResponse(String message) {
+		return Response.status(Response.Status.BAD_REQUEST).entity(
+			new JaxExternalError(
+				JaxExternalErrorCode.NO_RESULTS,
+				message)).build();
+	}
+
+	private Response createBadParameterResponse(String message) {
+		return Response.status(Response.Status.BAD_REQUEST).entity(
+			new JaxExternalError(
+				JaxExternalErrorCode.BAD_PARAMETER,
+				message)).build();
+	}
+
+	private Response createInternalServerErrorResponse(String message) {
+		return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
+			new JaxExternalError(
+				JaxExternalErrorCode.SERVER_ERROR,
+				message)).build();
+	}
+
+	private Response createTooManyResultsResponse(String message) {
+		return Response.status(Response.Status.BAD_REQUEST).entity(
+			new JaxExternalError(
+				JaxExternalErrorCode.TOO_MANY_RESULTS,
+				message)).build();
 	}
 }

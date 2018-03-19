@@ -195,7 +195,7 @@ public abstract class AbstractTestfall {
 		gesuchsteller.setVorname(vorname);
 		gesuchsteller.setGeburtsdatum(LocalDate.of(1980, Month.MARCH, 25));
 		gesuchsteller.setDiplomatenstatus(false);
-		gesuchsteller.setMail("test@email.com");
+		gesuchsteller.setMail("test@example.com");
 		gesuchsteller.setMobile("079 000 00 00");
 		return gesuchsteller;
 	}
