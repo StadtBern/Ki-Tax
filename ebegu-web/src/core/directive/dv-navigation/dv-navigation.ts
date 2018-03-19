@@ -13,7 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IDirective, IDirectiveFactory, IQService} from 'angular';
+import {IDirective, IDirectiveFactory, IQService, ITimeoutService} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
@@ -21,10 +21,10 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import ErrorService from '../../errors/service/ErrorService';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import ITranslateService = angular.translate.ITranslateService;
+
 declare let require: any;
 let template = require('./dv-navigation.html');
 let style = require('./dv-navigation.less');
-
 
 /**
  * Diese Direktive wird benutzt, um die Navigation Buttons darzustellen. Folgende Parameter koennen benutzt werden,
@@ -62,6 +62,7 @@ export class DVNavigation implements IDirective {
         return directive;
     }
 }
+
 /**
  * Direktive  der initial die smart table nach dem aktuell eingeloggtem user filtert
  */
@@ -80,10 +81,11 @@ export class NavigatorController {
 
     performSave: boolean;
 
-    static $inject: string[] = ['WizardStepManager', '$state', 'GesuchModelManager', '$translate', 'ErrorService', '$q'];
+    static $inject: string[] = ['WizardStepManager', '$state', 'GesuchModelManager', '$translate', 'ErrorService', '$q', '$timeout'];
+
     /* @ngInject */
     constructor(private wizardStepManager: WizardStepManager, private state: IStateService, private gesuchModelManager: GesuchModelManager,
-                private $translate: ITranslateService, private errorService: ErrorService, private $q: IQService) {
+        private $translate: ITranslateService, private errorService: ErrorService, private $q: IQService, private $timeout: ITimeoutService) {
     }
 
     //wird von angular aufgerufen
@@ -92,7 +94,6 @@ export class NavigatorController {
         this.dvSavingPossible = this.dvSavingPossible || false;
 
     }
-
 
     public doesCancelExist(): boolean {
         return this.dvCancel !== undefined && this.dvCancel !== null;
@@ -150,7 +151,10 @@ export class NavigatorController {
                 let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
                 if (returnValue !== undefined) {
                     this.$q.when(returnValue).then(() => {
-                        this.navigateToNextStep();
+                        this.$timeout(() => {
+                            this.navigateToNextStep(); //wait till digest is finished (EBEGU-1595)
+                        });
+
                     }).finally(() => {
                         this.isRequestInProgress = false;
                     });
@@ -185,7 +189,9 @@ export class NavigatorController {
                 let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
                 if (returnValue !== undefined) {
                     this.$q.when(returnValue).then(() => {
-                        this.navigateToPreviousStep();
+                        this.$timeout(() => {
+                            this.navigateToPreviousStep(); //wait till digest is finished (EBEGU-1595)
+                        });
                     }).finally(() => {
                         this.isRequestInProgress = false;
                     });
@@ -332,7 +338,7 @@ export class NavigatorController {
                     this.navigateToStepFinanzielleSituation('1');
 
                 } else if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && (this.gesuchModelManager.isGesuchsteller2Required()
-                    || (this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung() && this.gesuchModelManager.areThereOnlySchulamtAngebote()))) {
+                        || (this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung() && this.gesuchModelManager.areThereOnlySchulamtAngebote()))) {
                     this.navigateToStep(TSWizardStepName.FINANZIELLE_SITUATION);
                 } else {
                     this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch()));
@@ -576,7 +582,6 @@ export class NavigatorController {
             }
         }
     }
-
 
     private navigatePreviousEVSubStep3(): void {
         if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 1)) {
