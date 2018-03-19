@@ -203,14 +203,12 @@ public class TestfaelleResource {
 	private void assertTestfaelleAccessAllowed() {
 		// Testfaelle duerfen nur erstellt werden, wenn das Flag gesetzt ist und das Dummy Login eingeschaltet ist
 		if (!ebeguConfiguration.isDummyLoginEnabled()) {
-			throw new EbeguRuntimeException("assertTestfaelleAccessAllowed", ErrorCodeEnum.ERROR_TESTFAELLE_DISABLED, "Testfaelle duerfen nur verwendet werden, wenn das DummyLogin fuer diese Umgebung"
-				+ " eingeschaltet ist");
+			throw new EbeguRuntimeException("assertTestfaelleAccessAllowed", ErrorCodeEnum.ERROR_TESTFAELLE_DISABLED, "Testfaelle duerfen nur verwendet werden,"
+				+ " wenn das DummyLogin fuer diese Umgebung eingeschaltet ist");
 		}
 		if (!ebeguConfiguration.isTestfaelleEnabled()) {
 			throw new EbeguRuntimeException("assertTestfaelleAccessAllowed", ErrorCodeEnum.ERROR_TESTFAELLE_DISABLED, "Testfaelle duerfen nur verwendet "
-				+ "werden, wenn diese ueber ein "
-				+ "SystemProperty "
-				+ "eingeschaltet sind");
+				+ "werden, wenn diese ueber ein SystemProperty eingeschaltet sind");
 		}
 	}
 }
