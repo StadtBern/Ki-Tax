@@ -97,6 +97,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 	private static final Logger LOG = LoggerFactory.getLogger(SchulungServiceBean.class);
 	private static final Random RANDOM = new Random();
 	private static final Pattern XX = Pattern.compile("XX");
+	private static final String EXAMPLE_COM = "@example.com";
 
 	private static final String TRAEGERSCHAFT_FISCH_ID = "11111111-1111-1111-1111-111111111111";
 
@@ -134,6 +135,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		"Schmid",
 		"Rodriguez",
 		"Nussbaum" };
+
 
 	@Inject
 	private GesuchService gesuchService;
@@ -263,7 +265,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		Traegerschaft traegerschaft = new Traegerschaft();
 		traegerschaft.setId(id);
 		traegerschaft.setName(name);
-		traegerschaft.setMail("hallo@dvbern.ch");
+		traegerschaft.setMail(name + EXAMPLE_COM);
 		return traegerschaftService.saveTraegerschaft(traegerschaft);
 	}
 
@@ -277,7 +279,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		institution.setName(name);
 		institution.setMandant(mandant);
 		institution.setTraegerschaft(traegerschaft);
-		institution.setMail("hallo@dvbern.ch");
+		institution.setMail(name + EXAMPLE_COM);
 		return institutionService.createInstitution(institution);
 	}
 
@@ -317,7 +319,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		benutzer.setVorname(GESUCHSTELLER_VORNAME);
 		benutzer.setNachname(name);
 		benutzer.setRole(UserRole.GESUCHSTELLER);
-		benutzer.setEmail(GESUCHSTELLER_VORNAME.toLowerCase(Locale.GERMAN) + '.' + name.toLowerCase(Locale.GERMAN) + "@mailinator.com");
+		benutzer.setEmail(GESUCHSTELLER_VORNAME.toLowerCase(Locale.GERMAN) + '.' + name.toLowerCase(Locale.GERMAN) + EXAMPLE_COM);
 		benutzer.setUsername(username);
 		benutzer.setMandant(mandant);
 		return benutzerService.saveBenutzer(benutzer);
@@ -339,7 +341,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 			benutzer.setRole(UserRole.SACHBEARBEITER_INSTITUTION);
 			benutzer.setInstitution(institution);
 		}
-		benutzer.setEmail(vorname.toLowerCase(Locale.GERMAN) + '.' + name.toLowerCase(Locale.GERMAN) + "@mailinator.com");
+		benutzer.setEmail(vorname.toLowerCase(Locale.GERMAN) + '.' + name.toLowerCase(Locale.GERMAN) + EXAMPLE_COM);
 		benutzer.setUsername(username);
 		benutzer.setMandant(mandant);
 		return benutzerService.saveBenutzer(benutzer);

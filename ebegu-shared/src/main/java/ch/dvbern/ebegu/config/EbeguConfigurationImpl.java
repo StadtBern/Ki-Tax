@@ -51,7 +51,6 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_MAIL_SMTP_PORT = "ebegu.mail.smtp.port";
 	private static final String EBEGU_HOSTNAME = "ebegu.hostname";
 	private static final String EBEGU_DUMMY_LOGIN_ENABLED = "ebegu.dummy.login.enabled";
-	public static final String EBEGU_SUPERUSER_MAIL = "ebegu.superuser.mail";
 	public static final String EBEGU_DUMP_DBUNIT_XML = "ebegu.dump.dbunit.xml";
 	private static final String EBEGU_ZAHLUNGEN_TEST_MODE = "ebegu.zahlungen.test.mode";
 	private static final String EBEGU_PERSONENSUCHE_DISABLED = "ebegu.personensuche.disabled";
@@ -67,6 +66,9 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_LOGIN_API_SCHULAMT_USER = "ebegu.login.api.schulamt.user";
 	private static final String EBEGU_LOGIN_API_SCHULAMT_PASSWORD = "ebegu.login.api.schulamt.password";
 	private static final String EBEGU_SEND_REPORTS_AS_ATTACHEMENT = "ebegu.send.reports.as.attachement";
+	private static final String EBEGU_TESTFAELLE_ENABLED = "ebegu.testfaelle.enabled";
+	private static final String EBEGU_ADMINISTRATOR_MAIL = "ebegu.admin.mail";
+
 
 	@Inject
 	private ApplicationPropertyService applicationPropertyService;
@@ -108,12 +110,12 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 
 	@Override
 	public String getOpenIdmUser() {
-		return getString(EBEGU_OPENIDM_USER, "SRVC_eBEGU");
+		return getString(EBEGU_OPENIDM_USER);
 	}
 
 	@Override
 	public String getOpenIdmPassword() {
-		return getString(EBEGU_OPENIDM_PASSWD, "EBEGUADMINTZZ0");
+		return getString(EBEGU_OPENIDM_PASSWD);
 	}
 
 	@Override
@@ -162,11 +164,6 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	}
 
 	@Override
-	public String getEmailOfSuperUser() {
-		return getString(EBEGU_SUPERUSER_MAIL, "eberhard.gugler@dvbern.ch");
-	}
-
-	@Override
 	public boolean getIsZahlungenTestMode() {
 		return getBoolean(EBEGU_ZAHLUNGEN_TEST_MODE, false) && getIsDevmode();
 	}
@@ -210,7 +207,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	public String getInternalAPIUser() {
 		String user = getString(EBEGU_LOGIN_API_INTERNAL_USER);
 		if (StringUtils.isEmpty(user)) {
-			LOG.error("Internal API User  must be set in the properties (key: {}) to use the LoginConnector API ",
+			LOG.warn("Internal API User  must be set in the properties (key: {}) to use the LoginConnector API ",
 				EBEGU_LOGIN_API_INTERNAL_USER);
 
 		}
@@ -221,7 +218,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	public String getInternalAPIPassword() {
 		String internalUserPW = getString(EBEGU_LOGIN_API_INTERNAL_PASSWORD);
 		if (StringUtils.isEmpty(internalUserPW)) {
-			LOG.error("Internal API password must be set in the properties (key: {}) to use the LoginConnector API ",
+			LOG.warn("Internal API password must be set in the properties (key: {}) to use the LoginConnector API ",
 				EBEGU_LOGIN_API_INTERNAL_PASSWORD);
 		}
 		return internalUserPW;
@@ -245,5 +242,15 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	@Override
 	public boolean isSendReportAsAttachement() {
 		return getBoolean(EBEGU_SEND_REPORTS_AS_ATTACHEMENT, false);
+	}
+
+	@Override
+	public boolean isTestfaelleEnabled() {
+		return getBoolean(EBEGU_TESTFAELLE_ENABLED, false);
+	}
+
+	@Override
+	public String getAdministratorMail() {
+		return getString(EBEGU_ADMINISTRATOR_MAIL);
 	}
 }

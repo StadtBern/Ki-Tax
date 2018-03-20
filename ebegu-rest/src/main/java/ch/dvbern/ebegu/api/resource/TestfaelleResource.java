@@ -30,7 +30,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.SchulungService;
 import ch.dvbern.ebegu.services.TestfaelleService;
 import ch.dvbern.ebegu.util.DateUtil;
@@ -55,6 +58,10 @@ public class TestfaelleResource {
 	@Inject
 	private SchulungService schulungService;
 
+	@Inject
+	private EbeguConfiguration ebeguConfiguration;
+
+
 	@ApiOperation(value = "Erstellt einen Testfall aus mehreren vordefinierten Testfaellen. Folgende Einstellungen " +
 		"sind moeglich: Gesuchsperiode, Status der Betreuungen, Gesuch verfuegen", response = String.class)
 	@GET
@@ -67,6 +74,7 @@ public class TestfaelleResource {
 		@PathParam("betreuungenBestaetigt") boolean betreuungenBestaetigt,
 		@PathParam("verfuegen") boolean verfuegen) {
 
+		assertTestfaelleAccessAllowed();
 		StringBuilder responseString = testfaelleService.createAndSaveTestfaelle(fallid, betreuungenBestaetigt, verfuegen, gesuchsperiodeId);
 		return Response.ok(responseString.toString()).build();
 	}
@@ -85,6 +93,7 @@ public class TestfaelleResource {
 		@PathParam("verfuegen") boolean verfuegen,
 		@PathParam("username") String username) {
 
+		assertTestfaelleAccessAllowed();
 		StringBuilder responseString = testfaelleService.createAndSaveAsOnlineGesuch(fallid, betreuungenBestaetigt, verfuegen, username, gesuchsperiodeId);
 		return Response.ok(responseString.toString()).build();
 	}
@@ -97,6 +106,7 @@ public class TestfaelleResource {
 	public Response removeFaelleOfGS(
 		@PathParam("username") String username) {
 
+		assertTestfaelleAccessAllowed();
 		testfaelleService.removeGesucheOfGS(username);
 		return Response.ok().build();
 	}
@@ -112,6 +122,7 @@ public class TestfaelleResource {
 		@Nullable @QueryParam("mutationsdatum") String stringMutationsdatum,
 		@Nullable @QueryParam("aenderungper") String stringAenderungPer) {
 
+		assertTestfaelleAccessAllowed();
 		LocalDate mutationsdatum = DateUtil.parseStringToDateOrReturnNow(stringMutationsdatum);
 		LocalDate aenderungPer = DateUtil.parseStringToDateOrReturnNow(stringAenderungPer);
 
@@ -133,6 +144,7 @@ public class TestfaelleResource {
 		@Nullable @QueryParam("mutationsdatum") String stringMutationsdatum,
 		@Nullable @QueryParam("aenderungper") String stringAenderungPer) {
 
+		assertTestfaelleAccessAllowed();
 		LocalDate mutationsdatum = DateUtil.parseStringToDateOrReturnNow(stringMutationsdatum);
 		LocalDate aenderungPer = DateUtil.parseStringToDateOrReturnNow(stringAenderungPer);
 
@@ -149,6 +161,7 @@ public class TestfaelleResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response resetSchulungsdaten() {
+		assertTestfaelleAccessAllowed();
 		schulungService.resetSchulungsdaten();
 		return Response.ok("Schulungsdaten zurückgesetzt").build();
 	}
@@ -159,6 +172,7 @@ public class TestfaelleResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response deleteSchulungsdaten() {
+		assertTestfaelleAccessAllowed();
 		schulungService.deleteSchulungsdaten();
 		return Response.ok("Schulungsdaten gelöscht").build();
 	}
@@ -169,6 +183,7 @@ public class TestfaelleResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response createSchulungsdaten() {
+		assertTestfaelleAccessAllowed();
 		schulungService.createSchulungsdaten();
 		return Response.ok("Schulungsdaten erstellt").build();
 	}
@@ -180,7 +195,20 @@ public class TestfaelleResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
 	public Response getSchulungBenutzer() {
+		assertTestfaelleAccessAllowed();
 		String[] schulungBenutzer = schulungService.getSchulungBenutzer();
 		return Response.ok(schulungBenutzer).build();
+	}
+
+	private void assertTestfaelleAccessAllowed() {
+		// Testfaelle duerfen nur erstellt werden, wenn das Flag gesetzt ist und das Dummy Login eingeschaltet ist
+		if (!ebeguConfiguration.isDummyLoginEnabled()) {
+			throw new EbeguRuntimeException("assertTestfaelleAccessAllowed", ErrorCodeEnum.ERROR_TESTFAELLE_DISABLED, "Testfaelle duerfen nur verwendet werden,"
+				+ " wenn das DummyLogin fuer diese Umgebung eingeschaltet ist");
+		}
+		if (!ebeguConfiguration.isTestfaelleEnabled()) {
+			throw new EbeguRuntimeException("assertTestfaelleAccessAllowed", ErrorCodeEnum.ERROR_TESTFAELLE_DISABLED, "Testfaelle duerfen nur verwendet "
+				+ "werden, wenn diese ueber ein SystemProperty eingeschaltet sind");
+		}
 	}
 }
