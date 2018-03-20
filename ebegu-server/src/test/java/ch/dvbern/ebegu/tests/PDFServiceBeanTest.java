@@ -269,6 +269,31 @@ public class PDFServiceBeanTest {
 	}
 
 	@Test
+	public void testPrintErsteMahnung50Dokumente() throws Exception {
+
+		Mahnung mahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch_2GS, LocalDate.now().plusWeeks
+			(2), 50);
+
+		byte[] bytes = pdfService.generateMahnung(mahnung, null, writeProtectPDF);
+
+		assertNotNull(bytes);
+
+		unitTestTempfolder.writeToTempDir(bytes, "1_Mahnung_50_Dokumente.pdf");
+
+		PdfReader pdfRreader = new PdfReader(bytes);
+		pdfRreader.getNumberOfPages();
+		assertEquals("PDF should be two pages long.", 2, pdfRreader.getNumberOfPages());
+
+		PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(pdfRreader);
+		assertTrue("Absenderadresse ist nicht Jugendamt",
+			pdfTextExtractor.getTextFromPage(1).startsWith("Jugendamt"));
+		assertTrue("Second page should begin with this text.",
+			pdfTextExtractor.getTextFromPage(2).startsWith("-    Test Dokument 22"));
+
+		pdfRreader.close();
+	}
+
+	@Test
 	public void testPrintZweiteMahnungSinglePageSchulamt() throws Exception {
 
 		Mahnung ersteMahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch_Schulamt, LocalDate.now().plusWeeks(2),
@@ -336,6 +361,33 @@ public class PDFServiceBeanTest {
 			pdfTextExtractor.getTextFromPage(1).startsWith("Jugendamt"));
 		assertTrue("Second page should begin with this text.",
 			pdfTextExtractor.getTextFromPage(2).startsWith("Wenn Sie die geforderten Unterlagen"));
+
+		pdfRreader.close();
+	}
+
+	@Test
+	public void testPrintZweiteMahnung50Dokumente() throws Exception {
+
+		Mahnung ersteMahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch_2GS, LocalDate.now()
+			.plusWeeks(2), 50);
+		Mahnung zweiteMahnung = TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch_2GS, LocalDate.now()
+			.plusWeeks(2), 50);
+		zweiteMahnung.setVorgaengerId(ersteMahnung.getId());
+
+		byte[] bytes = pdfService.generateMahnung(zweiteMahnung,  Optional.of(ersteMahnung), writeProtectPDF);
+		assertNotNull(bytes);
+
+		unitTestTempfolder.writeToTempDir(bytes, "2_Mahnung_50_Dokumente.pdf");
+
+		PdfReader pdfRreader = new PdfReader(bytes);
+		pdfRreader.getNumberOfPages();
+		assertEquals("PDF should be two pages long.", 2, pdfRreader.getNumberOfPages());
+
+		PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(pdfRreader);
+		assertTrue("Absenderadresse ist nicht Jugendamt",
+			pdfTextExtractor.getTextFromPage(1).startsWith("Jugendamt"));
+		assertTrue("Second page should begin with this text.",
+			pdfTextExtractor.getTextFromPage(2).startsWith("-    Test Dokument 23"));
 
 		pdfRreader.close();
 	}
