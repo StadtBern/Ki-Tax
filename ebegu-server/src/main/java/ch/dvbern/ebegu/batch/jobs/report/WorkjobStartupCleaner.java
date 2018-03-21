@@ -59,7 +59,7 @@ public class WorkjobStartupCleaner {
 
 	@Timeout
 	public void startCleanupOfWorkjobs() {
-		final List<Workjob> unfinishedWorkjobs = workjobService.get().findUnfinishedWorkjobs();
+		final List<Workjob> unfinishedWorkjobs = workjobService.get().findAllWorkjobs();
 		unfinishedWorkjobs.forEach(workjob ->  workjobService.get().removeWorkjob(workjob));
 	}
 
