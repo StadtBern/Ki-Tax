@@ -60,7 +60,7 @@
                                 <label class="md-no-float" data-translate="VORNAME" for="vorname_ID"></label>
                                 <input id="vorname_ID" type="text" name="vorname" ng-model="vm.getModelJA().vorname"
                                        dv-max-length class="form-control input-dv" required ng-blur="vm.checkAllEwkRelevantDataPresent()"
-                                       aria-describedby="vorname_ID-error">
+                                       aria-describedby="vorname_ID-error" autocomplete="given-name">
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.vorname"
                                            ja="vm.getModel().gesuchstellerJA.vorname"></dv-bisher>
                                 <dv-error-messages for="vm.form.vorname.$error"
@@ -72,7 +72,8 @@
                             <dv-input-container class="form-group secondColumn">
                                 <label class="md-no-float" data-translate="NAME" for="name_ID"></label>
                                 <input aria-describedby="name_ID-error" id="name_ID" type="text" name="name" ng-model="vm.getModelJA().nachname"
-                                       dv-max-length class="form-control" required ng-blur="vm.checkAllEwkRelevantDataPresent()">
+                                       dv-max-length class="form-control" required ng-blur="vm.checkAllEwkRelevantDataPresent()"
+                                       autocomplete="family-name">
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.nachname"
                                            ja="vm.getModel().gesuchstellerJA.nachname"></dv-bisher>
                                 <dv-error-messages input-id="name_ID" for="vm.form.name.$error"
@@ -233,7 +234,7 @@
                                 </label>
                                 <input aria-describedby="email_ID-error" id="email_ID" type="email" name="email" ng-model="vm.getModelJA().mail"
                                        dv-max-length class="form-control" required placeholder="hans.muster@example.com"
-                                       ng-pattern="vm.CONSTANTS.PATTERN_EMAIL">
+                                       ng-pattern="vm.CONSTANTS.PATTERN_EMAIL" autocomplete="email">
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.mail"
                                            ja="vm.getModel().gesuchstellerJA.mail"></dv-bisher>
                                 <dv-error-messages input-id="email_ID" for="vm.form.email.$error"
@@ -250,7 +251,7 @@
                                 </label>
                                 <input aria-describedby="mobile_ID-error" id="mobile_ID" type="text" name="mobile" ng-model="vm.getModelJA().mobile"
                                        dv-max-length class="form-control" placeholder="e.g: +41 79 123 44 55"
-                                       ng-pattern="vm.CONSTANTS.PATTERN_MOBILE">
+                                       ng-pattern="vm.CONSTANTS.PATTERN_MOBILE" autocomplete="mobile">
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.mobile"
                                            ja="vm.getModel().gesuchstellerJA.mobile"></dv-bisher>
                                 <dv-error-messages input-id="mobile_ID" for="vm.form.mobile.$error"
@@ -263,7 +264,7 @@
                                 </label>
                                 <input aria-describedby="tel_ID-error" id="tel_ID" type="text" name="telefon" ng-model="vm.getModelJA().telefon"
                                        dv-max-length class="form-control" placeholder="e.g: +41 33 123 45 67"
-                                       ng-pattern="vm.CONSTANTS.PATTERN_PHONE">
+                                       ng-pattern="vm.CONSTANTS.PATTERN_PHONE" autocomplete="home tel">
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.telefon"
                                            ja="vm.getModel().gesuchstellerJA.telefon"></dv-bisher>
                                 <dv-error-messages input-id="tel_ID" for="vm.form.telefon.$error"
@@ -278,7 +279,7 @@
                                 <label class="md-no-float" data-translate="TELEFON_AUSLAND" for="ausl_tel">
                                 </label>
                                 <input aria-describedby="ausl_tel-error" id="ausl_tel" type="text" name="telefonAusland"
-                                       ng-model="vm.getModelJA().telefonAusland"
+                                       ng-model="vm.getModelJA().telefonAusland" autocomplete="tel"
                                        dv-max-length class="form-control">
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.telefonAusland"
                                            ja="vm.getModel().gesuchstellerJA.telefonAusland"></dv-bisher>

@@ -26,9 +26,16 @@
                  ng-bind="user.vorname + ' ' + user.nachname"></div>
         </div>
     </div>
-    <!-- Institutionsbenutzer -->
     <div class="col-md-3">
+        <!-- Institutionsbenutzer -->
         <div class="panel panel-default" ng-repeat="user in vm.institutionsuserList">
+            <div class="mark-hover panel-body" ng-click="vm.logIn(user)"
+                 ng-bind="user.vorname + ' ' + user.nachname + ', ' + (user.getRoleKey() | translate) + ' '
+                          + user.institution.name + user.traegerschaft.name"></div>
+        </div>
+
+        <!-- AmtBenutzer -->
+        <div class="panel panel-default" ng-repeat="user in vm.amtUserList">
             <div class="mark-hover panel-body" ng-click="vm.logIn(user)"
                  ng-bind="user.vorname + ' ' + user.nachname + ', ' + (user.getRoleKey() | translate) + ' '
                           + user.institution.name + user.traegerschaft.name"></div>
