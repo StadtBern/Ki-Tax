@@ -51,6 +51,9 @@ public class CheckOnlyOneInstitutionsStammdatenPerGesuchsperiodeValidator
 		Collection<Gesuchsperiode> gesuchsperiodeList = getGesuchsperiodeService().getGesuchsperiodenBetween(
 			stammdaten.getGueltigkeit().getGueltigAb(), stammdaten.getGueltigkeit().getGueltigBis());
 
+		if (gesuchsperiodeList.size() <= 0) {
+			return false;
+		}
 		for (Gesuchsperiode gesuchsperiode : gesuchsperiodeList) {
 			if (!isValidForGesuchsperiode(stammdaten, gesuchsperiode)) {
 				return false;
