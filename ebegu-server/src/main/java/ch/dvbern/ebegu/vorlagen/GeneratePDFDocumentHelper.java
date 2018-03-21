@@ -58,6 +58,7 @@ public class GeneratePDFDocumentHelper {
 	private static final String NUMOFPAGE = "#PAGE";
 	private static final String NUMOFPAGES = "#MAX";
 	private static final String PROP_STANDARD_ANZAHL_SEITEN = "expectedNumberOfPages";
+	private static final String PROP_SKIP_BREAKS_AFTER_ANZAHL_SEITEN = "skipBreaksAfterNumPages";
 
 	/**
 	 * Konvertiert ein docx zu einem PDF
@@ -96,10 +97,11 @@ public class GeneratePDFDocumentHelper {
 			DOCXMergeEngine docxme = new DOCXMergeEngine(mergeSource.getClass().getName());
 
 			byte[] mergedDocx = docxme.getDocument(new ByteArrayInputStream(docxTemplate), mergeSource);
-			//			save(mergedDocx);
-			byte[] mergedPdf = generatePDFDocument(mergedDocx);
-			PdfReader reader = new PdfReader(mergedPdf);
-			int numOfPDFPages = reader.getNumberOfPages();
+			//save(mergedDocx);
+			byte[] mergedPdfv1, mergedPdfv2, mergedPdfResult;
+			mergedPdfv1 = generatePDFDocument(mergedDocx);
+			PdfReader reader = new PdfReader(mergedPdfv1);
+			int numOfPDFv1Pages = reader.getNumberOfPages();
 			reader.close();
 
 			int expectedNumOfDOCXPages = 0;
@@ -109,17 +111,30 @@ public class GeneratePDFDocumentHelper {
 					.getProperty(PROP_STANDARD_ANZAHL_SEITEN).getI4();
 			}
 
-			if (expectedNumOfDOCXPages > 0 && expectedNumOfDOCXPages != numOfPDFPages) {
+			mergedPdfv2 = generatePDFDocument(mergedDocx);
+
+			if (expectedNumOfDOCXPages > 0 && expectedNumOfDOCXPages != numOfPDFv1Pages) {
 				mergeSource.setPDFLongerThanExpected(true);
 				mergedDocx = docxme.getDocument(new ByteArrayInputStream(docxTemplate), mergeSource);
-				mergedPdf = generatePDFDocument(mergedDocx);
+				mergedPdfv2 = generatePDFDocument(mergedDocx);
 			}
+
+			reader = new PdfReader(mergedPdfv2);
+			int numOfPDFv2Pages = reader.getNumberOfPages();
+			reader.close();
+
+			int skipBreaksAfterNumPages = 0;
+			if (document.getProperties().getCustomProperties().contains(PROP_SKIP_BREAKS_AFTER_ANZAHL_SEITEN)) {
+				skipBreaksAfterNumPages = document.getProperties().getCustomProperties()
+					.getProperty(PROP_SKIP_BREAKS_AFTER_ANZAHL_SEITEN).getI4();
+			}
+			mergedPdfResult = skipBreaksAfterNumPages > 0 && skipBreaksAfterNumPages < numOfPDFv2Pages ? mergedPdfv1 : mergedPdfv2;
 
 			if (!writeProtected) {
-				mergedPdf = addDraftWatermark(mergedPdf);
+				mergedPdfResult = addDraftWatermark(mergedPdfResult);
 			}
 
-			return mergedPdf;
+			return mergedPdfResult;
 		} catch (IOException | DocTemplateException | DocumentException e) {
 			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[] {});
 		}
