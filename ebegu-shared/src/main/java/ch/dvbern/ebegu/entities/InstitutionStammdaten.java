@@ -42,6 +42,8 @@ import javax.validation.constraints.Size;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.MathUtil;
+import ch.dvbern.ebegu.validationgroups.InstitutionsStammdatenInsertValidationGroup;
+import ch.dvbern.ebegu.validators.CheckOnlyOneInstitutionsStammdatenPerGesuchsperiode;
 import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
 import org.hibernate.envers.Audited;
 
@@ -62,6 +64,7 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 		@Index(name = "IX_institution_stammdaten_gueltig_bis", columnList = "gueltigBis")
 	}
 )
+@CheckOnlyOneInstitutionsStammdatenPerGesuchsperiode (groups = InstitutionsStammdatenInsertValidationGroup.class)
 //@Cacheable
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class InstitutionStammdaten extends AbstractDateRangedEntity {
