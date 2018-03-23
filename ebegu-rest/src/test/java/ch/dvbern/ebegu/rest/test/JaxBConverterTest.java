@@ -161,6 +161,8 @@ public class JaxBConverterTest extends AbstractEbeguRestLoginTest {
 	@Test
 	public void institutionsStammdatenSpeichernDarfInstitutionNichtUpdaten() throws Exception {
 		Mandant mandant = criteriaQueryHelper.getAll(Mandant.class).iterator().next();
+		final Gesuchsperiode gesuchsperiode1718 = TestDataUtil.createGesuchsperiode1718();
+		persistence.persist(gesuchsperiode1718);
 		Institution institution = TestDataUtil.createDefaultInstitution();
 		institution.setMandant(mandant);
 		institution.setTraegerschaft(null);
@@ -170,14 +172,14 @@ public class JaxBConverterTest extends AbstractEbeguRestLoginTest {
 		JaxInstitutionStammdaten jaxStammdaten = TestJaxDataUtil.createTestJaxInstitutionsStammdaten();
 		jaxStammdaten.setInstitution(converter.institutionToJAX(institution));
 		jaxStammdaten.getInstitution().setName("ChangedInstitution");
-		institutionStammdatenResource.saveInstitutionStammdaten(jaxStammdaten, uri, null);
+		final JaxInstitutionStammdaten updatedInstitution = institutionStammdatenResource.saveInstitutionStammdaten(jaxStammdaten, uri, null);
 
-		institution = criteriaQueryHelper.getAll(Institution.class).iterator().next();
-		Assert.assertEquals("Institution1", institution.getName());
+		Assert.assertNotNull(updatedInstitution);
+		Assert.assertEquals("Institution1", updatedInstitution.getInstitution().getName());
 	}
 
 	@Test
-	public void betreuungSpeichernDarfInstitutionsStammdatenNichtUpdaten() throws Exception {
+	public void betreuungSpeichernDarfInstitutionsStammdatenNichtUpdaten() {
 		InstitutionStammdaten kitaBruennen = TestDataUtil.createInstitutionStammdatenKitaBruennen();
 		Assert.assertEquals(Constants.START_OF_TIME, kitaBruennen.getGueltigkeit().getGueltigAb());
 

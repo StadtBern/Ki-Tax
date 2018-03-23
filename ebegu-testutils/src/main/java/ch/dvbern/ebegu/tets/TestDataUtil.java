@@ -330,7 +330,7 @@ public final class TestDataUtil {
 		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
-		instStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2010, 12, 31)));
+		instStammdaten.setGueltigkeit(new DateRange(Constants.GESUCHSPERIODE_17_18));
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
 		instStammdaten.setAdresse(createDefaultAdresse());

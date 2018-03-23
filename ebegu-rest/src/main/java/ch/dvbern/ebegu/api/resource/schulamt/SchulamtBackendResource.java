@@ -16,6 +16,7 @@
 package ch.dvbern.ebegu.api.resource.schulamt;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +59,9 @@ import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.FinSitStatus;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
@@ -247,14 +250,18 @@ public class SchulamtBackendResource {
 				return createBadParameterResponse("Can not parse date for stichtagParam");
 			}
 
-			//Get Gesuchsperiode am Stichtag
-			final Optional<Gesuchsperiode> gesuchsperiodeAm = gesuchsperiodeService.getGesuchsperiodeAm(stichtag);
-			if (!gesuchsperiodeAm.isPresent()) {
-				return createBadParameterResponse("No gesuchsperiode found for stichtag");
+			// Parse Gesuchsperiode
+			int yearFromBGNummer = betreuungService.getYearFromBGNummer(bgNummer);
+			Gesuchsperiode gesuchsperiodeFromBGNummer = gesuchsperiodeService.getGesuchsperiodeAm(LocalDate.of(yearFromBGNummer, Month.AUGUST, 1))
+				.orElseThrow(() -> new EbeguEntityNotFoundException("getFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, bgNummer));
+
+			// Falls der Stichtag *vor* Beginn der Gesuchsperiode liegt, wird der Starttag der Gesuchsperiode genommen
+			if (stichtag.isBefore(gesuchsperiodeFromBGNummer.getGueltigkeit().getGueltigAb())) {
+				stichtag = gesuchsperiodeFromBGNummer.getGueltigkeit().getGueltigAb();
 			}
 
 			//Get "neustes" Gesuch on Stichtag an fallnummer
-			Optional<Gesuch> neustesGesuchOpt = gesuchService.getNeustesGesuchFuerFallnumerForSchulamtInterface(gesuchsperiodeAm.get(), fallNummer);
+			Optional<Gesuch> neustesGesuchOpt = gesuchService.getNeustesGesuchFuerFallnumerForSchulamtInterface(gesuchsperiodeFromBGNummer, fallNummer);
 			if (!neustesGesuchOpt.isPresent()) {
 				return createNoResultsResponse("No gesuch found for fallnummer or finSit not yet set");
 			}

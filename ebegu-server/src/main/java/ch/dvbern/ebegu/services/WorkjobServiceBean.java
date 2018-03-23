@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -260,6 +261,13 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 		q.setParameter(statusParam, statesToSearch);
 
 		return q.getResultList();
+	}
+
+	@Nonnull
+	@Override
+	public List<Workjob> findAllWorkjobs() {
+		final Collection<Workjob> all = criteriaQueryHelper.getAll(Workjob.class);
+		return new ArrayList<>(all);
 	}
 
 	@Override

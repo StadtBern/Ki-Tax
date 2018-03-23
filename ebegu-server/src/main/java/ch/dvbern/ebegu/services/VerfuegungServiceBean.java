@@ -396,6 +396,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	/**
 	 * Mithilfe der Methode isSamePersistedValues schaut ob der uebergebene Zeitabschnitt bereits in der uebergebenen Liste existiert.
+	 * Alle Felder muessen verglichen werden.
 	 */
 	private boolean isNotInZeitabschnitteList(VerfuegungZeitabschnitt zeitabschnitt, List<VerfuegungZeitabschnitt> vorgaengerZeitabschnitte) {
 		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : vorgaengerZeitabschnitte) {

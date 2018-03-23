@@ -40,6 +40,7 @@ export class SchulungViewController {
     public usersList: Array<TSUser> = Array<TSUser>();
     private gesuchstellerList: string[];
     private institutionsuserList: Array<TSUser> = Array<TSUser>();
+    private amtUserList: Array<TSUser> = Array<TSUser>();
     private mandant: TSMandant;
     private institutionForelle: TSInstitution;
     private traegerschaftFisch: TSTraegerschaft;
@@ -61,11 +62,23 @@ export class SchulungViewController {
                 this.usersList.push(new TSUser('Sandra', name, username, 'password1', 'sandra.' + name.toLocaleLowerCase() + '@example.com', this.mandant, TSRole.GESUCHSTELLER));
             }
 
-            this.institutionsuserList.push(new TSUser('Fritz', 'Fisch', 'sch20', 'password1', 'fritz.fisch@example.com',
-                this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftFisch, undefined));
-            this.institutionsuserList.push(new TSUser('Franz', 'Forelle', 'sch21', 'password1', 'franz.forelle@example.com',
-                this.mandant, TSRole.SACHBEARBEITER_INSTITUTION, undefined, this.institutionForelle));
+            this.setInstitutionUsers();
+            this.setAmtUsers();
         });
+    }
+
+    private setInstitutionUsers() {
+        this.institutionsuserList.push(new TSUser('Fritz', 'Fisch', 'sch20', 'password1', 'fritz.fisch@example.com',
+            this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftFisch, undefined));
+        this.institutionsuserList.push(new TSUser('Franz', 'Forelle', 'sch21', 'password1', 'franz.forelle@example.com',
+            this.mandant, TSRole.SACHBEARBEITER_INSTITUTION, undefined, this.institutionForelle));
+    }
+
+    private setAmtUsers() {
+        this.amtUserList.push(new TSUser('Julien', 'Schuler', 'scju', 'password9', 'julien.schuler@example.com',
+            this.mandant, TSRole.SCHULAMT));
+        this.amtUserList.push(new TSUser('Jennifer', 'Müller', 'jemu', 'password2', 'jennifer.mueller@example.com',
+            this.mandant, TSRole.SACHBEARBEITER_JA));
     }
 
     /**

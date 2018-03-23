@@ -43,7 +43,7 @@ public final class VerfuegungUtil {
 				// todo imanol Dies sollte auch subzeitabschnitte vergleichen
 				Optional<VerfuegungZeitabschnitt> oldSameZeitabschnitt = findZeitabschnittSameGueltigkeit(zeitabschnitteGSM, newZeitabschnitt);
 				if (oldSameZeitabschnitt.isPresent()) {
-					newZeitabschnitt.setSameVerfuegungsdaten(newZeitabschnitt.isSamePersistedValues(oldSameZeitabschnitt.get()));
+					newZeitabschnitt.setSameVerfuegungsdaten(newZeitabschnitt.isSameBerechnung(oldSameZeitabschnitt.get()));
 					newZeitabschnitt.setSameVerguenstigung(Objects.equals(newZeitabschnitt.getVerguenstigung(), oldSameZeitabschnitt.get().getVerguenstigung()));
 				} else { // no Zeitabschnitt with the same Gueltigkeit has been found, so it must be different
 					newZeitabschnitt.setSameVerfuegungsdaten(false);

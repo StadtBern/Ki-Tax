@@ -52,6 +52,15 @@ public interface WorkjobService {
 	@Nonnull
 	List<Workjob> findWorkjobs(@Nonnull String startingUserName, @Nonnull Set<BatchJobStatus> statesToSearch);
 
+	/**
+	 * gibt eine Liste aller Workjobs aus der DB zurueck
+	 */
+	@Nonnull
+	List<Workjob> findAllWorkjobs();
+
+	/**
+	 * Gibt die Liste aller Workjobs zurueck die entweder fehlgeschlagen sind, oder noch nicht fertig sind
+	 */
 	@Nonnull
 	List<Workjob> findUnfinishedWorkjobs();
 
