@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import javax.annotation.Nonnull;
 
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 
@@ -72,6 +73,13 @@ public interface InstitutionStammdatenService {
 	 * @return Alle InstitutionStammdaten, bei denen die Institution dem übergebenen id-Wert entspricht
 	 */
 	Collection<InstitutionStammdaten> getAllInstitutionStammdatenByInstitution(String institutionId);
+
+	/**
+	 * Gibt eine Liste aller Stammdaten des uebergebenen Betreuungstyps zurueck, welche fuer die uebergebene Institution und die uebergebene Gesuchsperiode
+	 * vorhanden sind
+	 */
+	Collection<InstitutionStammdaten> getAllInstitutionStammdatenByInstitutionAndGesuchsperiode(@Nonnull String institutionId,
+		@Nonnull BetreuungsangebotTyp betreuungsangebotTyp, @Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
 	 * Gibt alle Betreuungsangebotstypen zurueck, welche die Institutionen anbieten, fuer welche der

@@ -207,7 +207,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	public String getInternalAPIUser() {
 		String user = getString(EBEGU_LOGIN_API_INTERNAL_USER);
 		if (StringUtils.isEmpty(user)) {
-			LOG.error("Internal API User  must be set in the properties (key: {}) to use the LoginConnector API ",
+			LOG.warn("Internal API User  must be set in the properties (key: {}) to use the LoginConnector API ",
 				EBEGU_LOGIN_API_INTERNAL_USER);
 
 		}
@@ -218,7 +218,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	public String getInternalAPIPassword() {
 		String internalUserPW = getString(EBEGU_LOGIN_API_INTERNAL_PASSWORD);
 		if (StringUtils.isEmpty(internalUserPW)) {
-			LOG.error("Internal API password must be set in the properties (key: {}) to use the LoginConnector API ",
+			LOG.warn("Internal API password must be set in the properties (key: {}) to use the LoginConnector API ",
 				EBEGU_LOGIN_API_INTERNAL_PASSWORD);
 		}
 		return internalUserPW;

@@ -42,13 +42,14 @@ describe('dvNavigation', function () {
     beforeEach(angular.mock.inject(function ($injector: angular.auto.IInjectorService) {
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($injector.get('$httpBackend'));
         $q = $injector.get('$q');
+        let $timeout = $injector.get('$timeout');
         $rootScope = $injector.get('$rootScope');
         wizardStepManager = $injector.get('WizardStepManager');
         $state = $injector.get('$state');
         gesuchModelManager = $injector.get('GesuchModelManager');
         authServiceRS = $injector.get('AuthServiceRS');
         navController = new NavigatorController(wizardStepManager, $state, gesuchModelManager,
-            $injector.get('$translate'), $injector.get('ErrorService'), $q);
+            $injector.get('$translate'), $injector.get('ErrorService'), $q, $timeout);
         navController.dvSave = () => {
             return $q.when({});
         };
