@@ -987,7 +987,7 @@ public class JaxBConverter {
 		// Finanzielle Situation
 		if (jaxGesuchstellerCont.getFinanzielleSituationContainer() != null) {
 			gesuchstellerCont.setFinanzielleSituationContainer(finanzielleSituationContainerToStorableEntity(jaxGesuchstellerCont
-				.getFinanzielleSituationContainer()));
+				.getFinanzielleSituationContainer(), null));
 		}
 		//Erwerbspensum
 		jaxGesuchstellerCont.getErwerbspensenContainers()
@@ -1298,9 +1298,10 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
-	public FinanzielleSituationContainer finanzielleSituationContainerToStorableEntity(@Nonnull final JaxFinanzielleSituationContainer containerJAX) {
+	public FinanzielleSituationContainer finanzielleSituationContainerToStorableEntity(@Nonnull final JaxFinanzielleSituationContainer containerJAX,
+		@Nullable FinanzielleSituationContainer container) {
 		Validate.notNull(containerJAX);
-		FinanzielleSituationContainer containerToMergeWith = new FinanzielleSituationContainer();
+		FinanzielleSituationContainer containerToMergeWith = container != null ? container : new FinanzielleSituationContainer();
 		if (containerJAX.getId() != null) {
 			final Optional<FinanzielleSituationContainer> existingFSC = finanzielleSituationService.findFinanzielleSituation(containerJAX.getId());
 			if (existingFSC.isPresent()) {
