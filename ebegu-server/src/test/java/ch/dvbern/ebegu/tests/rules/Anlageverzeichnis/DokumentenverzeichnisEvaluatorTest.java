@@ -179,7 +179,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Assert.assertFalse(kindDokumente.isDokumentNeeded(DokumentTyp.FACHSTELLENBEST_BEH, kind));
 		Assert.assertTrue(kindDokumente.isDokumentNeeded(DokumentTyp.FACHSTELLENBEST_SOZ, kind));
 
-		final DokumentGrund dokumentGrund = getDokumentGrund(kind);
+		final DokumentGrund dokumentGrund = getDokumentGrund();
 		Assert.assertEquals(DokumentTyp.FACHSTELLENBEST_SOZ, dokumentGrund.getDokumentTyp());
 	}
 
@@ -193,19 +193,19 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Assert.assertTrue(kindDokumente.isDokumentNeeded(DokumentTyp.FACHSTELLENBEST_BEH, kind));
 		Assert.assertFalse(kindDokumente.isDokumentNeeded(DokumentTyp.FACHSTELLENBEST_SOZ, kind));
 
-		final DokumentGrund dokumentGrund = getDokumentGrund(kind);
+		final DokumentGrund dokumentGrund = getDokumentGrund();
 
 		Assert.assertEquals(DokumentTyp.FACHSTELLENBEST_BEH, dokumentGrund.getDokumentTyp());
 	}
 
-	private DokumentGrund getDokumentGrund(Kind kind) {
+	private DokumentGrund getDokumentGrund() {
 		final Set<DokumentGrund> calculate = evaluator.calculate(testgesuch);
 		Assert.assertEquals(1, calculate.size());
 		final DokumentGrund dokumentGrund = calculate.iterator().next();
 		Assert.assertEquals(DokumentGrundTyp.KINDER, dokumentGrund.getDokumentGrundTyp());
 		Assert.assertNull(dokumentGrund.getFullName());
 		Assert.assertEquals(DokumentGrundPersonType.KIND, dokumentGrund.getPersonType());
-		Assert.assertEquals(Integer.valueOf(1), dokumentGrund.getPersonNumber());
+		Assert.assertEquals(Integer.valueOf(-1), dokumentGrund.getPersonNumber()); //-1 is the default value
 		return dokumentGrund;
 	}
 

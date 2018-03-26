@@ -78,8 +78,9 @@ public class AbstractEntityListener {
 		entity.setTimestampMutiert(now);
 		entity.setUserErstellt(getPrincipalName());
 		entity.setUserMutiert(getPrincipalName());
-		if (entity instanceof KindContainer && !entity.hasVorgaenger()) {
-			// Neue Kind-Nummer: nur setzen, wenn es nicht ein "kopiertes" Kind ist
+		if (entity instanceof KindContainer && !entity.hasVorgaenger() && ((KindContainer) entity).getKindNummer() <= -1) {
+			// Neue Kind-Nummer: nur setzen, wenn es nicht ein "kopiertes" Kind (Mutation oder Erneuerungsgesuch) ist
+			// !entity.hasVorgaenger() ist ueberfluessig, trotzdem wird als Doppelcheck nicht entfernt.
 			KindContainer kind = (KindContainer) entity;
 			Optional<Fall> optFall = getFallService().findFall(kind.getGesuch().getFall().getId());
 			if (optFall.isPresent()) {

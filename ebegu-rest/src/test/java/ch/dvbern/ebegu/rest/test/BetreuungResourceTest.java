@@ -176,6 +176,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 		JaxGesuch returnedGesuch = (JaxGesuch) gesuchResource.create(jaxGesuch, uri, null).getEntity();
 
 		KindContainer returnedKind = TestDataUtil.createDefaultKindContainer();
+		returnedKind.setKindNummer(1);
 		returnedKind.setGesuch(converter.gesuchToEntity(returnedGesuch, new Gesuch()));
 		JaxKindContainer jaxKind = converter.kindContainerToJAX(returnedKind);
 		JaxPensumFachstelle jaxPensumFachstelle = jaxKind.getKindGS().getPensumFachstelle();
