@@ -80,6 +80,7 @@ public class AbstractEntityListener {
 		entity.setUserMutiert(getPrincipalName());
 		if (entity instanceof KindContainer && !entity.hasVorgaenger() && ((KindContainer) entity).getKindNummer() <= -1) {
 			// Neue Kind-Nummer: nur setzen, wenn es nicht ein "kopiertes" Kind (Mutation oder Erneuerungsgesuch) ist
+			// in diesen Faellen ist dann bereits eine Nummer gesetzt und wir setzen hier keine neue
 			// !entity.hasVorgaenger() ist ueberfluessig, trotzdem wird als Doppelcheck nicht entfernt.
 			KindContainer kind = (KindContainer) entity;
 			Optional<Fall> optFall = getFallService().findFall(kind.getGesuch().getFall().getId());
