@@ -169,7 +169,7 @@ public class Verfuegung extends AbstractEntity {
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Verfuegung");
 		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitte) {
-			sb.append("\n");
+			sb.append('\n');
 			sb.append(zeitabschnitt);
 		}
 		return sb.toString();
@@ -178,7 +178,7 @@ public class Verfuegung extends AbstractEntity {
 	public String toStringFinanzielleSituation() {
 		StringBuilder sb = new StringBuilder("Verfuegung");
 		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitte) {
-			sb.append("\n");
+			sb.append('\n');
 			sb.append(zeitabschnitt.toStringFinanzielleSituation());
 		}
 		return sb.toString();

@@ -80,7 +80,7 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	@NotNull
 	@Min(1)
 	@Column(nullable = false)
-	private Integer kindNummer = 1;
+	private Integer kindNummer = -1; // by default ungueltig, sodass wir wissen wann es neu ist
 
 	/**
 	 * nextNumberBetreuung ist die Nummer, die die naechste Betreuung bekommen wird. Aus diesem Grund ist es by default 1

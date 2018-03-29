@@ -81,7 +81,7 @@ public final class DokumenteUtil {
 	/**
 	 * Compares two DokumentGrund. In order to support the old version where the name of the linked person
 	 * was saved statically in the DokumentGrund we cannot just compare both elements as usual. We need to check
-	 * if it is an old DokumentGrund (FREETEXT) and in that case we have to etract the name of the Gesuchsteller
+	 * if it is an old DokumentGrund (FREETEXT) and in that case we have to extract the name of the Gesuchsteller
 	 * or Kind to compare it with the fullName.
 	 */
 	public static int compareDokumentGrunds(DokumentGrund persistedDok, DokumentGrund neededDok, final Gesuch gesuch) {
@@ -94,7 +94,7 @@ public final class DokumenteUtil {
 		if (persistedDok.getPersonType() != null && neededDok.getPersonType() != null) {
 			// when persistedDokument is an old one ie.e. FREETEXT, then we compare fullname of
 			// the persisted one with the calculated name of the needed one.
-			if (persistedDok.getPersonType().equals(DokumentGrundPersonType.FREETEXT)) {
+			if (persistedDok.getPersonType() == DokumentGrundPersonType.FREETEXT) {
 				final String fullNameNeededDok = fullNameNeededDok(gesuch, neededDok.getPersonType(), neededDok.getPersonNumber(), neededDok.getFullName());
 				if (persistedDok.getFullName() != null && fullNameNeededDok != null) {
 					builder.append(persistedDok.getFullName(), fullNameNeededDok);
@@ -113,13 +113,13 @@ public final class DokumenteUtil {
 
 	private static String fullNameNeededDok(Gesuch gesuch, DokumentGrundPersonType personType, Integer personNumber, String fullName) {
 		if (personType != null) {
-			if (personType.equals(DokumentGrundPersonType.GESUCHSTELLER)) {
+			if (personType == DokumentGrundPersonType.GESUCHSTELLER) {
 				if (personNumber == 1 && gesuch.getGesuchsteller1() != null) {
 					return gesuch.getGesuchsteller1().extractFullName();
 				} else if (personNumber == 2 && gesuch.getGesuchsteller2() != null) {
 					return gesuch.getGesuchsteller2().extractFullName();
 				}
-			} else if (personType.equals(DokumentGrundPersonType.KIND)) {
+			} else if (personType == DokumentGrundPersonType.KIND) {
 				final KindContainer kindContainer = gesuch.extractKindFromKindNumber(personNumber);
 				if (kindContainer != null) {
 					return kindContainer.getKindJA().getFullName();
