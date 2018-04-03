@@ -77,8 +77,11 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Hinweis, dass Tageschulanmeldung ncoh nicht freigeschaltet -->
+        <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.hasTagesschulenAnmeldung()">
+
+            <!-- Hinweis, dass Tageschulanmeldung noch nicht freigeschaltet -->
             <div class="marginTop30" ng-if="!vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">
                 <div class="well well-status-warten">
                     <i class="fa fa-exclamation " aria-hidden="true"></i>
@@ -87,7 +90,7 @@
             </div>
 
             <!-- Hinweis, wenn keine Module ausgewaehlt -->
-            <div class="marginTop30" ng-if="vm.showErrorMessageNoModule === true">
+            <div class="marginTop30" ng-if="vm.showErrorMessageNoModule === true && !vm.getBetreuungModel().keineDetailinformationen">
                 <div class="well well-status-warten">
                     <i class="fa fa-exclamation" aria-hidden="true"></i>
                     <span data-translate="WARN_TAGESSCHULE_KEIN_MODUL_GEWAEHLT"></span>
