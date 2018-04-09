@@ -1434,7 +1434,6 @@ public class JaxBConverter {
 			}
 			kindContainer.setKindJA(kindToEntity(kindContainerJAXP.getKindJA(), kindJA));
 		}
-		kindContainer.setKindNummer(kindContainerJAXP.getKindNummer());
 		if (kindContainerJAXP.getNextNumberBetreuung() != null) {
 			kindContainer.setNextNumberBetreuung(kindContainerJAXP.getNextNumberBetreuung());
 		}

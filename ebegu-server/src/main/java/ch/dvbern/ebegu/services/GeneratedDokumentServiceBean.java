@@ -415,7 +415,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	@Override
 	public WriteProtectedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(@Nonnull final Gesuch gesuch,
 		@Nonnull Betreuung betreuung, @Nonnull String manuelleBemerkungen, @Nonnull Boolean forceCreation) throws
-		MimeTypeParseException, MergeDocException, IOException {
+		MimeTypeParseException, MergeDocException {
 
 		String bgNummer = betreuung.getBGNummer();
 		String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG, bgNummer);
@@ -514,7 +514,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	}
 
 	@Override
-	public WriteProtectedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(Betreuung betreuung, Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException {
+	public WriteProtectedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(Betreuung betreuung, Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 
 		Gesuch gesuch = betreuung.extractGesuch();
 		GeneratedDokumentTyp dokumentTyp = GeneratedDokumentTyp.NICHTEINTRETEN;
