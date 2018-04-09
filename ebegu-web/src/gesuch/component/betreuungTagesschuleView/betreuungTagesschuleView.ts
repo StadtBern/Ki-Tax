@@ -82,6 +82,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
                 authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams,
                 mitteilungRS: MitteilungRS, dvDialog: DvDialog, $log: ILogService,
                 $timeout: ITimeoutService, $translate: ITranslateService) {
+
         super($state, gesuchModelManager, ebeguUtil, CONSTANTS, $scope, berechnungsManager, errorService, authServiceRS,
             wizardStepManager, $stateParams, mitteilungRS, dvDialog, $log, $timeout, $translate);
 
