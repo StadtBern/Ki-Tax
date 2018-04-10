@@ -206,7 +206,7 @@
                  dv-show-expression="!vm.gesuchModelManager.isGesuchsperiodeReadonly()">
                 <dv-loading-button button-click="vm.setAbschliessen()"
                                    aria-label="{{'ABSCHLIESSEN_UPPER' | translate}}"
-                                   ng-if="vm.showAbschliessen()"
+                                   ng-if="vm.showAbschliessen() && !vm.showCloseWithoutAngebot()"
                                    button-disabled="!vm.isFinSitChoosen()">
                     <span data-translate="ABSCHLIESSEN_UPPER"></span>
                 </dv-loading-button>
