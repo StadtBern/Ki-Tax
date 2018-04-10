@@ -45,6 +45,6 @@ public class NichteintretenPrintImpl extends BriefPrintImpl implements Nichteint
 	public String getAngebotName() {
 		return betreuung.getKind().getKindJA().getFullName()
 			+ ", Angebot " + betreuung.getInstitutionStammdaten().getInstitution().getName()
-			+ " (" + betreuung.getBGNummer() + ")";
+			+ " (" + betreuung.getBGNummer() + ')';
 	}
 }
