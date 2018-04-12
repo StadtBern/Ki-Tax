@@ -1572,13 +1572,13 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return updateGesuch(gesuch, true, null);
 	}
 
-	private void createFinSitDokument(Gesuch persistedGesuch, String setAbschliessen) {
+	private void createFinSitDokument(Gesuch persistedGesuch, String methodname) {
 		if (EbeguUtil.isFinanzielleSituationRequired(persistedGesuch)) {
 			try {
 				// Das Erstellen des FinSitDokumentes wirft eine Exception, wenn die FinSit nicht benötigt wird
 				generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(persistedGesuch, true);
 			} catch (MimeTypeParseException | MergeDocException e) {
-				throw new EbeguRuntimeException(setAbschliessen, "FinSit-Dokument konnte nicht erstellt werden"
+				throw new EbeguRuntimeException(methodname, "FinSit-Dokument konnte nicht erstellt werden"
 					+ persistedGesuch.getId(), e);
 			}
 		}
