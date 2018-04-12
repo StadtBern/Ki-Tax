@@ -1357,7 +1357,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Gesuch persistedGesuch = updateGesuch(gesuch, true, null);
 		// Das Dokument der Finanziellen Situation erstellen
 		try {
-			generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(persistedGesuch, true);
+			// Das Erstellen des FinSitDokumentes wirft eine Exception, wenn die FinSit nicht benötigt wird
+			if (EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
+				generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(persistedGesuch, true);
+			}
 		} catch (MimeTypeParseException | MergeDocException e) {
 			throw new EbeguRuntimeException("closeWithoutAngebot", "FinSit-Dokument konnte nicht erstellt werden"
 				+ persistedGesuch.getId(), e);

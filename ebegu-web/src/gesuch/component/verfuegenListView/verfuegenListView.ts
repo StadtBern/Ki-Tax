@@ -119,6 +119,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         }
         this.refreshKinderListe();
         this.finSitStatus = EnumEx.getNames(TSFinSitStatus);
+        this.setHasFSDokumentAccordingToFinSitState();
     }
 
     private refreshKinderListe(): IPromise<any> {
@@ -441,7 +442,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public showGeprueft(): boolean {
         return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))
             && this.wizardStepManager.areAllStepsOK(this.getGesuch()) && this.mahnung === undefined
-            && !this.gesuchModelManager.areThereOnlySchulamtAngebote()
+            && (!this.gesuchModelManager.areThereOnlySchulamtAngebote() || !this.gesuchModelManager.getGesuch().isThereAnyBetreuung())
             && !this.isGesuchReadonly();
     }
 
@@ -531,7 +532,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public showAbschliessen(): boolean {
         let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
         return (TSAntragStatus.IN_BEARBEITUNG_JA === status || TSAntragStatus.GEPRUEFT === status)
-            && this.gesuchModelManager.areThereOnlySchulamtAngebote();
+            && this.gesuchModelManager.areThereOnlySchulamtAngebote() && this.gesuchModelManager.getGesuch().isThereAnyBetreuung();
     }
 
     public isFinSitChoosen(): boolean {
