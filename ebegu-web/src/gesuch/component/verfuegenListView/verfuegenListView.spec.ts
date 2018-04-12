@@ -16,6 +16,7 @@
 import {EbeguWebCore} from '../../../core/core.module';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import TSBetreuung from '../../../models/TSBetreuung';
+import TSGesuch from '../../../models/TSGesuch';
 import TSKindContainer from '../../../models/TSKindContainer';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import {EbeguWebGesuch} from '../../gesuch.module';
@@ -50,6 +51,8 @@ describe('verfuegenListViewTest', function () {
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([tsKindContainer]);
         spyOn(gesuchModelManager, 'calculateVerfuegungen').and.returnValue($q.when({}));
+
+        spyOn(gesuchModelManager, 'getGesuch').and.returnValue(new TSGesuch());
 
         berechnungsManager = $injector.get('BerechnungsManager');
         spyOn(berechnungsManager, 'calculateFinanzielleSituation').and.returnValue({});
@@ -134,7 +137,7 @@ describe('verfuegenListViewTest', function () {
                 expect($state.go).toHaveBeenCalledWith('gesuch.verfuegenView', {
                     betreuungNumber: 2,
                     kindNumber: 1,
-                    gesuchId: ''
+                    gesuchId: undefined
                 });
             });
         });
