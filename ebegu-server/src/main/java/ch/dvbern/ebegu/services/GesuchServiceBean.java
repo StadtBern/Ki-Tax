@@ -622,7 +622,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			if (gesuch.hasOnlyBetreuungenOfSchulamt() && EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
 				// Das Dokument der Finanziellen Situation erstellen
 				try {
-					generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(gesuch, true);
+					generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(gesuch, false);
 				} catch (MimeTypeParseException | MergeDocException e) {
 					throw new EbeguRuntimeException("antragFreigeben", "FinSit-Dokument konnte nicht erstellt werden"
 						+ gesuch.getId(), e);
