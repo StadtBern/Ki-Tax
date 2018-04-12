@@ -618,11 +618,13 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			}
 
 			// Falls es ein NUR_SCHULAMT Gesuch ist, muss hier bereits die Finanzielle Situation erstellt werden,
-			// da das Gesuch mit Einlesen der Freigabequittung als freigegeben gilt.
-			if (gesuch.hasOnlyBetreuungenOfSchulamt() && EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
+			// da das Gesuch mit Einlesen der Freigabequittung als freigegeben gilt. Dies aber nur bei Gesuchen der Periode 17/18 (ohne TS-Anmeldungen)
+			if (gesuch.hasOnlyBetreuungenOfSchulamt()
+				&& !gesuch.getGesuchsperiode().hasTagesschulenAnmeldung()
+				&& EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
 				// Das Dokument der Finanziellen Situation erstellen
 				try {
-					generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(gesuch, false);
+					generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(gesuch, true);
 				} catch (MimeTypeParseException | MergeDocException e) {
 					throw new EbeguRuntimeException("antragFreigeben", "FinSit-Dokument konnte nicht erstellt werden"
 						+ gesuch.getId(), e);
