@@ -119,6 +119,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         }
         this.refreshKinderListe();
         this.finSitStatus = EnumEx.getNames(TSFinSitStatus);
+        this.setHasFSDokumentAccordingToFinSitState();
     }
 
     private refreshKinderListe(): IPromise<any> {
