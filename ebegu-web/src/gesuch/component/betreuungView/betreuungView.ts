@@ -30,6 +30,7 @@ import TSBetreuung from '../../../models/TSBetreuung';
 import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
 import TSBetreuungspensum from '../../../models/TSBetreuungspensum';
 import TSBetreuungspensumContainer from '../../../models/TSBetreuungspensumContainer';
+import TSExceptionReport from '../../../models/TSExceptionReport';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import TSKindContainer from '../../../models/TSKindContainer';
@@ -255,15 +256,20 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             this.isSavingData = false;
             this.form.$setPristine();
             this.$state.go(nextStep, params);
-        }).catch((exception) => {
+        }).catch((exception: TSExceptionReport[]) => {
             // starting over
-            this.$log.error('there was an error saving the betreuung ', this.model);
-            this.isSavingData = false;
-            this.model.betreuungsstatus = oldStatus;
-            this.startEmptyListOfBetreuungspensen();
-            this.form.$setUntouched();
-            this.form.$setPristine();
-            this.model.institutionStammdaten = this.initialBetreuung.institutionStammdaten;
+            this.$log.error('there was an error saving the betreuung ', this.model, exception);
+            if (exception[0].errorCodeEnum === 'ERROR_DUPLICATE_BETREUUNG') {
+                this.isSavingData = true;
+                this.model.institutionStammdaten = this.initialBetreuung.institutionStammdaten;
+            } else {
+                this.isSavingData = false;
+                this.model.betreuungsstatus = oldStatus;
+                this.startEmptyListOfBetreuungspensen();
+                this.form.$setUntouched();
+                this.form.$setPristine();
+                this.model.institutionStammdaten = this.initialBetreuung.institutionStammdaten;
+            }
             return undefined;
         });
     }

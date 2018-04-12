@@ -268,7 +268,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         }
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
-                if (!isOfAnyBetreuungsangebotTyp(betreuung.institutionStammdaten.betreuungsangebotTyp, types)) {
+                if (betreuung.institutionStammdaten && !isOfAnyBetreuungsangebotTyp(betreuung.institutionStammdaten.betreuungsangebotTyp, types)) {
                     return false;
                 }
             }
