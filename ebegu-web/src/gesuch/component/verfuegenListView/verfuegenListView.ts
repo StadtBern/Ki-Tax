@@ -558,6 +558,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         }).then(() => {
             return this.gesuchRS.setAbschliessen(this.getGesuch().id).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);
+                this.setHasFSDokumentAccordingToFinSitState();
                 return this.gesuchModelManager.getGesuch();
             });
         });
