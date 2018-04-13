@@ -192,7 +192,6 @@ describe('betreuungView', function () {
 
                 betreuungView.platzAbweisen();
 
-                expect(gesuchModelManager.setBetreuungToWorkWith).toHaveBeenCalledWith(betreuungView.model);
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND); // Status wird serverseitig gesetzt
                 expect(gesuchModelManager.getBetreuungToWorkWith().grundAblehnung).toEqual('mein Grund');
                 expect(gesuchModelManager.getBetreuungToWorkWith().datumAblehnung).toEqual(DateUtil.today());

@@ -80,6 +80,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     $translate: ITranslateService;
     moduleBackup: TSModulTagesschule[] = undefined;
     aktuellGueltig: boolean = true;
+    isDuplicated: boolean = false;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout', '$translate'];
@@ -241,7 +242,6 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     private save(newStatus: TSBetreuungsstatus, nextStep: string, params: any): void {
         this.isSavingData = true;
-        this.gesuchModelManager.setBetreuungToWorkWith(this.model); //setze model
         let oldStatus: TSBetreuungsstatus = this.model.betreuungsstatus;
         if (this.getBetreuungModel()) {
             if (this.isSchulamt()) {
@@ -253,6 +253,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         }
         this.errorService.clearAll();
         this.gesuchModelManager.saveBetreuung(this.model, newStatus, false).then((betreuungResponse: any) => {
+            this.gesuchModelManager.setBetreuungToWorkWith(this.model); //setze model
             this.isSavingData = false;
             this.form.$setPristine();
             this.$state.go(nextStep, params);
@@ -260,8 +261,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             // starting over
             this.$log.error('there was an error saving the betreuung ', this.model, exception);
             if (exception[0].errorCodeEnum === 'ERROR_DUPLICATE_BETREUUNG') {
-                this.isSavingData = true;
-                this.model.institutionStammdaten = this.initialBetreuung.institutionStammdaten;
+                this.isDuplicated = true;
+                this.copyModuleToBelegung();
             } else {
                 this.isSavingData = false;
                 this.model.betreuungsstatus = oldStatus;
@@ -291,6 +292,27 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             } else {
                 this.getBetreuungModel().belegungTagesschule.moduleTagesschule = this.getBetreuungModel().belegungTagesschule.moduleTagesschule
                     .filter(modul => modul.angemeldet === true);
+            }
+        }
+    }
+
+    /**
+     * Kopiert alle Module der ausgewaehlten Tagesschule in die Belegung, sodass man direkt in die Belegung die Module auswaehlen kann.
+     */
+    public copyModuleToBelegung() {
+        if (this.getBetreuungModel().institutionStammdaten && this.getBetreuungModel().institutionStammdaten.institutionStammdatenTagesschule
+            && this.getBetreuungModel().institutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule) {
+
+            let angemeldeteModule: TSModulTagesschule[] = angular.copy(this.getBetreuungModel().belegungTagesschule.moduleTagesschule);
+            this.getBetreuungModel().belegungTagesschule.moduleTagesschule = angular.copy(this.getBetreuungModel().institutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule);
+            if (angemeldeteModule) {
+                angemeldeteModule.forEach(angemeldetesModul => {
+                    this.getBetreuungModel().belegungTagesschule.moduleTagesschule.forEach(instModul => {
+                        if (angemeldetesModul.isSameModul(instModul)) {
+                            instModul.angemeldet = true;
+                        }
+                    });
+                });
             }
         }
     }
@@ -518,6 +540,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      * @returns {boolean}
      */
     public isEnabled(): boolean {
+        if (this.isDuplicated) {
+            return false;
+        }
         if (this.getBetreuungModel() && this.getBetreuungModel().betreuungsstatus) {
             return !this.getBetreuungModel().hasVorgaenger()
                 && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)

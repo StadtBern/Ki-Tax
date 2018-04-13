@@ -21,7 +21,7 @@
         <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.hasTagesschulenAnmeldung() && !vm.getBetreuungModel().keineDetailinformationen">
 
             <!-- Modulauswahl Tagesschule -->
-            <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv()">
+            <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv() && vm.isTagesschuleAlreadySelected()">
 
                 <!-- Eintrittsdatum -->
                 <div class="row">
@@ -38,6 +38,8 @@
                                            for="vm.form.eintrittsdatum.$error"></dv-error-messages>
                     </div>
                 </div>
+
+                <!-- TS-Module -->
                 <div class="dv-ebegu-calendar__wrapper-tagesschule" ng-if="vm.isTagesschuleAlreadySelected()">
 
                     <div class="dv-ebegu-calendar__row--tagesschule">
