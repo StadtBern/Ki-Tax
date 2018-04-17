@@ -112,27 +112,6 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
         }
     }
 
-    /**
-     * Kopiert alle Module der ausgewaehlten Tagesschule in die Belegung, sodass man direkt in die Belegung die Module auswaehlen kann.
-     */
-    private copyModuleToBelegung() {
-        if (this.getBetreuungModel().institutionStammdaten && this.getBetreuungModel().institutionStammdaten.institutionStammdatenTagesschule
-            && this.getBetreuungModel().institutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule) {
-
-            let angemeldeteModule: TSModulTagesschule[] = angular.copy(this.getBetreuungModel().belegungTagesschule.moduleTagesschule);
-            this.getBetreuungModel().belegungTagesschule.moduleTagesschule = angular.copy(this.getBetreuungModel().institutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule);
-            if (angemeldeteModule) {
-                angemeldeteModule.forEach(angemeldetesModul => {
-                    this.getBetreuungModel().belegungTagesschule.moduleTagesschule.forEach(instModul => {
-                        if (angemeldetesModul.isSameModul(instModul)) {
-                            instModul.angemeldet = true;
-                        }
-                    });
-                });
-            }
-        }
-    }
-
     public getTagesschuleAnmeldungNotYetReadyText(): string {
         let gp: TSGesuchsperiode = this.gesuchModelManager.getGesuch().gesuchsperiode;
         if (gp.hasTagesschulenAnmeldung()) {

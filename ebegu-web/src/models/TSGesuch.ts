@@ -258,7 +258,8 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     }
 
     /**
-     * Returns true when all Betreuungen are of one of the given types
+     * Returns true when all Betreuungen are of one of the given types.
+     * ACHTUNG! Diese Methode gibt auch true zurueck wenn es keine Betreuungen gibt, was nicht immer richtig ist
      */
     private areThereOnlyAngeboteOfType(types: TSBetreuungsangebotTyp[]): boolean {
         let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
@@ -267,7 +268,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         }
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
-                if (!isOfAnyBetreuungsangebotTyp(betreuung.institutionStammdaten.betreuungsangebotTyp, types)) {
+                if (betreuung.institutionStammdaten && !isOfAnyBetreuungsangebotTyp(betreuung.institutionStammdaten.betreuungsangebotTyp, types)) {
                     return false;
                 }
             }
