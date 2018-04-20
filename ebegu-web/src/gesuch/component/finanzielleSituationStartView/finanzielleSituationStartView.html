@@ -1,0 +1,128 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="finanzielleSituation gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
+    <div class="row viewTitle">
+        <div class="col-md-12">
+            <h2>
+            <span data-translate="FINANZIELLE_SITUATION"
+                  translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></span>
+            </h2>
+            <hr class="header"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <form role="form" name="vm.form" class="" unsaved-warning-form="" novalidate>
+
+                <div class="row" ng-if="vm.areThereOnlyFerieninsel">
+                    <div class="col-md-12">
+                        <p>
+                            <span data-translate="FIN_SIT_NOT_REQUIRED">
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <div ng-if="!vm.areThereOnlyFerieninsel">
+
+                    <div ng-if="vm.hasTagesschulenAnmeldung()">
+                        <dv-finanzielle-situation-require sozialhilfe-bezueger="vm.model.sozialhilfeBezueger"
+                                                          verguenstigung-gewuenscht="vm.model.verguenstigungGewuenscht"
+                                                          finanzielle-situation-required="vm.finanzielleSituationRequired"
+                                                          are-there-only-schulamtangebote="vm.areThereOnlySchulamtangebote">
+                        </dv-finanzielle-situation-require>
+                    </div>
+
+
+                    <div ng-if="!vm.hasTagesschulenAnmeldung() || (vm.isFinanziellesituationRequired() && vm.is2GSRequired())">
+                        <!-- Gemeinsame Steuererklaerung -->
+                        <div class="row">
+                            <div class="col-xs-12 dv-input-container-question">
+                                <div class="form-group">
+                            <span class="ebeguH1 required">
+                                <span data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
+                                      translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr(), namegs2: vm.extractFullNameGS2()}"></span>
+                            </span>
+                                    <dv-radio-container name="gemeinsameSteuererklaerung" class="input-element"
+                                                        ng-model="vm.model.gemeinsameSteuererklaerung"
+                                                        ng-required="true" class="radio" ng-change="vm.gemeinsameStekClicked()"
+                                                        dv-enable-element
+                                                        dv-enable-allowed-roles="vm.allowedRoles"
+                                                        dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
+                                                        aria-label="{{ 'FINANZIELLE_SITUATION_STEK_GEMEINSAM' |translate}}"
+                                                        aria-described-by="gemeinsameSteuererklaerung-error">
+                                    </dv-radio-container>
+                                    <dv-error-messages input-id="gemeinsameSteuererklaerung"
+                                                       for="vm.form.gemeinsameSteuererklaerung.$error"
+                                                       class="error"></dv-error-messages>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Steuerveranlagung -->
+                        <div class="row">
+                            <div class="col-xs-12 dv-input-container-question" ng-if="vm.showSteuerveranlagung()">
+                                <div class="form-group">
+                                    <span class="ebeguH1 required">
+                                        <span data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
+                                              translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></span>
+                                    </span>
+                                    <dv-radio-container name="steuerveranlagung" class="input-element"
+                                                        ng-model="vm.getFinanzielleSituationGS1().steuerveranlagungErhalten"
+                                                        ng-required="true" class="radio"
+                                                        ng-change="vm.steuerveranlagungClicked()"
+                                                        dv-enable-element
+                                                        dv-enable-allowed-roles="vm.allowedRoles"
+                                                        dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
+                                                        aria-label="{{ 'FINANZIELLE_SITUATION_STEUERVERANLAGUNG' |translate}}" `
+                                                        aria-described-by="steuerveranlagung-error">
+                                    </dv-radio-container>
+                                    <dv-error-messages input-id="steuerveranlagung" for="vm.form.steuerveranlagung.$error" class="error"></dv-error-messages>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Steuererklärung -->
+                        <div class="row">
+                            <div class="col-xs-12 dv-input-container-question"
+                                 ng-if="vm.showSteuerveranlagung() && vm.showSteuererklaerung()">
+                                <div class="form-group">
+                            <span class="ebeguH1 required">
+                                <span data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
+                                      translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></span>
+                            </span>
+                                    <dv-radio-container name="steuererklaerung" class="input-element"
+                                                        ng-model="vm.getFinanzielleSituationGS1().steuererklaerungAusgefuellt"
+                                                        ng-required="true" class="radio"
+                                                        ng-change="vm.steuererklaerungClicked()"
+                                                        dv-enable-element
+                                                        dv-enable-allowed-roles="vm.allowedRoles"
+                                                        dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
+                                                        aria-label="{{ 'FINANZIELLE_SITUATION_STEUERERKLAERUNG' |translate}}"
+                                                        aria-described-by="steuererklaerung-error">
+                                    </dv-radio-container>
+                                    <dv-error-messages input-id="steuererklaerung" for="vm.form.steuererklaerung.$error" class="error"></dv-error-messages>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Buttons-->
+                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.confirmAndSave()" dv-sub-step="2">
+                </dv-navigation>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,71 @@
+{
+    "extends": [
+        "tslint-eslint-rules"
+    ],
+    "rules": {
+        "attribute-parameter-decorator": false,
+        "class-name": true,
+        "curly": false,
+        "no-var-keyword": true,
+        "eofline": true,
+        "indent": [
+            true,
+            "spaces"
+        ],
+        "max-line-length": [
+            true,
+            200
+        ],
+        "member-ordering": [
+            true,
+            "variables-before-functions"
+        ],
+        "no-arg": true,
+        "no-construct": true,
+        "no-duplicate-variable": true,
+        "no-empty": false,
+        "no-eval": true,
+        "no-internal-module": true,
+        "trailing-comma": true,
+        "no-trailing-whitespace": true,
+        "no-unused-expression": true,
+        "no-unused-variable": false,
+        "no-use-before-declare": false,
+        "one-line": [
+            true,
+            "check-open-brace",
+            "check-catch",
+            "check-else",
+            "check-whitespace"
+        ],
+        "quotemark": [
+            true,
+            "single",
+            "avoid-escape"
+        ],
+        "semicolon": true,
+        "triple-equals": [
+            true,
+            "allow-null-check"
+        ],
+        "variable-name": false,
+        "typedef-whitespace": [
+            true,
+            {
+                "call-signature": "nospace",
+                "index-signature": "nospace",
+                "parameter": "nospace",
+                "property-declaration": "nospace",
+                "variable-declaration": "nospace"
+            }
+        ],
+        "whitespace": [
+            true,
+            "check-branch",
+            "check-decl",
+            "check-operator",
+            "check-separator",
+            "check-type"
+        ]
+    }
+}

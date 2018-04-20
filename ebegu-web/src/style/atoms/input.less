@@ -1,0 +1,197 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@import '../variables.less';
+@import '../mixins.less';
+
+//    error styling
+md-input-container {
+    padding: 0;
+    margin: 0;
+}
+
+.contrast {
+    .dvDatepicker, dvTimePicker {
+        background: @contrast-light;
+    }
+}
+
+[disabled] md-input-container .md-input {
+    background: @contrast;
+    color: @contrast-darkest;
+    .ebeguDisabledPlaceholder();
+}
+
+input[type="text"], input[type="number"], input[type="email"], textarea, textarea.md-input, .form-control, .dv-select-style select {
+    width: 100%;
+    .table &, &.contrast {
+        background: @contrast-lighter;
+    }
+    &[disabled], &:disabled {
+        background: @contrast;
+        color: @contrast-darkest;
+        -webkit-text-fill-color:@contrast-darkest;
+        .ebeguDisabledPlaceholder();
+    }
+    .ebeguPlaceholder();
+    .ebeguSemi-bold();
+    .ebeguH1();
+    padding: 0 0 0 1rem;
+    margin: 0;
+    height: 4rem;
+    border: 0;
+    background: @contrast-lightest;
+    border: none;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0) /*@secondary-dark*/;
+    outline: 0;
+    border-radius: 0;
+
+    color: @contrast-darkest;
+    -moz-appearance: textfield; // spinner in firefox sieht doof aus -> disable
+
+
+    &:focus {
+        outline: 2px solid @contrast-darkest;
+        outline-offset: 0;
+        -webkit-box-shadow: none /*@secondary-dark*/;
+        box-shadow: none /*@secondary-dark*/;
+    }
+}
+
+input[type="number"] {
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    -moz-appearance: textfield;
+}
+
+.dv-select-style {
+    position: relative !important;
+    display: block;
+    background: none;
+    select {
+        width: 100%;
+        margin: 0;
+        outline: none;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        &[disabled], &:disabled {
+            background: @contrast;
+            color: @contrast-darkest;
+        }
+        &:hover {
+            cursor: pointer;
+        }
+    }
+    &::after {
+        content: " \F107";
+        font-family: FontAwesome;
+        font-size: 1.6rem;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 2;
+        pointer-events: none;
+        display: none;
+    }
+}
+
+@supports ( -webkit-appearance: none ) or ( appearance: none )
+	or ( ( -moz-appearance: none ) and ( mask-type: alpha ) ) {
+
+    .dv-select-style::after {
+        display: block;
+    }
+
+    .dv-select-style select {
+        padding-right: 2em;
+        border: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+}
+
+//noinspection CssInvalidPropertyValue
+@-moz-document url-prefix() {
+    .dv-select-style {
+        overflow: hidden;
+    }
+    .dv-select-style::after {
+        display: block;
+    }
+    .dv-select-style select {
+        overflow: -moz-hidden-unscrollable;
+        padding-right: .4em;
+        border: none;
+        /* Firefox < 4 */
+        min-width: 6em;
+        width: 130%;
+        /* Firefox 4-15 */
+        min-width: -moz-calc(0em);
+        width: -moz-calc(100% + 2.4em);
+        /* Firefox 16+ */
+        min-width: calc(0em);
+        width: calc(100% + 2.4em);
+    }
+    @supports ( mask-type: alpha ) {
+        .dv-select-style {
+            overflow: visible;
+        }
+
+        .dv-select-style select {
+            -moz-appearance: none;
+            width: 100%;
+            padding-right: 2em;
+        }
+    }
+}
+
+.dv-select-style select:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 #000;
+}
+
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    .dv-select-style select::-ms-expand {
+        display: none;
+    }
+
+    .dv-select-style select:focus::-ms-value {
+        color: #222;
+    }
+
+    .dv-select-style select {
+        padding-right: 2em;
+        border: none;
+    }
+
+    .dv-select-style::after {
+        display: block;
+    }
+}
+
+textarea.md-input, textarea.form-control {
+    padding: 1rem;
+    .ebeguNormal();
+    .md-input-focused & {
+        padding: 1rem;
+    }
+}
+

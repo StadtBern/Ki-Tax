@@ -1,0 +1,190 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@import 'variables.less';
+
+.vendor(@property, @value) {
+    -webkit-@{property}: @value;
+    -khtml-@{property}: @value;
+    -moz-@{property}: @value;
+        @{property}: @value;
+}
+
+.ebeguPlaceholder-specs() {
+    .ebeguNormal();
+    font-size: 1.4rem;
+    letter-spacing: 0.1rem;
+    line-height: normal;
+    height: 4rem;
+    color: @contrast-dark;
+}
+
+.ebeguPlaceholder() {
+    &::-webkit-input-placeholder {
+        .ebeguPlaceholder-specs();
+    }
+    &::-moz-placeholder {
+        .ebeguPlaceholder-specs();
+        line-height: 4rem;
+    }
+    &:-moz-placeholder {
+        .ebeguPlaceholder-specs();
+        line-height: 4rem;
+    }
+    &:-ms-input-placeholder {
+        .ebeguPlaceholder-specs();
+    }
+}
+
+.ebeguDisabledPlaceholder() {
+    &::-webkit-input-placeholder {
+        color: @contrast;
+        -webkit-text-fill-color: @contrast;
+    }
+    &::-moz-placeholder {
+        color: @contrast;
+        -webkit-text-fill-color: @contrast;
+    }
+    &:-moz-placeholder {
+        color: @contrast;
+        -webkit-text-fill-color: @contrast;
+    }
+    &:-ms-input-placeholder {
+        color: @contrast;
+        -webkit-text-fill-color: @contrast;
+    }
+    &::placeholder {
+        color: @contrast;
+        -webkit-text-fill-color: @contrast;
+    }
+}
+
+.ebeguFont-family() {
+    font-family: "Open Sans", Arial, Helvetica, sans-serif;
+}
+
+.ebeguNormal() {
+    font-weight: 400;
+    font-style: normal;
+}
+
+.ebeguItalic() {
+    font-weight: 400;
+    font-style: italic;
+}
+
+.ebeguSemi-bold() {
+    font-weight: 600;
+    font-style: normal;
+}
+
+.ebeguBold() {
+    font-weight: 700;
+    font-style: normal;
+}
+
+.ebeguCapitalize() {
+    text-transform: capitalize;
+}
+
+.ebeguVertical(@a) when (@a=middle) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.ebeguH1() {
+    .ebeguBold();
+    font-size: 1.6rem;
+    letter-spacing: 0.1rem;
+    line-height: 2.0rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.ebeguH2() {
+    .ebeguSemi-bold();
+    font-size: 2rem;
+    letter-spacing: 0.15rem;
+    line-height: 2rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.ebeguH3() {
+    .ebeguSemi-bold();
+    font-size: 1.4rem;
+    letter-spacing: 0.1rem;
+    line-height: 2.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.ebeguLabel() {
+    .ebeguNormal();
+    font-size: 1.4rem;
+    letter-spacing: 0.1rem;
+    line-height: normal;
+    min-height: 3rem;
+    height: auto;
+    text-align: left;
+    padding: 0;
+    margin: 0;
+    position: static;
+    white-space: normal;
+}
+
+.ebeguP() {
+    .ebeguNormal();
+    font-size: 1.4rem;
+    letter-spacing: 0.135rem;
+    line-height: 2.8rem;
+    text-align: left;
+    margin-bottom: 0;
+}
+
+.ebeguSmall-text() {
+    .ebeguNormal();
+    font-size: 1.2rem;
+    letter-spacing: 0.1rem;
+    line-height: 2.0rem;
+}
+
+.ebeguA() {
+    .ebeguNormal();
+    font-size: 1.3rem;
+    letter-spacing: 0.1rem;
+    line-height: 2.0rem;
+    text-decoration: underline;
+}
+
+.menu-item-link() {
+    font-size: 1.6rem;
+    letter-spacing: 0.15rem;
+    line-height: 4rem;
+    text-decoration: none;
+    height: 4rem !important;
+    min-width: unset;
+    text-align: left;
+    span {
+        text-align: left;
+    }
+    &:hover {
+        text-decoration: none;
+    }
+
+}

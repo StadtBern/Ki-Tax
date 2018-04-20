@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Build-Timestamp: 15.11.2016 15:53:30.231
+Archiver-Version: Plexus Archiver
+Artifact-Group: 
+Built-By: homa
+Artifact-Name: ebegu-rest
+Description: Dies ist ein dummy manfiest file fuer arquililan
+OS-Name: Linux
+Version: 0.13.0-SNAPSHOT
+Created-By: Apache Maven 3.3.9
+Build-Jdk: 1.8.0_111
+Dependencies: org.infinispan export
+

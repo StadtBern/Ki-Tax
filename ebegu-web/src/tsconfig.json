@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "noImplicitReturns": true,
+        "outDir": "temp/js"
+    },
+    "exclude": [
+        "node_modules",
+        "build",
+        "dist",
+        "temp",
+        "target"
+    ],
+    "compileOnSave": false,
+    "buildOnSave": false
+}

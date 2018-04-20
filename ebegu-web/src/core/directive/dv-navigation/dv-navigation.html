@@ -1,0 +1,34 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!--Die Order der Knoepfe soll im HTML so sein, dass der weiter Knopf als erster im Form ist, dies wird dann fuer die darstelltung
+mit Flexlayout wieder korrigiert. Grund ist, dass beim druecken von Enter in einem input Feld automaitisch der erste submit button triggered wird-->
+<div layout="row" layout-align="space-between center" layout-align-gt-sm="center center">
+    <dv-loading-button ng-if="vm.dvNext()" button-click="vm.nextStep()" button-class="next" type="submit"
+                       button-disabled="vm.isNextButtonDisabled()" title="{{vm.getTooltip()}}" aria-label="{{vm.getNextButtonName()}}">
+        <span ng-if="!vm.doesdvTranslateNextExist()" ng-bind="vm.getNextButtonName()" hide-xs></span>
+        <span ng-if="vm.doesdvTranslateNextExist()" ng-bind="vm.getNextButtonName()"></span>
+        <span ng-if="!vm.doesdvTranslateNextExist()" class="fa fa-angle-right" hide-gt-xs
+              style="font-size: 2rem; height:unset; line-height: 4rem;"></span>
+    </dv-loading-button>
+    <dv-loading-button ng-if="vm.dvPrevious()" button-click="vm.previousStep()" button-class="previous"
+                       type="submit" aria-label="{{vm.getPreviousButtonName()}}">
+        <span ng-bind="vm.getPreviousButtonName()" hide-xs></span>
+        <span class="fa fa-angle-left" hide-gt-xs style="font-size: 2rem; height:unset; line-height: 4rem;"></span>
+    </dv-loading-button>
+    <dv-loading-button ng-if="vm.doesCancelExist()" button-click="vm.cancel()" button-class="cancel" type="reset" aria-label="{{'CANCEL' | translate}}">
+        <span data-translate="ABBRECHEN_UPPER"></span>
+    </dv-loading-button>
+</div>

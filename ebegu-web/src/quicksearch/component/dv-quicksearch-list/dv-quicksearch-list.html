@@ -1,0 +1,189 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="dv-antrag-list">
+    <div st-table="displayedCollection" st-safe-src="vm.getQuicksearchList()"
+         st-delay="20" st-set-filter="quicksearchFilter" dv-st-persist-quicksearch="{{vm.tableId}}">
+
+        <div class="row">
+            <div class="col-md-10">
+                <div id="titleText">
+                    <h3 data-translate="{{vm.tableTitle}}"></h3>
+                </div>
+                <div id="refreshIcon">
+                    <i class="fa fa-undo" dv-st-reset-search></i>
+                </div>
+            </div>
+            <div class="col-md-2 text-right">
+                <h3 ng-bind="vm.totalResultCount"></h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 table-responsive">
+            <!--Tabelle-->
+            <table class="table table-striped fixedtable">
+                <thead>
+                <!--Sortierspalten-->
+                <tr>
+                    <th st-sort="fallNummer" class="sortable row-fallnr" data-translate="FALL_UPPER"></th>
+                    <th st-sort="familienName" class="sortable row-name" data-translate="FAMILIE_UPPER"></th>
+                    <th st-sort="kinder" class="sortable row-name" data-translate="KINDER_UPPER"></th>
+                    <th st-sort="antragTyp" class="sortable row-antrag" data-translate="TYP_UPPER"></th>
+                    <th st-sort="gesuchsperiodeString" class="sortable row-periode"
+                        data-translate="PERIODE_UPPER"></th>
+                    <th st-sort="eingangsdatum" st-sort-default="reverse" class="sortable row-geandert"
+                        data-translate="EINGANG_UPPER"></th>
+                    <th st-sort="status" class="sortable row-status" data-translate="STATUS_UPPER"></th>
+                    <th st-sort="dokumenteHochgeladen" class="sortable row-dokumenteHochgeladen"
+                        data-translate="DOKUMENTE_HOCHGELADEN_UPPER"></th>
+                    <th st-sort="angebote" class="sortable row-angebot" data-translate="ANGEBOT_UPPER"></th>
+                    <th st-sort="institutionen[0]" class="sortable row-inst" data-translate="INSTITUTION_UPPER"></th>
+                    <th st-sort="verantwortlicherSCH" class="sortable row-ver"
+                        data-translate="VERANTWORTLICHER_SCHULAMT"></th>
+                    <th st-sort="verantwortlicher" class="sortable row-ver"
+                        data-translate="VERANTWORTLICHER_JUGENDAMT"></th>
+                </tr>
+                <!--Filterspalten-->
+                <tr>
+                    <th><input st-search="fallNummer" class="form-control" type="text"
+                               ng-model="vm.selectedFallNummer"/></th>
+                    <th><input st-search="familienName" class="form-control" type="text"
+                               ng-model="vm.selectedFamilienName"/></th>
+                    <th><input st-search="kinder" class="form-control" type="text"
+                               ng-model="vm.selectedKinder"/></th>
+                    <th>
+                        <div class="dv-select-style">
+                            <select st-input-event="change" name="antragTyp" id="antragTyp" st-search="antragTyp"
+                                    class="form-control"
+                                    ng-options="typ | translate for typ in vm.getAntragTypen() track by typ"
+                                    ng-model="vm.selectedAntragTyp">
+                                <option value="">{{"ALLE" | translate}}</option>
+                            </select>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="dv-select-style">
+                            <select st-input-event="change" name="gesuchsperiodeString" id="gesuchsperiodeString"
+                                    st-search="gesuchsperiodeString" class="form-control"
+                                    ng-options="periode for periode in vm.gesuchsperiodenList track by periode"
+                                    ng-model="vm.selectedGesuchsperiode">
+                                <option value="">{{"ALLE" | translate}}</option>
+                            </select>
+                        </div>
+                    </th>
+                    <th><input st-search="eingangsdatum" class="form-control" type="text"
+                               ng-model="vm.selectedEingangsdatum"/></th>
+                    <th>
+                        <div class="dv-select-style">
+                            <select st-input-event="change" name="antragStatus" id="antragStatus" st-search="status"
+                                    class="form-control"
+                                    ng-options="status | translate for status in vm.getAntragStatus() track by status"
+                                    ng-model="vm.selectedAntragStatus">
+                                <option value="">{{"ALLE" | translate}}</option>
+                            </select>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="dv-select-style">
+                            <select st-input-event="change" name="dokumenteHochgeladen" id="dokumenteHochgeladen" st-search="dokumenteHochgeladen"
+                                    class="form-control"
+                                    ng-model="vm.selectedDokumenteHochgeladen">
+                                <option value="">{{"ALLE" | translate}}</option>
+                                <option value="{{true}}">{{"LABEL_JA" | translate}}</option>
+                                <option value="{{false}}">{{"LABEL_NEIN" | translate}}</option>
+                            </select>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="dv-select-style">
+                            <select st-input-event="change" name="angebote" id="angebote" st-search="angebote"
+                                    class="form-control"
+                                    ng-options="typ | translate for typ in vm.getBetreuungsangebotTypen() track by typ"
+                                    ng-model="vm.selectedBetreuungsangebotTyp">
+                                <option value="">{{"ALLE" | translate}}</option>
+                            </select>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="dv-select-style">
+                            <select st-input-event="change" name="institutionen" id="institutionen"
+                                    st-search="institutionen" class="form-control"
+                                    ng-options="institution.name for institution in vm.institutionenList | orderBy: 'name' track by institution.name"
+                                    ng-model="vm.selectedInstitution">
+                                <option value="">{{"ALLE" | translate}}</option>
+                            </select>
+                        </div>
+                    </th>
+                    <th>
+                        <dv-userselect input-id="verantwortlicherSCH" dv-usersearch="verantwortlicherSCH"
+                                       initial-all="vm.initialAll" show-selection-all="vm.showSelectionAll"
+                                       on-user-changed="vm.userChanged(user)" schulamt="true"
+                                       selected-user="vm.selectedVerantwortlicherSCH"></dv-userselect>
+                    </th>
+                    <th>
+                        <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher"
+                                       initial-all="vm.initialAll" show-selection-all="vm.showSelectionAll"
+                                       on-user-changed="vm.userChanged(user)"
+                                       selected-user="vm.selectedVerantwortlicher"></dv-userselect>
+                    </th>
+                </tr>
+                </thead>
+                <!--Spaltendefinitionen-->
+                <tbody>
+                <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                    ng-click="vm.editAntrag(row, $event)">
+                    <td class="ellipsis" title="{{vm.addZerosToFallnummer(row.fallNummer)}}"
+                        ng-bind="vm.addZerosToFallnummer(row.fallNummer)"></td>
+                    <td class="ellipsis" title="{{row.familienName}}" ng-bind="row.familienName"></td>
+                    <td class="ellipsis" title="{{row.kinder | arrayToString}}" ng-bind="row.kinder | arrayToString"></td>
+                    <td class="ellipsis"  title="{{row.antragTyp | translate}}">
+                        <i class="fa fa-desktop" aria-hidden="true" ng-show="vm.showOnlineGesuchIcon(row)"></i>
+                        <i class="fa fa-file-text-o" aria-hidden="true" ng-show="vm.showPapierGesuchIcon(row)"></i>
+                        <span  ng-bind="row.antragTyp | translate" class="marginLeft5"></span>
+                    </td>
+                    <td class="ellipsis"
+                        title="{{row.gesuchsperiodeString}}"
+                        ng-bind="row.gesuchsperiodeString"></td>
+                    <td class="ellipsis" title="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
+                        ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
+                    <td class="ellipsis" title="{{row.status | translate}}"
+                        ng-bind="row.status | translate"></td>
+                    <td class="ellipsis" title="{{row.dokumenteHochgeladen | translate}}">
+                        <i class="fa fa-file-o" aria-hidden="true" ng-show="row.dokumenteHochgeladen"></i>
+                    </td>
+                    <td class="ellipsis" title="{{vm.translateBetreuungsangebotTypList(row.angebote)}}"
+                        ng-bind="vm.translateBetreuungsangebotTypList(row.angebote)">
+                    </td>
+                    <td class="ellipsis" title="{{row.institutionen | arrayToString}}" ng-bind="row.institutionen | arrayToString"></td>
+                    <td class="ellipsis" title="{{row.verantwortlicherSCH}}"
+                        ng-bind="row.verantwortlicherSCH"></td>
+                    <td class="ellipsis" title="{{row.verantwortlicher}}"
+                        ng-bind="row.verantwortlicher"></td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="10" class="text-center">
+                        <div st-pagination="" st-items-by-page="vm.itemsByPage" st-displayed-pages="5"></div>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+
+            </div>
+        </div>
+    </div>
+</div>

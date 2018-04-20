@@ -1,0 +1,339 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+@import 'variables.less';
+
+@media @mq-xs {
+    .gesuchModul {
+        &.betreuungView {
+            padding: 5rem 3rem 10rem;
+        }
+    }
+
+    md-dialog.md-default-theme.md-dialog-fullscreen.dv-tooltip-dialog, md-dialog {
+        font-size: 1.8rem;
+        .md-dialog-content {
+            padding: 5rem;
+        }
+    }
+
+    .gesuchstellerDashboardView {
+        .dashboardHeader {
+            margin-top: 20rem !important;
+            align-items: stretch;
+        }
+        .gdashboard-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            max-width: 32rem;
+            margin: 0;
+            &:not(:last-of-type) {
+                padding-right: 6rem;
+                border-right: 1px solid @contrast;
+                &:not(:first-of-type) {
+                    padding-left: 6rem;
+                    max-width: 38rem;
+                }
+            }
+            &:last-child {
+                padding-left: 6rem;
+            }
+            .gdashboard-panel__button {
+                &--margin {
+                    margin-top: 5rem;
+                    margin-bottom: 5rem;
+
+                }
+                &--ansehen {
+                    margin-bottom: -5rem;
+                }
+                &--margin + .gdashboard-panel__text {
+                    margin-top: -5rem;
+                }
+                &--ansehen + .gdashboard-panel__text {
+                    margin-top: 5rem;
+                }
+            }
+        }
+    }
+
+    .dv-progressbar {
+        top: 9.5rem !important;
+    }
+
+    .dv-input-container-small {
+        width: 30rem;
+    }
+
+    .dv-input-container-medium-label {
+        width: 30rem;
+        padding-right: 32px;
+    }
+
+    .dv-input-container-medium {
+        width: 60rem;
+    }
+
+    .dv-input-container-question {
+        min-width: 30rem;
+        max-width: 100%;
+        width: auto;
+    }
+
+    /*  .gesuchModul {
+          padding-bottom: 10rem;
+      }*/
+    #sidenavContainer {
+        width: 35.5rem;
+        min-width: 35.5rem;
+        max-width: 35.5rem;
+        right: unset;
+        li {
+            width: 35.5rem;
+            &:before {
+                width: 30rem; /* or 100px */
+            }
+        }
+    }
+
+    #gesuchContainer {
+        .nav-row-betreuung {
+            flex-direction: row-reverse;
+            -ms-flex-direction: row-reverse;
+            bottom: 4rem;
+            & > div {
+                width: auto;
+                margin-bottom: 0;
+                padding: 0;
+                margin-right: auto;
+
+                &:last-child {
+                    margin-left: 3rem;
+                    margin-right: auto;
+                    margin-bottom: 0;
+                    padding: 0;
+                }
+                &:first-child {
+                    margin-right: 3rem;
+                    margin-left: auto;
+                }
+                &:only-child {
+                    margin-left: 3rem;
+                    margin-right: auto;
+                }
+                & > div {
+                    display: flex;
+                    flex-direction: row;
+                    -ms-flex-direction: row;
+                    padding: 0;
+                    &:first-child {
+                        padding-right: 0;
+                    }
+                    & > div {
+                        padding: 0;
+                    }
+                }
+            }
+        }
+        .nav-row-verfuegen {
+            & > div {
+                padding: 0;
+                & > div {
+                    padding: 0 0.75rem 0;
+                }
+
+            }
+        }
+    }
+}
+
+@media @mq-sm {
+    .gesuchModul {
+        padding: 5rem 2.5rem 10rem 5rem;
+        &.betreuungView {
+            padding: 5rem 2.5rem 10rem 5rem;
+        }
+    }
+
+    .mitteilungenView {
+        padding: 6rem;
+        dv-accordion {
+            dv-accordion-tab {
+                width: 95%;
+                .dv-accordion-tab-title {
+                    & .arrow {
+                        width: 4rem;
+                    }
+                }
+            }
+        }
+    }
+
+    #gesuchContainer {
+        .nav-row-betreuung {
+            & > div {
+                width: auto;
+                margin-bottom: 0;
+                padding: 0;
+                margin-right: auto;
+
+                &:last-child {
+                    margin-left: auto;
+                    margin-right: 0;
+                    margin-bottom: 0;
+                    padding: 0 0.75rem 0;
+                    padding-left: 0;
+                }
+                &:first-child {
+                    margin-right: auto;
+                    margin-left: 0;
+                }
+                &:only-child {
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+                & > div {
+                    padding: 0 0.75rem 0;
+                }
+            }
+        }
+        dv-navigation, .nav-row-verfuegen {
+            & > div {
+                padding: 0;
+                & > div {
+                    padding: 0 0.75rem 0;
+                }
+
+            }
+        }
+        .nav-row-verfuegen {
+            dv-navigation {
+                margin-left: auto;
+                margin-right: 0;
+                &:only-child {
+                    margin-right: auto;
+                }
+
+            }
+            & > div {
+                margin-right: 0;
+            }
+            & > div + div, & > div:only-of-type {
+                margin-right: auto;
+            }
+        }
+    }
+}
+
+//Device Media Queries
+
+@media @mq-d-md {
+    html {
+        font-size: @base-font-size*0.25;
+    }
+}
+
+@media @mq-d-lg {
+    html {
+        font-size: @base-font-size*0.5;
+    }
+}
+
+@media @mq-d-xlg {
+    html {
+        font-size: @base-font-size*0.75;
+    }
+}
+
+@media @mq-d-xxlg {
+    html {
+        font-size: @base-font-size;
+    }
+}
+
+@media only screen
+and (min-device-width: 320px)
+and (max-device-width: 568px)
+and (-webkit-min-device-pixel-ratio: 2), only screen
+and (min-device-width: 375px)
+and (max-device-width: 667px)
+and (-webkit-min-device-pixel-ratio: 2), only screen
+and (min-device-width: 414px)
+and (max-device-width: 736px)
+and (-webkit-min-device-pixel-ratio: 3), only screen
+and (max-device-width: 640px), only screen
+and (max-device-width: 667px), only screen
+and (max-width: 480px) {
+
+    h2 {
+        line-height: 2.4rem;
+    }
+
+    .dv-input-container-small {
+        width: 100%;
+    }
+
+    .dv-input-container-calendar {
+        width: 100%;
+    }
+
+    .dv-input-container-medium-label {
+        width: 100%;
+
+    }
+
+    .dv-input-container-medium {
+        width: 100%;
+    }
+
+    .dv-input-container-question {
+        width: 100%;
+    }
+
+    .gesuchModul {
+        padding: 5rem 3rem 13rem;
+    }
+
+    html {
+        font-size: @base-font-size;
+    }
+
+    .dv-ebegu-calendar {
+        &__module {
+            padding: 1rem;
+        }
+        &__weekday {
+            padding: 0;
+            //  font-size: 1rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+        }
+        &__container-weekdays {
+            flex-wrap: nowrap;
+
+        }
+        &__date {
+            &--day {
+                font-size: 1.3rem !important;
+                margin-top: auto !important;
+            }
+            &--year {
+                font-size: 0.9rem !important;
+                margin-bottom: auto !important;
+            }
+        }
+    }
+}

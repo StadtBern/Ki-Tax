@@ -1,0 +1,39 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<md-dialog md-theme="default" aria-label=" " ng-class="vm.css" class="md-default-theme md-transition-in"
+           role="dialog" tabindex="-1">
+
+    <md-dialog-content class="md-dialog-content" role="document" tabindex="-1" id="dialogContent">
+        <h2 class="md-title ng-binding"  ng-bind="vm.title"></h2>
+        <div class="md-dialog-content-body ng-scope"><p class="ng-binding" ng-bind="vm.confirmationText"></p></div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout-align="center center">
+        <button class="ng-scope md-default-theme " type="button"
+                ng-click="vm.cancel()" aria-label="{{vm.cancelText}}" style="">
+            <span class="ng-binding ng-scope" ng-bind="vm.cancelText"></span>
+        </button>
+        <button class="md-default-theme " type="button"
+                ng-click="vm.hide(1)" md-autofocus="dialog.$type==='alert'" aria-label="{{vm.firstOkText}}">
+            <span class="ng-binding ng-scope" ng-bind="vm.firstOkText"></span>
+        </button>
+        <button class="md-default-theme " type="button"
+                ng-click="vm.hide(2)" md-autofocus="dialog.$type==='alert'" aria-label="{{vm.secondOkText}}">
+            <span class="ng-binding ng-scope" ng-bind="vm.secondOkText"></span>
+        </button>
+    </md-dialog-actions>
+
+</md-dialog>

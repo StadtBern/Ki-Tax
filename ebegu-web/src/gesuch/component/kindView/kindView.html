@@ -1,0 +1,360 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="kindView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
+    <div class="row viewTitle">
+        <div class="col-md-12">
+            <h2>
+                <span data-translate="KIND"></span> {{vm.getContainer() ? vm.getContainer().kindNummer : ''}}
+            </h2>
+            <hr class="header"/>
+            <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
+                <fieldset ng-disabled="vm.isGesuchReadonly()">
+
+
+                    <!--Geschlecht-->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-small">
+                            <div class="form-group">
+                                <label class="md-no-float required" id="geschlecht" data-translate="GESCHLECHT"></label>
+                                <dv-radio-container name="geschlecht" class="input-element"
+                                                    dv-enable-element
+                                                    dv-enable-allowed-roles="vm.allowedRoles"
+                                                    dv-enable-expression="!vm.isGesuchReadonly()"
+                                                    ng-required="true" items="vm.geschlechter"
+                                                    ng-model="vm.getModel().geschlecht"
+                                                    aria-described-by="geschlecht-error"
+                                >
+                                </dv-radio-container>
+                                <dv-bisher gs="vm.getContainer().kindGS.geschlecht"
+                                           ja="vm.getContainer().kindJA.geschlecht"></dv-bisher>
+                                <dv-error-messages input-id="geschlecht" for="vm.form.geschlecht.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Vorname/Name-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="VORNAME" for="vorname_ID"></label>
+                                <input aria-describedby="vorname_ID-error" id="vorname_ID" type="text" name="vorname"
+                                       ng-model="vm.getModel().vorname"
+                                       dv-max-length class="form-control" required>
+                                <dv-bisher gs="vm.getContainer().kindGS.vorname"
+                                           ja="vm.getContainer().kindJA.vorname"></dv-bisher>
+                                <dv-error-messages input-id="vorname_ID" for="vm.form.vorname.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float" data-translate="NAME" for="name_ID"></label>
+                                <input aria-describedby="name_ID-error" id="name_ID" type="text" name="name" ng-model="vm.getModel().nachname"
+                                       dv-max-length class="form-control" required>
+                                <dv-bisher gs="vm.getContainer().kindGS.nachname"
+                                           ja="vm.getContainer().kindJA.nachname"></dv-bisher>
+                                <dv-error-messages input-id="name_ID" for="vm.form.name.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
+
+                    <!--Geburtsdatum-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
+                                </label>
+                                <dv-datepicker no-future
+                                               input-id="geburtsdatum_ID" name="geburtsdatum"
+                                               ng-model="vm.getModel().geburtsdatum" ng-required="true"
+                                               class="input-element"
+                                               ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
+                                </dv-datepicker>
+
+                                <dv-bisher gs="vm.getContainer().kindGS.geburtsdatum"
+                                           ja="vm.getContainer().kindJA.geburtsdatum"></dv-bisher>
+                                <dv-error-messages input-id="geburtsdatum_ID"
+                                                   for="vm.form.geburtsdatum.$error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
+
+                    <!-- Kinderabzug -->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-question">
+                            <dv-input-container class="form-group">
+                                <span class="ebeguH1 required">
+                                    <span data-translate="KINDERABZUG"></span>
+                                    <dv-tooltip input-id="kinderabzug"
+                                                text="'KINDERABZUG_HELP' | translate"></dv-tooltip>
+                                </span>
+                                <dv-radio-container name="kinderabzug" ng-model="vm.getModel().kinderabzug"
+                                                    ng-required="true"
+                                                    dv-enable-element
+                                                    dv-enable-allowed-roles="vm.allowedRoles"
+                                                    dv-enable-expression="!vm.isGesuchReadonly()"
+                                                    class="input-element" items="vm.kinderabzugValues"
+                                                    aria-label="{{ 'KINDERABZUG' |translate}}"
+                                                    aria-described-by="kinderabzug-error">
+                                </dv-radio-container>
+                                <dv-bisher gs="vm.getContainer().kindGS.kinderabzug"
+                                           ja="vm.getContainer().kindJA.kinderabzug"></dv-bisher>
+                                <dv-error-messages input-id="kinderabzug" for="vm.form.kinderabzug.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
+
+                    <!--familienErgaenzendeBetreuung-->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-question">
+                            <div class="form-group">
+                                <span class="ebeguH1 required">
+                                    <span data-translate="FAM_ERGAENZENDE_BETREUUNG"></span>
+                                    <dv-tooltip input-id="familienErgaenzendeBetreuung" text="'FAM_ERGAENZENDE_BETREUUNG_HELP' | translate">
+                                    </dv-tooltip>
+                                </span>
+                                <span ng-if="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt() && vm.hasKindBetreuungen()"
+                                      class="inlineHint"
+                                      data-translate="FAM_ERGAENZENDE_BETREUUNG_NOT_EDITABLE"></span>
+
+                                <dv-radio-container name="familienErgaenzendeBetreuung" class="input-element"
+                                                    dv-enable-element
+                                                    dv-enable-allowed-roles="vm.allowedRoles"
+                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt() && !vm.hasKindBetreuungen()"
+                                                    ng-required="true"
+                                                    ng-model="vm.getModel().familienErgaenzendeBetreuung"
+                                                    ng-change="vm.familienErgaenzendeBetreuungClicked()"
+                                                    aria-label="{{ 'FAM_ERGAENZENDE_BETREUUNG' |translate}}"
+                                                    aria-described-by="familienErgaenzendeBetreuung-error">
+                                </dv-radio-container>
+                                <dv-bisher gs="vm.getContainer().kindGS.familienErgaenzendeBetreuung"
+                                           ja="vm.getContainer().kindJA.familienErgaenzendeBetreuung"></dv-bisher>
+                                <dv-error-messages input-id="familienErgaenzendeBetreuung" for="vm.form.familienErgaenzendeBetreuung.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--mutterspracheDeutsch-->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-question">
+                            <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
+                                <span class="ebeguH1 required">
+                                    <span data-translate="MUTTERSPRACHE_DEUTSCH"></span>
+                                    <dv-tooltip input-id="mutterspracheDeutsch"
+                                                text="'MUTTERSPRACHE_DEUTSCH_HELP' | translate"></dv-tooltip>
+                                </span>
+
+                                <dv-radio-container name="mutterspracheDeutsch" class="input-element"
+                                                    dv-enable-element
+                                                    dv-enable-allowed-roles="vm.allowedRoles"
+                                                    dv-enable-expression="!vm.isGesuchReadonly()"
+                                                    ng-required="vm.getModel().familienErgaenzendeBetreuung"
+                                                    ng-model="vm.getModel().mutterspracheDeutsch"
+                                                    aria-label="{{ 'MUTTERSPRACHE_DEUTSCH' |translate}}"
+                                                    aria-described-by="mutterspracheDeutsch-error">
+                                </dv-radio-container>
+                                <dv-bisher gs="vm.getContainer().kindGS.mutterspracheDeutsch"
+                                           ja="vm.getContainer().kindJA.mutterspracheDeutsch"></dv-bisher>
+                                <dv-error-messages input-id="mutterspracheDeutsch" for="vm.form.mutterspracheDeutsch.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Das Kind ist per 1.8.XX eingeschult (auch Kindergarten)-->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-question">
+                            <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
+                                <span class="ebeguH1 required">
+                                    <span data-translate="EINSCHULUNG"
+                                          data-translate-value-date="{{vm.getDatumEinschulung() | amDateFormat : 'DD.MM.YYYY'}}"> </span>
+                                    <dv-tooltip input-id="einschulung" text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
+                                </span>
+                                <dv-radio-container name="einschulung" class="input-element"
+                                                    dv-enable-element
+                                                    dv-enable-allowed-roles="vm.allowedRoles"
+                                                    dv-enable-expression="!vm.isGesuchReadonly()"
+                                                    ng-required="vm.getModel().familienErgaenzendeBetreuung"
+                                                    ng-model="vm.getModel().einschulung"
+                                                    aria-described-by="einschulung-error"
+                                >
+                                </dv-radio-container>
+                                <dv-bisher gs="vm.getContainer().kindGS.einschulung"
+                                           ja="vm.getContainer().kindJA.einschulung"></dv-bisher>
+                                <dv-error-messages input-id="einschulung" for="vm.form.einschulung.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Wohnhaft im gleichen Haushalt-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-question">
+                            <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
+                                <dv-input-container class="form-group">
+                                    <label class="md-no-float"
+                                           for="gleichemHaushalt">
+                                        <span data-translate="WOHNHAFT_IM_GLEICHEN_HAUSHALT" class="ebeguH1"> </span>
+                                        <dv-tooltip input-id="gleichemHaushalt"
+                                                    text="'WOHNHAFT_IM_GLEICHEN_HAUSHALT_HELP' | translate"></dv-tooltip>
+                                    </label>
+                                    <div class="dv-input-container-small" style="padding-right:32px;">
+                                        <input aria-describedby="gleichemHaushalt-error" id="gleichemHaushalt"
+                                               type="number" name="gleichemHaushalt"
+                                               ng-model="vm.getModel().wohnhaftImGleichenHaushalt" max="100"
+                                               dv-max-length class="form-control"
+                                               ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
+                                               ng-required="vm.getModel().familienErgaenzendeBetreuung"
+                                               ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
+                                        <dv-bisher gs="vm.getContainer().kindGS.wohnhaftImGleichenHaushalt"
+                                                   ja="vm.getContainer().kindJA.wohnhaftImGleichenHaushalt"></dv-bisher>
+                                        <dv-error-messages input-id="gleichemHaushalt" for="vm.form.gleichemHaushalt.$error"
+                                                           class="error"></dv-error-messages>
+                                    </div>
+                                </dv-input-container>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Show Fachstelle?-->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-question">
+                            <div class=" checkbox" ng-show="vm.getModel().familienErgaenzendeBetreuung">
+                                <md-checkbox ng-model="vm.showFachstelle" name="showFachstelle" id="showFachstelle"
+                                             aria-label="{{'INVOLVIERTE_FACHSTELLE'|translate}}"
+                                             ng-disabled="vm.isGesuchReadonly()"
+                                             ng-change="vm.showFachstelleClicked()">
+                                    <span data-translate="INVOLVIERTE_FACHSTELLE"></span>
+                                </md-checkbox>
+                                <dv-tooltip input-id="showFachstelle"
+                                            text="'INVOLVIERTE_FACHSTELLE_HELP' | translate"></dv-tooltip>
+                                <dv-bisher gs="vm.showFachstelleGS"
+                                           ja="vm.showFachstelle"
+                                           specific-bisher-text="vm.getTextFachstelleKorrekturJA()"></dv-bisher>
+                                <dv-error-messages for="vm.form.showFachstelle.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                    <!--fachstelle-->
+                    <div ng-if="vm.isFachstelleRequired()">
+                        <div class="row">
+                            <div class="col-sm-12 dv-input-container-medium">
+                                <div class="form-group">
+                                    <label class="md-no-float required" data-translate="FACHSTELLE" for="fachstelle">
+                                    </label>
+                                    <div class="dv-select-style">
+                                        <select aria-describedby="fachstelle-error" name="fachstelle" id="fachstelle" ng-model="vm.fachstelleId"
+                                                class="form-control"
+                                                ng-options="fachstelle.id as fachstelle.name for fachstelle in vm.getFachstellenList() | orderBy: 'name'"
+                                                ng-required="vm.isFachstelleRequired()"
+                                                ng-change="vm.setSelectedFachsstelle()">
+                                        </select>
+
+                                        <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.fachstelle.name"
+                                                   ja="vm.getContainer().kindJA.pensumFachstelle.fachstelle.name"
+                                                   show-if-bisher-none="false"
+                                                   block-existed="vm.showFachstelleGS === true"></dv-bisher>
+                                        <dv-error-messages input-id="fachstelle" for="vm.form.fachstelle.$error"
+                                                           class="error"></dv-error-messages>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--betreuungspensumFachstelle-->
+                        <div class="row">
+                            <div class="col-sm-12 dv-input-container-small">
+                                <dv-input-container class="form-group">
+                                    <label class="md-no-float" data-translate="BETREUUNGSPENSUM_FACHSTELLE"
+                                           for="betreuungspensumFachstelle"></label>
+                                    <input aria-describedby="betreuungspensumFachstelle-error" id="betreuungspensumFachstelle" type="number"
+                                           name="betreuungspensumFachstelle"
+                                           ng-model="vm.getPensumFachstelle().pensum" max="100"
+                                           dv-max-length class="form-control"
+                                           ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
+                                           ng-required="vm.isFachstelleRequired()"
+                                           ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
+                                    <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.pensum"
+                                               ja="vm.getContainer().kindJA.pensumFachstelle.pensum"
+                                               show-if-bisher-none="false"
+                                               block-existed="vm.showFachstelleGS === true"></dv-bisher>
+                                    <dv-error-messages input-id="betreuungspensumFachstelle" for="vm.form.betreuungspensumFachstelle.$error"
+                                                       class="error"></dv-error-messages>
+                                </dv-input-container>
+                            </div>
+                        </div>
+
+                        <!-- gueltig ab / gueltig bis -->
+                        <div class="row">
+                            <div class="col-sm-12 dv-input-container-small">
+                                <dv-input-container class="form-group">
+                                    <label class="md-no-float" data-translate="VON" for="datumAb">
+                                    </label>
+                                    <dv-datepicker input-id="datumAb" name="datumAb"
+                                                   class="input-element"
+                                                   ng-model="vm.getPensumFachstelle().gueltigkeit.gueltigAb"
+                                                   ng-required="vm.isFachstelleRequired()"
+                                                   ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
+                                    </dv-datepicker>
+                                    <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.gueltigkeit.gueltigAb"
+                                               ja="vm.getContainer().kindJA.pensumFachstelle.gueltigkeit.gueltigAb"
+                                               show-if-bisher-none="false"
+                                               block-existed="vm.showFachstelleGS === true"></dv-bisher>
+                                    <dv-error-messages input-id="datumAb" for="vm.form.datumAb.$error"
+                                                       class="error"></dv-error-messages>
+                                </dv-input-container>
+                            </div>
+
+                            <div class="col-sm-12 dv-input-container-small">
+                                <dv-input-container class="form-group">
+                                    <label class="md-no-float" data-translate="BIS" for="datumBis">
+                                    </label>
+                                    <dv-datepicker input-id="datumBis" name="datumBis"
+                                                   class="input-element"
+                                                   ng-model="vm.getPensumFachstelle().gueltigkeit.gueltigBis"
+                                                   ng-required="false"
+                                                   ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
+                                    </dv-datepicker>
+                                    <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.gueltigkeit.gueltigBis"
+                                               ja="vm.getContainer().kindJA.pensumFachstelle.gueltigkeit.gueltigBis"
+                                               show-if-bisher-none="false"
+                                               block-existed="vm.showFachstelleGS === true"></dv-bisher>
+                                    <dv-error-messages input-id="datumBis" for="vm.form.datumBis.$error"
+                                                       class="error"></dv-error-messages>
+                                </dv-input-container>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!--Buttons-->
+                <dv-navigation dv-cancel="vm.cancel()" dv-next="true" dv-save="vm.save()" dv-sub-step="2"
+                               dv-translate-next="{{'SPEICHERN_UPPER'}}">
+                </dv-navigation>
+            </form>
+        </div>
+    </div>
+</div>
