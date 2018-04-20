@@ -1,0 +1,122 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="umzugView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
+    <div class="row viewTitle">
+        <div class="col-md-12">
+            <h2>
+                <span data-translate="UMZUG_TITLE"></span>
+            </h2>
+            <hr class="header"/>
+            <div ng-if="!vm.isGesuchReadonly()" >
+                <p dv-show-element
+                   dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()" class="inlineHint" data-translate="UMZUG_HINT"></p>
+                <p dv-show-element
+                   dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles()"
+                   dv-show-expression="vm.gesuchModelManager.getGesuch().isMutation()" class="inlineHint" data-translate="UMZUG_LIST_HINT"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
+                <fieldset dv-enable-element
+                          dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                          dv-enable-expression="!vm.isGesuchReadonly()">
+
+                    <div ng-repeat="umzugAdresse in vm.getUmzugAdressenList()">
+                        <!--Gesuchsteller-->
+                        <div class="row">
+                            <div class="col-sm-12 dv-input-container-medium">
+                                <div class="form-group">
+                                    <!--suppress XmlInvalidId -->
+                                    <label class="required" data-translate="BETROFFENE_WAEHLEN" for="betroffene">
+                                    </label>
+                                    <div class="dv-select-style">
+                                        <select aria-describedby="betroffene-{{$index}}-error"
+                                                name="betroffene-{{$index}}" id="betroffene-{{$index}}"
+                                                ng-model="umzugAdresse.betroffene"
+                                                class="form-control"
+                                                ng-disabled="vm.isKorrekturModusJugendamt()"
+                                                ng-options="(vm.getNameFromBetroffene(betroffene)) for betroffene in vm.getBetroffenenList()"
+                                                ng-required="true">
+                                        </select>
+                                        <dv-error-messages input-id="betroffene-{{$index}}" for="vm.form['betroffene-' + $index].$error"
+                                                           class="error"></dv-error-messages>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Umzugadresse-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <dv-adresse adresse="umzugAdresse.adresse" show-nicht-in-gemeinde="true"
+                                            prefix="umzug-{{$index}}"></dv-adresse>
+                            </div>
+                        </div>
+                        <!-- Umzug loeschen-->
+                        <div class="row">
+                            <div class="col-md-12 marginBottom60 dv-input-container-medium"
+                                 dv-show-element
+                                 dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                 dv-show-expression="!vm.isGesuchReadonly()">
+                                <dv-loading-button type="button" button-click="vm.removeUmzugAdresse(umzugAdresse)"
+                                                   button-class="dv-btn-operation"
+                                                   button-disabled="vm.isKorrekturModusJugendamt()">
+                                    <i class="fa fa-lg fa-trash-o" title="{{'UMZUG_ENTFERNEN' | translate}}" aria-label="{{'UMZUG_ENTFERNEN' | translate}}"></i>
+                                    <span data-translate="UMZUG_ENTFERNEN"></span>
+                                </dv-loading-button>
+                                <hr class="header"/>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Umzug hinzufuegen -->
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom: 2rem" dv-show-element
+                             dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                             dv-show-expression="!vm.isGesuchReadonly()">
+                            <dv-loading-button type="button" button-click="vm.createUmzugAdresse()"
+                                               button-class="dv-btn-operation"
+                                               button-disabled="vm.isKorrekturModusJugendamt()">
+                                <i class="fa fa-lg fa-plus-circle"></i>
+                                <span data-translate="UMZUG_HINZUFUEGEN"></span>
+                            </dv-loading-button>
+
+                        </div>
+                    </div>
+                </fieldset>
+
+                <dv-navigation dv-show-element
+                               dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                               dv-previous="true" dv-next="true" dv-save="vm.save()"
+                               dv-translate-next="{{vm.getNextButtonText()}}"
+                               dv-translate-previous="{{vm.getPreviousButtonText()}}">
+                </dv-navigation>
+                <dv-navigation dv-show-element
+                               dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()"
+                               dv-previous="true" dv-next="true"
+                               dv-translate-next="{{vm.getNextButtonText()}}"
+                               dv-translate-previous="{{vm.getPreviousButtonText()}}">
+                </dv-navigation>
+
+            </form>
+        </div>
+    </div>
+</div>

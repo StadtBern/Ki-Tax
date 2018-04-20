@@ -1,0 +1,99 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<md-dialog md-theme="default"
+           class="md-default-theme md-transition-in freigabe-dialog"
+           role="dialog" tabindex="-1">
+
+    <md-dialog-content class="md-dialog-content" role="document" tabindex="-1" id="dialogContent">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2 ng-if="!vm.hasError() && vm.gesuch" class="md-title ng-binding" data-translate="FREIGEBEN_DIALOG_TITLE"></h2>
+
+                <span ng-if="vm.hasError()" ng-bind="vm.errorMessage"></span>
+            </div>
+        </div>
+
+        <div class="row" ng-if="!vm.hasError() && vm.gesuch">
+            <div class="col-xs-12">
+                <div class="row marginTop10">
+                    <div class="col-xs-3">
+                        <span data-translate="FREIGEBEN_DIALOG_LABEL_FALL"></span>
+                    </div>
+                    <div class="col-xs-9">
+                        <span ng-bind="vm.fallNummer"></span>
+                    </div>
+                </div>
+                <div class="row marginTop10">
+                    <div class="col-xs-3">
+                        <span data-translate="FREIGEBEN_DIALOG_LABEL_FAMILIE"></span>
+                    </div>
+                    <div class="col-xs-9">
+                        <span ng-bind="vm.familie"></span>
+                    </div>
+                </div>
+                <div class="row marginTop10" ng-hide="!vm.isJugendamt()">
+                    <div class="col-xs-12 dv-input-container-medium">
+                        <div class="form-group">
+                            <label class="md-no-float" data-translate="FREIGEBEN_DIALOG_LABEL_VERANTWORTLICHER"
+                                   for="verantwortlicher">
+                            </label>
+                            <div class="dv-select-style">
+                                <select name="verantwortlicher"
+                                        id="verantwortlicher"
+                                        class="form-control"
+                                        ng-options="user.username as user.getFullName() for user in vm.userJAList"
+                                        ng-model="vm.selectedUserJA">
+                                    <option value="">{{'NO_VERANTWORTLICHER_SELECTED' | translate}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row marginTop10" ng-hide="!vm.isSchulamt()">
+                    <div class="col-xs-12 dv-input-container-medium">
+                        <div class="form-group">
+                            <label class="md-no-float" data-translate="FREIGEBEN_DIALOG_LABEL_VERANTWORTLICHER_SCH"
+                                   for="verantwortlicher">
+                            </label>
+                            <div class="dv-select-style">
+                                <select name="verantwortlicherSCH"
+                                        id="verantwortlicherSCH"
+                                        class="form-control"
+                                        ng-options="user.username as user.getFullName() for user in vm.userSCHList"
+                                        ng-model="vm.selectedUserSCH">
+                                    <option value="">{{'NO_VERANTWORTLICHER_SELECTED' | translate}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout-align="space-between center">
+        <button class="ng-scope" type="button" ng-class=" {'btn-link' : !vm.hasError()}"
+                ng-if="vm.hasError() || vm.gesuch" ng-click="vm.cancel()" aria-label="{{'CANCEL' | translate}}">
+            <span class="ng-binding ng-scope" data-translate="CANCEL"></span>
+        </button>
+        <dv-loading-button button-class="" type="button" ng-if="!vm.hasError()"
+                button-click="vm.freigeben()" md-autofocus="dialog.$type==='alert'"
+                aria-label="{{'LABEL_FREIGEBEN' | translate}}">
+            <span class="ng-binding ng-scope" data-translate="LABEL_FREIGEBEN"></span>
+        </dv-loading-button>
+    </md-dialog-actions>
+
+</md-dialog>

@@ -1,0 +1,117 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="einkommensverschlechterungSteuern gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
+    <div class="row">
+        <div class="col-md-12">
+
+            <form role="form" name="vm.form" class="" unsaved-warning-form novalidate>
+                <fieldset ng-disabled="vm.isGesuchReadonly()">
+
+                    <!-- -----------------------------------------BasisJahr+1----------------------------------------------- -->
+
+                    <div class="row viewTitle">
+                        <div class="col-md-12">
+                            <h2>
+                    <span data-translate="EKVI_ZUSAETZLICHE_FRAGEN"
+                          translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(1)}}}"></span>
+                            </h2>
+                            <hr class="header"/>
+                        </div>
+                    </div>
+                    <!-- Gemeinsame Steuererklaerung -->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-question">
+                            <div class="form-group">
+                                <span class="ebeguH1 required">
+                                    <span id="gemeinsameSteuererklaerung_BjP1"
+                                          data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
+                                          translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1), namegs2: vm.extractFullNameGS2()}"></span>
+                                </span>
+                                <dv-radio-container name="gemeinsameSteuererklaerung_BjP1"
+                                                    ng-model="vm.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1"
+                                                    ng-required="true" class="radio input-element"
+                                                    ng-change="vm.gemeinsameStekClicked_BjP1()"
+                                                    dv-enable-element
+                                                    dv-enable-allowed-roles="vm.allowedRoles"
+                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
+                                                    aria-described-by="gemeinsameSteuererklaerung_BjP1-error">
+                                </dv-radio-container>
+                                <dv-error-messages input-id="gemeinsameSteuererklaerung_BjP1" for="vm.form.gemeinsameSteuererklaerung_BjP1.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Steuerveranlagung -->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-question" ng-if="vm.showSteuerveranlagung_BjP1()">
+                            <div class="form-group">
+                                <span class="ebeguH1 required">
+                                    <span data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
+                                          translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1)}" id="steuerveranlagung_BjP1"></span>
+                                </span>
+                                <dv-radio-container name="steuerveranlagung_BjP1"
+                                                    ng-model="vm.getEkv_GS1_Bjp1().steuerveranlagungErhalten"
+                                                    ng-required="true" class="radio input-element"
+                                                    ng-change="vm.steuerveranlagungClicked_BjP1()"
+                                                    dv-enable-element
+                                                    dv-enable-allowed-roles="vm.allowedRoles"
+                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
+                                                    aria-described-by="steuerveranlagung_BjP1-error">
+                                </dv-radio-container>
+                                <dv-error-messages input-id="steuerveranlagung_BjP1" for="vm.form.steuerveranlagung_BjP1.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Steuererklärung -->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-question"
+                             ng-if="vm.showSteuerveranlagung_BjP1() && vm.showSteuererklaerung_BjP1()">
+                            <div class="form-group">
+                                <span class="ebeguH1 required">
+                                    <span id="steuererklaerung_BjP1" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
+                                          translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(1)}}}"></span>
+                                </span>
+                                <dv-radio-container name="steuererklaerung_BjP1"
+                                                    ng-model="vm.getEkv_GS1_Bjp1().steuererklaerungAusgefuellt"
+                                                    ng-required="true" class="radio input-element"
+                                                    ng-change="vm.steuererklaerungClicked_BjP1()"
+                                                    dv-enable-element
+                                                    dv-enable-allowed-roles="vm.allowedRoles"
+                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
+                                                    aria-described-by="steuererklaerung_BjP1-error"
+                                                    aria-label="{{ 'FINANZIELLE_SITUATION_STEUERERKLAERUNG' |translate}}">
+                                </dv-radio-container>
+                                <dv-error-messages input-id="steuererklaerung_BjP1" for="vm.form.steuererklaerung_BjP1.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+
+                </fieldset>
+
+                <!-- -------------------------------------------Navigation--------------------------------------------  -->
+                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save()" dv-sub-step="2">
+                </dv-navigation>
+            </form>
+
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,123 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="adminView adminModul">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+
+            <div class="viewTitle marginTop10">
+                <h1 data-translate="ADMIN"></h1>
+            </div>
+            <!-- Application Properties: Tabelle -->
+            <div class="row marginTop10">
+                <div class="col-md-12 table-responsive">
+
+                    <table st-table="displayedCollection" st-safe-src="vm.applicationProperties" st-delay="20"
+                           class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th st-sort="name" class="sortable" data-translate="PROPERTY_NAME"></th>
+                            <th st-sort="value" class="sortable valCol" data-translate="PROPERTY_VALUE"></th>
+                            <th st-sort="timestampErstellt" class="sortable" data-translate="TIMEERSTELLT"></th>
+                        </tr>
+                        <tr>
+                            <th><input st-search="name" class="form-control" placeholder="Suche nach Name"
+                                       type="text"/></th>
+                            <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
+                                       type="text"/></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                            ng-click="vm.editRow(row)">
+                            <td ng-bind="row.name"></td>
+                            <td ng-bind="row.value" class="valCol" title="{{row.value}}"></td>
+                            <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+            <!-- Application Properties Detail -->
+            <div class="row marginTop10" ng-if="!vm.isReadonly()">
+                <form ng-submit="form.$valid && vm.submit()" name="form" role="form" class="" novalidate
+                      ng-if="vm.applicationProperty"
+                      unsaved-warning-form>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <label class="md-no-float" data-translate="PROPERTY_NAME" for="propName">
+                                        </label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input id="propName" type="text" name="propertyName"
+                                               ng-model="vm.applicationProperty.name"
+                                               dv-max-length class="input-element smallfont" required
+                                               ng-disabled="vm.applicationProperty.timestampErstellt">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="md-no-float" data-translate="PROPERTY_VALUE" for="propVal">
+                                        </label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input id="propVal" type="text" name="propertyValue"
+                                               ng-model="vm.applicationProperty.value"
+                                               ng-maxlength="4000" class="smallfont">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-3 col-md-offset-3">
+                                        <dv-error-messages for="form.propertyName.$error"></dv-error-messages>
+                                    </div>
+                                    <div class="col-md-3 col-md-offset-3">
+                                        <dv-error-messages for="form.propertyValue.$error"></dv-error-messages>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                        <div class="col-md-2">
+                                <dv-loading-button button-class="" type="submit" >
+                                    <span data-translate="SAVE"></span>
+                                </dv-loading-button>
+                            </div>
+                            <div class="col-md-4 ">
+                                <a id="cancelLink" unsaved-warning-clear
+                                   ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();">
+                                    <span data-translate="CANCEL"></span>
+                                </a>
+                            </div>
+                        </div>
+                </form>
+            </div>
+
+            <!-- Suchindex -->
+            <div ng-if="!vm.isReadonly() && vm.authServiceRS.isOneOfRoles(vm.TSRoleUtil.getSuperAdminRoles())">
+                <div class="viewTitle marginTop10">
+                    <h1>Suchindex neu erstellen</h1>
+                </div>
+                <div class="row marginTop10">
+                    <div class="col-md-12 form-group">
+                        <dv-loading-button force-wait-service="true" button-click="vm.startReindex()">Suchindex neu erstellen</dv-loading-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!--suppress WebProperties -->
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+		 version="3.1">
+
+	<display-name>ebegu-rest</display-name>
+
+	<security-constraint>
+		<display-name>SecurityConstraint</display-name>
+		<web-resource-collection>
+			<web-resource-name>ebegu-web-protected-resources</web-resource-name>
+			<url-pattern>/api/*</url-pattern>
+
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+	<!--Achtung diese 2. Security constraint erlaubt wieder einige url-patterns die in der ersten geschuetzt wurden-->
+	<security-constraint>
+		<display-name>SecurityConstraint</display-name>
+		<web-resource-collection>
+			<web-resource-name>ebegu-web-allowed-pattern</web-resource-name>
+			<url-pattern>/api/v1/swagger.json</url-pattern>
+			<url-pattern>/api/v1/login</url-pattern>
+			<url-pattern>/api/v1/auth/login</url-pattern>
+			<url-pattern>/api/v1/connector/heartbeat</url-pattern>
+			<url-pattern>/api/v1/schulamt/heartbeat</url-pattern>
+			<url-pattern>/api/v1/auth/logout</url-pattern>
+			<url-pattern>/api/v1/auth/singleSignOn</url-pattern>
+			<url-pattern>/api/v1/auth/singleLogout</url-pattern>
+			<url-pattern>/api/v1/application-properties/public/*</url-pattern>
+			<url-pattern>/api/v1/testfaelle/schulung/public/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+
+	<security-role>
+		<description>pseude token for any role</description>
+		<role-name>*</role-name>
+	</security-role>
+	<security-role>
+		<role-name>SUPER_ADMIN</role-name>
+	</security-role>
+	<security-role>
+		<role-name>ADMIN</role-name>
+	</security-role>
+	<security-role>
+		<role-name>SACHBEARBEITER_JA</role-name>
+	</security-role>
+	<security-role>
+		<role-name>SACHBEARBEITER_INSTITUTION</role-name>
+	</security-role>
+	<security-role>
+		<role-name>SACHBEARBEITER_TRAEGERSCHAFT</role-name>
+	</security-role>
+	<security-role>
+		<role-name>GESUCHSTELLER</role-name>
+	</security-role>
+	<security-role>
+		<role-name>JURIST</role-name>
+	</security-role>
+	<security-role>
+		<role-name>REVISOR</role-name>
+	</security-role>
+	<security-role>
+		<role-name>STEUERAMT</role-name>
+	</security-role>
+	<security-role>
+		<role-name>ADMINISTRATOR_SCHULAMT</role-name>
+	</security-role>
+	<security-role>
+		<role-name>SCHULAMT</role-name>
+	</security-role>
+
+	<filter>
+		<filter-name>javamelody</filter-name>
+		<!-- Der Filter stellt aktuelle Monitoring-Infos unter /monitoring zur Verfuegung -->
+		<!--<filter-class>net.bull.javamelody.MonitoringFilter</filter-class>-->
+		<!-- Wir benutzen unseren eigenen Filter in dem wir die IDs aus REST-Resourcen durch Platzhalter entfernen -->
+		<filter-class>ch.dvbern.ebegu.api.util.EbeguMonitoringFilter</filter-class>
+		<async-supported>true</async-supported>
+	</filter>
+	<filter-mapping>
+		<filter-name>javamelody</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>ASYNC</dispatcher>
+	</filter-mapping>
+	<listener>
+		<listener-class>net.bull.javamelody.SessionListener</listener-class>
+	</listener>
+
+	<error-page>
+		<error-code>500</error-code>
+		<location>/error.jsp</location>
+	</error-page>
+
+</web-app>

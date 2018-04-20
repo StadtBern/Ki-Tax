@@ -1,0 +1,232 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="erwerbspensumView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
+    <div class="row viewTitle">
+        <div class="col-md-12">
+            <h2 ng-bind="vm.gesuchsteller.extractFullName()"></h2>
+            <hr class="header"/>
+            <p class="inlineHint" data-translate="INFOTEXT_ERWERBSPENSUM"></p>
+            <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <form role="form" name="vm.form" class="" novalidate
+                  unsaved-warning-form ng-if="vm.model">
+                <fieldset ng-disabled="vm.isGesuchReadonly()">
+
+                    <!--Bezeichnung-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="TAETIGKEIT" for="bezeichnung"></label>
+                                <input id="bezeichnung" type="text" name="bezeichnung"
+                                       ng-model="vm.model.erwerbspensumJA.bezeichnung"
+                                       dv-max-length class="form-control" ng-required="false"
+                                       ng-disabled="vm.erwerbspensumDisabled()"
+                                       aria-describedby="bezeichnung-error">
+                                <dv-bisher gs="vm.model.erwerbspensumGS.bezeichnung"
+                                           ja="vm.model.erwerbspensumJA.bezeichnung"></dv-bisher>
+                                <dv-error-messages input-id="bezeichnung"
+                                                   for="vm.form.bezeichnung.$error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
+
+                    <!--Taetigkeit-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-medium">
+                            <div class="form-group">
+                                <label class="md-no-float required" for="taetigkeit">
+                                    <span data-translate="TAETIGKEIT_WAEHLEN"></span>
+                                    <dv-tooltip input-id="taetigkeit"
+                                                text="'TAETIGKEIT_WAEHLEN_HELP' | translate"></dv-tooltip>
+                                </label>
+                                <div class="dv-select-style">
+                                    <select aria-describedby="taetigkeit-error"
+                                            name="taetigkeit" id="taetigkeit"
+                                            ng-model="vm.model.erwerbspensumJA.taetigkeit"
+                                            class="form-control"
+                                            ng-options="(taetigkeit| translate) for taetigkeit in vm.getTaetigkeitenList() "
+                                            ng-required="true" ng-change="vm.taetigkeitChanged()"
+                                            ng-disabled="vm.erwerbspensumDisabled()">
+                                    </select>
+
+                                <dv-bisher gs="vm.model.erwerbspensumGS.taetigkeit"
+                                           ja="vm.model.erwerbspensumJA.taetigkeit"></dv-bisher>
+                                <dv-error-messages input-id="taetigkeit" for="vm.form.taetigkeit.$error"
+                                                   class="error"></dv-error-messages>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Pensum-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="PENSUM" for="taetigkeitPensum"></label>
+                                <input aria-describedby="taetigkeitPensum-error"
+                                       id="taetigkeitPensum" type="number" name="taetigkeitPensum"
+                                       ng-model="vm.model.erwerbspensumJA.pensum"
+                                       dv-max-length class="form-control" max="100"
+                                       ng-required="true" ng-pattern="vm.patternPercentage"
+                                       ng-disabled="vm.erwerbspensumDisabled()"
+                                       ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
+                                <dv-bisher gs="vm.model.erwerbspensumGS.pensum"
+                                           ja="vm.model.erwerbspensumJA.pensum"></dv-bisher>
+                                <dv-error-messages input-id="taetigkeitPensum" for="vm.form.taetigkeitPensum.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
+
+                    <!--Ab Wann / Bis-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="AB" for="taetigkeitAbID">
+                                </label>
+                                <dv-datepicker input-id="taetigkeitAbID" name="taetigkeitAb"
+                                               ng-model="vm.model.erwerbspensumJA.gueltigkeit.gueltigAb"
+                                               ng-required="true" class="input-element" placeholder=""
+                                               ng-disabled="vm.erwerbspensumDisabled()"
+                                               ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
+                                </dv-datepicker>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.gueltigkeit.gueltigAb"
+                                           ja="vm.model.erwerbspensumJA.gueltigkeit.gueltigAb"></dv-bisher>
+                                <dv-error-messages input-id="taetigkeitAbID" for="vm.form.taetigkeitAb.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="BIS" for="taetigkeitBisID">
+                                </label>
+                                <dv-datepicker input-id="taetigkeitBisID" name="taetigkeitBis"
+                                               ng-model="vm.model.erwerbspensumJA.gueltigkeit.gueltigBis"
+                                               ng-required="false" class="input-element"
+                                               ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
+                                </dv-datepicker>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.gueltigkeit.gueltigBis"
+                                           ja="vm.model.erwerbspensumJA.gueltigkeit.gueltigBis"></dv-bisher>
+                                <dv-error-messages input-id="taetigkeitBisID" for="vm.form.taetigkeitBis.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
+
+                    <!--Zuschlag zu Erwerbspensum-->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-question">
+                            <div class="checkbox">
+                                <md-checkbox ng-model="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"
+                                             name="zuschlag" id="zuschlag"
+                                             ng-disabled="vm.isGesuchReadonly() || vm.erwerbspensumDisabled() || !vm.viewZuschlag()"
+                                             aria-label="{{'ZUSCHLAG_ZU_ERWERBSPENSUM' | translate}}">
+                                    <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
+                                </md-checkbox>
+                                <dv-tooltip input-id="zuschlag" text="vm.getZuschlagHelpText()"></dv-tooltip>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum"
+                                           ja="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"
+                                           specific-bisher-text="vm.getTextZuschlagErwerbspensumKorrekturJA()"></dv-bisher>
+                                <dv-error-messages for="vm.form.zuschlag.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Zuschlagsgrund-->
+                    <div class="row" ng-if="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum">
+                        <div class="col-sm-12 dv-input-container-medium">
+                            <div class="form-group">
+                                <label class="md-no-float required" data-translate="ZUSCHLAGSGRUND_WAEHLEN" for="zuschlagsgrund">
+                                </label>
+                                <!--im readonly modus wird das select durch ein div ersetzt weil werte gesetzt sein koennen die nicht in der selectbox sind-->
+                                <div class="dv-select-style" ng-if="!vm.isGesuchReadonly()">
+                                    <select name="zuschlagsgrund" id="zuschlagsgrund"
+                                            ng-model="vm.model.erwerbspensumJA.zuschlagsgrund"
+                                            class="form-control"
+                                            ng-options="zuschlagsgrund | translate for zuschlagsgrund in vm.getZuschlagsgrundList() "
+                                            ng-required="true"
+                                            ng-disabled="vm.erwerbspensumDisabled()">
+                                    </select>
+                                    <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsgrund"
+                                               ja="vm.model.erwerbspensumJA.zuschlagsgrund"
+                                               show-if-bisher-none="false"
+                                               block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
+                                    <dv-error-messages input-id="zuschlagsgrund_dvi" for="vm.form.zuschlagsgrund.$error"
+                                                       class="error"></dv-error-messages>
+                                </div>
+                                <div class="dv-select-style" ng-if="vm.isGesuchReadonly()">
+                                    <input aria-describedby="zuschlagsgrund_dvi-error" id="zuschlagsgrund_dvi"
+                                           type="text"
+                                           value="{{vm.model.erwerbspensumJA.zuschlagsgrund | translate}}"
+                                           class="form-control"
+                                           ng-disabled="true"
+                                           ng-if="vm.isGesuchReadonly()">
+                                    <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsgrund"
+                                               ja="vm.model.erwerbspensumJA.zuschlagsgrund"
+                                               show-if-bisher-none="false"
+                                               block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
+                                    <dv-error-messages input-id="zuschlagsgrund_dvi" for="vm.form.zuschlagsgrund.$error"
+                                                       class="error"></dv-error-messages>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Zuschlagsprozent-->
+                    <div class="row" ng-if="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="ZUSCHLAGSPROZENT"  data-translate-value-max="{{vm.maxZuschlagsprozent}}"
+                                       for="zuschlagsprozent"></label>
+                                <input  aria-describedby="zuschlagsprozent-error" type="number" id="zuschlagsprozent"
+                                        name="zuschlagsprozent"
+                                       ng-model="vm.model.erwerbspensumJA.zuschlagsprozent"
+                                       dv-max-length class="form-control" max="{{vm.maxZuschlagsprozent}}"
+                                       ng-required="true" ng-pattern="vm.patternPercentage"
+                                       ng-disabled="vm.erwerbspensumDisabled()"
+                                       ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
+                                <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsprozent"
+                                           ja="vm.model.erwerbspensumJA.zuschlagsprozent"
+                                           show-if-bisher-none="false"
+                                           block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
+                                <dv-error-messages input-id="zuschlagsprozent" for="vm.form.zuschlagsprozent.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
+
+
+                </fieldset>
+
+                <!--Buttons-->
+                <dv-navigation dv-cancel="vm.cancel()" dv-next="true" dv-save="vm.save()" dv-sub-step="2"
+                               dv-translate-next="{{'SPEICHERN_UPPER'}}">
+                </dv-navigation>
+
+            </form>
+
+            <p ng-if="!vm.model">Keine Erwerbspensum Daten vorhanden</p>
+
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,130 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@import '../variables.less';
+@import '../mixins.less';
+
+md-radio-group.radio, .radio {
+
+    margin: 0;
+    &:not(.ng-not-empty):focus {
+        md-radio-button {
+            &:first-child {
+                .md-off {
+                    box-shadow: 0 0 0 0.3rem rgba(0, 0, 0, 0.4);
+                    background: rgba(0, 0, 0, 0.4);
+                }
+            }
+        }
+    }
+    &.ng-not-empty:focus {
+        md-radio-button {
+
+            &.md-checked {
+                .md-on {
+                    box-shadow: 0 0 0 3.5rem rgba(0, 0, 0, 0.4);
+                }
+            }
+        }
+    }
+
+}
+
+md-radio-button {
+    min-height: 1.5rem;
+    height: auto;
+    color: @contrast-darkest;
+    margin: 0 0 1.5rem;
+    .md-label {
+
+    }
+    &:last-child {
+        margin-bottom: 0;
+    }
+    .md-container {
+        display: block !important;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 1.5rem;
+        width: 1.5rem;
+        &:before {
+            content: none;
+        }
+    }
+    .md-label {
+        display: block;
+        margin-left: 3rem;
+        // font-size:1.4rem;
+        line-height: 1.5rem;
+        min-height: 1.5rem;
+        height: auto;
+        span {
+            .ebeguH3();
+            // font-size:1.4rem;
+            line-height: 1.5rem;
+            height: 1.5rem;
+        }
+    }
+    .md-off {
+
+        width: 1.5rem;
+        height: 1.5rem;
+        border-width: 1px;
+        border-color: @contrast-darkest;
+    }
+
+    .md-on {
+        width: 1.5rem;
+        height: 1.5rem;
+        background-color: @contrast-darkest;
+        border: none;
+    }
+    &.md-checked {
+        .md-off {
+
+            width: 1.5rem;
+            height: 1.5rem;
+            border-color: @contrast-darkest;
+        }
+        .md-on {
+            border: none;
+            transform: scale(0.3);
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: @contrast-darkest;
+            border-color: @contrast-darkest;
+        }
+    }
+    &[disabled] {
+        color: @contrast-dark;
+        .md-container {
+            .md-off {
+                border-color: @contrast-dark;
+            }
+        }
+
+        .md-on {
+            border: none;
+            background-color: @contrast-dark;
+            border-color: @contrast-dark;
+        }
+        &.md-checked {
+            .md-off {
+                border-color: @contrast-dark;
+            }
+        }
+    }
+}
+

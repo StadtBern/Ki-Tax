@@ -1,0 +1,71 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="erwerbspensumListView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
+    <div class="row viewTitle">
+        <div class="col-md-12">
+            <h2>
+                <span data-translate="ERWERBSPENSEN_LIST_TITLE"></span>
+            </h2>
+            <hr class="header"/>
+            <p ng-if="vm.gesuchModelManager.getGesuch().isMutation() && !vm.isGesuchReadonly()" class="inlineHint"
+               data-translate="ERWERBSPENSUM_HINT"></p>
+            <p ng-if="vm.gesuchModelManager.getGesuch().isMutation()" class="inlineHint"
+               data-translate="ERWERBSPENSEN_LIST_HINT">
+            </p>
+            <p class="inlineHint" ng-if="!vm.erwerbspensumRequired" data-translate="ERWERBSPENSEN_NOT_REQUIRED"></p>
+        </div>
+    </div>
+
+
+    <!--Erwerbspensen von Gesuchsteller 1-->
+    <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller1" class="marginBottom80">
+        <h3 class="ebeguH2">
+            <span ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller1.extractFullName()"></span>
+        </h3>
+        <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS1()" table-id="erwerbspensenGS1"
+                               add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
+                               add-button-Visible="!vm.isGesuchReadonly()"
+                               add-button-enabled="!vm.isKorrekturModusJugendamt()"
+                               input-id="removeEWPButton1_"
+                               on-add="vm.createErwerbspensum(1)"
+                               on-edit="vm.editPensum(pensum, 1)"
+                               on-remove="vm.removePensum(pensum, 1, 'removeEWPButton1_',index)"></dv-erwerbspensum-list>
+
+    </div>
+    <!--Erwerbspensen von Gesuchsteller 2-->
+    <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller2">
+        <h3 class="ebeguH2">
+            <span ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName()"></span>
+        </h3>
+        <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS2()" table-id="erwerbspensenGS2"
+                               add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
+                               add-button-Visible="!vm.isGesuchReadonly()"
+                               add-button-enabled="!vm.isKorrekturModusJugendamt()"
+                               input-id="removeEWPButton2_"
+                               on-add="vm.createErwerbspensum(2)"
+                               on-edit="vm.editPensum(pensum, 2)"
+                               on-remove="vm.removePensum(pensum, 2, 'removeEWPButton2_')"></dv-erwerbspensum-list>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <!--Buttons-->
+            <dv-navigation dv-previous="true" dv-next="true" dv-next-disabled="vm.isSaveDisabled()" dv-sub-step="1">
+            </dv-navigation>
+        </div>
+    </div>
+</div>

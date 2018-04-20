@@ -1,0 +1,218 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@import '../variables.less';
+@import '../mixins.less';
+
+.color-success {
+    background: @success;
+    &:hover {
+        background: @success-dark;
+    }
+}
+
+.color-warning {
+    background: @warning;
+    &:hover {
+        background: @warning-dark;
+    }
+}
+
+.color-danger {
+    background: @danger;
+    &:hover {
+        background: @danger-dark;
+    }
+}
+
+.dv-btn-mutation-hinzufuegen {
+    margin-top: 2rem;
+}
+
+md-dialog-actions {
+    padding: 0 2rem 0;
+    button {
+        margin: 0.8rem;
+        min-width: 10rem;
+        width: auto;
+        span {
+            font-size: 1.6rem;
+        }
+    }
+}
+
+dv-navigation {
+    button {
+        // margin:2rem 0 -1rem;
+    }
+}
+
+.btn-link {
+    font-size: 1.4rem;
+    color: @contrast-darkest;
+    &.link-underline {
+        padding: 0;
+        &:hover {
+            color: @contrast-darkest;
+        }
+
+        i {
+            text-decoration: none
+        }
+        span {
+            text-decoration: underline;
+        }
+    }
+    letter-spacing: 0.1rem;
+    span {
+        line-height: normal;
+    }
+    &[disabled], &[disabled]:hover {
+
+        background: none;
+        outline: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        &:focus {
+            outline: 2px solid @contrast-darkest;
+
+        }
+    }
+
+}
+
+.dv-btn-sm {
+    height: 3rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    letter-spacing: normal;
+    span {
+        line-height: 3rem;
+    }
+}
+
+.dv-btn-institution {
+    margin-right: 4rem;
+}
+
+.dv-btn-operation {
+    &.centered-btn{
+        width:100%;
+    }
+    background: transparent;
+    color: @contrast-darkest;
+    letter-spacing: 0.1rem;
+    padding: 0;
+    .fa {
+        vertical-align: middle;
+    }
+    &.active, &:active {
+        .fa {
+            color: @primary;
+        }
+        background: transparent;
+        color: @contrast-darkest;
+
+    }
+    &:hover, &:focus {
+        outline: 2px solid @contrast-darkest;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        .fa {
+            outline: 0;
+            color: @primary;
+        }
+
+        background: transparent;
+        color: @contrast-darkest;
+    }
+
+    &:active, &:hover {
+        outline: none;
+        text-decoration: none !important;
+    }
+
+    &[disabled], &[disabled]:hover {
+        .fa {
+            color: @contrast-dark;
+        }
+        color: @contrast-dark;
+        background: transparent;
+    }
+
+}
+
+a.dv-btn {
+
+    display: block;
+    text-decoration: none;
+    span {
+        text-decoration: none;
+        line-height: 4rem;
+        text-align: center;
+    }
+}
+
+button, .dv-btn {
+    .ebeguNormal();
+    white-space: nowrap;
+    font-size: 1.4rem;
+    text-align: center;
+    letter-spacing: 0.2rem;
+    border: none;
+    background: @primary;
+    color: @contrast-lightest;
+    padding: 0 1.5rem 0;
+    height: 4rem;
+    span {
+        line-height: inherit;
+        text-align: center;
+        vertical-align: middle;
+    }
+    &.active, &:active {
+        background: @primary;
+        color: @contrast-lightest;
+
+    }
+    &:hover {
+        background: @primary-dark;
+        color: @contrast-lightest;
+    }
+
+    &:active, &:hover {
+        outline: none ;
+        text-decoration: none !important;
+    }
+    &:focus {
+        outline: 2px solid @contrast-darkest;
+        outline-offset: 0;
+
+    }
+    &[disabled], &[disabled]:hover {
+        color: @contrast-lightest;
+        background: @contrast;
+    }
+}
+.dv-btn-operation--white{
+    color: @contrast-lightest;
+    &.active, &:active {
+        .fa {
+            color: @primary;
+        }
+        background: transparent;
+        color: @contrast-lightest;
+
+    }
+}

@@ -1,0 +1,164 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="gesuch-toolbar" flex="100">
+    <md-toolbar flex="100">
+        <md-menu-bar flex="100" layout="row" layout-align="start center">
+            <span class="bold-menu" >
+                <i class="fa fa-desktop" aria-hidden="true" ng-if="vmx.hasBesitzer()" title="{{vmx.getBesitzer()}}"></i>
+                <i class="fa fa-file-text-o" aria-hidden="true" ng-if="!vmx.hasBesitzer()"></i>
+                <span class="bold-menu" ng-bind="vmx.getGesuchName()"></span>
+            </span>
+            <md-menu ng-if="vmx.showGesuchPeriodeNavigationMenu()">
+                <button ng-click="$mdMenu.open()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
+                    <span class="bold-menu" ng-bind="vmx.getCurrentGesuchsperiode()"></span>
+                    <i class="ellipsis-icon fa fa-chevron-down"></i>
+                </button>
+
+                <md-menu-content class="no-padding menu-item-container">
+                    <md-menu-item class="menu-item-link"
+                                  ng-repeat="gesuchsperiodeString in vmx.getKeys(vmx.gesuchNavigationList)"
+                                  ng-value="gesuchsperiodeString">
+                        <md-button ng-click="vmx.setGesuchsperiode(gesuchsperiodeString)"
+                                   aria-label="{{gesuchsperiodeString}}">
+                                <span>
+                                    <a href="#" ng-click="$event.preventDefault()" aria-hidden>{{gesuchsperiodeString}}</a>
+                                </span>
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+
+            <span class="bold-menu" ng-if="!vmx.showGesuchPeriodeNavigationMenu()"
+                  ng-bind="vmx.getCurrentGesuchsperiode()"></span>
+
+            <!--Gesuchstyp-->
+            <md-menu ng-if="vmx.showAntragTypListNavigationMenu()">
+                <button ng-click="$mdMenu.open()" aria-label="{{vmx.getAntragTyp()}}">
+                    <span class="bold-menu" ng-bind="vmx.getAntragTyp()"></span>
+                    <i class="ellipsis-icon fa fa-chevron-down"></i>
+                </button>
+                <md-menu-content class="no-padding menu-item-container">
+                    <md-menu-item class="menu-item-link"
+                                  ng-repeat="antragTypDatum in vmx.gesuchNavigationList[vmx.getCurrentGesuchsperiode()]"
+                                  ng-value="antragTypDatum">
+                        <md-button class="menu-item-link" ng-click="vmx.setAntragTypDatum(antragTypDatum)"
+                                   aria-label="{{antragTypDatum}}">
+                                <span>
+                                    <a href="#" aria-hidden ng-click="$event.preventDefault()">{{antragTypDatum}}</a>
+                                </span>
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+
+            <span ng-if="!vmx.showAntragTypListNavigationMenu()">
+                 <button ng-click="vmx.goToOpenGesuch(vmx.getGesuch().id)"
+                         aria-label="vmx.getAntragTyp()" style="text-align: center;">
+                    <span ng-bind="vmx.getAntragTyp()" class="bold-menu" ></span>
+                </button>
+            </span>
+
+            <span flex=""></span>
+
+            <!-- Gesuch loeschen -->
+            <div dv-show-element
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getAdministratorRoles()" dv-show-expression="vmx.showGesuchLoeschen()">
+                <button ng-click="vmx.gesuchLoeschen()"
+                        aria-label="{{'TOOLBAR_LOESCHEN' | translate}}" style="text-align: center;"
+                        input-id="{{'gesuchLoeschenButton'}}" type="reset">
+                    <span data-translate="TOOLBAR_LOESCHEN"></span>
+                </button>
+            </div>
+
+            <!--Verlauf-->
+            <div dv-show-element
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getJugendamtAndSchulamtRole()" dv-show-expression="vmx.showVerlauf()">
+                <button ng-click="vmx.openVerlauf()"
+                        aria-label="{{'TOOLBAR_VERLAUF' | translate}}" style="text-align: center;">
+                    <span data-translate="TOOLBAR_VERLAUF"></span>
+                </button>
+            </div>
+
+            <!-- Verfuegungen -->
+            <div dv-show-element
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getAllRolesForMenuAlleVerfuegungen()"
+                 dv-show-expression="!vmx.getGesuch().isNew()">
+                <button ng-click="vmx.openAlleVerfuegungen()"
+                        aria-label="{{'TOOLBAR_ALLE_VERFUEGUNGEN' | translate}}" style="text-align: center;">
+                    <span data-translate="TOOLBAR_ALLE_VERFUEGUNGEN"></span>
+                </button>
+            </div>
+
+            <!-- Mitteilungen -->
+            <div dv-show-element
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getGesuchstellerJugendamtSchulamtOtherAmtRoles()"  dv-show-expression="!vmx.getGesuch().isNew()">
+                <button ng-click="vmx.openMitteilungen()"
+                        aria-label="{{'TOOLBAR_MITTEILUNGEN' | translate}}" style="text-align: center;">
+                    <span data-translate="TOOLBAR_MITTEILUNGEN"></span>
+                </button>
+            </div>
+
+            <!-- Mutieren -->
+            <div dv-show-element
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles()"
+                 dv-show-expression="vmx.showButtonMutieren()">
+                <button ng-click="vmx.antragMutieren()"
+                        aria-label="{{'TOOLBAR_MUTIEREN' | translate}}" style="text-align: center;">
+                    <span data-translate="TOOLBAR_MUTIEREN"></span>
+                </button>
+            </div>
+
+            <!-- Erneuerungsgesuch erstellen -->
+            <div dv-show-element
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getGesuchstellerJugendamtSchulamtRoles()"
+                 dv-show-expression="vmx.erneuernPossibleForCurrentAntrag && !vmx.hideActionButtons && !vmx.getGesuch().isNew()">
+                <button ng-click="vmx.antragErneuern()"
+                        aria-label="{{'TOOLBAR_ERNEUERN' | translate}}" style="text-align: center;">
+                    <span data-translate="TOOLBAR_ERNEUERN"></span>
+                </button>
+            </div>
+
+            <!--Kontakt-->
+            <md-menu ng-if="vmx.showKontaktMenu()">
+                <button ng-click="$mdMenu.open()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
+                    <i class="ellipsis-icon fa fa-envelope"></i>
+                    <span data-translate="TOOLBAR_KONTAKT"></span>
+                </button>
+                <md-menu-content class="no-padding menu-item-container kontakt">
+
+                    <span class="kontaktTop" ng-bind="vmx.getGesuch().gesuchsteller1.extractFullName()"></span>
+                    <span ng-bind="vmx.getGesuch().gesuchsteller1.extractMail()"></span>
+                    <span class="kontaktBottom" ng-bind="vmx.getGesuch().gesuchsteller1.extractPhone()"></span>
+
+
+                    <span ng-if="vmx.getGesuch().gesuchsteller2"
+                          ng-bind="vmx.getGesuch().gesuchsteller2.extractFullName()"></span>
+                    <span ng-if="vmx.getGesuch().gesuchsteller2"
+                              ng-bind="vmx.getGesuch().gesuchsteller2.extractMail()"></span>
+                    <span class="kontaktBottom" ng-if="vmx.getGesuch().gesuchsteller2"
+                          ng-bind="vmx.getGesuch().gesuchsteller2.extractPhone()"></span>
+
+                </md-menu-content>
+            </md-menu>
+
+            <dv-verantwortlicherselect schulamt="true"></dv-verantwortlicherselect>
+
+            <dv-verantwortlicherselect></dv-verantwortlicherselect>
+
+        </md-menu-bar>
+
+    </md-toolbar>
+</div>

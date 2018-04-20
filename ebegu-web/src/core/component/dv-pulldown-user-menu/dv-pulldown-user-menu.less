@@ -1,0 +1,80 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@import '../../../style/variables.less';
+@import '../../../style/mixins.less';
+
+.user-menu {
+    md-menu-item > a.md-button {
+        padding: 0 16px 0;
+    }
+    md-menu-bar button {
+        padding: 0;
+    }
+    md-menu-item:focus{
+        background: @contrast;
+    }
+    padding: 0;
+    float: right;
+    display: block;
+    font-size: 1.4rem;
+    a {
+        text-decoration: none;
+        color: @contrast-darkest;
+        letter-spacing: normal;
+        font-size: 1.4rem;
+        &:hover, &:focus {
+            color: @contrast-darkest;
+            text-decoration: none;
+            outline: 0;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+    }
+    .md-button:not([disabled]):hover, &:focus {
+        background: @contrast;
+    }
+    button {
+        letter-spacing: normal;
+        background: @contrast-lightest;
+        color: @contrast-darkest;
+        margin: 0;
+        height: @navbar-height;
+        font-size: 1.4rem;
+        span {
+            font-size: 1.4rem;
+        }
+        i {
+            font-size: 2rem;
+            margin-left: 1rem;
+            vertical-align: middle;
+        }
+        &:hover, &:focus:hover {
+            color: @contrast-darkest;
+            background: @contrast;
+            outline: 0;
+        }
+        &:focus {
+            outline: 2px solid @contrast-darkest;
+            background: @contrast;
+            outline-offset: -1rem;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+    }
+    .versionInfo a {
+        color: @dred;
+    }
+}

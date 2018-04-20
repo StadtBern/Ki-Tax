@@ -1,0 +1,66 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@import "../../../../style/variables.less";
+@import "../../../../style/mixins.less";
+.dvb-error-messages-panel {
+    .container {
+        margin-top: @small-abstand;
+        margin-bottom: @small-abstand;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        .alarm-icon {
+            margin-right: @small-abstand;
+        }
+        div {
+            line-height: 2rem;
+            flex: 1;
+        }
+        .close-icon {
+            margin-left: @small-abstand;
+            margin-right: @small-abstand;
+        }
+        .fa:before {
+            line-height: 2rem;
+            vertical-align: middle;
+        }
+        a {
+            :hover {
+                cursor: pointer;
+            }
+            line-height: 2rem;
+            color: @color-contrast-bright-on-hover;
+
+        }
+    }
+    position: fixed;
+    top: @page-start;
+    right: 0;
+    left: 0;
+    z-index: @z-index-error;
+    background-color: @primary-dark;
+    padding: 0.5rem 0;
+    border-bottom: none;
+    color: @contrast-lightest;
+    font-weight: bold;
+    display: none;
+}
+
+.dvb-error-messages-panel.info{
+    background-color: @blue;
+}
+
+

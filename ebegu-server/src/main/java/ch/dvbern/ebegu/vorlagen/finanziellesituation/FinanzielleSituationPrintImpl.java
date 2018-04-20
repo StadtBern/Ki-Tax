@@ -1,0 +1,49 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package ch.dvbern.ebegu.vorlagen.finanziellesituation;
+/**
+ * DTO fuer den den FinanzielleSituation Print. Ergenzt FinanzDatenPrintImpl um einige Funktionen
+ */
+public class FinanzielleSituationPrintImpl extends FinanzDatenPrintImpl implements FinanzielleSituationPrint {
+
+	private final String finanzielleSituationJahr;
+	private final String fallNummer;
+
+	/**
+	 * Konstruktor
+	 */
+	public FinanzielleSituationPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1,
+		FinanzSituationPrintGesuchsteller fsGesuchsteller2, String finanzielleSituationJahr,
+		String fallNummer) {
+
+		super(fsGesuchsteller1, fsGesuchsteller2);
+		this.finanzielleSituationJahr = finanzielleSituationJahr;
+		this.fallNummer = fallNummer;
+
+	}
+
+	@Override
+	public String getFallNummer() {
+
+		return fallNummer;
+	}
+
+	@Override
+	public String getFinanzielleSituationJahr() {
+
+		return finanzielleSituationJahr;
+	}
+}

@@ -1,0 +1,54 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="skiplinks" style="display: none">
+    <ul class="skiplinks__list">
+        <li>
+            <a class="skip" accesskey="0" href="#" ng-click="vm.goBackHome()"
+               title="[ALT + 0]"
+               dv-show-element
+               dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()"
+               dv-show-expression="!vm.isCurrentPageGSDashboard()"
+            data-translate="SKIP_0">
+                </a>
+        </li>
+        <li>
+            <a class="skip" accesskey="1" href="#"  ng-click="vm.focusLink('#usermenu'); $event.preventDefault()"
+               title="[ALT + 1]" id="SKIP_1"
+               data-translate="SKIP_1"></a>
+        </li>
+        <li>
+            <a class="skip" accesskey="2" href="#"  ng-click="vm.focusToolbar(); $event.preventDefault()" title="[ALT + 2]"
+               id="SKIP_2"
+               data-translate="SKIP_2"></a>
+        </li>
+        <li>
+            <a class="skip" accesskey="3" href="#"  ng-click="vm.focusSidenav(); $event.preventDefault()" title="[ALT + 3]"
+               id="SKIP_3"
+               dv-show-element
+               dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()"
+               dv-show-expression="vm.isCurrentPageGesuch()" data-translate="SKIP_3"></a>
+        </li>
+        <li>
+            <a class="skip" accesskey="4" href="#"  ng-click="vm.showKontakt(); $event.preventDefault()" title="[ALT + 4]"
+               id="SKIP_4"
+               data-translate="SKIP_4"></a>
+        </li>
+        <!--<li>-->
+            <!--<a class="skip" accesskey="5" href="#inhalt" title="[ALT + 5]"-->
+               <!--data-translate="SKIP_5"></a>-->
+        <!--</li>-->
+    </ul>
+</div>

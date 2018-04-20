@@ -1,0 +1,75 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2018 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!-- Verantwortlichen zuteilen -->
+<span title="{{'VERANTWORTLICHER' | translate:{name: vm.getVerantwortlicherFullName()} }}"
+      dv-show-element
+      dv-show-allowed-roles="vm.TSRoleUtil.getAllButAdministratorAmtRole()"
+      dv-show-expression="vm.hasGesuch()">
+        <i ng-class="{'fa fa-user': !vm.schulamt, 'fa fa-graduation-cap': vm.schulamt}" aria-hidden="true"
+           style="margin-right: 0.2rem"></i>
+        {{vm.getVerantwortlicherFullName()}}
+</span>
+<md-menu-bar style="padding: 0;">
+    <md-menu dv-show-element
+             dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorOrAmtRole()"
+             dv-show-expression="vm.hasGesuch()">
+
+        <button ng-click="$mdMenu.open()" aria-label="{{vm.getVerantwortlicherFullName()}}">
+            <i ng-class="{'fa fa-user': !vm.schulamt, 'fa fa-graduation-cap': vm.schulamt}" aria-hidden="true"
+               style="margin-right: 0.2rem"></i>
+            <span ng-bind="vm.getVerantwortlicherFullName()"></span>
+            <i class="ellipsis-icon fa fa-chevron-down"></i>
+        </button>
+
+        <md-menu-content class="menu-item-container">
+
+            <md-menu-item class="menu-item-text">
+                <span>{{vm.getTitel()}}</span>
+            </md-menu-item>
+
+            <md-menu-item class="menu-item-link">
+                <md-button ng-click="vm.setVerantwortlicher(undefined)"
+                           aria-label="{{'NO_VERANTWORTLICHER_SELECTED' | translate}}"
+                           style="position: relative;">
+                <span>
+
+                     <a href="#" ng-click="$event.preventDefault();" aria-hidden>{{'NO_VERANTWORTLICHER_SELECTED' | translate}}</a>
+                    <i ng-if="!vm.getFallVerantwortlicher()"
+                       ng-class="{'fa fa-user': !vm.schulamt, 'fa fa-graduation-cap': vm.schulamt}"
+                       aria-hidden="true"
+                       style="line-height: 4rem; padding-left: 1rem;"></i>
+                </span>
+                </md-button>
+            </md-menu-item>
+
+            <md-menu-item class="menu-item-link" ng-repeat="user in vm.userList | orderBy: 'getFullName()'"
+                          ng-value="user.username">
+                <md-button ng-click="vm.setVerantwortlicher(user)" aria-label="{{user.username}}"
+                           style="position: relative;">
+                <span>
+
+                     <a href="#" ng-click="$event.preventDefault();" aria-hidden>{{user.getFullName()}}</a>
+                     <i ng-if="vm.isCurrentVerantwortlicher(user)"
+                        ng-class="{'fa fa-user': !vm.schulamt, 'fa fa-graduation-cap': vm.schulamt}"
+                        aria-hidden="true"
+                        style="line-height: 4rem; padding-left: 1rem;"></i>
+                </span>
+                </md-button>
+            </md-menu-item>
+
+        </md-menu-content>
+    </md-menu>
+</md-menu-bar>

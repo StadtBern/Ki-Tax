@@ -1,0 +1,457 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@nodeModules: ~"../node_modules";
+
+@import '~angular-material/angular-material.css';
+@import '~bootstrap/less/bootstrap';
+@import '~font-awesome/less/font-awesome';
+@fa-font-path: "~font-awesome/fonts/";
+
+@import 'style/atoms/button.less';
+@import 'style/atoms/input.less';
+@import 'style/atoms/checkbox.less';
+@import 'style/atoms/radio.less';
+@import 'style/organisms/navbar.less';
+@import 'style/molecules/table.less';
+@import 'style/molecules/dv-ebegu-calendar.less';
+@import 'style/variables.less';
+@import 'style/mixins.less';
+@import 'style/typography.less';
+
+.access-for-all-title {
+    display: block;
+    font-size: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+dv-posteingang {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.fixedtable {
+    table-layout: fixed;
+}
+
+/* Add Component LESS Above */
+.loaded {
+    opacity: 1 !important;
+    -moz-transition: opacity 0.3s ease;
+    -o-transition: opacity 0.3s ease;
+    -webkit-transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease;
+}
+
+html {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+dv-bisher, .dv-bisher {
+    //display: none;
+}
+
+/* Required for Angular UI Bootstrap */
+.nav, .pagination, .carousel, .panel-title a {
+    cursor: pointer;
+}
+
+body {
+    height: 100%;
+    position: fixed;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 100vh;
+    font-size: 1.6rem;
+    .ebeguFont-family();
+    .starter-template {
+        padding: 4rem 1.5rem;
+        text-align: center;
+    }
+    &.ebegu {
+        background-color: @contrast-lightest;
+    }
+}
+
+.ui-absolute-view {
+    display: flex;
+    flex: 1 1 auto;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.overflow-auto {
+    overflow: auto;
+}
+
+.overflow-scroll {
+    overflow-x: auto;
+    overflow-y: scroll;
+}
+
+.dv-progressbar {
+    position: fixed;
+    width: 100%;
+    height: 0.5rem;
+    top: 5rem;
+    z-index: @z-index-progressbar;
+
+    .md-container {
+        background: none;
+        .md-bar {
+            background: @contrast;
+            height: 0.5rem;
+        }
+    }
+
+}
+
+#Intro {
+    top: 0;
+    background-color: @contrast-lightest;
+    height: @navbar-height;
+    min-height: @navbar-height;
+    width: 100%;
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-content: flex-end;
+    z-index: (@z-index-error+1);
+}
+
+dv-home-icon, dv-countdown, dv-downloadmenu {
+    &:nth-child(2) {
+        margin-left: auto;
+    }
+    display: flex;
+    width: @navbar-height;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+}
+
+dv-pulldown-user-menu {
+}
+
+.logo-bern {
+    background-image: url('assets/images/logo1-bern.png');
+    background-repeat: no-repeat;
+    background-size: Auto @navbar-height;
+    background-position: left 0.7rem center;
+}
+
+.logo-house, .dv-countdown-countdown {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -o-user-select: none;
+    vertical-align: middle;
+    padding: 0;
+    height: @navbar-height;
+    width: @navbar-height;
+    line-height: @navbar-height;
+    &:hover, &:focus:hover {
+        background: @contrast;
+        outline: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+    &:focus {
+        outline: 2px solid @contrast-darkest !important;
+        background: @contrast;
+        outline-offset: -1rem;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+}
+
+.dv-countdown-countdown:hover {
+    background-color: transparent;
+    cursor: default;
+}
+
+.logo-text {
+    .ebeguBold();
+    .ebeguCapitalize();
+    .ebeguVertical(middle);
+    font-size: 1.6rem;
+    color: @contrast-darkest;
+    letter-spacing: 0.1rem;
+    text-align: center;
+    width: 15rem;
+    position: relative;
+}
+
+.userMenu {
+    background-size: Auto 4rem;
+    background-position: right 2rem center;
+    float: right;
+}
+
+.empty-table {
+    font-style: italic;
+    color: gray;
+}
+
+@background-error-color: #ffe6e6;
+
+.ErrorInput {
+    border-color: @state-danger-text;
+    background-color: @background-error-color;
+}
+
+.form-horizontal {
+    dv-error-messages {
+        padding-left: 0.1rem;
+    }
+}
+
+//roter hintergund bei den feldern die invalid sind
+form {
+    &.ng-submitted {
+        input, textarea {
+            &.ng-invalid {
+                .ErrorInput
+            }
+        }
+        md-radio-group.ng-invalid {
+            .ErrorInput
+        }
+
+    }
+    // style der den Hintergrund der inputs on-blur Rot markiert wenn nicht valid
+    .form-control.ng-invalid, .input-element.ng-invalid, md-radio-group.ng-invalid /*, :not(md-checkbox.input-element.ng-invalid)*/ {
+        &.ng-touched {
+            .ErrorInput
+        }
+    }
+
+}
+
+.row.is-flex {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.row.is-flex > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
+
+.md-dialog-container {
+    z-index: @z-index-dialog;
+}
+
+md-backdrop.md-dialog-backdrop {
+
+    z-index: @z-index-dialog;
+}
+
+md-dialog.md-default-theme, md-dialog {
+    border-radius: 0;
+    .md-dialog-content {
+        padding: 2.5rem;
+    }
+}
+
+.md-virtual-repeat-container.md-autocomplete-suggestions-container {
+    max-height: 99999999px !important;
+    z-index: @z-index-mobile-toolbar;
+    box-shadow: none;
+}
+
+.md-autocomplete-suggestions-container.md-default-theme, .md-autocomplete-suggestions-container {
+    background: @secondary;
+}
+
+.md-autocomplete-suggestions-container li {
+    color: @contrast-lightest;
+    .highlight {
+        color: @contrast-lightest;
+        font-weight: bold;
+    }
+    .allresultsLink {
+        background: transparent;
+        color: @contrast-lightest;
+    }
+    &:hover, &:focus {
+        background: @secondary-dark;
+    }
+}
+
+dv-quicksearchbox {
+    md-autocomplete, md-autocomplete input:not(.md-input) {
+        background: @contrast-light;
+        height: @navbar-height;
+
+        md-autocomplete-wrap {
+            height: @navbar-height;
+            input {
+                transition: all 0.5s ease;
+            }
+
+            input::-webkit-input-placeholder {
+                color: @contrast-darkest;
+                opacity: 1 !important;
+                text-align: right;
+                font-family: FontAwesome;
+            }
+            input:-moz-placeholder {
+                color: @contrast-darkest;
+                opacity: 1 !important;
+                text-align: right;
+                font-family: FontAwesome;
+            }
+            input::-moz-placeholder {
+                color: @contrast-darkest;
+                opacity: 1 !important;
+                text-align: right;
+                font-family: FontAwesome;
+            }
+            input:-ms-input-placeholder {
+                color: @contrast-darkest;
+                opacity: 1 !important;
+                text-align: right;
+                font-family: FontAwesome;
+            }
+
+        }
+    }
+    md-autocomplete {
+        md-progress-linear.md-default-theme .md-bar, md-progress-linear .md-bar {
+            background-color: @secondary;
+        }
+        md-progress-linear.md-default-theme .md-container, md-progress-linear .md-container {
+            background-color: @contrast-light;
+        }
+    }
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+    min-width: 43rem;
+    .md-whiteframe-z1 {
+        box-shadow: none;
+    }
+    button:hover, button:focus, button:active {
+        background: none;
+        &:after {
+            content: none;
+        }
+    }
+}
+
+.skiplinks {
+    display: block!important;
+    .skiplinks__list {
+        list-style: none;
+        height: 0;
+        margin: 0;
+    }
+    .skip {
+        position: fixed;
+        z-index: 108;
+        top: -1000px;
+        left: -1000px;
+        height: 1px;
+        width: 1px;
+        text-align: left;
+        overflow: hidden;
+        &:active,
+        &:focus,
+        &:hover {
+            left: 0;
+            top: 0;
+            width: auto;
+            height: @navbar-height;
+            line-height: 3rem;
+            overflow: visible;
+            border-bottom: 2px solid @contrast-darkest;
+            border-right: 2px solid @contrast-darkest;
+            box-shadow: none;
+            outline: none;
+            background: @primary;
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: block;
+            padding: 1rem;
+            color: @contrast-lightest;
+            text-decoration: none;
+        }
+    }
+
+}
+
+.row-button__th, .row-button__td {
+    width: 0;
+    padding: 0 !important;
+    margin: 0 !important;
+
+}
+
+.row-button__button {
+    position: fixed;
+    z-index: 108;
+    top: -1000px;
+    left: -1000px;
+    height: 1px;
+    width: 1px;
+    text-align: left;
+    overflow: hidden;
+    &:active,
+    &:focus,
+    &:hover {
+        position: static;
+
+        height: 100%;
+        width: 100%;
+        line-height: 3rem;
+        overflow: visible;
+        border: 2px solid @contrast-darkest;
+        box-shadow: none;
+        outline: none;
+        background: @primary;
+        font-size: 1.8rem;
+        font-weight: bold;
+        display: block;
+        padding: 0;
+        color: @contrast-lightest;
+        text-decoration: none;
+    }
+}
+
+/* Personal preference for BS modal.  The LESS below makes the backdrop white and
+   causes the modal to fade in rather than slide in. */
+//@modal-backdrop-bg: white;
+//.modal {
+//	&.fade {
+//		.transition(opacity .3s);
+//	}
+//	&.fade .modal-dialog {
+//		.translate(0,0);
+//	}
+//}

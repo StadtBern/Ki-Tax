@@ -1,0 +1,157 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="freigabeView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
+    <div class="row" ng-if="vm.isGesuchFreigegeben()">
+        <div class="col-md-12">
+            <div class="row viewTitle">
+                <div class="col-md-12">
+                    <h2>
+                        <span data-translate="FREIGABEQUITTUNG_DRUCKEN_TITLE"></span>
+                    </h2>
+                    <hr class="header"/>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <p data-translate="FREIGABEQUITTUNG_ERFOLG_TEXT"
+                       data-translate-value-freigabedatum="{{vm.getFreigabeDatum()}}"></p>
+                </div>
+                <div class="col-md-12" ng-if="vm.isFreigabequittungAusstehend()">
+                    <p data-translate="FREIGABEQUITTUNG_AUSSTEHEND_TEXT"></p>
+                </div>
+            </div>
+            <div class="row marginTop50" ng-if="vm.isThereFreigabequittung()">
+                <div class="col-md-12">
+                    <dv-loading-button type="button" button-class="btn-link link-underline" button-click="vm.openFreigabequittungPDF(false)">
+                        <i class="fa fa-file-text-o"></i>
+                        <span data-translate="PDF_FREIGABEQUITTUNG_ANZEIGEN"></span>
+                    </dv-loading-button>
+                </div>
+            </div>
+
+            <!-- Simulationsbutton fuer Quittung einlesen -->
+            <div class="row marginTop50" ng-if="vm.isFreigabequittungAusstehend()">
+                <span class="col-md-12" ng-if="vm.showGesuchFreigebenSimulationButton">
+                    <dv-loading-button type="button" button-click="vm.gesuchFreigeben()">
+                        <span data-translate="ANTRAG_FREIGEBEN_SIMULIEREN"></span>
+                    </dv-loading-button>
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row" ng-if="!vm.isGesuchFreigegeben()">
+        <div class="col-md-12" ng-if="!vm.canBeFreigegeben()">
+            <div class="row viewTitle">
+                <div class="col-md-12">
+                    <h2>
+                        <span data-translate="FREIGABEQUITTUNG_DRUCKEN_TITLE"></span>
+                    </h2>
+                    <hr class="header"/>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <span data-translate="{{vm.getTextForFreigebenNotAllowed()}}"></span>
+                </div>
+            </div>
+            <div class="marginTop40" ng-if="vm.isThereAnyAbgewieseneBetreuung()">
+                <div class="well well-status-warten">
+                    <p class="ebeguH3" data-translate="HINT_BETREUUNGEN_LOESCHEN"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12" ng-if="vm.canBeFreigegeben()">
+
+            <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
+
+                <div class="row viewTitle">
+                    <div class="col-md-12">
+                        <h2>
+                            <span data-translate="FREIGABEQUITTUNG_DRUCKEN_TITLE"></span>
+                        </h2>
+                        <hr class="header"/>
+                    </div>
+
+                </div>
+
+                <fieldset>
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-question">
+                            <div class=" checkbox">
+                                <md-checkbox ng-model="vm.bestaetigungFreigabequittung"
+                                             name="bestaetigungFreigabequittung"
+                                             aria-label="{{'FREIGABEQUITTUNG_DRUCKEN_TEXT' | translate}}"
+                                             ng-required="vm.isFreigebenClicked">
+                                    <span data-translate="FREIGABEQUITTUNG_DRUCKEN_TEXT"></span>
+                                </md-checkbox>
+                                <div class="dv-error-messages">
+                                    <div ng-messages="vm.form.bestaetigungFreigabequittung.$error"
+                                         class="error">
+                                        <div ng-message="required" data-translate="ERROR_BESTAETIGUNG_REQUIRED"
+                                             for="vm.form.bestaetigungFreigabequittung.$error" role="alert"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div>
+                    <div class="row viewTitle marginTop20">
+                        <div class="col-md-12">
+                            <h2>
+                                <span data-translate="EINVERSTAENDNISERKLAERUNG_TITLE"></span>
+                            </h2>
+                            <hr class="header"/>
+                            <p data-translate="EINVERSTAENDNISERKLAERUNG_TEXT"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row marginTop30">
+                    <div class="col-md-4">
+
+                    </div>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+
+    <div class="nav-row-verfuegen">
+
+        <dv-navigation dv-previous="true" dv-next="false" ng-if="vm.canBeFreigegeben()">
+        </dv-navigation>
+        <dv-navigation dv-previous="true" dv-next="true" ng-if="!vm.canBeFreigegeben()" class="freigabe-nav">
+        </dv-navigation>
+        <div>
+            <dv-loading-button type="submit" button-click="vm.gesuchEinreichen()"
+                               aria-label="{{'ANTRAG_EINREICHEN' | translate}}" ng-if="vm.canBeFreigegeben()">
+                <span data-translate="ANTRAG_EINREICHEN"></span>
+            </dv-loading-button>
+        </div>
+    </div>
+
+</div>

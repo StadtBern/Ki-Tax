@@ -1,0 +1,219 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@import '../variables.less';
+@import '../mixins.less';
+
+td, th {
+    background-clip: padding-box !important;
+}
+.table-responsive {
+    border: none;
+}
+
+.row-fallnr {
+    min-width: 8rem;
+    width: 8rem;
+}
+
+.row-name {
+    width: 10%;
+
+}
+
+.row-antrag {
+    width: 7.5%;
+
+}
+
+.row-periode {
+    width: 7.5%;
+
+}
+
+.row-geandert {
+    width: 7.5%;
+
+}
+
+.eingangsdatum.row-status {
+    width: 12.5%;
+
+}
+
+.row-angebot {
+    width: 15%;
+
+}
+
+.row-inst {
+    width: 15%;
+
+}
+
+.row-ver {
+    width: 10%;
+
+}
+
+.row-action {
+    width: 10%;
+}
+
+.table {
+    margin-bottom: 2rem;
+}
+.table > tbody {
+    & > tr, & > tr:first-child {
+        &:hover {
+            background: #fafafa;
+            color: @contrast-darkest;
+        }
+        &:focus {
+            outline: 2px solid @contrast-darkest;
+            outline-offset: 0;
+        }
+        &.disabled-row, &.disabled-row:hover {
+            &:focus {
+                outline: none;
+            }
+            background: @contrast;
+            cursor: default;
+            & > td {
+                border-color: @contrast-dark;
+            }
+        }
+    }
+}
+
+table, .table > tbody, .table > thead, .table > thead:first-child {
+    & > tr {
+        & > td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            .ebeguH3();
+            position: relative;
+            line-height: 3rem;
+            height: 6rem;
+            border: 1px solid @contrast;
+            border-left: none;
+            border-right: none;
+            vertical-align: middle;
+            padding: 0 0.8rem 0;
+            color: @contrast-darkest;
+            .dvb-loading-button {
+                text-align: end;
+            }
+            &.empty-table {
+                .ebeguItalic();
+            }
+
+        }
+
+        & > th, & > th:empty {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            .ebeguLabel();
+            height: 5rem;
+            vertical-align: middle;
+            border: 1px solid @contrast;
+            border-left: none;
+            border-right: none;
+            border-radius: 0;
+            padding: 0 0.25rem 0;
+            color: @contrast-darkest;
+            span {
+                .ebeguP();
+                line-height: 0;
+            }
+        }
+    }
+    & > tr:first-child {
+        & > th, & > th:empty {
+            .ebeguLabel();
+            height: 4rem;
+            vertical-align: middle;
+            border: 1px solid @contrast-darkest;
+            border-left: none;
+            border-right: none;
+            border-radius: 0;
+            padding: 0 0.8rem 0;
+            color: @contrast-darkest;
+            span {
+                .ebeguP();
+                line-height: 0;
+            }
+        }
+        & > th:first-child {
+            padding-left: 0;
+        }
+        .text-right {
+            text-align: right;
+        }
+    }
+}
+
+.gesuchstellerDashboardView {
+    table {
+        min-width: 100%;
+    }
+    .table > tbody {
+        & > tr, & > tr:first-child {
+            &:hover {
+                background: rgba(220, 220, 220, 0.2);
+            }
+        }
+    }
+    table, .table > tbody, .table > thead, .table > thead:first-child {
+        & > tr, & > tr:first-child {
+            & > td {
+                .ebeguLabel();
+                height: 5rem;
+                vertical-align: middle;
+                padding: 0 0.8rem 0;
+                border: 1px solid rgba(220, 220, 220, 0.2);
+                border-left: none;
+                border-right: none;
+                color: @contrast-lightest;
+            }
+            & > th, & > th:empty {
+                .ebeguH3();
+                position: relative;
+                line-height: 3rem;
+                height: 5rem;
+                vertical-align: middle;
+                padding: 0 0.8rem 0;
+                border: 1px solid @contrast-lightest;
+                border-left: none;
+                border-right: none;
+                color: @contrast-lightest;
+                span {
+                    .ebeguP();
+                    line-height: 0;
+                }
+            }
+        }
+    }
+}
+
+table {
+    min-width: 65rem;
+}
+
+.table-fixed {
+    table-layout: fixed;
+}

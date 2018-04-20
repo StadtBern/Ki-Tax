@@ -1,0 +1,103 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="dokumente gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
+    <div class="row viewTitle">
+        <div class="col-md-12">
+            <h2>Dokumente</h2>
+            <hr class="header"/>
+            <p class="inlineHint" data-translate="DOK_HINT_DOKUMENTE"></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+
+            <form role="form" name="vm.form" class="" unsaved-warning-form="" novalidate>
+                <dv-dokumente-list dokumente="vm.dokumenteFamSit" table-id="dokumenteFamSit"
+                                   table-title="DOK_FAMILIENSITUATION" title-value=""
+                                   on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteFamSit)"
+                                   on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteFamSit)">
+                </dv-dokumente-list>
+
+                <dv-dokumente-list dokumente="vm.dokumenteKinder" table-id="dokumenteKinder"
+                                   table-title="DOK_KINDER"
+                                   on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteKinder)"
+                                   on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteKinder)">
+                </dv-dokumente-list>
+
+                <dv-dokumente-list dokumente="vm.dokumenteFinSit" table-id="dokumenteFinSit"
+                                   table-title="DOK_FINANZIELLE_SITUATION"
+                                   tag="DOK_JAHR"
+                                   title-value="vm.gesuchModelManager.getBasisjahr()"
+                                   on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteFinSit)"
+                                   on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteFinSit)">
+                </dv-dokumente-list>
+
+                <dv-dokumente-list dokumente="vm.dokumenteErwp" table-id="dokumenteErwp"
+                                   table-title="DOK_ERWERBSPENSUM"
+                                   tag="DOK_TAETIGKEIT"
+                                   on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteErwp)"
+                                   on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteErwp)">
+                </dv-dokumente-list>
+
+                <dv-dokumente-list dokumente="vm.dokumenteEkv" table-id="dokumenteEkv"
+                                   table-title="EKVI_EINKOMMENSVERSCHLECHTERUNG"
+                                   tag="DOK_JAHR"
+                                   on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteEkv)"
+                                   on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteEkv)">
+                </dv-dokumente-list>
+
+
+                <dv-dokumente-list dokumente="vm.dokumenteSonst" table-id="dokumenteSonst"
+                                   table-title="DOK_SONSTIGES"
+                                   on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteSonst)"
+                                   on-remove="vm.removeDokument(dokumentGrund, dokument,  vm.dokumenteSonst)"
+                                   sonstige="true">
+                </dv-dokumente-list>
+
+
+                <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getJugendamtAndSchulamtRole()">
+                    <dv-dokumente-list dokumente="vm.dokumentePapiergesuch" table-id="dokumentePapiergesuch"
+                                       table-title="DOK_PAPIERGESUCH"
+                                       on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumentePapiergesuch)"
+                                       on-remove="vm.removeDokument(dokumentGrund, dokument,  vm.dokumentePapiergesuch)"
+                                       sonstige="true">
+                    </dv-dokumente-list>
+                </div>
+
+                <!-- -------------------------------------------Navigation--------------------------------------------  -->
+
+
+                <div class="nav-row-dokumente">
+
+                    <div dv-show-element
+                         dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtRoles()">
+                        <dv-loading-button type="button" button-click="vm.setDokumenteGeprueft()"
+                                           aria-label="{{'DOKUMENTE_GEPRUEFT' | translate}}" ng-if="vm.showDokumenteGeprueftButton()">
+                            <span data-translate="DOKUMENTE_GEPRUEFT"></span>
+                        </dv-loading-button>
+                    </div>
+
+                    <dv-navigation dv-previous="true" dv-next="true" class="dokumente-nav"></dv-navigation>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
