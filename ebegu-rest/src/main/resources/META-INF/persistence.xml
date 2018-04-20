@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+			 version="2.1">
+	<persistence-unit name="ebeguPersistenceUnit" transaction-type="JTA">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		<jta-data-source>java:/jdbc/ebegu</jta-data-source>
+		<mapping-file>META-INF/orm.xml</mapping-file>
+		<!--<shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>-->
+
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
+			<property name="hibernate.cache.use_second_level_cache" value="true"/>
+			<property name="hibernate.physical_naming_strategy" value="ch.dvbern.ebegu.persistence.EbeguPhysicalNamingStrategyImpl"/>
+
+			<!-- SQL Logging bitte via Logger konfigurieren -->
+			<property name="hibernate.show_sql" value="false"/>
+			<!--<property name="hibernate.hbm2ddl.auto" value="validate"/>-->
+
+			<property name="hibernate.search.lucene_version" value="LUCENE_CURRENT"/> <!-- Default-Value, verhindert aber eine Warning im Logfile -->
+			<!--fuer lokale tests ist es praktischer den indem im FS zu haben-->
+			<property name="hibernate.search.default.directory_provider"
+					  value="filesystem"/>
+			<!--nur ein prozess benutzt unseren index (?)-->
+			<property name="hibernate.search.default.exclusive_index_use" value="true"/>
+
+			<!--<property name="hibernate.search.default.indexBase"-->
+			<!--value="/home/homa/java/JBoss/wildfly-10.1.0.Final-ebegu/standalone/data/lucene"/>-->
+
+			<!--<property name="hibernate.search.default.directory_provider" value="infinispan"/>-->
+			<!--<property name="hibernate.search.infinispan.configuration_resourcename" value="ebegu-hibernatesearch-infinispan.xml"/>-->
+		</properties>
+	</persistence-unit>
+</persistence>

@@ -1,0 +1,999 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses />.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>parent</artifactId>
+        <groupId>ch.dvbern.oss.maven</groupId>
+        <version>1.0.5</version>
+    </parent>
+
+    <groupId>ch.dvbern.ebegu</groupId>
+    <artifactId>ebegu</artifactId>
+    <version>3.3.2-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>eBEGU - Multimodule Project</name>
+
+    <properties>
+        <!-- Wird ggf. im Profil "development-mode' ueberschrieben -->
+        <skip-code-validation>false</skip-code-validation>
+
+        <!-- local database properties -->
+        <database.jdbc.driver>org.mariadb.jdbc.Driver</database.jdbc.driver>
+        <database.jdbc.url>jdbc:mysql://localhost/ebegu</database.jdbc.url>
+        <database.jdbc.usr>ebegu</database.jdbc.usr>
+        <database.jdbc.pwd>ebegu</database.jdbc.pwd>
+
+        <version.mysqldriver>1.3.7</version.mysqldriver>
+        <version.hibernate>5.1.0.Final</version.hibernate>
+        <hibernate-search.version>5.5.4.Final</hibernate-search.version>
+
+        <version.flyway>3.2.1</version.flyway>
+        <version.slf4j>1.7.10</version.slf4j>
+        <version.wildfly-arquillian-containers>2.0.2.Final</version.wildfly-arquillian-containers>
+        <version.wildfly.container>10.0.0.Final</version.wildfly.container>
+
+        <maven-checkstyle-plugin.version>2.15</maven-checkstyle-plugin.version>
+        <maven-checkstyle.version>6.1.1</maven-checkstyle.version>
+        <ebegu-code-conventions.version>1.0.2</ebegu-code-conventions.version>
+        <maven-pmd-plugin.version>3.6</maven-pmd-plugin.version>
+        <findbugs-maven-plugin.version>3.0.3</findbugs-maven-plugin.version>
+
+    </properties>
+
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License</name>
+            <url>http://www.gnu.org/licenses/agpl-3.0.txt</url>
+        </license>
+    </licenses>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>jboss-javaee-7.0-wildfly</artifactId>
+                <version>10.0.0.CR2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-api</artifactId>
+                <version>7.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-bom</artifactId>
+                <version>3.0.14.Final</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-envers</artifactId>
+                <version>${version.hibernate}</version>
+                <exclusions>
+                    <exclusion>
+                        <!-- mit dom4j kann orm.xml nicht geparst werden -->
+                        <groupId>dom4j</groupId>
+                        <artifactId>dom4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>${version.hibernate}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>dom4j</groupId>
+                        <artifactId>dom4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>annotations</artifactId>
+                <version>3.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>19.0.20150826</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${version.hibernate}</version>
+                <!--Diese Exclusion wird gebraucht weil wir eine @OrderBy Annotaion verwenden die nur geparsed werden kann wenn antlr excluded wird-->
+                <exclusions>
+                    <exclusion>
+                        <groupId>antlr</groupId>
+                        <artifactId>antlr</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>3.15</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>3.15</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>dom4j</artifactId>
+                        <groupId>dom4j</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${version.mysqldriver}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>${version.flyway}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.3.2</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>1.10</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.4</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.dvbern.oss.datehelper</groupId>
+                <artifactId>date-helper</artifactId>
+                <version>1.0.4</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.dvbern.oss.beanvalidation</groupId>
+                <artifactId>beanvalidation</artifactId>
+                <version>1.0.9</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.dvbern.oss.doctemplate</groupId>
+                <artifactId>docx-engine</artifactId>
+                <version>2.4.1</version>
+            </dependency>
+            <!-- Achtung: diese Dependeny nutzt ooxml-schemas Version 1.3, welche diverse CPEs hat -->
+            <!-- Siehe auch dependency-check-suppressions.xml -->
+            <dependency>
+                <groupId>fr.opensagres.xdocreport</groupId>
+                <artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
+                <version>2.0.1</version>
+            </dependency>
+
+            <!-- Submodule-dependencies should be on the project version -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ebegu-server</artifactId>
+                <version>${project.version}</version>
+                <type>ejb</type>
+            </dependency>
+            <dependency>
+                <groupId>ch.dvbern.ebegu</groupId>
+                <artifactId>ebegu-external-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ebegu-dbschema</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ebegu-shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ebegu-rest</artifactId>
+                <type>war</type>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ebegu-testutils</artifactId>
+                <version>${project.version}</version>
+                <!--dep hat testscope, -->
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${version.slf4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-ext</artifactId>
+                <version>${version.slf4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${version.slf4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${version.slf4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>log4j-over-slf4j</artifactId>
+                <version>${version.slf4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.3.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-ext-jdk15on</artifactId>
+                <version>1.52</version>
+            </dependency>
+            <dependency>
+                <groupId>net.bull.javamelody</groupId>
+                <artifactId>javamelody-core</artifactId>
+                <version>1.70.0</version>
+                <!--<version>1.59.0-jpa21-SNAPSHOT</version>-->
+                <!--<scope>provided</scope>-->
+            </dependency>
+
+            <dependency>
+                <groupId>javax.security.jacc</groupId>
+                <artifactId>javax.security.jacc-api</artifactId>
+                <version>1.5</version>
+                <scope>provided</scope>
+            </dependency>
+            <!--Arquillian bom dependecies-->
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>1.1.11.Final</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <!--JASPI -->
+            <dependency>
+                <groupId>org.jboss.javaee</groupId>
+                <artifactId>jboss-jaspi-api</artifactId>
+                <version>1.0.0.GA</version>
+                <scope>provided</scope>
+            </dependency>
+            <!--SWAGGER-API-->
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-jaxrs</artifactId>
+                <version>1.5.9</version>
+            </dependency>
+            <!--hibernate 5 mit java 8 support-->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-java8</artifactId>
+                <version>${version.hibernate}</version>
+            </dependency>
+
+            <!--Hibernate validator implementation fuer testing-->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>5.2.3.Final</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.el</groupId>
+                <artifactId>javax.el-api</artifactId>
+                <version>2.2.4</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>de.akquinet.jbosscc</groupId>
+                <artifactId>jbosscc-needle</artifactId>
+                <version>2.2</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.easymock</groupId>
+                <artifactId>easymock</artifactId>
+                <version>3.4</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>ch.dvbern.oss.cdipersistence</groupId>
+                <artifactId>cdi-persistence-api</artifactId>
+                <version>2.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.dvbern.oss.iso20022</groupId>
+                <artifactId>iso20022-ch-intf</artifactId>
+                <version>2.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.dvbern.oss.iso20022</groupId>
+                <artifactId>iso20022-ch-impl</artifactId>
+                <version>2.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.dvbern.oss.excelmerger</groupId>
+                <artifactId>excelmerger-impl</artifactId>
+                <version>2.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.1.0</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.spec.javax.annotation</groupId>
+                <artifactId>jboss-annotations-api_1.2_spec</artifactId>
+                <scope>provided</scope>
+                <version>1.0.0.Final</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.spec.javax.interceptor</groupId>
+                <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+                <version>1.0.0.Final</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.activation</groupId>
+                <artifactId>activation</artifactId>
+                <version>1.1.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-core</artifactId>
+                <version>8.1.0.Final</version>
+                <!-- Provided as we use the Infinispan provided by Wildfly -->
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Hibernate-Search dependencies-->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-search-orm</artifactId>
+                <version>${hibernate-search.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>dom4j</groupId>
+                        <artifactId>dom4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.spec.javax.transaction</groupId>
+                        <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-directory-provider</artifactId>
+                <version>8.1.0.Final</version>
+            </dependency>
+
+            <dependency>
+              <groupId>org.jberet</groupId>
+              <artifactId>jberet-core</artifactId>
+              <version>1.2.1.Final</version>
+            </dependency>
+            <!--um dependency konflikte zu vermeiden fixen wir die versionen von 2 mal angezogenen libs im dep management-->
+            <dependency>
+                <groupId>org.dbunit</groupId>
+                <artifactId>dbunit</artifactId>
+                <version>2.5.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.remoting</groupId>
+                <artifactId>jboss-remoting</artifactId>
+                <version>4.0.9.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.xnio</groupId>
+                <artifactId>xnio-nio</artifactId>
+                <version>3.3.2.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.xnio</groupId>
+                <artifactId>xnio-api</artifactId>
+                <version>3.3.2.Final</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss</groupId>
+                <artifactId>jandex</artifactId>
+                <version>2.0.0.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.common</groupId>
+                <artifactId>hibernate-commons-annotations</artifactId>
+                <version>5.0.1.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml</groupId>
+                <artifactId>classmate</artifactId>
+                <version>1.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.xmlbeans</groupId>
+                <artifactId>xmlbeans</artifactId>
+                <version>2.6.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-client</artifactId>
+                <version>3.0.13.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>2.6.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>0.9.10</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>3.20.0-GA</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.wildfly.core</groupId>
+                <artifactId>wildfly-controller-client</artifactId>
+                <version>2.2.1.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.threads</groupId>
+                <artifactId>jboss-threads</artifactId>
+                <version>2.2.1.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wildfly.core</groupId>
+                <artifactId>wildfly-protocol</artifactId>
+                <version>2.2.1.Final</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.2.7</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.oxo42</groupId>
+                <artifactId>stateless4j</artifactId>
+                <version>2.5.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-jdk14</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- CVE-2014-0114 -->
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.9.3</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils-core</artifactId>
+                <version>1.8.3</version>
+            </dependency>
+            <!-- CVE-2014-8122 -->
+            <dependency>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>2.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.el</groupId>
+                        <artifactId>javax.el-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.interceptor</groupId>
+                        <artifactId>javax.interceptor-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <!-- Fuer DB-Skripts/Statistken (TransactionTimeout) -->
+            <dependency>
+                <groupId>org.jboss.ejb3</groupId>
+                <artifactId>jboss-ejb3-ext-api</artifactId>
+                <version>2.2.0.Final</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <scope>test</scope>
+                <version>4.12</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-xml</artifactId>
+                <version>2.9.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-email</artifactId>
+                <version>1.5</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.mail</groupId>
+                        <artifactId>javax.mail</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>1.4.7</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>3.1</version>
+            </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>2.9.9</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.9.4</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-ext</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.dvbern.oss.datehelper</groupId>
+            <artifactId>date-helper</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-api</artifactId>
+        </dependency>
+        <!-- Es gibt noch kein Alpha6 des Impl -->
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-persistence-api</artifactId>
+            <version>1.0.0.Alpha6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-persistence-impl</artifactId>
+            <version>1.0.0.Alpha6</version>
+            <scope>test</scope>
+        </dependency>
+        <!--Um Tests mit arquillian in einem deployment laufen zu lassen-->
+        <dependency>
+            <groupId>org.eu.ingwar.tools</groupId>
+            <artifactId>arquillian-suite-extension</artifactId>
+            <version>1.1.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-servlet</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <profiles>
+
+        <profile>
+            <id>development-mode</id>
+            <activation>
+                <property>
+                    <name>skipTests</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <skip-code-validation>true</skip-code-validation>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>wildfly10-embedded</id>
+            <properties>
+                <!--embedded wird ans gleiche ort enpackt wie managed-->
+                <jbossHome>${project.build.directory}/wildfly-${version.wildfly.container}</jbossHome>
+                <unpack.groupId>org.wildfly</unpack.groupId>
+                <unpack.artifactId>wildfly-dist</unpack.artifactId>
+                <unpack.version>${version.wildfly.container}</unpack.version>
+                <unpack.directory>${project.build.directory}</unpack.directory>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.wildfly.arquillian</groupId>
+                    <artifactId>wildfly-arquillian-container-embedded</artifactId>
+                    <version>${version.wildfly-arquillian-containers}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.wildfly.core</groupId>
+                    <artifactId>wildfly-embedded</artifactId>
+                    <version>2.0.10.Final</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <activation>
+                <property>
+                    <!-- hiermit wird getestet ob ein property disable-managed-wildfly existiert, wenn nicht lauft
+                    arquillian mit embedded container-->
+                    <name>!disable-managed-wildfly</name>
+                </property>
+            </activation>
+            <id>test-wildfly-managed</id>
+            <properties>
+                <jbossHome>${project.build.directory}/wildfly-${version.wildfly.container}</jbossHome>
+                <unpack.groupId>org.wildfly</unpack.groupId>
+                <unpack.artifactId>wildfly-dist</unpack.artifactId>
+                <unpack.version>${version.wildfly.container}</unpack.version>
+                <unpack.directory>${project.build.directory}</unpack.directory>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.wildfly.arquillian</groupId>
+                    <artifactId>wildfly-arquillian-container-managed</artifactId>
+                    <version>${version.wildfly-arquillian-containers}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                    <!--port offset fuer embedded wildfly -->
+                    <argLine>-Djboss.socket.binding.port-offset=10000</argLine>
+                    <environmentVariables>
+                        <JBOSS_HOME>${jbossHome}</JBOSS_HOME>
+                    </environmentVariables>
+                    <systemPropertyVariables>
+                        <!--name des containers im arquillian.xml-->
+                        <arquillian.launch>wildfly-container</arquillian.launch>
+                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                    </systemPropertyVariables>
+                </configuration>
+
+            </plugin>
+
+            <plugin>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <version>1.0-m5.1</version>
+                <configuration>
+                    <flowInitContext>
+                        <masterBranchName>master</masterBranchName>
+                        <developBranchName>dev</developBranchName>
+                        <featureBranchPrefix>feature/</featureBranchPrefix>
+                        <releaseBranchPrefix>release/</releaseBranchPrefix>
+                        <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+                        <versionTagPrefix />
+                    </flowInitContext>
+                    <allowUntracked>true</allowUntracked>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <!-- Releases werden von einem eigenen Jenkings Job gebaut und deployed,
+					deshalb schalten wir dies hier aus -->
+                    <noDeploy>true</noDeploy>
+                    <noReleaseBuild>true</noReleaseBuild>
+                    <noHotfixBuild>true</noHotfixBuild>
+                    <!-- Nach jgitflow:release-finish sollen release, master und develop Branch gepusht werden -->
+                    <pushHotfixes>true</pushHotfixes>
+                    <pushReleases>true</pushReleases>
+                    <allowSnapshots>true</allowSnapshots>
+                    <!-- Fast Forward merges verhindern -->
+                    <suppressFastForward>true</suppressFastForward>
+                    <!-- Force lf line-endings in pom.xml -->
+                    <eol>lf</eol>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <!-- Nur Deployen wenn alle Module erfolgreich gebaut wurden -->
+                    <deployAtEnd>true</deployAtEnd>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven-checkstyle-plugin.version}</version>
+                    <configuration>
+                        <configLocation>rules/ebegu/checkstyle/checkstyle-rules.xml</configLocation>
+                        <suppressionsLocation>rules/ebegu/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+                        <violationSeverity>error</violationSeverity>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>ch.dvbern.oss.maven</groupId>
+                            <artifactId>ebegu-code-conventions</artifactId>
+                            <version>${ebegu-code-conventions.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${maven-pmd-plugin.version}</version>
+                    <configuration>
+                        <rulesets>
+                            <ruleset>rules/ebegu/pmd/pmd-rules.xml</ruleset>
+                        </rulesets>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>ch.dvbern.oss.maven</groupId>
+                            <artifactId>ebegu-code-conventions</artifactId>
+                            <version>${ebegu-code-conventions.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>${findbugs-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>ch.dvbern.oss.maven</groupId>
+                            <artifactId>ebegu-code-conventions</artifactId>
+                            <version>${ebegu-code-conventions.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <includeFilterFile>rules/ebegu/findbugs/findbugs-includes.xml</includeFilterFile>
+                        <excludeFilterFile>rules/ebegu/findbugs/findbugs-excludes.xml</excludeFilterFile>
+                    </configuration>
+                </plugin>
+
+                <!-- You need the maven dependency plugin to download locally a zip with the server,
+                unless you provide your own, it will download under the /target directory -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.10</version>
+                    <executions>
+                        <execution>
+                            <id>unpack</id>
+                            <phase>process-test-classes</phase>
+                            <goals>
+                                <goal>unpack</goal>
+                            </goals>
+                            <configuration>
+                                <artifactItems>
+                                    <artifactItem>
+                                        <groupId>${unpack.groupId}</groupId>
+                                        <artifactId>${unpack.artifactId}</artifactId>
+                                        <version>${unpack.version}</version>
+                                        <type>zip</type>
+                                        <overWrite>false</overWrite>
+                                        <outputDirectory>${unpack.directory}</outputDirectory>
+                                    </artifactItem>
+                                </artifactItems>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.flywaydb</groupId>
+                    <artifactId>flyway-maven-plugin</artifactId>
+                    <version>${version.flyway}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.10.2</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>de.juplo</groupId>
+                    <artifactId>hibernate-maven-plugin</artifactId>
+                    <version>2.1.0</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>1.4.1</version>
+                    <executions>
+                        <execution>
+                            <id>check-maven-setup</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <fail>true</fail>
+                                <failFast>true</failFast>
+                                <rules>
+                                    <dependencyConvergence />
+                                    <reactorModuleConvergence />
+                                    <requireJavaVersion>
+                                        <!-- Bei aelteren Versionen aendern die Unit-Test-Ergebnisse bei Berechnungen mit BigDecimal -->
+                                        <version>[1.8.0-40,)</version>
+                                    </requireJavaVersion>
+                                    <requireMavenVersion>
+                                        <version>3.3</version>
+                                    </requireMavenVersion>
+                                    <!-- Pruefen, dass im Release keine SNAPSHOT-Dependencies mehr drin sind -->
+                                    <requireReleaseDeps>
+                                        <failWhenParentIsSnapshot>true</failWhenParentIsSnapshot>
+                                        <onlyWhenRelease>true</onlyWhenRelease>
+                                        <searchTransitive>true</searchTransitive>
+                                    </requireReleaseDeps>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <configuration>
+                        <suppressionFile>dependency-check-suppressions.xml</suppressionFile>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <modules>
+        <module>ebegu-dbschema</module>
+        <module>ebegu-shared</module>
+        <module>ebegu-server</module>
+        <module>ebegu-testutils</module>
+        <module>ebegu-rest</module>
+        <module>ebegu-external-api</module>
+        <module>ebegu-web</module>
+        <module>ebegu-ws</module>
+    </modules>
+</project>

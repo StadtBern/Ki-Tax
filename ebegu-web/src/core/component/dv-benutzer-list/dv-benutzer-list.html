@@ -1,0 +1,130 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2018 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="dv-benutzer-list">
+    <div class="row" st-table="vm.displayedCollection" st-delay="20" st-pipe="vm.callServer">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-10">
+                    <div id="titleText">
+                        <h3 data-translate="{{vm.tableTitle}}"></h3>
+                    </div>
+                    <div id="refreshIcon">
+                        <i class="fa fa-undo" dv-st-reset-search></i>
+                    </div>
+                </div>
+                <div class="col-md-2 text-right">
+                    <h3 ng-bind="vm.totalResultCount"></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 table-responsive">
+            <!--Tabelle-->
+            <table class="table fixedtable table-hover" id="{{vm.tableId}}"
+                   title="{{vm.tableTitle}}">
+                <thead>
+                <!--Sortierspalten-->
+                <tr id="benutzerHeadRow">
+                    <th st-sort="username" class="sortable row-username" data-translate="USERNAME"></th>
+                    <th st-sort="vorname" class="sortable row-vorname" data-translate="VORNAME"></th>
+                    <th st-sort="nachname" class="sortable row-nachname" data-translate="NACHNAME"></th>
+                    <th st-sort="email" class="sortable row-email" data-translate="EMAIL"></th>
+                    <th st-sort="role" class="sortable row-role" data-translate="ROLLE"></th>
+                    <th st-sort="roleGueltigBis" class="sortable row-roleGueltigBis" data-translate="ROLLE_GUELTIG_BIS"></th>
+                    <th st-sort="institution" class="sortable row-institution" data-translate="INSTITUTION"></th>
+                    <th st-sort="traegerschaft" class="sortable row-traegerschaft" data-translate="TRAEGERSCHAFT"></th>
+                    <th st-sort="gesperrt" class="sortable row-gesperrt" data-translate="GESPERRT"></th>
+                </tr>
+                <!--Filterspalten-->
+                <tr>
+                    <th><input st-search="username" class="form-control" type="text" ng-model="vm.selectedUsername"/></th>
+                    <th><input st-search="vorname" class="form-control" type="text" ng-model="vm.selectedVorname"/></th>
+                    <th><input st-search="nachname" class="form-control" type="text" ng-model="vm.selectedNachname"/></th>
+                    <th><input st-search="email" class="form-control" type="text" ng-model="vm.selectedEmail"/></th>
+                    <th>
+                        <div class="dv-select-style">
+                        <select st-input-event="change" name="role" id="role" st-search="role" class="form-control" ng-model="vm.selectedRole"
+                            ng-options="vm.getTranslatedRole(r) for r in vm.getRollen() track by r">
+                            <option value="">{{"ALLE" | translate}}</option>
+                        </select>
+                        </div>
+                    </th>
+                    <th><input st-search="roleGueltigBis" class="form-control" type="text"/></th>
+                    <th>
+                        <div class="dv-select-style">
+                            <select st-input-event="change" name="institution" id="institution"
+                                    st-search="institution" class="form-control"
+                                    ng-options="institution.name for institution in vm.institutionenList | orderBy: 'name' track by institution.name"
+                                    ng-model="vm.selectedInstitution">
+                                <option value="">{{"ALLE" | translate}}</option>
+                            </select>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="dv-select-style">
+                            <select st-input-event="change" name="traegerschaft" id="traegerschaft"
+                                    st-search="traegerschaft" class="form-control"
+                                    ng-options="traegersch.name for traegersch in vm.traegerschaftenList | orderBy: 'name' track by traegersch.name"
+                                    ng-model="vm.selectedTraegerschaft">
+                                <option value="">{{"ALLE" | translate}}</option>
+                            </select>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="dv-select-style">
+                        <select st-input-event="change" name="gesperrt" id="gesperrt" st-search="gesperrt"
+                        class="form-control"
+                        ng-model="vm.selectedGesperrt">
+                        <option value="">{{"ALLE" | translate}}</option>
+                        <option value="{{true}}">{{"LABEL_JA" | translate}}</option>
+                        <option value="{{false}}">{{"LABEL_NEIN" | translate}}</option>
+                        </select>
+                        </div>
+                    </th>
+                </tr>
+                </thead>
+                <!--Spaltendefinitionen-->
+                <tbody>
+                <tr ng-repeat="row in vm.displayedCollection" st-select-row="row" st-select-mode="single"
+                     ng-click="vm.editClicked(row, $event)">
+
+                    <td class="ellipsis" title="{{row.username}}" ng-bind="row.username"></td>
+                    <td class="ellipsis" title="{{row.vorname}}" ng-bind="row.vorname"></td>
+                    <td class="ellipsis" title="{{row.nachname}}" ng-bind="row.nachname"></td>
+                    <td class="ellipsis" title="{{row.email}}" ng-bind="row.email"></td>
+                    <td class="ellipsis" title="{{vm.getTranslatedRole(row.role)}}" ng-bind="vm.getTranslatedRole(row.role)"></td>
+                    <td class="ellipsis" title="{{row.roleGueltigBis | amDateFormat : 'DD.MM.YYYY'}}" ng-bind="row.roleGueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
+                    <td class="ellipsis" title="{{row.institution.name}}" ng-bind="row.institution.name"></td>
+                    <td class="ellipsis" title="{{row.traegerschaft.name}}" ng-bind="row.traegerschaft.name"></td>
+                    <td class="ellipsis" title="{{(row.gesperrt ? 'LABEL_JA' : 'LABEL_NEIN') | translate}}"
+                        ng-bind="(row.gesperrt ? 'LABEL_JA' : 'LABEL_NEIN') | translate"></td>
+                </tr>
+                <tr>
+                <tr ng-if="vm.displayedCollection.length === 0">
+                    <td colspan="9" class="empty-table" data-translate="KEIN_EINTRAG">...</td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="{{vm.getColumnsNumber()}}" class="text-center">
+                        <div st-pagination="" st-items-by-page="20" st-displayed-pages="10"></div>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+
+        </div>
+    </div>
+</div>

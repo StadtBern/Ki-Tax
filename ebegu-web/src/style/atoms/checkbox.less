@@ -1,0 +1,422 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+@import '../variables.less';
+@import '../mixins.less';
+
+.checkbox {
+    margin: 0 0 3rem;
+    height: auto;
+    font-size: 0;
+    dv-tooltip {
+        display: inline-block;
+        height: 1.7rem;
+        line-height: 1.7rem;
+        vertical-align: middle;
+        font-size: 0;
+        margin-left: -4rem;
+        i {
+            font-size: 1.6rem;
+        }
+    }
+    .dv-error-messages {
+        overflow: visible;
+        height: auto;
+        min-height: 3rem;
+        display: block;
+        margin-bottom: -3rem;
+    }
+}
+md-checkbox {
+    //float:left;
+    font-size: 0;
+    position: relative;
+    min-height: 1.7rem;
+    min-width: 0;
+    height: auto;
+    width: auto;
+    &:last-of-type {
+        margin-right: 4rem;
+    }
+    margin-right: 4rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    &[disabled] {
+        color: @contrast-dark;
+        .md-label {
+            span {
+                color: @contrast-dark;
+            }
+        }
+        &.md-checked, &:not(.md-checked) {
+            .md-icon {
+                border: 1px solid @contrast-dark;
+            }
+        }
+        &.md-checked {
+            .md-icon {
+                background: @contrast-dark;
+            }
+        }
+    }
+    &.md-focused, &:focus {
+        .md-icon {
+            //-webkit-box-shadow: 0 0 4px 0 #858585;
+            //box-shadow: 0 0 4px 0 #858585;
+            //outline: 2px solid @contrast-darkest;
+            transition: none;
+            box-shadow: 0 0 0 2px @contrast-darkest;
+
+        }
+    }
+    .md-container {
+        width: 1.7rem;
+        height: 1.7rem;
+        display: block;
+        &:before {
+            content: none !important;
+        }
+    }
+    .md-label {
+        display: inline-block;
+        margin-left: 3rem;
+        height: auto;
+        min-height: 1.7rem;
+        line-height: 1.7rem;
+        vertical-align: middle;
+        font-size: 0;
+
+        span {
+            .ebeguH3();
+            margin: 0;
+            line-height: 1.7rem;
+            height: auto;
+            min-height: 1.7rem;
+            display: block;
+            margin-right: 1rem;
+            vertical-align: middle;
+        }
+    }
+    .md-icon, &:not(.md-checked) .md-icon {
+        border: 1px solid @contrast-darkest;
+        border-radius: 0.2rem;
+        width: auto;
+        height: auto;
+        line-height: 1.7rem;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+    }
+    &.md-checked {
+        .md-icon {
+            background-color: @contrast-darkest;
+            &:after {
+                line-height: 175%;
+                position: absolute;
+                font-size: 0.8rem;
+                font-family: 'FontAwesome';
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: auto;
+                height: auto;
+                transform: none;
+                border-width: 0;
+                border-radius: 0.2rem;
+                content: "\f00c";
+                text-align: center;
+                vertical-align: middle;
+                color: @contrast-lightest;
+                display: block !important;
+            }
+        }
+    }
+}
+
+md-checkbox.dv-ebegu-calendar {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    //float:left;
+    font-size: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    margin: 0;
+    &:last-of-type {
+        margin-right: 0;
+    }
+    &[disabled], &:disabled {
+        color: @contrast-lightest;
+        .md-label {
+            span {
+                color: @contrast-lightest;
+            }
+        }
+        &.md-checked, &:not(.md-checked) {
+            .md-icon {
+                border: none !important;
+            }
+        }
+        .md-icon {
+            background: @contrast-dark;
+        }
+    }
+    &.md-focused, &:focus {
+        .md-icon {
+            transition: none;
+            box-shadow: 0 0 0 2px @contrast-darkest;
+
+        }
+    }
+    .md-container {
+        height: 100%;
+        width: 100%;
+        display: block;
+        background: @contrast-lightest;
+        &:before {
+            content: none !important;
+        }
+    }
+    .md-label {
+        position: relative !important;
+        margin-left: 0;
+        flex: 1 0 auto !important;
+        height: unset!important;
+        min-height: 1.7rem;
+        line-height: 1.7rem;
+        vertical-align: top!important;
+        text-align: center!important;
+        font-size: 0;
+        display: flex!important;
+        align-items: center!important;
+        justify-content: flex-start!important;
+        max-height: none;
+        flex-direction: column;
+
+        span {
+            line-height: initial!important;
+            height: auto;
+            min-height: initial!important;
+            display: initial!important;
+            margin: 0;
+            padding: 0;
+            border-bottom: none;
+            vertical-align: initial!important;
+        }
+    }
+    .md-icon, &:not(.md-checked) .md-icon {
+        display: block;
+        border: none;
+        border-radius: 0;
+        width: auto;
+        height: auto;
+        line-height: 1.7rem;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+    }
+    &.md-checked {
+        .md-label {
+            color: @contrast-lightest;
+            span {
+                border-bottom-color: @contrast-lightest;
+            }
+        }
+        .md-icon {
+            background-color: @contrast-dark;
+            top: 0;
+            &:after {
+                line-height: normal;
+                position: absolute;
+                font-family: 'FontAwesome';
+                left: 0;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                bottom: unset !important;
+                width: auto;
+                height: auto;
+                border-width: 0;
+                border-radius: 0;
+                content: "";
+                text-align: center;
+                vertical-align: middle;
+                color: @contrast-lightest;
+                font-size: 2rem;
+                display: none !important;
+            }
+        }
+    }
+}
+
+md-checkbox.dv-ebegu-calendar--tagesschule {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    //float:left;
+    font-size: 0;
+    height: 100%;
+    width: 100%;
+    display: block;
+    margin: 0;
+    &:last-of-type {
+        margin-right: 0;
+    }
+    &[disabled], &:disabled {
+        color: @contrast-lightest;
+        .md-label {
+            span {
+                color: @contrast-lightest;
+            }
+        }
+
+        &:not(.md-checked) .md-icon {
+            background: @contrast-dark;
+            &:after {
+                color: @contrast-dark;
+            }
+        }
+
+        &.md-checked, &:not(.md-checked) {
+            .md-icon {
+                border: none !important;
+            }
+        }
+        .md-icon {
+            background: @contrast-dark;
+        }
+    }
+    &.md-focused, &:focus {
+        .md-icon {
+            //-webkit-box-shadow: 0 0 4px 0 #858585;
+            //box-shadow: 0 0 4px 0 #858585;
+            //outline: 2px solid @contrast-darkest;
+            transition: none;
+            box-shadow: 0 0 0 2px @contrast-darkest;
+
+        }
+    }
+    .md-container {
+        height: 100%;
+        width: 100%;
+        display: block;
+        background: @contrast-lightest;
+        &:before {
+            content: none !important;
+        }
+    }
+    .md-label {
+        position: relative !important;
+        display: block;
+        margin-left: 0;
+        height: auto;
+        min-height: 1.7rem;
+        line-height: 1.7rem;
+        vertical-align: top;
+        text-align: center;
+        font-size: 0;
+
+        span {
+            .ebeguH3();
+            line-height: 1.7rem;
+            height: auto;
+            min-height: 1.7rem;
+            display: block;
+            margin: 0;
+            padding: 1rem 0;
+            border-bottom: 1px solid @contrast;
+            vertical-align: middle;
+        }
+    }
+    .md-icon, &:not(.md-checked) .md-icon {
+        display: block;
+        border: none;
+        border-radius: 0;
+        width: auto;
+        height: auto;
+        line-height: 1.7rem;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        &:after {
+            line-height: normal;
+            position: absolute;
+            font-family: 'FontAwesome';
+            left: 0;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            bottom: unset !important;
+            width: auto;
+            height: auto;
+            border-width: 0;
+            border-radius: 0;
+            content: "\f05d";
+            text-align: center;
+            vertical-align: middle;
+            color: @contrast-lighter;
+            font-size: 3.5rem;
+            display: block !important;
+        }
+    }
+    &.md-checked {
+        .md-label {
+            color: @contrast-lightest;
+            span {
+                border-bottom-color: @contrast-lightest;
+            }
+        }
+        .md-icon {
+            background-color: @contrast-dark;
+            top: 0;
+            &:after {
+                line-height: normal;
+                position: absolute;
+                font-family: 'FontAwesome';
+                left: 0;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                bottom: unset !important;
+                width: auto;
+                height: auto;
+                border-width: 0;
+                border-radius: 0;
+                content: "\f058";
+                text-align: center;
+                vertical-align: middle;
+                color: @contrast-lightest;
+                font-size: 3.5rem;
+                display: block !important;
+            }
+        }
+    }
+}
+
+
+

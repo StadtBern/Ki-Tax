@@ -1,0 +1,88 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@import '../../../style/variables.less';
+@import '../../../style/mixins.less';
+
+.kommentarView {
+    overflow-y: auto;
+    height: 100%;
+    & > form {
+        height: inherit;
+    }
+    md-input-container {
+        label:not(.md-container-ignore) {
+            position: static;
+            .ebeguH3();
+        }
+        textarea {
+            margin-top: 0.5rem;
+        }
+        margin: 0;
+    }
+    #kommentarIntern, #kommentarVerfuegung, #kommentarPruefungSTV {
+        .ebeguP();
+        border: 1px @secondary solid;
+        background-color: @contrast-lightest;
+        padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+        &[disabled] {
+            background-color: @contrast;
+        }
+        &:focus{
+            outline:0;
+        }
+    }
+
+    .kommentar-feld md-input-container label:not(.md-no-float):not(._md-container-ignore) {
+        padding-left: 1rem;
+        color: @secondary;
+    }
+
+    .kommentar-button {
+        background-color: @secondary;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        width:100%;
+        span {
+            margin: auto;
+        }
+        &:hover {
+            background: @secondary-dark;
+            color: @contrast-lightest;
+        }
+    }
+
+    .bottom-align {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding: 0;
+    }
+
+    .kommentar-verfuegung-align {
+        position: absolute;
+        bottom: 2rem;
+        right: 0;
+    }
+
+}
+.kommentar-padding{
+    padding:1.5rem;
+    & + & {
+        padding-top:0rem;
+    }
+}
+

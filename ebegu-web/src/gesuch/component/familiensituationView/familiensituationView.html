@@ -1,0 +1,127 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="familiensituationView gesuchModul">
+    <h1 class="access-for-all-title" data-translate="AFA_GESUCHSFORMULAR"></h1>
+    <div class="row viewTitle">
+        <div class="col-md-12">
+            <h2>
+                <span ng-if="vm.isMutation()" data-translate="MUTATION_FAMSITUATION_TITLE"></span>
+                <span ng-if="!vm.isMutation()" data-translate="FAMILIENSITUATION"></span>
+            </h2>
+            <hr class="header"/>
+            <p ng-if="vm.isMutation()" data-translate="MUTATION_FAMSITUATION_HINT"></p>
+            <p ng-if="vm.showError()" role="alert" data-translate="ERROR_DATUM_GESETZT_BEI_MUTATION"
+               class="dv-error-messages"></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+
+            <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
+                <fieldset>
+                    <!--Aenderung per-->
+                    <div class="row" ng-if="vm.isMutation()">
+                        <div class="col-md-12">
+                            <dv-input-container class="form-group">
+
+                                <div class="row">
+                                    <div class="col-xs-12 dv-input-container-small">
+                                        <label class="md-no-float" data-translate="AENDERUNG_PER" for="aenderungPer_ID">
+                                        </label>
+                                        <dv-datepicker input-id="aenderungPer_ID" name="aenderungPer"
+                                                       ng-model="vm.getFamiliensituation().aenderungPer"
+                                                       class="input-element"
+                                                       ng-required="vm.isKorrekturModusJugendamt() && vm.gesuchstellerHasChangedZivilstand()"
+                                                       dv-on-blur="vm.onDatumBlur()"
+                                                       ng-disabled="vm.isGesuchReadonly() || (vm.isKorrekturModusJugendamt() && !vm.gesuchstellerHasChangedZivilstand())">
+                                        </dv-datepicker>
+                                        <dv-bisher gs="vm.model.familiensituationGS.aenderungPer"
+                                                   ja="vm.model.familiensituationJA.aenderungPer"></dv-bisher>
+                                        <dv-error-messages input-id="aenderungPer_ID" for="vm.form.aenderungPer.$error"
+                                                           class="error"></dv-error-messages>
+                                    </div>
+                                </div>
+
+
+                            </dv-input-container>
+                        </div>
+                    </div>
+
+
+                    <!--familienstatus-->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-question">
+                            <div class="form-group">
+                                <span class="ebeguH1 required">
+                                    <span data-translate="FAMILIENSITUATION_FRAGE_1"></span>
+                                </span>
+                                <dv-radio-container name="familienstatus"
+                                                    ng-model="vm.getFamiliensituation().familienstatus"
+                                                    ng-required="true"
+                                                    class="input-element sp" items="vm.familienstatusValues"
+                                                    dv-enable-element
+                                                    dv-enable-allowed-roles="vm.allowedRoles"
+                                                    dv-enable-expression="vm.isEnabled()"
+                                                    aria-label="{{ 'FAMILIENSITUATION_FRAGE_1' |translate}}"
+                                                    aria-described-by="familienstatus-error"></dv-radio-container>
+                                <dv-error-messages input-id="familienstatus" for="vm.form.familienstatus.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--gesuchstellerKardinalitaet-->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-question" ng-if="vm.showGesuchstellerKardinalitaet()">
+                            <div class="form-group">
+                                <span class="ebeguH1 required">
+                                    <span data-translate="FAMILIENSITUATION_FRAGE_2"></span>
+                                    <dv-tooltip input-id="gesuchstellerKardinalitaet"
+                                                text="'FAMILIENSITUATION_HELP' | translate"></dv-tooltip>
+                                </span>
+                                <dv-radio-container name="gesuchstellerKardinalitaet"
+                                                    ng-model="vm.getFamiliensituation().gesuchstellerKardinalitaet"
+                                                    ng-required="true"
+                                                    class="input-element" items="vm.gesuchstellerKardinalitaetValues"
+                                                    dv-enable-element
+                                                    dv-enable-allowed-roles="vm.allowedRoles"
+                                                    dv-enable-expression="vm.isEnabled()"
+                                                    aria-label="{{ 'FAMILIENSITUATION_FRAGE_2' |translate}}"
+                                                    aria-described-by="gesuchstellerKardinalitaet-error"></dv-radio-container>
+                                <dv-error-messages input-id="gesuchstellerKardinalitaet"
+                                                   for="vm.form.gesuchstellerKardinalitaet.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="row">
+                    <div class="col-md-12">
+                        <dv-navigation dv-show-element
+                                       dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitutionSteueramt()"
+                                       dv-previous="true" dv-next="true" dv-save="vm.confirmAndSave()">
+                        </dv-navigation>
+                        <dv-navigation dv-show-element
+                                       dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionSteueramtOnlyRoles()"
+                                       dv-next="true">
+                        </dv-navigation>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

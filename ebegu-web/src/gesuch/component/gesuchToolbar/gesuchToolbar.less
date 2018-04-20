@@ -1,0 +1,517 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+@import '../../../style/variables.less';
+@import '../../../style/mixins.less';
+
+.md-open-menu-container {
+    box-shadow: none !important;
+}
+
+.menu-item-text {
+    .menu-item-link();
+    color: @contrast-lightest;
+    &:hover {
+        background: none;
+    }
+    margin-bottom: 1rem;
+    padding: 0 1.5rem 0;
+    * {
+        padding: 0 !important;
+    }
+}
+
+.md-dense :not(.md-dense-disabled) .md-button:not(.md-dense-disabled) {
+    min-height: 4rem !important;
+    line-height: 4rem !important;
+}
+
+.menu-item-link {
+    .menu-item-link();
+    background: @secondary;
+    color: @contrast-lightest;
+    &:hover {
+        background: @secondary-dark;
+    }
+    a {
+        .menu-item-link();
+        color: @contrast-lightest;
+        background: none;
+        &:hover {
+            color: @contrast-lightest;
+            background: none;
+        }
+    }
+    .md-button {
+        background: none;
+        .menu-item-link();
+        padding: 0 2rem 0;
+        &:hover, &.md-default-theme:not([disabled]).md-focused, &:not([disabled]).md-focused, &:focus {
+            background: none;
+            outline: 0;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+    }
+
+}
+
+.menu-item-link.gesuchsteller {
+    .menu-item-link();
+    background: @primary;
+    color: @contrast-lightest;
+    button {
+        &:hover, &:focus:hover {
+            background: @primary-dark;
+            outline: 0;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+        &:focus {
+            outline: 2px solid @contrast-darkest !important;
+            background: @primary-dark;
+            outline-offset: -1rem;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+    }
+    a {
+        .menu-item-link();
+        color: @contrast-lightest;
+        background: none;
+        &:hover {
+            color: @contrast-lightest;
+            background: none;
+        }
+    }
+    .md-button {
+
+        .menu-item-link();
+        background: none;
+        padding: 0 2rem 0;
+        &:hover, &.md-default-theme:not([disabled]).md-focused, &:not([disabled]).md-focused, &:focus {
+            background: @primary-dark;
+            outline: 0;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+    }
+
+}
+
+.menu-item-container {
+    min-width: 15rem !important;
+    width: auto;
+    background: @secondary;
+    &.gesuchsteller {
+        background: @primary;
+    }
+    padding: 1rem 0 1rem !important;
+    &.no-padding {
+        padding: 0 !important;
+    }
+}
+
+.kontakt {
+
+    & > span, a span, a {
+        text-decoration: none;
+        letter-spacing: 0.15rem;
+        font-size: 1.6rem;
+        display: block;
+        height: auto;
+        line-height: normal;
+        .ebeguH1();
+        .ebeguNormal();
+        margin: 0 2rem 0.5rem;
+        color: @contrast-lightest;
+    }
+    a span, a span:first-child, a span:last-child {
+        margin: 0;
+    }
+    span:first-child {
+        margin-top: 2rem;
+    }
+    a:last-child, span:last-child {
+        margin-bottom: 2rem;
+    }
+
+}
+
+.gesuch-toolbar {
+    .bold-menu {
+        .ebeguBold();
+        white-space: nowrap;
+    }
+    span {
+        .menu-item-link();
+        background: none;
+        padding: 0 2rem 0;
+        &:hover {
+            background: none;
+        }
+    }
+
+    md-toolbar {
+        background-color: @secondary;
+        height: 4rem;
+        min-height: 4rem;
+    }
+    md-menu-bar {
+        padding-left: 2rem;
+        padding-right: 0;
+        button {
+            display: block;
+            height: 4rem;
+            min-width: 15rem;
+            width: auto;
+            padding: 0 2rem 0;
+            font-size: 1.4rem;
+            background: @secondary;
+            text-align: left;
+            span {
+                padding: 0;
+            }
+
+            &:hover, &:focus {
+                background: @secondary-dark;
+                outline: 0;
+                -webkit-box-shadow: none;
+                box-shadow: none;
+            }
+        }
+        md-menu {
+            line-height: 0;
+            background: @secondary;
+            display: block;
+            &:hover {
+                background: @secondary;
+            }
+            &.md-open {
+                button {
+                    background: @secondary-dark;
+                    &:hover {
+                        background: @secondary-dark;
+                    }
+                }
+            }
+        }
+    }
+    md-menu-item {
+        .md-button {
+            padding: 0;
+        }
+    }
+}
+
+.gesuch-toolbar-gesuchsteller {
+    .gesuchNotLoaded {
+        .ebeguBold();
+        font-size: 1.6rem;
+        white-space: nowrap;
+        min-width: 15rem;
+        display: block;
+        padding: 0 2rem 0;
+    }
+    & > md-backdrop.md-sidenav-backdrop {
+        z-index: (@z-index-mobile-toolbar - 1);
+    }
+    .gesuchName > span {
+        .ebeguBold();
+        font-size: 1.6rem;
+        white-space: nowrap;
+    }
+    .gesuchName {
+        width: 1rem;
+        overflow: visible;
+        white-space: nowrap;
+    }
+
+    span {
+        .menu-item-link();
+        background: none;
+        &:hover {
+            background: none;
+        }
+    }
+
+    md-toolbar {
+        background-color: @primary;
+        height: @navbar-height;
+        min-height: @navbar-height;
+    }
+    md-menu-bar {
+        padding-left: 2rem;
+        padding-right: 0;
+        button {
+            .ebeguBold();
+            display: block;
+            height: @navbar-height;
+            min-width: 15rem;
+            width: auto;
+            padding: 0 2rem 0;
+            font-size: 1.4rem;
+            background: @primary;
+            text-align: left;
+            margin: 0;
+            &:hover, &:focus:hover {
+                background: @primary-dark;
+                outline: 0;
+                -webkit-box-shadow: none;
+                box-shadow: none;
+            }
+            &:focus {
+                outline: 2px solid @contrast-darkest !important;
+                background: @primary-dark;
+                outline-offset: -1rem;
+                -webkit-box-shadow: none;
+                box-shadow: none;
+            }
+        }
+        md-menu {
+            line-height: 0;
+            background: @primary;
+            &:hover {
+                background: @primary;
+            }
+            &.md-open {
+                button {
+                    background: @primary;
+                    &:hover {
+                        background: @primary;
+                    }
+                }
+            }
+        }
+    }
+
+    md-menu-item {
+        .md-button {
+            padding: 0;
+        }
+    }
+}
+
+.gesuch-toolbar-mobile-close {
+    background-color: transparent;
+    color: @contrast-darkest;
+    font-size: 1.8rem;
+    line-height: @navbar-height;
+    height: @navbar-height;
+    flex-shrink: 0;
+    &.active, &:active, &:hover, &:focus {
+        background-color: transparent;
+        color: @contrast-darkest;
+        outline: none !important;
+        text-decoration: none !important;
+        outline: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+
+    }
+
+}
+
+.gesuch-toolbar-mobile {
+    box-shadow: none;
+    color: @contrast-lightest;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: @z-index-mobile-toolbar;
+    width: 90%;
+    min-width: 90%;
+    max-width: 90%;
+    background: @primary;
+    .gesuchsperioden-container {
+        width: 100%;
+        display: block;
+    }
+    button.gesuchsperiode-button, button.antrag-typ-datum-button, .gesuchsperiode-gesuchname {
+        & > span {
+            .ebeguBold();
+            letter-spacing: 0.15rem;
+            font-size: 1.6rem;
+        }
+
+        display: block;
+        width: 100%;
+        height: @navbar-height;
+        min-height: @navbar-height;
+        text-align: left;
+        padding: 0 3rem 0;
+        line-height: @navbar-height;
+        border-bottom: solid @primary-dark 1px;
+        background-color: transparent;
+        color: @contrast-lightest;
+        &.active, &:active, &:hover, &:focus {
+            background-color: transparent;
+            color: @contrast-lightest;
+            outline: none;
+            text-decoration: none !important;
+            outline: 0;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+
+        }
+    }
+    button.gesuchsperiode-button {
+        margin-top: 2rem;
+    }
+    button.antrag-typ-datum-button {
+        padding: 0 0 0 5rem;
+    }
+    .gesuchsperiode-gesuchname {
+        span {
+            font-weight: normal;
+        }
+    }
+    & > span {
+        &.antrag-typ-datum-button, &.gesuchsperiode-button {
+
+            .ebeguNormal();
+            letter-spacing: 0.15rem;
+            font-size: 1.6rem;
+            display: block;
+            width: 100%;
+            height: @navbar-height !important;
+            text-align: left;
+            padding: 0 3rem 0;
+            line-height: @navbar-height !important;
+            border-bottom: solid @primary-dark 1px;
+            color: @contrast;
+        }
+        &.flex {
+            border: none;
+        }
+        &.antrag-typ-datum-button {
+            padding: 0 5rem 0;
+        }
+    }
+
+    .mobile-kontakt {
+        color: @contrast-lightest;
+        width: 100%;
+        height: auto;
+        text-align: left;
+        padding: 0;
+        border-bottom: solid @primary-dark 1px;
+        & > button, & > div > button {
+            padding: 0;
+        }
+        & > div {
+            padding: 0 2rem 0;
+        }
+
+        & > span, a span, a {
+            color: @contrast-lightest;
+            .ebeguNormal();
+            text-decoration: none;
+            letter-spacing: 0.15rem;
+            font-size: 1.6rem;
+            display: block;
+            height: auto;
+            line-height: normal;
+        }
+    }
+    .mobile-kontakt {
+        padding: 2rem 3rem 5rem;
+        & > a {
+            span {
+                .ebeguBold()
+            }
+        }
+    }
+
+    .gesuch-toolbar-mobile-close, .mobile-logout {
+        background-color: transparent;
+        color: @contrast-lightest;
+        text-align: right;
+        width: 100%;
+        height: @navbar-height;
+        padding: 0 1.5rem 0 3rem;
+        line-height: @navbar-height;
+        &.active, &:active, &:hover, &:focus {
+            background-color: transparent;
+            color: @contrast-lightest;
+            outline: none;
+            text-decoration: none !important;
+            outline: 0;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+
+        }
+
+    }
+    .mobile-logout {
+        text-align: left;
+        span {
+            text-transform: uppercase;
+            font-size: 1.6rem;
+        }
+
+    }
+}
+
+md-menu-bar.md-default-theme.md-open:not(.md-keyboard-mode) md-menu:hover > button, md-menu-bar.md-open:not(.md-keyboard-mode) md-menu:hover > button {
+    background: none;
+}
+
+.small-toolbar {
+    min-height: 4rem;
+    height: 4rem;
+}
+
+i.ellipsis-icon {
+    margin-left: 1rem;
+}
+
+.toolbar-submenu {
+    background-color: @secondary;
+}
+
+.toolbar-submenu-item {
+    color: #FFFFFF;
+    margin-bottom: 1rem;
+}
+
+.toolbar-submenu-a, .toolbar-submenu-a:hover {
+    color: #FFFFFF;
+}
+
+.fa-user {
+    color: #FFFFFF;
+}
+
+.toolbar-adress {
+    color: #FFFFFF;
+    margin-left: 1rem;
+}
+
+.toolbar-gesuchname {
+    font-size: 1.4rem;
+}
+
+.toolbar-gesuchname {
+    font-size: 1.6rem;
+    line-height: @navbar-height;
+    height: @navbar-height;
+    padding: 0;
+    box-sizing: border-box;
+    .ebeguBold();
+    text-align: center;
+    text-decoration: none;
+    letter-spacing: 0.15rem;
+    color: @contrast-lightest;
+    text-transform: none;
+}

@@ -1,0 +1,113 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="kommentarView">
+    <form role="form" name="vm.form" class="" novalidate layout="column">
+        <!--bemerkungen intern-->
+        <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getJugendamtAndSchulamtRole()"
+             class="kommentar-padding">
+            <div class="kommentarTop">
+                <dv-input-container class="form-group kommentar-feld">
+                    <label class="md-no-float" for="kommentarIntern" data-translate="BEMERKUNGEN_INTERN"></label>
+                    <textarea md-no-autogrow class="form-control" rows="6" id="kommentarIntern"
+                              ng-blur="vm.saveStepBemerkung()" name="kommentarIntern"
+                              ng-model="vm.getCurrentWizardStep().bemerkungen" maxlength="4000"
+                              dv-enable-element dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorOrAmtRole()">
+                        </textarea>
+                </dv-input-container>
+            </div>
+        </div>
+
+        <div class="kommentarEwk kommentar-padding" dv-show-element
+             dv-show-allowed-roles="vm.TSRoleUtil.getJugendamtAndSchulamtRole()">
+            <div>
+                <button type="button" ng-click="vm.toggleEwkSidenav()"
+                        class="kommentar-button" aria-label="{{'EWK_ABFRAGE_STARTEN' | translate}}">
+                    <span data-translate="EWK_ABFRAGE_STARTEN"></span>
+                </button>
+            </div>
+        </div>
+
+        <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
+            <div class="kommentar-padding">
+                <dv-input-container class="form-group kommentar-feld">
+                    <label class="md-no-float" for="kommentarSTV_JA" data-translate="BEMERKUNGEN_STV_JA"></label>
+                    <textarea md-no-autogrow class="form-control" rows="6" id="kommentarSTV_JA"
+                              ng-model="vm.getGesuch().bemerkungenSTV" maxlength="4000" name="kommentarSTV_JA"
+                              ng-disabled="true"></textarea>
+                </dv-input-container>
+            </div>
+        </div>
+        <div dv-show-element
+             dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtSteueramtRoles()"
+             dv-show-expression="vm.showBemerkungenPruefungSTV()"
+             class="kommentar-padding">
+            <div>
+                <dv-input-container class="form-group kommentar-feld">
+                    <label class="md-no-float" for="kommentarPruefungSTV"
+                           data-translate="BEMERKUNGEN_PRUEFUNG_STV"></label>
+                    <textarea md-no-autogrow class="form-control" rows="6" id="kommentarPruefungSTV"
+                              ng-blur="vm.saveBemerkungPruefungSTV()" name="kommentarPruefungSTV"
+                              ng-model="vm.getGesuch().bemerkungenPruefungSTV" maxlength="4000"
+                              dv-enable-element
+                              dv-enable-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()"
+                              dv-enable-expression="vm.isInBearbeitungSTV()"></textarea>
+                </dv-input-container>
+            </div>
+        </div>
+
+        <div layout="row" layout-align="center"
+             dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
+            <div class="kommentar-padding">
+                <dv-loading-button button-click="vm.freigebenSTV()" button-class="centered-btn" type="submit"
+                                   aria-label="{{vm.getFreigabeName()}}">
+                    <span ng-bind="vm.getFreigabeName()"></span>
+                </dv-loading-button>
+            </div>
+        </div>
+
+        <span flex=""></span>
+        <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getJugendamtAndSchulamtRole()">
+            <!--bemerkungen Verfügung-->
+            <div class="kommentar-padding">
+                <dv-input-container class="form-group kommentar-feld">
+                    <label class="md-no-float" for="kommentarVerfuegung"
+                           data-translate="BEMERKUNGEN_VERFUEGUNG"></label>
+                    <textarea md-no-autogrow class="form-control" rows="6" id="kommentarVerfuegung"
+                              ng-blur="vm.saveBemerkungZurVerfuegung()" name="kommentarVerfuegung"
+                              dv-enable-element dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
+                              dv-enable-expression="!vm.isGesuchReadonly()"
+                              ng-model="vm.getGesuch().bemerkungen" maxlength="4000">
+                        </textarea>
+                </dv-input-container>
+            </div>
+
+            <div ng-if="!vm.isGesuchUnsaved()" class="kommentar-padding">
+                <div ng-if="vm.hasPapiergesuch()" ng-click="vm.download()" class="dv-btn kommentar-button">
+                    <span data-translate="PAPIERGESUCH_OEFFNEN"></span>
+                </div>
+
+                <div ng-if="!vm.hasPapiergesuch() && !vm.isGesuchReadonly()"
+                     accept=".pdf, .docx, .odt"
+                     ngf-select="vm.upload($files)" ngf-multiple="false"
+                     ngf-drop="vm.upload($files)"
+                     ngf-drag-over-class="'dragover'"
+                     class="dv-btn kommentar-button">
+                    <span data-translate="PAPIERGESUCH_LADEN"></span>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,132 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="posteingangView">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-1">
+                <h3 data-translate="POSTEINGANG"></h3>
+            </div>
+            <div class="col-md-2 text-right closedMitteilungen posteingangView__resultCombo">
+                <md-checkbox ng-model="vm.includeClosed" name="includeClosed" id="includeClosed" ng-change="vm.clickedIncludeClosed()"
+                             aria-label="{{'POSTEINGANG_INCLUDE_CLOSED'|translate}}">
+                    <span data-translate="POSTEINGANG_INCLUDE_CLOSED"></span>
+                </md-checkbox>
+                <h3 ng-bind="vm.totalResultCount" class="posteingangView__resultcount"></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1 table-responsive">
+
+                <table st-table="vm.displayedCollection" st-delay="20" st-pipe="vm.passFilterToServer" class="table fixedtable table-striped">
+                    <thead>
+                    <tr>
+                        <!-- Von -->
+                        <th st-sort="sender" class="sortable row-sender" data-translate="POSTEINGANG_VON_UPPER"></th>
+                        <!-- Fall-Nummer -->
+                        <th st-sort="fallNummer" class="sortable row-fallNummer" data-translate="POSTEINGANG_FALL_UPPER"></th>
+                        <!-- Familie -->
+                        <th st-sort="familienName" class="sortable row-besitzer" data-translate="POSTEINGANG_FAMILIE_UPPER"></th>
+                        <!-- Betreff -->
+                        <th st-sort="subject" class="sortable row-subject" data-translate="POSTEINGANG_BETREFF_UPPER"></th>
+                        <!-- Datum -->
+                        <th st-sort="sentDatum" class="sortable row-sentDatum" data-translate="POSTEINGANG_DATUM_UPPER"></th>
+                        <!-- Verantwortliche Person -->
+                        <th st-sort="empfaenger" class="sortable row-empfaenger" data-translate="POSTEINGANG_VERANTWORTLICH_UPPER"></th>
+                        <!-- Amt -->
+                        <th st-sort="empfaengerAmt" class="sortable row-amt" data-translate="POSTEINGANG_AMT"></th>
+                        <!-- Status -->
+                        <th st-sort="mitteilungStatus" class="sortable row-status" data-translate="POSTEINGANG_STATUS"></th>
+                    </tr>
+                    <tr>
+                        <!-- Von -->
+                        <th><input st-search="sender" class="form-control" type="text"/></th>
+                        <!-- Fall-Nummer -->
+                        <th><input st-search="fallNummer" class="form-control" type="text"/></th>
+                        <!-- Familie -->
+                        <th><input st-search="familienName" class="form-control" type="text"/></th>
+                        <!-- Betreff -->
+                        <th><input st-search="subject" class="form-control" type="text"/></th>
+                        <!-- Datum -->
+                        <th><input st-search="sentDatum" class="form-control" type="text"/></th>
+                        <!-- Verantwortliche Person -->
+                        <th>
+                            <dv-userselect input-id="empfaenger" dv-usersearch="empfaenger" initial-all="false" show-selection-all="true"
+                                           schulamt="vm.isCurrentUserSchulamt()"></dv-userselect>
+                        </th>
+                        <!-- Amt -->
+                        <th>
+                            <div class="dv-select-style">
+                                <select st-input-event="change" name="empfaengerAmt" id="empfaengerAmt" st-search="empfaengerAmt" class="form-control"
+                                        ng-options="'AMT_' + a | translate for a in vm.getAemter() track by a" ng-model="vm.selectedAmt">
+                                    <option value="">{{"ALLE" | translate}}</option>
+                                </select>
+                            </div>
+                        </th>
+                        <!-- Status -->
+                        <th>
+                            <div class="dv-select-style">
+                                <select st-input-event="change" name="mitteilungStatus" id="mitteilungStatus"
+                                        st-search="mitteilungStatus" class="form-control"
+                                        ng-options="status | translate for status in vm.getMitteilungsStatus() track by status"
+                                        ng-model="vm.selectedMitteilungsstatus">
+                                    <option value="">{{"ALLE" | translate}}</option>
+                                </select>
+                            </div>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="row in vm.displayedCollection" st-select-row="row" st-select-mode="single" ng-click="vm.gotoMitteilung(row)"
+                        ng-class="{'mitteilung_neu': ('NEU' === row.mitteilungStatus.toString()),'mitteilung_alt': ('NEU' !== row.mitteilungStatus.toString())}">
+                        <!-- Von -->
+                        <td title="{{row.sender.getFullName()}}"
+                            ng-bind="row.sender.getFullName()"></td>
+                        <!-- Fall-Nummer -->
+                        <td class="ellipsis" title="{{vm.addZerosToFallNummer(row.fall.fallNummer)}}"
+                            ng-bind="vm.addZerosToFallNummer(row.fall.fallNummer)"></td>
+                        <!-- Familie -->
+                        <td class="ellipsis" title="{{row.fall.besitzer.getFullName()}}"
+                            ng-bind="row.fall.besitzer.getFullName()"></td>
+                        <!-- Betreff -->
+                        <td class="ellipsis" title="{{row.subject}}"
+                            ng-bind="row.subject"></td>
+                        <!-- Datum -->
+                        <td class="ellipsis" title="{{row.sentDatum | amDateFormat : 'DD.MM.YYYY'}}"
+                            ng-bind="row.sentDatum | amDateFormat : 'DD.MM.YYYY'"></td>
+                        <!-- Verantwortliche Person -->
+                        <td class="ellipsis" title="{{row.empfaenger}}"
+                            ng-bind="row.empfaenger.getFullName()"></td>
+                        <!-- Amt -->
+                        <td class="ellipsis" title="{{row.empfaenger.amt}}"
+                            ng-bind="'AMT_' + row.empfaenger.amt | translate"></td>
+                        <!-- Status -->
+                        <td class="ellipsis" title="{{row.mitteilungStatus}}"
+                            ng-bind="row.mitteilungStatus | translate"></td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <div st-pagination="" st-items-by-page="20" st-displayed-pages="10"></div>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>

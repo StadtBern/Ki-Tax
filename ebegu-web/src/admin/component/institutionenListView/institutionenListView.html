@@ -1,0 +1,84 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="institutionenListView adminModul">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="viewTitle">
+                <h1 data-translate="INSTITUTIONEN"></h1>
+            </div>
+
+            <form role="form" name="vm.form" class="" unsaved-warning-form novalidate>
+                <!--Tabelle zum anzeigen aller Institutionen-->
+                <div class="row">
+                    <div class="col-md-12 table-responsive">
+                        <table st-table="displayedCollection" st-safe-src="vm.getInstitutionenList()"
+                               class="table fixedtable table-striped" st-delay="20">
+                            <thead>
+                            <tr>
+                                <th colspan="2" st-sort="name" st-sort-default="true" class="sortable" data-translate="INSTITUTION"></th>
+                            </tr>
+                            <tr>
+                                <th colspan="2">
+                                    <input st-search="name" class="form-control"
+                                           placeholder="Suche nach Institutionen" type="text"/>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="row in displayedCollection" ng-click="vm.editInstitution(row)"
+                                ng-class="vm.rowClass(row.id)">
+                                <td ng-bind="row.name" class="ellipsis" title="{{row.name}}"></td>
+                                <td>
+                                    <dv-loading-button type="button" button-click="vm.removeInstitution(row)"
+                                                       button-class="pull-right" button-disabled="vm.isReadonly()">
+                                        <i class="fa fa-minus">
+                                        </i>
+                                    </dv-loading-button>
+                                </td>
+                            <tr ng-if="vm.getInstitutionenList().length === 0">
+                                <td colspan="2" class="empty-table" data-translate="INSTITUTIONEN_NOCH_KEINE"></td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="2" class="text-center">
+                                    <div st-pagination="" st-items-by-page="vm.itemsByPage"
+                                         st-displayed-pages="5"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!--Knöpfe unterhalb der Tabelle zum anzeigen aller Institutionen-->
+                <div class="" ng-if="vm.isAnyAdminRole()">
+                    <div class="row form-group">
+                        <dv-input-container class="form-group row">
+                            <!--Knopf zum hinzufügen neuer Institutionen-->
+                            <dv-loading-button type="button"
+                                               button-click="vm.createInstitution(); vm.form.$setPristine(); vm.form.$setUntouched()"
+                                               button-class="">
+                                <i class="glyphicon glyphicon-plus"></i>
+                                <span data-translate="INSTITUTION_HINZUFUEGEN"></span>
+                            </dv-loading-button>
+                        </dv-input-container>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,518 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@import '../style/variables.less';
+@import '../style/mixins.less';
+@import '../style/organisms/sidenav.less';
+
+#ewk {
+    display: flex;
+    color: @contrast-darkest;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    z-index: @z-index-sidenav;
+    width: 57rem;
+    min-width: 55rem;
+    max-width: 100%;
+    background: @contrast-lightest;
+    top: (@navbar-height*2) + 4rem;
+    padding: 2rem;
+}
+
+.ewk-content {
+    padding: 0;
+    overflow: unset;
+}
+
+.ewk-button {
+    padding: 2rem;
+}
+
+dv-accordion.ewk > ng-transclude > dv-accordion-tab {
+    &.is-chosen {
+        & > .dv-accordion-tab-title {
+            color: @success;
+            &:after {
+                font-family: FontAwesome;
+                content: "\f00c";
+                float: right;
+            }
+            &.tab-open, &:hover {
+                background: @success-light;
+                color: @success-dark;
+            }
+        }
+    }
+
+    & > .dv-accordion-tab-title {
+        padding: 1rem;
+        color: @contrast-darkest;
+        background: @contrast-lightest;
+        border-top: 1px solid @contrast-darkest;
+
+        &.tab-open, &:hover {
+            background: @contrast-light;
+            color: @contrast-darkest;
+
+        }
+    }
+    & > .dv-accordion-tab-content {
+        overflow: hidden;
+        opacity: 1;
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: 500rem;
+        background: @contrast-light;
+        padding: 0 2rem 0;
+        & > tab-body > * {
+            margin: 0;
+            .ewk-label {
+                .ebeguBold();
+                -webkit-touch-callout: none; /* iOS Safari */
+                -webkit-user-select: none; /* Safari*/
+                -khtml-user-select: none; /* Konqueror */
+                -moz-user-select: none; /* Firefox */
+                -ms-user-select: none; /* Internet Explorer/Edge */
+                user-select: none;
+                &:after {
+                    content: " : "
+                }
+            }
+
+        }
+        &.ng-hide-add {
+            max-height: 500rem;
+            transition: all 1s ease;
+        }
+        &.ng-hide-add.ng-hide-add-active {
+            max-height: 0;
+        }
+        &.ng-hide-remove {
+            transition: all 1s ease;
+            max-height: 0;
+        }
+        &.ng-hide-remove.ng-hide-remove-active {
+            max-height: 500rem;
+        }
+    }
+}
+
+dv-accordion.ewksubsub,
+dv-accordion.ewksub {
+    .dv-accordion-tab-title {
+        color: @contrast-darkest;
+        background: transparent;
+        width: auto;
+        padding-left: 2rem;
+        margin-left: -2rem;
+        margin-right: -2rem;
+        .ebeguBold();
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari*/
+        -khtml-user-select: none; /* Konqueror */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
+        transition: none;
+        &:before {
+            font-family: FontAwesome;
+            content: "\f0fe";
+        }
+        &.tab-open {
+            color: @contrast-darkest;
+            background: @contrast-light;
+            &:before {
+                font-family: FontAwesome;
+                content: "\f146";
+            }
+        }
+    }
+    .dv-accordion-tab-content {
+        overflow: hidden;
+        opacity: 1;
+        display: block;
+        width: auto;
+        height: auto;
+        max-height: 50rem;
+        background: @contrast-light;
+        padding-left: 4rem;
+        margin-left: -2rem;
+        margin-right: -2rem;
+        & > tab-body > * {
+            margin: 0;
+            .ewk-label {
+                .ebeguBold();
+                &:after {
+                    content: " : "
+                }
+            }
+
+        }
+        &.ng-hide-add {
+            max-height: 50rem;
+            transition: all 1s ease;
+        }
+        &.ng-hide-add.ng-hide-add-active {
+            max-height: 0;
+        }
+        &.ng-hide-remove {
+            transition: all 1s ease;
+            max-height: 0;
+        }
+        &.ng-hide-remove.ng-hide-remove-active {
+            max-height: 50rem;
+        }
+    }
+
+}
+
+dv-accordion.ewksubsub {
+    .dv-accordion-tab-content {
+        padding-left: 6rem;
+        margin-left: -4rem;
+        margin-right: 0;
+    }
+    .dv-accordion-tab-title {
+        color: @contrast-darkest;
+        background: transparent;
+        width: auto;
+        padding-left: 4rem;
+        margin-left: -4rem;
+        margin-right: 0;
+    }
+}
+
+.mainTitle {
+    margin-top: 0;
+}
+
+.freigabe-dialog {
+    select {
+        background: @contrast-lighter;
+    }
+}
+
+.mobile-sidenav-scroll {
+    overflow-y: auto;
+    flex: 1;
+}
+
+.mobile-sidenav-toggle {
+    flex: 0 0 auto;
+    .ebeguBold();
+    height: @navbar-height;
+    position: relative;
+    background: @contrast-lightest;
+    box-sizing: border-box;
+    color: @contrast-darkest;
+    border-top: .1rem @contrast solid;
+    border-bottom: .1rem @contrast solid;
+    &.mobile-open {
+        border-left: 0.7rem @primary solid;
+    }
+    &.mobile-close {
+        border-right: 0.7rem @primary solid;
+    }
+    .mobile-active {
+        padding: 0 1.5rem 0 2.5rem;
+        &:focus {
+            outline: none;
+        }
+        span {
+            letter-spacing: 0.15rem;
+            font-size: 1.6rem;
+            display: none;
+            &.gesuch-name, &.active-element, &.fa-angle-down {
+                overflow: hidden;
+                display: block;
+                max-width: 40%;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+            &.active-element {
+                color: @primary;
+                margin-left: auto;
+                margin-right: 2rem;
+                max-width: 55%;
+
+            }
+            &.fa-angle-down {
+                max-width: 5%;
+                font-size: 2rem;
+                overflow: visible;
+                display: block;
+            }
+
+        }
+    }
+    button {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        max-width: unset;
+        height: auto;
+        display: block;
+        background: transparent;
+        color: @contrast-darkest;
+
+        &.active, &:active, &:hover, &:focus,
+        &[disabled], &[disabled]:hover {
+            outline: 0;
+            background: transparent;
+            color: @contrast-darkest;
+        }
+        //IE Fallback
+        text-align: right;
+        text-align: end;
+        &.mobile-sidenav-close {
+            padding: 0 1.5rem 0;
+        }
+        span {
+            font-size: 2rem;
+            line-height: @navbar-height;
+            height: @navbar-height;
+        }
+    }
+}
+
+#gesuchContainer {
+
+    background: @contrast-light;
+    overflow-y: scroll;
+    flex: 1 1 auto;
+    min-width: 3rem;
+    display: block;
+    position: relative;
+    dv-navigation, .nav-row-verfuegen, .nav-row-betreuung {
+        -ms-box-orient: horizontal;
+        display: -ms-flexbox;
+        display: flex;
+        flex-direction: row-reverse;
+        -ms-flex-direction: row-reverse;
+        bottom: 4rem;
+        left: 0;
+        right: 0;
+        transform: unset;
+        position: absolute;
+        margin: 0;
+        align-items: center;
+        & > div {
+            flex-direction: row-reverse;
+            -ms-flex-direction: row-reverse;
+            clear: both;
+            margin-bottom: 0;
+            display: flex;
+            position: static;
+            padding: 0 3rem 0;
+            width: 100%;
+        }
+    }
+    .nav-row-verfuegen {
+        flex-direction: row;
+        -ms-flex-direction: row;
+        dv-navigation {
+            margin-left: 3rem;
+            margin-right: auto;
+
+            position: static;
+            width: auto;
+            & > div {
+                width: auto;
+                padding: 0;
+            }
+        }
+        & > div {
+            padding: 0;
+            width: auto;
+            margin-right: 3rem;
+        }
+    }
+    .nav-row-betreuung {
+        flex-direction: column;
+        -ms-flex-direction: column;
+        bottom: 2rem;
+        & > div {
+            width: auto;
+            margin-bottom: 1rem;
+            &:last-child {
+                margin-left: 0;
+                margin-bottom: 0;
+                width: auto;
+            }
+            & > div {
+                display: flex;
+                flex-direction: row;
+                -ms-flex-direction: row;
+                padding: 0;
+                & > div {
+                    padding: 0 0.75rem 0;
+                }
+            }
+        }
+    }
+    & > div {
+        height: 1px;
+        min-height: 100%;
+        & > * {
+            height: 1px;
+            min-height: 100%;
+            .gesuchModul {
+                min-height: 100%;
+                & div {
+
+                }
+            }
+        }
+    }
+}
+
+#kommentarContainer {
+    flex: 0 0 auto;
+    background: @contrast-lightest;
+    width: 45rem;
+    padding: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.fixedToolbar {
+    position: fixed;
+    width: 100%;
+    top: 10rem;
+    z-index: @z-index-toolbar;
+}
+
+.gesuchModul {
+    padding: 5rem 3rem 10rem;
+    &.betreuungView {
+        padding: 5rem 3rem 14rem;
+    }
+    position: relative;
+
+    & div:not(.md-container):not(.md-off):not(.md-on):not(.md-icon) {
+        position: static;
+    }
+}
+
+.betreuung-table-header {
+    width: 40rem;
+}
+
+.betreuung-status {
+    position: relative !important;
+    div {
+        .ebeguH3();
+        line-height: 6rem;
+        height: 100% !important;
+        display: block;
+        position: relative !important;
+        margin: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .betreuung-bar {
+        position: absolute;
+        left: 0.8rem;
+        bottom: 0;
+        width: 3rem;
+        height: 0.5rem;
+        border-bottom: 0.5rem solid;
+
+    }
+    &.verfuegenView .betreuung-bar {
+        left: 0;
+    }
+    &.verfuegenView.NICHT_EINGETRETEN {
+        border-bottom: 1px solid @contrast-darkest;
+    }
+
+    &.BESTAETIGT .betreuung-bar ,&.SCHULAMT_ANMELDUNG_UEBERNOMMEN .betreuung-bar {
+        border-color: @success;
+    }
+    &.WARTEN .betreuung-bar ,&.SCHULAMT_FALSCHE_INSTITUTION .betreuung-bar ,&.SCHULAMT_ANMELDUNG_ABGELEHNT .betreuung-bar {
+        border-color: @warning;
+    }
+    &.ABGEWIESEN .betreuung-bar{
+        border-color: @danger;
+    }
+    &.VERFUEGT .betreuung-bar {
+        border-color: @purple;
+    }
+}
+
+.AUSSTEHEND {
+}
+
+.WARTEN {
+}
+
+.SCHULAMT {
+}
+
+.ABGEWIESEN {
+}
+
+.BESTAETIGT {
+}
+
+.right-side {
+    background-color: #ECF1F4;
+}
+
+.gesuch-status {
+    margin: 5rem 2.5rem 2.5rem 2.5rem;
+    color: @contrast-darkest;
+
+    .status {
+        .ebeguBold();
+        font-size: 1.4rem;
+        letter-spacing: 0.1rem;
+    }
+    .zuletzt {
+        .ebeguItalic();
+        font-size: 1.2rem;
+        letter-spacing: 0.1rem;
+    }
+    .gesperrt {
+        font-size: 1.2rem;
+        letter-spacing: 0.1rem;
+        color: red;
+    }
+    .uploaded-document {
+        margin-left: 0.5rem;
+    }
+}
+
+.gesuchbody.row {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.gesuchbody.row > [class*='col-'] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+}
+

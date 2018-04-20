@@ -1,0 +1,30 @@
+<!--
+  ~ Ki-Tax: System for the management of external childcare subsidies
+  ~ Copyright (C) 2017 City of Bern Switzerland
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="dv-userselect">
+    <div class="dv-select-style">
+        <select st-input-event="change"
+                st-search="{{vm.dvUsersearch}}"
+                ng-attr-id="{{vm.inputId}}"
+                ng-attr-name={{vm.inputId}}"
+                ng-change="vm.valueChanged()"
+
+                class="form-control"
+                ng-options="user.getFullName() for user in vm.userList | orderBy: 'nachname' track by user.getFullName()"
+                ng-model="vm.selectedUser">
+            <option value="" ng-if="vm.showSelectionAll">{{"ALLE" | translate}}</option>
+        </select>
+    </div>
+</div>

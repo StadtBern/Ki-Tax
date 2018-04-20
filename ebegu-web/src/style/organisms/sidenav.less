@@ -1,0 +1,159 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2017 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@import '../variables.less';
+@import '../mixins.less';
+
+#sidenavContainer {
+    display: flex;
+    box-shadow: none;
+    color: @contrast-darkest;
+    overflow-y: auto;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    z-index: @z-index-sidenav;
+    width: 35.5rem;
+    min-width: 35.5rem;
+    max-width: 35.5rem;
+    background: @contrast-lightest;
+    top: @navbar-height;
+    .row {
+        margin: 0;
+    }
+    .gesuchMenu {
+        padding: 0;
+        width: auto;
+
+    }
+    li {
+        position: relative;
+        height: @sidebar-height;
+        box-sizing: content-box;
+        width: 100%;
+        list-style: none;
+        &:before {
+            content: "";
+            position: absolute;
+            left: 2.5rem;
+            right: 2.5rem;
+            bottom: 0;
+            height: 0.1rem;
+            min-height: 1px;
+            border-bottom: 1px solid @contrast;
+            display: block;
+        }
+        button {
+            border: none;
+            height: @sidebar-height;
+            text-align: left;
+            padding: 0;
+            display: block;
+            &:active, &:hover {
+                outline: none;
+                text-decoration: none;
+            }
+            &:focus {
+                outline: 2px solid @contrast-darkest;
+                text-decoration: underline;
+                outline-offset: -1.5rem;
+
+            }
+            &[disabled] span {
+                color: @contrast-dark;
+            }
+            span {
+                .ebeguNormal();
+                margin-left: 2.5rem;
+                letter-spacing: 0.1rem;
+                line-height: @sidebar-height;
+                height: @sidebar-height;
+                font-size: 1.6rem;
+                text-align: left;
+                overflow-x: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                padding: 0;
+                color: @contrast-darkest;
+                display: block;
+            }
+        }
+
+        span {
+            .ebeguNormal();
+            letter-spacing: 0.1rem;
+            line-height: @sidebar-height;
+            height: @sidebar-height;
+            font-size: 1.6rem;
+            color: @contrast-darkest;
+            display: block;
+            overflow-x: visible;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin: 0;
+            text-align: center;
+            padding: 0 3rem 0 0;
+        }
+
+    }
+    li.active-element {
+        &:after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            height: @sidebar-height;
+            width: 0.7rem; /* or 100px */
+            border-left: 0.7rem solid @primary;
+        }
+        &:before {
+            left: 2.5rem;
+
+        }
+        button {
+            span {
+                margin-left: 2.5rem;
+                .ebeguBold();
+                color: @primary;
+
+            }
+        }
+        span {
+            margin: 0;
+            .ebeguNormal();
+        }
+
+    }
+
+    .fa-check.green {
+        color: @success;
+    }
+    .fa-circle.green {
+        color: @success;
+    }
+    .fa-close.red {
+        color: @danger;
+    }
+    .fa-hourglass.orange {
+        color: @warning;
+    }
+    .fa-pencil.black {
+        color: @contrast-darkest;
+    }
+    .fa-pencil.green {
+        color: @success;
+    }
+
+}
