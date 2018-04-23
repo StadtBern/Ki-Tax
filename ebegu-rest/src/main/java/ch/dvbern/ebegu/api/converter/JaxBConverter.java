@@ -2269,6 +2269,8 @@ public class JaxBConverter {
 		benutzer.setRole(jaxLoginElement.getRole());
 		benutzer.setGesperrt(jaxLoginElement.isGesperrt());
 		benutzer.setRoleGueltigBis(jaxLoginElement.getRoleGueltigBis());
+		benutzer.setRoleAb(jaxLoginElement.getRoleAb());
+		benutzer.setRoleGueltigAb(jaxLoginElement.getRoleGueltigAb());
 
 		if (jaxLoginElement.getMandant() != null && jaxLoginElement.getMandant().getId() != null) {
 			final Optional<Mandant> mandantFromDB = mandantService.findMandant(jaxLoginElement.getMandant().getId());
@@ -2332,6 +2334,8 @@ public class JaxBConverter {
 		jaxLoginElement.setAmt(benutzer.getRole().getAmt());
 		jaxLoginElement.setGesperrt(benutzer.getGesperrt());
 		jaxLoginElement.setRoleGueltigBis(benutzer.getRoleGueltigBis());
+		jaxLoginElement.setRoleAb(benutzer.getRoleAb());
+		jaxLoginElement.setRoleGueltigAb(benutzer.getRoleGueltigAb());
 		return jaxLoginElement;
 	}
 

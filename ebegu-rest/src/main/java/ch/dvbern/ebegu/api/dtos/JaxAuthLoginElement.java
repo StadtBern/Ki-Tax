@@ -61,6 +61,13 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate roleGueltigBis = null;
 
+	@Nullable
+	private UserRole roleAb;
+
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate roleGueltigAb = null;
+
 
 	@SuppressFBWarnings(value = "NM_CONFUSING", justification = "Other method is external interface, cant change that")
 	@Nonnull
@@ -167,5 +174,23 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 
 	public void setRoleGueltigBis(@Nullable LocalDate roleGueltigBis) {
 		this.roleGueltigBis = roleGueltigBis;
+	}
+
+	@Nullable
+	public UserRole getRoleAb() {
+		return roleAb;
+	}
+
+	public void setRoleAb(@Nullable UserRole roleAb) {
+		this.roleAb = roleAb;
+	}
+
+	@Nullable
+	public LocalDate getRoleGueltigAb() {
+		return roleGueltigAb;
+	}
+
+	public void setRoleGueltigAb(@Nullable LocalDate roleGueltigAb) {
+		this.roleGueltigAb = roleGueltigAb;
 	}
 }

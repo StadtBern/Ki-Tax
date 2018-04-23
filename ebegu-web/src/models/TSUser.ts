@@ -34,9 +34,12 @@ export default class TSUser {
     private _amt: TSAmt;
     private _gesperrt: boolean;
     private _roleGueltigBis: moment.Moment;
+    private _roleAb: TSRole;
+    private _roleGueltigAb: moment.Moment;
 
     constructor(vorname?: string, nachname?: string, username?: string, password?: string, email?: string,
-                mandant?: TSMandant, role?: TSRole, traegerschaft?: TSTraegerschaft, institution?: TSInstitution, amt?: TSAmt, gesperrt?: boolean, roleGueltigBis?: moment.Moment) {
+                mandant?: TSMandant, role?: TSRole, traegerschaft?: TSTraegerschaft, institution?: TSInstitution, amt?: TSAmt, gesperrt?: boolean,
+                roleGueltigBis?: moment.Moment, roleAb?: TSRole, roleGueltigAb?: moment.Moment) {
         this._vorname = vorname;
         this._nachname = nachname;
         this._username = username;
@@ -49,6 +52,8 @@ export default class TSUser {
         this._amt = amt;
         this._gesperrt = gesperrt;
         this._roleGueltigBis = roleGueltigBis;
+        this._roleAb = roleAb;
+        this._roleGueltigAb = roleGueltigAb;
     }
 
     get nachname(): string {
@@ -148,6 +153,22 @@ export default class TSUser {
 
     set roleGueltigBis(value: moment.Moment) {
         this._roleGueltigBis = value;
+    }
+
+    get roleAb(): TSRole {
+        return this._roleAb;
+    }
+
+    set roleAb(value: TSRole) {
+        this._roleAb = value;
+    }
+
+    get roleGueltigAb(): moment.Moment {
+        return this._roleGueltigAb;
+    }
+
+    set roleGueltigAb(value: moment.Moment) {
+        this._roleGueltigAb = value;
     }
 
     getFullName(): string {

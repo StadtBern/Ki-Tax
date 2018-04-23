@@ -1616,6 +1616,8 @@ export default class EbeguRestUtil {
             user.institution = this.institutionToRestObject({}, userTS.institution);
             user.gesperrt = userTS.gesperrt;
             user.roleGueltigBis = DateUtil.momentToLocalDate(userTS.roleGueltigBis);
+            user.roleAb = userTS.roleAb;
+            user.roleGueltigAb = DateUtil.momentToLocalDate(userTS.roleGueltigAb);
             return user;
         }
         return undefined;
@@ -1635,6 +1637,8 @@ export default class EbeguRestUtil {
             userTS.amt = userFromServer.amt;
             userTS.gesperrt = userFromServer.gesperrt;
             userTS.roleGueltigBis = DateUtil.localDateToMoment(userFromServer.roleGueltigBis);
+            userTS.roleAb = userFromServer.roleAb;
+            userTS.roleGueltigAb = DateUtil.localDateToMoment(userFromServer.roleGueltigAb);
             return userTS;
         }
         return undefined;

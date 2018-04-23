@@ -89,6 +89,14 @@ public class Benutzer extends AbstractEntity {
 	@Column(nullable = true)
 	private LocalDate roleGueltigBis;
 
+	@Enumerated(value = EnumType.STRING)
+	@Column(nullable = true)
+	private UserRole roleAb;
+
+	@Nullable
+	@Column(nullable = true)
+	private LocalDate roleGueltigAb;
+
 	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_benutzer_mandant_id"))
@@ -156,6 +164,23 @@ public class Benutzer extends AbstractEntity {
 
 	public void setRoleGueltigBis(@Nullable LocalDate roleGueltigBis) {
 		this.roleGueltigBis = roleGueltigBis;
+	}
+
+	public UserRole getRoleAb() {
+		return roleAb;
+	}
+
+	public void setRoleAb(UserRole roleInZukunft) {
+		this.roleAb = roleInZukunft;
+	}
+
+	@Nullable
+	public LocalDate getRoleGueltigAb() {
+		return roleGueltigAb;
+	}
+
+	public void setRoleGueltigAb(@Nullable LocalDate roleGueltigAb) {
+		this.roleGueltigAb = roleGueltigAb;
 	}
 
 	public Mandant getMandant() {
