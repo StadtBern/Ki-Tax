@@ -28,7 +28,7 @@ mit Flexlayout wieder korrigiert. Grund ist, dass beim druecken von Enter in ein
         <span ng-bind="vm.getPreviousButtonName()" hide-xs></span>
         <span class="fa fa-angle-left" hide-gt-xs style="font-size: 2rem; height:unset; line-height: 4rem;"></span>
     </dv-loading-button>
-    <dv-loading-button ng-if="vm.doesCancelExist()" button-click="vm.cancel()" button-class="cancel" type="reset" aria-label="{{'CANCEL' | translate}}">
+    <dv-loading-button ng-if="vm.doesCancelExist()" button-click="vm.cancel()" button-class="cancel-button" type="reset" aria-label="{{'CANCEL' | translate}}">
         <span data-translate="ABBRECHEN_UPPER"></span>
     </dv-loading-button>
 </div>
