@@ -299,61 +299,25 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		List<InputStream> docsToMerge = new ArrayList<>();
 
 		// Begleitschreiben
-		final String begleitschreibenFilename = DokumenteUtil.getFileNameForGeneratedDokumentTyp(
-			GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getJahrAndFallnummer());
-		WriteProtectedDokument begleitschreiben = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), begleitschreibenFilename, false);
-		if (begleitschreiben != null) {
-			Path filePath = Paths.get(begleitschreiben.getFilepfad());
-			try {
-				byte[] begleitschreibenBytes = Files.readAllBytes(filePath);
-				docsToMerge.add(new ByteArrayInputStream(begleitschreibenBytes));
-			} catch (Exception e) {
-				throw new MergeDocException("getKompletteKorrespondenz", "Begleitschreiben kann nicht gelesen werden", e);
-			}
+		byte[] begleitschreiben = readFileIfExists(GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getJahrAndFallnummer(), gesuch);
+		if (begleitschreiben.length > 0) {
+			docsToMerge.add(new ByteArrayInputStream(begleitschreiben));
 		}
-
 		// FinanzielleSituation
-		final String finanzielleSituationFilename = DokumenteUtil.getFileNameForGeneratedDokumentTyp(
-			GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch.getJahrAndFallnummer());
-		WriteProtectedDokument finanzielleSituation = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), finanzielleSituationFilename, false);
-		if (finanzielleSituation != null) {
-			Path filePath = Paths.get(finanzielleSituation.getFilepfad());
-			try {
-				byte[] finanzielleSituationBytes = Files.readAllBytes(filePath);
-				docsToMerge.add(new ByteArrayInputStream(finanzielleSituationBytes));
-			} catch (Exception e) {
-				throw new MergeDocException("getKompletteKorrespondenz", "FinanzielleSituation kann nicht gelesen werden", e);
-			}
+		byte[] finanzielleSituation = readFileIfExists(GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch.getJahrAndFallnummer(), gesuch);
+		if (finanzielleSituation.length > 0) {
+			docsToMerge.add(new ByteArrayInputStream(finanzielleSituation));
 		}
-
 		// Betreuungen
 		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
-
 			// Verfuegt
-			final String verfuegungFilename = DokumenteUtil.getFileNameForGeneratedDokumentTyp(
-				GeneratedDokumentTyp.VERFUEGUNG, betreuung.getBGNummer());
-			WriteProtectedDokument verfuegung = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), verfuegungFilename, false);
-			if (verfuegung != null) {
-				Path filePath = Paths.get(verfuegung.getFilepfad());
-				try {
-					byte[] verfuegungBytes = Files.readAllBytes(filePath);
-					docsToMerge.add(new ByteArrayInputStream(verfuegungBytes));
-				} catch (Exception e) {
-					throw new MergeDocException("getKompletteKorrespondenz", "Verfuegung kann nicht gelesen werden", e);
-				}
+			byte[] verfuegung = readFileIfExists(GeneratedDokumentTyp.VERFUEGUNG, betreuung.getBGNummer(), gesuch);
+			if (verfuegung.length > 0) {
+				docsToMerge.add(new ByteArrayInputStream(verfuegung));
 			} else {
-				// Nicht eingetreten
-				final String nichtEintretenFilename = DokumenteUtil.getFileNameForGeneratedDokumentTyp(
-					GeneratedDokumentTyp.NICHTEINTRETEN, betreuung.getBGNummer());
-				WriteProtectedDokument nichtEintreten = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), nichtEintretenFilename, false);
-				if (nichtEintreten != null) {
-					Path filePath = Paths.get(nichtEintreten.getFilepfad());
-					try {
-						byte[] nichtEintretenBytes = Files.readAllBytes(filePath);
-						docsToMerge.add(new ByteArrayInputStream(nichtEintretenBytes));
-					} catch (Exception e) {
-						throw new MergeDocException("getKompletteKorrespondenz", "NichtEintretensVerfuegung kann nicht gelesen werden", e);
-					}
+				byte[] nichtEintreten = readFileIfExists(GeneratedDokumentTyp.NICHTEINTRETEN, betreuung.getBGNummer(), gesuch);
+				if (nichtEintreten.length > 0) {
+					docsToMerge.add(new ByteArrayInputStream(nichtEintreten));
 				}
 			}
 		}
@@ -369,6 +333,21 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			"KompletteKorrespondenz", false);
 
 		return document;
+	}
+
+	@Nonnull
+	private byte[] readFileIfExists(GeneratedDokumentTyp dokumentTyp, String identification, Gesuch gesuch) throws MergeDocException {
+		final String filename = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, identification);
+		WriteProtectedDokument dokument = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), filename, false);
+		if (dokument != null) {
+			Path filePath = Paths.get(dokument.getFilepfad());
+			try {
+				return Files.readAllBytes(filePath);
+			} catch (Exception e) {
+				throw new MergeDocException("readFileIfExists", dokumentTyp + " kann nicht gelesen werden", e);
+			}
+		}
+		return new byte[0];
 	}
 
 	@Override
