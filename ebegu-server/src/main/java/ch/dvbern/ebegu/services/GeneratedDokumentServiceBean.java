@@ -304,9 +304,11 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			docsToMerge.add(new ByteArrayInputStream(begleitschreiben));
 		}
 		// FinanzielleSituation
-		byte[] finanzielleSituation = readFileIfExists(GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch.getJahrAndFallnummer(), gesuch);
-		if (finanzielleSituation.length > 0) {
-			docsToMerge.add(new ByteArrayInputStream(finanzielleSituation));
+		if (gesuch.isHasFSDokument()) {
+			byte[] finanzielleSituation = readFileIfExists(GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch.getJahrAndFallnummer(), gesuch);
+			if (finanzielleSituation.length > 0) {
+				docsToMerge.add(new ByteArrayInputStream(finanzielleSituation));
+			}
 		}
 		// Betreuungen
 		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
