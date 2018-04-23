@@ -211,7 +211,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public isKompletteKorrespondenzVisible(): boolean {
         let status = this.getAntragStatus();
-        return isAnyStatusOfVerfuegt(status);
+        return this.isBegleitschreibenVisible() && isAnyStatusOfVerfuegt(status);
     }
 
     private getAntragStatus(): TSAntragStatus {
