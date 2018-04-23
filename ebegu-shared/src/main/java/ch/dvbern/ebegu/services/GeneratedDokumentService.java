@@ -31,7 +31,6 @@ import ch.dvbern.ebegu.entities.Pain001Dokument;
 import ch.dvbern.ebegu.entities.WriteProtectedDokument;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
-import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.errors.MergeDocException;
 
 /**
@@ -58,6 +57,8 @@ public interface GeneratedDokumentService {
 		Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
 
 	WriteProtectedDokument getBegleitschreibenDokument(Gesuch gesuch) throws MimeTypeParseException, MergeDocException;
+
+	WriteProtectedDokument getKompletteKorrespondenz(Gesuch gesuch) throws MimeTypeParseException, MergeDocException;
 
 	WriteProtectedDokument getFreigabequittungAccessTokenGeneratedDokument(Gesuch gesuch,
 		Boolean forceCreation) throws MimeTypeParseException, MergeDocException;

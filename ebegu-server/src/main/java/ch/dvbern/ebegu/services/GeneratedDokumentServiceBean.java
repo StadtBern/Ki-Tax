@@ -15,8 +15,12 @@
 
 package ch.dvbern.ebegu.services;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -71,10 +75,12 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
+import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import ch.dvbern.oss.lib.iso20022.pain001.v00103ch02.AuszahlungDTO;
 import ch.dvbern.oss.lib.iso20022.pain001.v00103ch02.Pain001DTO;
 import ch.dvbern.oss.lib.iso20022.pain001.v00103ch02.Pain001Service;
+import com.lowagie.text.DocumentException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -284,6 +290,84 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			document = saveGeneratedDokumentInDB(data, GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch,
 				fileNameForGeneratedDokumentTyp, writeProtectPDF);
 		}
+		return document;
+	}
+
+	@Override
+	public WriteProtectedDokument getKompletteKorrespondenz(final Gesuch gesuch) throws MimeTypeParseException, MergeDocException {
+
+		List<InputStream> docsToMerge = new ArrayList<>();
+
+		// Begleitschreiben
+		final String begleitschreibenFilename = DokumenteUtil.getFileNameForGeneratedDokumentTyp(
+			GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getJahrAndFallnummer());
+		WriteProtectedDokument begleitschreiben = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), begleitschreibenFilename, false);
+		if (begleitschreiben != null) {
+			Path filePath = Paths.get(begleitschreiben.getFilepfad());
+			try {
+				byte[] begleitschreibenBytes = Files.readAllBytes(filePath);
+				docsToMerge.add(new ByteArrayInputStream(begleitschreibenBytes));
+			} catch (Exception e) {
+				throw new MergeDocException("getKompletteKorrespondenz", "Begleitschreiben kann nicht gelesen werden", e);
+			}
+		}
+
+		// FinanzielleSituation
+		final String finanzielleSituationFilename = DokumenteUtil.getFileNameForGeneratedDokumentTyp(
+			GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch.getJahrAndFallnummer());
+		WriteProtectedDokument finanzielleSituation = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), finanzielleSituationFilename, false);
+		if (finanzielleSituation != null) {
+			Path filePath = Paths.get(finanzielleSituation.getFilepfad());
+			try {
+				byte[] finanzielleSituationBytes = Files.readAllBytes(filePath);
+				docsToMerge.add(new ByteArrayInputStream(finanzielleSituationBytes));
+			} catch (Exception e) {
+				throw new MergeDocException("getKompletteKorrespondenz", "FinanzielleSituation kann nicht gelesen werden", e);
+			}
+		}
+
+		// Betreuungen
+		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
+
+			// Verfuegt
+			final String verfuegungFilename = DokumenteUtil.getFileNameForGeneratedDokumentTyp(
+				GeneratedDokumentTyp.VERFUEGUNG, betreuung.getBGNummer());
+			WriteProtectedDokument verfuegung = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), verfuegungFilename, false);
+			if (verfuegung != null) {
+				Path filePath = Paths.get(verfuegung.getFilepfad());
+				try {
+					byte[] verfuegungBytes = Files.readAllBytes(filePath);
+					docsToMerge.add(new ByteArrayInputStream(verfuegungBytes));
+				} catch (Exception e) {
+					throw new MergeDocException("getKompletteKorrespondenz", "Verfuegung kann nicht gelesen werden", e);
+				}
+			} else {
+				// Nicht eingetreten
+				final String nichtEintretenFilename = DokumenteUtil.getFileNameForGeneratedDokumentTyp(
+					GeneratedDokumentTyp.NICHTEINTRETEN, betreuung.getBGNummer());
+				WriteProtectedDokument nichtEintreten = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), nichtEintretenFilename, false);
+				if (nichtEintreten != null) {
+					Path filePath = Paths.get(nichtEintreten.getFilepfad());
+					try {
+						byte[] nichtEintretenBytes = Files.readAllBytes(filePath);
+						docsToMerge.add(new ByteArrayInputStream(nichtEintretenBytes));
+					} catch (Exception e) {
+						throw new MergeDocException("getKompletteKorrespondenz", "NichtEintretensVerfuegung kann nicht gelesen werden", e);
+					}
+				}
+			}
+		}
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			GeneratePDFDocumentHelper.doMerge(docsToMerge, baos);
+		} catch (DocumentException | IOException e) {
+			throw new MergeDocException("getKompletteKorrespondenz", "Dokumente konnten nicht gemergt werden", e);
+		}
+
+		WriteProtectedDokument document = saveGeneratedDokumentInDB(baos.toByteArray(), GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch,
+			"KompletteKorrespondenz", false);
+
 		return document;
 	}
 

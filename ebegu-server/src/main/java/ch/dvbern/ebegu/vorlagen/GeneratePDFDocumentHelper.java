@@ -19,9 +19,12 @@ import java.awt.color.ICC_Profile;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -30,6 +33,7 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 import com.google.common.io.ByteStreams;
+import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
@@ -38,6 +42,7 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfDictionary;
 import com.lowagie.text.pdf.PdfDocument;
 import com.lowagie.text.pdf.PdfGState;
+import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfLayer;
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfObject;
@@ -283,5 +288,34 @@ public class GeneratePDFDocumentHelper {
 
 		final ICC_Profile icc = ICC_Profile.getInstance(this.getClass().getResourceAsStream("/font/sRGB.profile"));
 		pdfWriter.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+	}
+
+	/**
+	 * Merge multiple pdf into one pdf
+	 *
+	 * @param list  of pdf input stream
+	 * @param outputStream output file output stream
+	 */
+	public static void doMerge(List<InputStream> list, OutputStream outputStream) throws DocumentException, IOException {
+		Document document = new Document();
+		PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+		document.open();
+		PdfContentByte cb = writer.getDirectContent();
+
+		for (InputStream in : list) {
+			PdfReader reader = new PdfReader(in);
+			for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+				//import the page from source pdf
+				PdfImportedPage page = writer.getImportedPage(reader, i);
+				//add the page to the destination pdf
+				document.setPageSize(page.getBoundingBox());
+				document.newPage();
+				cb.addTemplate(page, 0, 0);
+			}
+		}
+
+		outputStream.flush();
+		document.close();
+		outputStream.close();
 	}
 }
