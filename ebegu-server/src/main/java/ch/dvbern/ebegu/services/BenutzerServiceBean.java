@@ -266,7 +266,8 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		boolean institutionChanged = benutzerFromDB.getInstitution() != null && !benutzerFromDB.getInstitution().equals(institution);
 		boolean traegerschaftChanged = benutzerFromDB.getTraegerschaft() != null && !benutzerFromDB.getTraegerschaft().equals(traegerschaft);
 
-		if (benutzerFromDB.getRole() != userRole || institutionChanged || traegerschaftChanged) {
+		// Ausloggen nur, wenn die Änderungen nicht in der Zukunft liegen! Falls dies der Fall ist, wird der Timer das ausloggen übernehmen
+		if (roleGueltigBis != null && (benutzerFromDB.getRole() != userRole || institutionChanged || traegerschaftChanged)) {
 			// Die AuthorisiertenBenutzer müssen gelöscht werden
 			logoutAndDeleteAuthorisierteBenutzerForUser(username);
 		}
