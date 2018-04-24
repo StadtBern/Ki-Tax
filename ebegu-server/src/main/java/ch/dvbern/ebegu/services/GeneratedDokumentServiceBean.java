@@ -104,6 +104,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class GeneratedDokumentServiceBean extends AbstractBaseService implements GeneratedDokumentService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeneratedDokumentServiceBean.class.getSimpleName());
+	public static final byte[] EMPTY_BYTES = new byte[0];
 
 	@Inject
 	private Persistence persistence;
@@ -313,10 +314,13 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		// Betreuungen
 		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
 			// Verfuegt
-			byte[] verfuegung = readFileIfExists(GeneratedDokumentTyp.VERFUEGUNG, betreuung.getBGNummer(), gesuch);
-			if (verfuegung.length > 0) {
-				docsToMerge.add(new ByteArrayInputStream(verfuegung));
-			} else {
+			if (betreuung.getBetreuungsstatus() == Betreuungsstatus.VERFUEGT) {
+				byte[] verfuegung = readFileIfExists(GeneratedDokumentTyp.VERFUEGUNG, betreuung.getBGNummer(), gesuch);
+				if (verfuegung.length > 0) {
+					docsToMerge.add(new ByteArrayInputStream(verfuegung));
+				}
+			}
+			else if (betreuung.getBetreuungsstatus() == Betreuungsstatus.NICHT_EINGETRETEN) {
 				byte[] nichtEintreten = readFileIfExists(GeneratedDokumentTyp.NICHTEINTRETEN, betreuung.getBGNummer(), gesuch);
 				if (nichtEintreten.length > 0) {
 					docsToMerge.add(new ByteArrayInputStream(nichtEintreten));
@@ -349,7 +353,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				throw new MergeDocException("readFileIfExists", dokumentTyp + " kann nicht gelesen werden", e);
 			}
 		}
-		return new byte[0];
+		return EMPTY_BYTES;
 	}
 
 	@Override

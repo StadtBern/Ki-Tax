@@ -112,7 +112,7 @@ public class VerfuegungResource {
 	public Response calculateVerfuegung(
 		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchstellerId,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchstellerId.getId());
 
@@ -164,7 +164,7 @@ public class VerfuegungResource {
 		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchId,
 		@Nonnull @NotNull @PathParam("betreuungId") JaxId betreuungId,
 		@Nonnull @NotNull @PathParam("ignorieren") Boolean ignorieren,
-		@Nonnull @NotNull @Valid JaxVerfuegung verfuegungJAXP) throws EbeguException {
+		@Nonnull @NotNull @Valid JaxVerfuegung verfuegungJAXP) {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
 		if (gesuch.isPresent()) {
@@ -186,14 +186,14 @@ public class VerfuegungResource {
 		throw new EbeguEntityNotFoundException("saveVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}
 
-	@ApiOperation(value = "Schliesst eine Betreuung ab, ohne sie zu verfuegen", response = Void.class)
+	@ApiOperation("Schliesst eine Betreuung ab, ohne sie zu verfuegen")
 	@Nullable
 	@POST
 	@Path("/schliessenOhneVerfuegen/{betreuungId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response verfuegungSchliessenOhneVerfuegen(
-		@Nonnull @NotNull @PathParam("betreuungId") JaxId betreuungId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("betreuungId") JaxId betreuungId) {
 
 		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungId.getId());
 		if (betreuung.isPresent()) {
@@ -211,7 +211,7 @@ public class VerfuegungResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxVerfuegung schliessenNichtEintreten(
 		@Nonnull @NotNull @PathParam("betreuungId") JaxId betreuungId,
-		@Nonnull @NotNull @Valid JaxVerfuegung verfuegungJAXP) throws EbeguException {
+		@Nonnull @NotNull @Valid JaxVerfuegung verfuegungJAXP) {
 
 		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungId.getId());
 		if (betreuung.isPresent()) {

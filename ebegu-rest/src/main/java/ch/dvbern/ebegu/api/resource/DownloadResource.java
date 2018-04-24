@@ -81,6 +81,8 @@ import io.swagger.annotations.ApiOperation;
 
 /**
  * REST Resource fuer den Download von Dokumenten
+ *
+ * Die Services muessen gross geschrieben werden, da es aus dem Client so kommt, weil wir dort ein Enum brauchen.
  */
 @SuppressWarnings("InstanceMethodNamingConvention")
 @Path("blobs/temp")
@@ -463,8 +465,7 @@ public class DownloadResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDokumentAccessTokenVerfuegungExport(
 		@Nonnull @Valid @PathParam("betreuungId") JaxId jaxBetreuungId,
-		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException,
-		IOException, MimeTypeParseException, MergeDocException {
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException {
 		Validate.notNull(jaxBetreuungId);
 		String ip = getIP(request);
 
@@ -482,7 +483,7 @@ public class DownloadResource {
 	@Produces(MediaType.WILDCARD)
 	public Response getPain001AccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("zahlungsauftragId") JaxId jaxId,
-		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, MimeTypeParseException {
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MimeTypeParseException {
 
 		Validate.notNull(jaxId.getId());
 		String ip = getIP(request);

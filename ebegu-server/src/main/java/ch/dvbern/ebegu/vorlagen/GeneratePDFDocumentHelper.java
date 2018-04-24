@@ -64,6 +64,7 @@ public class GeneratePDFDocumentHelper {
 	private static final String NUMOFPAGES = "#MAX";
 	private static final String PROP_STANDARD_ANZAHL_SEITEN = "expectedNumberOfPages";
 	private static final String PROP_SKIP_BREAKS_AFTER_ANZAHL_SEITEN = "skipBreaksAfterNumPages";
+	public static final Objects[] OBJECTS = {};
 
 	/**
 	 * Konvertiert ein docx zu einem PDF
@@ -84,7 +85,7 @@ public class GeneratePDFDocumentHelper {
 
 			return manipulatePdf(out.toByteArray());
 		} catch (IOException | InvocationTargetException | DocumentException | IllegalAccessException | NoSuchMethodException e) {
-			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[] {});
+			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, OBJECTS);
 		}
 	}
 
@@ -103,8 +104,8 @@ public class GeneratePDFDocumentHelper {
 
 			byte[] mergedDocx = docxme.getDocument(new ByteArrayInputStream(docxTemplate), mergeSource);
 			//save(mergedDocx);
-			byte[] mergedPdfv1, mergedPdfv2, mergedPdfResult;
-			mergedPdfv1 = generatePDFDocument(mergedDocx);
+			byte[] mergedPdfv1 = generatePDFDocument(mergedDocx);
+
 			PdfReader reader = new PdfReader(mergedPdfv1);
 			int numOfPDFv1Pages = reader.getNumberOfPages();
 			reader.close();
@@ -116,7 +117,7 @@ public class GeneratePDFDocumentHelper {
 					.getProperty(PROP_STANDARD_ANZAHL_SEITEN).getI4();
 			}
 
-			mergedPdfv2 = generatePDFDocument(mergedDocx);
+			byte[] mergedPdfv2 = generatePDFDocument(mergedDocx);
 
 			if (expectedNumOfDOCXPages > 0 && expectedNumOfDOCXPages != numOfPDFv1Pages) {
 				mergeSource.setPDFLongerThanExpected(true);
@@ -133,7 +134,8 @@ public class GeneratePDFDocumentHelper {
 				skipBreaksAfterNumPages = document.getProperties().getCustomProperties()
 					.getProperty(PROP_SKIP_BREAKS_AFTER_ANZAHL_SEITEN).getI4();
 			}
-			mergedPdfResult = skipBreaksAfterNumPages > 0 && skipBreaksAfterNumPages < numOfPDFv2Pages ? mergedPdfv1 : mergedPdfv2;
+
+			byte[] mergedPdfResult = skipBreaksAfterNumPages > 0 && skipBreaksAfterNumPages < numOfPDFv2Pages ? mergedPdfv1 : mergedPdfv2;
 
 			if (!writeProtected) {
 				mergedPdfResult = addDraftWatermark(mergedPdfResult);
@@ -141,7 +143,7 @@ public class GeneratePDFDocumentHelper {
 
 			return mergedPdfResult;
 		} catch (IOException | DocTemplateException | DocumentException e) {
-			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[] {});
+			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, OBJECTS);
 		}
 	}
 
@@ -149,7 +151,7 @@ public class GeneratePDFDocumentHelper {
 	 * Speichert das Zwischenresultat der PDF Generierung (Word mit ersetzten Tags)
 	 * im Temp-Folder. Zum Debuggen.
 	 */
-	@SuppressWarnings(value = { "PMD.UnusedPrivateMethod", "UPM_UNCALLED_PRIVATE_METHOD", "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" })
+	@SuppressWarnings({ "PMD.UnusedPrivateMethod", "UPM_UNCALLED_PRIVATE_METHOD", "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" })
 	//	private boolean save(byte[] content) {
 	//		UUID uuid = UUID.randomUUID();
 	//		String tempDir = System.getProperty("java.io.tmpdir");
@@ -215,13 +217,9 @@ public class GeneratePDFDocumentHelper {
 
 	private byte[] addDraftWatermark(byte[] orginalPDF) throws IOException, DocumentException {
 
-		PdfReader pdfReader = null;
-		ByteArrayOutputStream outputStream = null;
-		PdfStamper pdfStamper = null;
-
-		pdfReader = new PdfReader(orginalPDF);
-		outputStream = new ByteArrayOutputStream();
-		pdfStamper = new PdfStamper(pdfReader, outputStream);
+		PdfReader pdfReader = new PdfReader(orginalPDF);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		PdfStamper pdfStamper = new PdfStamper(pdfReader, outputStream);
 
 		PdfLayer layer = new PdfLayer("watermark", pdfStamper.getWriter());
 
@@ -270,7 +268,7 @@ public class GeneratePDFDocumentHelper {
 	 * Zusätlich zu die Fonts, soll auch das Color Profil im PDF.Dictionnary addiert werden.
 	 */
 	@SuppressWarnings("PMD.AvoidCatchingNPE")
-	@SuppressFBWarnings(value = "UI_INHERITANCE_UNSAFE_GETRESOURCE")
+	@SuppressFBWarnings("UI_INHERITANCE_UNSAFE_GETRESOURCE")
 	private void setColorProfile(@Nonnull PdfWriter pdfWriter) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
 
 		pdfWriter.setDefaultColorspace(PdfName.DEFAULTRGB, null);

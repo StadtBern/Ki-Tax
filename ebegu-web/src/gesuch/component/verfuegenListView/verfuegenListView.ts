@@ -518,7 +518,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             })
             .catch((ex) => {
                 win.close();
-                this.$log.error('An error occurred downloading the document, closing download window.');
+                this.$log.error('An error occurred downloading the document, closing download window.', ex);
             });
     }
 
