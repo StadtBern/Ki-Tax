@@ -13,76 +13,88 @@
   ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div class="dv-benutzer adminModul row col-md-8 col-md-offset-2">
+<div class="dv-benutzer adminModul">
     <form role="form" name="vm.form" class="" unsaved-warning-form novalidate>
 
         <fieldset>
-            <div class="row col-md-12">
-                <div class="viewTitle marginBottom20">
+            <div class="row">
+                <div class="viewTitle marginBottom20 col-md-12">
                     <h1 data-translate="BENUTZER_DETAIL"
                         data-translate-value-name="{{vm.selectedUser.nachname}}"
                         data-translate-value-vorname="{{vm.selectedUser.vorname}}"></h1>
                     <hr class="header"/>
                 </div>
-
-                <!-- Mandant -->
-                <div class="row" dv-display-element dv-display-allowed-roles="['SUPER_ADMIN']">
-                    <dv-input-container class="form-group col-md-6">
+            </div>
+            <!-- Mandant -->
+            <div class="row" dv-display-element dv-display-allowed-roles="['SUPER_ADMIN']">
+                <div class="col-sm-12 dv-input-container-medium">
+                    <dv-input-container class="form-group">
                         <label class="md-no-float" data-translate="MANDANT" for="mandant_ID"></label>
                         <input id="mandant_ID" type="text" name="mandant" ng-model="vm.selectedUser.mandant.name"
                                class="form-control" required ng-disabled="true">
                         <dv-error-messages for="vm.form.mandant.$error" class="error"></dv-error-messages>
                     </dv-input-container>
                 </div>
-                <!-- Username -->
-                <div class="row">
-                    <dv-input-container class="form-group col-md-6">
+            </div>
+            <!-- Username -->
+            <div class="row">
+                <div class="col-sm-12 dv-input-container-medium">
+                    <dv-input-container class="form-group">
                         <label class="md-no-float" data-translate="USERNAME" for="username_ID"></label>
                         <input id="username_ID" type="text" name="username" ng-model="vm.selectedUser.username"
                                class="form-control" required ng-disabled="true">
                         <dv-error-messages for="vm.form.username.$error" class="error"></dv-error-messages>
                     </dv-input-container>
                 </div>
-                <!-- Name / Vorname -->
-                <div class="row">
-                    <dv-input-container class="form-group col-md-6">
+            </div>
+            <!-- Name / Vorname -->
+            <div class="row">
+                <div class="col-sm-12 dv-input-container-medium">
+                    <dv-input-container class="form-group">
                         <label class="md-no-float" data-translate="NACHNAME" for="nachname_ID"></label>
                         <input id="nachname_ID" type="text" name="nachname" ng-model="vm.selectedUser.nachname"
                                class="form-control" required ng-disabled="true">
                         <dv-error-messages for="vm.form.nachname.$error" class="error"></dv-error-messages>
                     </dv-input-container>
-                    <dv-input-container class="form-group col-md-6">
+                </div>
+                <div class="col-sm-12 dv-input-container-medium">
+                    <dv-input-container class="form-group">
                         <label class="md-no-float" data-translate="VORNAME" for="vorname_ID"></label>
                         <input id="vorname_ID" type="text" name="vorname" ng-model="vm.selectedUser.vorname"
                                class="form-control" required ng-disabled="true">
                         <dv-error-messages for="vm.form.name.$error" class="error"></dv-error-messages>
                     </dv-input-container>
                 </div>
-                <!-- E-Mail -->
-                <div class="row">
-                    <dv-input-container class="form-group col-md-6">
+            </div>
+            <!-- E-Mail -->
+            <div class="row">
+                <div class="col-sm-12 dv-input-container-medium">
+                    <dv-input-container class="form-group">
                         <label class="md-no-float" data-translate="EMAIL" for="email_ID"></label>
                         <input id="email_ID" type="text" name="email" ng-model="vm.selectedUser.email"
                                class="form-control" required ng-disabled="true">
                         <dv-error-messages for="vm.form.email.$error" class="error"></dv-error-messages>
                     </dv-input-container>
                 </div>
+            </div>
 
-                <!-- Warnung, wenn gesperrt -->
-                <div class="row">
-                    <div class="col-md-12" ng-if="vm.selectedUser.gesperrt">
-                        <div class="well well-status-warten">
-                            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                            <span data-translate="BENUTZER_GESPERRT_INFO"></span>
-                        </div>
+            <!-- Warnung, wenn gesperrt -->
+            <div class="row">
+                <div class="col-md-12" ng-if="vm.selectedUser.gesperrt">
+                    <div class="well well-status-warten">
+                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                        <span data-translate="BENUTZER_GESPERRT_INFO"></span>
                     </div>
                 </div>
+            </div>
 
+            <!-- Rolle -->
+            <div class="row">
                 <!-- Rolle -->
-                <div class="row">
-                    <!-- Rolle -->
-                    <div class="col-sm-12 dv-input-container-medium form-group">
-                        <label class="md-no-float required" data-translate="ROLLE" for="rolle"></label>
+                <div class="col-sm-12 dv-input-container-medium">
+                    <div class="form-group">
+                        <label class="md-no-float required  dv-benutzer-label" data-translate="ROLLE"
+                               for="rolle"></label>
                         <div class="dv-select-style">
                             <select aria-describedby="rolle-error" name="role" id="rolle"
                                     class="form-control" ng-required="true"
@@ -92,109 +104,115 @@
                             <dv-error-messages input-id="rolle" for="vm.form.rolle.$error"></dv-error-messages>
                         </div>
                     </div>
-                    <!-- Gueltig bis -->
-                    <div class="col-sm-12 dv-input-container-small">
-                        <dv-input-container class="form-group" ng-if="vm.showGueltigBis()">
-                            <!--suppress XmlInvalidId -->
-                            <label class="md-no-float" data-translate="ROLLE_GUELTIG_BIS" for="roleGueltigBis"></label>
-                            <dv-datepicker input-id="roleGueltigBis" input-name="roleGueltigBis" name="roleGueltigBis"
-                                           ng-model="vm.selectedUser.roleGueltigBis" ng-required="vm.checkRolleBeenden"
-                                           class="input-element" ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}"
-                                           dv-min-date="vm.minDate">
-                            </dv-datepicker>
-                            <dv-error-messages input-id="roleGueltigBis" for="vm.form.roleGueltigBis.$error" class="error"></dv-error-messages>
-                        </dv-input-container>
-                    </div>
                 </div>
-                <!-- Checkbox zum Rolle beenden -->
-                <div class="row" ng-if="vm.showRolleBeenden()">
-                    <div class="col-xs-12 dv-input-container-question">
-                        <div class="checkbox">
-                            <md-checkbox ng-model="vm.checkRolleBeenden" name="checkRolleBeenden" id="checkRolleBeenden"
-                                         aria-label="{{'ROLLE_BEENDEN'|translate}}">
-                                <span data-translate="ROLLE_BEENDEN"></span>
-                            </md-checkbox>
-                            <dv-error-messages for="vm.form.checkRolleBeenden.$error" class="error" style=""></dv-error-messages>
-                        </div>
-                    </div>
-                </div>
-				<!-- Warnung, wenn Rolle beendet -->
-                <div class="row">
-                    <div class="col-md-12" ng-if="vm.checkRolleBeenden">
-                        <div class="well well-status-warten">
-                            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                            <span data-translate="ROLLE_BEENDET_INFO"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Institution -->
-                <div class="row" ng-if="vm.showInstitutionenList()">
-                    <dv-input-container class="col-sm-12 dv-input-container-medium form-group">
-                        <label class="md-no-float required" data-translate="INSTITUTION" for="institution"></label>
-                        <div class="dv-select-style">
-                            <select aria-describedby="institution-error" name="institution" id="institution"
-                                    class="form-control" ng-required="vm.showInstitutionenList()"
-                                    ng-model="vm.selectedUser.institution.id"
-                                    ng-options="institution.id as institution.name for institution in vm.institutionenList | orderBy: 'institution.name'">
-                            </select>
-                            <dv-error-messages input-id="institution" for="vm.form.institution.$error"></dv-error-messages>
-                        </div>
+                <!-- Gueltig bis -->
+                <div class="col-sm-12 dv-input-container-small">
+                    <dv-input-container class="form-group" ng-if="vm.showGueltigBis()">
+                        <!--suppress XmlInvalidId -->
+                        <label class="md-no-float" data-translate="ROLLE_GUELTIG_BIS" for="roleGueltigBis"></label>
+                        <dv-datepicker input-id="roleGueltigBis" input-name="roleGueltigBis" name="roleGueltigBis"
+                                       ng-model="vm.selectedUser.roleGueltigBis" ng-required="vm.checkRolleBeenden"
+                                       class="input-element"
+                                       ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}"
+                                       dv-min-date="vm.minDate">
+                        </dv-datepicker>
+                        <dv-error-messages input-id="roleGueltigBis" for="vm.form.roleGueltigBis.$error"
+                                           class="error"></dv-error-messages>
                     </dv-input-container>
                 </div>
-                <!-- Traegerschaft -->
-                <div class="row"
-                     ng-if="vm.showTraegerschaftenList()">
-                    <dv-input-container class="col-sm-12 dv-input-container-medium form-group">
-                        <label class="md-no-float required" data-translate="TRAEGERSCHAFT" for="traegerschaft"></label>
-                        <div class="dv-select-style">
-                            <select aria-describedby="traegerschaft-error" name="traegerschaft" id="traegerschaft"
-                                    class="form-control" ng-required="vm.showTraegerschaftenList()"
-                                    ng-model="vm.selectedUser.traegerschaft.id"
-                                    ng-options="traegerschaft.id as traegerschaft.name for traegerschaft in vm.traegerschaftenList | orderBy: 'traegerschaft.name'">
-                            </select>
-                            <dv-error-messages input-id="traegerschaft" for="vm.form.traegerschaft.$error"></dv-error-messages>
-                        </div>
-                    </dv-input-container>
+            </div>
+            <!-- Checkbox zum Rolle beenden -->
+            <div class="row" ng-if="vm.showRolleBeenden()">
+                <div class="col-sm-12 dv-input-container-medium">
+                    <div class="checkbox">
+                        <md-checkbox ng-model="vm.checkRolleBeenden" name="checkRolleBeenden" id="checkRolleBeenden"
+                                     aria-label="{{'ROLLE_BEENDEN'|translate}}">
+                            <span data-translate="ROLLE_BEENDEN"></span>
+                        </md-checkbox>
+                        <dv-error-messages for="vm.form.checkRolleBeenden.$error" class="error"
+                                           style=""></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+            <!-- Warnung, wenn Rolle beendet -->
+            <div class="row">
+                <div class="col-md-12" ng-if="vm.checkRolleBeenden">
+                    <div class="well well-status-warten">
+                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                        <span data-translate="ROLLE_BEENDET_INFO"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Institution -->
+            <div class="row" ng-if="vm.showInstitutionenList()">
+                <dv-input-container class="col-sm-12 dv-input-container-medium form-group">
+                    <label class="md-no-float required" data-translate="INSTITUTION" for="institution"></label>
+                    <div class="dv-select-style">
+                        <select aria-describedby="institution-error" name="institution" id="institution"
+                                class="form-control" ng-required="vm.showInstitutionenList()"
+                                ng-model="vm.selectedUser.institution.id"
+                                ng-options="institution.id as institution.name for institution in vm.institutionenList | orderBy: 'institution.name'">
+                        </select>
+                        <dv-error-messages input-id="institution"
+                                           for="vm.form.institution.$error"></dv-error-messages>
+                    </div>
+                </dv-input-container>
+            </div>
+            <!-- Traegerschaft -->
+            <div class="row"
+                 ng-if="vm.showTraegerschaftenList()">
+                <dv-input-container class="col-sm-12 dv-input-container-medium form-group">
+                    <label class="md-no-float required" data-translate="TRAEGERSCHAFT" for="traegerschaft"></label>
+                    <div class="dv-select-style">
+                        <select aria-describedby="traegerschaft-error" name="traegerschaft" id="traegerschaft"
+                                class="form-control" ng-required="vm.showTraegerschaftenList()"
+                                ng-model="vm.selectedUser.traegerschaft.id"
+                                ng-options="traegerschaft.id as traegerschaft.name for traegerschaft in vm.traegerschaftenList | orderBy: 'traegerschaft.name'">
+                        </select>
+                        <dv-error-messages input-id="traegerschaft"
+                                           for="vm.form.traegerschaft.$error"></dv-error-messages>
+                    </div>
+                </dv-input-container>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-row dv-input-container-medium">
+
+                    <dv-loading-button type="submit"
+                                       button-click="vm.saveBenutzer()"
+                                       button-class="">
+                        <span data-translate="BENUTZER_SAVE"></span>
+                    </dv-loading-button>
+
+
+                <div ng-show="!vm.selectedUser.gesperrt">
+                    <dv-loading-button type="submit"
+                                       button-click="vm.inactivateBenutzer()"
+                                       button-class="cancel-button">
+                        <span data-translate="BENUTZER_SPERREN"></span>
+                    </dv-loading-button>
                 </div>
 
-				<!-- Buttons -->
-				<div class="row button-row">
-					<div class="col-sm-2">
-						<dv-loading-button type="submit"
-										   button-click="vm.saveBenutzer()"
-										   button-class="">
-							<span data-translate="BENUTZER_SAVE"></span>
-						</dv-loading-button>
-					</div>
+                <div ng-show="vm.selectedUser.gesperrt">
+                    <dv-loading-button type="submit"
+                                       button-click="vm.reactivateBenutzer()"
+                                       button-class="cancel-button">
+                        <span data-translate="BENUTZER_REAKTIVIEREN"></span>
+                    </dv-loading-button>
+                </div>
 
-					<div class="col-sm-2" ng-show="!vm.selectedUser.gesperrt">
-						<dv-loading-button type="submit"
-										   button-click="vm.inactivateBenutzer()"
-										   button-class="cancel-button">
-							<span data-translate="BENUTZER_SPERREN"></span>
-						</dv-loading-button>
-					</div>
+                <div >
+                    <dv-loading-button type="submit"
+                                       button-click="vm.cancel()"
+                                       button-class="cancel-button">
+                        <span data-translate="CANCEL"></span>
+                    </dv-loading-button>
+                </div>
 
-    				<div class="col-sm-2" ng-show="vm.selectedUser.gesperrt">
-						<dv-loading-button type="submit"
-										   button-click="vm.reactivateBenutzer()"
-										   button-class="cancel-button">
-							<span data-translate="BENUTZER_REAKTIVIEREN"></span>
-						</dv-loading-button>
-					</div>
-
-                    <div class="col-sm-2">
-                        <dv-loading-button type="submit"
-                                           button-click="vm.cancel()"
-                                           button-class="cancel-button">
-                            <span data-translate="CANCEL"></span>
-                        </dv-loading-button>
-                    </div>
-
-				</div>
-			</div>
-
+            </div>
         </fieldset>
+
+
     </form>
 </div>
