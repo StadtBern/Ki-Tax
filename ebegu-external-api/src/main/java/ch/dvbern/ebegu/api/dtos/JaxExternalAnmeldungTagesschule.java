@@ -33,9 +33,6 @@ public class JaxExternalAnmeldungTagesschule extends JaxExternalAnmeldung {
 	@Nonnull
 	private List<JaxExternalModul> anmeldungen;
 
-	//TODO (team) was ist "istRegistriert"?
-	//TODO (team) was ist "bemerkung"?
-
 
 	public JaxExternalAnmeldungTagesschule(
 		@Nonnull String bgNummer,

@@ -19,9 +19,12 @@ import java.awt.color.ICC_Profile;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -30,6 +33,7 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 import com.google.common.io.ByteStreams;
+import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
@@ -38,6 +42,7 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfDictionary;
 import com.lowagie.text.pdf.PdfDocument;
 import com.lowagie.text.pdf.PdfGState;
+import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfLayer;
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfObject;
@@ -59,6 +64,7 @@ public class GeneratePDFDocumentHelper {
 	private static final String NUMOFPAGES = "#MAX";
 	private static final String PROP_STANDARD_ANZAHL_SEITEN = "expectedNumberOfPages";
 	private static final String PROP_SKIP_BREAKS_AFTER_ANZAHL_SEITEN = "skipBreaksAfterNumPages";
+	public static final Objects[] OBJECTS = {};
 
 	/**
 	 * Konvertiert ein docx zu einem PDF
@@ -79,7 +85,7 @@ public class GeneratePDFDocumentHelper {
 
 			return manipulatePdf(out.toByteArray());
 		} catch (IOException | InvocationTargetException | DocumentException | IllegalAccessException | NoSuchMethodException e) {
-			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[] {});
+			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, OBJECTS);
 		}
 	}
 
@@ -98,8 +104,8 @@ public class GeneratePDFDocumentHelper {
 
 			byte[] mergedDocx = docxme.getDocument(new ByteArrayInputStream(docxTemplate), mergeSource);
 			//save(mergedDocx);
-			byte[] mergedPdfv1, mergedPdfv2, mergedPdfResult;
-			mergedPdfv1 = generatePDFDocument(mergedDocx);
+			byte[] mergedPdfv1 = generatePDFDocument(mergedDocx);
+
 			PdfReader reader = new PdfReader(mergedPdfv1);
 			int numOfPDFv1Pages = reader.getNumberOfPages();
 			reader.close();
@@ -111,7 +117,7 @@ public class GeneratePDFDocumentHelper {
 					.getProperty(PROP_STANDARD_ANZAHL_SEITEN).getI4();
 			}
 
-			mergedPdfv2 = generatePDFDocument(mergedDocx);
+			byte[] mergedPdfv2 = generatePDFDocument(mergedDocx);
 
 			if (expectedNumOfDOCXPages > 0 && expectedNumOfDOCXPages != numOfPDFv1Pages) {
 				mergeSource.setPDFLongerThanExpected(true);
@@ -128,7 +134,8 @@ public class GeneratePDFDocumentHelper {
 				skipBreaksAfterNumPages = document.getProperties().getCustomProperties()
 					.getProperty(PROP_SKIP_BREAKS_AFTER_ANZAHL_SEITEN).getI4();
 			}
-			mergedPdfResult = skipBreaksAfterNumPages > 0 && skipBreaksAfterNumPages < numOfPDFv2Pages ? mergedPdfv1 : mergedPdfv2;
+
+			byte[] mergedPdfResult = skipBreaksAfterNumPages > 0 && skipBreaksAfterNumPages < numOfPDFv2Pages ? mergedPdfv1 : mergedPdfv2;
 
 			if (!writeProtected) {
 				mergedPdfResult = addDraftWatermark(mergedPdfResult);
@@ -136,7 +143,7 @@ public class GeneratePDFDocumentHelper {
 
 			return mergedPdfResult;
 		} catch (IOException | DocTemplateException | DocumentException e) {
-			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[] {});
+			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, OBJECTS);
 		}
 	}
 
@@ -144,7 +151,7 @@ public class GeneratePDFDocumentHelper {
 	 * Speichert das Zwischenresultat der PDF Generierung (Word mit ersetzten Tags)
 	 * im Temp-Folder. Zum Debuggen.
 	 */
-	@SuppressWarnings(value = { "PMD.UnusedPrivateMethod", "UPM_UNCALLED_PRIVATE_METHOD", "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" })
+	@SuppressWarnings({ "PMD.UnusedPrivateMethod", "UPM_UNCALLED_PRIVATE_METHOD", "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" })
 	//	private boolean save(byte[] content) {
 	//		UUID uuid = UUID.randomUUID();
 	//		String tempDir = System.getProperty("java.io.tmpdir");
@@ -210,13 +217,9 @@ public class GeneratePDFDocumentHelper {
 
 	private byte[] addDraftWatermark(byte[] orginalPDF) throws IOException, DocumentException {
 
-		PdfReader pdfReader = null;
-		ByteArrayOutputStream outputStream = null;
-		PdfStamper pdfStamper = null;
-
-		pdfReader = new PdfReader(orginalPDF);
-		outputStream = new ByteArrayOutputStream();
-		pdfStamper = new PdfStamper(pdfReader, outputStream);
+		PdfReader pdfReader = new PdfReader(orginalPDF);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		PdfStamper pdfStamper = new PdfStamper(pdfReader, outputStream);
 
 		PdfLayer layer = new PdfLayer("watermark", pdfStamper.getWriter());
 
@@ -265,7 +268,7 @@ public class GeneratePDFDocumentHelper {
 	 * Zusätlich zu die Fonts, soll auch das Color Profil im PDF.Dictionnary addiert werden.
 	 */
 	@SuppressWarnings("PMD.AvoidCatchingNPE")
-	@SuppressFBWarnings(value = "UI_INHERITANCE_UNSAFE_GETRESOURCE")
+	@SuppressFBWarnings("UI_INHERITANCE_UNSAFE_GETRESOURCE")
 	private void setColorProfile(@Nonnull PdfWriter pdfWriter) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
 
 		pdfWriter.setDefaultColorspace(PdfName.DEFAULTRGB, null);
@@ -283,5 +286,34 @@ public class GeneratePDFDocumentHelper {
 
 		final ICC_Profile icc = ICC_Profile.getInstance(this.getClass().getResourceAsStream("/font/sRGB.profile"));
 		pdfWriter.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+	}
+
+	/**
+	 * Merge multiple pdf into one pdf
+	 *
+	 * @param list  of pdf input stream
+	 * @param outputStream output file output stream
+	 */
+	public static void doMerge(List<InputStream> list, OutputStream outputStream) throws DocumentException, IOException {
+		Document document = new Document();
+		PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+		document.open();
+		PdfContentByte cb = writer.getDirectContent();
+
+		for (InputStream in : list) {
+			PdfReader reader = new PdfReader(in);
+			for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+				//import the page from source pdf
+				PdfImportedPage page = writer.getImportedPage(reader, i);
+				//add the page to the destination pdf
+				document.setPageSize(page.getBoundingBox());
+				document.newPage();
+				cb.addTemplate(page, 0, 0);
+			}
+		}
+
+		outputStream.flush();
+		document.close();
+		outputStream.close();
 	}
 }
