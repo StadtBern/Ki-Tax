@@ -541,7 +541,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Override
 	public WriteProtectedDokument getMahnungDokumentAccessTokenGeneratedDokument(Mahnung mahnung, Boolean createWriteProtected) throws MimeTypeParseException,
-		IOException, MergeDocException {
+		MergeDocException {
 
 		Gesuch gesuch = mahnung.getGesuch();
 		Mahnung mahnungDB = persistence.find(Mahnung.class, mahnung.getId());
