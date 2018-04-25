@@ -27,6 +27,7 @@ import ch.dvbern.ebegu.api.dtos.JaxAbstractFinanzielleSituation;
 import ch.dvbern.ebegu.api.dtos.JaxAdresse;
 import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
+import ch.dvbern.ebegu.api.dtos.JaxBerechtigung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungspensum;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungspensumContainer;
@@ -186,13 +187,19 @@ public class TestJaxDataUtil {
 
 	public static JaxAuthLoginElement createTestJaxBenutzer() {
 		JaxAuthLoginElement jaxBenutzer = new JaxAuthLoginElement();
-		jaxBenutzer.setRole(UserRole.ADMIN);
+		jaxBenutzer.setCurrentBerechtigung(createTestJaxBerechtigung());
 		jaxBenutzer.setUsername("TestUser");
 		jaxBenutzer.setPassword("1234");
 		jaxBenutzer.setEmail("testuser@example.com");
 		jaxBenutzer.setNachname("NachnameTest");
 		jaxBenutzer.setVorname("VornameTest");
 		return jaxBenutzer;
+	}
+
+	public static JaxBerechtigung createTestJaxBerechtigung() {
+		JaxBerechtigung berechtigung = new JaxBerechtigung();
+		berechtigung.setRole(UserRole.ADMIN);
+		return berechtigung;
 	}
 
 	public static JaxGesuch createTestJaxGesuch() {
@@ -362,6 +369,6 @@ public class TestJaxDataUtil {
 		JaxTraegerschaft jaxTraegerschaft = new JaxTraegerschaft();
 		jaxTraegerschaft.setName("Test_Traegerschaft");
 		jaxTraegerschaft.setActive(true);
-		return null;
+		return jaxTraegerschaft;
 	}
 }

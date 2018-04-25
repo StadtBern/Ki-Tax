@@ -15,28 +15,25 @@
 
 package ch.dvbern.ebegu.entities;
 
-import java.time.LocalDate;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import ch.dvbern.ebegu.enums.Amt;
 import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.validators.CheckBenutzerRoles;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -47,11 +44,13 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 @Entity
 @Table(
-	uniqueConstraints = { @UniqueConstraint(columnNames = "username", name = "UK_username") },
-	indexes = { @Index(columnList = "username", name = "IX_benutzer_username")
-	})
+	uniqueConstraints = {
+		@UniqueConstraint(columnNames = "username", name = "UK_username"),
+		@UniqueConstraint(columnNames = "current_berechtigung_id", name = "UK_current_berechtigung_id")},
+	indexes =
+		@Index(columnList = "username", name = "IX_benutzer_username")
+	)
 @Audited
-@CheckBenutzerRoles
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Benutzer extends AbstractEntity {
@@ -80,42 +79,19 @@ public class Benutzer extends AbstractEntity {
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	private String email = null;
 
-	@Enumerated(value = EnumType.STRING)
-	@Column(nullable = false)
-	@NotNull
-	private UserRole role;
-
-	@Nullable
-	@Column(nullable = true)
-	private LocalDate roleGueltigBis;
-
-	@Enumerated(value = EnumType.STRING)
-	@Column(nullable = true)
-	private UserRole roleAb;
-
-	@Nullable
-	@Column(nullable = true)
-	private LocalDate roleGueltigAb;
+	@Nonnull
+	@OneToOne(cascade = CascadeType.ALL, optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_benutzer_currentBerechtigung_id"))
+	private Berechtigung currentBerechtigung;
 
 	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_benutzer_mandant_id"))
 	private Mandant mandant;
 
-	@Nullable
-	@ManyToOne(optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_benutzer_institution_id"))
-	private Institution institution;
-
-	@Nullable
-	@ManyToOne(optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_benutzer_traegerschaft_id"))
-	private Traegerschaft traegerschaft;
-
 	@NotNull
 	@Column(nullable = false)
 	private Boolean gesperrt = false;
-
 
 	public String getUsername() {
 		return username;
@@ -149,38 +125,13 @@ public class Benutzer extends AbstractEntity {
 		this.email = email;
 	}
 
-	public UserRole getRole() {
-		return role;
+	@Nonnull
+	public Berechtigung getCurrentBerechtigung() {
+		return currentBerechtigung;
 	}
 
-	public void setRole(UserRole role) {
-		this.role = role;
-	}
-
-	@Nullable
-	public LocalDate getRoleGueltigBis() {
-		return roleGueltigBis;
-	}
-
-	public void setRoleGueltigBis(@Nullable LocalDate roleGueltigBis) {
-		this.roleGueltigBis = roleGueltigBis;
-	}
-
-	public UserRole getRoleAb() {
-		return roleAb;
-	}
-
-	public void setRoleAb(UserRole roleInZukunft) {
-		this.roleAb = roleInZukunft;
-	}
-
-	@Nullable
-	public LocalDate getRoleGueltigAb() {
-		return roleGueltigAb;
-	}
-
-	public void setRoleGueltigAb(@Nullable LocalDate roleGueltigAb) {
-		this.roleGueltigAb = roleGueltigAb;
+	public void setCurrentBerechtigung(Berechtigung currentBerechtigung) {
+		this.currentBerechtigung = currentBerechtigung;
 	}
 
 	public Mandant getMandant() {
@@ -189,24 +140,6 @@ public class Benutzer extends AbstractEntity {
 
 	public void setMandant(Mandant mandant) {
 		this.mandant = mandant;
-	}
-
-	@Nullable
-	public Institution getInstitution() {
-		return institution;
-	}
-
-	public void setInstitution(@Nullable Institution institution) {
-		this.institution = institution;
-	}
-
-	@Nullable
-	public Traegerschaft getTraegerschaft() {
-		return traegerschaft;
-	}
-
-	public void setTraegerschaft(@Nullable Traegerschaft traegerschaft) {
-		this.traegerschaft = traegerschaft;
 	}
 
 	public Boolean getGesperrt() {
@@ -223,20 +156,11 @@ public class Benutzer extends AbstractEntity {
 			+ (this.nachname != null ? this.nachname : "");
 	}
 
-	@Nonnull
-	public Amt getAmt() {
-		if (role != null) {
-			return role.getAmt();
-		}
-		return Amt.NONE;
-	}
-
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this)
 			.appendSuper(super.toString())
 			.append("username", username)
-			.append("role", role)
 			.toString();
 	}
 
@@ -254,5 +178,34 @@ public class Benutzer extends AbstractEntity {
 		}
 		final Benutzer otherBenutzer = (Benutzer) other;
 		return Objects.equals(getUsername(), otherBenutzer.getUsername());
+	}
+
+	//TODO (hefr) Delegationsmethoden evtl. spaeter entfernen?
+
+	@Nonnull
+	public UserRole getRole() {
+		return getCurrentBerechtigung().getRole();
+	}
+
+	public void setRole(@Nonnull UserRole userRole) {
+		getCurrentBerechtigung().setRole(userRole);
+	}
+
+	@Nullable
+	public Institution getInstitution() {
+		return getCurrentBerechtigung().getInstitution();
+	}
+
+	public void setInstitution(@Nullable Institution institution) {
+		getCurrentBerechtigung().setInstitution(institution);
+	}
+
+	@Nullable
+	public Traegerschaft getTraegerschaft() {
+		return getCurrentBerechtigung().getTraegerschaft();
+	}
+
+	public void setTraegerschaft(@Nullable Traegerschaft traegerschaft) {
+		getCurrentBerechtigung().setTraegerschaft(traegerschaft);
 	}
 }

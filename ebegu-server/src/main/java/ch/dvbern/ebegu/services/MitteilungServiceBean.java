@@ -61,6 +61,7 @@ import ch.dvbern.ebegu.dto.suchfilter.smarttable.MitteilungPredicateObjectDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.MitteilungTableFilterDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Benutzer_;
+import ch.dvbern.ebegu.entities.Berechtigung_;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuung_;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -449,10 +450,10 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		predicates.add(predicateSender);
 
 		if (currentUserRole.isRoleJugendamt()) {
-			Predicate predicateSenderGleichesAmt = root.get(Mitteilung_.sender).get(Benutzer_.role).in(UserRole.getJugendamtRoles());
+			Predicate predicateSenderGleichesAmt = root.get(Mitteilung_.sender).get(Benutzer_.currentBerechtigung).get(Berechtigung_.role).in(UserRole.getJugendamtRoles());
 			predicates.add(predicateSenderGleichesAmt);
 		} else if (currentUserRole.isRoleSchulamt()) {
-			Predicate predicateSenderGleichesAmt = root.get(Mitteilung_.sender).get(Benutzer_.role).in(UserRole.getSchulamtRoles());
+			Predicate predicateSenderGleichesAmt = root.get(Mitteilung_.sender).get(Benutzer_.currentBerechtigung).get(Berechtigung_.role).in(UserRole.getSchulamtRoles());
 			predicates.add(predicateSenderGleichesAmt);
 		}
 
@@ -806,10 +807,10 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				Amt amt = Amt.valueOf(predicateObjectDto.getEmpfaengerAmt());
 				switch (amt) {
 				case JUGENDAMT:
-					predicates.add(joinEmpfaenger.get(Benutzer_.role).in(UserRole.getJugendamtSuperadminRoles()));
+					predicates.add(joinEmpfaenger.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role).in(UserRole.getJugendamtSuperadminRoles()));
 					break;
 				case SCHULAMT:
-					predicates.add(joinEmpfaenger.get(Benutzer_.role).in(UserRole.getSchulamtRoles()));
+					predicates.add(joinEmpfaenger.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role).in(UserRole.getSchulamtRoles()));
 					break;
 				}
 			}
@@ -892,7 +893,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			case "empfaengerAmt":
 				String sJugendamt = ServerMessageUtil.getMessage(Amt.class.getSimpleName() + '_' + Amt.JUGENDAMT.name());
 				String sSchulamt = ServerMessageUtil.getMessage(Amt.class.getSimpleName() + '_' + Amt.SCHULAMT.name());
-				expression = cb.selectCase().when(joinEmpfaenger.get(Benutzer_.role).in(UserRole.getJugendamtRoles()), sJugendamt).otherwise(sSchulamt);
+				expression = cb.selectCase().when(joinEmpfaenger.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role).in(UserRole.getJugendamtRoles()), sJugendamt).otherwise(sSchulamt);
 				break;
 			case "mitteilungStatus":
 				expression = root.get(Mitteilung_.mitteilungStatus);

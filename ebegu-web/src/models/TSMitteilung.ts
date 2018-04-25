@@ -141,10 +141,10 @@ export default class TSMitteilung extends TSAbstractEntity {
 
     get senderAsString(): string {
         let senderAsString: string;
-        if (this.sender.institution) {
-            senderAsString = this.sender.institution.name + ', ';
-        } else if (this.sender.traegerschaft) {
-            senderAsString = this.sender.traegerschaft.name + ', ';
+        if (this.sender.currentBerechtigung.institution) {
+            senderAsString = this.sender.currentBerechtigung.institution.name + ', ';
+        } else if (this.sender.currentBerechtigung.traegerschaft) {
+            senderAsString = this.sender.currentBerechtigung.traegerschaft.name + ', ';
         }
         if (senderAsString) {
             return senderAsString + this.sender.getFullName();

@@ -34,6 +34,7 @@ import TSApplicationProperty from '../models/TSApplicationProperty';
 import TSBelegungFerieninsel from '../models/TSBelegungFerieninsel';
 import TSBelegungFerieninselTag from '../models/TSBelegungFerieninselTag';
 import TSBelegungTagesschule from '../models/TSBelegungTagesschule';
+import TSBerechtigung from '../models/TSBerechtigung';
 import TSBetreuung from '../models/TSBetreuung';
 import TSBetreuungsmitteilung from '../models/TSBetreuungsmitteilung';
 import TSBetreuungsmitteilungPensum from '../models/TSBetreuungsmitteilungPensum';
@@ -1610,14 +1611,9 @@ export default class EbeguRestUtil {
             user.nachname = userTS.nachname;
             user.vorname = userTS.vorname;
             user.email = userTS.email;
-            user.role = userTS.role;
             user.mandant = this.mandantToRestObject({}, userTS.mandant);
-            user.traegerschaft = this.traegerschaftToRestObject({}, userTS.traegerschaft);
-            user.institution = this.institutionToRestObject({}, userTS.institution);
             user.gesperrt = userTS.gesperrt;
-            user.roleGueltigBis = DateUtil.momentToLocalDate(userTS.roleGueltigBis);
-            user.roleAb = userTS.roleAb;
-            user.roleGueltigAb = DateUtil.momentToLocalDate(userTS.roleGueltigAb);
+            user.currentBerechtigung = this.berechtigungToRestObject({}, userTS.currentBerechtigung);
             return user;
         }
         return undefined;
@@ -1630,16 +1626,35 @@ export default class EbeguRestUtil {
             userTS.nachname = userFromServer.nachname;
             userTS.vorname = userFromServer.vorname;
             userTS.email = userFromServer.email;
-            userTS.role = userFromServer.role;
             userTS.mandant = this.parseMandant(new TSMandant(), userFromServer.mandant);
-            userTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), userFromServer.traegerschaft);
-            userTS.institution = this.parseInstitution(new TSInstitution(), userFromServer.institution);
             userTS.amt = userFromServer.amt;
             userTS.gesperrt = userFromServer.gesperrt;
-            userTS.roleGueltigBis = DateUtil.localDateToMoment(userFromServer.roleGueltigBis);
-            userTS.roleAb = userFromServer.roleAb;
-            userTS.roleGueltigAb = DateUtil.localDateToMoment(userFromServer.roleGueltigAb);
+            userTS.currentBerechtigung = this.parseBerechtigung(new TSBerechtigung(), userFromServer.currentBerechtigung);
             return userTS;
+        }
+        return undefined;
+    }
+
+    public berechtigungToRestObject(berechtigung: any, berechtigungTS: TSBerechtigung): any {
+        if (berechtigungTS) {
+            this.abstractDateRangeEntityToRestObject(berechtigung, berechtigungTS);
+            berechtigung.role = berechtigungTS.role;
+            berechtigung.benutzer = this.userToRestObject({}, berechtigungTS.user);
+            berechtigung.traegerschaft = this.traegerschaftToRestObject({}, berechtigungTS.traegerschaft);
+            berechtigung.institution = this.institutionToRestObject({}, berechtigungTS.institution);
+            return berechtigung;
+        }
+        return undefined;
+    }
+
+    public parseBerechtigung(berechtigungTS: TSBerechtigung, berechtigungFromServer: any) {
+        if (berechtigungFromServer) {
+            this.parseDateRangeEntity(berechtigungTS, berechtigungFromServer);
+            berechtigungTS.role = berechtigungFromServer.role;
+            berechtigungTS.user = this.parseUser(new TSUser(), berechtigungFromServer.user);
+            berechtigungTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), berechtigungFromServer.traegerschaft);
+            berechtigungTS.institution = this.parseInstitution(new TSInstitution(), berechtigungFromServer.institution);
+            return berechtigungTS;
         }
         return undefined;
     }

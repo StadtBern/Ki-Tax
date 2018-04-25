@@ -53,6 +53,7 @@ import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
 import ch.dvbern.ebegu.api.dtos.JaxBelegungFerieninsel;
 import ch.dvbern.ebegu.api.dtos.JaxBelegungFerieninselTag;
 import ch.dvbern.ebegu.api.dtos.JaxBelegungTagesschule;
+import ch.dvbern.ebegu.api.dtos.JaxBerechtigung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilungPensum;
@@ -118,6 +119,7 @@ import ch.dvbern.ebegu.entities.BelegungFerieninsel;
 import ch.dvbern.ebegu.entities.BelegungFerieninselTag;
 import ch.dvbern.ebegu.entities.BelegungTagesschule;
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Berechtigung;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
 import ch.dvbern.ebegu.entities.BetreuungsmitteilungPensum;
@@ -2266,12 +2268,7 @@ public class JaxBConverter {
 		benutzer.setEmail(jaxLoginElement.getEmail());
 		benutzer.setNachname(jaxLoginElement.getNachname());
 		benutzer.setVorname(jaxLoginElement.getVorname());
-		benutzer.setRole(jaxLoginElement.getRole());
 		benutzer.setGesperrt(jaxLoginElement.isGesperrt());
-		benutzer.setRoleGueltigBis(jaxLoginElement.getRoleGueltigBis());
-		benutzer.setRoleAb(jaxLoginElement.getRoleAb());
-		benutzer.setRoleGueltigAb(jaxLoginElement.getRoleGueltigAb());
-
 		if (jaxLoginElement.getMandant() != null && jaxLoginElement.getMandant().getId() != null) {
 			final Optional<Mandant> mandantFromDB = mandantService.findMandant(jaxLoginElement.getMandant().getId());
 			if (mandantFromDB.isPresent()) {
@@ -2284,34 +2281,7 @@ public class JaxBConverter {
 		} else {
 			throw new EbeguEntityNotFoundException("authLoginElementToBenutzer -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
 		}
-
-
-		// wir muessen Traegerschaft und Institution auch updaten wenn sie null sind. Es koennte auch so aus dem IAM kommen
-		if (jaxLoginElement.getInstitution() != null && jaxLoginElement.getInstitution().getId() != null) {
-			final Optional<Institution> institutionFromDB = institutionService.findInstitution(jaxLoginElement.getInstitution().getId());
-			if (institutionFromDB.isPresent()) {
-				// Institution darf nicht vom Client ueberschrieben werden
-				benutzer.setInstitution(institutionFromDB.get());
-			} else {
-				throw new EbeguEntityNotFoundException("authLoginElementToBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxLoginElement
-					.getInstitution().getId());
-			}
-		} else {
-			benutzer.setInstitution(null);
-		}
-
-		if (jaxLoginElement.getTraegerschaft() != null && jaxLoginElement.getTraegerschaft().getId() != null) {
-			final Optional<Traegerschaft> traegerschaftFromDB = traegerschaftService.findTraegerschaft(jaxLoginElement.getTraegerschaft().getId());
-			if (traegerschaftFromDB.isPresent()) {
-				// Traegerschaft darf nicht vom Client ueberschrieben werden
-				benutzer.setTraegerschaft(traegerschaftFromDB.get());
-			} else {
-				throw new EbeguEntityNotFoundException("authLoginElementToBenutzer -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxLoginElement
-					.getTraegerschaft().getId());
-			}
-		} else {
-			benutzer.setTraegerschaft(null);
-		}
+		benutzer.setCurrentBerechtigung(berechtigungToEntity(jaxLoginElement.getCurrentBerechtigung(), new Berechtigung()));
 		return benutzer;
 	}
 
@@ -2323,19 +2293,53 @@ public class JaxBConverter {
 		if (benutzer.getMandant() != null) {
 			jaxLoginElement.setMandant(mandantToJAX(benutzer.getMandant()));
 		}
-		if (benutzer.getInstitution() != null) {
-			jaxLoginElement.setInstitution(institutionToJAX(benutzer.getInstitution()));
-		}
-		if (benutzer.getTraegerschaft() != null) {
-			jaxLoginElement.setTraegerschaft(traegerschaftToJAX(benutzer.getTraegerschaft()));
-		}
 		jaxLoginElement.setUsername(benutzer.getUsername());
-		jaxLoginElement.setRole(benutzer.getRole());
-		jaxLoginElement.setAmt(benutzer.getRole().getAmt());
-		jaxLoginElement.setGesperrt(benutzer.getGesperrt());
-		jaxLoginElement.setRoleGueltigBis(benutzer.getRoleGueltigBis());
-		jaxLoginElement.setRoleAb(benutzer.getRoleAb());
-		jaxLoginElement.setRoleGueltigAb(benutzer.getRoleGueltigAb());
+		jaxLoginElement.setCurrentBerechtigung(berechtigungToJax(benutzer.getCurrentBerechtigung()));
+		return jaxLoginElement;
+	}
+
+	public Berechtigung berechtigungToEntity(JaxBerechtigung jaxBerechtigung, Berechtigung berechtigung) {
+		convertAbstractDateRangedFieldsToEntity(jaxBerechtigung, berechtigung);
+		berechtigung.setRole(jaxBerechtigung.getRole());
+
+		// wir muessen Traegerschaft und Institution auch updaten wenn sie null sind. Es koennte auch so aus dem IAM kommen
+		if (jaxBerechtigung.getInstitution() != null && jaxBerechtigung.getInstitution().getId() != null) {
+			final Optional<Institution> institutionFromDB = institutionService.findInstitution(jaxBerechtigung.getInstitution().getId());
+			if (institutionFromDB.isPresent()) {
+				// Institution darf nicht vom Client ueberschrieben werden
+				berechtigung.setInstitution(institutionFromDB.get());
+			} else {
+				throw new EbeguEntityNotFoundException("authLoginElementToBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxBerechtigung
+					.getInstitution().getId());
+			}
+		} else {
+			berechtigung.setInstitution(null);
+		}
+
+		if (jaxBerechtigung.getTraegerschaft() != null && jaxBerechtigung.getTraegerschaft().getId() != null) {
+			final Optional<Traegerschaft> traegerschaftFromDB = traegerschaftService.findTraegerschaft(jaxBerechtigung.getTraegerschaft().getId());
+			if (traegerschaftFromDB.isPresent()) {
+				// Traegerschaft darf nicht vom Client ueberschrieben werden
+				berechtigung.setTraegerschaft(traegerschaftFromDB.get());
+			} else {
+				throw new EbeguEntityNotFoundException("authLoginElementToBenutzer -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxBerechtigung
+					.getTraegerschaft().getId());
+			}
+		} else {
+			berechtigung.setTraegerschaft(null);
+		}
+		return berechtigung;
+	}
+
+	public JaxBerechtigung berechtigungToJax(Berechtigung berechtigung) {
+		JaxBerechtigung jaxLoginElement = new JaxBerechtigung();
+		jaxLoginElement.setRole(berechtigung.getRole());
+		if (berechtigung.getInstitution() != null) {
+			jaxLoginElement.setInstitution(institutionToJAX(berechtigung.getInstitution()));
+		}
+		if (berechtigung.getTraegerschaft() != null) {
+			jaxLoginElement.setTraegerschaft(traegerschaftToJAX(berechtigung.getTraegerschaft()));
+		}
 		return jaxLoginElement;
 	}
 

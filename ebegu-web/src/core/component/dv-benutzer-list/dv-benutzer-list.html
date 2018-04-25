@@ -104,10 +104,11 @@
                     <td class="ellipsis" title="{{row.vorname}}" ng-bind="row.vorname"></td>
                     <td class="ellipsis" title="{{row.nachname}}" ng-bind="row.nachname"></td>
                     <td class="ellipsis" title="{{row.email}}" ng-bind="row.email"></td>
-                    <td class="ellipsis" title="{{vm.getTranslatedRole(row.role)}}" ng-bind="vm.getTranslatedRole(row.role)"></td>
-                    <td class="ellipsis" title="{{row.roleGueltigBis | amDateFormat : 'DD.MM.YYYY'}}" ng-bind="row.roleGueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
-                    <td class="ellipsis" title="{{row.institution.name}}" ng-bind="row.institution.name"></td>
-                    <td class="ellipsis" title="{{row.traegerschaft.name}}" ng-bind="row.traegerschaft.name"></td>
+                    <td class="ellipsis" title="{{vm.getTranslatedRole(row.currentBerechtigung.role)}}" ng-bind="vm.getTranslatedRole(row.currentBerechtigung.role)"></td>
+                    <td class="ellipsis" title="{{row.currentBerechtigung.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'}}"
+                        ng-bind="row.currentBerechtigung.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
+                    <td class="ellipsis" title="{{row.currentBerechtigung.institution.name}}" ng-bind="row.currentBerechtigung.institution.name"></td>
+                    <td class="ellipsis" title="{{row.currentBerechtigung.traegerschaft.name}}" ng-bind="row.currentBerechtigung.traegerschaft.name"></td>
                     <td class="ellipsis" title="{{(row.gesperrt ? 'LABEL_JA' : 'LABEL_NEIN') | translate}}"
                         ng-bind="(row.gesperrt ? 'LABEL_JA' : 'LABEL_NEIN') | translate"></td>
                 </tr>

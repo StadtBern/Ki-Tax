@@ -47,6 +47,7 @@ import ch.dvbern.ebegu.entities.BelegungFerieninsel;
 import ch.dvbern.ebegu.entities.BelegungFerieninselTag;
 import ch.dvbern.ebegu.entities.BelegungTagesschule;
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Berechtigung;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
 import ch.dvbern.ebegu.entities.BetreuungsmitteilungPensum;
@@ -674,7 +675,10 @@ public final class TestDataUtil {
 		user.setVorname("Julio");
 		user.setEmail("julio.iglesias@example.com");
 		user.setMandant(createDefaultMandant());
-		user.setRole(UserRole.ADMIN);
+		Berechtigung berechtigung = new Berechtigung();
+		berechtigung.setRole(UserRole.ADMIN);
+		berechtigung.setBenutzer(user);
+		user.setCurrentBerechtigung(berechtigung);
 		return user;
 	}
 
@@ -1008,9 +1012,11 @@ public final class TestDataUtil {
 		benutzer.setNachname("anonymous");
 		benutzer.setVorname("anonymous");
 		benutzer.setEmail("e@e");
-		benutzer.setTraegerschaft(traegerschaft);
-		benutzer.setInstitution(institution);
-		benutzer.setRole(role);
+		Berechtigung berechtigung = new Berechtigung();
+		berechtigung.setTraegerschaft(traegerschaft);
+		berechtigung.setInstitution(institution);
+		berechtigung.setRole(role);
+		benutzer.setCurrentBerechtigung(berechtigung);
 		benutzer.setMandant(mandant);
 		return benutzer;
 	}

@@ -14,16 +14,12 @@
  */
 package ch.dvbern.ebegu.api.dtos;
 
-import java.time.LocalDate;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import ch.dvbern.ebegu.enums.Amt;
 import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -36,37 +32,28 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 
 	@Nonnull
 	private String username = "";
+
 	@Nonnull
 	private String password = "";
+
 	@Nonnull
 	private String nachname = "";
+
 	@Nonnull
 	private String vorname = "";
+
 	@Nonnull
 	private String email = "";
-	@Nonnull
-	private UserRole role;
+
 	@Nonnull
 	private Amt amt;
 
 	private JaxMandant mandant;
-	@Nullable
-	private JaxTraegerschaft traegerschaft;
-	@Nullable
-	private JaxInstitution institution;
 
 	private boolean gesperrt;
 
-	@Nullable
-	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
-	private LocalDate roleGueltigBis = null;
-
-	@Nullable
-	private UserRole roleAb;
-
-	@Nullable
-	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
-	private LocalDate roleGueltigAb = null;
+	@Nonnull
+	private JaxBerechtigung currentBerechtigung;
 
 
 	@SuppressFBWarnings(value = "NM_CONFUSING", justification = "Other method is external interface, cant change that")
@@ -116,15 +103,6 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 	}
 
 	@Nonnull
-	public UserRole getRole() {
-		return role;
-	}
-
-	public void setRole(@Nonnull UserRole role) {
-		this.role = role;
-	}
-
-	@Nonnull
 	public Amt getAmt() {
 		return amt;
 	}
@@ -141,24 +119,6 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 		this.mandant = mandant;
 	}
 
-	@Nullable
-	public JaxTraegerschaft getTraegerschaft() {
-		return traegerschaft;
-	}
-
-	public void setTraegerschaft(@Nullable JaxTraegerschaft traegerschaft) {
-		this.traegerschaft = traegerschaft;
-	}
-
-	@Nullable
-	public JaxInstitution getInstitution() {
-		return institution;
-	}
-
-	public void setInstitution(@Nullable JaxInstitution institution) {
-		this.institution = institution;
-	}
-
 	public boolean isGesperrt() {
 		return gesperrt;
 	}
@@ -167,30 +127,29 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 		this.gesperrt = gesperrt;
 	}
 
-	@Nullable
-	public LocalDate getRoleGueltigBis() {
-		return roleGueltigBis;
+	@Nonnull
+	public JaxBerechtigung getCurrentBerechtigung() {
+		return currentBerechtigung;
 	}
 
-	public void setRoleGueltigBis(@Nullable LocalDate roleGueltigBis) {
-		this.roleGueltigBis = roleGueltigBis;
+	public void setCurrentBerechtigung(@Nonnull JaxBerechtigung currentBerechtigung) {
+		this.currentBerechtigung = currentBerechtigung;
 	}
 
-	@Nullable
-	public UserRole getRoleAb() {
-		return roleAb;
-	}
+	//TODO (hefr) Delegationsmethoden evtl. spaeter entfernen?
 
-	public void setRoleAb(@Nullable UserRole roleAb) {
-		this.roleAb = roleAb;
+	@Nonnull
+	public UserRole getRole() {
+		return getCurrentBerechtigung().getRole();
 	}
 
 	@Nullable
-	public LocalDate getRoleGueltigAb() {
-		return roleGueltigAb;
+	public JaxInstitution getInstitution() {
+		return getCurrentBerechtigung().getInstitution();
 	}
 
-	public void setRoleGueltigAb(@Nullable LocalDate roleGueltigAb) {
-		this.roleGueltigAb = roleGueltigAb;
+	@Nullable
+	public JaxTraegerschaft getTraegerschaft() {
+		return getCurrentBerechtigung().getTraegerschaft();
 	}
 }

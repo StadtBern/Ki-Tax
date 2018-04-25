@@ -241,8 +241,9 @@ public class BenutzerResource {
 			}
 		}
 
-		Benutzer benutzer = benutzerService.changeRole(benutzerJax.getUsername(), benutzerJax.getRole(), institution, traegerschaft, benutzerJax
-			.getRoleGueltigBis());
+		//TODO (hefr) achtung, gueltigBis gibts nicht mehr
+		Benutzer benutzer = benutzerService.changeRole(benutzerJax.getUsername(), benutzerJax.getRole(), institution, traegerschaft,
+			null);
 
 		return converter.benutzerToAuthLoginElement(benutzer);
 	}

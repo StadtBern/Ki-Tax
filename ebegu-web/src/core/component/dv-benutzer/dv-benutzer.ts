@@ -75,7 +75,7 @@ export class DVBenutzerController {
            this.userRS.findBenutzer(this.$stateParams.benutzerId).then((result) => {
                this.selectedUser = result;
                this.roleBisher = result.role;
-               this.checkRolleBeenden = EbeguUtil.isNotNullOrUndefined(this.selectedUser.roleGueltigBis);
+               // this.checkRolleBeenden = EbeguUtil.isNotNullOrUndefined(this.selectedUser.roleGueltigBis);
            });
         }
     }
@@ -190,21 +190,21 @@ export class DVBenutzerController {
 
     private clearBenutzerObject(benutzer: TSUser): void {
         // Wenn das Flag "Rolle beenden" nicht mehr gesetzt ist, muss das Datum gelöscht werden
-        if (!this.checkRolleBeenden) {
-            benutzer.roleGueltigBis = null;
-        }
-        // Es darf nur eine Institution gesetzt sein, wenn die Rolle INSTITUTION ist
-        if (benutzer.role !== TSRole.SACHBEARBEITER_INSTITUTION) {
-            benutzer.institution = null;
-        }
-        // Es darf nur eine Trägerschaft gesetzt sein, wenn die Rolle TRAEGERSCHAFT ist
-        if (benutzer.role !== TSRole.SACHBEARBEITER_TRAEGERSCHAFT) {
-            benutzer.traegerschaft = null;
-        }
-        // Das Datum gueltigBis sollte bei Rolle GESUCHSTELLER nicht gesetzt werden
-        if (benutzer.role === TSRole.GESUCHSTELLER) {
-            benutzer.roleGueltigBis = null;
-        }
+        // if (!this.checkRolleBeenden) {
+        //     benutzer.roleGueltigBis = null;
+        // }
+        // // Es darf nur eine Institution gesetzt sein, wenn die Rolle INSTITUTION ist
+        // if (benutzer.role !== TSRole.SACHBEARBEITER_INSTITUTION) {
+        //     benutzer.institution = null;
+        // }
+        // // Es darf nur eine Trägerschaft gesetzt sein, wenn die Rolle TRAEGERSCHAFT ist
+        // if (benutzer.role !== TSRole.SACHBEARBEITER_TRAEGERSCHAFT) {
+        //     benutzer.traegerschaft = null;
+        // }
+        // // Das Datum gueltigBis sollte bei Rolle GESUCHSTELLER nicht gesetzt werden
+        // if (benutzer.role === TSRole.GESUCHSTELLER) {
+        //     benutzer.roleGueltigBis = null;
+        // }
     }
 
     public showRolleBeenden(): boolean {

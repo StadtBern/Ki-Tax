@@ -18,16 +18,16 @@ package ch.dvbern.ebegu.validators;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Berechtigung;
 import ch.dvbern.ebegu.enums.UserRole;
 
 /**
  * Dieser Validator prueft dass die angelegte Benutzer, mit den richtigen Parameter erstellt werden.
  */
-public class CheckBenutzerRolesValidator implements ConstraintValidator<CheckBenutzerRoles, Benutzer> {
+public class CheckBerechtigungValidator implements ConstraintValidator<CheckBerechtigung, Berechtigung> {
 
 	@Override
-	public void initialize(CheckBenutzerRoles constraintAnnotation) {
+	public void initialize(CheckBerechtigung constraintAnnotation) {
 		//nop
 	}
 
@@ -41,7 +41,7 @@ public class CheckBenutzerRolesValidator implements ConstraintValidator<CheckBen
 	 * @return true wenn die Regeln erfuellt sind
 	 */
 	@Override
-	public boolean isValid(Benutzer instance, ConstraintValidatorContext context) {
+	public boolean isValid(Berechtigung instance, ConstraintValidatorContext context) {
 		if (UserRole.SACHBEARBEITER_INSTITUTION == instance.getRole()) {
 			return instance.getInstitution() != null;
 		}

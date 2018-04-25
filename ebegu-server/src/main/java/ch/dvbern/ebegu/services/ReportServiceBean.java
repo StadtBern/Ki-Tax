@@ -61,6 +61,7 @@ import ch.dvbern.ebegu.entities.AntragStatusHistory;
 import ch.dvbern.ebegu.entities.AntragStatusHistory_;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Benutzer_;
+import ch.dvbern.ebegu.entities.Berechtigung_;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuung_;
 import ch.dvbern.ebegu.entities.Erwerbspensum;
@@ -467,8 +468,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		query.groupBy(verantwortlicherJoin.get(Benutzer_.id), verantwortlicherJoin.get(Benutzer_.nachname), verantwortlicherJoin.get(Benutzer_.vorname));
 		query.orderBy(builder.asc(verantwortlicherJoin.get(Benutzer_.nachname)));
 
-		Predicate isAdmin = builder.equal(verantwortlicherJoin.get(Benutzer_.role), UserRole.ADMIN);
-		Predicate isSachbearbeiterJA = builder.equal(verantwortlicherJoin.get(Benutzer_.role), UserRole.SACHBEARBEITER_JA);
+		Predicate isAdmin = builder.equal(verantwortlicherJoin.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role), UserRole.ADMIN);
+		Predicate isSachbearbeiterJA = builder.equal(verantwortlicherJoin.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role), UserRole.SACHBEARBEITER_JA);
 		Predicate orRoles = builder.or(isAdmin, isSachbearbeiterJA);
 
 		query.where(orRoles);
@@ -502,8 +503,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		// Datum der Verfuegung muss vor (oder gleich) dem Ende des Abfragezeitraums sein
 		final Predicate predicateDatumBis = builder.lessThanOrEqualTo(root.get(AntragStatusHistory_.timestampVon), datumBis.atStartOfDay());
 
-		Predicate isAdmin = builder.equal(benutzerJoin.get(Benutzer_.role), UserRole.ADMIN);
-		Predicate isSachbearbeiterJA = builder.equal(benutzerJoin.get(Benutzer_.role), UserRole.SACHBEARBEITER_JA);
+		Predicate isAdmin = builder.equal(benutzerJoin.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role), UserRole.ADMIN);
+		Predicate isSachbearbeiterJA = builder.equal(benutzerJoin.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role), UserRole.SACHBEARBEITER_JA);
 		Predicate predOrRoles = builder.or(isAdmin, isSachbearbeiterJA);
 
 		query.where(predicateStatus, predicateDatumVon, predicateDatumBis, predOrRoles);
@@ -1292,7 +1293,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		List<Predicate> predicates = new ArrayList<>();
 
 		// Gesuchsteller sollen nicht ausgegeben werden
-		predicates.add(builder.notEqual(root.get(Benutzer_.role), UserRole.GESUCHSTELLER));
+		predicates.add(builder.notEqual(root.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role), UserRole.GESUCHSTELLER));
 
 		// Wenn es sich nicht um einen SuperAdmin handelt, muss noch der Mandant beachtet werden, sowie die SuperAdmin ausgefiltert werden.
 		Benutzer user = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("searchBenutzer", "No User is logged in"));
@@ -1301,7 +1302,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			// Admins duerfen alle Benutzer ihres Mandanten sehen
 			predicates.add(builder.equal(root.get(Benutzer_.mandant), user.getMandant()));
 			// Und sie duerfen keine Superadmins sehen
-			predicates.add(builder.notEqual(root.get(Benutzer_.role), UserRole.SUPER_ADMIN));
+			predicates.add(builder.notEqual(root.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role), UserRole.SUPER_ADMIN));
 		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicates));
@@ -1322,7 +1323,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			row.setVorname(benutzer.getVorname());
 			row.setEmail(benutzer.getEmail());
 			row.setRole(ServerMessageUtil.translateEnumValue(benutzer.getRole()));
-			row.setRoleGueltigBis(benutzer.getRoleGueltigBis());
+//			row.setRoleGueltigBis(benutzer.getRoleGueltigBis());
 			String institution = benutzer.getInstitution() != null ? benutzer.getInstitution().getName() : null;
 			String traegerschaft = benutzer.getTraegerschaft() != null ? benutzer.getTraegerschaft().getName() : null;
 			row.setInstitution(institution);

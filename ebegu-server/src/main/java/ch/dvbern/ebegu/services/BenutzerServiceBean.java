@@ -49,6 +49,8 @@ import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer_;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Benutzer_;
+import ch.dvbern.ebegu.entities.Berechtigung;
+import ch.dvbern.ebegu.entities.Berechtigung_;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Institution_;
 import ch.dvbern.ebegu.entities.Traegerschaft;
@@ -61,6 +63,7 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.util.SearchUtil;
+import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang.StringUtils;
@@ -98,6 +101,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	@PermitAll
 	public Benutzer saveBenutzer(@Nonnull Benutzer benutzer) {
 		Objects.requireNonNull(benutzer);
+		benutzer.getCurrentBerechtigung().setBenutzer(benutzer);
 		return persistence.merge(benutzer);
 	}
 
@@ -135,7 +139,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		final CriteriaQuery<Benutzer> query = cb.createQuery(Benutzer.class);
 		Root<Benutzer> root = query.from(Benutzer.class);
 		query.select(root);
-		final Predicate role = root.get(Benutzer_.role).in(roles);
+		final Predicate role = root.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role).in(roles);
 		query.where(role);
 		return persistence.getCriteriaResults(query);
 	}
@@ -148,7 +152,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		final CriteriaQuery<Benutzer> query = cb.createQuery(Benutzer.class);
 		Root<Benutzer> root = query.from(Benutzer.class);
 		query.select(root);
-		Predicate isGesuchsteller = cb.equal(root.get(Benutzer_.role), UserRole.GESUCHSTELLER);
+		Predicate isGesuchsteller = cb.equal(root.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role), UserRole.GESUCHSTELLER);
 		query.where(isGesuchsteller);
 		query.orderBy(cb.asc(root.get(Benutzer_.username)));
 
@@ -195,9 +199,12 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			return saveBenutzer(foundUser);
 		} else {
 			// Wir kennen den Benutzer noch nicht: Wir uebernehmen alles, setzen aber grundsätzlich die Rolle auf GESUCHSTELLER
-			benutzer.setRole(UserRole.GESUCHSTELLER);
-			benutzer.setInstitution(null);
-			benutzer.setTraegerschaft(null);
+			Berechtigung berechtigung = new Berechtigung();
+			berechtigung.setRole(UserRole.GESUCHSTELLER);
+			berechtigung.setInstitution(null);
+			berechtigung.setTraegerschaft(null);
+			berechtigung.setBenutzer(benutzer);
+			benutzer.setCurrentBerechtigung(berechtigung);
 			return saveBenutzer(benutzer);
 		}
 	}
@@ -261,38 +268,41 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 		Benutzer benutzerFromDB = findBenutzer(username).orElseThrow(()
 			-> new EbeguEntityNotFoundException("changeRole", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + username));
-
-		// Feststellen, was alles geändert hat
-		boolean institutionChanged = benutzerFromDB.getInstitution() != null && !benutzerFromDB.getInstitution().equals(institution);
-		boolean traegerschaftChanged = benutzerFromDB.getTraegerschaft() != null && !benutzerFromDB.getTraegerschaft().equals(traegerschaft);
-
-		// Ausloggen nur, wenn die Änderungen nicht in der Zukunft liegen! Falls dies der Fall ist, wird der Timer das ausloggen übernehmen
-		if (roleGueltigBis != null && (benutzerFromDB.getRole() != userRole || institutionChanged || traegerschaftChanged)) {
-			// Die AuthorisiertenBenutzer müssen gelöscht werden
-			logoutAndDeleteAuthorisierteBenutzerForUser(username);
-		}
-
-		benutzerFromDB.setRole(userRole);
-		benutzerFromDB.setInstitution(institution);
-		benutzerFromDB.setTraegerschaft(traegerschaft);
-		benutzerFromDB.setRoleGueltigBis(roleGueltigBis);
-		clearBenutzerObject(benutzerFromDB);
+		//TODO (hefr) changeme
+//		Berechtigung berechtigungFromDB =
+//
+//		// Feststellen, was alles geändert hat
+//		boolean institutionChanged = benutzerFromDB.getCurrentBerechtigung().getInstitution() != null && !benutzerFromDB.getInstitution().equals(institution);
+//		boolean traegerschaftChanged = benutzerFromDB.getTraegerschaft() != null && !benutzerFromDB.getTraegerschaft().equals(traegerschaft);
+//
+//		// Ausloggen nur, wenn die Änderungen nicht in der Zukunft liegen! Falls dies der Fall ist, wird der Timer das ausloggen übernehmen
+//		if (roleGueltigBis != null && (benutzerFromDB.getRole() != userRole || institutionChanged || traegerschaftChanged)) {
+//			// Die AuthorisiertenBenutzer müssen gelöscht werden
+//			logoutAndDeleteAuthorisierteBenutzerForUser(username);
+//		}
+//
+//		benutzerFromDB.setRole(userRole);
+//		benutzerFromDB.setInstitution(institution);
+//		benutzerFromDB.setTraegerschaft(traegerschaft);
+//		benutzerFromDB.setRoleGueltigBis(roleGueltigBis);
+//		clearBenutzerObject(benutzerFromDB);
 		return this.saveBenutzer(benutzerFromDB);
 	}
 
 	private void clearBenutzerObject(@Nonnull Benutzer benutzer) {
 		// Es darf nur eine Institution gesetzt sein, wenn die Rolle INSTITUTION ist
-		if (benutzer.getRole() != UserRole.SACHBEARBEITER_INSTITUTION) {
-			benutzer.setInstitution(null);
-		}
-		// Es darf nur eine Trägerschaft gesetzt sein, wenn die Rolle TRAEGERSCHAFT ist
-		if (benutzer.getRole() != UserRole.SACHBEARBEITER_TRAEGERSCHAFT) {
-			benutzer.setTraegerschaft(null);
-		}
-		// Das Datum gueltigBis sollte bei Rolle GESUCHSTELLER nicht gesetzt werden
-		if (benutzer.getRole() == UserRole.GESUCHSTELLER) {
-			benutzer.setRoleGueltigBis(null);
-		}
+		//TODO (hefr) changeme
+//		if (benutzer.getRole() != UserRole.SACHBEARBEITER_INSTITUTION) {
+//			benutzer.setInstitution(null);
+//		}
+//		// Es darf nur eine Trägerschaft gesetzt sein, wenn die Rolle TRAEGERSCHAFT ist
+//		if (benutzer.getRole() != UserRole.SACHBEARBEITER_TRAEGERSCHAFT) {
+//			benutzer.setTraegerschaft(null);
+//		}
+//		// Das Datum gueltigBis sollte bei Rolle GESUCHSTELLER nicht gesetzt werden
+//		if (benutzer.getRole() == UserRole.GESUCHSTELLER) {
+//			benutzer.setRoleGueltigBis(null);
+//		}
 	}
 
 	private Optional<Benutzer> loadSuperAdmin() {
@@ -325,20 +335,20 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		// Construct from-clause
 		@SuppressWarnings("unchecked") // Je nach Abfrage ist das Query String oder Long
 		Root<Benutzer> root = query.from(Benutzer.class);
-		Join<Benutzer, Institution> institution = root.join(Benutzer_.institution, JoinType.LEFT);
-		Join<Benutzer, Traegerschaft> traegerschaft = root.join(Benutzer_.traegerschaft, JoinType.LEFT);
+		Join<Benutzer, Berechtigung> currentBerechtigung = root.join(Benutzer_.currentBerechtigung);
+		Join<Berechtigung, Institution> institution = currentBerechtigung.join(Berechtigung_.institution, JoinType.LEFT);
+		Join<Berechtigung, Traegerschaft> traegerschaft = currentBerechtigung.join(Berechtigung_.traegerschaft, JoinType.LEFT);
 
 		List<Predicate> predicates = new ArrayList<>();
 
 		// General role based predicates
 		Benutzer user = getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("searchBenutzer", "No User is logged in"));
-		UserRole role = user.getRole();
 
-		if (role != UserRole.SUPER_ADMIN) {
+		if (!principalBean.isCallerInRole(UserRole.SUPER_ADMIN)) {
 			// Admins duerfen alle Benutzer ihres Mandanten sehen
 			predicates.add(cb.equal(root.get(Benutzer_.mandant), user.getMandant()));
 			// Und sie duerfen keine Superadmins sehen
-			predicates.add(cb.notEqual(root.get(Benutzer_.role), UserRole.SUPER_ADMIN));
+			predicates.add(cb.notEqual(currentBerechtigung.get(Berechtigung_.role), UserRole.SUPER_ADMIN));
 		}
 
 		//prepare predicates
@@ -370,13 +380,13 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			}
 			// role;
 			if (predicateObjectDto.getRole() != null) {
-				predicates.add(cb.equal(root.get(Benutzer_.role), UserRole.valueOf(predicateObjectDto.getRole())));
+				predicates.add(cb.equal(currentBerechtigung.get(Berechtigung_.role), UserRole.valueOf(predicateObjectDto.getRole())));
 			}
 			// roleGueltigBis;
 			if (predicateObjectDto.getRoleGueltigBis() != null) {
 				try {
 					LocalDate searchDate = LocalDate.parse(predicateObjectDto.getRoleGueltigBis(), Constants.DATE_FORMATTER);
-					predicates.add(cb.equal(root.get(Benutzer_.roleGueltigBis), searchDate));
+					predicates.add(cb.equal(currentBerechtigung.get(Berechtigung_.gueltigkeit).get(DateRange_.gueltigBis), searchDate));
 				} catch (DateTimeParseException e) {
 					// Kein gueltiges Datum. Es kann kein Gesuch geben, welches passt. Wir geben leer zurueck
 					return new ImmutablePair<>(0L, Collections.emptyList());
@@ -403,7 +413,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			if (!predicates.isEmpty()) {
 				query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 			}
-			constructOrderByClause(benutzerTableFilterDTO, cb, query, root, institution, traegerschaft);
+			constructOrderByClause(benutzerTableFilterDTO, cb, query, root, currentBerechtigung, institution, traegerschaft);
 			break;
 		case COUNT:
 			//noinspection unchecked // Je nach Abfrage ist das Query String oder Long
@@ -438,8 +448,11 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		return result;
 	}
 
-	private void constructOrderByClause(@Nonnull BenutzerTableFilterDTO benutzerTableFilterDto, CriteriaBuilder cb, CriteriaQuery query, Root<Benutzer> root,
-		Join<Benutzer, Institution> institution, Join<Benutzer, Traegerschaft> traegerschaft) {
+	private void constructOrderByClause(@Nonnull BenutzerTableFilterDTO benutzerTableFilterDto, CriteriaBuilder cb, CriteriaQuery query,
+			Root<Benutzer> root,
+			Join<Benutzer, Berechtigung> currentBerechtigung,
+			Join<Berechtigung, Institution> institution,
+			Join<Berechtigung, Traegerschaft> traegerschaft) {
 		Expression<?> expression;
 		if (benutzerTableFilterDto.getSort() != null && benutzerTableFilterDto.getSort().getPredicate() != null) {
 			switch (benutzerTableFilterDto.getSort().getPredicate()) {
@@ -456,10 +469,10 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 				expression = root.get(Benutzer_.email);
 				break;
 			case "role":
-				expression = root.get(Benutzer_.role);
+				expression = currentBerechtigung.get(Berechtigung_.role);
 				break;
 			case "roleGueltigBis":
-				expression = root.get(Benutzer_.roleGueltigBis);
+				expression = currentBerechtigung.get(Berechtigung_.gueltigkeit).get(DateRange_.gueltigBis);
 				break;
 			case "institution":
 				expression = institution.get(Institution_.name);
@@ -503,17 +516,19 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	public int handleAbgelaufeneRollen(@Nonnull LocalDate stichtag) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Benutzer> query = cb.createQuery(Benutzer.class);
+
+		//TODO (hefr) changeme
 		Root<Benutzer> root = query.from(Benutzer.class);
-		Predicate predicateDatumGesetzt  = cb.isNotNull(root.get(Benutzer_.roleGueltigBis));
-		Predicate predicateAbgelaufen = cb.lessThanOrEqualTo(root.get(Benutzer_.roleGueltigBis), stichtag);
-		query.where(predicateDatumGesetzt, predicateAbgelaufen);
+//		Predicate predicateDatumGesetzt  = cb.isNotNull(root.get(Benutzer_.currentBerechtigung).get(Berechtigung_.roleGueltigBis));
+//		Predicate predicateAbgelaufen = cb.lessThanOrEqualTo(root.get(Benutzer_.currentBerechtigung).get(Berechtigung_.roleGueltigBis), stichtag);
+//		query.where(predicateDatumGesetzt, predicateAbgelaufen);
 		List<Benutzer> userMitAbgelaufenerRolle = persistence.getCriteriaResults(query);
 
-		for (Benutzer benutzer : userMitAbgelaufenerRolle) {
-			LOG.info("Benutzerrolle ist abgelaufen: {}, war: {}, abgelaufen: {}", benutzer.getUsername(),
-				benutzer.getRole(), benutzer.getRoleGueltigBis());
-			changeRole(benutzer.getUsername(), UserRole.GESUCHSTELLER, null, null, null);
-		}
+//		for (Benutzer benutzer : userMitAbgelaufenerRolle) {
+//			LOG.info("Benutzerrolle ist abgelaufen: {}, war: {}, abgelaufen: {}", benutzer.getUsername(),
+//				benutzer.getRole(), benutzer.getRoleGueltigBis());
+//			changeRole(benutzer.getUsername(), UserRole.GESUCHSTELLER, null, null, null);
+//		}
 		return userMitAbgelaufenerRolle.size();
 	}
 }

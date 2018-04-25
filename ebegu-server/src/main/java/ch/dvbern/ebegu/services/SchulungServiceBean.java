@@ -45,6 +45,7 @@ import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer_;
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Berechtigung;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuung_;
 import ch.dvbern.ebegu.entities.Fall;
@@ -318,7 +319,10 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		Benutzer benutzer = new Benutzer();
 		benutzer.setVorname(GESUCHSTELLER_VORNAME);
 		benutzer.setNachname(name);
-		benutzer.setRole(UserRole.GESUCHSTELLER);
+		Berechtigung berechtigung = new Berechtigung();
+		berechtigung.setRole(UserRole.GESUCHSTELLER);
+		berechtigung.setBenutzer(benutzer);
+		benutzer.setCurrentBerechtigung(berechtigung);
 		benutzer.setEmail(GESUCHSTELLER_VORNAME.toLowerCase(Locale.GERMAN) + '.' + name.toLowerCase(Locale.GERMAN) + EXAMPLE_COM);
 		benutzer.setUsername(username);
 		benutzer.setMandant(mandant);
@@ -333,14 +337,18 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		Benutzer benutzer = new Benutzer();
 		benutzer.setVorname(vorname);
 		benutzer.setNachname(name);
+		Berechtigung berechtigung = new Berechtigung();
+		berechtigung.setBenutzer(benutzer);
+
 		if (traegerschaft != null) {
-			benutzer.setRole(UserRole.SACHBEARBEITER_TRAEGERSCHAFT);
-			benutzer.setTraegerschaft(traegerschaft);
+			berechtigung.setRole(UserRole.SACHBEARBEITER_TRAEGERSCHAFT);
+			berechtigung.setTraegerschaft(traegerschaft);
 		}
 		if (institution != null) {
-			benutzer.setRole(UserRole.SACHBEARBEITER_INSTITUTION);
-			benutzer.setInstitution(institution);
+			berechtigung.setRole(UserRole.SACHBEARBEITER_INSTITUTION);
+			berechtigung.setInstitution(institution);
 		}
+		benutzer.setCurrentBerechtigung(berechtigung);
 		benutzer.setEmail(vorname.toLowerCase(Locale.GERMAN) + '.' + name.toLowerCase(Locale.GERMAN) + EXAMPLE_COM);
 		benutzer.setUsername(username);
 		benutzer.setMandant(mandant);

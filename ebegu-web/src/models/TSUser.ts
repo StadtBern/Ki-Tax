@@ -15,10 +15,10 @@
 
 import {TSAmt} from './enums/TSAmt';
 import {rolePrefix, TSRole} from './enums/TSRole';
+import TSBerechtigung from './TSBerechtigung';
 import TSInstitution from './TSInstitution';
 import {TSMandant} from './TSMandant';
 import {TSTraegerschaft} from './TSTraegerschaft';
-import moment = require('moment');
 
 export default class TSUser {
 
@@ -28,18 +28,16 @@ export default class TSUser {
     private _password: string;
     private _email: string;
     private _mandant: TSMandant;
-    private _traegerschaft: TSTraegerschaft;
-    private _institution: TSInstitution;
     private _role: TSRole;
     private _amt: TSAmt;
     private _gesperrt: boolean;
-    private _roleGueltigBis: moment.Moment;
-    private _roleAb: TSRole;
-    private _roleGueltigAb: moment.Moment;
 
+    private _currentBerechtigung: TSBerechtigung;
+
+    //TODO (hefr) hier muss wohl doch direkt die currentBerechtigung uebergeben werden??? wegen DatumBis?
     constructor(vorname?: string, nachname?: string, username?: string, password?: string, email?: string,
-                mandant?: TSMandant, role?: TSRole, traegerschaft?: TSTraegerschaft, institution?: TSInstitution, amt?: TSAmt, gesperrt?: boolean,
-                roleGueltigBis?: moment.Moment, roleAb?: TSRole, roleGueltigAb?: moment.Moment) {
+                mandant?: TSMandant, role?: TSRole, traegerschaft?: TSTraegerschaft, institution?: TSInstitution,
+                amt?: TSAmt, gesperrt?: boolean) {
         this._vorname = vorname;
         this._nachname = nachname;
         this._username = username;
@@ -47,13 +45,13 @@ export default class TSUser {
         this._email = email;
         this._mandant = mandant;
         this._role = role;
-        this._traegerschaft = traegerschaft;
-        this._institution = institution;
         this._amt = amt;
         this._gesperrt = gesperrt;
-        this._roleGueltigBis = roleGueltigBis;
-        this._roleAb = roleAb;
-        this._roleGueltigAb = roleGueltigAb;
+        // Berechtigung
+        this._currentBerechtigung = new TSBerechtigung();
+        this._currentBerechtigung.role = role;
+        this._currentBerechtigung.institution = institution;
+        this._currentBerechtigung.traegerschaft = traegerschaft;
     }
 
     get nachname(): string {
@@ -112,22 +110,6 @@ export default class TSUser {
         this._role = value;
     }
 
-    get traegerschaft(): TSTraegerschaft {
-        return this._traegerschaft;
-    }
-
-    set traegerschaft(value: TSTraegerschaft) {
-        this._traegerschaft = value;
-    }
-
-    get institution(): TSInstitution {
-        return this._institution;
-    }
-
-    set institution(value: TSInstitution) {
-        this._institution = value;
-    }
-
     get amt(): TSAmt {
         if (!this._amt) {
             this._amt = this.analyseAmt();
@@ -147,28 +129,12 @@ export default class TSUser {
         this._gesperrt = value;
     }
 
-    get roleGueltigBis(): moment.Moment {
-        return this._roleGueltigBis;
+    get currentBerechtigung(): TSBerechtigung {
+        return this._currentBerechtigung;
     }
 
-    set roleGueltigBis(value: moment.Moment) {
-        this._roleGueltigBis = value;
-    }
-
-    get roleAb(): TSRole {
-        return this._roleAb;
-    }
-
-    set roleAb(value: TSRole) {
-        this._roleAb = value;
-    }
-
-    get roleGueltigAb(): moment.Moment {
-        return this._roleGueltigAb;
-    }
-
-    set roleGueltigAb(value: moment.Moment) {
-        this._roleGueltigAb = value;
+    set currentBerechtigung(value: TSBerechtigung) {
+        this._currentBerechtigung = value;
     }
 
     getFullName(): string {

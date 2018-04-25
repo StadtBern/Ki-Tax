@@ -28,9 +28,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({ TYPE, ANNOTATION_TYPE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = CheckBenutzerRolesValidator.class)
+@Constraint(validatedBy = CheckBerechtigungValidator.class)
 @Documented
-public @interface CheckBenutzerRoles {
+public @interface CheckBerechtigung {
 
 	String message() default "{invalid_benutzer_roles_rules}";
 
