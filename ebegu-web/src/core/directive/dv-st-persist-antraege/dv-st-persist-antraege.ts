@@ -14,6 +14,7 @@
  */
 
 import {IAttributes, IAugmentedJQuery, IDirective, IDirectiveFactory, IDirectiveLinkFn, IScope} from 'angular';
+import TSBerechtigung from '../../../models/TSBerechtigung';
 import {DVAntragListController} from '../../component/dv-antrag-list/dv-antrag-list';
 import TSUser from '../../../models/TSUser';
 import UserRS from '../../service/userRS.rest';
@@ -167,7 +168,8 @@ export default class DVSTPersistAntraege implements IDirective {
                 savedStateToReturn.search.predicateObject = this.extractVerantwortlicherFullName();
             }
             if (!savedStateToReturn.search.predicateObject.verantwortlicher) {
-                if (this.authServiceRS.getPrincipal().role === TSRole.ADMINISTRATOR_SCHULAMT || this.authServiceRS.getPrincipal().role === TSRole.SCHULAMT) {
+                let berechtigung: TSBerechtigung = this.authServiceRS.getPrincipal().currentBerechtigung;
+                if (berechtigung.role === TSRole.ADMINISTRATOR_SCHULAMT || berechtigung.role === TSRole.SCHULAMT) {
                     savedStateToReturn.search.predicateObject.verantwortlicherSCH = this.authServiceRS.getPrincipal().getFullName();
                 } else { //JA
                     savedStateToReturn.search.predicateObject.verantwortlicher = this.authServiceRS.getPrincipal().getFullName();
@@ -178,7 +180,8 @@ export default class DVSTPersistAntraege implements IDirective {
     }
 
     private extractVerantwortlicherFullName() {
-        if (this.authServiceRS.getPrincipal().role === TSRole.ADMINISTRATOR_SCHULAMT || this.authServiceRS.getPrincipal().role === TSRole.SCHULAMT) {
+        let berechtigung: TSBerechtigung = this.authServiceRS.getPrincipal().currentBerechtigung;
+        if (berechtigung.role === TSRole.ADMINISTRATOR_SCHULAMT || berechtigung.role === TSRole.SCHULAMT) {
             return {verantwortlicherSCH: this.authServiceRS.getPrincipal().getFullName()};
         } else { //JA
             return {verantwortlicher: this.authServiceRS.getPrincipal().getFullName()};

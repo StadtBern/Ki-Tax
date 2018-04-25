@@ -264,45 +264,46 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	@Override
 	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
 	public Benutzer changeRole(@Nonnull String username, @Nonnull UserRole userRole, @Nullable Institution institution,
-		@Nullable Traegerschaft traegerschaft, @Nullable LocalDate roleGueltigBis) {
+		@Nullable Traegerschaft traegerschaft, @Nullable LocalDate gueltigAb, @Nullable LocalDate gueltigBis) {
 
 		Benutzer benutzerFromDB = findBenutzer(username).orElseThrow(()
 			-> new EbeguEntityNotFoundException("changeRole", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + username));
-		//TODO (hefr) changeme
-//		Berechtigung berechtigungFromDB =
-//
-//		// Feststellen, was alles geändert hat
-//		boolean institutionChanged = benutzerFromDB.getCurrentBerechtigung().getInstitution() != null && !benutzerFromDB.getInstitution().equals(institution);
-//		boolean traegerschaftChanged = benutzerFromDB.getTraegerschaft() != null && !benutzerFromDB.getTraegerschaft().equals(traegerschaft);
-//
-//		// Ausloggen nur, wenn die Änderungen nicht in der Zukunft liegen! Falls dies der Fall ist, wird der Timer das ausloggen übernehmen
-//		if (roleGueltigBis != null && (benutzerFromDB.getRole() != userRole || institutionChanged || traegerschaftChanged)) {
-//			// Die AuthorisiertenBenutzer müssen gelöscht werden
-//			logoutAndDeleteAuthorisierteBenutzerForUser(username);
-//		}
-//
-//		benutzerFromDB.setRole(userRole);
-//		benutzerFromDB.setInstitution(institution);
-//		benutzerFromDB.setTraegerschaft(traegerschaft);
-//		benutzerFromDB.setRoleGueltigBis(roleGueltigBis);
-//		clearBenutzerObject(benutzerFromDB);
-		return this.saveBenutzer(benutzerFromDB);
+
+		// Feststellen, was alles geändert hat
+		boolean roleChanged = benutzerFromDB.getRole() != userRole;
+		boolean institutionChanged = roleChanged && (benutzerFromDB.getInstitution() != null && !benutzerFromDB.getInstitution().equals(institution));
+		boolean traegerschaftChanged = roleChanged && (benutzerFromDB.getTraegerschaft() != null && !benutzerFromDB.getTraegerschaft().equals(traegerschaft));
+		boolean isFuture = gueltigBis != null && gueltigBis.isAfter(LocalDate.now()) && gueltigBis.isBefore(Constants.END_OF_TIME);
+
+		// Ausloggen nur, wenn die Änderungen nicht in der Zukunft liegen! Falls dies der Fall ist, wird der Timer das ausloggen übernehmen
+		if (!isFuture && (institutionChanged || traegerschaftChanged || roleChanged)) {
+			// Die AuthorisiertenBenutzer müssen gelöscht werden
+			logoutAndDeleteAuthorisierteBenutzerForUser(username);
+		}
+
+		benutzerFromDB.setRole(userRole);
+		benutzerFromDB.setInstitution(institution);
+		benutzerFromDB.setTraegerschaft(traegerschaft);
+		if (isFuture) {
+			benutzerFromDB.getCurrentBerechtigung().getGueltigkeit().setGueltigBis(gueltigBis);
+		}
+		clearBenutzerObject(benutzerFromDB);
+		return benutzerFromDB;
 	}
 
 	private void clearBenutzerObject(@Nonnull Benutzer benutzer) {
 		// Es darf nur eine Institution gesetzt sein, wenn die Rolle INSTITUTION ist
-		//TODO (hefr) changeme
-//		if (benutzer.getRole() != UserRole.SACHBEARBEITER_INSTITUTION) {
-//			benutzer.setInstitution(null);
-//		}
-//		// Es darf nur eine Trägerschaft gesetzt sein, wenn die Rolle TRAEGERSCHAFT ist
-//		if (benutzer.getRole() != UserRole.SACHBEARBEITER_TRAEGERSCHAFT) {
-//			benutzer.setTraegerschaft(null);
-//		}
-//		// Das Datum gueltigBis sollte bei Rolle GESUCHSTELLER nicht gesetzt werden
-//		if (benutzer.getRole() == UserRole.GESUCHSTELLER) {
-//			benutzer.setRoleGueltigBis(null);
-//		}
+		if (benutzer.getRole() != UserRole.SACHBEARBEITER_INSTITUTION) {
+			benutzer.setInstitution(null);
+		}
+		// Es darf nur eine Trägerschaft gesetzt sein, wenn die Rolle TRAEGERSCHAFT ist
+		if (benutzer.getRole() != UserRole.SACHBEARBEITER_TRAEGERSCHAFT) {
+			benutzer.setTraegerschaft(null);
+		}
+		// Das Datum gueltigBis sollte bei Rolle GESUCHSTELLER nicht gesetzt werden
+		if (benutzer.getRole() == UserRole.GESUCHSTELLER) {
+			benutzer.getCurrentBerechtigung().getGueltigkeit().setGueltigBis(Constants.END_OF_TIME);
+		}
 	}
 
 	private Optional<Benutzer> loadSuperAdmin() {

@@ -28,7 +28,6 @@ export default class TSUser {
     private _password: string;
     private _email: string;
     private _mandant: TSMandant;
-    private _role: TSRole;
     private _amt: TSAmt;
     private _gesperrt: boolean;
 
@@ -44,7 +43,6 @@ export default class TSUser {
         this._password = password;
         this._email = email;
         this._mandant = mandant;
-        this._role = role;
         this._amt = amt;
         this._gesperrt = gesperrt;
         // Berechtigung
@@ -102,14 +100,6 @@ export default class TSUser {
         this._mandant = value;
     }
 
-    get role(): TSRole {
-        return this._role;
-    }
-
-    set role(value: TSRole) {
-        this._role = value;
-    }
-
     get amt(): TSAmt {
         if (!this._amt) {
             this._amt = this.analyseAmt();
@@ -142,7 +132,7 @@ export default class TSUser {
     }
 
     getRoleKey(): string {
-        return rolePrefix() + this.role;
+        return rolePrefix() + this.currentBerechtigung.role;
     }
 
     /**
@@ -152,7 +142,7 @@ export default class TSUser {
      * ACHTUNG Diese Logik existiert auch im Server UserRole. Aenderungen muessen in beiden Orten gemacht werden.
      */
     private analyseAmt(): TSAmt {
-        switch (this.role) {
+        switch (this.currentBerechtigung.role) {
             case TSRole.SACHBEARBEITER_JA:
             case TSRole.ADMIN:
             case TSRole.SUPER_ADMIN:

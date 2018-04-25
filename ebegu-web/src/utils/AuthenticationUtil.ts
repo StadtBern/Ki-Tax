@@ -13,6 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import TSBerechtigung from '../models/TSBerechtigung';
 import TSUser from '../models/TSUser';
 import {IStateService} from 'angular-ui-router';
 import {TSRoleUtil} from './TSRoleUtil';
@@ -24,21 +25,22 @@ export default class AuthenticationUtil {
      *  Navigiert basierend auf der Rolle zu einer anderen Startseite
      */
     public static navigateToStartPageForRole(user: TSUser, $state: IStateService): void {
-        if (user.role === TSRole.SUPER_ADMIN) {
+        let berechtigung: TSBerechtigung = user.currentBerechtigung;
+        if (berechtigung.role === TSRole.SUPER_ADMIN) {
             $state.go('faelle');
-        } else if (TSRoleUtil.getAdministratorJugendamtRole().indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getAdministratorJugendamtRole().indexOf(berechtigung.role) > -1) {
             $state.go('pendenzen');
-        } else if (TSRoleUtil.getTraegerschaftInstitutionOnlyRoles().indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getTraegerschaftInstitutionOnlyRoles().indexOf(berechtigung.role) > -1) {
             $state.go('pendenzenBetreuungen');
-        } else if (TSRoleUtil.getSchulamtOnlyRoles().indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getSchulamtOnlyRoles().indexOf(berechtigung.role) > -1) {
             $state.go('pendenzen');
-        } else if (TSRoleUtil.getSteueramtOnlyRoles().indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getSteueramtOnlyRoles().indexOf(berechtigung.role) > -1) {
             $state.go('pendenzenSteueramt');
-        } else if (TSRoleUtil.getGesuchstellerOnlyRoles().indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getGesuchstellerOnlyRoles().indexOf(berechtigung.role) > -1) {
             $state.go('gesuchstellerDashboard');
-        } else if (TSRoleUtil.getJuristOnlyRoles().indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getJuristOnlyRoles().indexOf(berechtigung.role) > -1) {
             $state.go('faelle');
-        } else if (TSRoleUtil.getRevisorOnlyRoles().indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getRevisorOnlyRoles().indexOf(berechtigung.role) > -1) {
             $state.go('faelle');
         } else {
             console.error('Achtung, keine Startpage definiert fuer Rolle ', user.getRoleKey(), ', nehme gesuchstellerDashboard');

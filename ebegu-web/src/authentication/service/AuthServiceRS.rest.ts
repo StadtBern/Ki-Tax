@@ -46,7 +46,7 @@ export default class AuthServiceRS {
 
     public getPrincipalRole(): TSRole {
         if (this.principal) {
-            return this.principal.role;
+            return this.principal.currentBerechtigung.role;
         }
         return undefined;
     }
@@ -124,7 +124,7 @@ export default class AuthServiceRS {
      */
     public isRole(role: TSRole) {
         if (role && this.principal) {
-            return this.principal.role === role;
+            return this.principal.currentBerechtigung.role === role;
         }
         return false;
     }
@@ -136,7 +136,7 @@ export default class AuthServiceRS {
         if (roles !== undefined && roles !== null && this.principal) {
             for (let i = 0; i < roles.length; i++) {
                 let role = roles[i];
-                if (role === this.principal.role) {
+                if (role === this.principal.currentBerechtigung.role) {
                     return true;
                 }
             }

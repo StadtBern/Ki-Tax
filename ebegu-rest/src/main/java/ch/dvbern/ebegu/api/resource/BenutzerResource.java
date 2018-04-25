@@ -241,9 +241,8 @@ public class BenutzerResource {
 			}
 		}
 
-		//TODO (hefr) achtung, gueltigBis gibts nicht mehr
 		Benutzer benutzer = benutzerService.changeRole(benutzerJax.getUsername(), benutzerJax.getRole(), institution, traegerschaft,
-			null);
+			benutzerJax.getCurrentBerechtigung().getGueltigAb(), benutzerJax.getCurrentBerechtigung().getGueltigBis());
 
 		return converter.benutzerToAuthLoginElement(benutzer);
 	}

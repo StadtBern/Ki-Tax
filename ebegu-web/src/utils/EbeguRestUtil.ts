@@ -1647,7 +1647,7 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public parseBerechtigung(berechtigungTS: TSBerechtigung, berechtigungFromServer: any) {
+    public parseBerechtigung(berechtigungTS: TSBerechtigung, berechtigungFromServer: any): TSBerechtigung {
         if (berechtigungFromServer) {
             this.parseDateRangeEntity(berechtigungTS, berechtigungFromServer);
             berechtigungTS.role = berechtigungFromServer.role;

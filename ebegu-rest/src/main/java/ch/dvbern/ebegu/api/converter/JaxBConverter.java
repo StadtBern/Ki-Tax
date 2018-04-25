@@ -2333,6 +2333,7 @@ public class JaxBConverter {
 
 	public JaxBerechtigung berechtigungToJax(Berechtigung berechtigung) {
 		JaxBerechtigung jaxLoginElement = new JaxBerechtigung();
+		convertAbstractDateRangedFieldsToJAX(berechtigung, jaxLoginElement);
 		jaxLoginElement.setRole(berechtigung.getRole());
 		if (berechtigung.getInstitution() != null) {
 			jaxLoginElement.setInstitution(institutionToJAX(berechtigung.getInstitution()));

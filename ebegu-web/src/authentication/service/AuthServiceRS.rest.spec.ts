@@ -76,7 +76,7 @@ describe('AuthServiceRS', function () {
             expect(cookieUser.nachname).toEqual(user.nachname);
             expect(cookieUser.password).toEqual('');
             expect(cookieUser.email).toEqual(user.email);
-            expect(cookieUser.role).toEqual(user.role);
+            expect(cookieUser.currentBerechtigung.role).toEqual(user.currentBerechtigung.role);
         });
         it('sends a logrequest to server', () => {
             authServiceRS.logoutRequest();

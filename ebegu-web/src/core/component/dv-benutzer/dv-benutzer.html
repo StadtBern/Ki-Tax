@@ -98,7 +98,7 @@
                         <div class="dv-select-style">
                             <select aria-describedby="rolle-error" name="role" id="rolle"
                                     class="form-control" ng-required="true"
-                                    ng-model="vm.selectedUser.role"
+                                    ng-model="vm.selectedUser.currentBerechtigung.role"
                                     ng-options="role as vm.getTranslatedRole(role) for role in vm.getRollen()">
                             </select>
                             <dv-error-messages input-id="rolle" for="vm.form.rolle.$error"></dv-error-messages>
@@ -111,7 +111,7 @@
                         <!--suppress XmlInvalidId -->
                         <label class="md-no-float" data-translate="ROLLE_GUELTIG_BIS" for="roleGueltigBis"></label>
                         <dv-datepicker input-id="roleGueltigBis" input-name="roleGueltigBis" name="roleGueltigBis"
-                                       ng-model="vm.selectedUser.roleGueltigBis" ng-required="vm.checkRolleBeenden"
+                                       ng-model="vm.selectedUser.currentBerechtigung.gueltigkeit.gueltigBis" ng-required="vm.checkRolleBeenden"
                                        class="input-element"
                                        ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}"
                                        dv-min-date="vm.minDate">
@@ -151,7 +151,7 @@
                     <div class="dv-select-style">
                         <select aria-describedby="institution-error" name="institution" id="institution"
                                 class="form-control" ng-required="vm.showInstitutionenList()"
-                                ng-model="vm.selectedUser.institution.id"
+                                ng-model="vm.selectedUser.currentBerechtigung.institution.id"
                                 ng-options="institution.id as institution.name for institution in vm.institutionenList | orderBy: 'institution.name'">
                         </select>
                         <dv-error-messages input-id="institution"
@@ -167,7 +167,7 @@
                     <div class="dv-select-style">
                         <select aria-describedby="traegerschaft-error" name="traegerschaft" id="traegerschaft"
                                 class="form-control" ng-required="vm.showTraegerschaftenList()"
-                                ng-model="vm.selectedUser.traegerschaft.id"
+                                ng-model="vm.selectedUser.currentBerechtigung.traegerschaft.id"
                                 ng-options="traegerschaft.id as traegerschaft.name for traegerschaft in vm.traegerschaftenList | orderBy: 'traegerschaft.name'">
                         </select>
                         <dv-error-messages input-id="traegerschaft"

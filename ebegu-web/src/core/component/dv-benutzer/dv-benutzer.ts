@@ -74,8 +74,8 @@ export class DVBenutzerController {
         if (this.$stateParams.benutzerId) {
            this.userRS.findBenutzer(this.$stateParams.benutzerId).then((result) => {
                this.selectedUser = result;
-               this.roleBisher = result.role;
-               // this.checkRolleBeenden = EbeguUtil.isNotNullOrUndefined(this.selectedUser.roleGueltigBis);
+               this.roleBisher = result.currentBerechtigung.role;
+               this.checkRolleBeenden = EbeguUtil.isNotNullOrUndefined(this.selectedUser.currentBerechtigung.gueltigkeit.gueltigBis);
            });
         }
     }
@@ -105,14 +105,14 @@ export class DVBenutzerController {
 
     public showInstitutionenList(): boolean {
         if (this.selectedUser) {
-            return this.selectedUser.role === TSRole.SACHBEARBEITER_INSTITUTION;
+            return this.selectedUser.currentBerechtigung.role === TSRole.SACHBEARBEITER_INSTITUTION;
         }
         return false;
     }
 
     public showTraegerschaftenList(): boolean {
         if (this.selectedUser) {
-            return this.selectedUser.role === TSRole.SACHBEARBEITER_TRAEGERSCHAFT;
+            return this.selectedUser.currentBerechtigung.role === TSRole.SACHBEARBEITER_TRAEGERSCHAFT;
         }
         return false;
     }
@@ -146,15 +146,15 @@ export class DVBenutzerController {
     }
 
     private hasRoleChanged() {
-        return this.roleBisher !== this.selectedUser.role;
+        return this.roleBisher !== this.selectedUser.currentBerechtigung.role;
     }
 
     private isAdminRole() {
-        return TSRoleUtil.getAdministratorRoles().indexOf(this.selectedUser.role) > -1;
+        return TSRoleUtil.getAdministratorRoles().indexOf(this.selectedUser.currentBerechtigung.role) > -1;
     }
 
     private isMoreThanGesuchstellerRole() {
-        return TSRoleUtil.getAllRolesButGesuchsteller().indexOf(this.selectedUser.role) > -1;
+        return TSRoleUtil.getAllRolesButGesuchsteller().indexOf(this.selectedUser.currentBerechtigung.role) > -1;
     }
 
     private doSaveBenutzer(): void {
@@ -190,25 +190,28 @@ export class DVBenutzerController {
 
     private clearBenutzerObject(benutzer: TSUser): void {
         // Wenn das Flag "Rolle beenden" nicht mehr gesetzt ist, muss das Datum gelöscht werden
-        // if (!this.checkRolleBeenden) {
-        //     benutzer.roleGueltigBis = null;
-        // }
-        // // Es darf nur eine Institution gesetzt sein, wenn die Rolle INSTITUTION ist
-        // if (benutzer.role !== TSRole.SACHBEARBEITER_INSTITUTION) {
-        //     benutzer.institution = null;
-        // }
-        // // Es darf nur eine Trägerschaft gesetzt sein, wenn die Rolle TRAEGERSCHAFT ist
-        // if (benutzer.role !== TSRole.SACHBEARBEITER_TRAEGERSCHAFT) {
-        //     benutzer.traegerschaft = null;
-        // }
-        // // Das Datum gueltigBis sollte bei Rolle GESUCHSTELLER nicht gesetzt werden
-        // if (benutzer.role === TSRole.GESUCHSTELLER) {
-        //     benutzer.roleGueltigBis = null;
-        // }
+        if (!this.checkRolleBeenden) {
+            benutzer.currentBerechtigung.gueltigkeit.gueltigBis = null;
+        }
+        // Es darf nur eine Institution gesetzt sein, wenn die Rolle INSTITUTION ist
+        if (benutzer.currentBerechtigung.role !== TSRole.SACHBEARBEITER_INSTITUTION) {
+            benutzer.currentBerechtigung.institution = null;
+        }
+        // Es darf nur eine Trägerschaft gesetzt sein, wenn die Rolle TRAEGERSCHAFT ist
+        if (benutzer.currentBerechtigung.role !== TSRole.SACHBEARBEITER_TRAEGERSCHAFT) {
+            benutzer.currentBerechtigung.traegerschaft = null;
+        }
+        // Das Datum gueltigBis sollte bei Rolle GESUCHSTELLER nicht gesetzt werden
+        if (benutzer.currentBerechtigung.role === TSRole.GESUCHSTELLER) {
+            benutzer.currentBerechtigung.gueltigkeit.gueltigBis = null;
+        }
     }
 
     public showRolleBeenden(): boolean {
-        return this.selectedUser.role !== TSRole.GESUCHSTELLER;
+        if (this.selectedUser) {
+            return this.selectedUser.currentBerechtigung.role !== TSRole.GESUCHSTELLER;
+        }
+        return false;
     }
 
     public showGueltigBis(): boolean {
