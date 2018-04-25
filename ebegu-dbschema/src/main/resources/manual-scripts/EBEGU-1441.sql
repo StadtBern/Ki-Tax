@@ -25,10 +25,6 @@ delete from zahlungsposition where id in ('58802c0a-24e0-4a04-aa5e-7ec581de324b'
 '1f44ae89-40db-4ee6-b55e-5a5ca175ffad', 'a577155b-8ee4-4fef-a6c3-607266431138', '8a07bc66-8616-4508-b372-6dac13fbb7d4',
 '2936a254-a974-40d7-8da1-68932c03b0f2', '2055eeba-86d7-4c14-8332-6394eb74724b');
 
-
--- TODO (hefr) Achtung, das Total der Aufträge müsste auch korrigiert werden!
-
-
 -- Die korrigierten Verfuegungszeitabschnitte auf VERRECHNET_KORRIGIERT setzen
 -- bei allen zahlungspositionen mit status "KORREKTUR_VOLLKOSTEN" oder "KORREKTUR_ELTERNBEITRAG" AND ignoriert = false muss der dazugehoerige verfuegungszeigabschnitt auf VERRECHNET_KORRIGIERT gesetzt werden (später)
 

@@ -41,8 +41,6 @@ public class JaxExternalModul implements Serializable {
 		this.stufe = stufe;
 	}
 
-	//TODO (team) Tag und Stufe wirklich als INT?
-
 	@Nonnull
 	public DayOfWeek getTag() {
 		return tag;

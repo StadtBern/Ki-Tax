@@ -165,8 +165,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
         //gesuchsteller hat sicher mal nur Zugriff auf verfuegungsdetail wenn das gesuch mindestens freiggeben ist
         if (isGesuchsteller) {
-            let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-            return isAtLeastFreigegeben(status);
+            return isAtLeastFreigegeben(this.getAntragStatus());
         } else {
             return true;
         }
@@ -192,8 +191,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         }
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
         if (isGesuchsteller) {
-            let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-            return isAnyStatusOfVerfuegt(status) && this.getGesuch().hasFSDokument && !this.isFinSitAbglehnt();
+            return isAnyStatusOfVerfuegt(this.getAntragStatus()) && this.getGesuch().hasFSDokument && !this.isFinSitAbglehnt();
         }
         return this.getGesuch().hasFSDokument && !this.isFinSitAbglehnt();
 
@@ -206,10 +204,19 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public isBegleitschreibenVisible(): boolean {
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
         if (isGesuchsteller) {
-            let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-            return isAnyStatusOfVerfuegt(status) && !this.gesuchModelManager.areThereOnlySchulamtAngebote() && !this.gesuchModelManager.areThereOnlyGeschlossenOhneVerfuegung();
+            return isAnyStatusOfVerfuegt(this.getAntragStatus()) && !this.gesuchModelManager.areThereOnlySchulamtAngebote() && !this.gesuchModelManager.areThereOnlyGeschlossenOhneVerfuegung();
         }
         return !this.gesuchModelManager.areThereOnlySchulamtAngebote() && !this.gesuchModelManager.areThereOnlyGeschlossenOhneVerfuegung();
+    }
+
+    public isKompletteKorrespondenzVisible(): boolean {
+        let status = this.getAntragStatus();
+        return this.isBegleitschreibenVisible() && isAnyStatusOfVerfuegt(status);
+    }
+
+    private getAntragStatus(): TSAntragStatus {
+        let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
+        return status;
     }
 
     public getFall() {
@@ -502,6 +509,19 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             });
     }
 
+    public openKompletteKorrespondenzPDF(): void {
+        let win: Window = this.downloadRS.prepareDownloadWindow();
+        this.downloadRS.getKompletteKorrespondenzAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id)
+            .then((downloadFile: TSDownloadFile) => {
+                this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+            })
+            .catch((ex) => {
+                win.close();
+                this.$log.error('An error occurred downloading the document, closing download window.', ex);
+            });
+    }
+
     public openMahnungPDF(mahnung: TSMahnung): void {
         let win: Window = this.downloadRS.prepareDownloadWindow();
         if (mahnung == null) {
@@ -519,18 +539,16 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public showBeschwerdeHaengig(): boolean {
-        let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
         // Schulamt Status duerfen keine Beschwerde starten
-        return isAnyStatusOfVerfuegt(status) && !this.getGesuch().gesperrtWegenBeschwerde;
+        return isAnyStatusOfVerfuegt(this.getAntragStatus()) && !this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     public showBeschwerdeAbschliessen(): boolean {
-        let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-        return TSAntragStatus.BESCHWERDE_HAENGIG === status;
+        return TSAntragStatus.BESCHWERDE_HAENGIG === this.getAntragStatus();
     }
 
     public showAbschliessen(): boolean {
-        let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
+        let status: TSAntragStatus = this.getAntragStatus();
         return (TSAntragStatus.IN_BEARBEITUNG_JA === status || TSAntragStatus.GEPRUEFT === status)
             && this.gesuchModelManager.areThereOnlySchulamtAngebote() && this.gesuchModelManager.getGesuch().isThereAnyBetreuung();
     }
