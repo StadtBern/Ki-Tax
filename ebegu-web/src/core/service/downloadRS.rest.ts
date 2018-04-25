@@ -68,6 +68,14 @@ export class DownloadRS {
             });
     }
 
+    public getKompletteKorrespondenzAccessTokenGeneratedDokument(gesuchId: string): IPromise<TSDownloadFile> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/KOMPLETTEKORRESPONDENZ/generated')
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
     public getFreigabequittungAccessTokenGeneratedDokument(gesuchId: string, forceCreation: boolean): IPromise<TSDownloadFile> {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/'
             + encodeURIComponent(TSGeneratedDokumentTyp[TSGeneratedDokumentTyp.FREIGABEQUITTUNG]) + '/' + forceCreation + '/generated')

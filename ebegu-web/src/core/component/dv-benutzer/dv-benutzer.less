@@ -12,19 +12,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 @import '../../../style/variables.less';
 
 .dv-benutzer {
     background: #F0F0F0;
-    flex: 1 1 auto;
+    flex-grow: 0 !important;
+    margin-left: auto;
+    margin-right: auto;
     min-width: 3rem;
     display: block;
     position: relative;
+    box-sizing: content-box;
 
     .row {
         .well {
-            margin-left: 0rem;
+            margin-left: -2.5rem;
             margin-right: -2.5rem;
             box-shadow: none;
             border: none;
@@ -34,11 +36,22 @@
     }
 }
 
+dv-benutzer {
+    display: flex;
+}
+
 .button-row {
     flex-direction: row;
     -ms-flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    display: flex;
+    margin-left:-16px;
+    padding-left:16px;
+    margin-right:-16px;
+    padding-right:16px;
     dv-loading-button {
-        margin-left: 3rem;
+        margin-left: auto;
         margin-right: auto;
 
         position: static;
@@ -51,8 +64,6 @@
     & > div {
         padding: 0;
         width: auto;
-        margin-right: 3rem;
-        margin-left: 2rem;
     }
 }
 

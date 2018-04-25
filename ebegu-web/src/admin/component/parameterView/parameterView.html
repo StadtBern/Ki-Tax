@@ -167,11 +167,11 @@
                                                 </dv-loading-button>
                                             </div>
                                             <div class="col-md-2">
-                                                <a href="#" id="cancelJahresabhLink" class="dv-btn"
-                                                   unsaved-warning-clear
-                                                   ng-click="vm.cancelJahresabhaengig(); vm.form.$setPristine(); vm.form.$setUntouched(); $event.preventDefault();">
+                                                <dv-loading-button type="submit"
+                                                                   button-click="vm.cancelJahresabhaengig(); vm.form.$setPristine(); vm.form.$setUntouched(); $event.preventDefault();"
+                                                                   button-class="cancel-button">
                                                     <span data-translate="CANCEL"></span>
-                                                </a>
+                                                </dv-loading-button>
                                             </div>
                                         </div>
                                     </div>

@@ -633,7 +633,6 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 				break;
 			}
 			default: {
-				//TODO (team) Rollen Schulamt beruecksichtigen!
 				// Alle anderen Rollen sind nicht berechtigt
 				throwViolation(mitteilung);
 			}

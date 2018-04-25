@@ -131,6 +131,18 @@
                         </button>
                     </div>
                 </div>
+                <!-- Komplette Korrespondenz anzeigen -->
+                <div class="row text-left" ng-show="vm.isKompletteKorrespondenzVisible()">
+                    <div class="col-md-12">
+
+                        <button type="button" class=" btn-link link-underline"
+                                ng-click="vm.openKompletteKorrespondenzPDF()">
+                            <i class="fa fa-file-text-o"></i>
+                            <span data-translate="PDF_KOMPLETTE_KORRESPONDENZ_ANZEIGEN"></span>
+                        </button>
+                    </div>
+                </div>
+
 
                 <!-- Liste der bisherige Mahnungen -->
                 <div class="row text-left marginTop20" ng-if="vm.getMahnungList().length > 0">

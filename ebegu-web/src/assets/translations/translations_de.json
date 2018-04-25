@@ -883,6 +883,7 @@
     "PDF_NICHT_EINTRETEN_ANZEIGEN": "Nichteintretensverfügung als PDF anzeigen",
     "PDF_FINSITUATION_ANZEIGEN": "Berechnung der finanziellen Situation als PDF anzeigen",
     "PDF_BEGLEITSCHREIBEN_ANZEIGEN": "Deckblatt als PDF anzeigen",
+    "PDF_KOMPLETTE_KORRESPONDENZ_ANZEIGEN": "Komplette Korrespondenz als PDF anzeigen",
     "EFFEKTIVE_BETREUUNG": "Effektive Betreuung",
     "ZULETZT_BEARBEITER": "zuletzt {{username}}",
     "GUELTIGES_GESUCH": "dies ist das aktuell gültige Gesuch",
