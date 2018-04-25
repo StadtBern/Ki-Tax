@@ -14,6 +14,8 @@
  */
 package ch.dvbern.ebegu.api.resource.authentication;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Optional;
@@ -52,12 +54,13 @@ public final class AuthDataUtil {
 		}
 		try {
 			Gson gson = new Gson();
+			encodedPrincipalJson =  URLDecoder.decode(encodedPrincipalJson, "UTF-8");
 			return Optional.of(gson.fromJson(
 				new String(
 					Base64.getDecoder().decode(encodedPrincipalJson), Charset.forName("UTF-8")
 				),
 				JaxAuthAccessElementCookieData.class));
-		} catch (JsonSyntaxException | IllegalArgumentException e) {
+		} catch (JsonSyntaxException | IllegalArgumentException | UnsupportedEncodingException e) {
 			LOG.warn("Failed to get the AuthAccessElement from the principal Cookie", e);
 			return Optional.empty();
 		}
