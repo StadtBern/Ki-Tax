@@ -22,14 +22,13 @@ import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.security.RolesAllowed;
 
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.BenutzerTableFilterDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Berechtigung;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.enums.UserRoleName;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -114,11 +113,16 @@ public interface BenutzerService {
 	Benutzer reaktivieren(@Nonnull String username);
 
 	/**
+	 * Gibt alle Berechtigungen des Benutzers mit dem uebergebenen Username zurueck
+	 */
+	@Nonnull
+	List<Berechtigung> getBerechtigungenForBenutzer(@Nonnull String username);
+
+	/**
 	 * Ändert die aktuelle Berechtigung des uebergebenen Benutzers mit den uebergebenen Attributen.
 	 * Alle anderen Attribute werden nicht verändert.
 	 */
 	@Nonnull
-	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
 	Benutzer changeRole(@Nonnull String username, @Nonnull UserRole userRole, @Nullable Institution institution,
 		@Nullable Traegerschaft traegerschaft, @Nullable LocalDate gueltigAb, @Nullable LocalDate gueltigBis);
 
@@ -133,4 +137,14 @@ public interface BenutzerService {
 	 * @return Die Anzahl zurückgesetzter Benutzer
 	 */
 	int handleAbgelaufeneRollen(@Nonnull LocalDate stichtag);
+
+	/**
+	 * Suche die Berechtigung mit der uebergebenen Id
+	 */
+	Optional<Berechtigung> findBerechtigung(String id);
+
+	/**
+	 * Speichert eine Berechtigung zu einem Benutzer
+	 */
+	void saveBerechtigung(Benutzer benutzer, Berechtigung berechtigung);
 }

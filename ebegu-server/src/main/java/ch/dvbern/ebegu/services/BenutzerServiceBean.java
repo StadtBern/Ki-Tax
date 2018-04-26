@@ -263,6 +263,25 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	@Nonnull
 	@Override
 	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
+	public List<Berechtigung> getBerechtigungenForBenutzer(@Nonnull String username) {
+		Benutzer benutzer = findBenutzer(username).orElseThrow(() -> new EbeguEntityNotFoundException("getBerechtigungenForBenutzer",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Berechtigung> query = cb.createQuery(Berechtigung.class);
+		Root<Berechtigung> root = query.from(Berechtigung.class);
+		query.select(root);
+		Predicate predicateBenutzer = cb.equal(root.get(Berechtigung_.benutzer), benutzer);
+		query.where(predicateBenutzer);
+		query.orderBy(cb.desc(root.get(Berechtigung_.gueltigkeit).get(DateRange_.gueltigBis)));
+		//TODO (hefr) nur die aktuelle und alle zukünftigen Berechtigungen???
+
+		return persistence.getCriteriaResults(query);
+	}
+
+	@Nonnull
+	@Override
+	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
 	public Benutzer changeRole(@Nonnull String username, @Nonnull UserRole userRole, @Nullable Institution institution,
 		@Nullable Traegerschaft traegerschaft, @Nullable LocalDate gueltigAb, @Nullable LocalDate gueltigBis) {
 
@@ -531,5 +550,21 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 //			changeRole(benutzer.getUsername(), UserRole.GESUCHSTELLER, null, null, null);
 //		}
 		return userMitAbgelaufenerRolle.size();
+	}
+
+	@Override
+	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
+	public Optional<Berechtigung> findBerechtigung(String id) {
+		Objects.requireNonNull(id, "id muss gesetzt sein");
+		return Optional.of(persistence.find(Berechtigung.class, id));
+	}
+
+	@Override
+	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
+	public void saveBerechtigung(Benutzer benutzer, Berechtigung berechtigung) {
+		Objects.requireNonNull(benutzer);
+		Objects.requireNonNull(berechtigung);
+		berechtigung.setBenutzer(benutzer);
+		persistence.merge(berechtigung);
 	}
 }

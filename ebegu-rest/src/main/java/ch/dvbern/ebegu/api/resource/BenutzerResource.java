@@ -43,11 +43,15 @@ import javax.ws.rs.core.UriInfo;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
 import ch.dvbern.ebegu.api.dtos.JaxBenutzerSearchresultDTO;
+import ch.dvbern.ebegu.api.dtos.JaxBerechtigung;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.BenutzerTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Berechtigung;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.TraegerschaftService;
@@ -245,5 +249,44 @@ public class BenutzerResource {
 			benutzerJax.getCurrentBerechtigung().getGueltigAb(), benutzerJax.getCurrentBerechtigung().getGueltigBis());
 
 		return converter.benutzerToAuthLoginElement(benutzer);
+	}
+
+	@ApiOperation(value = "Gibt die Berechtigungen des Benutzers mit dem uebergebenen Username zurück.",
+		response = JaxAuthLoginElement.class)
+	@Nullable
+	@GET
+	@Path("/berechtigungen/{username}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed({ SUPER_ADMIN, ADMIN})
+	public List<JaxBerechtigung> getBerechtigungenForBenutzer(@Nonnull @NotNull @PathParam("username") String username) {
+		Validate.notNull(username);
+		return benutzerService.getBerechtigungenForBenutzer(username).stream()
+			.map(benutzer -> converter.berechtigungToJax(benutzer))
+			.collect(Collectors.toList());
+	}
+
+	@ApiOperation(value = "Speichert eine Berechtigung zu einem Benutzer")
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed({ SUPER_ADMIN, ADMIN})
+	@Path("/berechtigungen/{username}")
+	public void saveBerechtigung(
+		@Nonnull @NotNull @PathParam("username") String username,
+		@Nonnull @NotNull @Valid JaxBerechtigung berechtigungJax,
+		@Context UriInfo uriInfo, @Context HttpServletResponse response) {
+
+		Benutzer benutzer = benutzerService.findBenutzer(username).orElseThrow(() -> new EbeguEntityNotFoundException("saveBerechtigung",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
+
+		Berechtigung gesuchstellerToMerge = new Berechtigung();
+		if (berechtigungJax.getId() != null) {
+			Optional<Berechtigung> optional = benutzerService.findBerechtigung(berechtigungJax.getId());
+			gesuchstellerToMerge = optional.orElse(new Berechtigung());
+		}
+
+		Berechtigung berechtigung = converter.berechtigungToEntity(berechtigungJax, gesuchstellerToMerge);
+		benutzerService.saveBerechtigung(benutzer, berechtigung);
 	}
 }

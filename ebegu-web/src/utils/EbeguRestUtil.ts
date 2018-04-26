@@ -1635,6 +1635,18 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
+    public parseUserList(data: any): TSUser[] {
+        let users: TSUser[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                users[i] = this.parseUser(new TSUser(), data[i]);
+            }
+        } else {
+            users[0] = this.parseUser(new TSUser(), data);
+        }
+        return users;
+    }
+
     public berechtigungToRestObject(berechtigung: any, berechtigungTS: TSBerechtigung): any {
         if (berechtigungTS) {
             this.abstractDateRangeEntityToRestObject(berechtigung, berechtigungTS);
@@ -1659,16 +1671,16 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public parseUserList(data: any): TSUser[] {
-        let users: TSUser[] = [];
+    public parseBerechtigungenList(data: any): TSBerechtigung[] {
+        let berechtigungen: TSBerechtigung[] = [];
         if (data && Array.isArray(data)) {
             for (let i = 0; i < data.length; i++) {
-                users[i] = this.parseUser(new TSUser(), data[i]);
+                berechtigungen[i] = this.parseBerechtigung(new TSBerechtigung(), data[i]);
             }
         } else {
-            users[0] = this.parseUser(new TSUser(), data);
+            berechtigungen[0] = this.parseBerechtigung(new TSBerechtigung(), data);
         }
-        return users;
+        return berechtigungen;
     }
 
     parseDokumenteDTO(dokumenteDTO: TSDokumenteDTO, dokumenteFromServer: any): TSDokumenteDTO {

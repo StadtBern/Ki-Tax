@@ -15,6 +15,7 @@
 
 import {IHttpService, ILogService, IPromise} from 'angular';
 import {IEntityRS} from '../../core/service/iEntityRS.rest';
+import TSBerechtigung from '../../models/TSBerechtigung';
 import TSUser from '../../models/TSUser';
 import TSUserSearchresultDTO from '../../models/TSUserSearchresultDTO';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
@@ -106,6 +107,22 @@ export default class UserRS implements IEntityRS {
             }
         }).then((response: any) => {
             return this.ebeguRestUtil.parseUser(new TSUser(), response.data);
+        });
+    }
+
+    public getBerechtigungenForBenutzer(user: TSUser): IPromise<TSBerechtigung[]> {
+        return this.http.get(this.serviceURL + '/berechtigungen/' + encodeURIComponent(user.username)).then((response: any) => {
+            this.$log.debug('PARSING user REST array object', response.data);
+            return this.ebeguRestUtil.parseBerechtigungenList(response.data);
+        });
+    }
+
+    public saveBerechtigung(user: TSUser, berechtigung: TSBerechtigung): void {
+        let berechtigungRest = this.ebeguRestUtil.berechtigungToRestObject({}, berechtigung);
+        this.http.put(this.serviceURL + '/berechtigungen/' + encodeURIComponent(user.username), berechtigungRest, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
     }
 }
