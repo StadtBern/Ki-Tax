@@ -200,6 +200,10 @@ export class DVBenutzerController {
         return this.berechtigungenOfBenutzer && this.berechtigungenOfBenutzer.length < 1;
     }
 
+    canBeenden(): boolean {
+       return this.selectedUser.currentBerechtigung.role !== TSRole.GESUCHSTELLER:
+    }
+
     addBerechtigung() {
         let berechtigung: TSBerechtigung = new TSBerechtigung();
         berechtigung.role = TSRole.GESUCHSTELLER;
