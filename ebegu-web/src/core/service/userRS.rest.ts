@@ -14,7 +14,7 @@
  */
 
 import {IHttpService, ILogService, IPromise} from 'angular';
-import {IEntityRS} from '../../core/service/iEntityRS.rest';
+import {IEntityRS} from './iEntityRS.rest';
 import TSBerechtigung from '../../models/TSBerechtigung';
 import TSUser from '../../models/TSUser';
 import TSUserSearchresultDTO from '../../models/TSUserSearchresultDTO';
@@ -91,17 +91,6 @@ export default class UserRS implements IEntityRS {
     public reactivateBenutzer(user: TSUser): IPromise<TSUser> {
         let userRest = this.ebeguRestUtil.userToRestObject({}, user);
         return this.http.put(this.serviceURL + '/reactivate/', userRest, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then((response: any) => {
-            return this.ebeguRestUtil.parseUser(new TSUser(), response.data);
-        });
-    }
-
-    public saveBenutzer(user: TSUser): IPromise<TSUser> {
-        let userRest = this.ebeguRestUtil.userToRestObject({}, user);
-        return this.http.put(this.serviceURL + '/save/', userRest, {
             headers: {
                 'Content-Type': 'application/json'
             }

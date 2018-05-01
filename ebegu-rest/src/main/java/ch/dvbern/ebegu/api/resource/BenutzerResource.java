@@ -48,8 +48,6 @@ import ch.dvbern.ebegu.dto.suchfilter.smarttable.BenutzerTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Berechtigung;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.BenutzerService;
@@ -215,39 +213,6 @@ public class BenutzerResource {
 		@Nonnull @NotNull @Valid JaxAuthLoginElement benutzerJax, @Context UriInfo uriInfo, @Context HttpServletResponse response) {
 
 		Benutzer benutzer = benutzerService.reaktivieren(benutzerJax.getUsername());
-		return converter.benutzerToAuthLoginElement(benutzer);
-	}
-
-	@ApiOperation(value = "Updates a Benutzer in the database", response = JaxAuthLoginElement.class)
-	@Nullable
-	@PUT
-	@Path("/save")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ SUPER_ADMIN, ADMIN})
-	public JaxAuthLoginElement changeRole(
-		@Nonnull @NotNull @Valid JaxAuthLoginElement benutzerJax, @Context UriInfo uriInfo, @Context HttpServletResponse response) {
-
-		Institution institution = null;
-		if (benutzerJax.getInstitution() != null) {
-			assert benutzerJax.getInstitution().getId() != null;
-			Optional<Institution> institutionOptional = institutionService.findInstitution(benutzerJax.getInstitution().getId());
-			if (institutionOptional.isPresent()) {
-				institution = institutionOptional.get();
-			}
-		}
-		Traegerschaft traegerschaft = null;
-		if (benutzerJax.getTraegerschaft() != null) {
-			assert benutzerJax.getTraegerschaft().getId() != null;
-			Optional<Traegerschaft> traegerschaftOptional = traegerschaftService.findTraegerschaft(benutzerJax.getTraegerschaft().getId());
-			if (traegerschaftOptional.isPresent()) {
-				traegerschaft = traegerschaftOptional.get();
-			}
-		}
-
-		Benutzer benutzer = benutzerService.changeRole(benutzerJax.getUsername(), benutzerJax.getRole(), institution, traegerschaft,
-			benutzerJax.getCurrentBerechtigung().getGueltigAb(), benutzerJax.getCurrentBerechtigung().getGueltigBis());
-
 		return converter.benutzerToAuthLoginElement(benutzer);
 	}
 

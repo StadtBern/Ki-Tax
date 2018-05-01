@@ -28,7 +28,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -108,7 +107,10 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	@PermitAll
 	public Benutzer saveBenutzer(@Nonnull Benutzer benutzer) {
 		Objects.requireNonNull(benutzer);
+		clearBenutzerObject(benutzer);
 		benutzer.getCurrentBerechtigung().setBenutzer(benutzer);
+		Berechtigung berechtigungMerged = saveBerechtigung(benutzer, benutzer.getCurrentBerechtigung());
+		benutzer.setCurrentBerechtigung(berechtigungMerged);
 		return persistence.merge(benutzer);
 	}
 
@@ -171,9 +173,12 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	public void removeBenutzer(@Nonnull String username) {
 		Objects.requireNonNull(username);
 		Benutzer benutzer = findBenutzer(username).orElseThrow(() -> new EbeguEntityNotFoundException("removeBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
+		// Den Benutzer ausloggen und seine AuthBenutzer loeschen
+		logoutAndDeleteAuthorisierteBenutzerForUser(username);
 		// Die Berechtigungen des Benutzers loeschen
 		List<Berechtigung> berechtigungenForBenutzer = getBerechtigungenForBenutzer(benutzer.getUsername());
 		for (Berechtigung berechtigung : berechtigungenForBenutzer) {
+			//TODO (hefr) History
 			persistence.remove(berechtigung);
 		}
 		persistence.remove(benutzer);
@@ -199,7 +204,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 	@Override
 	@PermitAll
-	public Benutzer updateOrStoreUserFromIAM(Benutzer benutzer) {
+	public Benutzer updateOrStoreUserFromIAM(@Nonnull Benutzer benutzer) {
 		Optional<Benutzer> foundUserOptional = this.findBenutzer(benutzer.getUsername());
 		if (foundUserOptional.isPresent()) {
 			// Wir kennen den Benutzer schon: Es werden nur die readonly-Attribute neu von IAM uebernommen
@@ -230,6 +235,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 		benutzerFromDB.setGesperrt(Boolean.TRUE);
 		int deletedAuthBenutzer = logoutAndDeleteAuthorisierteBenutzerForUser(username);
+		//TODO (hefr) History
 		logSperreBenutzer(benutzerFromDB, deletedAuthBenutzer);
 		return persistence.merge(benutzerFromDB);
 	}
@@ -261,6 +267,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			-> new EbeguEntityNotFoundException("reaktivieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + username));
 		benutzerFromDB.setGesperrt(Boolean.FALSE);
 		logReaktivierenBenutzer(benutzerFromDB);
+		//TODO (hefr) History
 		return persistence.merge(benutzerFromDB);
 	}
 
@@ -291,36 +298,6 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		return persistence.getCriteriaResults(query);
 	}
 
-	@Nonnull
-	@Override
-	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
-	public Benutzer changeRole(@Nonnull String username, @Nonnull UserRole userRole, @Nullable Institution institution,
-		@Nullable Traegerschaft traegerschaft, @Nullable LocalDate gueltigAb, @Nullable LocalDate gueltigBis) {
-
-		Benutzer benutzerFromDB = findBenutzer(username).orElseThrow(()
-			-> new EbeguEntityNotFoundException("changeRole", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + username));
-
-		// Feststellen, was alles geändert hat
-		boolean roleChanged = benutzerFromDB.getRole() != userRole;
-		boolean institutionChanged = roleChanged && (benutzerFromDB.getInstitution() != null && !benutzerFromDB.getInstitution().equals(institution));
-		boolean traegerschaftChanged = roleChanged && (benutzerFromDB.getTraegerschaft() != null && !benutzerFromDB.getTraegerschaft().equals(traegerschaft));
-		boolean isFuture = gueltigBis != null && gueltigBis.isAfter(LocalDate.now()) && gueltigBis.isBefore(Constants.END_OF_TIME);
-
-		// Ausloggen nur, wenn die Änderungen nicht in der Zukunft liegen! Falls dies der Fall ist, wird der Timer das ausloggen übernehmen
-		if (!isFuture && (institutionChanged || traegerschaftChanged || roleChanged)) {
-			// Die AuthorisiertenBenutzer müssen gelöscht werden
-			logoutAndDeleteAuthorisierteBenutzerForUser(username);
-		}
-
-		benutzerFromDB.setRole(userRole);
-		benutzerFromDB.setInstitution(institution);
-		benutzerFromDB.setTraegerschaft(traegerschaft);
-		if (isFuture) {
-			benutzerFromDB.getCurrentBerechtigung().getGueltigkeit().setGueltigBis(gueltigBis);
-		}
-		clearBenutzerObject(benutzerFromDB);
-		return benutzerFromDB;
-	}
 
 	private void clearBenutzerObject(@Nonnull Benutzer benutzer) {
 		// Es darf nur eine Institution gesetzt sein, wenn die Rolle INSTITUTION ist
@@ -558,7 +535,6 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		for (Benutzer benutzer : userMitAbgelaufenerRolle) {
 			LOG.info("Benutzerrolle ist abgelaufen: {}, war: {}, abgelaufen: {}", benutzer.getUsername(),
 				benutzer.getRole(), benutzer.getCurrentBerechtigung().getGueltigkeit().getGueltigBis());
-
 			// Die abgelaufene Rolle löschen
 			persistence.remove(benutzer.getCurrentBerechtigung());
 			// Die aktuell gueltige Rolle suchen und neu umhängen
@@ -603,15 +579,55 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
 	public Optional<Berechtigung> findBerechtigung(@Nonnull String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
-		return Optional.of(persistence.find(Berechtigung.class, id));
+		return Optional.ofNullable(persistence.find(Berechtigung.class, id));
 	}
 
+	@Nonnull
 	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
-	private void saveBerechtigung(@Nonnull Benutzer benutzer, @Nonnull Berechtigung berechtigung) {
+	private Berechtigung saveBerechtigung(@Nonnull Benutzer benutzer, @Nonnull Berechtigung berechtigung) {
 		Objects.requireNonNull(benutzer);
 		Objects.requireNonNull(berechtigung);
+
+		boolean roleChanged = false;
+		boolean institutionChanged = false;
+		boolean traegerschaftChanged = false;
+		LocalDate gueltigAb = berechtigung.getGueltigkeit().getGueltigAb();
+		boolean isFuture = gueltigAb.isAfter(LocalDate.now());
+
+		if (!berechtigung.isNew()) {
+			// Ueberpruefen, was geaendert hat
+			Berechtigung berechtigungFromDB = findBerechtigung(berechtigung.getId()).orElseThrow(()
+				-> new EbeguEntityNotFoundException("saveBerechtigung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BerechtigungID invalid: " + berechtigung.getId()));
+			// Feststellen, was alles geändert hat
+			roleChanged = berechtigungFromDB.getRole() != berechtigung.getRole();
+			institutionChanged = roleChanged && (berechtigungFromDB.getInstitution() != null
+				&& !berechtigungFromDB.getInstitution().equals(berechtigung.getInstitution()));
+			traegerschaftChanged = roleChanged && (berechtigungFromDB.getTraegerschaft() != null
+				&& !berechtigungFromDB.getTraegerschaft().equals(berechtigung.getTraegerschaft()));
+		} else {
+			roleChanged = true;
+			institutionChanged = true;
+			traegerschaftChanged = true;
+		}
+
+		// Ausloggen nur, wenn die Änderungen nicht in der Zukunft liegen! Falls dies der Fall ist, wird der Timer das ausloggen übernehmen
+		if (!isFuture && (institutionChanged || traegerschaftChanged || roleChanged)) {
+			// Die AuthorisiertenBenutzer müssen gelöscht werden
+			logoutAndDeleteAuthorisierteBenutzerForUser(benutzer.getUsername());
+		}
+
+		// History-Eintrag nur, wenn etwas geaendert hat
+		if (institutionChanged || traegerschaftChanged || roleChanged) {
+			// TODO (hefr) History
+		}
 		berechtigung.setBenutzer(benutzer);
-		persistence.merge(berechtigung);
+		return persistence.merge(berechtigung);
+	}
+
+	private void removeBerechtigung(@Nonnull Berechtigung berechtigung) {
+		logoutAndDeleteAuthorisierteBenutzerForUser(berechtigung.getBenutzer().getUsername());
+		// TODO (hefr) History
+		persistence.remove(berechtigung);
 	}
 
 	@Override
@@ -643,14 +659,14 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		berechtigungenToRemove.removeAll(berechtigungenToMerge);
 		berechtigungenToPersist.removeAll(berechtigungenToMerge);
 
-		for (Berechtigung t: berechtigungenToRemove) {
-			persistence.remove(t);
+		for (Berechtigung berechtigung: berechtigungenToRemove) {
+			removeBerechtigung(berechtigung);
 		}
-		for (Berechtigung t: berechtigungenToPersist) {
-			saveBerechtigung(benutzer, t);
+		for (Berechtigung berechtigung: berechtigungenToPersist) {
+			saveBerechtigung(benutzer, berechtigung);
 		}
-		for (Berechtigung t: berechtigungenToMerge) {
-			saveBerechtigung(benutzer, t);
+		for (Berechtigung berechtigung: berechtigungenToMerge) {
+			saveBerechtigung(benutzer, berechtigung);
 		}
 	}
 }

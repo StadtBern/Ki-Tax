@@ -1323,7 +1323,10 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			row.setVorname(benutzer.getVorname());
 			row.setEmail(benutzer.getEmail());
 			row.setRole(ServerMessageUtil.translateEnumValue(benutzer.getRole()));
-//			row.setRoleGueltigBis(benutzer.getRoleGueltigBis());
+			LocalDate gueltigBis = benutzer.getCurrentBerechtigung().getGueltigkeit().getGueltigBis();
+			if (gueltigBis.isBefore(Constants.END_OF_TIME)) {
+				row.setRoleGueltigBis(gueltigBis);
+			}
 			String institution = benutzer.getInstitution() != null ? benutzer.getInstitution().getName() : null;
 			String traegerschaft = benutzer.getTraegerschaft() != null ? benutzer.getTraegerschaft().getName() : null;
 			row.setInstitution(institution);

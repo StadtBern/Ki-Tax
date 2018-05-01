@@ -51,7 +51,7 @@ export class DVBenutzerController {
 
     institutionenList: TSInstitution[];
     traegerschaftenList: TSTraegerschaft[];
-    today: Moment = moment(moment.now());
+    today: Moment = moment(moment.now()).add(1, 'days');
 
     selectedUser: TSUser;
     berechtigungenOfBenutzer: TSBerechtigung[];
@@ -201,7 +201,7 @@ export class DVBenutzerController {
     }
 
     canBeenden(): boolean {
-       return this.selectedUser.currentBerechtigung.role !== TSRole.GESUCHSTELLER:
+       return this.selectedUser.currentBerechtigung.role !== TSRole.GESUCHSTELLER;
     }
 
     addBerechtigung() {
