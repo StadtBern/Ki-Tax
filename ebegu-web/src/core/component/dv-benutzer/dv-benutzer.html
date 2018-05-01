@@ -18,7 +18,7 @@
 
         <fieldset>
             <div class="row">
-                <div class="viewTitle marginBottom20 col-md-12">
+                <div class="viewTitle marginTop20 col-md-12">
                     <h1 data-translate="BENUTZER_DETAIL"
                         data-translate-value-name="{{vm.selectedUser.nachname}}"
                         data-translate-value-vorname="{{vm.selectedUser.vorname}}"></h1>
@@ -88,92 +88,186 @@
                 </div>
             </div>
 
-            <!-- Rolle -->
             <div class="row">
-                <!-- Rolle -->
-                <div class="col-sm-12 dv-input-container-medium">
-                    <div class="form-group">
-                        <label class="md-no-float required  dv-benutzer-label" data-translate="ROLLE"
-                               for="rolle"></label>
-                        <div class="dv-select-style">
-                            <select aria-describedby="rolle-error" name="role" id="rolle"
-                                    class="form-control" ng-required="true"
-                                    ng-model="vm.selectedUser.currentBerechtigung.role"
-                                    ng-options="role as vm.getTranslatedRole(role) for role in vm.getRollen()">
-                            </select>
-                            <dv-error-messages input-id="rolle" for="vm.form.rolle.$error"></dv-error-messages>
-                        </div>
-                    </div>
-                </div>
-                <!-- Gueltig bis -->
-                <div class="col-sm-12 dv-input-container-small">
-                    <dv-input-container class="form-group" ng-if="vm.showGueltigBis()">
-                        <!--suppress XmlInvalidId -->
-                        <label class="md-no-float" data-translate="ROLLE_GUELTIG_BIS" for="roleGueltigBis"></label>
-                        <dv-datepicker input-id="roleGueltigBis" input-name="roleGueltigBis" name="roleGueltigBis"
-                                       ng-model="vm.selectedUser.currentBerechtigung.gueltigkeit.gueltigBis" ng-required="vm.checkRolleBeenden"
-                                       class="input-element"
-                                       ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}"
-                                       dv-min-date="vm.minDate">
-                        </dv-datepicker>
-                        <dv-error-messages input-id="roleGueltigBis" for="vm.form.roleGueltigBis.$error"
-                                           class="error"></dv-error-messages>
-                    </dv-input-container>
-                </div>
-            </div>
-            <!-- Checkbox zum Rolle beenden -->
-            <div class="row" ng-if="vm.showRolleBeenden()">
-                <div class="col-sm-12 dv-input-container-medium">
-                    <div class="checkbox">
-                        <md-checkbox ng-model="vm.checkRolleBeenden" name="checkRolleBeenden" id="checkRolleBeenden"
-                                     aria-label="{{'ROLLE_BEENDEN'|translate}}">
-                            <span data-translate="ROLLE_BEENDEN"></span>
-                        </md-checkbox>
-                        <dv-error-messages for="vm.form.checkRolleBeenden.$error" class="error"
-                                           style=""></dv-error-messages>
-                    </div>
-                </div>
-            </div>
-            <!-- Warnung, wenn Rolle beendet -->
-            <div class="row">
-                <div class="col-md-12" ng-if="vm.checkRolleBeenden">
-                    <div class="well well-status-warten">
-                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                        <span data-translate="ROLLE_BEENDET_INFO"></span>
-                    </div>
+                <div class="viewTitle marginTop20 col-md-12">
+                    <h1 data-translate="ROLLE_AKTIV"></h1>
+                    <hr class="header"/>
                 </div>
             </div>
 
-            <!-- Institution -->
-            <div class="row" ng-if="vm.showInstitutionenList()">
-                <dv-input-container class="col-sm-12 dv-input-container-medium form-group">
-                    <label class="md-no-float required" data-translate="INSTITUTION" for="institution"></label>
-                    <div class="dv-select-style">
-                        <select aria-describedby="institution-error" name="institution" id="institution"
-                                class="form-control" ng-required="vm.showInstitutionenList()"
-                                ng-model="vm.selectedUser.currentBerechtigung.institution.id"
-                                ng-options="institution.id as institution.name for institution in vm.institutionenList | orderBy: 'institution.name'">
-                        </select>
-                        <dv-error-messages input-id="institution"
-                                           for="vm.form.institution.$error"></dv-error-messages>
+            <!-- Aktive Rolle -->
+            <fieldset ng-disabled="!vm.isBerechtigungEnabled(vm.selectedUser.currentBerechtigung)">
+                <div class="row" ng-disabled="true">
+                    <!-- Rolle -->
+                    <div class="col-sm-12 dv-input-container-medium">
+                        <div class="form-group">
+                            <label class="md-no-float required dv-benutzer-label" data-translate="ROLLE"
+                                   for="rolle"></label>
+                            <div class="dv-select-style">
+                                <select aria-describedby="rolle-error" name="role" id="rolle"
+                                        class="form-control" ng-required="true"
+                                        ng-model="vm.selectedUser.currentBerechtigung.role"
+                                        ng-options="role as vm.getTranslatedRole(role) for role in vm.getRollen()">
+                                </select>
+                                <dv-error-messages input-id="rolle" for="vm.form.rolle.$error"></dv-error-messages>
+                            </div>
+                        </div>
                     </div>
-                </dv-input-container>
+                </div>
+                <div class="row">
+                    <!-- Institution -->
+                    <div class="col-sm-12 dv-input-container-medium" ng-if="vm.isInstitutionBerechtigung(vm.selectedUser.currentBerechtigung)">
+                        <div class="form-group">
+                            <label class="md-no-float required dv-benutzer-label" data-translate="INSTITUTION" for="institution"></label>
+                            <div class="dv-select-style">
+                                <select aria-describedby="institution-error" name="institution" id="institution"
+                                        class="form-control" ng-required="vm.showInstitutionenList()"
+                                        ng-model="vm.selectedUser.currentBerechtigung.institution.id"
+                                        ng-options="institution.id as institution.name for institution in vm.institutionenList | orderBy: 'institution.name'">
+                                </select>
+                                <dv-error-messages input-id="institution" for="vm.form.institution.$error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Traegerschaft -->
+                    <div class="col-sm-12 dv-input-container-medium" ng-if="vm.isTraegerschaftBerechtigung(vm.selectedUser.currentBerechtigung)">
+                        <div class="form-group">
+                            <label class="md-no-float required dv-benutzer-label" data-translate="TRAEGERSCHAFT" for="traegerschaft"></label>
+                            <div class="dv-select-style">
+                                <select aria-describedby="traegerschaft-error" name="traegerschaft" id="traegerschaft"
+                                        class="form-control" ng-required="vm.showTraegerschaftenList()"
+                                        ng-model="vm.selectedUser.currentBerechtigung.traegerschaft.id"
+                                        ng-options="traegerschaft.id as traegerschaft.name for traegerschaft in vm.traegerschaftenList | orderBy: 'traegerschaft.name'">
+                                </select>
+                                <dv-error-messages input-id="traegerschaft"
+                                                   for="vm.form.traegerschaft.$error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="row col-sm-12" style="margin-bottom: 2rem" ng-if="!vm.selectedUser.currentBerechtigung.enabled">
+                <dv-loading-button type="button" button-click="vm.enableBerechtigung(vm.selectedUser.currentBerechtigung)" button-class="dv-btn-operation">
+                    <i class="fa fa-lg fa-pencil-square-o"></i>
+                    <span data-translate="BERECHTIGUNG_AKTUELL_EDITIEREN"></span>
+                </dv-loading-button>
             </div>
-            <!-- Traegerschaft -->
-            <div class="row"
-                 ng-if="vm.showTraegerschaftenList()">
-                <dv-input-container class="col-sm-12 dv-input-container-medium form-group">
-                    <label class="md-no-float required" data-translate="TRAEGERSCHAFT" for="traegerschaft"></label>
-                    <div class="dv-select-style">
-                        <select aria-describedby="traegerschaft-error" name="traegerschaft" id="traegerschaft"
-                                class="form-control" ng-required="vm.showTraegerschaftenList()"
-                                ng-model="vm.selectedUser.currentBerechtigung.traegerschaft.id"
-                                ng-options="traegerschaft.id as traegerschaft.name for traegerschaft in vm.traegerschaftenList | orderBy: 'traegerschaft.name'">
-                        </select>
-                        <dv-error-messages input-id="traegerschaft"
-                                           for="vm.form.traegerschaft.$error"></dv-error-messages>
+            <div class="row col-sm-12" style="margin-bottom: 2rem" ng-if="vm.canAddBerechtigung()">
+                <dv-loading-button type="button" button-click="vm.addBerechtigung()" button-class="dv-btn-operation">
+                    <i class="fa fa-lg fa-pencil-square-o"></i>
+                    <span data-translate="ROLLE_BEENDEN"></span>
+                </dv-loading-button>
+            </div>
+
+            <div class="row">
+                <div class="viewTitle marginTop20 col-md-12">
+                    <h1 data-translate="ROLLE_KUNEFTIG"></h1>
+                    <hr class="header"/>
+                </div>
+            </div>
+
+            <!-- Zukünftige Berechtigung -->
+            <div ng-repeat="futureBerechtigung in vm.berechtigungenOfBenutzer">
+                <fieldset ng-disabled="!vm.isBerechtigungEnabled(futureBerechtigung)">
+                    <div class="row">
+                        <!-- Rolle -->
+                        <div class="col-sm-12 dv-input-container-medium">
+                            <div class="form-group">
+                                <label class="md-no-float required  dv-benutzer-label" data-translate="ROLLE"
+                                       for="rolle_{{$index}}"></label>
+                                <div class="dv-select-style">
+                                    <select aria-describedby="rolle-error" name="role_{{$index}}" id="rolle_{{$index}}"
+                                            class="form-control" ng-required="true"
+                                            ng-model="futureBerechtigung.role"
+                                            ng-options="role as vm.getTranslatedRole(role) for role in vm.getRollen()">
+                                    </select>
+                                    <dv-error-messages input-id="rolle_{{$index}}" for="vm.form['rolle_' + $index].$error"></dv-error-messages>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 dv-input-container-small">
+                            <div class="form-group">
+                                <!--suppress XmlInvalidId -->
+                                <label class="md-no-float dv-benutzer-label" data-translate="ROLLE_GUELTIG_AB" for="roleGueltigAb_{{$index}}"></label>
+                                <dv-datepicker input-id="roleGueltigAb" input-name="roleGueltigAb_{{$index}}" name="roleGueltigAb_{{$index}}"
+                                               ng-model="futureBerechtigung.gueltigkeit.gueltigAb" ng-required="true"
+                                               class="input-element"
+                                               ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}"
+                                               dv-min-date="vm.today">
+                                </dv-datepicker>
+                                <dv-error-messages input-id="roleGueltigBis_{{$index}}" for="vm.form['roleGueltigBis_' + $index].$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 dv-input-container-small">
+                            <div class="form-group">
+                                <!--suppress XmlInvalidId -->
+                                <label class="md-no-float dv-benutzer-label" data-translate="ROLLE_GUELTIG_BIS" for="roleGueltigBis_{{$index}}"></label>
+                                <dv-datepicker input-id="roleGueltigBis" input-name="roleGueltigBis_{{$index}}" name="roleGueltigBis_{{$index}}"
+                                               ng-model="futureBerechtigung.gueltigkeit.gueltigBis"
+                                               class="input-element"
+                                               ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}"
+                                               dv-min-date="vm.today">
+                                </dv-datepicker>
+                                <dv-error-messages input-id="roleGueltigBis_{{$index}}" for="vm.form['roleGueltigBis_' + $index].$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
                     </div>
-                </dv-input-container>
+                    <div class="row">
+                        <!-- Institution -->
+                        <div class="col-sm-12 dv-input-container-medium" ng-if="vm.isInstitutionBerechtigung(futureBerechtigung)">
+                            <div class="form-group">
+                                <label class="md-no-float required dv-benutzer-label" data-translate="INSTITUTION" for="institution_{{$index}}"></label>
+                                <div class="dv-select-style">
+                                    <select aria-describedby="institution-error" name="institution_{{$index}}" id="institution_{{$index}}"
+                                            class="form-control" ng-required="vm.showInstitutionenList()"
+                                            ng-model="futureBerechtigung.institution.id"
+                                            ng-options="institution.id as institution.name for institution in vm.institutionenList | orderBy: 'institution.name'">
+                                    </select>
+                                    <dv-error-messages input-id="institution_{{$index}}" for="vm.form['institution_' + $index].$error"></dv-error-messages>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Traegerschaft -->
+                        <div class="col-sm-12 dv-input-container-medium" ng-if="vm.isTraegerschaftBerechtigung(futureBerechtigung)">
+                            <div class="form-group">
+                                <label class="md-no-float required dv-benutzer-label" data-translate="TRAEGERSCHAFT" for="traegerschaft_{{$index}}"></label>
+                                <div class="dv-select-style">
+                                    <select aria-describedby="traegerschaft-error" name="traegerschaft_{{$index}}" id="traegerschaft_{{$index}}"
+                                            class="form-control" ng-required="vm.showTraegerschaftenList()"
+                                            ng-model="futureBerechtigung.traegerschaft.id"
+                                            ng-options="traegerschaft.id as traegerschaft.name for traegerschaft in vm.traegerschaftenList | orderBy: 'traegerschaft.name'">
+                                    </select>
+                                    <dv-error-messages input-id="traegerschaft_{{$index}}" for="vm.form['traegerschaft_' + $index].$error"></dv-error-messages>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Edit Zukünftige Berechtigung -->
+                <div class="row col-sm-12" style="margin-bottom: 2rem" ng-if="!futureBerechtigung.enabled">
+                    <dv-loading-button type="button" button-click="vm.enableBerechtigung(futureBerechtigung)" button-class="dv-btn-operation">
+                        <i class="fa fa-lg fa-pencil-square-o"></i>
+                        <span data-translate="BERECHTIGUNG_KUENFTIG_EDITIEREN"></span>
+                    </dv-loading-button>
+                </div>
+                <!-- Remove Zukünftige Berechtigung -->
+                <div class="row col-sm-12" style="margin-bottom: 2rem">
+                    <dv-loading-button type="button" button-click="vm.removeBerechtigung(futureBerechtigung)" button-class="dv-btn-operation">
+                        <i class="fa fa-lg fa-trash-o"></i>
+                        <span data-translate="BERECHTIGUNG_ENTFERNEN"></span>
+                    </dv-loading-button>
+                </div>
+            </div>
+
+            <!-- Add Zukünftige Berechtigung -->
+            <div class="row col-sm-12" style="margin-bottom: 2rem" ng-if="vm.canAddBerechtigung()">
+                <dv-loading-button type="button" button-click="vm.addBerechtigung()" button-class="dv-btn-operation">
+                    <i class="fa fa-lg fa-plus-circle"></i>
+                    <span data-translate="BERECHTIGUNG_HINZUFUEGEN"></span>
+                </dv-loading-button>
             </div>
 
             <!-- Buttons -->

@@ -266,27 +266,30 @@ public class BenutzerResource {
 			.collect(Collectors.toList());
 	}
 
-	@ApiOperation(value = "Speichert eine Berechtigung zu einem Benutzer")
+	@ApiOperation("Speichert eine Liste von Berechtigung zu einem Benutzer")
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed({ SUPER_ADMIN, ADMIN})
 	@Path("/berechtigungen/{username}")
-	public void saveBerechtigung(
+	public void saveBerechtigungen(
 		@Nonnull @NotNull @PathParam("username") String username,
-		@Nonnull @NotNull @Valid JaxBerechtigung berechtigungJax,
+		@Nonnull @NotNull @Valid List<JaxBerechtigung> berechtigungenJax,
 		@Context UriInfo uriInfo, @Context HttpServletResponse response) {
 
 		Benutzer benutzer = benutzerService.findBenutzer(username).orElseThrow(() -> new EbeguEntityNotFoundException("saveBerechtigung",
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
 
-		Berechtigung gesuchstellerToMerge = new Berechtigung();
-		if (berechtigungJax.getId() != null) {
-			Optional<Berechtigung> optional = benutzerService.findBerechtigung(berechtigungJax.getId());
-			gesuchstellerToMerge = optional.orElse(new Berechtigung());
-		}
-
-		Berechtigung berechtigung = converter.berechtigungToEntity(berechtigungJax, gesuchstellerToMerge);
-		benutzerService.saveBerechtigung(benutzer, berechtigung);
+		List<Berechtigung> resultBetreuungen = new ArrayList<>();
+		berechtigungenJax.forEach(berechtigungJax -> {
+			Berechtigung gesuchstellerToMerge = new Berechtigung();
+			if (berechtigungJax.getId() != null) {
+				Optional<Berechtigung> optional = benutzerService.findBerechtigung(berechtigungJax.getId());
+				gesuchstellerToMerge = optional.orElse(new Berechtigung());
+			}
+			Berechtigung berechtigung = converter.berechtigungToEntity(berechtigungJax, gesuchstellerToMerge);
+			resultBetreuungen.add(berechtigung);
+		});
+		benutzerService.saveBerechtigungen(benutzer, resultBetreuungen);
 	}
 }

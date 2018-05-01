@@ -7,7 +7,7 @@ INSERT INTO berechtigung (
 		user_mutiert,
 		version,
 		NULL,
-		'1000-01-01',
+		'2017-01-01',
 		'9999-12-31',
 		role,
 		id,

@@ -28,6 +28,8 @@ export default class TSBerechtigung extends TSAbstractDateRangedEntity {
     private _institution: TSInstitution;
     private _role: TSRole;
 
+    private _enabled: boolean; // Wird nicht zum Server gemappt, nur zur Anzeige im GUI
+
     constructor(gueltigkeit?: TSDateRange, user?: TSUser, role?: TSRole, traegerschaft?: TSTraegerschaft, institution?: TSInstitution) {
         super(gueltigkeit);
         this._user = user;
@@ -66,6 +68,14 @@ export default class TSBerechtigung extends TSAbstractDateRangedEntity {
 
     set institution(value: TSInstitution) {
         this._institution = value;
+    }
+
+    get enabled(): boolean {
+        return this._enabled;
+    }
+
+    set enabled(value: boolean) {
+        this._enabled = value;
     }
 
     getRoleKey(): string {

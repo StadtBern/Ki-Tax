@@ -130,7 +130,7 @@ public class Benutzer extends AbstractEntity {
 		return currentBerechtigung;
 	}
 
-	public void setCurrentBerechtigung(Berechtigung currentBerechtigung) {
+	public void setCurrentBerechtigung(@Nonnull Berechtigung currentBerechtigung) {
 		this.currentBerechtigung = currentBerechtigung;
 	}
 

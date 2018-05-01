@@ -51,6 +51,7 @@ import ch.dvbern.ebegu.authentication.AuthLoginElement;
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Berechtigung;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
@@ -153,10 +154,13 @@ public class AuthResource {
 				loginElement.getNachname(), loginElement.getVorname(), loginElement.getEmail(), validRole);
 
 			// Der Benutzer wird gesucht. Wenn er noch nicht existiert wird er erstellt und wenn ja dann aktualisiert
-			Benutzer benutzer = new Benutzer();
+			Benutzer benutzer = null;
 			Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(loginElement.getUsername());
 			if (optBenutzer.isPresent()) {
 				benutzer = optBenutzer.get();
+			} else {
+				benutzer = new Benutzer();
+				benutzer.setCurrentBerechtigung(new Berechtigung());
 			}
 			benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(loginElement, benutzer));
 

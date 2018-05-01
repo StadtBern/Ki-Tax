@@ -117,9 +117,12 @@ export default class UserRS implements IEntityRS {
         });
     }
 
-    public saveBerechtigung(user: TSUser, berechtigung: TSBerechtigung): void {
-        let berechtigungRest = this.ebeguRestUtil.berechtigungToRestObject({}, berechtigung);
-        this.http.put(this.serviceURL + '/berechtigungen/' + encodeURIComponent(user.username), berechtigungRest, {
+    public saveBerechtigungen(user: TSUser, berechtigungen: Array<TSBerechtigung>): void {
+        let berechtigungenRest: Array<any> = [];
+        berechtigungen.forEach((berechtigungToUpdate: TSBerechtigung) => {
+            berechtigungenRest.push(this.ebeguRestUtil.berechtigungToRestObject({}, berechtigungToUpdate));
+        });
+        this.http.put(this.serviceURL + '/berechtigungen/' + encodeURIComponent(user.username), berechtigungenRest, {
             headers: {
                 'Content-Type': 'application/json'
             }

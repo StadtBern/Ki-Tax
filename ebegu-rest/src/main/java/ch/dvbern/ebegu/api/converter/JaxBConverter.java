@@ -2281,7 +2281,7 @@ public class JaxBConverter {
 		} else {
 			throw new EbeguEntityNotFoundException("authLoginElementToBenutzer -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
 		}
-		benutzer.setCurrentBerechtigung(berechtigungToEntity(jaxLoginElement.getCurrentBerechtigung(), new Berechtigung()));
+		benutzer.setCurrentBerechtigung(berechtigungToEntity(jaxLoginElement.getCurrentBerechtigung(), benutzer.getCurrentBerechtigung()));
 		return benutzer;
 	}
 

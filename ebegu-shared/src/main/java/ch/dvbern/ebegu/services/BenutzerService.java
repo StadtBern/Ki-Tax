@@ -98,7 +98,7 @@ public interface BenutzerService {
 	/**
 	 * inserts a user received from iam or updates it if it alreday exists
 	 */
-	Benutzer updateOrStoreUserFromIAM(Benutzer benutzer);
+	Benutzer updateOrStoreUserFromIAM(@Nonnull Benutzer benutzer);
 
 	/**
 	 * Setzt den uebergebenen Benutzer auf gesperrt. Es werden auch alle möglicherweise noch vorhandenen AuthentifizierteBenutzer gelöscht.
@@ -141,10 +141,11 @@ public interface BenutzerService {
 	/**
 	 * Suche die Berechtigung mit der uebergebenen Id
 	 */
-	Optional<Berechtigung> findBerechtigung(String id);
+	@Nonnull
+	Optional<Berechtigung> findBerechtigung(@Nonnull String id);
 
 	/**
-	 * Speichert eine Berechtigung zu einem Benutzer
+	 * Speichert die Berechtigungen zu einem Benutzer
 	 */
-	void saveBerechtigung(Benutzer benutzer, Berechtigung berechtigung);
+	void saveBerechtigungen(@Nonnull Benutzer benutzer, @Nonnull List<Berechtigung> berechtigungen);
 }

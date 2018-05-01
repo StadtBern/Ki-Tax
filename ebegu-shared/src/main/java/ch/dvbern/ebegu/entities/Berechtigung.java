@@ -132,6 +132,10 @@ public class Berechtigung extends AbstractDateRangedEntity {
 			return false;
 		}
 		final Berechtigung otherBerechtigung = (Berechtigung) other;
-		return Objects.equals(getBenutzer(), otherBerechtigung.getBenutzer()) && Objects.equals(getRole(), otherBerechtigung.getRole());
+		return Objects.equals(getBenutzer(), otherBerechtigung.getBenutzer())
+			&& Objects.equals(getInstitution(), otherBerechtigung.getInstitution())
+			&& Objects.equals(getTraegerschaft(), otherBerechtigung.getTraegerschaft())
+			&& Objects.equals(getGueltigkeit(), otherBerechtigung.getGueltigkeit())
+			&& Objects.equals(getBenutzer().getGesperrt(), otherBerechtigung.getBenutzer().getGesperrt());
 	}
 }
