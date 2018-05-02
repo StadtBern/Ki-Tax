@@ -17,44 +17,44 @@ import TSAbstractEntity from './TSAbstractEntity';
 
 export default class TSInstitutionStammdatenFerieninsel extends TSAbstractEntity {
 
-    private _ausweichstandortSommerferien: String;
-    private _ausweichstandortHerbstferien: String;
-    private _ausweichstandortSportferien: String;
-    private _ausweichstandortFruehlingsferien: String;
+    private _ausweichstandortSommerferien: string;
+    private _ausweichstandortHerbstferien: string;
+    private _ausweichstandortSportferien: string;
+    private _ausweichstandortFruehlingsferien: string;
 
     constructor() {
         super();
     }
 
-    get ausweichstandortSommerferien(): String {
+    get ausweichstandortSommerferien(): string {
         return this._ausweichstandortSommerferien;
     }
 
-    set ausweichstandortSommerferien(value: String) {
+    set ausweichstandortSommerferien(value: string) {
         this._ausweichstandortSommerferien = value;
     }
 
-    get ausweichstandortHerbstferien(): String {
+    get ausweichstandortHerbstferien(): string {
         return this._ausweichstandortHerbstferien;
     }
 
-    set ausweichstandortHerbstferien(value: String) {
+    set ausweichstandortHerbstferien(value: string) {
         this._ausweichstandortHerbstferien = value;
     }
 
-    get ausweichstandortSportferien(): String {
+    get ausweichstandortSportferien(): string {
         return this._ausweichstandortSportferien;
     }
 
-    set ausweichstandortSportferien(value: String) {
+    set ausweichstandortSportferien(value: string) {
         this._ausweichstandortSportferien = value;
     }
 
-    get ausweichstandortFruehlingsferien(): String {
+    get ausweichstandortFruehlingsferien(): string {
         return this._ausweichstandortFruehlingsferien;
     }
 
-    set ausweichstandortFruehlingsferien(value: String) {
+    set ausweichstandortFruehlingsferien(value: string) {
         this._ausweichstandortFruehlingsferien = value;
     }
 }

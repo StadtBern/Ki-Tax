@@ -32,7 +32,8 @@
                                     ng-model="vm.selectedInstitutionStammdatenBetreuungsangebot"
                                     ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
                                     ng-required="true"
-                                    ng-disabled="!vm.isCreateStammdatenMode()">
+                                    ng-change="vm.betreuungsangebotChanged()"
+                                    ng-disabled="!vm.isCreateStammdatenModel()">
                             </select>
 
                             <dv-error-messages for="form.betreuungsangebot.$error"
@@ -89,7 +90,7 @@
                                 <input id="oeffnungstage" type="number" name="oeffnungstage"
                                        ng-model="vm.getSelectedInstitutionStammdaten().oeffnungstage"
                                        class="form-control" required max="365" min="0"
-                                       ng-disabled="!vm.isCreateStammdatenMode()">
+                                       ng-disabled="!vm.isCreateStammdatenModel()">
                                 <dv-error-messages for="form.oeffnungstage.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -100,7 +101,7 @@
                                        name="oeffnungsstunden"
                                        ng-model="vm.getSelectedInstitutionStammdaten().oeffnungsstunden"
                                        class="form-control" required max="24" min="0"
-                                       ng-disabled="!vm.isCreateStammdatenMode()">
+                                       ng-disabled="!vm.isCreateStammdatenModel()">
                                 <dv-error-messages for="form.oeffnungsstunden.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -150,6 +151,63 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div ng-if="vm.showAusweichstandorte()">
+                    <h1>
+                        <span data-translate="INSTITUTION_ST_AUSWEICHSTANDORT"></span>
+                    </h1>
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-sm-12 dv-input-container-small">
+                                <dv-input-container class="form-group">
+                                    <label class="md-no-float" data-translate="HERBSTFERIEN" for="inst-fi-herbstferien"></label>
+                                    <input id="inst-fi-herbstferien" type="text"
+                                           name="herbstferien"
+                                           ng-model="vm.getStammdatenFerieinsel().ausweichstandortHerbstferien"
+                                           dv-max-length class="form-control">
+                                    <dv-error-messages for="adresseForm.herbstferien.$error" class="error"></dv-error-messages>
+                                </dv-input-container>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 dv-input-container-small">
+                                <dv-input-container class="form-group">
+                                    <label class="md-no-float" data-translate="SPORTFERIEN" for="inst-fi-sportferien"></label>
+                                    <input id="inst-fi-sportferien" type="text"
+                                           name="sportferien"
+                                           ng-model="vm.getStammdatenFerieinsel().ausweichstandortSportferien"
+                                           dv-max-length class="form-control">
+                                    <dv-error-messages for="adresseForm.sportferien.$error" class="error"></dv-error-messages>
+                                </dv-input-container>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 dv-input-container-small">
+                                <dv-input-container class="form-group">
+                                    <label class="md-no-float" data-translate="FRUEHLINGSFERIEN" for="inst-fi-fruehlingsferien"></label>
+                                    <input id="inst-fi-fruehlingsferien" type="text"
+                                           name="fruehlingsferien"
+                                           ng-model="vm.getStammdatenFerieinsel().ausweichstandortFruehlingsferien"
+                                           dv-max-length class="form-control">
+                                    <dv-error-messages for="adresseForm.fruehlingsferien.$error" class="error"></dv-error-messages>
+                                </dv-input-container>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 dv-input-container-small">
+                                <dv-input-container class="form-group">
+                                    <label class="md-no-float" data-translate="SOMMERFERIEN" for="inst-fi-sommerferien"></label>
+                                    <input id="inst-fi-sommerferien" type="text"
+                                           name="sommerferien"
+                                           ng-model="vm.getStammdatenFerieinsel().ausweichstandortSommerferien"
+                                           dv-max-length class="form-control">
+                                    <dv-error-messages for="adresseForm.sommerferien.$error" class="error"></dv-error-messages>
+                                </dv-input-container>
+                            </div>
+                        </div>
+                    </fieldset>
+
                 </div>
 
                 <h1>

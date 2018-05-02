@@ -24,14 +24,15 @@ import {getTSModulTagesschuleNameValues, TSModulTagesschuleName} from '../../../
 import TSAdresse from '../../../models/TSAdresse';
 import TSInstitution from '../../../models/TSInstitution';
 import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
+import TSInstitutionStammdatenFerieninsel from '../../../models/TSInstitutionStammdatenFerieninsel';
 import TSInstitutionStammdatenTagesschule from '../../../models/TSInstitutionStammdatenTagesschule';
 import TSModulTagesschule from '../../../models/TSModulTagesschule';
 import TSLand from '../../../models/types/TSLand';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import AbstractAdminViewController from '../../abstractAdminView';
 import {IInstitutionStammdatenStateParams} from '../../admin.route';
-import IStateService = angular.ui.IStateService;
 import IFormController = angular.IFormController;
+import IStateService = angular.ui.IStateService;
 
 let template = require('./institutionStammdatenView.html');
 require('./institutionStammdatenView.less');
@@ -75,16 +76,18 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
                 this.selectedInstitution = institution;
                 this.createInstitutionStammdaten();
                 this.loadModuleTagesschule();
+                this.initStammdatenFerieninsel();
             });
         } else {
             this.institutionStammdatenRS.findInstitutionStammdaten(this.$stateParams.institutionStammdatenId).then((institutionStammdaten) => {
                 this.setSelectedInstitutionStammdaten(institutionStammdaten);
                 this.loadModuleTagesschule();
+                this.initStammdatenFerieninsel();
             });
         }
     }
 
-    isCreateStammdatenMode(): boolean {
+    isCreateStammdatenModel(): boolean {
         return this.selectedInstitutionStammdaten && this.selectedInstitutionStammdaten.isNew();
     }
 
@@ -117,7 +120,9 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
         if (form.$valid) {
             this.selectedInstitutionStammdaten.betreuungsangebotTyp = this.selectedInstitutionStammdatenBetreuungsangebot.key;
             this.replaceTagesschulmoduleOnInstitutionStammdatenTagesschule();
-            if (this.isCreateStammdatenMode()) {
+            this.purgeInstitutionstammdaten();
+
+            if (this.isCreateStammdatenModel()) {
                 this.institutionStammdatenRS.createInstitutionStammdaten(this.selectedInstitutionStammdaten).then((institutionStammdaten: TSInstitutionStammdaten) => {
                     this.goBack();
                 });
@@ -149,6 +154,11 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
     isTagesschule(): boolean {
         return this.selectedInstitutionStammdatenBetreuungsangebot
             && this.selectedInstitutionStammdatenBetreuungsangebot.key === TSBetreuungsangebotTyp.TAGESSCHULE;
+    }
+
+    isFerieninsel(): boolean {
+        return this.selectedInstitutionStammdatenBetreuungsangebot
+            && this.selectedInstitutionStammdatenBetreuungsangebot.key === TSBetreuungsangebotTyp.FERIENINSEL;
     }
 
     private setBetreuungsangebotTypValues(): void {
@@ -193,18 +203,55 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
     }
 
     private replaceTagesschulmoduleOnInstitutionStammdatenTagesschule(): void {
-        let definedModulTagesschule = [];
-        for (let modulname in this.modulTageschuleMap) {
-            let tempModul: TSModulTagesschule = this.modulTageschuleMap[modulname];
-            if (tempModul.zeitVon && tempModul.zeitBis) {
-                definedModulTagesschule.push(tempModul);
+        if (this.isTagesschule()) {
+            let definedModulTagesschule = [];
+            for (let modulname in this.modulTageschuleMap) {
+                let tempModul: TSModulTagesschule = this.modulTageschuleMap[modulname];
+                if (tempModul.zeitVon && tempModul.zeitBis) {
+                    definedModulTagesschule.push(tempModul);
+                }
+            }
+            if (definedModulTagesschule.length > 0) {
+                if (!this.selectedInstitutionStammdaten.institutionStammdatenTagesschule) {
+                    this.selectedInstitutionStammdaten.institutionStammdatenTagesschule = new TSInstitutionStammdatenTagesschule();
+                }
+                this.selectedInstitutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule = definedModulTagesschule;
             }
         }
-        if (definedModulTagesschule.length > 0) {
-            if (!this.selectedInstitutionStammdaten.institutionStammdatenTagesschule) {
-                this.selectedInstitutionStammdaten.institutionStammdatenTagesschule = new TSInstitutionStammdatenTagesschule();
-            }
-            this.selectedInstitutionStammdaten.institutionStammdatenTagesschule.moduleTagesschule = definedModulTagesschule;
+    }
+
+    public getStammdatenFerieinsel(): TSInstitutionStammdatenFerieninsel {
+        if (this.selectedInstitutionStammdaten) {
+            return this.selectedInstitutionStammdaten.institutionStammdatenFerieninsel;
+        }
+        return undefined;
+    }
+
+    public showAusweichstandorte(): boolean {
+        return this.getStammdatenFerieinsel() && this.isFerieninsel();
+    }
+
+    private initStammdatenFerieninsel() {
+        if (this.isFerieninsel() && !this.selectedInstitutionStammdaten.institutionStammdatenFerieninsel) {
+            this.selectedInstitutionStammdaten.institutionStammdatenFerieninsel = new TSInstitutionStammdatenFerieninsel();
+        }
+    }
+
+    public betreuungsangebotChanged(): void {
+        if (this.isFerieninsel()) {
+            this.initStammdatenFerieninsel();
+        }
+    }
+
+    /**
+     * Removes all unused Stammdaten for the selected Betreuungsangebotstyp
+     */
+    private purgeInstitutionstammdaten() {
+        if (!this.isFerieninsel()) {
+            this.selectedInstitutionStammdaten.institutionStammdatenFerieninsel = undefined;
+        }
+        if (!this.isTagesschule()) {
+            this.selectedInstitutionStammdaten.institutionStammdatenTagesschule = undefined;
         }
     }
 }
