@@ -72,6 +72,7 @@ import TSGesuchsteller from '../models/TSGesuchsteller';
 import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
 import TSInstitution from '../models/TSInstitution';
 import TSInstitutionStammdaten from '../models/TSInstitutionStammdaten';
+import TSInstitutionStammdatenFerieninsel from '../models/TSInstitutionStammdatenFerieninsel';
 import TSInstitutionStammdatenTagesschule from '../models/TSInstitutionStammdatenTagesschule';
 import TSKind from '../models/TSKind';
 import TSKindContainer from '../models/TSKindContainer';
@@ -819,6 +820,7 @@ export default class EbeguRestUtil {
             restInstitutionStammdaten.kontoinhaber = institutionStammdaten.kontoinhaber;
             restInstitutionStammdaten.adresseKontoinhaber = this.adresseToRestObject({}, institutionStammdaten.adresseKontoinhaber);
             restInstitutionStammdaten.institutionStammdatenTagesschule = this.institutionStammdatenTagesschuleToRestObject({}, institutionStammdaten.institutionStammdatenTagesschule);
+            restInstitutionStammdaten.institutionStammdatenFerieninsel = this.institutionStammdatenFerieninselToRestObject({}, institutionStammdaten.institutionStammdatenFerieninsel);
             return restInstitutionStammdaten;
         }
         return undefined;
@@ -837,6 +839,8 @@ export default class EbeguRestUtil {
             institutionStammdatenTS.adresseKontoinhaber = this.parseAdresse(new TSAdresse(), institutionStammdatenFromServer.adresseKontoinhaber);
             institutionStammdatenTS.institutionStammdatenTagesschule = this.parseInstitutionStammdatenTagesschule(new TSInstitutionStammdatenTagesschule(),
                 institutionStammdatenFromServer.institutionStammdatenTagesschule);
+            institutionStammdatenTS.institutionStammdatenFerieninsel = this.parseInstitutionStammdatenFerieninsel(new TSInstitutionStammdatenFerieninsel(),
+                institutionStammdatenFromServer.institutionStammdatenFerieninsel);
             return institutionStammdatenTS;
         }
         return undefined;
@@ -852,6 +856,32 @@ export default class EbeguRestUtil {
             institutionStammdaten[0] = this.parseInstitutionStammdaten(new TSInstitutionStammdaten(), data);
         }
         return institutionStammdaten;
+    }
+
+    public institutionStammdatenFerieninselToRestObject(restInstitutionStammdatenFerieninsel: any,
+        institutionStammdatenFerieninsel: TSInstitutionStammdatenFerieninsel): any {
+        if (institutionStammdatenFerieninsel) {
+            this.abstractEntityToRestObject(restInstitutionStammdatenFerieninsel, institutionStammdatenFerieninsel);
+            restInstitutionStammdatenFerieninsel.ausweichstandortFruehlingsferien = institutionStammdatenFerieninsel.ausweichstandortFruehlingsferien;
+            restInstitutionStammdatenFerieninsel.ausweichstandortHerbstferien = institutionStammdatenFerieninsel.ausweichstandortHerbstferien;
+            restInstitutionStammdatenFerieninsel.ausweichstandortSommerferien = institutionStammdatenFerieninsel.ausweichstandortSommerferien;
+            restInstitutionStammdatenFerieninsel.ausweichstandortSportferien = institutionStammdatenFerieninsel.ausweichstandortSportferien;
+            return restInstitutionStammdatenFerieninsel;
+        }
+        return undefined;
+    }
+
+    public parseInstitutionStammdatenFerieninsel(institutionStammdatenFerieninselTS: TSInstitutionStammdatenFerieninsel,
+                                                 institutionStammdatenFerieninselFromServer: any): TSInstitutionStammdatenFerieninsel {
+        if (institutionStammdatenFerieninselFromServer) {
+            this.parseAbstractEntity(institutionStammdatenFerieninselTS, institutionStammdatenFerieninselFromServer);
+            institutionStammdatenFerieninselTS.ausweichstandortFruehlingsferien = institutionStammdatenFerieninselFromServer.ausweichstandortFruehlingsferien;
+            institutionStammdatenFerieninselTS.ausweichstandortHerbstferien = institutionStammdatenFerieninselFromServer.ausweichstandortHerbstferien;
+            institutionStammdatenFerieninselTS.ausweichstandortSommerferien = institutionStammdatenFerieninselFromServer.ausweichstandortSommerferien;
+            institutionStammdatenFerieninselTS.ausweichstandortSportferien = institutionStammdatenFerieninselFromServer.ausweichstandortSportferien;
+            return institutionStammdatenFerieninselTS;
+        }
+        return undefined;
     }
 
     public institutionStammdatenTagesschuleToRestObject(restInstitutionStammdatenTagesschule: any,

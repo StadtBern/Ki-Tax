@@ -46,6 +46,8 @@ public class JaxInstitutionStammdaten extends JaxAbstractDateRangedDTO {
 	private JaxInstitution institution;
 	@Nullable
 	private JaxInstitutionStammdatenTagesschule institutionStammdatenTagesschule;
+	@Nullable
+	private JaxInstitutionStammdatenFerieninsel institutionStammdatenFerieninsel;
 
 	@NotNull
 	private JaxAdresse adresse;
@@ -132,5 +134,14 @@ public class JaxInstitutionStammdaten extends JaxAbstractDateRangedDTO {
 
 	public void setInstitutionStammdatenTagesschule(@Nullable JaxInstitutionStammdatenTagesschule institutionStammdatenTagesschule) {
 		this.institutionStammdatenTagesschule = institutionStammdatenTagesschule;
+	}
+
+	@Nullable
+	public JaxInstitutionStammdatenFerieninsel getInstitutionStammdatenFerieninsel() {
+		return institutionStammdatenFerieninsel;
+	}
+
+	public void setInstitutionStammdatenFerieninsel(@Nullable JaxInstitutionStammdatenFerieninsel institutionStammdatenFerieninsel) {
+		this.institutionStammdatenFerieninsel = institutionStammdatenFerieninsel;
 	}
 }
