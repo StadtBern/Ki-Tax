@@ -299,12 +299,35 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		List<InputStream> docsToMerge = new ArrayList<>();
 
-		// Begleitschreiben
-		byte[] begleitschreiben = readFileIfExists(GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getJahrAndFallnummer(), gesuch);
-		if (begleitschreiben.length > 0) {
-			docsToMerge.add(new ByteArrayInputStream(begleitschreiben));
+		addBegleitschreibenDoc(gesuch, docsToMerge);
+
+		addBetreuungenDoc(gesuch, docsToMerge);
+
+		addFinanzielleSituationDoc(gesuch, docsToMerge);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			GeneratePDFDocumentHelper.doMerge(docsToMerge, baos);
+		} catch (DocumentException | IOException e) {
+			throw new MergeDocException("getKompletteKorrespondenz", "Dokumente konnten nicht gemergt werden", e);
 		}
-		// Betreuungen
+
+		WriteProtectedDokument document = saveGeneratedDokumentInDB(baos.toByteArray(), GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch,
+			"KompletteKorrespondenz", false);
+
+		return document;
+	}
+
+	private void addFinanzielleSituationDoc(Gesuch gesuch, List<InputStream> docsToMerge) throws MergeDocException {
+		if (gesuch.isHasFSDokument()) {
+			byte[] finanzielleSituation = readFileIfExists(GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch.getJahrAndFallnummer(), gesuch);
+			if (finanzielleSituation.length > 0) {
+				docsToMerge.add(new ByteArrayInputStream(finanzielleSituation));
+			}
+		}
+	}
+
+	private void addBetreuungenDoc(Gesuch gesuch, List<InputStream> docsToMerge) throws MergeDocException {
 		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
 			// Verfuegt
 			if (betreuung.getBetreuungsstatus() == Betreuungsstatus.VERFUEGT) {
@@ -320,25 +343,13 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				}
 			}
 		}
-		// FinanzielleSituation
-		if (gesuch.isHasFSDokument()) {
-			byte[] finanzielleSituation = readFileIfExists(GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch.getJahrAndFallnummer(), gesuch);
-			if (finanzielleSituation.length > 0) {
-				docsToMerge.add(new ByteArrayInputStream(finanzielleSituation));
-			}
+	}
+
+	private void addBegleitschreibenDoc(Gesuch gesuch, List<InputStream> docsToMerge) throws MergeDocException {
+		byte[] begleitschreiben = readFileIfExists(GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getJahrAndFallnummer(), gesuch);
+		if (begleitschreiben.length > 0) {
+			docsToMerge.add(new ByteArrayInputStream(begleitschreiben));
 		}
-
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try {
-			GeneratePDFDocumentHelper.doMerge(docsToMerge, baos);
-		} catch (DocumentException | IOException e) {
-			throw new MergeDocException("getKompletteKorrespondenz", "Dokumente konnten nicht gemergt werden", e);
-		}
-
-		WriteProtectedDokument document = saveGeneratedDokumentInDB(baos.toByteArray(), GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch,
-			"KompletteKorrespondenz", false);
-
-		return document;
 	}
 
 	@Nonnull
