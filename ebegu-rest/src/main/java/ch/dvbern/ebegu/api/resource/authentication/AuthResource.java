@@ -15,6 +15,8 @@
 
 package ch.dvbern.ebegu.api.resource.authentication;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.NoSuchElementException;
@@ -40,11 +42,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
-
 import ch.dvbern.ebegu.api.AuthConstants;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElementCookieData;
@@ -57,6 +54,9 @@ import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
+import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This resource has functions to login or logout
@@ -241,6 +241,12 @@ public class AuthResource {
 	 */
 	private String encodeAuthAccessElement(JaxAuthAccessElementCookieData element) {
 		Gson gson = new Gson();
-		return Base64.getEncoder().encodeToString(gson.toJson(element).getBytes(Charset.forName("UTF-8")));
+		String s =  Base64.getEncoder().encodeToString(gson.toJson(element).getBytes(Charset.forName("UTF-8")));
+		try {
+			s = URLEncoder.encode(s, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalStateException("UTF-8 encoding must be available", e);
+		}
+		return s;
 	}
 }

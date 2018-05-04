@@ -81,6 +81,7 @@ export default class AuthServiceRS {
 
     public initWithCookie(): boolean {
         let authIdbase64 = this.$cookies.get('authId');
+        authIdbase64 = decodeURIComponent(authIdbase64);
         if (authIdbase64) {
             try {
                 let authData = angular.fromJson(this.base64.decode(authIdbase64));
