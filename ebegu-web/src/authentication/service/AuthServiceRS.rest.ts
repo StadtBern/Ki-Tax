@@ -85,7 +85,7 @@ export default class AuthServiceRS {
         if (authIdbase64) {
             try {
                 let authData = angular.fromJson(this.base64.decode(authIdbase64));
-                this.principal = new TSUser(authData.vorname, authData.nachname, authData.authId, '', authData.email, authData.mandant, authData.role);
+                this.principal = new TSUser(authData.vorname, authData.nachname, authData.authId, '', authData.email, authData.mandant, authData.currentBerechtigung.role);
                 this.$timeout(() => {
                     this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], 'logged in');
                 }); //bei login muessen wir warten bis angular alle componenten erstellt hat bevor wir das event werfen
