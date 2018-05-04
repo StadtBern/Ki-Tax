@@ -109,9 +109,15 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_stammdaten_adressekontoinhaber_id"), nullable = true)
 	private Adresse adresseKontoinhaber;
 
+	@Nullable
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_inst_stammdaten_inst_stammdaten_tagesschule_id"), nullable = true)
 	private InstitutionStammdatenTagesschule institutionStammdatenTagesschule;
+
+	@Nullable
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_inst_stammdaten_inst_stammdaten_ferieninsel_id"), nullable = true)
+	private InstitutionStammdatenFerieninsel institutionStammdatenFerieninsel;
 
 	public InstitutionStammdaten() {
 	}
@@ -184,6 +190,24 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 		this.adresseKontoinhaber = adresseKontoinhaber;
 	}
 
+	@Nullable
+	public InstitutionStammdatenTagesschule getInstitutionStammdatenTagesschule() {
+		return institutionStammdatenTagesschule;
+	}
+
+	public void setInstitutionStammdatenTagesschule(@Nullable InstitutionStammdatenTagesschule institutionStammdatenTagesschule) {
+		this.institutionStammdatenTagesschule = institutionStammdatenTagesschule;
+	}
+
+	@Nullable
+	public InstitutionStammdatenFerieninsel getInstitutionStammdatenFerieninsel() {
+		return institutionStammdatenFerieninsel;
+	}
+
+	public void setInstitutionStammdatenFerieninsel(@Nullable InstitutionStammdatenFerieninsel institutionStammdatenFerieninsel) {
+		this.institutionStammdatenFerieninsel = institutionStammdatenFerieninsel;
+	}
+
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality
@@ -206,14 +230,5 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 			MathUtil.isSame(getOeffnungsstunden(), otherInstStammdaten.getOeffnungsstunden()) &&
 			MathUtil.isSame(getOeffnungstage(), otherInstStammdaten.getOeffnungstage()) &&
 			EbeguUtil.isSameObject(getAdresse(), otherInstStammdaten.getAdresse());
-	}
-
-	@Nullable
-	public InstitutionStammdatenTagesschule getInstitutionStammdatenTagesschule() {
-		return institutionStammdatenTagesschule;
-	}
-
-	public void setInstitutionStammdatenTagesschule(@Nullable InstitutionStammdatenTagesschule institutionStammdatenTagesschule) {
-		this.institutionStammdatenTagesschule = institutionStammdatenTagesschule;
 	}
 }
