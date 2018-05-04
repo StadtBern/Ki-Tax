@@ -14,8 +14,8 @@
  */
 package ch.dvbern.ebegu.api.dtos;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -59,7 +59,7 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 	private JaxBerechtigung currentBerechtigung;
 
 	@Nonnull
-	private Set<JaxBerechtigung> berechtigungen = new TreeSet<>();
+	private Set<JaxBerechtigung> berechtigungen = new LinkedHashSet<>();
 
 
 	@SuppressFBWarnings(value = "NM_CONFUSING", justification = "Other method is external interface, cant change that")

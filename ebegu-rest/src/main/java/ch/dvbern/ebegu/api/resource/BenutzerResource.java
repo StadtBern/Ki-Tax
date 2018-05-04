@@ -46,8 +46,6 @@ import ch.dvbern.ebegu.api.dtos.JaxBenutzerSearchresultDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.BenutzerTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.util.MonitoringUtil;
 import io.swagger.annotations.Api;
@@ -218,9 +216,13 @@ public class BenutzerResource {
 		@Nonnull @NotNull @Valid JaxAuthLoginElement benutzerJax, @Context UriInfo uriInfo, @Context HttpServletResponse response) {
 
 		String username = benutzerJax.getUsername();
-		Benutzer benutzer = benutzerService.findBenutzer(username).orElseThrow(() -> new EbeguEntityNotFoundException("saveBerechtigung",
-			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
-		Benutzer mergedBenutzer = benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(benutzerJax, benutzer));
+		Optional<Benutzer> benutzerOptional = benutzerService.findBenutzer(username);
+		Benutzer mergedBenutzer = null;
+		if (benutzerOptional.isPresent()) {
+			mergedBenutzer = benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(benutzerJax, benutzerOptional.get()));
+		} else {
+			mergedBenutzer = benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(benutzerJax, new Benutzer()));
+		}
 		return converter.benutzerToAuthLoginElement(mergedBenutzer);
 	}
 }
