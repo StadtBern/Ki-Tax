@@ -88,6 +88,7 @@ import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxInstitution;
 import ch.dvbern.ebegu.api.dtos.JaxInstitutionStammdaten;
+import ch.dvbern.ebegu.api.dtos.JaxInstitutionStammdatenFerieninsel;
 import ch.dvbern.ebegu.api.dtos.JaxInstitutionStammdatenTagesschule;
 import ch.dvbern.ebegu.api.dtos.JaxKind;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
@@ -153,6 +154,7 @@ import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.InstitutionStammdatenFerieninsel;
 import ch.dvbern.ebegu.entities.InstitutionStammdatenTagesschule;
 import ch.dvbern.ebegu.entities.Kind;
 import ch.dvbern.ebegu.entities.KindContainer;
@@ -1170,6 +1172,10 @@ public class JaxBConverter {
 			jaxInstStammdaten.setInstitutionStammdatenTagesschule(institutionStammdatenTagesschuleToJAX(persistedInstStammdaten
 				.getInstitutionStammdatenTagesschule()));
 		}
+		if (persistedInstStammdaten.getInstitutionStammdatenFerieninsel() != null) {
+			jaxInstStammdaten.setInstitutionStammdatenFerieninsel(institutionStammdatenFerieninselToJAX(persistedInstStammdaten
+				.getInstitutionStammdatenFerieninsel()));
+		}
 		jaxInstStammdaten.setInstitution(institutionToJAX(persistedInstStammdaten.getInstitution()));
 		jaxInstStammdaten.setAdresse(adresseToJAX(persistedInstStammdaten.getAdresse()));
 		jaxInstStammdaten.setKontoinhaber(persistedInstStammdaten.getKontoinhaber());
@@ -1204,6 +1210,15 @@ public class JaxBConverter {
 					.getInstitutionStammdatenTagesschule(), new InstitutionStammdatenTagesschule()));
 			}
 		}
+		if (institutionStammdatenJAXP.getInstitutionStammdatenFerieninsel() != null) {
+			if (institutionStammdaten.getInstitutionStammdatenFerieninsel() != null) {
+				institutionStammdaten.setInstitutionStammdatenFerieninsel(institutionStammdatenFerieninselToEntity(institutionStammdatenJAXP
+					.getInstitutionStammdatenFerieninsel(), institutionStammdaten.getInstitutionStammdatenFerieninsel()));
+			} else {
+				institutionStammdaten.setInstitutionStammdatenFerieninsel(institutionStammdatenFerieninselToEntity(institutionStammdatenJAXP
+					.getInstitutionStammdatenFerieninsel(), new InstitutionStammdatenFerieninsel()));
+			}
+		}
 		institutionStammdaten.setKontoinhaber(institutionStammdatenJAXP.getKontoinhaber());
 		if (institutionStammdatenJAXP.getAdresseKontoinhaber() != null) {
 			if (institutionStammdaten.getAdresseKontoinhaber() != null) {
@@ -1227,6 +1242,32 @@ public class JaxBConverter {
 
 		return institutionStammdaten;
 
+	}
+
+	public JaxInstitutionStammdatenFerieninsel institutionStammdatenFerieninselToJAX(@Nonnull final InstitutionStammdatenFerieninsel
+		persistedInstStammdatenFerieninsel) {
+		final JaxInstitutionStammdatenFerieninsel jaxInstStammdatenFerieninsel = new JaxInstitutionStammdatenFerieninsel();
+		convertAbstractFieldsToJAX(persistedInstStammdatenFerieninsel, jaxInstStammdatenFerieninsel);
+		jaxInstStammdatenFerieninsel.setAusweichstandortFruehlingsferien(persistedInstStammdatenFerieninsel.getAusweichstandortFruehlingsferien());
+		jaxInstStammdatenFerieninsel.setAusweichstandortHerbstferien(persistedInstStammdatenFerieninsel.getAusweichstandortHerbstferien());
+		jaxInstStammdatenFerieninsel.setAusweichstandortSommerferien(persistedInstStammdatenFerieninsel.getAusweichstandortSommerferien());
+		jaxInstStammdatenFerieninsel.setAusweichstandortSportferien(persistedInstStammdatenFerieninsel.getAusweichstandortSportferien());
+		return jaxInstStammdatenFerieninsel;
+	}
+
+	@Nullable
+	public InstitutionStammdatenFerieninsel institutionStammdatenFerieninselToEntity(final JaxInstitutionStammdatenFerieninsel
+		institutionStammdatenFerieninselJAXP, final InstitutionStammdatenFerieninsel institutionStammdatenFerieninsel) {
+		Validate.notNull(institutionStammdatenFerieninselJAXP);
+		Validate.notNull(institutionStammdatenFerieninsel);
+		convertAbstractFieldsToEntity(institutionStammdatenFerieninselJAXP, institutionStammdatenFerieninsel);
+
+		institutionStammdatenFerieninsel.setAusweichstandortFruehlingsferien(institutionStammdatenFerieninselJAXP.getAusweichstandortFruehlingsferien());
+		institutionStammdatenFerieninsel.setAusweichstandortHerbstferien(institutionStammdatenFerieninselJAXP.getAusweichstandortHerbstferien());
+		institutionStammdatenFerieninsel.setAusweichstandortSommerferien(institutionStammdatenFerieninselJAXP.getAusweichstandortSommerferien());
+		institutionStammdatenFerieninsel.setAusweichstandortSportferien(institutionStammdatenFerieninselJAXP.getAusweichstandortSportferien());
+
+		return institutionStammdatenFerieninsel;
 	}
 
 	public JaxInstitutionStammdatenTagesschule institutionStammdatenTagesschuleToJAX(@Nonnull final InstitutionStammdatenTagesschule
