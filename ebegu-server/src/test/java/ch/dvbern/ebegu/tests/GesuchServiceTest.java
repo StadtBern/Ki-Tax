@@ -95,6 +95,7 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -248,6 +249,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertFalse(einkommensverschlechterungInfo.getEkvFuerBasisJahrPlus2());
 	}
 
+	@Ignore //TODO siehe EBEGU-1877
 	@Test
 	public void testAntragMutieren() throws Exception {
 
@@ -293,6 +295,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(1, intersection.size());
 	}
 
+	@Ignore //TODO siehe EBEGU-1877
 	@Test
 	public void testAntragErneuern() throws Exception {
 
