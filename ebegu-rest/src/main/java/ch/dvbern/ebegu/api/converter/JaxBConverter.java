@@ -2284,14 +2284,12 @@ public class JaxBConverter {
 		}
 		// Berechtigungen
 		final Set<Berechtigung> convertedBerechtigungen = berechtigungenListToEntity(jaxLoginElement.getBerechtigungen(),
-			benutzer.getBerechtigungen(), benutzer);
-		if (convertedBerechtigungen != null) {
-			//change the existing collection to reflect changes
-			// Already tested: All existing module of the list remain as they were, that means their data are updated
-			// and the objects are not created again. ID and InsertTimeStamp are the same as before
-			benutzer.getBerechtigungen().clear();
-			benutzer.getBerechtigungen().addAll(convertedBerechtigungen);
-		}
+		benutzer.getBerechtigungen(), benutzer);
+		//change the existing collection to reflect changes
+		// Already tested: All existing module of the list remain as they were, that means their data are updated
+		// and the objects are not created again. ID and InsertTimeStamp are the same as before
+		benutzer.getBerechtigungen().clear();
+		benutzer.getBerechtigungen().addAll(convertedBerechtigungen);
 		return benutzer;
 	}
 
