@@ -13,6 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import EbeguUtil from '../utils/EbeguUtil';
 import {TSAmt} from './enums/TSAmt';
 import {rolePrefix, TSRole} from './enums/TSRole';
 import TSBerechtigung from './TSBerechtigung';
@@ -131,7 +132,14 @@ export default class TSUser {
     }
 
     get currentBerechtigung(): TSBerechtigung {
-            return this._currentBerechtigung;
+        if (EbeguUtil.isNullOrUndefined(this._currentBerechtigung)) {
+            for (let obj of this.berechtigungen) {
+                if (obj.active) {
+                    this._currentBerechtigung = obj;
+                }
+            }
+        }
+        return this._currentBerechtigung;
     }
 
     set currentBerechtigung(value: TSBerechtigung) {

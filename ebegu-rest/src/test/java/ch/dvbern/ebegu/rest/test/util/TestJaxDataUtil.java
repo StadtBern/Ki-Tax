@@ -62,6 +62,7 @@ import ch.dvbern.ebegu.enums.Land;
 import ch.dvbern.ebegu.enums.Taetigkeit;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
+import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -187,7 +188,10 @@ public class TestJaxDataUtil {
 
 	public static JaxAuthLoginElement createTestJaxBenutzer() {
 		JaxAuthLoginElement jaxBenutzer = new JaxAuthLoginElement();
-		jaxBenutzer.setCurrentBerechtigung(createTestJaxBerechtigung());
+		JaxBerechtigung jaxBerechtigung = createTestJaxBerechtigung();
+		jaxBerechtigung.setBenutzer(jaxBenutzer);
+		jaxBenutzer.getBerechtigungen().add(jaxBerechtigung);
+		jaxBenutzer.setCurrentBerechtigung(jaxBerechtigung);
 		jaxBenutzer.setUsername("TestUser");
 		jaxBenutzer.setPassword("1234");
 		jaxBenutzer.setEmail("testuser@example.com");
@@ -199,6 +203,9 @@ public class TestJaxDataUtil {
 	public static JaxBerechtigung createTestJaxBerechtigung() {
 		JaxBerechtigung berechtigung = new JaxBerechtigung();
 		berechtigung.setRole(UserRole.ADMIN);
+		berechtigung.setActive(true);
+		berechtigung.setGueltigAb(LocalDate.now());
+		berechtigung.setGueltigBis(Constants.END_OF_TIME);
 		return berechtigung;
 	}
 
