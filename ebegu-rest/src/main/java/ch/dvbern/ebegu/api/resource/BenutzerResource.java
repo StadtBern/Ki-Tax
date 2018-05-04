@@ -43,16 +43,12 @@ import javax.ws.rs.core.UriInfo;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
 import ch.dvbern.ebegu.api.dtos.JaxBenutzerSearchresultDTO;
-import ch.dvbern.ebegu.api.dtos.JaxBerechtigung;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.BenutzerTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Berechtigung;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.BenutzerService;
-import ch.dvbern.ebegu.services.InstitutionService;
-import ch.dvbern.ebegu.services.TraegerschaftService;
 import ch.dvbern.ebegu.util.MonitoringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -84,11 +80,6 @@ public class BenutzerResource {
 	@Inject
 	private JaxBConverter converter;
 
-	@Inject
-	private InstitutionService institutionService;
-
-	@Inject
-	private TraegerschaftService traegerschaftService;
 
 	@ApiOperation(value = "Gibt alle existierenden Benutzer mit Rolle ADMIN oder SACHBEARBEITER_JA zurueck", responseContainer = "List", response = JaxAuthLoginElement.class)
 	@Nonnull
@@ -216,45 +207,20 @@ public class BenutzerResource {
 		return converter.benutzerToAuthLoginElement(benutzer);
 	}
 
-	@ApiOperation(value = "Gibt die Berechtigungen des Benutzers mit dem uebergebenen Username zurück.",
-		response = JaxAuthLoginElement.class)
+	@ApiOperation(value = "Updates a Benutzer in the database", response = JaxAuthLoginElement.class)
 	@Nullable
-	@GET
-	@Path("/berechtigungen/{username}")
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ SUPER_ADMIN, ADMIN})
-	public List<JaxBerechtigung> getBerechtigungenForBenutzer(@Nonnull @NotNull @PathParam("username") String username) {
-		Validate.notNull(username);
-		return benutzerService.getBerechtigungenForBenutzer(username).stream()
-			.map(benutzer -> converter.berechtigungToJax(benutzer))
-			.collect(Collectors.toList());
-	}
-
-	@ApiOperation("Speichert eine Liste von Berechtigung zu einem Benutzer")
 	@PUT
+	@Path("/save")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed({ SUPER_ADMIN, ADMIN})
-	@Path("/berechtigungen/{username}")
-	public void saveBerechtigungen(
-		@Nonnull @NotNull @PathParam("username") String username,
-		@Nonnull @NotNull @Valid List<JaxBerechtigung> berechtigungenJax,
-		@Context UriInfo uriInfo, @Context HttpServletResponse response) {
+	public JaxAuthLoginElement saveBenutzer(
+		@Nonnull @NotNull @Valid JaxAuthLoginElement benutzerJax, @Context UriInfo uriInfo, @Context HttpServletResponse response) {
 
+		String username = benutzerJax.getUsername();
 		Benutzer benutzer = benutzerService.findBenutzer(username).orElseThrow(() -> new EbeguEntityNotFoundException("saveBerechtigung",
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
-
-		List<Berechtigung> resultBetreuungen = new ArrayList<>();
-		berechtigungenJax.forEach(berechtigungJax -> {
-			Berechtigung gesuchstellerToMerge = new Berechtigung();
-			if (berechtigungJax.getId() != null) {
-				Optional<Berechtigung> optional = benutzerService.findBerechtigung(berechtigungJax.getId());
-				gesuchstellerToMerge = optional.orElse(new Berechtigung());
-			}
-			Berechtigung berechtigung = converter.berechtigungToEntity(berechtigungJax, gesuchstellerToMerge);
-			resultBetreuungen.add(berechtigung);
-		});
-		benutzerService.saveBerechtigungen(benutzer, resultBetreuungen);
+		Benutzer mergedBenutzer = benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(benutzerJax, benutzer));
+		return converter.benutzerToAuthLoginElement(mergedBenutzer);
 	}
 }

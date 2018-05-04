@@ -15,6 +15,7 @@
 
 package ch.dvbern.ebegu.entities;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -32,6 +33,7 @@ import javax.validation.constraints.NotNull;
 import ch.dvbern.ebegu.enums.Amt;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.validators.CheckBerechtigung;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -42,7 +44,7 @@ import org.hibernate.envers.Audited;
 @CheckBerechtigung
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Berechtigung extends AbstractDateRangedEntity {
+public class Berechtigung extends AbstractDateRangedEntity implements Comparable<Berechtigung> {
 
 	private static final long serialVersionUID = 6372688971894279665L;
 
@@ -65,6 +67,10 @@ public class Berechtigung extends AbstractDateRangedEntity {
 	@ManyToOne(optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Berechtigung_traegerschaft_id"))
 	private Traegerschaft traegerschaft;
+
+	@NotNull
+	@Column(nullable = false)
+	private Boolean active = false;
 
 
 
@@ -102,6 +108,14 @@ public class Berechtigung extends AbstractDateRangedEntity {
 		this.traegerschaft = traegerschaft;
 	}
 
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
 	@Nonnull
 	public Amt getAmt() {
 		if (role != null) {
@@ -137,5 +151,17 @@ public class Berechtigung extends AbstractDateRangedEntity {
 			&& Objects.equals(getTraegerschaft(), otherBerechtigung.getTraegerschaft())
 			&& Objects.equals(getGueltigkeit(), otherBerechtigung.getGueltigkeit())
 			&& Objects.equals(getBenutzer().getGesperrt(), otherBerechtigung.getBenutzer().getGesperrt());
+	}
+
+	@Override
+	public int compareTo(Berechtigung o) {
+		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(this.getGueltigkeit().getGueltigAb(), o.getGueltigkeit().getGueltigAb());
+		builder.append(this.getId(), o.getId());
+		return builder.toComparison();
+	}
+
+	public boolean isGueltig() {
+		return getGueltigkeit().contains(LocalDate.now());
 	}
 }

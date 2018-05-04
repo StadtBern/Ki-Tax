@@ -54,6 +54,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.Abwesenheit;
@@ -61,6 +62,7 @@ import ch.dvbern.ebegu.entities.AntragStatusHistory;
 import ch.dvbern.ebegu.entities.AntragStatusHistory_;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Benutzer_;
+import ch.dvbern.ebegu.entities.Berechtigung;
 import ch.dvbern.ebegu.entities.Berechtigung_;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuung_;
@@ -457,8 +459,10 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		Root<Gesuch> root = query.from(Gesuch.class);
 
+
 		final Join<Gesuch, Fall> fallJoin = root.join(Gesuch_.fall, JoinType.INNER);
 		final Join<Fall, Benutzer> verantwortlicherJoin = fallJoin.join(Fall_.verantwortlicher, JoinType.LEFT);
+		SetJoin<Benutzer, Berechtigung> verantwortlicherBerechtigungenJoin = verantwortlicherJoin.join(Benutzer_.berechtigungen);
 
 		query.multiselect(verantwortlicherJoin.get(Benutzer_.id).alias(Benutzer_.id.getName()),
 			verantwortlicherJoin.get(Benutzer_.nachname).alias(Benutzer_.nachname.getName()),
@@ -468,11 +472,13 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		query.groupBy(verantwortlicherJoin.get(Benutzer_.id), verantwortlicherJoin.get(Benutzer_.nachname), verantwortlicherJoin.get(Benutzer_.vorname));
 		query.orderBy(builder.asc(verantwortlicherJoin.get(Benutzer_.nachname)));
 
-		Predicate isAdmin = builder.equal(verantwortlicherJoin.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role), UserRole.ADMIN);
-		Predicate isSachbearbeiterJA = builder.equal(verantwortlicherJoin.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role), UserRole.SACHBEARBEITER_JA);
-		Predicate orRoles = builder.or(isAdmin, isSachbearbeiterJA);
+		// Der Benutzer muss eine aktive Berechtigung mit Rolle ADMIN oder SACHBEARBEITER_JA haben
+		Predicate predicateActive = builder.equal(verantwortlicherBerechtigungenJoin.get(Berechtigung_.active), Boolean.TRUE);
+		Predicate isAdmin = verantwortlicherBerechtigungenJoin.get(Berechtigung_.role).in(UserRole.ADMIN);
+		Predicate isSachbearbeiterJA = verantwortlicherBerechtigungenJoin.get(Berechtigung_.role).in(UserRole.SACHBEARBEITER_JA);
+		Predicate predAdminOrSachbearbeiterJA = builder.or(isAdmin, isSachbearbeiterJA);
 
-		query.where(orRoles);
+		query.where(predicateActive, predAdminOrSachbearbeiterJA);
 
 		return persistence.getCriteriaResults(query);
 	}
@@ -489,6 +495,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		Root<AntragStatusHistory> root = query.from(AntragStatusHistory.class);
 		final Join<AntragStatusHistory, Benutzer> benutzerJoin = root.join(AntragStatusHistory_.benutzer, JoinType.INNER);
+		SetJoin<Benutzer, Berechtigung> joinBerechtigungen = benutzerJoin.join(Benutzer_.berechtigungen);
 
 		query.multiselect(
 			benutzerJoin.get(Benutzer_.id).alias(Benutzer_.id.getName()),
@@ -502,12 +509,13 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final Predicate predicateDatumVon = builder.greaterThanOrEqualTo(root.get(AntragStatusHistory_.timestampVon), datumVon.atStartOfDay());
 		// Datum der Verfuegung muss vor (oder gleich) dem Ende des Abfragezeitraums sein
 		final Predicate predicateDatumBis = builder.lessThanOrEqualTo(root.get(AntragStatusHistory_.timestampVon), datumBis.atStartOfDay());
+		// Der Benutzer muss eine aktive Berechtigung mit Rolle ADMIN oder SACHBEARBEITER_JA haben
+		Predicate predicateActive = builder.equal(joinBerechtigungen.get(Berechtigung_.active), Boolean.TRUE);
+		Predicate isAdmin = joinBerechtigungen.get(Berechtigung_.role).in(UserRole.ADMIN);
+		Predicate isSachbearbeiterJA = joinBerechtigungen.get(Berechtigung_.role).in(UserRole.SACHBEARBEITER_JA);
+		Predicate predAdminOrSachbearbeiterJA = builder.or(isAdmin, isSachbearbeiterJA);
 
-		Predicate isAdmin = builder.equal(benutzerJoin.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role), UserRole.ADMIN);
-		Predicate isSachbearbeiterJA = builder.equal(benutzerJoin.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role), UserRole.SACHBEARBEITER_JA);
-		Predicate predOrRoles = builder.or(isAdmin, isSachbearbeiterJA);
-
-		query.where(predicateStatus, predicateDatumVon, predicateDatumBis, predOrRoles);
+		query.where(predicateStatus, predicateDatumVon, predicateDatumBis, predicateActive, predAdminOrSachbearbeiterJA);
 
 		query.groupBy(benutzerJoin.get(Benutzer_.id), benutzerJoin.get(Benutzer_.nachname), benutzerJoin.get(Benutzer_.vorname));
 		query.orderBy(builder.asc(benutzerJoin.get(Benutzer_.nachname)));
@@ -1289,11 +1297,15 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Benutzer> query = builder.createQuery(Benutzer.class);
 		Root<Benutzer> root = query.from(Benutzer.class);
+		SetJoin<Benutzer, Berechtigung> joinBerechtigungen = root.join(Benutzer_.berechtigungen);
 
 		List<Predicate> predicates = new ArrayList<>();
 
 		// Gesuchsteller sollen nicht ausgegeben werden
-		predicates.add(builder.notEqual(root.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role), UserRole.GESUCHSTELLER));
+		Predicate predicateActive = builder.equal(joinBerechtigungen.get(Berechtigung_.active), Boolean.TRUE);
+		Predicate predicateRoleNotGS = joinBerechtigungen.get(Berechtigung_.role).in(UserRole.GESUCHSTELLER).not();
+		predicates.add(predicateActive);
+		predicates.add(predicateRoleNotGS);
 
 		// Wenn es sich nicht um einen SuperAdmin handelt, muss noch der Mandant beachtet werden, sowie die SuperAdmin ausgefiltert werden.
 		Benutzer user = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("searchBenutzer", "No User is logged in"));
@@ -1302,7 +1314,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			// Admins duerfen alle Benutzer ihres Mandanten sehen
 			predicates.add(builder.equal(root.get(Benutzer_.mandant), user.getMandant()));
 			// Und sie duerfen keine Superadmins sehen
-			predicates.add(builder.notEqual(root.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role), UserRole.SUPER_ADMIN));
+			Predicate predicateRoleNotSuperadmin = joinBerechtigungen.get(Berechtigung_.role).in(UserRole.SUPER_ADMIN).not();
+			predicates.add(predicateRoleNotSuperadmin);
 		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicates));

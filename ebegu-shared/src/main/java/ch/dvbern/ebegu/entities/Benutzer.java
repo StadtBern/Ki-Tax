@@ -16,6 +16,8 @@
 package ch.dvbern.ebegu.entities;
 
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,13 +25,16 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -37,6 +42,7 @@ import ch.dvbern.ebegu.enums.UserRole;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Field;
 
@@ -44,12 +50,9 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 @Entity
 @Table(
-	uniqueConstraints = {
-		@UniqueConstraint(columnNames = "username", name = "UK_username"),
-		@UniqueConstraint(columnNames = "current_berechtigung_id", name = "UK_current_berechtigung_id")},
-	indexes =
-		@Index(columnList = "username", name = "IX_benutzer_username")
-	)
+	uniqueConstraints = @UniqueConstraint(columnNames = "username", name = "UK_username"),
+	indexes = @Index(columnList = "username", name = "IX_benutzer_username")
+)
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -79,10 +82,13 @@ public class Benutzer extends AbstractEntity {
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	private String email = null;
 
-	@Nonnull
-	@OneToOne(cascade = CascadeType.ALL, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_benutzer_currentBerechtigung_id"))
+	@Transient
 	private Berechtigung currentBerechtigung;
+
+	@Valid
+	@SortNatural
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "benutzer")
+	private Set<Berechtigung> berechtigungen = new TreeSet<>();
 
 	@NotNull
 	@ManyToOne(optional = false)
@@ -125,13 +131,12 @@ public class Benutzer extends AbstractEntity {
 		this.email = email;
 	}
 
-	@Nonnull
-	public Berechtigung getCurrentBerechtigung() {
-		return currentBerechtigung;
+	public Set<Berechtigung> getBerechtigungen() {
+		return berechtigungen;
 	}
 
-	public void setCurrentBerechtigung(@Nonnull Berechtigung currentBerechtigung) {
-		this.currentBerechtigung = currentBerechtigung;
+	public void setBerechtigungen(Set<Berechtigung> berechtigungen) {
+		this.berechtigungen = berechtigungen;
 	}
 
 	public Mandant getMandant() {
@@ -180,7 +185,18 @@ public class Benutzer extends AbstractEntity {
 		return Objects.equals(getUsername(), otherBenutzer.getUsername());
 	}
 
-	//TODO (hefr) Delegationsmethoden evtl. spaeter entfernen?
+	@Nonnull
+	public Berechtigung getCurrentBerechtigung() {
+		if (currentBerechtigung == null) {
+			for (Berechtigung berechtigung : berechtigungen) {
+				if (berechtigung.getActive()) {
+					currentBerechtigung = berechtigung;
+				}
+			}
+		}
+		Objects.requireNonNull(currentBerechtigung, "Keine aktive Berechtigung vorhanden fuer Benutzer " + username);
+		return currentBerechtigung;
+	}
 
 	@Nonnull
 	public UserRole getRole() {

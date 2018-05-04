@@ -1268,8 +1268,9 @@ public class JaxBConverter {
 		if (moduleOfInstitution != null && jaxModuleTagesschule != null) {
 			final Set<ModulTagesschule> transformedModule = new TreeSet<>();
 			for (final JaxModulTagesschule jaxModulTagesschule : jaxModuleTagesschule) {
-				final ModulTagesschule modulTagesschuleToMergeWith = moduleOfInstitution.stream().filter(existingModul -> existingModul.getId()
-					.equalsIgnoreCase(jaxModulTagesschule.getId()))
+				final ModulTagesschule modulTagesschuleToMergeWith = moduleOfInstitution
+					.stream()
+					.filter(existingModul -> existingModul.getId().equalsIgnoreCase(jaxModulTagesschule.getId()))
 					.reduce(StreamsUtil.toOnlyElement())
 					.orElse(new ModulTagesschule());
 				final ModulTagesschule modulTagesschuleToAdd = modulTagesschuleToEntity(jaxModulTagesschule, modulTagesschuleToMergeWith);
@@ -2281,8 +2282,37 @@ public class JaxBConverter {
 		} else {
 			throw new EbeguEntityNotFoundException("authLoginElementToBenutzer -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
 		}
-		benutzer.setCurrentBerechtigung(berechtigungToEntity(jaxLoginElement.getCurrentBerechtigung(), benutzer.getCurrentBerechtigung()));
+		// Berechtigungen
+		final Set<Berechtigung> convertedBerechtigungen = berechtigungenListToEntity(jaxLoginElement.getBerechtigungen(),
+			benutzer.getBerechtigungen(), benutzer);
+		if (convertedBerechtigungen != null) {
+			//change the existing collection to reflect changes
+			// Already tested: All existing module of the list remain as they were, that means their data are updated
+			// and the objects are not created again. ID and InsertTimeStamp are the same as before
+			benutzer.getBerechtigungen().clear();
+			benutzer.getBerechtigungen().addAll(convertedBerechtigungen);
+		}
 		return benutzer;
+	}
+
+	public Set<Berechtigung> berechtigungenListToEntity(@Nonnull Set<JaxBerechtigung> jaxBerechtigungenList,
+			@Nonnull Set<Berechtigung> berechtigungenList, @Nonnull Benutzer benutzer) {
+
+		final Set<Berechtigung> convertedBerechtigungen = new TreeSet<>();
+		for (final JaxBerechtigung jaxBerechtigung : jaxBerechtigungenList) {
+			final Berechtigung berechtigungToMergeWith = berechtigungenList
+				.stream()
+				.filter(existingBerechtigung -> existingBerechtigung.getId().equals(jaxBerechtigung.getId()))
+				.reduce(StreamsUtil.toOnlyElement())
+				.orElse(new Berechtigung());
+			final Berechtigung berechtigungToAdd = berechtigungToEntity(jaxBerechtigung, berechtigungToMergeWith);
+			berechtigungToAdd.setBenutzer(benutzer);
+			final boolean added = convertedBerechtigungen.add(berechtigungToAdd);
+			if (!added) {
+				LOGGER.warn("dropped duplicate berechtigung {}", berechtigungToAdd);
+			}
+		}
+		return convertedBerechtigungen;
 	}
 
 	public JaxAuthLoginElement benutzerToAuthLoginElement(Benutzer benutzer) {
@@ -2294,13 +2324,21 @@ public class JaxBConverter {
 			jaxLoginElement.setMandant(mandantToJAX(benutzer.getMandant()));
 		}
 		jaxLoginElement.setUsername(benutzer.getUsername());
+		jaxLoginElement.setGesperrt(benutzer.getGesperrt());
 		jaxLoginElement.setCurrentBerechtigung(berechtigungToJax(benutzer.getCurrentBerechtigung()));
+		// Berechtigungen
+		final Set<JaxBerechtigung> jaxBerechtigungen = new TreeSet<>();
+		if (benutzer.getBerechtigungen() != null) {
+			jaxBerechtigungen.addAll(benutzer.getBerechtigungen().stream().map(this::berechtigungToJax).collect(Collectors.toList()));
+		}
+		jaxLoginElement.setBerechtigungen(jaxBerechtigungen);
 		return jaxLoginElement;
 	}
 
 	public Berechtigung berechtigungToEntity(JaxBerechtigung jaxBerechtigung, Berechtigung berechtigung) {
 		convertAbstractDateRangedFieldsToEntity(jaxBerechtigung, berechtigung);
 		berechtigung.setRole(jaxBerechtigung.getRole());
+		berechtigung.setActive(jaxBerechtigung.isActive());
 
 		// wir muessen Traegerschaft und Institution auch updaten wenn sie null sind. Es koennte auch so aus dem IAM kommen
 		if (jaxBerechtigung.getInstitution() != null && jaxBerechtigung.getInstitution().getId() != null) {
@@ -2309,7 +2347,7 @@ public class JaxBConverter {
 				// Institution darf nicht vom Client ueberschrieben werden
 				berechtigung.setInstitution(institutionFromDB.get());
 			} else {
-				throw new EbeguEntityNotFoundException("authLoginElementToBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxBerechtigung
+				throw new EbeguEntityNotFoundException("berechtigungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxBerechtigung
 					.getInstitution().getId());
 			}
 		} else {
@@ -2322,7 +2360,7 @@ public class JaxBConverter {
 				// Traegerschaft darf nicht vom Client ueberschrieben werden
 				berechtigung.setTraegerschaft(traegerschaftFromDB.get());
 			} else {
-				throw new EbeguEntityNotFoundException("authLoginElementToBenutzer -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxBerechtigung
+				throw new EbeguEntityNotFoundException("berechtigungToEntity -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxBerechtigung
 					.getTraegerschaft().getId());
 			}
 		} else {
@@ -2332,16 +2370,17 @@ public class JaxBConverter {
 	}
 
 	public JaxBerechtigung berechtigungToJax(Berechtigung berechtigung) {
-		JaxBerechtigung jaxLoginElement = new JaxBerechtigung();
-		convertAbstractDateRangedFieldsToJAX(berechtigung, jaxLoginElement);
-		jaxLoginElement.setRole(berechtigung.getRole());
+		JaxBerechtigung jaxBerechtigung = new JaxBerechtigung();
+		convertAbstractDateRangedFieldsToJAX(berechtigung, jaxBerechtigung);
+		jaxBerechtigung.setRole(berechtigung.getRole());
+		jaxBerechtigung.setActive(berechtigung.getActive());
 		if (berechtigung.getInstitution() != null) {
-			jaxLoginElement.setInstitution(institutionToJAX(berechtigung.getInstitution()));
+			jaxBerechtigung.setInstitution(institutionToJAX(berechtigung.getInstitution()));
 		}
 		if (berechtigung.getTraegerschaft() != null) {
-			jaxLoginElement.setTraegerschaft(traegerschaftToJAX(berechtigung.getTraegerschaft()));
+			jaxBerechtigung.setTraegerschaft(traegerschaftToJAX(berechtigung.getTraegerschaft()));
 		}
-		return jaxLoginElement;
+		return jaxBerechtigung;
 	}
 
 	public JaxDokumente dokumentGruendeToJAX(Set<DokumentGrund> dokumentGrunds) {

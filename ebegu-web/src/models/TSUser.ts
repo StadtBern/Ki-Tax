@@ -32,8 +32,9 @@ export default class TSUser {
     private _gesperrt: boolean;
 
     private _currentBerechtigung: TSBerechtigung;
+    private _berechtigungen: Array<TSBerechtigung> = [];
 
-    //TODO (hefr) hier muss wohl doch direkt die currentBerechtigung uebergeben werden??? wegen DatumBis?
+
     constructor(vorname?: string, nachname?: string, username?: string, password?: string, email?: string,
                 mandant?: TSMandant, role?: TSRole, traegerschaft?: TSTraegerschaft, institution?: TSInstitution,
                 amt?: TSAmt, gesperrt?: boolean) {
@@ -50,6 +51,8 @@ export default class TSUser {
         this._currentBerechtigung.role = role;
         this._currentBerechtigung.institution = institution;
         this._currentBerechtigung.traegerschaft = traegerschaft;
+        this._currentBerechtigung.active = true;
+        this._berechtigungen.push(this._currentBerechtigung);
     }
 
     get nachname(): string {
@@ -119,8 +122,16 @@ export default class TSUser {
         this._gesperrt = value;
     }
 
+    get berechtigungen(): Array<TSBerechtigung> {
+        return this._berechtigungen;
+    }
+
+    set berechtigungen(value: Array<TSBerechtigung>) {
+        this._berechtigungen = value;
+    }
+
     get currentBerechtigung(): TSBerechtigung {
-        return this._currentBerechtigung;
+            return this._currentBerechtigung;
     }
 
     set currentBerechtigung(value: TSBerechtigung) {

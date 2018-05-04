@@ -14,6 +14,9 @@
  */
 package ch.dvbern.ebegu.api.dtos;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -54,6 +57,9 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 
 	@Nonnull
 	private JaxBerechtigung currentBerechtigung;
+
+	@Nonnull
+	private Set<JaxBerechtigung> berechtigungen = new TreeSet<>();
 
 
 	@SuppressFBWarnings(value = "NM_CONFUSING", justification = "Other method is external interface, cant change that")
@@ -136,7 +142,13 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 		this.currentBerechtigung = currentBerechtigung;
 	}
 
-	//TODO (hefr) Delegationsmethoden evtl. spaeter entfernen?
+	public Set<JaxBerechtigung> getBerechtigungen() {
+		return berechtigungen;
+	}
+
+	public void setBerechtigungen(Set<JaxBerechtigung> berechtigungen) {
+		this.berechtigungen = berechtigungen;
+	}
 
 	@Nonnull
 	public UserRole getRole() {

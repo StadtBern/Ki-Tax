@@ -160,8 +160,14 @@ public class AuthResource {
 				benutzer = optBenutzer.get();
 			} else {
 				benutzer = new Benutzer();
-				benutzer.setCurrentBerechtigung(new Berechtigung());
+				Berechtigung dummyBerechtigung = new Berechtigung();
+				// Wir sind hier im DummyLogin: Die dafür erstellte Berechtigung ist defaultmässig aktiv
+				dummyBerechtigung.setActive(Boolean.TRUE);
+				dummyBerechtigung.setBenutzer(benutzer);
+				benutzer.getBerechtigungen().add(dummyBerechtigung);
 			}
+			// Achtung: Damit wird der bereits vorhandene Benutzer wieder mit den Daten aus dem LocalLogin überschrieben!
+			// Dies ist aber gewünschtes Verhalten: Wenn wir uns mit dem Admin-Link einloggen, wollen wir immer Admin sein.
 			benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(loginElement, benutzer));
 
 			Optional<AuthAccessElement> accessElement = authService.login(login);

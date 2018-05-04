@@ -16,9 +16,9 @@
 package ch.dvbern.ebegu.tests;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -54,9 +54,10 @@ public class BenutzerServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void oneBerechtigung() {
 		Benutzer benutzer = TestDataUtil.createDefaultBenutzer();
+		persistence.merge(benutzer.getMandant());
 		persistence.merge(benutzer);
 
-		List<Berechtigung> berechtigungen = benutzerService.getBerechtigungenForBenutzer(benutzer.getUsername());
+		Set<Berechtigung> berechtigungen = benutzer.getBerechtigungen();
 		Assert.assertNotNull(berechtigungen);
 		Assert.assertEquals(1, berechtigungen.size());
 	}
@@ -66,11 +67,12 @@ public class BenutzerServiceBeanTest extends AbstractEbeguLoginTest {
 		LocalDate AB_ERSTE_BERECHTIGUNG = LocalDate.now();
 		Benutzer benutzer = TestDataUtil.createDefaultBenutzer();
 		benutzer.getCurrentBerechtigung().getGueltigkeit().setGueltigAb(AB_ERSTE_BERECHTIGUNG);
-		persistence.merge(benutzer);
-		List<Berechtigung> berechtigungen = benutzerService.getBerechtigungenForBenutzer(benutzer.getUsername());
+		persistence.merge(benutzer.getMandant());
+		benutzer = persistence.merge(benutzer);
+		Set<Berechtigung> berechtigungen = benutzer.getBerechtigungen();
 		Assert.assertNotNull(berechtigungen);
 		Assert.assertEquals(1, berechtigungen.size());
-		Berechtigung firstBerechtigung = berechtigungen.get(0);
+		Berechtigung firstBerechtigung = berechtigungen.iterator().next();
 		Assert.assertEquals(AB_ERSTE_BERECHTIGUNG, firstBerechtigung.getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(Constants.END_OF_TIME, firstBerechtigung.getGueltigkeit().getGueltigBis());
 		Assert.assertEquals(UserRole.ADMIN, firstBerechtigung.getRole());
@@ -81,15 +83,15 @@ public class BenutzerServiceBeanTest extends AbstractEbeguLoginTest {
 		secondBerechtigung.setBenutzer(benutzer);
 		secondBerechtigung.setRole(UserRole.SACHBEARBEITER_JA);
 		secondBerechtigung.getGueltigkeit().setGueltigAb(AB_ZWEITE_BERECHTIGUNG);
-		List<Berechtigung> berechtigungenNeu = new ArrayList<>();
-		berechtigungenNeu.add(secondBerechtigung);
-		benutzerService.saveBerechtigungen(benutzer, berechtigungenNeu);
+		benutzer.getBerechtigungen().add(secondBerechtigung);
+		benutzer = benutzerService.saveBenutzer(benutzer);
 
-		berechtigungen = benutzerService.getBerechtigungenForBenutzer(benutzer.getUsername());
+		berechtigungen = benutzer.getBerechtigungen();
 		Assert.assertNotNull(berechtigungen);
 		Assert.assertEquals(2, berechtigungen.size());
-		firstBerechtigung = berechtigungen.get(0);
-		secondBerechtigung = berechtigungen.get(1);
+		Iterator<Berechtigung> iterator = berechtigungen.iterator();
+		firstBerechtigung = iterator.next();
+		secondBerechtigung = iterator.next();
 
 		Assert.assertEquals(AB_ERSTE_BERECHTIGUNG, firstBerechtigung.getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(AB_ZWEITE_BERECHTIGUNG.minusDays(1), firstBerechtigung.getGueltigkeit().getGueltigBis());
@@ -103,7 +105,8 @@ public class BenutzerServiceBeanTest extends AbstractEbeguLoginTest {
 		LocalDate AB_ERSTE_BERECHTIGUNG = LocalDate.now().minusYears(1);
 		Benutzer benutzer = TestDataUtil.createDefaultBenutzer();
 		benutzer.getCurrentBerechtigung().getGueltigkeit().setGueltigAb(AB_ERSTE_BERECHTIGUNG);
-		persistence.merge(benutzer);
+		persistence.merge(benutzer.getMandant());
+		benutzer = persistence.merge(benutzer);
 
 		// Timer durchlaufen lassen: Es ist immer noch dieselbe Berechtigung aktiv
 		benutzerService.handleAbgelaufeneRollen(LocalDate.now());
@@ -118,10 +121,9 @@ public class BenutzerServiceBeanTest extends AbstractEbeguLoginTest {
 		secondBerechtigung.setBenutzer(benutzer);
 		secondBerechtigung.setRole(UserRole.SACHBEARBEITER_JA);
 		secondBerechtigung.getGueltigkeit().setGueltigAb(AB_ZWEITE_BERECHTIGUNG);
-		List<Berechtigung> berechtigungenNeu = new ArrayList<>();
-		berechtigungenNeu.add(secondBerechtigung);
-		benutzerService.saveBerechtigungen(benutzer, berechtigungenNeu);
-		List<Berechtigung> berechtigungen = benutzerService.getBerechtigungenForBenutzer(benutzer.getUsername());
+		benutzer.getBerechtigungen().add(secondBerechtigung);
+		benutzer = benutzerService.saveBenutzer(benutzer);
+		Set<Berechtigung> berechtigungen = benutzer.getBerechtigungen();
 		Assert.assertEquals(2, berechtigungen.size());
 
 		// Timer durchlaufen lassen: Es ist jetzt die neue Berechtigung aktiv

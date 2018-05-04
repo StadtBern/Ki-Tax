@@ -322,7 +322,8 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		Berechtigung berechtigung = new Berechtigung();
 		berechtigung.setRole(UserRole.GESUCHSTELLER);
 		berechtigung.setBenutzer(benutzer);
-		benutzer.setCurrentBerechtigung(berechtigung);
+		berechtigung.setActive(Boolean.TRUE);
+		benutzer.getBerechtigungen().add(berechtigung);
 		benutzer.setEmail(GESUCHSTELLER_VORNAME.toLowerCase(Locale.GERMAN) + '.' + name.toLowerCase(Locale.GERMAN) + EXAMPLE_COM);
 		benutzer.setUsername(username);
 		benutzer.setMandant(mandant);
@@ -348,7 +349,8 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 			berechtigung.setRole(UserRole.SACHBEARBEITER_INSTITUTION);
 			berechtigung.setInstitution(institution);
 		}
-		benutzer.setCurrentBerechtigung(berechtigung);
+		berechtigung.setActive(Boolean.TRUE);
+		benutzer.getBerechtigungen().add(berechtigung);
 		benutzer.setEmail(vorname.toLowerCase(Locale.GERMAN) + '.' + name.toLowerCase(Locale.GERMAN) + EXAMPLE_COM);
 		benutzer.setUsername(username);
 		benutzer.setMandant(mandant);

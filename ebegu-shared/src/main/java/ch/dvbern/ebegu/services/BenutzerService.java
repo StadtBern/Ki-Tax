@@ -109,12 +109,6 @@ public interface BenutzerService {
 	Benutzer reaktivieren(@Nonnull String username);
 
 	/**
-	 * Gibt alle Berechtigungen des Benutzers mit dem uebergebenen Username zurueck
-	 */
-	@Nonnull
-	List<Berechtigung> getBerechtigungenForBenutzer(@Nonnull String username);
-
-	/**
 	 * Sucht Benutzer, welche den übergebenen Filterkriterien entsprechen
 	 */
 	@Nonnull
@@ -131,9 +125,4 @@ public interface BenutzerService {
 	 */
 	@Nonnull
 	Optional<Berechtigung> findBerechtigung(@Nonnull String id);
-
-	/**
-	 * Speichert die Berechtigungen zu einem Benutzer
-	 */
-	void saveBerechtigungen(@Nonnull Benutzer benutzer, @Nonnull List<Berechtigung> berechtigungen);
 }

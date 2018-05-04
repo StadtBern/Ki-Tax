@@ -12,12 +12,6 @@ INSERT INTO berechtigung (
 		role,
 		id,
 		institution_id,
-		traegerschaft_id
+		traegerschaft_id,
+		true
 	FROM benutzer);
-
-UPDATE benutzer b SET current_berechtigung_id = (SELECT id FROM berechtigung WHERE benutzer_id = b.id);
-
-ALTER TABLE benutzer
-	ADD CONSTRAINT FK_benutzer_currentBerechtigung_id
-FOREIGN KEY (current_berechtigung_id)
-REFERENCES berechtigung (id);

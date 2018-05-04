@@ -12,6 +12,7 @@ CREATE TABLE berechtigung (
 	benutzer_id        VARCHAR(36)  NOT NULL,
 	institution_id     VARCHAR(36),
 	traegerschaft_id   VARCHAR(36),
+	active			   BIT NOT NULL,
 	PRIMARY KEY (id)
 );
 
@@ -30,14 +31,9 @@ CREATE TABLE berechtigung_aud (
 	benutzer_id        VARCHAR(36),
 	institution_id     VARCHAR(36),
 	traegerschaft_id   VARCHAR(36),
+	active			   BIT,
 	PRIMARY KEY (id, rev)
 );
-
-ALTER TABLE benutzer ADD current_berechtigung_id VARCHAR(36);
-ALTER TABLE benutzer_aud ADD current_berechtigung_id VARCHAR(36);
-
-ALTER TABLE benutzer
-	ADD CONSTRAINT UK_current_berechtigung_id UNIQUE (current_berechtigung_id);
 
 ALTER TABLE berechtigung
 	ADD CONSTRAINT FK_Berechtigung_benutzer_id

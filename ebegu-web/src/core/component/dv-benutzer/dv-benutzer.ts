@@ -15,7 +15,6 @@
 
 import {IComponentOptions, IFormController, ILogService} from 'angular';
 import {IStateService} from 'angular-ui-router';
-import * as moment from 'moment';
 import {Moment} from 'moment';
 import {IBenutzerStateParams} from '../../../admin/admin.route';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
@@ -26,6 +25,7 @@ import TSInstitution from '../../../models/TSInstitution';
 import {TSTraegerschaft} from '../../../models/TSTraegerschaft';
 import TSUser from '../../../models/TSUser';
 import {TSDateRange} from '../../../models/types/TSDateRange';
+import DateUtil from '../../../utils/DateUtil';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import {InstitutionRS} from '../../service/institutionRS.rest';
@@ -51,10 +51,11 @@ export class DVBenutzerController {
 
     institutionenList: TSInstitution[];
     traegerschaftenList: TSTraegerschaft[];
-    today: Moment = moment(moment.now()).add(1, 'days');
+    tomorrow: Moment = DateUtil.today().add(1, 'days');
 
     selectedUser: TSUser;
-    berechtigungenOfBenutzer: TSBerechtigung[];
+    private _currentBerechtigung: TSBerechtigung;
+    private _futureBerechtigungen: TSBerechtigung[];
 
 
     static $inject: any[] = ['$log', 'InstitutionRS', 'TraegerschaftRS', 'AuthServiceRS', '$translate', '$stateParams', 'UserRS', '$state', 'DvDialog'];
@@ -73,12 +74,9 @@ export class DVBenutzerController {
         if (username) {
            this.userRS.findBenutzer(username).then((result) => {
                this.selectedUser = result;
-               this.userRS.getBerechtigungenForBenutzer(result).then((result) => {
-                   this.berechtigungenOfBenutzer = result;
-                   // Wir schicken nur die aktuelle und eine eventuelle zukünftige Berechtigung, sortiert mit Datum aufsteigend, d.h. die erste ist die aktuelle
-                   // Diese muss entfernt werden, da sie schon als aktuelleBerechtigung aufgefuehrt wird
-                   this.berechtigungenOfBenutzer.splice(0, 1);
-               });
+               this._currentBerechtigung = this.selectedUser.berechtigungen[0];
+               this._futureBerechtigungen = this.selectedUser.berechtigungen;
+               this._futureBerechtigungen.splice(0, 1);
            });
         }
     }
@@ -107,20 +105,6 @@ export class DVBenutzerController {
             return this.$translate.instant(rolePrefix() + 'NONE');
         }
         return this.$translate.instant(rolePrefix() + role);
-    }
-
-    public showInstitutionenList(): boolean {
-        if (this.selectedUser) {
-            return this.selectedUser.currentBerechtigung.role === TSRole.SACHBEARBEITER_INSTITUTION;
-        }
-        return false;
-    }
-
-    public showTraegerschaftenList(): boolean {
-        if (this.selectedUser) {
-            return this.selectedUser.currentBerechtigung.role === TSRole.SACHBEARBEITER_TRAEGERSCHAFT;
-        }
-        return false;
     }
 
     saveBenutzer(): void {
@@ -161,10 +145,10 @@ export class DVBenutzerController {
 
     private isAtLeastOneRoleInList(rolesToCheck: Array<TSRole>): boolean {
         // Es muessen alle vorhandenen Rollen geprueft werden
-        if (rolesToCheck.indexOf(this.selectedUser.currentBerechtigung.role) > -1) {
+        if (rolesToCheck.indexOf(this.currentBerechtigung.role) > -1) {
             return true;
         }
-        for (let berechtigung of this.berechtigungenOfBenutzer) {
+        for (let berechtigung of this.futureBerechtigungen) {
             if (rolesToCheck.indexOf(berechtigung.role) > -1) {
                 return true;
             }
@@ -174,10 +158,11 @@ export class DVBenutzerController {
 
     private doSaveBenutzer(): void {
         // Die (separat behandelte) aktuelle Berechtigung wieder zur Liste hinzufügen
-        this.berechtigungenOfBenutzer.unshift(this.selectedUser.currentBerechtigung);
-        this.clearBenutzerObject(this.selectedUser);
-        this.userRS.saveBerechtigungen(this.selectedUser, this.berechtigungenOfBenutzer);
-        this.navigateBackToUsersList();
+        this.selectedUser.berechtigungen = this._futureBerechtigungen;
+        this.selectedUser.berechtigungen.unshift(this._currentBerechtigung);
+        this.userRS.saveBenutzer(this.selectedUser).then((changedUser: TSUser) => {
+            this.navigateBackToUsersList();
+        });
     }
 
     inactivateBenutzer(): void {
@@ -197,20 +182,20 @@ export class DVBenutzerController {
     }
 
     canAddBerechtigung(): boolean {
-        return this.berechtigungenOfBenutzer && this.berechtigungenOfBenutzer.length < 1;
+        return this.futureBerechtigungen && this.futureBerechtigungen.length < 1;
     }
 
     canBeenden(): boolean {
-       return this.selectedUser.currentBerechtigung.role !== TSRole.GESUCHSTELLER;
+       return this.currentBerechtigung && this.currentBerechtigung.role !== TSRole.GESUCHSTELLER;
     }
 
     addBerechtigung() {
         let berechtigung: TSBerechtigung = new TSBerechtigung();
         berechtigung.role = TSRole.GESUCHSTELLER;
         berechtigung.gueltigkeit = new TSDateRange();
-        berechtigung.gueltigkeit.gueltigAb = this.today;
+        berechtigung.gueltigkeit.gueltigAb = this.tomorrow;
         berechtigung.enabled = true;
-        this.berechtigungenOfBenutzer.push(berechtigung);
+        this.futureBerechtigungen.push(berechtigung);
     }
 
     enableBerechtigung(berechtigung: TSBerechtigung): void {
@@ -218,8 +203,8 @@ export class DVBenutzerController {
     }
 
     removeBerechtigung(berechtigung: TSBerechtigung): void {
-        let index: number = this.berechtigungenOfBenutzer.indexOf(berechtigung, 0);
-        this.berechtigungenOfBenutzer.splice(index, 1);
+        let index: number = this.futureBerechtigungen.indexOf(berechtigung, 0);
+        this.futureBerechtigungen.splice(index, 1);
     }
 
     cancel(): void {
@@ -228,21 +213,6 @@ export class DVBenutzerController {
 
     private navigateBackToUsersList() {
         this.$state.go('benutzerlist');
-    }
-
-    private clearBenutzerObject(benutzer: TSUser): void {
-        // Es darf nur eine Institution gesetzt sein, wenn die Rolle INSTITUTION ist
-        if (benutzer.currentBerechtigung.role !== TSRole.SACHBEARBEITER_INSTITUTION) {
-            benutzer.currentBerechtigung.institution = null;
-        }
-        // Es darf nur eine Trägerschaft gesetzt sein, wenn die Rolle TRAEGERSCHAFT ist
-        if (benutzer.currentBerechtigung.role !== TSRole.SACHBEARBEITER_TRAEGERSCHAFT) {
-            benutzer.currentBerechtigung.traegerschaft = null;
-        }
-        // Das Datum gueltigBis sollte bei Rolle GESUCHSTELLER nicht gesetzt werden
-        if (benutzer.currentBerechtigung.role === TSRole.GESUCHSTELLER) {
-            benutzer.currentBerechtigung.gueltigkeit.gueltigBis = null;
-        }
     }
 
     public isInstitutionBerechtigung(berechtigung: TSBerechtigung): boolean {
@@ -255,5 +225,13 @@ export class DVBenutzerController {
 
     public isBerechtigungEnabled(berechtigung: TSBerechtigung): boolean {
         return berechtigung && berechtigung.enabled;
+    }
+
+    public get currentBerechtigung(): TSBerechtigung {
+        return this._currentBerechtigung;
+    }
+
+    public get futureBerechtigungen(): TSBerechtigung[] {
+        return this._futureBerechtigungen;
     }
 }

@@ -40,6 +40,8 @@ public class JaxBerechtigung extends JaxAbstractDateRangedDTO {
 	@Nullable
 	private JaxInstitution institution;
 
+	private boolean active;
+
 
 	@Nonnull
 	public JaxAuthLoginElement getBenutzer() {
@@ -75,5 +77,13 @@ public class JaxBerechtigung extends JaxAbstractDateRangedDTO {
 
 	public void setInstitution(@Nullable JaxInstitution institution) {
 		this.institution = institution;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

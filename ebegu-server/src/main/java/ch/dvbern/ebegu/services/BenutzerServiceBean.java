@@ -21,7 +21,9 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -101,17 +103,18 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 	@Inject
 	private AuthService authService;
-
 	@Nonnull
 	@Override
 	@PermitAll
 	public Benutzer saveBenutzer(@Nonnull Benutzer benutzer) {
 		Objects.requireNonNull(benutzer);
-		clearBenutzerObject(benutzer);
-		benutzer.getCurrentBerechtigung().setBenutzer(benutzer);
-		Berechtigung berechtigungMerged = saveBerechtigung(benutzer, benutzer.getCurrentBerechtigung());
-		benutzer.setCurrentBerechtigung(berechtigungMerged);
-		return persistence.merge(benutzer);
+		if (benutzer.isNew()) {
+			return persistence.merge(benutzer);
+			// TODO (hefr) History
+		} else {
+			saveBerechtigungen(benutzer);
+			return persistence.merge(benutzer);
+		}
 	}
 
 	@Nonnull
@@ -147,9 +150,12 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Benutzer> query = cb.createQuery(Benutzer.class);
 		Root<Benutzer> root = query.from(Benutzer.class);
+		Join<Benutzer, Berechtigung> joinBerechtigungen = root.join(Benutzer_.berechtigungen);
 		query.select(root);
-		final Predicate role = root.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role).in(roles);
-		query.where(role);
+
+		Predicate predicateActive = cb.equal(joinBerechtigungen.get(Berechtigung_.active), Boolean.TRUE);
+		Predicate predicateRole = joinBerechtigungen.get(Berechtigung_.role).in(roles);
+		query.where(predicateActive, predicateRole);
 		return persistence.getCriteriaResults(query);
 	}
 
@@ -160,11 +166,13 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Benutzer> query = cb.createQuery(Benutzer.class);
 		Root<Benutzer> root = query.from(Benutzer.class);
+		Join<Benutzer, Berechtigung> joinBerechtigungen = root.join(Benutzer_.berechtigungen);
 		query.select(root);
-		Predicate isGesuchsteller = cb.equal(root.get(Benutzer_.currentBerechtigung).get(Berechtigung_.role), UserRole.GESUCHSTELLER);
-		query.where(isGesuchsteller);
-		query.orderBy(cb.asc(root.get(Benutzer_.username)));
 
+		Predicate predicateActive = cb.equal(joinBerechtigungen.get(Berechtigung_.active), Boolean.TRUE);
+		Predicate predicateRole = joinBerechtigungen.get(Berechtigung_.role).in(UserRole.GESUCHSTELLER);
+		query.where(predicateActive, predicateRole);
+		query.orderBy(cb.asc(root.get(Benutzer_.username)));
 		return persistence.getCriteriaResults(query);
 	}
 
@@ -175,12 +183,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		Benutzer benutzer = findBenutzer(username).orElseThrow(() -> new EbeguEntityNotFoundException("removeBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
 		// Den Benutzer ausloggen und seine AuthBenutzer loeschen
 		logoutAndDeleteAuthorisierteBenutzerForUser(username);
-		// Die Berechtigungen des Benutzers loeschen
-		List<Berechtigung> berechtigungenForBenutzer = getBerechtigungenForBenutzer(benutzer.getUsername());
-		for (Berechtigung berechtigung : berechtigungenForBenutzer) {
-			//TODO (hefr) History
-			persistence.remove(berechtigung);
-		}
+		//TODO (hefr) History
 		persistence.remove(benutzer);
 	}
 
@@ -209,7 +212,6 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		if (foundUserOptional.isPresent()) {
 			// Wir kennen den Benutzer schon: Es werden nur die readonly-Attribute neu von IAM uebernommen
 			Benutzer foundUser = foundUserOptional.get();
-			foundUser.setUsername(benutzer.getUsername());
 			foundUser.setNachname(benutzer.getNachname());
 			foundUser.setVorname(benutzer.getVorname());
 			foundUser.setEmail(benutzer.getEmail());
@@ -221,7 +223,9 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			berechtigung.setInstitution(null);
 			berechtigung.setTraegerschaft(null);
 			berechtigung.setBenutzer(benutzer);
-			benutzer.setCurrentBerechtigung(berechtigung);
+			berechtigung.setActive(Boolean.TRUE); // Ein neuer Benutzer hat grundsätzich eine aktive, unbegrenzte Berechtigung
+			benutzer.getBerechtigungen().clear();
+			benutzer.getBerechtigungen().add(berechtigung);
 			return saveBenutzer(benutzer);
 		}
 	}
@@ -279,38 +283,39 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		LOG.info(sb.toString());
 	}
 
-	@Nonnull
-	@Override
-	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
-	public List<Berechtigung> getBerechtigungenForBenutzer(@Nonnull String username) {
-		Benutzer benutzer = findBenutzer(username).orElseThrow(() -> new EbeguEntityNotFoundException("getBerechtigungenForBenutzer",
-			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
+	private void prepareBenutzerForSave(@Nonnull Benutzer benutzer) {
+		List<Berechtigung> sorted = new LinkedList<>();
+		sorted.addAll(benutzer.getBerechtigungen());
+		sorted.sort(Comparator.comparing(o -> o.getGueltigkeit().getGueltigAb()));
 
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Berechtigung> query = cb.createQuery(Berechtigung.class);
-		Root<Berechtigung> root = query.from(Berechtigung.class);
-		query.select(root);
-
-		Predicate predicateBenutzer = cb.equal(root.get(Berechtigung_.benutzer), benutzer);
-		Predicate predicateAktivOderZukuenftig = cb.greaterThanOrEqualTo(root.get(Berechtigung_.gueltigkeit).get(DateRange_.gueltigBis), LocalDate.now());
-		query.where(predicateBenutzer, predicateAktivOderZukuenftig);
-		query.orderBy(cb.asc(root.get(Berechtigung_.gueltigkeit).get(DateRange_.gueltigAb)));
-		return persistence.getCriteriaResults(query);
+		Berechtigung currentBerechtigung = sorted.get(0);
+		Berechtigung futureBerechtigung = null;
+		if (sorted.size() > 1) {
+			futureBerechtigung = sorted.get(1);
+		}
+		if (futureBerechtigung != null) {
+			// Die aktuelle Berechtigung per Startdatum der zukünftigen beenden
+			currentBerechtigung.getGueltigkeit().setGueltigBis(futureBerechtigung.getGueltigkeit().getGueltigAb().minusDays(1));
+		} else {
+			if (currentBerechtigung.getRole() == UserRole.GESUCHSTELLER) {
+				// Wenn keine zukünftige Berechtigung und die aktuelle ist GS: Sicherstellen, dass Gueltigkeit unendlich
+				currentBerechtigung.getGueltigkeit().setGueltigBis(Constants.END_OF_TIME);
+			} else if (currentBerechtigung.getGueltigkeit().getGueltigBis().isBefore(Constants.END_OF_TIME)) {
+				// Wenn keine zukünftige Berechtigungn, aber die aktuelle ist nicht GS: Eine anschliessende mit GS erstellen
+				futureBerechtigung = createFutureBerechtigungAsGesuchsteller(currentBerechtigung.getGueltigkeit().getGueltigBis().plusDays(1), benutzer);
+				benutzer.getBerechtigungen().add(futureBerechtigung);
+			}
+		}
 	}
 
-
-	private void clearBenutzerObject(@Nonnull Benutzer benutzer) {
+	private void prepareBerechtigungForSave(@Nonnull Berechtigung berechtigung) {
 		// Es darf nur eine Institution gesetzt sein, wenn die Rolle INSTITUTION ist
-		if (benutzer.getRole() != UserRole.SACHBEARBEITER_INSTITUTION) {
-			benutzer.setInstitution(null);
+		if (berechtigung.getRole() != UserRole.SACHBEARBEITER_INSTITUTION) {
+			berechtigung.setInstitution(null);
 		}
 		// Es darf nur eine Trägerschaft gesetzt sein, wenn die Rolle TRAEGERSCHAFT ist
-		if (benutzer.getRole() != UserRole.SACHBEARBEITER_TRAEGERSCHAFT) {
-			benutzer.setTraegerschaft(null);
-		}
-		// Das Datum gueltigBis sollte bei Rolle GESUCHSTELLER nicht gesetzt werden
-		if (benutzer.getRole() == UserRole.GESUCHSTELLER) {
-			benutzer.getCurrentBerechtigung().getGueltigkeit().setGueltigBis(Constants.END_OF_TIME);
+		if (berechtigung.getRole() != UserRole.SACHBEARBEITER_TRAEGERSCHAFT) {
+			berechtigung.setTraegerschaft(null);
 		}
 	}
 
@@ -344,7 +349,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		// Construct from-clause
 		@SuppressWarnings("unchecked") // Je nach Abfrage ist das Query String oder Long
 		Root<Benutzer> root = query.from(Benutzer.class);
-		Join<Benutzer, Berechtigung> currentBerechtigung = root.join(Benutzer_.currentBerechtigung);
+		Join<Benutzer, Berechtigung> currentBerechtigung = root.join(Benutzer_.berechtigungen);
 		Join<Berechtigung, Institution> institution = currentBerechtigung.join(Berechtigung_.institution, JoinType.LEFT);
 		Join<Berechtigung, Traegerschaft> traegerschaft = currentBerechtigung.join(Berechtigung_.traegerschaft, JoinType.LEFT);
 
@@ -525,23 +530,43 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	public int handleAbgelaufeneRollen(@Nonnull LocalDate stichtag) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Benutzer> query = cb.createQuery(Benutzer.class);
-
 		Root<Benutzer> root = query.from(Benutzer.class);
-		Join<Benutzer, Berechtigung> currentBerechtigung = root.join(Benutzer_.currentBerechtigung);
+		Join<Benutzer, Berechtigung> currentBerechtigung = root.join(Benutzer_.berechtigungen);
 		Predicate predicateAbgelaufen = cb.lessThan(currentBerechtigung.get(Berechtigung_.gueltigkeit).get(DateRange_.gueltigBis), stichtag);
 		query.where(predicateAbgelaufen);
 		List<Benutzer> userMitAbgelaufenerRolle = persistence.getCriteriaResults(query);
 
 		for (Benutzer benutzer : userMitAbgelaufenerRolle) {
+			Berechtigung abgelaufeneBerechtigung = benutzer.getCurrentBerechtigung();
 			LOG.info("Benutzerrolle ist abgelaufen: {}, war: {}, abgelaufen: {}", benutzer.getUsername(),
-				benutzer.getRole(), benutzer.getCurrentBerechtigung().getGueltigkeit().getGueltigBis());
-			// Die abgelaufene Rolle löschen
-			persistence.remove(benutzer.getCurrentBerechtigung());
+				benutzer.getRole(), abgelaufeneBerechtigung.getGueltigkeit().getGueltigBis());
+
 			// Die aktuell gueltige Rolle suchen und neu umhängen
-			Berechtigung aktuelleBerechtigung = getAktuellGueltigeBerechtigungFuerBenutzer(benutzer);
-			benutzer.setCurrentBerechtigung(aktuelleBerechtigung);
+			try {
+				Berechtigung aktuelleBerechtigung = getAktuellGueltigeBerechtigungFuerBenutzer(benutzer);
+				aktuelleBerechtigung.setActive(Boolean.TRUE);
+				persistence.merge(aktuelleBerechtigung);
+			} catch(NoResultException nre) {
+				// Sonderfall: Die letzte Berechtigung ist abgelaufen. Wir erstellen sofort eine neue anschliessende Berechtigung als Gesuchsteller
+				Berechtigung futureGesuchstellerBerechtigung = createFutureBerechtigungAsGesuchsteller(LocalDate.now(), benutzer);
+				persistence.persist(futureGesuchstellerBerechtigung);
+			}
+			// Die abgelaufene Rolle löschen
+			benutzer.getBerechtigungen().remove(abgelaufeneBerechtigung);
+			persistence.merge(benutzer);
+			removeBerechtigung(abgelaufeneBerechtigung);
 		}
 		return userMitAbgelaufenerRolle.size();
+	}
+
+	private Berechtigung createFutureBerechtigungAsGesuchsteller(LocalDate startDatum, Benutzer benutzer) {
+		Berechtigung futureGesuchstellerBerechtigung = new Berechtigung();
+		futureGesuchstellerBerechtigung.getGueltigkeit().setGueltigAb(startDatum);
+		futureGesuchstellerBerechtigung.getGueltigkeit().setGueltigBis(Constants.END_OF_TIME);
+		futureGesuchstellerBerechtigung.setRole(UserRole.GESUCHSTELLER);
+		futureGesuchstellerBerechtigung.setBenutzer(benutzer);
+		futureGesuchstellerBerechtigung.setActive(futureGesuchstellerBerechtigung.isGueltig());
+		return futureGesuchstellerBerechtigung;
 	}
 
 	@Nonnull
@@ -553,7 +578,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		ParameterExpression<Benutzer> benutzerParam = cb.parameter(Benutzer.class, "benutzer");
 		ParameterExpression<LocalDate> dateParam = cb.parameter(LocalDate.class, "date");
 
-		Predicate predicateBenutzer = cb.equal(root.get(Berechtigung_.id), benutzerParam);
+		Predicate predicateBenutzer = cb.equal(root.get(Berechtigung_.benutzer), benutzerParam);
 		Predicate predicateZeitraum = cb.between(dateParam,
 			root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
 			root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
@@ -588,6 +613,8 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		Objects.requireNonNull(benutzer);
 		Objects.requireNonNull(berechtigung);
 
+		prepareBerechtigungForSave(berechtigung);
+
 		boolean roleChanged = false;
 		boolean institutionChanged = false;
 		boolean traegerschaftChanged = false;
@@ -617,10 +644,13 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		}
 
 		// History-Eintrag nur, wenn etwas geaendert hat
-		if (institutionChanged || traegerschaftChanged || roleChanged) {
-			// TODO (hefr) History
-		}
+//		if (institutionChanged || traegerschaftChanged || roleChanged) {
+//			// TODO (hefr) History
+//		}
 		berechtigung.setBenutzer(benutzer);
+		if (berechtigung.isNew()) {
+			return persistence.persist(berechtigung);
+		}
 		return persistence.merge(berechtigung);
 	}
 
@@ -630,29 +660,19 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		persistence.remove(berechtigung);
 	}
 
-	@Override
-	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
-	public void saveBerechtigungen(@Nonnull Benutzer benutzer, @Nonnull List<Berechtigung> berechtigungen) {
+	private void saveBerechtigungen(@Nonnull Benutzer benutzer) {
 		Objects.requireNonNull(benutzer);
 
-		// Die Gueltigkeiten richtig setzen: Jeweils den Vorgaenger am Vortag der nächsten Berechtigung
-		// beenden.
-		Berechtigung vorgaenger = null;
-		// Die Berechtigungen sind aufsteigend sortiert
-		for (Berechtigung berechtigung : berechtigungen) {
-			if (vorgaenger == null) {
-				vorgaenger = berechtigung;
-				// Solange es kein "nächstes" gibt, ist die Berechtigung unendlich gueltig
-				vorgaenger.getGueltigkeit().setGueltigBis(Constants.END_OF_TIME);
-			} else {
-				vorgaenger.getGueltigkeit().setGueltigBis(berechtigung.getGueltigkeit().getGueltigAb().minusDays(1));
-			}
-		}
+		prepareBenutzerForSave(benutzer);
+
+		Benutzer berechtigungFromDB = findBenutzer(benutzer.getUsername()).orElseThrow(()
+			-> new EbeguEntityNotFoundException("saveBerechtigungen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Username invalid: " + benutzer.getUsername()));
+
 		// Mit DB abgleichen
-		List<Berechtigung> berechtigungenFromDB = getBerechtigungenForBenutzer(benutzer.getUsername());
+		Set<Berechtigung> berechtigungenFromDB = berechtigungFromDB.getBerechtigungen();
 		Set<Berechtigung> berechtigungenToMerge = new HashSet<>(berechtigungenFromDB);
 		Set<Berechtigung> berechtigungenToRemove = new HashSet<>(berechtigungenFromDB);
-		Set<Berechtigung> berechtigungenToPersist = new HashSet<>(berechtigungen);
+		Set<Berechtigung> berechtigungenToPersist = new HashSet<>(benutzer.getBerechtigungen());
 		// Die aktuelle vorsichtshalber auch noch hinzufügen (es ist ja ein Set)
 		berechtigungenToPersist.add(benutzer.getCurrentBerechtigung());
 		berechtigungenToMerge.retainAll(berechtigungenToPersist);
