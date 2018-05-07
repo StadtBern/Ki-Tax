@@ -268,6 +268,10 @@ export default class EbeguUtil {
         return !EbeguUtil.isNullOrUndefined(data);
     }
 
+    public static isEmptyStringNullOrUndefined(data: string): boolean {
+        return !data;
+    }
+
     public replaceElementInList(element: TSAbstractEntity, list: TSAbstractEntity[], wasNew: boolean) {
         if (wasNew) {
             list.push(element);
