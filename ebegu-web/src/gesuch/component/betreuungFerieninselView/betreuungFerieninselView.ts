@@ -224,4 +224,18 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
         }
     }
 
+    public hasAusweichstandort(): boolean {
+        return this.betreuung.institutionStammdaten
+            && this.betreuung.institutionStammdaten.institutionStammdatenFerieninsel
+            && this.betreuung.institutionStammdaten.institutionStammdatenFerieninsel.isAusweichstandortDefined(this.betreuung.belegungFerieninsel.ferienname);
+    }
+
+    public getAusgewaehltFeriensequenz(): string {
+        if (this.hasAusweichstandort()) {
+            return this.betreuung.institutionStammdaten.institutionStammdatenFerieninsel
+                .getAusweichstandortFromFerienname(this.betreuung.belegungFerieninsel.ferienname);
+        }
+        return '';
+    }
+
 }
