@@ -57,8 +57,6 @@ public class InstitutionStammdatenFerieninsel extends AbstractEntity implements 
 	private String ausweichstandortFruehlingsferien;
 
 
-
-
 	public InstitutionStammdatenFerieninsel() {
 	}
 
@@ -76,7 +74,6 @@ public class InstitutionStammdatenFerieninsel extends AbstractEntity implements 
 		}
 		return true;
 	}
-
 
 	@Override
 	public int compareTo(InstitutionStammdatenFerieninsel o) {
@@ -120,4 +117,5 @@ public class InstitutionStammdatenFerieninsel extends AbstractEntity implements 
 	public void setAusweichstandortFruehlingsferien(@Nullable String ausweichstandortFruehlingsferien) {
 		this.ausweichstandortFruehlingsferien = ausweichstandortFruehlingsferien;
 	}
+
 }

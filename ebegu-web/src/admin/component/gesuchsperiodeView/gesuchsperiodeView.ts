@@ -98,7 +98,7 @@ export class GesuchsperiodeViewController extends AbstractAdminViewController {
         if (this.form.$valid && this.statusHaveChanged()) {
             // Den Dialog nur aufrufen, wenn der Status geändert wurde (oder die GP neu ist) oder wenn es AKTIV ist
             if (this.gesuchsperiode.isNew() || this.initialStatus !== this.gesuchsperiode.status || this.gesuchsperiode.status === TSGesuchsperiodeStatus.AKTIV) {
-                let dialogText = this.getGesuchsperiodeSaveDialogText();
+                let dialogText = this.getGesuchsperiodeSaveDialogText(this.initialStatus !== this.gesuchsperiode.status);
                 this.dvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
                     title: 'GESUCHSPERIODE_DIALOG_TITLE',
                     deleteText: dialogText,
@@ -170,7 +170,10 @@ export class GesuchsperiodeViewController extends AbstractAdminViewController {
         this.gesuchsperiodeRS.updateNichtAbgeschlosseneGesuchsperiodenList();
     }
 
-    private getGesuchsperiodeSaveDialogText(): string {
+    private getGesuchsperiodeSaveDialogText(hasStatusChanged: boolean): string {
+        if (!hasStatusChanged) {
+            return ''; // if the status didn't change no message is required
+        }
         if (this.gesuchsperiode.status === TSGesuchsperiodeStatus.ENTWURF) {
             return 'GESUCHSPERIODE_DIALOG_TEXT_ENTWURF';
         }
