@@ -220,7 +220,7 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
         }
     }
 
-    public getStammdatenFerieinsel(): TSInstitutionStammdatenFerieninsel {
+    public getStammdatenFerieninsel(): TSInstitutionStammdatenFerieninsel {
         if (this.selectedInstitutionStammdaten) {
             return this.selectedInstitutionStammdaten.institutionStammdatenFerieninsel;
         }
@@ -228,7 +228,7 @@ export class InstitutionStammdatenViewController extends AbstractAdminViewContro
     }
 
     public showAusweichstandorte(): boolean {
-        return this.getStammdatenFerieinsel() && this.isFerieninsel();
+        return this.getStammdatenFerieninsel() && this.isFerieninsel();
     }
 
     private initStammdatenFerieninsel() {

@@ -190,6 +190,24 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 		this.adresseKontoinhaber = adresseKontoinhaber;
 	}
 
+	@Nullable
+	public InstitutionStammdatenTagesschule getInstitutionStammdatenTagesschule() {
+		return institutionStammdatenTagesschule;
+	}
+
+	public void setInstitutionStammdatenTagesschule(@Nullable InstitutionStammdatenTagesschule institutionStammdatenTagesschule) {
+		this.institutionStammdatenTagesschule = institutionStammdatenTagesschule;
+	}
+
+	@Nullable
+	public InstitutionStammdatenFerieninsel getInstitutionStammdatenFerieninsel() {
+		return institutionStammdatenFerieninsel;
+	}
+
+	public void setInstitutionStammdatenFerieninsel(@Nullable InstitutionStammdatenFerieninsel institutionStammdatenFerieninsel) {
+		this.institutionStammdatenFerieninsel = institutionStammdatenFerieninsel;
+	}
+
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality
@@ -212,23 +230,5 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 			MathUtil.isSame(getOeffnungsstunden(), otherInstStammdaten.getOeffnungsstunden()) &&
 			MathUtil.isSame(getOeffnungstage(), otherInstStammdaten.getOeffnungstage()) &&
 			EbeguUtil.isSameObject(getAdresse(), otherInstStammdaten.getAdresse());
-	}
-
-	@Nullable
-	public InstitutionStammdatenTagesschule getInstitutionStammdatenTagesschule() {
-		return institutionStammdatenTagesschule;
-	}
-
-	public void setInstitutionStammdatenTagesschule(@Nullable InstitutionStammdatenTagesschule institutionStammdatenTagesschule) {
-		this.institutionStammdatenTagesschule = institutionStammdatenTagesschule;
-	}
-
-	@Nullable
-	public InstitutionStammdatenFerieninsel getInstitutionStammdatenFerieninsel() {
-		return institutionStammdatenFerieninsel;
-	}
-
-	public void setInstitutionStammdatenFerieninsel(@Nullable InstitutionStammdatenFerieninsel institutionStammdatenFerieninsel) {
-		this.institutionStammdatenFerieninsel = institutionStammdatenFerieninsel;
 	}
 }

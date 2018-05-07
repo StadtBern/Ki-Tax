@@ -16,7 +16,6 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import javax.annotation.Nullable;
-import javax.persistence.Column;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
