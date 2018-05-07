@@ -1700,7 +1700,6 @@ export default class EbeguRestUtil {
             this.abstractDateRangeEntityToRestObject(berechtigung, berechtigungTS);
             berechtigung.role = berechtigungTS.role;
             berechtigung.active = berechtigungTS.active;
-            berechtigung.benutzer = this.userToRestObject({}, berechtigungTS.user);
             berechtigung.traegerschaft = this.traegerschaftToRestObject({}, berechtigungTS.traegerschaft);
             berechtigung.institution = this.institutionToRestObject({}, berechtigungTS.institution);
             return berechtigung;
@@ -1713,7 +1712,6 @@ export default class EbeguRestUtil {
             this.parseDateRangeEntity(berechtigungTS, berechtigungFromServer);
             berechtigungTS.role = berechtigungFromServer.role;
             berechtigungTS.active = berechtigungFromServer.active;
-            berechtigungTS.user = this.parseUser(new TSUser(), berechtigungFromServer.user);
             berechtigungTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), berechtigungFromServer.traegerschaft);
             berechtigungTS.institution = this.parseInstitution(new TSInstitution(), berechtigungFromServer.institution);
             return berechtigungTS;

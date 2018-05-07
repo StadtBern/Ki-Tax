@@ -29,9 +29,6 @@ public class JaxBerechtigung extends JaxAbstractDateRangedDTO {
 	private static final long serialVersionUID = 2769899329796452129L;
 
 	@Nonnull
-	private JaxAuthLoginElement benutzer;
-
-	@Nonnull
 	private UserRole role;
 
 	@Nullable
@@ -42,15 +39,6 @@ public class JaxBerechtigung extends JaxAbstractDateRangedDTO {
 
 	private boolean active;
 
-
-	@Nonnull
-	public JaxAuthLoginElement getBenutzer() {
-		return benutzer;
-	}
-
-	public void setBenutzer(@Nonnull JaxAuthLoginElement benutzer) {
-		this.benutzer = benutzer;
-	}
 
 	@Nonnull
 	public UserRole getRole() {

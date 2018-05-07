@@ -104,7 +104,7 @@
                     <td class="ellipsis" title="{{row.vorname}}" ng-bind="row.vorname"></td>
                     <td class="ellipsis" title="{{row.nachname}}" ng-bind="row.nachname"></td>
                     <td class="ellipsis" title="{{row.email}}" ng-bind="row.email"></td>
-                    <td class="ellipsis" title="{{vm.getTranslatedRole(row.currentBerechtigung.role)}}" ng-bind="vm.getTranslatedRole(row.currentBerechtigung.role)"></td>
+                    <td class="ellipsis" title="{{vm.getTranslatedRole(row.getCurrentRole())}}" ng-bind="vm.getTranslatedRole(row.getCurrentRole())"></td>
                     <td class="ellipsis" title="{{row.currentBerechtigung.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'}}"
                         ng-bind="row.currentBerechtigung.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td class="ellipsis" title="{{row.currentBerechtigung.institution.name}}" ng-bind="row.currentBerechtigung.institution.name"></td>

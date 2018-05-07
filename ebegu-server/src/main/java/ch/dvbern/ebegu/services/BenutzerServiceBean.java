@@ -103,6 +103,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 	@Inject
 	private AuthService authService;
+
 	@Nonnull
 	@Override
 	@PermitAll
@@ -212,6 +213,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		if (foundUserOptional.isPresent()) {
 			// Wir kennen den Benutzer schon: Es werden nur die readonly-Attribute neu von IAM uebernommen
 			Benutzer foundUser = foundUserOptional.get();
+			// den username ueberschreiben wir nicht!
 			foundUser.setNachname(benutzer.getNachname());
 			foundUser.setVorname(benutzer.getVorname());
 			foundUser.setEmail(benutzer.getEmail());
@@ -297,14 +299,8 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			// Die aktuelle Berechtigung per Startdatum der zukünftigen beenden
 			currentBerechtigung.getGueltigkeit().setGueltigBis(futureBerechtigung.getGueltigkeit().getGueltigAb().minusDays(1));
 		} else {
-			if (currentBerechtigung.getRole() == UserRole.GESUCHSTELLER) {
-				// Wenn keine zukünftige Berechtigung und die aktuelle ist GS: Sicherstellen, dass Gueltigkeit unendlich
-				currentBerechtigung.getGueltigkeit().setGueltigBis(Constants.END_OF_TIME);
-			} else if (currentBerechtigung.getGueltigkeit().getGueltigBis().isBefore(Constants.END_OF_TIME)) {
-				// Wenn keine zukünftige Berechtigungn, aber die aktuelle ist nicht GS: Eine anschliessende mit GS erstellen
-				futureBerechtigung = createFutureBerechtigungAsGesuchsteller(currentBerechtigung.getGueltigkeit().getGueltigBis().plusDays(1), benutzer);
-				benutzer.getBerechtigungen().add(futureBerechtigung);
-			}
+			// Wenn keine zukünftige Berechtigung: Sicherstellen, dass Gueltigkeit unendlich
+			currentBerechtigung.getGueltigkeit().setGueltigBis(Constants.END_OF_TIME);
 		}
 	}
 

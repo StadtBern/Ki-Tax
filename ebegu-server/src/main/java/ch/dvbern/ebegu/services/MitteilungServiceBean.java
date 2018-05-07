@@ -453,19 +453,22 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		predicates.add(predicateSender);
 
 		if (currentUserRole.isRoleJugendamt()) {
-			Predicate predicateActive = cb.equal(joinSenderBerechtigungen.get(Berechtigung_.active), Boolean.TRUE);
-			Predicate predicateSenderGleichesAmt = joinSenderBerechtigungen.get(Berechtigung_.role).in(UserRole.getJugendamtRoles());
-			predicates.add(cb.and(predicateActive, predicateSenderGleichesAmt));
+			setActiveAndRolePredicates(cb, joinSenderBerechtigungen, predicates, UserRole.getJugendamtRoles());
 		} else if (currentUserRole.isRoleSchulamt()) {
-			Predicate predicateActive = cb.equal(joinSenderBerechtigungen.get(Berechtigung_.active), Boolean.TRUE);
-			Predicate predicateSenderGleichesAmt = joinSenderBerechtigungen.get(Berechtigung_.role).in(UserRole.getSchulamtRoles());
-			predicates.add(cb.and(predicateActive, predicateSenderGleichesAmt));
+			setActiveAndRolePredicates(cb, joinSenderBerechtigungen, predicates, UserRole.getSchulamtRoles());
 		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		Mitteilung entwurf = persistence.getCriteriaSingleResult(query);
 		authorizer.checkWriteAuthorizationMitteilung(entwurf);
 		return entwurf;
+	}
+
+	private void setActiveAndRolePredicates(CriteriaBuilder cb, SetJoin<Benutzer, Berechtigung> joinSenderBerechtigungen,
+		List<Predicate> predicates, List<UserRole> jugendamtRoles) {
+		Predicate predicateActive = cb.equal(joinSenderBerechtigungen.get(Berechtigung_.active), Boolean.TRUE);
+		Predicate predicateSenderGleichesAmt = joinSenderBerechtigungen.get(Berechtigung_.role).in(jugendamtRoles);
+		predicates.add(cb.and(predicateActive, predicateSenderGleichesAmt));
 	}
 
 	@Override
@@ -813,15 +816,11 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				Amt amt = Amt.valueOf(predicateObjectDto.getEmpfaengerAmt());
 				switch (amt) {
 				case JUGENDAMT: {
-					Predicate predicateActive = cb.equal(joinEmpfaengerBerechtigungen.get(Berechtigung_.active), Boolean.TRUE);
-					Predicate predicateEmpfaengerGleichesAmt = joinEmpfaengerBerechtigungen.get(Berechtigung_.role).in(UserRole.getJugendamtSuperadminRoles());
-					predicates.add(cb.and(predicateActive, predicateEmpfaengerGleichesAmt));
+					setActiveAndRolePredicates(cb, joinEmpfaengerBerechtigungen, predicates, UserRole.getJugendamtSuperadminRoles());
 					break;
 				}
 				case SCHULAMT: {
-					Predicate predicateActive = cb.equal(joinEmpfaengerBerechtigungen.get(Berechtigung_.active), Boolean.TRUE);
-					Predicate predicateEmpfaengerGleichesAmt = joinEmpfaengerBerechtigungen.get(Berechtigung_.role).in(UserRole.getSchulamtRoles());
-					predicates.add(cb.and(predicateActive, predicateEmpfaengerGleichesAmt));
+					setActiveAndRolePredicates(cb, joinEmpfaengerBerechtigungen, predicates, UserRole.getSchulamtRoles());
 					break;
 				}
 				}

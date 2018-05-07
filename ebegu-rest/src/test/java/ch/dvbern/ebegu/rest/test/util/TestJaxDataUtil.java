@@ -189,7 +189,6 @@ public class TestJaxDataUtil {
 	public static JaxAuthLoginElement createTestJaxBenutzer() {
 		JaxAuthLoginElement jaxBenutzer = new JaxAuthLoginElement();
 		JaxBerechtigung jaxBerechtigung = createTestJaxBerechtigung();
-		jaxBerechtigung.setBenutzer(jaxBenutzer);
 		jaxBenutzer.getBerechtigungen().add(jaxBerechtigung);
 		jaxBenutzer.setCurrentBerechtigung(jaxBerechtigung);
 		jaxBenutzer.setUsername("TestUser");

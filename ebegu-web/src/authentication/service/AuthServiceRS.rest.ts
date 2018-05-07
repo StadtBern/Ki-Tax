@@ -46,7 +46,7 @@ export default class AuthServiceRS {
 
     public getPrincipalRole(): TSRole {
         if (this.principal) {
-            return this.principal.currentBerechtigung.role;
+            return this.principal.getCurrentRole();
         }
         return undefined;
     }
@@ -92,7 +92,7 @@ export default class AuthServiceRS {
 
                 return true;
             } catch (e) {
-                console.log('cookie decoding failed');
+                console.log('cookie decoding failed', e);
             }
         }
 
@@ -125,7 +125,7 @@ export default class AuthServiceRS {
      */
     public isRole(role: TSRole) {
         if (role && this.principal) {
-            return this.principal.currentBerechtigung.role === role;
+            return this.principal.getCurrentRole() === role;
         }
         return false;
     }
@@ -137,7 +137,7 @@ export default class AuthServiceRS {
         if (roles !== undefined && roles !== null && this.principal) {
             for (let i = 0; i < roles.length; i++) {
                 let role = roles[i];
-                if (role === this.principal.currentBerechtigung.role) {
+                if (role === this.principal.getCurrentRole()) {
                     return true;
                 }
             }

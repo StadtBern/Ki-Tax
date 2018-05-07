@@ -139,6 +139,9 @@ export default class TSUser {
                 }
             }
         }
+        if (!this._currentBerechtigung) {
+            console.log('ERROR - Benutzer {} hat keine Berechtigung!', this.username);
+        }
         return this._currentBerechtigung;
     }
 
@@ -172,5 +175,9 @@ export default class TSUser {
             default:
                 return TSAmt.NONE;
         }
+    }
+
+    public getCurrentRole() {
+        return this.currentBerechtigung.role;
     }
 }

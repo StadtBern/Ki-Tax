@@ -160,11 +160,11 @@ public class AuthResource {
 				benutzer = optBenutzer.get();
 			} else {
 				benutzer = new Benutzer();
-				Berechtigung dummyBerechtigung = new Berechtigung();
-				// Wir sind hier im DummyLogin: Die dafür erstellte Berechtigung ist defaultmässig aktiv
-				dummyBerechtigung.setActive(Boolean.TRUE);
-				dummyBerechtigung.setBenutzer(benutzer);
-				benutzer.getBerechtigungen().add(dummyBerechtigung);
+				Berechtigung localloginBerechtigung = new Berechtigung();
+				// Wir sind hier im locallogin: Die dafür erstellte Berechtigung ist defaultmässig aktiv
+				localloginBerechtigung.setActive(Boolean.TRUE);
+				localloginBerechtigung.setBenutzer(benutzer);
+				benutzer.getBerechtigungen().add(localloginBerechtigung);
 			}
 			// Achtung: Damit wird der bereits vorhandene Benutzer wieder mit den Daten aus dem LocalLogin überschrieben!
 			// Dies ist aber gewünschtes Verhalten: Wenn wir uns mit dem Admin-Link einloggen, wollen wir immer Admin sein.
@@ -205,9 +205,9 @@ public class AuthResource {
 	private JaxAuthAccessElementCookieData convertToJaxAuthAccessElement(AuthAccessElement access) {
 		return new JaxAuthAccessElementCookieData(
 			access.getAuthId(),
-			String.valueOf(access.getNachname()),
-			String.valueOf(access.getVorname()),
-			String.valueOf(access.getEmail()),
+			access.getNachname(),
+			access.getVorname(),
+			access.getEmail(),
 			String.valueOf(access.getRole()));
 	}
 

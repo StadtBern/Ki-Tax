@@ -247,7 +247,7 @@ export class DVMitteilungListController {
      */
     private isCurrentUserTypTheSenderTyp(mitteilung: TSMitteilung): boolean {
         return mitteilung && mitteilung.sender && this.authServiceRS.getPrincipal()
-            && mitteilung.senderTyp === this.getMitteilungTeilnehmerTypForUserRole(this.authServiceRS.getPrincipal().currentBerechtigung.role);
+            && mitteilung.senderTyp === this.getMitteilungTeilnehmerTypForUserRole(this.authServiceRS.getPrincipal().getCurrentRole());
     }
 
     public isSenderTypInstitution(mitteilung: TSMitteilung): boolean {

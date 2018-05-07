@@ -18,12 +18,10 @@ import {rolePrefix, TSRole} from './enums/TSRole';
 import {TSAbstractDateRangedEntity} from './TSAbstractDateRangedEntity';
 import TSInstitution from './TSInstitution';
 import {TSTraegerschaft} from './TSTraegerschaft';
-import TSUser from './TSUser';
 import {TSDateRange} from './types/TSDateRange';
 
 export default class TSBerechtigung extends TSAbstractDateRangedEntity {
 
-    private _user: TSUser;
     private _traegerschaft: TSTraegerschaft;
     private _institution: TSInstitution;
     private _role: TSRole;
@@ -31,20 +29,11 @@ export default class TSBerechtigung extends TSAbstractDateRangedEntity {
 
     private _enabled: boolean; // Wird nicht zum Server gemappt, nur zur Anzeige im GUI
 
-    constructor(gueltigkeit?: TSDateRange, user?: TSUser, role?: TSRole, traegerschaft?: TSTraegerschaft, institution?: TSInstitution) {
+    constructor(gueltigkeit?: TSDateRange, role?: TSRole, traegerschaft?: TSTraegerschaft, institution?: TSInstitution) {
         super(gueltigkeit);
-        this._user = user;
         this._role = role;
         this._traegerschaft = traegerschaft;
         this._institution = institution;
-    }
-
-    get user(): TSUser {
-        return this._user;
-    }
-
-    set user(value: TSUser) {
-        this._user = value;
     }
 
     get role(): TSRole {

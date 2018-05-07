@@ -53,7 +53,7 @@ public class Berechtigung extends AbstractDateRangedEntity implements Comparable
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Berechtigung_benutzer_id"))
 	private Benutzer benutzer;
 
-	@Enumerated(value = EnumType.STRING)
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	@NotNull
 	private UserRole role;
