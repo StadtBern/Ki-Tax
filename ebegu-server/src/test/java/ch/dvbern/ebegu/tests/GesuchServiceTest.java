@@ -26,13 +26,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.annotation.Nonnull;
 import javax.ejb.EJBAccessException;
 import javax.inject.Inject;
-import javax.persistence.OneToOne;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
@@ -45,7 +47,6 @@ import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
 import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.GeneratedDokument;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchDeletionLog;
@@ -53,6 +54,7 @@ import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.entities.Zahlungsposition;
 import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
@@ -89,7 +91,6 @@ import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -150,7 +151,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private BetreuungService betreuungService;
 
-	private int anzahlObjekte = 0;
 	public static final int ANZAHL_TAGE_BIS_WARNUNG_FREIGABE = 60;
 	public static final int ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG = 15;
 	public static final int ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE = 60;
@@ -267,30 +267,21 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		// gleich viele sein
 		Gesuch mutation = gesuchOptional.get();
 
-		anzahlObjekte = 0;
-		Set<String> idsErstgesuch = new HashSet<>();
-		findAllIdsOfAbstractEntities(gesuchVerfuegt, idsErstgesuch, false);
-		int anzahlObjekteErstgesuch = anzahlObjekte;
+		Map<String, AbstractEntity> entitiesErstgesuch = new TreeMap<>();
+		findAllIdsOfAbstractEntities(gesuchVerfuegt, entitiesErstgesuch, 0);
+		int anzahlObjekteErstgesuch = entitiesErstgesuch.size();
 
-		anzahlObjekte = 0;
-		Set<String> idsMutation = new HashSet<>();
-		findAllIdsOfAbstractEntities(mutation, idsMutation, true);
-		int anzahlObjekteMutation = anzahlObjekte;
+		Map<String, AbstractEntity> entitiesMutation = new TreeMap<>();
+		findAllIdsOfAbstractEntities(mutation, entitiesMutation, 0);
+		int anzahlObjekteMutation = entitiesMutation.size();
 
 		// Die Mutation hat immer 1 Objekte mehr als Erstgesuch, und die "FamiliensituationErstgesuch.
 		// Deswegen muessen wir 1 subtrahieren
 		Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation - 1);
 
-		// Ids, welche in beiden Gesuchen vorkommen ermitteln. Die meisten Objekte muessen kopiert
-		// werden, es gibt aber Ausnahmen, wo eine Referenz kopiert wird.
-		Set<String> intersection = new HashSet<>(idsErstgesuch);
-		intersection.retainAll(idsMutation);
-		if (!intersection.isEmpty()) {
-			// Die korrekterweise umgehaengten Ids rausnehmen
-			findAbstractEntitiesWithIds(gesuchVerfuegt, intersection);
-		}
-		// Jetzt sollten keine Ids mehr drinn sein. Nur die ID von verantwortlicher bleibt, da er nicht mutiert wird
-		Assert.assertEquals(1, intersection.size());
+		Set<String> intersection = new HashSet<>(entitiesErstgesuch.keySet());
+		intersection.retainAll(entitiesMutation.keySet());
+		Assert.assertEquals(0, intersection.size());
 	}
 
 	@Test
@@ -315,28 +306,17 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		// Sicherstellen, dass alle Objekte kopiert und nicht referenziert sind.
 		// Anzahl erstellte Objekte zaehlen, es muessen im Gesuch und in der Mutation
 		// gleich viele sein
+		Map<String, AbstractEntity> entitiesErstgesuch = new TreeMap<>();
+		findAllIdsOfAbstractEntities(erstgesuch, entitiesErstgesuch, 0);
 
-		anzahlObjekte = 0;
-		Set<String> idsErstgesuch = new HashSet<>();
-		findAllIdsOfAbstractEntities(erstgesuch, idsErstgesuch, false);
+		Map<String, AbstractEntity> entitiesFolgegesuch = new TreeMap<>();
+		findAllIdsOfAbstractEntities(folgegesuch, entitiesFolgegesuch, 0);
+		int anzahlObjekteFolgegesuch = entitiesFolgegesuch.size();
+		Assert.assertEquals(11, anzahlObjekteFolgegesuch);
 
-		anzahlObjekte = 0;
-		Set<String> idsFolgegesuch = new HashSet<>();
-		findAllIdsOfAbstractEntities(folgegesuch, idsFolgegesuch, false);
-		int anzahlObjekteMutation = anzahlObjekte;
-
-		Assert.assertEquals(10, anzahlObjekteMutation);
-
-		// Ids, welche in beiden Gesuchen vorkommen ermitteln. Die meisten Objekte muessen kopiert
-		// werden, es gibt aber Ausnahmen, wo eine Referenz kopiert wird.
-		Set<String> intersection = new HashSet<>(idsErstgesuch);
-		intersection.retainAll(idsFolgegesuch);
-		if (!intersection.isEmpty()) {
-			// Die korrekterweise umgehaengten Ids rausnehmen
-			findAbstractEntitiesWithIds(erstgesuch, intersection);
-		}
-		// Jetzt sollten keine Ids mehr drinn sein. Nur die ID von verantwortlicher bleibt, da er nicht mutiert wird
-		Assert.assertEquals(1, intersection.size());
+		Set<String> intersection = new HashSet<>(entitiesErstgesuch.keySet());
+		intersection.retainAll(entitiesFolgegesuch.keySet());
+		Assert.assertEquals(0, intersection.size());
 	}
 
 	@Test
@@ -347,6 +327,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final Gesuch eingereichtesGesuch = gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
 
 		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, eingereichtesGesuch.getStatus());
+		assert eingereichtesGesuch.getFreigabeDatum() != null;
 		Assert.assertFalse(now.isAfter(eingereichtesGesuch.getFreigabeDatum())); // beste Art um Datum zu testen die direkt in der Methode erzeugt werden
 
 		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
@@ -366,6 +347,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final Gesuch eingereichtesGesuch = gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
 
 		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, eingereichtesGesuch.getStatus());
+		assert eingereichtesGesuch.getFreigabeDatum() != null;
 		Assert.assertFalse(now.isAfter(eingereichtesGesuch.getFreigabeDatum())); // beste Art um Datum zu testen die direkt in der Methode erzeugt werden
 
 		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
@@ -406,6 +388,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final Gesuch eingereichtesGesuch = gesuchService.antragFreigabequittungErstellen(schulamtGesuch, AntragStatus.FREIGABEQUITTUNG);
 
 		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, eingereichtesGesuch.getStatus());
+		assert eingereichtesGesuch.getFreigabeDatum() != null;
 		Assert.assertFalse(now.isAfter(eingereichtesGesuch.getFreigabeDatum()));
 		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(schulamtGesuch.getId(), WizardStepName.FREIGABE);
 		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
@@ -712,7 +695,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, gesuch.getGesuchBetreuungenStatus()); // by default
 
 		// 1st Betreuung=BESTAETIGT, 2nd Betreuung=WARTEN
-		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().setBetreuungsstatus
+		Objects.requireNonNull(gesuch.getKindContainers().iterator().next().getBetreuungen()).iterator().next().setBetreuungsstatus
 			(Betreuungsstatus.BESTAETIGT);
 		gesuchService.updateBetreuungenStatus(gesuch);
 		Assert.assertEquals(GesuchBetreuungenStatus.WARTEN, gesuch.getGesuchBetreuungenStatus());
@@ -735,7 +718,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(GesuchBetreuungenStatus.ALLE_BESTAETIGT, gesuch.getGesuchBetreuungenStatus()); // by default
 
 		// 1st Betreuung=ABGEWIESEN, 2nd Betreuung=WARTEN
-		final Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		final Betreuung betreuung = Objects.requireNonNull(gesuch.getKindContainers().iterator().next().getBetreuungen()).iterator().next();
 		betreuung.setBetreuungsstatus(Betreuungsstatus.ABGEWIESEN);
 		betreuung.setGrundAblehnung("grund");
 		gesuchService.updateBetreuungenStatus(gesuch);
@@ -825,63 +808,45 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	/**
 	 * Schreibt alle Ids von AbstractEntities (rekursiv vom Gesuch) ins Set.
 	 */
-	private void findAllIdsOfAbstractEntities(AbstractEntity entity, Set<String> ids, boolean assertNoVorgaengerGesetzt) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+	private void findAllIdsOfAbstractEntities(AbstractEntity entity, Map<String, AbstractEntity> entities, int depth) throws IllegalAccessException,
+		NoSuchMethodException, InvocationTargetException {
 		String id = BeanUtils.getProperty(entity, "id");
-		String vorgaengerId = BeanUtils.getProperty(entity, "vorgaengerId");
-		if (!ids.contains(id)) {
-			anzahlObjekte = anzahlObjekte + 1;
-			ids.add(id);
+		if (!entities.containsKey(id)) {
+			entities.put(id, entity);
+			StringBuilder indent = new StringBuilder("");
+			for (int i = 0; i < depth; i++) {
+				indent.append(' ');
+			}
+			LOG.info(indent + " - " + entity.getClass().getSimpleName());
 			PropertyUtilsBean bean = new PropertyUtilsBean();
 			PropertyDescriptor[] propertyDescriptors = bean.getPropertyDescriptors(entity.getClass());
 			for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
 				Object property = bean.getProperty(entity, propertyDescriptor.getName());
 				if (property instanceof AbstractEntity) {
-					findAllIdsOfAbstractEntities((AbstractEntity) property, ids, assertNoVorgaengerGesetzt);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Ermittelt die Entites, deren Ids im Set enthalten sind.
-	 */
-	private void findAbstractEntitiesWithIds(AbstractEntity entity, Set<String> ids) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-		if (ids.isEmpty()) {
-			return;
-		}
-		String id = BeanUtils.getProperty(entity, "id");
-		if (ids.contains(id)) {
-			if (entity instanceof Fall || entity instanceof Mandant || entity instanceof Gesuchsperiode || entity instanceof Familiensituation) {
-				// Diese Entitaeten wurden korrekterweise nur umgehaengt und nicht kopiert.
-				// Aus der Liste entfernen
-				// Familiensituation wird hier ebenfalls aufgefuehrt, da sie bei FamiliensituationErstgescuh nur umgehaengt wird
-				// (die "normale" Familiensituation wird aber kopiert, dies wird jetzt nicht mehr getestet)
-				ids.remove(id);
-			}
-		}
-		PropertyUtilsBean bean = new PropertyUtilsBean();
-		PropertyDescriptor[] propertyDescriptors = bean.getPropertyDescriptors(entity.getClass());
-		for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-			Object property = bean.getProperty(entity, propertyDescriptor.getName());
-			// Bidirektionale Beziehungen fuehren zu einem Endlos-Loop. Wir nehmen nur die OwningSide,
-			// also ohne ...mappedBy
-			try {
-				OneToOne declaredAnnotationsByType = entity.getClass().getDeclaredField(propertyDescriptor.getName()).getDeclaredAnnotation(OneToOne.class);
-				if (declaredAnnotationsByType != null) {
-					String s = declaredAnnotationsByType.mappedBy();
-					if (StringUtils.isNotEmpty(s)) {
-						return;
+					if (!isCorrectlyIgnored((AbstractEntity) property)) {
+						findAllIdsOfAbstractEntities((AbstractEntity) property, entities, depth + 1);
+					}
+				} else if (property instanceof Collection) {
+					Collection properties = (Collection) property;
+					for (Object o : properties) {
+						if (o instanceof AbstractEntity) {
+							findAllIdsOfAbstractEntities((AbstractEntity) o, entities, depth+1);
+						}
 					}
 				}
-			} catch (NoSuchFieldException e) {
-				// do nothing, go on
-			}
-			if (property instanceof AbstractEntity && !(property instanceof Gesuch)) { //to avoid loops
-				findAbstractEntitiesWithIds((AbstractEntity) property, ids);
 			}
 		}
 	}
 
+	private boolean isCorrectlyIgnored(AbstractEntity property) {
+		// Diese Entitaeten wurden korrekterweise nur umgehaengt und nicht kopiert.
+		if (property instanceof Fall || property instanceof Mandant || property instanceof Gesuchsperiode
+			|| property instanceof Institution || property instanceof InstitutionStammdaten || property instanceof Benutzer
+			|| property instanceof Traegerschaft) {
+			return true;
+		}
+		return false;
+	}
 
 	private Gesuch persistNewEntity(AntragStatus status, Eingangsart eingangsart) {
 		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
@@ -899,7 +864,10 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuch.setEingangsart(Eingangsart.PAPIER);
 		wizardStepService.createWizardStepList(gesuch);
 		gesuch.getKindContainers().stream()
-			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
+			.flatMap(kindContainer -> {
+				assert kindContainer.getBetreuungen() != null;
+				return kindContainer.getBetreuungen().stream();
+			})
 			.forEach((betreuung)
 				-> {
 				betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESSCHULE);
@@ -945,7 +913,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 				}
 			}
 		}
-
 		return foundGesuche;
 	}
 
@@ -957,5 +924,4 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuchVerfuegt = gesuchService.updateGesuch(gesuchVerfuegt, true, null);
 		return gesuchVerfuegt;
 	}
-
 }
