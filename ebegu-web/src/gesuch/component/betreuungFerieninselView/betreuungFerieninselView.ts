@@ -227,7 +227,7 @@ export class BetreuungFerieninselViewController extends BetreuungViewController 
     public hasAusweichstandort(): boolean {
         return this.betreuung.institutionStammdaten
             && this.betreuung.institutionStammdaten.institutionStammdatenFerieninsel
-            && this.betreuung.institutionStammdaten.institutionStammdatenFerieninsel.isDefined(this.betreuung.belegungFerieninsel.ferienname);
+            && this.betreuung.institutionStammdaten.institutionStammdatenFerieninsel.isAusweichstandortDefined(this.betreuung.belegungFerieninsel.ferienname);
     }
 
     public getAusgewaehltFeriensequenz(): string {

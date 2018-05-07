@@ -60,7 +60,7 @@ export default class TSInstitutionStammdatenFerieninsel extends TSAbstractEntity
         this._ausweichstandortFruehlingsferien = value;
     }
 
-    public isDefined(ferienname: TSFerienname): boolean {
+    public isAusweichstandortDefined(ferienname: TSFerienname): boolean {
         switch (ferienname) {
             case TSFerienname.FRUEHLINGSFERIEN:
                 return !EbeguUtil.isEmptyStringNullOrUndefined(this.ausweichstandortFruehlingsferien);
