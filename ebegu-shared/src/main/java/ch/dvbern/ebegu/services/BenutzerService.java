@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.BenutzerTableFilterDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Berechtigung;
+import ch.dvbern.ebegu.entities.BerechtigungHistory;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -125,4 +126,9 @@ public interface BenutzerService {
 	 */
 	@Nonnull
 	Optional<Berechtigung> findBerechtigung(@Nonnull String id);
+
+	/**
+	 * Schreibt eine Berechtigungs-History in die DB
+	 */
+	void saveBerechtigungHistory(@Nonnull BerechtigungHistory history);
 }

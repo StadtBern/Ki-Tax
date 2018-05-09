@@ -2324,8 +2324,8 @@ public class JaxBConverter {
 			throw new EbeguEntityNotFoundException("authLoginElementToBenutzer -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
 		}
 		// Berechtigungen
-		final Set<Berechtigung> convertedBerechtigungen = berechtigungenListToEntity(jaxLoginElement.getBerechtigungen(),
-		benutzer.getBerechtigungen(), benutzer);
+		final Set<Berechtigung> convertedBerechtigungen = berechtigungenListToEntity(jaxLoginElement.getBerechtigungen(), benutzer.getBerechtigungen(),
+			benutzer);
 		//change the existing collection to reflect changes
 		// Already tested: All existing module of the list remain as they were, that means their data are updated
 		// and the objects are not created again. ID and InsertTimeStamp are the same as before
@@ -2334,7 +2334,7 @@ public class JaxBConverter {
 		return benutzer;
 	}
 
-	public Set<Berechtigung> berechtigungenListToEntity(@Nonnull Set<JaxBerechtigung> jaxBerechtigungenList,
+	private Set<Berechtigung> berechtigungenListToEntity(@Nonnull Set<JaxBerechtigung> jaxBerechtigungenList,
 			@Nonnull Set<Berechtigung> berechtigungenList, @Nonnull Benutzer benutzer) {
 
 		final Set<Berechtigung> convertedBerechtigungen = new TreeSet<>();

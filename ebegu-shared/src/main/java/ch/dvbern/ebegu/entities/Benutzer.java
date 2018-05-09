@@ -25,6 +25,7 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.Index;
@@ -39,6 +40,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.listener.BenutzerChangedEntityListener;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -49,6 +51,7 @@ import org.hibernate.search.annotations.Field;
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 @Entity
+@EntityListeners(BenutzerChangedEntityListener.class)
 @Table(
 	uniqueConstraints = @UniqueConstraint(columnNames = "username", name = "UK_username"),
 	indexes = @Index(columnList = "username", name = "IX_benutzer_username")

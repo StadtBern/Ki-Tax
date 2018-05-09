@@ -158,6 +158,9 @@ public class AuthResource {
 			Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(loginElement.getUsername());
 			if (optBenutzer.isPresent()) {
 				benutzer = optBenutzer.get();
+				// Damit wird kein neues Element erstellt, sondern das bestehende "verändert". Führt sonst zu einem
+				// Löschen und Wiedereinfügen in der History-Tabelle
+				loginElement.getBerechtigungen().iterator().next().setId(benutzer.getCurrentBerechtigung().getId());
 			} else {
 				benutzer = new Benutzer();
 				Berechtigung localloginBerechtigung = new Berechtigung();

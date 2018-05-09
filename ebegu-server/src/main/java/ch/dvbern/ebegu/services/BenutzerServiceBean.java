@@ -22,12 +22,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
@@ -58,6 +56,7 @@ import ch.dvbern.ebegu.entities.AuthorisierterBenutzer_;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Benutzer_;
 import ch.dvbern.ebegu.entities.Berechtigung;
+import ch.dvbern.ebegu.entities.BerechtigungHistory;
 import ch.dvbern.ebegu.entities.Berechtigung_;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Institution_;
@@ -110,10 +109,9 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	public Benutzer saveBenutzer(@Nonnull Benutzer benutzer) {
 		Objects.requireNonNull(benutzer);
 		if (benutzer.isNew()) {
-			return persistence.merge(benutzer);
-			// TODO (hefr) History
+			return persistence.persist(benutzer);
 		} else {
-			saveBerechtigungen(benutzer);
+			prepareBenutzerForSave(benutzer);
 			return persistence.merge(benutzer);
 		}
 	}
@@ -184,7 +182,6 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		Benutzer benutzer = findBenutzer(username).orElseThrow(() -> new EbeguEntityNotFoundException("removeBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
 		// Den Benutzer ausloggen und seine AuthBenutzer loeschen
 		logoutAndDeleteAuthorisierteBenutzerForUser(username);
-		//TODO (hefr) History
 		persistence.remove(benutzer);
 	}
 
@@ -241,7 +238,6 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 		benutzerFromDB.setGesperrt(Boolean.TRUE);
 		int deletedAuthBenutzer = logoutAndDeleteAuthorisierteBenutzerForUser(username);
-		//TODO (hefr) History
 		logSperreBenutzer(benutzerFromDB, deletedAuthBenutzer);
 		return persistence.merge(benutzerFromDB);
 	}
@@ -273,7 +269,6 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			-> new EbeguEntityNotFoundException("reaktivieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + username));
 		benutzerFromDB.setGesperrt(Boolean.FALSE);
 		logReaktivierenBenutzer(benutzerFromDB);
-		//TODO (hefr) History
 		return persistence.merge(benutzerFromDB);
 	}
 
@@ -639,10 +634,6 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			logoutAndDeleteAuthorisierteBenutzerForUser(benutzer.getUsername());
 		}
 
-		// History-Eintrag nur, wenn etwas geaendert hat
-//		if (institutionChanged || traegerschaftChanged || roleChanged) {
-//			// TODO (hefr) History
-//		}
 		berechtigung.setBenutzer(benutzer);
 		if (berechtigung.isNew()) {
 			return persistence.persist(berechtigung);
@@ -652,37 +643,13 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 	private void removeBerechtigung(@Nonnull Berechtigung berechtigung) {
 		logoutAndDeleteAuthorisierteBenutzerForUser(berechtigung.getBenutzer().getUsername());
-		// TODO (hefr) History
 		persistence.remove(berechtigung);
 	}
 
-	private void saveBerechtigungen(@Nonnull Benutzer benutzer) {
-		Objects.requireNonNull(benutzer);
 
-		prepareBenutzerForSave(benutzer);
-
-		Benutzer berechtigungFromDB = findBenutzer(benutzer.getUsername()).orElseThrow(()
-			-> new EbeguEntityNotFoundException("saveBerechtigungen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Username invalid: " + benutzer.getUsername()));
-
-		// Mit DB abgleichen
-		Set<Berechtigung> berechtigungenFromDB = berechtigungFromDB.getBerechtigungen();
-		Set<Berechtigung> berechtigungenToMerge = new HashSet<>(berechtigungenFromDB);
-		Set<Berechtigung> berechtigungenToRemove = new HashSet<>(berechtigungenFromDB);
-		Set<Berechtigung> berechtigungenToPersist = new HashSet<>(benutzer.getBerechtigungen());
-		// Die aktuelle vorsichtshalber auch noch hinzufügen (es ist ja ein Set)
-		berechtigungenToPersist.add(benutzer.getCurrentBerechtigung());
-		berechtigungenToMerge.retainAll(berechtigungenToPersist);
-		berechtigungenToRemove.removeAll(berechtigungenToMerge);
-		berechtigungenToPersist.removeAll(berechtigungenToMerge);
-
-		for (Berechtigung berechtigung: berechtigungenToRemove) {
-			removeBerechtigung(berechtigung);
-		}
-		for (Berechtigung berechtigung: berechtigungenToPersist) {
-			saveBerechtigung(benutzer, berechtigung);
-		}
-		for (Berechtigung berechtigung: berechtigungenToMerge) {
-			saveBerechtigung(benutzer, berechtigung);
-		}
+	@Override
+	@PermitAll
+	public void saveBerechtigungHistory(@Nonnull BerechtigungHistory history) {
+		persistence.persist(history);
 	}
 }
