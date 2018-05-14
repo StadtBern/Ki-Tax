@@ -20,18 +20,15 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.types.DateRange;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
@@ -41,7 +38,7 @@ import org.hibernate.envers.Audited;
  */
 @Audited
 @Entity
-public class BerechtigungHistory extends AbstractEntity implements Comparable<BerechtigungHistory> {
+public class BerechtigungHistory extends AbstractDateRangedEntity implements Comparable<BerechtigungHistory> {
 
 	private static final long serialVersionUID = -9032257320864372570L;
 
@@ -54,11 +51,6 @@ public class BerechtigungHistory extends AbstractEntity implements Comparable<Be
 	@Column(nullable = false)
 	@NotNull
 	private UserRole role;
-
-	@Nonnull
-	@Embedded
-	@Valid
-	private DateRange gueltigkeit = new DateRange();
 
 	@Nullable
 	@ManyToOne(optional = true)
@@ -84,7 +76,7 @@ public class BerechtigungHistory extends AbstractEntity implements Comparable<Be
 	public BerechtigungHistory(@Nonnull Berechtigung berechtigung, boolean deleted) {
 		this.benutzer = berechtigung.getBenutzer();
 		this.role = berechtigung.getRole();
-		this.gueltigkeit = berechtigung.getGueltigkeit();
+		this.setGueltigkeit(berechtigung.getGueltigkeit());
 		this.institution = berechtigung.getInstitution();
 		this.traegerschaft = berechtigung.getTraegerschaft();
 		this.gesperrt = berechtigung.getBenutzer().getGesperrt();
@@ -105,15 +97,6 @@ public class BerechtigungHistory extends AbstractEntity implements Comparable<Be
 
 	public void setRole(UserRole role) {
 		this.role = role;
-	}
-
-	@Nonnull
-	public DateRange getGueltigkeit() {
-		return gueltigkeit;
-	}
-
-	public void setGueltigkeit(@Nonnull DateRange gueltigkeit) {
-		this.gueltigkeit = gueltigkeit;
 	}
 
 	@Nullable
@@ -175,7 +158,7 @@ public class BerechtigungHistory extends AbstractEntity implements Comparable<Be
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), benutzer, role, gueltigkeit, institution, traegerschaft, gesperrt, geloescht);
+		return Objects.hash(super.hashCode(), benutzer, role, getGueltigkeit(), institution, traegerschaft, gesperrt, geloescht);
 	}
 
 	@Override
@@ -183,7 +166,7 @@ public class BerechtigungHistory extends AbstractEntity implements Comparable<Be
 		return new ToStringBuilder(this)
 			.append("benutzer", benutzer)
 			.append("role", role)
-			.append("gueltigkeit", gueltigkeit)
+			.append("gueltigkeit", getGueltigkeit())
 			.append("institution", institution)
 			.append("traegerschaft", traegerschaft)
 			.append("gesperrt", gesperrt)

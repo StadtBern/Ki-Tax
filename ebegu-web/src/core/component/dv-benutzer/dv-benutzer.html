@@ -307,6 +307,44 @@
             </div>
         </fieldset>
 
+        <fieldset>
+            <div class="row marginTop20">
+                <div class="marginTop20 col-md-12">
+                    <h1 data-translate="BERECHTIGUNGHISTORY"></h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+                    <table st-table="displayedCollection" st-safe-src="vm.berechtigungHistoryList"
+                           class="table" st-delay="20">
+                        <thead>
+                        <tr>
+                            <th data-translate="BERECHTIGUNG_GEAENDERT_USER"></th>
+                            <th data-translate="BERECHTIGUNG_GEAENDERT_TS"></th>
+                            <th data-translate="ROLLE"></th>
+                            <th data-translate="BERECHTIGUNG_GUELTIG_AB"></th>
+                            <th data-translate="BERECHTIGUNG_GUELTIG_BIS"></th>
+                            <th data-translate="INSTITUTIONTRAEGERSCHAFT"></th>
+                            <th data-translate="GESPERRT"></th>
+                            <th data-translate="GELOESCHT"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="row in displayedCollection" st-select-row="row">
+                                <td ng-bind="row.userErstellt"></td>
+                                <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
+                                <td ng-bind="vm.getTranslatedRole(row.role)"></td>
+                                <td ng-bind="row.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
+                                <td ng-bind="row.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
+                                <td ng-bind="row.getInstitutionOrTraegerschaft()"></td>
+                                <td ng-bind="row.gesperrt ? 'LABEL_JA' : 'LABEL_NEIN' | translate"></td>
+                                <td ng-bind="row.geloescht ? 'LABEL_JA' : 'LABEL_NEIN' | translate"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </fieldset>
 
     </form>
 </div>

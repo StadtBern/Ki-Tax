@@ -54,6 +54,7 @@ import ch.dvbern.ebegu.api.dtos.JaxBelegungFerieninsel;
 import ch.dvbern.ebegu.api.dtos.JaxBelegungFerieninselTag;
 import ch.dvbern.ebegu.api.dtos.JaxBelegungTagesschule;
 import ch.dvbern.ebegu.api.dtos.JaxBerechtigung;
+import ch.dvbern.ebegu.api.dtos.JaxBerechtigungHistory;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilungPensum;
@@ -121,6 +122,7 @@ import ch.dvbern.ebegu.entities.BelegungFerieninselTag;
 import ch.dvbern.ebegu.entities.BelegungTagesschule;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Berechtigung;
+import ch.dvbern.ebegu.entities.BerechtigungHistory;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
 import ch.dvbern.ebegu.entities.BetreuungsmitteilungPensum;
@@ -2420,6 +2422,24 @@ public class JaxBConverter {
 			jaxBerechtigung.setTraegerschaft(traegerschaftToJAX(berechtigung.getTraegerschaft()));
 		}
 		return jaxBerechtigung;
+	}
+
+	public JaxBerechtigungHistory berechtigungHistoryToJax(BerechtigungHistory history) {
+		JaxBerechtigungHistory jaxHistory = new JaxBerechtigungHistory();
+		convertAbstractDateRangedFieldsToJAX(history, jaxHistory);
+		Validate.notNull(history.getUserErstellt());
+		jaxHistory.setUserErstellt(history.getUserErstellt());
+		jaxHistory.setBenutzer(benutzerToAuthLoginElement(history.getBenutzer()));
+		jaxHistory.setRole(history.getRole());
+		if (history.getInstitution() != null) {
+			jaxHistory.setInstitution(institutionToJAX(history.getInstitution()));
+		}
+		if (history.getTraegerschaft() != null) {
+			jaxHistory.setTraegerschaft(traegerschaftToJAX(history.getTraegerschaft()));
+		}
+		jaxHistory.setGesperrt(history.getGesperrt());
+		jaxHistory.setGeloescht(history.getGeloescht());
+		return jaxHistory;
 	}
 
 	public JaxDokumente dokumentGruendeToJAX(Set<DokumentGrund> dokumentGrunds) {

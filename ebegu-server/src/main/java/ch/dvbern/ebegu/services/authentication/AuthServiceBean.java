@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.services.authentication;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,6 +47,7 @@ import ch.dvbern.ebegu.entities.AuthorisierterBenutzer_;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.util.Constants;
@@ -63,8 +65,12 @@ public class AuthServiceBean implements AuthService {
 
 	@PersistenceContext(unitName = "ebeguPersistenceUnit")
 	private EntityManager entityManager;
+
 	@Inject
 	private BenutzerService benutzerService;
+
+	@Inject
+	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Resource(lookup = "java:jboss/infinispan/container/ebeguCache")
 	private CacheContainer cacheContainer;
@@ -119,6 +125,17 @@ public class AuthServiceBean implements AuthService {
 		} catch (Exception ignored) {
 			return false;
 		}
+	}
+
+	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public int logoutAndDeleteAuthorisierteBenutzerForUser(@Nonnull String username) {
+		Collection<AuthorisierterBenutzer> authUsers = criteriaQueryHelper.getEntitiesByAttribute(AuthorisierterBenutzer.class, username, AuthorisierterBenutzer_.username);
+		for (AuthorisierterBenutzer authUser : authUsers) {
+			// Den Benutzer ausloggen und den AuthentifiziertenBenutzer löschen
+			logout(authUser.getAuthToken());
+		}
+		return authUsers.size();
 	}
 
 	@Override

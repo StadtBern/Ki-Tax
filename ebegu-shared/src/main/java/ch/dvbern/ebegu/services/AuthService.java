@@ -43,6 +43,15 @@ public interface AuthService {
 	 */
 	boolean logout(@Nonnull final String authToken);
 
+	/**
+	 * Fuehrt ein Logout durch und loescht alle "AuthorisierteBenutzer" aus der Tabelle.
+	 * Gibt die Anzahl gelöschter AuthorisierteBenutzer zurück.
+	 */
+	int logoutAndDeleteAuthorisierteBenutzerForUser(@Nonnull String username);
+
+	/**
+	 * IAM Login
+	 */
 	@Nonnull
 	AuthAccessElement createLoginFromIAM(AuthorisierterBenutzer authorisierterBenutzer);
 

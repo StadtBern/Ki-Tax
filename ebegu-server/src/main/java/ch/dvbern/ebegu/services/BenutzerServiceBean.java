@@ -51,12 +51,11 @@ import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.BenutzerPredicateObjectDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.BenutzerTableFilterDTO;
 import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
-import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
-import ch.dvbern.ebegu.entities.AuthorisierterBenutzer_;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Benutzer_;
 import ch.dvbern.ebegu.entities.Berechtigung;
 import ch.dvbern.ebegu.entities.BerechtigungHistory;
+import ch.dvbern.ebegu.entities.BerechtigungHistory_;
 import ch.dvbern.ebegu.entities.Berechtigung_;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Institution_;
@@ -181,7 +180,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		Objects.requireNonNull(username);
 		Benutzer benutzer = findBenutzer(username).orElseThrow(() -> new EbeguEntityNotFoundException("removeBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
 		// Den Benutzer ausloggen und seine AuthBenutzer loeschen
-		logoutAndDeleteAuthorisierteBenutzerForUser(username);
+		authService.logoutAndDeleteAuthorisierteBenutzerForUser(username);
 		persistence.remove(benutzer);
 	}
 
@@ -237,7 +236,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			-> new EbeguEntityNotFoundException("sperren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + username));
 
 		benutzerFromDB.setGesperrt(Boolean.TRUE);
-		int deletedAuthBenutzer = logoutAndDeleteAuthorisierteBenutzerForUser(username);
+		int deletedAuthBenutzer = authService.logoutAndDeleteAuthorisierteBenutzerForUser(username);
 		logSperreBenutzer(benutzerFromDB, deletedAuthBenutzer);
 		return persistence.merge(benutzerFromDB);
 	}
@@ -250,15 +249,6 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		sb.append(" / ");
 		sb.append("Lösche ").append(deletedAuthBenutzer).append(" Eintraege aus der AuthorisierteBenutzer Tabelle");
 		LOG.info(sb.toString());
-	}
-
-	private int logoutAndDeleteAuthorisierteBenutzerForUser(@Nonnull String username) {
-		Collection<AuthorisierterBenutzer> authUsers = criteriaQueryHelper.getEntitiesByAttribute(AuthorisierterBenutzer.class, username, AuthorisierterBenutzer_.username);
-		for (AuthorisierterBenutzer authUser : authUsers) {
-			// Den Benutzer ausloggen und den AuthentifiziertenBenutzer löschen
-			authService.logout(authUser.getAuthToken());
-		}
-		return authUsers.size();
 	}
 
 	@Nonnull
@@ -297,6 +287,10 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			// Wenn keine zukünftige Berechtigung: Sicherstellen, dass Gueltigkeit unendlich
 			currentBerechtigung.getGueltigkeit().setGueltigBis(Constants.END_OF_TIME);
 		}
+		for (Berechtigung berechtigung : sorted) {
+			prepareBerechtigungForSave(berechtigung);
+		}
+		authService.logoutAndDeleteAuthorisierteBenutzerForUser(benutzer.getUsername());
 	}
 
 	private void prepareBerechtigungForSave(@Nonnull Berechtigung berechtigung) {
@@ -598,58 +592,32 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		return Optional.ofNullable(persistence.find(Berechtigung.class, id));
 	}
 
-	@Nonnull
-	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
-	private Berechtigung saveBerechtigung(@Nonnull Benutzer benutzer, @Nonnull Berechtigung berechtigung) {
-		Objects.requireNonNull(benutzer);
-		Objects.requireNonNull(berechtigung);
-
-		prepareBerechtigungForSave(berechtigung);
-
-		boolean roleChanged = false;
-		boolean institutionChanged = false;
-		boolean traegerschaftChanged = false;
-		LocalDate gueltigAb = berechtigung.getGueltigkeit().getGueltigAb();
-		boolean isFuture = gueltigAb.isAfter(LocalDate.now());
-
-		if (!berechtigung.isNew()) {
-			// Ueberpruefen, was geaendert hat
-			Berechtigung berechtigungFromDB = findBerechtigung(berechtigung.getId()).orElseThrow(()
-				-> new EbeguEntityNotFoundException("saveBerechtigung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BerechtigungID invalid: " + berechtigung.getId()));
-			// Feststellen, was alles geändert hat
-			roleChanged = berechtigungFromDB.getRole() != berechtigung.getRole();
-			institutionChanged = roleChanged && (berechtigungFromDB.getInstitution() != null
-				&& !berechtigungFromDB.getInstitution().equals(berechtigung.getInstitution()));
-			traegerschaftChanged = roleChanged && (berechtigungFromDB.getTraegerschaft() != null
-				&& !berechtigungFromDB.getTraegerschaft().equals(berechtigung.getTraegerschaft()));
-		} else {
-			roleChanged = true;
-			institutionChanged = true;
-			traegerschaftChanged = true;
-		}
-
-		// Ausloggen nur, wenn die Änderungen nicht in der Zukunft liegen! Falls dies der Fall ist, wird der Timer das ausloggen übernehmen
-		if (!isFuture && (institutionChanged || traegerschaftChanged || roleChanged)) {
-			// Die AuthorisiertenBenutzer müssen gelöscht werden
-			logoutAndDeleteAuthorisierteBenutzerForUser(benutzer.getUsername());
-		}
-
-		berechtigung.setBenutzer(benutzer);
-		if (berechtigung.isNew()) {
-			return persistence.persist(berechtigung);
-		}
-		return persistence.merge(berechtigung);
-	}
-
 	private void removeBerechtigung(@Nonnull Berechtigung berechtigung) {
-		logoutAndDeleteAuthorisierteBenutzerForUser(berechtigung.getBenutzer().getUsername());
+		authService.logoutAndDeleteAuthorisierteBenutzerForUser(berechtigung.getBenutzer().getUsername());
 		persistence.remove(berechtigung);
 	}
-
 
 	@Override
 	@PermitAll
 	public void saveBerechtigungHistory(@Nonnull BerechtigungHistory history) {
 		persistence.persist(history);
+	}
+
+	@Nonnull
+	@Override
+	@RolesAllowed({ UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN })
+	public Collection<BerechtigungHistory> getBerechtigungHistoriesForBenutzer(@Nonnull Benutzer benutzer) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<BerechtigungHistory> query = cb.createQuery(BerechtigungHistory.class);
+		Root<BerechtigungHistory> root = query.from(BerechtigungHistory.class);
+
+		ParameterExpression<Benutzer> benutzerParam = cb.parameter(Benutzer.class, "benutzer");
+		Predicate predicateBenutzer = cb.equal(root.get(BerechtigungHistory_.benutzer), benutzerParam);
+		query.orderBy(cb.desc(root.get(BerechtigungHistory_.timestampErstellt)));
+		query.where(predicateBenutzer);
+
+		TypedQuery<BerechtigungHistory> q = persistence.getEntityManager().createQuery(query);
+		q.setParameter(benutzerParam, benutzer);
+		return q.getResultList();
 	}
 }

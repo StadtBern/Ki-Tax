@@ -21,6 +21,7 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import {getTSRoleValues, getTSRoleValuesWithoutSuperAdmin, rolePrefix, TSRole} from '../../../models/enums/TSRole';
 import TSBerechtigung from '../../../models/TSBerechtigung';
+import TSBerechtigungHistory from '../../../models/TSBerechtigungHistory';
 import TSInstitution from '../../../models/TSInstitution';
 import {TSTraegerschaft} from '../../../models/TSTraegerschaft';
 import TSUser from '../../../models/TSUser';
@@ -56,6 +57,7 @@ export class DVBenutzerController {
     selectedUser: TSUser;
     private _currentBerechtigung: TSBerechtigung;
     private _futureBerechtigungen: TSBerechtigung[];
+    berechtigungHistoryList: TSBerechtigungHistory[];
 
 
     static $inject: any[] = ['$log', 'InstitutionRS', 'TraegerschaftRS', 'AuthServiceRS', '$translate', '$stateParams', 'UserRS', '$state', 'DvDialog'];
@@ -78,6 +80,9 @@ export class DVBenutzerController {
                this._futureBerechtigungen = this.selectedUser.berechtigungen;
                this._futureBerechtigungen.splice(0, 1);
            });
+            this.userRS.getBerechtigungHistoriesForBenutzer(username).then((result) => {
+                this.berechtigungHistoryList = result;
+            });
         }
     }
 

@@ -35,6 +35,7 @@ import TSBelegungFerieninsel from '../models/TSBelegungFerieninsel';
 import TSBelegungFerieninselTag from '../models/TSBelegungFerieninselTag';
 import TSBelegungTagesschule from '../models/TSBelegungTagesschule';
 import TSBerechtigung from '../models/TSBerechtigung';
+import TSBerechtigungHistory from '../models/TSBerechtigungHistory';
 import TSBetreuung from '../models/TSBetreuung';
 import TSBetreuungsmitteilung from '../models/TSBetreuungsmitteilung';
 import TSBetreuungsmitteilungPensum from '../models/TSBetreuungsmitteilungPensum';
@@ -1729,6 +1730,33 @@ export default class EbeguRestUtil {
             berechtigungen[0] = this.parseBerechtigung(new TSBerechtigung(), data);
         }
         return berechtigungen;
+    }
+
+    public parseBerechtigungHistory(historyTS: TSBerechtigungHistory, historyFromServer: any): TSBerechtigungHistory {
+        if (historyFromServer) {
+            this.parseDateRangeEntity(historyTS, historyFromServer);
+            historyTS.userErstellt = historyFromServer.userErstellt;
+            historyTS.user = this.parseUser(new TSUser(), historyFromServer.benutzer);
+            historyTS.role = historyFromServer.role;
+            historyTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), historyFromServer.traegerschaft);
+            historyTS.institution = this.parseInstitution(new TSInstitution(), historyFromServer.institution);
+            historyTS.gesperrt = historyFromServer.gesperrt;
+            historyTS.geloescht = historyFromServer.geloescht;
+            return historyTS;
+        }
+        return undefined;
+    }
+
+    public parseBerechtigungHistoryList(data: any): TSBerechtigungHistory[] {
+        let tsHistoryList: TSBerechtigungHistory[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                tsHistoryList[i] = this.parseBerechtigungHistory(new TSBerechtigungHistory(), data[i]);
+            }
+        } else {
+            tsHistoryList[0] = this.parseBerechtigungHistory(new TSBerechtigungHistory(), data);
+        }
+        return tsHistoryList;
     }
 
     parseDokumenteDTO(dokumenteDTO: TSDokumenteDTO, dokumenteFromServer: any): TSDokumenteDTO {

@@ -14,6 +14,7 @@
  */
 
 import {IHttpService, ILogService, IPromise} from 'angular';
+import TSBerechtigungHistory from '../../models/TSBerechtigungHistory';
 import TSUser from '../../models/TSUser';
 import TSUserSearchresultDTO from '../../models/TSUserSearchresultDTO';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
@@ -107,5 +108,13 @@ export default class UserRS implements IEntityRS {
         }).then((response: any) => {
             return this.ebeguRestUtil.parseUser(new TSUser(), response.data);
         });
+    }
+
+    public getBerechtigungHistoriesForBenutzer(username: string): IPromise<TSBerechtigungHistory[]> {
+        return this.http.get(this.serviceURL + '/berechtigunghistory/' + encodeURIComponent(username))
+            .then((response: any) => {
+                this.$log.debug('PARSING benutzer REST object ', response.data);
+                return this.ebeguRestUtil.parseBerechtigungHistoryList(response.data);
+            });
     }
 }
