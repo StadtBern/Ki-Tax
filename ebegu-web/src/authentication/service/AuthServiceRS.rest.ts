@@ -81,21 +81,22 @@ export default class AuthServiceRS {
 
     public initWithCookie(): boolean {
         let authIdbase64 = this.$cookies.get('authId');
-        authIdbase64 = decodeURIComponent(authIdbase64);
         if (authIdbase64) {
-            try {
-                let authData = angular.fromJson(this.base64.decode(authIdbase64));
-                this.principal = new TSUser(authData.vorname, authData.nachname, authData.authId, '', authData.email, authData.mandant, authData.role);
-                this.$timeout(() => {
-                    this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], 'logged in');
-                }); //bei login muessen wir warten bis angular alle componenten erstellt hat bevor wir das event werfen
+            authIdbase64 = decodeURIComponent(authIdbase64);
+            if (authIdbase64) {
+                try {
+                    let authData = angular.fromJson(this.base64.decode(authIdbase64));
+                    this.principal = new TSUser(authData.vorname, authData.nachname, authData.authId, '', authData.email, authData.mandant, authData.role);
+                    this.$timeout(() => {
+                        this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], 'logged in');
+                    }); //bei login muessen wir warten bis angular alle componenten erstellt hat bevor wir das event werfen
 
-                return true;
-            } catch (e) {
-                console.log('cookie decoding failed');
+                    return true;
+                } catch (e) {
+                    console.log('cookie decoding failed', e);
+                }
             }
         }
-
         return false;
     }
 
