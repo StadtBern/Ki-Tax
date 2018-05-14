@@ -22,7 +22,7 @@ import TSUser from './TSUser';
 export default class TSBerechtigungHistory extends TSAbstractDateRangedEntity {
 
     private _userErstellt: string;
-    private _user: TSUser;
+    private _username: string;
     private _role: TSRole;
     private _traegerschaft: TSTraegerschaft;
     private _institution: TSInstitution;
@@ -37,12 +37,12 @@ export default class TSBerechtigungHistory extends TSAbstractDateRangedEntity {
         this._userErstellt = value;
     }
 
-    public get user(): TSUser {
-        return this._user;
+    public get username(): string {
+        return this._username;
     }
 
-    public set user(value: TSUser) {
-        this._user = value;
+    public set username(value: string) {
+        this._username = value;
     }
 
     public get role(): TSRole {

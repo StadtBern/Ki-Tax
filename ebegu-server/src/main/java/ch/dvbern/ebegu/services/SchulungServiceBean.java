@@ -42,8 +42,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import ch.dvbern.ebegu.entities.Adresse;
-import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
-import ch.dvbern.ebegu.entities.AuthorisierterBenutzer_;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Berechtigung;
 import ch.dvbern.ebegu.entities.Betreuung;
@@ -62,7 +60,6 @@ import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
@@ -167,9 +164,6 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 
 	@Inject
 	private WizardStepService wizardStepService;
-
-	@Inject
-	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Inject
 	private Persistence persistence;
@@ -499,10 +493,6 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 	}
 
 	private void removeBenutzer(@Nonnull String username) {
-		Collection<AuthorisierterBenutzer> entitiesByAttribute = criteriaQueryHelper.getEntitiesByAttribute(AuthorisierterBenutzer.class, username, AuthorisierterBenutzer_.username);
-		for (AuthorisierterBenutzer authorisierterBenutzer : entitiesByAttribute) {
-			persistence.remove(authorisierterBenutzer);
-		}
 		if (benutzerService.findBenutzer(username).isPresent()) {
 			benutzerService.removeBenutzer(username);
 		}

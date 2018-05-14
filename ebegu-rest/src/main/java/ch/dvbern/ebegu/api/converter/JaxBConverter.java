@@ -2429,7 +2429,7 @@ public class JaxBConverter {
 		convertAbstractDateRangedFieldsToJAX(history, jaxHistory);
 		Validate.notNull(history.getUserErstellt());
 		jaxHistory.setUserErstellt(history.getUserErstellt());
-		jaxHistory.setBenutzer(benutzerToAuthLoginElement(history.getBenutzer()));
+		jaxHistory.setUsername(history.getUsername());
 		jaxHistory.setRole(history.getRole());
 		if (history.getInstitution() != null) {
 			jaxHistory.setInstitution(institutionToJAX(history.getInstitution()));

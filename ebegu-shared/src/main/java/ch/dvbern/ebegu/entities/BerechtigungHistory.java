@@ -41,9 +41,7 @@ public class BerechtigungHistory extends AbstractDateRangedEntity implements Com
 	private static final long serialVersionUID = -9032257320864372570L;
 
 	@NotNull
-	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_berechtigung_history_benutzer_id"), nullable = false)
-	private Benutzer benutzer = null;
+	private String username = null;
 
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = false)
@@ -72,7 +70,7 @@ public class BerechtigungHistory extends AbstractDateRangedEntity implements Com
 	}
 
 	public BerechtigungHistory(@Nonnull Berechtigung berechtigung, boolean deleted) {
-		this.benutzer = berechtigung.getBenutzer();
+		this.username = berechtigung.getBenutzer().getUsername();
 		this.role = berechtigung.getRole();
 		this.setGueltigkeit(berechtigung.getGueltigkeit());
 		this.institution = berechtigung.getInstitution();
@@ -81,12 +79,12 @@ public class BerechtigungHistory extends AbstractDateRangedEntity implements Com
 		this.geloescht = deleted;
 	}
 
-	public Benutzer getBenutzer() {
-		return benutzer;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setBenutzer(Benutzer benutzer) {
-		this.benutzer = benutzer;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public UserRole getRole() {
@@ -146,7 +144,7 @@ public class BerechtigungHistory extends AbstractDateRangedEntity implements Com
 		}
 		BerechtigungHistory other = (BerechtigungHistory) otherEntity;
 		CompareToBuilder cb = new CompareToBuilder();
-		cb.append(this.getBenutzer(), other.getBenutzer());
+		cb.append(this.getUsername(), other.getUsername());
 		cb.append(this.getRole(), other.getRole());
 		cb.append(this.getGueltigkeit().getGueltigAb(), other.getGueltigkeit().getGueltigAb());
 		cb.append(this.getGueltigkeit().getGueltigBis(), other.getGueltigkeit().getGueltigBis());
@@ -160,7 +158,7 @@ public class BerechtigungHistory extends AbstractDateRangedEntity implements Com
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this)
-			.append("benutzer", benutzer)
+			.append("username", username)
 			.append("role", role)
 			.append("gueltigkeit", getGueltigkeit())
 			.append("institution", institution)

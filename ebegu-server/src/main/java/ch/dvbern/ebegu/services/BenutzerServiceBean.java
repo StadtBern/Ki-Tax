@@ -181,7 +181,15 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		Benutzer benutzer = findBenutzer(username).orElseThrow(() -> new EbeguEntityNotFoundException("removeBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
 		// Den Benutzer ausloggen und seine AuthBenutzer loeschen
 		authService.logoutAndDeleteAuthorisierteBenutzerForUser(username);
+		removeBerechtigungHistoryForBenutzer(benutzer);
 		persistence.remove(benutzer);
+	}
+
+	private void removeBerechtigungHistoryForBenutzer(@Nonnull Benutzer benutzer) {
+		Collection<BerechtigungHistory> histories = getBerechtigungHistoriesForBenutzer(benutzer);
+		for (BerechtigungHistory history : histories) {
+			persistence.remove(history);
+		}
 	}
 
 	@Nonnull
@@ -611,13 +619,13 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		final CriteriaQuery<BerechtigungHistory> query = cb.createQuery(BerechtigungHistory.class);
 		Root<BerechtigungHistory> root = query.from(BerechtigungHistory.class);
 
-		ParameterExpression<Benutzer> benutzerParam = cb.parameter(Benutzer.class, "benutzer");
-		Predicate predicateBenutzer = cb.equal(root.get(BerechtigungHistory_.benutzer), benutzerParam);
+		ParameterExpression<String> benutzerParam = cb.parameter(String.class, "username");
+		Predicate predicateBenutzer = cb.equal(root.get(BerechtigungHistory_.username), benutzerParam);
 		query.orderBy(cb.desc(root.get(BerechtigungHistory_.timestampErstellt)));
 		query.where(predicateBenutzer);
 
 		TypedQuery<BerechtigungHistory> q = persistence.getEntityManager().createQuery(query);
-		q.setParameter(benutzerParam, benutzer);
+		q.setParameter(benutzerParam, benutzer.getUsername());
 		return q.getResultList();
 	}
 }

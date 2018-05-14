@@ -32,7 +32,7 @@ public class JaxBerechtigungHistory extends JaxAbstractDateRangedDTO {
 	private String userErstellt;
 
 	@Nonnull
-	private JaxAuthLoginElement benutzer;
+	private String username;
 
 	@Nonnull
 	private UserRole role;
@@ -58,12 +58,12 @@ public class JaxBerechtigungHistory extends JaxAbstractDateRangedDTO {
 	}
 
 	@Nonnull
-	public JaxAuthLoginElement getBenutzer() {
-		return benutzer;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setBenutzer(@Nonnull JaxAuthLoginElement benutzer) {
-		this.benutzer = benutzer;
+	public void setUsername(@Nonnull String username) {
+		this.username = username;
 	}
 
 	@Nonnull

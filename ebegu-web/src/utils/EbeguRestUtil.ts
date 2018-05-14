@@ -1736,7 +1736,7 @@ export default class EbeguRestUtil {
         if (historyFromServer) {
             this.parseDateRangeEntity(historyTS, historyFromServer);
             historyTS.userErstellt = historyFromServer.userErstellt;
-            historyTS.user = this.parseUser(new TSUser(), historyFromServer.benutzer);
+            historyTS.username = historyFromServer.username;
             historyTS.role = historyFromServer.role;
             historyTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), historyFromServer.traegerschaft);
             historyTS.institution = this.parseInstitution(new TSInstitution(), historyFromServer.institution);

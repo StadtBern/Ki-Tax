@@ -10,7 +10,7 @@ CREATE TABLE berechtigung_history (
 	gueltig_ab         DATE         NOT NULL,
 	gueltig_bis        DATE         NOT NULL,
 	role               VARCHAR(255) NOT NULL,
-	benutzer_id        VARCHAR(36)  NOT NULL,
+	username	       VARCHAR(255)  NOT NULL,
 	institution_id     VARCHAR(36),
 	traegerschaft_id   VARCHAR(36),
 	geloescht           BIT          NOT NULL,
@@ -30,17 +30,12 @@ CREATE TABLE berechtigung_history_aud (
 	gueltig_ab         DATE,
 	gueltig_bis        DATE,
 	role               VARCHAR(255),
-	benutzer_id        VARCHAR(36),
+	username           VARCHAR(255),
 	institution_id     VARCHAR(36),
 	traegerschaft_id   VARCHAR(36),
 	geloescht           BIT,
 	PRIMARY KEY (id, rev)
 );
-
-ALTER TABLE berechtigung_history
-	ADD CONSTRAINT FK_berechtigung_history_benutzer_id
-FOREIGN KEY (benutzer_id)
-REFERENCES benutzer (id);
 
 ALTER TABLE berechtigung_history
 	ADD CONSTRAINT FK_berechtigung_history_institution_id
@@ -70,7 +65,7 @@ INSERT INTO berechtigung_history (
 		gueltig_ab,
 		gueltig_bis,
 		role,
-		benutzer_id,
+		(select username from benutzer where id = benutzer_id),
 		institution_id,
 		traegerschaft_id,
 		false
