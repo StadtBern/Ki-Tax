@@ -327,7 +327,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final Gesuch eingereichtesGesuch = gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
 
 		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, eingereichtesGesuch.getStatus());
-		assert eingereichtesGesuch.getFreigabeDatum() != null;
+		Assert.assertNotNull(eingereichtesGesuch.getFreigabeDatum());
 		Assert.assertFalse(now.isAfter(eingereichtesGesuch.getFreigabeDatum())); // beste Art um Datum zu testen die direkt in der Methode erzeugt werden
 
 		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
@@ -347,7 +347,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final Gesuch eingereichtesGesuch = gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
 
 		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, eingereichtesGesuch.getStatus());
-		assert eingereichtesGesuch.getFreigabeDatum() != null;
+		Assert.assertNotNull(eingereichtesGesuch.getFreigabeDatum());
 		Assert.assertFalse(now.isAfter(eingereichtesGesuch.getFreigabeDatum())); // beste Art um Datum zu testen die direkt in der Methode erzeugt werden
 
 		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
@@ -388,7 +388,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final Gesuch eingereichtesGesuch = gesuchService.antragFreigabequittungErstellen(schulamtGesuch, AntragStatus.FREIGABEQUITTUNG);
 
 		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, eingereichtesGesuch.getStatus());
-		assert eingereichtesGesuch.getFreigabeDatum() != null;
+		Assert.assertNotNull(eingereichtesGesuch.getFreigabeDatum());
 		Assert.assertFalse(now.isAfter(eingereichtesGesuch.getFreigabeDatum()));
 		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(schulamtGesuch.getId(), WizardStepName.FREIGABE);
 		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
@@ -813,7 +813,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		String id = BeanUtils.getProperty(entity, "id");
 		if (!entities.containsKey(id)) {
 			entities.put(id, entity);
-			StringBuilder indent = new StringBuilder("");
+			StringBuilder indent = new StringBuilder();
 			for (int i = 0; i < depth; i++) {
 				indent.append(' ');
 			}
