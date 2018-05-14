@@ -15,8 +15,6 @@
 
 package ch.dvbern.ebegu.entities;
 
-import java.util.Objects;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -143,6 +141,9 @@ public class BerechtigungHistory extends AbstractDateRangedEntity implements Com
 
 	@Override
 	public boolean isSame(AbstractEntity otherEntity) {
+		if (!(otherEntity instanceof BerechtigungHistory)) {
+			return false;
+		}
 		BerechtigungHistory other = (BerechtigungHistory) otherEntity;
 		CompareToBuilder cb = new CompareToBuilder();
 		cb.append(this.getBenutzer(), other.getBenutzer());
@@ -154,11 +155,6 @@ public class BerechtigungHistory extends AbstractDateRangedEntity implements Com
 		cb.append(this.getGesperrt(), other.getGesperrt());
 		cb.append(this.getGeloescht(), other.getGeloescht());
 		return cb.toComparison() == 0;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(super.hashCode(), benutzer, role, getGueltigkeit(), institution, traegerschaft, gesperrt, geloescht);
 	}
 
 	@Override

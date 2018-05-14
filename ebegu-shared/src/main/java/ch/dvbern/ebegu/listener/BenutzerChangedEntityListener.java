@@ -25,11 +25,13 @@ import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Berechtigung;
 import ch.dvbern.ebegu.entities.BerechtigungHistory;
 import ch.dvbern.ebegu.services.BenutzerService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class BenutzerChangedEntityListener {
 
 	private static BenutzerService benutzerService = null;
 
+	@SuppressFBWarnings(value = "LI_LAZY_INIT_STATIC", justification = "Auch wenn das vlt. mehrfach initialisiert wird... das macht nix, solange am Ende was Richtiges drinsteht")
 	private static BenutzerService getBenutzerService() {
 		if (benutzerService == null) {
 			//FIXME: das ist nur ein Ugly Workaround, weil CDI-Injection (mal wieder) buggy ist.
