@@ -108,7 +108,7 @@ public class AuthServiceBean implements AuthService {
 	}
 
 	@Override
-	public boolean logout(@Nonnull String authToken) {
+	public boolean logoutAndDelete(@Nonnull String authToken) {
 		if (StringUtils.isEmpty(authToken)) {
 			return false;
 		}
@@ -133,7 +133,7 @@ public class AuthServiceBean implements AuthService {
 		Collection<AuthorisierterBenutzer> authUsers = criteriaQueryHelper.getEntitiesByAttribute(AuthorisierterBenutzer.class, username, AuthorisierterBenutzer_.username);
 		for (AuthorisierterBenutzer authUser : authUsers) {
 			// Den Benutzer ausloggen und den AuthentifiziertenBenutzer löschen
-			logout(authUser.getAuthToken());
+			logoutAndDelete(authUser.getAuthToken());
 		}
 		return authUsers.size();
 	}

@@ -17,7 +17,6 @@ import {TSRole} from './enums/TSRole';
 import {TSAbstractDateRangedEntity} from './TSAbstractDateRangedEntity';
 import TSInstitution from './TSInstitution';
 import {TSTraegerschaft} from './TSTraegerschaft';
-import TSUser from './TSUser';
 
 export default class TSBerechtigungHistory extends TSAbstractDateRangedEntity {
 

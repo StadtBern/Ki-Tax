@@ -43,7 +43,7 @@ public class BerechtigungHistory extends AbstractDateRangedEntity implements Com
 	@NotNull
 	private String username = null;
 
-	@Enumerated(value = EnumType.STRING)
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	@NotNull
 	private UserRole role;

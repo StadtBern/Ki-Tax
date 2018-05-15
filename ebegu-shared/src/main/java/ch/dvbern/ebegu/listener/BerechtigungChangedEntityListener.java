@@ -15,8 +15,6 @@
 
 package ch.dvbern.ebegu.listener;
 
-import java.time.LocalDateTime;
-
 import javax.annotation.Nonnull;
 import javax.enterprise.inject.spi.CDI;
 import javax.persistence.PrePersist;
@@ -24,7 +22,6 @@ import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 
 import ch.dvbern.ebegu.entities.Berechtigung;
-import ch.dvbern.ebegu.entities.BerechtigungHistory;
 import ch.dvbern.ebegu.services.BenutzerService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -54,10 +51,6 @@ public class BerechtigungChangedEntityListener {
 	}
 
 	private void save(@Nonnull Berechtigung berechtigung, boolean deleted) {
-		BerechtigungHistory newBerechtigungsHistory = new BerechtigungHistory(berechtigung, deleted);
-		newBerechtigungsHistory.setTimestampErstellt(LocalDateTime.now());
-		String userMutiert = berechtigung.getUserMutiert() != null ? berechtigung.getUserMutiert() : "anonymous";
-		newBerechtigungsHistory.setUserErstellt(userMutiert);
-		getBenutzerService().saveBerechtigungHistory(newBerechtigungsHistory);
+		getBenutzerService().saveBerechtigungHistory(berechtigung, deleted);
 	}
 }

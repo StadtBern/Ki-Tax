@@ -41,7 +41,7 @@ public interface AuthService {
 	 * @param authToken Authentifizierungs Token Identifikation
 	 * @return TRUE falls das Logout erfolgreich war, sonst FALSE
 	 */
-	boolean logout(@Nonnull final String authToken);
+	boolean logoutAndDelete(@Nonnull final String authToken);
 
 	/**
 	 * Fuehrt ein Logout durch und loescht alle "AuthorisierteBenutzer" aus der Tabelle.

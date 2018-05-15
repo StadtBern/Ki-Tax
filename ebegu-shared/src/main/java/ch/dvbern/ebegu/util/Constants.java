@@ -83,4 +83,6 @@ public interface Constants {
 	String PATH_DESIGNATOR_NO_TOKEN_REFRESH = "notokenrefresh";
 
 	String TEMP_REPORT_FOLDERNAME = "tempReports";
+
+	String SYSTEM_USER_USERNAME = "System";
 }
