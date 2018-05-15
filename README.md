@@ -25,7 +25,7 @@ The following roles are represented in Ki-Tax:
 
 ### Installation
 
-Refer to the 'Ki-Tax Installation Instructions' (german) for more information on installation and operation.
+Refer to the file [Ki-Tax Installation Instructions](Ki-Tax_Installationshandbuch.pdf) (german) for more information on installation and operation.
 
 ## Built With
 
