@@ -14,7 +14,7 @@
   -->
 
 <div class="dv-benutzer adminModul">
-    <form role="form" name="vm.form" class="" unsaved-warning-form novalidate>
+    <form role="form" name="vm.form" ng-submit="vm.saveBenutzer()" class="" novalidate>
 
         <fieldset>
             <div class="row">
@@ -274,14 +274,12 @@
             <div class="button-row dv-input-container-medium">
 
                 <dv-loading-button type="submit"
-                                   button-click="vm.saveBenutzer()"
                                    button-class="">
                     <span data-translate="BENUTZER_SAVE"></span>
                 </dv-loading-button>
 
-
                 <div ng-show="!vm.selectedUser.gesperrt">
-                    <dv-loading-button type="submit"
+                    <dv-loading-button type="button"
                                        button-click="vm.inactivateBenutzer()"
                                        button-class="cancel-button">
                         <span data-translate="BENUTZER_SPERREN"></span>
@@ -289,7 +287,7 @@
                 </div>
 
                 <div ng-show="vm.selectedUser.gesperrt">
-                    <dv-loading-button type="submit"
+                    <dv-loading-button type="button"
                                        button-click="vm.reactivateBenutzer()"
                                        button-class="cancel-button">
                         <span data-translate="BENUTZER_REAKTIVIEREN"></span>
@@ -297,7 +295,7 @@
                 </div>
 
                 <div>
-                    <dv-loading-button type="submit"
+                    <dv-loading-button type="button"
                                        button-click="vm.cancel()"
                                        button-class="cancel-button">
                         <span data-translate="CANCEL"></span>
