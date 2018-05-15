@@ -35,7 +35,6 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.resource.util.EbeguSchemaOutputResolver;
 import ch.dvbern.ebegu.dto.dataexport.v1.VerfuegungenExportDTO;
-import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.ExportService;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,17 +67,17 @@ public class ExportResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/gesuch/{id}")
 	public VerfuegungenExportDTO exportVerfuegungenOfAntrag(
-		@Nonnull @NotNull @PathParam("id") JaxId id) throws EbeguException {
+		@Nonnull @NotNull @PathParam("id") JaxId id) {
 
 		Validate.notNull(id.getId(), "id muss gesetzt sein");
 		String antragID = converter.toEntityId(id);
 		return this.exportServiceBean.exportAllVerfuegungenOfAntrag(antragID);
 	}
 
-	@ApiOperation(value = "Exports a json Schema of the ExportDTOs")
+	@ApiOperation("Exports a json Schema of the ExportDTOs")
 	@Path("/meta/jsonschema")
 	@GET
-	@Produces({ MediaType.APPLICATION_JSON })
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getJsonSchemaString() throws JsonMappingException {
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -93,7 +92,7 @@ public class ExportResource {
 	@ApiOperation(value = "Exports an xsd of the ExportDTOs", response = String.class)
 	@Path("/meta/xsd")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML })
+	@Produces(MediaType.APPLICATION_XML)
 	public String getXmlSchemaString() throws JAXBException, IOException {
 		JAXBContext jaxbContext = JAXBContext.newInstance(VerfuegungenExportDTO.class);
 		EbeguSchemaOutputResolver sor = new EbeguSchemaOutputResolver();
