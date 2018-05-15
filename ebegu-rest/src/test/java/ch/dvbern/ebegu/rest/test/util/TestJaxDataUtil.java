@@ -202,7 +202,6 @@ public class TestJaxDataUtil {
 	public static JaxBerechtigung createTestJaxBerechtigung() {
 		JaxBerechtigung berechtigung = new JaxBerechtigung();
 		berechtigung.setRole(UserRole.ADMIN);
-		berechtigung.setActive(true);
 		berechtigung.setGueltigAb(LocalDate.now());
 		berechtigung.setGueltigBis(Constants.END_OF_TIME);
 		return berechtigung;

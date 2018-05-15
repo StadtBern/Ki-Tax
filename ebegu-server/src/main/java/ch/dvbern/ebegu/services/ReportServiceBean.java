@@ -57,6 +57,7 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
 import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.AntragStatusHistory;
 import ch.dvbern.ebegu.entities.AntragStatusHistory_;
@@ -472,7 +473,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		query.orderBy(builder.asc(verantwortlicherJoin.get(Benutzer_.nachname)));
 
 		// Der Benutzer muss eine aktive Berechtigung mit Rolle ADMIN oder SACHBEARBEITER_JA haben
-		Predicate predicateActive = builder.equal(verantwortlicherBerechtigungenJoin.get(Berechtigung_.active), Boolean.TRUE);
+		Predicate predicateActive = builder.between(builder.literal(LocalDate.now()),
+			verantwortlicherBerechtigungenJoin.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
+			verantwortlicherBerechtigungenJoin.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
 		Predicate isAdmin = verantwortlicherBerechtigungenJoin.get(Berechtigung_.role).in(UserRole.ADMIN);
 		Predicate isSachbearbeiterJA = verantwortlicherBerechtigungenJoin.get(Berechtigung_.role).in(UserRole.SACHBEARBEITER_JA);
 		Predicate predAdminOrSachbearbeiterJA = builder.or(isAdmin, isSachbearbeiterJA);
@@ -509,7 +512,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		// Datum der Verfuegung muss vor (oder gleich) dem Ende des Abfragezeitraums sein
 		final Predicate predicateDatumBis = builder.lessThanOrEqualTo(root.get(AntragStatusHistory_.timestampVon), datumBis.atStartOfDay());
 		// Der Benutzer muss eine aktive Berechtigung mit Rolle ADMIN oder SACHBEARBEITER_JA haben
-		Predicate predicateActive = builder.equal(joinBerechtigungen.get(Berechtigung_.active), Boolean.TRUE);
+		Predicate predicateActive = builder.between(builder.literal(LocalDate.now()),
+			joinBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
+			joinBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
 		Predicate isAdmin = joinBerechtigungen.get(Berechtigung_.role).in(UserRole.ADMIN);
 		Predicate isSachbearbeiterJA = joinBerechtigungen.get(Berechtigung_.role).in(UserRole.SACHBEARBEITER_JA);
 		Predicate predAdminOrSachbearbeiterJA = builder.or(isAdmin, isSachbearbeiterJA);
@@ -1301,7 +1306,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		List<Predicate> predicates = new ArrayList<>();
 
 		// Gesuchsteller sollen nicht ausgegeben werden
-		Predicate predicateActive = builder.equal(joinBerechtigungen.get(Berechtigung_.active), Boolean.TRUE);
+		Predicate predicateActive = builder.between(builder.literal(LocalDate.now()),
+			joinBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
+			joinBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
 		Predicate predicateRoleNotGS = joinBerechtigungen.get(Berechtigung_.role).in(UserRole.GESUCHSTELLER).not();
 		predicates.add(predicateActive);
 		predicates.add(predicateRoleNotGS);

@@ -25,7 +25,6 @@ export default class TSBerechtigung extends TSAbstractDateRangedEntity {
     private _traegerschaft: TSTraegerschaft;
     private _institution: TSInstitution;
     private _role: TSRole;
-    private _active: boolean;
 
     private _enabled: boolean; // Wird nicht zum Server gemappt, nur zur Anzeige im GUI
 
@@ -66,14 +65,6 @@ export default class TSBerechtigung extends TSAbstractDateRangedEntity {
 
     set enabled(value: boolean) {
         this._enabled = value;
-    }
-
-    get active(): boolean {
-        return this._active;
-    }
-
-    set active(value: boolean) {
-        this._active = value;
     }
 
     getRoleKey(): string {

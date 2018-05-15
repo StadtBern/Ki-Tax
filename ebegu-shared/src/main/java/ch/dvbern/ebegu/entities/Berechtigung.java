@@ -71,11 +71,6 @@ public class Berechtigung extends AbstractDateRangedEntity implements Comparable
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Berechtigung_traegerschaft_id"))
 	private Traegerschaft traegerschaft;
 
-	@NotNull
-	@Column(nullable = false)
-	private Boolean active = false;
-
-
 
 	public Benutzer getBenutzer() {
 		return benutzer;
@@ -109,14 +104,6 @@ public class Berechtigung extends AbstractDateRangedEntity implements Comparable
 
 	public void setTraegerschaft(@Nullable Traegerschaft traegerschaft) {
 		this.traegerschaft = traegerschaft;
-	}
-
-	public Boolean getActive() {
-		return active;
-	}
-
-	public void setActive(Boolean active) {
-		this.active = active;
 	}
 
 	@Nonnull
@@ -167,5 +154,9 @@ public class Berechtigung extends AbstractDateRangedEntity implements Comparable
 
 	public boolean isGueltig() {
 		return getGueltigkeit().contains(LocalDate.now());
+	}
+
+	public boolean isAbgelaufen() {
+		return getGueltigkeit().endsBefore(LocalDate.now());
 	}
 }

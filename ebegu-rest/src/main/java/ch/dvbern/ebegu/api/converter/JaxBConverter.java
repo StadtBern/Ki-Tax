@@ -2379,7 +2379,6 @@ public class JaxBConverter {
 	public Berechtigung berechtigungToEntity(JaxBerechtigung jaxBerechtigung, Berechtigung berechtigung) {
 		convertAbstractDateRangedFieldsToEntity(jaxBerechtigung, berechtigung);
 		berechtigung.setRole(jaxBerechtigung.getRole());
-		berechtigung.setActive(jaxBerechtigung.isActive());
 
 		// wir muessen Traegerschaft und Institution auch updaten wenn sie null sind. Es koennte auch so aus dem IAM kommen
 		if (jaxBerechtigung.getInstitution() != null && jaxBerechtigung.getInstitution().getId() != null) {
@@ -2414,7 +2413,6 @@ public class JaxBConverter {
 		JaxBerechtigung jaxBerechtigung = new JaxBerechtigung();
 		convertAbstractDateRangedFieldsToJAX(berechtigung, jaxBerechtigung);
 		jaxBerechtigung.setRole(berechtigung.getRole());
-		jaxBerechtigung.setActive(berechtigung.getActive());
 		if (berechtigung.getInstitution() != null) {
 			jaxBerechtigung.setInstitution(institutionToJAX(berechtigung.getInstitution()));
 		}

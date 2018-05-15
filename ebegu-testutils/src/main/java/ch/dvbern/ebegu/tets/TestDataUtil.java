@@ -678,7 +678,6 @@ public final class TestDataUtil {
 		Berechtigung berechtigung = new Berechtigung();
 		berechtigung.setRole(UserRole.ADMIN);
 		berechtigung.setBenutzer(user);
-		berechtigung.setActive(Boolean.TRUE);
 		user.getBerechtigungen().add(berechtigung);
 		return user;
 	}
@@ -1017,7 +1016,6 @@ public final class TestDataUtil {
 		berechtigung.setTraegerschaft(traegerschaft);
 		berechtigung.setInstitution(institution);
 		berechtigung.setRole(role);
-		berechtigung.setActive(Boolean.TRUE);
 		berechtigung.setBenutzer(benutzer);
 		benutzer.getBerechtigungen().add(berechtigung);
 		benutzer.setMandant(mandant);

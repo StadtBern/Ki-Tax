@@ -55,6 +55,7 @@ import javax.validation.Validator;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.MitteilungPredicateObjectDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.MitteilungTableFilterDTO;
+import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Benutzer_;
 import ch.dvbern.ebegu.entities.Berechtigung;
@@ -88,6 +89,7 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.util.SearchUtil;
+import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -466,7 +468,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	private void setActiveAndRolePredicates(CriteriaBuilder cb, SetJoin<Benutzer, Berechtigung> joinSenderBerechtigungen,
 		List<Predicate> predicates, List<UserRole> jugendamtRoles) {
-		Predicate predicateActive = cb.equal(joinSenderBerechtigungen.get(Berechtigung_.active), Boolean.TRUE);
+		Predicate predicateActive = cb.between(cb.literal(LocalDate.now()),
+			joinSenderBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
+			joinSenderBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
 		Predicate predicateSenderGleichesAmt = joinSenderBerechtigungen.get(Berechtigung_.role).in(jugendamtRoles);
 		predicates.add(cb.and(predicateActive, predicateSenderGleichesAmt));
 	}
@@ -902,7 +906,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				expression = joinEmpfaenger.get(Benutzer_.vorname);
 				break;
 			case "empfaengerAmt":
-				Predicate predicateActive = cb.equal(joinEmpfaengerBerechtigungen.get(Berechtigung_.active), Boolean.TRUE);
+				Predicate predicateActive = cb.between(cb.literal(LocalDate.now()),
+					joinEmpfaengerBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
+					joinEmpfaengerBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
 				Predicate predicateJA = joinEmpfaengerBerechtigungen.get(Berechtigung_.role).in(UserRole.getJugendamtRoles());
 				Expression<Boolean> isActiveJA = cb.and(predicateActive, predicateJA);
 				String sJugendamt = ServerMessageUtil.getMessage(Amt.class.getSimpleName() + '_' + Amt.JUGENDAMT.name());

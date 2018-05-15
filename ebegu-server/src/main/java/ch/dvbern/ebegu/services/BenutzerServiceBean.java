@@ -151,7 +151,9 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		Join<Benutzer, Berechtigung> joinBerechtigungen = root.join(Benutzer_.berechtigungen);
 		query.select(root);
 
-		Predicate predicateActive = cb.equal(joinBerechtigungen.get(Berechtigung_.active), Boolean.TRUE);
+		Predicate predicateActive = cb.between(cb.literal(LocalDate.now()),
+			joinBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
+			joinBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
 		Predicate predicateRole = joinBerechtigungen.get(Berechtigung_.role).in(roles);
 		query.where(predicateActive, predicateRole);
 		return persistence.getCriteriaResults(query);
@@ -167,7 +169,9 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		Join<Benutzer, Berechtigung> joinBerechtigungen = root.join(Benutzer_.berechtigungen);
 		query.select(root);
 
-		Predicate predicateActive = cb.equal(joinBerechtigungen.get(Berechtigung_.active), Boolean.TRUE);
+		Predicate predicateActive = cb.between(cb.literal(LocalDate.now()),
+			joinBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
+			joinBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
 		Predicate predicateRole = joinBerechtigungen.get(Berechtigung_.role).in(UserRole.GESUCHSTELLER);
 		query.where(predicateActive, predicateRole);
 		query.orderBy(cb.asc(root.get(Benutzer_.username)));
@@ -229,7 +233,6 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			berechtigung.setInstitution(null);
 			berechtigung.setTraegerschaft(null);
 			berechtigung.setBenutzer(benutzer);
-			berechtigung.setActive(Boolean.TRUE); // Ein neuer Benutzer hat grundsätzich eine aktive, unbegrenzte Berechtigung
 			benutzer.getBerechtigungen().clear();
 			benutzer.getBerechtigungen().add(berechtigung);
 			return saveBenutzer(benutzer);
@@ -530,14 +533,14 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		List<Benutzer> userMitAbgelaufenerRolle = persistence.getCriteriaResults(query);
 
 		for (Benutzer benutzer : userMitAbgelaufenerRolle) {
-			Berechtigung abgelaufeneBerechtigung = benutzer.getCurrentBerechtigung();
-			LOG.info("Benutzerrolle ist abgelaufen: {}, war: {}, abgelaufen: {}", benutzer.getUsername(),
-				benutzer.getRole(), abgelaufeneBerechtigung.getGueltigkeit().getGueltigBis());
-
-			// Die aktuell gueltige Rolle suchen und neu umhängen
+			List<Berechtigung> abgelaufeneBerechtigungen = new ArrayList<>();
+			for (Berechtigung berechtigung : benutzer.getBerechtigungen()) {
+				if (berechtigung.isAbgelaufen()) {
+					abgelaufeneBerechtigungen.add(berechtigung);
+				}
+			}
 			try {
 				Berechtigung aktuelleBerechtigung = getAktuellGueltigeBerechtigungFuerBenutzer(benutzer);
-				aktuelleBerechtigung.setActive(Boolean.TRUE);
 				persistence.merge(aktuelleBerechtigung);
 			} catch(NoResultException nre) {
 				// Sonderfall: Die letzte Berechtigung ist abgelaufen. Wir erstellen sofort eine neue anschliessende Berechtigung als Gesuchsteller
@@ -545,9 +548,14 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 				persistence.persist(futureGesuchstellerBerechtigung);
 			}
 			// Die abgelaufene Rolle löschen
-			benutzer.getBerechtigungen().remove(abgelaufeneBerechtigung);
-			persistence.merge(benutzer);
-			removeBerechtigung(abgelaufeneBerechtigung);
+			for (Berechtigung abgelaufeneBerechtigung : abgelaufeneBerechtigungen) {
+				LOG.info("Benutzerrolle ist abgelaufen: {}, war: {}, abgelaufen: {}", benutzer.getUsername(),
+					benutzer.getRole(), abgelaufeneBerechtigung.getGueltigkeit().getGueltigBis());
+				benutzer.getBerechtigungen().remove(abgelaufeneBerechtigung);
+				persistence.merge(benutzer);
+				removeBerechtigung(abgelaufeneBerechtigung);
+			}
+
 		}
 		return userMitAbgelaufenerRolle.size();
 	}
@@ -558,7 +566,6 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		futureGesuchstellerBerechtigung.getGueltigkeit().setGueltigBis(Constants.END_OF_TIME);
 		futureGesuchstellerBerechtigung.setRole(UserRole.GESUCHSTELLER);
 		futureGesuchstellerBerechtigung.setBenutzer(benutzer);
-		futureGesuchstellerBerechtigung.setActive(futureGesuchstellerBerechtigung.isGueltig());
 		return futureGesuchstellerBerechtigung;
 	}
 

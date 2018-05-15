@@ -165,7 +165,6 @@ public class AuthResource {
 				benutzer = new Benutzer();
 				Berechtigung localloginBerechtigung = new Berechtigung();
 				// Wir sind hier im locallogin: Die dafür erstellte Berechtigung ist defaultmässig aktiv
-				localloginBerechtigung.setActive(Boolean.TRUE);
 				localloginBerechtigung.setBenutzer(benutzer);
 				benutzer.getBerechtigungen().add(localloginBerechtigung);
 			}

@@ -13,6 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DateUtil from '../utils/DateUtil';
 import EbeguUtil from '../utils/EbeguUtil';
 import {TSAmt} from './enums/TSAmt';
 import {rolePrefix, TSRole} from './enums/TSRole';
@@ -52,7 +53,6 @@ export default class TSUser {
         this._currentBerechtigung.role = role;
         this._currentBerechtigung.institution = institution;
         this._currentBerechtigung.traegerschaft = traegerschaft;
-        this._currentBerechtigung.active = true;
         this._berechtigungen.push(this._currentBerechtigung);
     }
 
@@ -134,7 +134,7 @@ export default class TSUser {
     get currentBerechtigung(): TSBerechtigung {
         if (EbeguUtil.isNullOrUndefined(this._currentBerechtigung)) {
             for (let obj of this.berechtigungen) {
-                if (obj.active) {
+                if (DateUtil.now().isBefore(obj.gueltigkeit.gueltigBis) && DateUtil.now().isAfter(obj.gueltigkeit.gueltigAb)) {
                     this._currentBerechtigung = obj;
                 }
             }

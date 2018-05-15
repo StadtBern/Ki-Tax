@@ -192,7 +192,7 @@ public class Benutzer extends AbstractEntity {
 	public Berechtigung getCurrentBerechtigung() {
 		if (currentBerechtigung == null) {
 			for (Berechtigung berechtigung : berechtigungen) {
-				if (berechtigung.getActive()) {
+				if (berechtigung.isGueltig()) {
 					currentBerechtigung = berechtigung;
 				}
 			}
