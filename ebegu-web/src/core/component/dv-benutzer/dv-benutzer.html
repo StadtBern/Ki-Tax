@@ -123,7 +123,7 @@
                                 <select aria-describedby="institution-error" name="institution" id="institution"
                                         class="form-control" ng-required="vm.isInstitutionBerechtigung(vm.currentBerechtigung)"
                                         ng-model="vm.currentBerechtigung.institution.id"
-                                        ng-options="institution.id as institution.name for institution in vm.institutionenList | orderBy: 'institution.name'">
+                                        ng-options="institution.id as institution.name for institution in vm.institutionenList | orderBy: 'name' track by institution.name">
                                 </select>
                                 <dv-error-messages input-id="institution" for="vm.form.institution.$error"></dv-error-messages>
                             </div>
@@ -137,7 +137,7 @@
                                 <select aria-describedby="traegerschaft-error" name="traegerschaft" id="traegerschaft"
                                         class="form-control" ng-required="vm.isTraegerschaftBerechtigung(vm.currentBerechtigung)"
                                         ng-model="vm.currentBerechtigung.traegerschaft.id"
-                                        ng-options="traegerschaft.id as traegerschaft.name for traegerschaft in vm.traegerschaftenList | orderBy: 'traegerschaft.name'">
+                                        ng-options="traegerschaft.id as traegerschaft.name for traegerschaft in vm.traegerschaftenList | orderBy: 'name' track by traegerschaft.name">
                                 </select>
                                 <dv-error-messages input-id="traegerschaft"
                                                    for="vm.form.traegerschaft.$error"></dv-error-messages>
@@ -330,7 +330,7 @@
                         <tbody>
                             <tr ng-repeat="row in displayedCollection" st-select-row="row">
                                 <td ng-bind="row.userErstellt"></td>
-                                <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
+                                <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY HH:mm'"></td>
                                 <td ng-bind="vm.getTranslatedRole(row.role)"></td>
                                 <td ng-bind="row.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
                                 <td ng-bind="row.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
