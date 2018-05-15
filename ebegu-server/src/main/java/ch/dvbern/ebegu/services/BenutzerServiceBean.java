@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.services;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -614,8 +615,12 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 	@Override
 	@PermitAll
-	public void saveBerechtigungHistory(@Nonnull BerechtigungHistory history) {
-		persistence.persist(history);
+	public void saveBerechtigungHistory(@Nonnull Berechtigung berechtigung, boolean deleted) {
+		BerechtigungHistory newBerechtigungsHistory = new BerechtigungHistory(berechtigung, deleted);
+		newBerechtigungsHistory.setTimestampErstellt(LocalDateTime.now());
+		String userMutiert = berechtigung.getUserMutiert() != null ? berechtigung.getUserMutiert() : Constants.SYSTEM_USER_USERNAME;
+		newBerechtigungsHistory.setUserErstellt(userMutiert);
+		persistence.persist(newBerechtigungsHistory);
 	}
 
 	@Nonnull

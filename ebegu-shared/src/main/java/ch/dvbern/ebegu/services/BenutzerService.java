@@ -130,7 +130,7 @@ public interface BenutzerService {
 	/**
 	 * Schreibt eine Berechtigungs-History in die DB
 	 */
-	void saveBerechtigungHistory(@Nonnull BerechtigungHistory history);
+	void saveBerechtigungHistory(@Nonnull Berechtigung berechtigung, boolean deleted);
 
 	/**
 	 * Gibt alle BerechtigungsHistories fuer den übergebenen Benutzer zurück

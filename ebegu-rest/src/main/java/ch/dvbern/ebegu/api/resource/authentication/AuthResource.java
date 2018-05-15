@@ -227,7 +227,7 @@ public class AuthResource {
 				String authToken = Objects.requireNonNull(authTokenCookie.getValue());
 				boolean cookieSecure = isCookieSecure();
 
-				if (authService.logout(authToken)) {
+				if (authService.logoutAndDelete(authToken)) {
 					// Respond with expired cookies
 					NewCookie authCookie = expireCookie(AuthConstants.COOKIE_AUTH_TOKEN, cookieSecure, true);
 					NewCookie xsrfCookie = expireCookie(AuthConstants.COOKIE_XSRF_TOKEN, cookieSecure, false);
