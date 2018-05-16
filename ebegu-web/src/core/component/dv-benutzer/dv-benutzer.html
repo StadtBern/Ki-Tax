@@ -146,13 +146,13 @@
                     </div>
                 </div>
             </fieldset>
-            <div class="row col-sm-12" style="margin-bottom: 2rem" ng-if="!vm.currentBerechtigung.enabled">
+            <div class="row col-sm-12" style="margin-bottom: 2rem" ng-if="!vm.currentBerechtigung.enabled && !vm.isDefaultVerantwortlicher">
                 <dv-loading-button type="button" button-click="vm.enableBerechtigung(vm.currentBerechtigung)" button-class="dv-btn-operation">
                     <i class="fa fa-lg fa-pencil-square-o"></i>
                     <span data-translate="BERECHTIGUNG_AKTUELL_EDITIEREN"></span>
                 </dv-loading-button>
             </div>
-            <div class="row col-sm-12" style="margin-bottom: 2rem" ng-if="vm.canAddBerechtigung() && vm.canBeenden()">
+            <div class="row col-sm-12" style="margin-bottom: 2rem" ng-if="vm.canAddBerechtigung() && vm.canBeenden() && !vm.isDefaultVerantwortlicher">
                 <dv-loading-button type="button" button-click="vm.addBerechtigung()" button-class="dv-btn-operation">
                     <i class="fa fa-lg fa-pencil-square-o"></i>
                     <span data-translate="ROLLE_BEENDEN"></span>
@@ -247,14 +247,14 @@
                 </fieldset>
 
                 <!-- Edit Zukünftige Berechtigung -->
-                <div class="row col-sm-12" style="margin-bottom: 2rem" ng-if="!futureBerechtigung.enabled">
+                <div class="row col-sm-12" style="margin-bottom: 2rem" ng-if="!futureBerechtigung.enabled  && !vm.isDefaultVerantwortlicher">
                     <dv-loading-button type="button" button-click="vm.enableBerechtigung(futureBerechtigung)" button-class="dv-btn-operation">
                         <i class="fa fa-lg fa-pencil-square-o"></i>
                         <span data-translate="BERECHTIGUNG_KUENFTIG_EDITIEREN"></span>
                     </dv-loading-button>
                 </div>
                 <!-- Remove Zukünftige Berechtigung -->
-                <div class="row col-sm-12" style="margin-bottom: 2rem">
+                <div class="row col-sm-12" style="margin-bottom: 2rem" ng-if="!vm.isDefaultVerantwortlicher">
                     <dv-loading-button type="button" button-click="vm.removeBerechtigung(futureBerechtigung)" button-class="dv-btn-operation">
                         <i class="fa fa-lg fa-trash-o"></i>
                         <span data-translate="BERECHTIGUNG_ENTFERNEN"></span>
@@ -270,15 +270,24 @@
                 </dv-loading-button>
             </div>
 
+            <!-- Info, wenn Defaultbenutzer -->
+            <div class="row">
+                <div class="col-md-12" ng-if="vm.isDefaultVerantwortlicher">
+                    <div class="well well-status-bestaetigt">
+                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                        <span data-translate="BENUTZER_DEFAULTVERANTWORTLICHER_INFO"></span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Buttons -->
             <div class="button-row dv-input-container-medium">
 
-                <dv-loading-button type="submit"
-                                   button-class="">
+                <dv-loading-button type="submit" button-class="" ng-if="!vm.isDefaultVerantwortlicher">
                     <span data-translate="BENUTZER_SAVE"></span>
                 </dv-loading-button>
 
-                <div ng-show="!vm.selectedUser.gesperrt">
+                <div ng-show="!vm.selectedUser.gesperrt" ng-if="!vm.isDefaultVerantwortlicher">
                     <dv-loading-button type="button"
                                        button-click="vm.inactivateBenutzer()"
                                        button-class="cancel-button">
@@ -286,7 +295,7 @@
                     </dv-loading-button>
                 </div>
 
-                <div ng-show="vm.selectedUser.gesperrt">
+                <div ng-show="vm.selectedUser.gesperrt" ng-if="!vm.isDefaultVerantwortlicher">
                     <dv-loading-button type="button"
                                        button-click="vm.reactivateBenutzer()"
                                        button-class="cancel-button">

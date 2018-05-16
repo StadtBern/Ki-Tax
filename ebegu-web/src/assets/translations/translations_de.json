@@ -1284,6 +1284,7 @@
     "GELOESCHT": "gelöscht",
     "BENUTZER_DETAIL": "Benutzer {{name}} {{vorname}}",
     "BENUTZER_GESPERRT_INFO": "Dieser Benutzer ist aktuell gesperrt",
+    "BENUTZER_DEFAULTVERANTWORTLICHER_INFO": "Dieser Benutzer ist als Defaultverantwortlicher definiert und kann nicht editiert werden",
     "BENUTZER_SAVE": "Benutzer speichern",
     "BENUTZER_CANCEL": "Zurück zur Liste",
     "BENUTZER_SPERREN": "Benutzer sperren",

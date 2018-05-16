@@ -17,6 +17,7 @@ import {IComponentOptions, IFormController, ILogService} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import {Moment} from 'moment';
 import {IBenutzerStateParams} from '../../../admin/admin.route';
+import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import {getTSRoleValues, getTSRoleValuesWithoutSuperAdmin, rolePrefix, TSRole} from '../../../models/enums/TSRole';
@@ -59,12 +60,16 @@ export class DVBenutzerController {
     private _futureBerechtigungen: TSBerechtigung[];
     berechtigungHistoryList: TSBerechtigungHistory[];
 
+    private _isDefaultVerantwortlicher: boolean = false;
 
-    static $inject: any[] = ['$log', 'InstitutionRS', 'TraegerschaftRS', 'AuthServiceRS', '$translate', '$stateParams', 'UserRS', '$state', 'DvDialog'];
+
+    static $inject: any[] = ['$log', 'InstitutionRS', 'TraegerschaftRS', 'AuthServiceRS', '$translate', '$stateParams', 'UserRS', '$state',
+        'DvDialog', 'ApplicationPropertyRS'];
     /* @ngInject */
     constructor(private $log: ILogService, private institutionRS: InstitutionRS, private traegerschaftenRS: TraegerschaftRS,
                 private authServiceRS: AuthServiceRS, private $translate: ITranslateService,
-                private $stateParams: IBenutzerStateParams, private userRS: UserRS, private $state: IStateService, private dvDialog: DvDialog) {
+                private $stateParams: IBenutzerStateParams, private userRS: UserRS, private $state: IStateService,
+                private dvDialog: DvDialog, private applicationPropertyRS: ApplicationPropertyRS) {
 
         this.TSRoleUtil = TSRoleUtil;
     }
@@ -79,6 +84,22 @@ export class DVBenutzerController {
                this._currentBerechtigung = this.selectedUser.berechtigungen[0];
                this._futureBerechtigungen = this.selectedUser.berechtigungen;
                this._futureBerechtigungen.splice(0, 1);
+               // Falls der Benutzer JA oder SCH Benutzer ist, muss geprüft werden, ob es sich um den "Default-Verantwortlichen" des
+               // entsprechenden Amtes handelt
+               if (TSRoleUtil.getAdministratorJugendamtRole().indexOf(this.currentBerechtigung.role) > -1) {
+                   this.applicationPropertyRS.getByName('DEFAULT_VERANTWORTLICHER').then(defaultBenutzerJA => {
+                       if (result.username.toLowerCase() === defaultBenutzerJA.value.toLowerCase()) {
+                           this._isDefaultVerantwortlicher = true;
+                       }
+                   });
+               }
+               if (TSRoleUtil.getSchulamtRoles().indexOf(this.currentBerechtigung.role) > -1) {
+                   this.applicationPropertyRS.getByName('DEFAULT_VERANTWORTLICHER_SCH').then(defaultBenutzerSCH => {
+                       if (result.username.toLowerCase() === defaultBenutzerSCH.value.toLowerCase()) {
+                           this._isDefaultVerantwortlicher = true;
+                       }
+                   });
+               }
            });
             this.userRS.getBerechtigungHistoriesForBenutzer(username).then((result) => {
                 this.berechtigungHistoryList = result;
@@ -238,5 +259,13 @@ export class DVBenutzerController {
 
     public get futureBerechtigungen(): TSBerechtigung[] {
         return this._futureBerechtigungen;
+    }
+
+    public get isDefaultVerantwortlicher(): boolean {
+        return this._isDefaultVerantwortlicher;
+    }
+
+    public set isDefaultVerantwortlicher(value: boolean) {
+        this._isDefaultVerantwortlicher = value;
     }
 }
