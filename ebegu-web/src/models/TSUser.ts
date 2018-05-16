@@ -134,7 +134,7 @@ export default class TSUser {
     get currentBerechtigung(): TSBerechtigung {
         if (EbeguUtil.isNullOrUndefined(this._currentBerechtigung)) {
             for (let obj of this.berechtigungen) {
-                if (DateUtil.now().isBefore(obj.gueltigkeit.gueltigBis) && DateUtil.now().isAfter(obj.gueltigkeit.gueltigAb)) {
+                if (obj.gueltigkeit.isInDateRange(DateUtil.now())) {
                     this._currentBerechtigung = obj;
                 }
             }
