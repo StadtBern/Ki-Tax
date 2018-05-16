@@ -41,7 +41,6 @@ import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -73,7 +72,7 @@ public class MitteilungResourceTest extends AbstractEbeguRestLoginTest {
 	private BetreuungService betreuungService;
 
 	@Test
-	public void testGetMitteilungenForCurrentRolleForFallNoFall() throws EbeguException {
+	public void testGetMitteilungenForCurrentRolleForFallNoFall() {
 		try {
 			mitteilungResource.getMitteilungenForCurrentRolleForFall(new JaxId("123456789"), null, null);
 			Assert.fail("Exception should be thrown. The Fall doesn't exist");
@@ -83,7 +82,7 @@ public class MitteilungResourceTest extends AbstractEbeguRestLoginTest {
 	}
 
 	@Test
-	public void testGetMitteilungenForCurrentRolleForFallNoMitteilungen() throws EbeguException {
+	public void testGetMitteilungenForCurrentRolleForFallNoMitteilungen() {
 		final Fall fall = createAndPersistFall();
 
 		final JaxMitteilungen mitteilungen = mitteilungResource.getMitteilungenForCurrentRolleForFall(new JaxId(fall.getId()), null, null);
@@ -93,7 +92,7 @@ public class MitteilungResourceTest extends AbstractEbeguRestLoginTest {
 	}
 
 	@Test
-	public void testGetMitteilungenForCurrentRolleForFallNormalMitteilungen() throws EbeguException {
+	public void testGetMitteilungenForCurrentRolleForFallNormalMitteilungen() {
 		final Benutzer empfaengerJA = loginAsSachbearbeiterJA();
 		final Fall fall = createAndPersistFall();
 		final Benutzer sender = createAndPersistSender();
@@ -106,13 +105,13 @@ public class MitteilungResourceTest extends AbstractEbeguRestLoginTest {
 
 		Assert.assertNotNull(mitteilungen);
 		Assert.assertEquals(1, mitteilungen.getMitteilungen().size());
-		Assert.assertEquals(JaxMitteilung.class, mitteilungen.getMitteilungen().iterator().next().getClass());
+		Assert.assertSame(JaxMitteilung.class, mitteilungen.getMitteilungen().iterator().next().getClass());
 		Assert.assertEquals(mitteilung.getId(), mitteilungen.getMitteilungen().iterator().next().getId());
 	}
 
 	@Transactional(TransactionMode.DEFAULT)
 	@Test
-	public void testGetMitteilungenForCurrentRolleForFallBetreuungMitteilungen() throws EbeguException, JAXBException, JsonProcessingException {
+	public void testGetMitteilungenForCurrentRolleForFallBetreuungMitteilungen() throws JAXBException, JsonProcessingException {
 		final Benutzer empfaengerJA = loginAsSachbearbeiterJA();
 		final Fall fall = createAndPersistFall();
 		final Benutzer sender = createAndPersistSender();
@@ -139,7 +138,7 @@ public class MitteilungResourceTest extends AbstractEbeguRestLoginTest {
 
 		final StringWriter stringFirst = new StringWriter();
 		final JaxMitteilung first = iterator.next();
-		Assert.assertEquals(JaxMitteilung.class, first.getClass());
+		Assert.assertSame(JaxMitteilung.class, first.getClass());
 		Assert.assertEquals(mitteilung.getId(), first.getId());
 		marshaller.marshal(first, stringFirst);
 		Assert.assertFalse(stringFirst.toString().contains("betreuungspensen"));
@@ -149,7 +148,7 @@ public class MitteilungResourceTest extends AbstractEbeguRestLoginTest {
 
 		final StringWriter stringSecond = new StringWriter();
 		final JaxMitteilung second = iterator.next();
-		Assert.assertEquals(JaxBetreuungsmitteilung.class, second.getClass());
+		Assert.assertSame(JaxBetreuungsmitteilung.class, second.getClass());
 		Assert.assertEquals(betreuungMitteilung.getId(), second.getId());
 		marshaller.marshal(second, stringSecond);
 		Assert.assertTrue(stringSecond.toString().contains("betreuungspensen"));

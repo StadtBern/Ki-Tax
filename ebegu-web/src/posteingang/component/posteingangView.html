@@ -107,13 +107,13 @@
                         <td class="ellipsis" title="{{row.sentDatum | amDateFormat : 'DD.MM.YYYY'}}"
                             ng-bind="row.sentDatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <!-- Verantwortliche Person -->
-                        <td class="ellipsis" title="{{row.empfaenger}}"
+                        <td class="ellipsis" title="{{row.empfaenger.getFullName()}}"
                             ng-bind="row.empfaenger.getFullName()"></td>
                         <!-- Amt -->
-                        <td class="ellipsis" title="{{row.empfaenger.amt}}"
+                        <td class="ellipsis" title="{{'AMT_' + row.empfaenger.amt | translate}}"
                             ng-bind="'AMT_' + row.empfaenger.amt | translate"></td>
                         <!-- Status -->
-                        <td class="ellipsis" title="{{row.mitteilungStatus}}"
+                        <td class="ellipsis" title="{{row.mitteilungStatus | translate}}"
                             ng-bind="row.mitteilungStatus | translate"></td>
                     </tr>
                     </tbody>
