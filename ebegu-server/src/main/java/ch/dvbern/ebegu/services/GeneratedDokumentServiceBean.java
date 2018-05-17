@@ -15,8 +15,12 @@
 
 package ch.dvbern.ebegu.services;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -71,10 +75,12 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
+import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import ch.dvbern.oss.lib.iso20022.pain001.v00103ch02.AuszahlungDTO;
 import ch.dvbern.oss.lib.iso20022.pain001.v00103ch02.Pain001DTO;
 import ch.dvbern.oss.lib.iso20022.pain001.v00103ch02.Pain001Service;
+import com.lowagie.text.DocumentException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -98,6 +104,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class GeneratedDokumentServiceBean extends AbstractBaseService implements GeneratedDokumentService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeneratedDokumentServiceBean.class.getSimpleName());
+	public static final byte[] EMPTY_BYTES = new byte[0];
 
 	@Inject
 	private Persistence persistence;
@@ -288,6 +295,79 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	}
 
 	@Override
+	public WriteProtectedDokument getKompletteKorrespondenz(final Gesuch gesuch) throws MimeTypeParseException, MergeDocException {
+
+		List<InputStream> docsToMerge = new ArrayList<>();
+
+		addBegleitschreibenDoc(gesuch, docsToMerge);
+
+		addBetreuungenDoc(gesuch, docsToMerge);
+
+		addFinanzielleSituationDoc(gesuch, docsToMerge);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			GeneratePDFDocumentHelper.doMerge(docsToMerge, baos);
+		} catch (DocumentException | IOException e) {
+			throw new MergeDocException("getKompletteKorrespondenz", "Dokumente konnten nicht gemergt werden", e);
+		}
+
+		WriteProtectedDokument document = saveGeneratedDokumentInDB(baos.toByteArray(), GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch,
+			"KompletteKorrespondenz", false);
+
+		return document;
+	}
+
+	private void addFinanzielleSituationDoc(Gesuch gesuch, List<InputStream> docsToMerge) throws MergeDocException {
+		if (gesuch.isHasFSDokument()) {
+			byte[] finanzielleSituation = readFileIfExists(GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch.getJahrAndFallnummer(), gesuch);
+			if (finanzielleSituation.length > 0) {
+				docsToMerge.add(new ByteArrayInputStream(finanzielleSituation));
+			}
+		}
+	}
+
+	private void addBetreuungenDoc(Gesuch gesuch, List<InputStream> docsToMerge) throws MergeDocException {
+		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
+			// Verfuegt
+			if (betreuung.getBetreuungsstatus() == Betreuungsstatus.VERFUEGT) {
+				byte[] verfuegung = readFileIfExists(GeneratedDokumentTyp.VERFUEGUNG, betreuung.getBGNummer(), gesuch);
+				if (verfuegung.length > 0) {
+					docsToMerge.add(new ByteArrayInputStream(verfuegung));
+				}
+			}
+			else if (betreuung.getBetreuungsstatus() == Betreuungsstatus.NICHT_EINGETRETEN) {
+				byte[] nichtEintreten = readFileIfExists(GeneratedDokumentTyp.NICHTEINTRETEN, betreuung.getBGNummer(), gesuch);
+				if (nichtEintreten.length > 0) {
+					docsToMerge.add(new ByteArrayInputStream(nichtEintreten));
+				}
+			}
+		}
+	}
+
+	private void addBegleitschreibenDoc(Gesuch gesuch, List<InputStream> docsToMerge) throws MergeDocException {
+		byte[] begleitschreiben = readFileIfExists(GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getJahrAndFallnummer(), gesuch);
+		if (begleitschreiben.length > 0) {
+			docsToMerge.add(new ByteArrayInputStream(begleitschreiben));
+		}
+	}
+
+	@Nonnull
+	private byte[] readFileIfExists(GeneratedDokumentTyp dokumentTyp, String identification, Gesuch gesuch) throws MergeDocException {
+		final String filename = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, identification);
+		WriteProtectedDokument dokument = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), filename, false);
+		if (dokument != null) {
+			Path filePath = Paths.get(dokument.getFilepfad());
+			try {
+				return Files.readAllBytes(filePath);
+			} catch (Exception e) {
+				throw new MergeDocException("readFileIfExists", dokumentTyp + " kann nicht gelesen werden", e);
+			}
+		}
+		return EMPTY_BYTES;
+	}
+
+	@Override
 	public WriteProtectedDokument getFreigabequittungAccessTokenGeneratedDokument(final Gesuch gesuch,
 		Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 
@@ -472,7 +552,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Override
 	public WriteProtectedDokument getMahnungDokumentAccessTokenGeneratedDokument(Mahnung mahnung, Boolean createWriteProtected) throws MimeTypeParseException,
-		IOException, MergeDocException {
+		MergeDocException {
 
 		Gesuch gesuch = mahnung.getGesuch();
 		Mahnung mahnungDB = persistence.find(Mahnung.class, mahnung.getId());

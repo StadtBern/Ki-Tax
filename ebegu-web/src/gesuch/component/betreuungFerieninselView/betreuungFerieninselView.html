@@ -33,6 +33,15 @@
             </div>
         </div>
 
+        <!-- Hinweis, wenn Ferien einen Ausweichstandort haben -->
+        <div class="marginTop30" ng-if="vm.hasAusweichstandort()">
+            <div class="well well-status-warten">
+                <i class="fa fa-exclamation " aria-hidden="true"></i>
+                <span data-translate="WARN_FERIEN_AUSWEICHSTANDORT"
+                      data-translate-value-standort="{{vm.getAusgewaehltFeriensequenz() | translate}}"></span>
+            </div>
+        </div>
+
         <!-- Auswahl der Tage -->
         <div ng-if="vm.isAnmeldungMoeglich() || !vm.betreuung.isEnabled()">
             <div class="row">
