@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,13 +31,16 @@ import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
@@ -56,6 +60,7 @@ import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.validationgroups.ChangeVerantwortlicherValidationGroup;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
@@ -251,30 +256,36 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		return Optional.of(verantwortlicher);
 	}
 
+	@Nonnull
 	@Override
-	public int setVerantwortlicher(String id, Benutzer benutzer){
-		CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaUpdate<Fall> update = cb.createCriteriaUpdate(Fall.class);
-		Root<Fall> root = update.from(Fall.class);
-		update.set(Fall_.verantwortlicher, benutzer);
+	public Fall setVerantwortlicherJA(@Nonnull String fallId, @Nonnull Benutzer benutzer) {
+		final Fall fall = findFall(fallId).orElseThrow(() -> new EbeguEntityNotFoundException("setVerantwortlicherJA",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallId));
+		fall.setVerantwortlicher(benutzer);
 
-		Predicate predFall = cb.equal(root.get(Fall_.id), id);
-		update.where(predFall);
-
-		return persistence.getEntityManager().createQuery(update).executeUpdate();
+		// Die Validierung bezüglich der Rolle des Verantwortlichen darf nur hier erfolgen, nicht bei jedem Speichern des Falls
+		validateVerantwortlicher(fall);
+		return saveFall(fall);
 	}
 
+	@Nonnull
 	@Override
-	public int setVerantwortlicherSCH(String id, Benutzer benutzer){
-		CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaUpdate<Fall> update = cb.createCriteriaUpdate(Fall.class);
-		Root<Fall> root = update.from(Fall.class);
-		update.set(Fall_.verantwortlicherSCH, benutzer);
+	public Fall setVerantwortlicherSCH(@Nonnull String fallId, @Nonnull Benutzer benutzer){
+		final Fall fall = findFall(fallId).orElseThrow(() -> new EbeguEntityNotFoundException("setVerantwortlicherSCH",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallId));
+		fall.setVerantwortlicherSCH(benutzer);
 
-		Predicate predFall = cb.equal(root.get(Fall_.id), id);
-		update.where(predFall);
+		// Die Validierung bezüglich der Rolle des Verantwortlichen darf nur hier erfolgen, nicht bei jedem Speichern des Falls
+		validateVerantwortlicher(fall);
+		return saveFall(fall);
+	}
 
-		return persistence.getEntityManager().createQuery(update).executeUpdate();
+	private void validateVerantwortlicher(@Nonnull Fall fall) {
+		Validator validator = Validation.byDefaultProvider().configure().buildValidatorFactory().getValidator();
+		Set<ConstraintViolation<Fall>> constraintViolations = validator.validate(fall, ChangeVerantwortlicherValidationGroup.class);
+		if (!constraintViolations.isEmpty()) {
+			throw new ConstraintViolationException(constraintViolations);
+		}
 	}
 
 	private String readBesitzerEmailForFall(String fallID) {

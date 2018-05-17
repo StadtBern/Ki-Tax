@@ -24,10 +24,12 @@ import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.tests.util.ValidationTestHelper;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.validationgroups.ChangeVerantwortlicherValidationGroup;
 import ch.dvbern.ebegu.validators.CheckVerantwortlicher;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("JUnitTestMethodWithNoAssertions")
 public class CheckVerantwortlicherValidatorTest {
 
 	private ValidatorFactory customFactory = null;
@@ -54,7 +56,7 @@ public class CheckVerantwortlicherValidatorTest {
 		final Fall fall = new Fall();
 		fall.setVerantwortlicher(jaUser);
 		fall.setVerantwortlicherSCH(schUser);
-		ValidationTestHelper.assertNotViolated(CheckVerantwortlicher.class, fall, customFactory, "");
+		ValidationTestHelper.assertNotViolated(CheckVerantwortlicher.class, fall, customFactory, ChangeVerantwortlicherValidationGroup.class);
 	}
 
 	@Test
@@ -62,7 +64,7 @@ public class CheckVerantwortlicherValidatorTest {
 		final Fall fall = new Fall();
 		fall.setVerantwortlicher(jaAdmin);
 		fall.setVerantwortlicherSCH(schAdmin);
-		ValidationTestHelper.assertNotViolated(CheckVerantwortlicher.class, fall, customFactory, "");
+		ValidationTestHelper.assertNotViolated(CheckVerantwortlicher.class, fall, customFactory, ChangeVerantwortlicherValidationGroup.class);
 	}
 
 	@Test
@@ -70,7 +72,7 @@ public class CheckVerantwortlicherValidatorTest {
 		final Fall fall = new Fall();
 		fall.setVerantwortlicher(null);
 		fall.setVerantwortlicherSCH(null);
-		ValidationTestHelper.assertNotViolated(CheckVerantwortlicher.class, fall, customFactory, "");
+		ValidationTestHelper.assertNotViolated(CheckVerantwortlicher.class, fall, customFactory, ChangeVerantwortlicherValidationGroup.class);
 	}
 
 	@Test
@@ -78,7 +80,7 @@ public class CheckVerantwortlicherValidatorTest {
 		final Fall fall = new Fall();
 		fall.setVerantwortlicher(schAdmin);
 		fall.setVerantwortlicherSCH(schAdmin);
-		ValidationTestHelper.assertViolated(CheckVerantwortlicher.class, fall, customFactory, "");
+		ValidationTestHelper.assertViolated(CheckVerantwortlicher.class, fall, customFactory, ChangeVerantwortlicherValidationGroup.class);
 	}
 
 	@Test
@@ -86,7 +88,7 @@ public class CheckVerantwortlicherValidatorTest {
 		final Fall fall = new Fall();
 		fall.setVerantwortlicher(jaAdmin);
 		fall.setVerantwortlicherSCH(jaAdmin);
-		ValidationTestHelper.assertViolated(CheckVerantwortlicher.class, fall, customFactory, "");
+		ValidationTestHelper.assertViolated(CheckVerantwortlicher.class, fall, customFactory, ChangeVerantwortlicherValidationGroup.class);
 	}
 
 }

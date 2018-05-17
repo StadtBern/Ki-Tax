@@ -676,7 +676,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				&& (verantwortlicher.get().getRole().isRoleJugendamt() || verantwortlicher.get().getRole().isSuperadmin())
 				&& (gesuch.getFall().getVerantwortlicher() == null || !onlyIfNotSet)) {
 				if (persist) {
-					fallService.setVerantwortlicher(gesuch.getFall().getId(), verantwortlicher.get());
+					fallService.setVerantwortlicherJA(gesuch.getFall().getId(), verantwortlicher.get());
 				}
 				gesuch.getFall().setVerantwortlicher(verantwortlicher.get());
 				hasVerantwortlicheChanged = true;

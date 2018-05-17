@@ -83,4 +83,26 @@ export default class FallRS {
             return this.ebeguRestUtil.parseFall(new TSFall(), response.data);
         });
     }
+
+    public setVerantwortlicherJA(fallId: string, username: string): IPromise<TSFall> {
+        return this.http.put(this.serviceURL + '/verantwortlicherJA/' +  encodeURIComponent(fallId), username, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }) .then((response: any) => {
+            this.$log.debug('PARSING fall REST object ', response.data);
+            return this.ebeguRestUtil.parseFall(new TSFall(), response.data);
+        });
+    }
+
+    public setVerantwortlicherSCH(fallId: string, username: string): IPromise<TSFall> {
+        return this.http.put(this.serviceURL + '/verantwortlicherSCH/' +  encodeURIComponent(fallId), username, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            this.$log.debug('PARSING fall REST object ', response.data);
+            return this.ebeguRestUtil.parseFall(new TSFall(), response.data);
+        });
+    }
 }

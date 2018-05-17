@@ -114,7 +114,6 @@ export class VerantwortlicherselectController {
      */
     public setVerantwortlicher(verantwortlicher: TSUser): void {
         this.setVerantwortlicherGesuchModelManager(verantwortlicher);
-        this.gesuchModelManager.updateFall();
         this.setUserAsFallVerantwortlicherLocal(verantwortlicher);
     }
 

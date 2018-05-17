@@ -34,6 +34,7 @@ import javax.validation.constraints.NotNull;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.validationgroups.ChangeVerantwortlicherValidationGroup;
 import ch.dvbern.ebegu.validators.CheckVerantwortlicher;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
@@ -49,7 +50,7 @@ import org.hibernate.search.bridge.builtin.LongBridge;
  */
 @Audited
 @Entity
-@CheckVerantwortlicher
+@CheckVerantwortlicher (groups = ChangeVerantwortlicherValidationGroup.class)
 @Table(
 	uniqueConstraints = {
 		@UniqueConstraint(columnNames = "fallNummer", name = "UK_fall_nummer"),

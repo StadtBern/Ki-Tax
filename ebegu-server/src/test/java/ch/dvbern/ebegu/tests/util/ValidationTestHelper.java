@@ -100,6 +100,13 @@ public final class ValidationTestHelper {
 		assertViolation(clazz, bean, false, "Validation constraint found with Annotation {0} on propertyPath {1}", factory, propertyPaths);
 	}
 
+	public static <T> void assertNotViolated(@Nonnull final Class<? extends Annotation> clazz,
+		@Nonnull final T bean,
+		@Nonnull final ValidatorFactory factory,
+		@Nonnull final Class<?>... groups) {
+		assertViolation(clazz, bean, false, "Validation constraint found with Annotation {0} on propertyPath {1}", factory,null, groups);
+	}
+
 	/**
 	 * Stellt sicher dass keine {@link ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
 	 * gegebenen Bean auf dem gegebenem Property <tt>propertyPath</tt> vorhanden ist welche über eine Annotation der
@@ -170,6 +177,13 @@ public final class ValidationTestHelper {
 		@Nonnull final ValidatorFactory factory,
 		@Nonnull final String... propertyPaths) {
 		assertViolation(clazz, bean, true, "No validation constraint found with Annotation {0} on property {1}", factory, propertyPaths);
+	}
+
+	public static <T> void assertViolated(@Nonnull final Class<? extends Annotation> clazz,
+		@Nonnull final T bean,
+		@Nonnull final ValidatorFactory factory,
+		@Nonnull final Class<?>... groups) {
+		assertViolation(clazz, bean, true, "No validation constraint found with Annotation {0} on property {1}", factory, null, groups);
 	}
 
 	/**
