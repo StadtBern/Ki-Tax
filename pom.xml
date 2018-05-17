@@ -980,6 +980,7 @@
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
                     <configuration>
+                        <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
                         <suppressionFile>dependency-check-suppressions.xml</suppressionFile>
                     </configuration>
                 </plugin>

@@ -49,7 +49,7 @@
     "start:hmr": "npm run server:dev:hmr",
     "hotstart": "npm run server:dev:hmr"
   },
-  "devDependencies": {
+  "dependencies": {
     "@types/angular": "~1.6.38",
     "@types/angular-animate": "~1.5.8",
     "@types/angular-cookies": "~1.4.5",

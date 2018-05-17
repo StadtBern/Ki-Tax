@@ -68,6 +68,7 @@
 
                     <execution>
                         <id>install node and npm</id>
+                        <phase>validate</phase>
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
@@ -81,6 +82,7 @@
 
                     <execution>
                         <id>npm install</id>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>npm</goal>
                         </goals>
@@ -148,5 +150,21 @@
                 </configuration>
             </plugin>
         </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <configuration>
+                        <scanSet>
+                            <fileSet implementation="org.apache.maven.shared.model.fileset.FileSet">
+                                <directory>.</directory>
+                            </fileSet>
+                        </scanSet>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>
