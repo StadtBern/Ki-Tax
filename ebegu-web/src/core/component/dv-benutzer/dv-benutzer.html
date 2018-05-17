@@ -153,18 +153,22 @@
                     </div>
                 </div>
             </fieldset>
-            <div class="row col-sm-12" ng-if="!vm.currentBerechtigung.enabled">
-                <dv-loading-button type="button" button-click="vm.enableBerechtigung(vm.currentBerechtigung)"
-                                   button-class="dv-btn-operation">
-                    <i class="fa fa-lg fa-pencil-square-o"></i>
-                    <span data-translate="BERECHTIGUNG_AKTUELL_EDITIEREN"></span>
-                </dv-loading-button>
+            <div class="row" ng-if="!vm.currentBerechtigung.enabled">
+                <div class="col-sm-12">
+                    <dv-loading-button type="button" button-click="vm.enableBerechtigung(vm.currentBerechtigung)"
+                                       button-class="dv-btn-operation">
+                        <i class="fa fa-lg fa-pencil-square-o"></i>
+                        <span data-translate="BERECHTIGUNG_AKTUELL_EDITIEREN"></span>
+                    </dv-loading-button>
+                </div>
             </div>
-            <div class="row col-sm-12" ng-if="vm.canAddBerechtigung() && vm.canBeenden()">
-                <dv-loading-button type="button" button-click="vm.addBerechtigung()" button-class="dv-btn-operation">
-                    <i class="fa fa-lg fa-pencil-square-o"></i>
-                    <span data-translate="ROLLE_BEENDEN"></span>
-                </dv-loading-button>
+            <div class="row" ng-if="vm.canAddBerechtigung() && vm.canBeenden()">
+                <div class="col-sm-12">
+                    <dv-loading-button type="button" button-click="vm.addBerechtigung()" button-class="dv-btn-operation">
+                        <i class="fa fa-lg fa-pencil-square-o"></i>
+                        <span data-translate="ROLLE_BEENDEN"></span>
+                    </dv-loading-button>
+                </div>
             </div>
 
             <div class="row">
