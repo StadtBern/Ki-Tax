@@ -81,9 +81,7 @@ export class DVBenutzerController {
         if (username) {
            this.userRS.findBenutzer(username).then((result) => {
                this.selectedUser = result;
-               this._currentBerechtigung = this.selectedUser.berechtigungen[0];
-               this._futureBerechtigungen = this.selectedUser.berechtigungen;
-               this._futureBerechtigungen.splice(0, 1);
+               this.initSelectedUser();
                // Falls der Benutzer JA oder SCH Benutzer ist, muss geprüft werden, ob es sich um den "Default-Verantwortlichen" des
                // entsprechenden Amtes handelt
                if (TSRoleUtil.getAdministratorJugendamtRole().indexOf(this.currentBerechtigung.role) > -1) {
@@ -101,10 +99,16 @@ export class DVBenutzerController {
                    });
                }
            });
-            this.userRS.getBerechtigungHistoriesForBenutzer(username).then((result) => {
-                this.berechtigungHistoryList = result;
-            });
         }
+    }
+
+    private initSelectedUser(): void {
+        this._currentBerechtigung = this.selectedUser.berechtigungen[0];
+        this._futureBerechtigungen = this.selectedUser.berechtigungen;
+        this._futureBerechtigungen.splice(0, 1);
+        this.userRS.getBerechtigungHistoriesForBenutzer(this.selectedUser.username).then((result) => {
+            this.berechtigungHistoryList = result;
+        });
     }
 
     private updateInstitutionenList(): void {
@@ -188,6 +192,8 @@ export class DVBenutzerController {
         this.selectedUser.berechtigungen.unshift(this._currentBerechtigung);
         this.userRS.saveBenutzer(this.selectedUser).then((changedUser: TSUser) => {
             this.navigateBackToUsersList();
+        }).catch(reason => {
+            this.initSelectedUser();
         });
     }
 
