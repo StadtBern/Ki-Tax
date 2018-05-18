@@ -298,7 +298,7 @@
             </div>
 
             <!-- Add Zukünftige Berechtigung -->
-            <div class="row" ng-if="vm.canAddBerechtigung()">
+            <div class="row" ng-if="vm.canAddBerechtigung() && !vm.isDefaultVerantwortlicher">
                 <div class="col-sm-12">
                     <dv-loading-button type="button" button-click="vm.addBerechtigung()"
                                        button-class="dv-btn-operation">
