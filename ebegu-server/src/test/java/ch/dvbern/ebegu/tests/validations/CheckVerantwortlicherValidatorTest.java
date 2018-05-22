@@ -39,7 +39,7 @@ public class CheckVerantwortlicherValidatorTest {
 	private Benutzer schAdmin = null;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		// see https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-bootstrapping.html#_constraintvalidatorfactory
 		Configuration<?> config = Validation.byDefaultProvider().configure();
 		//wir verwenden dummy service daher geben wir hier null als em mit

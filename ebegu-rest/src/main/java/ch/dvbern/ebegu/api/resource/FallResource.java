@@ -41,7 +41,6 @@ import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.FallService;
 import io.swagger.annotations.Api;
@@ -74,7 +73,7 @@ public class FallResource {
 	public JaxFall saveFall(
 		@Nonnull @NotNull @Valid JaxFall fallJAXP,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Fall fall = new Fall();
 		if (fallJAXP.getId() != null) {
@@ -94,7 +93,7 @@ public class FallResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxFall findFall(
-		@Nonnull @NotNull @PathParam("fallId") JaxId fallJAXPId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("fallId") JaxId fallJAXPId) {
 		Validate.notNull(fallJAXPId.getId());
 		String fallID = converter.toEntityId(fallJAXPId);
 		Optional<Fall> fallOptional = fallService.findFall(fallID);
@@ -112,7 +111,7 @@ public class FallResource {
 	@Path("/currentbenutzer")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxFall findFallByCurrentBenutzerAsBesitzer() throws EbeguException {
+	public JaxFall findFallByCurrentBenutzerAsBesitzer() {
 		Optional<Fall> fallOptional = fallService.findFallByCurrentBenutzerAsBesitzer();
 		if (!fallOptional.isPresent()) {
 			return null;
@@ -122,14 +121,14 @@ public class FallResource {
 	}
 
 	@ApiOperation(value = "Creates a new Fall in the database with the current user as owner.", response = JaxFall.class)
-	@NotNull
+	@Nullable
 	@PUT
 	@Path("/createforcurrentbenutzer")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxFall createFallForCurrentGesuchstellerAsBesitzer(
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Optional<Fall> fallOptional = fallService.createFallForCurrentGesuchstellerAsBesitzer();
 		if (!fallOptional.isPresent()) {
@@ -149,7 +148,7 @@ public class FallResource {
 		@Nonnull @NotNull @PathParam("fallId") JaxId fallJaxId,
 		@Nonnull @NotNull String username,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Validate.notNull(fallJaxId.getId());
 		Validate.notNull(username);
@@ -172,7 +171,7 @@ public class FallResource {
 		@Nonnull @NotNull @PathParam("fallId") JaxId fallJaxId,
 		@Nonnull @NotNull String username,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Validate.notNull(fallJaxId.getId());
 		Validate.notNull(username);
