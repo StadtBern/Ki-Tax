@@ -15,6 +15,7 @@
 
 import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
+import {TSRole} from '../../../models/enums/TSRole';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSKindContainer from '../../../models/TSKindContainer';
@@ -101,6 +102,11 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
         if (kindIndex >= 0) {
             this.gesuchModelManager.setKindIndex(kindIndex);
+            // Beim Navigieren auf die BetreuungView muss eventuell die Liste der Institutionen neu geladen werden.
+            // Diese wird im GMM gecached und enthält eventuell nicht die neuesten Daten, insbesondere beim Hinzufügen von Betreuungen.
+            if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
+                this.gesuchModelManager.resetActiveInstitutionenList();
+            }
             this.openBetreuungView(undefined, kind.kindNummer);
         } else {
             this.$log.error('kind nicht gefunden ', kind);
@@ -119,6 +125,11 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
         if (kindIndex >= 0) {
             this.gesuchModelManager.setKindIndex(kindIndex);
+            // Beim Navigieren auf die BetreuungView muss eventuell die Liste der Institutionen neu geladen werden.
+            // Diese wird im GMM gecached und enthält eventuell nicht die neuesten Daten, insbesondere beim Hinzufügen von Betreuungen.
+            if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
+                this.gesuchModelManager.resetActiveInstitutionenList();
+            }
             this.openAnmeldungView(kind.kindNummer, betreuungstyp);
         } else {
             this.$log.error('kind nicht gefunden ', kind);
