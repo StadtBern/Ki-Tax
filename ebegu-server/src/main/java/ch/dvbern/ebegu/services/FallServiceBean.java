@@ -60,7 +60,8 @@ import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.ebegu.validationgroups.ChangeVerantwortlicherValidationGroup;
+import ch.dvbern.ebegu.validationgroups.ChangeVerantwortlicherJAValidationGroup;
+import ch.dvbern.ebegu.validationgroups.ChangeVerantwortlicherSCHValidationGroup;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
@@ -264,7 +265,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		fall.setVerantwortlicher(benutzer);
 
 		// Die Validierung bezüglich der Rolle des Verantwortlichen darf nur hier erfolgen, nicht bei jedem Speichern des Falls
-		validateVerantwortlicher(fall);
+		validateVerantwortlicher(fall, ChangeVerantwortlicherJAValidationGroup.class);
 		return saveFall(fall);
 	}
 
@@ -276,13 +277,13 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		fall.setVerantwortlicherSCH(benutzer);
 
 		// Die Validierung bezüglich der Rolle des Verantwortlichen darf nur hier erfolgen, nicht bei jedem Speichern des Falls
-		validateVerantwortlicher(fall);
+		validateVerantwortlicher(fall, ChangeVerantwortlicherSCHValidationGroup.class);
 		return saveFall(fall);
 	}
 
-	private void validateVerantwortlicher(@Nonnull Fall fall) {
+	private void validateVerantwortlicher(@Nonnull Fall fall, @Nonnull Class validationGroup) {
 		Validator validator = Validation.byDefaultProvider().configure().buildValidatorFactory().getValidator();
-		Set<ConstraintViolation<Fall>> constraintViolations = validator.validate(fall, ChangeVerantwortlicherValidationGroup.class);
+		Set<ConstraintViolation<Fall>> constraintViolations = validator.validate(fall, validationGroup);
 		if (!constraintViolations.isEmpty()) {
 			throw new ConstraintViolationException(constraintViolations);
 		}

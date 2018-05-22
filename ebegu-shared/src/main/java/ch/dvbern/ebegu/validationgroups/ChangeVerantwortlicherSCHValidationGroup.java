@@ -18,5 +18,5 @@ package ch.dvbern.ebegu.validationgroups;
 /**
  * ValidationGroup für Validierungen beim Setzen von Verantwortlichen auf einem Fall
  */
-public interface ChangeVerantwortlicherValidationGroup {
+public interface ChangeVerantwortlicherSCHValidationGroup {
 }

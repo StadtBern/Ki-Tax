@@ -24,8 +24,10 @@ import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.tests.util.ValidationTestHelper;
 import ch.dvbern.ebegu.tets.TestDataUtil;
-import ch.dvbern.ebegu.validationgroups.ChangeVerantwortlicherValidationGroup;
-import ch.dvbern.ebegu.validators.CheckVerantwortlicher;
+import ch.dvbern.ebegu.validationgroups.ChangeVerantwortlicherJAValidationGroup;
+import ch.dvbern.ebegu.validationgroups.ChangeVerantwortlicherSCHValidationGroup;
+import ch.dvbern.ebegu.validators.CheckVerantwortlicherJA;
+import ch.dvbern.ebegu.validators.CheckVerantwortlicherSCH;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -56,7 +58,8 @@ public class CheckVerantwortlicherValidatorTest {
 		final Fall fall = new Fall();
 		fall.setVerantwortlicher(jaUser);
 		fall.setVerantwortlicherSCH(schUser);
-		ValidationTestHelper.assertNotViolated(CheckVerantwortlicher.class, fall, customFactory, ChangeVerantwortlicherValidationGroup.class);
+		ValidationTestHelper.assertNotViolated(CheckVerantwortlicherJA.class, fall, customFactory, ChangeVerantwortlicherJAValidationGroup.class);
+		ValidationTestHelper.assertNotViolated(CheckVerantwortlicherSCH.class, fall, customFactory, ChangeVerantwortlicherSCHValidationGroup.class);
 	}
 
 	@Test
@@ -64,7 +67,8 @@ public class CheckVerantwortlicherValidatorTest {
 		final Fall fall = new Fall();
 		fall.setVerantwortlicher(jaAdmin);
 		fall.setVerantwortlicherSCH(schAdmin);
-		ValidationTestHelper.assertNotViolated(CheckVerantwortlicher.class, fall, customFactory, ChangeVerantwortlicherValidationGroup.class);
+		ValidationTestHelper.assertNotViolated(CheckVerantwortlicherJA.class, fall, customFactory, ChangeVerantwortlicherJAValidationGroup.class);
+		ValidationTestHelper.assertNotViolated(CheckVerantwortlicherSCH.class, fall, customFactory, ChangeVerantwortlicherSCHValidationGroup.class);
 	}
 
 	@Test
@@ -72,7 +76,8 @@ public class CheckVerantwortlicherValidatorTest {
 		final Fall fall = new Fall();
 		fall.setVerantwortlicher(null);
 		fall.setVerantwortlicherSCH(null);
-		ValidationTestHelper.assertNotViolated(CheckVerantwortlicher.class, fall, customFactory, ChangeVerantwortlicherValidationGroup.class);
+		ValidationTestHelper.assertNotViolated(CheckVerantwortlicherJA.class, fall, customFactory, ChangeVerantwortlicherJAValidationGroup.class);
+		ValidationTestHelper.assertNotViolated(CheckVerantwortlicherSCH.class, fall, customFactory, ChangeVerantwortlicherSCHValidationGroup.class);
 	}
 
 	@Test
@@ -80,7 +85,8 @@ public class CheckVerantwortlicherValidatorTest {
 		final Fall fall = new Fall();
 		fall.setVerantwortlicher(schAdmin);
 		fall.setVerantwortlicherSCH(schAdmin);
-		ValidationTestHelper.assertViolated(CheckVerantwortlicher.class, fall, customFactory, ChangeVerantwortlicherValidationGroup.class);
+		ValidationTestHelper.assertViolated(CheckVerantwortlicherJA.class, fall, customFactory, ChangeVerantwortlicherJAValidationGroup.class);
+		ValidationTestHelper.assertNotViolated(CheckVerantwortlicherSCH.class, fall, customFactory, ChangeVerantwortlicherSCHValidationGroup.class);
 	}
 
 	@Test
@@ -88,7 +94,8 @@ public class CheckVerantwortlicherValidatorTest {
 		final Fall fall = new Fall();
 		fall.setVerantwortlicher(jaAdmin);
 		fall.setVerantwortlicherSCH(jaAdmin);
-		ValidationTestHelper.assertViolated(CheckVerantwortlicher.class, fall, customFactory, ChangeVerantwortlicherValidationGroup.class);
+		ValidationTestHelper.assertNotViolated(CheckVerantwortlicherJA.class, fall, customFactory, ChangeVerantwortlicherJAValidationGroup.class);
+		ValidationTestHelper.assertViolated(CheckVerantwortlicherSCH.class, fall, customFactory, ChangeVerantwortlicherSCHValidationGroup.class);
 	}
 
 }

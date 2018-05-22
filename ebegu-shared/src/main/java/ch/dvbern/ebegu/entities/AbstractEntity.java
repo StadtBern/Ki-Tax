@@ -239,7 +239,7 @@ public abstract class AbstractEntity implements Serializable {
 	}
 
 	public int hashCode() {
-		return getId() != null ? getId().hashCode() : 0;
+		return getId().hashCode();
 	}
 
 	/**

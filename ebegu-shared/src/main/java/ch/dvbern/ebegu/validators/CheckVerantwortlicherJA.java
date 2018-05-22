@@ -31,9 +31,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Target({ TYPE, ANNOTATION_TYPE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = CheckVerantwortlicherValidator.class)
+@Constraint(validatedBy = CheckVerantwortlicherValidatorJA.class)
 @Documented
-public @interface CheckVerantwortlicher {
+public @interface CheckVerantwortlicherJA {
 
 	String message() default "{invalid_verantwortlicher}";
 
