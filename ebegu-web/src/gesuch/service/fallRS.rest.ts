@@ -13,7 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IHttpService, ILogService, IPromise} from 'angular';
+import {IHttpPromise, IHttpService, ILogService, IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFall from '../../models/TSFall';
 
@@ -84,25 +84,19 @@ export default class FallRS {
         });
     }
 
-    public setVerantwortlicherJA(fallId: string, username: string): IPromise<TSFall> {
+    public setVerantwortlicherJA(fallId: string, username: string): IHttpPromise<TSFall> {
         return this.http.put(this.serviceURL + '/verantwortlicherJA/' +  encodeURIComponent(fallId), username, {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }) .then((response: any) => {
-            this.$log.debug('PARSING fall REST object ', response.data);
-            return this.ebeguRestUtil.parseFall(new TSFall(), response.data);
         });
     }
 
-    public setVerantwortlicherSCH(fallId: string, username: string): IPromise<TSFall> {
+    public setVerantwortlicherSCH(fallId: string, username: string): IHttpPromise<TSFall> {
         return this.http.put(this.serviceURL + '/verantwortlicherSCH/' +  encodeURIComponent(fallId), username, {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then((response: any) => {
-            this.$log.debug('PARSING fall REST object ', response.data);
-            return this.ebeguRestUtil.parseFall(new TSFall(), response.data);
         });
     }
 }

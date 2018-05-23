@@ -32,6 +32,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
@@ -43,6 +44,7 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.FallService;
+import com.google.common.base.Strings;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -144,21 +146,25 @@ public class FallResource {
 	@Path("/verantwortlicherJA/{fallId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxFall setVerantwortlicherJA(
+	public Response setVerantwortlicherJA(
 		@Nonnull @NotNull @PathParam("fallId") JaxId fallJaxId,
-		@Nonnull @NotNull String username,
+		@Nullable String username,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) {
 
 		Validate.notNull(fallJaxId.getId());
-		Validate.notNull(username);
 
-		Benutzer benutzer = benutzerService.findBenutzer(username).orElseThrow(() -> new EbeguEntityNotFoundException("setVerantwortlicherJA",
-			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
+		Benutzer benutzer = null;
+		if(!Strings.isNullOrEmpty(username)) {
+			benutzer = benutzerService.findBenutzer(username).orElseThrow(() -> new EbeguEntityNotFoundException("setVerantwortlicherJA",
+				ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
+		}
 		Fall fall = fallService.findFall(fallJaxId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("setVerantwortlicherJA",
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJaxId.getId()));
 
-		return converter.fallToJAX(this.fallService.setVerantwortlicherJA(fall.getId(), benutzer));
+		this.fallService.setVerantwortlicherJA(fall.getId(), benutzer);
+
+		return Response.ok().build();
 	}
 
 	@ApiOperation(value = "Setzt den Verantwortlichen SCH fuer diesen Fall.", response = JaxFall.class)
@@ -167,20 +173,24 @@ public class FallResource {
 	@Path("/verantwortlicherSCH/{fallId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxFall setVerantwortlicherSCH(
+	public Response setVerantwortlicherSCH(
 		@Nonnull @NotNull @PathParam("fallId") JaxId fallJaxId,
-		@Nonnull @NotNull String username,
+		@Nullable String username,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) {
 
 		Validate.notNull(fallJaxId.getId());
-		Validate.notNull(username);
 
-		Benutzer benutzer = benutzerService.findBenutzer(username).orElseThrow(() -> new EbeguEntityNotFoundException("setVerantwortlicherSCH",
-			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
+		Benutzer benutzer = null;
+		if(!Strings.isNullOrEmpty(username)) {
+			benutzer = benutzerService.findBenutzer(username).orElseThrow(() -> new EbeguEntityNotFoundException("setVerantwortlicherSCH",
+				ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
+		}
 		Fall fall = fallService.findFall(fallJaxId.getId()).orElseThrow(() -> new EbeguEntityNotFoundException("setVerantwortlicherSCH",
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJaxId.getId()));
 
-		return converter.fallToJAX(this.fallService.setVerantwortlicherSCH(fall.getId(), benutzer));
+		this.fallService.setVerantwortlicherSCH(fall.getId(), benutzer);
+
+		return Response.ok().build();
 	}
 }

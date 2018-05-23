@@ -259,7 +259,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 
 	@Nonnull
 	@Override
-	public Fall setVerantwortlicherJA(@Nonnull String fallId, @Nonnull Benutzer benutzer) {
+	public Fall setVerantwortlicherJA(@Nonnull String fallId, @Nullable Benutzer benutzer) {
 		final Fall fall = findFall(fallId).orElseThrow(() -> new EbeguEntityNotFoundException("setVerantwortlicherJA",
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallId));
 		fall.setVerantwortlicher(benutzer);
@@ -271,7 +271,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 
 	@Nonnull
 	@Override
-	public Fall setVerantwortlicherSCH(@Nonnull String fallId, @Nonnull Benutzer benutzer){
+	public Fall setVerantwortlicherSCH(@Nonnull String fallId, @Nullable Benutzer benutzer){
 		final Fall fall = findFall(fallId).orElseThrow(() -> new EbeguEntityNotFoundException("setVerantwortlicherSCH",
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallId));
 		fall.setVerantwortlicherSCH(benutzer);

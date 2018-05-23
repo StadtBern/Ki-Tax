@@ -112,12 +112,12 @@ public interface FallService {
 	 * stores the verantwortlicherJA on the given fall
 	 */
 	@Nonnull
-	Fall setVerantwortlicherJA(@Nonnull String fallId, @Nonnull Benutzer benutzer);
+	Fall setVerantwortlicherJA(@Nonnull String fallId, @Nullable Benutzer benutzer);
 
 	/**
 	 * stores the verantwortlicherSCH on the given fall
 	 */
 	@Nonnull
-	Fall setVerantwortlicherSCH(@Nonnull String fallId, @Nonnull Benutzer benutzer);
+	Fall setVerantwortlicherSCH(@Nonnull String fallId, @Nullable Benutzer benutzer);
 
 }
