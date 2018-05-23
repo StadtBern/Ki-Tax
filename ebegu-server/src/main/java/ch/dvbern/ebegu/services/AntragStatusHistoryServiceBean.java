@@ -35,6 +35,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.AntragStatusHistory;
 import ch.dvbern.ebegu.entities.AntragStatusHistory_;
 import ch.dvbern.ebegu.entities.Benutzer;
@@ -83,6 +84,9 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+
+	@Inject
+	private PrincipalBean principalBean;
 
 	@Nonnull
 	@Override
@@ -155,8 +159,7 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 		Objects.requireNonNull(fall);
 		authorizer.checkReadAuthorizationFall(fall);
 
-		Benutzer user = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("searchAntraege", "No User is logged in"));
-		UserRole role = user.getRole();
+		UserRole role = principalBean.discoverMostPrivilegedRoleOrThrowExceptionIfNone();
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<AntragStatusHistory> query = cb.createQuery(AntragStatusHistory.class);

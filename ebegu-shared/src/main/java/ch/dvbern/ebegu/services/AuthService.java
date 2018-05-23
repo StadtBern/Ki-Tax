@@ -41,8 +41,17 @@ public interface AuthService {
 	 * @param authToken Authentifizierungs Token Identifikation
 	 * @return TRUE falls das Logout erfolgreich war, sonst FALSE
 	 */
-	boolean logout(@Nonnull final String authToken);
+	boolean logoutAndDelete(@Nonnull final String authToken);
 
+	/**
+	 * Fuehrt ein Logout durch und loescht alle "AuthorisierteBenutzer" aus der Tabelle.
+	 * Gibt die Anzahl gelöschter AuthorisierteBenutzer zurück.
+	 */
+	int logoutAndDeleteAuthorisierteBenutzerForUser(@Nonnull String username);
+
+	/**
+	 * IAM Login
+	 */
 	@Nonnull
 	AuthAccessElement createLoginFromIAM(AuthorisierterBenutzer authorisierterBenutzer);
 
@@ -51,4 +60,10 @@ public interface AuthService {
 	 * if doRefresh is true, the login cookie gets refreshed.
 	 */
 	Optional<AuthorisierterBenutzer> validateAndRefreshLoginToken(String token, boolean doRefreshToken);
+
+	/**
+	 * Loescht alle abgelaufenen AuthTokens (Authentifizierte Benutzer)
+	 * @return Die Anzahl gelöschter Tokens
+	 */
+	int deleteInvalidAuthTokens();
 }

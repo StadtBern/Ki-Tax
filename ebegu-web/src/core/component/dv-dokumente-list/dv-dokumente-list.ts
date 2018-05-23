@@ -160,7 +160,7 @@ export class DVDokumenteListController {
         let roleLoggedIn: TSRole = this.authServiceRS.getPrincipalRole();
         let documentUploadedByAmt: boolean = true; // by default true in case there is no uploadUser
         if (dokument.userUploaded) {
-            let roleDocumentUpload: TSRole = dokument.userUploaded.role;
+            let roleDocumentUpload: TSRole = dokument.userUploaded.getCurrentRole();
             documentUploadedByAmt = (roleDocumentUpload === TSRole.SACHBEARBEITER_JA || roleDocumentUpload === TSRole.ADMIN
                 || roleDocumentUpload === TSRole.SCHULAMT || roleDocumentUpload === TSRole.ADMINISTRATOR_SCHULAMT || roleDocumentUpload === TSRole.SUPER_ADMIN);
         }

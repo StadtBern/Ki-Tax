@@ -61,17 +61,6 @@ export class TraegerschaftRS {
         });
     }
 
-    synchronizeTraegerschaften(): IPromise<any> {
-        return this.http.post(this.serviceURL + '/' + 'synchronizeWithOpenIdm', null, {
-            headers: {
-                'Content-Type': 'text/plain'
-            }
-        }).then((response: any) => {
-            this.log.debug('synchronizeWithOpenIdm returns: ', response.data);
-            return response;
-        });
-    }
-
     public removeTraegerschaft(traegerschaftID: string): IHttpPromise<TSTraegerschaft> {
         return this.http.delete(this.serviceURL + '/' + encodeURIComponent(traegerschaftID));
     }
@@ -90,9 +79,7 @@ export class TraegerschaftRS {
         });
     }
 
-
     public getServiceName(): string {
         return 'TraegerschaftRS';
     }
-
 }

@@ -16,41 +16,47 @@
 package ch.dvbern.ebegu.entities;
 
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import ch.dvbern.ebegu.enums.Amt;
 import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.validators.CheckBenutzerRoles;
+import ch.dvbern.ebegu.listener.BenutzerChangedEntityListener;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Field;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 @Entity
+@EntityListeners(BenutzerChangedEntityListener.class)
 @Table(
-	uniqueConstraints = { @UniqueConstraint(columnNames = "username", name = "UK_username") },
-	indexes = { @Index(columnList = "username", name = "IX_benutzer_username")
-	})
+	uniqueConstraints = @UniqueConstraint(columnNames = "username", name = "UK_username"),
+	indexes = @Index(columnList = "username", name = "IX_benutzer_username")
+)
 @Audited
-@CheckBenutzerRoles
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Benutzer extends AbstractEntity {
@@ -79,25 +85,22 @@ public class Benutzer extends AbstractEntity {
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	private String email = null;
 
-	@Enumerated(value = EnumType.STRING)
-	@Column(nullable = false)
-	@NotNull
-	private UserRole role;
+	@Transient
+	private Berechtigung currentBerechtigung;
+
+	@Valid
+	@SortNatural
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "benutzer")
+	private Set<Berechtigung> berechtigungen = new TreeSet<>();
 
 	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_benutzer_mandant_id"))
 	private Mandant mandant;
 
-	@Nullable
-	@ManyToOne(optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_benutzer_institution_id"))
-	private Institution institution;
-
-	@Nullable
-	@ManyToOne(optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_benutzer_traegerschaft_id"))
-	private Traegerschaft traegerschaft;
+	@NotNull
+	@Column(nullable = false)
+	private Boolean gesperrt = false;
 
 	public String getUsername() {
 		return username;
@@ -131,12 +134,12 @@ public class Benutzer extends AbstractEntity {
 		this.email = email;
 	}
 
-	public UserRole getRole() {
-		return role;
+	public Set<Berechtigung> getBerechtigungen() {
+		return berechtigungen;
 	}
 
-	public void setRole(UserRole role) {
-		this.role = role;
+	public void setBerechtigungen(Set<Berechtigung> berechtigungen) {
+		this.berechtigungen = berechtigungen;
 	}
 
 	public Mandant getMandant() {
@@ -147,22 +150,12 @@ public class Benutzer extends AbstractEntity {
 		this.mandant = mandant;
 	}
 
-	@Nullable
-	public Institution getInstitution() {
-		return institution;
+	public Boolean getGesperrt() {
+		return gesperrt;
 	}
 
-	public void setInstitution(@Nullable Institution institution) {
-		this.institution = institution;
-	}
-
-	@Nullable
-	public Traegerschaft getTraegerschaft() {
-		return traegerschaft;
-	}
-
-	public void setTraegerschaft(@Nullable Traegerschaft traegerschaft) {
-		this.traegerschaft = traegerschaft;
+	public void setGesperrt(Boolean gesperrt) {
+		this.gesperrt = gesperrt;
 	}
 
 	@Nonnull
@@ -171,20 +164,11 @@ public class Benutzer extends AbstractEntity {
 			+ (this.nachname != null ? this.nachname : "");
 	}
 
-	@Nonnull
-	public Amt getAmt() {
-		if (role != null) {
-			return role.getAmt();
-		}
-		return Amt.NONE;
-	}
-
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this)
 			.appendSuper(super.toString())
 			.append("username", username)
-			.append("role", role)
 			.toString();
 	}
 
@@ -202,5 +186,45 @@ public class Benutzer extends AbstractEntity {
 		}
 		final Benutzer otherBenutzer = (Benutzer) other;
 		return Objects.equals(getUsername(), otherBenutzer.getUsername());
+	}
+
+	@Nonnull
+	public Berechtigung getCurrentBerechtigung() {
+		if (currentBerechtigung == null) {
+			for (Berechtigung berechtigung : berechtigungen) {
+				if (berechtigung.isGueltig()) {
+					currentBerechtigung = berechtigung;
+				}
+			}
+		}
+		Objects.requireNonNull(currentBerechtigung, "Keine aktive Berechtigung vorhanden fuer Benutzer " + username);
+		return currentBerechtigung;
+	}
+
+	@Nonnull
+	public UserRole getRole() {
+		return getCurrentBerechtigung().getRole();
+	}
+
+	public void setRole(@Nonnull UserRole userRole) {
+		getCurrentBerechtigung().setRole(userRole);
+	}
+
+	@Nullable
+	public Institution getInstitution() {
+		return getCurrentBerechtigung().getInstitution();
+	}
+
+	public void setInstitution(@Nullable Institution institution) {
+		getCurrentBerechtigung().setInstitution(institution);
+	}
+
+	@Nullable
+	public Traegerschaft getTraegerschaft() {
+		return getCurrentBerechtigung().getTraegerschaft();
+	}
+
+	public void setTraegerschaft(@Nullable Traegerschaft traegerschaft) {
+		getCurrentBerechtigung().setTraegerschaft(traegerschaft);
 	}
 }

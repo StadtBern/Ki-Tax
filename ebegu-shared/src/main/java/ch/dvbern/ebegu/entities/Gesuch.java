@@ -803,9 +803,7 @@ public class Gesuch extends AbstractEntity implements Searchable {
 	public Optional<Betreuung> extractBetreuungsFromBetreuungNummer(@NotNull Integer kindNummer, @NotNull Integer betreuungNummer) {
 		final List<Betreuung> allBetreuungen = extractAllBetreuungen();
 		for (final Betreuung betreuung : allBetreuungen) {
-			if (betreuung.getId() != null
-				&& betreuung.getBetreuungNummer().equals(betreuungNummer)
-				&& betreuung.getKind().getKindNummer().equals(kindNummer)) {
+			if (betreuung.getBetreuungNummer().equals(betreuungNummer) && betreuung.getKind().getKindNummer().equals(kindNummer)) {
 				return Optional.of(betreuung);
 			}
 		}

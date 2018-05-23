@@ -32,4 +32,8 @@ public interface DailyBatch {
 	void runBatchGesuchsperiodeLoeschen();
 
 	void runBatchCleanWorkjobs();
+
+	void runBatchAbgelaufeneRollen();
+
+	void runBatchDeleteInvalidAuthTokens();
 }

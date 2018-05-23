@@ -13,29 +13,36 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.dvbern.ebegu.validators;
+@import '../../../style/variables.less';
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+.ellipsis {
+    width: 5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+}
+.dv-benutzer-list {
+    th{
+        width: 100%;
+    }
+    button {
+        height: 2rem;
+    }
+}
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
+.fa-undo {
+    &:hover{
+        color:@primary;
+        cursor: pointer;
+    }
+}
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+#titleText {
+    display: inline-block;
+}
 
-@Target({ TYPE, ANNOTATION_TYPE })
-@Retention(RUNTIME)
-@Constraint(validatedBy = CheckBenutzerRolesValidator.class)
-@Documented
-public @interface CheckBenutzerRoles {
-
-	String message() default "{invalid_benutzer_roles_rules}";
-
-	Class<?>[] groups() default {};
-
-	Class<? extends Payload>[] payload() default {};
-
+#refreshIcon {
+    margin-left: 1rem;
+    display: inline-block;
 }

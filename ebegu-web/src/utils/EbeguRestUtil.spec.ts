@@ -253,7 +253,6 @@ describe('EbeguRestUtil', function () {
 
                 let transformedTraegerschaft = ebeguRestUtil.parseTraegerschaft(new TSTraegerschaft(), restTraegerschaft);
                 expect(transformedTraegerschaft).toBeDefined();
-                transformedTraegerschaft.synchronizedWithOpenIdm = false;
                 expect(transformedTraegerschaft).toEqual(myTraegerschaft);
             });
         });
@@ -269,8 +268,6 @@ describe('EbeguRestUtil', function () {
 
                 let transformedInstitution = ebeguRestUtil.parseInstitution(new TSInstitution(), restInstitution);
                 expect(transformedInstitution).toBeDefined();
-                transformedInstitution.synchronizedWithOpenIdm = false;
-                transformedInstitution.traegerschaft.synchronizedWithOpenIdm = false;
                 expect(transformedInstitution).toEqual(myInstitution);
             });
         });
@@ -363,8 +360,6 @@ describe('EbeguRestUtil', function () {
                 let transformedInstitutionStammdaten = ebeguRestUtil.parseInstitutionStammdaten(new TSInstitutionStammdaten(), restInstitutionStammdaten);
 
                 TestDataUtil.checkGueltigkeitAndSetIfSame(transformedInstitutionStammdaten, myInstitutionStammdaten);
-                transformedInstitutionStammdaten.institution.synchronizedWithOpenIdm = false;
-                transformedInstitutionStammdaten.institution.traegerschaft.synchronizedWithOpenIdm = false;
                 expect(transformedInstitutionStammdaten).toEqual(myInstitutionStammdaten);
             });
         });

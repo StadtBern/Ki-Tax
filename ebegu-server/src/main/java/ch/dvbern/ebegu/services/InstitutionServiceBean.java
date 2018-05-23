@@ -36,6 +36,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.BerechtigungHistory;
+import ch.dvbern.ebegu.entities.BerechtigungHistory_;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
@@ -113,6 +115,14 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 		Optional<Institution> institutionToRemove = findInstitution(institutionId);
 		Institution institution = institutionToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeInstitution",
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionId));
+
+		// Es müssen auch alle Berechtigungen für diese Institution gelöscht werden
+		Collection<BerechtigungHistory> berechtigungenToDelete = criteriaQueryHelper.getEntitiesByAttribute(BerechtigungHistory.class, institution,
+			BerechtigungHistory_.institution);
+		for (BerechtigungHistory berechtigungHistory : berechtigungenToDelete) {
+			persistence.remove(berechtigungHistory);
+		}
+
 		persistence.remove(institution);
 	}
 

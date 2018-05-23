@@ -23,9 +23,6 @@ export default class TSInstitution extends TSAbstractEntity {
     private _mandant: TSMandant;
     private _mail: string;
 
-    // just to communicate with client
-    private _synchronizedWithOpenIdm: boolean = false;
-
     constructor(name?: string, tragerschaft?: TSTraegerschaft, mandant?: TSMandant, mail?: string) {
         super();
         this._name = name;
@@ -64,13 +61,5 @@ export default class TSInstitution extends TSAbstractEntity {
 
     set mail(value: string) {
         this._mail = value;
-    }
-
-    get synchronizedWithOpenIdm(): boolean {
-        return this._synchronizedWithOpenIdm;
-    }
-
-    set synchronizedWithOpenIdm(value: boolean) {
-        this._synchronizedWithOpenIdm = value;
     }
 }

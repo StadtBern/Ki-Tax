@@ -338,6 +338,26 @@
                         </tab-body>
                     </dv-accordion-tab>
                 </div>
+
+                <div dv-show-element
+                     dv-show-allowed-roles="['ADMIN','SUPER_ADMIN']">
+                    <dv-accordion-tab tabid="benutzer">
+                        <tab-title data-translate="BENUTZER_STATISTIK"></tab-title>
+                        <tab-body>
+                            <form name="benutzer"
+                                  ng-submit="vm.generateStatistik(benutzer, 'BENUTZER')" novalidate>
+                                <div class="row">
+                                    <div class="col-xs-3 col-xs-offset-9 statistik-button statistik-no-fields">
+                                        <dv-loading-button type="submit">
+                                            <span data-translate="GENERIEREN"></span>
+                                        </dv-loading-button>
+                                    </div>
+                                </div>
+                            </form>
+                        </tab-body>
+                    </dv-accordion-tab>
+                </div>
+
                 <div dv-show-element
                      dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR']">
                     <dv-accordion-tab tabid="betreuung">

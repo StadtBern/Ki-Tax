@@ -154,6 +154,10 @@ export class TSRoleUtil {
         );
     }
 
+    public static getSchulamtRoles(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN, TSRole.SCHULAMT, TSRole.ADMINISTRATOR_SCHULAMT];
+    }
+
     public static getSchulamtOnlyRoles(): Array<TSRole> {
         return [TSRole.SCHULAMT, TSRole.ADMINISTRATOR_SCHULAMT];
     }

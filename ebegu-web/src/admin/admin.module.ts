@@ -20,6 +20,7 @@ import {InstitutionRS} from '../core/service/institutionRS.rest';
 import './admin.module.less';
 import {adminRun} from './admin.route';
 import {AdminViewComponentConfig} from './component/adminView/adminView';
+import {BenutzerListViewComponentConfig} from './component/benutzerListView/benutzerListView';
 import {InstitutionenListViewComponentConfig} from './component/institutionenListView/institutionenListView';
 import {InstitutionStammdatenViewComponentConfig} from './component/institutionStammdatenView/institutionStammdatenView';
 import {InstitutionViewComponentConfig} from './component/institutionView/institutionView';
@@ -54,6 +55,7 @@ export const EbeguWebAdmin = angular.module('ebeguWeb.admin', [EbeguWebCore.name
     .component('dvTraegerschaftView', new TraegerschaftViewComponentConfig())
     .component('dvTestdatenView', new TestdatenViewComponentConfig())
     .component('dvFerieninselView', new FerieninselViewComponentConfig())
+    .component('benutzerListView', new BenutzerListViewComponentConfig())
     .run(adminRun);
 
 export default EbeguWebAdmin;

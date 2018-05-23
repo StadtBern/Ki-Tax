@@ -42,7 +42,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
@@ -50,8 +50,8 @@ import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
 import ch.dvbern.ebegu.entities.Institution_;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.validationgroups.InstitutionsStammdatenInsertValidationGroup;
@@ -76,9 +76,6 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	private static final String ANGEBOTSTYP = "angebotstyp";
 
 	@Inject
-	private BenutzerService benutzerService;
-
-	@Inject
 	private Persistence persistence;
 
 	@Inject
@@ -86,6 +83,9 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 
 	@Inject
 	private InstitutionService institutionService;
+
+	@Inject
+	private PrincipalBean principalBean;
 
 	@Nonnull
 	@Override
@@ -207,8 +207,8 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	@Override
 	@PermitAll
 	public Collection<BetreuungsangebotTyp> getBetreuungsangeboteForInstitutionenOfCurrentBenutzer() {
-		Benutzer user = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("getBetreuungsangeboteForInstitutionenOfCurrentBenutzer", "No User is logged in"));
-		if (user.getRole().isRoleSchulamt()) { // fuer Schulamt muessen wir nichts machen. Direkt Schulamttypes zurueckgeben
+		UserRole role = principalBean.discoverMostPrivilegedRoleOrThrowExceptionIfNone();
+		if (role.isRoleSchulamt()) { // fuer Schulamt muessen wir nichts machen. Direkt Schulamttypes zurueckgeben
 			return BetreuungsangebotTyp.getSchulamtTypes();
 		}
 		Collection<Institution> institutionenForCurrentBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);

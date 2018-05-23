@@ -24,15 +24,11 @@ import javax.enterprise.inject.Alternative;
  */
 @Alternative
 @Dependent
-@Priority(value = 1)
+@Priority(1)
 public class EbeguConfigurationDummyImpl extends EbeguConfigurationImpl {
 
 	private static final long serialVersionUID = 7880484074016308515L;
 
-	@Override
-	public boolean getOpenIdmEnabled() {
-		return false;
-	}
 
 	@Override
 	public boolean isSendingOfMailsDisabled() {

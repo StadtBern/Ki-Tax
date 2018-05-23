@@ -28,45 +28,9 @@ public interface EbeguConfiguration {
 	String getDocumentFilePath();
 
 	/**
-	 * Gibt den (servlet-context relativen) path zur fedlet configuration zurueck die verwendet werden soll, die Idee
-	 * waere das entweder dieser Path gesetzt ist oder einzelne properties
-	 */
-	String getFedletConfigPath();
-
-	/**
 	 * Gibt an ob die Client Applikation https verwendet. Wenn true werden cookies nur bei https clients gesetzt
 	 */
 	boolean isClientUsingHTTPS();
-
-	/**
-	 * Gibt die URL der IDM Rest Schnittstelle zureuck
-	 */
-	String getOpenIdmURL();
-
-	/**
-	 * Gibt die URL der IDM Rest Schnittstelle zureuck
-	 */
-	String getOpenamURL();
-
-	/**
-	 * Gibt den Benutzer fuer die IDM Rest Schnittstelle zurueck
-	 */
-	String getOpenIdmUser();
-
-	/**
-	 * Gibt das Passwort fuer die IDM Rest Schnittstelle zurueck
-	 */
-	String getOpenIdmPassword();
-
-	/**
-	 * Gibt zurueck ob die synchronisierung mit der IDM Rest Schnittstelle fuer Inst und Traegerschaft aktiviert ist
-	 */
-	boolean getOpenIdmEnabled();
-
-	/**
-	 * Set false on standaloneFile to use old communication with password and username for Testserver
-	 */
-	boolean getLoginWithToken();
 
 	/**
 	 * Gibt zurueck, ob E-Mails versendet werden sollen. Falls nicht, wird der entsprechende Text auf der Console ausgegeben
@@ -76,7 +40,7 @@ public interface EbeguConfiguration {
 	/**
 	 * Gibt einen Host zurück welcher zum Verschicken eines Mails verwendet wird.
 	 *
-	 * @return einen Hostnamen, oder <code>null</code>
+	 * @return einen Hostnamen, oder {@code null}
 	 */
 	String getSMTPHost();
 
@@ -90,14 +54,14 @@ public interface EbeguConfiguration {
 	/**
 	 * Gibt die Absender-Adresse fuer mails zurück.
 	 *
-	 * @return die Absender-Adresse oder <code>null</code>
+	 * @return die Absender-Adresse oder {@code null}
 	 */
 	String getSenderAddress();
 
 	/**
 	 * Gibt den Hostname des Servers zurück.
 	 *
-	 * @return den Hostname oder <code>null</code>
+	 * @return den Hostname oder {@code null}
 	 */
 	String getHostname();
 

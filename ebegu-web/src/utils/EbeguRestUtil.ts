@@ -34,6 +34,8 @@ import TSApplicationProperty from '../models/TSApplicationProperty';
 import TSBelegungFerieninsel from '../models/TSBelegungFerieninsel';
 import TSBelegungFerieninselTag from '../models/TSBelegungFerieninselTag';
 import TSBelegungTagesschule from '../models/TSBelegungTagesschule';
+import TSBerechtigung from '../models/TSBerechtigung';
+import TSBerechtigungHistory from '../models/TSBerechtigungHistory';
 import TSBetreuung from '../models/TSBetreuung';
 import TSBetreuungsmitteilung from '../models/TSBetreuungsmitteilung';
 import TSBetreuungsmitteilungPensum from '../models/TSBetreuungsmitteilungPensum';
@@ -764,7 +766,6 @@ export default class EbeguRestUtil {
             this.parseAbstractEntity(traegerschaftTS, traegerschaftFromServer);
             traegerschaftTS.name = traegerschaftFromServer.name;
             traegerschaftTS.active = traegerschaftFromServer.active;
-            traegerschaftTS.synchronizedWithOpenIdm = traegerschaftFromServer.synchronizedWithOpenIdm;
             traegerschaftTS.mail = traegerschaftFromServer.mail;
             return traegerschaftTS;
         }
@@ -789,7 +790,6 @@ export default class EbeguRestUtil {
             institutionTS.name = institutionFromServer.name;
             institutionTS.mandant = this.parseMandant(new TSMandant(), institutionFromServer.mandant);
             institutionTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), institutionFromServer.traegerschaft);
-            institutionTS.synchronizedWithOpenIdm = institutionFromServer.synchronizedWithOpenIdm;
             institutionTS.mail = institutionFromServer.mail;
             return institutionTS;
         }
@@ -1357,7 +1357,6 @@ export default class EbeguRestUtil {
         }
         return betPensContainers;
     }
-
     public parseAbwesenheitContainers(data: Array<any>): TSAbwesenheitContainer[] {
         let abwesenheitContainers: TSAbwesenheitContainer[] = [];
         if (data && Array.isArray(data)) {
@@ -1642,13 +1641,17 @@ export default class EbeguRestUtil {
             user.nachname = userTS.nachname;
             user.vorname = userTS.vorname;
             user.email = userTS.email;
-            user.role = userTS.role;
             user.mandant = this.mandantToRestObject({}, userTS.mandant);
-            user.traegerschaft = this.traegerschaftToRestObject({}, userTS.traegerschaft);
-            user.institution = this.institutionToRestObject({}, userTS.institution);
-            return user;
+            user.gesperrt = userTS.gesperrt;
+            if (userTS.berechtigungen) {
+                user.berechtigungen = [];
+                userTS.berechtigungen.forEach((berecht: TSBerechtigung) => {
+                    user.berechtigungen.push(this.berechtigungToRestObject({}, berecht));
+                });
+                return user;
+            }
+            return undefined;
         }
-        return undefined;
     }
 
     public parseUser(userTS: TSUser, userFromServer: any): TSUser {
@@ -1658,14 +1661,27 @@ export default class EbeguRestUtil {
             userTS.nachname = userFromServer.nachname;
             userTS.vorname = userFromServer.vorname;
             userTS.email = userFromServer.email;
-            userTS.role = userFromServer.role;
             userTS.mandant = this.parseMandant(new TSMandant(), userFromServer.mandant);
-            userTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), userFromServer.traegerschaft);
-            userTS.institution = this.parseInstitution(new TSInstitution(), userFromServer.institution);
             userTS.amt = userFromServer.amt;
+            userTS.gesperrt = userFromServer.gesperrt;
+            userTS.currentBerechtigung = this.parseBerechtigung(new TSBerechtigung(), userFromServer.currentBerechtigung);
+            userTS.berechtigungen = this.parseBerechtigungen(userFromServer.berechtigungen);
             return userTS;
         }
         return undefined;
+    }
+
+
+    public parseBerechtigungen(data: Array<any>): TSBerechtigung[] {
+        let berechtigungenList: TSBerechtigung[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                berechtigungenList[i] = this.parseBerechtigung(new TSBerechtigung(), data[i]);
+            }
+        } else if (data) {
+            berechtigungenList[0] = this.parseBerechtigung(new TSBerechtigung(), data);
+        }
+        return berechtigungenList;
     }
 
     public parseUserList(data: any): TSUser[] {
@@ -1678,6 +1694,67 @@ export default class EbeguRestUtil {
             users[0] = this.parseUser(new TSUser(), data);
         }
         return users;
+    }
+
+    public berechtigungToRestObject(berechtigung: any, berechtigungTS: TSBerechtigung): any {
+        if (berechtigungTS) {
+            this.abstractDateRangeEntityToRestObject(berechtigung, berechtigungTS);
+            berechtigung.role = berechtigungTS.role;
+            berechtigung.traegerschaft = this.traegerschaftToRestObject({}, berechtigungTS.traegerschaft);
+            berechtigung.institution = this.institutionToRestObject({}, berechtigungTS.institution);
+            return berechtigung;
+        }
+        return undefined;
+    }
+
+    public parseBerechtigung(berechtigungTS: TSBerechtigung, berechtigungFromServer: any): TSBerechtigung {
+        if (berechtigungFromServer) {
+            this.parseDateRangeEntity(berechtigungTS, berechtigungFromServer);
+            berechtigungTS.role = berechtigungFromServer.role;
+            berechtigungTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), berechtigungFromServer.traegerschaft);
+            berechtigungTS.institution = this.parseInstitution(new TSInstitution(), berechtigungFromServer.institution);
+            return berechtigungTS;
+        }
+        return undefined;
+    }
+
+    public parseBerechtigungenList(data: any): TSBerechtigung[] {
+        let berechtigungen: TSBerechtigung[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                berechtigungen[i] = this.parseBerechtigung(new TSBerechtigung(), data[i]);
+            }
+        } else {
+            berechtigungen[0] = this.parseBerechtigung(new TSBerechtigung(), data);
+        }
+        return berechtigungen;
+    }
+
+    public parseBerechtigungHistory(historyTS: TSBerechtigungHistory, historyFromServer: any): TSBerechtigungHistory {
+        if (historyFromServer) {
+            this.parseDateRangeEntity(historyTS, historyFromServer);
+            historyTS.userErstellt = historyFromServer.userErstellt;
+            historyTS.username = historyFromServer.username;
+            historyTS.role = historyFromServer.role;
+            historyTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), historyFromServer.traegerschaft);
+            historyTS.institution = this.parseInstitution(new TSInstitution(), historyFromServer.institution);
+            historyTS.gesperrt = historyFromServer.gesperrt;
+            historyTS.geloescht = historyFromServer.geloescht;
+            return historyTS;
+        }
+        return undefined;
+    }
+
+    public parseBerechtigungHistoryList(data: any): TSBerechtigungHistory[] {
+        let tsHistoryList: TSBerechtigungHistory[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                tsHistoryList[i] = this.parseBerechtigungHistory(new TSBerechtigungHistory(), data[i]);
+            }
+        } else {
+            tsHistoryList[0] = this.parseBerechtigungHistory(new TSBerechtigungHistory(), data);
+        }
+        return tsHistoryList;
     }
 
     parseDokumenteDTO(dokumenteDTO: TSDokumenteDTO, dokumenteFromServer: any): TSDokumenteDTO {

@@ -90,4 +90,7 @@ public interface ReportService {
 
 	@Nonnull
 	UploadFileInfo generateExcelReportGesuchsteller(@Nonnull LocalDate stichtag) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
+
+	@Nonnull
+	UploadFileInfo generateExcelReportBenutzer() throws ExcelMergeException;
 }

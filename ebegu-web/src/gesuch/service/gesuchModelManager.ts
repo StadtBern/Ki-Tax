@@ -1041,13 +1041,19 @@ export default class GesuchModelManager {
 
     public setUserAsFallVerantwortlicherSCH(user: TSUser) {
         if (this.gesuch && this.gesuch.fall) {
-            this.gesuch.fall.verantwortlicherSCH = user;
+            this.fallRS.setVerantwortlicherSCH(this.gesuch.fall.id, user ? user.username : null)
+                .then(() =>
+                    this.gesuch.fall.verantwortlicherSCH = user
+                );
         }
     }
 
     public setUserAsFallVerantwortlicher(user: TSUser) {
         if (this.gesuch && this.gesuch.fall) {
-            this.gesuch.fall.verantwortlicher = user;
+            this.fallRS.setVerantwortlicherJA(this.gesuch.fall.id, user ? user.username : null)
+                .then(() =>
+                    this.gesuch.fall.verantwortlicher = user
+                );
         }
     }
 

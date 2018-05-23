@@ -53,7 +53,7 @@ export class ZahlungViewController {
 
     private initViewModel() {
         if (this.$stateParams.zahlungsauftragId) {
-            switch (this.authServiceRS.getPrincipal().role) {
+            switch (this.authServiceRS.getPrincipal().getCurrentRole()) {
                 case TSRole.SACHBEARBEITER_INSTITUTION:
                 case TSRole.SACHBEARBEITER_TRAEGERSCHAFT: {
                     this.zahlungRS.getZahlungsauftragInstitution(this.$stateParams.zahlungsauftragId).then((response) => {

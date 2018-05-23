@@ -68,6 +68,13 @@ public class DailyBatchBean implements DailyBatch {
 	@Inject
 	private WorkjobService workjobService;
 
+	@Inject
+	private BenutzerService benutzerService;
+
+	@Inject
+	private AuthService authService;
+
+
 	@Override
 	@Asynchronous
 	public void runBatchCleanDownloadFiles() {
@@ -166,6 +173,28 @@ public class DailyBatchBean implements DailyBatch {
 			LOGGER.info("... Job GesuchsperiodeLoeschen finished");
 		} catch (RuntimeException e) {
 			LOGGER.error("Batch-Job GesuchsperiodeLoeschen konnte nicht durchgefuehrt werden!", e);
+		}
+	}
+
+	@Override
+	public void runBatchAbgelaufeneRollen() {
+		try {
+			LOGGER.info("Starting Job AbgelaufeneRollen...");
+			int abgelaufeneRollen = benutzerService.handleAbgelaufeneRollen(LocalDate.now());
+			LOGGER.info("... Job AbgelaufeneRollen finished. Es wurden {} Benutzer zurückgesetzt", abgelaufeneRollen);
+		} catch (RuntimeException e) {
+			LOGGER.error("Batch-Job AbgelaufeneRollen konnte nicht durchgefuehrt werden!", e);
+		}
+	}
+
+	@Override
+	public void runBatchDeleteInvalidAuthTokens() {
+		try {
+			LOGGER.info("Starting Job DeleteInvalidAuthTokens...");
+			int deletedTokens = authService.deleteInvalidAuthTokens();
+			LOGGER.info("... Job DeleteInvalidAuthTokens finished. Es wurden {} Tokens gelöscht", deletedTokens);
+		} catch (RuntimeException e) {
+			LOGGER.error("Batch-Job DeleteInvalidAuthTokens konnte nicht durchgefuehrt werden!", e);
 		}
 	}
 }

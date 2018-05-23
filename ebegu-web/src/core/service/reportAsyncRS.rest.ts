@@ -140,6 +140,13 @@ export class ReportAsyncRS {
             });
     }
 
+    public getBenutzerReportExcel(): IPromise<string> {
+        return this.http.get(this.serviceURL + '/excel/benutzer')
+            .then((response: any) => {
+                return response.data;
+            });
+    }
+
     public getKinderReportExcel(auswertungVon: string, auswertungBis: string, gesuchPeriodeID: string): IPromise<string> {
         let reportParams: string = this.httpParamSerializer({
             auswertungVon: auswertungVon,

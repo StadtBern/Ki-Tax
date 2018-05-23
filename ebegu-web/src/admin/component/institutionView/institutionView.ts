@@ -19,7 +19,6 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {InstitutionRS} from '../../../core/service/institutionRS.rest';
 import {InstitutionStammdatenRS} from '../../../core/service/institutionStammdatenRS.rest';
-import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import TSInstitution from '../../../models/TSInstitution';
@@ -34,7 +33,6 @@ import IStateService = angular.ui.IStateService;
 import IFormController = angular.IFormController;
 
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
-let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
 let template = require('./institutionView.html');
 require('./institutionView.less');
 import $ = require('jquery');
@@ -73,12 +71,12 @@ export class InstitutionViewController extends AbstractAdminViewController {
 
     $onInit() {
         this.setBetreuungsangebotTypValues();
-        if (!this.$stateParams.institutionId) {
-            this.createInstitution();
-        } else {
+        if (this.$stateParams.institutionId) {
             this.institutionRS.findInstitution(this.$stateParams.institutionId).then((found: TSInstitution) => {
                 this.setSelectedInstitution(found);
             });
+        } else {
+            this.createInstitution();
         }
     }
 
@@ -116,20 +114,10 @@ export class InstitutionViewController extends AbstractAdminViewController {
             this.errorService.clearAll();
             if (this.isCreateInstitutionsMode()) {
                 this.institutionRS.createInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
-                    if (!institution.synchronizedWithOpenIdm) {
-                        this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
-                            title: 'INSTITUTION_CREATE_SYNCHRONIZE'
-                        });
-                    }
                     this.setSelectedInstitution(institution);
                 });
             } else {
                 this.institutionRS.updateInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
-                    if (!institution.synchronizedWithOpenIdm) {
-                        this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
-                            title: 'INSTITUTION_UPDATE_SYNCHRONIZE'
-                        });
-                    }
                 });
             }
         }

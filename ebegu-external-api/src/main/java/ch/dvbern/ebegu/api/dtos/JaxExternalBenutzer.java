@@ -48,6 +48,8 @@ public class JaxExternalBenutzer implements Serializable {
 	private String countryCode;
 	private String country;
 
+	private boolean gesperrt;
+
 	public String getUsername() {
 		return username;
 	}
@@ -192,5 +194,13 @@ public class JaxExternalBenutzer implements Serializable {
 
 	public void setCountry(String country) {
 		this.country = country;
+	}
+
+	public boolean isGesperrt() {
+		return gesperrt;
+	}
+
+	public void setGesperrt(boolean gesperrt) {
+		this.gesperrt = gesperrt;
 	}
 }

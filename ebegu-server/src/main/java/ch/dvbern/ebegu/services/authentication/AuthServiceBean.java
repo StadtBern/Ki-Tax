@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.services.authentication;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,6 +25,8 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -44,6 +47,7 @@ import ch.dvbern.ebegu.entities.AuthorisierterBenutzer_;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.util.Constants;
@@ -61,8 +65,12 @@ public class AuthServiceBean implements AuthService {
 
 	@PersistenceContext(unitName = "ebeguPersistenceUnit")
 	private EntityManager entityManager;
+
 	@Inject
 	private BenutzerService benutzerService;
+
+	@Inject
+	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Resource(lookup = "java:jboss/infinispan/container/ebeguCache")
 	private CacheContainer cacheContainer;
@@ -100,7 +108,7 @@ public class AuthServiceBean implements AuthService {
 	}
 
 	@Override
-	public boolean logout(@Nonnull String authToken) {
+	public boolean logoutAndDelete(@Nonnull String authToken) {
 		if (StringUtils.isEmpty(authToken)) {
 			return false;
 		}
@@ -120,6 +128,17 @@ public class AuthServiceBean implements AuthService {
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public int logoutAndDeleteAuthorisierteBenutzerForUser(@Nonnull String username) {
+		Collection<AuthorisierterBenutzer> authUsers = criteriaQueryHelper.getEntitiesByAttribute(AuthorisierterBenutzer.class, username, AuthorisierterBenutzer_.username);
+		for (AuthorisierterBenutzer authUser : authUsers) {
+			// Den Benutzer ausloggen und den AuthentifiziertenBenutzer löschen
+			logoutAndDelete(authUser.getAuthToken());
+		}
+		return authUsers.size();
+	}
+
+	@Override
 	@Nonnull
 	public AuthAccessElement createLoginFromIAM(AuthorisierterBenutzer authorisierterBenutzer) {
 		try {
@@ -133,7 +152,7 @@ public class AuthServiceBean implements AuthService {
 
 			entityManager.persist(authorisierterBenutzer);
 		} catch (RuntimeException ex) {
-			LOG.error("Could not create Login from IAM for user " + authorisierterBenutzer, ex);
+			LOG.error("Could not create Login from IAM for user {}", authorisierterBenutzer, ex);
 			throw ex;
 		}
 		Benutzer existingUser = authorisierterBenutzer.getBenutzer();
@@ -174,20 +193,40 @@ public class AuthServiceBean implements AuthService {
 				LocalDateTime now = LocalDateTime.now();
 				LocalDateTime maxDateFromNow = now.minus(Constants.LOGIN_TIMEOUT_SECONDS, ChronoUnit.SECONDS);
 				if (authUser.getLastLogin().isBefore(maxDateFromNow)) {
-					LOG.debug("Token is no longer valid: " + token);
+					LOG.debug("Token is no longer valid: {}", token);
 					return Optional.empty();
 				}
 				authUser.setLastLogin(now);
 				entityManager.persist(authUser);
 				entityManager.flush();
-				LOG.trace("Valid auth Token '{0}' was refreshed", token);
+				LOG.trace("Valid auth Token '{}' was refreshed", token);
 			}
 			return Optional.of(authUser);
 
 		} catch (NoResultException ignored) {
-			LOG.debug("Could not load Authorisierterbenutzer for token '" +
-				token + "'");
+			LOG.debug("Could not load Authorisierterbenutzer for token '{}'", token);
 			return Optional.empty();
+		}
+	}
+
+	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public int deleteInvalidAuthTokens() {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaDelete<AuthorisierterBenutzer> delete = criteriaBuilder.createCriteriaDelete(AuthorisierterBenutzer.class);
+		Root<AuthorisierterBenutzer> root = delete.from(AuthorisierterBenutzer.class);
+
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime maxDateFromNow = now.minus(Constants.LOGIN_TIMEOUT_SECONDS, ChronoUnit.SECONDS);
+		Predicate predicateAbgelaufen = criteriaBuilder.lessThanOrEqualTo(root.get(AuthorisierterBenutzer_.lastLogin), maxDateFromNow);
+
+		delete.where(criteriaBuilder.and(predicateAbgelaufen));
+		try {
+			int nbrDeleted = entityManager.createQuery(delete).executeUpdate();
+			return nbrDeleted;
+		} catch (Exception e) {
+			LOG.error("Could not delete invalid AuthTokens", e);
+			return 0;
 		}
 	}
 }

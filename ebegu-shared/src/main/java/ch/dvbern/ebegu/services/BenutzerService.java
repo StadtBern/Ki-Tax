@@ -15,12 +15,18 @@
 
 package ch.dvbern.ebegu.services;
 
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
 
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.BenutzerTableFilterDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Berechtigung;
+import ch.dvbern.ebegu.entities.BerechtigungHistory;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Service fuer die Verwaltung von Benutzern
@@ -89,5 +95,46 @@ public interface BenutzerService {
 	/**
 	 * inserts a user received from iam or updates it if it alreday exists
 	 */
-	Benutzer updateOrStoreUserFromIAM(Benutzer benutzer);
+	Benutzer updateOrStoreUserFromIAM(@Nonnull Benutzer benutzer);
+
+	/**
+	 * Setzt den uebergebenen Benutzer auf gesperrt. Es werden auch alle möglicherweise noch vorhandenen AuthentifizierteBenutzer gelöscht.
+	 */
+	@Nonnull
+	Benutzer sperren(@Nonnull String username);
+
+	/**
+	 * Reaktiviert den uebergebenen Benutzer wieder.
+	 */
+	@Nonnull
+	Benutzer reaktivieren(@Nonnull String username);
+
+	/**
+	 * Sucht Benutzer, welche den übergebenen Filterkriterien entsprechen
+	 */
+	@Nonnull
+	Pair<Long, List<Benutzer>> searchBenutzer(@Nonnull BenutzerTableFilterDTO benutzerTableFilterDto);
+
+	/**
+	 * Setzt alle Benutzer mit abgelaufenen Rollen auf die Rolle GESUCHSTELLER zurück.
+	 * @return Die Anzahl zurückgesetzter Benutzer
+	 */
+	int handleAbgelaufeneRollen(@Nonnull LocalDate stichtag);
+
+	/**
+	 * Suche die Berechtigung mit der uebergebenen Id
+	 */
+	@Nonnull
+	Optional<Berechtigung> findBerechtigung(@Nonnull String id);
+
+	/**
+	 * Schreibt eine Berechtigungs-History in die DB
+	 */
+	void saveBerechtigungHistory(@Nonnull Berechtigung berechtigung, boolean deleted);
+
+	/**
+	 * Gibt alle BerechtigungsHistories fuer den übergebenen Benutzer zurück
+	 */
+	@Nonnull
+	Collection<BerechtigungHistory> getBerechtigungHistoriesForBenutzer(@Nonnull Benutzer benutzer);
 }
