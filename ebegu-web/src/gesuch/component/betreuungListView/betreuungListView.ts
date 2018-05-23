@@ -102,14 +102,18 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
         if (kindIndex >= 0) {
             this.gesuchModelManager.setKindIndex(kindIndex);
-            // Beim Navigieren auf die BetreuungView muss eventuell die Liste der Institutionen neu geladen werden.
-            // Diese wird im GMM gecached und enthält eventuell nicht die neuesten Daten, insbesondere beim Hinzufügen von Betreuungen.
-            if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
-                this.gesuchModelManager.resetActiveInstitutionenList();
-            }
+            this.resetActiveInstitutionenList();
             this.openBetreuungView(undefined, kind.kindNummer);
         } else {
             this.$log.error('kind nicht gefunden ', kind);
+        }
+    }
+
+    private resetActiveInstitutionenList() {
+        // Beim Navigieren auf die BetreuungView muss eventuell die Liste der Institutionen neu geladen werden.
+        // Diese wird im GMM gecached und enthält eventuell nicht die neuesten Daten, insbesondere beim Hinzufügen von Betreuungen.
+        if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
+            this.gesuchModelManager.resetActiveInstitutionenList();
         }
     }
 
@@ -125,11 +129,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
         if (kindIndex >= 0) {
             this.gesuchModelManager.setKindIndex(kindIndex);
-            // Beim Navigieren auf die BetreuungView muss eventuell die Liste der Institutionen neu geladen werden.
-            // Diese wird im GMM gecached und enthält eventuell nicht die neuesten Daten, insbesondere beim Hinzufügen von Betreuungen.
-            if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
-                this.gesuchModelManager.resetActiveInstitutionenList();
-            }
+            this.resetActiveInstitutionenList();
             this.openAnmeldungView(kind.kindNummer, betreuungstyp);
         } else {
             this.$log.error('kind nicht gefunden ', kind);
