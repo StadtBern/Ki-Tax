@@ -126,7 +126,7 @@
                                         class="form-control"
                                         ng-required="vm.isInstitutionBerechtigung(vm.currentBerechtigung)"
                                         ng-model="vm.currentBerechtigung.institution.id"
-                                        ng-options="institution.id as institution.name for institution in vm.institutionenList | orderBy: 'name' track by institution.name">
+                                        ng-options="institution.id as institution.name for institution in vm.institutionenList | orderBy: 'institution.name'">
                                 </select>
                                 <dv-error-messages input-id="institution"
                                                    for="vm.form.institution.$error"></dv-error-messages>
@@ -144,7 +144,7 @@
                                         class="form-control"
                                         ng-required="vm.isTraegerschaftBerechtigung(vm.currentBerechtigung)"
                                         ng-model="vm.currentBerechtigung.traegerschaft.id"
-                                        ng-options="traegerschaft.id as traegerschaft.name for traegerschaft in vm.traegerschaftenList | orderBy: 'name' track by traegerschaft.name">
+                                        ng-options="traegerschaft.id as traegerschaft.name for traegerschaft in vm.traegerschaftenList | orderBy: 'traegerschaft.name'">
                                 </select>
                                 <dv-error-messages input-id="traegerschaft"
                                                    for="vm.form.traegerschaft.$error"></dv-error-messages>
