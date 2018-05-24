@@ -81,7 +81,7 @@ public class TraegerschaftServiceBean extends AbstractBaseService implements Tra
 	@Nonnull
 	@PermitAll
 	public Collection<Traegerschaft> getAllTraegerschaften() {
-		return new ArrayList<>(criteriaQueryHelper.getAll(Traegerschaft.class));
+		return new ArrayList<>(criteriaQueryHelper.getAllOrdered(Traegerschaft.class, Traegerschaft_.name));
 	}
 
 	@Override

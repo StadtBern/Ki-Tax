@@ -182,7 +182,7 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 	@Nonnull
 	@PermitAll
 	public Collection<Institution> getAllInstitutionen() {
-		return new ArrayList<>(criteriaQueryHelper.getAll(Institution.class));
+		return new ArrayList<>(criteriaQueryHelper.getAllOrdered(Institution.class, Institution_.name));
 	}
 
 	@Override
