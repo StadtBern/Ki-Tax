@@ -127,7 +127,7 @@ public class BenutzerResource {
 	@Path("/search")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ SUPER_ADMIN, ADMIN})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, ADMINISTRATOR_SCHULAMT})
 	public Response searchBenutzer(
 		@Nonnull @NotNull BenutzerTableFilterDTO benutzerSearch,
 		@Context UriInfo uriInfo,
@@ -167,17 +167,16 @@ public class BenutzerResource {
 	@Path("/username/{username}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ SUPER_ADMIN, ADMIN})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, ADMINISTRATOR_SCHULAMT})
 	public JaxAuthLoginElement findBenutzer(
 		@Nonnull @NotNull @PathParam("username") String username) {
 
 		Validate.notNull(username);
 		Optional<Benutzer> benutzerOptional = benutzerService.findBenutzer(username);
 
-		if (!benutzerOptional.isPresent()) {
-			return null;
-		}
-		return converter.benutzerToAuthLoginElement(benutzerOptional.get());
+		return benutzerOptional
+			.map(benutzer -> converter.benutzerToAuthLoginElement(benutzer))
+			.orElse(null);
 	}
 
 	@ApiOperation(value = "Inactivates a Benutzer in the database", response = JaxAuthLoginElement.class)
@@ -186,7 +185,7 @@ public class BenutzerResource {
 	@Path("/inactivate")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ SUPER_ADMIN, ADMIN})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, ADMINISTRATOR_SCHULAMT})
 	public JaxAuthLoginElement inactivateBenutzer(
 		@Nonnull @NotNull @Valid JaxAuthLoginElement benutzerJax, @Context UriInfo uriInfo, @Context HttpServletResponse response) {
 
@@ -200,7 +199,7 @@ public class BenutzerResource {
 	@Path("/reactivate")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ SUPER_ADMIN, ADMIN})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, ADMINISTRATOR_SCHULAMT})
 	public JaxAuthLoginElement reactivateBenutzer(
 		@Nonnull @NotNull @Valid JaxAuthLoginElement benutzerJax, @Context UriInfo uriInfo, @Context HttpServletResponse response) {
 
@@ -214,7 +213,7 @@ public class BenutzerResource {
 	@Path("/save")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ SUPER_ADMIN, ADMIN})
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, ADMINISTRATOR_SCHULAMT})
 	public JaxAuthLoginElement saveBenutzer(
 		@Nonnull @NotNull @Valid JaxAuthLoginElement benutzerJax, @Context UriInfo uriInfo, @Context HttpServletResponse response) {
 
@@ -236,7 +235,7 @@ public class BenutzerResource {
 	@Path("/berechtigunghistory/{username}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, ADMINISTRATOR_SCHULAMT})
 	public List<JaxBerechtigungHistory> getBerechtigungHistoriesForBenutzer(@Nonnull @NotNull @PathParam("username") String username) {
 		Benutzer benutzer = benutzerService.findBenutzer(username).orElseThrow(()
 			-> new EbeguEntityNotFoundException("getBerechtigungHistoriesForBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "username invalid: " + username));
