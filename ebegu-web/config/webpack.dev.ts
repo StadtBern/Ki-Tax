@@ -92,8 +92,8 @@ export default (env: any): webpack.Configuration => webpackMerge(commonConfig(en
         },
         headers: {
             'Content-Security-Policy': "default-src 'none'; object-src 'self'; script-src 'self' 'unsafe-eval' ajax.googleapis.com; connect-src 'self' ws:; img-src 'self' data:; style-src 'self' 'unsafe-inline'  https://fonts.googleapis.com; font-src 'self'  https://fonts.googleapis.com https://fonts.gstatic.com;",
-            'X-Frame-Options': 'DENY'
-        }
-
+            'X-Frame-Options': 'DENY',
+            'X-XSS-Protection': '1; mode=block', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin'
+		}
     }
 });
