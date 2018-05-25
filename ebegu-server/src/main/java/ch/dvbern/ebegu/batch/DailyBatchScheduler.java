@@ -79,7 +79,7 @@ public class DailyBatchScheduler {
 		dailyBatch.runBatchGesuchsperiodeLoeschen();
 	}
 
-	@Schedule(second = "00", minute = "30", hour = "23", persistent = false)
+	@Schedule(second = "00", minute = "30", hour = "0", persistent = false)
 	public void runBatchAbgelaufeneRollen() {
 		dailyBatch.runBatchAbgelaufeneRollen();
 	}
