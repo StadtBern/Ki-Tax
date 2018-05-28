@@ -615,7 +615,7 @@ export default class GesuchModelManager {
         this.gesuch.eingangsart = eingangsart;
         this.setHiddenSteps();
         this.wizardStepManager.initWizardSteps();
-        this.setCurrentUserAsFallVerantwortlicher();
+        this.setCurrentUserAsFallVerantwortlicher(false);
     }
 
     public initFamiliensituation() {
@@ -1029,31 +1029,41 @@ export default class GesuchModelManager {
     /**
      * Takes current user and sets him as the verantwortlicher of Fall. Depending on the role it sets him as
      * verantwortlicher or verantworlicherSCH
+     *
+     * @param {boolean} saveInDB when true it saves the verantwortliche in the database. If falls it only sets it in the client object
      */
-    private setCurrentUserAsFallVerantwortlicher() {
+    private setCurrentUserAsFallVerantwortlicher(saveInDB: boolean) {
         if (this.authServiceRS && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
-            this.setUserAsFallVerantwortlicher(this.authServiceRS.getPrincipal());
+            this.setUserAsFallVerantwortlicher(this.authServiceRS.getPrincipal(), saveInDB);
         }
         if (this.authServiceRS && this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles())) {
-            this.setUserAsFallVerantwortlicherSCH(this.authServiceRS.getPrincipal());
+            this.setUserAsFallVerantwortlicherSCH(this.authServiceRS.getPrincipal(), saveInDB);
         }
     }
 
-    public setUserAsFallVerantwortlicherSCH(user: TSUser) {
+    public setUserAsFallVerantwortlicherSCH(user: TSUser, saveInDB: boolean = true) {
         if (this.gesuch && this.gesuch.fall) {
-            this.fallRS.setVerantwortlicherSCH(this.gesuch.fall.id, user ? user.username : null)
-                .then(() =>
-                    this.gesuch.fall.verantwortlicherSCH = user
-                );
+            if (saveInDB) {
+                this.fallRS.setVerantwortlicherSCH(this.gesuch.fall.id, user ? user.username : null)
+                    .then(() => {
+                        this.gesuch.fall.verantwortlicherSCH = user;
+                    });
+            } else {
+                this.gesuch.fall.verantwortlicherSCH = user;
+            }
         }
     }
 
-    public setUserAsFallVerantwortlicher(user: TSUser) {
+    public setUserAsFallVerantwortlicher(user: TSUser, saveInDB: boolean = true) {
         if (this.gesuch && this.gesuch.fall) {
-            this.fallRS.setVerantwortlicherJA(this.gesuch.fall.id, user ? user.username : null)
-                .then(() =>
-                    this.gesuch.fall.verantwortlicher = user
-                );
+            if (saveInDB) {
+                this.fallRS.setVerantwortlicherJA(this.gesuch.fall.id, user ? user.username : null)
+                    .then(() => {
+                        this.gesuch.fall.verantwortlicher = user;
+                    });
+            } else {
+                this.gesuch.fall.verantwortlicher = user;
+            }
         }
     }
 
